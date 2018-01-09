@@ -8,6 +8,7 @@ using Ict.Win;
 using Sci.Win.Tems;
 using Sci.Data;
 using System.Transactions;
+using System.Linq;
 
 namespace Sci.Production.SubProcess
 {
@@ -123,6 +124,109 @@ namespace Sci.Production.SubProcess
             };
             #endregion
 
+            gridSMV.EditingMouseDown += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    string brand = MyUtility.Convert.GetString(this.CurrentMaintain["brandid"]);
+                    string style = MyUtility.Convert.GetString(this.CurrentMaintain["id"]);
+                    string season = MyUtility.Convert.GetString(this.CurrentMaintain["seasonid"]);
+                    string sqlcomb = $@"select COMBOTYPE,id from timestudy where brandid='{brand}'and styleid= '{style}' and seasonid = '{season}'";
+                    DataTable comb;
+                    DualResult result = DBProxy.Current.Select(null, sqlcomb, out comb);
+                    if (!result)
+                    {
+                        this.ShowErr(result);
+                        return;
+                    }
+
+                    if (comb.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Datas not found!");
+                    }
+                    else if (comb.Rows.Count == 1)
+                    {
+                        string id = MyUtility.Convert.GetString(comb.Rows[0]["id"]);
+                        string sqlcmd = $@"
+select 
+      td.[SEQ]
+	  ,td.[OperationID]
+      ,OperationDescEN = o.DescEN
+      ,td.[Annotation]
+      ,td.[MachineTypeID]
+      ,td.[Mold]
+      ,td.[SMV]
+from TimeStudy_Detail td WITH (NOLOCK) 
+left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+where td.ID = '{id}'
+order by td.Seq";
+
+                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "SMV");
+                        DialogResult dresult = item.ShowDialog();
+                        if (dresult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        var smvs = item.GetSelectedList();
+                        decimal smv = 0;
+                        foreach (string ss in smvs)
+                        {
+                            smv += MyUtility.Convert.GetDecimal(ss);
+                        }
+
+                        this.CurrentDetailData["smv"] = smv;
+                        this.CurrentDetailData.EndEdit();
+                    }
+                    else
+                    {
+                        Sci.Win.Tools.SelectItem item1 = new Win.Tools.SelectItem($@"select COMBOTYPE from timestudy where brandid='{brand}'and styleid= '{style}' and seasonid = '{season}'", null, null);
+                        DialogResult returnResult = item1.ShowDialog();
+                        if (returnResult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        string combo = item1.GetSelectedString();
+                        string sqlcmd = $@"
+select 
+      td.[SEQ]
+	  ,td.[OperationID]
+      ,OperationDescEN = o.DescEN
+      ,td.[Annotation]
+      ,td.[MachineTypeID]
+      ,td.[Mold]
+      ,td.[SMV]
+from TimeStudy_Detail td WITH (NOLOCK) 
+inner join TimeStudy t WITH (NOLOCK) on t.id = td.id
+left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+where COMBOTYPE = '{combo}' and t.brandid='{brand}'and t.styleid= '{style}' and t.seasonid = '{season}'
+order by td.Seq";
+
+                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "SMV");
+                        DialogResult dresult = item.ShowDialog();
+                        if (dresult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        var smvs = item.GetSelectedList();
+                        decimal smv = 0;
+                        foreach (string ss in smvs)
+                        {
+                            smv += MyUtility.Convert.GetDecimal(ss);
+                        }
+
+                        this.CurrentDetailData["smv"] = smv;
+                        this.CurrentDetailData.EndEdit();
+                    }
+                }
+            };
             gridSMV.CellValidating += (s, e) =>
              {
                  DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
