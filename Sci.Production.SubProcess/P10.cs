@@ -309,8 +309,11 @@ from (
 		order by SMV desc
 	) SF
 	outer apply (
-		-- 規格尚未完成
-		select value = 0
+        select value = isnull (Sum(spod.QaQty), 0)
+        from SubProcessOutput_Detail spod
+        left join SubProcessOutput spo on spod.ID = spo.ID
+        where spod.OrderId = o.ID
+	          and spo.Status = 'Confirned'
 	) OutputQty
 	left join PPASchedule ps on o.ID = ps.OrderID
 	where ps.OrderID is null
@@ -693,8 +696,12 @@ end
             int intProcessIndex = 1;
 
             #region 合併 OutputDate Qty 與 Remark
-            DataTable dtOutputDateRemark;
-            dtOutputDateRemark = (DataTable)this.listControlBindingSourceRemark.DataSource;
+            DataTable dtOutputDateRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).Clone();
+
+            if (((DataTable)this.listControlBindingSourceRemark.DataSource).AsEnumerable().Any(row => row.RowState != DataRowState.Deleted))
+            {
+                dtOutputDateRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted).CopyToDataTable();
+            }
 
             string strUnpivotSQL = $@"
 select OrderID
