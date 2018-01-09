@@ -30,12 +30,21 @@ namespace Sci.Production.IE
         private DataTable noppa;
         private DataTable atct;
         private DataTable GCTime;
+        private DataTable maxcycle;
         private decimal styleCPU;
         private decimal takt1;
         private decimal takt2;
         private decimal changp;
         private decimal count1;
         private decimal count2;
+        private decimal standardOutput1;
+        private decimal standardOutput2;
+        private decimal dailyDemand1;
+        private decimal dailyDemand2;
+        private decimal totalCycle1;
+        private decimal totalCycle2;
+        private decimal totalGSD1;
+        private decimal totalGSD2;
         private bool change = false;
         private DataTable summt2;
         private DataTable actCycleTime2;
@@ -44,6 +53,7 @@ namespace Sci.Production.IE
         private DataTable nodist2;
         private DataTable noda2;
         private DataTable mt2;
+        private DataTable maxcycle2;
 
         /// <summary>
         /// P03_Print
@@ -85,7 +95,7 @@ namespace Sci.Production.IE
                 string sqlp1 = string.Format(
                     @"
 select no = count(distinct no)
-from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+from LineMapping_Detail ld WITH (NOLOCK)
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no<={1}
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
@@ -93,7 +103,7 @@ where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no<={1}
                 string sqlp2 = string.Format(
                     @"
 select no = count(distinct no)
-from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+from LineMapping_Detail ld WITH (NOLOCK)
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
@@ -103,7 +113,7 @@ where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
                 sqlp1 = string.Format(
                     @"
 select sumCycle = sum(Cycle)
-from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+from LineMapping_Detail ld WITH (NOLOCK)
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)  and no<={1}
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
@@ -111,22 +121,41 @@ where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)  and no<={1}
                 sqlp2 = string.Format(
                     @"
 select sumCycle = sum(Cycle)
-from LineMapping_Detail ld WITH (NOLOCK) inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+from LineMapping_Detail ld WITH (NOLOCK)
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
 
-                decimal totalCycle1 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1));
-                decimal totalCycle2 = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2));
+                this.totalCycle1 = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1)), 0);
+                this.totalCycle2 = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2)), 0);
                 decimal currentOperators1 = this.count1;
                 decimal currentOperators2 = this.count2;
-                decimal standardOutput1 = totalCycle1 == 0 ? 0 : MyUtility.Math.Round(3600 * currentOperators1 / totalCycle1, 0);
-                decimal standardOutput2 = totalCycle2 == 0 ? 0 : MyUtility.Math.Round(3600 * currentOperators2 / totalCycle2, 0);
-                decimal dailyDemand1 = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["Workhour"]) * standardOutput1, 0);
-                decimal dailyDemand2 = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["Workhour"]) * standardOutput2, 0);
-                this.takt1 = dailyDemand1 == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["NetTime"]) / dailyDemand1, 0);
-                this.takt2 = dailyDemand2 == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["NetTime"]) / dailyDemand2, 0);
+                this.standardOutput1 = this.totalCycle1 == 0 ? 0 : MyUtility.Math.Round(3600 * currentOperators1 / this.totalCycle1, 0);
+                this.standardOutput2 = this.totalCycle2 == 0 ? 0 : MyUtility.Math.Round(3600 * currentOperators2 / this.totalCycle2, 0);
+                this.dailyDemand1 = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["Workhour"]) * this.standardOutput1, 0);
+                this.dailyDemand2 = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["Workhour"]) * this.standardOutput2, 0);
+                this.takt1 = this.dailyDemand1 == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["NetTime"]) / this.dailyDemand1, 0);
+                this.takt2 = this.dailyDemand2 == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.masterData["NetTime"]) / this.dailyDemand2, 0);
+
+                sqlp1 = string.Format(
+                   @"
+select sumTotalGSD = sum(GSD)
+from LineMapping_Detail ld WITH (NOLOCK)
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)  and no<={1}
+",
+                   MyUtility.Convert.GetString(this.masterData["ID"]),
+                   this.changp);
+                sqlp2 = string.Format(
+                    @"
+select sumTotalGSD = sum(GSD)
+from LineMapping_Detail ld WITH (NOLOCK)
+where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
+",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    this.changp);
+                this.totalGSD1 = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp1)), 0);
+                this.totalGSD2 = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlp2)), 0);
                 this.change = true;
             }
             else
@@ -252,8 +281,8 @@ from(
 	FROM(
 		select ld.No,ld.MachineTypeID,ThreadColor=isnull(ThreadColor,''),Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 		from LineMapping_Detail ld WITH (NOLOCK) 
-		inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-		where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
+		left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+		where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
 		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 	)A
 	group by No,MachineTypeID
@@ -336,11 +365,9 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
-	order by no
-	OFFSET 0 ROWS 
-	FETCH NEXT {1} ROWS ONLY
+	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
+	and no <= {1}
 )x
 group by ID
 
@@ -350,16 +377,16 @@ from(
 	FROM(
 		select ld.No,ld.MachineTypeID,ThreadColor=isnull(ThreadColor,''),Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 		from LineMapping_Detail ld WITH (NOLOCK) 
-		inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+		left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 		inner join #tmp t on ld.ID = t.ID
-		where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+		where  (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null) and no between t.minno and t.maxno
 		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 	)A
 	group by No,MachineTypeID
 )x
 group by MachineTypeID",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.summt);
                 if (!result)
                 {
@@ -374,11 +401,9 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
-	order by no
-	OFFSET {1} ROWS 
-	FETCH NEXT 255 ROWS ONLY
+	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
+	and no > {1}
 )x
 group by ID
 
@@ -388,16 +413,16 @@ from(
 	FROM(
 		select ld.No,ld.MachineTypeID,ThreadColor=isnull(ThreadColor,''),Attachment=isnull(Attachment,''),Template=isnull(Template,'')
 		from LineMapping_Detail ld WITH (NOLOCK) 
-		inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+		left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 		inner join #tmp t on ld.ID = t.ID
-		where  (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != '' and no between t.minno and t.maxno
+		where  (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null) and no between t.minno and t.maxno
 		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
 	)A
 	group by No,MachineTypeID
 )x
 group by MachineTypeID",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.summt2);
                 if (!result)
                 {
@@ -417,9 +442,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	order by no
-	OFFSET 0 ROWS 
-	FETCH NEXT {1} ROWS ONLY
+	and no <= {1}
 )x
 group by ID
 
@@ -429,7 +452,7 @@ inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.actCycleTime);
                 if (!result)
                 {
@@ -445,9 +468,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) 
-	order by no
-	OFFSET {1} ROWS 
-	FETCH NEXT 255 ROWS ONLY
+	and no > {1}
 )x
 group by ID
 
@@ -457,7 +478,7 @@ inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.actCycleTime2);
                 if (!result)
                 {
@@ -474,9 +495,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	order by no
-	OFFSET 0 ROWS 
-	FETCH NEXT {1} ROWS ONLY
+	and no <= {1}
 )x
 group by ID
 
@@ -486,7 +505,7 @@ inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime);
                 if (!result)
                 {
@@ -502,9 +521,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	order by no
-	OFFSET {1} ROWS 
-	FETCH NEXT 255 ROWS ONLY
+	and no > {1}
 )x
 group by ID
 
@@ -514,7 +531,7 @@ inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime2);
                 if (!result)
                 {
@@ -531,11 +548,9 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
-	order by no
-	OFFSET 0 ROWS 
-	FETCH NEXT {1} ROWS ONLY
+	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
+	and no <= {1}
 )x
 group by ID
 
@@ -563,7 +578,7 @@ from(
 outer apply(select * from SplitString(Template,','))t)z2
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.atct);
                 if (!result)
                 {
@@ -578,11 +593,9 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
-	order by no
-	OFFSET {1} ROWS 
-	FETCH NEXT 255 ROWS ONLY
+	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
+	and no > {1}
 )x
 group by ID
 
@@ -610,7 +623,7 @@ from(
 outer apply(select * from SplitString(Template,','))t)z2
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.atct2);
                 if (!result)
                 {
@@ -628,9 +641,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	order by no
-	OFFSET 0 ROWS 
-	FETCH NEXT {1} ROWS ONLY
+	and no <= {1}
 )x
 group by ID
 
@@ -643,7 +654,7 @@ order by no
 
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -659,9 +670,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) 
-	order by no
-	OFFSET {1} ROWS 
-	FETCH NEXT 255 ROWS ONLY
+	and no > {1}
 )x
 group by ID
 
@@ -674,7 +683,7 @@ order by no
 
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
                 if (!result)
                 {
@@ -692,9 +701,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	order by no
-	OFFSET 0 ROWS 
-	FETCH NEXT {1} ROWS ONLY
+	and no <= {1}
 )x
 group by ID
 
@@ -718,7 +725,7 @@ outer apply(
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by ld.No,ld.MachineTypeID,ld.GroupKey",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
                 if (!result)
                 {
@@ -734,9 +741,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	order by no
-	OFFSET {1} ROWS 
-	FETCH NEXT 255 ROWS ONLY
+	and no > {1}
 )x
 group by ID
 
@@ -760,7 +765,7 @@ outer apply(
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by ld.No,ld.MachineTypeID,ld.GroupKey",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda2);
                 if (!result)
                 {
@@ -778,9 +783,7 @@ from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
 	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	order by no
-	OFFSET 0 ROWS 
-	FETCH NEXT {1} ROWS ONLY
+	and no <= {1}
 )x
 group by ID
 
@@ -799,7 +802,7 @@ select * from
 where b.MachineTypeID!=''
 order by no",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.mt);
                 if (!result)
                 {
@@ -814,11 +817,9 @@ into #tmp
 from(
 	select distinct ld.ID,no
 	from LineMapping_Detail ld WITH (NOLOCK)
-	inner join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and m.MachineGroupID != ''
-	order by no
-	OFFSET {1} ROWS 
-	FETCH NEXT 255 ROWS ONLY
+	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
+	and no > {1}
 )x
 group by ID
 
@@ -837,8 +838,61 @@ select * from
 where b.MachineTypeID!=''
 order by no",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.mt2);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+                #endregion
+
+                #region maxHighCycle
+                sqlCmd = string.Format(
+                    @"
+select id, minno = min(no), maxno = max(no)
+into #tmp
+from(
+	select distinct ld.ID,no
+	from LineMapping_Detail ld WITH (NOLOCK)
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
+	and no <= {1}
+)x
+group by ID
+
+select maxHighCycle = max(TotalCycle)
+from LineMapping_Detail ld WITH (NOLOCK) 
+inner join #tmp t on ld.ID = t.ID
+where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    this.changp);
+                result = DBProxy.Current.Select(null, sqlCmd, out this.maxcycle);
+                if (!result)
+                {
+                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
+                    return failResult;
+                }
+
+                sqlCmd = string.Format(
+                    @"
+select id, minno = min(no), maxno = max(no)
+into #tmp
+from(
+	select distinct ld.ID,no
+	from LineMapping_Detail ld WITH (NOLOCK)
+	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
+	and no > {1}
+)x
+group by ID
+
+select maxHighCycle = max(TotalCycle)
+from LineMapping_Detail ld WITH (NOLOCK) 
+inner join #tmp t on ld.ID = t.ID
+where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
+                    MyUtility.Convert.GetString(this.masterData["ID"]),
+                    this.changp);
+                result = DBProxy.Current.Select(null, sqlCmd, out this.maxcycle2);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
@@ -1016,6 +1070,22 @@ order by no",
                 worksheet.Cells[28, 15] = DateTime.Now.ToString("d");
                 worksheet.Cells[31, 15] = Sci.Env.User.UserName;
 
+                // 左下表頭資料
+                worksheet.Cells[56, 4] = this.masterData["Version"];
+                worksheet.Cells[58, 4] = this.masterData["Workhour"];
+                worksheet.Cells[60, 4] = this.count1;
+                worksheet.Cells[62, 4] = this.standardOutput1;
+                worksheet.Cells[64, 4] = this.dailyDemand1;
+                worksheet.Cells[66, 4] = this.takt1;
+                worksheet.Cells[68, 4] = MyUtility.Check.Empty(this.maxcycle.Rows[0]["maxHighCycle"]) ? 0 : MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(this.maxcycle.Rows[0]["maxHighCycle"]), 2);
+                worksheet.Cells[70, 4] = this.totalCycle1;
+                worksheet.Cells[72, 4] = this.totalGSD1;
+                worksheet.Cells[74, 4] = MyUtility.Check.Empty(this.totalGSD1) ? 0 : (this.totalGSD1 - this.totalCycle1) / this.totalGSD1;
+                worksheet.Cells[76, 4] = MyUtility.Check.Empty(this.maxcycle.Rows[0]["maxHighCycle"]) || MyUtility.Check.Empty(this.count1) ? 0 : this.totalCycle1 / MyUtility.Convert.GetDecimal(this.maxcycle.Rows[0]["maxHighCycle"]) / this.count1;
+                worksheet.Cells[78, 4] = MyUtility.Check.Empty(this.takt1) || MyUtility.Check.Empty(this.count1) ? 0 : this.totalCycle1 / this.takt1 / this.count1;
+                worksheet.Cells[80, 4] = MyUtility.Check.Empty(this.maxcycle.Rows[0]["maxHighCycle"]) || MyUtility.Check.Empty(this.count1) ? 0 : this.totalGSD1 / MyUtility.Convert.GetDecimal(this.maxcycle.Rows[0]["maxHighCycle"]) / this.count1;
+                worksheet.Cells[82, 4] = MyUtility.Check.Empty(this.maxcycle.Rows[0]["maxHighCycle"]) || MyUtility.Check.Empty(this.count1) ? 0 : MyUtility.Math.Round(3600m / MyUtility.Convert.GetDecimal(this.maxcycle.Rows[0]["maxHighCycle"]), 2) * this.styleCPU / this.count1;
+
                 // 左上表頭資料
                 worksheet = excel.ActiveWorkbook.Worksheets[5];
                 worksheet.Cells[1, 5] = factory;
@@ -1026,6 +1096,22 @@ order by no",
                 // 右下簽名位置
                 worksheet.Cells[28, 15] = DateTime.Now.ToString("d");
                 worksheet.Cells[31, 15] = Sci.Env.User.UserName;
+
+                // 左下表頭資料
+                worksheet.Cells[56, 4] = this.masterData["Version"];
+                worksheet.Cells[58, 4] = this.masterData["Workhour"];
+                worksheet.Cells[60, 4] = this.count2;
+                worksheet.Cells[62, 4] = this.standardOutput2;
+                worksheet.Cells[64, 4] = this.dailyDemand2;
+                worksheet.Cells[66, 4] = this.takt2;
+                worksheet.Cells[68, 4] = MyUtility.Check.Empty(this.maxcycle2.Rows[0]["maxHighCycle"]) ? 0 : MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(this.maxcycle2.Rows[0]["maxHighCycle"]), 2);
+                worksheet.Cells[70, 4] = this.totalCycle2;
+                worksheet.Cells[72, 4] = this.totalGSD2;
+                worksheet.Cells[74, 4] = MyUtility.Check.Empty(this.totalGSD2) ? 0 : (this.totalGSD2 - this.totalCycle2) / this.totalGSD2;
+                worksheet.Cells[76, 4] = MyUtility.Check.Empty(this.maxcycle2.Rows[0]["maxHighCycle"]) || MyUtility.Check.Empty(this.count2) ? 0 : this.totalCycle2 / MyUtility.Convert.GetDecimal(this.maxcycle2.Rows[0]["maxHighCycle"]) / this.count2;
+                worksheet.Cells[78, 4] = MyUtility.Check.Empty(this.takt2) || MyUtility.Check.Empty(this.count2) ? 0 : this.totalCycle2 / this.takt2 / this.count2;
+                worksheet.Cells[80, 4] = MyUtility.Check.Empty(this.maxcycle2.Rows[0]["maxHighCycle"]) || MyUtility.Check.Empty(this.count2) ? 0 : this.totalGSD2 / MyUtility.Convert.GetDecimal(this.maxcycle2.Rows[0]["maxHighCycle"]) / this.count2;
+                worksheet.Cells[82, 4] = MyUtility.Check.Empty(this.maxcycle2.Rows[0]["maxHighCycle"]) || MyUtility.Check.Empty(this.count2) ? 0 : MyUtility.Math.Round(3600m / MyUtility.Convert.GetDecimal(this.maxcycle2.Rows[0]["maxHighCycle"]), 2) * this.styleCPU / this.count2;
                 #endregion
 
                 #region MACHINE INVENTORY
@@ -1874,6 +1960,22 @@ order by no",
                 // 右下簽名位置
                 worksheet.Cells[28, 15] = DateTime.Now.ToString("d");
                 worksheet.Cells[31, 15] = Sci.Env.User.UserName;
+
+                // 左下表頭資料
+                worksheet.Cells[56, 4] = this.masterData["Version"];
+                worksheet.Cells[58, 4] = this.masterData["Workhour"];
+                worksheet.Cells[60, 4] = this.masterData["CurrentOperators"];
+                worksheet.Cells[62, 4] = this.masterData["StandardOutput"];
+                worksheet.Cells[64, 4] = this.masterData["DailyDemand"];
+                worksheet.Cells[66, 4] = this.masterData["TaktTime"];
+                worksheet.Cells[68, 4] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(this.masterData["HighestCycle"]), 2);
+                worksheet.Cells[70, 4] = this.masterData["TotalCycle"];
+                worksheet.Cells[72, 4] = this.masterData["TotalGSD"];
+                worksheet.Cells[74, 4] = MyUtility.Check.Empty(this.masterData["TotalGSD"]) ? 0 : (MyUtility.Convert.GetDecimal(this.masterData["TotalGSD"]) - MyUtility.Convert.GetDecimal(this.masterData["TotalCycle"])) / MyUtility.Convert.GetDecimal(this.masterData["TotalGSD"]);
+                worksheet.Cells[76, 4] = MyUtility.Check.Empty(this.masterData["HighestCycle"]) || MyUtility.Check.Empty(this.masterData["CurrentOperators"]) ? 0 : MyUtility.Convert.GetDecimal(this.masterData["TotalCycle"]) / MyUtility.Convert.GetDecimal(this.masterData["HighestCycle"]) / MyUtility.Convert.GetDecimal(this.masterData["CurrentOperators"]);
+                worksheet.Cells[78, 4] = MyUtility.Check.Empty(this.masterData["TaktTime"]) || MyUtility.Check.Empty(this.masterData["CurrentOperators"]) ? 0 : MyUtility.Convert.GetDecimal(this.masterData["TotalCycle"]) / MyUtility.Convert.GetDecimal(this.masterData["TaktTime"]) / MyUtility.Convert.GetDecimal(this.masterData["CurrentOperators"]);
+                worksheet.Cells[80, 4] = MyUtility.Check.Empty(this.masterData["HighestCycle"]) || MyUtility.Check.Empty(this.masterData["CurrentOperators"]) ? 0 : MyUtility.Convert.GetDecimal(this.masterData["TotalGSD"]) / MyUtility.Convert.GetDecimal(this.masterData["HighestCycle"]) / MyUtility.Convert.GetDecimal(this.masterData["CurrentOperators"]);
+                worksheet.Cells[82, 4] = MyUtility.Check.Empty(this.masterData["HighestCycle"]) || MyUtility.Check.Empty(this.masterData["CurrentOperators"]) ? 0 : MyUtility.Math.Round(3600m / MyUtility.Convert.GetDecimal(this.masterData["HighestCycle"]), 2) * this.styleCPU / MyUtility.Convert.GetDecimal(this.masterData["CurrentOperators"]);
                 #endregion
 
                 #region MACHINE INVENTORY

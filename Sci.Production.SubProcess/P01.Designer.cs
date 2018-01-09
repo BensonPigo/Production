@@ -44,6 +44,11 @@
             this.labelDefectOutput = new Sci.Win.UI.Label();
             this.numDefectOutput = new Sci.Win.UI.NumericBox();
             this.txtdropdownlistShift = new Sci.Production.Class.txtdropdownlist();
+            this.lbManpower = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.numManpower = new Sci.Win.UI.NumericBox();
+            this.numWHours = new Sci.Win.UI.NumericBox();
+            this.lbstatus = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +65,11 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lbstatus);
+            this.masterpanel.Controls.Add(this.numWHours);
+            this.masterpanel.Controls.Add(this.numManpower);
+            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.lbManpower);
             this.masterpanel.Controls.Add(this.txtdropdownlistShift);
             this.masterpanel.Controls.Add(this.numDefectOutput);
             this.masterpanel.Controls.Add(this.numProdQty);
@@ -94,6 +104,11 @@
             this.masterpanel.Controls.SetChildIndex(this.numDefectOutput, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtdropdownlistShift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbManpower, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numManpower, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numWHours, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbstatus, 0);
             // 
             // detailpanel
             // 
@@ -201,7 +216,7 @@
             this.numTTLhours.DecimalPlaces = 2;
             this.numTTLhours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTTLhours.IsSupportEditMode = false;
-            this.numTTLhours.Location = new System.Drawing.Point(409, 5);
+            this.numTTLhours.Location = new System.Drawing.Point(305, 5);
             this.numTTLhours.Name = "numTTLhours";
             this.numTTLhours.NullValue = new decimal(new int[] {
             0,
@@ -220,7 +235,7 @@
             // 
             // labelManhours
             // 
-            this.labelManhours.Location = new System.Drawing.Point(311, 5);
+            this.labelManhours.Location = new System.Drawing.Point(207, 5);
             this.labelManhours.Name = "labelManhours";
             this.labelManhours.Size = new System.Drawing.Size(93, 23);
             this.labelManhours.TabIndex = 13;
@@ -232,7 +247,7 @@
             this.numProdQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ProdQty", true));
             this.numProdQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numProdQty.IsSupportEditMode = false;
-            this.numProdQty.Location = new System.Drawing.Point(409, 63);
+            this.numProdQty.Location = new System.Drawing.Point(305, 63);
             this.numProdQty.Name = "numProdQty";
             this.numProdQty.NullValue = new decimal(new int[] {
             0,
@@ -255,7 +270,7 @@
             this.numQAOutput.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "QAQty", true));
             this.numQAOutput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numQAOutput.IsSupportEditMode = false;
-            this.numQAOutput.Location = new System.Drawing.Point(409, 34);
+            this.numQAOutput.Location = new System.Drawing.Point(305, 34);
             this.numQAOutput.Name = "numQAOutput";
             this.numQAOutput.NullValue = new decimal(new int[] {
             0,
@@ -274,7 +289,7 @@
             // 
             // labelProdQty
             // 
-            this.labelProdQty.Location = new System.Drawing.Point(311, 63);
+            this.labelProdQty.Location = new System.Drawing.Point(207, 63);
             this.labelProdQty.Name = "labelProdQty";
             this.labelProdQty.Size = new System.Drawing.Size(93, 23);
             this.labelProdQty.TabIndex = 24;
@@ -282,7 +297,7 @@
             // 
             // labelQAOutput
             // 
-            this.labelQAOutput.Location = new System.Drawing.Point(311, 34);
+            this.labelQAOutput.Location = new System.Drawing.Point(207, 34);
             this.labelQAOutput.Name = "labelQAOutput";
             this.labelQAOutput.Size = new System.Drawing.Size(93, 23);
             this.labelQAOutput.TabIndex = 23;
@@ -290,7 +305,7 @@
             // 
             // labelDefectOutput
             // 
-            this.labelDefectOutput.Location = new System.Drawing.Point(311, 92);
+            this.labelDefectOutput.Location = new System.Drawing.Point(207, 92);
             this.labelDefectOutput.Name = "labelDefectOutput";
             this.labelDefectOutput.Size = new System.Drawing.Size(93, 23);
             this.labelDefectOutput.TabIndex = 25;
@@ -302,7 +317,7 @@
             this.numDefectOutput.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
             this.numDefectOutput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDefectOutput.IsSupportEditMode = false;
-            this.numDefectOutput.Location = new System.Drawing.Point(409, 92);
+            this.numDefectOutput.Location = new System.Drawing.Point(305, 92);
             this.numDefectOutput.Name = "numDefectOutput";
             this.numDefectOutput.NullValue = new decimal(new int[] {
             0,
@@ -331,6 +346,86 @@
             this.txtdropdownlistShift.Size = new System.Drawing.Size(121, 24);
             this.txtdropdownlistShift.TabIndex = 2;
             this.txtdropdownlistShift.Type = "PMS_PPAOutput_Shift";
+            // 
+            // lbManpower
+            // 
+            this.lbManpower.Location = new System.Drawing.Point(400, 5);
+            this.lbManpower.Name = "lbManpower";
+            this.lbManpower.Size = new System.Drawing.Size(93, 23);
+            this.lbManpower.TabIndex = 26;
+            this.lbManpower.Text = "Manpower";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(400, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(93, 23);
+            this.label1.TabIndex = 27;
+            this.label1.Text = "W/Hours(Day)";
+            // 
+            // numManpower
+            // 
+            this.numManpower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numManpower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Manpower", true));
+            this.numManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numManpower.IsSupportEditMode = false;
+            this.numManpower.Location = new System.Drawing.Point(496, 5);
+            this.numManpower.Name = "numManpower";
+            this.numManpower.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numManpower.ReadOnly = true;
+            this.numManpower.Size = new System.Drawing.Size(62, 23);
+            this.numManpower.TabIndex = 28;
+            this.numManpower.TabStop = false;
+            this.numManpower.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numWHours
+            // 
+            this.numWHours.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numWHours.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WHour", true));
+            this.numWHours.DecimalPlaces = 1;
+            this.numWHours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numWHours.Location = new System.Drawing.Point(496, 34);
+            this.numWHours.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            65536});
+            this.numWHours.Name = "numWHours";
+            this.numWHours.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numWHours.ReadOnly = true;
+            this.numWHours.Size = new System.Drawing.Size(62, 23);
+            this.numWHours.TabIndex = 29;
+            this.numWHours.TabStop = false;
+            this.numWHours.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numWHours.Validating += new System.ComponentModel.CancelEventHandler(this.NumWHours_Validating);
+            // 
+            // lbstatus
+            // 
+            this.lbstatus.BackColor = System.Drawing.Color.Transparent;
+            this.lbstatus.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "status", true));
+            this.lbstatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
+            this.lbstatus.Location = new System.Drawing.Point(604, 5);
+            this.lbstatus.Name = "lbstatus";
+            this.lbstatus.Size = new System.Drawing.Size(133, 34);
+            this.lbstatus.TabIndex = 30;
+            this.lbstatus.Text = "confirmed";
+            this.lbstatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P01
             // 
@@ -391,5 +486,10 @@
         private Win.UI.Label labelProdQty;
         private Win.UI.Label labelQAOutput;
         private Class.txtdropdownlist txtdropdownlistShift;
+        private Win.UI.Label lbManpower;
+        private Win.UI.NumericBox numWHours;
+        private Win.UI.NumericBox numManpower;
+        private Win.UI.Label label1;
+        private Win.UI.Label lbstatus;
     }
 }
