@@ -386,7 +386,7 @@ from(
 )x
 group by MachineTypeID",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.summt);
                 if (!result)
                 {
@@ -422,7 +422,7 @@ from(
 )x
 group by MachineTypeID",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.summt2);
                 if (!result)
                 {
@@ -452,7 +452,7 @@ inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.actCycleTime);
                 if (!result)
                 {
@@ -478,7 +478,7 @@ inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.actCycleTime2);
                 if (!result)
                 {
@@ -505,7 +505,7 @@ inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime);
                 if (!result)
                 {
@@ -531,7 +531,7 @@ inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by No",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime2);
                 if (!result)
                 {
@@ -578,7 +578,7 @@ from(
 outer apply(select * from SplitString(Template,','))t)z2
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.atct);
                 if (!result)
                 {
@@ -623,7 +623,7 @@ from(
 outer apply(select * from SplitString(Template,','))t)z2
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.atct2);
                 if (!result)
                 {
@@ -654,7 +654,7 @@ order by no
 
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist);
                 if (!result)
                 {
@@ -683,7 +683,7 @@ order by no
 
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
                 if (!result)
                 {
@@ -725,7 +725,7 @@ outer apply(
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by ld.No,ld.MachineTypeID,ld.GroupKey",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
                 if (!result)
                 {
@@ -765,7 +765,7 @@ outer apply(
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
 order by ld.No,ld.MachineTypeID,ld.GroupKey",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda2);
                 if (!result)
                 {
@@ -802,7 +802,7 @@ select * from
 where b.MachineTypeID!=''
 order by no",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.mt);
                 if (!result)
                 {
@@ -838,7 +838,7 @@ select * from
 where b.MachineTypeID!=''
 order by no",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.mt2);
                 if (!result)
                 {
@@ -865,7 +865,7 @@ from LineMapping_Detail ld WITH (NOLOCK)
 inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.maxcycle);
                 if (!result)
                 {
@@ -891,7 +891,7 @@ from LineMapping_Detail ld WITH (NOLOCK)
 inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.count1);
+                    this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.maxcycle2);
                 if (!result)
                 {
