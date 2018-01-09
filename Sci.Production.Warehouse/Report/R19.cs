@@ -128,7 +128,8 @@ select  cte.id
         , backQty = isnull((select sum(qty) 
                             from BorrowBack x WITH (NOLOCK) 
                             inner join BorrowBack_Detail y WITH (NOLOCK) on y.id = x.id 
-                            where   x.Status = 'Confirmed' 
+                            where x.Borrowid = cte.id
+									and x.Status = 'Confirmed' 
                                     and x.type='B' 
                                     and y.ToPOID = cte.FromPOID 
                                     and y.ToSeq1 = cte.FromSeq1
@@ -138,7 +139,8 @@ select  cte.id
         , balance = cte.qty - isnull((  select sum(qty) 
                                         from BorrowBack x WITH (NOLOCK) 
                                         inner join BorrowBack_Detail y WITH (NOLOCK) on y.id = x.id 
-                                        where   x.Status = 'Confirmed' 
+                                        where   x.Borrowid = cte.id
+                                                and x.Status = 'Confirmed' 
                                                 and x.type='B' 
                                                 and y.ToPOID = cte.FromPOID 
                                                 and y.ToSeq1 = cte.FromSeq1
