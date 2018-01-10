@@ -313,7 +313,7 @@ from (
         from SubProcessOutput_Detail spod
         left join SubProcessOutput spo on spod.ID = spo.ID
         where spod.OrderId = o.ID
-	          and spo.Status = 'Confirned'
+	          and spo.Status = 'Confirmed'
 	) OutputQty
 	left join PPASchedule ps on o.ID = ps.OrderID
 	where ps.OrderID is null
@@ -327,8 +327,8 @@ from (
 		   , StyleID = o.StyleID
 		   , OrderID = o.ID
 		   , OrderQty = o.Qty
-		   , OutputQty = ps.OutputQty
-		   , BalanceQty = o.Qty - ps.OutputQty
+           , OutputQty = OutputQty.value
+		   , BalanceQty = o.Qty - OutputQty.value
 		   , SewInLine = o.SewInLine
 		   , TargetQty = ps.TargetQty
 		   , Feature = ps.Feature
@@ -346,6 +346,13 @@ from (
 	from PPASchedule ps
     inner join #OrderList ol on ps.OrderID = ol.OrderID
 	left join orders o on ol.OrderID = o.ID
+    outer apply (
+        select value = isnull (Sum(spod.QaQty), 0)
+        from SubProcessOutput_Detail spod
+        left join SubProcessOutput spo on spod.ID = spo.ID
+        where spod.OrderId = o.ID
+	          and spo.Status = 'Confirmed'
+	) OutputQty
 ) tmp
 
 select *
@@ -1420,7 +1427,7 @@ order by GroupID";
             List<SqlParameter> listSQLParameter = new List<SqlParameter>();
             listSQLParameter.Add(new SqlParameter("@Inline", dr["Inline"]));
             listSQLParameter.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
-            listSQLParameter.Add(new SqlParameter("@OrderQty", dr["OrderQty"]));
+            listSQLParameter.Add(new SqlParameter("@BalanceQty", dr["BalanceQty"]));
             listSQLParameter.Add(new SqlParameter("@TargetQty", dr["TargetQty"]));
             listSQLParameter.Add(new SqlParameter("@SubProcessLearnCurveID", dr["SubProcessLearnCurveID"]));
 
@@ -1444,8 +1451,8 @@ from (
 ) tmp
 outer apply (
 	select value = case
-					  when @OrderQty - RunningTotal >= 0 then OutputQty
-					  else OutputQty + @OrderQty - RunningTotal
+					  when @BalanceQty - RunningTotal >= 0 then OutputQty
+					  else OutputQty + @BalanceQty - RunningTotal
 				   end
 ) DailyQty
 where DailyQty.value > 0";
