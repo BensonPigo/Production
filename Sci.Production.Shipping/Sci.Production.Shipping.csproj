@@ -141,6 +141,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="B47.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B47.Designer.cs">
+      <DependentUpon>B47.cs</DependentUpon>
+    </Compile>
     <Compile Include="B01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -671,6 +677,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="B47.resx">
+      <DependentUpon>B47.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="B01.resx">
       <DependentUpon>B01.cs</DependentUpon>
     </EmbeddedResource>
