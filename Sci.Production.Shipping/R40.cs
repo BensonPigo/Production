@@ -48,19 +48,10 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            // if (checkLiquidationDataOnly.Checked)
-            // {
-            //    if (MyUtility.Check.Empty(txtSPNoStartFrom.Text))
-            //    {
-            //        txtSPNoStartFrom.Focus();
-            //        MyUtility.Msg.WarningBox("SP# start from can't empty!!");
-            //        return false;
-            //    }
-            // }
             this.contract = this.txtContractNo.Text;
             this.hscode = this.txtHSCode.Text;
             this.nlcode = this.txtNLCode.Text;
-            this.sp = this.txtSPNoStartFrom.Text;
+            //this.sp = this.txtSPNoStartFrom.Text;
             this.liguidationonly = this.checkLiquidationDataOnly.Checked;
 
             return base.ValidateInput();
@@ -283,8 +274,9 @@ from (
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on t.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
     inner join FtyInventory ft on mdp.Ukey=MDivisionPoDetailUkey
-	where 1=1 and ft.StockType='O'
-    {0}", this.sp == string.Empty ? string.Empty : string.Format("and t.POID >= '{0}'", this.sp)));
+	where 1=1 and ft.StockType='O'"));
+                // SP# start from移除
+                // {0}", this.sp == string.Empty ? string.Empty : string.Format("and t.POID >= '{0}'", this.sp)));
                 sqlCmd.Append(string.Format(
                     @"
 	union all
@@ -315,9 +307,9 @@ from (
 	from LocalInventory l WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where 1=1 and o.WhseClose is not null
-    {0}", this.sp == string.Empty ? string.Empty : string.Format("and o.ID >= '{0}'", this.sp)));
-                sqlCmd.Append(string.Format(
+	where 1=1 and o.WhseClose is not null "));
+              //  { 0}", this.sp == string.Empty ? string.Empty : string.Format("and o.ID >= '{0}'", this.sp)));
+                sqlCmd.Append(
                     @"
 ) a
 
@@ -551,7 +543,7 @@ left join (
 	inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = tc.ID and vs.SizeCode = t.SizeCode
 	inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = tc.ID
 ) a on t.ID = a.ID and t.Article = a.Article and t.SizeCode = a.SizeCode
-order by t.ID,t.Article,t.SizeCode,t.SewQty,t.PullQty", this.sp));
+order by t.ID,t.Article,t.SizeCode,t.SewQty,t.PullQty");
 
                 sqlCmd.Append(@"
 --整理出Summary
