@@ -94,7 +94,7 @@ And  AP.LocalSuppID = (select top 1 PrintingSuppID from System)
          worksheet.Columns.AutoFit();
          #endregion
          #region Save & Show Excel
-         string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R51");
+         string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R52");
          objApp.ActiveWorkbook.SaveAs(strExcelName);
          objApp.Quit();
          Marshal.ReleaseComObject(objApp);

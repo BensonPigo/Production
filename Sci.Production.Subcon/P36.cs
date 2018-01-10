@@ -508,25 +508,36 @@ where id = '{4}'"
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dtDetail;
-            string sqlcmd = @"select 
-				 Ldeb.ID,dbo.getPass1(Ldeb.handle)[FROM],F.nameEn,Ldeb.LocalSuppID+L.name AS Supplier,
-				 (Select Ldetail.orderid+',' from localdebit_detail WITH (NOLOCK) where id = Ldeb.id for xml path('')) [poid],
-				 (Select t.name +',' from (SELECT name FROM DBO.Reason WITH (NOLOCK) 
-					inner join dbo.localdebit_detail WITH (NOLOCK) on dbo.localdebit_detail.reasonid = DBO.Reason.id
-					WHERE reason.ReasonTypeID = 'DebitNote_Factory' 
-					and localdebit_detail.id =Ldeb.id) t for xml path(''))[Subject],
-					Ldeb.Description,Ldeb.Currencyid,format(Ldeb.Amount,'#,###,###,##0.00') Amount,
-					Iif(Ldeb.Exchange=0,'',FORMAT(Ldeb.Exchange,'###.00'))as ExchangeRate,
-					CONCAT( Ldeb.taxrate , ' %TAX')as titletaxrate,FORMAT(Ldeb.tax,'#,##0.00')as taxrate
-					,FORMAT(Ldeb.Amount+Ldeb.Tax,'#,##0.00')as total,dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1 (Ldeb.SMR) as Purchaser
-					
-                   from DBO.LocalDebit Ldeb WITH (NOLOCK) 
-	               LEFT JOIN dbo.factory F WITH (NOLOCK) 
-	               ON  F.ID = Ldeb.factoryid
-	               LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
-	               ON  L.ID = Ldeb.LocalSuppID
-	               LEFT JOIN dbo.localdebit_detail Ldetail WITH (NOLOCK) 
-	               ON  Ldetail.ID = Ldeb.ID where Ldeb.ID= @ID";
+            string sqlcmd = @"
+select 
+    Ldeb.ID,dbo.getPass1(Ldeb.handle)[FROM],F.nameEn,Ldeb.LocalSuppID+L.name AS Supplier,
+    poids.poid,
+    (Select t.name +',' from (SELECT name FROM DBO.Reason WITH (NOLOCK) 
+    inner join dbo.localdebit_detail WITH (NOLOCK) on dbo.localdebit_detail.reasonid = DBO.Reason.id
+    WHERE reason.ReasonTypeID = 'DebitNote_Factory' 
+    and localdebit_detail.id =Ldeb.id) t for xml path(''))[Subject],
+    Ldeb.Description,Ldeb.Currencyid,format(Ldeb.Amount,'#,###,###,##0.00') Amount,
+    Iif(Ldeb.Exchange=0,'',FORMAT(Ldeb.Exchange,'###.00'))as ExchangeRate,
+    CONCAT( Ldeb.taxrate , ' %TAX')as titletaxrate,FORMAT(Ldeb.tax,'#,##0.00')as taxrate
+    ,FORMAT(Ldeb.Amount+Ldeb.Tax,'#,##0.00')as total,dbo.getpass1(Ldeb.Handle)+ '/' +  dbo.getpass1 (Ldeb.SMR) as Purchaser					
+from DBO.LocalDebit Ldeb WITH (NOLOCK) 
+LEFT JOIN dbo.factory F WITH (NOLOCK) 
+ON  F.ID = Ldeb.factoryid
+LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) 
+ON  L.ID = Ldeb.LocalSuppID
+LEFT JOIN dbo.localdebit_detail Ldetail WITH (NOLOCK) 
+ON  Ldetail.ID = Ldeb.ID
+outer apply
+(
+	select poid =
+	stuff((
+		select distinct concat(',',orderid)
+		from localdebit_detail
+		where id = Ldeb.ID
+		for xml path('')
+	),1,1,'')
+)poids
+where Ldeb.ID= @ID";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
             string Barcode = dtDetail.Rows[0]["ID"].ToString();
