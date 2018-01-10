@@ -160,13 +160,13 @@ select
       ,td.[Annotation]
       ,td.[MachineTypeID]
       ,td.[Mold]
-      ,td.[SMV]
+      ,td.[IETMSSMV]
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = '{id}'
 order by td.Seq";
 
-                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "SMV");
+                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
                         DialogResult dresult = item.ShowDialog();
                         if (dresult == DialogResult.Cancel)
                         {
@@ -201,14 +201,14 @@ select
       ,td.[Annotation]
       ,td.[MachineTypeID]
       ,td.[Mold]
-      ,td.[SMV]
+      ,td.[IETMSSMV]
 from TimeStudy_Detail td WITH (NOLOCK) 
 inner join TimeStudy t WITH (NOLOCK) on t.id = td.id
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where COMBOTYPE = '{combo}' and t.brandid='{brand}'and t.styleid= '{style}' and t.seasonid = '{season}'
 order by td.Seq";
 
-                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "SMV");
+                        Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
                         DialogResult dresult = item.ShowDialog();
                         if (dresult == DialogResult.Cancel)
                         {
