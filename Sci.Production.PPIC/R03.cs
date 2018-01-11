@@ -78,7 +78,7 @@ namespace Sci.Production.PPIC
         {
             this.InitializeComponent();
 
-            this.Text = type == "1" ? "R03. PPIC master list report" : "R03. PPIC master list report (Artwork)";
+            this.Text = type == "1" ? "R03. PPIC master list report" : "R031. PPIC master list report (Artwork)";
             this.checkIncludeArtworkdata.Enabled = type != "1";
             this.checkIncludeArtworkdataKindIsPAP.Enabled = type != "1";
 
