@@ -71,11 +71,16 @@ namespace Sci.Production.PPIC
         /// <summary>
         /// R03
         /// </summary>
-        /// <param name="menuitem">ToolStripMenuItem</param>
-        public R03(ToolStripMenuItem menuitem)
+        /// <param name="menuitem">menuitem</param>
+        /// <param name="type">type</param>
+        public R03(ToolStripMenuItem menuitem, string type)
             : base(menuitem)
         {
             this.InitializeComponent();
+
+            this.Text = type == "1" ? "R03. PPIC master list report" : "R031. PPIC master list report (Artwork)";
+            this.checkIncludeArtworkdata.Enabled = type != "1";
+            this.checkIncludeArtworkdataKindIsPAP.Enabled = type != "1";
 
             DataTable zone, mDivision, factory, subprocess;
             string strSelectSql = @"select '' as Zone,'' as Fty union all
