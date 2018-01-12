@@ -1170,6 +1170,12 @@ order by ArticleGroup", patternukey);
         {
             if (CutRefTb == null) return;
             if (CutRefTb.Rows.Count == 0) return;
+            if (gridArticleSize.GetSelecteds().Count == 0)
+            {
+                MyUtility.Msg.InfoBox("No distrubed data to create CutPart data");
+                return;
+            }
+
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             string ukey = MyUtility.GetValue.Lookup("Styleukey", selectDr["poid"].ToString(), "Orders", "ID");
             Sci.Production.PublicForm.GarmentList callNextForm = new Sci.Production.PublicForm.GarmentList(ukey, selectDr["poid"].ToString(), selectDr["Cutref"].ToString());
