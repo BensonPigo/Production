@@ -196,13 +196,14 @@ from
 	,[StockUnit] = dbo.getStockUnit(psd.SciRefno,ed.Suppid)				
 	from Export e WITH (NOLOCK) 
 	inner join Export_Detail ed WITH (NOLOCK) on e.id=ed.id
-	inner join VNImportDeclaration vd WITH (NOLOCK) on vd.BLNo=e.BLNo
+	inner join VNImportDeclaration vd WITH (NOLOCK) on vd.BLNo=e.BLNo and vd.wkno = e.id
 	inner join po_supp_detail psd WITH (NOLOCK) on psd.ID=ed.poid and psd.seq1=ed.seq1 and psd.seq2=ed.seq2
 	inner join Fabric f WITH (NOLOCK) on f.SciRefno=psd.SciRefno										
 	where vd.VNContractID = @contract
 	and vd.Status='Confirmed'
 	and not exists (select 1 from Receiving WITH (NOLOCK)
 		where exportID = e.id and status='Confirmed')
+	and vd.blno<>''
 
 union all
 	
@@ -230,11 +231,10 @@ union all
 			(select Rate from dbo.View_Unitrate where FROM_U = IIF(fed.UnitId = 'CONE','M',fed.UnitId) and TO_U = isnull(f.CustomsUnit,''))),'')
 	))
 	,[CustomsUnit] = isnull(isnull(f.CustomsUnit,li.CustomsUnit),'')
-	,[OnRaodQty] = UnitRateQty.qty
-	,[StockUnit] = StockUnit.unit
+	,[OnRaodQty] = isnull(UnitRateQty.qty,0)
+	,[StockUnit] = isnull(StockUnit.unit,'')
 	from FtyExport fe WITH (NOLOCK)
-	inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id
-	inner join VNImportDeclaration vd WITH (NOLOCK) on vd.BLNo <> fe.BLNo or vd.wkno <> fe.id	
+	inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
 	inner join Fabric f WITH (NOLOCK) on f.SciRefno=fed.SciRefno			
 	left join LocalItem li WITH (NOLOCK) on li.Refno = fed.RefNo
 	outer apply(
@@ -244,8 +244,11 @@ union all
 		select Qty = iif(fe.type in (2,3),dbo.getUnitRate(fed.UnitID,StockUnit.unit)*(fed.qty),
 		iif(fe.type in (1,4),fed.qty,0))
 	) UnitRateQty							
-	where vd.VNContractID = @contract
-	and vd.Status='Confirmed'
+	where 1=1 
+	and not exists (select 1 from VNImportDeclaration 
+		where blno = fe.blno and VNContractID = @contract and blno<>'')
+	and not exists (select 1 from VNImportDeclaration 
+		where wkno = fe.id and VNContractID = @contract and blno<>'')	
 	and not exists (select 1 from Receiving 
 		where InvNo = fe.InvNo and status='Confirmed')
 	and not exists (select 1 from TransferIn 
@@ -283,7 +286,7 @@ from (
 		where fid.Ukey = fi.UKey 
 		for xml path(''))
 		,'')
-	,[Qty] = IIF(fi.InQty-fi.OutQty+fi.AdjustQty <> 0, dbo.getVNUnitTransfer(
+	,[Qty] = IIF(fi.InQty-fi.OutQty+fi.AdjustQty > 0, dbo.getVNUnitTransfer(
 			isnull(f.Type, '')
 			,psd.StockUnit
 			,isnull(f.CustomsUnit, '')
@@ -321,7 +324,7 @@ union all
 	,[Dyelot] = '' 
 	,[StockType] = 'B'
 	,[Location] = '' 
-	,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty <> 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		,l.UnitId
 		,li.CustomsUnit
 		,(l.InQty-l.OutQty+l.AdjustQty)*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1)
@@ -375,7 +378,7 @@ from
 	 [HSCode] = isnull(f.HSCode,'')
 	,[NLCode] = isnull(f.NLCode,'')
 	,[ID] = t.ID
-	,[Qty] = IIF((mdp.OutQty-mdp.LObQty) <> 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
+	,[Qty] = IIF((mdp.OutQty-mdp.LObQty) > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 		,psd.StockUnit
 		,isnull(f.CustomsUnit,'')
 		,(mdp.OutQty-mdp.LObQty)
@@ -401,7 +404,7 @@ union all
 	 [HSCode] = isnull(li.HSCode,'')
 	,[NLCode] = isnull(li.NLCode,'')
 	,[ID] = t.ID
-	,[Qty] = IIF(l.OutQty <> 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	,[Qty] = IIF(l.OutQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 		,l.UnitId
 		,isnull(li.CustomsUnit,'')
 		,l.OutQty*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1)
@@ -466,16 +469,15 @@ left join (
 			,vd.HSCode
 			,vd.NLCode
 			,vd.UnitID
-			,(ol_rate.value/100*sdd.QAQty)*vd.Qty as Qty
+			,(ol_rate.value/100*sdd.QAQty)* (vd.Qty * (1+vd.Waste)) as Qty
 			,v.CustomSP
 	from #tmpWHNotClose t
-	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.ID	
-    outer apply(select value = dbo.GetOrderLocation_Rate(t.id,sdd.ComboType)) ol_rate	
-	inner join VNConsumption v WITH (NOLOCK) on t.StyleID=v.StyleID and t.BrandID=v.BrandID and t.SeasonID=v.SeasonID and v.sizecode=sdd.sizecode
+	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.ID	    
+	inner join #tmpCustomSP v on v.StyleID = t.StyleID and v.BrandID = t.BrandID and v.Category = t.Category and v.seasonid=t.seasonid
 	inner join VNConsumption_Article va WITH (NOLOCK) on va.ID = v.ID and va.Article = sdd.Article
 	inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = v.ID and vs.SizeCode = sdd.SizeCode
 	inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = v.ID
-	where v.VNContractID=@contract 
+	outer apply(select value = dbo.GetOrderLocation_Rate(t.id,sdd.ComboType)) ol_rate		
 ) a on t.ID = a.OrderId and sdd.ComboType = a.ComboType and sdd.Article = a.Article and sdd.SizeCode = a.SizeCode
 group by t.ID, sdd.ComboType,sdd.Article,sdd.SizeCode,isnull(a.HSCode,''),isnull(a.NLCode,'')
 	,isnull(a.UnitID,''),isnull(a.CustomSP,''),t.POID
@@ -525,36 +527,39 @@ and LocalOrder = 0
 
 ;with tmpPreProdQty as(
 	select 
-	 tp.id ,tp.StyleID,tp.BrandID,tp.SeasonID
+	 tp.id ,tp.StyleID,tp.BrandID,tp.SeasonID,tp.Category
 	,[Article] = sdd.Article
 	,[SizeCode] = sdd.SizeCode
-	,[SewQty] = isnull(dbo.getMinCompleteSewQty(tp.ID,sdd.Article,sdd.SizeCode),0) - sddg.QAQty
+	,[SewQty] = isnull(dbo.getMinCompleteSewQty(tp.ID,sdd.Article,sdd.SizeCode),0) - SewingGMT.QAQty
 	,[PullQty] = isnull(PulloutDD.ShipQty + InvAdjustQ.DiffQty,0)
 	,[GMTAdjustQty] = isnull(AdjustGMT.gmtQty,0)
 	from #tmpNoPullOutComp tp
-	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on tp.id=sdd.orderid
-	inner join SewingOutput_Detail_Detail_Garment sddg WITH (NOLOCK) on tp.id=sddg.OrderIDfrom
+	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on tp.id=sdd.orderid	
 	outer apply(
-		select Sum(pdd.ShipQty) as ShipQty
+		select isnull(Sum(sddg.QAQty),0) as QAQty
+		from SewingOutput_Detail_Detail_Garment sddg WITH (NOLOCK)
+		where sdd.id=sddg.OrderIDfrom
+	)SewingGMT
+	outer apply(
+		select isnull(Sum(pdd.ShipQty),0) as ShipQty
 		from Pullout_Detail_Detail pdd WITH (NOLOCK)
-		where pdd.OrderID = tp.ID  and pdd.Article = sdd.Article 
-		and pdd.SizeCode = sdd.SizeCode
+		where pdd.OrderID = tp.ID  and pdd.Article = sdd.Article and pdd.SizeCode = sdd.SizeCode
 	)PulloutDD
 	outer apply(
-		select Sum(iaq.DiffQty) as DiffQty
+		select isnull(Sum(iaq.DiffQty),0) as DiffQty
 		from InvAdjust ia WITH (NOLOCK)
 		inner join InvAdjust_qty iaq WITH (NOLOCK) on ia.id=iaq.id 	
-		where ia.OrderID=sdd.OrderId and iaq.Article = sdd.SizeCode and iaq.SizeCode=sdd.SizeCode
+		where ia.OrderID=sdd.OrderId and iaq.Article = sdd.Article and iaq.SizeCode=sdd.SizeCode
 	)InvAdjustQ
 	outer apply(
-		select Sum(agd.qty) as gmtQty
+		select isnull(Sum(agd.qty),0) as gmtQty
 		from AdjustGMT ag WITH (NOLOCK)
 		inner join AdjustGMT_Detail agd WITH (NOLOCK) on ag.id=agd.id
 		where ag.Status='Confirmed'
 		and agd.orderid=sdd.orderid and agd.Article=sdd.Article and agd.SizeCode=sdd.SizeCode
 	)AdjustGMT
 )
-select 
+select
  [SP#] = tpq.ID
 ,[Article] = tpq.Article
 ,[SizeCode] = tpq.SizeCode
@@ -564,14 +569,16 @@ select
 ,[HSCode] = vd.HSCode
 ,[NLCode] = vd.NLCode
 ,[Customs Unit] = vd.UnitID	
-,[Qty]  = (tpq.SewQty-tpq.PullQty-tpq.GMTAdjustQty)*vd.qty
+,[Qty]  = (tpq.SewQty-tpq.PullQty-tpq.GMTAdjustQty)*(vd.Qty * (1+vd.Waste))
 ,[Custom SP#] = tc.CustomSP
 into #tmpProdQty
 from tmpPreProdQty tpq
-inner join #tmpCustomSP tc on tc.StyleID = tpq.StyleID and tc.BrandID = tpq.BrandID 
-							and tc.SeasonID = tpq.SeasonID and tpq.SizeCode = tc.SizeCode
+inner join #tmpCustomSP tc on tc.StyleID = tpq.StyleID 
+                    and tc.BrandID = tpq.BrandID and tc.SeasonID = tpq.SeasonID 
+                    and tpq.SizeCode = tc.SizeCode and tc.category=tpq.category
+inner join VNConsumption_Article va WITH (NOLOCK) on va.ID = tc.ID and va.Article = tpq.Article
+inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = tc.ID and vs.SizeCode = tpq.SizeCode
 inner join VNConsumption_Detail vd WITH (NOLOCK) on tc.id=vd.id
-
 
 -- 5) 在途成品(已報關但還沒出貨) (On Road Product Qty)
 select 
@@ -581,13 +588,13 @@ select
 ,[HSCode] = vcd.HSCode
 ,[NLCode] = vcd.NlCode
 ,[Unit] = vcd.UnitID
-,[Qty] = vdds.ExportQty * (vcd.Qty)
+,[Qty] = vdds.ExportQty * (vcd.Qty * (1+vcd.Waste))
 ,[CustomSP] = vc.CustomSP
 INTO #OnRoadProductQty
 from VNExportDeclaration vd WITH (NOLOCK)
 inner join VNExportDeclaration_Detail vdd WITH (NOLOCK) on vd.id=vdd.id
 inner join #tmpCustomSP vc on vc.StyleID = vdd.StyleID and vc.BrandID=vdd.BrandID
-							and vc.SeasonID=vdd.SeasonID
+							and vc.SeasonID=vdd.SeasonID and vc.category=vdd.category
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID=vc.ID
 outer apply (
 	select sum(ExportQty) as ExportQty 
@@ -596,13 +603,12 @@ outer apply (
 )vdds
 where vd.status='Confirmed'
 and not exists(
-	select 1 from pullout_detail WITH (NOLOCK)
-	where invno = vd.invno)
-and not exists(
+	select 1 from pullout_detail pd WITH (NOLOCK)
+	where pd.invno = vd.invno)
+and exists(
 	select 1 from pullout_detail WITH (NOLOCK)
 	where invno = vd.invno
 	and shipQty=0)
-
 
 
 -- 6) 料倉(C) (Scrap Qty Detail
@@ -621,7 +627,7 @@ from (
 	,[Dyelot] = ft.Dyelot
 	,[StockType] = ft.StockType
 	,[Location] = ftd.MtlLocationID		
-	,[Qty] = IIF(mdp.LObQty <> 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
+	,[Qty] = IIF(ft.InQty-ft.OutQty+ft.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 			,psd.StockUnit
 			,isnull(f.CustomsUnit,'')
 			,mdp.LObQty
@@ -657,7 +663,7 @@ union all
 	,[Dyelot] = ''
 	,[StockType] = 'O'
 	,[Location] = l.CLocation		
-	,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty <> 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 			,l.UnitId,li.CustomsUnit
 			,(l.InQty-l.OutQty+l.AdjustQty)*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1)
 			,0
