@@ -104,16 +104,16 @@ namespace Sci.Production.Shipping
                 }
                 else
                 {
-                    newRow["ID"] = drc["ID"];
-                    newRow["StyleID"] = drc["StyleID"];
-                    newRow["SeasonID"] = drc["SeasonID"];
-                    newRow["SizeCode"] = drc["SizeCode"];
+                    newRow["ID"] = drc["ID"].ToString().Trim();
+                    newRow["StyleID"] = drc["StyleID"].ToString().Trim();
+                    newRow["SeasonID"] = drc["SeasonID"].ToString().Trim();
+                    newRow["SizeCode"] = drc["SizeCode"].ToString().Trim();
                 }
 
                 newRow["remark"] = remark;
-                newRow["CustomSP"] = customSP;
-                newRow["VNContractID"] = contractID;
-                newRow["NLCode"] = nLCode;
+                newRow["CustomSP"] = customSP.ToString().Trim();
+                newRow["VNContractID"] = contractID.ToString().Trim();
+                newRow["NLCode"] = nLCode.ToString().Trim();
                 newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "N");
 
                 this.dt.Rows.Add(newRow);
@@ -233,19 +233,27 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                 }
             }
 
-            drt = DBProxy.Current.Execute(null, idu.ToString());
-            if (!drt)
+            // 如果沒資料update/insert 就不進去
+            if (!MyUtility.Check.Empty(idu.ToString()))
             {
-                MyUtility.Msg.ErrorBox("Insert/Update datas error!");
+                drt = DBProxy.Current.Execute(null, idu.ToString());
+                if (!drt)
+                {
+                    MyUtility.Msg.ErrorBox("Insert/Update datas error!");
+                }
+                else
+                {
+                    DataRow[] drsf = this.dt.Select("remark <> ''");
+                    this.numericFail.Value = drsf.Length;
+                    DataTable distinctchk = this.dt.DefaultView.ToTable(true, new string[] { "CustomSP", "checkS" });
+                    DataRow[] drs2 = distinctchk.Select("checkS = 1");
+                    this.numericSucessSP.Value = drs2.Length;
+                    MyUtility.Msg.InfoBox("Complete!!");
+                }
             }
             else
             {
-                DataRow[] drsf = this.dt.Select("remark <> ''");
-                this.numericFail.Value = drsf.Length;
-                DataTable distinctchk = this.dt.DefaultView.ToTable(true, new string[] { "CustomSP", "checkS" });
-                DataRow[] drs2 = distinctchk.Select("checkS = 1");
-                this.numericSucessSP.Value = drs2.Length;
-                MyUtility.Msg.InfoBox("Complete!!");
+                MyUtility.Msg.InfoBox("No data import success!");
             }
         }
 
