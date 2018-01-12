@@ -388,6 +388,14 @@ where lapd.id = '{0}'"
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            //mantis 9749 confirm前先檢查此單狀態為NEW才可以confirm
+            bool chk_status = MyUtility.Check.Seek(string.Format("select status from dbo.Localap  where id = '{0}' and status = 'New' ", CurrentMaintain["id"]));
+            if (chk_status == false)
+            {
+                MyUtility.Msg.WarningBox(string.Format("This ID<{0}> is already Approved", CurrentMaintain["id"]));
+                return;
+            }
+
             var dr = this.CurrentMaintain; if (null == dr) return;
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
@@ -449,7 +457,7 @@ where lapd.id = '{0}'"
                 DataRow drNewPoData = dtUpdateLocalPoData.NewRow();
 
                 sqlcmd = string.Format(@"select b.Localpo_detailukey, sum(b.qty) qty
-                                from Localap a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
+                                from Localap a , Localap_detail b 
                                 where a.id = b.id  and a.status = 'Approved' and b.Localpo_detailukey ='{0}'
                                 group by b.Localpo_detailukey ", drchk["Localpo_detailukey"]);
 
@@ -521,6 +529,14 @@ inner join #tmp b on a.ukey = b.ukey";
         //unApprove
         protected override void ClickUnconfirm()
         {
+            //mantis 9749 confirm前先檢查此單狀態為Approved才可以UNconfirm
+            bool chk_status = MyUtility.Check.Seek(string.Format("select status from dbo.Localap  where id = '{0}' and status = 'Approved' ", CurrentMaintain["id"]));
+            if (chk_status == false)
+            {
+                MyUtility.Msg.WarningBox(string.Format("This ID<{0}> is already Unapproved", CurrentMaintain["id"]));
+                return;
+            }
+
             //若VoucherID有值，則不能UNCONFIRM
             if (!MyUtility.Check.Empty(CurrentMaintain["VoucherID"]))
             {
@@ -559,7 +575,7 @@ inner join #tmp b on a.ukey = b.ukey";
             foreach (DataRow drchk in DetailDatas)
             {
                 sqlcmd = string.Format(@"select b.Localpo_detailukey,sum(b.qty) qty
-                                from Localap a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
+                                from Localap a  , Localap_detail b
                                 where a.id = b.id  and a.status ='Approved' and b.Localpo_detailukey ='{0}'
                                 group by b.Localpo_detailukey ", drchk["Localpo_detailukey"]);
 
