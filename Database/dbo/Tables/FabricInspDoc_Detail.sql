@@ -10,6 +10,7 @@
     [InspReport] BIT NULL DEFAULT ((0)), 
     [ContinuityCard] BIT NULL DEFAULT ((0)), 
     [BulkDyelot] BIT NULL DEFAULT ((0)), 
+    [SeasonID] VARCHAR(10) NULL DEFAULT (''), 
     PRIMARY KEY ([ID], [Seq1], [Seq2])
 )
 
@@ -103,3 +104,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'FabricInspDoc_Detail',
     @level2type = N'COLUMN',
     @level2name = N'BulkDyelot'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'季別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FabricInspDoc_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'SeasonID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'物料號碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FabricInspDoc_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Refno'
