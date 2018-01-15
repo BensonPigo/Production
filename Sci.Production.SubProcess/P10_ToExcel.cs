@@ -428,7 +428,7 @@ from (
                     int intCountWeekDays = 0;
                     decimal intSumCPU = 0;
                     string strDateRange = Convert.ToDateTime(dtRightGroupByWeek.Columns[0].ColumnName).ToString("MM/dd");
-
+                    int intRowIndex = 0;
                     for (int i = 0; i < dtRightGroupByWeek.Columns.Count; i++)
                     {
                         if (dtRightGroupByWeek.Rows[0][i].EqualDecimal(intCheckWeek))
@@ -440,8 +440,13 @@ from (
                         }
                         else
                         {
-                            int intRowIndex = Convert.ToInt32(dtRightGroupByWeek.Rows[0][i]) - intStartWeek - 1;
+                            //int intRowIndex = Convert.ToInt32(dtRightGroupByWeek.Rows[0][i]) - intStartWeek - 1;
                             strDateRange += $"-{Convert.ToDateTime(dtRightGroupByWeek.Columns[i - 1].ColumnName).ToString("MM/dd")}";
+                            //DataRow newdtToExcel = dtToExcel.NewRow();
+                            if (dtToExcel.Rows.Count < intRowIndex + 1)
+                            {
+                                dtToExcel.Rows.Add();
+                            }
 
                             dtToExcel.Rows[intRowIndex]["DateRange"] = strDateRange;
                             dtToExcel.Rows[intRowIndex]["WeeklyWorkingDays"] = intCountWeekDays;
@@ -453,6 +458,7 @@ from (
                             intCountWeekDays = 1;
                             intSumCPU = decCPU;
                             strDateRange = Convert.ToDateTime(dtRightGroupByWeek.Columns[i].ColumnName).ToString("MM/dd");
+                            intRowIndex++;
                         }
                     }
 

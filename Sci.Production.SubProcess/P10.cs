@@ -360,7 +360,7 @@ select *
 	   , ShowInline = Right (CONVERT(varchar, Inline, 111), 5)
 	   , ShowOffline = Right (CONVERT(varchar, Offline, 111), 5)
 from #InfoTable
-Order by Ukey
+Order by Feature,SewInLine,orderid,id
 
 if (select count(1) from #InfoTable) > 0
 begin
@@ -444,6 +444,8 @@ begin
 	select OrderID
 		   , ID
 		   , Ukey
+		   , feature
+		   , SewInLine
 		   ' + @UpdateOutputDataZero + '
 	into #OutputDateTable
 	from (
@@ -452,6 +454,8 @@ begin
 			   , ift.Ukey
 			   , wd.OutputDate
 			   , Qty = isnull (psd.Qty, 0)
+			   , feature
+			   , SewInLine
 		from #InfoTable ift
 		outer apply (
 			select *
@@ -474,12 +478,18 @@ begin
 	values
 		(''02'')
 
-	select *
+	select OrderID
+		   , ID
+		   , Ukey
+		   ' + @UpdateOutputDataZero + '
 	from #OutputDateTable
 	where OrderID not in (''01'', ''02'')
-	order by OrderID, ID, Ukey
+	order by feature, SewInLine,orderid,id,ukey
 
-	select *
+	select OrderID
+		   , ID
+		   , Ukey
+		   ' + @UpdateOutputDataZero + '
 	from #OutputDateTable
 	where OrderID in (''01'', ''02'')
 	'
@@ -497,7 +507,7 @@ begin
 	where psd.OutputDate in (select OutputDate 
 							 from #WorkDate)
 		  and psd.Remark is not null
-	order by OrderID, ID
+	order by feature, SewInLine,orderid,id
 end
 --drop table #OrderList, #InfoTable, #WorkDate";
             #endregion
@@ -622,6 +632,11 @@ end
 
         private void GridRight_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
+
             DataRow drOutputInfo = this.gridRight.GetDataRow<DataRow>(e.RowIndex);
 
             var orderID = drOutputInfo["OrderID"];
