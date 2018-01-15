@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
             this.displaySeason = new Sci.Win.UI.DisplayBox();
             this.displayStyle = new Sci.Win.UI.DisplayBox();
@@ -37,8 +38,9 @@
             this.labelSP = new Sci.Win.UI.Label();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelRemark = new Sci.Win.UI.Label();
-            this.btnFind = new Sci.Win.UI.Button();
+            this.btnReImport = new Sci.Win.UI.Button();
             this.txtID = new Sci.Win.UI.TextBox();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -51,12 +53,13 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.txtID);
-            this.masterpanel.Controls.Add(this.btnFind);
+            this.masterpanel.Controls.Add(this.btnReImport);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.displayBrand);
@@ -77,7 +80,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnReImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtID, 0);
             // 
             // detailpanel
@@ -88,6 +91,7 @@
             // gridicon
             // 
             this.gridicon.Location = new System.Drawing.Point(5, 70);
+            this.gridicon.TabIndex = 6;
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -122,35 +126,32 @@
             // displayBrand
             // 
             this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBrand.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BrandID", true));
             this.displayBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBrand.Location = new System.Drawing.Point(323, 41);
             this.displayBrand.Name = "displayBrand";
             this.displayBrand.Size = new System.Drawing.Size(158, 21);
-            this.displayBrand.TabIndex = 26;
+            this.displayBrand.TabIndex = 5;
             // 
             // displaySeason
             // 
             this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
             this.displaySeason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displaySeason.Location = new System.Drawing.Point(323, 11);
             this.displaySeason.Name = "displaySeason";
             this.displaySeason.Size = new System.Drawing.Size(158, 21);
-            this.displaySeason.TabIndex = 25;
+            this.displaySeason.TabIndex = 3;
             // 
             // displayStyle
             // 
             this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayStyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Style", true));
             this.displayStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayStyle.Location = new System.Drawing.Point(70, 43);
             this.displayStyle.Name = "displayStyle";
             this.displayStyle.Size = new System.Drawing.Size(158, 21);
-            this.displayStyle.TabIndex = 24;
+            this.displayStyle.TabIndex = 4;
             // 
             // labelBrand
             // 
@@ -198,7 +199,7 @@
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(272, 55);
-            this.editRemark.TabIndex = 27;
+            this.editRemark.TabIndex = 1;
             // 
             // labelRemark
             // 
@@ -209,15 +210,16 @@
             this.labelRemark.TabIndex = 28;
             this.labelRemark.Text = "Remark";
             // 
-            // btnFind
+            // btnReImport
             // 
-            this.btnFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnFind.Location = new System.Drawing.Point(669, 68);
-            this.btnFind.Name = "btnFind";
-            this.btnFind.Size = new System.Drawing.Size(204, 31);
-            this.btnFind.TabIndex = 29;
-            this.btnFind.Text = "Re-Import Table";
-            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnReImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnReImport.Location = new System.Drawing.Point(669, 68);
+            this.btnReImport.Name = "btnReImport";
+            this.btnReImport.Size = new System.Drawing.Size(204, 31);
+            this.btnReImport.TabIndex = 2;
+            this.btnReImport.Text = "Re-Import Table";
+            this.btnReImport.UseVisualStyleBackColor = true;
+            this.btnReImport.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // txtID
             // 
@@ -229,16 +231,24 @@
             this.txtID.Name = "txtID";
             this.txtID.ReadOnly = true;
             this.txtID.Size = new System.Drawing.Size(158, 23);
-            this.txtID.TabIndex = 30;
+            this.txtID.TabIndex = 0;
             this.txtID.Validating += new System.ComponentModel.CancelEventHandler(this.txtID_Validating);
             // 
             // P09
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(900, 449);
-            this.DefaultDetailOrder = "seq";
-            this.DefaultOrder = "ID";
+            this.DefaultControl = "txtID";
+            this.DefaultControlForEdit = "editRemark";
+            this.DefaultDetailOrder = "seq1,seq2";
+            this.DefaultOrder = "id";
+            this.GridAlias = "FabricInspDoc_Detail";
+            this.GridNew = 0;
+            this.GridUniqueKey = "id,seq1,seq2";
             this.IsSupportConfirm = true;
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P09";
@@ -260,6 +270,7 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -276,7 +287,8 @@
         private Win.UI.Label labelSP;
         private Win.UI.EditBox editRemark;
         private Win.UI.Label labelRemark;
-        private Win.UI.Button btnFind;
+        private Win.UI.Button btnReImport;
         private Win.UI.TextBox txtID;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }
