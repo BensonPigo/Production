@@ -18,6 +18,20 @@ namespace Sci.Production.Quality
 {
     public partial class R42 : Sci.Win.Tems.PrintForm
     {
+        string Brand;
+        string Year;
+        string Report_Type1;
+        string Report_Type2;
+        DualResult result;
+        System.Data.DataTable dt;
+        System.Data.DataTable dt_All;
+        System.Data.DataTable[] alldt;
+        System.Data.DataTable month12 = null;
+        System.Data.DataTable allsupplier = null;
+        System.Data.DataTable dat;
+        System.Data.DataTable dt_temp = new System.Data.DataTable(); //for Printing Detail Report only
+        System.Data.DataTable dt_printing = new System.Data.DataTable(); //for Printing Detail Report only
+
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -38,23 +52,17 @@ namespace Sci.Production.Quality
             this.comboYear.ValueMember = "M";
             this.comboYear.DisplayMember = "M";
 
-            this.comboBrand.SelectedIndex = 0;
             print.Enabled = false;
         }
-        string Brand;
-        string Year;
-        string Report_Type1;
-        string Report_Type2;
-        DualResult result;
-        System.Data.DataTable dt;
-        System.Data.DataTable dt_All;
-        System.Data.DataTable[] alldt;
-        System.Data.DataTable month12 = null;
-        System.Data.DataTable allsupplier = null;
-        System.Data.DataTable dat;
-        System.Data.DataTable dt_temp = new System.Data.DataTable(); //for Printing Detail Report only
-        System.Data.DataTable dt_printing = new System.Data.DataTable(); //for Printing Detail Report only
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.comboYear.SelectedValue = DateTime.Today.AddMonths(-1).Year;
+        }
+
         Dictionary<string, System.Data.DataTable> PrintingData = new Dictionary<string, System.Data.DataTable>();
+
         protected override bool ValidateInput()
         {
             Brand = comboBrand.Text.ToString();
@@ -63,7 +71,6 @@ namespace Sci.Production.Quality
             Report_Type2 = radioPrintDetail.Checked.ToString();
             return base.ValidateInput();
         }
-
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
@@ -250,7 +257,7 @@ from
             {
 
                 month12 = alldt[0];
-                dt_printing.Clear();
+                dt_printing = new System.Data.DataTable();
                 dt_printing.Columns.Add("Shell_Supplier", typeof(string));
                 bool First = true;
                 //Type=  Pilling & Snagging Detail                  
@@ -456,7 +463,6 @@ from
         }
 
         Dictionary<string, System.Data.DataTable> dicSUP = new Dictionary<string, System.Data.DataTable>();
-
 
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
