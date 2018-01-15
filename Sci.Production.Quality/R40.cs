@@ -69,7 +69,7 @@ insert into #dRangesM values
 ('10',10,'Oct'),  ('11',11,'Nov'),  ('12',12,'Dec')
 create table #dRangesY( Y varchar(4))
 insert into #dRangesY values
-(format(dateadd(year,-2,getdate()),'yyyy')),(format(dateadd(year,-1,getdate()),'yyyy')),(format(getdate(),'yyyy'))
+(format(dateadd(year, -2, dateadd(month, -1, getdate())), 'yyyy')), (format(dateadd(year, -1, dateadd(month, -1, getdate())), 'yyyy')), (format(dateadd(month, -1, getdate()), 'yyyy'))
 
 select *
 into #daterange
@@ -131,10 +131,37 @@ isnull(year3.Shipped,0)[Shipped3],
 isnull(year3.adicomp,0)[adicomp3] 
 from dbo.#temp
 inner join @dRanges as dRanges on dRanges.starts between dRanges.starts and dRanges.ends 
-OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=iif(sum(#temp.Claimed)<>0,round(sum(#temp.Claimed)/sum(#temp.Shipped),6),0) FROM #temp WHERE YEAR1=format(dateadd(year,-2,getdate()),'yyyy') and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year1
-OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=iif(sum(#temp.Claimed)<>0,round(sum(#temp.Claimed)/sum(#temp.Shipped),6),0) FROM #temp WHERE YEAR1=format(dateadd(year,-1,getdate()),'yyyy') and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year2
-OUTER APPLY(SELECT #temp.Claimed,#temp.Shipped,adicomp=iif(sum(#temp.Claimed)<>0,round(sum(#temp.Claimed)/sum(#temp.Shipped),6),0) FROM #temp WHERE YEAR1=format(getdate(),'yyyy') and dRanges.starts=month1 group by #temp.Claimed,#temp.Shipped)AS year3
-outer apply(select Target1=isnull(sum(#temp.Target),0) from #temp where dRanges.starts=month1)AS tg1
+OUTER APPLY(
+	SELECT #temp.Claimed
+		   , #temp.Shipped
+		   , adicomp=iif(sum(#temp.Claimed)<>0,round(sum(#temp.Claimed)/sum(#temp.Shipped),6),0) 
+	FROM #temp 
+	WHERE YEAR1=format(dateadd(year,-2, dateadd(month, -1, getdate())),'yyyy') 
+		  and dRanges.starts=month1 
+	group by #temp.Claimed,#temp.Shipped
+)AS year1
+OUTER APPLY(
+	SELECT #temp.Claimed
+		   , #temp.Shipped
+		   , adicomp=iif(sum(#temp.Claimed)<>0,round(sum(#temp.Claimed)/sum(#temp.Shipped),6),0) 
+	FROM #temp 
+	WHERE YEAR1=format(dateadd(year,-1, dateadd(month, -1, getdate())),'yyyy') 
+		  and dRanges.starts=month1 
+	group by #temp.Claimed,#temp.Shipped
+)AS year2
+OUTER APPLY(
+	SELECT #temp.Claimed
+		   , #temp.Shipped,adicomp=iif(sum(#temp.Claimed)<>0,round(sum(#temp.Claimed)/sum(#temp.Shipped),6),0) 
+	FROM #temp 
+	WHERE YEAR1=format(dateadd(month, -1, getdate()),'yyyy') 
+		  and dRanges.starts=month1 
+	group by #temp.Claimed,#temp.Shipped
+)AS year3
+outer apply(
+	select Target1=isnull(sum(#temp.Target),0) 
+	from #temp 
+	where dRanges.starts=month1
+)AS tg1
 GROUP BY dRanges.name,Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
 order by dRanges.starts
 
@@ -206,7 +233,7 @@ drop table #dRangesM,#dRangesY,#daterange,#temp", Brand, userfactory);
             else
             {
                 #region By Factory 橫工廠別 縱月份
-                string allt = string.Format(@"
+                string allt = string.Format($@"
 create table #dRangesM(m varchar(2) ,m1 int,  Mname varchar(3))
 	insert into #dRangesM values
     ('01',1,'Jan'),   ('02',2,'Feb'),   ('03',3,'Mar'),
@@ -217,7 +244,7 @@ create table #dRangesY( Y varchar(4))
 	insert into #dRangesY values
 	(format(dateadd(year,-2,getdate()),'yyyy')),(format(dateadd(year,-1,getdate()),'yyyy')),(format(getdate(),'yyyy'))
 select * into #F 
-from dbo.SCIFty where id in  (select id from dbo.SCIFty where CountryID = (select CountryID from Factory where id='fac'))
+from dbo.SCIFty where id in  (select id from dbo.SCIFty where CountryID = (select CountryID from Factory where id = '{Env.User.Factory}'))
 
 select *
 into #daterange
@@ -256,9 +283,7 @@ outer apply (
 
 select distinct FactoryID from #AllTemp
 select distinct month from #AllTemp
-select * from #AllTemp
-
-              ", Brand, userfactory);
+select * from #AllTemp", Brand, userfactory);
                 SqlConnection conn;
                 result = DBProxy.Current.OpenConnection("", out conn);
                 if (!result) { return result; }
@@ -268,10 +293,15 @@ select * from #AllTemp
 
 
 
-                string s = @"select DISTINCT * from ( select month,month1,Target 
-                 from #AllTemp T 
-				 left join #dRangesM as dRanges on dRanges.Mname = T.month 
-				   )as s";
+                string s = @"
+select DISTINCT * 
+from ( 
+    select month
+           , month1
+           , Target 
+    from #AllTemp T 
+	left join #dRangesM as dRanges on dRanges.Mname = T.month 
+)as s";
                 s = s + Environment.NewLine ;
 
 
@@ -281,12 +311,14 @@ select * from #AllTemp
                     string sss = allFactory.Rows[i]["FactoryID"].ToString();
                     string o = string.Format(@"
 outer apply (
-    select {0}_Claimed = isnull(sum(claimed),0),
-    {0}_Shipped = isnull(sum(shipped),0),
-    {0}_Adicomp=iif(isnull(sum(shipped),0)=0,0,round(sum(claimed)/sum(shipped),6)) 
+    select {0}_Claimed = isnull(sum(claimed),0)
+           , {0}_Shipped = isnull(sum(shipped),0)
+           , {0}_Adicomp=iif(isnull(sum(shipped),0)=0,0,round(sum(claimed)/sum(shipped),6)) 
     from #AllTemp t 
-    where t.month = s.month and  
-    t.YEAR1=(select cast(datepart(year,getdate()) as varchar(4))) and t.FactoryID = '{0}') as {0}", sss);
+    where t.month = s.month 
+          and t.YEAR1=(select cast(datepart(year,getdate()) as varchar(4))) 
+          and t.FactoryID = '{0}'
+) as {0}", sss);
                     s = s + Environment.NewLine + o;
                 }
                 s = s + Environment.NewLine + "order by month1";
@@ -358,49 +390,67 @@ outer apply (
                     string sss = allFactory.Rows[i]["Factoryid"].ToString();
 
                     string scmd = string.Format(@"declare @dRanges table(starts int , ends int, name varchar(3))
-                    insert into @dRanges values
-                    (1,1,'Jan'),
-                    (2,2,'Feb'),
-                    (3,3,'Mar'),
-                    (4,4,'Apr'),
-                    (5,5,'May'),
-                    (6,6,'Jun'),
-                    (7,7,'Jul'),
-                    (8,8,'Aug'),
-                    (9,9,'Sep'),
-                    (10,10,'Oct'),
-                    (11,11,'Nov'),
-                    (12,12,'Dec')
-
-
-
-                    select dRanges.name[ ] ,
-                    dRanges.starts,
-                    [Target]=t.Target,
-                    [Claimed1] = isnull(year1.Claimed,0),
-                    [Shipped1] = isnull(convert(int,year1.Shipped),0),
-                    [adicomp1] = isnull(year1.adicomp,0),
-                    [Claimed2] = isnull(year2.Claimed,0),
-                    [Shipped2] = isnull(convert(int,year2.Shipped),0),
-                    [adicomp2] = isnull(year2.adicomp,0),
-                    [Claimed3] = isnull(year3.Claimed,0),
-                    [Shipped3] = isnull(convert(int,year3.Shipped),0),
-                    [adicomp3]  =isnull(year3.adicomp,0)
-                    from #AllTemp as t
-                    inner join @dRanges as dRanges on  dRanges.starts between dRanges.starts and dRanges.ends 
-		            OUTER APPLY(
-    SELECT s.Claimed,s.Shipped,adicomp=iif(s.Shipped<>0 ,round(sum(s.Claimed)/sum(s.Shipped),6) ,0)
-    FROM #AllTemp as s WHERE YEAR1=format(dateadd(year,-2,getdate()),'yyyy') 
-    and dRanges.starts=month1 and FactoryID='{0}' group by s.Claimed,s.Shipped)AS year1
-		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=iif(s.Shipped<>0 ,round(sum(s.Claimed)/sum(s.Shipped),6) ,0)
-FROM #AllTemp as s WHERE YEAR1=format(dateadd(year,-1,getdate()),'yyyy') and dRanges.starts=month1 and FactoryID='{0}' group by s.Claimed,s.Shipped)AS year2
-		            OUTER APPLY(SELECT s.Claimed,s.Shipped,adicomp=iif(s.Shipped<>0 ,round(sum(s.Claimed)/sum(s.Shipped),6) ,0)
-FROM #AllTemp as s WHERE YEAR1=format(getdate(),'yyyy') and dRanges.starts=month1 and FactoryID='{0}' group by s.Claimed,s.Shipped)AS year3		           
-					where t.factoryid='" + userfactory +
-                    @"' 
+insert into @dRanges 
+values (1,1,'Jan')
+       , (2,2,'Feb')
+       , (3,3,'Mar')
+       , (4,4,'Apr')
+       , (5,5,'May')
+       , (6,6,'Jun')
+       , (7,7,'Jul')
+       , (8,8,'Aug')
+       , (9,9,'Sep')
+       , (10,10,'Oct')
+       , (11,11,'Nov')
+       , (12,12,'Dec')
+       
+select dRanges.name[ ] 
+       , dRanges.starts
+       , [Target]=t.Target
+       , [Claimed1] = isnull(year1.Claimed,0)
+       , [Shipped1] = isnull(convert(int,year1.Shipped),0)
+       , [adicomp1] = isnull(year1.adicomp,0)
+       , [Claimed2] = isnull(year2.Claimed,0)
+       , [Shipped2] = isnull(convert(int,year2.Shipped),0)
+       , [adicomp2] = isnull(year2.adicomp,0)
+       , [Claimed3] = isnull(year3.Claimed,0)
+       , [Shipped3] = isnull(convert(int,year3.Shipped),0)
+       , [adicomp3]  =isnull(year3.adicomp,0)
+from #AllTemp as t
+inner join @dRanges as dRanges on dRanges.starts between dRanges.starts and dRanges.ends 
+OUTER APPLY(
+     SELECT s.Claimed
+            , s.Shipped
+            , adicomp=iif(s.Shipped<>0 ,round(sum(s.Claimed)/sum(s.Shipped),6) ,0)
+     FROM #AllTemp as s 
+     WHERE YEAR1=format(dateadd(year,-2,getdate()),'yyyy') 
+           and dRanges.starts = month1 
+           and FactoryID = '{0}' 
+     group by s.Claimed,s.Shipped
+) AS year1
+OUTER APPLY(
+     SELECT s.Claimed
+            , s.Shipped
+            , adicomp=iif(s.Shipped<>0 ,round(sum(s.Claimed)/sum(s.Shipped),6) ,0)
+     FROM #AllTemp as s 
+     WHERE YEAR1=format(dateadd(year,-1,getdate()),'yyyy') 
+           and dRanges.starts=month1 
+           and FactoryID='{0}' 
+     group by s.Claimed,s.Shipped
+) AS year2
+OUTER APPLY(
+     SELECT s.Claimed
+            , s.Shipped
+            , adicomp=iif(s.Shipped<>0 ,round(sum(s.Claimed)/sum(s.Shipped),6) ,0)
+     FROM #AllTemp as s 
+     WHERE YEAR1=format(getdate(),'yyyy') 
+           and dRanges.starts=month1 
+           and FactoryID='{0}' 
+     group by s.Claimed,s.Shipped
+)AS year3		           
+where t.factoryid='" + userfactory + @"' 
 GROUP BY  dRanges.name,Target,year1.Claimed,year1.Shipped,year2.Claimed,year2.Shipped,year3.Claimed,year3.Shipped,dRanges.starts,year1.adicomp,year2.adicomp,year3.adicomp
-                    order by dRanges.starts
-
+order by dRanges.starts
 
 drop table #dRangesM,#dRangesY,#daterange,#F
 --DROP TABLE #temp", sss);
