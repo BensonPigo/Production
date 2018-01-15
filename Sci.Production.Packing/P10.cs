@@ -102,6 +102,7 @@ from (
     and a.MDivisionID = '{0}' 
     and (a.Type = 'B' or a.Type = 'L') 
     and c.MDivisionID = '{0}'
+	and b.CTNQty=1
 ", Sci.Env.User.Keyword));
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
