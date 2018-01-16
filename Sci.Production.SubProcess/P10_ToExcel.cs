@@ -235,7 +235,7 @@ order by num";
                     {
                         int intWorkSheetCount = myExcel.Worksheets.Count;
                         mySheet = (Excel.Worksheet)myExcel.Worksheets.Add(Type.Missing, myExcel.Worksheets[intWorkSheetCount]);
-                        mySheet.Name = dr["Group"].ToString();
+                        mySheet.Name = MyUtility.Check.Empty(dr["Group"]) ? " " : dr["Group"].ToString();
 
                         #region 依照群組 組成 CPU
                         DataTable dtGroupLeft = this.dtLeft.AsEnumerable().Where(row => row["Group"].EqualString(dr["Group"])).CopyToDataTable();
@@ -410,14 +410,20 @@ from (
                     double doubleEff = Convert.ToDouble(((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[0]["Data"]);
                     doubleEff = doubleEff.Empty() ? 0 : doubleEff / 100.0;
 
-                    for (int i = intStartWeek; i <= intEndWeek; i++)
+                    int weekn = 0;
+                    foreach (DataColumn dc in dtRightGroupByWeek.Columns)
                     {
-                        DataRow newRow = dtToExcel.NewRow();
-                        newRow["Week"] = i;
-                        newRow["Eff"] = doubleEff;
-                        newRow["ManPower"] = ((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[1]["Data"];
-                        newRow["DailyWorkingHour"] = ((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[2]["Data"];
-                        dtToExcel.Rows.Add(newRow);
+                        int getweek = MyUtility.Convert.GetInt(dtRightGroupByWeek.Rows[0][dc]);
+                        if (weekn != getweek)
+                        {
+                            weekn = getweek;
+                            DataRow newRow = dtToExcel.NewRow();
+                            newRow["Week"] = getweek;
+                            newRow["Eff"] = doubleEff;
+                            newRow["ManPower"] = ((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[1]["Data"];
+                            newRow["DailyWorkingHour"] = ((DataTable)this.listControlBindingSourceCapacity.DataSource).Rows[2]["Data"];
+                            dtToExcel.Rows.Add(newRow);
+                        }
                     }
 
                     dtToExcel.EndInit();
@@ -425,42 +431,74 @@ from (
 
                     #region set DateRange, WeeklyWorkingDays, WorkLoad
                     int intCheckWeek = intStartWeek;
-                    int intCountWeekDays = 0;
-                    decimal intSumCPU = 0;
-                    string strDateRange = Convert.ToDateTime(dtRightGroupByWeek.Columns[0].ColumnName).ToString("MM/dd");
-
-                    for (int i = 0; i < dtRightGroupByWeek.Columns.Count; i++)
+                    string dateb = string.Empty;
+                    int intRowIndex = 0;
+                    string sdate = string.Empty;
+                    string edate = string.Empty;
+                    int intCountWeekDays = 1;
+                    decimal sumCPU = 0;
+                    weekn = 0;
+                    foreach (DataColumn dc in dtRightGroupByWeek.Columns)
                     {
-                        if (dtRightGroupByWeek.Rows[0][i].EqualDecimal(intCheckWeek))
+                        int getweek = MyUtility.Convert.GetInt(dtRightGroupByWeek.Rows[0][dc]);
+                        if (weekn != getweek)
                         {
-                            intCountWeekDays++;
-                            decimal decCPU;
-                            decimal.TryParse(dtRightGroupByWeek.Rows[1][i].ToString(), out decCPU);
-                            intSumCPU += decCPU;
+                            weekn = getweek;
+                            if (!MyUtility.Check.Empty(sdate))
+                            {
+                                dtToExcel.Rows[intRowIndex]["DateRange"] = sdate + "~" + (MyUtility.Check.Empty(edate) ? sdate : edate);
+                                dtToExcel.Rows[intRowIndex]["WeeklyWorkingDays"] = intCountWeekDays;
+                                dtToExcel.Rows[intRowIndex]["WorkLoad"] = sumCPU;
+                                intRowIndex++;
+                                intCountWeekDays = 1;
+                            }
+
+                            sdate = Convert.ToDateTime(dc.ColumnName).ToString("MM/dd");
+                            sumCPU = MyUtility.Convert.GetDecimal(dtRightGroupByWeek.Rows[1][dc]);
                         }
                         else
                         {
-                            int intRowIndex = Convert.ToInt32(dtRightGroupByWeek.Rows[0][i]) - intStartWeek - 1;
-                            strDateRange += $"-{Convert.ToDateTime(dtRightGroupByWeek.Columns[i - 1].ColumnName).ToString("MM/dd")}";
-
-                            dtToExcel.Rows[intRowIndex]["DateRange"] = strDateRange;
-                            dtToExcel.Rows[intRowIndex]["WeeklyWorkingDays"] = intCountWeekDays;
-                            dtToExcel.Rows[intRowIndex]["WorkLoad"] = intSumCPU;
-
-                            decimal decCPU;
-                            decimal.TryParse(dtRightGroupByWeek.Rows[1][i].ToString(), out decCPU);
-                            intCheckWeek++;
-                            intCountWeekDays = 1;
-                            intSumCPU = decCPU;
-                            strDateRange = Convert.ToDateTime(dtRightGroupByWeek.Columns[i].ColumnName).ToString("MM/dd");
+                            edate = Convert.ToDateTime(dc.ColumnName).ToString("MM/dd");
+                            sumCPU += MyUtility.Convert.GetDecimal(dtRightGroupByWeek.Rows[1][dc]);
+                            intCountWeekDays++;
                         }
                     }
 
-                    strDateRange += $"~{Convert.ToDateTime(dtRightGroupByWeek.Columns[dtRightGroupByWeek.Columns.Count - 1].ColumnName).ToString("MM/dd")}";
+                    //for (int i = 0; i < dtRightGroupByWeek.Columns.Count; i++)
+                    //{
+                    //    if (dtRightGroupByWeek.Rows[0][i].EqualDecimal(intCheckWeek))
+                    //    {
+                    //        intCountWeekDays++;
+                    //        decimal decCPU;
+                    //        decimal.TryParse(dtRightGroupByWeek.Rows[1][i].ToString(), out decCPU);
+                    //        intSumCPU += decCPU;
+                    //        //intCountWeekDays = 1;
+                    //        intSumCPU = decCPU;
+                    //        strDateRange = Convert.ToDateTime(dtRightGroupByWeek.Columns[i].ColumnName).ToString("MM/dd");
+                    //    }
+                    //    else
+                    //    {
+                    //        //int intRowIndex = Convert.ToInt32(dtRightGroupByWeek.Rows[0][i]) - intStartWeek - 1;
+                    //        strDateRange += $"-{Convert.ToDateTime(dtRightGroupByWeek.Columns[i - 1].ColumnName).ToString("MM/dd")}";
+                    //        //DataRow newdtToExcel = dtToExcel.NewRow();
 
-                    dtToExcel.Rows[dtToExcel.Rows.Count - 1]["DateRange"] = strDateRange;
+                    //        dtToExcel.Rows[intRowIndex]["DateRange"] = strDateRange;
+                    //        dtToExcel.Rows[intRowIndex]["WeeklyWorkingDays"] = intCountWeekDays;
+                    //        dtToExcel.Rows[intRowIndex]["WorkLoad"] = intSumCPU;
+
+                    //        decimal decCPU;
+                    //        decimal.TryParse(dtRightGroupByWeek.Rows[1][i].ToString(), out decCPU);
+                    //        intCheckWeek = MyUtility.Convert.GetInt(dtRightGroupByWeek.Rows[0][i]);
+                    //        intCountWeekDays = 1;
+                    //        intSumCPU = decCPU;
+                    //        strDateRange = Convert.ToDateTime(dtRightGroupByWeek.Columns[i].ColumnName).ToString("MM/dd");
+                    //        intRowIndex++;
+                    //    }
+                    //}
+
+                    dtToExcel.Rows[dtToExcel.Rows.Count - 1]["DateRange"] = sdate + "~" + Convert.ToDateTime(dtRightGroupByWeek.Columns[dtRightGroupByWeek.Columns.Count - 1].ColumnName).ToString("MM/dd");
                     dtToExcel.Rows[dtToExcel.Rows.Count - 1]["WeeklyWorkingDays"] = intCountWeekDays;
-                    dtToExcel.Rows[dtToExcel.Rows.Count - 1]["WorkLoad"] = intSumCPU;
+                    dtToExcel.Rows[dtToExcel.Rows.Count - 1]["WorkLoad"] = sumCPU;
 
                     dtToExcel.EndInit();
                     #endregion
@@ -492,7 +530,7 @@ from (
                         mySheet.Cells[i + 2][6] = dtToExcel.Rows[i]["DailyWorkingHour"];
                         mySheet.Cells[i + 2][7] = $"=ROUND(({strColumnName}{3} * {strColumnName}{4} * {strColumnName}{5} * {strColumnName}{6} * 3600 / {intStdTMS}), 0)";
                         mySheet.Cells[i + 2][8] = dtToExcel.Rows[i]["WorkLoad"];
-                        mySheet.Cells[i + 2][9] = $"=if({strColumnName}{8} = 0, 0, {strColumnName}{7} / {strColumnName}{8})";
+                        mySheet.Cells[i + 2][9] = $"=if({strColumnName}{7} = 0, 0, {strColumnName}{8} / {strColumnName}{7})";
 
                         ((Excel.Range)mySheet.Cells[9, i + 2]).NumberFormat = "0.00%";
                         ((Excel.Range)mySheet.Cells[4, i + 2]).NumberFormat = "0.00%";
