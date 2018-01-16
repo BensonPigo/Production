@@ -196,7 +196,7 @@ from
 	,[StockUnit] = dbo.getStockUnit(psd.SciRefno,ed.Suppid)				
 	from Export e WITH (NOLOCK) 
 	inner join Export_Detail ed WITH (NOLOCK) on e.id=ed.id
-	inner join VNImportDeclaration vd WITH (NOLOCK) on vd.BLNo=e.BLNo and vd.wkno = e.id
+	inner join VNImportDeclaration vd WITH (NOLOCK) on vd.BLNo=e.BLNo 
 	inner join po_supp_detail psd WITH (NOLOCK) on psd.ID=ed.poid and psd.seq1=ed.seq1 and psd.seq2=ed.seq2
 	inner join Fabric f WITH (NOLOCK) on f.SciRefno=psd.SciRefno										
 	where vd.VNContractID = @contract
@@ -617,7 +617,7 @@ inner join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID=vc.ID
 outer apply (
 	select sum(ExportQty) as ExportQty 
 	from VNExportDeclaration_Detail WITH (NOLOCK)
-	where id=vd.id
+	where id=vd.id and Article=vdd.Article and sizecode=vdd.sizecode
 )vdds
 where vd.status='Confirmed'
 and vd.VNContractID=@contract
@@ -633,8 +633,8 @@ from (
 	select 
 	 [HSCode] = isnull(f.HSCode,'')
 	,[NLCode] = isnull(f.NLCode,'')
-	,[POID] = t.POID
-	,[Seq] = (mdp.Seq1+'-'+mdp.Seq2)
+	,[POID] = ft.POID
+	,[Seq] = (ft.Seq1+'-'+ft.Seq2)
 	,[Refno] = psd.Refno	
 	,[Description] = isnull(f.Description,'')
 	,[Roll] = ft.Roll
@@ -656,15 +656,15 @@ from (
 				,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
 				,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),'')),0)
 	,[CustomsUnit] = isnull(f.CustomsUnit,'')
-	,[ScrapQty] = mdp.LObQty
+	,[ScrapQty] = ft.InQty-ft.OutQty+ft.AdjustQty
 	,[StockUnit] = psd.StockUnit
-	from #tmpPOID t
-	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.POID
-	inner join PO_Supp_Detail psd WITH (NOLOCK) on t.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
-	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
-	inner join FtyInventory ft WITH (NOLOCK) on mdp.Ukey=MDivisionPoDetailUkey
-	inner join FtyInventory_detail ftd WITH (NOLOCK) on ft.ukey=ftd.ukey
+	from FtyInventory ft WITH (NOLOCK) 
+	left join FtyInventory_detail ftd WITH (NOLOCK) on ft.ukey=ftd.ukey
+	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.Ukey=ft.MDivisionPoDetailUkey
+	inner join PO_Supp_Detail psd WITH (NOLOCK) on ft.POID = psd.ID and psd.SEQ1 = ft.Seq1 and psd.SEQ2 = ft.Seq2
+	inner join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	where 1=1 and ft.StockType='O'
+	and ft.InQty-ft.OutQty+ft.AdjustQty>0
 union all
 	select 	
 	 [HSCode] = isnull(li.HSCode,'')
@@ -696,7 +696,7 @@ union all
 	from LocalInventory l WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where 1=1 and o.WhseClose is not null 
+	where 1=1
 	and l.LobQty >0
 ) a
 
