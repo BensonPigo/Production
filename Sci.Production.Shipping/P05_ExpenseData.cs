@@ -46,14 +46,14 @@ namespace Sci.Production.Shipping
                         @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
-where se.InvNo = '{0}'", this.id);
+where se.InvNo = '{0}' and se.junk=0", this.id);
                     break;
                 case "WKNo":
                     this.sqlCmd = string.Format(
                         @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
 from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
-where se.WKNo = '{0}'", this.id);
+where se.WKNo = '{0}' and se.junk=0", this.id);
                     break;
                 default:
                     this.sqlCmd = "select Type,CurrencyID,Amount,ShippingAPID from ShareExpense WITH (NOLOCK) where 1=2";
