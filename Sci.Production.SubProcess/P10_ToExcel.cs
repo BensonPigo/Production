@@ -235,7 +235,7 @@ order by num";
                     {
                         int intWorkSheetCount = myExcel.Worksheets.Count;
                         mySheet = (Excel.Worksheet)myExcel.Worksheets.Add(Type.Missing, myExcel.Worksheets[intWorkSheetCount]);
-                        mySheet.Name = dr["Group"].ToString();
+                        mySheet.Name = MyUtility.Check.Empty(dr["Group"]) ? " " : dr["Group"].ToString();
 
                         #region 依照群組 組成 CPU
                         DataTable dtGroupLeft = this.dtLeft.AsEnumerable().Where(row => row["Group"].EqualString(dr["Group"])).CopyToDataTable();
