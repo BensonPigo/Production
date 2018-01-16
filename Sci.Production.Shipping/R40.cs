@@ -245,15 +245,14 @@ union all
 		iif(fe.type in (1,4),fed.qty,0))
 	) UnitRateQty							
 	where 1=1 
-	and not exists (select 1 from VNImportDeclaration 
-		where blno = fe.blno and VNContractID = @contract and blno<>'')
-	and not exists (select 1 from VNImportDeclaration 
-		where wkno = fe.id and VNContractID = @contract and blno<>'')	
-	and not exists (select 1 from Receiving 
+    and exists (select 1 from VNImportDeclaration WITH (NOLOCK) 
+        where (blno=fe.blno or wkno=fe.id) 
+		and blno<>'' and vncontractid=@contract )	
+	and not exists (select 1 from Receiving WITH (NOLOCK)
 		where InvNo = fe.InvNo and status='Confirmed')
-	and not exists (select 1 from TransferIn 
+	and not exists (select 1 from TransferIn WITH (NOLOCK)
 		where InvNo = fe.InvNo and status='Confirmed')				
-	and not exists (select 1 from LocalReceiving 
+	and not exists (select 1 from LocalReceiving WITH (NOLOCK)
 		where InvNo = fe.InvNo and status='Confirmed')
 ) a
 -- end --
@@ -361,11 +360,14 @@ select 	o.ID
 		,o.POID 
 into #tmpWHNotClose 
 from Orders o  WITH (NOLOCK) 
+inner join VNConsumption vn WITH (NOLOCK) on vn.Styleid=o.Styleid 
+and vn.SeasonID = o.SeasonID and vn.BrandID=o.BrandID and vn.category=o.category
 where o.Category <>''
 and o.Finished=0
 and o.WhseClose is null
 and o.Qty<>0
 and o.LocalOrder = 0 
+and vn.VNContractID=@contract
 
 
  -- 3) WIP在製品(WIP Qty Detail) 
@@ -512,18 +514,21 @@ order by IIF(ti.ID is null,tw.POID,ti.ID)
 --4) Production成品倉(Prod. Qty Detail)
 
 --撈尚未Pullout Complete的資料
-select 	ID
-		,StyleID
-		,BrandID		
-		,Category
-		,SeasonID
+select 	o.ID
+		,o.StyleID
+		,o.BrandID		
+		,o.Category
+		,o.SeasonID
 into #tmpNoPullOutComp
-from Orders WITH (NOLOCK) 
-where Category <>''
-and WhseClose is null
-and Finished=0
-and Qty<>0
-and LocalOrder = 0
+from Orders o WITH (NOLOCK)
+inner join VNConsumption vn WITH (NOLOCK) on vn.Styleid=o.Styleid 
+and vn.SeasonID = o.SeasonID and vn.BrandID=o.BrandID and vn.category=o.category
+where o.Category <>''
+and o.WhseClose is null
+and o.Finished=0
+and o.Qty<>0
+and o.LocalOrder = 0
+and vn.VNContractID=@contract
 
 ;with tmpPreProdQty as(
 	select 
@@ -581,6 +586,19 @@ inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = tc.ID and vs.SizeC
 inner join VNConsumption_Detail vd WITH (NOLOCK) on tc.id=vd.id
 
 -- 5) 在途成品(已報關但還沒出貨) (On Road Product Qty)
+
+-- 取得Shipping P41有資料, 但Pullout沒資料 (或ShipQty=0)
+select * 
+into #tmpPull
+from (
+select a.ID from VNExportDeclaration a
+where not exists (select 1 from pullout_detail
+	where invno=a.invno)
+union 
+select a.ID from VNExportDeclaration a
+where exists (select 1 from pullout_detail
+	where invno=a.invno and shipqty=0)) a
+
 select 
  [SP#] = vdd.OrderId
 ,[Article] = vdd.Article
@@ -602,13 +620,9 @@ outer apply (
 	where id=vd.id
 )vdds
 where vd.status='Confirmed'
-and not exists(
-	select 1 from pullout_detail pd WITH (NOLOCK)
-	where pd.invno = vd.invno)
+and vd.VNContractID=@contract
 and exists(
-	select 1 from pullout_detail WITH (NOLOCK)
-	where invno = vd.invno
-	and shipQty=0)
+	select 1 from #tmpPull where ID=vd.id)
 
 
 -- 6) 料倉(C) (Scrap Qty Detail
