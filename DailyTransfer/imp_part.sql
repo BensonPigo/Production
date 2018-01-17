@@ -29,7 +29,7 @@ when matched then
 		, t.Fix= s.Fix
 		, t.AddName= s.AddName
 		, t.AddDate= s.AddDate
-		, t.Lock = isnull(s.Lock,0)
+		, t.Lock = s.Lock
 
 	when not matched by target and s.type='P' then 
 		insert 
