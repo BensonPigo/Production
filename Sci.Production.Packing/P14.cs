@@ -57,7 +57,8 @@ namespace Sci.Production.Packing
                 .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
-                .DateTime("AddDate", header: "Create Date", iseditable: false);
+                .DateTime("AddDate", header: "Create Date", iseditable: false)
+                .Date("ReceiveDate", header: "Rec. Date", iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -116,6 +117,7 @@ from (
             , convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery
             , t.AddDate
             , tid = t.id
+            , pd.ReceiveDate
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
