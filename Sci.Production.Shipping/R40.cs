@@ -235,7 +235,7 @@ union all
 	,[StockUnit] = isnull(StockUnit.unit,'')
 	from FtyExport fe WITH (NOLOCK)
 	inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
-	inner join Fabric f WITH (NOLOCK) on f.SciRefno=fed.SciRefno			
+	left join Fabric f WITH (NOLOCK) on f.SciRefno=fed.SciRefno			
 	left join LocalItem li WITH (NOLOCK) on li.Refno = fed.RefNo
 	outer apply(
 		select unit = iif(fe.type in (2,3),dbo.getStockUnit(fed.SciRefno,fed.SuppID),iif(fe.type in (1,4),li.UnitID,''))
@@ -269,10 +269,10 @@ where o.WhseClose is null
 select * 
 into #tmpWHQty
 from (
-	select 
+		select 
 	 [HSCode] = isnull(f.HSCode,'')
 	,[NLCode] = isnull(f.NLCode,'')
-	,[POID] = t.POID
+	,[POID] = fi.POID
 	,[Seq] = (fi.Seq1+'-'+fi.Seq2)
 	,[Refno] = psd.Refno
 	,[Description] = f.Description
@@ -304,15 +304,15 @@ from (
 	,[W/House Unit] = psd.POUnit
 	,[W/House Qty(Stock Unit)] = fi.InQty-fi.OutQty+fi.AdjustQty
 	,[Stock Unit] = f.CustomsUnit
-	from #tmpPOID t
-	inner join FtyInventory fi WITH (NOLOCK) on fi.POID = t.POID 
-	inner join PO_Supp_Detail psd WITH (NOLOCK) on t.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
-	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
+	from FtyInventory fi WITH (NOLOCK)  --EDIT
+	inner join PO_Supp_Detail psd WITH (NOLOCK) on fi.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
+	inner join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	where (fi.StockType = 'B' or fi.StockType = 'I')
+	and fi.InQty-fi.OutQty+fi.AdjustQty>0 
 
 union all
 
-	select 
+select distinct
 	 [HSCode] = isnull(li.HSCode,'') 
 	,[NLCode] = isnull(li.NLCode,'') 
 	,[POID] = l.OrderID
@@ -339,13 +339,11 @@ union all
 			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),''))
 		,0)
 	,[W/House Unit] = ''
-	,[W/House Qty(Usage Unit)] = 0.00
-	,[Customs Unit] = ''
-	from LocalInventory l WITH (NOLOCK) 
-	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
-	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
-	where 1=1
-	and o.WhseClose is null
+	,[W/House Qty(Usage Unit)] =l.InQty-l.OutQty+l.AdjustQty
+	,[Customs Unit] = l.UnitID
+	from LocalInventory l WITH (NOLOCK) 	
+	inner join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
+	where l.InQty-l.OutQty+l.AdjustQty > 0	
 ) a
 
 
@@ -463,7 +461,7 @@ into #tmpWHNotCloseSewingOutput
 from #tmpWHNotClose t 
 inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.ID
 left join (
-	select 	sdd.OrderId
+	select distinct	sdd.OrderId
 			,sdd.ComboType
 			,sdd.Article
 			,sdd.SizeCode
@@ -531,7 +529,7 @@ and o.LocalOrder = 0
 and vn.VNContractID=@contract
 
 ;with tmpPreProdQty as(
-	select 
+	select distinct
 	 tp.id ,tp.StyleID,tp.BrandID,tp.SeasonID,tp.Category
 	,[Article] = sdd.Article
 	,[SizeCode] = sdd.SizeCode
@@ -599,6 +597,17 @@ select a.ID from VNExportDeclaration a
 where exists (select 1 from pullout_detail
 	where invno=a.invno and shipqty=0)) a
 
+-- 取得最大值customsp
+select max(vdd.customsp)customsp,vd.id--,vc.sizecode
+into #tmpmax
+from VNExportDeclaration vd WITH (NOLOCK)
+inner join VNExportDeclaration_Detail vdd WITH (NOLOCK) on vd.id=vdd.id
+inner join VNConsumption vc on  vc.StyleID = vdd.StyleID and vc.BrandID=vdd.BrandID
+		and vc.SeasonID=vdd.SeasonID and vc.category=vdd.category 
+		and vc.sizecode=vdd.sizecode and vc.customsp=vdd.customsp
+where vd.VNContractID=@contract
+group by vd.id
+
 select 
  [SP#] = vdd.OrderId
 ,[Article] = vdd.Article
@@ -607,18 +616,20 @@ select
 ,[NLCode] = vcd.NlCode
 ,[Unit] = vcd.UnitID
 ,[Qty] = vdds.ExportQty * (vcd.Qty * (1+vcd.Waste))
-,[CustomSP] = vc.CustomSP
+,[CustomSP] = vdd.customsp
 INTO #OnRoadProductQty
 from VNExportDeclaration vd WITH (NOLOCK)
 inner join VNExportDeclaration_Detail vdd WITH (NOLOCK) on vd.id=vdd.id
-inner join #tmpCustomSP vc on vc.StyleID = vdd.StyleID and vc.BrandID=vdd.BrandID
-							and vc.SeasonID=vdd.SeasonID and vc.category=vdd.category
+inner join VNConsumption vc on vc.StyleID = vdd.StyleID and vc.BrandID=vdd.BrandID
+							and vc.SeasonID=vdd.SeasonID and vc.category=vdd.category 
+							and vc.sizecode=vdd.sizecode and vc.customsp=vdd.customsp
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID=vc.ID
 outer apply (
 	select sum(ExportQty) as ExportQty 
 	from VNExportDeclaration_Detail WITH (NOLOCK)
-	where id=vd.id and Article=vdd.Article and sizecode=vdd.sizecode
+	where id=vdd.id and Article=vdd.Article and sizecode=vdd.sizecode
 )vdds
+inner join #tmpmax tm on vd.id=tm.id and tm.customsp=vdd.customsp
 where vd.status='Confirmed'
 and vd.VNContractID=@contract
 and exists(
