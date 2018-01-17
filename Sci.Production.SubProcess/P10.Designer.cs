@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P10));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
             this.txtSPStart = new Sci.Win.UI.TextBox();
@@ -48,8 +48,11 @@
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.btnQuery = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.lableDailyCpu = new Sci.Win.UI.Label();
             this.gridLeft = new Sci.Win.UI.Grid();
             this.listControlBindingSourceLeft = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.gridTop = new Sci.Win.UI.Grid();
+            this.listControlBindingSourceTop = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridRight = new Sci.Win.UI.Grid();
             this.listControlBindingSourceRight = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label1 = new Sci.Win.UI.Label();
@@ -65,22 +68,21 @@
             this.pictureBoxUpdateColumn = new Sci.Win.UI.PictureBox();
             this.listControlBindingSourceRemark = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSourceDateRange = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.listControlBindingSourceTop = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.gridTop = new Sci.Win.UI.Grid();
-            this.lableDailyCpu = new Sci.Win.UI.Label();
+            this.lableGreen = new System.Windows.Forms.Label();
+            this.labelComplete = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLeft)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceLeft)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridTop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceTop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridRight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceRight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxUpdateColumn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceRemark)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceDateRange)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceTop)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridTop)).BeginInit();
             this.SuspendLayout();
             // 
             // labelSPNo
@@ -250,6 +252,19 @@
             this.splitContainer1.SplitterDistance = 659;
             this.splitContainer1.TabIndex = 6;
             // 
+            // lableDailyCpu
+            // 
+            this.lableDailyCpu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lableDailyCpu.BackColor = System.Drawing.Color.Transparent;
+            this.lableDailyCpu.Location = new System.Drawing.Point(581, 3);
+            this.lableDailyCpu.Name = "lableDailyCpu";
+            this.lableDailyCpu.Size = new System.Drawing.Size(75, 32);
+            this.lableDailyCpu.TabIndex = 19;
+            this.lableDailyCpu.Text = "Daily CPU";
+            this.lableDailyCpu.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
+            this.lableDailyCpu.TextStyle.BorderColor = System.Drawing.Color.Transparent;
+            this.lableDailyCpu.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // gridLeft
             // 
             this.gridLeft.AllowUserToAddRows = false;
@@ -286,6 +301,43 @@
             this.gridLeft.CurrentCellChanged += new System.EventHandler(this.GridLeft_CurrentCellChanged);
             this.gridLeft.Scroll += new System.Windows.Forms.ScrollEventHandler(this.GridLeft_Scroll);
             // 
+            // gridTop
+            // 
+            this.gridTop.AllowUserToAddRows = false;
+            this.gridTop.AllowUserToDeleteRows = false;
+            this.gridTop.AllowUserToResizeRows = false;
+            this.gridTop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridTop.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridTop.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridTop.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridTop.ColumnHeadersVisible = false;
+            this.gridTop.DataSource = this.listControlBindingSourceTop;
+            this.gridTop.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridTop.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridTop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridTop.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridTop.Location = new System.Drawing.Point(3, 3);
+            this.gridTop.Name = "gridTop";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridTop.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.gridTop.RowHeadersVisible = false;
+            this.gridTop.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridTop.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridTop.RowTemplate.Height = 24;
+            this.gridTop.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.gridTop.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridTop.ShowCellToolTips = false;
+            this.gridTop.Size = new System.Drawing.Size(521, 49);
+            this.gridTop.TabIndex = 19;
+            this.gridTop.Scroll += new System.Windows.Forms.ScrollEventHandler(this.GridTop_Scroll);
+            // 
             // gridRight
             // 
             this.gridRight.AllowUserToAddRows = false;
@@ -321,7 +373,6 @@
             this.gridRight.ShowCellToolTips = false;
             this.gridRight.Size = new System.Drawing.Size(521, 520);
             this.gridRight.TabIndex = 0;
-            this.gridRight.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GridRight_CellDoubleClick);
             this.gridRight.CurrentCellChanged += new System.EventHandler(this.GridRight_CurrentCellChanged);
             this.gridRight.Scroll += new System.Windows.Forms.ScrollEventHandler(this.GridRight_Scroll);
             // 
@@ -496,61 +547,34 @@
             this.pictureBoxUpdateColumn.WaitOnLoad = true;
             this.pictureBoxUpdateColumn.Click += new System.EventHandler(this.PictureBoxUpdateColumn_Click);
             // 
-            // gridTop
+            // lableGreen
             // 
-            this.gridTop.AllowUserToAddRows = false;
-            this.gridTop.AllowUserToDeleteRows = false;
-            this.gridTop.AllowUserToResizeRows = false;
-            this.gridTop.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridTop.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridTop.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridTop.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridTop.ColumnHeadersVisible = false;
-            this.gridTop.DataSource = this.listControlBindingSourceTop;
-            this.gridTop.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridTop.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridTop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridTop.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridTop.Location = new System.Drawing.Point(3, 3);
-            this.gridTop.Name = "gridTop";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridTop.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.gridTop.RowHeadersVisible = false;
-            this.gridTop.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridTop.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridTop.RowTemplate.Height = 24;
-            this.gridTop.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.gridTop.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridTop.ShowCellToolTips = false;
-            this.gridTop.Size = new System.Drawing.Size(521, 49);
-            this.gridTop.TabIndex = 19;
-            this.gridTop.Scroll += new System.Windows.Forms.ScrollEventHandler(this.GridTop_Scroll);
+            this.lableGreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lableGreen.AutoSize = true;
+            this.lableGreen.BackColor = System.Drawing.Color.Green;
+            this.lableGreen.Location = new System.Drawing.Point(676, 645);
+            this.lableGreen.Name = "lableGreen";
+            this.lableGreen.Size = new System.Drawing.Size(16, 17);
+            this.lableGreen.TabIndex = 17;
+            this.lableGreen.Text = "  ";
             // 
-            // lableDailyCpu
+            // labelComplete
             // 
-            this.lableDailyCpu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lableDailyCpu.BackColor = System.Drawing.Color.Transparent;
-            this.lableDailyCpu.Location = new System.Drawing.Point(581, 3);
-            this.lableDailyCpu.Name = "lableDailyCpu";
-            this.lableDailyCpu.Size = new System.Drawing.Size(75, 32);
-            this.lableDailyCpu.TabIndex = 19;
-            this.lableDailyCpu.Text = "Daily CPU";
-            this.lableDailyCpu.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
-            this.lableDailyCpu.TextStyle.BorderColor = System.Drawing.Color.Transparent;
-            this.lableDailyCpu.TextStyle.Color = System.Drawing.Color.Black;
+            this.labelComplete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelComplete.AutoSize = true;
+            this.labelComplete.Location = new System.Drawing.Point(698, 645);
+            this.labelComplete.Name = "labelComplete";
+            this.labelComplete.Size = new System.Drawing.Size(65, 17);
+            this.labelComplete.TabIndex = 18;
+            this.labelComplete.Text = "complete";
             // 
             // P10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1195, 673);
+            this.Controls.Add(this.labelComplete);
+            this.Controls.Add(this.lableGreen);
             this.Controls.Add(this.pictureBoxUpdateColumn);
             this.Controls.Add(this.txtUpdateColumn);
             this.Controls.Add(this.comboBoxUpdateColumn);
@@ -606,19 +630,21 @@
             this.Controls.SetChildIndex(this.comboBoxUpdateColumn, 0);
             this.Controls.SetChildIndex(this.txtUpdateColumn, 0);
             this.Controls.SetChildIndex(this.pictureBoxUpdateColumn, 0);
+            this.Controls.SetChildIndex(this.lableGreen, 0);
+            this.Controls.SetChildIndex(this.labelComplete, 0);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridLeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceLeft)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridTop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceTop)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridRight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceRight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxUpdateColumn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceRemark)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceDateRange)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSourceTop)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridTop)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -661,5 +687,7 @@
         private Win.UI.ListControlBindingSource listControlBindingSourceTop;
         private Win.UI.Label lableDailyCpu;
         private Win.UI.Grid gridTop;
+        private System.Windows.Forms.Label lableGreen;
+        private System.Windows.Forms.Label labelComplete;
     }
 }

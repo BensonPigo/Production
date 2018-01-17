@@ -9,68 +9,39 @@ BEGIN
 
 	---------- Parts, type='P'---------------------
 Merge Machine.dbo.Part as t
-	Using (
-	select * from Trade_To_Pms.dbo.Part WITH (NOLOCK) where type='P' 
-	)as s
-	on t.id=s.Refno 
-	when matched then 
+Using (
+	select * 
+	from Trade_To_Pms.dbo.Part WITH (NOLOCK) 
+	where type = 'P' 
+)as s on t.id=s.Refno 
+when matched then 
 	update set 
-t.Description= s.Description,
-t.Partno= s.Partno,
-t.UseUnit= s.UnitID,
-t.PoUnit= s.PoUnitID,
-t.Price= s.Price,
-t.PurchaseBatchQty= s.BatchQty,
-t.Junk= s.Junk,
-t.SuppID= s.SuppID,
-t.CurrencyID= s.CurrencyID,
-t.Formula= s.Formula,
-t.Fix= s.Fix,
-t.AddName= s.AddName,
-t.AddDate= s.AddDate
+		t.Description = s.Description
+		, t.Partno= s.Partno
+		, t.UseUnit= s.UnitID
+		, t.PoUnit= s.PoUnitID
+		, t.Price= s.Price
+		, t.PurchaseBatchQty= s.BatchQty
+		, t.Junk= s.Junk
+		, t.SuppID= s.SuppID
+		, t.CurrencyID= s.CurrencyID
+		, t.Formula= s.Formula
+		, t.Fix= s.Fix
+		, t.AddName= s.AddName
+		, t.AddDate= s.AddDate
+		, t.Lock = s.Lock
 
 	when not matched by target and s.type='P' then 
-		insert ( 
-		ID
-,Description
-,Partno
-,MachineGroupID
-,MachineBrandID
-,UseUnit
-,PoUnit
-,Price
-,PurchaseBatchQty
-,Junk
-,PurchaseFrom
-,SuppID
-,CurrencyID
-,Formula
-,Fix
-,AddName
-,AddDate
-,EditName
-,EditDate
-	)
-values(s.refno,
-s.Description,
-s.Partno,
-s.MachineGroupID,
-s.MachineBrandID,
-s.UnitID,
-s.POUnitID,
-s.Price,
-s.BatchQty,
-s.Junk,
-'T',
-s.SuppID,
-s.CurrencyID,
-s.Formula,
-s.Fix,
-s.AddName,
-s.AddDate,
-s.EditName,
-s.EditDate
- );
+		insert 
+			(ID 				, Description 	, Partno 		, MachineGroupID 	, MachineBrandID
+	 	 	 , UseUnit 			, PoUnit 		, Price 		, PurchaseBatchQty 	, Junk
+			 , PurchaseFrom 	, SuppID 		, CurrencyID 	, Formula	 		, Fix
+			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock)
+		values
+			(s.refno 			, s.Description , s.Partno 		, s.MachineGroupID 	, s.MachineBrandID
+			 , s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
+			 , 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
+			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock);
 
 	---------- Misc, type='O'---------------------
 	Merge Machine.dbo.Misc as t

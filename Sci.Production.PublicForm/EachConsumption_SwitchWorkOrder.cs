@@ -87,6 +87,52 @@ namespace Sci.Production.PublicForm
             }
             #endregion
 
+            #region 依每個FabricPanelCode, article判斷，若Order_Eachcons_Color的顏色不存在於order_colorcombo中，則跳出警告視窗。
+            string checkByFabricPanelCode_article_color = $@"
+SELECT  FabricPanelCode, article, ColorID
+into #tmp1
+FROM Order_Eachcons OE
+left join Order_Eachcons_Color OEC on OEC.Order_EachConsUkey=OE.Ukey
+where OE.id='{cuttingid}'
+group by FabricPanelCode, article, ColorID
+
+SELECT  FabricPanelCode, article, ColorID
+into #tmp2
+FROM order_colorcombo where id='{cuttingid}'
+group by FabricPanelCode, article, colorid
+
+select a.*
+from #tmp1 a
+left join #tmp2 b on a.fabricpanelcode = b.fabricpanelcode and a.ColorID = b.ColorID 
+and (b.article in (select data from [dbo].[SplitString](a.Article,',')where data !='') or a.Article ='')
+where  b.fabricpanelcode is null
+
+drop table #tmp1,#tmp2
+";
+            DataTable DTcheckFabricPanelCode_article_color;
+            worRes = DBProxy.Current.Select(null, checkByFabricPanelCode_article_color, out DTcheckFabricPanelCode_article_color);
+            if (!worRes)
+            {
+                ShowErr(worRes);
+                return;
+            }
+
+            StringBuilder msgFabricPanelCode_article_color = new StringBuilder();
+            if (DTcheckFabricPanelCode_article_color.Rows.Count > 0)
+            {
+                foreach (DataRow item in DTcheckFabricPanelCode_article_color.Rows)
+                {
+                    msgFabricPanelCode_article_color.Append($"FabricPanelCode={item["FabricPanelCode"]}, color={item["ColorID"]}"+Environment.NewLine);
+                }
+                msgFabricPanelCode_article_color.Append("do not exist in order_colorcombo. Please check with MR first. Do you want to continue?");
+                DialogResult Result = MyUtility.Msg.QuestionBox(msgFabricPanelCode_article_color.ToString(), "Warning");
+                if (Result == DialogResult.No)
+                {
+                    return;
+                }
+            }
+            #endregion
+
             #endregion
 
             #region transaction

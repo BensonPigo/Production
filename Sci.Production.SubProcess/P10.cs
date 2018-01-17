@@ -607,15 +607,28 @@ end
                 this.gridTop.Rows[0].Visible = false;
                 #endregion
 
+                #region Set complete color (Green)
+                int ii = 0;
+                foreach (DataRow dr in ((DataTable)this.listControlBindingSourceLeft.DataSource).Rows)
+                {
+                    if (MyUtility.Convert.GetInt(dr["OutputQty"]) > 0)
+                    {
+                        this.CompleteColor_Green(dr, ii);
+                    }
+
+                    ii++;
+                }
+                #endregion
+
                 #region Set Remark DataSource
-                dtGridData[5].PrimaryKey = new DataColumn[] { dtGridData[5].Columns["Ukey"], dtGridData[5].Columns["OutputDate"] };
-                this.listControlBindingSourceRemark.DataSource = dtGridData[5];
+                //dtGridData[5].PrimaryKey = new DataColumn[] { dtGridData[5].Columns["Ukey"], dtGridData[5].Columns["OutputDate"] };
+                //this.listControlBindingSourceRemark.DataSource = dtGridData[5];
 
                 #region Set Remark Color
-                foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
-                {
-                    this.RemarkColorChange(dr);
-                }
+                // foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
+                // {
+                //    this.RemarkColorChange(dr);
+                // }
                 #endregion
                 #endregion
 
@@ -630,56 +643,79 @@ end
             this.HideWaitMessage();
         }
 
-        private void GridRight_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void CompleteColor_Green(DataRow dr, int ii)
         {
-            if (e.RowIndex == -1)
+            int outputQty = MyUtility.Convert.GetInt(dr["OutputQty"]);
+
+            foreach (DataColumn dc in ((DataTable)this.listControlBindingSourceRight.DataSource).Columns)
             {
-                return;
-            }
-
-            DataRow drOutputInfo = this.gridRight.GetDataRow<DataRow>(e.RowIndex);
-
-            var orderID = drOutputInfo["OrderID"];
-            var outputDate = this.gridRight.Columns[e.ColumnIndex].Name;
-            var id = drOutputInfo["ID"];
-            var ukey = drOutputInfo["Ukey"];
-
-            DataRow[] drRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).Select($"Ukey = '{ukey}' and OutputDate = '{outputDate}'");
-
-            if (drRemark.Length == 0)
-            {
-                string strRemark = this.EditRemark(string.Empty);
-
-                if (strRemark.Empty() == false)
+                if (dc.ColumnName.ToUpper() != "ORDERID" && dc.ColumnName.ToUpper() != "ID" && dc.ColumnName.ToUpper() != "UKEY")
                 {
-                    DataRow newRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).NewRow();
-                    newRemark["OrderID"] = orderID;
-                    newRemark["OutputDate"] = outputDate;
-                    newRemark["ID"] = id;
-                    newRemark["Ukey"] = ukey;
-                    newRemark["Remark"] = strRemark;
-                    newRemark.EndEdit();
+                    int rightQty = MyUtility.Convert.GetInt(((DataTable)this.listControlBindingSourceRight.DataSource).Rows[ii][dc]);
+                    if (outputQty < rightQty && !rightQty.EqualDecimal(0))
+                    {
+                        break;
+                    }
 
-                    ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows.Add(newRemark);
-                    this.RemarkColorChange(newRemark);
-                }
-            }
-            else
-            {
-                string strRemark = this.EditRemark(drRemark[0]["Remark"].ToString());
-
-                if (strRemark.Empty() == false)
-                {
-                    drRemark[0]["Remark"] = strRemark;
-                    this.RemarkColorChange(drRemark[0]);
-                }
-                else
-                {
-                    this.RemarkColorChange(drRemark[0], true);
-                    drRemark[0].Delete();
+                    if (outputQty >= rightQty && !rightQty.EqualDecimal(0))
+                    {
+                        this.gridRight.Rows[ii].Cells[dc.ColumnName].Style.BackColor = Color.Green;
+                        outputQty = outputQty - rightQty;
+                    }
                 }
             }
         }
+
+        // private void GridRight_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        // {
+        //    if (e.RowIndex == -1)
+        //    {
+        //        return;
+        //    }
+
+        // DataRow drOutputInfo = this.gridRight.GetDataRow<DataRow>(e.RowIndex);
+
+        // var orderID = drOutputInfo["OrderID"];
+        //    var outputDate = this.gridRight.Columns[e.ColumnIndex].Name;
+        //    var id = drOutputInfo["ID"];
+        //    var ukey = drOutputInfo["Ukey"];
+
+        // DataRow[] drRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).Select($"Ukey = '{ukey}' and OutputDate = '{outputDate}'");
+
+        // if (drRemark.Length == 0)
+        //    {
+        //        string strRemark = this.EditRemark(string.Empty);
+
+        // if (strRemark.Empty() == false)
+        //        {
+        //            DataRow newRemark = ((DataTable)this.listControlBindingSourceRemark.DataSource).NewRow();
+        //            newRemark["OrderID"] = orderID;
+        //            newRemark["OutputDate"] = outputDate;
+        //            newRemark["ID"] = id;
+        //            newRemark["Ukey"] = ukey;
+        //            newRemark["Remark"] = strRemark;
+        //            newRemark.EndEdit();
+
+        // ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows.Add(newRemark);
+        //            //this.RemarkColorChange(newRemark);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        string strRemark = this.EditRemark(drRemark[0]["Remark"].ToString());
+
+        // if (strRemark.Empty() == false)
+        //        {
+        //            drRemark[0]["Remark"] = strRemark;
+        //            //this.RemarkColorChange(drRemark[0]);
+        //        }
+        //        else
+        //        {
+        //            //this.RemarkColorChange(drRemark[0], true);
+        //            drRemark[0].Delete();
+        //        }
+        //    }
+        // }
 
         private string EditRemark(string strRemark)
         {
@@ -695,13 +731,13 @@ end
             return strRemark;
         }
 
-        private void RemarkColorChange(DataRow dr, bool isDelete = false)
-        {
-            Color newColor = isDelete ? Color.White : Color.Yellow;
-            int intRowIndex = Convert.ToInt32(dr["Ukey"]) - 1;
+        // private void RemarkColorChange(DataRow dr, bool isDelete = false)
+        // {
+        //    Color newColor = isDelete ? Color.White : Color.Yellow;
+        //    int intRowIndex = Convert.ToInt32(dr["Ukey"]) - 1;
 
-            this.gridRight.Rows[intRowIndex].Cells[dr["OutputDate"].ToString()].Style.BackColor = newColor;
-        }
+        // this.gridRight.Rows[intRowIndex].Cells[dr["OutputDate"].ToString()].Style.BackColor = newColor;
+        // }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {

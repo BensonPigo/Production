@@ -4,7 +4,7 @@
     [Version]      VARCHAR (3)    CONSTRAINT [DF_Pattern_GL_Article_Version] DEFAULT ('') NOT NULL,
     [PatternUKEY]  BIGINT         CONSTRAINT [DF_Pattern_GL_Article_PatternUKEY] DEFAULT ((0)) NOT NULL,
     [ArticleGroup] VARCHAR (6)    CONSTRAINT [DF_Pattern_GL_Article_ArticleGroup] DEFAULT ('') NOT NULL,
-    [Article]      VARCHAR (8)    CONSTRAINT [DF_Pattern_GL_Article_Article] DEFAULT ('') NOT NULL,
+    [Article]      NVARCHAR(100)    CONSTRAINT [DF_Pattern_GL_Article_Article] DEFAULT ('') NOT NULL,
     [SizeRange]    NVARCHAR (MAX) CONSTRAINT [DF_Pattern_GL_Article_SizeRange] DEFAULT ('') NULL,
     [Remark]       VARCHAR (20)   CONSTRAINT [DF_Pattern_GL_Article_Remark] DEFAULT ('') NULL,
     [AddName]      VARCHAR (10)   CONSTRAINT [DF_Pattern_GL_Article_AddName] DEFAULT ('') NULL,
