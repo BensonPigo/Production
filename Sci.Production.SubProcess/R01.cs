@@ -23,6 +23,7 @@ namespace Sci.Production.SubProcess
     {
         private DataTable dtPrint = null;
         private int intRowHeaderCount = 2;
+        DateTime? date1, date2;
 
         /// <summary>
         /// R01
@@ -37,6 +38,16 @@ namespace Sci.Production.SubProcess
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
+            date1 = dateRange.Value1;
+            date2 = dateRange.Value2;
+
+            //Date 為必輸條件
+            if (MyUtility.Check.Empty(date1) || MyUtility.Check.Empty(date2))
+            {
+                MyUtility.Msg.InfoBox(" Date can't empty!!");
+                return false;
+            }
+
             return base.ValidateInput();
         }
 
