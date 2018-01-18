@@ -621,14 +621,14 @@ end
                 #endregion
 
                 #region Set Remark DataSource
-                //dtGridData[5].PrimaryKey = new DataColumn[] { dtGridData[5].Columns["Ukey"], dtGridData[5].Columns["OutputDate"] };
-                //this.listControlBindingSourceRemark.DataSource = dtGridData[5];
+                dtGridData[5].PrimaryKey = new DataColumn[] { dtGridData[5].Columns["Ukey"], dtGridData[5].Columns["OutputDate"] };
+                this.listControlBindingSourceRemark.DataSource = dtGridData[5];
 
                 #region Set Remark Color
-                // foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
-                // {
+                //foreach (DataRow dr in ((DataTable)this.listControlBindingSourceRemark.DataSource).Rows)
+                //{
                 //    this.RemarkColorChange(dr);
-                // }
+                //}
                 #endregion
                 #endregion
 
@@ -1478,7 +1478,7 @@ order by GroupID";
             List<SqlParameter> listSQLParameter = new List<SqlParameter>();
             listSQLParameter.Add(new SqlParameter("@Inline", dr["Inline"]));
             listSQLParameter.Add(new SqlParameter("@FactoryID", Sci.Env.User.Factory));
-            listSQLParameter.Add(new SqlParameter("@BalanceQty", dr["BalanceQty"]));
+            listSQLParameter.Add(new SqlParameter("@OrderQty", dr["OrderQty"]));
             listSQLParameter.Add(new SqlParameter("@TargetQty", dr["TargetQty"]));
             listSQLParameter.Add(new SqlParameter("@SubProcessLearnCurveID", dr["SubProcessLearnCurveID"]));
 
@@ -1502,8 +1502,8 @@ from (
 ) tmp
 outer apply (
 	select value = case
-					  when @BalanceQty - RunningTotal >= 0 then OutputQty
-					  else OutputQty + @BalanceQty - RunningTotal
+					  when @OrderQty - RunningTotal >= 0 then OutputQty
+					  else OutputQty + @OrderQty - RunningTotal
 				   end
 ) DailyQty
 where DailyQty.value > 0";
