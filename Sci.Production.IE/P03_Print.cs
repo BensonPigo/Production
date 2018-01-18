@@ -243,7 +243,7 @@ outer apply(
     ),1,1,'')
 )e2
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-order by ld.No,ld.MachineTypeID,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
+order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
                 if (!result)
                 {
@@ -723,7 +723,7 @@ outer apply(
     ),1,1,'')
 )e2
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by ld.No,ld.MachineTypeID,ld.GroupKey",
+order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
@@ -763,7 +763,7 @@ outer apply(
     ),1,1,'')
 )e2
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by ld.No,ld.MachineTypeID,ld.GroupKey",
+order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda2);
@@ -1477,21 +1477,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn - 6] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -1512,21 +1509,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn + 5] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -1597,21 +1591,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda2.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn - 6] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt2.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -1632,21 +1623,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda2.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn + 5] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt2.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -1714,21 +1702,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn - 6] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -1746,21 +1731,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn + 5] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -1841,21 +1823,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda2.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn - 6] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt2.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -1873,21 +1852,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda2.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn + 5] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt2.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -2195,21 +2171,17 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn - 6] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
-
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
                                 ridx++;
                             }
 
@@ -2230,21 +2202,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn + 5] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -2309,21 +2278,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn - 6] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
@@ -2341,21 +2307,18 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
 
                             DataRow[] nodrs = this.noda.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                             int ridx = 2;
+                            string machinetype = string.Empty;
+                            string machinetypeL = string.Empty;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
                                 worksheet.Cells[norow + ridx, nocolumn + 5] = item["gsd"];
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
+                                machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
+                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
 
-                                ridx++;
-                            }
-
-                            DataRow[] mdrs = this.mt.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
-                            ridx = 2;
-                            foreach (DataRow item in mdrs)
-                            {
-                                worksheet.Cells[norow + ridx, nocolumn] = item["machineTypeid"];
                                 ridx++;
                             }
 
