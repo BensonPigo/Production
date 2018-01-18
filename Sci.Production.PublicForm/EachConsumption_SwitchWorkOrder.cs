@@ -47,6 +47,34 @@ namespace Sci.Production.PublicForm
 
             #region 檢核
 
+            #region Article + Sizecode 有缺, 停止
+            string checkArticleSize = $@"
+select distinct a.SizeCode,a.Article
+from Order_Qty a with(nolock)
+left join Order_EachCons_Color_Article b with(nolock)on a.SizeCode = b.SizeCode and a.Article = b.Article and a.id = b.id
+where a.id = '{cuttingid}' and b.Article is null
+";
+            DataTable DTcheckAS;
+            DualResult result = DBProxy.Current.Select(null, checkArticleSize, out DTcheckAS);
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
+
+            if (DTcheckAS.Rows.Count > 0)
+            {
+                var m = MyUtility.Msg.ShowMsgGrid(DTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", "Error");
+
+                m.Width = 500;
+                m.grid1.Columns[1].Width = 140;
+                m.text_Find.Width = 140;
+                m.btn_Find.Location = new Point(150, 6);
+                m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+                return;
+            }
+            #endregion
+
             #region 若只要有一筆不存在BOF就不可轉
             cmd = string.Format(@"Select * from Order_EachCons a WITH (NOLOCK) Left join Order_Bof b WITH (NOLOCK) on a.id = b.id and a.FabricCode = b.FabricCode Where a.id = '{0}' and b.id is null", cuttingid);
             DataTable bofnullTb;
