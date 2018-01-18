@@ -66,8 +66,8 @@ namespace Sci.Production.Quality
             
             if (!this.Supp.Empty())
            {
-                sqlSuppWhere= " and a.SuppID = @Supp ";
-               lis.Add(new SqlParameter("@Supp", Supp));
+                sqlSuppWhere = " and a.SuppID = @Supp ";
+                lis.Add(new SqlParameter("@Supp", Supp));
               
            } if (!this.refno.Empty())
            {
@@ -380,9 +380,9 @@ group by f.Suppid
 select  b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
 (select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID 
+inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID
 where a1.Status='Confirmed'
- ),4),0)
+),4),0)
 into #tmpTestReport
 from FabricInspDoc a
 inner join FabricInspDoc_Detail b on a.ID=b.ID
@@ -394,7 +394,7 @@ group by b.SuppID
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
 (select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID 
+inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID
 where a1.Status='Confirmed'
  ),4),0)
 into #InspReport
@@ -408,7 +408,7 @@ group by b.SuppID
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
 (select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID 
+inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID
 where a1.Status='Confirmed'
  ),4),0)
  into #tmpContinuityCard 
@@ -422,7 +422,7 @@ group by b.SuppID
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
 (select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID 
+inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID
 where a1.Status='Confirmed'
  ),4),0)
 into #BulkDyelot

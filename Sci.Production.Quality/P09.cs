@@ -132,6 +132,7 @@ where fd.id='{0}' order by seq1,seq2
                         }
                     }                   
                 }
+                FirstBulk();
             };
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -160,6 +161,8 @@ where fd.id='{0}' order by seq1,seq2
             CurrentMaintain["Status"] = "New";
             this.txtID.ReadOnly = false;
             insert = true;
+            btnReImport.Enabled = false;
+            btnReImport.ForeColor = Color.Black;
             base.ClickNewAfter();
         }
 
@@ -207,22 +210,47 @@ where fd.id='{0}' order by seq1,seq2
         private void txtID_Validating(object sender, CancelEventArgs e)
         {
             string spno = this.txtID.Text;
-            // 檢查是否存在orders
-            if (!MyUtility.Check.Seek($"select 1 from orders where poid='{spno}'"))
+            bool delGrid = false;
+            if (MyUtility.Check.Empty(spno))
             {
-                MyUtility.Msg.WarningBox($"{spno} dose not exist!");
-                this.txtID.Focus();
-                return;
+                delGrid = true;
             }
+            else
+            {
+                // 檢查是否存在orders
+                if (!MyUtility.Check.Seek($"select 1 from orders where poid='{spno}'"))
+                {
+                    this.txtID.Select();
+                    MyUtility.Msg.WarningBox($"{spno} dose not exist!");
+                    delGrid = true;
+                }
+            }          
+          
 
             // 檢查該ID是否存在FabircInspDoc
             if (MyUtility.Check.Seek($"select 1 from FabricInspDoc where id='{spno}'"))
             {
-                MyUtility.Msg.WarningBox($"{spno} is already exists!");
-                this.txtID.Focus();
+                this.txtID.Select();
+                MyUtility.Msg.WarningBox($"{spno} is already exists!");                
                 return;
             }
+
+            if (delGrid)
+            {
+                foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+                {
+                    dr.Delete();
+                }
+                displayStyle.Text = "";
+                displaySeason.Text = "";
+                displayBrand.Text = "";
+                return;
+            }
+           
+
+            headerValue();
             insDetailData(true);
+            //FirstBulk();
         }
 
         protected override DualResult ClickSave()
@@ -235,6 +263,7 @@ where fd.id='{0}' order by seq1,seq2
         protected override void ClickUndo()
         {
             this.txtID.ReadOnly = true;
+            insert = false;
             btnReImport.ForeColor = Color.Black;
             base.ClickUndo();
         }
@@ -243,8 +272,14 @@ where fd.id='{0}' order by seq1,seq2
         {
             base.OnDetailEntered();
             btnReImport.Enabled = !MyUtility.Check.Empty(txtID.Text);
+            headerValue();
+            chkDiff();
+        }
+
+        private void headerValue()
+        {
             DataRow dr;
-            if (MyUtility.Check.Seek($@"select top 1 poid,StyleID,Seasonid,BrandID from orders where poid='{txtID.Text}'",out dr))
+            if (MyUtility.Check.Seek($@"select top 1 poid,StyleID,Seasonid,BrandID from orders where poid='{txtID.Text}'", out dr))
             {
                 displayStyle.Text = dr["StyleID"].ToString();
                 displaySeason.Text = dr["Seasonid"].ToString();
@@ -256,21 +291,46 @@ where fd.id='{0}' order by seq1,seq2
                 displaySeason.Text = "";
                 displayBrand.Text = "";
             }
-        }          
+        }
 
         // 比對表身資料跟DB資料是否一致
         private void chkDiff()
         {
             DualResult result;            
             bool diff = false;
+            DataTable dtPo;
 
             if (!(result = DBProxy.Current.Select(null, $@"select * from FabricInspDoc_Detail where id='{txtID.Text}' order by seq1,seq2", out dtDB)))
             {
                 MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
+            }         
+
+            string sqlcmd = $@"
+SELECT DISTINCT 
+[ID] =psd.id
+,[Seq] = psd.SEQ1+'-'+psd.SEQ2
+,psd.SEQ1,psd.SEQ2
+,[Refno] = psd.Refno
+,[Color] = psd.colorid+'-'+c.Name
+,[Colorid]=psd.ColorID
+,[Seasonid] = O.seasonID
+,[Supp] = ps.suppid+'-'+s.NameEN
+,[Suppid]=ps.SuppID
+FROM PO_Supp_Detail psd
+LEFT JOIN po_supp ps ON ps.id=psd.id AND ps.seq1=psd.seq1
+LEFT JOIN ORDERS O ON O.ID=PSD.ID
+left join color c WITH (NOLOCK) on psd.ColorID=c.ID and c.BrandId=o.BrandID
+left join Supp s WITH (NOLOCK) on ps.SuppID=s.ID
+WHERE  FabricType='F' and psd.id ='{txtID.Text}' 
+and psd.SEQ1 <'70' and psd.Junk=0
+";
+
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtPo)))
+            {
+                MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
             }
 
-
-            if (MyUtility.Check.Empty(dtDB) || dtDB.Rows.Count < 1)
+            if ((MyUtility.Check.Empty(dtDB) || dtDB.Rows.Count < 1) || ((MyUtility.Check.Empty(dtPo) || dtPo.Rows.Count < 1)))
             {
                 return;
             }
@@ -279,7 +339,9 @@ where fd.id='{0}' order by seq1,seq2
             {
                 if (dr.RowState!=DataRowState.Deleted )
                 {
+                    #region 表身資料Check
                     DataRow[] selectData = dtDB.Select($@"id='{dr["id"].ToString()}' and seq1='{dr["seq1".ToString()]}' and seq2='{dr["seq2"].ToString()}'");
+
                     if (selectData.Length > 0)
                     {
                         if (selectData[0]["TestReport"].ToString() != dr["TestReport"].ToString() ||
@@ -290,9 +352,32 @@ where fd.id='{0}' order by seq1,seq2
                             diff = true;
                         }
                     }
+                    #endregion
+
+                    #region PO資料Check
+                    DataRow[] selectDataPO = dtPo.Select($@"id='{dr["id"].ToString()}' and seq1='{dr["seq1".ToString()]}' and seq2='{dr["seq2"].ToString()}'");
+                    
+                    if (selectDataPO.Length > 0)
+                    {
+                        if (selectDataPO[0]["ColorID"].ToString() != dr["ColorID"].ToString() ||
+                            selectDataPO[0]["seasonID"].ToString() != dr["seasonID"].ToString() ||
+                            selectDataPO[0]["SuppID"].ToString() != dr["SuppID"].ToString() ||
+                            selectDataPO[0]["Refno"].ToString() != dr["Refno"].ToString())
+                        {
+                            diff = true;
+                        }
+                    }
+                    #endregion
+
                 }
             }
-            if (diff)
+           
+            if (DetailDatas.Count != dtDB.Rows.Count || DetailDatas.Count!=dtPo.Rows.Count)
+            {
+                diff = true;
+            }
+
+            if (diff && !insert)
             {
                 btnReImport.Enabled = true;
                 btnReImport.ForeColor = Color.Red;
@@ -337,7 +422,7 @@ WHERE FD.Refno=psd.Refno AND FD.seasonID
 ) 
 AS OFD
 WHERE  FabricType='F' and psd.id ='{txtID.Text}' 
-and psd.SEQ1 <'70' and psd.SEQ1 <> '20' and psd.Junk=0
+and psd.SEQ1 <'70' and psd.Junk=0
 ";
             if (result = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtDetail))
             {
@@ -345,7 +430,7 @@ and psd.SEQ1 <'70' and psd.SEQ1 <> '20' and psd.Junk=0
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
                 }
-                else
+                else if(!insert)
                 {
                     btnReImport.Enabled = true;
                     btnReImport.ForeColor = Color.Red;
@@ -355,19 +440,8 @@ and psd.SEQ1 <'70' and psd.SEQ1 <> '20' and psd.Junk=0
             {
                 MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
             }
-            string msg_bulkdyelot = "";
-            for (int i = 0; i < dtDetail.Rows.Count; i++)
-            {
-                if (dtDetail.Rows[i]["BulkDyelot"].ToString() == "1")
-                {
-                    msg_bulkdyelot = msg_bulkdyelot + $"{dtDetail.Rows[i]["Seq"]}, {dtDetail.Rows[i]["Season"]},{dtDetail.Rows[i]["Refno"]},{dtDetail.Rows[i]["Color"]},{dtDetail.Rows[i]["supp"]}"+ "\r\n";
-                }
-            }
 
-            if (msg_bulkdyelot.Length > 1 && isInsert)
-            {
-                MyUtility.Msg.WarningBox("Already received 1st bulk dyelot. Below data will be selected automatically.\r\n" + "seq# Season Ref# Color Supp \r\n" + msg_bulkdyelot.ToString());
-            }
+            FirstBulk();
             if (isInsert)
             {
                 this.detailgridbs.DataSource = dtDetail;
@@ -409,14 +483,56 @@ and psd.SEQ1 <'70' and psd.SEQ1 <> '20' and psd.Junk=0
                         drins["Refno"] = dr["Refno"];
                         drins["SeasonID"] = dr["SeasonID"];
                         dtGrid.Rows.Add(drins);
-                    }
+                    }                   
                 }
                 if (diffRows.Length > 1)
                 {
                     MyUtility.Msg.InfoBox("The corrected data is as follows" + "\r\n" +
                     "Status Seq# Season Ref# Color Supp" + "\r\n" + diffRows);
+                    btnReImport.Enabled = false;
+                    btnReImport.ForeColor = Color.Black;
                 }
                 #endregion
+            }
+        }
+
+        private void FirstBulk()
+        {
+            if (!insert)
+            {
+                return; 
+            }
+            string msg_bulkdyelot = "";
+            foreach (DataRow drt in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (drt.RowState != DataRowState.Deleted)
+                {
+                    if ((bool)drt["BulkDyelot"])
+                    {
+                        foreach (DataRow drt1 in ((DataTable)this.detailgridbs.DataSource).Rows)
+                        {
+                            // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
+                            if (drt1["colorid"].ToString() == drt["colorid"].ToString()
+                   && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
+                   && drt1["Refno"].ToString() == drt["Refno"].ToString())
+                            {
+                                drt["BulkDyelot"] = drt1["BulkDyelot"];
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < dtDetail.Rows.Count; i++)
+            {
+                if (MyUtility.Convert.GetBool(dtDetail.Rows[i]["BulkDyelot"]))
+                {
+                    msg_bulkdyelot = msg_bulkdyelot + $"{dtDetail.Rows[i]["Seq"]}, {dtDetail.Rows[i]["SeasonID"]},{dtDetail.Rows[i]["Refno"]},{dtDetail.Rows[i]["Color"]},{dtDetail.Rows[i]["supp"]}" + "\r\n";
+                }
+            }
+
+            if (msg_bulkdyelot.Length > 1)
+            {
+                MyUtility.Msg.WarningBox("Already received 1st bulk dyelot. Below data will be selected automatically.\r\n" + "seq# Season Ref# Color Supp \r\n" + msg_bulkdyelot.ToString());
             }
         }
 
@@ -437,6 +553,26 @@ and psd.SEQ1 <'70' and psd.SEQ1 <> '20' and psd.Junk=0
                 else
                 {
                     insDetailData(insert);
+                    foreach (DataRow drt in ((DataTable)this.detailgridbs.DataSource).Rows)
+                    {
+                        if (drt.RowState != DataRowState.Deleted)
+                        {
+                            if ((bool)drt["BulkDyelot"])
+                            {
+                                foreach (DataRow drt1 in ((DataTable)this.detailgridbs.DataSource).Rows)
+                                {
+                                    // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
+                                    if (drt1["colorid"].ToString() == drt["colorid"].ToString()
+                           && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
+                           && drt1["Refno"].ToString() == drt["Refno"].ToString())
+                                    {
+                                        drt["BulkDyelot"] = drt1["BulkDyelot"];
+                                    }
+                                }
+                            }  
+                        }
+                    }
+                    FirstBulk();
                 }
             }
         }
