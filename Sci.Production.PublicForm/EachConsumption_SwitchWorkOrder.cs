@@ -64,7 +64,7 @@ where a.id = '{cuttingid}' and b.Article is null
 
             if (DTcheckAS.Rows.Count > 0)
             {
-                var m = MyUtility.Msg.ShowMsgGrid(DTcheckAS, "Switching is stoped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", "Error");
+                var m = MyUtility.Msg.ShowMsgGrid(DTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", "Error");
 
                 m.Width = 500;
                 m.grid1.Columns[1].Width = 140;
