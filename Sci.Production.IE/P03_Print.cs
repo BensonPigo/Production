@@ -226,7 +226,21 @@ order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 sqlCmd = string.Format(
                     @"
+select * into #tmp from
+(
+	select a.No,MachineTypeID=iif(m.MachineGroupID = '','',a.MachineTypeID),MachineTypeID2 = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
+	from(
+		select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
+		from LineMapping_Detail ld WITH (NOLOCK) 
+		where ld.ID = {0} and  (IsPPa = 0 or IsPPa is null)
+		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+	)a
+	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+)b
+where b.MachineTypeID!=''
+
 select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
+into #tmp2
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
@@ -243,30 +257,13 @@ outer apply(
     ),1,1,'')
 )e2
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]));
-                result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
+order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey
 
-                sqlCmd = string.Format(
-                    @"
-select * from
-(
-	select a.No,MachineTypeID = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
-	from(
-		select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
-		from LineMapping_Detail ld WITH (NOLOCK) 
-		where ld.ID = {0} and  (IsPPa = 0 or IsPPa is null)
-		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-	)a
-	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-)b
-where b.MachineTypeID!=''
-order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
-                result = DBProxy.Current.Select(null, sqlCmd, out this.mt);
+select t2.No,t2.Cycle,t2.GSD,t2.Name,t2.Annotation,t2.DescEN,MachineTypeID = t.MachineTypeID2
+from #tmp2 t2,#tmp t
+where t2.no=t.no and t2.MachineTypeID = t.MachineTypeID
+", MyUtility.Convert.GetString(this.masterData["ID"]));
+                result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
@@ -705,7 +702,23 @@ from(
 )x
 group by ID
 
+select * into #tmpmt from
+(
+    select a.No,MachineTypeID=iif(m.MachineGroupID = '','',a.MachineTypeID),MachineTypeID2 = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
+    from(
+	    select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
+	    from LineMapping_Detail ld WITH (NOLOCK) 
+	    inner join #tmp t on ld.ID = t.ID
+	    where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
+	    GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+    )a
+    left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+)b
+where b.MachineTypeID!=''
+order by no
+
 select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
+into #tmpmt2
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
@@ -723,7 +736,12 @@ outer apply(
     ),1,1,'')
 )e2
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey",
+order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey
+
+select t2.No,t2.Cycle,t2.GSD,t2.Name,t2.Annotation,t2.DescEN,MachineTypeID = t.MachineTypeID2
+from #tmpmt2 t2,#tmpmt t
+where t2.no=t.no and t2.MachineTypeID = t.MachineTypeID
+",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
@@ -745,7 +763,23 @@ from(
 )x
 group by ID
 
+select * into #tmpmt from
+(
+    select a.No,MachineTypeID=iif(m.MachineGroupID = '','',a.MachineTypeID),MachineTypeID2 = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
+    from(
+	    select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
+	    from LineMapping_Detail ld WITH (NOLOCK) 
+	    inner join #tmp t on ld.ID = t.ID
+	    where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
+	    GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
+    )a
+    left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
+)b
+where b.MachineTypeID!=''
+order by no
+
 select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
+into #tmpmt2
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
@@ -763,83 +797,15 @@ outer apply(
     ),1,1,'')
 )e2
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey",
+order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey
+
+select t2.No,t2.Cycle,t2.GSD,t2.Name,t2.Annotation,t2.DescEN,MachineTypeID = t.MachineTypeID2
+from #tmpmt2 t2,#tmpmt t
+where t2.no=t.no and t2.MachineTypeID = t.MachineTypeID
+",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda2);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-                #endregion
-
-                #region
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	and no <= {1}
-)x
-group by ID
-
-select * from
-(
-    select a.No,MachineTypeID = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
-    from(
-	    select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
-	    from LineMapping_Detail ld WITH (NOLOCK) 
-	    inner join #tmp t on ld.ID = t.ID
-	    where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-	    GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-    )a
-    left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-)b
-where b.MachineTypeID!=''
-order by no",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.mt);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
-	and no > {1}
-)x
-group by ID
-
-select * from
-(
-    select a.No,MachineTypeID = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
-    from(
-	    select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
-	    from LineMapping_Detail ld WITH (NOLOCK) 
-	    inner join #tmp t on ld.ID = t.ID
-	    where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-	    GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-    )a
-    left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-)b
-where b.MachineTypeID!=''
-order by no",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.mt2);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
