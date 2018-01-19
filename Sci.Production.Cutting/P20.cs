@@ -522,14 +522,14 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
-                        ShowErr(upResult);
                         _transactionscope.Dispose();
+                        ShowErr(upResult);
                         return;
                     }
                     if (!(upResult = DBProxy.Current.Execute(null, updatettlcpu)))
                     {
-                        ShowErr(upResult);
                         _transactionscope.Dispose();
+                        ShowErr(upResult);
                         return;
                     }
                     _transactionscope.Complete();
@@ -657,14 +657,14 @@ where c.ID =a.CuttingID", dissp.ToString());
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
-                        ShowErr(upResult);
                         _transactionscope.Dispose();
+                        ShowErr(upResult);
                         return;
                     }
                     if (!(upResult = DBProxy.Current.Execute(null, updatettlcpu)))
                     {
-                        ShowErr(upResult);
                         _transactionscope.Dispose();
+                        ShowErr(upResult);
                         return;
                     }
 
