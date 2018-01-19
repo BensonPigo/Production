@@ -35,7 +35,12 @@ union
 select distinct FTYGroup 
 from Factory 
 where MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            DBProxy.Current.Select(null, querySql, out queryDT);
+            DualResult result;
+            result = DBProxy.Current.Select(null, querySql, out queryDT);
+            if (!result)
+            {
+                ShowErr(result);
+            }
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
             queryfors.SelectedIndex = 0;
             queryfors.SelectedIndexChanged += (s, e) =>
@@ -438,8 +443,21 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
 
             DataTable t1, t2;
-            DBProxy.Current.Select(null, sql1, out t1); //今天日期之前的gmt數
-            DBProxy.Current.Select(null, sql2, out t2); //包含今天之前的gmt 數
+            DualResult result;
+            result = DBProxy.Current.Select(null, sql1, out t1); //今天日期之前的gmt數
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
+
+            result = DBProxy.Current.Select(null, sql2, out t2); //包含今天之前的gmt 數
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
+
             int t1gmt,t2gmt;
             if (t1.Rows.Count == 0) t1gmt = 0;
             else t1gmt = Convert.ToInt32(t1.Compute("sum(cutqty)", ""));
@@ -504,11 +522,13 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
+                        ShowErr(upResult);
                         _transactionscope.Dispose();
                         return;
                     }
                     if (!(upResult = DBProxy.Current.Execute(null, updatettlcpu)))
                     {
+                        ShowErr(upResult);
                         _transactionscope.Dispose();
                         return;
                     }
@@ -604,7 +624,13 @@ where c.ID =a.CuttingID", dissp.ToString());
             , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
 
             DataTable t1;
-            DBProxy.Current.Select(null, sql1, out t1);
+            DualResult result;
+            result = DBProxy.Current.Select(null, sql1, out t1);
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
             #endregion
             string update = "";
             foreach (DataRow dr in t1.Rows)
@@ -631,11 +657,13 @@ where c.ID =a.CuttingID", dissp.ToString());
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
                     {
+                        ShowErr(upResult);
                         _transactionscope.Dispose();
                         return;
                     }
                     if (!(upResult = DBProxy.Current.Execute(null, updatettlcpu)))
                     {
+                        ShowErr(upResult);
                         _transactionscope.Dispose();
                         return;
                     }
