@@ -66,12 +66,37 @@ select  p.GMTBookingLock
         , p.FactoryID,p.ID
         , OrderID = STUFF ((select CONCAT (',', cast (a.OrderID as nvarchar)) 
                             from (
-                                select distinct OrderID 
+                                select pd.OrderID 
                                 from PackingList_Detail pd WITH (NOLOCK) 
+                                left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+                                                                     and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
                                 where pd.ID = p.id
+                                group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
                             ) a 
                             for xml path('')
                           ), 1, 1, '') 
+        , OrderShipmodeSeq = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+                                     from (
+                                         select pd.OrderShipmodeSeq 
+                                         from PackingList_Detail pd WITH (NOLOCK) 
+                                         left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+                                                                              and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+                                         where pd.ID = p.id
+                                         group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+                                     ) a 
+                                     for xml path('')
+                                   ), 1, 1, '') 
+        , AirPPID = STUFF ((select CONCAT (',', cast (a.ID as nvarchar)) 
+                            from (
+                                select ap.ID
+                                from PackingList_Detail pd WITH (NOLOCK) 
+                                left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+                                                                    and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+                                where pd.ID = p.id
+                                group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+                            ) a 
+                            for xml path('')
+                           ), 1, 1, '') 
         , p.CargoReadyDate
         , BuyerDelivery = ( select   oq.BuyerDelivery 
                             from (
@@ -208,7 +233,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("FactoryID", header: "Factory#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("ID", header: "Packing #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Date("CargoReadyDate", header: "Cargo Ready Date").Get(out this.col_crd)
+                .Text("OrderShipmodeSeq", header: "Seq", width:Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
                 .Date("SDPDate", header: "SDP Date", iseditingreadonly: true)
                 .Date("PulloutDate", header: "Pull out Date", iseditingreadonly: true)
@@ -222,7 +248,8 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Numeric("NNW", header: "ttl N.N.W.", decimal_places: 3, iseditingreadonly: true)
                 .Text("Status", header: "Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Numeric("ClogCTNQty", header: "CTN in C-Logs", iseditingreadonly: true)
-                .Date("InspDate", header: "Est. Inspection date", iseditingreadonly: true);
+                .Date("InspDate", header: "Est. Inspection date", iseditingreadonly: true)
+                .Date("CargoReadyDate", header: "Cargo Ready Date").Get(out this.col_crd);
 
             #region 欄位值檢查
             this.detailgrid.CellValidating += (s, e) =>

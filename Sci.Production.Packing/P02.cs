@@ -329,9 +329,10 @@ where o.ID = @orderid";
             }
 
             // 檢查OrderID+Seq不可以重複建立
-            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString(), this.IsDetailInserting ? string.Empty : this.CurrentMaintain["ID"].ToString())))
+            DataRow existid;
+            if (MyUtility.Check.Seek(string.Format("select ID from PackingGuide WITH (NOLOCK) where OrderID = '{0}' AND OrderShipmodeSeq = '{1}' AND ID != '{2}'", this.CurrentMaintain["OrderID"].ToString(), this.CurrentMaintain["OrderShipmodeSeq"].ToString(), this.IsDetailInserting ? string.Empty : this.CurrentMaintain["ID"].ToString()),out existid))
             {
-                MyUtility.Msg.WarningBox("SP No:" + this.CurrentMaintain["OrderID"].ToString() + ", Seq:" + this.CurrentMaintain["OrderShipmodeSeq"].ToString() + " already exist in packing guide, can't be create again!");
+                MyUtility.Msg.WarningBox($"SP No: {this.CurrentMaintain["OrderID"]}, Seq: {this.CurrentMaintain["OrderShipmodeSeq"]} already exists in packing guide {existid["ID"]}, can't be created again!");
                 return false;
             }
 

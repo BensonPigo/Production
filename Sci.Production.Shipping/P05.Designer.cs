@@ -857,6 +857,7 @@
             this.btnAirPPList.Text = "AirPP List";
             this.btnAirPPList.UseVisualStyleBackColor = true;
             this.btnAirPPList.Click += new System.EventHandler(this.BtnAirPPList_Click);
+            this.btnAirPPList.Visible = false;
             // 
             // btnExpenseData
             // 
