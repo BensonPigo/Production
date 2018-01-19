@@ -518,9 +518,7 @@ where id = '{1}'",
 select balanceQty = 
     isnull(sum(dbo.getMinCompleteSewQty('{dr["OrderId"]}', '{dr["Article"]}','{dr["SizeCode"]}')),0)
     -
-    isnull((select sum(QAQty) from SewingOutput_Detail_Detail_Garment soddg with(nolock) 
-	where soddg.OrderIDfrom = '{dr["OrderId"]}' and soddg.Article =  '{dr["Article"]}' and soddg.SizeCode = '{dr["SizeCode"]}'
-    ),0)
+    isnull(sum(dbo.getMinCompleteGMTQty('{dr["OrderId"]}', '{dr["Article"]}','{dr["SizeCode"]}')),0)
 	-
 	isnull((select sum(isnull(ShipQty,0) + isnull(iq.DiffQty,0))
 	from Pullout_Detail_Detail pdd with(nolock) 
