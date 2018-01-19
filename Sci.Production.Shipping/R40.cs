@@ -301,12 +301,12 @@ from (
 				(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
 				,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),''))
 			, 0)
-	,[W/House Unit] = psd.POUnit
+	,[W/House Unit] = f.CustomsUnit
 	,[W/House Qty(Stock Unit)] = fi.InQty-fi.OutQty+fi.AdjustQty
-	,[Stock Unit] = f.CustomsUnit
+	,[Stock Unit] = psd.StockUnit
 	from FtyInventory fi WITH (NOLOCK)  --EDIT
-	inner join PO_Supp_Detail psd WITH (NOLOCK) on fi.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
-	inner join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
+	left join PO_Supp_Detail psd WITH (NOLOCK) on fi.POID = psd.ID and psd.SEQ1 = fi.Seq1 and psd.SEQ2 = fi.Seq2
+	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	where (fi.StockType = 'B' or fi.StockType = 'I')
 	and fi.InQty-fi.OutQty+fi.AdjustQty>0 
 
@@ -338,9 +338,9 @@ select distinct
 			(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
 			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),''))
 		,0)
-	,[W/House Unit] = ''
+	,[W/House Unit] = li.CustomsUnit
 	,[W/House Qty(Usage Unit)] =l.InQty-l.OutQty+l.AdjustQty
-	,[Customs Unit] = l.UnitID
+	,[Customs Unit] = l.UnitId
 	from LocalInventory l WITH (NOLOCK) 	
 	inner join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
 	where l.InQty-l.OutQty+l.AdjustQty > 0	
@@ -438,10 +438,11 @@ inner join (
 	select 	vc.StyleID
 			,vc.BrandID
 			,vc.Category
+            ,vc.sizecode
 			,MAX(vc.CustomSP) as CustomSP
 	from VNConsumption vc WITH (NOLOCK) 
 	where vc.VNContractID = @contract
-	group by vc.StyleID,vc.BrandID,vc.Category
+	group by vc.StyleID,vc.BrandID,vc.Category,vc.sizecode
 ) vc on vc.CustomSP = v.CustomSP
 where v.VNContractID = @contract
 
@@ -505,6 +506,7 @@ join (
 			,NLCode
 			,SUM(Qty) as Qty 
 	from #tmpWHNotCloseSewingOutput 
+    where CustomSP <>''
 	group by POID,HSCode,NLCode
 ) tw on tw.POID = ti.ID and tw.NLCode = ti.NLCode
 order by IIF(ti.ID is null,tw.POID,ti.ID)
@@ -533,16 +535,13 @@ and vn.VNContractID=@contract
 	 tp.id ,tp.StyleID,tp.BrandID,tp.SeasonID,tp.Category
 	,[Article] = sdd.Article
 	,[SizeCode] = sdd.SizeCode
-	,[SewQty] = isnull(dbo.getMinCompleteSewQty(tp.ID,sdd.Article,sdd.SizeCode),0) - SewingGMT.QAQty
+	,[SewQty] = isnull(dbo.getMinCompleteSewQty(tp.ID,sdd.Article,sdd.SizeCode),0) 
+	 - isnull(dbo.getMinCompleteGMTQty(tp.ID,sdd.Article,sdd.SizeCode),0) 
 	,[PullQty] = isnull(PulloutDD.ShipQty + InvAdjustQ.DiffQty,0)
 	,[GMTAdjustQty] = isnull(AdjustGMT.gmtQty,0)
 	from #tmpNoPullOutComp tp
 	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on tp.id=sdd.orderid	
-	outer apply(
-		select isnull(Sum(sddg.QAQty),0) as QAQty
-		from SewingOutput_Detail_Detail_Garment sddg WITH (NOLOCK)
-		where sdd.id=sddg.OrderIDfrom
-	)SewingGMT
+	left join SewingOutput_Detail_Detail_Garment sddg WITH (NOLOCK) on sdd.id=sddg.OrderIDfrom
 	outer apply(
 		select isnull(Sum(pdd.ShipQty),0) as ShipQty
 		from Pullout_Detail_Detail pdd WITH (NOLOCK)
@@ -560,7 +559,7 @@ and vn.VNContractID=@contract
 		inner join AdjustGMT_Detail agd WITH (NOLOCK) on ag.id=agd.id
 		where ag.Status='Confirmed'
 		and agd.orderid=sdd.orderid and agd.Article=sdd.Article and agd.SizeCode=sdd.SizeCode
-	)AdjustGMT
+	)AdjustGMT	
 )
 select
  [SP#] = tpq.ID
@@ -717,7 +716,7 @@ union all
  as (
 	select distinct id,article,sizecode,qaqty
 	from #tmpWHNotCloseSewingOutput
-	where NLcode =''
+	where CustomSP =''
 )
 select o.ID
 ,o.Styleid
