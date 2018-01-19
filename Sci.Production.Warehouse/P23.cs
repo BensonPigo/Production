@@ -157,6 +157,15 @@ namespace Sci.Production.Warehouse
             label25.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            if (CurrentMaintain["status"].ToString().EqualString("Confirmed"))
+            {
+                this.btnPrintFabricSticker.Enabled = true;
+            }
+            else
+            {
+                this.btnPrintFabricSticker.Enabled = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -1187,6 +1196,11 @@ order by t.frompoid,SEQ,BULKLOCATION,t.fromroll,t.FromDyelot
             frm.MdiParent = MdiParent;
             frm.Show();
             return true;
+        }
+
+        private void BtnPrintFabricSticker_Click(object sender, EventArgs e)
+        {
+            new P23_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
         }
     }
 }
