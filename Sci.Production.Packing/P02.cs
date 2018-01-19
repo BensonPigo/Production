@@ -362,7 +362,6 @@ where o.ID = @orderid";
                 }
             }
 
-
             #region 計算Total Cartons & CBM
 
             // Total Cartons: 單色混碼裝：min(無條件捨去(同一顏色不同Size的訂單件數/每箱件數)) + (1(若其中一個Size有餘數) or 0(完全整除沒有餘數))
@@ -465,15 +464,6 @@ where o.ID = @orderid";
                 }
 
                 this.CurrentMaintain["ID"] = id;
-
-                // [檢查SP# + Seq是否已存在]
-                string checkSPSeq = $"select id from PackingGuide where orderid = '{this.CurrentMaintain["orderid"]}' and OrderShipmodeSeq = '{this.CurrentMaintain["OrderShipmodeSeq"]}'";
-                string existsid = MyUtility.GetValue.Lookup(checkSPSeq);
-                if (!MyUtility.Check.Empty(existsid))
-                {
-                    MyUtility.Msg.WarningBox($"SP No: {this.CurrentMaintain["orderid"]}, Seq: {this.CurrentMaintain["OrderShipmodeSeq"]} already exists in packing guide {existsid}, can't be created again!");
-                    return false;
-                }
             }
 
             return base.ClickSaveBefore();
