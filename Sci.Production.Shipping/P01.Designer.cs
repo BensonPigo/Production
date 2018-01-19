@@ -2016,6 +2016,7 @@
             // 
             this.txtuserShipLeader.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ShipLeader", true));
             this.txtuserShipLeader.DisplayBox1Binding = "";
+            this.txtuserShipLeader.Enabled = false;
             this.txtuserShipLeader.Location = new System.Drawing.Point(100, 575);
             this.txtuserShipLeader.Name = "txtuserShipLeader";
             this.txtuserShipLeader.Size = new System.Drawing.Size(300, 23);
