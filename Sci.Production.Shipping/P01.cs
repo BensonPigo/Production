@@ -36,6 +36,8 @@ namespace Sci.Production.Shipping
             this.labelResponsible.Text = "Cause &\r\nResponsible\r\nDetails";
             this.txtUserPreparedBy.TextBox1.ReadOnly = true;
             this.txtUserPreparedBy.TextBox1.IsSupportEditMode = false;
+            this.txtuserShipLeader.TextBox1.ReadOnly = true;
+            this.txtuserShipLeader.TextBox1.IsSupportEditMode = false;
             this.txtCountryDestination.TextBox1.ReadOnly = true;
             this.txtCountryDestination.TextBox1.IsSupportEditMode = false;
         }
