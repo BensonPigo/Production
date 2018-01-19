@@ -85,15 +85,30 @@ order by RowNo";
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
+            DualResult result;
             DataTable dtPrint = (DataTable)this.listControlBindingSource.DataSource;
             if (dtPrint != null
                 && dtPrint.AsEnumerable().Any(row => Convert.ToBoolean(row["Sel"]))){
                 #region Print
                 dtPrint = dtPrint.AsEnumerable().Where(row => Convert.ToBoolean(row["Sel"])).CopyToDataTable();
 
+                string strDtSortSQL = @"
+select NewRowNo = Row_Number() over (order by RowNo)
+       , *
+from #tmp
+order by NewRowNo";
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtPrint, string.Empty, strDtSortSQL, out dtPrint);
+
+                if (result == false)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return;
+                }
+
                 List<P23_FabricSticker_PrintData> listData = dtPrint.AsEnumerable().Select(row => new P23_FabricSticker_PrintData()
                 {
-                    RowNo = Convert.ToInt32(row["RowNo"]),
+                    RowNo = Convert.ToInt32(row["NewRowNo"]),
                     InventorySPNo = row["InventorySPNo"].ToString().Trim(),
                     InventorySeq = row["InventorySeq"].ToString().Trim(),
                     BulkSPNo = row["BulkSPNo"].ToString().Trim(),
@@ -116,7 +131,6 @@ order by RowNo";
                 string ReportResourceName = "P23_FabricSticker_Print.rdlc";
 
                 IReportResource reportresource;
-                DualResult result;
 
                 if ((result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)) == false)
                 {
