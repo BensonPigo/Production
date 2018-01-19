@@ -2254,6 +2254,7 @@
     <Build Include="dbo\Functions\CalculateWorkDate.sql" />
     <Build Include="dbo\Tables\AdjustGMT.sql" />
     <Build Include="dbo\Tables\AdjustGMT_Detail.sql" />
+    <Build Include="dbo\Functions\getMinCompleteGMTQty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
