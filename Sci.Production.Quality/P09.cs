@@ -253,6 +253,20 @@ where fd.id='{0}' order by seq1,seq2
             //FirstBulk();
         }
 
+        protected override bool ClickSaveBefore()
+        {
+            string spno = txtID.Text;
+            // 檢查是否存在orders
+            if (!MyUtility.Check.Seek($"select 1 from orders where poid='{spno}'"))
+            {
+                this.txtID.Select();
+                MyUtility.Msg.WarningBox($"{spno} dose not exist!");
+                return false;
+            }
+            return base.ClickSaveBefore();
+           
+        }
+
         protected override DualResult ClickSave()
         {
             this.txtID.ReadOnly = true;
@@ -461,6 +475,20 @@ and psd.SEQ1 <'70' and psd.Junk=0
                             diffRows = diffRows + $@"Remove " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
                             dr.Delete();
                         }
+                        else
+                        {
+                            // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
+                            if (selectDelete[0]["colorid"].ToString() != dr["colorid"].ToString()
+                   || selectDelete[0]["Suppid"].ToString() != dr["Suppid"].ToString()
+                   || selectDelete[0]["Refno"].ToString() != dr["Refno"].ToString())
+                            {
+                                diffRows = diffRows + $@"Update " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
+                                dr["colorid"] = selectDelete[0]["colorid"].ToString();
+                                dr["Suppid"] = selectDelete[0]["Suppid"].ToString();
+                                dr["Refno"] = selectDelete[0]["Refno"].ToString();
+                            }
+
+                        }
                     }                    
                 }
                 DataTable dtGrid = (DataTable)this.detailgridbs.DataSource;
@@ -507,17 +535,20 @@ and psd.SEQ1 <'70' and psd.Junk=0
             {
                 if (drt.RowState != DataRowState.Deleted)
                 {
-                    if ((bool)drt["BulkDyelot"])
+                    if (drt["BulkDyelot"].ToString().ToUpper()=="TRUE")
                     {
                         foreach (DataRow drt1 in ((DataTable)this.detailgridbs.DataSource).Rows)
                         {
-                            // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
-                            if (drt1["colorid"].ToString() == drt["colorid"].ToString()
-                   && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
-                   && drt1["Refno"].ToString() == drt["Refno"].ToString())
+                            if (drt1.RowState !=DataRowState.Deleted)
                             {
-                                drt["BulkDyelot"] = drt1["BulkDyelot"];
-                            }
+                                // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
+                                if (drt1["colorid"].ToString() == drt["colorid"].ToString()
+                       && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
+                       && drt1["Refno"].ToString() == drt["Refno"].ToString())
+                                {
+                                    drt["BulkDyelot"] = drt1["BulkDyelot"];
+                                }
+                            }                           
                         }
                     }
                 }
@@ -557,17 +588,21 @@ and psd.SEQ1 <'70' and psd.Junk=0
                     {
                         if (drt.RowState != DataRowState.Deleted)
                         {
-                            if ((bool)drt["BulkDyelot"])
+                            if (drt["BulkDyelot"].ToString().ToUpper()=="TRUE")
                             {
                                 foreach (DataRow drt1 in ((DataTable)this.detailgridbs.DataSource).Rows)
                                 {
-                                    // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
-                                    if (drt1["colorid"].ToString() == drt["colorid"].ToString()
-                           && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
-                           && drt1["Refno"].ToString() == drt["Refno"].ToString())
+                                    if (drt1.RowState != DataRowState.Deleted)
                                     {
-                                        drt["BulkDyelot"] = drt1["BulkDyelot"];
+                                        // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
+                                        if (drt1["colorid"].ToString() == drt["colorid"].ToString()
+                               && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
+                               && drt1["Refno"].ToString() == drt["Refno"].ToString())
+                                        {
+                                            drt["BulkDyelot"] = drt1["BulkDyelot"];
+                                        }
                                     }
+                                    
                                 }
                             }  
                         }

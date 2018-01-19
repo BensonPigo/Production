@@ -380,21 +380,21 @@ group by f.Suppid
 select  b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
 (select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID
+inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID and b1.refno=b.refno
 where a1.Status='Confirmed'
-),4),0)
+ ),4),0)
 into #tmpTestReport
 from FabricInspDoc a
 inner join FabricInspDoc_Detail b on a.ID=b.ID
 inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
 where a.Status='Confirmed'
 and b.TestReport=1
-group by b.SuppID
+group by b.SuppID,b.Refno
 ------#FabricInspDoc Inspection Report
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
 (select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID
+inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID and b1.refno=b.refno
 where a1.Status='Confirmed'
  ),4),0)
 into #InspReport
@@ -403,12 +403,12 @@ inner join FabricInspDoc_Detail b on a.ID=b.ID
 inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
 where a.Status='Confirmed'
 and b.InspReport=1
-group by b.SuppID
+group by b.SuppID,b.Refno
 ------#FabricInspDoc Approved Continuity Card Provided %
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
 (select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID
+inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID and b1.refno=b.refno
 where a1.Status='Confirmed'
  ),4),0)
  into #tmpContinuityCard 
@@ -417,12 +417,12 @@ inner join FabricInspDoc_Detail b on a.ID=b.ID
 inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
 where a.Status='Confirmed'
 and b.ContinuityCard =1
-group by b.SuppID
+group by b.SuppID,b.Refno
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
 (select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID
+inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID and b1.refno=b.refno
 where a1.Status='Confirmed'
  ),4),0)
 into #BulkDyelot
@@ -431,7 +431,7 @@ inner join FabricInspDoc_Detail b on a.ID=b.ID
 inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
 where a.Status='Confirmed'
 and b.BulkDyelot  =1
-group by b.SuppID
+group by b.SuppID,b.Refno
 ------#TmpFinal 
 select --distinct 
     Tmp.SuppID 
