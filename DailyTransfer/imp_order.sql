@@ -724,9 +724,7 @@ BEGIN
 										 FROM Production.dbo.Style_Artwork_Quot T WITH (NOLOCK)
 										 inner join  production.dbo.Style_Artwork a WITH (NOLOCK) on t.Ukey=a.Ukey
 										 inner join Trade_To_Pms.DBO.Order_TmsCost  b WITH (NOLOCK) on a.ArtworkTypeID=b.ArtworkTypeID
-										 WHERE	T.styleUkey IN (SELECT A.Ukey 	
-														   FROM Production.dbo.Style A	WITH (NOLOCK)
-														   INNER JOIN #TOrder B ON A.ID=B.StyleID AND A.BRANDID=B.BrandID AND A.SeasonID=B.SeasonID) 
+										 WHERE	T.styleUkey = (select styleukey from  #TOrder where id=A.ID)
 										 Order by T.Ukey
 										)
 									  , (SELECT top 1 LocalSuppID 
