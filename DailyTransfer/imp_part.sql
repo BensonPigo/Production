@@ -408,6 +408,40 @@ where a.id in (select id from @T)) as s
       ,s.[EditDate]
 	  );
 
+	  -----------MachineMasterGroup------------------------
+	  Merge Machine.dbo.MachineMasterGroup as t
+		using Trade_To_Pms.dbo.MachineMasterGroup as s 
+		on t.id=s.id
+		when matched then
+				update set 
+				t.ID				 = s.ID,				
+				t.Description		 = s.Description,		
+				t.DescriptionCH	 = s.DescriptionCH	,
+				t.Junk			 = s.Junk	,		
+				t.AddName			 = s.AddName,			
+				t.AddDate			 = s.AddDate,			
+				t.EditName		 = s.EditName,		
+				t.EditDate		 = s.EditDate		
+		when not matched by target then
+				insert(ID			 ,
+					   Description	 ,
+					   DescriptionCH,	
+					   Junk			 ,
+					   AddName		 ,
+					   AddDate		 ,
+					   EditName		 ,
+					   EditDate		
+				)
+				values(s.ID			 ,
+					   s.Description	 ,
+					   s.DescriptionCH,	
+					   s.Junk			 ,
+					   s.AddName		 ,
+					   s.AddDate		 ,
+					   s.EditName		 ,
+					   s.EditDate	
+				);
+
 	  -----------MachineGroup------------------------
 
 		Merge Machine.dbo.MachineGroup as t
@@ -425,7 +459,8 @@ where a.id in (select id from @T)) as s
 				t.AddName= s.AddName,
 				t.AddDate= s.AddDate,
 				t.EditName= s.EditName,
-				t.EditDate= s.EditDate
+				t.EditDate= s.EditDate,
+				t.MasterGroupID = s.MasterGroupID
 		when not matched by target then
 				insert(ID
 				,Description
@@ -438,6 +473,7 @@ where a.id in (select id from @T)) as s
 				,AddDate
 				,EditName
 				,EditDate
+				,MasterGroupID
 				)
 				values(s.ID,
 				s.Description,
@@ -449,7 +485,8 @@ where a.id in (select id from @T)) as s
 				s.AddName,
 				s.AddDate,
 				s.EditName,
-				s.EditDate
+				s.EditDate,
+				s.MasterGroupID
 				);
 		
 
