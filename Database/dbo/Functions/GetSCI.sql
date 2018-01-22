@@ -28,7 +28,7 @@ RETURN
 				Or (@Category = '' And Not (MainPO.Category = 'B' And Orders.Category = 'S'))
 				Or (MainPO.Category = Orders.Category)
 			   )
-		   And Orders.Qty > 0
+		   --And Orders.Qty > 0
 	 ) as s1
 	 outer apply (
 	   Select  Min(Orders.SewInLIne) AS MinSewinLine
@@ -36,6 +36,6 @@ RETURN
 		 ,  Min(Orders.PFETA) as MinPFETA
 		  From dbo.Orders
 		  Where Orders.PoID = @PoID
-		   And Orders.Qty > 0
+		   --And Orders.Qty > 0
 	 ) as s2 
 )
