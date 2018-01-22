@@ -36,6 +36,8 @@ namespace Sci.Production.Shipping
             this.labelResponsible.Text = "Cause &\r\nResponsible\r\nDetails";
             this.txtUserPreparedBy.TextBox1.ReadOnly = true;
             this.txtUserPreparedBy.TextBox1.IsSupportEditMode = false;
+            this.txtuserShipLeader.TextBox1.ReadOnly = true;
+            this.txtuserShipLeader.TextBox1.IsSupportEditMode = false;
             this.txtCountryDestination.TextBox1.ReadOnly = true;
             this.txtCountryDestination.TextBox1.IsSupportEditMode = false;
         }
@@ -223,6 +225,13 @@ where o.Id = '{0}'",
             {
                 this.txtUserFactorymgr.TextBox1.Focus();
                 MyUtility.Msg.WarningBox("Factory mgr can't empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ShipLeader"]))
+            {
+                this.txtuserShipLeader.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Shipping Leader can't be empty!!");
                 return false;
             }
 
@@ -673,6 +682,7 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                 this.CurrentMaintain["SMR"] = string.Empty;
                 this.CurrentMaintain["ShipQty"] = 0;
                 this.CurrentMaintain["FtyMgr"] = string.Empty;
+                this.CurrentMaintain["ShipLeader"] = string.Empty;
             }
             else
             {
@@ -690,9 +700,11 @@ select o.FactoryID
        , p.POSMR
        , o.MRHandle
        , o.SMR
+       , b.ShipLeader
 from Orders o WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
 left join PO p WITH (NOLOCK) on p.ID = o.POID
+left join Brand b WITH (NOLOCK) on o.BrandID = b.ID
 where o.Id = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out orderData))
                 {
@@ -707,7 +719,7 @@ where o.Id = '{0}'", orderID);
                     this.CurrentMaintain["MRHandle"] = orderData["MRHandle"];
                     this.CurrentMaintain["SMR"] = orderData["SMR"];
                     this.CurrentMaintain["FtyMgr"] = MyUtility.GetValue.Lookup("Manager", MyUtility.Convert.GetString(orderData["FtyGroup"]), "Factory", "ID");
-
+                    this.CurrentMaintain["ShipLeader"] = orderData["ShipLeader"];
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                     sqlCmd = string.Format(
                         @"
