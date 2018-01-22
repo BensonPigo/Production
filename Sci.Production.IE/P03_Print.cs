@@ -24,7 +24,6 @@ namespace Sci.Production.IE
         private DataTable actCycleTime;
         private DataTable operationCode;
         private DataTable noda;
-        private DataTable mt;
         private DataTable summt;
         private DataTable nodist;
         private DataTable noppa;
@@ -52,7 +51,6 @@ namespace Sci.Production.IE
         private DataTable atct2;
         private DataTable nodist2;
         private DataTable noda2;
-        private DataTable mt2;
         private DataTable maxcycle2;
 
         /// <summary>
@@ -226,21 +224,11 @@ order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
 
                 sqlCmd = string.Format(
                     @"
-select * into #tmp from
-(
-	select a.No,MachineTypeID=iif(m.MachineGroupID = '','',a.MachineTypeID),MachineTypeID2 = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
-	from(
-		select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
-		from LineMapping_Detail ld WITH (NOLOCK) 
-		where ld.ID = {0} and  (IsPPa = 0 or IsPPa is null)
-		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-	)a
-	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-)b
-where b.MachineTypeID!=''
-
-select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
-into #tmp2
+select ld.No,ld.Cycle,ld.GSD,e2.Name,ld.Annotation,o.DescEN
+,MachineTypeID = ltrim(rtrim(concat(iif(m.MachineGroupID = '','',ld.MachineTypeID),
+	iif(Attachment is null,'',' '+ Attachment),
+	iif(Template is null,'',' '+ Template),
+	iif(ThreadColor is null,'',' '+ ThreadColor))))
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 left join Operation o WITH (NOLOCK) on o.ID = ld.OperationID
@@ -257,11 +245,7 @@ outer apply(
     ),1,1,'')
 )e2
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey
-
-select t2.No,t2.Cycle,t2.GSD,t2.Name,t2.Annotation,t2.DescEN,MachineTypeID = t.MachineTypeID2
-from #tmp2 t2,#tmp t
-where t2.no=t.no and t2.MachineTypeID = t.MachineTypeID
+order by No,MachineTypeID
 ", MyUtility.Convert.GetString(this.masterData["ID"]));
                 result = DBProxy.Current.Select(null, sqlCmd, out this.noda);
                 if (!result)
@@ -702,23 +686,11 @@ from(
 )x
 group by ID
 
-select * into #tmpmt from
-(
-    select a.No,MachineTypeID=iif(m.MachineGroupID = '','',a.MachineTypeID),MachineTypeID2 = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
-    from(
-	    select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
-	    from LineMapping_Detail ld WITH (NOLOCK) 
-	    inner join #tmp t on ld.ID = t.ID
-	    where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-	    GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-    )a
-    left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-)b
-where b.MachineTypeID!=''
-order by no
-
-select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
-into #tmpmt2
+select ld.No,ld.Cycle,ld.GSD,e2.Name,ld.Annotation,o.DescEN
+,MachineTypeID = ltrim(rtrim(concat(iif(m.MachineGroupID = '','',ld.MachineTypeID),
+	iif(Attachment is null,'',' '+ Attachment),
+	iif(Template is null,'',' '+ Template),
+	iif(ThreadColor is null,'',' '+ ThreadColor))))
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
@@ -736,11 +708,7 @@ outer apply(
     ),1,1,'')
 )e2
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey
-
-select t2.No,t2.Cycle,t2.GSD,t2.Name,t2.Annotation,t2.DescEN,MachineTypeID = t.MachineTypeID2
-from #tmpmt2 t2,#tmpmt t
-where t2.no=t.no and t2.MachineTypeID = t.MachineTypeID
+order by No,MachineTypeID
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
@@ -763,23 +731,11 @@ from(
 )x
 group by ID
 
-select * into #tmpmt from
-(
-    select a.No,MachineTypeID=iif(m.MachineGroupID = '','',a.MachineTypeID),MachineTypeID2 = ltrim(rtrim(iif(m.MachineGroupID = '','',a.MachineTypeID)+' '+Attachment+' '+Template+' '+ThreadColor))
-    from(
-	    select ld.No,MachineTypeID ,Attachment = isnull(Attachment,''),Template = isnull(Template,''),ThreadColor = isnull(ThreadColor,'')
-	    from LineMapping_Detail ld WITH (NOLOCK) 
-	    inner join #tmp t on ld.ID = t.ID
-	    where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-	    GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-    )a
-    left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-)b
-where b.MachineTypeID!=''
-order by no
-
-select ld.No,ld.Cycle,ld.GSD,MachineTypeID = iif(m.MachineGroupID = '','',ld.MachineTypeID),e2.Name,ld.Annotation,o.DescEN
-into #tmpmt2
+select ld.No,ld.Cycle,ld.GSD,e2.Name,ld.Annotation,o.DescEN
+,MachineTypeID = ltrim(rtrim(concat(iif(m.MachineGroupID = '','',ld.MachineTypeID),
+	iif(Attachment is null,'',' '+ Attachment),
+	iif(Template is null,'',' '+ Template),
+	iif(ThreadColor is null,'',' '+ ThreadColor))))
 from LineMapping_Detail ld WITH (NOLOCK) 
 left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
 inner join #tmp t on ld.ID = t.ID
@@ -797,11 +753,7 @@ outer apply(
     ),1,1,'')
 )e2
 where (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by ld.No,ld.MachineTypeID,ld.attachment,ld.template,ld.GroupKey
-
-select t2.No,t2.Cycle,t2.GSD,t2.Name,t2.Annotation,t2.DescEN,MachineTypeID = t.MachineTypeID2
-from #tmpmt2 t2,#tmpmt t
-where t2.no=t.no and t2.MachineTypeID = t.MachineTypeID
+order by No,MachineTypeID
 ",
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
@@ -892,6 +844,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                 return false;
             }
 
+            // excel.Visible = true;
             #region 第一頁
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             string factory = MyUtility.Convert.GetString(this.masterData["FactoryID"]);
@@ -1445,6 +1398,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
@@ -1452,8 +1406,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("I{0}:J{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -1477,6 +1439,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
@@ -1484,8 +1447,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("L{0}:M{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -1559,6 +1530,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
@@ -1566,8 +1538,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("I{0}:J{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -1591,6 +1571,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
@@ -1598,8 +1579,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("L{0}:M{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -1670,6 +1659,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
@@ -1677,8 +1667,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("I{0}:J{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -1699,6 +1697,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
@@ -1706,8 +1705,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("L{0}:M{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -1791,6 +1798,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
@@ -1798,8 +1806,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("I{0}:J{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -1820,6 +1836,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
@@ -1827,8 +1844,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("L{0}:M{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -2139,6 +2164,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
@@ -2146,8 +2172,17 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("I{0}:J{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
+
                                 ridx++;
                             }
 
@@ -2170,6 +2205,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
@@ -2177,8 +2213,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("L{0}:M{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -2246,6 +2290,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn - 7] = item["cycle"];
@@ -2253,8 +2298,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn - 5] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn - 4] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("I{0}:J{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
@@ -2275,6 +2328,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                             int ridx = 2;
                             string machinetype = string.Empty;
                             string machinetypeL = string.Empty;
+                            int row = norow + ridx;
                             foreach (DataRow item in nodrs)
                             {
                                 worksheet.Cells[norow + ridx, nocolumn + 6] = item["cycle"];
@@ -2282,8 +2336,16 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                                 worksheet.Cells[norow + ridx, nocolumn + 2] = this.contentType == "A" ? MyUtility.Convert.GetString(item["Annotation"]).Trim() : MyUtility.Convert.GetString(item["DescEN"]).Trim();
                                 worksheet.Cells[norow, nocolumn + 3] = item["name"];
                                 machinetypeL = MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype) ? string.Empty : MyUtility.Convert.GetString(item["machineTypeid"]);
-                                machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
-                                worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                if (MyUtility.Convert.GetString(item["machineTypeid"]).EqualString(machinetype))
+                                {
+                                    worksheet.get_Range(string.Format("L{0}:M{1}", row, norow + ridx)).Merge(false);
+                                }
+                                else
+                                {
+                                    row = norow + ridx;
+                                    machinetype = MyUtility.Convert.GetString(item["machineTypeid"]);
+                                    worksheet.Cells[norow + ridx, nocolumn] = machinetypeL;
+                                }
 
                                 ridx++;
                             }
