@@ -1665,6 +1665,50 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         {
             base.ClickConfirm();
 
+            int i = 0, ctnQty = 0, shipQty = 0;
+            double nw = 0.0, gw = 0.0, nnw = 0.0, cbm = 0.0;
+            foreach (DataRow dr in this.DetailDatas.OrderBy(u => u["ID"]).ThenBy(u => u["OrderShipmodeSeq"]))
+            {
+                #region 計算CTNQty, ShipQty, NW, GW, NNW, CBM
+                ctnQty = ctnQty + MyUtility.Convert.GetInt(dr["CTNQty"]);
+                shipQty = shipQty + MyUtility.Convert.GetInt(dr["ShipQty"]);
+                nw = MyUtility.Math.Round(nw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
+                gw = MyUtility.Math.Round(gw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
+                nnw = MyUtility.Math.Round(nnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
+                if (MyUtility.Check.Empty(dr["CTNQty"]) || MyUtility.Convert.GetInt(dr["CTNQty"]) > 0)
+                {
+                    cbm = MyUtility.Math.Round(cbm + (MyUtility.Math.Round(MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo")), 3) * MyUtility.Convert.GetInt(dr["CTNQty"])), 4);
+                }
+
+                #endregion
+            }
+
+            string updaterc = $@"
+update packinglist set
+    CTNQty ={ctnQty},
+    ShipQty ={shipQty},
+    NW       ={nw},
+    GW       ={gw},
+    NNW     ={nnw},
+    CBM      ={cbm}
+where id = '{this.CurrentMaintain["ID"]}'
+";
+
+            DualResult resultrc = DBProxy.Current.Execute(null, updaterc);
+            if (!resultrc)
+            {
+                this.ShowErr(resultrc);
+                return;
+            }
+
+            // 表身重新計算後,再判斷CBM or GW 是不是0
+            if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup($"select CBM from PackingList where id='{this.CurrentMaintain["ID"]}'")) 
+                || MyUtility.Check.Empty(MyUtility.GetValue.Lookup($"select gw from PackingList where id='{this.CurrentMaintain["ID"]}'")))
+            {
+                MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
+                return;
+            }
+
             // 訂單M別與登入系統M別不一致時，不可以Confirm
             DataTable diffMOrder;
             string sqlCmd = string.Format("select distinct pd.OrderID from PackingList_Detail pd WITH (NOLOCK) , Orders o WITH (NOLOCK) where pd.ID = '{0}' and pd.OrderID = o.ID and o.MDivisionID <> '{1}'", this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword);
