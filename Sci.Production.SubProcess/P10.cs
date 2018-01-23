@@ -1715,7 +1715,7 @@ where DailyQty.value > 0";
         private void GridRight_Scroll(object sender, ScrollEventArgs e)
         {
             if (this.gridRight.Rows.Count > 0
-                && this.gridLeft.Rows.Count > 0)
+                && this.gridLeft.Rows.Count > 0 && this.gridRight.Rows.Count == this.gridLeft.Rows.Count)
             {
                 this.gridLeft.FirstDisplayedScrollingRowIndex = this.gridRight.FirstDisplayedScrollingRowIndex;
             }
@@ -1730,7 +1730,7 @@ where DailyQty.value > 0";
         private void GridTop_Scroll(object sender, ScrollEventArgs e)
         {
             if (this.gridRight.Columns.Count > 0
-                && this.gridTop.Columns.Count > 0)
+                && this.gridTop.Columns.Count > 0 && this.gridRight.Columns.Count == this.gridTop.Columns.Count)
             {
                 this.gridRight.FirstDisplayedScrollingColumnIndex = this.gridTop.FirstDisplayedScrollingColumnIndex;
             }
