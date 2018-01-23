@@ -1701,10 +1701,9 @@ where id = '{this.CurrentMaintain["ID"]}'
                 return;
             }
 
-            this.OnDetailEntered();
-
             // 表身重新計算後,再判斷CBM or GW 是不是0
-            if (MyUtility.Check.Empty(this.CurrentMaintain["CBM"]) || MyUtility.Check.Empty(this.CurrentMaintain["GW"]))
+            if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup($"select CBM from PackingList where id='{this.CurrentMaintain["ID"]}'")) 
+                || MyUtility.Check.Empty(MyUtility.GetValue.Lookup($"select gw from PackingList where id='{this.CurrentMaintain["ID"]}'")))
             {
                 MyUtility.Msg.WarningBox("Ttl CBM and Ttl GW can't be empty!!");
                 return;
