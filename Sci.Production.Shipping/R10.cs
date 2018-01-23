@@ -928,10 +928,16 @@ where s.Type = 'EXPORT'");
                         objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
                         objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+
                         objArray[0, 24] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
                         objArray[0, 25] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
                         objArray[0, 26] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
-                        objArray[0, 27] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
+
+                        // 動態增加欄位會因來源沒資料沒有，先判斷來源資料數量後再塞
+                        if (this.printData.Columns.Count > 27)
+                        {
+                            objArray[0, 27] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
+                        }
 
                         // if (counts > 0)
                         // {
