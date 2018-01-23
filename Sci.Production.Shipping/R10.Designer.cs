@@ -51,6 +51,8 @@
             this.radioDetailListBySPNoByFeeType = new Sci.Win.UI.RadioButton();
             this.radioDetailListbySPNo = new Sci.Win.UI.RadioButton();
             this.radioExportFeeReport = new Sci.Win.UI.RadioButton();
+            this.dateOnBoardDate = new Sci.Win.UI.DateRange();
+            this.labelOnBoardDate = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -69,7 +71,6 @@
             // 
             // labelReportContent
             // 
-            this.labelReportContent.Lines = 0;
             this.labelReportContent.Location = new System.Drawing.Point(13, 12);
             this.labelReportContent.Name = "labelReportContent";
             this.labelReportContent.Size = new System.Drawing.Size(101, 23);
@@ -78,7 +79,6 @@
             // 
             // labelPulloutDate
             // 
-            this.labelPulloutDate.Lines = 0;
             this.labelPulloutDate.Location = new System.Drawing.Point(13, 80);
             this.labelPulloutDate.Name = "labelPulloutDate";
             this.labelPulloutDate.Size = new System.Drawing.Size(101, 23);
@@ -87,8 +87,7 @@
             // 
             // labelAPApvDate
             // 
-            this.labelAPApvDate.Lines = 0;
-            this.labelAPApvDate.Location = new System.Drawing.Point(13, 116);
+            this.labelAPApvDate.Location = new System.Drawing.Point(13, 112);
             this.labelAPApvDate.Name = "labelAPApvDate";
             this.labelAPApvDate.Size = new System.Drawing.Size(101, 23);
             this.labelAPApvDate.TabIndex = 96;
@@ -96,8 +95,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
-            this.labelBrand.Location = new System.Drawing.Point(13, 152);
+            this.labelBrand.Location = new System.Drawing.Point(13, 181);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(101, 23);
             this.labelBrand.TabIndex = 97;
@@ -105,8 +103,7 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Lines = 0;
-            this.labelCustCD.Location = new System.Drawing.Point(13, 189);
+            this.labelCustCD.Location = new System.Drawing.Point(13, 218);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(101, 23);
             this.labelCustCD.TabIndex = 98;
@@ -114,8 +111,7 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
-            this.labelDestination.Location = new System.Drawing.Point(13, 225);
+            this.labelDestination.Location = new System.Drawing.Point(13, 254);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(101, 23);
             this.labelDestination.TabIndex = 99;
@@ -123,8 +119,7 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
-            this.labelShipMode.Location = new System.Drawing.Point(13, 261);
+            this.labelShipMode.Location = new System.Drawing.Point(13, 290);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(101, 23);
             this.labelShipMode.TabIndex = 100;
@@ -132,8 +127,7 @@
             // 
             // labelForwarder
             // 
-            this.labelForwarder.Lines = 0;
-            this.labelForwarder.Location = new System.Drawing.Point(13, 297);
+            this.labelForwarder.Location = new System.Drawing.Point(13, 326);
             this.labelForwarder.Name = "labelForwarder";
             this.labelForwarder.Size = new System.Drawing.Size(101, 23);
             this.labelForwarder.TabIndex = 101;
@@ -141,8 +135,7 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Lines = 0;
-            this.labelReportType.Location = new System.Drawing.Point(13, 334);
+            this.labelReportType.Location = new System.Drawing.Point(13, 363);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(101, 23);
             this.labelReportType.TabIndex = 102;
@@ -166,7 +159,7 @@
             this.radioRowMaterial.Size = new System.Drawing.Size(107, 21);
             this.radioRowMaterial.TabIndex = 1;
             this.radioRowMaterial.TabStop = true;
-            this.radioRowMaterial.Text = "Row Material";
+            this.radioRowMaterial.Text = "Raw Material";
             this.radioRowMaterial.UseVisualStyleBackColor = true;
             this.radioRowMaterial.CheckedChanged += new System.EventHandler(this.RadioRowMaterial_CheckedChanged);
             // 
@@ -185,6 +178,20 @@
             // 
             // datePulloutDate
             // 
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePulloutDate.DateBox1.Name = "";
+            this.datePulloutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.datePulloutDate.DateBox2.Name = "";
+            this.datePulloutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox2.TabIndex = 1;
             this.datePulloutDate.IsRequired = false;
             this.datePulloutDate.Location = new System.Drawing.Point(118, 80);
             this.datePulloutDate.Name = "datePulloutDate";
@@ -193,8 +200,22 @@
             // 
             // dateAPApvDate
             // 
+            // 
+            // 
+            // 
+            this.dateAPApvDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateAPApvDate.DateBox1.Name = "";
+            this.dateAPApvDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateAPApvDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateAPApvDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateAPApvDate.DateBox2.Name = "";
+            this.dateAPApvDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateAPApvDate.DateBox2.TabIndex = 1;
             this.dateAPApvDate.IsRequired = false;
-            this.dateAPApvDate.Location = new System.Drawing.Point(118, 116);
+            this.dateAPApvDate.Location = new System.Drawing.Point(118, 112);
             this.dateAPApvDate.Name = "dateAPApvDate";
             this.dateAPApvDate.Size = new System.Drawing.Size(280, 23);
             this.dateAPApvDate.TabIndex = 105;
@@ -203,7 +224,7 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(119, 152);
+            this.txtbrand.Location = new System.Drawing.Point(119, 181);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(81, 23);
             this.txtbrand.TabIndex = 106;
@@ -213,7 +234,7 @@
             this.txtcustcd.BackColor = System.Drawing.Color.White;
             this.txtcustcd.BrandObjectName = null;
             this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd.Location = new System.Drawing.Point(119, 189);
+            this.txtcustcd.Location = new System.Drawing.Point(119, 218);
             this.txtcustcd.Name = "txtcustcd";
             this.txtcustcd.Size = new System.Drawing.Size(125, 23);
             this.txtcustcd.TabIndex = 107;
@@ -221,7 +242,7 @@
             // txtcountryDestination
             // 
             this.txtcountryDestination.DisplayBox1Binding = "";
-            this.txtcountryDestination.Location = new System.Drawing.Point(118, 225);
+            this.txtcountryDestination.Location = new System.Drawing.Point(118, 254);
             this.txtcountryDestination.Name = "txtcountryDestination";
             this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
             this.txtcountryDestination.TabIndex = 108;
@@ -233,7 +254,7 @@
             this.txtshipmode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtshipmode.FormattingEnabled = true;
             this.txtshipmode.IsSupportUnselect = true;
-            this.txtshipmode.Location = new System.Drawing.Point(118, 261);
+            this.txtshipmode.Location = new System.Drawing.Point(118, 290);
             this.txtshipmode.Name = "txtshipmode";
             this.txtshipmode.Size = new System.Drawing.Size(80, 24);
             this.txtshipmode.TabIndex = 109;
@@ -243,7 +264,7 @@
             // 
             this.txtsubconForwarder.DisplayBox1Binding = "";
             this.txtsubconForwarder.IsIncludeJunk = true;
-            this.txtsubconForwarder.Location = new System.Drawing.Point(119, 297);
+            this.txtsubconForwarder.Location = new System.Drawing.Point(119, 326);
             this.txtsubconForwarder.Name = "txtsubconForwarder";
             this.txtsubconForwarder.Size = new System.Drawing.Size(170, 23);
             this.txtsubconForwarder.TabIndex = 110;
@@ -254,7 +275,7 @@
             this.radioPanel2.Controls.Add(this.radioDetailListBySPNoByFeeType);
             this.radioPanel2.Controls.Add(this.radioDetailListbySPNo);
             this.radioPanel2.Controls.Add(this.radioExportFeeReport);
-            this.radioPanel2.Location = new System.Drawing.Point(118, 332);
+            this.radioPanel2.Location = new System.Drawing.Point(118, 361);
             this.radioPanel2.Name = "radioPanel2";
             this.radioPanel2.Size = new System.Drawing.Size(232, 84);
             this.radioPanel2.TabIndex = 111;
@@ -295,9 +316,41 @@
             this.radioExportFeeReport.Text = "Export Fee Report";
             this.radioExportFeeReport.UseVisualStyleBackColor = true;
             // 
+            // dateOnBoardDate
+            // 
+            // 
+            // 
+            // 
+            this.dateOnBoardDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateOnBoardDate.DateBox1.Name = "";
+            this.dateOnBoardDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateOnBoardDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateOnBoardDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateOnBoardDate.DateBox2.Name = "";
+            this.dateOnBoardDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateOnBoardDate.DateBox2.TabIndex = 1;
+            this.dateOnBoardDate.IsRequired = false;
+            this.dateOnBoardDate.Location = new System.Drawing.Point(118, 144);
+            this.dateOnBoardDate.Name = "dateOnBoardDate";
+            this.dateOnBoardDate.Size = new System.Drawing.Size(280, 23);
+            this.dateOnBoardDate.TabIndex = 113;
+            // 
+            // labelOnBoardDate
+            // 
+            this.labelOnBoardDate.Location = new System.Drawing.Point(13, 144);
+            this.labelOnBoardDate.Name = "labelOnBoardDate";
+            this.labelOnBoardDate.Size = new System.Drawing.Size(101, 23);
+            this.labelOnBoardDate.TabIndex = 112;
+            this.labelOnBoardDate.Text = "On Board Date";
+            // 
             // R10
             // 
-            this.ClientSize = new System.Drawing.Size(525, 451);
+            this.ClientSize = new System.Drawing.Size(525, 482);
+            this.Controls.Add(this.dateOnBoardDate);
+            this.Controls.Add(this.labelOnBoardDate);
             this.Controls.Add(this.radioPanel2);
             this.Controls.Add(this.txtsubconForwarder);
             this.Controls.Add(this.txtshipmode);
@@ -340,6 +393,8 @@
             this.Controls.SetChildIndex(this.txtshipmode, 0);
             this.Controls.SetChildIndex(this.txtsubconForwarder, 0);
             this.Controls.SetChildIndex(this.radioPanel2, 0);
+            this.Controls.SetChildIndex(this.labelOnBoardDate, 0);
+            this.Controls.SetChildIndex(this.dateOnBoardDate, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.radioPanel2.ResumeLayout(false);
@@ -374,5 +429,7 @@
         private Win.UI.RadioButton radioDetailListBySPNoByFeeType;
         private Win.UI.RadioButton radioDetailListbySPNo;
         private Win.UI.RadioButton radioExportFeeReport;
+        private Win.UI.DateRange dateOnBoardDate;
+        private Win.UI.Label labelOnBoardDate;
     }
 }

@@ -20,6 +20,8 @@ namespace Sci.Production.Shipping
         private int reportType;
         private DateTime? date1;
         private DateTime? date2;
+        private DateTime? onBoardDate1;
+        private DateTime? onBoardDate2;
         private string brand;
         private string custCD;
         private string dest;
@@ -112,6 +114,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 this.labelPulloutDate.Location = new System.Drawing.Point(13, 71);
                 this.txtbrand.Enabled = true;
                 this.txtcustcd.Enabled = true;
+                this.dateOnBoardDate.Enabled = true;
             }
             else
             {
@@ -120,6 +123,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 this.labelPulloutDate.Location = new System.Drawing.Point(13, 64);
                 this.txtbrand.Enabled = false;
                 this.txtcustcd.Enabled = false;
+                this.dateOnBoardDate.Enabled = false;
             }
         }
 
@@ -128,6 +132,8 @@ where a.ID = '{0}'", this.txtForwarder.Text);
         {
             this.date1 = this.datePulloutDate.Value1;
             this.date2 = this.datePulloutDate.Value2;
+            this.onBoardDate1 = this.dateOnBoardDate.Value1;
+            this.onBoardDate2 = this.dateOnBoardDate.Value2;
             this.brand = this.txtbrand.Text;
             this.custCD = this.txtcustcd.Text;
             this.dest = this.txtcountryDestination.TextBox1.Text;
@@ -147,7 +153,7 @@ where a.ID = '{0}'", this.txtForwarder.Text);
                 #region 組SQL Command
                 sqlCmd.Append(@"with GBData
 as (
-select distinct 'Export' as IE, 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,
+select distinct 'Export' as IE, 'GARMENT' as Type,g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
 IIF(p.Type = 'B','Bulk',IIF(p.Type = 'S','Sample','')) as Category,
 isnull((select sum(a.Qty) from (
 select distinct oq.Id,oq.Seq,oq.Qty from PackingList_Detail pd WITH (NOLOCK) , Order_QtyShip oq WITH (NOLOCK) 
@@ -167,6 +173,16 @@ where not exists (select 1 from ShareExpense WITH (NOLOCK) where InvNo = g.ID)")
                 if (!MyUtility.Check.Empty(this.date2))
                 {
                     sqlCmd.Append(string.Format(" and p.PulloutDate <= '{0}'", Convert.ToDateTime(this.date2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.onBoardDate1))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.onBoardDate2))
+                {
+                    sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
                 }
 
                 if (!MyUtility.Check.Empty(this.brand))
@@ -197,7 +213,7 @@ where not exists (select 1 from ShareExpense WITH (NOLOCK) where InvNo = g.ID)")
                 sqlCmd.Append(@"),
 PLData
 as (
-select  'Export' as IE, 'GARMENT' as Type,p.ID,p.MDivisionID,p.BrandID,
+select  'Export' as IE, 'GARMENT' as Type,p.ID, null as OnBoardDate,p.MDivisionID,p.BrandID,
 IIF((select top 1 o.Category from Orders o WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) 
 where pd.ID = p.ID and o.ID = pd.OrderID)='B','Bulk','Sample') as Category,
 isnull((select sum(a.Qty) from (

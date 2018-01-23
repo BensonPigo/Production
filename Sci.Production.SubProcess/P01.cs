@@ -276,11 +276,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA'",
 
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    string sqlCmd = string.Format(
-                    @"Select  distinct a.Article, b.Colorid
-from Order_Qty a, Order_ColorCombo b,orders o
-where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}'",
-                    this.CurrentDetailData["orderid"]);
+                    string sqlCmd = string.Format(@"select Article,ColorID from View_OrderFAColor where Id = '{0}'", this.CurrentDetailData["orderid"]);
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10", this.CurrentDetailData["Article"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
@@ -333,12 +329,7 @@ where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}'",
                 }
 
                 bool flag = false;
-                string sqlCmd = string.Format(
-                    @"Select  distinct a.Article, b.Colorid
-from Order_Qty a, Order_ColorCombo b,orders o
-where a.Article = b.Article and a.ID = o.id and b.ID = o.poid and o.id = '{0}' and  a.Article = '{1}'",
-                    this.CurrentDetailData["orderid"],
-                    e.FormattedValue);
+                string sqlCmd = string.Format(@"select * from View_OrderFAColor where Id = '{0}' and Article = '{1}'", this.CurrentDetailData["orderid"], e.FormattedValue);
                 DataRow dr_article;
                 if (!MyUtility.Check.Seek(sqlCmd, out dr_article))
                 {
@@ -574,7 +565,6 @@ Order by Feature",
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(11), settings: orderID)
             .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(7), settings: article)
-            .Text("Color", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("QAOutput", header: "QA\r\nOutput", width: Widths.AnsiChars(12), iseditingreadonly: true, settings: qaoutput)
             .Numeric("QAQty", header: "QA Ttl\r\nOutput", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Numeric("ProdQty", header: "Prod.\r\nOutput", width: Widths.AnsiChars(3), settings: prodQty)

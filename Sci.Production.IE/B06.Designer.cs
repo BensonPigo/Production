@@ -33,6 +33,8 @@
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
+            this.displayMasterGroupID = new Sci.Win.UI.DisplayBox();
+            this.labelMasterGroupID = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,6 +49,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayMasterGroupID);
+            this.detailcont.Controls.Add(this.labelMasterGroupID);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayDescription);
             this.detailcont.Controls.Add(this.displayCode);
@@ -82,19 +86,17 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(36, 42);
             this.labelCode.Name = "labelCode";
-            this.labelCode.Size = new System.Drawing.Size(75, 23);
+            this.labelCode.Size = new System.Drawing.Size(101, 23);
             this.labelCode.TabIndex = 0;
-            this.labelCode.Text = "Code";
+            this.labelCode.Text = "Machine Group";
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(36, 90);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.Size = new System.Drawing.Size(101, 23);
             this.labelDescription.TabIndex = 1;
             this.labelDescription.Text = "Description";
             // 
@@ -103,7 +105,7 @@
             this.displayCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCode.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCode.Location = new System.Drawing.Point(115, 42);
+            this.displayCode.Location = new System.Drawing.Point(140, 42);
             this.displayCode.Name = "displayCode";
             this.displayCode.Size = new System.Drawing.Size(30, 23);
             this.displayCode.TabIndex = 0;
@@ -113,7 +115,7 @@
             this.displayDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Description", true));
             this.displayDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDescription.Location = new System.Drawing.Point(115, 90);
+            this.displayDescription.Location = new System.Drawing.Point(140, 90);
             this.displayDescription.Name = "displayDescription";
             this.displayDescription.Size = new System.Drawing.Size(414, 23);
             this.displayDescription.TabIndex = 1;
@@ -123,12 +125,30 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(400, 42);
+            this.checkJunk.Location = new System.Drawing.Point(497, 44);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 2;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
+            // 
+            // displayMasterGroupID
+            // 
+            this.displayMasterGroupID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMasterGroupID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MasterGroupID", true));
+            this.displayMasterGroupID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMasterGroupID.Location = new System.Drawing.Point(140, 134);
+            this.displayMasterGroupID.Name = "displayMasterGroupID";
+            this.displayMasterGroupID.Size = new System.Drawing.Size(106, 23);
+            this.displayMasterGroupID.TabIndex = 3;
+            // 
+            // labelMasterGroupID
+            // 
+            this.labelMasterGroupID.Location = new System.Drawing.Point(36, 134);
+            this.labelMasterGroupID.Name = "labelMasterGroupID";
+            this.labelMasterGroupID.Size = new System.Drawing.Size(101, 23);
+            this.labelMasterGroupID.TabIndex = 4;
+            this.labelMasterGroupID.Text = "Master Group";
             // 
             // B06
             // 
@@ -167,5 +187,7 @@
         private Win.UI.DisplayBox displayCode;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
+        private Win.UI.DisplayBox displayMasterGroupID;
+        private Win.UI.Label labelMasterGroupID;
     }
 }

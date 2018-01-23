@@ -38,6 +38,7 @@ namespace Sci.Production.SubProcess
             this.comboBoxUpdateColumn.SelectedIndex = 0;
         }
 
+        Ict.Win.UI.DataGridViewNumericBoxColumn setEarlyInlinecolor;
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -168,7 +169,7 @@ namespace Sci.Production.SubProcess
                 .Numeric("TargetQty", header: $"Target{Environment.NewLine}Qty", settings: setTargetQty)
                 .EditText("Feature", header: $"PPA{Environment.NewLine}Feature", iseditingreadonly: true, settings: setPPAFeature)
                 .Numeric("SMV", header: $"PPA{Environment.NewLine}SMV", integer_places: 3, decimal_places: 4, maximum: (decimal)999.9999, settings: setSMV)
-                .Numeric("EarlyInline", header: $"Early{Environment.NewLine}Inline", settings: setEarlyInline)
+                .Numeric("EarlyInline", header: $"Early{Environment.NewLine}Inline", settings: setEarlyInline).Get(out this.setEarlyInlinecolor)
                 .Text("SubProcessLearnCurveID", header: $"Learn{Environment.NewLine}Curve", settings: setLearnCurve)
                 .Text("ShowInline", header: $"PPA{Environment.NewLine}Inline", iseditingreadonly: true)
                 .Text("ShowOffline", header: $"PPA{Environment.NewLine}Offline", iseditingreadonly: true)
@@ -550,10 +551,10 @@ end
                 this.listControlBindingSourceLeft.DataSource = dtGridData[0];
 
                 #region Set Early Date Color
-                foreach (DataRow dr in ((DataTable)this.listControlBindingSourceLeft.DataSource).Rows)
-                {
-                    this.EarlyInlineColorChange(dr);
-                }
+                //foreach (DataRow dr in ((DataTable)this.listControlBindingSourceLeft.DataSource).Rows)
+                //{
+                //    this.EarlyInlineColorChange();
+                //}
                 #endregion
                 #endregion
 
@@ -641,6 +642,7 @@ end
             }
 
             this.HideWaitMessage();
+            this.EarlyInlineColorChange();
         }
 
         private void CompleteColor_Green(DataRow dr, int ii)
@@ -1293,7 +1295,7 @@ order by Feature";
                     this.ReCalculateOutputDateQty(dr);
                 }
 
-                this.EarlyInlineColorChange(dr);
+                //this.EarlyInlineColorChange();
                 dr.EndEdit();
             }
         }
@@ -1405,27 +1407,35 @@ order by ID";
         /// EarlyInline Change Row Background Color
         /// </summary>
         /// <param name="dr">DataRow</param>
-        private void EarlyInlineColorChange(DataRow dr)
+        private void EarlyInlineColorChange()
         {
-            int intRowIndex = Convert.ToInt32(dr["Ukey"]) - 1;
-            Color newColor;
-            if (Convert.ToDecimal(dr["EarlyInline"]) > 5)
+            this.setEarlyInlinecolor.CellFormatting += (s, e) =>
             {
-                // 黃色
-                newColor = Color.Yellow;
-            }
-            else if (Convert.ToDecimal(dr["EarlyInline"]) < 5)
-            {
-                // 灰色
-                newColor = Color.Gray;
-            }
-            else
-            {
-                // 不變色
-                newColor = Color.White;
-            }
+                DataRow dr = this.gridLeft.GetDataRow<DataRow>(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
 
-            this.gridLeft.Rows[intRowIndex].Cells["EarlyInline"].Style.BackColor = newColor;
+                Color newColor;
+                if (Convert.ToDecimal(dr["EarlyInline"]) > 5)
+                {
+                    // 黃色
+                    newColor = Color.Yellow;
+                }
+                else if (Convert.ToDecimal(dr["EarlyInline"]) < 5)
+                {
+                    // 灰色
+                    newColor = Color.Gray;
+                }
+                else
+                {
+                    // 不變色
+                    newColor = Color.White;
+                }
+
+                this.gridLeft.Rows[e.RowIndex].Cells["EarlyInline"].Style.BackColor = newColor;
+            };
         }
 
         private void PPA_GroupLine_Click(DataRow dr, string strGroup, bool isUpdateMultipleGetValue)
@@ -1705,7 +1715,7 @@ where DailyQty.value > 0";
         private void GridRight_Scroll(object sender, ScrollEventArgs e)
         {
             if (this.gridRight.Rows.Count > 0
-                && this.gridLeft.Rows.Count > 0)
+                && this.gridLeft.Rows.Count > 0 && this.gridRight.Rows.Count == this.gridLeft.Rows.Count)
             {
                 this.gridLeft.FirstDisplayedScrollingRowIndex = this.gridRight.FirstDisplayedScrollingRowIndex;
             }
@@ -1720,7 +1730,7 @@ where DailyQty.value > 0";
         private void GridTop_Scroll(object sender, ScrollEventArgs e)
         {
             if (this.gridRight.Columns.Count > 0
-                && this.gridTop.Columns.Count > 0)
+                && this.gridTop.Columns.Count > 0 && this.gridRight.Columns.Count == this.gridTop.Columns.Count)
             {
                 this.gridRight.FirstDisplayedScrollingColumnIndex = this.gridTop.FirstDisplayedScrollingColumnIndex;
             }

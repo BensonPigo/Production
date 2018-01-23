@@ -9,6 +9,8 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Reflection;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -21,6 +23,8 @@ namespace Sci.Production.Shipping
         private DateTime? date2;
         private DateTime? apApvDate1;
         private DateTime? apApvDate2;
+        private DateTime? onBoardDate1;
+        private DateTime? onBoardDate2;
         private string brand;
         private string custcd;
         private string dest;
@@ -59,6 +63,7 @@ namespace Sci.Production.Shipping
                 this.txtcustcd.Enabled = true;
                 this.radioDetailListbySPNo.Text = "Detail List by SP#";
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by SP# by Fee Type";
+                this.dateOnBoardDate.Enabled = true;
             }
         }
 
@@ -71,6 +76,7 @@ namespace Sci.Production.Shipping
                 this.txtcustcd.Enabled = false;
                 this.radioDetailListbySPNo.Text = "Detail List by WK#";
                 this.radioDetailListBySPNoByFeeType.Text = "Detail List by WK# by Fee Type";
+                this.dateOnBoardDate.Enabled = false;
             }
         }
 
@@ -81,6 +87,8 @@ namespace Sci.Production.Shipping
             this.date2 = this.datePulloutDate.Value2;
             this.apApvDate1 = this.dateAPApvDate.Value1;
             this.apApvDate2 = this.dateAPApvDate.Value2;
+            this.onBoardDate1 = this.dateOnBoardDate.Value1;
+            this.onBoardDate2 = this.dateOnBoardDate.Value2;
             this.brand = this.txtbrand.Text;
             this.custcd = this.txtcustcd.Text;
             this.dest = this.txtcountryDestination.TextBox1.Text;
@@ -111,7 +119,7 @@ namespace Sci.Production.Shipping
                         sqlCmd.Append(@"with tmpGB 
 as (
 select distinct 'GARMENT' as Type,
-g.ID,g.Shipper,g.BrandID,
+g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
 IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 g.CustCDID,g.Dest,g.ShipModeID,p.PulloutDate,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,
 s.BLNo,
@@ -145,6 +153,16 @@ where s.Type = 'EXPORT'");
                             sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
                         }
 
+                        if (!MyUtility.Check.Empty(this.onBoardDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.onBoardDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                        }
+
                         if (!MyUtility.Check.Empty(this.brand))
                         {
                             sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
@@ -173,7 +191,7 @@ where s.Type = 'EXPORT'");
                         sqlCmd.Append(@"),tmpPL
 as (
 select distinct 'GARMENT' as Type,
-p.ID,'' as Shipper,o.BrandID,
+p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,
 IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 o.CustCDID,o.Dest,p.ShipModeID,p.PulloutDate,
 '' as Forwarder,
@@ -185,7 +203,7 @@ inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-inner join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+inner join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
@@ -238,7 +256,7 @@ where s.Type = 'EXPORT'");
 with tmpGB 
 as (
 select distinct 'GARMENT' as Type,
-g.ID,g.Shipper,g.BrandID,
+g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,
 IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,
 g.CustCDID,g.Dest,g.ShipModeID,p.ID as packingid, p.PulloutID,p.PulloutDate,
@@ -273,6 +291,16 @@ where s.Type = 'EXPORT'");
                             sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
                         }
 
+                        if (!MyUtility.Check.Empty(this.onBoardDate1))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                        }
+
+                        if (!MyUtility.Check.Empty(this.onBoardDate2))
+                        {
+                            sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
+                        }
+
                         if (!MyUtility.Check.Empty(this.brand))
                         {
                             sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
@@ -302,7 +330,7 @@ where s.Type = 'EXPORT'");
 tmpPL
 as (
 select distinct 'GARMENT' as Type,
-p.ID,'' as Shipper,o.BrandID,
+p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,
 IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,
 o.CustCDID,o.Dest,p.ShipModeID,p.ID as packingid, p.PulloutID,p.PulloutDate,
@@ -314,7 +342,7 @@ inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 inner join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID 
-inner join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+inner join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                         if (!MyUtility.Check.Empty(this.date1))
                         {
@@ -375,7 +403,7 @@ from tmpAllData");
                     {
                         sqlCmd.Append(@"
 -----temp2
-select distinct type,id,shipper,Brandid,category,custcdid,dest,shipmodeid,pulloutdate,
+select distinct type,id,OnBoardDate,shipper,Brandid,category,custcdid,dest,shipmodeid,pulloutdate,
 forwarder,s.BLNo,currencyid,orderid,packingid
 into #temp2
 from #temp1 as a
@@ -392,14 +420,14 @@ outer apply (
 	)s
 
 
-select type,id,Shipper,BrandID,Category,[OQty]=sum(oqs.OQty),CustCDID,
+select type,id,OnBoardDate,Shipper,BrandID,Category,[OQty]=sum(oqs.OQty),CustCDID,
 Dest,ShipModeID,PulloutDate,
 [ShipQty]=sum(pt.ShipQty),[ctnqty]=sum(pt.ctnqty),[gw]=sum(pt.gw),[CBM]=sum(pt.CBM),Forwarder,BLNo,CurrencyID 
 into #temp3
 from #temp2 a
-outer apply(select sum(qty) as OQty from Order_QtyShip where id=a.OrderID) as oqs
-outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList where id=a.packingID) as pt
-group by type,id,Shipper,BrandID,Category,CustCDID,
+outer apply(select sum(qty) as OQty from Order_QtyShip  WITH (NOLOCK) where id=a.OrderID) as oqs
+outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList WITH (NOLOCK)  where id=a.packingID) as pt
+group by type,id,OnBoardDate,Shipper,BrandID,Category,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID 
 
 select a.*,b.AccountID,b.Amount 
@@ -411,7 +439,7 @@ inner join ShareExpense b on a.ID=b.InvNo ");
                     {
                         sqlCmd.Append(@"
 -----temp2 detail List by SP#
-select distinct type,id,shipper,Brandid,category,OrderID,BuyerDelivery,custcdid,dest,shipmodeid,packingid,PulloutID,PulloutDate,
+select distinct type,id,OnBoardDate,shipper,Brandid,category,OrderID,BuyerDelivery,custcdid,dest,shipmodeid,packingid,PulloutID,PulloutDate,
 forwarder,s.BLNo,currencyid
 into #temp2
 from #temp1 as a
@@ -427,14 +455,14 @@ outer apply (
 		),1,1,'')
 	)s
 --temp3 detail List by SP#
-select type,id,Shipper,BrandID,Category,orderID,BuyerDelivery,[OQty]=sum(oqs.OQty),CustCDID,
+select type,id,OnBoardDate,Shipper,BrandID,Category,orderID,BuyerDelivery,[OQty]=sum(oqs.OQty),CustCDID,
 Dest,ShipModeID,packingid,PulloutID,PulloutDate,
 [ShipQty]=sum(pt.ShipQty),[ctnqty]=sum(pt.ctnqty),[gw]=sum(pt.gw),[CBM]=sum(pt.CBM),Forwarder,BLNo,CurrencyID 
 into #temp3
 from #temp2 a
-outer apply(select sum(qty) as OQty from Order_QtyShip where id=a.OrderID) as oqs
-outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList where id=a.packingID) as pt
-group by type,id,Shipper,BrandID,Category,CustCDID,
+outer apply(select sum(qty) as OQty from Order_QtyShip WITH (NOLOCK)  where id=a.OrderID) as oqs
+outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,sum(CBM)as CBM from PackingList WITH (NOLOCK)  where id=a.packingID) as pt
+group by type,id,OnBoardDate,Shipper,BrandID,Category,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID
 
 select a.*,b.AccountID,b.Amount 
@@ -482,7 +510,7 @@ drop table #temp1,#temp2,#temp3,#temp4
                     #region 組SQL
                     sqlCmd.Append(@"with tmpGB 
 as (
-select distinct 'GARMENT' as Type,g.ID,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
+select distinct 'GARMENT' as Type,g.ID, g.ETD as OnBoardDate,g.Shipper,g.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,g.CustCDID,g.Dest,g.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,g.Forwarder+'-'+isnull(ls.Abb,'') as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
 s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
@@ -494,7 +522,7 @@ inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
-left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a WITH (NOLOCK)  on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
@@ -514,6 +542,16 @@ where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(this.apApvDate2))
                     {
                         sqlCmd.Append(string.Format(" and CONVERT(DATE,s.ApvDate) <= '{0}'", Convert.ToDateTime(this.apApvDate2).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.onBoardDate1))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) >= '{0}'", Convert.ToDateTime(this.onBoardDate1).ToString("d")));
+                    }
+
+                    if (!MyUtility.Check.Empty(this.onBoardDate2))
+                    {
+                        sqlCmd.Append(string.Format(" and CONVERT(DATE,g.ETD) <= '{0}'", Convert.ToDateTime(this.onBoardDate2).ToString("d")));
                     }
 
                     if (!MyUtility.Check.Empty(this.brand))
@@ -544,7 +582,7 @@ where s.Type = 'EXPORT'");
                     sqlCmd.Append(@"),
 tmpPL
 as (
-select distinct 'GARMENT' as Type,p.ID,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
+select distinct 'GARMENT' as Type,p.ID, null as OnBoardDate,'' as Shipper,o.BrandID,IIF(o.Category = 'B','Bulk',IIF(o.Category = 'S','Sample','')) as Category,
 pd.OrderID,oq.BuyerDelivery,isnull(oq.Qty,0) as OQty,o.CustCDID,o.Dest,p.ShipModeID,p.ID as PackID, p.PulloutID,p.PulloutDate,p.ShipQty,p.CTNQty,
 p.GW,p.CBM,'' as Forwarder,s.BLNo,se.AccountID+'-'+isnull(a.Name,'') as FeeType,se.Amount,se.CurrencyID,
 s.ID as APID,s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
@@ -554,7 +592,7 @@ inner join PackingList p WITH (NOLOCK) on p.ID = se.InvNo
 inner join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
 left join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = pd.OrderID and oq.Seq = pd.OrderShipmodeSeq
-left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+left join [FinanceEN].dbo.AccountNo a  WITH (NOLOCK)  on a.ID = se.AccountID
 where s.Type = 'EXPORT'");
                     if (!MyUtility.Check.Empty(this.date1))
                     {
@@ -791,6 +829,7 @@ where s.Type = 'EXPORT'");
                 return false;
             }
 
+            DataTable tb_onBoardDate = new DataTable();
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             if (this.reportContent == 2)
             {
@@ -806,15 +845,32 @@ where s.Type = 'EXPORT'");
                 }
             }
 
+            // mantis9831 增加On Board Date，因為只針對Garment keep OnBoardDate欄位之後插入
+            else
+            {
+                tb_onBoardDate = this.printData.Copy();
+                for (int f = 0; f < tb_onBoardDate.Columns.Count; f++)
+                {
+                    if (!tb_onBoardDate.Columns[f].ColumnName.Equals("OnBoardDate"))
+                    {
+                        tb_onBoardDate.Columns.RemoveAt(f);
+                        f--;
+                    }
+                }
+
+                this.printData.Columns.RemoveAt(2);
+            }
+
             int allColumn = this.reportType == 1 ? 23 : 27;
-            int counts = this.accnoData.Rows.Count;
             int i = 0;
+            int counts = 0;
             if (this.reportType != 3)
             {
+                counts = this.accnoData.Rows.Count;
                 foreach (DataRow dr in this.accnoData.Rows)
                 {
                     i++;
-                    worksheet.Cells[1, allColumn + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [FinanceEN].dbo.AccountNo where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
+                    worksheet.Cells[1, allColumn + i] = MyUtility.GetValue.Lookup(string.Format("select Name from [FinanceEN].dbo.AccountNo  WITH (NOLOCK)  where ID = '{0}'", MyUtility.Convert.GetString(dr["Accno"])));
                 }
 
                 worksheet.Cells[1, allColumn + i + 1] = "Total Export Fee";
@@ -872,10 +928,16 @@ where s.Type = 'EXPORT'");
                         objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
                         objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+
                         objArray[0, 24] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
                         objArray[0, 25] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
                         objArray[0, 26] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
-                        objArray[0, 27] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
+
+                        // 動態增加欄位會因來源沒資料沒有，先判斷來源資料數量後再塞
+                        if (this.printData.Columns.Count > 27)
+                        {
+                            objArray[0, 27] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
+                        }
 
                         // if (counts > 0)
                         // {
@@ -937,6 +999,19 @@ where s.Type = 'EXPORT'");
                     worksheet.Range[string.Format("A{0}:AB{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
+            }
+
+            // mantis9831 增加On Board Date，因為只針對Garment所以在excel產生後插入
+            if (this.reportContent == 1)
+            {
+                Microsoft.Office.Interop.Excel.Range range = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("C1", Missing.Value);
+                range.EntireColumn.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftToRight, Microsoft.Office.Interop.Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow);
+                worksheet.Cells[1, 3] = "On Board Date";
+                range = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("C2", "C" + (this.printData.Rows.Count + 1));
+                range.EntireColumn.NumberFormat = "yyyy/MM/dd";
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM();
+                object[,] arrayValues = com.Transfer_2_Array(tb_onBoardDate);
+                range.Value2 = arrayValues;
             }
 
             excel.Cells.EntireColumn.AutoFit();

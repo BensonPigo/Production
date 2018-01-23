@@ -38,6 +38,8 @@ namespace Sci.Production.IE
             {
                 this.btnThreadRatio.ForeColor = Control.DefaultForeColor;
             }
+
+            this.displayMasterGroupID.Text = this.grid.SelectedRows[0].Cells["MasterGroupID"].Value.ToString();
         }
 
         private void BtnThreadRatio_Click(object sender, EventArgs e)
