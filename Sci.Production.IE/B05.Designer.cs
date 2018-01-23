@@ -45,6 +45,8 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.btnThreadRatio = new Sci.Win.UI.Button();
             this.checkThreadcons = new Sci.Win.UI.CheckBox();
+            this.displayMasterGroupID = new Sci.Win.UI.DisplayBox();
+            this.labelMasterGroupID = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -59,6 +61,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayMasterGroupID);
+            this.detailcont.Controls.Add(this.labelMasterGroupID);
             this.detailcont.Controls.Add(this.checkThreadcons);
             this.detailcont.Controls.Add(this.btnThreadRatio);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -122,15 +126,15 @@
             // 
             // labelGroupID
             // 
-            this.labelGroupID.Location = new System.Drawing.Point(30, 100);
+            this.labelGroupID.Location = new System.Drawing.Point(30, 132);
             this.labelGroupID.Name = "labelGroupID";
             this.labelGroupID.Size = new System.Drawing.Size(125, 23);
             this.labelGroupID.TabIndex = 2;
-            this.labelGroupID.Text = "Group ID";
+            this.labelGroupID.Text = "Machine Group";
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Location = new System.Drawing.Point(30, 135);
+            this.labelArtworkType.Location = new System.Drawing.Point(30, 167);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(125, 23);
             this.labelArtworkType.TabIndex = 3;
@@ -138,7 +142,7 @@
             // 
             // labelMachineAllowance
             // 
-            this.labelMachineAllowance.Location = new System.Drawing.Point(30, 170);
+            this.labelMachineAllowance.Location = new System.Drawing.Point(30, 202);
             this.labelMachineAllowance.Name = "labelMachineAllowance";
             this.labelMachineAllowance.Size = new System.Drawing.Size(125, 23);
             this.labelMachineAllowance.TabIndex = 4;
@@ -146,7 +150,7 @@
             // 
             // labelManualAllowance
             // 
-            this.labelManualAllowance.Location = new System.Drawing.Point(30, 205);
+            this.labelManualAllowance.Location = new System.Drawing.Point(30, 237);
             this.labelManualAllowance.Name = "labelManualAllowance";
             this.labelManualAllowance.Size = new System.Drawing.Size(125, 23);
             this.labelManualAllowance.TabIndex = 5;
@@ -177,7 +181,7 @@
             this.displayGroupID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayGroupID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineGroupID", true));
             this.displayGroupID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayGroupID.Location = new System.Drawing.Point(159, 100);
+            this.displayGroupID.Location = new System.Drawing.Point(159, 132);
             this.displayGroupID.Name = "displayGroupID";
             this.displayGroupID.Size = new System.Drawing.Size(35, 23);
             this.displayGroupID.TabIndex = 2;
@@ -187,7 +191,7 @@
             this.displayArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ArtworkTypeID", true));
             this.displayArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayArtworkType.Location = new System.Drawing.Point(159, 135);
+            this.displayArtworkType.Location = new System.Drawing.Point(159, 167);
             this.displayArtworkType.Name = "displayArtworkType";
             this.displayArtworkType.Size = new System.Drawing.Size(140, 23);
             this.displayArtworkType.TabIndex = 3;
@@ -198,7 +202,7 @@
             this.numMachineAllowance.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MachineAllow", true));
             this.numMachineAllowance.DecimalPlaces = 2;
             this.numMachineAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numMachineAllowance.Location = new System.Drawing.Point(159, 170);
+            this.numMachineAllowance.Location = new System.Drawing.Point(159, 202);
             this.numMachineAllowance.Name = "numMachineAllowance";
             this.numMachineAllowance.NullValue = new decimal(new int[] {
             0,
@@ -219,7 +223,7 @@
             this.numManualAllowance.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ManAllow", true));
             this.numManualAllowance.DecimalPlaces = 2;
             this.numManualAllowance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numManualAllowance.Location = new System.Drawing.Point(159, 205);
+            this.numManualAllowance.Location = new System.Drawing.Point(159, 237);
             this.numManualAllowance.Name = "numManualAllowance";
             this.numManualAllowance.NullValue = new decimal(new int[] {
             0,
@@ -236,7 +240,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(212, 170);
+            this.label9.Location = new System.Drawing.Point(212, 202);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 23);
             this.label9.TabIndex = 12;
@@ -244,7 +248,7 @@
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(212, 205);
+            this.label10.Location = new System.Drawing.Point(212, 237);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
             this.label10.TabIndex = 13;
@@ -283,6 +287,23 @@
             this.checkThreadcons.TabIndex = 16;
             this.checkThreadcons.Text = "Calculate Thread cons.";
             this.checkThreadcons.UseVisualStyleBackColor = true;
+            // 
+            // displayMasterGroupID
+            // 
+            this.displayMasterGroupID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayMasterGroupID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayMasterGroupID.Location = new System.Drawing.Point(159, 100);
+            this.displayMasterGroupID.Name = "displayMasterGroupID";
+            this.displayMasterGroupID.Size = new System.Drawing.Size(106, 23);
+            this.displayMasterGroupID.TabIndex = 17;
+            // 
+            // labelMasterGroupID
+            // 
+            this.labelMasterGroupID.Location = new System.Drawing.Point(30, 100);
+            this.labelMasterGroupID.Name = "labelMasterGroupID";
+            this.labelMasterGroupID.Size = new System.Drawing.Size(125, 23);
+            this.labelMasterGroupID.TabIndex = 18;
+            this.labelMasterGroupID.Text = "Master Group";
             // 
             // B05
             // 
@@ -332,5 +353,7 @@
         private Win.UI.Label labelCode;
         private Win.UI.Button btnThreadRatio;
         private Win.UI.CheckBox checkThreadcons;
+        private Win.UI.DisplayBox displayMasterGroupID;
+        private Win.UI.Label labelMasterGroupID;
     }
 }
