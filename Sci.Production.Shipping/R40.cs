@@ -654,7 +654,7 @@ from (
 	,[Qty] = IIF(ft.InQty-ft.OutQty+ft.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(f.Type,'')
 			,psd.StockUnit
 			,isnull(f.CustomsUnit,'')
-			,mdp.LObQty
+			,ft.InQty-ft.OutQty+ft.AdjustQty
 			,isnull(f.Width,0)
 			,isnull(f.PcsWidth,0)
 			,isnull(f.PcsLength,0)
@@ -669,8 +669,7 @@ from (
 	,[ScrapQty] = ft.InQty-ft.OutQty+ft.AdjustQty
 	,[StockUnit] = psd.StockUnit
 	from FtyInventory ft WITH (NOLOCK) 
-	left join FtyInventory_detail ftd WITH (NOLOCK) on ft.ukey=ftd.ukey
-	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.Ukey=ft.MDivisionPoDetailUkey
+	left join FtyInventory_detail ftd WITH (NOLOCK) on ft.ukey=ftd.ukey	
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on ft.POID = psd.ID and psd.SEQ1 = ft.Seq1 and psd.SEQ2 = ft.Seq2
 	inner join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
 	where 1=1 and ft.StockType='O'
@@ -701,7 +700,7 @@ union all
 				(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
 				,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = li.CustomsUnit)),'')),0)
 	,[CustomsUnit] = isnull(li.CustomsUnit,'')
-	,[ScrapQty] = l.InQty-l.OutQty+l.AdjustQty
+	,[ScrapQty] = l.LobQty
 	,[StockUnit] = l.UnitID
 	from LocalInventory l WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = l.OrderID
