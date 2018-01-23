@@ -348,7 +348,7 @@ select distinct
 
 
 --撈已發料數量
-select 	o.ID
+select distinct	o.ID
 		,o.MDivisionID
 		,o.StyleID
 		,o.BrandID
@@ -514,7 +514,7 @@ order by IIF(ti.ID is null,tw.POID,ti.ID)
 --4) Production成品倉(Prod. Qty Detail)
 
 --撈尚未Pullout Complete的資料
-select 	o.ID
+select distinct	o.ID
 		,o.StyleID
 		,o.BrandID		
 		,o.Category
@@ -597,7 +597,7 @@ where exists (select 1 from pullout_detail
 	where invno=a.invno and shipqty=0)) a
 
 -- 取得最大值customsp
-select max(vdd.customsp)customsp,vd.id--,vc.sizecode
+select max(vdd.customsp)customsp,vd.id,vc.sizecode
 into #tmpmax
 from VNExportDeclaration vd WITH (NOLOCK)
 inner join VNExportDeclaration_Detail vdd WITH (NOLOCK) on vd.id=vdd.id
@@ -605,7 +605,7 @@ inner join VNConsumption vc on  vc.StyleID = vdd.StyleID and vc.BrandID=vdd.Bran
 		and vc.SeasonID=vdd.SeasonID and vc.category=vdd.category 
 		and vc.sizecode=vdd.sizecode and vc.customsp=vdd.customsp
 where vd.VNContractID=@contract
-group by vd.id
+group by vd.id,vc.sizecode
 
 select 
  [SP#] = vdd.OrderId
@@ -628,7 +628,7 @@ outer apply (
 	from VNExportDeclaration_Detail WITH (NOLOCK)
 	where id=vdd.id and Article=vdd.Article and sizecode=vdd.sizecode
 )vdds
-inner join #tmpmax tm on vd.id=tm.id and tm.customsp=vdd.customsp
+inner join #tmpmax tm on vd.id=tm.id and tm.customsp=vdd.customsp and vdd.sizecode=tm.sizecode
 where vd.status='Confirmed'
 and vd.VNContractID=@contract
 and exists(
@@ -687,9 +687,9 @@ union all
 	,[Dyelot] = ''
 	,[StockType] = 'O'
 	,[Location] = l.CLocation		
-	,[Qty] = IIF(l.InQty-l.OutQty+l.AdjustQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
+	,[Qty] = IIF(l.LobQty > 0,dbo.getVNUnitTransfer(isnull(li.Category,'')
 			,l.UnitId,li.CustomsUnit
-			,(l.InQty-l.OutQty+l.AdjustQty)*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1)
+			,(l.LobQty)*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1)
 			,0
 			,li.PcsWidth
 			,li.PcsLength
