@@ -813,6 +813,7 @@ left join (
 	select 	NLCode
 			,SUM(Qty) as Qty 
 	from #tmpWIPDetail 
+    where Qty > 0
 	group by NLCode
 ) ti on a.NLCode = ti.NLCode
 left join (
