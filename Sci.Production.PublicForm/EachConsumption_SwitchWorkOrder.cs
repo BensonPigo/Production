@@ -52,7 +52,7 @@ namespace Sci.Production.PublicForm
 select distinct a.SizeCode,a.Article
 from Order_Qty a with(nolock)
 left join Order_EachCons_Color_Article b with(nolock)on a.SizeCode = b.SizeCode and a.Article = b.Article and a.id = b.id
-where a.id = '{cuttingid}' and b.Article is null
+where a.id = '{cuttingid}' and b.Article is null and a.Qty > 0
 ";
             DataTable DTcheckAS;
             DualResult result = DBProxy.Current.Select(null, checkArticleSize, out DTcheckAS);
