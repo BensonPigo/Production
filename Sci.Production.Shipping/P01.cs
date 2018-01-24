@@ -973,12 +973,6 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
                 return;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ETA"]))
-            {
-                MyUtility.Msg.WarningBox("ETA can't empty!!");
-                return;
-            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["GW"]))
             {
                 MyUtility.Msg.WarningBox("Gross Weight(Kgs) can't empty!!");
