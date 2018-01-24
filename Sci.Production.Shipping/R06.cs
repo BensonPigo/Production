@@ -46,6 +46,7 @@ namespace Sci.Production.Shipping
 
             MyUtility.Tool.SetupCombox(this.comboOrderby, 1, 1, "M,B/L No.");
             this.comboOrderby.SelectedIndex = 0;
+            this.radioDetail.Checked = true;
         }
 
         /// <inheritdoc/>
@@ -74,12 +75,48 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select s.Type,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
+            if (this.radioDetail.Checked == true)
+            {
+                sqlCmd.Append(@"select	s.Type,
+		Supplier = s.LocalSuppID + ls.Abb,
+		s.ID,
+		s.VoucherID,
+		s.CDate,
+		s.[ApvDate],
+		s.[MDivisionID],
+		s.[CurrencyID],
+		s.[Amount],
+		s.[BLNo],
+		s.[Remark],
+		s.[InvNo],
+		ExportINV =  Stuff((select iif(WKNo = '','',concat( '/',WKNo)) + iif(InvNo = '','',concat( '/',InvNo) )   from ShareExpense she where she.ShippingAPID = s.ID FOR XML PATH('')),1,1,'') ,
+		sd.[ShipExpenseID],
+		se.Description,
+		sd.[Qty],
+		se.UnitID,
+		sd.[CurrencyID],
+		sd.[Price],
+		sd.[Rate],
+		sd.[Amount],
+		sd.[Remark],
+		se.AccountID,
+		an.Name
+from ShippingAP s WITH (NOLOCK)
+inner join ShippingAP_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
+left join ShipExpense se  WITH (NOLOCK) ON sd.ShipExpenseID = se.ID
+left join [FinanceEN].dbo.AccountNo an on an.ID = se.AccountID 
+left join LocalSupp ls WITH (NOLOCK) on s.LocalSuppID = ls.ID
+where s.Status = 'Approved'");
+            }
+            else
+            {
+                sqlCmd.Append(@"select s.Type,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
 s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amt,s.BLNo,s.Remark,s.InvNo,
 isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 where s.Status = 'Approved'");
+            }
 
             if (!MyUtility.Check.Empty(this.date1))
             {
@@ -123,11 +160,11 @@ where s.Status = 'Approved'");
 
             if (this.orderby == 0)
             {
-                sqlCmd.Append(" order by s.MDivisionID");
+                sqlCmd.Append(" order by s.MDivisionID,s.ID");
             }
             else if (this.orderby == 1)
             {
-                sqlCmd.Append(" order by s.BLNo");
+                sqlCmd.Append(" order by s.BLNo,s.ID");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
@@ -153,7 +190,8 @@ where s.Status = 'Approved'");
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentList.xltx";
+            string strXltName = this.radioDetail.Checked == true ? Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx" : Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentList.xltx";
+
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -162,26 +200,34 @@ where s.Status = 'Approved'");
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            // 填內容值
-            int intRowsStart = 3;
-            object[,] objArray = new object[1, 13];
-            foreach (DataRow dr in this.printData.Rows)
+            if (this.radioDetail.Checked == true)
             {
-                objArray[0, 0] = dr["Type"];
-                objArray[0, 1] = dr["Supplier"];
-                objArray[0, 2] = dr["ID"];
-                objArray[0, 3] = dr["VoucherID"];
-                objArray[0, 4] = dr["CDate"];
-                objArray[0, 5] = dr["ApvDate"];
-                objArray[0, 6] = dr["MDivisionID"];
-                objArray[0, 7] = dr["CurrencyID"];
-                objArray[0, 8] = dr["Amt"];
-                objArray[0, 9] = dr["BLNo"];
-                objArray[0, 10] = dr["Remark"];
-                objArray[0, 11] = dr["InvNo"];
-                objArray[0, 12] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0, MyUtility.Convert.GetString(dr["ExportInv"]).Length - 1);
-                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
-                intRowsStart++;
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Shipping_R06_PaymentListDetail.xltx", excel);
+                com.WriteTable(this.printData, 2);
+            }
+            else
+            {
+                // 填內容值
+                int intRowsStart = 3;
+                object[,] objArray = new object[1, 13];
+                foreach (DataRow dr in this.printData.Rows)
+                {
+                    objArray[0, 0] = dr["Type"];
+                    objArray[0, 1] = dr["Supplier"];
+                    objArray[0, 2] = dr["ID"];
+                    objArray[0, 3] = dr["VoucherID"];
+                    objArray[0, 4] = dr["CDate"];
+                    objArray[0, 5] = dr["ApvDate"];
+                    objArray[0, 6] = dr["MDivisionID"];
+                    objArray[0, 7] = dr["CurrencyID"];
+                    objArray[0, 8] = dr["Amt"];
+                    objArray[0, 9] = dr["BLNo"];
+                    objArray[0, 10] = dr["Remark"];
+                    objArray[0, 11] = dr["InvNo"];
+                    objArray[0, 12] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0, MyUtility.Convert.GetString(dr["ExportInv"]).Length - 1);
+                    worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
+                    intRowsStart++;
+                }
             }
 
             excel.Cells.EntireColumn.AutoFit();
@@ -189,7 +235,7 @@ where s.Status = 'Approved'");
             this.HideWaitMessage();
 
             #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R06_PaymentList");
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(this.radioDetail.Checked == true ? "Shipping_R06_PaymentListDetail" : "Shipping_R06_PaymentList");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
             Marshal.ReleaseComObject(excel);
