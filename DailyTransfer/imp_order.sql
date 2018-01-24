@@ -720,12 +720,13 @@ BEGIN
 				, A.TMS
 				, A.Price
 				, C.InhouseOSP
-				, IIF(C.InhouseOSP='O', (SELECT top 1 t.LocalSuppId 
-										 FROM Production.dbo.Style_Artwork_Quot T WITH (NOLOCK)
-										 inner join  production.dbo.Style_Artwork a WITH (NOLOCK) on t.Ukey=a.Ukey
-										 inner join Trade_To_Pms.DBO.Order_TmsCost  b WITH (NOLOCK) on a.ArtworkTypeID=b.ArtworkTypeID
-										 WHERE	T.styleUkey = (select styleukey from  #TOrder where id=A.ID)
-										 Order by T.Ukey
+				, IIF(C.InhouseOSP='O', (
+											SELECT top 1 LocalSuppId
+											from Style_Artwork_Quot saq with(nolock)
+											inner join Style_artwork sa with(nolock) on saq.ukey = sa.ukey
+											inner join Trade_To_Pms.DBO.Order_TmsCost ot WITH (NOLOCK) on sa.ArtworkTypeID=ot.ArtworkTypeID
+											where sa.styleukey = b.styleukey and ot.id = a.id and ot.ArtworkTypeID = a.ArtworkTypeID
+											Order by sa.ukey
 										)
 									  , (SELECT top 1 LocalSuppID 
 										 FROM Production.dbo.Order_TmsCost WITH (NOLOCK) WHERE ID=A.ID)
