@@ -133,6 +133,7 @@ where fd.id='{0}' order by seq1,seq2
                     }                   
                 }
                 FirstBulk();
+                chkDiff();
             };
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -276,12 +277,20 @@ where fd.id='{0}' order by seq1,seq2
 
         protected override void ClickUndo()
         {
-            this.txtID.ReadOnly = true;
-            insert = false;
-            btnReImport.ForeColor = Color.Black;
-            base.ClickUndo();
+            // base.DoDetailUndo() = 直接呼叫底層的undo Fnction
+            if (base.DoDetailUndo())
+            {
+                this.txtID.ReadOnly = true;
+                insert = false;
+                btnReImport.ForeColor = Color.Black;
+                OnDetailEntered();
+            }
+            else
+            {
+                return;
+            }
         }
-
+        
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
@@ -464,33 +473,6 @@ and psd.SEQ1 <'70' and psd.Junk=0
             {
                 #region 異動的資料
                 string diffRows = "";
-                foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
-                {
-                    if (dr.RowState!=DataRowState.Deleted)
-                    {
-                        DataRow[] selectDelete = dtDetail.Select($@"id='{dr["id"].ToString()}' and seq1='{dr["seq1"].ToString()}' and seq2='{dr["seq2"].ToString()}'");
-
-                        if (selectDelete.Length < 1)
-                        {
-                            diffRows = diffRows + $@"Remove " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
-                            dr.Delete();
-                        }
-                        else
-                        {
-                            // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
-                            if (selectDelete[0]["colorid"].ToString() != dr["colorid"].ToString()
-                   || selectDelete[0]["Suppid"].ToString() != dr["Suppid"].ToString()
-                   || selectDelete[0]["Refno"].ToString() != dr["Refno"].ToString())
-                            {
-                                diffRows = diffRows + $@"Update " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
-                                dr["colorid"] = selectDelete[0]["colorid"].ToString();
-                                dr["Suppid"] = selectDelete[0]["Suppid"].ToString();
-                                dr["Refno"] = selectDelete[0]["Refno"].ToString();
-                            }
-
-                        }
-                    }                    
-                }
                 DataTable dtGrid = (DataTable)this.detailgridbs.DataSource;
 
                 foreach (DataRow dr in dtDetail.Rows)
@@ -511,8 +493,36 @@ and psd.SEQ1 <'70' and psd.Junk=0
                         drins["Refno"] = dr["Refno"];
                         drins["SeasonID"] = dr["SeasonID"];
                         dtGrid.Rows.Add(drins);
-                    }                   
+                    }
                 }
+
+                foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+                {
+                    if (dr.RowState!=DataRowState.Deleted)
+                    {
+                        DataRow[] selectDelete = dtDetail.Select($@"id='{dr["id"].ToString()}' and seq1='{dr["seq1"].ToString()}' and seq2='{dr["seq2"].ToString()}'");
+
+                        if (selectDelete.Length < 1)
+                        {
+                            diffRows = diffRows + $@"Remove " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
+                            dr.Delete();
+                        }
+                        else
+                        {
+                            // 如果不相同,就勾選相同的color,suppid,refno
+                            if (selectDelete[0]["colorid"].ToString() != dr["colorid"].ToString()
+                   || selectDelete[0]["Suppid"].ToString() != dr["Suppid"].ToString()
+                   || selectDelete[0]["Refno"].ToString() != dr["Refno"].ToString())
+                            {
+                                diffRows = diffRows + $@"Update " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
+                                dr["colorid"] = selectDelete[0]["colorid"].ToString();
+                                dr["Suppid"] = selectDelete[0]["Suppid"].ToString();
+                                dr["Refno"] = selectDelete[0]["Refno"].ToString();
+                            }
+
+                        }
+                    }                    
+                }               
                 if (diffRows.Length > 1)
                 {
                     MyUtility.Msg.InfoBox("The corrected data is as follows" + "\r\n" +
@@ -520,8 +530,10 @@ and psd.SEQ1 <'70' and psd.Junk=0
                     btnReImport.Enabled = false;
                     btnReImport.ForeColor = Color.Black;
                 }
+                
                 #endregion
             }
+            
         }
 
         private void FirstBulk()
@@ -546,7 +558,7 @@ and psd.SEQ1 <'70' and psd.Junk=0
                        && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
                        && drt1["Refno"].ToString() == drt["Refno"].ToString())
                                 {
-                                    drt["BulkDyelot"] = drt1["BulkDyelot"];
+                                    drt["BulkDyelot"] = true;
                                 }
                             }                           
                         }
@@ -564,6 +576,7 @@ and psd.SEQ1 <'70' and psd.Junk=0
             if (msg_bulkdyelot.Length > 1)
             {
                 MyUtility.Msg.WarningBox("Already received 1st bulk dyelot. Below data will be selected automatically.\r\n" + "seq# Season Ref# Color Supp \r\n" + msg_bulkdyelot.ToString());
+                insert = false;
             }
         }
 
@@ -599,7 +612,7 @@ and psd.SEQ1 <'70' and psd.Junk=0
                                && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
                                && drt1["Refno"].ToString() == drt["Refno"].ToString())
                                         {
-                                            drt["BulkDyelot"] = drt1["BulkDyelot"];
+                                            drt1["BulkDyelot"] = true;
                                         }
                                     }
                                     

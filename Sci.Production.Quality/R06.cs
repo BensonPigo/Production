@@ -379,23 +379,25 @@ group by f.Suppid
 ------#FabricInspDoc TestReport
 select  b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
-(select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID and b1.refno=b.refno
-where a1.Status='Confirmed'
+(select count(*) from po_supp_detail p
+inner join po_supp p2 on p.id=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
+inner join  FabricInspDoc f1 on p.id=f1.Id and f1.Id=a.Id 
+where f1.Status='Confirmed'
  ),4),0)
 into #tmpTestReport
-from FabricInspDoc a
+from FabricInspDoc a 
 inner join FabricInspDoc_Detail b on a.ID=b.ID
 inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
 where a.Status='Confirmed'
 and b.TestReport=1
-group by b.SuppID,b.Refno
+group by b.SuppID,a.Id
 ------#FabricInspDoc Inspection Report
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
-(select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID and b1.refno=b.refno
-where a1.Status='Confirmed'
+(select count(*) from po_supp_detail p
+inner join po_supp p2 on p.id=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
+inner join  FabricInspDoc f1 on p.id=f1.Id and f1.Id=a.Id 
+where f1.Status='Confirmed'
  ),4),0)
 into #InspReport
 from FabricInspDoc a
@@ -403,13 +405,14 @@ inner join FabricInspDoc_Detail b on a.ID=b.ID
 inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
 where a.Status='Confirmed'
 and b.InspReport=1
-group by b.SuppID,b.Refno
+group by b.SuppID,a.Id
 ------#FabricInspDoc Approved Continuity Card Provided %
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
-(select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID and b1.refno=b.refno
-where a1.Status='Confirmed'
+(select count(*) from po_supp_detail p
+inner join po_supp p2 on p.id=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
+inner join  FabricInspDoc f1 on p.id=f1.Id and f1.Id=a.Id 
+where f1.Status='Confirmed'
  ),4),0)
  into #tmpContinuityCard 
 from FabricInspDoc a
@@ -417,21 +420,44 @@ inner join FabricInspDoc_Detail b on a.ID=b.ID
 inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
 where a.Status='Confirmed'
 and b.ContinuityCard =1
-group by b.SuppID,b.Refno
+group by b.SuppID,a.Id
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
-select b.SuppID,[cnt] = isnull(round(convert(float,
-count(a.id))/
-(select count(*) from FabricInspDoc a1
-inner join FabricInspDoc_Detail b1 on a1.ID=b1.ID and b1.SuppID=b.SuppID and b1.refno=b.refno
-where a1.Status='Confirmed'
+select  ta.SuppID,
+[cnt] = isnull(round(convert(float,
+(select count(1) from
+	(
+		select f2.ID,f2.SuppID,f2.Refno,f2.ColorID
+		from po_supp_detail p3
+		inner join po_supp p2 on p3.id=p2.ID and p3.SEQ1=p2.SEQ1
+		left join  FabricInspDoc f1 on p3.id=f1.Id
+		left join  FabricInspDoc_Detail f2 on f1.id=f2.id  and p3.seq1=f2.seq1 and p3.seq2=f2.seq2
+		and f2.SuppID=p2.SuppID and f2.Refno=p3.Refno
+		where f1.Status='Confirmed'
+		and f2.id=ta.poid
+		and f2.Suppid=ta.suppid		
+		and f2.BulkDyelot=1
+		group by f2.ID,f2.SuppID,f2.Refno,f2.ColorID
+	)bb
+))
+/ 
+(select count(1) from
+	(
+		select po3.id,po3.Refno,po2.SuppID,po3.ColorID
+		from po_supp_detail po3 
+		inner join po_supp po2 on po3.id=po2.ID and po3.SEQ1=po2.SEQ1 		
+		where po3.id=ta.poID
+		and po2.suppid=ta.suppid 
+		group by po3.id,po3.Refno,po2.SuppID,po3.ColorID
+	) aa
  ),4),0)
 into #BulkDyelot
-from FabricInspDoc a
-inner join FabricInspDoc_Detail b on a.ID=b.ID
-inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
-where a.Status='Confirmed'
-and b.BulkDyelot  =1
-group by b.SuppID,b.Refno
+from #tmpAllData ta
+left join FabricInspDoc_detail fab2 on ta.poid=fab2.id 
+and ta.seq1=fab2.seq1 and ta.seq2=fab2.seq2
+left join FabricInspDoc fab1 on fab2.id=fab1.id
+where 1=1
+and fab2.BulkDyelot=1
+group by ta.suppid,ta.poid
 ------#TmpFinal 
 select --distinct 
     Tmp.SuppID 
