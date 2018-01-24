@@ -160,11 +160,11 @@ where s.Status = 'Approved'");
 
             if (this.orderby == 0)
             {
-                sqlCmd.Append(" order by s.MDivisionID");
+                sqlCmd.Append(" order by s.MDivisionID,s.ID");
             }
             else if (this.orderby == 1)
             {
-                sqlCmd.Append(" order by s.BLNo");
+                sqlCmd.Append(" order by s.BLNo,s.ID");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
