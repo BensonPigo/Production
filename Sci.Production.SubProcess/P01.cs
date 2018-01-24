@@ -29,6 +29,7 @@ namespace Sci.Production.SubProcess
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboTeam, 1, 1, "A,B");
             this.DoSubForm = new P01_QAOutput();
+            this.DefaultFilter = $"MDivisionID = '{Sci.Env.User.Keyword}'";
         }
 
         /// <inheritdoc/>
@@ -148,9 +149,10 @@ order by a.OrderId,os.Seq
                     @"
 Select  Id, Manpower, Description
 from SubProcessLine
-where type = '{0}' and Junk = 0
+where type = '{0}' and Junk = 0 and MDivisionID = '{1}'
 order by Id",
-                    this.CurrentMaintain["TypeID"]);
+                    this.CurrentMaintain["TypeID"],
+                    Env.User.Keyword);
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,10,20", this.CurrentDetailData["subprocessLineID"].ToString());
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
@@ -178,10 +180,11 @@ order by Id",
                 @"
 Select  Id, Manpower, Description
 from SubProcessLine
-where type = '{0}' and Junk = 0 and Id = '{1}'
+where type = '{0}' and Junk = 0 and Id = '{1}' and MDivisionID = '{2}'
 order by Id",
                 this.CurrentMaintain["TypeID"],
-                e.FormattedValue);
+                e.FormattedValue,
+                Env.User.Keyword);
                 if (!MyUtility.Check.Seek(sqlCmd))
                 {
                     MyUtility.Msg.WarningBox(string.Format("<Subprocess Line:{0}> not found !!", e.FormattedValue));
@@ -217,8 +220,9 @@ from Orders o WITH (NOLOCK)
 inner join Factory f on o.FactoryID = f.ID
 inner join Style_Feature SF on SF.styleukey =o.styleukey
 where o.ID ='{0}' and o.Category in ('B','S') 
-and f.IsProduceFty = 1 and SF.Type='PPA'",
-                e.FormattedValue);
+and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
+                e.FormattedValue,
+                Env.User.Keyword);
                 DataRow dr_orderID;
                 if (!MyUtility.Check.Seek(sqlCmd, out dr_orderID))
                 {
@@ -833,6 +837,7 @@ where not exists (select 1
             this.CurrentMaintain["Team"] = "A";
             this.CurrentMaintain["status"] = "New";
             this.CurrentMaintain["TypeID"] = "PPA";
+            this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
         }
 
         /// <inheritdoc/>

@@ -70,6 +70,8 @@
             this.listControlBindingSourceDateRange = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.lableGreen = new System.Windows.Forms.Label();
             this.labelComplete = new System.Windows.Forms.Label();
+            this.txtLocate = new Sci.Win.UI.TextBox();
+            this.btnLocate = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -241,6 +243,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnLocate);
+            this.splitContainer1.Panel1.Controls.Add(this.txtLocate);
             this.splitContainer1.Panel1.Controls.Add(this.lableDailyCpu);
             this.splitContainer1.Panel1.Controls.Add(this.gridLeft);
             // 
@@ -568,6 +572,25 @@
             this.labelComplete.TabIndex = 18;
             this.labelComplete.Text = "complete";
             // 
+            // txtLocate
+            // 
+            this.txtLocate.BackColor = System.Drawing.Color.White;
+            this.txtLocate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocate.Location = new System.Drawing.Point(7, 26);
+            this.txtLocate.Name = "txtLocate";
+            this.txtLocate.Size = new System.Drawing.Size(100, 23);
+            this.txtLocate.TabIndex = 20;
+            // 
+            // btnLocate
+            // 
+            this.btnLocate.Location = new System.Drawing.Point(113, 22);
+            this.btnLocate.Name = "btnLocate";
+            this.btnLocate.Size = new System.Drawing.Size(80, 30);
+            this.btnLocate.TabIndex = 21;
+            this.btnLocate.Text = "Locate";
+            this.btnLocate.UseVisualStyleBackColor = true;
+            this.btnLocate.Click += new System.EventHandler(this.BtnLocate_Click);
+            // 
             // P10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -633,6 +656,7 @@
             this.Controls.SetChildIndex(this.lableGreen, 0);
             this.Controls.SetChildIndex(this.labelComplete, 0);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -689,5 +713,7 @@
         private Win.UI.Grid gridTop;
         private System.Windows.Forms.Label lableGreen;
         private System.Windows.Forms.Label labelComplete;
+        private Win.UI.Button btnLocate;
+        private Win.UI.TextBox txtLocate;
     }
 }

@@ -228,7 +228,7 @@
             this.IsSupportPrint = false;
             this.Name = "B03";
             this.Text = "B03.SubProcess Line";
-            this.UniqueExpress = "Type,ID";
+            this.UniqueExpress = "Type,ID,MdivisionID";
             this.WorkAlias = "SubProcessLine";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

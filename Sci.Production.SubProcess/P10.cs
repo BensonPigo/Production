@@ -38,7 +38,7 @@ namespace Sci.Production.SubProcess
             this.comboBoxUpdateColumn.SelectedIndex = 0;
         }
 
-        Ict.Win.UI.DataGridViewNumericBoxColumn setEarlyInlinecolor;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn setEarlyInlinecolor;
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -225,9 +225,12 @@ namespace Sci.Production.SubProcess
             listSQLParameter.Add(new SqlParameter("@SciDeliveryStart", strSciDeliveryStart));
             listSQLParameter.Add(new SqlParameter("@SciDeliveryEnd", strSciDeliveryEnd));
             listSQLParameter.Add(new SqlParameter("@Style", this.txtStyle.Text));
+            listSQLParameter.Add(new SqlParameter("@MDivisionID ", Sci.Env.User.Keyword));
 
             List<string> listSQLFilter = new List<string>();
             string strHolidayDateFactory = string.Empty;
+
+            listSQLFilter.Add("and o.MDivisionID = @MDivisionID");
 
             if (this.txtSPStart.Text.Empty() == false
                 && this.txtSPEnd.Text.Empty() == false)
@@ -808,6 +811,7 @@ where Qty is not null
                         listSQLParameter.Add(new SqlParameter("@OrderID", drPPASchedule["OrderID"]));
                         listSQLParameter.Add(new SqlParameter("@StartDate", this.objStartDate));
                         listSQLParameter.Add(new SqlParameter("@EndDate", this.objEndDate));
+                        listSQLParameter.Add(new SqlParameter("@MDivisionID ", Sci.Env.User.Keyword));
 
                         DataTable dtPPASchedule_Detail = dtOutputDateQtyRemark.Clone();
 
@@ -842,15 +846,16 @@ update set
 	, t.Offline = s.Offline
 	, t.EditDate = GETDATE()
 	, t.EditName = @UserName
+    , t.MDivisionID = @MDivisionID
 when not matched by target then
 insert (
 	OrderID		, [Group]	, SubProcessLineID		, OutputQty					, TargetQty
 	, Feature	, SMV		, EarlyInline			, SubProcessLearnCurveID	, Inline
-	, Offline	, AddDate	, AddName)
+	, Offline	, AddDate	, AddName, MDivisionID)
 values (
 	s.OrderID	, s.[Group]	, s.SubProcessLineID	, s.OutputQty				, s.TargetQty
 	, s.Feature	, s.SMV		, s.EarlyInline			, s.SubProcessLearnCurveID	, s.Inline
-	, s.Offline	, GETDATE()	, @UserName);
+	, s.Offline	, GETDATE()	, @UserName, @MDivisionID);
 select @@IDENTITY";
                         List<DataRow> listTmpTable = new List<DataRow>();
                         listTmpTable.Add(drPPASchedule);
@@ -1758,6 +1763,66 @@ where DailyQty.value > 0";
             {
                 this.gridLeft.CurrentCell = this.gridLeft.Rows[this.gridRight.CurrentCell.RowIndex].Cells[this.gridLeft.FirstDisplayedScrollingColumnIndex];
             }
+        }
+
+        private int index;
+        private string find = string.Empty;
+        private DataRow[] find_dr;
+
+        private void BtnLocate_Click(object sender, EventArgs e)
+        {
+            string ftext = this.txtLocate.Text;
+            if (MyUtility.Check.Empty(ftext))
+            {
+                return;
+            }
+
+            string find_new = $@"
+Group like '%{ftext}%'
+or SubProcessLineID like '%{ftext}%'
+or SewingLine like '%{ftext}%'
+or StyleID like '%{ftext}%'
+or OrderID like '%{ftext}%'
+or ShowSewInLine like '%{ftext}%'
+or TargetQty like '%{ftext}%'
+or Feature like '%{ftext}%'
+or SMV like '%{ftext}%'
+or EarlyInline like '%{ftext}%'
+or SubProcessLearnCurveID like '%{ftext}%'
+or ShowInline like '%{ftext}%'
+or ShowOffline like '%{ftext}%'
+or Manpower like '%{ftext}%'";
+// or OrderQty like '%{ftext}%'
+//or OutputQty like '%{ftext}%'
+//or BalanceQty like '%{ftext}%'
+            DataTable detDtb = (DataTable)this.listControlBindingSourceLeft.DataSource;
+
+            if (this.find != find_new)
+            {
+                this.find = find_new;
+                this.find_dr = detDtb.Select(find_new);
+                if (this.find_dr.Length == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not Found.");
+                    return;
+                }
+                else { this.index = 0; }
+            }
+            else
+            {
+                this.index++;
+                if (this.find_dr == null)
+                {
+                    return;
+                }
+
+                if (this.index >= this.find_dr.Length)
+                {
+                    this.index = 0;
+                }
+            }
+
+            this.listControlBindingSourceLeft.Position = detDtb.Rows.IndexOf(this.find_dr[this.index]);
         }
     }
 }
