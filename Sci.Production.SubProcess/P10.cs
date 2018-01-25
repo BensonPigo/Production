@@ -39,6 +39,7 @@ namespace Sci.Production.SubProcess
         }
 
         private Ict.Win.UI.DataGridViewNumericBoxColumn setEarlyInlinecolor;
+        private Ict.Win.UI.DataGridViewTextBoxColumn setPPAInlinecolor;
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -175,7 +176,7 @@ namespace Sci.Production.SubProcess
                 .Numeric("SMV", header: $"PPA{Environment.NewLine}SMV", integer_places: 3, decimal_places: 4, maximum: (decimal)999.9999, settings: setSMV)
                 .Numeric("EarlyInline", header: $"Early{Environment.NewLine}Inline", settings: setEarlyInline).Get(out this.setEarlyInlinecolor)
                 .Text("SubProcessLearnCurveID", header: $"Learn{Environment.NewLine}Curve", settings: setLearnCurve)
-                .Text("ShowInline", header: $"PPA{Environment.NewLine}Inline", iseditingreadonly: true)
+                .Text("ShowInline", header: $"PPA{Environment.NewLine}Inline", iseditingreadonly: true).Get(out this.setPPAInlinecolor)
                 .Text("ShowOffline", header: $"PPA{Environment.NewLine}Offline", iseditingreadonly: true)
                 .Numeric("Manpower", header: $"PPA{Environment.NewLine}Manpower", iseditingreadonly: true);
 
@@ -306,6 +307,7 @@ from (
 		   , Offline = null
 		   , Manpower = 0
 		   , ID = null
+           ,o.CutInLine
 	from orders o
 	inner join #OrderList ol on o.ID = ol.OrderID
 	outer apply (
@@ -351,6 +353,7 @@ from (
 		   				/ @WorkingHour
 		   				/ @EFF
 		   , ID = ps.ID	
+           ,o.CutInLine
 	from PPASchedule ps
     inner join #OrderList ol on ps.OrderID = ol.OrderID
 	left join orders o on ol.OrderID = o.ID
@@ -556,13 +559,6 @@ end
 
                 #region Set Left Grid
                 this.listControlBindingSourceLeft.DataSource = dtGridData[0];
-
-                #region Set Early Date Color
-                //foreach (DataRow dr in ((DataTable)this.listControlBindingSourceLeft.DataSource).Rows)
-                //{
-                //    this.EarlyInlineColorChange();
-                //}
-                #endregion
                 #endregion
 
                 // 動態設定 OutputDate Grid
@@ -649,7 +645,7 @@ end
             }
 
             this.HideWaitMessage();
-            this.EarlyInlineColorChange();
+            this.ColumnColorChange();
         }
 
         private void CompleteColor_Green(DataRow dr, int ii)
@@ -1304,7 +1300,6 @@ order by Feature";
                     this.ReCalculateOutputDateQty(dr);
                 }
 
-                //this.EarlyInlineColorChange();
                 dr.EndEdit();
             }
         }
@@ -1412,11 +1407,7 @@ order by ID";
         #endregion
         #endregion
 
-        /// <summary>
-        /// EarlyInline Change Row Background Color
-        /// </summary>
-        /// <param name="dr">DataRow</param>
-        private void EarlyInlineColorChange()
+        private void ColumnColorChange()
         {
             this.setEarlyInlinecolor.CellFormatting += (s, e) =>
             {
@@ -1444,6 +1435,31 @@ order by ID";
                 }
 
                 this.gridLeft.Rows[e.RowIndex].Cells["EarlyInline"].Style.BackColor = newColor;
+            };
+
+            this.setPPAInlinecolor.CellFormatting += (s, e) =>
+            {
+                DataRow dr = this.gridLeft.GetDataRow<DataRow>(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                Color newColor;
+                if (MyUtility.Check.Empty(dr["CutInLine"]))
+                {
+                    newColor = Color.Red;
+                }
+                else if (MyUtility.Convert.GetDate(dr["Inline"]) <= MyUtility.Convert.GetDate(dr["CutInLine"]))
+                {
+                    newColor = Color.Red;
+                }
+                else
+                {
+                    newColor = Color.White;
+                }
+
+                this.gridLeft.Rows[e.RowIndex].Cells["ShowInline"].Style.BackColor = newColor;
             };
         }
 
