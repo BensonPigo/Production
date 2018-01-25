@@ -95,6 +95,10 @@ namespace Sci.Production.SubProcess
                 object newTargetQty = e.FormattedValue;
                 object oldTargetQty = dr["TargetQty"];
                 this.TargetQtyValidating(dr, newTargetQty, oldTargetQty);
+
+                object oldEarlyInline = dr["EarlyInline"];
+                object oldInline = dr["Inline"];
+                this.EarlyInlineValidating(dr, oldEarlyInline, oldEarlyInline, oldInline, true);
             };
             #endregion
 
@@ -129,7 +133,7 @@ namespace Sci.Production.SubProcess
                 object oldEarlyInline = dr["EarlyInline"];
                 object oldInline = dr["Inline"];
 
-                this.EarlyInlineValidating(dr, newEarlyInline, oldEarlyInline, oldInline);
+                this.EarlyInlineValidating(dr, newEarlyInline, oldEarlyInline, oldInline, false);
             };
             #endregion
 
@@ -1036,7 +1040,7 @@ and t.OutputDate between @StartDate and @EndDate";
                             case "PPA Feature":
                                 break;
                             case "Early Inline":
-                                this.EarlyInlineValidating(dr, this.txtUpdateColumn.Text, dr["EarlyInline"], dr["Inline"]);
+                                this.EarlyInlineValidating(dr, this.txtUpdateColumn.Text, dr["EarlyInline"], dr["Inline"], false);
                                 break;
                             case "Learn Curve":
                                 this.LearnCurveValidating(dr, dr["SubProcessLearnCurveID"].ToString(), this.txtUpdateColumn.Text);
@@ -1272,9 +1276,9 @@ order by Feature";
         #endregion
 
         #region Early Inline
-        private void EarlyInlineValidating(DataRow dr, object newEarlyInline, object oldEarlyInline, object oldInline)
+        private void EarlyInlineValidating(DataRow dr, object newEarlyInline, object oldEarlyInline, object oldInline, bool flag)
         {
-            if (newEarlyInline.EqualDecimal(oldEarlyInline) == false)
+            if (newEarlyInline.EqualDecimal(oldEarlyInline) == false || flag)
             {
                 dr["EarlyInline"] = newEarlyInline;
                 dr.EndEdit();
