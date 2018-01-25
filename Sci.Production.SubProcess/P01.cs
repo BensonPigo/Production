@@ -264,7 +264,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
                     this.CreateSubDetailDatas(this.CurrentDetailData);
                 }
 
-                this.SumQty_QA_Prod_Defect();
+                this.SumQty_QA_Prod_Defect_CPU();
                 this.SumWorkinghours_Manpower();
             };
             #endregion
@@ -316,7 +316,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
                         }
                     }
 
-                    this.SumQty_QA_Prod_Defect();
+                    this.SumQty_QA_Prod_Defect_CPU();
                     this.SumWorkinghours_Manpower();
                 }
             };
@@ -371,7 +371,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
                     this.CreateSubDetailDatas(this.CurrentDetailData);
                 }
 
-                this.SumQty_QA_Prod_Defect();
+                this.SumQty_QA_Prod_Defect_CPU();
                 this.SumWorkinghours_Manpower();
             };
             #endregion
@@ -388,7 +388,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
                      this.Caculate_TotalCPU();
                      this.Caculate_PPH();
                      this.CurrentDetailData.EndEdit();
-                     this.SumQty_QA_Prod_Defect();
+                     this.SumQty_QA_Prod_Defect_CPU();
                      this.SumWorkinghours_Manpower();
                  }
              };
@@ -406,7 +406,7 @@ and f.IsProduceFty = 1 and SF.Type='PPA' and o.MDivisionID  = '{1}'",
                 this.CurrentDetailData["ProdQty"] = MyUtility.Convert.GetDecimal(e.FormattedValue);
                 this.Caculate_DefectQty();
                 this.CurrentDetailData.EndEdit();
-                this.SumQty_QA_Prod_Defect();
+                this.SumQty_QA_Prod_Defect_CPU();
                 this.SumWorkinghours_Manpower();
             };
             #endregion
@@ -446,7 +446,7 @@ Order by Feature",
                     this.CurrentDetailData["Feature"] = item.GetSelectedString();
                     this.Caculate_SMV();
                     this.CurrentDetailData.EndEdit();
-                    this.SumQty_QA_Prod_Defect();
+                    this.SumQty_QA_Prod_Defect_CPU();
                     this.SumWorkinghours_Manpower();
                 }
             };
@@ -506,7 +506,7 @@ Order by Feature",
                 this.CurrentDetailData["Feature"] = string.Join(",", trueFeature.ToArray());
                 this.Caculate_SMV();
                 this.CurrentDetailData.EndEdit();
-                this.SumQty_QA_Prod_Defect();
+                this.SumQty_QA_Prod_Defect_CPU();
                 this.SumWorkinghours_Manpower();
             };
             #endregion
@@ -524,7 +524,7 @@ Order by Feature",
                 this.Caculate_FeatureCPU();
                 this.Caculate_EFF();
                 this.CurrentDetailData.EndEdit();
-                this.SumQty_QA_Prod_Defect();
+                this.SumQty_QA_Prod_Defect_CPU();
                 this.SumWorkinghours_Manpower();
             };
             #endregion
@@ -541,7 +541,7 @@ Order by Feature",
                 this.CurrentDetailData["manpower"] = e.FormattedValue;
                 this.Caculate_TTLWorkinghours();
                 this.CurrentDetailData.EndEdit();
-                this.SumQty_QA_Prod_Defect();
+                this.SumQty_QA_Prod_Defect_CPU();
                 this.SumWorkinghours_Manpower();
             };
             #endregion
@@ -558,7 +558,7 @@ Order by Feature",
                 this.CurrentDetailData["workinghours"] = e.FormattedValue;
                 this.Caculate_TTLWorkinghours();
                 this.CurrentDetailData.EndEdit();
-                this.SumQty_QA_Prod_Defect();
+                this.SumQty_QA_Prod_Defect_CPU();
                 this.SumWorkinghours_Manpower();
             };
             #endregion
@@ -689,7 +689,7 @@ Order by Feature",
             #endregion
 
             this.SumWorkinghours_Manpower();
-            this.SumQty_QA_Prod_Defect();
+            this.SumQty_QA_Prod_Defect_CPU();
 
             #region GetID
             if (this.IsDetailInserting)
@@ -1152,11 +1152,12 @@ order by a.OrderId,os.Seq
             }
         }
 
-        private void SumQty_QA_Prod_Defect()
+        private void SumQty_QA_Prod_Defect_CPU()
         {
             this.CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("sum(QAQty)", string.Empty);
             this.CurrentMaintain["ProdQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("sum(ProdQty)", string.Empty);
             this.CurrentMaintain["DefectQty"] = ((DataTable)this.detailgridbs.DataSource).Compute("sum(DefectQty)", string.Empty);
+            this.CurrentMaintain["TotalCPU"] = ((DataTable)this.detailgridbs.DataSource).Compute("sum(TotalCPU)", string.Empty);
         }
 
         private void SumWorkinghours_Manpower()

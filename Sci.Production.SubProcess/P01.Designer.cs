@@ -49,6 +49,8 @@
             this.numManpower = new Sci.Win.UI.NumericBox();
             this.numWHours = new Sci.Win.UI.NumericBox();
             this.lbstatus = new Sci.Win.UI.Label();
+            this.numTotalCPU = new Sci.Win.UI.NumericBox();
+            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,6 +67,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numTotalCPU);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.lbstatus);
             this.masterpanel.Controls.Add(this.numWHours);
             this.masterpanel.Controls.Add(this.numManpower);
@@ -109,6 +113,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numManpower, 0);
             this.masterpanel.Controls.SetChildIndex(this.numWHours, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbstatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTotalCPU, 0);
             // 
             // detailpanel
             // 
@@ -349,7 +355,7 @@
             // 
             // lbManpower
             // 
-            this.lbManpower.Location = new System.Drawing.Point(400, 5);
+            this.lbManpower.Location = new System.Drawing.Point(389, 34);
             this.lbManpower.Name = "lbManpower";
             this.lbManpower.Size = new System.Drawing.Size(93, 23);
             this.lbManpower.TabIndex = 26;
@@ -357,7 +363,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(400, 34);
+            this.label1.Location = new System.Drawing.Point(389, 63);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(93, 23);
             this.label1.TabIndex = 27;
@@ -369,7 +375,7 @@
             this.numManpower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Manpower", true));
             this.numManpower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numManpower.IsSupportEditMode = false;
-            this.numManpower.Location = new System.Drawing.Point(496, 5);
+            this.numManpower.Location = new System.Drawing.Point(485, 34);
             this.numManpower.Name = "numManpower";
             this.numManpower.NullValue = new decimal(new int[] {
             0,
@@ -392,7 +398,7 @@
             this.numWHours.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WHour", true));
             this.numWHours.DecimalPlaces = 1;
             this.numWHours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numWHours.Location = new System.Drawing.Point(496, 34);
+            this.numWHours.Location = new System.Drawing.Point(485, 63);
             this.numWHours.Maximum = new decimal(new int[] {
             999,
             0,
@@ -426,6 +432,43 @@
             this.lbstatus.TabIndex = 30;
             this.lbstatus.Text = "confirmed";
             this.lbstatus.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // numTotalCPU
+            // 
+            this.numTotalCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalCPU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalCPU", true));
+            this.numTotalCPU.DecimalPlaces = 2;
+            this.numTotalCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalCPU.IsSupportEditMode = false;
+            this.numTotalCPU.Location = new System.Drawing.Point(485, 5);
+            this.numTotalCPU.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            65536});
+            this.numTotalCPU.Name = "numTotalCPU";
+            this.numTotalCPU.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalCPU.ReadOnly = true;
+            this.numTotalCPU.Size = new System.Drawing.Size(62, 23);
+            this.numTotalCPU.TabIndex = 32;
+            this.numTotalCPU.TabStop = false;
+            this.numTotalCPU.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(389, 5);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 23);
+            this.label2.TabIndex = 31;
+            this.label2.Text = "TTL CPU";
             // 
             // P01
             // 
@@ -491,5 +534,7 @@
         private Win.UI.NumericBox numManpower;
         private Win.UI.Label label1;
         private Win.UI.Label lbstatus;
+        private Win.UI.NumericBox numTotalCPU;
+        private Win.UI.Label label2;
     }
 }
