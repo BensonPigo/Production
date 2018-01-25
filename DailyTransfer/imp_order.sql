@@ -1847,6 +1847,35 @@ BEGIN
 		values(s.[Id],s.[Order_MarkerlistUkey],s.[Article],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
 	when not matched by source and t.id in (select id from #TOrder)then
 			delete;
+			
+
+----------------ppaschedule-----------------
+
+----若有跨M轉廠的訂單(orders.mdivisionid不同)。(例:PM1 to PM2)
+----若這些訂單編號存在ppaschedule.orderid中，則刪除其ppaschedule, ppaschedule_detail的資料。
+	delete c
+	from #TOrder a 		
+	inner join Production.dbo.ppaschedule b on b.Orderid = a.id
+	inner join Production.dbo.ppaschedule_detail c on c.id = b.id
+	where b.mdivisionid <> a.mdivisionid
+
+	delete b
+	from #TOrder a 		
+	inner join Production.dbo.ppaschedule b on b.Orderid = a.id
+	where b.mdivisionid <> a.mdivisionid
+----以ppaschedule.AddDate或EditDate近3個月有異動範圍,MDivisionID，若不同，則刪除其ppaschedule, ppaschedule_detail的資料。
+	delete c
+	from Production.dbo.orders a 		
+	inner join Production.dbo.ppaschedule b on b.Orderid = a.id
+	inner join Production.dbo.ppaschedule_detail c on c.id = b.id
+	where b.mdivisionid <> a.mdivisionid and (b.adddate > dateadd(day,90,getdate()) or b.editdate > dateadd(day,90,getdate()))
+
+	delete b
+	from Production.dbo.orders a 		
+	inner join Production.dbo.ppaschedule b on b.Orderid = a.id
+	where b.mdivisionid <> a.mdivisionid and (b.adddate > dateadd(day,90,getdate()) or b.editdate > dateadd(day,90,getdate()))
+
+
 
 ----刪除的判斷必須要依照#Torder的區間作刪除
 
