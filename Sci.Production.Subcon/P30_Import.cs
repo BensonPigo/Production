@@ -311,7 +311,14 @@ where a.status = 'Approved'
                         dr["remark"] += "  This orders already finished, can not be transfered to local purchase!!";
                         dr["selected"] = 0;
                     }
-                    if (MyUtility.Check.Seek(String.Format(@"
+
+                    if (dr_localPO["category"].ToString().EqualString("SP_THREAD")
+                        || dr_localPO["category"].ToString().EqualString("EMB_THREAD")
+                        || dr_localPO["category"].ToString().EqualString("CARTON")) {
+                        #region CARTON
+                        var strCheckOrderID = dr["OrderID"];
+                        var strCheckRemark = "  This orders already PulloutComplete, can not be transfered to local purchase!!";
+                        var strCheckPulloutCompleteSql = $@"
 SELECT 1
 FROM ORDERS O
 outer apply (
@@ -323,13 +330,46 @@ outer apply(
 	left join InvAdjust_Qty IQ on I.ID=IQ.ID
 	where OrderID=O.ID
 ) inv
-WHERE O.ID='{0}' 
-AND (O.Qty-pd.ShipQty-inv.DiffQty = 0)", dr["orderid"])))
-                    {
-                        dr["remark"] += "  This orders already PulloutComplete, can not be transfered to local purchase!!";
-                        dr["selected"] = 0;
-                    }
+WHERE O.ID='{strCheckOrderID}' 
+AND (O.Qty-pd.ShipQty-inv.DiffQty = 0)";
+                        #endregion
 
+                        #region SP_THREAD, EMB_THREAD
+                        if (dr_localPO["category"].ToString().EqualString("SP_THREAD")
+                            || dr_localPO["category"].ToString().EqualString("EMB_THREAD"))
+                        {
+                            strCheckOrderID = dr["POID"];
+                            strCheckRemark = "  This POID already PulloutComplete, can not be transfered to local purchase!!";
+                            strCheckPulloutCompleteSql = $@"
+select *
+from (
+	SELECT Qty = sum (O.qty)
+		   , ShipQty = sum(pd.ShipQty)
+		   , DiffQty = sum(inv.DiffQty)
+	FROM ORDERS O
+	outer apply (
+		select ShipQty= isnull(sum(ShipQty),0)  
+		from Pullout_Detail 
+		where OrderID=O.ID
+	) pd
+	outer apply(
+		select DiffQty= isnull(SUM(isnull(DiffQty ,0)),0) 
+		from InvAdjust I
+		left join InvAdjust_Qty IQ on I.ID=IQ.ID
+		where OrderID=O.ID
+	) inv
+	WHERE O.POID='{strCheckOrderID}' 
+) tmp
+where Qty - ShipQty - DiffQty = 0";
+                        }
+                        #endregion
+
+                        if (MyUtility.Check.Seek(strCheckPulloutCompleteSql))
+                        {
+                            dr["remark"] += strCheckRemark;
+                            dr["selected"] = 0;
+                        }
+                    }
                 }
                 #endregion  
             }
