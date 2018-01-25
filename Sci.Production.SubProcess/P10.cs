@@ -1040,7 +1040,7 @@ and t.OutputDate between @StartDate and @EndDate";
                             case "PPA Feature":
                                 break;
                             case "Early Inline":
-                                this.EarlyInlineValidating(dr, this.txtUpdateColumn.Text, dr["EarlyInline"], dr["Inline"], false);
+                                this.EarlyInlineValidating(dr, this.txtUpdateColumn.Text, dr["EarlyInline"], dr["Inline"], true);
                                 break;
                             case "Learn Curve":
                                 this.LearnCurveValidating(dr, dr["SubProcessLearnCurveID"].ToString(), this.txtUpdateColumn.Text);
