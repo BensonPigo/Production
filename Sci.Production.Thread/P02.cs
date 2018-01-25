@@ -760,7 +760,7 @@ Left join (
     Select  a.Article,sum(a.qty) as OrderQty 
     from Order_Qty a WITH (NOLOCK) 
     inner join orders b WITH (NOLOCK) on a.id = b.id  
-    where b.POID = '{0}' and b.Category!='G'
+    where b.POID = '{0}' and b.Category!='G' and b.junk=0
     group by Article
 ) f on a.Article = f.Article
 Left join LocalItem g WITH (NOLOCK) on a.Refno = g.Refno

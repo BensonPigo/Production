@@ -18,6 +18,8 @@ namespace Sci.Production.SubProcess
     public partial class B02 : Sci.Win.Tems.Input6
     {
         private string user = Sci.Env.User.UserID;
+        private DataTable dtSMV = new DataTable();
+        private int newUkey = 0;
 
         /// <summary>
         /// B02
@@ -27,6 +29,30 @@ namespace Sci.Production.SubProcess
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.dtSMV.Columns.Add("StyleFeatureUkey", typeof(int));
+            this.dtSMV.Columns.Add("Seq", typeof(string));
+            this.dtSMV.Columns.Add("OperationID", typeof(string));
+            this.dtSMV.Columns.Add("Annotation", typeof(string));
+            this.dtSMV.Columns.Add("MachineTypeID", typeof(string));
+            this.dtSMV.Columns.Add("Mold", typeof(string));
+            this.dtSMV.Columns.Add("IETMSSMV", typeof(string));
+            this.dtSMV.Columns.Add("NewUkey", typeof(int));
+        }
+
+        /// <summary>
+        /// OnDetailSelectCommandPrepare
+        /// </summary>
+        /// <param name="e">e</param>
+        /// <returns>DualResult</returns>
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ukey"]);
+            this.DetailSelectCommand = string.Format(
+                @"
+select *,[NewUkey]=0 from style_feature
+where styleUkey = '{0}'",
+                masterID);
+            return base.OnDetailSelectCommandPrepare(e);
         }
 
         /// <summary>
@@ -126,9 +152,27 @@ namespace Sci.Production.SubProcess
 
             gridSMV.EditingMouseDown += (s, e) =>
             {
+                int featueUkey = MyUtility.Check.Empty(MyUtility.Convert.GetInt(this.CurrentDetailData["ukey"])) ? MyUtility.Convert.GetInt(this.CurrentDetailData["NewUkey"]) : MyUtility.Convert.GetInt(this.CurrentDetailData["ukey"]);
+                string strupdeSmv = string.Empty;
                 if (!this.EditMode)
                 {
-                    return;
+                    if (!MyUtility.Check.Empty(featueUkey))
+                    {
+                        string sqlcmd = $@"
+Select  Seq, OperationID, O.DescEN, SFS.Annotation, SFS.MachineTypeID, Mold, IETMSSMV
+From  Style_Feature_SMV SFS
+Left join Operation o on o.id=SFS.OperationID
+Where StyleFeatureUkey={featueUkey}
+Order by Seq
+";
+                        Sci.Win.Tools.SelectItem item1 = new Win.Tools.SelectItem(sqlcmd, "6,15,30,10,10,10,10", null, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", columndecimals: "0,0,0,0,0,0,4");
+                        item1.Width = 1000;
+                        DialogResult returnResult = item1.ShowDialog();
+                        if (returnResult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+                    }
                 }
 
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
@@ -137,6 +181,7 @@ namespace Sci.Production.SubProcess
                     string style = MyUtility.Convert.GetString(this.CurrentMaintain["id"]);
                     string season = MyUtility.Convert.GetString(this.CurrentMaintain["seasonid"]);
                     string sqlcomb = $@"select COMBOTYPE,id from timestudy where brandid='{brand}'and styleid= '{style}' and seasonid = '{season}'";
+
                     DataTable comb;
                     DualResult result = DBProxy.Current.Select(null, sqlcomb, out comb);
                     if (!result)
@@ -164,7 +209,7 @@ select
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 where td.ID = '{id}'
-order by td.Seq";
+order by td.Seq ";
 
                         Sci.Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sqlcmd, "Seq,Operation code,Operation Description,Annotation,M/C,Attachment,Std. SMV", string.Empty, string.Empty, columndecimals: "0,0,0,0,0,0,4", defaultValueColumn: "IETMSSMV");
                         DialogResult dresult = item.ShowDialog();
@@ -178,6 +223,35 @@ order by td.Seq";
                         foreach (string ss in smvs)
                         {
                             smv += MyUtility.Convert.GetDecimal(ss);
+                        }
+
+                        if (MyUtility.Check.Seek($@"select 1 from Style_Feature_SMV where StyleFeatureUkey={featueUkey}"))
+                        {
+                            strupdeSmv = strupdeSmv + $@"delete from Style_Feature_SMV where StyleFeatureUkey={featueUkey} 
+                        ";
+                        }
+
+                        DataRow[] drCheck = this.dtSMV.Select($@"StyleFeatureUkey={featueUkey}");
+                        if (drCheck.Length > 0)
+                        {
+                            foreach (DataRow dr1 in drCheck)
+                            {
+                                dr1.Delete();
+                            }
+                        }
+
+                        for (int i = 0; i < item.GetSelectedList().Count; i++)
+                        {
+                            DataRow dr = this.dtSMV.NewRow();
+                            dr["StyleFeatureUkey"] = featueUkey;
+                            dr["seq"] = item.GetSelecteds()[i]["SEQ"].ToString();
+                            dr["OperationID"] = item.GetSelecteds()[i]["OperationID"].ToString();
+                            dr["Annotation"] = item.GetSelecteds()[i]["Annotation"].ToString();
+                            dr["MachineTypeID"] = item.GetSelecteds()[i]["MachineTypeID"].ToString();
+                            dr["Mold"] = item.GetSelecteds()[i]["Mold"].ToString();
+                            dr["IETMSSMV"] = item.GetSelecteds()[i]["IETMSSMV"].ToString();
+                            dr["NewUkey"] = this.CurrentDetailData["NewUkey"];
+                            this.dtSMV.Rows.Add(dr);
                         }
 
                         this.CurrentDetailData["smv"] = smv;
@@ -222,9 +296,57 @@ order by td.Seq";
                             smv += MyUtility.Convert.GetDecimal(ss);
                         }
 
+                        if (MyUtility.Check.Seek($@"select 1 from Style_Feature_SMV where StyleFeatureUkey={featueUkey} "))
+                        {
+                            strupdeSmv = strupdeSmv + $@"delete from Style_Feature_SMV where StyleFeatureUkey={featueUkey} ";
+                        }
+
+                        DataRow[] drCheck = this.dtSMV.Select($@"StyleFeatureUkey={featueUkey}");
+                        if (drCheck.Length > 0)
+                        {
+                            foreach (DataRow dr1 in drCheck)
+                            {
+                                dr1.Delete();
+                            }
+                        }
+
+                        for (int i = 0; i < item.GetSelectedList().Count; i++)
+                        {
+                            DataRow dr = this.dtSMV.NewRow();
+                            dr["StyleFeatureUkey"] = featueUkey;
+                            dr["seq"] = item.GetSelecteds()[i]["SEQ"].ToString();
+                            dr["OperationID"] = item.GetSelecteds()[i]["OperationID"].ToString();
+                            dr["Annotation"] = item.GetSelecteds()[i]["Annotation"].ToString();
+                            dr["MachineTypeID"] = item.GetSelecteds()[i]["MachineTypeID"].ToString();
+                            dr["Mold"] = item.GetSelecteds()[i]["Mold"].ToString();
+                            dr["IETMSSMV"] = item.GetSelecteds()[i]["IETMSSMV"].ToString();
+                            dr["NewUkey"] = this.CurrentDetailData["NewUkey"];
+                            this.dtSMV.Rows.Add(dr);
+                        }
+
                         this.CurrentDetailData["smv"] = smv;
                         this.CurrentDetailData.EndEdit();
                     }
+
+                    if (strupdeSmv.Length > 0)
+                    {
+                        TransactionScope transactionscope = new TransactionScope();
+                        using (transactionscope)
+                        {
+                            DualResult dualResult = DBProxy.Current.Execute(null, strupdeSmv);
+
+                            if (dualResult == false)
+                            {
+                                transactionscope.Dispose();
+                                MyUtility.Msg.WarningBox(dualResult.ToString());
+                                return;
+                            }
+
+                            transactionscope.Complete();
+                            transactionscope.Dispose();
+                        }
+                    }
+
                 }
             };
             gridSMV.CellValidating += (s, e) =>
@@ -264,8 +386,11 @@ order by td.Seq";
         protected override void OnDetailGridInsert(int index = -1)
         {
             base.OnDetailGridInsert(index);
+            int styleUkey = MyUtility.Convert.GetInt(this.CurrentMaintain["ukey"]);
             this.CurrentDetailData["AddName"] = this.user;
             this.CurrentDetailData["AddDate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
+            this.CurrentDetailData["NewUkey"] = this.newUkey + 1;
+
         }
 
         /// <summary>
@@ -290,6 +415,115 @@ order by td.Seq";
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <summary>
+        /// 跳過底層,手寫存表身功能
+        /// </summary>
+        /// <param name="details">details</param>
+        /// <param name="detailtableschema">detailtableschema</param>
+        /// <returns>DualResult</returns>
+        protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
+        {
+            DataTable dtDB;
+            DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+            dtDetail.AcceptChanges();
+            string sqlcmd = "declare @ukey bigint ;";
+            DualResult result;
+            #region 刪除
+
+            // 表身沒有,但DB有資料就刪除
+            if (result = DBProxy.Current.Select(null, $@"select * from Style_Feature where styleUkey={this.CurrentMaintain["ukey"]}", out dtDB))
+            {
+                foreach (DataRow drd in dtDB.Rows)
+                {
+                    for (int d = 0; d < details.Count; d++)
+                    {
+                        DataRow[] drdelt = dtDetail.Select($"ukey={drd["ukey"]}");
+                        if (drdelt.Length < 1)
+                        {
+                            sqlcmd = sqlcmd + $@"
+delete from Style_Feature where ukey={drd["ukey"]}
+delete from Style_Feature_SMV where StyleFeatureUkey={drd["ukey"]}
+";
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region 新增,修改
+            for (int i = 0; i < dtDetail.Rows.Count; i++)
+            {
+                if (dtDetail.Rows.Count > 0)
+                {
+                    // NewUkey!=0,代表該資料不存在SQLDB,Insert
+                    if ((int)dtDetail.Rows[i]["NewUkey"] != 0)
+                    {
+                        sqlcmd = sqlcmd + $@"
+insert into Style_Feature (StyleUkey,Type,Feature,SMV,Remark,Addname,AddDate)
+values ({dtDetail.Rows[i]["StyleUkey"]},'{dtDetail.Rows[i]["Type"]}','{dtDetail.Rows[i]["Feature"]}','{dtDetail.Rows[i]["SMV"]}','{dtDetail.Rows[i]["Remark"]}','{dtDetail.Rows[i]["AddName"]}',convert(varchar, getdate(), 121))
+set @ukey  = (select @@identity);
+";
+                        for (int ii = 0; ii < this.dtSMV.Rows.Count; ii++)
+                        {
+                            if (MyUtility.Convert.GetInt(this.dtSMV.Rows[ii]["NewUkey"]) == MyUtility.Convert.GetInt(dtDetail.Rows[i]["NewUkey"]))
+                            {
+                                sqlcmd = sqlcmd + $@"
+insert into Style_Feature_SMV(StyleFeatureUkey,Seq,OperationID,Annotation,MachineTypeID,Mold,IETMSSMV)
+values(@ukey,'{this.dtSMV.Rows[ii]["Seq"]}','{this.dtSMV.Rows[ii]["OperationID"]}','{this.dtSMV.Rows[ii]["Annotation"]}','{this.dtSMV.Rows[ii]["MachineTypeID"]}','{this.dtSMV.Rows[ii]["Mold"]}','{this.dtSMV.Rows[ii]["IETMSSMV"]}')
+";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // NewUkey=0,代表該資料已存在SQLDB,Update
+                        sqlcmd = sqlcmd + $@"
+update Style_Feature
+set Type= '{dtDetail.Rows[i]["Type"]}',
+Feature= '{dtDetail.Rows[i]["Feature"]}',
+SMV= '{dtDetail.Rows[i]["SMV"]}',
+Remark = '{dtDetail.Rows[i]["Remark"]}',
+EditName = '{dtDetail.Rows[i]["EditName"]}',
+EditDate = convert(varchar, getdate(), 121)
+where ukey='{dtDetail.Rows[i]["Ukey"]}'
+";
+
+                        for (int ii = 0; ii < this.dtSMV.Rows.Count; ii++)
+                        {
+                            if (MyUtility.Convert.GetInt(this.dtSMV.Rows[ii]["StyleFeatureUkey"]) == MyUtility.Convert.GetInt(dtDetail.Rows[i]["ukey"]))
+                            {
+                                sqlcmd = sqlcmd + $@"
+insert into Style_Feature_SMV(StyleFeatureUkey,Seq,OperationID,Annotation,MachineTypeID,Mold,IETMSSMV)
+values({MyUtility.Convert.GetInt(dtDetail.Rows[i]["ukey"])},'{this.dtSMV.Rows[ii]["Seq"]}','{this.dtSMV.Rows[ii]["OperationID"]}','{this.dtSMV.Rows[ii]["Annotation"]}','{this.dtSMV.Rows[ii]["MachineTypeID"]}','{this.dtSMV.Rows[ii]["Mold"]}','{this.dtSMV.Rows[ii]["IETMSSMV"]}')
+";
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+            if (sqlcmd.Length > 0)
+            {
+                TransactionScope transactionscope = new TransactionScope();
+                using (transactionscope)
+                {
+                    DualResult dualResult = DBProxy.Current.Execute(null, sqlcmd);
+
+                    if (dualResult == false)
+                    {
+                        transactionscope.Dispose();
+                        MyUtility.Msg.WarningBox(dualResult.ToString());
+                        return Result.True;
+                    }
+
+                    transactionscope.Complete();
+                    transactionscope.Dispose();
+                }
+            }
+
+            return Result.True;
         }
 
         /// <summary>

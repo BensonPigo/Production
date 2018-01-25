@@ -217,6 +217,13 @@ left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = m
 			from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = cutting.ID
 where cutting.ID = '{0}';", tmp_id);
 
+                //orders.CutInLine及CutOffLine也要連帶更新
+                update = update + string.Format(@"update orders set CutInLine =  wk.Min_Wk_estcutdate, CutOffLine = wk.Max_Wk_estcutdate
+                                                from dbo.orders WITH (NOLOCK)
+                                                left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = max(estcutdate) 
+			                                                from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = orders.POID
+                                                where orders.POID = '{0}';", tmp_id);
+
             }
 
             if (update == "") return;

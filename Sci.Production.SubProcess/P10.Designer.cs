@@ -48,6 +48,8 @@
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.btnQuery = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnLocate = new Sci.Win.UI.Button();
+            this.txtLocate = new Sci.Win.UI.TextBox();
             this.lableDailyCpu = new Sci.Win.UI.Label();
             this.gridLeft = new Sci.Win.UI.Grid();
             this.listControlBindingSourceLeft = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -70,6 +72,8 @@
             this.listControlBindingSourceDateRange = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.lableGreen = new System.Windows.Forms.Label();
             this.labelComplete = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -241,6 +245,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnLocate);
+            this.splitContainer1.Panel1.Controls.Add(this.txtLocate);
             this.splitContainer1.Panel1.Controls.Add(this.lableDailyCpu);
             this.splitContainer1.Panel1.Controls.Add(this.gridLeft);
             // 
@@ -251,6 +257,25 @@
             this.splitContainer1.Size = new System.Drawing.Size(1193, 578);
             this.splitContainer1.SplitterDistance = 659;
             this.splitContainer1.TabIndex = 6;
+            // 
+            // btnLocate
+            // 
+            this.btnLocate.Location = new System.Drawing.Point(113, 22);
+            this.btnLocate.Name = "btnLocate";
+            this.btnLocate.Size = new System.Drawing.Size(80, 30);
+            this.btnLocate.TabIndex = 21;
+            this.btnLocate.Text = "Locate";
+            this.btnLocate.UseVisualStyleBackColor = true;
+            this.btnLocate.Click += new System.EventHandler(this.BtnLocate_Click);
+            // 
+            // txtLocate
+            // 
+            this.txtLocate.BackColor = System.Drawing.Color.White;
+            this.txtLocate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocate.Location = new System.Drawing.Point(7, 26);
+            this.txtLocate.Name = "txtLocate";
+            this.txtLocate.Size = new System.Drawing.Size(100, 23);
+            this.txtLocate.TabIndex = 20;
             // 
             // lableDailyCpu
             // 
@@ -568,11 +593,34 @@
             this.labelComplete.TabIndex = 18;
             this.labelComplete.Text = "complete";
             // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(477, 645);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(194, 17);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "[PPA Inline]<=[Cutting In Line]";
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.Red;
+            this.label3.Location = new System.Drawing.Point(455, 645);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(16, 17);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "  ";
+            // 
             // P10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1195, 673);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.labelComplete);
             this.Controls.Add(this.lableGreen);
             this.Controls.Add(this.pictureBoxUpdateColumn);
@@ -632,7 +680,10 @@
             this.Controls.SetChildIndex(this.pictureBoxUpdateColumn, 0);
             this.Controls.SetChildIndex(this.lableGreen, 0);
             this.Controls.SetChildIndex(this.labelComplete, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -689,5 +740,9 @@
         private Win.UI.Grid gridTop;
         private System.Windows.Forms.Label lableGreen;
         private System.Windows.Forms.Label labelComplete;
+        private Win.UI.Button btnLocate;
+        private Win.UI.TextBox txtLocate;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }

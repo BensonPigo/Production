@@ -2255,6 +2255,7 @@
     <Build Include="dbo\Tables\AdjustGMT.sql" />
     <Build Include="dbo\Tables\AdjustGMT_Detail.sql" />
     <Build Include="dbo\Functions\getMinCompleteGMTQty.sql" />
+    <Build Include="dbo\Tables\Style_Feature_SMV.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

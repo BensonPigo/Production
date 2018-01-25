@@ -38,7 +38,8 @@ namespace Sci.Production.SubProcess
             this.comboBoxUpdateColumn.SelectedIndex = 0;
         }
 
-        Ict.Win.UI.DataGridViewNumericBoxColumn setEarlyInlinecolor;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn setEarlyInlinecolor;
+        private Ict.Win.UI.DataGridViewTextBoxColumn setPPAInlinecolor;
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -95,6 +96,10 @@ namespace Sci.Production.SubProcess
                 object newTargetQty = e.FormattedValue;
                 object oldTargetQty = dr["TargetQty"];
                 this.TargetQtyValidating(dr, newTargetQty, oldTargetQty);
+
+                object oldEarlyInline = dr["EarlyInline"];
+                object oldInline = dr["Inline"];
+                this.EarlyInlineValidating(dr, oldEarlyInline, oldEarlyInline, oldInline, true);
             };
             #endregion
 
@@ -129,7 +134,7 @@ namespace Sci.Production.SubProcess
                 object oldEarlyInline = dr["EarlyInline"];
                 object oldInline = dr["Inline"];
 
-                this.EarlyInlineValidating(dr, newEarlyInline, oldEarlyInline, oldInline);
+                this.EarlyInlineValidating(dr, newEarlyInline, oldEarlyInline, oldInline, false);
             };
             #endregion
 
@@ -171,7 +176,7 @@ namespace Sci.Production.SubProcess
                 .Numeric("SMV", header: $"PPA{Environment.NewLine}SMV", integer_places: 3, decimal_places: 4, maximum: (decimal)999.9999, settings: setSMV)
                 .Numeric("EarlyInline", header: $"Early{Environment.NewLine}Inline", settings: setEarlyInline).Get(out this.setEarlyInlinecolor)
                 .Text("SubProcessLearnCurveID", header: $"Learn{Environment.NewLine}Curve", settings: setLearnCurve)
-                .Text("ShowInline", header: $"PPA{Environment.NewLine}Inline", iseditingreadonly: true)
+                .Text("ShowInline", header: $"PPA{Environment.NewLine}Inline", iseditingreadonly: true).Get(out this.setPPAInlinecolor)
                 .Text("ShowOffline", header: $"PPA{Environment.NewLine}Offline", iseditingreadonly: true)
                 .Numeric("Manpower", header: $"PPA{Environment.NewLine}Manpower", iseditingreadonly: true);
 
@@ -225,9 +230,12 @@ namespace Sci.Production.SubProcess
             listSQLParameter.Add(new SqlParameter("@SciDeliveryStart", strSciDeliveryStart));
             listSQLParameter.Add(new SqlParameter("@SciDeliveryEnd", strSciDeliveryEnd));
             listSQLParameter.Add(new SqlParameter("@Style", this.txtStyle.Text));
+            listSQLParameter.Add(new SqlParameter("@MDivisionID ", Sci.Env.User.Keyword));
 
             List<string> listSQLFilter = new List<string>();
             string strHolidayDateFactory = string.Empty;
+
+            listSQLFilter.Add("and o.MDivisionID = @MDivisionID");
 
             if (this.txtSPStart.Text.Empty() == false
                 && this.txtSPEnd.Text.Empty() == false)
@@ -299,6 +307,7 @@ from (
 		   , Offline = null
 		   , Manpower = 0
 		   , ID = null
+           ,o.CutInLine
 	from orders o
 	inner join #OrderList ol on o.ID = ol.OrderID
 	outer apply (
@@ -344,6 +353,7 @@ from (
 		   				/ @WorkingHour
 		   				/ @EFF
 		   , ID = ps.ID	
+           ,o.CutInLine
 	from PPASchedule ps
     inner join #OrderList ol on ps.OrderID = ol.OrderID
 	left join orders o on ol.OrderID = o.ID
@@ -549,13 +559,6 @@ end
 
                 #region Set Left Grid
                 this.listControlBindingSourceLeft.DataSource = dtGridData[0];
-
-                #region Set Early Date Color
-                //foreach (DataRow dr in ((DataTable)this.listControlBindingSourceLeft.DataSource).Rows)
-                //{
-                //    this.EarlyInlineColorChange();
-                //}
-                #endregion
                 #endregion
 
                 // 動態設定 OutputDate Grid
@@ -642,7 +645,7 @@ end
             }
 
             this.HideWaitMessage();
-            this.EarlyInlineColorChange();
+            this.ColumnColorChange();
         }
 
         private void CompleteColor_Green(DataRow dr, int ii)
@@ -808,6 +811,7 @@ where Qty is not null
                         listSQLParameter.Add(new SqlParameter("@OrderID", drPPASchedule["OrderID"]));
                         listSQLParameter.Add(new SqlParameter("@StartDate", this.objStartDate));
                         listSQLParameter.Add(new SqlParameter("@EndDate", this.objEndDate));
+                        listSQLParameter.Add(new SqlParameter("@MDivisionID ", Sci.Env.User.Keyword));
 
                         DataTable dtPPASchedule_Detail = dtOutputDateQtyRemark.Clone();
 
@@ -842,15 +846,16 @@ update set
 	, t.Offline = s.Offline
 	, t.EditDate = GETDATE()
 	, t.EditName = @UserName
+    , t.MDivisionID = @MDivisionID
 when not matched by target then
 insert (
 	OrderID		, [Group]	, SubProcessLineID		, OutputQty					, TargetQty
 	, Feature	, SMV		, EarlyInline			, SubProcessLearnCurveID	, Inline
-	, Offline	, AddDate	, AddName)
+	, Offline	, AddDate	, AddName, MDivisionID)
 values (
 	s.OrderID	, s.[Group]	, s.SubProcessLineID	, s.OutputQty				, s.TargetQty
 	, s.Feature	, s.SMV		, s.EarlyInline			, s.SubProcessLearnCurveID	, s.Inline
-	, s.Offline	, GETDATE()	, @UserName);
+	, s.Offline	, GETDATE()	, @UserName, @MDivisionID);
 select @@IDENTITY";
                         List<DataRow> listTmpTable = new List<DataRow>();
                         listTmpTable.Add(drPPASchedule);
@@ -1031,7 +1036,7 @@ and t.OutputDate between @StartDate and @EndDate";
                             case "PPA Feature":
                                 break;
                             case "Early Inline":
-                                this.EarlyInlineValidating(dr, this.txtUpdateColumn.Text, dr["EarlyInline"], dr["Inline"]);
+                                this.EarlyInlineValidating(dr, this.txtUpdateColumn.Text, dr["EarlyInline"], dr["Inline"], true);
                                 break;
                             case "Learn Curve":
                                 this.LearnCurveValidating(dr, dr["SubProcessLearnCurveID"].ToString(), this.txtUpdateColumn.Text);
@@ -1083,11 +1088,11 @@ and t.OutputDate between @StartDate and @EndDate";
                 List<SqlParameter> listSQLParameter = new List<SqlParameter>();
                 listSQLParameter.Add(new SqlParameter("@Group", newGroup));
 
-                string strCheckGroupSQL = @"
+                string strCheckGroupSQL = $@"
 select ID
 from SubProcessLine
 where Type = 'PPA'
-      and Junk = 0
+	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
       and GroupID = @Group";
 
                 if (MyUtility.Check.Seek(strCheckGroupSQL, listSQLParameter) == true)
@@ -1149,11 +1154,11 @@ where Type = 'PPA'
                 List<SqlParameter> listSQLParameter = new List<SqlParameter>();
                 listSQLParameter.Add(new SqlParameter("@ID", newID));
 
-                string strCheckGroupSQL = @"
+                string strCheckGroupSQL = $@"
 select GroupID
 from SubProcessLine
 where Type = 'PPA'
-      and Junk = 0
+	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
       and ID = @ID";
 
                 if (MyUtility.Check.Seek(strCheckGroupSQL, listSQLParameter) == true)
@@ -1267,9 +1272,9 @@ order by Feature";
         #endregion
 
         #region Early Inline
-        private void EarlyInlineValidating(DataRow dr, object newEarlyInline, object oldEarlyInline, object oldInline)
+        private void EarlyInlineValidating(DataRow dr, object newEarlyInline, object oldEarlyInline, object oldInline, bool flag)
         {
-            if (newEarlyInline.EqualDecimal(oldEarlyInline) == false)
+            if (newEarlyInline.EqualDecimal(oldEarlyInline) == false || flag)
             {
                 dr["EarlyInline"] = newEarlyInline;
                 dr.EndEdit();
@@ -1295,7 +1300,6 @@ order by Feature";
                     this.ReCalculateOutputDateQty(dr);
                 }
 
-                //this.EarlyInlineColorChange();
                 dr.EndEdit();
             }
         }
@@ -1403,11 +1407,7 @@ order by ID";
         #endregion
         #endregion
 
-        /// <summary>
-        /// EarlyInline Change Row Background Color
-        /// </summary>
-        /// <param name="dr">DataRow</param>
-        private void EarlyInlineColorChange()
+        private void ColumnColorChange()
         {
             this.setEarlyInlinecolor.CellFormatting += (s, e) =>
             {
@@ -1436,16 +1436,41 @@ order by ID";
 
                 this.gridLeft.Rows[e.RowIndex].Cells["EarlyInline"].Style.BackColor = newColor;
             };
+
+            this.setPPAInlinecolor.CellFormatting += (s, e) =>
+            {
+                DataRow dr = this.gridLeft.GetDataRow<DataRow>(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                Color newColor;
+                if (MyUtility.Check.Empty(dr["CutInLine"]))
+                {
+                    newColor = Color.Red;
+                }
+                else if (MyUtility.Convert.GetDate(dr["Inline"]) <= MyUtility.Convert.GetDate(dr["CutInLine"]))
+                {
+                    newColor = Color.Red;
+                }
+                else
+                {
+                    newColor = Color.White;
+                }
+
+                this.gridLeft.Rows[e.RowIndex].Cells["ShowInline"].Style.BackColor = newColor;
+            };
         }
 
         private void PPA_GroupLine_Click(DataRow dr, string strGroup, bool isUpdateMultipleGetValue)
         {
-            string strGetListSQL = @"
+            string strGetListSQL = $@"
 select [Group] = GroupID
        , ID
 from SubProcessLine
 where Type = 'PPA'
-	  and Junk = 0
+	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
 order by GroupID";
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(strGetListSQL, "15,15", strGroup);
@@ -1758,6 +1783,72 @@ where DailyQty.value > 0";
             {
                 this.gridLeft.CurrentCell = this.gridLeft.Rows[this.gridRight.CurrentCell.RowIndex].Cells[this.gridLeft.FirstDisplayedScrollingColumnIndex];
             }
+        }
+
+        private int index;
+        private string find = string.Empty;
+        private DataRow[] find_dr;
+
+        private void BtnLocate_Click(object sender, EventArgs e)
+        {
+            string ftext = this.txtLocate.Text;
+            int fint = MyUtility.Convert.GetInt(ftext);
+            if (MyUtility.Check.Empty(ftext))
+            {
+                return;
+            }
+
+            string find_new = $@"
+Group like '%{ftext}%'
+or SubProcessLineID like '%{ftext}%'
+or SewingLine like '%{ftext}%'
+or StyleID like '%{ftext}%'
+or OrderID like '%{ftext}%'
+or ShowSewInLine like '%{ftext}%'
+or Feature like '%{ftext}%'
+or SubProcessLearnCurveID like '%{ftext}%'
+or ShowInline like '%{ftext}%'
+or ShowOffline like '%{ftext}%'";
+            if (!MyUtility.Check.Empty(fint))
+            {
+                find_new += $@"
+or OrderQty = {fint}
+or OutputQty = {fint}
+or BalanceQty = {fint}
+or TargetQty = {fint}
+or SMV = {fint}
+or EarlyInline = {fint}
+or Manpower = {fint}";
+            }
+
+            DataTable detDtb = (DataTable)this.listControlBindingSourceLeft.DataSource;
+
+            if (this.find != find_new)
+            {
+                this.find = find_new;
+                this.find_dr = detDtb.Select(find_new);
+                if (this.find_dr.Length == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not Found.");
+                    return;
+                }
+                else { this.index = 0; }
+            }
+            else
+            {
+                this.index++;
+                if (this.find_dr == null)
+                {
+                    return;
+                }
+
+                if (this.index >= this.find_dr.Length)
+                {
+                    this.index = 0;
+                }
+            }
+
+            this.listControlBindingSourceLeft.Position = detDtb.Rows.IndexOf(this.find_dr[this.index]);
         }
     }
 }
