@@ -1088,11 +1088,11 @@ and t.OutputDate between @StartDate and @EndDate";
                 List<SqlParameter> listSQLParameter = new List<SqlParameter>();
                 listSQLParameter.Add(new SqlParameter("@Group", newGroup));
 
-                string strCheckGroupSQL = @"
+                string strCheckGroupSQL = $@"
 select ID
 from SubProcessLine
 where Type = 'PPA'
-      and Junk = 0
+	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
       and GroupID = @Group";
 
                 if (MyUtility.Check.Seek(strCheckGroupSQL, listSQLParameter) == true)
@@ -1154,11 +1154,11 @@ where Type = 'PPA'
                 List<SqlParameter> listSQLParameter = new List<SqlParameter>();
                 listSQLParameter.Add(new SqlParameter("@ID", newID));
 
-                string strCheckGroupSQL = @"
+                string strCheckGroupSQL = $@"
 select GroupID
 from SubProcessLine
 where Type = 'PPA'
-      and Junk = 0
+	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
       and ID = @ID";
 
                 if (MyUtility.Check.Seek(strCheckGroupSQL, listSQLParameter) == true)
@@ -1445,12 +1445,12 @@ order by ID";
 
         private void PPA_GroupLine_Click(DataRow dr, string strGroup, bool isUpdateMultipleGetValue)
         {
-            string strGetListSQL = @"
+            string strGetListSQL = $@"
 select [Group] = GroupID
        , ID
 from SubProcessLine
 where Type = 'PPA'
-	  and Junk = 0
+	  and Junk = 0 and MDivisionID ='{Sci.Env.User.Keyword}'
 order by GroupID";
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(strGetListSQL, "15,15", strGroup);
@@ -1772,6 +1772,7 @@ where DailyQty.value > 0";
         private void BtnLocate_Click(object sender, EventArgs e)
         {
             string ftext = this.txtLocate.Text;
+            int fint = MyUtility.Convert.GetInt(ftext);
             if (MyUtility.Check.Empty(ftext))
             {
                 return;
@@ -1784,17 +1785,22 @@ or SewingLine like '%{ftext}%'
 or StyleID like '%{ftext}%'
 or OrderID like '%{ftext}%'
 or ShowSewInLine like '%{ftext}%'
-or TargetQty like '%{ftext}%'
 or Feature like '%{ftext}%'
-or SMV like '%{ftext}%'
-or EarlyInline like '%{ftext}%'
 or SubProcessLearnCurveID like '%{ftext}%'
 or ShowInline like '%{ftext}%'
-or ShowOffline like '%{ftext}%'
-or Manpower like '%{ftext}%'";
-// or OrderQty like '%{ftext}%'
-//or OutputQty like '%{ftext}%'
-//or BalanceQty like '%{ftext}%'
+or ShowOffline like '%{ftext}%'";
+            if (!MyUtility.Check.Empty(fint))
+            {
+                find_new += $@"
+or OrderQty = {fint}
+or OutputQty = {fint}
+or BalanceQty = {fint}
+or TargetQty = {fint}
+or SMV = {fint}
+or EarlyInline = {fint}
+or Manpower = {fint}";
+            }
+
             DataTable detDtb = (DataTable)this.listControlBindingSourceLeft.DataSource;
 
             if (this.find != find_new)
