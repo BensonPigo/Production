@@ -22,19 +22,35 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             System.Data.DataTable Year = null;
-            string cmd = (@"declare @d date = getdate()
-                            declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
-                            declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
-                            declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
-                            select @y1 as y1,@y2 as y2,@y3 as y3 into #temp 
-                            select * from #temp 
-                            unpivot(M FOR #temp IN 
-                            (y1,y2,y3)) as years");
+            string cmd = (@"
+declare @y Table (M int);
+
+declare @StartYear int = 2013;
+declare @EndYear int = datepart(year, DateAdd (Month, -1, getDate()))
+
+while (@StartYear <= @EndYear)
+begin 
+	insert into @y
+	(M)
+	values
+	(@StartYear)
+
+	set @StartYear = @StartYear + 1
+end
+
+select *
+from @y");
             DBProxy.Current.Select("", cmd, out Year);
             Year.DefaultView.Sort = "M";
             this.comboYear.DataSource = Year;
             this.comboYear.ValueMember = "M";
             this.comboYear.DisplayMember = "M";
+
+            if (Year != null
+                && Year.Rows.Count > 0)
+            {
+                this.comboYear.SelectedIndex = Year.Rows.Count - 1;
+            }
 
             this.comboBrand.SelectedIndex = 0;
             print.Enabled = false;
@@ -940,6 +956,16 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
 
             foreach (var wkSheet in lisWK)
             {
+                for (int idx = 1; idx < 14; idx++)
+                {
+                    wkSheet.Cells[2, idx * 3] = "Quality";
+                    wkSheet.Columns[idx * 3].HorizontalAlignment = XlHAlign.xlHAlignRight;
+                    wkSheet.Cells[2, idx * 3 + 1] = "Percentage";
+                    wkSheet.Columns[idx * 3 + 1].HorizontalAlignment = XlHAlign.xlHAlignRight;
+                    wkSheet.Cells[2, idx * 3 + 2] = "Amount US$";
+                    wkSheet.Columns[idx * 3 + 2].HorizontalAlignment = XlHAlign.xlHAlignRight;
+                }
+
                 wkSheet.Cells[1, 1] = ""; wkSheet.get_Range("A1:B1").Merge();
                 wkSheet.Cells[1, 2] = "";
                 wkSheet.Cells[1, 3] = "January"; wkSheet.get_Range("C1:E1").Merge();
@@ -972,13 +998,6 @@ drop table #tmp,#t_all,#t_qty,#t_Amount,#last
                 wkSheet.Cells[1, 33].HorizontalAlignment = XlVAlign.xlVAlignCenter;
                 wkSheet.Cells[1, 36].HorizontalAlignment = XlVAlign.xlVAlignCenter;
                 wkSheet.Cells[1, 39].HorizontalAlignment = XlVAlign.xlVAlignCenter;
-
-                for (int idx = 1; idx < 14; idx++)
-                {
-                    wkSheet.Cells[2, idx * 3] = "Quality";
-                    wkSheet.Cells[2, idx * 3 + 1] = "Percentage";
-                    wkSheet.Cells[2, idx * 3 + 2] = "Amount US$";
-                }
             }
 
             //mySheet.Delete();

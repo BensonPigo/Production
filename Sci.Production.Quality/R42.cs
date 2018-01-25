@@ -38,19 +38,35 @@ namespace Sci.Production.Quality
             InitializeComponent();
 
             System.Data.DataTable Year = null;
-            string cmd = (@"declare @d date = getdate()
-                            declare @y1 varchar(4) = cast(datepart(year, dateadd(year,-2, @d) ) as varchar(4))
-                            declare @y2 varchar(4) = cast(datepart(year, dateadd(year,-1, @d) ) as varchar(4))
-                            declare @y3 varchar(4) = cast(datepart(year,@d) as varchar(4))
-                            select @y1 as y1,@y2 as y2,@y3 as y3 into #temp 
-                            select * from #temp 
-                            unpivot(M FOR #temp IN 
-                            (y1,y2,y3)) as years");
+            string cmd = (@"
+declare @y Table (M int);
+
+declare @StartYear int = 2013;
+declare @EndYear int = datepart(year, DateAdd (Month, -1, getDate()))
+
+while (@StartYear <= @EndYear)
+begin 
+	insert into @y
+	(M)
+	values
+	(@StartYear)
+
+	set @StartYear = @StartYear + 1
+end
+
+select *
+from @y");
             DBProxy.Current.Select("", cmd, out Year);
             Year.DefaultView.Sort = "M";
             this.comboYear.DataSource = Year;
             this.comboYear.ValueMember = "M";
             this.comboYear.DisplayMember = "M";
+
+            if (Year != null
+                && Year.Rows.Count > 0)
+            {
+                this.comboYear.SelectedIndex = Year.Rows.Count - 1;
+            }
 
             print.Enabled = false;
         }
