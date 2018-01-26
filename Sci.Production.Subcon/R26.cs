@@ -148,7 +148,7 @@ namespace Sci.Production.Subcon
             sqlWhere = string.Join(" and ", sqlWheres);
             if (!sqlWhere.Empty())
             {
-                sqlWhere = " where " + sqlWhere;
+                sqlWhere = checkBoxNoClosed.Checked ? " where a.Status != 'Closed' and " + sqlWhere : " where " + sqlWhere;
             }
             all = @"
 select  Title1

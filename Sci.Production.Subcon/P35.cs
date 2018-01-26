@@ -400,20 +400,7 @@ where lapd.id = '{0}'"
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
-            #region 檢查po是否close了。
-            sqlcmd = string.Format(@"select a.id from Localpo a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
-                            where a.id = b.Localpoid and a.status = 'Closed' and b.id = '{0}'", CurrentMaintain["id"]);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
-            if (datacheck.Rows.Count > 0)
-            {
-                foreach (DataRow drchk in datacheck.Rows)
-                {
-                    ids += drchk[0].ToString() + ",";
-                }
-                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't Approve it", ids));
-                return;
-            }
-            #endregion
+            
             #region 檢查apqty是否超過poqty
             ids = "";
             foreach (var dr1 in DetailDatas)
@@ -551,23 +538,7 @@ inner join #tmp b on a.ukey = b.ukey";
             String sqlcmd, sqlupd2 = "", sqlupd3 = "", ids = "";
             DualResult result, result2;
             DataTable datacheck;
-            #region 檢查po是否close了。
-            sqlcmd = string.Format(@"select a.id from Localpo a WITH (NOLOCK) , Localap_detail b WITH (NOLOCK) 
-                            where a.id = b.Localpoid and a.status = 'Closed' and b.id = '{0}'", CurrentMaintain["id"]);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck))) { ShowErr(sqlcmd, result); }
-            if (datacheck.Rows.Count > 0)
-            {
-                foreach (DataRow drchk in datacheck.Rows)
-                {
-                    ids += drchk[0].ToString() + ",";
-                }
-                MyUtility.Msg.WarningBox(String.Format("These POID <{0}> already closed, can't UnApprove it", ids));
-                return;
-            }
-            #endregion
-
-         
-
+   
             #region 開始更新相關table資料
             sqlupd3 = string.Format(@"update Localap set status='New',apvname='', apvdate = null , editname = '{0}' 
                                                 , editdate = GETDATE()"+ "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
