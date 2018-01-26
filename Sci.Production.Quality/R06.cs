@@ -107,7 +107,7 @@ namespace Sci.Production.Quality
 
            cmd = string.Format(@"
 
-select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno 
+select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID
 into #tmp1
 from
 (
@@ -140,7 +140,7 @@ left join PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SE
 where psd.FabricType = 'F'
 " + sqlWhere + @"
 ------------Fabric Defect ----- 
-select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno 
+select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid 
 into #tmpAllData
 from #tmp1 t
 inner join Receiving_Detail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2
@@ -379,9 +379,9 @@ group by f.Suppid
 ------#FabricInspDoc TestReport
 select  b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
-(select count(*) from po_supp_detail p
-inner join po_supp p2 on p.id=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
-inner join  FabricInspDoc f1 on p.id=f1.Id and f1.Id=a.Id 
+(select count(*) from #tmpAllData p
+inner join po_supp p2 on p.poid=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
+inner join  FabricInspDoc f1 on p.poid=f1.Id and f1.Id=a.Id 
 where f1.Status='Confirmed'
  ),4),0)
 into #tmpTestReport
@@ -394,9 +394,9 @@ group by b.SuppID,a.Id
 ------#FabricInspDoc Inspection Report
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
-(select count(*) from po_supp_detail p
-inner join po_supp p2 on p.id=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
-inner join  FabricInspDoc f1 on p.id=f1.Id and f1.Id=a.Id 
+(select count(*) from #tmpAllData p
+inner join po_supp p2 on p.poid=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
+inner join  FabricInspDoc f1 on p.poid=f1.Id and f1.Id=a.Id 
 where f1.Status='Confirmed'
  ),4),0)
 into #InspReport
@@ -409,9 +409,9 @@ group by b.SuppID,a.Id
 ------#FabricInspDoc Approved Continuity Card Provided %
 select b.SuppID,[cnt] = isnull(round(convert(float,
 count(a.id))/
-(select count(*) from po_supp_detail p
-inner join po_supp p2 on p.id=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
-inner join  FabricInspDoc f1 on p.id=f1.Id and f1.Id=a.Id 
+(select count(*) from #tmpAllData p
+inner join po_supp p2 on p.poid=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
+inner join  FabricInspDoc f1 on p.poid=f1.Id and f1.Id=a.Id 
 where f1.Status='Confirmed'
  ),4),0)
  into #tmpContinuityCard 
@@ -427,9 +427,9 @@ select  ta.SuppID,
 (select count(1) from
 	(
 		select f2.ID,f2.SuppID,f2.Refno,f2.ColorID
-		from po_supp_detail p3
-		inner join po_supp p2 on p3.id=p2.ID and p3.SEQ1=p2.SEQ1
-		left join  FabricInspDoc f1 on p3.id=f1.Id
+		from #tmpAllData p3
+		inner join po_supp p2 on p3.poid=p2.ID and p3.SEQ1=p2.SEQ1
+		left join  FabricInspDoc f1 on p3.poid=f1.Id
 		left join  FabricInspDoc_Detail f2 on f1.id=f2.id  and p3.seq1=f2.seq1 and p3.seq2=f2.seq2
 		and f2.SuppID=p2.SuppID and f2.Refno=p3.Refno
 		where f1.Status='Confirmed'
@@ -442,12 +442,12 @@ select  ta.SuppID,
 / 
 (select count(1) from
 	(
-		select po3.id,po3.Refno,po2.SuppID,po3.ColorID
-		from po_supp_detail po3 
-		inner join po_supp po2 on po3.id=po2.ID and po3.SEQ1=po2.SEQ1 		
-		where po3.id=ta.poID
+		select po3.poid,po3.Refno,po2.SuppID,po3.ColorID
+		from #tmpAllData po3 
+		inner join po_supp po2 on po3.poid=po2.ID and po3.SEQ1=po2.SEQ1 		
+		where po3.poid=ta.poID
 		and po2.suppid=ta.suppid 
-		group by po3.id,po3.Refno,po2.SuppID,po3.ColorID
+		group by po3.poid,po3.Refno,po2.SuppID,po3.ColorID
 	) aa
  ),4),0)
 into #BulkDyelot
