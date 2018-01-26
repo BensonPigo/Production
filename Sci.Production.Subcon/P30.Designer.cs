@@ -603,8 +603,10 @@
             this.GridAlias = "localPO_detail";
             this.GridNew = 0;
             this.GridUniqueKey = "orderid,refno,threadcolorid";
+            this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnclose = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P30";

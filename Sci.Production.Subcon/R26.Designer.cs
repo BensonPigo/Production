@@ -50,6 +50,7 @@
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.checkShippingMark = new Sci.Win.UI.CheckBox();
+            this.checkBoxNoClosed = new Sci.Win.UI.CheckBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,6 +71,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkBoxNoClosed);
             this.panel1.Controls.Add(this.comboFactory);
             this.panel1.Controls.Add(this.txtLocalPoidEnd);
             this.panel1.Controls.Add(this.label10);
@@ -92,7 +94,7 @@
             this.panel1.Controls.Add(this.labelSCIDelivery);
             this.panel1.Location = new System.Drawing.Point(8, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(409, 277);
+            this.panel1.Size = new System.Drawing.Size(409, 293);
             this.panel1.TabIndex = 1;
             // 
             // comboFactory
@@ -118,7 +120,6 @@
             // label10
             // 
             this.label10.BackColor = System.Drawing.SystemColors.Control;
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(245, 106);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(20, 23);
@@ -147,7 +148,6 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.SystemColors.Control;
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(245, 76);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(22, 23);
@@ -204,6 +204,20 @@
             // 
             // dateIssueDate
             // 
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateIssueDate.DateBox1.Name = "";
+            this.dateIssueDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateIssueDate.DateBox2.Name = "";
+            this.dateIssueDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox2.TabIndex = 1;
             this.dateIssueDate.IsRequired = false;
             this.dateIssueDate.Location = new System.Drawing.Point(114, 41);
             this.dateIssueDate.Name = "dateIssueDate";
@@ -212,6 +226,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(114, 8);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -220,7 +248,6 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Lines = 0;
             this.labelReportType.Location = new System.Drawing.Point(15, 236);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(94, 23);
@@ -229,7 +256,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(15, 205);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(94, 23);
@@ -238,7 +264,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(15, 168);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(94, 23);
@@ -247,7 +272,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(15, 136);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(94, 23);
@@ -256,7 +280,6 @@
             // 
             // labelLocalPoid
             // 
-            this.labelLocalPoid.Lines = 0;
             this.labelLocalPoid.Location = new System.Drawing.Point(15, 106);
             this.labelLocalPoid.Name = "labelLocalPoid";
             this.labelLocalPoid.Size = new System.Drawing.Size(94, 23);
@@ -265,7 +288,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(15, 75);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(94, 23);
@@ -274,7 +296,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(15, 41);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(94, 23);
@@ -283,7 +304,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(15, 8);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(94, 23);
@@ -302,9 +322,20 @@
             this.checkShippingMark.UseVisualStyleBackColor = true;
             this.checkShippingMark.CheckedChanged += new System.EventHandler(this.checkShippingMark_CheckedChanged);
             // 
+            // checkBoxNoClosed
+            // 
+            this.checkBoxNoClosed.AutoSize = true;
+            this.checkBoxNoClosed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxNoClosed.Location = new System.Drawing.Point(15, 265);
+            this.checkBoxNoClosed.Name = "checkBoxNoClosed";
+            this.checkBoxNoClosed.Size = new System.Drawing.Size(250, 21);
+            this.checkBoxNoClosed.TabIndex = 94;
+            this.checkBoxNoClosed.Text = "Outstanding (without payment only)";
+            this.checkBoxNoClosed.UseVisualStyleBackColor = true;
+            // 
             // R26
             // 
-            this.ClientSize = new System.Drawing.Size(547, 314);
+            this.ClientSize = new System.Drawing.Size(547, 331);
             this.Controls.Add(this.checkShippingMark);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "dateSCIDelivery";
@@ -347,6 +378,6 @@
         private Win.UI.TextBox txtSPNoStart;
         private Win.UI.CheckBox checkShippingMark;
         private Win.UI.ComboBox comboFactory;
-
+        private Win.UI.CheckBox checkBoxNoClosed;
     }
 }
