@@ -47,10 +47,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(726, 351);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.labelStatus);
@@ -64,16 +60,10 @@
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtRequest);
             this.detailcont.Controls.Add(this.labelM);
-            this.detailcont.Size = new System.Drawing.Size(726, 313);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 313);
-            this.detailbtm.Size = new System.Drawing.Size(726, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(632, 304);
+            this.browse.Size = new System.Drawing.Size(726, 351);
             // 
             // tabs
             // 
@@ -187,7 +177,7 @@
             // P14
             // 
             this.ClientSize = new System.Drawing.Size(734, 413);
-            this.DefaultOrder = "OrderID,AddDate";
+            this.DefaultOrder = "ID";
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
             this.IsSupportSend = true;
