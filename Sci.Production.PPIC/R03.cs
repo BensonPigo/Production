@@ -421,7 +421,7 @@ tmpFilterZone as (
                 sqlCmd.Append(string.Format(
                     @"
     inner join Style_TmsCost st on t.StyleUkey = st.StyleUkey
-    where st.ArtworkTypeID = '{0}'", this.subProcess));
+    where st.ArtworkTypeID = '{0}' AND (st.Qty>0 or st.TMS>0 and st.Price>0) ", this.subProcess));
             }
 
             if (this.poCombo)
