@@ -17,7 +17,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.52368cm</Height>
+              <Height>0.13229cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -107,7 +107,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.12917cm</Height>
+              <Height>0.952cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -180,7 +180,7 @@ SP#</Value>
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.10271cm</Height>
+              <Height>0.92554cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -354,6 +354,7 @@ SP#</Value>
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -365,7 +366,7 @@ SP#</Value>
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.67938cm</Height>
+              <Height>1.06822cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -580,7 +581,7 @@ SP#</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Repared By</Value>
+                              <Value>Prepared By</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -659,6 +660,7 @@ SP#</Value>
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -742,7 +744,7 @@ SP#</Value>
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.38884cm</Height>
+              <Height>0.17717cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -857,7 +859,7 @@ SP#</Value>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
         <Left>0.76729cm</Left>
-        <Height>7.37413cm</Height>
+        <Height>6.80557cm</Height>
         <Width>8.36995cm</Width>
         <Style>
           <Border>
@@ -880,7 +882,7 @@ SP#</Value>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.52368cm</Height>
+              <Height>0.13229cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -970,7 +972,7 @@ SP#</Value>
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.12917cm</Height>
+              <Height>0.952cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1043,7 +1045,7 @@ SP#</Value>
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>1.10271cm</Height>
+              <Height>0.92554cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1217,6 +1219,7 @@ SP#</Value>
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -1228,7 +1231,7 @@ SP#</Value>
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.67938cm</Height>
+              <Height>1.06822cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1443,7 +1446,7 @@ SP#</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Repared By</Value>
+                              <Value>Prepared By</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1522,6 +1525,7 @@ SP#</Value>
                           <Color>LightGrey</Color>
                           <Style>Solid</Style>
                         </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -1605,7 +1609,7 @@ SP#</Value>
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.38884cm</Height>
+              <Height>0.17717cm</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1720,7 +1724,7 @@ SP#</Value>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
         <Left>11.51765cm</Left>
-        <Height>7.37413cm</Height>
+        <Height>6.80557cm</Height>
         <Width>8.36995cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
@@ -1730,7 +1734,7 @@ SP#</Value>
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>7.425cm</Height>
+    <Height>6.80557cm</Height>
     <Style />
   </Body>
   <Width>21cm</Width>
@@ -1787,7 +1791,7 @@ SP#</Value>
         </Field>
         <Field Name="Qty">
           <DataField>Qty</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
         <Field Name="RefNo">
           <DataField>RefNo</DataField>
@@ -1799,7 +1803,7 @@ SP#</Value>
         </Field>
         <Field Name="RowNo">
           <DataField>RowNo</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="StockUnit">
           <DataField>StockUnit</DataField>

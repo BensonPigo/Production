@@ -19,6 +19,6 @@ namespace Sci.Production.Warehouse
         public string RefNo { get; set; }
         public string Color { get; set; }
         public string StockUnit { get; set; }
-        public string Qty { get; set; }
+        public double Qty { get; set; }
     }
 }
