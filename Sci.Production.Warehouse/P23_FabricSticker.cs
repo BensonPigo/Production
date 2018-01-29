@@ -119,7 +119,7 @@ order by NewRowNo";
                     RefNo = row["RefNo"].ToString().Trim(),
                     Color = row["Color"].ToString().Trim(),
                     StockUnit = row["StockUnit"].ToString().Trim(),
-                    Qty = row["Qty"].ToString().Trim(),
+                    Qty = Convert.ToDouble(row["Qty"]),
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition();
