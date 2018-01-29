@@ -39,9 +39,9 @@ begin
 end
 
 select *
-from @y");
+from @y
+order by M desc");
             DBProxy.Current.Select("", cmd, out Year);
-            Year.DefaultView.Sort = "M";
             this.comboYear.DataSource = Year;
             this.comboYear.ValueMember = "M";
             this.comboYear.DisplayMember = "M";
@@ -49,7 +49,7 @@ from @y");
             if (Year != null
                 && Year.Rows.Count > 0)
             {
-                this.comboYear.SelectedIndex = Year.Rows.Count - 1;
+                this.comboYear.SelectedIndex = 0;
             }
 
             this.comboBrand.SelectedIndex = 0;

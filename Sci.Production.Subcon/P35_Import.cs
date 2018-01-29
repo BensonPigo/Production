@@ -83,7 +83,7 @@ namespace Sci.Production.Subcon
                                                                                 ,b.apqty
                                                                                 ,b.inqty - b.apqty AS balance
                                                                         from localpo a WITH (NOLOCK) , localpo_detail b WITH (NOLOCK) 
-                                                                        where a.id = b.id and a.status='Approved' and b.apqty < inqty
+                                                                        where a.id = b.id and a.status != 'New' and b.apqty < inqty
                                                                         and a.category = '{0}' 
                                                                         and a.localsuppid = '{1}' and a.mdivisionid = '{2}'", dr_localAp["category"],
                                                                                                             dr_localAp["localsuppid"],Env.User.Keyword);

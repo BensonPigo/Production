@@ -54,6 +54,8 @@ namespace Sci.Production.Subcon
             {
                 this.toolbar.cmdConfirm.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "New";
                 this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "Approved";
+                this.toolbar.cmdClose.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "Approved";
+                this.toolbar.cmdUnclose.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "Closed";
             }
         }
 
@@ -906,6 +908,81 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0)
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("UnApprove successful");
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+        }
+
+        // Close
+        protected override void ClickClose()
+        {
+            base.ClickClose();
+            string sqlupd3 = string.Format("update Localpo set status='Closed', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
+                              "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            DualResult result;
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(sqlupd3, result);
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                    MyUtility.Msg.InfoBox("Close successful");
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+        }
+
+        //Unclose
+        protected override void ClickUnclose()
+        {
+            base.ClickUnclose();
+            
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to UnClose it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            if (dResult.ToString().ToUpper() == "NO") return;
+            var dr = this.CurrentMaintain; if (null == dr) return;
+            String sqlupd3 = "";
+            DualResult result;
+
+            sqlupd3 = string.Format(@"update Localpo set status='Approved',apvname='', apvdate = null , editname = '{0}' 
+                                                    , editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(sqlupd3, result);
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                    MyUtility.Msg.InfoBox("UnClose successful");
                 }
                 catch (Exception ex)
                 {
