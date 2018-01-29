@@ -33,6 +33,11 @@ namespace Sci.Production.Quality
             detailgridmenus.Items.Remove(appendmenu);
             detailgridmenus.Items.Remove(modifymenu);
             detailgridmenus.Items.Remove(deletemenu);
+            detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                this.modifyPhysicalInspectionToolStripMenuItem,
+                this.modifyWeightTestToolStripMenuItem,
+                this.modifyShadeBondTestToolStripMenuItem,
+                this.modifyContinuityTestToolStripMenuItem });
             //關閉表身Grid DoubleClick 會新增row的問題
             InsertDetailGridOnDoubleClick = false;
         }
