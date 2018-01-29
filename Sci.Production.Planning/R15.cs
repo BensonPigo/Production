@@ -757,7 +757,7 @@ Select DISTINCT
     [Comb] = b.PatternPanel,
 	b.FabricPanelCode,
     bd.PatternCode,
-    Qty = iif(bio.InComing is null ,0,bd.Qty),
+    bd.Qty,
     bio.InComing,
     bio.OutGoing
 into #tmp
@@ -775,7 +775,7 @@ and b.Orderid in (select distinct orderid from #cte)
 and bof.kind != 0
 --order by [M],[Factory],[SP],SubProcessId,article,[Size],[Comb],FabricPanelCode,PatternCode
 ------
-select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(Qty)
+select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
 into #tmp2
 from #tmp
 group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
@@ -848,7 +848,7 @@ select t.MDivisionID
        , t.Qty
        , #cte2.first_cut_date
        , #cte2.cut_qty
-       , [RFID Cut Qty] = isnull (CutQty.AccuInCome, 0)
+       , [RFID Cut Qty] = isnull (CutQty.AccuOutCome, 0)
        , [RFID Loading Qty] = isnull (loading.AccuInCome,0)             
        , [RFID Emb Farm In Qty] = isnull (Embin.AccuInCome, 0)
        , [RFID Emb Farm Out Qty] = isnull (Embout.AccuOutGo, 0)
@@ -942,8 +942,8 @@ outer apply (
           and t.KPIChangeReason is not null 
 ) KPIChangeReason 
 outer apply (
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-    from #tmpin 
+	select [AccuOutCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+    from #tmpout 
 	where SP = t.OrderID 
 	      and FactoryID = t.FactoryID
           and SubProcessId = 'SORTING'
@@ -1058,7 +1058,7 @@ outer apply(
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
             sqlCmd.Append(@" 
 DROP TABLE #cte2, #cte, #tsp, #cutcomb, #tmpBundleInOutQty, #cur_bdltrack2, #Min_cut
-           , #AccuInComeData, #TablePatternUkey, #TablePatternCode,#tmp,#tmpin2,#tmpin3,#tmpout2,#tmpout3,#tmpin,#tmpout
+           , #AccuInComeData, #TablePatternUkey, #TablePatternCode,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout
 ");
             if (this.isArtwork)
             {
