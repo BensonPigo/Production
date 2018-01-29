@@ -37,9 +37,9 @@ begin
 end
 
 select *
-from @y");
+from @y
+order by M desc");
             DBProxy.Current.Select("", cmd, out Year);
-            Year.DefaultView.Sort = "M";
             
             this.comboyear.DataSource = Year;
             this.comboyear.ValueMember = "M";
@@ -48,7 +48,7 @@ from @y");
             if (Year != null
                 && Year.Rows.Count > 0)
             {
-                this.comboyear.SelectedIndex = Year.Rows.Count - 1;
+                this.comboyear.SelectedIndex = 0;
             }
 
             //DataTable Month = null;
