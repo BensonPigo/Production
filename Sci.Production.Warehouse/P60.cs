@@ -157,6 +157,7 @@ where ID = '{0}'", CurrentMaintain["ID"].ToString()));
             #endregion Status Label
         }
 
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
@@ -251,7 +252,7 @@ where	Junk != 1
             .Numeric("poqty", header: "PO Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
             .Text("unitId", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("onRoad", header: "On Road", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
-            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, settings: ns)
+            .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, settings: ns).Get(out col_qty)
             .Text("location", header: "Location", width: Widths.AnsiChars(20), settings: locationSet)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
             ;     //
@@ -260,6 +261,33 @@ where	Junk != 1
             detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
+            this.ColumnColorChange();
+        }
+
+
+        private void ColumnColorChange()
+        {
+            this.col_qty.CellFormatting += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                Color newColor;
+                if (MyUtility.Convert.GetString(this.CurrentMaintain["status"]).EqualString("New") && MyUtility.Convert.GetDecimal(dr["inqty"]) + MyUtility.Convert.GetDecimal(dr["qty"]) > MyUtility.Convert.GetDecimal(dr["poqty"]))
+                {
+                    // 黃色
+                    newColor = Color.Yellow;
+                }
+                else
+                {
+                    newColor = Color.Pink;
+                }
+
+                this.detailgrid.Rows[e.RowIndex].Cells["qty"].Style.BackColor = newColor;
+            };
         }
 
         //Confirm
@@ -621,6 +649,7 @@ select  a.Id
         , b.qty - b.inqty [onRoad]
         , b.Qty poqty,b.Price
         , dbo.getItemDesc(a.category,a.Refno) [description],b.UnitId
+        , b.inqty
 from dbo.LocalReceiving_Detail a WITH (NOLOCK) 
 left join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.LocalPoId 
                                                 and b.Ukey = a.LocalPo_detailukey
