@@ -755,12 +755,12 @@ Where DetailUkey = {15};",
                 DBProxy.Current.Select("", cmd_leader, out dt_Leader);
                 if (!MyUtility.Check.Empty(dt_Leader) && dt_Leader.Rows.Count > 0)
                 {
-                    string mailto = dt_Leader.Rows[0]["email"].ToString();
-
-                    string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", displayWKNo.Text, displaySP.Text, displaySEQ.Text);
-                    string content = "Please Approve and Check Fabric Inspection";
+                    string mailto = dt_Leader.Rows[0]["email"].ToString() + ";" + MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID");
+                    string ccAddress = MyUtility.GetValue.Lookup("CcAddress", "007", "MailTo", "ID");
+                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), displayWKNo.Text, displaySP.Text, displaySEQ.Text);
+                    string content = MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID");
                     ToExcel(true);
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, "", subject, excelFile, content, true, true);
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, true, true);
                     email.ShowDialog(this);
                 }
                 #endregion
