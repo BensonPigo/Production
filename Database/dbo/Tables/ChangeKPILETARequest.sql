@@ -11,8 +11,10 @@
     [AddDate] DATETIME NULL, 
     [EditName] VARCHAR(10) NULL DEFAULT (''), 
     [EditDate] DATETIME NULL, 
-    [TPEConfirmName] VARCHAR(10) NULL DEFAULT (''), 
-    [TPEConfirmDate] DATETIME NULL, 
+	[ApproveName] VARCHAR(10) NULL DEFAULT (''), 
+    [ApproveDate] DATETIME NULL, 
+    [ConfirmName] VARCHAR(10) NULL DEFAULT (''), 
+    [ConfirmDate] DATETIME NULL, 
     [TPERemark] NVARCHAR(500) NULL DEFAULT (''), 
     [TPEEditName] VARCHAR(10) NULL DEFAULT (''), 
     [TPEEditDate] DATETIME NULL
@@ -125,7 +127,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1type = N'TABLE',
     @level1name = N'ChangeKPILETARequest',
     @level2type = N'COLUMN',
-    @level2name = N'TPEConfirmName'
+    @level2name = N'ConfirmName'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'台北確認日期',
@@ -134,7 +136,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1type = N'TABLE',
     @level1name = N'ChangeKPILETARequest',
     @level2type = N'COLUMN',
-    @level2name = N'TPEConfirmDate'
+    @level2name = N'ConfirmDate'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'台北註記',
