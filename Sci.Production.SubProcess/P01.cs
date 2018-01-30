@@ -998,7 +998,7 @@ where sd.ID = '{0}'",
 
             sqlcmd = string.Format(
                 @"
-select ttlEFF = sum(TotalCPU)*1400/3600/sum(sd.TTLworkinghours),ttlpph = sum(TotalCPU)/sum(sd.TTLworkinghours)
+select ttlEFF = sum(sd.TotalCPU)*1400/3600/sum(sd.TTLworkinghours),ttlpph = sum(sd.TotalCPU)/sum(sd.TTLworkinghours)
 from SubProcessOutput s with(nolock)
 inner join SubProcessOutput_Detail sd with(nolock) on s.id=sd.id
 where s.id = '{0}'
