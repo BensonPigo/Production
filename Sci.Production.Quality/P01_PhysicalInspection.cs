@@ -750,15 +750,26 @@ Where DetailUkey = {15};",
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
-                string cmd_leader = string.Format(@"select email from pass1	
-	where id=(select Supervisor from pass1 where  id='{0}')", Sci.Env.User.UserID);
+                string cmd_leader = string.Format(@"
+select ToAddress = stuff ((select concat (';', tmp.email)
+						  from (
+							  select distinct email from pass1
+							  where id in (select Supervisor from pass1 where  id='{0}')
+							         or id in (select Manager from Pass1 where id = '{0}')
+						  ) tmp
+						  for xml path('')
+						 ), 1, 1, '')", Sci.Env.User.UserID);
                 DBProxy.Current.Select("", cmd_leader, out dt_Leader);
-                if (!MyUtility.Check.Empty(dt_Leader) && dt_Leader.Rows.Count > 0)
+                if (!MyUtility.Check.Empty(dt_Leader)
+                    && dt_Leader.Rows.Count > 0
+                    && string.IsNullOrEmpty(dt_Leader.Rows[0][0].ToString()) == false)
                 {
-                    string mailto = dt_Leader.Rows[0]["email"].ToString() + ";" + MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID");
-                    string ccAddress = MyUtility.GetValue.Lookup("CcAddress", "007", "MailTo", "ID");
-                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), displayWKNo.Text, displaySP.Text, displaySEQ.Text);
-                    string content = MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID");
+                    string mailto = dt_Leader.Rows[0]["ToAddress"].ToString();
+                    string ccAddress = Env.User.MailAddress;
+                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), returnstr[0], displayWKNo.Text, displaySP.Text, displaySEQ.Text);
+                    string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), returnstr[0], displayWKNo.Text, displaySP.Text, displaySEQ.Text)
+                                     + Environment.NewLine
+                                     + "Please Approve and Check Fabric Inspection";
                     ToExcel(true);
                     var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, true, true);
                     email.ShowDialog(this);
@@ -864,19 +875,20 @@ Where DetailUkey = {15};",
                 }
             }
             #region *****Send Excel Email 完成 需寄給Factory MC*****
-            DataTable dt_MC;
-            string cmd_MC = "select * from MailTo where Description='Material locked/Unlocked'";
-            DBProxy.Current.Select("", cmd_MC, out dt_MC);
-            if (!MyUtility.Check.Empty(dt_MC)&& dt_MC.Rows.Count>0)
+            if (this.btnApprove.Text.EqualString("Approve"))
             {
-                string mailto = dt_MC.Rows[0]["ToAddress"].ToString();
-                string mailCC = dt_MC.Rows[0]["CCAddress"].ToString();
+                string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID");
+                if (string.IsNullOrEmpty(strToAddress) != true)
+                {
+                    string mailto = strToAddress;
+                    string mailCC = MyUtility.GetValue.Lookup("CCAddress", "007", "MailTo", "ID");
+                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), maindr["Result"], displayWKNo.Text, displaySP.Text, displaySEQ.Text);
+                    string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), maindr["Result"], displayWKNo.Text, displaySP.Text, displaySEQ.Text);
 
-                string subject = string.Format("WKNo: {0}, SP#: {1}, Seq: {2} Fabric Inspection Report", displayWKNo.Text, displaySP.Text, displaySEQ.Text);
-                string content = "Please see attached file ,Fabric Inspection Report";
-                ToExcel(true);
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, true, true);
-                email.ShowDialog(this);
+                    ToExcel(true);
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, true, true);
+                    email.ShowDialog(this);
+                }
             }
             #endregion
             OnRequery();
