@@ -934,7 +934,7 @@ where id = '{1}'",
         {
             #region SQL撈取資料
             string ftyName = MyUtility.GetValue.Lookup(string.Format(@"select NameEN from MDivision where ID = '{0}'", Sci.Env.User.Keyword));
-            string secondrow = "PPA Daily MP Report, DD." + MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]).Value.Month + "." + MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]).Value.Day;
+            string secondrow = "PPA Daily CMP Report, DD." + MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]).Value.Month + "." + MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]).Value.Day;
             string sqlcmd = string.Format(
                 @"
 select sd.SubprocessLineID, o.styleid,orderid = o.id,o.factoryid
