@@ -1497,125 +1497,19 @@ drop table #Child, #updateChild";
         /// <inheritdoc/>
         protected override DualResult ClickSaveSubDetial(SubDetailSaveEventArgs e)
         {
-            DualResult result = base.ClickSaveSubDetial(e);
-            if (result == false)
-            {
-                return result;
-            }
-
-            #region 重新 修改、刪除第三層資料
-            List<DataRow> inserted = new List<DataRow>();
-            List<DataRow> updated = new List<DataRow>();
-            List<DataRow> deleteList = new List<DataRow>();
-            var ok = DBProxy.Current.GetTableSchema(null, this.SubGridAlias, out this.sub_Schema);
-            if (!ok)
-            {
-                return ok;
-            }
-
             foreach (KeyValuePair<DataRow, DataTable> it in e.SubDetails)
             {
                 foreach (DataRow dr in it.Value.Rows)
                 {
-                    if (dr.RowState == DataRowState.Deleted)
+                    if (MyUtility.Check.Empty(dr["QAQty"]))
                     {
-                        continue;
-                    }
-
-                    if (MyUtility.Convert.GetInt(dr["QAQty"]) <= 0)
-                    {
-                        deleteList.Add(dr);
-                    }
-                    else
-                    {
-                        if (dr.RowState == DataRowState.Modified && MyUtility.Convert.GetInt(dr["QAQty"]) > 0 && MyUtility.Convert.GetInt(dr["QAQty", DataRowVersion.Original]) == 0)
-                        {
-                            dr.AcceptChanges();
-                            dr.SetAdded();
-                            inserted.Add(dr);
-                        }
+                        dr.AcceptChanges();
+                        dr.Delete();
                     }
                 }
             }
 
-            // List<DataRow> newUpdate.d = new List<DataRow>();
-            // if (updated.Count > 0 && false)
-            // {
-            //    var newT = updated[0].Table.Clone();
-            //    for (int i = 0; i < updated.Count; i++)
-            //    {
-            //        var newOne = newT.NewRow();
-            //        newOne.ItemArray = updated[i].ItemArray;
-            //        newUpdated.Add(newOne);
-            //        newT.Rows.Add(newOne);
-            //    }
-
-            // newT.AcceptChanges();
-            //    for (int i = 0; i < updated.Count; i++)
-            //    {
-            //        newUpdated[i]["QaQty"] = updated[i]["qaqty"];
-            //    }
-            // }
-            List<DataRow> newDelete = new List<DataRow>();
-            if (deleteList.Count > 0)
-            {
-                var newT = deleteList[0].Table.Clone();
-                for (int i = 0; i < deleteList.Count; i++)
-                {
-                    var newOne = newT.NewRow();
-                    newOne.ItemArray = deleteList[i].ItemArray;
-                    try
-                    {
-                        if (deleteList[i].RowState != DataRowState.Added)
-                        {
-                            newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Original];
-                        }
-                        else
-                        {
-                            newOne["QaQty"] = deleteList[i]["qaqty", DataRowVersion.Current];
-                        }
-                    }
-                    catch (Exception ec)
-                    {
-                        this.ShowErr("Error:", ec);
-                    }
-
-                    newDelete.Add(newOne);
-                    newT.Rows.Add(newOne);
-
-                    // newOne["QaQty"] = Updated[i]["qaqty"];
-                }
-
-                newT.AcceptChanges();
-                for (int i = 0; i < deleteList.Count; i++)
-                {
-                    newDelete[i]["QaQty"] = 0;
-                }
-            }
-
-            // foreach (DataRow dr in inserted)
-            // {
-            //    string x = dr.RowState.ToString();
-            // }
-            ok = DBProxy.Current.Deletes(null, this.sub_Schema, newDelete);
-            if (!ok)
-            {
-                return ok;
-            }
-
-            // ok = DBProxy.Current.Batch(null, sub_Schema, Updated);
-            // ok = DBProxy.Current.Batch(null, this.sub_Schema, newUpdated);
-            // if (!ok)
-            // {
-            //    return ok;
-            // }
-            ok = DBProxy.Current.Inserts(null, this.sub_Schema, inserted);
-            if (!ok)
-            {
-                return ok;
-            }
-            #endregion
-            return ok;
+            return base.ClickSaveSubDetial(e);
         }
 
         // Date
