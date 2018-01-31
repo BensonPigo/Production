@@ -138,7 +138,9 @@ namespace Sci.Production
                 if (!MyUtility.Check.Empty(dr["IsSubMenu"])) continue;
                 if (dr["MenuName"].ToString().Contains("Centralized") && ConfigurationManager.AppSettings["TaipeiServer"] == "") continue;
 
-                menus.Items.Add(progmenu = new ToolStripMenuItem(dr["MenuName"].ToString()));
+                progmenu = new ToolStripMenuItem(dr["MenuName"].ToString());
+                progmenu.Overflow = ToolStripItemOverflow.AsNeeded;
+                menus.Items.Add(progmenu);
                 progmenu.DropDownItemClicked += progmenu_DropDownItemClicked;
 
                 drs = dtMenuDetail.Select(string.Format("UKey = '{0}'", dr["PKey"].ToString().Trim()));
