@@ -33,6 +33,7 @@
             this.radioByOrderCombo = new Sci.Win.UI.RadioButton();
             this.radioMNotice = new Sci.Win.UI.RadioButton();
             this.btnToPDF = new Sci.Win.UI.Button();
+            this.btn_toExccel = new Sci.Win.UI.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -99,9 +100,21 @@
             this.btnToPDF.UseVisualStyleBackColor = true;
             this.btnToPDF.Click += new System.EventHandler(this.BtnToPDF_Click);
             // 
+            // btn_toExccel
+            // 
+            this.btn_toExccel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_toExccel.Location = new System.Drawing.Point(535, 48);
+            this.btn_toExccel.Name = "btn_toExccel";
+            this.btn_toExccel.Size = new System.Drawing.Size(80, 30);
+            this.btn_toExccel.TabIndex = 98;
+            this.btn_toExccel.Text = "To Excel";
+            this.btn_toExccel.UseVisualStyleBackColor = true;
+            this.btn_toExccel.Click += new System.EventHandler(this.Btn_toExccel_Click);
+            // 
             // P01_MNoticePrint
             // 
             this.ClientSize = new System.Drawing.Size(627, 200);
+            this.Controls.Add(this.btn_toExccel);
             this.Controls.Add(this.btnToPDF);
             this.Controls.Add(this.groupBox1);
             this.Name = "P01_MNoticePrint";
@@ -111,6 +124,7 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.btnToPDF, 0);
+            this.Controls.SetChildIndex(this.btn_toExccel, 0);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -125,5 +139,6 @@
         private Win.UI.RadioButton radioByOrderCombo;
         private Win.UI.RadioButton radioMNotice;
         private Win.UI.Button btnToPDF;
+        private Win.UI.Button btn_toExccel;
     }
 }
