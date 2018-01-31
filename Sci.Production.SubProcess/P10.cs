@@ -279,8 +279,8 @@ namespace Sci.Production.SubProcess
 -- 確認有哪些 order 符合 --
 select distinct OrderID = o.ID
 into #OrderList
-from orders o
-inner join Style_Feature sf on sf.styleUkey = o.StyleUkey
+from orders o with(nolock)
+inner join Style_Feature sf with(nolock) on sf.styleUkey = o.StyleUkey
 where sf.Type = 'PPA'
       {listSQLFilter.JoinToString($"{Environment.NewLine}   ")}
 -- 總表 --
@@ -308,24 +308,24 @@ from (
 		   , Manpower = 0
 		   , ID = null
            ,o.CutInLine
-	from orders o
+	from orders o with(nolock)
 	inner join #OrderList ol on o.ID = ol.OrderID
 	outer apply (
 		select top 1 Feature
 			   , SMV
-		from Style_Feature sf
+		from Style_Feature sf with(nolock)
 		where sf.styleUkey = o.StyleUkey
 			  and sf.Type = 'PPA'
 		order by SMV desc
 	) SF
 	outer apply (
         select value = isnull (Sum(spod.QaQty), 0)
-        from SubProcessOutput_Detail spod
-        left join SubProcessOutput spo on spod.ID = spo.ID
+        from SubProcessOutput_Detail spod with(nolock)
+        left join SubProcessOutput spo with(nolock) on spod.ID = spo.ID
         where spod.OrderId = o.ID
 	          and spo.Status = 'Confirmed'
 	) OutputQty
-	left join PPASchedule ps on o.ID = ps.OrderID
+	left join PPASchedule ps with(nolock) on o.ID = ps.OrderID
 	where ps.OrderID is null
 
 	union all
@@ -354,13 +354,13 @@ from (
 		   				/ @EFF
 		   , ID = ps.ID	
            ,o.CutInLine
-	from PPASchedule ps
+	from PPASchedule ps with(nolock)
     inner join #OrderList ol on ps.OrderID = ol.OrderID
-	left join orders o on ol.OrderID = o.ID
+	left join orders o with(nolock) on ol.OrderID = o.ID
     outer apply (
         select value = isnull (Sum(spod.QaQty), 0)
-        from SubProcessOutput_Detail spod
-        left join SubProcessOutput spo on spod.ID = spo.ID
+        from SubProcessOutput_Detail spod with(nolock)
+        left join SubProcessOutput spo with(nolock) on spod.ID = spo.ID
         where spod.OrderId = o.ID
 	          and spo.Status = 'Confirmed'
 	) OutputQty
@@ -408,7 +408,7 @@ begin
 
 		if (DATEPART (WEEKDAY, @StartDate) != 1
 			and @StartDate not in (select HolidayDate
-								   from Holiday
+								   from Holiday with(nolock)
 								   {strHolidayDateFactory}))
 		begin
 			insert into #WorkDate 

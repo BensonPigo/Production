@@ -5,7 +5,7 @@
     [Manpower]    NUMERIC (3)     CONSTRAINT [DF_CuttingOutput_Manpower] DEFAULT ((0)) NULL,
     [Manhours]    NUMERIC (5, 1)  CONSTRAINT [DF_CuttingOutput_Manhours] DEFAULT ((0)) NULL,
     [Actoutput]   NUMERIC (7)     CONSTRAINT [DF_CuttingOutput_Actoutput] DEFAULT ((0)) NULL,
-    [ActGarment]  NUMERIC (5)     CONSTRAINT [DF_CuttingOutput_ActGarment] DEFAULT ((0)) NULL,
+    [ActGarment]  INT     CONSTRAINT [DF_CuttingOutput_ActGarment] DEFAULT ((0)) NULL,
     [Lock]        DATE            NULL,
     [Status]      VARCHAR (15)    CONSTRAINT [DF_CuttingOutput_Status] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)    CONSTRAINT [DF_CuttingOutput_AddName] DEFAULT ('') NULL,
