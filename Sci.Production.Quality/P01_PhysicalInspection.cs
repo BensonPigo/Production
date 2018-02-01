@@ -761,17 +761,16 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 						 ), 1, 1, '')", Sci.Env.User.UserID);
                 DBProxy.Current.Select("", cmd_leader, out dt_Leader);
                 if (!MyUtility.Check.Empty(dt_Leader)
-                    && dt_Leader.Rows.Count > 0
-                    && string.IsNullOrEmpty(dt_Leader.Rows[0][0].ToString()) == false)
+                    && dt_Leader.Rows.Count > 0)
                 {
                     string mailto = dt_Leader.Rows[0]["ToAddress"].ToString();
                     string ccAddress = Env.User.MailAddress;
-                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), returnstr[0], displayWKNo.Text, displaySP.Text, displaySEQ.Text);
-                    string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), returnstr[0], displayWKNo.Text, displaySP.Text, displaySEQ.Text)
+                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
+                    string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text)
                                      + Environment.NewLine
                                      + "Please Approve and Check Fabric Inspection";
                     ToExcel(true);
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, true, true);
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, false, true);
                     email.ShowDialog(this);
                 }
                 #endregion
@@ -878,17 +877,14 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             if (this.btnApprove.Text.EqualString("Approve"))
             {
                 string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID");
-                if (string.IsNullOrEmpty(strToAddress) != true)
-                {
-                    string mailto = strToAddress;
-                    string mailCC = MyUtility.GetValue.Lookup("CCAddress", "007", "MailTo", "ID");
-                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), maindr["Result"], displayWKNo.Text, displaySP.Text, displaySEQ.Text);
-                    string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), maindr["Result"], displayWKNo.Text, displaySP.Text, displaySEQ.Text);
+                string mailto = strToAddress;
+                string mailCC = MyUtility.GetValue.Lookup("CCAddress", "007", "MailTo", "ID");
+                string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
+                string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
 
-                    ToExcel(true);
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, true, true);
-                    email.ShowDialog(this);
-                }
+                ToExcel(true);
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, false, true);
+                email.ShowDialog(this);
             }
             #endregion
             OnRequery();
