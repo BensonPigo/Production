@@ -83,7 +83,7 @@ namespace Sci.Production.PPIC
             {
                 strFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice");
                 strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P01_M_Notice", Sci.Production.Class.PDFFileNameExtension.PDF);
-
+                this.sxr.AllowRangeTransferToString = false;
                 this.sxr.Save(strFileName);
                 this.sxr.FinishSave();
             }
