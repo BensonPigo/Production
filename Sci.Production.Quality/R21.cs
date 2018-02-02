@@ -59,40 +59,44 @@ namespace Sci.Production.Quality
             if (radioSummary.Checked)
             {
                 #region 組撈Summary Data SQL
-                sqlCmd_Summary.Append(
-    @"select DISTINCT
-c.StyleID
-,a.OrderID
-,iif(c.VasShas=0,'','v') as 'VAS/SHAS'
-,c.BrandID
-,c.CustPONo
-,a.cDate
-,[GarmentOutput]= round(a.GarmentOutput/100,2)
-,a.FactoryID
-,a.SewingLineID
-,case a.shift 
-when 'D' then 'DAY'
-when 'N' then 'NIGHT'
-when 'O' then 'SUBCON OUT'
-when 'I' then 'SUBCON IN'
-else '' end as Shift
-,a.Team
-,c.Qty
-,DBO.GETPASS1(a.CFA) as CFA
-,case a.Stage when 'I' then 'Comments/Roving'
-when 'C' then 'Change Over'
-when 'P' then 'Stagger'
-when 'R' then 'Re-Stagger'
-when 'F' then 'Final'
-when 'B' then 'Buyer'
-else ''  end as Stage
-,[Result]= 
-case a.result when 'P' then 'Pass'
-when 'F' then 'Fail'
-else '' end 
-,a.InspectQty
-,a.DefectQty
-,iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty,3)) [SQR]
+                sqlCmd_Summary.Append(@"
+select DISTINCT c.StyleID
+	   , a.OrderID
+	   , 'VAS/SHAS' = iif(c.VasShas=0,'','v')
+	   , c.BrandID
+	   , c.CustPONo
+	   , a.cDate
+	   , [GarmentOutput] = round(a.GarmentOutput/100,2)
+	   , a.FactoryID
+	   , a.SewingLineID
+	   , Shift = case a.shift 
+				   when 'D' then 'DAY'
+				   when 'N' then 'NIGHT'
+				   when 'O' then 'SUBCON OUT'
+				   when 'I' then 'SUBCON IN'
+				   else '' 
+				 end
+	   , a.Team
+	   , c.Qty
+	   , CFA = DBO.GETPASS1(a.CFA)
+	   , Stage = case a.Stage 
+				   when 'I' then 'Comments/Roving'
+				   when 'C' then 'Change Over'
+				   when 'P' then 'Stagger'
+				   when 'R' then 'Re-Stagger'
+				   when 'F' then 'Final'
+				   when 'B' then 'Buyer'
+				   else ''  
+				 end 
+	   , [Result]= case a.result 
+					   when 'P' then 'Pass'
+					   when 'F' then 'Fail'
+					   else '' 
+				   end 
+	   , a.InspectQty
+	   , a.DefectQty
+	   , [SQR] = iif(a.InspectQty=0,0,round(a.DefectQty/a.InspectQty,3)) 
+	   , Remark = a.Remark
 from dbo.Cfa a WITH (NOLOCK) 
 inner join dbo.orders c WITH (NOLOCK) 
 on c.id = a.OrderID
