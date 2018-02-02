@@ -20,7 +20,5 @@ BEGIN
 		t.TPEEditName =		s.TPEEditName,
 		t.TPEEditDate =		s.TPEEditDate,
 		t.TPERemark =		s.TPERemark,
-		t.Status =			s.Status;
-		
+		t.Status =			s.Status;		
 END
-GO

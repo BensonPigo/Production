@@ -4,7 +4,6 @@
 CREATE PROCEDURE [dbo].[exp_ChangeKPILETARequest]
 
 AS
-BEGIN
 
 IF OBJECT_ID(N'ChangeKPILETARequest') IS NOT NULL
 BEGIN
@@ -24,8 +23,3 @@ and (
 	and EditDate is not null
 		)
 )
-
-
-
-END
-GO
