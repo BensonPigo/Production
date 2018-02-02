@@ -382,7 +382,7 @@ select
 	[RFT (%)] = iif(isnull(a.InspectQty,0)=0,0,round((a.InspectQty-a.RejectQty)/a.InspectQty * 100,2)),
 	[Over] = A.Status,
 	[QC] = D.CpuRate * C.CPU * A.RejectQty 
-
+    , [Remark] = A.Remark
 From DBO.Rft A WITH (NOLOCK) 
 INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
 OUTER APPLY DBO.GetCPURate(C.OrderTypeID,C.ProgramID,C.Category,C.BrandID,'O')D
@@ -458,7 +458,7 @@ select
 	[Description] = F.Description,
 	[Qty] = B.Qty,
 	[QC] = D.CpuRate * C.CPU * A.RejectQty 
-
+    , [Remark] = A.Remark
 From DBO.Rft A WITH (NOLOCK) 
 INNER JOIN DBO.Rft_Detail B WITH (NOLOCK) ON B.ID = A.ID
 INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
