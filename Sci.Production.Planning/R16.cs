@@ -108,36 +108,36 @@ select o.FactoryID [Factory]
 	,o.KPIEachConsApprove [Each cons. Approve Reqd.]
 	,o.EachConsApv  [Each cons. Approve Act.]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02' and ReasonID='') as [Sketch Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02' and ReasonID='') as [Sketch Act.]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02') as [Sketch Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02') as [Sketch Act.]
 	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02' and ReasonID=''),'','Y') as [Sketch Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03' and ReasonID='') as [AD/BOM/KIT Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03' and ReasonID='') as [AD/BOM/KIT Act.]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03') as [AD/BOM/KIT Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03') as [AD/BOM/KIT Act.]
 	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03' and ReasonID=''),'','Y') as [AD/BOM/KIT Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04' and ReasonID='') as [Sample Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04' and ReasonID='') as [Sample Act.]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04') as [Sample Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04') as [Sample Act.]
 	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04' and ReasonID=''),'','Y') as [Sample Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05' and ReasonID='') as [Mockup (Printing) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05' and ReasonID='') as [Mockup (Printing) Act.]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05') as [Mockup (Printing) Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05') as [Mockup (Printing) Act.]
 	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05' and ReasonID=''),'','Y') as [Mockup (Printing) Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06' and ReasonID='') as [Mockup (Embroidery) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06' and ReasonID='') as [Mockup (Embroidery) Act.]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06') as [Mockup (Embroidery) Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06') as [Mockup (Embroidery) Act.]
 	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK)  where StyleUkey =o.StyleUkey and doc='06' and ReasonID=''),'','Y') as [Mockup (Embroidery) Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08' and ReasonID='') as [Mockup (Heat transfer) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08' and ReasonID='') as [Mockup (Heat transfer) Act.]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08') as [Mockup (Heat transfer) Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08') as [Mockup (Heat transfer) Act.]
 	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08' and ReasonID=''),'','Y') as [Mockup (Heat transfer) Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07' and ReasonID='') as [Mockup (Emboss/Deboss) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07' and ReasonID='') as [Mockup (Emboss/Deboss) Act.]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07') as [Mockup (Emboss/Deboss) Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07') as [Mockup (Emboss/Deboss) Act.]
 	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07' and ReasonID=''),'','Y') as [Mockup (Emboss/Deboss) Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01' and ReasonID='') as [Trim card Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01' and ReasonID='') as [Trim card Act.]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01') as [Trim card Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01') as [Trim card Act.]
 	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01' and ReasonID=''),'','Y') as [Trim card Skip]
 
 
