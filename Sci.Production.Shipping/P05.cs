@@ -1127,6 +1127,13 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             callNextForm.ShowDialog(this);
         }
 
+        // AirPPStatus
+        private void BtnAirPPStatus_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Shipping.P05_AirPrePaidStatus callNextForm = new Sci.Production.Shipping.P05_AirPrePaidStatus();
+            callNextForm.ShowDialog(this);
+        }
+
         // S/O Confirm/UnConfirm
         private void BtnCFM_Click(object sender, EventArgs e)
         {
@@ -1337,29 +1344,44 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
             {
                 string sqlCmd = string.Format(
-                    @"select p.OrderID, p.OrderShipmodeSeq, isnull(a.ID,'') as AirPPID,o.Category
-from (Select distinct b.OrderID,b.OrderShipmodeSeq 
+                    @";with AirPPChk as (
+select p.ID, isnull(a.ID,'') as AirPPID,o.Category,isnull(a.status,'') as status
+from (Select distinct a.ID,b.OrderID,b.OrderShipmodeSeq 
       from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) 
       where a.INVNo = '{0}' and a.ID = b.ID) p
 left join orders o WITH (NOLOCK) on o.ID = p.OrderID
-left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq and a.Status != 'Junked'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq)
+select apc.ID as PackingID, apc.AirPPID,apc.Category,apc.status as AirPPStatus,aps.status as StatusDesc,aps.Followup
+from AirPPChk apc
+left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.selectData);
                 if (result)
                 {
                     // 如果此SP的 Category='S' 且 shipmode='E/P'時, 沒有AirPP# , 也可以Confirm，這邊不check category = 'S'
+                    // Issue ISP20180033 Lock才能被Confirm
                     DataRow[] row;
                     if (this.CurrentMaintain["ShipModeID"].Equals("E/P"))
                     {
-                        row = this.selectData.Select("AirPPID = '' and Category <> 'S'");
+                        row = this.selectData.Select(" Category <> 'S' and AirPPStatus <> 'Locked'");
                     }
                     else
                     {
-                       row = this.selectData.Select("AirPPID = ''");
+                       row = this.selectData.Select(" AirPPStatus <> 'Locked'");
                     }
 
                     if (row.Length > 0)
                     {
-                        MyUtility.Msg.WarningBox("Still have not yet assigned AirPP No.!");
+                        StringBuilder airPP_err = new StringBuilder();
+                        airPP_err.Append("DO NOT arrange Air-Prepaid shipment due to APP# is not on GM Team Locked status." + Environment.NewLine + Environment.NewLine);
+                        foreach (DataRow dr in row)
+                        {
+                            airPP_err.Append($"Packing#{dr["PackingID"]} APP#{dr["AirPPID"]} Status: {dr["StatusDesc"]} - {dr["Followup"]}" + Environment.NewLine);
+                        }
+
+                        airPP_err.Append(Environment.NewLine + @"If Shipping arrange Air-Prepaid shipment before GM Team Lock, PPIC and Shipping Dept. have to take the responsibility for the Air-Prepaid. 
+Please follow up based on the Air-Prepaid Status.");
+                        P05_ErrorMsg errMsg = new P05_ErrorMsg(airPP_err.ToString());
+                        errMsg.ShowDialog();
                         return;
                     }
                 }
@@ -1553,5 +1575,6 @@ order by ID");
                 }
             }
         }
+
     }
 }
