@@ -55,6 +55,7 @@
             this.txtTPEEditName = new Sci.Win.UI.TextBox();
             this.label11 = new Sci.Win.UI.Label();
             this.txtTPEEditDate = new Sci.Win.UI.TextBox();
+            this.btnmail = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -69,6 +70,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnmail);
             this.detailcont.Controls.Add(this.txtTPEEditDate);
             this.detailcont.Controls.Add(this.label11);
             this.detailcont.Controls.Add(this.txtTPEEditName);
@@ -284,7 +286,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(107, 23);
             this.label8.TabIndex = 64;
-            this.label8.Text = "Approve Date";
+            this.label8.Text = "ConfirmDate";
             // 
             // label9
             // 
@@ -318,28 +320,26 @@
             // txtApproveDate
             // 
             this.txtApproveDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ApproveDate", true));
             this.txtApproveDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtApproveDate.IsSupportEditMode = false;
             this.txtApproveDate.Location = new System.Drawing.Point(586, 240);
-            this.txtApproveDate.Mask = "0000/00/00 00:00";
             this.txtApproveDate.Name = "txtApproveDate";
             this.txtApproveDate.ReadOnly = true;
             this.txtApproveDate.Size = new System.Drawing.Size(137, 23);
             this.txtApproveDate.TabIndex = 68;
+            this.txtApproveDate.ValidatingType = typeof(System.DateTime);
             // 
             // txtConfirmDate
             // 
             this.txtConfirmDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtConfirmDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ConfirmDate", true));
             this.txtConfirmDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtConfirmDate.IsSupportEditMode = false;
             this.txtConfirmDate.Location = new System.Drawing.Point(586, 269);
-            this.txtConfirmDate.Mask = "0000/00/00 00:00";
             this.txtConfirmDate.Name = "txtConfirmDate";
             this.txtConfirmDate.ReadOnly = true;
             this.txtConfirmDate.Size = new System.Drawing.Size(137, 23);
             this.txtConfirmDate.TabIndex = 69;
+            this.txtConfirmDate.ValidatingType = typeof(System.DateTime);
             // 
             // txtTPEEditName
             // 
@@ -364,15 +364,24 @@
             // txtTPEEditDate
             // 
             this.txtTPEEditDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtTPEEditDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "TPEEditDate", true));
             this.txtTPEEditDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtTPEEditDate.IsSupportEditMode = false;
             this.txtTPEEditDate.Location = new System.Drawing.Point(424, 383);
-            this.txtTPEEditDate.Mask = "0000/00/00 00:00";
             this.txtTPEEditDate.Name = "txtTPEEditDate";
             this.txtTPEEditDate.ReadOnly = true;
             this.txtTPEEditDate.Size = new System.Drawing.Size(137, 23);
             this.txtTPEEditDate.TabIndex = 72;
+            this.txtTPEEditDate.ValidatingType = typeof(System.DateTime);
+            // 
+            // btnmail
+            // 
+            this.btnmail.Location = new System.Drawing.Point(583, 28);
+            this.btnmail.Name = "btnmail";
+            this.btnmail.Size = new System.Drawing.Size(80, 30);
+            this.btnmail.TabIndex = 73;
+            this.btnmail.Text = "Send Mail";
+            this.btnmail.UseVisualStyleBackColor = true;
+            this.btnmail.Click += new System.EventHandler(this.Btnmail_Click);
             // 
             // P14
             // 
@@ -429,5 +438,6 @@
         private Win.UI.TextBox txtTPEEditName;
         private Win.UI.TextBox txtConfirmDate;
         private Win.UI.TextBox txtApproveDate;
+        private Win.UI.Button btnmail;
     }
 }
