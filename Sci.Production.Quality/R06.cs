@@ -502,7 +502,7 @@ from (
 	,[Fabric(%)] = IIF(TotalInspYds!=0, round((yrds/TotalInspYds), 4), 0)        		
 	from #tmp	
 )Tmp 	
-outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(tmp.[Fabric(%)],0) between range1 and range2 )sl
+outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(tmp.[Fabric(%)],0) * 100 between range1 and range2 )sl
 outer apply
 (
 	select Defect = stuff(( 
@@ -514,19 +514,19 @@ outer apply
 ) point
 left join #SHtmp SHRINKAGE on SHRINKAGE.SuppID = tmp.SuppID
 outer apply(select SHINGKAGE = iif(Tmp.stockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/Tmp.stockqty,4)))SHINGKAGELevel
-outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) between range1 and range2)sl2
+outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) * 100 between range1 and range2)sl2
 left join #mtmp MIGRATION on MIGRATION.SuppID = tmp.SuppID
 outer apply(select MIGRATION =  iif(Tmp.stockqty = 0, 0, round(MIGRATION.MIGRATIONyards/Tmp.stockqty,4)))MIGRATIONLevel 
-outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(MIGRATIONLevel.MIGRATION,0) between range1 and range2)sl3
+outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(MIGRATIONLevel.MIGRATION,0) * 100 between range1 and range2)sl3
 left join #Stmp SHADING on SHADING.SuppID = tmp.SuppID
 outer apply(select SHADING = iif(Tmp.stockqty=0, 0, round(SHADING.SHADINGyards/Tmp.stockqty,4)))SHADINGLevel 
-outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHADINGLevel.SHADING,0) between range1 and range2)sl4
+outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHADINGLevel.SHADING,0) * 100 between range1 and range2)sl4
 left join #Ltmp LACKINGYARDAGE on LACKINGYARDAGE.SuppID= Tmp.SuppID
 outer apply(select LACKINGYARDAGE = iif(Tmp.stockqty=0, 0, round(LACKINGYARDAGE.ActualYds/Tmp.stockqty,4)))LACKINGYARDAGELevel
-outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0) between range1 and range2)sl5
+outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0) * 100 between range1 and range2)sl5
 left join #Sdtmp SHORTyards on SHORTyards.Suppid = Tmp.SuppID
 outer apply(select SHORTWIDTH = iif(Tmp.stockqty=0, 0, round(SHORTyards.SHORTWIDTH/Tmp.TotalInspYds,4)))SHORTWIDTHLevel 
-outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) between range1 and range2)sl6
+outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) * 100 between range1 and range2)sl6
 outer apply (select cnt from #tmpDyelot where Suppid=Tmp.SuppID ) TLDyelot
 outer apply (select TotalPoint from #tmpTotalPoint where Suppid=tmp.SuppID) TLPoint
 outer apply (select TotalRoll from #tmpTotalRoll where Suppid=tmp.SuppID) TLRoll
@@ -559,7 +559,7 @@ from(
 	from #TmpFinal t,#Weight
 ) a
 ,SuppLevel s
-where s.type='F' and s.Junk=0 and [AVG] between s.range1 and s.range2 " + sqlSuppWhere +
+where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 " + sqlSuppWhere +
 @"  ORDER BY SUPPID
 
 drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
