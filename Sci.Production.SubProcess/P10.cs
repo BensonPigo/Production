@@ -178,7 +178,8 @@ namespace Sci.Production.SubProcess
                 .Text("SubProcessLearnCurveID", header: $"Learn{Environment.NewLine}Curve", settings: setLearnCurve)
                 .Text("ShowInline", header: $"PPA{Environment.NewLine}Inline", iseditingreadonly: true).Get(out this.setPPAInlinecolor)
                 .Text("ShowOffline", header: $"PPA{Environment.NewLine}Offline", iseditingreadonly: true)
-                .Numeric("Manpower", header: $"PPA{Environment.NewLine}Manpower", iseditingreadonly: true);
+                .Numeric("Manpower", header: $"PPA{Environment.NewLine}Manpower", iseditingreadonly: true)
+                .CheckBox("Overload", header: $"Over{Environment.NewLine}load", trueValue: 1, falseValue: 0);
 
             for (int i = 0; i < this.gridLeft.Columns.Count; i++)
             {
@@ -193,6 +194,7 @@ namespace Sci.Production.SubProcess
             this.gridLeft.Columns["SubProcessLearnCurveID"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridLeft.Columns["Feature"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridLeft.Columns["TargetQty"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridLeft.Columns["Overload"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -234,6 +236,13 @@ namespace Sci.Production.SubProcess
 
             List<string> listSQLFilter = new List<string>();
             string strHolidayDateFactory = string.Empty;
+            string strOverload = string.Empty;
+
+            if (!this.chkcontainOverload.Checked)
+            {
+                listSQLParameter.Add(new SqlParameter("@Overload ", false));
+                strOverload = "where Overload = @Overload";
+            }
 
             listSQLFilter.Add("and o.MDivisionID = @MDivisionID");
 
@@ -308,6 +317,7 @@ from (
 		   , Manpower = 0
 		   , ID = null
            ,o.CutInLine
+           ,ps.Overload
 	from orders o with(nolock)
 	inner join #OrderList ol on o.ID = ol.OrderID
 	outer apply (
@@ -326,8 +336,7 @@ from (
 	          and spo.Status = 'Confirmed'
 	) OutputQty
 	left join PPASchedule ps with(nolock) on o.ID = ps.OrderID
-	where ps.OrderID is null
-
+	where ps.OrderID is null 
 	union all
 
 	select Sel = 0
@@ -354,6 +363,7 @@ from (
 		   				/ @EFF
 		   , ID = ps.ID	
            ,o.CutInLine
+           ,ps.Overload
 	from PPASchedule ps with(nolock)
     inner join #OrderList ol on ps.OrderID = ol.OrderID
 	left join orders o with(nolock) on ol.OrderID = o.ID
@@ -365,6 +375,7 @@ from (
 	          and spo.Status = 'Confirmed'
 	) OutputQty
 ) tmp
+{strOverload}
 
 select *
 	   , ShowSewInLine = Right (CONVERT(varchar, SewInLine, 111), 5)
@@ -736,14 +747,6 @@ end
             return strRemark;
         }
 
-        // private void RemarkColorChange(DataRow dr, bool isDelete = false)
-        // {
-        //    Color newColor = isDelete ? Color.White : Color.Yellow;
-        //    int intRowIndex = Convert.ToInt32(dr["Ukey"]) - 1;
-
-        // this.gridRight.Rows[intRowIndex].Cells[dr["OutputDate"].ToString()].Style.BackColor = newColor;
-        // }
-
         private void BtnSave_Click(object sender, EventArgs e)
         {
             if ((DataTable)this.listControlBindingSourceLeft.DataSource == null)
@@ -847,15 +850,16 @@ update set
 	, t.EditDate = GETDATE()
 	, t.EditName = @UserName
     , t.MDivisionID = @MDivisionID
+    , t.Overload = s.Overload
 when not matched by target then
 insert (
 	OrderID		, [Group]	, SubProcessLineID		, OutputQty					, TargetQty
 	, Feature	, SMV		, EarlyInline			, SubProcessLearnCurveID	, Inline
-	, Offline	, AddDate	, AddName, MDivisionID)
+	, Offline	, AddDate	, AddName, MDivisionID,Overload)
 values (
 	s.OrderID	, s.[Group]	, s.SubProcessLineID	, s.OutputQty				, s.TargetQty
 	, s.Feature	, s.SMV		, s.EarlyInline			, s.SubProcessLearnCurveID	, s.Inline
-	, s.Offline	, GETDATE()	, @UserName, @MDivisionID);
+	, s.Offline	, GETDATE()	, @UserName, @MDivisionID,s.Overload);
 select @@IDENTITY";
                         List<DataRow> listTmpTable = new List<DataRow>();
                         listTmpTable.Add(drPPASchedule);
@@ -987,6 +991,14 @@ and t.OutputDate between @StartDate and @EndDate";
                     decimal.TryParse(this.txtUpdateColumn.Text, out earlyDate);
                     this.txtUpdateColumn.Text = earlyDate.ToString();
                     break;
+                case "Over load":
+                    if (this.txtUpdateColumn.Text != "0" && this.txtUpdateColumn.Text != "1")
+                    {
+                        MyUtility.Msg.WarningBox("Overload must be the 0 or 1 !!");
+                        this.txtUpdateColumn.Text = string.Empty;
+                    }
+
+                    break;
             }
         }
 
@@ -1040,6 +1052,14 @@ and t.OutputDate between @StartDate and @EndDate";
                                 break;
                             case "Learn Curve":
                                 this.LearnCurveValidating(dr, dr["SubProcessLearnCurveID"].ToString(), this.txtUpdateColumn.Text);
+                                break;
+                            case "Over load":
+                                if (!MyUtility.Check.Empty(this.txtUpdateColumn.Text))
+                                {
+                                    dr["Overload"] = this.txtUpdateColumn.Text == "1" ? true : false;
+                                    dr.EndEdit();
+                                }
+
                                 break;
                         }
                     }
@@ -1404,6 +1424,9 @@ order by ID";
                 }
             }
         }
+        #endregion
+
+        #region
         #endregion
         #endregion
 

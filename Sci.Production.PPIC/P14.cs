@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,6 +37,17 @@ namespace Sci.Production.PPIC
         {
             base.OnDetailEntered();
             this.labelStatus.Text = this.CurrentMaintain["status"].ToString();
+            this.txtApproveDate.Text = MyUtility.Check.Empty(this.CurrentMaintain["ApproveDate"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["ApproveDate"])).ToString("yyyy/MM/dd HH:mm");
+            this.txtConfirmDate.Text = MyUtility.Check.Empty(this.CurrentMaintain["ConfirmDate"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["ConfirmDate"])).ToString("yyyy/MM/dd HH:mm");
+            this.txtTPEEditDate.Text = MyUtility.Check.Empty(this.CurrentMaintain["TPEEditDate"]) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["TPEEditDate"])).ToString("yyyy/MM/dd HH:mm");
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Sent"))
+            {
+                this.btnmail.Enabled = true;
+            }
+            else
+            {
+                this.btnmail.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -164,6 +176,7 @@ and MDivisionID = '{this.M}' and (category = 'S' or (category = 'B' and localord
             }
 
             this.CurrentMaintain["Status"] = "Sent";
+            this.Mail();
         }
 
         private void TxtOrderID_Validating(object sender, CancelEventArgs e)
@@ -193,6 +206,29 @@ and MDivisionID = '{this.M}' and (category = 'S' or (category = 'B' and localord
                 this.CurrentMaintain["OrderID"] = dr["ID"];
                 this.CurrentMaintain["OldKPILETA"] = dr["KPILETA"];
             }
+        }
+
+        private void Btnmail_Click(object sender, EventArgs e)
+        {
+            this.Mail();
+        }
+
+        private void Mail()
+        {
+            string mrHandle = MyUtility.GetValue.Lookup($"select EMail from TPEPass1 where ID=(select MRHandle from Orders WHERE ID='{this.CurrentMaintain["Orderid"]}')");
+            string smr = MyUtility.GetValue.Lookup($"select EMail from TPEPass1 where ID=(select SMR from Orders WHERE ID='{this.CurrentMaintain["Orderid"]}')");
+            string poid = MyUtility.GetValue.Lookup($"select poid from orders where id = '{this.CurrentMaintain["Orderid"]}'");
+            string poHandle = MyUtility.GetValue.Lookup($"select EMail from TPEPass1 where ID=(select POHandle from PO WITH (NOLOCK) where ID='{poid}')");
+            string poSMR = MyUtility.GetValue.Lookup($"select EMail from TPEPass1 where ID=(select POSMR from PO WITH (NOLOCK) where ID='{poid}')");
+            string toAddress = mrHandle + ";" + smr + ";" + poHandle + ";" + poSMR;
+            string ccAddress = "Planning@sportscity.com.tw ; " + Sci.Env.User.MailAddress;
+            string subject = $" Change Order KPI LETA Request – Request#:{this.CurrentMaintain["id"]} , SP#:{this.CurrentMaintain["Orderid"]} ";
+            string content = $@"Hi All, 
+Please help to change KPI LETA to {MyUtility.Convert.GetDate(this.CurrentMaintain["NewKPILETA"]).Value.ToShortDateString()} from {MyUtility.Convert.GetDate(this.CurrentMaintain["OldKPILETA"]).Value.ToShortDateString()}
+
+Thank you.";
+            var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, content, false, true);
+            email.ShowDialog(this);
         }
     }
 }

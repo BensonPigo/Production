@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P10));
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -45,7 +45,6 @@
             this.dateRangeSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelWorkHour = new Sci.Win.UI.Label();
             this.labelEff = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.btnQuery = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btnLocate = new Sci.Win.UI.Button();
@@ -74,6 +73,8 @@
             this.labelComplete = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.chkcontainOverload = new Sci.Win.UI.CheckBox();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -214,17 +215,6 @@
             this.labelEff.TabIndex = 1;
             this.labelEff.Text = "EFF";
             // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(270, 29);
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 3;
-            // 
             // btnQuery
             // 
             this.btnQuery.Location = new System.Drawing.Point(1112, 3);
@@ -308,14 +298,14 @@
             this.gridLeft.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridLeft.Location = new System.Drawing.Point(0, 58);
             this.gridLeft.Name = "gridLeft";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridLeft.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridLeft.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.gridLeft.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridLeft.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridLeft.RowTemplate.Height = 24;
@@ -344,14 +334,14 @@
             this.gridTop.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridTop.Location = new System.Drawing.Point(3, 3);
             this.gridTop.Name = "gridTop";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridTop.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridTop.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridTop.RowHeadersVisible = false;
             this.gridTop.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridTop.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
@@ -382,14 +372,14 @@
             this.gridRight.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridRight.Location = new System.Drawing.Point(3, 58);
             this.gridRight.Name = "gridRight";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridRight.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridRight.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.gridRight.RowHeadersVisible = false;
             this.gridRight.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridRight.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
@@ -540,7 +530,8 @@
             "PPA Line",
             "Target Qty",
             "Early Inline",
-            "Learn Curve"});
+            "Learn Curve",
+            "Over load"});
             this.comboBoxUpdateColumn.Location = new System.Drawing.Point(5, 642);
             this.comboBoxUpdateColumn.Name = "comboBoxUpdateColumn";
             this.comboBoxUpdateColumn.Size = new System.Drawing.Size(121, 24);
@@ -614,11 +605,34 @@
             this.label3.TabIndex = 19;
             this.label3.Text = "  ";
             // 
+            // chkcontainOverload
+            // 
+            this.chkcontainOverload.AutoSize = true;
+            this.chkcontainOverload.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkcontainOverload.Location = new System.Drawing.Point(959, 9);
+            this.chkcontainOverload.Name = "chkcontainOverload";
+            this.chkcontainOverload.Size = new System.Drawing.Size(135, 21);
+            this.chkcontainOverload.TabIndex = 21;
+            this.chkcontainOverload.Text = "contain Overload";
+            this.chkcontainOverload.UseVisualStyleBackColor = true;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(270, 29);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 3;
+            // 
             // P10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1195, 673);
+            this.Controls.Add(this.chkcontainOverload);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.labelComplete);
@@ -682,6 +696,7 @@
             this.Controls.SetChildIndex(this.labelComplete, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.chkcontainOverload, 0);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -744,5 +759,6 @@
         private Win.UI.TextBox txtLocate;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private Win.UI.CheckBox chkcontainOverload;
     }
 }
