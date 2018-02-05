@@ -108,37 +108,37 @@ select o.FactoryID [Factory]
 	,o.KPIEachConsApprove [Each cons. Approve Reqd.]
 	,o.EachConsApv  [Each cons. Approve Act.]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02') as [Sketch Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02') as [Sketch Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02'),'','Y') as [Sketch Skip]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02' and ReasonID='') as [Sketch Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02' and ReasonID='') as [Sketch Act.]
+	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='02' and ReasonID=''),'','Y') as [Sketch Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03') as [AD/BOM/KIT Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03') as [AD/BOM/KIT Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03'),'','Y') as [AD/BOM/KIT Skip]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03' and ReasonID='') as [AD/BOM/KIT Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03' and ReasonID='') as [AD/BOM/KIT Act.]
+	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='03' and ReasonID=''),'','Y') as [AD/BOM/KIT Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04') as [Sample Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04') as [Sample Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04'),'','Y') as [Sample Skip]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04' and ReasonID='') as [Sample Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04' and ReasonID='') as [Sample Act.]
+	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='04' and ReasonID=''),'','Y') as [Sample Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05') as [Mockup (Printing) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05') as [Mockup (Printing) Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05'),'','Y') as [Mockup (Printing) Skip]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05' and ReasonID='') as [Mockup (Printing) Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05' and ReasonID='') as [Mockup (Printing) Act.]
+	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='05' and ReasonID=''),'','Y') as [Mockup (Printing) Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06') as [Mockup (Embroidery) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06') as [Mockup (Embroidery) Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK)  where StyleUkey =o.StyleUkey and doc='06'),'','Y') as [Mockup (Embroidery) Skip]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06' and ReasonID='') as [Mockup (Embroidery) Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='06' and ReasonID='') as [Mockup (Embroidery) Act.]
+	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK)  where StyleUkey =o.StyleUkey and doc='06' and ReasonID=''),'','Y') as [Mockup (Embroidery) Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08') as [Mockup (Heat transfer) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08') as [Mockup (Heat transfer) Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08'),'','Y') as [Mockup (Heat transfer) Skip]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08' and ReasonID='') as [Mockup (Heat transfer) Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08' and ReasonID='') as [Mockup (Heat transfer) Act.]
+	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='08' and ReasonID=''),'','Y') as [Mockup (Heat transfer) Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07') as [Mockup (Emboss/Deboss) Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07') as [Mockup (Emboss/Deboss) Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07'),'','Y') as [Mockup (Emboss/Deboss) Skip]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07' and ReasonID='') as [Mockup (Emboss/Deboss) Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07' and ReasonID='') as [Mockup (Emboss/Deboss) Act.]
+	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='07' and ReasonID=''),'','Y') as [Mockup (Emboss/Deboss) Skip]
 
-	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01') as [Trim card Reqd.]
-	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01') as [Trim card Act.]
-	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01'),'','Y') as [Trim card Skip]
+	,(select max(sp.ProvideDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01' and ReasonID='') as [Trim card Reqd.]
+	,(select max(sp.FtyLastDate) from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01' and ReasonID='') as [Trim card Act.]
+	,iif(exists(select * from dbo.Style_ProductionKits sp WITH (NOLOCK) where StyleUkey =o.StyleUkey and doc='01' and ReasonID=''),'','Y') as [Trim card Skip]
 
 
 	,o.KPIEachConsApprove [Bulk marker request Reqd]
@@ -202,7 +202,7 @@ select o.FactoryID [Factory]
 	,iif(x3.max_garmentInspectDate is null,'Y','') as [Wahsing Skip]
 	,(select min(date) from dbo.WorkHour a WITH (NOLOCK) where FactoryID = o.FactoryID and a.Hours > 0 and a.date>=dateadd(day,1,o.SewOffLine) and Holiday=0) as [Carton Reqd Complete]
 	,(select max(pd.ReceiveDate) from  dbo.PackingList_Detail pd  WITH (NOLOCK) where pd.OrderID =o.ID ) as [Carton Act. Complete]
-	,'' -- 全面使用clog了，所以都是空白。
+	,'' as [Carton Skip]-- 全面使用clog了，所以都是空白。
 	,iif(o.PulloutComplete=1,o.ActPulloutDate,null) as [Garment Act. Complete]
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
@@ -319,7 +319,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
             // 列印動態欄位的表頭
             for (int i = 0; i < this.printData.Rows.Count; i++)
             {
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["PP Sample Material Arrival Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["PP Sample Material Arrival Reqd."])
+                    && this.printData.Rows[i]["PP Sample Material Arrival Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["PP Sample Material Arrival Act."]))
                     {
@@ -333,7 +334,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sample approval Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sample approval Reqd."])
+                    && this.printData.Rows[i]["Sample approval Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Sample approval Act."]))
                     {
@@ -389,7 +391,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sketch Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sketch Reqd."])
+                    && this.printData.Rows[i]["Sketch Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Sketch Act."]))
                     {
@@ -403,7 +406,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["AD/BOM/KIT Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["AD/BOM/KIT Reqd."])
+                    && this.printData.Rows[i]["AD/BOM/KIT Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["AD/BOM/KIT Act."]))
                     {
@@ -417,7 +421,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sample Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Sample Reqd."])
+                    && this.printData.Rows[i]["Sample Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Sample Act."]))
                     {
@@ -431,7 +436,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Printing) Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Printing) Reqd."])
+                    && this.printData.Rows[i]["Mockup (Printing) Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Printing) Act."]))
                     {
@@ -445,7 +451,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Embroidery) Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Embroidery) Reqd."])
+                    && this.printData.Rows[i]["Mockup (Embroidery) Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Embroidery) Act."]))
                     {
@@ -459,7 +466,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Heat transfer) Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Heat transfer) Reqd."])
+                    && this.printData.Rows[i]["Mockup (Heat transfer) Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Heat transfer) Act."]))
                     {
@@ -473,7 +481,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Emboss/Deboss) Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Emboss/Deboss) Reqd."])
+                    && this.printData.Rows[i]["Mockup (Emboss/Deboss) Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Mockup (Emboss/Deboss) Act."]))
                     {
@@ -487,7 +496,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Trim card Reqd."]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Trim card Reqd."])
+                    && this.printData.Rows[i]["Trim card Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Trim card Act."]))
                     {
@@ -543,7 +553,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Fabric receiving Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Fabric receiving Reqd"])
+                    && this.printData.Rows[i]["Fabric receiving Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Fabric receiving Act."]))
                     {
@@ -557,7 +568,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Reqd"])
+                    && this.printData.Rows[i]["Accessory receiving Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Accessory receiving Act."]))
                     {
@@ -571,7 +583,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Reqd"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Reqd"])
+                    && this.printData.Rows[i]["Packing material receiving Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Packing material receiving Act."]))
                     {
@@ -613,7 +626,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Reqd Complete"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Reqd Complete"])
+                    && this.printData.Rows[i]["PPMeeting Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["PPMeeting Act. Complete"]))
                     {
@@ -627,7 +641,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Wahsing Reqd Complete"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Wahsing Reqd Complete"])
+                    && this.printData.Rows[i]["Wahsing Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Washing Act. Complete"]))
                     {
@@ -641,7 +656,8 @@ where o.qty > 0 and o.junk = 0 and o.LocalOrder = 0
                     }
                 }
 
-                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Carton Reqd Complete"]))
+                if (!MyUtility.Check.Empty(this.printData.Rows[i]["Carton Reqd Complete"])
+                    && this.printData.Rows[i]["Carton Skip"].ToString().EqualString("Y") == false)
                 {
                     if (MyUtility.Check.Empty(this.printData.Rows[i]["Carton Act. Complete"]))
                     {
