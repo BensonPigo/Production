@@ -34,7 +34,7 @@
             this.labelConsignee = new Sci.Win.UI.Label();
             this.labelPackages = new Sci.Win.UI.Label();
             this.labelContainerType = new Sci.Win.UI.Label();
-            this.labelSONo = new Sci.Win.UI.Label();
+            this.labelShipModeID = new Sci.Win.UI.Label();
             this.labelRemark = new Sci.Win.UI.Label();
             this.displayWKNo = new Sci.Win.UI.DisplayBox();
             this.dateETA = new Sci.Win.UI.DateBox();
@@ -42,7 +42,7 @@
             this.displayConsignee = new Sci.Win.UI.DisplayBox();
             this.numPackages = new Sci.Win.UI.NumericBox();
             this.displayContainerType = new Sci.Win.UI.DisplayBox();
-            this.displaySONo = new Sci.Win.UI.DisplayBox();
+            this.displayShipModeID = new Sci.Win.UI.DisplayBox();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelInvoiceNo = new Sci.Win.UI.Label();
             this.labelPayer = new Sci.Win.UI.Label();
@@ -119,14 +119,14 @@
             this.masterpanel.Controls.Add(this.labelPayer);
             this.masterpanel.Controls.Add(this.labelInvoiceNo);
             this.masterpanel.Controls.Add(this.editRemark);
-            this.masterpanel.Controls.Add(this.displaySONo);
+            this.masterpanel.Controls.Add(this.displayShipModeID);
             this.masterpanel.Controls.Add(this.displayContainerType);
             this.masterpanel.Controls.Add(this.numPackages);
             this.masterpanel.Controls.Add(this.displayConsignee);
             this.masterpanel.Controls.Add(this.displayFactory);
             this.masterpanel.Controls.Add(this.displayWKNo);
             this.masterpanel.Controls.Add(this.labelRemark);
-            this.masterpanel.Controls.Add(this.labelSONo);
+            this.masterpanel.Controls.Add(this.labelShipModeID);
             this.masterpanel.Controls.Add(this.labelContainerType);
             this.masterpanel.Controls.Add(this.labelPackages);
             this.masterpanel.Controls.Add(this.labelConsignee);
@@ -151,14 +151,14 @@
             this.masterpanel.Controls.SetChildIndex(this.labelConsignee, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPackages, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelContainerType, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelSONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelShipModeID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayWKNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayConsignee, 0);
             this.masterpanel.Controls.SetChildIndex(this.numPackages, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayContainerType, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displaySONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayShipModeID, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelInvoiceNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPayer, 0);
@@ -255,7 +255,6 @@
             // labelWKNo
             // 
             this.labelWKNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelWKNo.Lines = 0;
             this.labelWKNo.Location = new System.Drawing.Point(5, 6);
             this.labelWKNo.Name = "labelWKNo";
             this.labelWKNo.Size = new System.Drawing.Size(89, 23);
@@ -265,7 +264,6 @@
             // labelETA
             // 
             this.labelETA.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelETA.Lines = 0;
             this.labelETA.Location = new System.Drawing.Point(5, 33);
             this.labelETA.Name = "labelETA";
             this.labelETA.Size = new System.Drawing.Size(89, 23);
@@ -275,7 +273,6 @@
             // labelFactory
             // 
             this.labelFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(4, 60);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(90, 23);
@@ -285,7 +282,6 @@
             // labelConsignee
             // 
             this.labelConsignee.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelConsignee.Lines = 0;
             this.labelConsignee.Location = new System.Drawing.Point(4, 87);
             this.labelConsignee.Name = "labelConsignee";
             this.labelConsignee.Size = new System.Drawing.Size(90, 23);
@@ -295,7 +291,6 @@
             // labelPackages
             // 
             this.labelPackages.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelPackages.Lines = 0;
             this.labelPackages.Location = new System.Drawing.Point(4, 114);
             this.labelPackages.Name = "labelPackages";
             this.labelPackages.Size = new System.Drawing.Size(90, 23);
@@ -305,27 +300,24 @@
             // labelContainerType
             // 
             this.labelContainerType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelContainerType.Lines = 0;
             this.labelContainerType.Location = new System.Drawing.Point(4, 141);
             this.labelContainerType.Name = "labelContainerType";
             this.labelContainerType.Size = new System.Drawing.Size(90, 23);
             this.labelContainerType.TabIndex = 6;
             this.labelContainerType.Text = "Container Type";
             // 
-            // labelSONo
+            // labelShipModeID
             // 
-            this.labelSONo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSONo.Lines = 0;
-            this.labelSONo.Location = new System.Drawing.Point(4, 168);
-            this.labelSONo.Name = "labelSONo";
-            this.labelSONo.Size = new System.Drawing.Size(90, 23);
-            this.labelSONo.TabIndex = 7;
-            this.labelSONo.Text = "S/O#";
+            this.labelShipModeID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labelShipModeID.Location = new System.Drawing.Point(4, 168);
+            this.labelShipModeID.Name = "labelShipModeID";
+            this.labelShipModeID.Size = new System.Drawing.Size(90, 23);
+            this.labelShipModeID.TabIndex = 7;
+            this.labelShipModeID.Text = "ShipModeID";
             // 
             // labelRemark
             // 
             this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(4, 195);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(90, 23);
@@ -397,22 +389,22 @@
             // displayContainerType
             // 
             this.displayContainerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayContainerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CYCFS", true));
+            this.displayContainerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MainCYCFS", true));
             this.displayContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayContainerType.Location = new System.Drawing.Point(98, 141);
             this.displayContainerType.Name = "displayContainerType";
             this.displayContainerType.Size = new System.Drawing.Size(30, 23);
             this.displayContainerType.TabIndex = 14;
             // 
-            // displaySONo
+            // displayShipModeID
             // 
-            this.displaySONo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySONo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sono", true));
-            this.displaySONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySONo.Location = new System.Drawing.Point(98, 168);
-            this.displaySONo.Name = "displaySONo";
-            this.displaySONo.Size = new System.Drawing.Size(120, 23);
-            this.displaySONo.TabIndex = 15;
+            this.displayShipModeID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayShipModeID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipModeID", true));
+            this.displayShipModeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayShipModeID.Location = new System.Drawing.Point(98, 168);
+            this.displayShipModeID.Name = "displayShipModeID";
+            this.displayShipModeID.Size = new System.Drawing.Size(120, 23);
+            this.displayShipModeID.TabIndex = 15;
             // 
             // editRemark
             // 
@@ -430,7 +422,6 @@
             // labelInvoiceNo
             // 
             this.labelInvoiceNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelInvoiceNo.Lines = 0;
             this.labelInvoiceNo.Location = new System.Drawing.Point(250, 33);
             this.labelInvoiceNo.Name = "labelInvoiceNo";
             this.labelInvoiceNo.Size = new System.Drawing.Size(79, 23);
@@ -440,7 +431,6 @@
             // labelPayer
             // 
             this.labelPayer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelPayer.Lines = 0;
             this.labelPayer.Location = new System.Drawing.Point(250, 60);
             this.labelPayer.Name = "labelPayer";
             this.labelPayer.Size = new System.Drawing.Size(79, 23);
@@ -450,7 +440,6 @@
             // labelBLNo
             // 
             this.labelBLNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBLNo.Lines = 0;
             this.labelBLNo.Location = new System.Drawing.Point(250, 87);
             this.labelBLNo.Name = "labelBLNo";
             this.labelBLNo.Size = new System.Drawing.Size(79, 23);
@@ -460,7 +449,6 @@
             // labelVesselName
             // 
             this.labelVesselName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelVesselName.Lines = 0;
             this.labelVesselName.Location = new System.Drawing.Point(250, 114);
             this.labelVesselName.Name = "labelVesselName";
             this.labelVesselName.Size = new System.Drawing.Size(79, 23);
@@ -470,7 +458,6 @@
             // labelNWGW
             // 
             this.labelNWGW.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelNWGW.Lines = 0;
             this.labelNWGW.Location = new System.Drawing.Point(250, 141);
             this.labelNWGW.Name = "labelNWGW";
             this.labelNWGW.Size = new System.Drawing.Size(79, 23);
@@ -480,7 +467,6 @@
             // labelCBM
             // 
             this.labelCBM.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCBM.Lines = 0;
             this.labelCBM.Location = new System.Drawing.Point(250, 168);
             this.labelCBM.Name = "labelCBM";
             this.labelCBM.Size = new System.Drawing.Size(79, 23);
@@ -551,7 +537,6 @@
             // label15
             // 
             this.label15.BackColor = System.Drawing.Color.Transparent;
-            this.label15.Lines = 0;
             this.label15.Location = new System.Drawing.Point(398, 141);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(10, 23);
@@ -610,7 +595,6 @@
             // labelHandle
             // 
             this.labelHandle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelHandle.Lines = 0;
             this.labelHandle.Location = new System.Drawing.Point(577, 33);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(92, 23);
@@ -620,7 +604,6 @@
             // labelPLRcvDate
             // 
             this.labelPLRcvDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelPLRcvDate.Lines = 0;
             this.labelPLRcvDate.Location = new System.Drawing.Point(577, 60);
             this.labelPLRcvDate.Name = "labelPLRcvDate";
             this.labelPLRcvDate.Size = new System.Drawing.Size(92, 23);
@@ -630,7 +613,6 @@
             // labelArrivePortDate
             // 
             this.labelArrivePortDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArrivePortDate.Lines = 0;
             this.labelArrivePortDate.Location = new System.Drawing.Point(577, 88);
             this.labelArrivePortDate.Name = "labelArrivePortDate";
             this.labelArrivePortDate.Size = new System.Drawing.Size(92, 23);
@@ -640,7 +622,6 @@
             // labelArriveWHDate
             // 
             this.labelArriveWHDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveWHDate.Lines = 0;
             this.labelArriveWHDate.Location = new System.Drawing.Point(577, 115);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(92, 23);
@@ -650,7 +631,6 @@
             // labelDoxRcvDate
             // 
             this.labelDoxRcvDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelDoxRcvDate.Lines = 0;
             this.labelDoxRcvDate.Location = new System.Drawing.Point(577, 142);
             this.labelDoxRcvDate.Name = "labelDoxRcvDate";
             this.labelDoxRcvDate.Size = new System.Drawing.Size(92, 23);
@@ -699,7 +679,6 @@
             // 
             this.label21.BackColor = System.Drawing.Color.Transparent;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold);
-            this.label21.Lines = 0;
             this.label21.Location = new System.Drawing.Point(250, 6);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(75, 23);
@@ -722,7 +701,6 @@
             // 
             // labelLocateSP
             // 
-            this.labelLocateSP.Lines = 0;
             this.labelLocateSP.Location = new System.Drawing.Point(5, 252);
             this.labelLocateSP.Name = "labelLocateSP";
             this.labelLocateSP.Size = new System.Drawing.Size(89, 23);
@@ -741,7 +719,6 @@
             // label23
             // 
             this.label23.BackColor = System.Drawing.Color.Transparent;
-            this.label23.Lines = 0;
             this.label23.Location = new System.Drawing.Point(200, 252);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(10, 23);
@@ -852,7 +829,7 @@
         private Win.UI.Label labelPayer;
         private Win.UI.Label labelInvoiceNo;
         private Win.UI.EditBox editRemark;
-        private Win.UI.DisplayBox displaySONo;
+        private Win.UI.DisplayBox displayShipModeID;
         private Win.UI.DisplayBox displayContainerType;
         private Win.UI.NumericBox numPackages;
         private Win.UI.DisplayBox displayConsignee;
@@ -860,7 +837,7 @@
         private Win.UI.DateBox dateETA;
         private Win.UI.DisplayBox displayWKNo;
         private Win.UI.Label labelRemark;
-        private Win.UI.Label labelSONo;
+        private Win.UI.Label labelShipModeID;
         private Win.UI.Label labelContainerType;
         private Win.UI.Label labelPackages;
         private Win.UI.Label labelConsignee;

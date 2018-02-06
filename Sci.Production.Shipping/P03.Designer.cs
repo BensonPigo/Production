@@ -42,7 +42,7 @@
             this.displayConsignee = new Sci.Win.UI.DisplayBox();
             this.numPackages = new Sci.Win.UI.NumericBox();
             this.displayContainerType = new Sci.Win.UI.DisplayBox();
-            this.displaySONo = new Sci.Win.UI.DisplayBox();
+            this.displayShipModeID = new Sci.Win.UI.DisplayBox();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelInvoiceNo = new Sci.Win.UI.Label();
             this.labelPayer = new Sci.Win.UI.Label();
@@ -121,7 +121,7 @@
             this.masterpanel.Controls.Add(this.labelPayer);
             this.masterpanel.Controls.Add(this.labelInvoiceNo);
             this.masterpanel.Controls.Add(this.editRemark);
-            this.masterpanel.Controls.Add(this.displaySONo);
+            this.masterpanel.Controls.Add(this.displayShipModeID);
             this.masterpanel.Controls.Add(this.displayContainerType);
             this.masterpanel.Controls.Add(this.numPackages);
             this.masterpanel.Controls.Add(this.displayConsignee);
@@ -160,7 +160,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayConsignee, 0);
             this.masterpanel.Controls.SetChildIndex(this.numPackages, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayContainerType, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displaySONo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayShipModeID, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelInvoiceNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPayer, 0);
@@ -315,7 +315,7 @@
             this.labelSONo.Name = "labelSONo";
             this.labelSONo.Size = new System.Drawing.Size(90, 23);
             this.labelSONo.TabIndex = 7;
-            this.labelSONo.Text = "S/O#";
+            this.labelSONo.Text = "ShipModeID";
             // 
             // labelRemark
             // 
@@ -391,22 +391,22 @@
             // displayContainerType
             // 
             this.displayContainerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayContainerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CYCFS", true));
+            this.displayContainerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MainCYCFS", true));
             this.displayContainerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayContainerType.Location = new System.Drawing.Point(98, 141);
             this.displayContainerType.Name = "displayContainerType";
             this.displayContainerType.Size = new System.Drawing.Size(30, 23);
             this.displayContainerType.TabIndex = 14;
             // 
-            // displaySONo
+            // displayShipModeID
             // 
-            this.displaySONo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySONo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sono", true));
-            this.displaySONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySONo.Location = new System.Drawing.Point(98, 168);
-            this.displaySONo.Name = "displaySONo";
-            this.displaySONo.Size = new System.Drawing.Size(120, 23);
-            this.displaySONo.TabIndex = 15;
+            this.displayShipModeID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayShipModeID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ShipModeID", true));
+            this.displayShipModeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayShipModeID.Location = new System.Drawing.Point(98, 168);
+            this.displayShipModeID.Name = "displayShipModeID";
+            this.displayShipModeID.Size = new System.Drawing.Size(120, 23);
+            this.displayShipModeID.TabIndex = 15;
             // 
             // editRemark
             // 
@@ -844,7 +844,7 @@
         private Win.UI.Label labelPayer;
         private Win.UI.Label labelInvoiceNo;
         private Win.UI.EditBox editRemark;
-        private Win.UI.DisplayBox displaySONo;
+        private Win.UI.DisplayBox displayShipModeID;
         private Win.UI.DisplayBox displayContainerType;
         private Win.UI.NumericBox numPackages;
         private Win.UI.DisplayBox displayConsignee;
