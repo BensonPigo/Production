@@ -60,7 +60,7 @@ namespace Sci.Production.Tools
                         {
                             if (strSever == hasConnectionNamedQuery[i])
                             {
-                                SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("Tradedb_", "").Trim().ToUpper());
+                                SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("PMSDB_", "").Trim().ToUpper());
                                 break;
                             }
                         }
