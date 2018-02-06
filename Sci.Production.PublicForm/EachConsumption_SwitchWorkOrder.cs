@@ -64,14 +64,19 @@ where a.id = '{cuttingid}' and b.Article is null and a.Qty > 0
 
             if (DTcheckAS.Rows.Count > 0)
             {
-                var m = MyUtility.Msg.ShowMsgGrid(DTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", "Error");
+                var m = new Sci.Win.UI.MsgGridForm(DTcheckAS, "Switching is stopped for these arctile size are not found in [ Each Consumpotion ], but exists in [ Quantity Breakdown ]", " Do you still want to Switch to WorkOrder ?", null, MessageBoxButtons.YesNo);
 
                 m.Width = 500;
                 m.grid1.Columns[1].Width = 140;
                 m.text_Find.Width = 140;
                 m.btn_Find.Location = new Point(150, 6);
                 m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
-                return;
+                m.ShowDialog();
+
+                if (m.result == DialogResult.No)
+                {
+                    return;
+                }
             }
             #endregion
 
