@@ -161,6 +161,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])),
                 }
 
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                DataRow drVD;
                 string oldvalue = MyUtility.Convert.GetString(dr["NLCode"]);
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                 if (oldvalue == newvalue)
@@ -168,10 +169,18 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])),
                     return;
                 }
 
-                if (!MyUtility.Check.Seek(string.Format("select 1 from VNContract_Detail where NLCode = '{0}' and id = '{1}'", newvalue, this.CurrentMaintain["VNContractID"].ToString())))
+                if (!MyUtility.Check.Seek(string.Format("select * from VNContract_Detail where NLCode = '{0}' and id = '{1}'", newvalue, this.CurrentMaintain["VNContractID"].ToString()), out drVD))
                 {
                     MyUtility.Msg.WarningBox(string.Format("NLCode:{0} not found!", newvalue));
                     dr["NLCode"] = string.Empty;
+                    dr["UnitID"] = string.Empty;
+                    dr["HSCode"] = string.Empty;
+                }
+                else
+                {
+                    dr["NLCode"] = drVD["NLCode"];
+                    dr["UnitID"] = drVD["UnitID"];
+                    dr["HSCode"] = drVD["HSCode"];
                 }
             };
             #endregion
@@ -442,6 +451,30 @@ from System WITH (NOLOCK) ");
             }
 
             return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSave()
+        {
+            foreach (DataRow dr in ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource).Rows)
+            {
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    if (MyUtility.Check.Empty(dr["Waste"]))
+                    {
+                        DataRow drs;
+                        if (MyUtility.Check.Seek(
+                            $@"
+select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaintain["BrandID"]}','{this.CurrentMaintain["SeasonID"]}','{this.CurrentMaintain["VNContractID"]}','{dr["NLCode"]}') as Waste", out drs))
+                        {
+                            dr["Waste"] = drs["Waste"];
+                            dr.EndEdit();
+                        }
+                    }
+                }
+            }
+
+            return base.ClickSave();
         }
 
         /// <inheritdoc/>
