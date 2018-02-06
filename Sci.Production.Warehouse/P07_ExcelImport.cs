@@ -264,23 +264,22 @@ namespace Sci.Production.Warehouse
                                 List<string> listNewRowErrMsg = new List<string>();
 
                                 DataRow newRow = grid2Data.NewRow();
-                                newRow["wkno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]], "C");
-                                newRow["poid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C");
-                                newRow["seq1"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C");
-                                newRow["seq2"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C");
-                                newRow["seq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C").ToString().PadRight(3) + MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C").ToString();
-                                newRow["PoIdSeq1"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C")+ MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C").ToString();
-                                newRow["PoIdSeq"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]], "C")+ MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]], "C").ToString().PadRight(3) + MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]], "C").ToString();
-                                newRow["roll"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]], "C")) ? "" :
-                                    MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]].ToString().Replace("'", "").Trim(), "C");
-                                newRow["dyelot"] = MyUtility.Check.Empty(MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]], "C")) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Replace("'", "").Trim(), "C");
+                                newRow["wkno"] = (objCellArray[1, ItemPosition[1]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[1]].ToString().Trim(), "C");
+                                newRow["poid"] = (objCellArray[1, ItemPosition[2]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C");
+                                newRow["seq1"] = (objCellArray[1, ItemPosition[3]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C");
+                                newRow["seq2"] = (objCellArray[1, ItemPosition[4]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C");
+                                newRow["seq"] = ((objCellArray[1, ItemPosition[3]] == null) ? "" :MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C").ToString().PadRight(3)) + ((objCellArray[1, ItemPosition[4]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString());
+                                newRow["PoIdSeq1"] = ((objCellArray[1, ItemPosition[2]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C"))+((objCellArray[1, ItemPosition[3]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C").ToString());
+                                newRow["PoIdSeq"] = ((objCellArray[1, ItemPosition[2]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[2]].ToString().Trim(), "C"))+((objCellArray[1, ItemPosition[3]] == null) ? "" :  MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[3]].ToString().Trim(), "C").ToString().PadRight(3)) + ((objCellArray[1, ItemPosition[4]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[4]].ToString().Trim(), "C").ToString());
+                                newRow["roll"] = (objCellArray[1, ItemPosition[5]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[5]].ToString().Replace("'", "").Trim(), "C");
+                                newRow["dyelot"] = (objCellArray[1, ItemPosition[6]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[6]].ToString().Replace("'", "").Trim(), "C");
                                 newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[7]], "N");
                                 newRow["foc"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[8]], "N");
-                                newRow["shipqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString());
-                                newRow["actualqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString());
+                                newRow["shipqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString().Trim());
+                                newRow["actualqty"] = decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString().Trim());
                                 newRow["actualWeight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[9]], "N");
                                 newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[10]], "N");
-                                newRow["location"] = (objCellArray[1, ItemPosition[11]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[11]], "C");
+                                newRow["location"] = (objCellArray[1, ItemPosition[11]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[11]].ToString().Trim(), "C");
 
                                 #region check Columns length
                                 List<string> listColumnLengthErrMsg = new List<string>();
