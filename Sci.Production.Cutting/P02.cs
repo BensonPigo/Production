@@ -176,7 +176,12 @@ Select
 	,MarkerLengthY = RIGHT(REPLICATE('0', 2) + CAST(substring(a.MarkerLength,1,CHARINDEX('Y',a.MarkerLength)-1) as VARCHAR), 2)  
 	,MarkerLengthE = substring(a.MarkerLength,CHARINDEX('Y',a.MarkerLength)+1,15) 
     ,shc = iif(isnull(shc.RefNo,'')='','','Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension')
-from Workorder a WITH (NOLOCK) left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
+    ,EachconsMarkerNo = e.markerNo
+    ,EachconsMarkerDownloadID = e.MarkerDownloadID 
+    ,EachconsMarkerVersion = e.MarkerVersion
+from Workorder a WITH (NOLOCK)
+left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
+left join dbo.order_Eachcons e WITH (NOLOCK) on e.Ukey = a.Order_EachconsUkey 
 outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc
 outer apply
 (
@@ -406,6 +411,15 @@ where WorkOrderUkey={0}", masterID);
             this.detailgrid.SelectRowTo(0);
             this.detailgrid.AutoResizeColumns();
             btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+
+            #region 檢查MarkerNo ,MarkerVersion ,MarkerDownloadID是否與Order_Eachcons不同
+            if (this.DetailDatas.Where(s=> !s["MarkerNo"].Equals(s["EachconsMarkerNo"]) ||
+                                           !s["MarkerVersion"].Equals(s["EachconsMarkerVersion"]) ||
+                                           !s["MarkerDownloadID"].Equals(s["EachconsMarkerDownloadID"])).Count()>0)
+                downloadid_Text.Visible = true;
+            else
+                downloadid_Text.Visible = false;
+            #endregion
         }
 
         protected override void OnDetailGridSetup()
@@ -460,7 +474,13 @@ where WorkOrderUkey={0}", masterID);
                 .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Adduser", header: "Add Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Add Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("UKey", header: "Key", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Text("UKey", header: "Key", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("MarkerNo", header: "Apply #", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("MarkerVersion", header: "Apply ver", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("MarkerDownloadID", header: "Download ID", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                .Text("EachconsMarkerNo", header: "EachCons Apply #", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("EachconsMarkerVersion", header: "EachCons Apply ver", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("EachconsMarkerDownloadID", header: "EachCons Download ID", width: Widths.AnsiChars(25), iseditingreadonly: true);
             
             Helper.Controls.Grid.Generator(this.gridSizeRatio)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5)).Get(out col_sizeRatio_size)
@@ -1529,16 +1549,7 @@ where WorkOrderUkey={0}", masterID);
                     numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
                 }
             }
-
-            #region 判斷download id
-            string downloadid = MyUtility.GetValue.Lookup("MarkerDownLoadid", CurrentDetailData["Order_EachConsUkey"].ToString(), "Order_EachCons", "Ukey");
-            displayEachConsDownloadID.Text = downloadid;
-            if (downloadid.Trim() != CurrentDetailData["MarkerDownLoadid"].ToString().Trim())
-                downloadid_Text.Visible = true;
-            else
-                downloadid_Text.Visible = false;
-            #endregion
-
+            
             #region 判斷可否開放修改
             if (MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]) && this.EditMode)
             {
@@ -2001,6 +2012,13 @@ where WorkOrderUkey={0}", masterID);
 
         protected override void OnDetailGridDelete()
         {
+            // 判斷有 CutPlanID不能刪除
+            if (!string.IsNullOrEmpty(CurrentDetailData["Cutplanid"].ToString()))
+            {
+                MyUtility.Msg.WarningBox($"it's scheduled in P04. Cutting Daily Plan : {CurrentDetailData["Cutplanid"]}, can't be deleted.");
+                return;
+            }
+
             string ukey = CurrentDetailData["Ukey"].ToString() == "" ? "0" : CurrentDetailData["Ukey"].ToString();
             int NewKey = Convert.ToInt32(CurrentDetailData["NewKey"]);
             DataRow[] drar = sizeratioTb.Select(string.Format("WorkOrderUkey = '{0}' and NewKey = {1}", ukey, NewKey));
@@ -2134,6 +2152,7 @@ where WorkOrderUkey={0}", masterID);
 
         private void deleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            
             DataRow selectDr = ((DataRowView)gridDistributetoSPNo.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
 

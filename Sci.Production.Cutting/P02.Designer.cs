@@ -884,11 +884,11 @@
             // 
             this.downloadid_Text.BackColor = System.Drawing.Color.Transparent;
             this.downloadid_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
-            this.downloadid_Text.Location = new System.Drawing.Point(82, 61);
+            this.downloadid_Text.Location = new System.Drawing.Point(26, 61);
             this.downloadid_Text.Name = "downloadid_Text";
-            this.downloadid_Text.Size = new System.Drawing.Size(186, 23);
+            this.downloadid_Text.Size = new System.Drawing.Size(263, 23);
             this.downloadid_Text.TabIndex = 53;
-            this.downloadid_Text.Text = "DownLoad ID Different";
+            this.downloadid_Text.Text = "DownLoad ID/ Apply # Different";
             this.downloadid_Text.TextStyle.Color = System.Drawing.Color.Red;
             this.downloadid_Text.Visible = false;
             // 
