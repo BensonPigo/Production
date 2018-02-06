@@ -19,8 +19,9 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
             this.labelErrMsg.Text = errMsg;
+            this.labelErrMsg.Height = this.labelErrMsg.Height + 20;
             this.Width = this.labelErrMsg.Width + 20;
-            this.Height = this.labelErrMsg.Height + this.buttonOK.Height + 80;
+            this.Height = this.labelErrMsg.Height + this.buttonOK.Height + 70;
         }
 
         private void ButtonOK_Click(object sender, EventArgs e)

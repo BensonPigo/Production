@@ -35,7 +35,8 @@
             // labelErrMsg
             // 
             this.labelErrMsg.AutoSize = true;
-            this.labelErrMsg.Location = new System.Drawing.Point(3, 3);
+            this.labelErrMsg.BackColor = System.Drawing.Color.White;
+            this.labelErrMsg.Location = new System.Drawing.Point(2, 2);
             this.labelErrMsg.Name = "labelErrMsg";
             this.labelErrMsg.Size = new System.Drawing.Size(0, 17);
             this.labelErrMsg.TabIndex = 73;
