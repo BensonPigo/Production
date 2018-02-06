@@ -1232,7 +1232,15 @@ where POID = @poid group by POID,b.spno";
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
-                MyUtility.Msg.ErrorBox("Shipment finished fail!!" + result.ToString());
+                MyUtility.Msg.ErrorBox("Shipment finished fail !!" + result.ToString());
+                return;
+            }
+
+            sqlCmd = string.Format("update sewingschedule set OrderFinished = 1 where OrderID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("update sewingschedule.OrderFinished Fail !!" + result.ToString());
                 return;
             }
 
@@ -1267,6 +1275,14 @@ where POID = @poid group by POID,b.spno";
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("'Back to P01. PPIC Master List' fail!!" + result.ToString());
+                return;
+            }
+
+            sqlCmd = string.Format("update sewingschedule set OrderFinished = 0 where OrderID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            result = DBProxy.Current.Execute(null, sqlCmd);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("update sewingschedule.OrderFinished Fail !!" + result.ToString());
                 return;
             }
 
