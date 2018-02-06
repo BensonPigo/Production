@@ -2012,6 +2012,10 @@ where WorkOrderUkey={0}", masterID);
 
         protected override void OnDetailGridDelete()
         {
+            if (CurrentDetailData == null)
+            {
+                return;
+            }
             // 判斷有 CutPlanID不能刪除
             if (!string.IsNullOrEmpty(CurrentDetailData["Cutplanid"].ToString()))
             {
