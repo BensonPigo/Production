@@ -377,87 +377,117 @@ left join Fabric on Fabric.SCIRefno = f.SCIRefno
 where f.PhysicalEncode = 1 and fp.ActualWidth <> Fabric.Width
 group by f.Suppid
 ------#FabricInspDoc TestReport
-select  b.SuppID,[cnt] = isnull(round(convert(float,
-count(a.id))/
-(select count(*) from #tmpAllData p
-inner join po_supp p2 on p.poid=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
-inner join  FabricInspDoc f1 on p.poid=f1.Id and f1.Id=a.Id 
-where f1.Status='Confirmed'
- ),4),0)
+select tmp.suppID
+	   , [cnt] = case count(1)
+					when 0 then 0
+					else 1.0 * sum(ch.value) / count(1) 
+				 end
 into #tmpTestReport
-from FabricInspDoc a 
-inner join FabricInspDoc_Detail b on a.ID=b.ID
-inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
-where a.Status='Confirmed'
-and b.TestReport=1
-group by b.SuppID,a.Id
+from (
+	select distinct suppID
+		   , poid
+		   , seq1
+		   , seq2
+	from #tmpAllData
+) tmp
+outer apply (
+	select value = count(1)
+	from FabricInspDoc fid
+	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
+	where tmp.poid = fid.ID
+		  and tmp.seq1 = fidd.seq1
+		  and tmp.seq2 = fidd.seq2
+		  and tmp.suppID = fidd.suppID
+		  and fid.Status='Confirmed'
+		  and fidd.TestReport=1
+) ch
+group by suppID
+
 ------#FabricInspDoc Inspection Report
-select b.SuppID,[cnt] = isnull(round(convert(float,
-count(a.id))/
-(select count(*) from #tmpAllData p
-inner join po_supp p2 on p.poid=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
-inner join  FabricInspDoc f1 on p.poid=f1.Id and f1.Id=a.Id 
-where f1.Status='Confirmed'
- ),4),0)
+select tmp.suppID
+	   , [cnt] = case count(1)
+					when 0 then 0
+					else 1.0 * sum(ch.value) / count(1) 
+				 end
 into #InspReport
-from FabricInspDoc a
-inner join FabricInspDoc_Detail b on a.ID=b.ID
-inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
-where a.Status='Confirmed'
-and b.InspReport=1
-group by b.SuppID,a.Id
+from (
+	select distinct suppID
+		   , poid
+		   , seq1
+		   , seq2
+	from #tmpAllData
+) tmp
+outer apply (
+	select value = count(1)
+	from FabricInspDoc fid
+	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
+	where tmp.poid = fid.ID
+		  and tmp.seq1 = fidd.seq1
+		  and tmp.seq2 = fidd.seq2
+		  and tmp.suppID = fidd.suppID
+		  and fid.Status='Confirmed'
+		  and fidd.InspReport=1
+) ch
+group by suppID
+
 ------#FabricInspDoc Approved Continuity Card Provided %
-select b.SuppID,[cnt] = isnull(round(convert(float,
-count(a.id))/
-(select count(*) from #tmpAllData p
-inner join po_supp p2 on p.poid=p2.id and p.seq1=p2.seq1 and p2.suppid=b.suppid
-inner join  FabricInspDoc f1 on p.poid=f1.Id and f1.Id=a.Id 
-where f1.Status='Confirmed'
- ),4),0)
- into #tmpContinuityCard 
-from FabricInspDoc a
-inner join FabricInspDoc_Detail b on a.ID=b.ID
-inner join (select distinct poid,SuppID from #tmpAllData) c on a.ID=c.PoId and b.SuppID=c.SuppID
-where a.Status='Confirmed'
-and b.ContinuityCard =1
-group by b.SuppID,a.Id
+select tmp.suppID
+	   , [cnt] = case count(1)
+					when 0 then 0
+					else 1.0 * sum(ch.value) / count(1) 
+				 end
+into #tmpContinuityCard
+from (
+	select distinct suppID
+		   , poid
+		   , seq1
+		   , seq2
+	from #tmpAllData
+) tmp
+outer apply (
+	select value = count(1)
+	from FabricInspDoc fid
+	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
+	where tmp.poid = fid.ID
+		  and tmp.seq1 = fidd.seq1
+		  and tmp.seq2 = fidd.seq2
+		  and tmp.suppID = fidd.suppID
+		  and fid.Status='Confirmed'
+		  and fidd.ContinuityCard=1
+) ch
+group by suppID
+
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
-select  ta.SuppID,
-[cnt] = isnull(round(convert(float,
-(select count(1) from
-	(
-		select f2.ID,f2.SuppID,f2.Refno,f2.ColorID
-		from #tmpAllData p3
-		inner join po_supp p2 on p3.poid=p2.ID and p3.SEQ1=p2.SEQ1
-		left join  FabricInspDoc f1 on p3.poid=f1.Id
-		left join  FabricInspDoc_Detail f2 on f1.id=f2.id  and p3.seq1=f2.seq1 and p3.seq2=f2.seq2
-		and f2.SuppID=p2.SuppID and f2.Refno=p3.Refno
-		where f1.Status='Confirmed'
-		and f2.id=ta.poid
-		and f2.Suppid=ta.suppid		
-		and f2.BulkDyelot=1
-		group by f2.ID,f2.SuppID,f2.Refno,f2.ColorID
-	)bb
-))
-/ 
-(select count(1) from
-	(
-		select po3.poid,po3.Refno,po2.SuppID,po3.ColorID
-		from #tmpAllData po3 
-		inner join po_supp po2 on po3.poid=po2.ID and po3.SEQ1=po2.SEQ1 		
-		where po3.poid=ta.poID
-		and po2.suppid=ta.suppid 
-		group by po3.poid,po3.Refno,po2.SuppID,po3.ColorID
-	) aa
- ),4),0)
+select ta.SuppID
+	   , [cnt] = case count(1)
+					when 0 then 0
+					else 1.0 * sum(ch.value) / count(1) 
+				 end
 into #BulkDyelot
-from #tmpAllData ta
-left join FabricInspDoc_detail fab2 on ta.poid=fab2.id 
-and ta.seq1=fab2.seq1 and ta.seq2=fab2.seq2
-left join FabricInspDoc fab1 on fab2.id=fab1.id
-where 1=1
-and fab2.BulkDyelot=1
-group by ta.suppid,ta.poid
+from (
+	select ta.poid, ta.seq1, ta.seq2, ta.suppID, ta.refno, ta.colorID
+	from #tmpAllData ta
+	group by ta.poid, ta.seq1, ta.seq2, ta.suppID, ta.refno, ta.colorID
+) ta
+inner join FabricInspDoc_detail fab2 on ta.poid = fab2.ID 
+										and ta.seq1 = fab2.seq1 
+										and ta.seq2 = fab2.seq2
+										and ta.suppid = fab2.suppid 
+										and ta.refno = fab2.refno 
+										and ta.colorid = fab2.colorid
+outer apply (
+	select value = count (1)
+	from FabricInspDoc_detail fab2 
+	where ta.poid = fab2.ID 
+		  and ta.seq1 = fab2.seq1 
+		  and ta.seq2 = fab2.seq2
+		  and ta.suppid = fab2.suppid 
+		  and ta.refno = fab2.refno 
+		  and ta.colorid = fab2.colorid
+		  and fab2.BulkDyelot = 1
+) ch
+group by ta.SuppID
+
 ------#TmpFinal 
 select --distinct 
     Tmp.SuppID 
