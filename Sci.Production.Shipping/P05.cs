@@ -411,7 +411,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             }
 
             // 已經有做出口費用分攤就不可以被刪除
-            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ShippingAPID from ShareExpense WITH (NOLOCK) where InvNo = '{0}' and (Junk = 0 or Junk is null)", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
             {
                 MyUtility.Msg.WarningBox("This record have expense data, can't be deleted!");
                 return false;
