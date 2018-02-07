@@ -72,12 +72,14 @@ namespace Sci.Production.Shipping
                 sqlCmd.Append(@"with ExportData
 as (
 select e.InvNo,'Material' as Type,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
-e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
+CYCFS = CYCFS.value,
+e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
 e.PortArrival,e.DocArrival,se.CurrencyID,se.Amount,se.AccountID
 from ShippingAP s WITH (NOLOCK) 
 inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
 left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
+outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
 where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {
@@ -218,7 +220,8 @@ FOR AccountID IN ({0})) a", allAccno.ToString()));
                 sqlCmd.Append(@"with ExportData
 as (
 select e.InvNo,'Material' as Type,s.MDivisionID,e.Consignee,e.ID as WKNo,'' as FtyWKNo,e.ShipModeID,
-e.CYCFS,e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
+CYCFS = CYCFS.value,
+e.Packages,e.Blno,e.WeightKg,e.Cbm,e.Forwarder+'-'+isnull(supp.AbbEN,'') as Forwarder,
 e.PortArrival,e.DocArrival,se.AccountID+'-'+isnull(a.Name,'') as AccountNo,se.Amount,se.CurrencyID,se.ShippingAPID,
 s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.VoucherID,s.SubType
 from ShippingAP s WITH (NOLOCK) 
@@ -226,6 +229,7 @@ inner join ShareExpense se WITH (NOLOCK) on se.ShippingAPID = s.ID
 inner join Export e WITH (NOLOCK) on se.WKNo = e.ID
 left join Supp WITH (NOLOCK) on supp.ID = e.Forwarder
 left join [FinanceEN].dbo.AccountNo a on a.ID = se.AccountID
+outer apply(select value = cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID) as CYCFS
 where s.Type = 'IMPORT'");
                 if (!MyUtility.Check.Empty(this.arrivePortDate1))
                 {

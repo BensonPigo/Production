@@ -37,7 +37,8 @@ with ExportSeq1 as(select distinct ID,Seq1 from Export_Detail WITH (NOLOCK) wher
 ,SeqSum as(select distinct ID, (select Seq1+',' from ExportSeq1 where ID = e.ID for xml path('')) as Seq from ExportSeq1 e)
 ,ExportData as
 (
-    select distinct 'Import Schedule' as Type, e.ID,e.Eta,e.WhseArrival,e.Consignee,e.ShipMark,e.Vessel,e.CYCFS
+    select distinct 'Import Schedule' as Type, e.ID,e.Eta,e.WhseArrival,e.Consignee,e.ShipMark,e.Vessel,
+           CYCFS =(select cycfs from Export as a1 WITH (NOLOCK) where a1.ID =  e.MainExportID)
     from Export e WITH (NOLOCK) , Export_Detail ed WITH (NOLOCK) 
     where e.ID = ed.ID
     and ed.PoID = @POID

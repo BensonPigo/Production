@@ -382,6 +382,12 @@
     <Compile Include="P05.Designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05_AirPrePaidStatus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_AirPrePaidStatus.Designer.cs">
+      <DependentUpon>P05_AirPrePaidStatus.cs</DependentUpon>
+    </Compile>
     <Compile Include="P05_AirPrePaidList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -393,6 +399,12 @@
     </Compile>
     <Compile Include="P05_ContainerTruck.Designer.cs">
       <DependentUpon>P05_ContainerTruck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_ErrorMsg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_ErrorMsg.Designer.cs">
+      <DependentUpon>P05_ErrorMsg.cs</DependentUpon>
     </Compile>
     <Compile Include="P05_ExpenseData.cs">
       <SubType>Form</SubType>
@@ -812,11 +824,17 @@
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P05_AirPrePaidStatus.resx">
+      <DependentUpon>P05_AirPrePaidStatus.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P05_AirPrePaidList.resx">
       <DependentUpon>P05_AirPrePaidList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05_ContainerTruck.resx">
       <DependentUpon>P05_ContainerTruck.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_ErrorMsg.resx">
+      <DependentUpon>P05_ErrorMsg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05_ExpenseData.resx">
       <DependentUpon>P05_ExpenseData.cs</DependentUpon>

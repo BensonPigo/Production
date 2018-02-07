@@ -96,6 +96,7 @@
             this.txtCountryDestination = new Sci.Production.Class.txtcountry();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtfactoryShipper = new Sci.Win.UI.TextBox();
+            this.btnAirPPStatus = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -112,6 +113,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnAirPPStatus);
             this.masterpanel.Controls.Add(this.btnImportfrompackinglist);
             this.masterpanel.Controls.Add(this.txtfactoryShipper);
             this.masterpanel.Controls.Add(this.txtCutoffDate);
@@ -250,6 +252,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtfactoryShipper, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportfrompackinglist, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnAirPPStatus, 0);
             // 
             // detailpanel
             // 
@@ -850,21 +853,21 @@
             // btnAirPPList
             // 
             this.btnAirPPList.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAirPPList.Location = new System.Drawing.Point(849, 34);
+            this.btnAirPPList.Location = new System.Drawing.Point(856, 30);
             this.btnAirPPList.Name = "btnAirPPList";
-            this.btnAirPPList.Size = new System.Drawing.Size(132, 30);
+            this.btnAirPPList.Size = new System.Drawing.Size(131, 30);
             this.btnAirPPList.TabIndex = 64;
             this.btnAirPPList.Text = "AirPP List";
             this.btnAirPPList.UseVisualStyleBackColor = true;
-            this.btnAirPPList.Click += new System.EventHandler(this.BtnAirPPList_Click);
             this.btnAirPPList.Visible = false;
+            this.btnAirPPList.Click += new System.EventHandler(this.BtnAirPPList_Click);
             // 
             // btnExpenseData
             // 
             this.btnExpenseData.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExpenseData.Location = new System.Drawing.Point(849, 71);
+            this.btnExpenseData.Location = new System.Drawing.Point(856, 66);
             this.btnExpenseData.Name = "btnExpenseData";
-            this.btnExpenseData.Size = new System.Drawing.Size(132, 30);
+            this.btnExpenseData.Size = new System.Drawing.Size(131, 30);
             this.btnExpenseData.TabIndex = 65;
             this.btnExpenseData.Text = "Expense Data";
             this.btnExpenseData.UseVisualStyleBackColor = true;
@@ -873,9 +876,9 @@
             // btnContainerTruck
             // 
             this.btnContainerTruck.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnContainerTruck.Location = new System.Drawing.Point(849, 108);
+            this.btnContainerTruck.Location = new System.Drawing.Point(856, 102);
             this.btnContainerTruck.Name = "btnContainerTruck";
-            this.btnContainerTruck.Size = new System.Drawing.Size(132, 30);
+            this.btnContainerTruck.Size = new System.Drawing.Size(131, 30);
             this.btnContainerTruck.TabIndex = 66;
             this.btnContainerTruck.Text = "Container/Truck";
             this.btnContainerTruck.UseVisualStyleBackColor = true;
@@ -1063,6 +1066,17 @@
             this.txtfactoryShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtfactoryShipper_PopUp);
             this.txtfactoryShipper.Validating += new System.ComponentModel.CancelEventHandler(this.TxtfactoryShipper_Validating);
             // 
+            // btnAirPPStatus
+            // 
+            this.btnAirPPStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnAirPPStatus.Location = new System.Drawing.Point(856, 138);
+            this.btnAirPPStatus.Name = "btnAirPPStatus";
+            this.btnAirPPStatus.Size = new System.Drawing.Size(131, 30);
+            this.btnAirPPStatus.TabIndex = 71;
+            this.btnAirPPStatus.Text = "Air-Prepaid Status";
+            this.btnAirPPStatus.UseVisualStyleBackColor = true;
+            this.btnAirPPStatus.Click += new System.EventHandler(this.BtnAirPPStatus_Click);
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -1172,5 +1186,6 @@
         private Win.UI.TextBox txtTerminalWhse;
         private Win.UI.TextBox txtCutoffDate;
         private Win.UI.TextBox txtfactoryShipper;
+        private Win.UI.Button btnAirPPStatus;
     }
 }
