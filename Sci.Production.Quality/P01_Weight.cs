@@ -618,7 +618,6 @@ left join dbo.style s on o.StyleID = s.ID and o.BrandID = s.BrandID and o.Season
             excelHeadData.FabricRefNo = maindr["SCIRefno"].ToString();
             excelHeadData.FabricColor = displayColor.Text;
             excelHeadData.FabricDesc = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-
             //取得資料
             //先取Article
             string article_sql = $@"SELECT distinct(oc.article)  as article
@@ -657,8 +656,8 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                  
                     foreach (var dateFilter in detailbyDate)
                     {
-                        excelHeadData.SubmitDate = ((DateTime)dateFilter.SubmitDate).ToString("yyyy/MM/dd");
-                        excelHeadData.ReportDate = ((DateTime)dateFilter.Inspdate).ToString("yyyy/MM/dd");
+                        excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.SubmitDate).ToString("yyyy/MM/dd");
+                        excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.Inspdate).ToString("yyyy/MM/dd");
                         //產生新sheet並填入標題等資料
                         exlSheets.Add();
                         
@@ -671,39 +670,44 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                         int detail_start = 16;
                         foreach (DataRow dr in dr_detail)
                         {
-                            newSheet.Cells[detail_start,2].Value = "'" + dr["Dyelot"];
-                            newSheet.Cells[detail_start, 3].Value =dr["Roll"];
-                            newSheet.Cells[detail_start, 4].Value = dr["WeightM2"];
-                            newSheet.Cells[detail_start, 5].Value = dr["AverageWeightM2"];
-                            newSheet.Cells[detail_start, 6].Value = dr["Difference"];
-                            newSheet.Cells[detail_start, 7].Value = dr["Result"];
-                            newSheet.Cells[detail_start, 8].Value = dr["Remark"];
-                            newSheet.Range[$"H{detail_start}", $"J{detail_start}"].Merge();
+                            newSheet.Cells[detail_start, 1].Value = "'" + dr["Dyelot"];
+                            newSheet.Cells[detail_start, 2].Value =dr["Roll"];
+                            newSheet.Cells[detail_start, 3].Value = dr["WeightM2"];
+                            newSheet.Cells[detail_start, 4].Value = dr["AverageWeightM2"];
+                            newSheet.Cells[detail_start, 5].Value = dr["Difference"];
+                            newSheet.Cells[detail_start, 6].Value = dr["Result"];
+                            newSheet.Cells[detail_start, 7].Value = dr["Remark"];
+                            newSheet.Range[$"G{detail_start}", $"I{detail_start}"].Merge();
                             detail_start++;
                         }
 
-                        newSheet.get_Range($"B16:J{detail_start-1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                        newSheet.get_Range($"B16:J{detail_start-1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+                        newSheet.get_Range($"A16:I{detail_start-1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                        newSheet.get_Range($"A16:I{detail_start-1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
                        
                         //簽名欄
-                        newSheet.Cells[detail_start + 1, 7].Value = "Signature";
-                        newSheet.Range[$"G{detail_start+1}", $"J{detail_start+1}"].Merge();
-                        newSheet.Cells[detail_start + 2, 7].Font.Size = 10;
-                        newSheet.Cells[detail_start + 2, 7].Value = signature;
-                        newSheet.Range[$"G{detail_start + 2}", $"J{detail_start + 2}"].Merge();
-                        newSheet.Cells[detail_start + 3, 7].Value = "Checked by:";
-                        newSheet.Range[$"G{detail_start + 3}", $"J{detail_start + 3}"].Merge();
-                        newSheet.get_Range($"G{detail_start + 1}:J{detail_start + 3}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                        newSheet.get_Range($"G{detail_start + 1}:J{detail_start + 3}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
-
+                        newSheet.Cells[detail_start + 1, 6].Value = "Signature";
+                        newSheet.Cells[detail_start + 1, 6].Font.Bold = true;
+                        newSheet.Range[$"F{detail_start+1}", $"I{detail_start+1}"].Merge();
+                        newSheet.Cells[detail_start + 2, 6].Value = signature;
+                        newSheet.Range[$"F{detail_start + 2}", $"I{detail_start + 2}"].Merge();
+                        newSheet.Cells[detail_start + 3, 6].Value = "Checked by:";
+                        newSheet.Range[$"F{detail_start + 3}", $"I{detail_start + 3}"].Merge();
+                        newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                        newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+                        newSheet.get_Range($"F{detail_start + 1}:I{detail_start + 3}").Font.Size = 9;
                         //全部置中
-                        newSheet.get_Range($"A1:J{detail_start + 3}").HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                        newSheet.get_Range($"A1:J{detail_start + 3}").Font.Name = "Arial";
+                        newSheet.get_Range($"A1:I{detail_start + 3}").HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                        newSheet.get_Range($"A1:I{detail_start + 3}").Font.Name = "Arial";
 
                         //版面保持一頁
                         newSheet.PageSetup.Zoom = false;
-                        newSheet.PageSetup.FitToPagesTall = 1;
                         newSheet.PageSetup.FitToPagesWide = 1;
+
+                        //針對merge後會過長的欄位作高度調整
+                        double newHeight;
+                        newSheet.Range["A7", "A7"].RowHeight = MeasureTextHeight(excelHeadData.StyleName, 54);
+                        newHeight = MeasureTextHeight(excelHeadData.FabricDesc, 59);
+                        newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
                     }
 
             
@@ -731,94 +735,123 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
         
         private void AddSheetAndHead(ExcelHeadData headData, Excel.Worksheet tmpSheet)
         {
-            tmpSheet.Cells[1, 2].Value = "Fabric Weight Test Report";
-            tmpSheet.Cells[1, 2].Font.Bold = true;
-            tmpSheet.Cells[1, 2].Font.Size = 18;
+            //設定欄位寬度
+            tmpSheet.Columns[1].ColumnWidth = 13.63;
+            tmpSheet.Columns[2].ColumnWidth = 8;
+            tmpSheet.Columns[3].ColumnWidth = 12.80;
+            tmpSheet.Columns[4].ColumnWidth = 12.80;
+            tmpSheet.Columns[5].ColumnWidth = 11.5;
+            tmpSheet.Columns[6].ColumnWidth = 8.38;
+            tmpSheet.Columns[7].ColumnWidth = 9.38;
+            tmpSheet.Columns[8].ColumnWidth = 8.38;
+            tmpSheet.Columns[9].ColumnWidth = 8.38;
+            tmpSheet.Columns.Font.Size = 10;
+
+            tmpSheet.Range["A1", "I1"].Merge();
+            tmpSheet.Range["F4", "G4"].Merge();
+            tmpSheet.Range["B6", "C6"].Merge();
+            tmpSheet.Range["E6", "F6"].Merge();
+            tmpSheet.Range["H6", "I6"].Merge();
+            tmpSheet.Range["B7", "F7"].Merge();
+            tmpSheet.Range["H7", "I7"].Merge();
+            tmpSheet.Range["B11", "C11"].Merge();
+            tmpSheet.Range["D11", "I11"].Merge();
+            tmpSheet.Range["B12", "C12"].Merge();
+            tmpSheet.Range["D12", "I12"].Merge();
+            tmpSheet.Range["G15", "I15"].Merge();
+
+            tmpSheet.Cells[1, 1].Value = "Fabric Weight Test Report";
+            tmpSheet.Cells[1, 1].Font.Bold = true;
+            tmpSheet.Cells[1, 1].Font.Size = 18;
 
 
-            tmpSheet.Cells[4, 2].Value = "Submit Date";
-            tmpSheet.Cells[4, 2].Font.Bold = true;
-            tmpSheet.Cells[4, 3].Value = headData.SubmitDate;
-            tmpSheet.Cells[4, 4].Value = "Report  Date";
-            tmpSheet.Cells[4, 4].Font.Bold = true;
-            tmpSheet.Cells[4, 5].Value = headData.ReportDate;
-            tmpSheet.Cells[4, 6].Value = "SP No";
-            tmpSheet.Cells[4, 6].Font.Bold = true;
-            tmpSheet.Cells[4, 7].Value = headData.SPNo;
-            tmpSheet.Cells[4, 9].Value = "Brand";
-            tmpSheet.Cells[4, 9].Font.Bold = true;
-            tmpSheet.Cells[4, 10].Value = headData.Brand;
+            tmpSheet.Cells[4, 1].Value = "Submit Date";
+            tmpSheet.Cells[4, 1].Font.Bold = true;
+            tmpSheet.Cells[4, 2].Value = headData.SubmitDate;
+            tmpSheet.Cells[4, 3].Value = "Report  Date";
+            tmpSheet.Cells[4, 3].Font.Bold = true;
+            tmpSheet.Cells[4, 4].Value = headData.ReportDate;
+            tmpSheet.Cells[4, 5].Value = "SP No";
+            tmpSheet.Cells[4, 5].Font.Bold = true;
+            tmpSheet.Cells[4, 6].Value = headData.SPNo;
+            tmpSheet.Cells[4, 8].Value = "Brand";
+            tmpSheet.Cells[4, 8].Font.Bold = true;
+            tmpSheet.Cells[4, 9].Value = headData.Brand;
 
-            tmpSheet.Cells[6, 2].Value = "Style No";
-            tmpSheet.Cells[6, 2].Font.Bold = true;
-            tmpSheet.Cells[6, 3].Value = headData.StyleNo;
-            tmpSheet.Cells[6, 5].Value = "PO Number";
-            tmpSheet.Cells[6, 5].Font.Bold = true;
-            tmpSheet.Cells[6, 6].Value = headData.PONumber;
-            tmpSheet.Cells[6, 8].Value = "Article No";
-            tmpSheet.Cells[6, 8].Font.Bold = true;
-            tmpSheet.Cells[6, 9].Value = headData.ArticleNo;
+            tmpSheet.Cells[6, 1].Value = "Style No";
+            tmpSheet.Cells[6, 1].Font.Bold = true;
+            tmpSheet.Cells[6, 2].Value = headData.StyleNo;
+            tmpSheet.Cells[6, 4].Value = "PO Number";
+            tmpSheet.Cells[6, 4].Font.Bold = true;
+            tmpSheet.Cells[6, 5].Value = headData.PONumber;
+            tmpSheet.Cells[6, 7].Value = "Article No";
+            tmpSheet.Cells[6, 7].Font.Bold = true;
+            tmpSheet.Cells[6, 8].Value = headData.ArticleNo;
 
-            tmpSheet.Cells[7, 2].Value = "Style Name";
-            tmpSheet.Cells[7, 2].Font.Bold = true;
-            tmpSheet.Cells[7, 3].Value = headData.StyleName;
-            tmpSheet.Cells[7, 3].WrapText = true;
-            tmpSheet.Cells[7, 5].Value = "Arrive Qty";
-            tmpSheet.Cells[7, 5].Font.Bold = true;
-            tmpSheet.Cells[7, 7].Value = headData.ArriveQty;
-            tmpSheet.Cells[7, 7].NumberFormat = "##,###,###.00";
+            tmpSheet.Cells[7, 1].Value = "Style Name";
+            tmpSheet.Cells[7, 1].Font.Bold = true;
+            tmpSheet.Cells[7, 2].Value = headData.StyleName;
+            tmpSheet.Cells[7, 2].WrapText = true;
+            tmpSheet.Cells[7, 7].Value = "Arrive Qty";
+            tmpSheet.Cells[7, 7].Font.Bold = true;
+            tmpSheet.Cells[7, 8].Value = headData.ArriveQty;
+            tmpSheet.Cells[7, 8].NumberFormat = "##,###,###.00";
 
-            tmpSheet.Cells[11, 2].Value = "Fabric Ref No.";
+            tmpSheet.Cells[11, 1].Value = "Fabric Ref No.";
+            tmpSheet.Cells[11, 1].Font.Bold = true;
+            tmpSheet.Cells[11, 2].Value = "Fabric Color";
             tmpSheet.Cells[11, 2].Font.Bold = true;
-            tmpSheet.Cells[11, 3].Value = "Fabric Color";
-            tmpSheet.Cells[11, 3].Font.Bold = true;
-            tmpSheet.Cells[11, 5].Value = "Fabric Description";
-            tmpSheet.Cells[11, 5].Font.Bold = true;
-            tmpSheet.Cells[12, 2].Value = headData.FabricRefNo;
-            tmpSheet.Cells[12, 3].Value = headData.FabricColor;
-            tmpSheet.Cells[12, 5].Value = headData.FabricDesc;
+            tmpSheet.Cells[11, 4].Value = "Fabric Description";
+            tmpSheet.Cells[11, 4].Font.Bold = true;
+            tmpSheet.Cells[12, 1].Value = headData.FabricRefNo;
+            tmpSheet.Cells[12, 1].WrapText = true;
+            tmpSheet.Cells[12, 2].Value = headData.FabricColor;
+            tmpSheet.Cells[12, 4].Value = headData.FabricDesc;
+            tmpSheet.Cells[12, 4].WrapText = true;
 
-            tmpSheet.Cells[15, 2].Value = "Dye Lot";
+            tmpSheet.Cells[15, 1].Value = "Dye Lot";
+            tmpSheet.Cells[15, 1].Font.Bold = true;
+            tmpSheet.Cells[15, 2].Value = "Roll No.";
             tmpSheet.Cells[15, 2].Font.Bold = true;
-            tmpSheet.Cells[15, 3].Value = "Roll No.";
+            tmpSheet.Cells[15, 3].Value = "Declared Mass";
             tmpSheet.Cells[15, 3].Font.Bold = true;
-            tmpSheet.Cells[15, 4].Value = "Declared Mass";
+            tmpSheet.Cells[15, 4].Value = "Average Mass";
             tmpSheet.Cells[15, 4].Font.Bold = true;
-            tmpSheet.Cells[15, 5].Value = "Average Mass";
+            tmpSheet.Cells[15, 5].Value = "%DIFRENCE";
             tmpSheet.Cells[15, 5].Font.Bold = true;
-            tmpSheet.Cells[15, 6].Value = "%DIFRENCE";
+            tmpSheet.Cells[15, 6].Value = "Result";
             tmpSheet.Cells[15, 6].Font.Bold = true;
-            tmpSheet.Cells[15, 7].Value = "Result";
+            tmpSheet.Cells[15, 7].Value = "Remark";
             tmpSheet.Cells[15, 7].Font.Bold = true;
-            tmpSheet.Cells[15, 8].Value = "Remark";
-            tmpSheet.Cells[15, 8].Font.Bold = true;
             tmpSheet.Rows.AutoFit();
-            tmpSheet.Columns.AutoFit();
-            tmpSheet.Range["B1", "J1"].Merge();
-            tmpSheet.Range["G4", "H4"].Merge();
-            tmpSheet.Range["C6", "D6"].Merge();
-            tmpSheet.Range["F6", "G6"].Merge();
-            tmpSheet.Range["I6", "J6"].Merge();
-            tmpSheet.Range["C7", "D7"].Merge();
-            tmpSheet.Range["F7", "J7"].Merge();
-            tmpSheet.Range["C11", "D11"].Merge();
-            tmpSheet.Range["E11", "J11"].Merge();
-            tmpSheet.Range["C12", "D12"].Merge();
-            tmpSheet.Range["E12", "J12"].Merge();
-            tmpSheet.Range["H15", "J15"].Merge();
 
-            tmpSheet.get_Range("B4:J4").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            tmpSheet.get_Range("B4:J4").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+            tmpSheet.get_Range("A4:I4").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            tmpSheet.get_Range("A4:I4").Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
-            tmpSheet.get_Range("B6:J7").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            tmpSheet.get_Range("B6:J7").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+            tmpSheet.get_Range("A6:I7").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            tmpSheet.get_Range("A6:I7").Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
-            tmpSheet.get_Range("B11:J12").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            tmpSheet.get_Range("B11:J12").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+            tmpSheet.get_Range("A11:I12").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            tmpSheet.get_Range("A11:I12").Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
-            tmpSheet.get_Range("B15:J15").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-            tmpSheet.get_Range("B15:J15").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+            tmpSheet.get_Range("A15:I15").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            tmpSheet.get_Range("A15:I15").Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
+     
+        }
+
+        private double MeasureTextHeight(string text, int width)
+        {
+            if (string.IsNullOrEmpty(text)) return 0.0;
+            var bitmap = new Bitmap(1, 1);
+            var graphics = Graphics.FromImage(bitmap);
+
+            var pixelWidth = Convert.ToInt32(width * 7.5);  //7.5 pixels per excel column width
+            var drawingFont = new Font("Arial", 11);
+            var size = graphics.MeasureString(text, drawingFont, pixelWidth);
+
+            //72 DPI and 96 points per inch.  Excel height in points with max of 409 per Excel requirements.
+            return Math.Min(Convert.ToDouble(size.Height) * 72 / 96, 409);
         }
 
         private class ExcelHeadData
