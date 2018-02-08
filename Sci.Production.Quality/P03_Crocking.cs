@@ -759,20 +759,34 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         private void btntoPDF_Click(object sender, EventArgs e)
         {
             string submitDate = MyUtility.Convert.GetString(this.maindr["ReceiveSampleDate"]);
+
             string sqlcmd = $@"
-SELECT distinct oc.article,fd.InspDate,fd.DryScale,fd.ResultDry,fd.WetScale,fd.ResultWet,fd.Remark,fd.Inspector
+SELECT distinct oc.article,fd.InspDate,a.Name
 FROM Order_BOF bof
 inner join PO_Supp_Detail p on p.id=bof.id and bof.SCIRefno=p.SCIRefno
 inner join Order_ColorCombo OC on oc.id=p.id and oc.FabricCode=bof.FabricCode
 inner join orders o on o.id = bof.id
 inner join FIR_Laboratory f on f.poid = o.poid and f.seq1 = p.seq1 and f.seq2 = p.seq2
 inner join FIR_Laboratory_Crocking fd on fd.id = f.id
+outer apply
+(
+	select Name = stuff((
+		select concat(',',Name)
+		from pass1 
+		where id = fd.Inspector
+		for xml path('')
+	),1,1,'')
+)a
 where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maindr["seq2"]}'
 order by fd.InspDate,oc.article
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null,sqlcmd,out dt);
-
+            if (!result)
+            {
+                ShowErr(result);
+                return;
+            }
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P03_Crocking_Test_for_PDF.xltx");
            
             objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
@@ -780,6 +794,7 @@ order by fd.InspDate,oc.article
             {
                 Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
                 Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1]);
+
                 worksheet1.Copy(worksheetn);
             }
 
@@ -790,22 +805,49 @@ order by fd.InspDate,oc.article
                 worksheet.Cells[4, 3] = submitDate;
                 worksheet.Cells[4, 5] = row["InspDate"];
                 worksheet.Cells[6, 9] = row["article"];
-
                 worksheet.Cells[4, 7] = txtSP.Text;
                 worksheet.Cells[4, 10] = txtBrand.Text;
                 worksheet.Cells[6, 3] = txtStyle.Text;
                 worksheet.Cells[6, 6] = MyUtility.GetValue.Lookup($"select CustPONo from orders where id = '{txtSP.Text}'");
                 worksheet.Cells[7, 3] = MyUtility.GetValue.Lookup($@"select StyleName from Style s, orders o where o.id = '{txtSP.Text}' and o.brandid = s.brandid and o.StyleID = s.id");
                 worksheet.Cells[7, 6] = txtArriveQty.Text;
-                worksheet.Cells[11, 2] = txtBrandRefno.Text;
-                worksheet.Cells[11, 3] = txtColor.Text;
-                worksheet.Cells[11, 4] = row["DryScale"];
-                worksheet.Cells[11, 5] = row["ResultDry"];
-                worksheet.Cells[11, 6] = row["WetScale"];
-                worksheet.Cells[11, 7] = row["ResultWet"];
-                worksheet.Cells[11, 8] = row["Remark"];
+                worksheet.Cells[22, 8] = row["Name"];
 
-                worksheet.Cells[22, 8] = MyUtility.GetValue.Lookup("Name", row["Inspector"].ToString(), "Pass1", "ID");
+                string sqlcmd2 = $@"
+SELECT fd.DryScale,fd.ResultDry,fd.WetScale,fd.ResultWet,fd.Remark,fd.Inspector
+FROM Order_BOF bof
+inner join PO_Supp_Detail p on p.id=bof.id and bof.SCIRefno=p.SCIRefno
+inner join Order_ColorCombo OC on oc.id=p.id and oc.FabricCode=bof.FabricCode
+inner join orders o on o.id = bof.id
+inner join FIR_Laboratory f on f.poid = o.poid and f.seq1 = p.seq1 and f.seq2 = p.seq2
+inner join FIR_Laboratory_Crocking fd on fd.id = f.id
+where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maindr["seq2"]}' 
+    and oc.article = '{row["article"]}' and fd.InspDate = '{MyUtility.Convert.GetDate(row["InspDate"]).Value.ToShortDateString()}'
+order by fd.InspDate,oc.article
+";
+                DataTable dt2;
+                DBProxy.Current.Select(null, sqlcmd2, out dt2);
+                for (int i = 1; i < dt2.Rows.Count; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A11:A11", Type.Missing).EntireRow;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    worksheet.get_Range("H11:J11").Merge(false); // 合併儲存格
+                    Marshal.ReleaseComObject(rngToInsert);
+                }
+
+                int k = 0;
+                foreach (DataRow row2 in dt2.Rows)
+                {
+                    worksheet.Cells[11+k, 2] = txtBrandRefno.Text;
+                    worksheet.Cells[11+k, 3] = txtColor.Text;
+                    worksheet.Cells[11+k, 4] = row2["DryScale"];
+                    worksheet.Cells[11+k, 5] = row2["ResultDry"];
+                    worksheet.Cells[11+k, 6] = row2["WetScale"];
+                    worksheet.Cells[11+k, 7] = row2["ResultWet"];
+                    worksheet.Cells[11+k, 8] = row2["Remark"];
+                    k++;
+                }
+                worksheet.get_Range("B10:J10").Font.Bold = true;
 
                 Marshal.ReleaseComObject(worksheet);
                 j++;
