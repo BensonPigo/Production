@@ -38,6 +38,7 @@
             this.labelAccount = new Sci.Win.UI.Label();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.label4 = new Sci.Win.UI.Label();
+            this.checkBoxTestEnvironment = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // comboFactory
@@ -63,7 +64,7 @@
             // btnExit
             // 
             this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnExit.Location = new System.Drawing.Point(258, 154);
+            this.btnExit.Location = new System.Drawing.Point(241, 136);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(80, 30);
             this.btnExit.TabIndex = 99;
@@ -74,7 +75,7 @@
             // btnLogin
             // 
             this.btnLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnLogin.Location = new System.Drawing.Point(172, 154);
+            this.btnLogin.Location = new System.Drawing.Point(155, 136);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(80, 30);
             this.btnLogin.TabIndex = 98;
@@ -144,9 +145,23 @@
             this.label4.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             this.label4.Visible = false;
             // 
+            // checkBoxTestEnvironment
+            // 
+            this.checkBoxTestEnvironment.AutoSize = true;
+            this.checkBoxTestEnvironment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxTestEnvironment.Location = new System.Drawing.Point(9, 142);
+            this.checkBoxTestEnvironment.Name = "checkBoxTestEnvironment";
+            this.checkBoxTestEnvironment.Size = new System.Drawing.Size(138, 21);
+            this.checkBoxTestEnvironment.TabIndex = 105;
+            this.checkBoxTestEnvironment.Text = "Test Environment";
+            this.checkBoxTestEnvironment.UseVisualStyleBackColor = true;
+            this.checkBoxTestEnvironment.Visible = false;
+            this.checkBoxTestEnvironment.CheckedChanged += new System.EventHandler(this.checkBoxTestEnvironment_CheckedChanged);
+            // 
             // SwitchFactory
             // 
-            this.ClientSize = new System.Drawing.Size(352, 194);
+            this.ClientSize = new System.Drawing.Size(335, 174);
+            this.Controls.Add(this.checkBoxTestEnvironment);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.comboFactory);
@@ -172,6 +187,7 @@
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.comboBox2, 0);
+            this.Controls.SetChildIndex(this.checkBoxTestEnvironment, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -189,5 +205,6 @@
         private Win.UI.Label labelAccount;
         private Win.UI.ComboBox comboBox2;
         private Win.UI.Label label4;
+        private Win.UI.CheckBox checkBoxTestEnvironment;
     }
 }
