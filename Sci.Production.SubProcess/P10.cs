@@ -240,8 +240,8 @@ namespace Sci.Production.SubProcess
 
             if (!this.chkcontainOverload.Checked)
             {
-                listSQLParameter.Add(new SqlParameter("@Overload ", false));
-                strOverload = "where Overload = @Overload";
+                listSQLParameter.Add(new SqlParameter("@Overload", "0"));
+                strOverload = "where isnull(Overload,0) = @Overload";
             }
 
             listSQLFilter.Add("and o.MDivisionID = @MDivisionID");
