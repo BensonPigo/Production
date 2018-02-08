@@ -859,7 +859,7 @@ insert (
 values (
 	s.OrderID	, s.[Group]	, s.SubProcessLineID	, s.OutputQty				, s.TargetQty
 	, s.Feature	, s.SMV		, s.EarlyInline			, s.SubProcessLearnCurveID	, s.Inline
-	, s.Offline	, GETDATE()	, @UserName, @MDivisionID,s.Overload);
+	, s.Offline	, GETDATE()	, @UserName, @MDivisionID,isnull(s.Overload,0));
 select @@IDENTITY";
                         List<DataRow> listTmpTable = new List<DataRow>();
                         listTmpTable.Add(drPPASchedule);
