@@ -15,7 +15,9 @@ using Sci.Win.Tools;
 using Sci.Production.Quality;
 using System.Runtime.InteropServices;
 using Sci.Production.PublicPrg;
-
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Linq;
+using System.Diagnostics;
 
 namespace Sci.Production.Quality
 {
@@ -209,6 +211,7 @@ namespace Sci.Production.Quality
             #endregion
           
             Helper.Controls.Grid.Generator(this.grid)
+            .Date("SubmitDate", header: "Submit Date", width: Widths.AnsiChars(10))
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("WeightM2", header: "DeclaredMass", width: Widths.AnsiChars(7), integer_places: 4, decimal_places: 1, iseditingreadonly: true)
@@ -519,7 +522,6 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-
             ToExcel(false);
         }
 
@@ -589,6 +591,251 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 excelFile.OpenFile();
             }
             return true;
+        }
+
+        private void buttonToPDF_Click(object sender, EventArgs e)
+        {
+            this.ShowWaitMessage("To PDF Processing...");
+            Excel.Application objApp = new Excel.Application();
+            objApp.DisplayAlerts = false;
+            objApp.Workbooks.Add();
+            Excel.Sheets exlSheets = objApp.Worksheets;
+            Excel.Worksheet newSheet = exlSheets.Item[1];
+            exlSheets.Item[1].Delete();
+            exlSheets.Item[1].Delete();
+            
+            ExcelHeadData excelHeadData = new ExcelHeadData();
+            excelHeadData.SPNo = maindr["POID"].ToString();
+            excelHeadData.Brand = displayBrand.Text;
+            excelHeadData.StyleNo = displayStyle.Text;
+
+            DataRow drOrder;
+            MyUtility.Check.Seek($@"select o.CustPONo,s.StyleName from dbo.orders o WITH (NOLOCK) 
+left join dbo.style s on o.StyleID = s.ID and o.BrandID = s.BrandID and o.SeasonID = s.SeasonID where o.ID = '{maindr["POID"].ToString()}'",out drOrder);
+            excelHeadData.PONumber = drOrder["CustPONo"].ToString();
+            excelHeadData.StyleName = drOrder["StyleName"].ToString();
+            excelHeadData.ArriveQty = maindr["arriveQty"].ToString();
+            excelHeadData.FabricRefNo = maindr["SCIRefno"].ToString();
+            excelHeadData.FabricColor = displayColor.Text;
+            excelHeadData.FabricDesc = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
+
+            //取得資料
+            //先取Article
+            string article_sql = $@"SELECT distinct(oc.article)  as article
+FROM [Order_BOF]  bof
+inner join PO_Supp_Detail p on p.id=bof.id and bof.SCIRefno=p.SCIRefno
+inner join Order_ColorCombo OC on oc.id=p.id and oc.FabricCode=bof.FabricCode
+where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString()}' and p.seq2='{maindr["Seq2"].ToString()}'
+ ";
+            DataTable dt_article;
+            DualResult result = DBProxy.Current.Select(null, article_sql, out dt_article);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.Messages.ToString());
+                return;
+            }
+            //取得Header資料
+            
+
+            //產生excel
+            using (dt_article)
+            {
+                foreach (DataRow articleDr in dt_article.Rows)
+                {
+                    excelHeadData.ArticleNo = articleDr["article"].ToString();
+                    var detailbyDate = from r1 in Datas.AsEnumerable()
+                                  group r1 by new
+                                  {
+                                      SubmitDate = r1["SubmitDate"],
+                                      Inspdate = r1["Inspdate"]
+                                  } into g
+                                  select new
+                                  {
+                                      SubmitDate = g.Key.SubmitDate,
+                                      Inspdate = g.Key.Inspdate
+                                  };
+                 
+                    foreach (var dateFilter in detailbyDate)
+                    {
+                        excelHeadData.SubmitDate = ((DateTime)dateFilter.SubmitDate).ToString("yyyy/MM/dd");
+                        excelHeadData.ReportDate = ((DateTime)dateFilter.Inspdate).ToString("yyyy/MM/dd");
+                        //產生新sheet並填入標題等資料
+                        exlSheets.Add();
+                        
+                        newSheet = exlSheets.Item[1];
+                        AddSheetAndHead(excelHeadData, newSheet);
+
+                        //填入detail資料
+                        DataRow[] dr_detail = Datas.Where(s => s["SubmitDate"].Equals(dateFilter.SubmitDate) && s["Inspdate"].Equals(dateFilter.Inspdate)).ToArray();
+                        string signature = dr_detail.GroupBy(s => s["Inspector"]).Select(s => MyUtility.GetValue.Lookup("Name", s.Key.ToString(), "Pass1", "ID")).JoinToString(",");
+                        int detail_start = 16;
+                        foreach (DataRow dr in dr_detail)
+                        {
+                            newSheet.Cells[detail_start,2].Value = "'" + dr["Dyelot"];
+                            newSheet.Cells[detail_start, 3].Value =dr["Roll"];
+                            newSheet.Cells[detail_start, 4].Value = dr["WeightM2"];
+                            newSheet.Cells[detail_start, 5].Value = dr["AverageWeightM2"];
+                            newSheet.Cells[detail_start, 6].Value = dr["Difference"];
+                            newSheet.Cells[detail_start, 7].Value = dr["Result"];
+                            newSheet.Cells[detail_start, 8].Value = dr["Remark"];
+                            newSheet.Range[$"H{detail_start}", $"J{detail_start}"].Merge();
+                            detail_start++;
+                        }
+
+                        newSheet.get_Range($"B16:J{detail_start-1}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                        newSheet.get_Range($"B16:J{detail_start-1}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+                       
+                        //簽名欄
+                        newSheet.Cells[detail_start + 1, 7].Value = "Signature";
+                        newSheet.Range[$"G{detail_start+1}", $"J{detail_start+1}"].Merge();
+                        newSheet.Cells[detail_start + 2, 7].Font.Size = 10;
+                        newSheet.Cells[detail_start + 2, 7].Value = signature;
+                        newSheet.Range[$"G{detail_start + 2}", $"J{detail_start + 2}"].Merge();
+                        newSheet.Cells[detail_start + 3, 7].Value = "Checked by:";
+                        newSheet.Range[$"G{detail_start + 3}", $"J{detail_start + 3}"].Merge();
+                        newSheet.get_Range($"G{detail_start + 1}:J{detail_start + 3}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                        newSheet.get_Range($"G{detail_start + 1}:J{detail_start + 3}").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+
+                        //全部置中
+                        newSheet.get_Range($"A1:J{detail_start + 3}").HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                        newSheet.get_Range($"A1:J{detail_start + 3}").Font.Name = "Arial";
+
+                        //版面保持一頁
+                        newSheet.PageSetup.Zoom = false;
+                        newSheet.PageSetup.FitToPagesTall = 1;
+                        newSheet.PageSetup.FitToPagesWide = 1;
+                    }
+
+            
+                }
+            }
+            
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight");
+            objApp.ActiveWorkbook.SaveAs(strExcelName);
+            objApp.ActiveWorkbook.Close(true, Type.Missing, Type.Missing);
+            objApp.Quit();
+            Marshal.ReleaseComObject(exlSheets);
+            Marshal.ReleaseComObject(objApp);
+            
+            string strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_Weight", Sci.Production.Class.PDFFileNameExtension.PDF);
+            if (ConvertToPDF.ExcelToPDF(strExcelName, strPDFFileName))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo(strPDFFileName);
+                Process.Start(startInfo);
+            }
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            this.HideWaitMessage();
+        }
+
+        
+        private void AddSheetAndHead(ExcelHeadData headData, Excel.Worksheet tmpSheet)
+        {
+            tmpSheet.Cells[1, 2].Value = "Fabric Weight Test Report";
+            tmpSheet.Cells[1, 2].Font.Bold = true;
+            tmpSheet.Cells[1, 2].Font.Size = 18;
+
+
+            tmpSheet.Cells[4, 2].Value = "Submit Date";
+            tmpSheet.Cells[4, 2].Font.Bold = true;
+            tmpSheet.Cells[4, 3].Value = headData.SubmitDate;
+            tmpSheet.Cells[4, 4].Value = "Report  Date";
+            tmpSheet.Cells[4, 4].Font.Bold = true;
+            tmpSheet.Cells[4, 5].Value = headData.ReportDate;
+            tmpSheet.Cells[4, 6].Value = "SP No";
+            tmpSheet.Cells[4, 6].Font.Bold = true;
+            tmpSheet.Cells[4, 7].Value = headData.SPNo;
+            tmpSheet.Cells[4, 9].Value = "Brand";
+            tmpSheet.Cells[4, 9].Font.Bold = true;
+            tmpSheet.Cells[4, 10].Value = headData.Brand;
+
+            tmpSheet.Cells[6, 2].Value = "Style No";
+            tmpSheet.Cells[6, 2].Font.Bold = true;
+            tmpSheet.Cells[6, 3].Value = headData.StyleNo;
+            tmpSheet.Cells[6, 5].Value = "PO Number";
+            tmpSheet.Cells[6, 5].Font.Bold = true;
+            tmpSheet.Cells[6, 6].Value = headData.PONumber;
+            tmpSheet.Cells[6, 8].Value = "Article No";
+            tmpSheet.Cells[6, 8].Font.Bold = true;
+            tmpSheet.Cells[6, 9].Value = headData.ArticleNo;
+
+            tmpSheet.Cells[7, 2].Value = "Style Name";
+            tmpSheet.Cells[7, 2].Font.Bold = true;
+            tmpSheet.Cells[7, 3].Value = headData.StyleName;
+            tmpSheet.Cells[7, 3].WrapText = true;
+            tmpSheet.Cells[7, 5].Value = "Arrive Qty";
+            tmpSheet.Cells[7, 5].Font.Bold = true;
+            tmpSheet.Cells[7, 7].Value = headData.ArriveQty;
+            tmpSheet.Cells[7, 7].NumberFormat = "##,###,###.00";
+
+            tmpSheet.Cells[11, 2].Value = "Fabric Ref No.";
+            tmpSheet.Cells[11, 2].Font.Bold = true;
+            tmpSheet.Cells[11, 3].Value = "Fabric Color";
+            tmpSheet.Cells[11, 3].Font.Bold = true;
+            tmpSheet.Cells[11, 5].Value = "Fabric Description";
+            tmpSheet.Cells[11, 5].Font.Bold = true;
+            tmpSheet.Cells[12, 2].Value = headData.FabricRefNo;
+            tmpSheet.Cells[12, 3].Value = headData.FabricColor;
+            tmpSheet.Cells[12, 5].Value = headData.FabricDesc;
+
+            tmpSheet.Cells[15, 2].Value = "Dye Lot";
+            tmpSheet.Cells[15, 2].Font.Bold = true;
+            tmpSheet.Cells[15, 3].Value = "Roll No.";
+            tmpSheet.Cells[15, 3].Font.Bold = true;
+            tmpSheet.Cells[15, 4].Value = "Declared Mass";
+            tmpSheet.Cells[15, 4].Font.Bold = true;
+            tmpSheet.Cells[15, 5].Value = "Average Mass";
+            tmpSheet.Cells[15, 5].Font.Bold = true;
+            tmpSheet.Cells[15, 6].Value = "%DIFRENCE";
+            tmpSheet.Cells[15, 6].Font.Bold = true;
+            tmpSheet.Cells[15, 7].Value = "Result";
+            tmpSheet.Cells[15, 7].Font.Bold = true;
+            tmpSheet.Cells[15, 8].Value = "Remark";
+            tmpSheet.Cells[15, 8].Font.Bold = true;
+            tmpSheet.Rows.AutoFit();
+            tmpSheet.Columns.AutoFit();
+            tmpSheet.Range["B1", "J1"].Merge();
+            tmpSheet.Range["G4", "H4"].Merge();
+            tmpSheet.Range["C6", "D6"].Merge();
+            tmpSheet.Range["F6", "G6"].Merge();
+            tmpSheet.Range["I6", "J6"].Merge();
+            tmpSheet.Range["C7", "D7"].Merge();
+            tmpSheet.Range["F7", "J7"].Merge();
+            tmpSheet.Range["C11", "D11"].Merge();
+            tmpSheet.Range["E11", "J11"].Merge();
+            tmpSheet.Range["C12", "D12"].Merge();
+            tmpSheet.Range["E12", "J12"].Merge();
+            tmpSheet.Range["H15", "J15"].Merge();
+
+            tmpSheet.get_Range("B4:J4").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            tmpSheet.get_Range("B4:J4").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+
+            tmpSheet.get_Range("B6:J7").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            tmpSheet.get_Range("B6:J7").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+
+            tmpSheet.get_Range("B11:J12").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            tmpSheet.get_Range("B11:J12").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+
+            tmpSheet.get_Range("B15:J15").Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            tmpSheet.get_Range("B15:J15").Borders.Weight = Excel.XlBorderWeight.xlMedium;
+
+        }
+
+        private class ExcelHeadData
+        {
+            public string SubmitDate;
+            public string ReportDate;
+            public string SPNo;
+            public string Brand;
+            public string StyleNo;
+            public string PONumber;
+            public string ArticleNo;
+            public string StyleName;
+            public string ArriveQty;
+            public string FabricRefNo;
+            public string FabricColor;
+            public string FabricDesc;
+
         }
     }
 }
