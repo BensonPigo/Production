@@ -56,7 +56,9 @@ namespace Sci.Production.Tools
                 }
 
                 ChangeTaipeiServer();
+                comboBox2.SelectedValue = OriginalDatasource;
             }
+
 
             DualResult result;
             DataTable dtPass1;
