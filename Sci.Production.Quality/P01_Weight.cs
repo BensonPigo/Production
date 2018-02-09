@@ -615,7 +615,7 @@ left join dbo.style s on o.StyleID = s.ID and o.BrandID = s.BrandID and o.Season
             excelHeadData.PONumber = drOrder["CustPONo"].ToString();
             excelHeadData.StyleName = drOrder["StyleName"].ToString();
             excelHeadData.ArriveQty = maindr["arriveQty"].ToString();
-            excelHeadData.FabricRefNo = maindr["SCIRefno"].ToString();
+            excelHeadData.FabricRefNo = displayRefno.Text;
             excelHeadData.FabricColor = displayColor.Text;
             excelHeadData.FabricDesc = MyUtility.GetValue.Lookup("Description", maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
             //取得資料
@@ -656,8 +656,8 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                  
                     foreach (var dateFilter in detailbyDate)
                     {
-                        excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.SubmitDate).ToString("yyyy/MM/dd");
-                        excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.Inspdate).ToString("yyyy/MM/dd");
+                        excelHeadData.SubmitDate = dateFilter.SubmitDate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.SubmitDate).ToOADate().ToString();
+                        excelHeadData.ReportDate = dateFilter.Inspdate.Equals(DBNull.Value) ? "" : ((DateTime)dateFilter.Inspdate).ToOADate().ToString();
                         //產生新sheet並填入標題等資料
                         exlSheets.Add();
                         
@@ -708,7 +708,8 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                         newSheet.Range["A7", "A7"].RowHeight = MeasureTextHeight(excelHeadData.StyleName, 54);
                         newHeight = MeasureTextHeight(excelHeadData.FabricDesc, 59);
                         newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
-
+                        newHeight = MeasureTextHeight(excelHeadData.FabricRefNo, 13);
+                        newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
                         newSheet.PageSetup.PrintArea = $"A1:I{detail_start + 3}";
                     }
 
@@ -770,9 +771,11 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
             tmpSheet.Cells[4, 1].Value = "Submit Date";
             tmpSheet.Cells[4, 1].Font.Bold = true;
             tmpSheet.Cells[4, 2].Value = headData.SubmitDate;
+            tmpSheet.Cells[4, 2].NumberFormat = "YYYY/MM/DD";
             tmpSheet.Cells[4, 3].Value = "Report  Date";
             tmpSheet.Cells[4, 3].Font.Bold = true;
             tmpSheet.Cells[4, 4].Value = headData.ReportDate;
+            tmpSheet.Cells[4, 4].NumberFormat = "YYYY/MM/DD";
             tmpSheet.Cells[4, 5].Value = "SP No";
             tmpSheet.Cells[4, 5].Font.Bold = true;
             tmpSheet.Cells[4, 6].Value = headData.SPNo;
