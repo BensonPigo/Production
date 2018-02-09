@@ -45,7 +45,7 @@ namespace Sci.Production.Shipping
         // SP#
         private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && this.txtSPNo.OldValue != this.txtSPNo.Text)
+            if (this.EditMode && !string.IsNullOrEmpty(this.txtSPNo.Text))
             {
                 // sql參數
                 // System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
@@ -310,6 +310,24 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             else
             {
                 this.displayTeamLeader.Text = string.Empty;
+            }
+        }
+
+        private void ComboCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboCategory.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            if (this.comboCategory.SelectedValue.Equals("8") || this.comboCategory.SelectedValue.Equals("9"))
+            {
+                this.txtSPNo.Text = string.Empty;
+                this.txtSPNo.ReadOnly = true;
+            }
+            else
+            {
+                this.txtSPNo.ReadOnly = false;
             }
         }
     }
