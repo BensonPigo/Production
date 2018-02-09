@@ -225,7 +225,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                     return false;
                 }
 
-                this.CurrentData["Seq1"] = seq["Seq1"];
+                this.CurrentData["Seq1"] = string.IsNullOrEmpty(seq["Seq1"].ToString()) ? "001" : seq["Seq1"];
                 this.CurrentData["InCharge"] = Sci.Env.User.UserID;
             }
 
