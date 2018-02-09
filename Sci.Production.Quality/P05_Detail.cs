@@ -1168,36 +1168,36 @@ SET IDENTITY_INSERT oven off";
             for (int i = 0; i < dtdist.Rows.Count; i++)
             {
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
-                worksheet.Cells[3, 2] = dtdist.Rows[i]["submitDate"];
-                worksheet.Cells[3, 4] = this.dateTestDate.Text;
-                worksheet.Cells[3, 6] = this.txtSP.Text;
-                worksheet.Cells[3, 8] = BrandID;
-                worksheet.Cells[5, 2] = StyleID;
-                worksheet.Cells[5, 5] = CustPONo;
-                worksheet.Cells[5, 7] = txtArticle.Text;
-                worksheet.Cells[6, 2] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where id='{StyleID}'", null));
-                worksheet.Cells[6, 5] = SeasonID;
-                worksheet.Cells[9, 2] = this.numTemperature.Value+ "˚C";
-                worksheet.Cells[9, 6] = this.numTime.Value + "hrs";
+                worksheet.Cells[4, 3] = dtdist.Rows[i]["submitDate"];
+                worksheet.Cells[4, 5] = this.dateTestDate.Text;
+                worksheet.Cells[4, 7] = this.txtSP.Text;
+                worksheet.Cells[4, 9] = BrandID;
+                worksheet.Cells[6, 3] = StyleID;
+                worksheet.Cells[6, 6] = CustPONo;
+                worksheet.Cells[6, 8] = txtArticle.Text;
+                worksheet.Cells[7, 3] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where id='{StyleID}'", null));
+                worksheet.Cells[7, 6] = SeasonID;
+                worksheet.Cells[10, 3] = this.numTemperature.Value+ "˚C";
+                worksheet.Cells[10, 7] = this.numTime.Value + "hrs";
 
                 DataRow[] dr = dt.Select((MyUtility.Check.Empty(dtdist.Rows[i]["submitDate"])) ? $@"submitDate is null" : $"submitDate = '{dtdist.Rows[i]["submitDate"]}'");
                 
                 for (int ii = 0; ii < dr.Length; ii++)
                 {                    
-                    worksheet.Cells[13 + ii, 1] = dr[ii]["Refno"];
-                    worksheet.Cells[13 + ii, 2] = dr[ii]["Colorid"];
-                    Microsoft.Office.Interop.Excel.Range rg2 = worksheet.Range[worksheet.Cells[2][13 + ii], worksheet.Cells[3][13 + ii]];
+                    worksheet.Cells[14 + ii, 2] = dr[ii]["Refno"];
+                    worksheet.Cells[14 + ii, 3] = dr[ii]["Colorid"];
+                    Microsoft.Office.Interop.Excel.Range rg2 = worksheet.Range[worksheet.Cells[3][14 + ii], worksheet.Cells[4][14 + ii]];
                     rg2.Merge();
 
-                    worksheet.Cells[13 + ii, 4] = dr[ii]["Changescale"];
-                    Microsoft.Office.Interop.Excel.Range rg3 = worksheet.Range[worksheet.Cells[4][13 + ii], worksheet.Cells[5][13 + ii]];
+                    worksheet.Cells[14 + ii, 5] = dr[ii]["Changescale"];
+                    Microsoft.Office.Interop.Excel.Range rg3 = worksheet.Range[worksheet.Cells[5][14 + ii], worksheet.Cells[6][14 + ii]];
                     rg3.Merge();
 
-                    worksheet.Cells[13 + ii, 6] = dr[ii]["ResultChange"];
-                    worksheet.Cells[13 + ii, 7] = dr[ii]["StainingScale"];
-                    worksheet.Cells[13 + ii, 8] = dr[ii]["ResultStain"];
+                    worksheet.Cells[14 + ii, 7] = dr[ii]["ResultChange"];
+                    worksheet.Cells[14 + ii, 8] = dr[ii]["StainingScale"];
+                    worksheet.Cells[14 + ii, 9] = dr[ii]["ResultStain"];
 
-                    Microsoft.Office.Interop.Excel.Range rg1 = worksheet.Range[worksheet.Cells[1][13 + ii], worksheet.Cells[8][13 + ii]];
+                    Microsoft.Office.Interop.Excel.Range rg1 = worksheet.Range[worksheet.Cells[2][14 + ii], worksheet.Cells[9][14 + ii]];
                     // 加框線
                     rg1.Borders.LineStyle = 1;
                     rg1.Borders.Weight = 2;
@@ -1211,7 +1211,7 @@ SET IDENTITY_INSERT oven off";
                 for (int m = 0; m < 3; m++)
                 {
                     // 設定range 變數
-                    Microsoft.Office.Interop.Excel.Range rgSign = worksheet.Range[worksheet.Cells[6][13 + dr.Length + 3 + m], worksheet.Cells[8][13 + dr.Length + 3 + m]];
+                    Microsoft.Office.Interop.Excel.Range rgSign = worksheet.Range[worksheet.Cells[7][14 + dr.Length + 3 + m], worksheet.Cells[9][14 + dr.Length + 3 + m]];
                     // 設定邊框
                     rgSign.Borders.LineStyle = 1;
                     rgSign.Borders.Weight = 2;
