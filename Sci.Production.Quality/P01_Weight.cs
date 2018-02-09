@@ -708,6 +708,8 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                         newSheet.Range["A7", "A7"].RowHeight = MeasureTextHeight(excelHeadData.StyleName, 54);
                         newHeight = MeasureTextHeight(excelHeadData.FabricDesc, 59);
                         newSheet.Range["A12", "A12"].RowHeight = newSheet.Rows[12].Height > newHeight ? newSheet.Rows[12].Height : newHeight;
+
+                        newSheet.PageSetup.PrintArea = $"A1:I{detail_start + 3}";
                     }
 
             
@@ -741,10 +743,10 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
             tmpSheet.Columns[3].ColumnWidth = 12.80;
             tmpSheet.Columns[4].ColumnWidth = 12.80;
             tmpSheet.Columns[5].ColumnWidth = 11.5;
-            tmpSheet.Columns[6].ColumnWidth = 8.38;
+            tmpSheet.Columns[6].ColumnWidth = 7.1;
             tmpSheet.Columns[7].ColumnWidth = 9.38;
-            tmpSheet.Columns[8].ColumnWidth = 8.38;
-            tmpSheet.Columns[9].ColumnWidth = 8.38;
+            tmpSheet.Columns[8].ColumnWidth = 8;
+            tmpSheet.Columns[9].ColumnWidth = 10.5;
             tmpSheet.Columns.Font.Size = 10;
 
             tmpSheet.Range["A1", "I1"].Merge();
