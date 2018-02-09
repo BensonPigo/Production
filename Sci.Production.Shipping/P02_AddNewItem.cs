@@ -323,11 +323,17 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             if (this.comboCategory.SelectedValue.Equals("8") || this.comboCategory.SelectedValue.Equals("9"))
             {
                 this.txtSPNo.Text = string.Empty;
+                this.CurrentData["Category"] = this.comboCategory.SelectedValue;
+                this.CurrentData["OrderID"] = string.Empty;
+                this.CurrentData.EndEdit();
                 this.txtSPNo.ReadOnly = true;
             }
             else
             {
-                this.txtSPNo.ReadOnly = false;
+                if (this.OperationMode == 2)
+                {
+                    this.txtSPNo.ReadOnly = false;
+                }
             }
         }
     }
