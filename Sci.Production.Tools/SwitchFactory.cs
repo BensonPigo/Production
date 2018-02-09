@@ -48,30 +48,17 @@ namespace Sci.Production.Tools
                 //Assembly a = typeof(Module1).Assembly;
                 label4.Visible = true;
                 comboBox2.Visible = true;
-                XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-                var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
-                Dictionary<String, String> SystemOption = new Dictionary<String, String>();
-                string[] strSevers = ConfigurationManager.AppSettings["TaipeiServer"].Split(new char[] { ',' });
-                if (strSevers.Length > 0 && hasConnectionNamedQuery.Count > 0)
+                this.checkBoxTestEnvironment.Visible = true;
+
+                if (OriginalDatasource.Contains("testing_"))
                 {
-                    foreach (string strSever in strSevers)
-                    {
-                        for (int i = 0; i < hasConnectionNamedQuery.Count; i++)
-                        {
-                            if (strSever == hasConnectionNamedQuery[i])
-                            {
-                                SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("PMSDB_", "").Trim().ToUpper());
-                                break;
-                            }
-                        }
-                    }
-                    comboBox2.ValueMember = "Key";
-                    comboBox2.DisplayMember = "Value";
-                    string tempDatabase = DBProxy.Current.DefaultModuleName;
-                    comboBox2.DataSource = new BindingSource(SystemOption, null);
-                    comboBox2.SelectedValue = tempDatabase;
+                    this.checkBoxTestEnvironment.Checked = true;
                 }
+
+                ChangeTaipeiServer();
+                comboBox2.SelectedValue = OriginalDatasource;
             }
+
 
             DualResult result;
             DataTable dtPass1;
@@ -155,7 +142,18 @@ namespace Sci.Production.Tools
             if (ConfigurationManager.AppSettings["TaipeiServer"] != "")
             {
                 DBProxy.Current.DefaultModuleName = OriginalDatasource;
+                if (OriginalDatasource.Contains("PMSDB"))
+                {
+                    ConfigurationManager.AppSettings["TaipeiServer"] = ConfigurationManager.AppSettings["PMSDBServer"];
+                    ConfigurationManager.AppSettings["ServerMatchFactory"] = ConfigurationManager.AppSettings["PMSDBServerMatchFactory"];
+                }
+                else
+                {
+                    ConfigurationManager.AppSettings["TaipeiServer"] = ConfigurationManager.AppSettings["TestingServer"];
+                    ConfigurationManager.AppSettings["ServerMatchFactory"] = ConfigurationManager.AppSettings["TestingServerMatchFactory"];
+                }
             }
+
             Close();
         }
 
@@ -193,6 +191,48 @@ namespace Sci.Production.Tools
                 comboFactory.DisplayMember = "Value";
                 comboFactory.DataSource = new BindingSource(factoryOption, null);
             }
+        }
+
+        private void ChangeTaipeiServer()
+        {
+            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
+            var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
+            Dictionary<String, String> SystemOption = new Dictionary<String, String>();
+            string[] strSevers = ConfigurationManager.AppSettings["TaipeiServer"].Split(new char[] { ',' });
+            if (strSevers.Length > 0 && hasConnectionNamedQuery.Count > 0)
+            {
+                foreach (string strSever in strSevers)
+                {
+                    for (int i = 0; i < hasConnectionNamedQuery.Count; i++)
+                    {
+                        if (strSever == hasConnectionNamedQuery[i])
+                        {
+                            SystemOption.Add(hasConnectionNamedQuery[i].Trim(), hasConnectionNamedQuery[i].Replace("PMSDB_", string.Empty).Replace("testing_", string.Empty).Trim().ToUpper());
+                            break;
+                        }
+                    }
+                }
+
+                comboBox2.ValueMember = "Key";
+                comboBox2.DisplayMember = "Value";
+                comboBox2.DataSource = new BindingSource(SystemOption, null);
+            }
+        }
+
+        private void checkBoxTestEnvironment_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.checkBoxTestEnvironment.Checked)
+            {
+                ConfigurationManager.AppSettings["TaipeiServer"] = ConfigurationManager.AppSettings["TestingServer"];
+                ConfigurationManager.AppSettings["ServerMatchFactory"] = ConfigurationManager.AppSettings["TestingServerMatchFactory"];
+            }
+            else
+            {
+                ConfigurationManager.AppSettings["TaipeiServer"] = ConfigurationManager.AppSettings["PMSDBServer"];
+                ConfigurationManager.AppSettings["ServerMatchFactory"] = ConfigurationManager.AppSettings["PMSDBServerMatchFactory"];
+            }
+
+            ChangeTaipeiServer();
         }
     }
 }
