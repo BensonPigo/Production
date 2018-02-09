@@ -202,6 +202,8 @@ select DISTINCT c.FactoryID
 	        ,a.FactoryId
 	        ,b.OrderId
 	        ,c.StyleID
+            ,c.SciDelivery
+            ,c.SewInLine
             ,c.brandid
 	        ,c.SeasonID
 	        ,[Supp] = a.LocalSuppID+'-'+d.Abb 
