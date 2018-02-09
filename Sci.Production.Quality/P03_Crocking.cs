@@ -814,7 +814,7 @@ order by fd.InspDate,oc.article
                 worksheet.Cells[22, 8] = row["Name"];
 
                 string sqlcmd2 = $@"
-SELECT fd.DryScale,fd.ResultDry,fd.WetScale,fd.ResultWet,fd.Remark,fd.Inspector
+SELECT distinct fd.InspDate,oc.article,fd.DryScale,fd.ResultDry,fd.WetScale,fd.ResultWet,fd.Remark,fd.Inspector,fd.Roll,fd.Dyelot
 FROM Order_BOF bof
 inner join PO_Supp_Detail p on p.id=bof.id and bof.SCIRefno=p.SCIRefno
 inner join Order_ColorCombo OC on oc.id=p.id and oc.FabricCode=bof.FabricCode
@@ -823,7 +823,6 @@ inner join FIR_Laboratory f on f.poid = o.poid and f.seq1 = p.seq1 and f.seq2 = 
 inner join FIR_Laboratory_Crocking fd on fd.id = f.id
 where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maindr["seq2"]}' 
     and oc.article = '{row["article"]}' and fd.InspDate = '{MyUtility.Convert.GetDate(row["InspDate"]).Value.ToShortDateString()}'
-order by fd.InspDate,oc.article
 ";
                 DataTable dt2;
                 DBProxy.Current.Select(null, sqlcmd2, out dt2);
