@@ -39,13 +39,14 @@ namespace Sci.Production.Win
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
             this.label4 = new Sci.Win.UI.Label();
+            this.checkBoxTestEnvironment = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // act
             // 
             this.act.BackColor = System.Drawing.Color.White;
             this.act.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.act.Location = new System.Drawing.Point(127, 39);
+            this.act.Location = new System.Drawing.Point(127, 40);
             this.act.Name = "act";
             this.act.ShortcutsEnabled = false;
             this.act.Size = new System.Drawing.Size(131, 23);
@@ -54,7 +55,7 @@ namespace Sci.Production.Win
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 39);
+            this.label1.Location = new System.Drawing.Point(9, 40);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(109, 23);
             this.label1.TabIndex = 0;
@@ -63,7 +64,7 @@ namespace Sci.Production.Win
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 71);
+            this.label2.Location = new System.Drawing.Point(9, 72);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(109, 23);
             this.label2.TabIndex = 0;
@@ -74,7 +75,7 @@ namespace Sci.Production.Win
             // 
             this.pwd.BackColor = System.Drawing.Color.White;
             this.pwd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.pwd.Location = new System.Drawing.Point(127, 71);
+            this.pwd.Location = new System.Drawing.Point(127, 72);
             this.pwd.Name = "pwd";
             this.pwd.PasswordChar = '*';
             this.pwd.ShortcutsEnabled = false;
@@ -84,7 +85,7 @@ namespace Sci.Production.Win
             // ok
             // 
             this.ok.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.ok.Location = new System.Drawing.Point(172, 154);
+            this.ok.Location = new System.Drawing.Point(164, 137);
             this.ok.Name = "ok";
             this.ok.Size = new System.Drawing.Size(80, 30);
             this.ok.TabIndex = 3;
@@ -94,7 +95,7 @@ namespace Sci.Production.Win
             // exit
             // 
             this.exit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.exit.Location = new System.Drawing.Point(258, 154);
+            this.exit.Location = new System.Drawing.Point(250, 137);
             this.exit.Name = "exit";
             this.exit.Size = new System.Drawing.Size(80, 30);
             this.exit.TabIndex = 4;
@@ -103,7 +104,7 @@ namespace Sci.Production.Win
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(9, 104);
+            this.label3.Location = new System.Drawing.Point(9, 105);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(109, 23);
             this.label3.TabIndex = 92;
@@ -116,7 +117,7 @@ namespace Sci.Production.Win
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(127, 103);
+            this.comboBox1.Location = new System.Drawing.Point(127, 104);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(131, 24);
             this.comboBox1.TabIndex = 2;
@@ -127,7 +128,7 @@ namespace Sci.Production.Win
             this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.IsSupportUnselect = true;
-            this.comboBox2.Location = new System.Drawing.Point(127, 8);
+            this.comboBox2.Location = new System.Drawing.Point(127, 9);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(131, 24);
             this.comboBox2.TabIndex = 97;
@@ -136,7 +137,7 @@ namespace Sci.Production.Win
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(9, 8);
+            this.label4.Location = new System.Drawing.Point(9, 9);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(109, 23);
             this.label4.TabIndex = 96;
@@ -144,9 +145,23 @@ namespace Sci.Production.Win
             this.label4.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             this.label4.Visible = false;
             // 
+            // checkBoxTestEnvironment
+            // 
+            this.checkBoxTestEnvironment.AutoSize = true;
+            this.checkBoxTestEnvironment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxTestEnvironment.Location = new System.Drawing.Point(9, 143);
+            this.checkBoxTestEnvironment.Name = "checkBoxTestEnvironment";
+            this.checkBoxTestEnvironment.Size = new System.Drawing.Size(138, 21);
+            this.checkBoxTestEnvironment.TabIndex = 98;
+            this.checkBoxTestEnvironment.Text = "Test Environment";
+            this.checkBoxTestEnvironment.UseVisualStyleBackColor = true;
+            this.checkBoxTestEnvironment.Visible = false;
+            this.checkBoxTestEnvironment.CheckedChanged += new System.EventHandler(this.CheckBoxTestEnvironment_CheckedChanged);
+            // 
             // Login
             // 
-            this.ClientSize = new System.Drawing.Size(352, 197);
+            this.ClientSize = new System.Drawing.Size(342, 178);
+            this.Controls.Add(this.checkBoxTestEnvironment);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.comboBox1);
@@ -177,6 +192,6 @@ namespace Sci.Production.Win
         private Sci.Win.UI.ComboBox comboBox1;
         private Sci.Win.UI.ComboBox comboBox2;
         private Sci.Win.UI.Label label4;
-
+        private Sci.Win.UI.CheckBox checkBoxTestEnvironment;
     }
 }

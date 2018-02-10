@@ -137,6 +137,7 @@ SELECT  Orders.ID
                             when Orders.Category = 'S' then 'Sample' 
                             when Orders.Category = 'B' then 'Bulk' 
                             when Orders.Category = 'M' then 'Material' 
+                            when Orders.Category = 'T' then 'SMTL' 
                             else Orders.Category 
                         end
 FROM ORDERS 
@@ -859,6 +860,7 @@ Select  Orders.ID
                             when Orders.Category = 'S' then 'Sample' 
                             when Orders.Category = 'B' then 'Bulk' 
                             when Orders.Category = 'M' then 'Material' 
+                            when Orders.Category = 'T' then 'SMTL' 
                             else Orders.Category 
                         end
         , Orders.BrandID

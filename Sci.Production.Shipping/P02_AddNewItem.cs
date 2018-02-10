@@ -45,7 +45,7 @@ namespace Sci.Production.Shipping
         // SP#
         private void TxtSPNo_Validating(object sender, CancelEventArgs e)
         {
-            if (this.EditMode && this.txtSPNo.OldValue != this.txtSPNo.Text)
+            if (this.EditMode && !string.IsNullOrEmpty(this.txtSPNo.Text))
             {
                 // sql參數
                 // System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", txtSPNo.Text);
@@ -225,7 +225,7 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
                     return false;
                 }
 
-                this.CurrentData["Seq1"] = seq["Seq1"];
+                this.CurrentData["Seq1"] = string.IsNullOrEmpty(seq["Seq1"].ToString()) ? "001" : seq["Seq1"];
                 this.CurrentData["InCharge"] = Sci.Env.User.UserID;
             }
 
@@ -310,6 +310,30 @@ from Express_Detail WITH (NOLOCK) where ID = '{0}' and Seq2 = ''", MyUtility.Con
             else
             {
                 this.displayTeamLeader.Text = string.Empty;
+            }
+        }
+
+        private void ComboCategory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboCategory.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            if (this.comboCategory.SelectedValue.Equals("8") || this.comboCategory.SelectedValue.Equals("9"))
+            {
+                this.txtSPNo.Text = string.Empty;
+                this.CurrentData["Category"] = this.comboCategory.SelectedValue;
+                this.CurrentData["OrderID"] = string.Empty;
+                this.CurrentData.EndEdit();
+                this.txtSPNo.ReadOnly = true;
+            }
+            else
+            {
+                if (this.OperationMode == 2)
+                {
+                    this.txtSPNo.ReadOnly = false;
+                }
             }
         }
     }
