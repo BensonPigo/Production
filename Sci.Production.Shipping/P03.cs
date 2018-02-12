@@ -37,7 +37,7 @@ namespace Sci.Production.Shipping
              when ed.PoType = 'M' and ed.FabricType = 'P' then (select TOP 1 ppo.FactoryID from [Machine].dbo.PartPO ppo, [Machine].dbo.PartPO_Detail ppod where ppo.ID = ppod.ID and ppod.TPEPOID = ed.PoID and ppod.Seq1 = ed.Seq1 and ppod.seq2 = ed.Seq2) 
 			 when ed.PoType = 'M' and ed.FabricType = 'O' then (select TOP 1 mpo.Factoryid from [Machine].dbo.MiscPO mpo, [Machine].dbo.MiscPO_Detail mpod where mpo.ID = mpod.ID and mpod.TPEPOID = ed.PoID and mpod.Seq1 = ed.Seq1 and mpod.seq2 = ed.Seq2) else o.FactoryID end) as FactoryID,
 o.ProjectID,ed.PoID,(select min(SciDelivery) from Orders WITH (NOLOCK) where POID = ed.PoID and (Category = 'B' or Category = o.Category)) as SCIDlv,
-(case when o.Category = 'B' then 'Bulk' when o.Category = 'S' then 'Sample' when o.Category = 'M' then 'Material' else '' end) as Category,
+(case when o.Category = 'B' then 'Bulk' when o.Category = 'S' then 'Sample' when o.Category = 'M' then 'Material' when o.Category = 'T' then 'Material' else '' end) as Category,
 iif(o.PFOrder = 1,dateadd(day,-10,o.SciDelivery),iif((select CountryID from Factory WITH (NOLOCK) where ID = o.factoryID)='PH',iif((select MrTeam from Brand WITH (NOLOCK) where ID = o.BrandID) = '01',dateadd(day,-15,o.SciDelivery),dateadd(day,-24,o.SciDelivery)),dateadd(day,-34,o.SciDelivery))) as InspDate,
 (SUBSTRING(ed.Seq1,1,3)+'-'+ed.Seq2) as Seq,(ed.SuppID+'-'+s.AbbEN) as Supp,
 iif(ed.Description = '',isnull(f.DescDetail,''),ed.Description) as Description,
