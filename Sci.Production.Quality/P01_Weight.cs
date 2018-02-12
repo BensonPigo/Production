@@ -740,7 +740,7 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
         {
             //設定欄位寬度
             tmpSheet.Columns[1].ColumnWidth = 13.63;
-            tmpSheet.Columns[2].ColumnWidth = 8;
+            tmpSheet.Columns[2].ColumnWidth = 10.5;
             tmpSheet.Columns[3].ColumnWidth = 12.80;
             tmpSheet.Columns[4].ColumnWidth = 12.80;
             tmpSheet.Columns[5].ColumnWidth = 11.5;
