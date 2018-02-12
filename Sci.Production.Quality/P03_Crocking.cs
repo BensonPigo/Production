@@ -848,7 +848,7 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                     k++;
                 }
                 worksheet.get_Range("B10:J10").Font.Bold = true;
-
+                worksheet.Cells.EntireColumn.AutoFit();
                 Marshal.ReleaseComObject(worksheet);
                 j++;
             }
