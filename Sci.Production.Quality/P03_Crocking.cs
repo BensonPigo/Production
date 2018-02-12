@@ -112,9 +112,9 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 dr["SEQ2"] = maindr["SEQ2"];
                 string name = MyUtility.Check.Empty(datas.Rows[i]["EditName"].ToString()) ? MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["AddName"].ToString(), "View_ShowName", "ID") :
                    MyUtility.GetValue.Lookup("Name_Extno", datas.Rows[i]["EditName"].ToString(), "View_ShowName", "ID");
-                string Date=MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
+                string Date = MyUtility.Check.Empty(datas.Rows[i]["EditDate"].ToString()) ? datas.Rows[i]["AddDate"].ToString() : datas.Rows[i]["EditDate"].ToString();
                 dr["Last update"] = name + " - " + Date;
-            
+
                 i++;
             }
 
@@ -165,7 +165,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                         if (result == DialogResult.Cancel)
                         {
                             return;
-                        }                        
+                        }
                         dr["DryScale"] = item1.GetSelectedString();
                     }
                 };
@@ -183,7 +183,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     if (result == DialogResult.Cancel)
                     {
                         return;
-                    }                    
+                    }
                     dr["WetScale"] = item1.GetSelectedString();
                 }
 
@@ -201,7 +201,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     if (result == DialogResult.Cancel)
                     {
                         return;
-                    }                    
+                    }
                     dr["Inspector"] = item1.GetSelectedString();
                 }
             };
@@ -267,7 +267,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
-                }                
+                }
             };
 
             dryScaleCell.CellValidating += (s, e) =>
@@ -343,7 +343,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     return;
                 }
 
-            };        
+            };
             InspDateCell.CellValidating += (s, e) =>
             {
                 if (MyUtility.Check.Empty(e.FormattedValue))
@@ -591,7 +591,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                             lastDate = newDate;
                         }
                     }
-                #endregion
+                    #endregion
 
                     #region  寫入實體Table
                     updatesql = string.Format(
@@ -608,7 +608,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
                 }
 
-                    #endregion
+                #endregion
 
             }
             else //Amend
@@ -781,14 +781,14 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
 order by fd.InspDate,oc.article
 ";
             DataTable dt;
-            DualResult result = DBProxy.Current.Select(null,sqlcmd,out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
             {
                 ShowErr(result);
                 return;
             }
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P03_Crocking_Test_for_PDF.xltx");
-           
+
             objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
             for (int i = 1; i < dt.Rows.Count; i++)
             {
@@ -830,20 +830,21 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                 {
                     Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A11:A11", Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    worksheet.get_Range("H11:J11").Merge(false); // 合併儲存格
                     Marshal.ReleaseComObject(rngToInsert);
                 }
 
                 int k = 0;
                 foreach (DataRow row2 in dt2.Rows)
                 {
-                    worksheet.Cells[11+k, 2] = txtBrandRefno.Text;
-                    worksheet.Cells[11+k, 3] = txtColor.Text;
-                    worksheet.Cells[11+k, 4] = row2["DryScale"];
-                    worksheet.Cells[11+k, 5] = row2["ResultDry"];
-                    worksheet.Cells[11+k, 6] = row2["WetScale"];
-                    worksheet.Cells[11+k, 7] = row2["ResultWet"];
-                    worksheet.Cells[11+k, 8] = row2["Remark"];
+                    worksheet.Cells[11 + k, 2] = txtBrandRefno.Text;
+                    worksheet.Cells[11 + k, 3] = txtColor.Text;
+                    worksheet.Cells[11 + k, 4] = row2["Dyelot"];
+                    worksheet.Cells[11 + k, 5] = row2["Roll"];
+                    worksheet.Cells[11 + k, 6] = row2["DryScale"];
+                    worksheet.Cells[11 + k, 7] = row2["ResultDry"];
+                    worksheet.Cells[11 + k, 8] = row2["WetScale"];
+                    worksheet.Cells[11 + k, 9] = row2["ResultWet"];
+                    worksheet.Cells[11 + k, 10] = row2["Remark"];
                     k++;
                 }
                 worksheet.get_Range("B10:J10").Font.Bold = true;
