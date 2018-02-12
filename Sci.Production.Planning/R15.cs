@@ -47,7 +47,7 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.txtMdivision.Text = Sci.Env.User.Keyword;
             this.txtfactory.Text = Sci.Env.User.Factory;
-            this.comboCategory.SelectedIndex = 1;  // Bulk
+            //this.comboCategory.SelectedIndex = 1;  // Bulk
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 2, 1, "orderid,SPNO,brandid,Brand");
             this.comboOrderBy.SelectedIndex = 0;
             this.dateBuyerDelivery.Select();

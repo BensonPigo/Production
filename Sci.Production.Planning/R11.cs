@@ -37,7 +37,7 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.txtMdivision.Text = Sci.Env.User.Keyword;
             this.txtfactory.Text = Sci.Env.User.Factory;
-            this.txtdropdownlist1.Type = "Category_Report";
+            this.comboCategory.Type = "Category_Report";
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace Sci.Production.Planning
             #endregion
             this.mdivision = this.txtMdivision.Text;
             this.factory = this.txtfactory.Text;
-            this.selectindex = this.txtdropdownlist1.SelectedIndex;
-            this.category = this.txtdropdownlist1.Text;
+            this.selectindex = this.comboCategory.SelectedIndex;
+            this.category = this.comboCategory.Text;
             this.months = this.numNewStyleBaseOn.Value;
 
             DualResult result;
