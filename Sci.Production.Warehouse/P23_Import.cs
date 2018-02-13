@@ -20,7 +20,9 @@ namespace Sci.Production.Warehouse
         protected DataTable dtBorrow;        
         private DataTable dtSort;
         private bool sortFinal;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private int scrollnb;
+        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;      
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
         DataRelation relation;
         public P23_Import(DataRow master, DataTable detail)
         {
@@ -210,8 +212,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
         {
             base.OnFormLoaded();
 
-            this.grid_TaipeiInput.IsEditingReadOnly = true;
-            //this.grid_TaipeiInput.AutoGenerateColumns = true;
+            this.grid_TaipeiInput.IsEditingReadOnly = true;            
             this.grid_TaipeiInput.DataSource = TaipeiInputBS;
             Helper.Controls.Grid.Generator(this.grid_TaipeiInput)
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
@@ -230,22 +231,10 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                ;
             this.grid_ftyDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid_ftyDetail.DataSource = FtyDetailBS;
-
-            Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+            
+           
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
-            #region -- transfer qty valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
-            ns.IsSupportNegative = true;
-            ns.CellValidating += (s, e) =>
-            {   
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    DataRow currentrow = grid_ftyDetail.GetDataRow(e.RowIndex);
-                    currentrow["qty"] = e.FormattedValue;
-                    currentrow["selected"] = true;
-                }
-            };
-            #endregion
+        
             #region -- Location 右鍵開窗 --
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
@@ -324,9 +313,11 @@ WHERE   StockType='{0}'
 
             this.grid_ftyDetail.CellValueChanged += (s, e) =>
             {
+                scrollnb = this.grid_ftyDetail.FirstDisplayedScrollingRowIndex;
+                DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
+                
                 if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         if (dr.GetParentRow("rel1") != null && !dr["balanceqty"].EqualDecimal(0))
@@ -341,13 +332,19 @@ WHERE   StockType='{0}'
                     {
                         dr["qty"] = 0;
                     }
-                    dr.EndEdit();
-                    sortdirect();
+                    
                 }
+                if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_Qty.Name)
+                {                  
+                    dr["selected"] = true;
+                }
+                dr.EndEdit();
+                sortdirect();
+                this.grid_ftyDetail.FirstDisplayedScrollingRowIndex = scrollnb;
             };
 
             Helper.Controls.Grid.Generator(this.grid_ftyDetail)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1,  falseValue: 0).Get(out col_chk)   //0
                 .Text("Frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
                 .Text("Fromseq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4)) //1
                 .Text("Fromseq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3)) //2
@@ -357,7 +354,7 @@ WHERE   StockType='{0}'
                 .Text("Fromstocktype", header: "Stock" + Environment.NewLine + "Type", iseditingreadonly: true, width: Widths.AnsiChars(8), settings: ns2) //4
                 .Numeric("accu_qty", header: "Accu." + Environment.NewLine + "Transfered", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(10)) //5  
                 .Numeric("balanceqty", header: "Stock" + Environment.NewLine + "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //9
-                .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)      //10
+                .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2).Get(out col_Qty)      //10
                 .Text("location", header: "From Location", iseditingreadonly: true)      //11
                 .Text("tolocation", header: "To Location", iseditingreadonly: false, settings: ts2).Get(out col_tolocation)      //12
                ;
