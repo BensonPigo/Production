@@ -28,18 +28,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            DataTable OrdersCategory = null;
-            string sqlm = (@" 
-                        select
-                             Category=name
-                        from  dbo.DropDownList WITH (NOLOCK) 
-                        where type = 'Category' and id != 'O'
-                        ");
-            DBProxy.Current.Select("", sqlm, out OrdersCategory);
-            OrdersCategory.DefaultView.Sort = "Category";
-            this.comboCategory.DataSource = OrdersCategory;
-            this.comboCategory.ValueMember = "Category";
-            this.comboCategory.DisplayMember = "Category";
+            this.comboCategory.Type = "Pms_ReportCategory";
             this.comboCategory.SelectedIndex = 0;
             DataTable Material = null;
             string sqlM = (@" 
@@ -159,19 +148,7 @@ namespace Sci.Production.Quality
                 lis.Add(new SqlParameter("@Ref", RefNo));
             } if (!this.comboCategory.SelectedItem.ToString().Empty())
             {
-                OWheres.Add("O.Category = @Cate");
-                if (Category == "Bulk")
-                {
-                    lis.Add(new SqlParameter("@Cate", "B"));
-                }
-                if (Category == "Sample")
-                {
-                    lis.Add(new SqlParameter("@Cate", "S"));
-                }
-                if (Category == "Material")
-                {
-                    lis.Add(new SqlParameter("@Cate", "M"));
-                }
+                OWheres.Add($"O.Category in ({this.comboCategory.SelectedValue})");
             } if (!this.txtsupplier.Text.Empty())
             {
                 sqlWheres.Add("ps.SuppId = @Supp");
