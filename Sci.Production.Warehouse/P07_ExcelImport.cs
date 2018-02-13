@@ -466,9 +466,9 @@ where   stocktype='{0}'
             //}
 
             //如果資料中有錯誤不能WriteIn
-            if (tmpPacking.AsEnumerable().Any(s => !string.IsNullOrEmpty(s["ErrMsg"].ToString())))
+            if (tmpPacking.AsEnumerable().Any(s => s["ErrMsg"].ToString().Contains("length can't be more than")))
             {
-                MyUtility.Msg.WarningBox("There are problems with the Excel content,please check column [Error Message] information to fix Excel.");
+                MyUtility.Msg.WarningBox("Excel column value over length limit,please check column [Error Message] information to fix Excel.");
                 return;
             }
 
