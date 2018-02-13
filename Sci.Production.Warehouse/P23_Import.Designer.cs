@@ -42,16 +42,16 @@
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.grid_TaipeiInput = new Sci.Win.UI.Grid();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.grid_ftyDetail = new Sci.Win.UI.Grid();
             this.TaipeiInputBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.FtyDetailBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.grid_ftyDetail = new Sci.Win.UI.Grid();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid_TaipeiInput)).BeginInit();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grid_ftyDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TaipeiInputBS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FtyDetailBS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid_ftyDetail)).BeginInit();
             this.SuspendLayout();
             // 
             // btnCancel
@@ -236,9 +236,11 @@
             this.grid_ftyDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_ftyDetail.RowTemplate.Height = 24;
             this.grid_ftyDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid_ftyDetail.ShowCellToolTips = false;
             this.grid_ftyDetail.Size = new System.Drawing.Size(1130, 261);
             this.grid_ftyDetail.TabIndex = 0;
             this.grid_ftyDetail.TabStop = false;
+            this.grid_ftyDetail.Sorted += new System.EventHandler(this.grid_ftyDetail_Sorted);
             // 
             // P23_Import
             // 
@@ -254,9 +256,9 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid_TaipeiInput)).EndInit();
             this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grid_ftyDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TaipeiInputBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FtyDetailBS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid_ftyDetail)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -271,7 +273,6 @@
         private Win.UI.GroupBox groupBox2;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Panel panel1;
-        private Win.UI.Grid grid_ftyDetail;
         private Win.UI.ListControlBindingSource TaipeiInputBS;
         private Win.UI.Grid grid_TaipeiInput;
         private Win.UI.ListControlBindingSource FtyDetailBS;
@@ -279,5 +280,6 @@
         private Win.UI.Button btnUpdateAllLocation;
         private Win.UI.TextBox txtLocation;
         private Win.UI.Label labelLocation;
+        private Win.UI.Grid grid_ftyDetail;
     }
 }
