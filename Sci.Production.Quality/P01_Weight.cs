@@ -595,6 +595,16 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
         private void buttonToPDF_Click(object sender, EventArgs e)
         {
+            DataTable dt;
+            DualResult xresult;
+            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,WeightM2,averageWeightM2,Difference,Result,Inspdate,Inspector,Remark from FIR_Weight WITH (NOLOCK) where id='{0}'", textID.Text), out dt))
+            {
+                if (dt.Rows.Count <= 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return;
+                }
+            }
             this.ShowWaitMessage("To PDF Processing...");
             Excel.Application objApp = new Excel.Application();
             objApp.DisplayAlerts = false;
@@ -781,21 +791,21 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
             tmpSheet.Cells[4, 6].Value = headData.SPNo;
             tmpSheet.Cells[4, 8].Value = "Brand";
             tmpSheet.Cells[4, 8].Font.Bold = true;
-            tmpSheet.Cells[4, 9].Value = headData.Brand;
+            tmpSheet.Cells[4, 9].Value = "'" + headData.Brand;
 
             tmpSheet.Cells[6, 1].Value = "Style No";
             tmpSheet.Cells[6, 1].Font.Bold = true;
-            tmpSheet.Cells[6, 2].Value = headData.StyleNo;
+            tmpSheet.Cells[6, 2].Value = "'" + headData.StyleNo;
             tmpSheet.Cells[6, 4].Value = "PO Number";
             tmpSheet.Cells[6, 4].Font.Bold = true;
-            tmpSheet.Cells[6, 5].Value = headData.PONumber;
+            tmpSheet.Cells[6, 5].Value = "'" + headData.PONumber;
             tmpSheet.Cells[6, 7].Value = "Article No";
             tmpSheet.Cells[6, 7].Font.Bold = true;
-            tmpSheet.Cells[6, 8].Value = headData.ArticleNo;
+            tmpSheet.Cells[6, 8].Value = "'" + headData.ArticleNo;
 
             tmpSheet.Cells[7, 1].Value = "Style Name";
             tmpSheet.Cells[7, 1].Font.Bold = true;
-            tmpSheet.Cells[7, 2].Value = headData.StyleName;
+            tmpSheet.Cells[7, 2].Value = "'" + headData.StyleName;
             tmpSheet.Cells[7, 2].WrapText = true;
             tmpSheet.Cells[7, 7].Value = "Arrive Qty";
             tmpSheet.Cells[7, 7].Font.Bold = true;
@@ -808,10 +818,10 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
             tmpSheet.Cells[11, 2].Font.Bold = true;
             tmpSheet.Cells[11, 4].Value = "Fabric Description";
             tmpSheet.Cells[11, 4].Font.Bold = true;
-            tmpSheet.Cells[12, 1].Value = headData.FabricRefNo;
+            tmpSheet.Cells[12, 1].Value = "'" + headData.FabricRefNo;
             tmpSheet.Cells[12, 1].WrapText = true;
-            tmpSheet.Cells[12, 2].Value = headData.FabricColor;
-            tmpSheet.Cells[12, 4].Value = headData.FabricDesc;
+            tmpSheet.Cells[12, 2].Value = "'" + headData.FabricColor;
+            tmpSheet.Cells[12, 4].Value = "'" + headData.FabricDesc;
             tmpSheet.Cells[12, 4].WrapText = true;
 
             tmpSheet.Cells[15, 1].Value = "Dye Lot";
