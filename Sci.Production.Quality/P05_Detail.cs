@@ -1171,10 +1171,10 @@ SET IDENTITY_INSERT oven off";
                 worksheet.Cells[4, 3] = dtdist.Rows[i]["submitDate"];
                 worksheet.Cells[4, 5] = this.dateTestDate.Text;
                 worksheet.Cells[4, 7] = this.txtSP.Text;
-                worksheet.Cells[4, 9] = BrandID;
+                worksheet.Cells[4, 10] = BrandID;
                 worksheet.Cells[6, 3] = StyleID;
                 worksheet.Cells[6, 6] = CustPONo;
-                worksheet.Cells[6, 8] = txtArticle.Text;
+                worksheet.Cells[6, 9] = txtArticle.Text;
                 worksheet.Cells[7, 3] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where id='{StyleID}'", null));
                 worksheet.Cells[7, 6] = SeasonID;
                 worksheet.Cells[10, 3] = this.numTemperature.Value+ "˚C";
@@ -1186,18 +1186,15 @@ SET IDENTITY_INSERT oven off";
                 {                    
                     worksheet.Cells[14 + ii, 2] = dr[ii]["Refno"];
                     worksheet.Cells[14 + ii, 3] = dr[ii]["Colorid"];
-                    Microsoft.Office.Interop.Excel.Range rg2 = worksheet.Range[worksheet.Cells[3][14 + ii], worksheet.Cells[4][14 + ii]];
-                    rg2.Merge();
-
-                    worksheet.Cells[14 + ii, 5] = dr[ii]["Changescale"];
-                    Microsoft.Office.Interop.Excel.Range rg3 = worksheet.Range[worksheet.Cells[5][14 + ii], worksheet.Cells[6][14 + ii]];
-                    rg3.Merge();
-
+                    worksheet.Cells[14 + ii, 4] = dr[ii]["Dyelot"];
+                    worksheet.Cells[14 + ii, 5] = dr[ii]["Roll"];
+                    worksheet.Cells[14 + ii, 6] = dr[ii]["Changescale"];
                     worksheet.Cells[14 + ii, 7] = dr[ii]["ResultChange"];
                     worksheet.Cells[14 + ii, 8] = dr[ii]["StainingScale"];
                     worksheet.Cells[14 + ii, 9] = dr[ii]["ResultStain"];
+                    worksheet.Cells[14 + ii, 10] = dr[ii]["Remark"];
 
-                    Microsoft.Office.Interop.Excel.Range rg1 = worksheet.Range[worksheet.Cells[2][14 + ii], worksheet.Cells[9][14 + ii]];
+                    Microsoft.Office.Interop.Excel.Range rg1 = worksheet.Range[worksheet.Cells[2][14 + ii], worksheet.Cells[10][14 + ii]];
                     // 加框線
                     rg1.Borders.LineStyle = 1;
                     rg1.Borders.Weight = 2;
@@ -1211,7 +1208,7 @@ SET IDENTITY_INSERT oven off";
                 for (int m = 0; m < 3; m++)
                 {
                     // 設定range 變數
-                    Microsoft.Office.Interop.Excel.Range rgSign = worksheet.Range[worksheet.Cells[7][14 + dr.Length + 3 + m], worksheet.Cells[9][14 + dr.Length + 3 + m]];
+                    Microsoft.Office.Interop.Excel.Range rgSign = worksheet.Range[worksheet.Cells[8][14 + dr.Length + 3 + m], worksheet.Cells[10][14 + dr.Length + 3 + m]];
                     // 設定邊框
                     rgSign.Borders.LineStyle = 1;
                     rgSign.Borders.Weight = 2;
