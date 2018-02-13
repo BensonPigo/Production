@@ -25,19 +25,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            DataTable ORS = null;
-            string sqlm = (@" 
-                        select
-                             Category=name
-                        from  dbo.DropDownList WITH (NOLOCK) 
-                        where type = 'Category' and id != 'O'
-                        ");
-            DBProxy.Current.Select("", sqlm, out ORS);
-            ORS.Rows.Add(new string[] { "" });
-            ORS.DefaultView.Sort = "Category";
-            this.comboCategory.DataSource = ORS;
-            this.comboCategory.ValueMember = "Category";
-            this.comboCategory.DisplayMember = "Category";
+            this.comboCategory.Type = "Pms_ReportCategory";
             this.comboCategory.SelectedIndex = 1;
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
@@ -119,19 +107,7 @@ namespace Sci.Production.Quality
             }
             if (!this.comboCategory.SelectedValue.Empty())
             {
-                sqlWheres.Add("Category = @Cate");
-                if (Category == "Bulk")
-                {
-                    lis.Add(new SqlParameter("@Cate", "B"));
-                }
-                if (Category == "Sample")
-                {
-                    lis.Add(new SqlParameter("@Cate", "S"));
-                }
-                if (Category == "Material")
-                {
-                    lis.Add(new SqlParameter("@Cate", "M"));
-                }
+                sqlWheres.Add($"Category in ({this.comboCategory.SelectedValue})");
             }
             if (!this.comboFactory.SelectedValue.Empty())
                 {

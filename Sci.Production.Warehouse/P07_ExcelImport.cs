@@ -285,23 +285,23 @@ namespace Sci.Production.Warehouse
                                 List<string> listColumnLengthErrMsg = new List<string>();
 
                                 // Poid varchar(13)
-                                if (newRow["poid"].ToString().Length > 13)
+                                if (Encoding.Default.GetBytes(newRow["poid"].ToString()).Length > 13)
                                     listColumnLengthErrMsg.Add("<SP#> length can't be more than 13 Characters.");
 
                                 // Seq1 varchar(3)
-                                if (newRow["Seq1"].ToString().Length > 3)
+                                if (Encoding.Default.GetBytes(newRow["Seq1"].ToString()).Length > 3)
                                     listColumnLengthErrMsg.Add("<SEQ1> length can't be more than 3 Characters.");
 
                                 // Seq2 varchar(2)
-                                if (newRow["Seq2"].ToString().Length > 2)
+                                if (Encoding.Default.GetBytes(newRow["Seq2"].ToString()).Length > 2)
                                     listColumnLengthErrMsg.Add("<SEQ2> length can't be more than 2 Characters.");
 
                                 // Roll varchar(8)
-                                if (newRow["Roll"].ToString().Length > 8)
+                                if (Encoding.Default.GetBytes(newRow["Roll"].ToString()).Length > 8)
                                     listColumnLengthErrMsg.Add("<C/No> length can't be more than 8 Characters.");
 
                                 // Dyelot varchar(4)
-                                if (newRow["Dyelot"].ToString().Length > 4)
+                                if (Encoding.Default.GetBytes(newRow["Dyelot"].ToString()).Length > 4)
                                     listColumnLengthErrMsg.Add("<LOT NO.> length can't be more than 4 Characters.");
 
                                 // qty + foc  numeric (11, 2)
@@ -317,7 +317,7 @@ namespace Sci.Production.Warehouse
                                     listColumnLengthErrMsg.Add("<WeiKg> value can't be more than 99,999");
 
                                 // Location varchar(60)
-                                if (newRow["Location"].ToString().Length > 60)
+                                if (Encoding.Default.GetBytes(newRow["Location"].ToString()).Length > 60)
                                     listColumnLengthErrMsg.Add("<Location> length can't be more than 60 Characters.");
 
                                 if (listColumnLengthErrMsg.Count > 0){
@@ -464,6 +464,13 @@ where   stocktype='{0}'
             //    DialogResult = System.Windows.Forms.DialogResult.OK;
             //    return;
             //}
+
+            //如果資料中有錯誤不能WriteIn
+            if (tmpPacking.AsEnumerable().Any(s => s["ErrMsg"].ToString().Contains("length can't be more than")))
+            {
+                MyUtility.Msg.WarningBox("Excel column value over length limit,please check column [Error Message] information to fix Excel.");
+                return;
+            }
 
             try
             {

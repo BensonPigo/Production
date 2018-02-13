@@ -28,29 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.labelM = new Sci.Win.UI.Label();
             this.checkOutstandingOnly = new Sci.Win.UI.CheckBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
             this.dateArriveWHDate = new Sci.Win.UI.DateRange();
             this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.dateReceivedSampleDate = new Sci.Win.UI.DateRange();
             this.labelReceivedSampleDate = new Sci.Win.UI.Label();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.comboM);
             this.panel1.Controls.Add(this.labelM);
             this.panel1.Controls.Add(this.checkOutstandingOnly);
             this.panel1.Controls.Add(this.comboFactory);
             this.panel1.Controls.Add(this.labelFactory);
-            this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.labelCategory);
             this.panel1.Controls.Add(this.dateArriveWHDate);
             this.panel1.Controls.Add(this.labelArriveWHDate);
@@ -74,7 +75,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(27, 138);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(158, 22);
@@ -105,12 +105,79 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(27, 176);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(158, 22);
             this.labelFactory.TabIndex = 50;
             this.labelFactory.Text = "Factory";
+            // 
+            // labelCategory
+            // 
+            this.labelCategory.Location = new System.Drawing.Point(27, 98);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(158, 23);
+            this.labelCategory.TabIndex = 48;
+            this.labelCategory.Text = "Category";
+            // 
+            // dateArriveWHDate
+            // 
+            // 
+            // 
+            // 
+            this.dateArriveWHDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateArriveWHDate.DateBox1.Name = "";
+            this.dateArriveWHDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateArriveWHDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateArriveWHDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateArriveWHDate.DateBox2.Name = "";
+            this.dateArriveWHDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateArriveWHDate.DateBox2.TabIndex = 1;
+            this.dateArriveWHDate.IsRequired = false;
+            this.dateArriveWHDate.Location = new System.Drawing.Point(192, 58);
+            this.dateArriveWHDate.Name = "dateArriveWHDate";
+            this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
+            this.dateArriveWHDate.TabIndex = 15;
+            // 
+            // labelArriveWHDate
+            // 
+            this.labelArriveWHDate.Location = new System.Drawing.Point(27, 58);
+            this.labelArriveWHDate.Name = "labelArriveWHDate";
+            this.labelArriveWHDate.Size = new System.Drawing.Size(158, 23);
+            this.labelArriveWHDate.TabIndex = 14;
+            this.labelArriveWHDate.Text = "Arrive W/H Date";
+            // 
+            // dateReceivedSampleDate
+            // 
+            // 
+            // 
+            // 
+            this.dateReceivedSampleDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateReceivedSampleDate.DateBox1.Name = "";
+            this.dateReceivedSampleDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateReceivedSampleDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateReceivedSampleDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateReceivedSampleDate.DateBox2.Name = "";
+            this.dateReceivedSampleDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateReceivedSampleDate.DateBox2.TabIndex = 1;
+            this.dateReceivedSampleDate.IsRequired = false;
+            this.dateReceivedSampleDate.Location = new System.Drawing.Point(192, 20);
+            this.dateReceivedSampleDate.Name = "dateReceivedSampleDate";
+            this.dateReceivedSampleDate.Size = new System.Drawing.Size(280, 23);
+            this.dateReceivedSampleDate.TabIndex = 1;
+            // 
+            // labelReceivedSampleDate
+            // 
+            this.labelReceivedSampleDate.Location = new System.Drawing.Point(27, 20);
+            this.labelReceivedSampleDate.Name = "labelReceivedSampleDate";
+            this.labelReceivedSampleDate.Size = new System.Drawing.Size(158, 23);
+            this.labelReceivedSampleDate.TabIndex = 0;
+            this.labelReceivedSampleDate.Text = "Received Sample Date";
             // 
             // comboCategory
             // 
@@ -120,51 +187,9 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(192, 98);
             this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(125, 24);
-            this.comboCategory.TabIndex = 49;
-            // 
-            // labelCategory
-            // 
-            this.labelCategory.Lines = 0;
-            this.labelCategory.Location = new System.Drawing.Point(27, 98);
-            this.labelCategory.Name = "labelCategory";
-            this.labelCategory.Size = new System.Drawing.Size(158, 23);
-            this.labelCategory.TabIndex = 48;
-            this.labelCategory.Text = "Category";
-            // 
-            // dateArriveWHDate
-            // 
-            this.dateArriveWHDate.IsRequired = false;
-            this.dateArriveWHDate.Location = new System.Drawing.Point(192, 58);
-            this.dateArriveWHDate.Name = "dateArriveWHDate";
-            this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
-            this.dateArriveWHDate.TabIndex = 15;
-            // 
-            // labelArriveWHDate
-            // 
-            this.labelArriveWHDate.Lines = 0;
-            this.labelArriveWHDate.Location = new System.Drawing.Point(27, 58);
-            this.labelArriveWHDate.Name = "labelArriveWHDate";
-            this.labelArriveWHDate.Size = new System.Drawing.Size(158, 23);
-            this.labelArriveWHDate.TabIndex = 14;
-            this.labelArriveWHDate.Text = "Arrive W/H Date";
-            // 
-            // dateReceivedSampleDate
-            // 
-            this.dateReceivedSampleDate.IsRequired = false;
-            this.dateReceivedSampleDate.Location = new System.Drawing.Point(192, 20);
-            this.dateReceivedSampleDate.Name = "dateReceivedSampleDate";
-            this.dateReceivedSampleDate.Size = new System.Drawing.Size(280, 23);
-            this.dateReceivedSampleDate.TabIndex = 1;
-            // 
-            // labelReceivedSampleDate
-            // 
-            this.labelReceivedSampleDate.Lines = 0;
-            this.labelReceivedSampleDate.Location = new System.Drawing.Point(27, 20);
-            this.labelReceivedSampleDate.Name = "labelReceivedSampleDate";
-            this.labelReceivedSampleDate.Size = new System.Drawing.Size(158, 23);
-            this.labelReceivedSampleDate.TabIndex = 0;
-            this.labelReceivedSampleDate.Text = "Received Sample Date";
+            this.comboCategory.Size = new System.Drawing.Size(185, 24);
+            this.comboCategory.TabIndex = 55;
+            this.comboCategory.Type = null;
             // 
             // R04
             // 
@@ -193,9 +218,9 @@
         private Win.UI.CheckBox checkOutstandingOnly;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.Label labelFactory;
-        private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
         private Win.UI.ComboBox comboM;
         private Win.UI.Label labelM;
+        private Class.comboDropDownList comboCategory;
     }
 }

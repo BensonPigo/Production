@@ -23,18 +23,7 @@ namespace Sci.Production.Quality
         {
 
             InitializeComponent();
-            DataTable Cartegory = null;
-            string sqlC = (@" 
-                        select
-                             Category=name
-                        from  dbo.DropDownList WITH (NOLOCK) 
-                        where type = 'Category' and id != 'O'  AND id != 'M'
-                        ");
-            DBProxy.Current.Select("", sqlC, out Cartegory);
-            Cartegory.DefaultView.Sort = "Category";
-            this.comboCategory.DataSource = Cartegory;
-            this.comboCategory.ValueMember = "Category";
-            this.comboCategory.DisplayMember = "Category";
+            this.comboCategory.Type = "Pms_GMT_Simple";
             this.comboCategory.SelectedIndex = 0;
 
             DataTable Material = null;
@@ -86,7 +75,6 @@ namespace Sci.Production.Quality
             lis = new List<SqlParameter>();
             string sqlWhere = ""; string sqlOrdersWhere = "";
             string CATEGORY = "";
-            List<string> sqlCATEGORY = new List<string>();
             List<string> sqlWheres = new List<string>();
             List<string> sqlOrderWheres = new List<string>();
             #region --組WHERE--
@@ -102,16 +90,8 @@ namespace Sci.Production.Quality
             }
             if (!this.comboCategory.SelectedItem.ToString().Empty())
             {
-                sqlOrderWheres.Add("Category = @Cate");
-                sqlCATEGORY.Add("@Cate");
-                if (str_Category == "Bulk")
-                {
-                    lis.Add(new SqlParameter("@Cate", "B"));
-                }
-                if (str_Category == "Sample")
-                {
-                    lis.Add(new SqlParameter("@Cate", "S"));
-                }
+                CATEGORY = $"({this.comboCategory.SelectedValue})";
+                sqlOrderWheres.Add($"Category in ({this.comboCategory.SelectedValue})");
 
             } if (!this.comboMaterialType.SelectedItem.ToString().Empty())
             {
@@ -137,7 +117,6 @@ namespace Sci.Production.Quality
             #endregion
             sqlOrdersWhere = string.Join(" and ", sqlOrderWheres);
             sqlWhere = string.Join(" and ", sqlWheres);
-            CATEGORY = string.Join("", sqlCATEGORY);
             if (!sqlOrdersWhere.Empty())
             {
                 sqlOrdersWhere = " AND " + sqlOrdersWhere;
@@ -162,7 +141,7 @@ namespace Sci.Production.Quality
                 ,f.Physical
                 ,(select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID)[WhseArrival]
                 ,(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID)[scidelivery]
-                ,iif(" + CATEGORY + @"='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+                ,iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
 		        ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = f.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y','')
 		                ) [Delay]
                 ,psd.ID
@@ -200,7 +179,7 @@ namespace Sci.Production.Quality
                ,AR.Result
                 ,(select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = AR.ReceivingID)[WhseArrival]
                 ,(select scidelivery from dbo.orders WITH (NOLOCK) where id = AR.POID)[scidelivery]
-                ,iif(" + CATEGORY + @"='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = AR.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+                ,iif(  'B' in " + CATEGORY + @",iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = AR.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
 		        ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = AR.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y','')
 		                ) [Delay]
                 ,AR.POID
@@ -381,7 +360,7 @@ drop table #tmp");
             inner join dbo.Supp as s WITH (NOLOCK) on s.ID = ps.SuppID
             inner join dbo.Receiving as m WITH (NOLOCK) on m.id = ai.ReceivingID
             inner join dbo.Receiving_Detail as n WITH (NOLOCK) on n.Id = m.Id and n.PoId = psd.ID and n.seq1 = psd.seq1 and n.seq2 = psd.SEQ2
-            OUTER APPLY (SELECT iif(" + CATEGORY + @"='B',iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = ai.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
+            OUTER APPLY (SELECT iif('B' in " + CATEGORY + @",iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = ai.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID))<25,'Y','')
                                                      ,iif(DATEDIFF(day, (select WhseArrival from dbo.Receiving WITH (NOLOCK) where id = ai.ReceivingID),(select scidelivery from dbo.orders WITH (NOLOCK) where id = a.POID) )<15,'Y',''))  
                                                        TF)DelayItemsRef
             WHERE " + sqlWhere + @" AND psd.SEQ1 NOT BETWEEN '50'AND'79' AND Ai.Result<>''
