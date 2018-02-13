@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.txtSeason = new Sci.Production.Class.txtseason();
             this.txtBrand = new Sci.Production.Class.txtbrand();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
@@ -44,6 +44,7 @@
             this.labelEstCuttingDate = new Sci.Win.UI.Label();
             this.labelSewingInLineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,11 +62,11 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.txtSeason);
             this.panel1.Controls.Add(this.txtBrand);
             this.panel1.Controls.Add(this.comboFactory);
             this.panel1.Controls.Add(this.labelFactory);
-            this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.labelCategory);
             this.panel1.Controls.Add(this.labelBrand);
             this.panel1.Controls.Add(this.labelSeason);
@@ -113,12 +114,146 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(12, 243);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(127, 23);
             this.labelFactory.TabIndex = 46;
             this.labelFactory.Text = "Factory";
+            // 
+            // labelCategory
+            // 
+            this.labelCategory.Location = new System.Drawing.Point(12, 202);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(127, 23);
+            this.labelCategory.TabIndex = 44;
+            this.labelCategory.Text = "Category";
+            // 
+            // labelBrand
+            // 
+            this.labelBrand.Location = new System.Drawing.Point(12, 163);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(127, 23);
+            this.labelBrand.TabIndex = 41;
+            this.labelBrand.Text = "Brand";
+            // 
+            // labelSeason
+            // 
+            this.labelSeason.Location = new System.Drawing.Point(12, 121);
+            this.labelSeason.Name = "labelSeason";
+            this.labelSeason.Size = new System.Drawing.Size(127, 23);
+            this.labelSeason.TabIndex = 40;
+            this.labelSeason.Text = "Season";
+            // 
+            // dateEstCuttingDate
+            // 
+            // 
+            // 
+            // 
+            this.dateEstCuttingDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateEstCuttingDate.DateBox1.Name = "";
+            this.dateEstCuttingDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateEstCuttingDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateEstCuttingDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateEstCuttingDate.DateBox2.Name = "";
+            this.dateEstCuttingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateEstCuttingDate.DateBox2.TabIndex = 1;
+            this.dateEstCuttingDate.IsRequired = false;
+            this.dateEstCuttingDate.Location = new System.Drawing.Point(142, 85);
+            this.dateEstCuttingDate.Name = "dateEstCuttingDate";
+            this.dateEstCuttingDate.Size = new System.Drawing.Size(280, 23);
+            this.dateEstCuttingDate.TabIndex = 39;
+            // 
+            // dateSewingInLineDate
+            // 
+            // 
+            // 
+            // 
+            this.dateSewingInLineDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingInLineDate.DateBox1.Name = "";
+            this.dateSewingInLineDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInLineDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingInLineDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingInLineDate.DateBox2.Name = "";
+            this.dateSewingInLineDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInLineDate.DateBox2.TabIndex = 1;
+            this.dateSewingInLineDate.IsRequired = false;
+            this.dateSewingInLineDate.Location = new System.Drawing.Point(142, 47);
+            this.dateSewingInLineDate.Name = "dateSewingInLineDate";
+            this.dateSewingInLineDate.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingInLineDate.TabIndex = 38;
+            // 
+            // dateRange4
+            // 
+            // 
+            // 
+            // 
+            this.dateRange4.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRange4.DateBox1.Name = "";
+            this.dateRange4.DateBox1.Size = new System.Drawing.Size(1, 23);
+            this.dateRange4.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRange4.DateBox2.Location = new System.Drawing.Point(1, 0);
+            this.dateRange4.DateBox2.Name = "";
+            this.dateRange4.DateBox2.Size = new System.Drawing.Size(1, 23);
+            this.dateRange4.DateBox2.TabIndex = 1;
+            this.dateRange4.Location = new System.Drawing.Point(215, 47);
+            this.dateRange4.Name = "dateRange4";
+            this.dateRange4.Size = new System.Drawing.Size(8, 23);
+            this.dateRange4.TabIndex = 37;
+            // 
+            // dateSCIDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(142, 10);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 36;
+            // 
+            // labelEstCuttingDate
+            // 
+            this.labelEstCuttingDate.Location = new System.Drawing.Point(12, 85);
+            this.labelEstCuttingDate.Name = "labelEstCuttingDate";
+            this.labelEstCuttingDate.Size = new System.Drawing.Size(127, 23);
+            this.labelEstCuttingDate.TabIndex = 35;
+            this.labelEstCuttingDate.Text = "Est. Cutting Date";
+            // 
+            // labelSewingInLineDate
+            // 
+            this.labelSewingInLineDate.Location = new System.Drawing.Point(12, 47);
+            this.labelSewingInLineDate.Name = "labelSewingInLineDate";
+            this.labelSewingInLineDate.Size = new System.Drawing.Size(127, 23);
+            this.labelSewingInLineDate.TabIndex = 34;
+            this.labelSewingInLineDate.Text = "Sewing in-line Date";
+            // 
+            // labelSCIDelivery
+            // 
+            this.labelSCIDelivery.Location = new System.Drawing.Point(12, 10);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(127, 23);
+            this.labelSCIDelivery.TabIndex = 33;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
             // comboCategory
             // 
@@ -128,93 +263,9 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(142, 202);
             this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(125, 24);
-            this.comboCategory.TabIndex = 45;
-            // 
-            // labelCategory
-            // 
-            this.labelCategory.Lines = 0;
-            this.labelCategory.Location = new System.Drawing.Point(12, 202);
-            this.labelCategory.Name = "labelCategory";
-            this.labelCategory.Size = new System.Drawing.Size(127, 23);
-            this.labelCategory.TabIndex = 44;
-            this.labelCategory.Text = "Category";
-            // 
-            // labelBrand
-            // 
-            this.labelBrand.Lines = 0;
-            this.labelBrand.Location = new System.Drawing.Point(12, 163);
-            this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(127, 23);
-            this.labelBrand.TabIndex = 41;
-            this.labelBrand.Text = "Brand";
-            // 
-            // labelSeason
-            // 
-            this.labelSeason.Lines = 0;
-            this.labelSeason.Location = new System.Drawing.Point(12, 121);
-            this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(127, 23);
-            this.labelSeason.TabIndex = 40;
-            this.labelSeason.Text = "Season";
-            // 
-            // dateEstCuttingDate
-            // 
-            this.dateEstCuttingDate.IsRequired = false;
-            this.dateEstCuttingDate.Location = new System.Drawing.Point(142, 85);
-            this.dateEstCuttingDate.Name = "dateEstCuttingDate";
-            this.dateEstCuttingDate.Size = new System.Drawing.Size(280, 23);
-            this.dateEstCuttingDate.TabIndex = 39;
-            // 
-            // dateSewingInLineDate
-            // 
-            this.dateSewingInLineDate.IsRequired = false;
-            this.dateSewingInLineDate.Location = new System.Drawing.Point(142, 47);
-            this.dateSewingInLineDate.Name = "dateSewingInLineDate";
-            this.dateSewingInLineDate.Size = new System.Drawing.Size(280, 23);
-            this.dateSewingInLineDate.TabIndex = 38;
-            // 
-            // dateRange4
-            // 
-            this.dateRange4.Location = new System.Drawing.Point(215, 47);
-            this.dateRange4.Name = "dateRange4";
-            this.dateRange4.Size = new System.Drawing.Size(8, 23);
-            this.dateRange4.TabIndex = 37;
-            // 
-            // dateSCIDelivery
-            // 
-            this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(142, 10);
-            this.dateSCIDelivery.Name = "dateSCIDelivery";
-            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateSCIDelivery.TabIndex = 36;
-            // 
-            // labelEstCuttingDate
-            // 
-            this.labelEstCuttingDate.Lines = 0;
-            this.labelEstCuttingDate.Location = new System.Drawing.Point(12, 85);
-            this.labelEstCuttingDate.Name = "labelEstCuttingDate";
-            this.labelEstCuttingDate.Size = new System.Drawing.Size(127, 23);
-            this.labelEstCuttingDate.TabIndex = 35;
-            this.labelEstCuttingDate.Text = "Est. Cutting Date";
-            // 
-            // labelSewingInLineDate
-            // 
-            this.labelSewingInLineDate.Lines = 0;
-            this.labelSewingInLineDate.Location = new System.Drawing.Point(12, 47);
-            this.labelSewingInLineDate.Name = "labelSewingInLineDate";
-            this.labelSewingInLineDate.Size = new System.Drawing.Size(127, 23);
-            this.labelSewingInLineDate.TabIndex = 34;
-            this.labelSewingInLineDate.Text = "Sewing in-line Date";
-            // 
-            // labelSCIDelivery
-            // 
-            this.labelSCIDelivery.Lines = 0;
-            this.labelSCIDelivery.Location = new System.Drawing.Point(12, 10);
-            this.labelSCIDelivery.Name = "labelSCIDelivery";
-            this.labelSCIDelivery.Size = new System.Drawing.Size(127, 23);
-            this.labelSCIDelivery.TabIndex = 33;
-            this.labelSCIDelivery.Text = "SCI Delivery";
+            this.comboCategory.Size = new System.Drawing.Size(185, 24);
+            this.comboCategory.TabIndex = 53;
+            this.comboCategory.Type = null;
             // 
             // R03
             // 
@@ -246,10 +297,10 @@
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelSeason;
         private Win.UI.Label labelFactory;
-        private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
         private Win.UI.ComboBox comboFactory;
         private Class.txtbrand txtBrand;
         private Class.txtseason txtSeason;
+        private Class.comboDropDownList comboCategory;
     }
 }
