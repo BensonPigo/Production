@@ -69,21 +69,22 @@
             this.checkGarment = new Sci.Win.UI.CheckBox();
             this.labelArticle = new Sci.Win.UI.Label();
             this.txtArticle = new Sci.Win.UI.TextBox();
+            this.checkSMTL = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(428, 12);
+            this.print.Location = new System.Drawing.Point(502, 12);
             this.print.TabIndex = 24;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(428, 48);
+            this.toexcel.Location = new System.Drawing.Point(502, 48);
             this.toexcel.TabIndex = 25;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(428, 84);
+            this.close.Location = new System.Drawing.Point(502, 84);
             this.close.TabIndex = 26;
             // 
             // labelBuyerDelivery
@@ -552,9 +553,21 @@
             this.txtArticle.Size = new System.Drawing.Size(100, 23);
             this.txtArticle.TabIndex = 8;
             // 
+            // checkSMTL
+            // 
+            this.checkSMTL.AutoSize = true;
+            this.checkSMTL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSMTL.Location = new System.Drawing.Point(520, 402);
+            this.checkSMTL.Name = "checkSMTL";
+            this.checkSMTL.Size = new System.Drawing.Size(64, 21);
+            this.checkSMTL.TabIndex = 112;
+            this.checkSMTL.Text = "SMTL";
+            this.checkSMTL.UseVisualStyleBackColor = true;
+            // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(520, 617);
+            this.ClientSize = new System.Drawing.Size(587, 617);
+            this.Controls.Add(this.checkSMTL);
             this.Controls.Add(this.txtArticle);
             this.Controls.Add(this.labelArticle);
             this.Controls.Add(this.checkGarment);
@@ -645,6 +658,7 @@
             this.Controls.SetChildIndex(this.checkGarment, 0);
             this.Controls.SetChildIndex(this.labelArticle, 0);
             this.Controls.SetChildIndex(this.txtArticle, 0);
+            this.Controls.SetChildIndex(this.checkSMTL, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -693,5 +707,6 @@
         private Win.UI.CheckBox checkGarment;
         private Win.UI.Label labelArticle;
         private Win.UI.TextBox txtArticle;
+        private Win.UI.CheckBox checkSMTL;
     }
 }

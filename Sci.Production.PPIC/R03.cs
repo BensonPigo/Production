@@ -34,6 +34,7 @@ namespace Sci.Production.PPIC
         private bool seperate;
         private bool poCombo;
         private bool garment;
+        private bool smtl;
         private DateTime? buyerDlv1;
         private DateTime? buyerDlv2;
         private DateTime? sciDlv1;
@@ -144,6 +145,7 @@ from Factory f WITH (NOLOCK) where Zone <> ''";
             this.material = this.checkMaterial.Checked;
             this.forecast = this.checkForecast.Checked;
             this.garment = this.checkGarment.Checked;
+            this.smtl = this.checkSMTL.Checked;
             this.subProcess = this.comboSubProcess.Text;
             this.hisOrder = this.checkIncludeHistoryOrder.Checked;
             this.artwork = this.checkIncludeArtworkdata.Checked;
@@ -361,7 +363,7 @@ with tmpOrders as (
                 sqlCmd.Append(" and o.Finished = 0");
             }
 
-            if ((this.bulk || this.sample || this.material || this.forecast || this.garment) && p_type.Equals("ALL"))
+            if ((this.bulk || this.sample || this.material || this.forecast || this.garment || this.smtl) && p_type.Equals("ALL"))
             {
                 sqlCmd.Append(" and (1=0");
                 if (this.bulk)
@@ -384,6 +386,10 @@ with tmpOrders as (
                     sqlCmd.Append(" or o.Category = 'G'");
                 }
 
+                if (this.smtl)
+                {
+                    sqlCmd.Append(" or o.Category = 'T'");
+                }
                 // 如果沒勾seperate但有勾forecast的情況，不用將forecast資料另外收
                 if (this.forecast && !this.seperate)
                 {
@@ -1191,7 +1197,7 @@ OrderID as(
                             sqlcmd_sub.Append(" and o.Finished = 0");
                         }
 
-                        if (this.bulk || this.sample || this.material || this.forecast || this.garment)
+                        if (this.bulk || this.sample || this.material || this.forecast || this.garment || this.smtl)
                         {
                             sqlcmd_sub.Append(" and (1=0");
                             if (this.bulk)
@@ -1212,6 +1218,11 @@ OrderID as(
                             if (this.garment)
                             {
                                 sqlcmd_sub.Append(" or o.Category = 'G'");
+                            }
+
+                            if (this.smtl)
+                            {
+                                sqlcmd_sub.Append(" or o.Category = 'T'");
                             }
 
                             if (this.forecast)
