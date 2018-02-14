@@ -156,7 +156,35 @@ namespace Sci.Production.Logistic
                     {
                         if (this.comboBrand.Text.EqualString("N.FACE"))
                         {
+                            using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(dr["FullFileName"]), System.Text.Encoding.UTF8))
+                            {
+                                string line;
+                                while ((line = reader.ReadLine()) != null)
+                                {
+                                    DataRow newRow = this.grid2Data.NewRow();
+                                    newRow["selected"] = 1;
+                                    string custPoNo = line.Substring(520, 15).TrimEnd();
+                                    if (custPoNo.Length <= 10)
+                                    {
+                                        custPoNo = custPoNo.Substring(0, 7);
+                                    }
+                                    else
+                                    {
+                                        custPoNo = custPoNo.Substring(0, 10);
+                                    }
 
+                                    newRow["CustPoNo"] = custPoNo;
+                                    newRow["Brand"] = this.comboBrand.Text;
+                                    newRow["styleid"] = line.Substring(550, 8).TrimEnd();
+                                    newRow["stylename"] = MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
+                                    newRow["Article"] = line.Substring(558, 10).TrimEnd();
+                                    newRow["Size"] = line.Substring(595, 5).TrimEnd().TrimStart('0');
+                                    string xxxBarCode = line.Substring(632, 40).Trim();
+                                    IList<string> sl = xxxBarCode.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                                    newRow["BarCode"] = sl[sl.Count - 1].Substring(sl[sl.Count - 1].Length - 12, 12);
+                                    this.grid2Data.Rows.Add(newRow);
+                                }
+                            }
                         }
                         else if (this.comboBrand.Text.EqualString("DOME"))
                         {
@@ -488,6 +516,20 @@ and (Pullout.Status = 'New' or Pullout.Status is null)
         private void Btnclose_click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void Btndowload_click(object sender, EventArgs e)
+        {
+            DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
+
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Clog_P07Template.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
         }
     }
 }

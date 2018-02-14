@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -40,12 +39,12 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.panel7 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
             this.panel6 = new Sci.Win.UI.Panel();
             this.panel10 = new Sci.Win.UI.Panel();
             this.panel12 = new Sci.Win.UI.Panel();
             this.gridAttachFile = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.panel11 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Panel();
             this.button1 = new Sci.Win.UI.Button();
@@ -76,7 +75,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(814, 33);
+            this.panel3.Size = new System.Drawing.Size(929, 33);
             this.panel3.TabIndex = 2;
             // 
             // comboBrand
@@ -111,14 +110,14 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 486);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(814, 42);
+            this.panel4.Size = new System.Drawing.Size(929, 42);
             this.panel4.TabIndex = 3;
             // 
             // Btnexit
             // 
             this.Btnexit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Btnexit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Btnexit.Location = new System.Drawing.Point(728, 6);
+            this.Btnexit.Location = new System.Drawing.Point(843, 6);
             this.Btnexit.Name = "Btnexit";
             this.Btnexit.Size = new System.Drawing.Size(80, 30);
             this.Btnexit.TabIndex = 3;
@@ -129,7 +128,7 @@
             // btnImport
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImport.Location = new System.Drawing.Point(642, 6);
+            this.btnImport.Location = new System.Drawing.Point(757, 6);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(80, 30);
             this.btnImport.TabIndex = 2;
@@ -144,7 +143,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 33);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(814, 453);
+            this.panel5.Size = new System.Drawing.Size(929, 453);
             this.panel5.TabIndex = 4;
             // 
             // panel7
@@ -153,7 +152,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(0, 169);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(814, 284);
+            this.panel7.Size = new System.Drawing.Size(929, 284);
             this.panel7.TabIndex = 1;
             // 
             // gridDetail
@@ -186,7 +185,7 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(814, 284);
+            this.gridDetail.Size = new System.Drawing.Size(929, 284);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
@@ -197,7 +196,7 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(0, 0);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(814, 169);
+            this.panel6.Size = new System.Drawing.Size(929, 169);
             this.panel6.TabIndex = 0;
             // 
             // panel10
@@ -207,7 +206,7 @@
             this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel10.Location = new System.Drawing.Point(0, 0);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(654, 169);
+            this.panel10.Size = new System.Drawing.Size(769, 169);
             this.panel10.TabIndex = 2;
             // 
             // panel12
@@ -216,7 +215,7 @@
             this.panel12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel12.Location = new System.Drawing.Point(0, 0);
             this.panel12.Name = "panel12";
-            this.panel12.Size = new System.Drawing.Size(654, 159);
+            this.panel12.Size = new System.Drawing.Size(769, 159);
             this.panel12.TabIndex = 1;
             // 
             // gridAttachFile
@@ -249,7 +248,7 @@
             this.gridAttachFile.RowTemplate.Height = 24;
             this.gridAttachFile.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAttachFile.ShowCellToolTips = false;
-            this.gridAttachFile.Size = new System.Drawing.Size(654, 159);
+            this.gridAttachFile.Size = new System.Drawing.Size(769, 159);
             this.gridAttachFile.TabIndex = 0;
             this.gridAttachFile.TabStop = false;
             // 
@@ -258,7 +257,7 @@
             this.panel11.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel11.Location = new System.Drawing.Point(0, 159);
             this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(654, 10);
+            this.panel11.Size = new System.Drawing.Size(769, 10);
             this.panel11.TabIndex = 0;
             // 
             // btnClose
@@ -268,7 +267,7 @@
             this.btnClose.Controls.Add(this.btnRemoveExcel);
             this.btnClose.Controls.Add(this.btnAddExcel);
             this.btnClose.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnClose.Location = new System.Drawing.Point(654, 0);
+            this.btnClose.Location = new System.Drawing.Point(769, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(160, 169);
             this.btnClose.TabIndex = 1;
@@ -281,6 +280,7 @@
             this.button1.TabIndex = 3;
             this.button1.Text = "Download Other Template";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Btndowload_click);
             // 
             // btnCheckImport
             // 
@@ -327,14 +327,14 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(824, 0);
+            this.panel2.Location = new System.Drawing.Point(939, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 528);
             this.panel2.TabIndex = 1;
             // 
             // P07
             // 
-            this.ClientSize = new System.Drawing.Size(834, 528);
+            this.ClientSize = new System.Drawing.Size(949, 528);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
