@@ -447,6 +447,16 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 MyUtility.Msg.WarningBox("<Result> can not be empty.");
                 return false;
             }
+            if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Resultdry"])))
+            {
+                MyUtility.Msg.WarningBox("<Result(dry)> can not be empty.");
+                return false;
+            }
+            if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Resultwet"])))
+            {
+                MyUtility.Msg.WarningBox("<Result(wet)> can not be empty.");
+                return false;
+            }
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["Inspdate"])))
             {
                 MyUtility.Msg.WarningBox("<Insection Date> can not be empty.");
