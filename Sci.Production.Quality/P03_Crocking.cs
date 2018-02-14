@@ -730,7 +730,6 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
         //maindr where id,poid重新query 
         private void mainDBQuery()
         {
-
             string cmd = @"select a.id,a.poid,(a.SEQ1+a.SEQ2) as seq,a.SEQ1,a.SEQ2,Receivingid,Refno,a.SCIRefno,
                 b.CrockingEncode,b.HeatEncode,b.WashEncode,
                 ArriveQty,
@@ -758,6 +757,13 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
         private void btntoPDF_Click(object sender, EventArgs e)
         {
+            DataTable dtt = (DataTable)gridbs.DataSource;
+            if (dtt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
+            }
+
             string submitDate = MyUtility.Convert.GetString(this.maindr["ReceiveSampleDate"]);
 
             string sqlcmd = $@"
@@ -810,7 +816,7 @@ order by fd.InspDate,oc.article
                 worksheet.Cells[6, 3] = txtStyle.Text;
                 worksheet.Cells[6, 6] = MyUtility.GetValue.Lookup($"select CustPONo from orders where id = '{txtSP.Text}'");
                 worksheet.Cells[7, 3] = MyUtility.GetValue.Lookup($@"select StyleName from Style s, orders o where o.id = '{txtSP.Text}' and o.brandid = s.brandid and o.StyleID = s.id");
-                worksheet.Cells[7, 6] = txtArriveQty.Text;
+                worksheet.Cells[7, 9] = txtArriveQty.Text;
                 worksheet.Cells[22, 8] = row["Name"];
 
                 string sqlcmd2 = $@"
