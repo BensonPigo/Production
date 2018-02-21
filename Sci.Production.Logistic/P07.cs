@@ -115,6 +115,8 @@ namespace Sci.Production.Logistic
                 ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(dr);
                 this.listControlBindingSource1.MoveLast();
             }
+
+            this.gridAttachFile.AutoResizeColumns();
         }
 
         // Remove Excel
@@ -418,6 +420,7 @@ namespace Sci.Production.Logistic
             #endregion
             this.grid2Data = notdist.DefaultView.ToTable(true, new string[] { "selected" , "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "Status" });
             this.listControlBindingSource2.DataSource = this.grid2Data;
+            this.gridDetail.AutoResizeColumns();
         }
 
         private void ComboBrand_SelectedIndexChanged(object sender, EventArgs e)
@@ -437,6 +440,14 @@ namespace Sci.Production.Logistic
 
         private void BtnWriteIn_Click_1(object sender, EventArgs e)
         {
+            #region 判斷第一個Grid是否有資料
+            if (this.listControlBindingSource1.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No excel data!!");
+                return;
+            }
+            #endregion
+
             DualResult result;
             DataRow[] selectrows = this.grid2Data.Select("selected = 1");
             foreach (DataRow item in selectrows)
@@ -512,6 +523,7 @@ and (Pullout.Status = 'New' or Pullout.Status is null)
                 }
             }
 
+            this.gridDetail.AutoResizeColumns();
             MyUtility.Msg.InfoBox("Created success, Refer to the Status field description");
         }
 
