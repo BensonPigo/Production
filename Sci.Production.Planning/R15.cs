@@ -14,7 +14,7 @@ namespace Sci.Production.Planning
     /// </summary>
     public partial class R15 : Sci.Win.Tems.PrintForm
     {
-        private int selectindex = 0;
+        private string category;
         private string factory;
         private string mdivision;
         private string orderby;
@@ -47,7 +47,6 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.txtMdivision.Text = Sci.Env.User.Keyword;
             this.txtfactory.Text = Sci.Env.User.Factory;
-            //this.comboCategory.SelectedIndex = 1;  // Bulk
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 2, 1, "orderid,SPNO,brandid,Brand");
             this.comboOrderBy.SelectedIndex = 0;
             this.dateBuyerDelivery.Select();
@@ -90,7 +89,7 @@ namespace Sci.Production.Planning
             this.custcd = this.txtCustCD.Text;
             this.mdivision = this.txtMdivision.Text;
             this.factory = this.txtfactory.Text;
-            this.selectindex = this.comboCategory.SelectedIndex;
+            this.category = this.comboCategory.SelectedValue.ToString();
             this.orderby = this.comboOrderBy.SelectedValue.ToString();
             this.isArtwork = this.checkIncludeArtowkData.Checked;
             if (this.isArtwork)
@@ -264,18 +263,7 @@ WHERE 1=1"));
                 cmds.Add(new System.Data.SqlClient.SqlParameter("@factory", this.factory));
             }
 
-            switch (this.selectindex)
-            {
-                case 0:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S')");
-                    break;
-                case 1:
-                    sqlCmd.Append(@" and o.Category = 'B' ");
-                    break;
-                case 2:
-                    sqlCmd.Append(@"  and (o.Category = 'S')");
-                    break;
-            }
+            sqlCmd.Append($" and o.Category in ({this.category})");
             #endregion
 
             #region -- 有列印Artwork --
