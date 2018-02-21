@@ -458,10 +458,10 @@ and oa.article = '{item["article"]}' and os.SizeCode = '{item["Size"]}'";
 select Barcode
 from CustBarCode with(nolock)
 where CustPoNo = '{item["CustPoNo"]}' and BrandID = '{item["Brand"]}' and StyleID = '{item["StyleID"]}' 
-and article = '{item["article"]}' and .SizeCode = '{item["Size"]}'";
+and article = '{item["article"]}' and SizeCode = '{item["Size"]}'";
 
                 DataRow custBarCodeDr;
-                if (!MyUtility.Check.Seek(checkCustBarCodeExists, out custBarCodeDr))
+                if (MyUtility.Check.Seek(checkCustBarCodeExists, out custBarCodeDr))
                 {
                     string updateCustBarCode = $@"
 update CustBarCode set
@@ -469,7 +469,7 @@ update CustBarCode set
     EditName='{Sci.Env.User.UserID}',
     EditDate= getdate()
 where CustPoNo = '{item["CustPoNo"]}' and BrandID = '{item["Brand"]}' and StyleID = '{item["StyleID"]}' 
-and article = '{item["article"]}' and .SizeCode = '{item["Size"]}'
+and article = '{item["article"]}' and SizeCode = '{item["Size"]}'
 ";
                     result = DBProxy.Current.Execute(null, updateCustBarCode);
                     item["status"] = $"This data already exists ,update barcode {custBarCodeDr["barcode"]} to {item["barcode"]}";
@@ -480,6 +480,7 @@ and article = '{item["article"]}' and .SizeCode = '{item["Size"]}'
 insert CustBarCode(BrandID,CustPONo,StyleID,Article,SizeCode,BarCode,EditName,EditDate)
 values('{item["Brand"]}','{item["CustPoNo"]}','{item["StyleID"]}','{item["article"]}','{item["Size"]}','{item["barcode"]}','{Sci.Env.User.UserID}',getdate())
 ";
+                    result = DBProxy.Current.Execute(null, insertCustBarCode);
                     item["status"] = $"Created success!!";
                 }
 
