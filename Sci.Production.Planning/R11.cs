@@ -14,11 +14,11 @@ namespace Sci.Production.Planning
     /// </summary>
     public partial class R11 : Sci.Win.Tems.PrintForm
     {
-        private int selectindex = 0;
         private decimal months;
         private string factory;
         private string mdivision;
         private string category;
+        private string category2;
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
         private DataTable printData;
@@ -37,7 +37,6 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.txtMdivision.Text = Sci.Env.User.Keyword;
             this.txtfactory.Text = Sci.Env.User.Factory;
-            this.txtdropdownlist1.Type = "Category_Report";
         }
 
         /// <summary>
@@ -58,8 +57,9 @@ namespace Sci.Production.Planning
             #endregion
             this.mdivision = this.txtMdivision.Text;
             this.factory = this.txtfactory.Text;
-            this.selectindex = this.txtdropdownlist1.SelectedIndex;
-            this.category = this.txtdropdownlist1.Text;
+            this.category = this.comboCategory.SelectedValue.ToString();
+            this.category2 = this.comboCategory.Text;
+
             this.months = this.numNewStyleBaseOn.Value;
 
             DualResult result;
@@ -169,32 +169,9 @@ Where 1=1 and ( o.junk = 0 or o.junk is null) "));
                 this.condition.Append(string.Format(@"    Factory : {0}", this.factory));
             }
 
-            switch (this.selectindex)
-            {
-                case 0:
-                    sqlCmd.Append(@" and o.Category = 'B' ");
-                    break;
-                case 1:
-                    sqlCmd.Append(@" and o.Category = 'S' ");
-                    break;
-                case 2:
-                    sqlCmd.Append(@" and o.Category = 'M' ");
-                    break;
-                case 3:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S') ");
-                    break;
-                case 4:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast  = '1') ");
-                    break;
-                case 5:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
-                    break;
-                default:
+            sqlCmd.Append($" and o.Category in ({this.category})");
 
-                    break;
-            }
-
-            this.condition.Append(string.Format(@"    Category : {0}", this.category));
+            this.condition.Append(string.Format(@"    Category : {0}", this.category2));
             #endregion
 
             sqlCmd.Append(string.Format(@"
@@ -250,29 +227,7 @@ where 1=1"));
                 this.condition.Append(string.Format(@"    New Style base on {0} month(s)", this.months));
             }
 
-            switch (this.selectindex)
-            {
-                case 0:
-                    sqlCmd.Append(@" and o.Category = 'B' ");
-                    break;
-                case 1:
-                    sqlCmd.Append(@" and o.Category = 'S' ");
-                    break;
-                case 2:
-                    sqlCmd.Append(@" and o.Category = 'M' ");
-                    break;
-                case 3:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S') ");
-                    break;
-                case 4:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast  = '1') ");
-                    break;
-                case 5:
-                    sqlCmd.Append(@" and (o.Category = 'B' or o.Category = 'S' or  o.Category = 'M' or o.IsForecast  = '1') ");
-                    break;
-                default:
-                    break;
-            }
+            sqlCmd.Append($" and o.Category in ({this.category})");
 
             sqlCmd.Append(
                 $@"
