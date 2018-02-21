@@ -17,14 +17,22 @@ namespace Sci.Production.Warehouse
         DataRow dr_master;
         DataTable dt_detail;
         DataSet dsTmp;
-        protected DataTable dtBorrow;
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        protected DataTable dtBorrow;        
+        private DataTable dtSort;
+        private bool sortFinal;
+        private int scrollnb;
+        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;      
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
         DataRelation relation;
         public P23_Import(DataRow master, DataTable detail)
         {
             InitializeComponent();
             dr_master = master;
             dt_detail = detail;
+            dtSort = new DataTable();
+            dtSort.Columns.Add("Name", typeof(string));
+            dtSort.Columns.Add("Sort", typeof(string));
+            sortFinal = false;
         }
 
         //Find Now Button
@@ -195,7 +203,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
                 myFilter();
-
+                dtSort.Clear();
                 this.HideWaitMessage();
             }
         }
@@ -204,8 +212,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
         {
             base.OnFormLoaded();
 
-            this.grid_TaipeiInput.IsEditingReadOnly = true;
-            //this.grid_TaipeiInput.AutoGenerateColumns = true;
+            this.grid_TaipeiInput.IsEditingReadOnly = true;            
             this.grid_TaipeiInput.DataSource = TaipeiInputBS;
             Helper.Controls.Grid.Generator(this.grid_TaipeiInput)
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
@@ -224,22 +231,10 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                ;
             this.grid_ftyDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid_ftyDetail.DataSource = FtyDetailBS;
-
-            Ict.Win.UI.DataGridViewNumericBoxColumn col_Qty;
+            
+           
             Ict.Win.UI.DataGridViewTextBoxColumn col_tolocation;
-            #region -- transfer qty valid --
-            Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
-            ns.IsSupportNegative = true;
-            ns.CellValidating += (s, e) =>
-            {
-                if (this.EditMode && !MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    DataRow currentrow = grid_ftyDetail.GetDataRow(grid_ftyDetail.GetSelectedRowIndex());
-                    currentrow["qty"] = e.FormattedValue;
-                    currentrow["selected"] = true;
-                }
-            };
-            #endregion
+        
             #region -- Location 右鍵開窗 --
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
@@ -318,9 +313,11 @@ WHERE   StockType='{0}'
 
             this.grid_ftyDetail.CellValueChanged += (s, e) =>
             {
+                scrollnb = this.grid_ftyDetail.FirstDisplayedScrollingRowIndex;
+                DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
+                
                 if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
-                    DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
                     {
                         if (dr.GetParentRow("rel1") != null && !dr["balanceqty"].EqualDecimal(0))
@@ -335,12 +332,19 @@ WHERE   StockType='{0}'
                     {
                         dr["qty"] = 0;
                     }
-                    dr.EndEdit();
+                    
                 }
+                if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_Qty.Name)
+                {                  
+                    dr["selected"] = true;
+                }
+                dr.EndEdit();
+                sortdirect();
+                this.grid_ftyDetail.FirstDisplayedScrollingRowIndex = scrollnb;
             };
 
             Helper.Controls.Grid.Generator(this.grid_ftyDetail)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
+                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1,  falseValue: 0).Get(out col_chk)   //0
                 .Text("Frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
                 .Text("Fromseq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4)) //1
                 .Text("Fromseq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3)) //2
@@ -348,12 +352,9 @@ WHERE   StockType='{0}'
                 .Text("Fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
                 .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .Text("Fromstocktype", header: "Stock" + Environment.NewLine + "Type", iseditingreadonly: true, width: Widths.AnsiChars(8), settings: ns2) //4
-                .Numeric("accu_qty", header: "Accu." + Environment.NewLine + "Transfered", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(10)) //5
-                //.Numeric("inqty", header: "Stock" + Environment.NewLine + "In", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //6
-                //.Numeric("outqty", header: "Stock" + Environment.NewLine + "Out", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //7
-                //.Numeric("adjustqty", header: "Stock" + Environment.NewLine + "Adjust", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //8
+                .Numeric("accu_qty", header: "Accu." + Environment.NewLine + "Transfered", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(10)) //5  
                 .Numeric("balanceqty", header: "Stock" + Environment.NewLine + "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //9
-                .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2,settings :ns).Get(out col_Qty)      //10
+                .Numeric("qty", header: "Transfer" + Environment.NewLine + "Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2).Get(out col_Qty)      //10
                 .Text("location", header: "From Location", iseditingreadonly: true)      //11
                 .Text("tolocation", header: "To Location", iseditingreadonly: false, settings: ts2).Get(out col_tolocation)      //12
                ;
@@ -487,6 +488,34 @@ WHERE   StockType='{0}'
                 }
             }
             this.Close();
+        }
+    
+        // 將記憶的排序放到Grid裡
+        private void sortdirect()
+        {
+            sortFinal = true;
+            ListSortDirection dir;
+            for (int i = 0; i < dtSort.Rows.Count; i++)
+            {
+                dir = (dtSort.Rows[i]["Sort"].ToString() == "ASC") ? ListSortDirection.Ascending : ListSortDirection.Descending;
+                this.grid_ftyDetail.Sort(grid_ftyDetail.Columns[dtSort.Rows[i]["Name"].ToString()], dir);
+                this.grid_ftyDetail.EndEdit();
+            }
+            sortFinal = false;
+        }
+
+        // 將所有排序的欄位記憶起來
+        private void grid_ftyDetail_Sorted(object sender, EventArgs e)
+        {
+            if (sortFinal)
+            {
+                return;
+            }
+            DataRow dr;
+            dr = dtSort.NewRow();
+            dr["Name"] = grid_ftyDetail.SortedColumn.Name;
+            dr["Sort"] = (grid_ftyDetail.SortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
+            dtSort.Rows.Add(dr);            
         }
     }
 }

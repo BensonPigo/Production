@@ -520,7 +520,7 @@ inner join  Order_tmscost b WITH (NOLOCK) on a.ID = b.ID)
 inner join SewingSchedule c on a.id = c.OrderID
 inner join dbo.factory on factory.id = a.factoryid
 where   a.Finished = 0 
-        and a.Category != 'M'  and factory.IsProduceFty = 1
+        and a.Category !='M' and a.Category !='T' and factory.IsProduceFty = 1
         and b.tms > 0   " + orderby,
                     this.numWorkHours.Text,
                     this.numEfficiency.Text);

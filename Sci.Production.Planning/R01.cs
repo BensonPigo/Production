@@ -15,9 +15,9 @@ namespace Sci.Production.Planning
     /// </summary>
     public partial class R01 : Sci.Win.Tems.PrintForm
     {
-        private int selectindex = 0;
         private string factory;
         private string mdivision;
+        private string category;
         private DateTime? sciDelivery1;
         private DateTime? sciDelivery2;
         private DataTable printData;
@@ -33,7 +33,6 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.txtMdivision.Text = Sci.Env.User.Keyword;
             this.txtfactory.Text = Sci.Env.User.Factory;
-            this.comboCategory.SelectedIndex = 1;
             this.dateSCIDelivery.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
             this.dateSCIDelivery.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
@@ -56,7 +55,7 @@ namespace Sci.Production.Planning
             #endregion
             this.mdivision = this.txtMdivision.Text;
             this.factory = this.txtfactory.Text;
-            this.selectindex = this.comboCategory.SelectedIndex;
+            this.category = this.comboCategory.SelectedValue.ToString();
 
             return base.ValidateInput();
         }
@@ -107,21 +106,7 @@ namespace Sci.Production.Planning
                 cmds.Add(sp_factory);
             }
 
-            switch (this.selectindex)
-            {
-                case 0:
-                    sqlCmd.Append(@" and (Category = 'B' or Category = 'S')");
-                    break;
-                case 1:
-                    sqlCmd.Append(@" and Category = 'B' ");
-                    break;
-                case 2:
-                    sqlCmd.Append(@" and (Category = 'S')");
-                    break;
-                case 3:
-                    sqlCmd.Append(@" and (Category = 'M' )");
-                    break;
-            }
+            sqlCmd.Append($" and o.Category in ({this.category})");
             #endregion
             this.condition.Clear();
             this.condition.Append(string.Format(@"SCI Delivery : {0} ~ {1}", Convert.ToDateTime(this.sciDelivery1).ToString("d"), Convert.ToDateTime(this.sciDelivery2).ToString("d")));
