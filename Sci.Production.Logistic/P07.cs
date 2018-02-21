@@ -420,6 +420,7 @@ namespace Sci.Production.Logistic
             #endregion
             this.grid2Data = notdist.DefaultView.ToTable(true, new string[] { "selected" , "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "Status" });
             this.listControlBindingSource2.DataSource = this.grid2Data;
+            this.gridAttachFile.AutoResizeColumns();
             this.gridDetail.AutoResizeColumns();
         }
 
