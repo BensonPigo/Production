@@ -48,7 +48,7 @@ namespace Sci.Production.Logistic
             this.gridAttachFile.DataSource = this.listControlBindingSource1;
             this.gridAttachFile.IsEditingReadOnly = true;
             this.Helper.Controls.Grid.Generator(this.gridAttachFile)
-            .Text("Filename", header: "File Name", width: Widths.AnsiChars(18))
+            .Text("Filename", header: "File Name", width: Widths.AnsiChars(20))
             .Text("Status", header: "Status", width: Widths.AnsiChars(100))
             ;
             #endregion
@@ -68,14 +68,14 @@ namespace Sci.Production.Logistic
             this.gridDetail.DataSource = this.listControlBindingSource2;
             this.gridDetail.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridDetail)
-            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
             .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("Brand", header: "Brand", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("StyleName", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("StyleName", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Size", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("BarCode", header: "BarCode", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("Status", header: "Status", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("BarCode", header: "BarCode", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Status", header: "Status", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
             #endregion
             #region 關閉排序功能
@@ -492,8 +492,8 @@ left join Pullout with(nolock) on Pullout.id = p.PulloutID
 where  p.BrandID = '{item["Brand"]}' and o.CustPoNo ='{item["CustPoNo"]}' and o.StyleID = '{item["StyleID"]}' and pd.Article = '{item["article"]}' and pd.SizeCode = '{item["Size"]}'
 and (Pullout.Status = 'New' or Pullout.Status is null)
 ";
-                DataRow PackingList_Detail;
-                if (MyUtility.Check.Seek(checkPackingList_DetailExists, out PackingList_Detail))
+                DataRow packingList_Detail;
+                if (MyUtility.Check.Seek(checkPackingList_DetailExists, out packingList_Detail))
                 {
                     string updatePackingList_Detai = $@"
 update pd set
@@ -522,7 +522,7 @@ and (Pullout.Status = 'New' or Pullout.Status is null)
         {
             DirectoryInfo dir = new DirectoryInfo(System.Windows.Forms.Application.StartupPath);
 
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Clog_P07Template.xltx";
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Logistic_P07Template.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
