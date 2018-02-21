@@ -9,6 +9,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.IO;
+using System.Linq;
 
 namespace Sci.Production.Logistic
 {
@@ -142,8 +143,8 @@ namespace Sci.Production.Logistic
                 this.grid2Data.Clear();
             }
 
-            this.gridDetail.SuspendLayout();
             #region 檢查1. Grid中的檔案是否存在，不存在時顯示於status欄位；2. Grid中的檔案都可以正常開啟，無法開啟時顯示於status欄位；3.檢查開啟的excel檔存在必要的欄位，將不存在欄位顯示於status。當檢查都沒問題時，就將資料寫入第2個Grid
+            DataTable notdist = this.grid2Data.Copy();
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
                 if (!MyUtility.Check.Empty(dr["Filename"]))
@@ -161,7 +162,7 @@ namespace Sci.Production.Logistic
                                 string line;
                                 while ((line = reader.ReadLine()) != null)
                                 {
-                                    DataRow newRow = this.grid2Data.NewRow();
+                                    DataRow newRow = notdist.NewRow();
                                     newRow["selected"] = 1;
                                     string custPoNo = line.Substring(520, 15).TrimEnd();
                                     if (custPoNo.Length <= 10)
@@ -182,7 +183,7 @@ namespace Sci.Production.Logistic
                                     string xxxBarCode = line.Substring(632, 40).Trim();
                                     IList<string> sl = xxxBarCode.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                                     newRow["BarCode"] = sl[sl.Count - 1].Substring(sl[sl.Count - 1].Length - 12, 12);
-                                    this.grid2Data.Rows.Add(newRow);
+                                    notdist.Rows.Add(newRow);
                                 }
                             }
                         }
@@ -263,7 +264,7 @@ namespace Sci.Production.Logistic
                                     range = worksheet.Range[string.Format("A{0}:AE{0}", intRowsRead)];
                                     objCellArray = range.Value;
 
-                                    DataRow newRow = this.grid2Data.NewRow();
+                                    DataRow newRow = notdist.NewRow();
                                     if (intRowsRead == 2)
                                     {
                                         custPoNo = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "C"));
@@ -284,7 +285,7 @@ namespace Sci.Production.Logistic
                                     newRow["Size"] = size2;
                                     newRow["BarCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 28], "C");
 
-                                    this.grid2Data.Rows.Add(newRow);
+                                    notdist.Rows.Add(newRow);
                                 }
 
                                 dr["Status"] = "Check Completed.";
@@ -343,24 +344,24 @@ namespace Sci.Production.Logistic
                                     columnName.Append("< Brand >, ");
                                 }
 
-                                if (styleid.ToUpper() != "Detail-Style Id")
+                                if (styleid.ToUpper() != "Style")
                                 {
-                                    columnName.Append("< Detail-Style Id >, ");
+                                    columnName.Append("< Style >, ");
                                 }
 
-                                if (article.ToUpper() != "Detail-Color")
+                                if (article.ToUpper() != "Article")
                                 {
-                                    columnName.Append("< Detail-Color >, ");
+                                    columnName.Append("< Article >, ");
                                 }
 
-                                if (size.ToUpper() != "Detail-Size")
+                                if (size.ToUpper() != "Size")
                                 {
-                                    columnName.Append("< Detail-Size >, ");
+                                    columnName.Append("< Size >, ");
                                 }
 
-                                if (barCode.ToUpper() != "Detail-Alternate Item Id")
+                                if (barCode.ToUpper() != "Barcode")
                                 {
-                                    columnName.Append("< Detail-Alternate Item Id >, ");
+                                    columnName.Append("< Barcode >, ");
                                 }
 
                                 dr["Status"] = columnName.ToString().Substring(0, columnName.ToString().Length - 2) + "column not found in the excel.";
@@ -379,7 +380,7 @@ namespace Sci.Production.Logistic
                                     range = worksheet.Range[string.Format("A{0}:F{0}", intRowsRead)];
                                     objCellArray = range.Value;
 
-                                    DataRow newRow = this.grid2Data.NewRow();
+                                    DataRow newRow = notdist.NewRow();
                                     if (intRowsRead == 2)
                                     {
                                         custPoNo = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"));
@@ -400,7 +401,7 @@ namespace Sci.Production.Logistic
                                     newRow["Size"] = size2;
                                     newRow["BarCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
 
-                                    this.grid2Data.Rows.Add(newRow);
+                                    notdist.Rows.Add(newRow);
                                 }
 
                                 dr["Status"] = "Check Completed.";
@@ -415,8 +416,8 @@ namespace Sci.Production.Logistic
                 }
             }
             #endregion
-
-            this.gridDetail.ResumeLayout();
+            this.grid2Data = notdist.DefaultView.ToTable(true, new string[] { "selected" , "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "Status" });
+            this.listControlBindingSource2.DataSource = this.grid2Data;
         }
 
         private void ComboBrand_SelectedIndexChanged(object sender, EventArgs e)
