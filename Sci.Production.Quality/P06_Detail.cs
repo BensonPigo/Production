@@ -732,11 +732,14 @@ namespace Sci.Production.Quality
 
             foreach (DataRow dr in ((DataTable)gridbs.DataSource).Rows)
             {
-                if (MyUtility.Check.Empty(dr["ResultChange"]) || MyUtility.Check.Empty(dr["ResultStain"]))
+                if (dr.RowState != DataRowState.Deleted)
                 {
-                    MyUtility.Msg.WarningBox(" Result(Change)/ Result(Staining) can not be empty");
-                    return false;
-                }
+                    if (MyUtility.Check.Empty(dr["ResultChange"]) || MyUtility.Check.Empty(dr["ResultStain"]))
+                    {
+                        MyUtility.Msg.WarningBox(" Result(Change)/ Result(Staining) can not be empty");
+                        return false;
+                    }
+                }                
             }
             return base.OnSaveBefore();
         }
@@ -883,41 +886,44 @@ where id='{ID}'";
                 {
                     foreach (DataRow dr in ((DataTable)gridbs.DataSource).Rows)
                     {
-                        if (MyUtility.Check.Empty(dr["ColorFastnessGroup"]))
+                        if (dr.RowState != DataRowState.Deleted)
                         {
-                            MyUtility.Msg.WarningBox("<Group> can not be empty!");
-                            return;
-                        }
-                        if (MyUtility.Check.Empty(dr["Seq"]))
-                        {
-                            MyUtility.Msg.WarningBox("<SEQ> can not be empty!");
-                            return;
-                        }
-                        if (MyUtility.Check.Empty(dr["Changescale"]))
-                        {
-                            MyUtility.Msg.WarningBox("<Color Change Scale> can not be empty!");
-                            return;
-                        }
-                        if (MyUtility.Check.Empty(dr["StainingScale"]))
-                        {
-                            MyUtility.Msg.WarningBox("<Color Staining Scale> can not be empty!");
-                            return;
-                        }
-                        if (MyUtility.Check.Empty(dr["Result"]))
-                        {
-                            MyUtility.Msg.WarningBox("<Result> can not be empty!");
-                            return;
-                        }
-                        if (dr["Result"].ToString().Trim().ToUpper() == "FAIL")
-                        {
-                            result = false;
-                            DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Fail',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
+                            if (MyUtility.Check.Empty(dr["ColorFastnessGroup"]))
+                            {
+                                MyUtility.Msg.WarningBox("<Group> can not be empty!");
+                                return;
+                            }
+                            if (MyUtility.Check.Empty(dr["Seq"]))
+                            {
+                                MyUtility.Msg.WarningBox("<SEQ> can not be empty!");
+                                return;
+                            }
+                            if (MyUtility.Check.Empty(dr["Changescale"]))
+                            {
+                                MyUtility.Msg.WarningBox("<Color Change Scale> can not be empty!");
+                                return;
+                            }
+                            if (MyUtility.Check.Empty(dr["StainingScale"]))
+                            {
+                                MyUtility.Msg.WarningBox("<Color Staining Scale> can not be empty!");
+                                return;
+                            }
+                            if (MyUtility.Check.Empty(dr["Result"]))
+                            {
+                                MyUtility.Msg.WarningBox("<Result> can not be empty!");
+                                return;
+                            }
+                            if (dr["Result"].ToString().Trim().ToUpper() == "FAIL")
+                            {
+                                result = false;
+                                DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Fail',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
 
-                        }
-                        if (dr["Result"].ToString().Trim().ToUpper() == "PASS" && result)
-                        {
-                            DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Pass',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
+                            }
+                            if (dr["Result"].ToString().Trim().ToUpper() == "PASS" && result)
+                            {
+                                DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='Pass',status='Confirmed',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dr["id"]));
 
+                            }
                         }
                     }
                 }
@@ -1078,6 +1084,7 @@ where id='{ID}'";
                 worksheet.Cells[10, 9] = this.comboDetergent.Text;
                 worksheet.Cells[11, 4] = this.comboMachineUs.Text;
                 worksheet.Cells[11, 7] = this.comboDryProcess.Text;
+                worksheet.Cells[51, 8] = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
 
                 DataTable dtBody = (DataTable)gridbs.DataSource;
                 DataRow[] dr = dtBody.Select((MyUtility.Check.Empty(dtSubDate.Rows[i]["submitDate"])) ? $@"submitDate is null" : $"submitDate = '{dtSubDate.Rows[i]["submitDate"]}'");
@@ -1101,7 +1108,7 @@ where id='{ID}'";
                     worksheet.Cells[14 + k, 9] = row["ResultChange"];
                     worksheet.Cells[14 + k, 10] = row["StainingScale"].ToString();
                     worksheet.Cells[14 + k, 11] = row["ResultStain"];
-                    worksheet.Cells[14 + k, 12] = row["Remark"];
+                    worksheet.Cells[14 + k, 12] = row["Remark"].ToString().Trim();
                     Microsoft.Office.Interop.Excel.Range rang = worksheet.Range[worksheet.Cells[2][14 + k], worksheet.Cells[12][14 + k]];
                     rang.NumberFormat = "@";
                     rang.Font.Bold = false;
@@ -1109,8 +1116,8 @@ where id='{ID}'";
                     rang.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                     rang.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                     k++;
-                }
-                worksheet.Cells[51 + k, 8] = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
+                }          
+                    
                 nSheet++;
             }
             #region Save & Show Excel            
