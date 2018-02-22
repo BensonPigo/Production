@@ -1289,14 +1289,19 @@ order by pd.Seq", PackingListID);
             }
 
             sqlCmd = string.Format(@"
-select  distinct pd.RefNo
+select  pd.RefNo
         , li.Description
         , Dimension = STR(li.CtnLength,8,4)+'\'+STR(li.CtnWidth,8,4)+'\'+STR(li.CtnHeight,8,4)
         , li.CtnUnit
+		, CTN = concat('(CTN#:',min(CTNStartNo),'-',max(CTNStartNo),')')
 from PackingList_Detail pd WITH (NOLOCK) 
 left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
-where pd.ID = '{0}'", PackingListID);
+where pd.ID = '{0}'
+group by pd.RefNo
+        , li.Description
+        , STR(li.CtnLength,8,4)+'\'+STR(li.CtnWidth,8,4)+'\'+STR(li.CtnHeight,8,4)
+        , li.CtnUnit", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out ctnDim);
             if (!result)
             {
@@ -1603,7 +1608,7 @@ where   p.ID = '{0}'
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in CtnDim.Rows)
             {
-                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"])));
+                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}, {4}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"]), MyUtility.Convert.GetString(dr["CTN"])));
             }
 
             foreach (DataRow dr in QtyCtn.Rows)
