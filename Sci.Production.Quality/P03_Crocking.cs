@@ -774,7 +774,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 return;
             }
 
-            string submitDate = MyUtility.Convert.GetString(this.maindr["ReceiveSampleDate"]);
+            string submitDate = ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("yyyy/MM/dd");
 
             string sqlcmd = $@"
 SELECT distinct oc.article,fd.InspDate,a.Name
