@@ -42,10 +42,8 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "Bulk+Sample,Bulk,Sample");
             this.comboM.Text = Sci.Env.User.Keyword;
             this.comboFactory.SelectedIndex = -1;
-            this.comboCategory.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -63,7 +61,7 @@ namespace Sci.Production.Shipping
             this.estPullout2 = this.dateEstimatePullout.Value2;
             this.brand = this.txtbrand.Text;
             this.factory = this.comboFactory.Text;
-            this.category = this.comboCategory.Text;
+            this.category = this.comboCategory.SelectedValue.ToString();
             this.orderNo = this.txtOrderNo.Text;
             this.includeLO = this.checkIncludeLocalOrder.Checked;
 
@@ -116,9 +114,11 @@ select 	oq.BuyerDelivery
 		,oq.OutstandingRemark
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
+inner join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join Brand b WITH (NOLOCK) on o.BrandID=b.id
-where 1=1 and o.PulloutComplete=0 and o.Qty > 0"));
+where 1=1 and ot.IsGMTMaster != 1
+and o.PulloutComplete=0 and o.Qty > 0"));
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
@@ -155,18 +155,7 @@ where 1=1 and o.PulloutComplete=0 and o.Qty > 0"));
                 sqlCmd.Append(string.Format(" and o.Customize1 = '{0}'", this.orderNo));
             }
 
-            if (this.category == "Bulk")
-            {
-                sqlCmd.Append(" and o.Category = 'B'");
-            }
-            else if (this.category == "Sample")
-            {
-                sqlCmd.Append(" and o.Category = 'S'");
-            }
-            else
-            {
-                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
-            }
+            sqlCmd.Append($" and o.Category in ({this.category})");
 
             if (!this.includeLO)
             {

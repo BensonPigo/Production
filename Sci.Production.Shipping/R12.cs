@@ -58,7 +58,7 @@ namespace Sci.Production.Shipping
             this.Brand = this.txtbrand.Text;
             this.CustCD = this.txtcustcd.Text;
             this.Dest = this.txtcountryDestination.TextBox1.Text;
-            this.category = this.txtdropdownlistCategory.SelectedValue.ToString();
+            this.category = this.comboCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -110,6 +110,7 @@ From GMTBooking g
 Left join PackingList p on g.ID = p.InvNo
 Left join PackingList_Detail pd on p.ID = pd.ID
 Inner join Orders o on pd.OrderID = o.ID
+inner join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
 Left join Brand b on b.ID = o.BrandID
 outer apply
 (	
@@ -118,7 +119,7 @@ outer apply
 	inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
 	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate 
 ) cpucost
-Where 1=1 ");
+Where 1=1 and ot.IsGMTMaster != 1");
 
             if (!MyUtility.Check.Empty(this.FCR_date1))
             {
@@ -180,18 +181,7 @@ Where 1=1 ");
                 sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.Dest));
             }
 
-            if (this.category == "B")
-            {
-                sqlCmd.Append(" and o.Category = 'B'");
-            }
-            else if (this.category == "S")
-            {
-                sqlCmd.Append(" and o.Category = 'S'");
-            }
-            else if (this.category == "BS")
-            {
-                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
-            }
+            sqlCmd.Append($" and o.Category in ({this.category})");
 
             sqlCmd.Append(@" ) 
                             select *

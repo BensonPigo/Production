@@ -38,10 +38,8 @@ namespace Sci.Production.Shipping
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "Bulk+Sample,Bulk,Sample");
             this.comboM.Text = Sci.Env.User.Keyword;
             this.comboFactory.SelectedIndex = -1;
-            this.comboCategory.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -57,7 +55,7 @@ namespace Sci.Production.Shipping
             this.pulloutDate2 = this.datePulloutDate.Value2;
             this.brand = this.txtbrand.Text;
             this.factory = this.comboFactory.Text;
-            this.category = this.comboCategory.Text;
+            this.category = this.comboCategory.SelectedValue.ToString();
 
             return base.ValidateInput();
         }
@@ -95,18 +93,7 @@ namespace Sci.Production.Shipping
                 sqlList.Add(string.Format(" o.FtyGroup = '{0}'", this.factory));
             }
 
-            if (this.category == "Bulk")
-            {
-                sqlList.Add(" o.Category = 'B'");
-            }
-            else if (this.category == "Sample")
-            {
-                sqlList.Add(" o.Category = 'S'");
-            }
-            else
-            {
-                sqlList.Add(" (o.Category = 'B' or o.Category = 'S')");
-            }
+            sqlList.Add($" o.Category in ({this.category})");
 
             #endregion
 
