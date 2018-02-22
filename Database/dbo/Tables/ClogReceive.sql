@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[ClogReceive] (
+﻿CREATE TABLE [dbo].[ClogReceive] (
     [ID]             BIGINT       IDENTITY (1, 1) NOT NULL,
     [ReceiveDate]    DATE         NOT NULL,
     [MDivisionID]    VARCHAR (8)  CONSTRAINT [DF_ClogReceive_Detail_MDivisionID] DEFAULT ('') NOT NULL,
@@ -8,8 +8,11 @@ CREATE TABLE [dbo].[ClogReceive] (
     [ClogLocationID] VARCHAR (10) CONSTRAINT [DF_ClogReceive_Detail_ClogLocationId] DEFAULT ('') NULL,
     [AddDate]        DATETIME     NULL,
     [OldID]          VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OldID] DEFAULT ('') NULL,
+    [AddName]        VARCHAR (10) NULL,
     CONSTRAINT [PK_ClogReceive_Detail_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
