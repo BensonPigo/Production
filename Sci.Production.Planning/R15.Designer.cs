@@ -412,7 +412,7 @@
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.Size = new System.Drawing.Size(280, 24);
             this.comboCategory.TabIndex = 152;
-            this.comboCategory.Type = "Pms_ReportCategory";
+            this.comboCategory.Type = "Pms_ReportForProduct";
             // 
             // R15
             // 
