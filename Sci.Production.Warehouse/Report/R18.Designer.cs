@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelRefNo = new Sci.Win.UI.Label();
@@ -37,7 +38,6 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.checkBalanceQty = new Sci.Win.UI.CheckBox();
             this.txtStyle = new Sci.Win.UI.TextBox();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
             this.labelColor = new Sci.Win.UI.Label();
             this.txtSizeCode = new Sci.Win.UI.TextBox();
@@ -51,6 +51,7 @@
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
             this.dateRangeBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateRangeSciDelivery = new Sci.Win.UI.DateRange();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -145,7 +146,7 @@
             this.checkBalanceQty.Checked = true;
             this.checkBalanceQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBalanceQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBalanceQty.Location = new System.Drawing.Point(274, 294);
+            this.checkBalanceQty.Location = new System.Drawing.Point(307, 292);
             this.checkBalanceQty.Name = "checkBalanceQty";
             this.checkBalanceQty.Size = new System.Drawing.Size(128, 21);
             this.checkBalanceQty.TabIndex = 8;
@@ -161,22 +162,6 @@
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(118, 23);
             this.txtStyle.TabIndex = 1;
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Items.AddRange(new object[] {
-            "Bulk+Sample",
-            "Bulk",
-            "Sample",
-            "Material"});
-            this.comboCategory.Location = new System.Drawing.Point(119, 291);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 7;
             // 
             // labelCategory
             // 
@@ -325,9 +310,22 @@
             this.dateRangeSciDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateRangeSciDelivery.TabIndex = 117;
             // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(116, 290);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(185, 24);
+            this.comboCategory.TabIndex = 123;
+            this.comboCategory.Type = "Pms_MtlCategory";
+            // 
             // R18
             // 
             this.ClientSize = new System.Drawing.Size(576, 355);
+            this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.dateRangeSciDelivery);
             this.Controls.Add(this.dateRangeBuyerDelivery);
             this.Controls.Add(this.txtsupplier);
@@ -339,7 +337,6 @@
             this.Controls.Add(this.labelSizeCode);
             this.Controls.Add(this.labelBuyerDelivery);
             this.Controls.Add(this.labelColor);
-            this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.labelSupplier);
@@ -368,7 +365,6 @@
             this.Controls.SetChildIndex(this.labelSupplier, 0);
             this.Controls.SetChildIndex(this.txtStyle, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
-            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.labelColor, 0);
             this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.labelSizeCode, 0);
@@ -380,6 +376,7 @@
             this.Controls.SetChildIndex(this.txtsupplier, 0);
             this.Controls.SetChildIndex(this.dateRangeBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.dateRangeSciDelivery, 0);
+            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -396,7 +393,6 @@
         private Win.UI.Label labelFactory;
         private Win.UI.CheckBox checkBalanceQty;
         private Win.UI.TextBox txtStyle;
-        private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
         private Win.UI.Label labelColor;
         private Win.UI.TextBox txtSizeCode;
@@ -410,5 +406,6 @@
         private Class.txtsupplier txtsupplier;
         private Win.UI.DateRange dateRangeBuyerDelivery;
         private Win.UI.DateRange dateRangeSciDelivery;
+        private Class.comboDropDownList comboCategory;
     }
 }

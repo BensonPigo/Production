@@ -25,8 +25,6 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            this.comboCategory.Type = "Pms_ReportCategory";
-            this.comboCategory.SelectedIndex = 1;
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             factory.Rows.Add(new string[] { "" });
@@ -105,7 +103,7 @@ namespace Sci.Production.Quality
                 sqlWheres.Add("BrandID = @Brand");
                 lis.Add(new SqlParameter("@Brand", Brand));
             }
-            if (!this.comboCategory.SelectedValue.Empty())
+            if (!MyUtility.Check.Empty(this.comboCategory.Text))
             {
                 sqlWheres.Add($"Category in ({this.comboCategory.SelectedValue})");
             }
