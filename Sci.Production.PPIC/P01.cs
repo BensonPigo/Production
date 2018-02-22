@@ -60,41 +60,52 @@ namespace Sci.Production.PPIC
             this.ControlButton();
         }
 
-        // 按鈕控制
-        private void ControlButton()
-        {
-            this.btnMCHandleCFM.Enabled = this.CurrentMaintain != null;
-            this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null;
-            this.btnProductionOutput.Enabled = this.CurrentMaintain != null;
-            this.btnOrderRemark.Enabled = this.CurrentMaintain != null;
-            this.btnFactoryCMT.Enabled = this.CurrentMaintain != null;
-            this.btnLabelHangtag.Enabled = this.CurrentMaintain != null;
-            this.btnQtyBdownByShipmode.Enabled = this.CurrentMaintain != null;
-            this.btnQuantityBreakdown.Enabled = this.CurrentMaintain != null;
-            this.btnShippingMark.Enabled = this.CurrentMaintain != null;
-            this.btnTMSCost.Enabled = this.CurrentMaintain != null;
-            this.btnStdGSDList.Enabled = this.CurrentMaintain != null;
-            this.btnCMPQRemark.Enabled = this.CurrentMaintain != null;
-            this.btnCMPQSheet.Enabled = this.CurrentMaintain != null;
-            this.btnArtwork.Enabled = this.CurrentMaintain != null;
-            this.btnGarmentExport.Enabled = this.CurrentMaintain != null;
-            this.btnH.Enabled = this.CurrentMaintain != null;
-            this.btnCuttingCombo.Enabled = this.CurrentMaintain != null;
-            this.btnbdown.Enabled = this.CurrentMaintain != null;
-            this.btnMaterialImport.Enabled = this.CurrentMaintain != null;
-            this.btnFabricInspectionList.Enabled = this.CurrentMaintain != null;
-            this.btnAccessoryInspectionList.Enabled = this.CurrentMaintain != null;
-            this.btnArtworkTransactionList.Enabled = this.CurrentMaintain != null;
-            this.btnProductionKits.Enabled = this.CurrentMaintain != null;
-            this.btnMNoticeSheet.Enabled = this.CurrentMaintain != null;
-            this.btnQtyBdownbySchedule.Enabled = this.CurrentMaintain != null;
-            this.btnCartonStatus.Enabled = this.CurrentMaintain != null;
-            this.btnPackingMethod.Enabled = this.CurrentMaintain != null;
-            this.btnPullForwardRemark.Enabled = this.CurrentMaintain != null;
-            this.btnShipmentFinished.Enabled = this.CurrentMaintain != null;
-            this.btnVASSHASInstruction.Enabled = this.CurrentMaintain != null;
-            this.btnBacktoPPICMasterList.Enabled = this.CurrentMaintain != null;
-        }
+      // 按鈕控制
+      private void ControlButton()
+      {
+         this.btnMCHandleCFM.Enabled = this.CurrentMaintain != null;
+         this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null;
+         this.btnProductionOutput.Enabled = this.CurrentMaintain != null;
+         this.btnOrderRemark.Enabled = this.CurrentMaintain != null;
+         this.btnFactoryCMT.Enabled = this.CurrentMaintain != null;
+         this.btnLabelHangtag.Enabled = this.CurrentMaintain != null;
+         this.btnQtyBdownByShipmode.Enabled = this.CurrentMaintain != null;
+         this.btnQuantityBreakdown.Enabled = this.CurrentMaintain != null;
+         this.btnShippingMark.Enabled = this.CurrentMaintain != null;
+         this.btnTMSCost.Enabled = this.CurrentMaintain != null;
+         this.btnStdGSDList.Enabled = this.CurrentMaintain != null;
+         this.btnCMPQRemark.Enabled = this.CurrentMaintain != null;
+         this.btnCMPQSheet.Enabled = this.CurrentMaintain != null;
+         this.btnArtwork.Enabled = this.CurrentMaintain != null;
+         this.btnGarmentExport.Enabled = this.CurrentMaintain != null;
+         this.btnH.Enabled = this.CurrentMaintain != null;
+         this.btnCuttingCombo.Enabled = this.CurrentMaintain != null;
+         this.btnbdown.Enabled = this.CurrentMaintain != null;
+         this.btnMaterialImport.Enabled = this.CurrentMaintain != null;
+         this.btnFabricInspectionList.Enabled = this.CurrentMaintain != null;
+         this.btnAccessoryInspectionList.Enabled = this.CurrentMaintain != null;
+         this.btnArtworkTransactionList.Enabled = this.CurrentMaintain != null;
+         this.btnProductionKits.Enabled = this.CurrentMaintain != null;
+         this.btnMNoticeSheet.Enabled = this.CurrentMaintain != null;
+         this.btnQtyBdownbySchedule.Enabled = this.CurrentMaintain != null;
+         this.btnCartonStatus.Enabled = this.CurrentMaintain != null;
+         this.btnPackingMethod.Enabled = this.CurrentMaintain != null;
+         this.btnPullForwardRemark.Enabled = this.CurrentMaintain != null;
+         this.btnShipmentFinished.Enabled = this.CurrentMaintain != null;
+         this.btnVASSHASInstruction.Enabled = this.CurrentMaintain != null;
+         this.btnBacktoPPICMasterList.Enabled = this.CurrentMaintain != null;
+         var dateBuyerDlv = this.dateBuyerDlv.Value;
+         var dateSCIDlv = this.dateSCIDlv.Value;
+         if (dateBuyerDlv > dateSCIDlv)
+         {
+            this.dateSCIDlv.TextBackColor = System.Drawing.Color.Yellow;
+         }
+         else
+         {
+            this.dateSCIDlv.TextBackColor = System.Drawing.Color.FromArgb(183, 227, 225);
+         }
+
+      }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
