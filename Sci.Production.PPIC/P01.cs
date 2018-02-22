@@ -60,41 +60,52 @@ namespace Sci.Production.PPIC
             this.ControlButton();
         }
 
-        // 按鈕控制
-        private void ControlButton()
-        {
-            this.btnMCHandleCFM.Enabled = this.CurrentMaintain != null;
-            this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null;
-            this.btnProductionOutput.Enabled = this.CurrentMaintain != null;
-            this.btnOrderRemark.Enabled = this.CurrentMaintain != null;
-            this.btnFactoryCMT.Enabled = this.CurrentMaintain != null;
-            this.btnLabelHangtag.Enabled = this.CurrentMaintain != null;
-            this.btnQtyBdownByShipmode.Enabled = this.CurrentMaintain != null;
-            this.btnQuantityBreakdown.Enabled = this.CurrentMaintain != null;
-            this.btnShippingMark.Enabled = this.CurrentMaintain != null;
-            this.btnTMSCost.Enabled = this.CurrentMaintain != null;
-            this.btnStdGSDList.Enabled = this.CurrentMaintain != null;
-            this.btnCMPQRemark.Enabled = this.CurrentMaintain != null;
-            this.btnCMPQSheet.Enabled = this.CurrentMaintain != null;
-            this.btnArtwork.Enabled = this.CurrentMaintain != null;
-            this.btnGarmentExport.Enabled = this.CurrentMaintain != null;
-            this.btnH.Enabled = this.CurrentMaintain != null;
-            this.btnCuttingCombo.Enabled = this.CurrentMaintain != null;
-            this.btnbdown.Enabled = this.CurrentMaintain != null;
-            this.btnMaterialImport.Enabled = this.CurrentMaintain != null;
-            this.btnFabricInspectionList.Enabled = this.CurrentMaintain != null;
-            this.btnAccessoryInspectionList.Enabled = this.CurrentMaintain != null;
-            this.btnArtworkTransactionList.Enabled = this.CurrentMaintain != null;
-            this.btnProductionKits.Enabled = this.CurrentMaintain != null;
-            this.btnMNoticeSheet.Enabled = this.CurrentMaintain != null;
-            this.btnQtyBdownbySchedule.Enabled = this.CurrentMaintain != null;
-            this.btnCartonStatus.Enabled = this.CurrentMaintain != null;
-            this.btnPackingMethod.Enabled = this.CurrentMaintain != null;
-            this.btnPullForwardRemark.Enabled = this.CurrentMaintain != null;
-            this.btnShipmentFinished.Enabled = this.CurrentMaintain != null;
-            this.btnVASSHASInstruction.Enabled = this.CurrentMaintain != null;
-            this.btnBacktoPPICMasterList.Enabled = this.CurrentMaintain != null;
-        }
+      // 按鈕控制
+      private void ControlButton()
+      {
+         this.btnMCHandleCFM.Enabled = this.CurrentMaintain != null;
+         this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null;
+         this.btnProductionOutput.Enabled = this.CurrentMaintain != null;
+         this.btnOrderRemark.Enabled = this.CurrentMaintain != null;
+         this.btnFactoryCMT.Enabled = this.CurrentMaintain != null;
+         this.btnLabelHangtag.Enabled = this.CurrentMaintain != null;
+         this.btnQtyBdownByShipmode.Enabled = this.CurrentMaintain != null;
+         this.btnQuantityBreakdown.Enabled = this.CurrentMaintain != null;
+         this.btnShippingMark.Enabled = this.CurrentMaintain != null;
+         this.btnTMSCost.Enabled = this.CurrentMaintain != null;
+         this.btnStdGSDList.Enabled = this.CurrentMaintain != null;
+         this.btnCMPQRemark.Enabled = this.CurrentMaintain != null;
+         this.btnCMPQSheet.Enabled = this.CurrentMaintain != null;
+         this.btnArtwork.Enabled = this.CurrentMaintain != null;
+         this.btnGarmentExport.Enabled = this.CurrentMaintain != null;
+         this.btnH.Enabled = this.CurrentMaintain != null;
+         this.btnCuttingCombo.Enabled = this.CurrentMaintain != null;
+         this.btnbdown.Enabled = this.CurrentMaintain != null;
+         this.btnMaterialImport.Enabled = this.CurrentMaintain != null;
+         this.btnFabricInspectionList.Enabled = this.CurrentMaintain != null;
+         this.btnAccessoryInspectionList.Enabled = this.CurrentMaintain != null;
+         this.btnArtworkTransactionList.Enabled = this.CurrentMaintain != null;
+         this.btnProductionKits.Enabled = this.CurrentMaintain != null;
+         this.btnMNoticeSheet.Enabled = this.CurrentMaintain != null;
+         this.btnQtyBdownbySchedule.Enabled = this.CurrentMaintain != null;
+         this.btnCartonStatus.Enabled = this.CurrentMaintain != null;
+         this.btnPackingMethod.Enabled = this.CurrentMaintain != null;
+         this.btnPullForwardRemark.Enabled = this.CurrentMaintain != null;
+         this.btnShipmentFinished.Enabled = this.CurrentMaintain != null;
+         this.btnVASSHASInstruction.Enabled = this.CurrentMaintain != null;
+         this.btnBacktoPPICMasterList.Enabled = this.CurrentMaintain != null;
+         var dateBuyerDlv = this.dateBuyerDlv.Value;
+         var dateSCIDlv = this.dateSCIDlv.Value;
+         if (dateBuyerDlv > dateSCIDlv)
+         {
+            this.dateSCIDlv.TextBackColor = System.Drawing.Color.Yellow;
+         }
+         else
+         {
+            this.dateSCIDlv.TextBackColor = System.Drawing.Color.FromArgb(183, 227, 225);
+         }
+
+      }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
@@ -1191,18 +1202,18 @@ where POID = @poid group by POID,b.spno";
         private void BtnShipmentFinished_Click(object sender, EventArgs e)
         {
             string sqlCmd;
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "M")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "M" || MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "T")
             {
                 if (!MyUtility.Check.Seek(string.Format("select ID from PO WITH (NOLOCK) where ID = '{0}' and Complete = 1", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]))))
                 {
-                    sqlCmd = string.Format(
-                        @"select A.ID
+                    // Category = T的單子不用檢查是否已經Pullout Complete
+                    string category_where = MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "T" ? string.Empty : "or B.InQty <> B.OutQty - B.AdjustQty ";
+
+                    sqlCmd = $@"select A.ID
                         from PO_Supp_Detail A WITH (NOLOCK) 
                         left join MDivisionPoDetail B WITH (NOLOCK) on B.POID=A.ID and B.Seq1=A.SEQ1 and B.Seq2=A.SEQ2
-                        inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{0}'
-                        where A.ID = '{1}' and (ETA > GETDATE() or B.InQty <> B.OutQty - B.AdjustQty)",
-                        this.CurrentMaintain["MDivisionID"],
-                        this.CurrentMaintain["POID"]);
+                        inner join dbo.Factory F WITH (NOLOCK) on F.id=A.factoryid and F.MDivisionID='{this.CurrentMaintain["MDivisionID"]}'
+                        where A.ID = '{this.CurrentMaintain["POID"]}' and (A.Complete = 0  {category_where})";
 
                     if (MyUtility.Check.Seek(sqlCmd))
                     {
