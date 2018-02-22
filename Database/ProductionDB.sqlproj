@@ -2258,6 +2258,7 @@
     <Build Include="dbo\Tables\ChangeKPILETARequest.sql" />
     <Build Include="dbo\Tables\FabricInspDoc.sql" />
     <Build Include="dbo\Tables\FabricInspDoc_Detail.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P20_CFM_Update.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

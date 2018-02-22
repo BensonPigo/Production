@@ -373,145 +373,36 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            DualResult result;
             #region 若前面的單子有尚未Confrim 則不可Confirm
 
-            string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{0}' and Status='New' and mDivisionid = '{1}'", CurrentMaintain["cdate"], keyWord);
+            string sql = string.Format("Select * from Cuttingoutput WITH (NOLOCK) where cdate<'{0}' and Status='New' and mDivisionid = '{1}'", ((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), keyWord);
             string msg = "";
             DataTable Dt;
-            if (DBProxy.Current.Select(null,sql, out Dt))
+            result = DBProxy.Current.Select(null, sql, out Dt);
+            if (result)
             {
                 foreach (DataRow dr in Dt.Rows)
                 {
-                    msg = msg + "<Date>:" + dr["cdate"].ToString()+"\\n";
+                    msg = msg + "<ID>:" + dr["ID"] +  ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
                 }
-                if(MyUtility.Check.Empty(msg))
+                if (!MyUtility.Check.Empty(msg))
                 {
-                    MyUtility.Msg.WarningBox("The record not yet confirm, you can not confirm.Please see below list.\\n"+msg);
+                    MyUtility.Msg.WarningBox("The record not yet confirm, you can not confirm.Please see below list." + Environment.NewLine + msg);
                     return;
                 }
             }
-            #endregion
-            #region GMT SQL
-            string sql1 = string.Format(@"
-            Select distinct d.*,e.Colorid,e.PatternPanel
-            into #tmp1
-            from 
-            (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-            from Orders a WITH (NOLOCK) ,CuttingOutput_Detail cu WITH (NOLOCK) ,WorkOrder_Distribute w WITH (NOLOCK)  where a.id = w.OrderID and cu.id='{0}' 
-            and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
-            order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
-            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
-
-            Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
-            into #tmp2
-            from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
-            Where ma.cdate<'{1}' and ma.ID = a.id --and ma.Status!='New' 
-            and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
-            and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
-            group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
-
-            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty ,cpu = o.cpu*min(isnull(b.cutqty,0))
-            from #tmp1 a 
-            left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-            left join orders o WITH (NOLOCK) on o.id = a.id
-            group by a.poid,a.id,a.article,a.sizecode ,o.cpu"
-            , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
-
-            string sql2 = string.Format(@"
-			Select distinct d.*,e.Colorid,e.PatternPanel
-            into #tmp1
-            from 
-            (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-            from Orders a WITH (NOLOCK) ,CuttingOutput_Detail cu WITH (NOLOCK) ,WorkOrder_Distribute w  WITH (NOLOCK) where a.id = w.OrderID and cu.id='{0}' 
-            and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
-            order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
-            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
-
-            Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
-            into #tmp2
-            from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
-            Where ma.cdate<='{1}' and ma.ID = a.id --and ma.Status!='New' 
-            and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
-            and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
-            group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
-
-            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty ,cpu = o.cpu*min(isnull(b.cutqty,0))
-            from #tmp1 a 
-            left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-            left join orders o WITH (NOLOCK) on o.id = a.id
-            group by a.poid,a.id,a.article,a.sizecode,o.cpu"
-            , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
-
-            DataTable t1, t2;
-            DualResult result;
-            result = DBProxy.Current.Select(null, sql1, out t1); //今天日期之前的gmt數
-            if (!result)
+            else
             {
                 ShowErr(result);
                 return;
             }
 
-            result = DBProxy.Current.Select(null, sql2, out t2); //包含今天之前的gmt 數
-            if (!result)
-            {
-                ShowErr(result);
-                return;
-            }
-
-            int t1gmt,t2gmt;
-            if (t1.Rows.Count == 0) t1gmt = 0;
-            else t1gmt = Convert.ToInt32(t1.Compute("sum(cutqty)", ""));
-            if (t2.Rows.Count == 0) t2gmt = 0;
-            else t2gmt = Convert.ToInt32(t2.Compute("sum(cutqty)", ""));
-            int gmt = t2gmt - t1gmt; //相減為當天的GMT數
-            
-            int t1cpu, t2CPU;
-            if (t1.Rows.Count == 0) t1cpu = 0;
-            else t1cpu = Convert.ToInt32(t1.Compute("sum(cpu)", ""));
-            if (t2.Rows.Count == 0) t2CPU = 0;
-            else t2CPU = Convert.ToInt32(t2.Compute("sum(cpu)", ""));
-            int ttlcpu = t2CPU - t1cpu; //相減為當天的ttlcpu
-            string updatettlcpu = string.Format("update CuttingOutput set ActTTCPU={0} where id = '{1}'", ttlcpu, CurrentMaintain["id"].ToString());
             #endregion
 
             string update = "";
-            DataRow wipRow;
-            decimal ncpu=0,var;
-            decimal cpu;
-
-            foreach (DataRow dr in t2.Rows)
-            {
-                if (MyUtility.Check.Seek(string.Format("Select * from CuttingOutput_WIP WITH (NOLOCK) where Orderid='{0}' and article ='{1}' and size = '{2}'", dr["id"], dr["article"], dr["sizecode"]), out wipRow, null))
-                {
-                    update = update + string.Format("update CuttingOutput_WIP set Qty = {0} where Orderid='{1}' and article ='{2}' and size = '{3}';", dr["cutqty"], dr["id"], dr["article"], dr["sizecode"]);
-                    cpu = Convert.ToDecimal(MyUtility.GetValue.Lookup("CPU", dr["id"].ToString(), "Orders", "ID"));
-                    var = Convert.ToDecimal(dr["cutqty"]) - Convert.ToDecimal(wipRow["Qty"]);
-                    ncpu = ncpu + var * cpu;
-                }
-                else
-                {
-                    update = update + string.Format("Insert into CuttingOutput_WIP(orderid,article,size,qty) values('{0}','{1}','{2}',{3});", dr["id"], dr["Article"], dr["SizeCode"], dr["cutqty"]);
-                    cpu = Convert.ToDecimal(MyUtility.GetValue.Lookup("CPU", dr["id"].ToString(), "Orders", "ID"));
-                    ncpu = ncpu + Convert.ToDecimal(dr["cutqty"]) * cpu;
-                }
-            }
-            decimal pph;
-            if (MyUtility.Check.Empty(CurrentMaintain["ManPower"]) || MyUtility.Check.Empty(CurrentMaintain["ManHours"]))
-            {
-                pph = 0;
-            }
-            else
-            {
-                if (MyUtility.Convert.GetDecimal(CurrentMaintain["ManHours"]) > 0)
-                {
-                    pph = Math.Round(ncpu / MyUtility.Convert.GetDecimal(CurrentMaintain["ManPower"]) / MyUtility.Convert.GetDecimal(CurrentMaintain["ManHours"]), 2);
-                }
-                else {
-                    pph = 0;
-                }
-            }
-
-            update = update + string.Format("update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{0}',actgarment ='{2}',pph='{3}' where id='{1}'", loginID, CurrentMaintain["ID"], gmt, pph);
+            update = $@"update Cuttingoutput set status='Confirmed',editDate=getdate(),editname ='{loginID}' where id='{CurrentMaintain["ID"]}';
+                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'Confirm';";
 
             #region transaction
             DualResult upResult;
@@ -521,12 +412,6 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 try
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, update)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(upResult);
-                        return;
-                    }
-                    if (!(upResult = DBProxy.Current.Execute(null, updatettlcpu)))
                     {
                         _transactionscope.Dispose();
                         ShowErr(upResult);
@@ -545,109 +430,41 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-
-           
+            
             #endregion
-
-            DataTable dtDistinct = ((DataTable)detailgridbs.DataSource).DefaultView.ToTable(true, new string[] { "Cuttingid" });
-            StringBuilder dissp = new StringBuilder();
-            dissp.Append(" and (1=0");
-            foreach (DataRow dr in dtDistinct.Rows)
-            {
-                dissp.Append(string.Format(" or COD.CuttingID ='{0}'", dr["Cuttingid"].ToString()));
-            }
-            dissp.Append(")");
-            string sqlupfl = string.Format(@"
-update c
-set c.FirstCutDate = a.FirstCutDate
-	,c.LastCutDate = a.LastCutDate
-from
-(
-select
-FirstCutDate = min(CO.cDate), LastCutDate = max(CO.cDate) ,COD.CuttingID
-FROM CuttingOutput_Detail COD
-LEFT JOIN CuttingOutput CO on CO.ID=COD.ID
-WHERE CO.Status='Confirmed' {0}
-group by COD.CuttingID
-)a,Cutting c
-where c.ID =a.CuttingID", dissp.ToString());
-            upResult = DBProxy.Current.Execute(null, sqlupfl);
-            if (!upResult)
-            {
-                ShowErr("Commit transaction error.", upResult);
-            }
         }
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+            DualResult result;
             #region 若前面的單子有UnConfrim 則UnConfirm
 
-            string sql = string.Format("Select * from Cuttingoutput  WITH (NOLOCK) where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", CurrentMaintain["cdate"], keyWord);
+            string sql = string.Format("Select * from Cuttingoutput  WITH (NOLOCK) where cdate>'{0}' and Status!='New' and mDivisionid = '{1}'", ((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd"), keyWord);
             string msg = "";
             DataTable Dt;
-            if (DBProxy.Current.Select(null, sql, out Dt))
+            result = DBProxy.Current.Select(null, sql, out Dt);
+            if (result)
             {
                 foreach (DataRow dr in Dt.Rows)
                 {
-                    msg = msg + "<Date>:" + dr["cdate"].ToString() + "\\n";
+                    msg = msg + "<ID>:" + dr["ID"] + ",<Date>:" + ((DateTime)dr["cdate"]).ToString("yyyy/MM/dd") + Environment.NewLine;
                 }
-                if (MyUtility.Check.Empty(msg))
+                if (!MyUtility.Check.Empty(msg))
                 {
-                    MyUtility.Msg.WarningBox("The record not yet Unconfirm, you can not Unconfirm.Please see below list.\\n" + msg);
+                    MyUtility.Msg.WarningBox("The record not yet Unconfirm, you can not Unconfirm.Please see below list." + Environment.NewLine + msg);
                     return;
                 }
             }
-            #endregion
-            #region GMT SQL
-            string sql1 = string.Format(@"
-            Select distinct d.*,e.Colorid,e.PatternPanel
-            into #tmp1
-            from 
-            (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-            from Orders a WITH (NOLOCK) ,CuttingOutput_Detail cu WITH (NOLOCK) ,WorkOrder_Distribute w WITH (NOLOCK) where a.id = w.OrderID and cu.id='{0}' 
-            and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
-            order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
-            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
-
-            Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(b.qty),0) as cutqty 
-            into #tmp2
-            from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
-            Where ma.cdate<'{1}' and ma.ID = a.id --and ma.Status!='New' 
-            and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
-            and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = '{0}')
-            group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
-
-            Select a.poid,a.id,a.article,a.sizecode,min(isnull(b.cutqty,0)) as cutqty 
-            from #tmp1 a 
-            left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-            group by a.poid,a.id,a.article,a.sizecode"
-            , CurrentMaintain["ID"], Convert.ToDateTime(CurrentMaintain["cdate"]).ToShortDateString());
-
-            DataTable t1;
-            DualResult result;
-            result = DBProxy.Current.Select(null, sql1, out t1);
-            if (!result)
+            else
             {
                 ShowErr(result);
                 return;
             }
             #endregion
             string update = "";
-            foreach (DataRow dr in t1.Rows)
-            {
-                if (MyUtility.Check.Seek(string.Format("Select * from CuttingOutput_WIP WITH (NOLOCK) where Orderid='{0}' and article ='{1}' and size = '{2}'", dr["id"], dr["article"], dr["sizecode"]), null))
-                {
-                    update = update + string.Format("update CuttingOutput_WIP set Qty = {0}  where Orderid='{1}' and article ='{2}' and size = '{3}';", dr["CutQty"], dr["id"], dr["article"], dr["sizecode"]);
-                }
-                else
-                {
-                    update = update + string.Format("Insert into CuttingOutput_WIP(orderid,article,size,qty) values('{0}','{1}','{2}',{3});", dr["ID"], dr["Article"], dr["SizeCode"], dr["CutQty"]);
-                }
-            }
-            update = update + string.Format("update Cuttingoutput set status='New',editDate=getdate(),editname ='{0}',actgarment =0,pph=0  where id='{1}'", loginID, CurrentMaintain["ID"]);
+            update = $@"update Cuttingoutput set status='New',editDate=getdate(),editname ='{loginID}' where id='{CurrentMaintain["ID"]}';
+                        EXEC Cutting_P20_CFM_Update '{CurrentMaintain["ID"]}','{((DateTime)CurrentMaintain["cdate"]).ToString("yyyy/MM/dd")}',{CurrentMaintain["ManPower"]},{CurrentMaintain["ManHours"]},'UnConfirm';";
 
-
-            string updatettlcpu = string.Format("update CuttingOutput set ActTTCPU=0 where id = '{0}'", CurrentMaintain["id"].ToString());
             #region transaction
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
@@ -661,13 +478,6 @@ where c.ID =a.CuttingID", dissp.ToString());
                         ShowErr(upResult);
                         return;
                     }
-                    if (!(upResult = DBProxy.Current.Execute(null, updatettlcpu)))
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr(upResult);
-                        return;
-                    }
-
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");
@@ -682,37 +492,8 @@ where c.ID =a.CuttingID", dissp.ToString());
             _transactionscope.Dispose();
             _transactionscope = null;
 
-            
             #endregion
 
-            DataTable dtDistinct = ((DataTable)detailgridbs.DataSource).DefaultView.ToTable(true, new string[] { "Cuttingid" });
-            StringBuilder dissp = new StringBuilder();
-            dissp.Append("where (1=0");
-            foreach (DataRow dr in dtDistinct.Rows)
-            {
-                dissp.Append(string.Format(" or c.ID  ='{0}'", dr["Cuttingid"].ToString()));
-            }
-            dissp.Append(")");
-            string sqlupfl = string.Format(@"
-update c
-set c.FirstCutDate = a.FirstCutDate
-	,c.LastCutDate = a.LastCutDate
-
-from Cutting c left join
-(
-	select
-	FirstCutDate = min(CO.cDate), LastCutDate = max(CO.cDate) ,COD.CuttingID
-	FROM CuttingOutput_Detail COD
-	LEFT JOIN CuttingOutput CO on CO.ID=COD.ID
-	WHERE CO.Status='Confirmed' 
-	group by COD.CuttingID
-)a on a.CuttingID = c.ID
-{0}", dissp.ToString());
-            upResult = DBProxy.Current.Execute(null, sqlupfl);
-            if (!upResult)
-            {
-                ShowErr("Commit transaction error.", upResult);
-            }
         }
 
         private void btnImportfromWorkOrder_Click(object sender, EventArgs e)
