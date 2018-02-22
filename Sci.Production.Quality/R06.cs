@@ -16,7 +16,7 @@ namespace Sci.Production.Quality
     {
         DateTime? DateArrStart; DateTime? DateArrEnd;
         List<SqlParameter> lis; 
-        DataTable dt; 
+        DataTable[] allDatas;        
         string cmd; 
         string Supp,refno,brand,season;
 
@@ -253,9 +253,10 @@ from #tmpsuppdefect a
 -------tmp 
 select distinct gbs.SuppID
 	,ref.Refno
+	,brand.brandid
 	,s.AbbEN
-	,TotalInspYds = (select sum(TotalInspYds) from FIR a inner join #GroupBySupp b on a.POID = b.PoId and a.SEQ1 = b.Seq1 and a.Seq2 = b.Seq2 where a.Suppid = gbs.SuppID)
-	,stockqty = (select sum(ActualQty) from #tmpAllData where SuppID = gbs.SuppID) 
+	,TotalInspYds = (select isnull(sum(TotalInspYds),0) from FIR a inner join #GroupBySupp b on a.POID = b.PoId and a.SEQ1 = b.Seq1 and a.Seq2 = b.Seq2 where a.Suppid = gbs.SuppID and a.refno=ref.Refno)
+	,stockqty = stock.ActualQty
 	,yrds = (
 		select [Yrds] = count(*) * 5 
 		from #tmpsuppdefect a inner join #GroupBySupp b on a.POID=b.PoId and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
@@ -267,16 +268,10 @@ select distinct gbs.SuppID
 into #tmp
 from (select SuppID from #GroupBySupp group by SuppID) as gbs
 inner join Supp s WITH (NOLOCK) on s.id = gbs.SuppID
-outer apply(
-	select Refno = stuff((
-		Select concat(',',Refno) 
-		from (
-			SELECT distinct Refno
-			FROM #tmpAllData 
-			WHERE #tmpAllData.SuppID = gbs.SuppID
-		)t 
-		for xml path('')				
-	),1,1,'')
+outer apply(	
+	SELECT distinct Refno
+	FROM #tmpAllData 
+	WHERE #tmpAllData.SuppID = gbs.SuppID
 ) as ref
 outer apply(
 	select Defect = fd.DescriptionEN, fd.ID, Point = sum(a.point)  
@@ -287,6 +282,25 @@ outer apply(
 	left join FabricDefect fd on id = a.Defect
 	group by fd.DescriptionEN,fd.ID
 ) as Point
+outer apply(
+	select BrandID = stuff((
+		select concat(',',BrandID)
+		from (
+			select distinct o.BrandID 
+			from orders o
+			inner join #tmpAllData t on o.poid=t.poid
+            where t.refno=ref.refno
+		) t
+		for xml path('')
+		),1,1,'')
+)as Brand
+outer apply(
+	select isnull(sum(ActualQty),0) as ActualQty,Refno 
+	from #tmpAllData
+	where Refno=ref.Refno
+	and suppid=gbs.suppid
+	group by Refno	
+)as stock
 order by Refno
 -------tmp2 
 select Suppid,defect,ID,
@@ -306,12 +320,16 @@ into #SH2
 from dbo.FIR_Laboratory FL WITH (NOLOCK) 
 inner join dbo.FIR_Laboratory_Wash W WITH (NOLOCK) on W.ID = FL.ID						
 where FL.WashEncode=1 and W.Result = 'Fail'
-select SHRINKAGEyards = Sum(rd1.stockqty), SuppID
+
+select distinct SHRINKAGEyards = stockqty,SuppID
 into #SHtmp
-from  #tmp2groupbyDyelot rd WITH (NOLOCK) inner join Receiving_Detail rd1 on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
-Where exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot)
-or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot)
-group by SuppID
+from(
+	select Sum(rd1.stockqty) stockqty, SuppID	
+	from  #tmp2groupbyDyelot rd WITH (NOLOCK) inner join Receiving_Detail rd1 on rd.PoId = rd1.PoId and rd.Seq1 = rd1.Seq1 and rd.Seq2 = rd1.Seq2
+	Where exists(select * from #SH1 where POID = rd.PoId and SEQ1 = RD.seq1 and seq2 = seq2 and Dyelot = RD.dyelot)
+	or exists(select * from #SH2 where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2 and Dyelot = RD.dyelot)
+	group by SuppID
+) a
 -----#mtmp 
 select l.POID,l.SEQ1,l.seq2, F.Suppid
 INTO #ea
@@ -331,11 +349,12 @@ from ColorFastness CF WITH (NOLOCK)
 inner join ColorFastness_Detail CFD WITH (NOLOCK) on CFD.ID = CF.ID
 INNER JOIN FIR F WITH (NOLOCK) ON CF.POID=F.POID 
 where CF.Status ='Confirmed' and CFD.Result = 'Fail' 
-select [MIGRATIONyards] = sum(rd.StockQty),tmp.Suppid
+
+select [MIGRATIONyards] =sum(rd.StockQty),tmp.Suppid
 into #mtmp
-from Receiving_Detail rd WITH (NOLOCK) 
+from Receiving_Detail rd WITH (NOLOCK)
 inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
-,#tmp tmp	
+,(select distinct suppid,abben,id,Point from #tmp) tmp
 Where exists(select * from #ea where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND Suppid = Tmp.SuppID ) 
 or exists(select * from #eb where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND Suppid = Tmp.SuppID ) 
 or exists(select * from #ec where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND Suppid = Tmp.SuppID ) 
@@ -346,20 +365,23 @@ into #sa
 from fir f WITH (NOLOCK)
 inner join FIR_Shadebone fs WITH (NOLOCK) on fs.ID = f.ID
 where f.ShadebondEncode =1 and fs.Result = 'Fail' 
-select f.poid,f.SEQ1,f.seq2,fc.Dyelot,f.suppid 
+select f.poid,f.SEQ1,f.seq2,fc.Dyelot,f.suppid
 into #sb
 from fir f WITH (NOLOCK) 
 inner join FIR_Continuity fc WITH (NOLOCK) on fc.ID = f.ID
 where f.ContinuityEncode =1 and fc.Result = 'Fail' 
-select [SHADINGyards]= sum(rd.StockQty),tmp.Suppid
+
+select [SHADINGyards] =sum(rd.StockQty),tmp.Suppid
 into #Stmp
 from Receiving_Detail rd WITH (NOLOCK) 
 inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
-,#tmp tmp
-Where exists(select * from #sa where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and suppid = Tmp.Suppid) 
-or exists(select * from #sb where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and suppid = Tmp.Suppid) 
+,(select distinct suppid,abben,id,Point from #tmp) tmp
+Where exists(select * from #sa where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and suppid = Tmp.Suppid ) 
+or exists(select * from #sb where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and suppid = Tmp.Suppid ) 
 group by tmp.Suppid
+
 -----#Ltmp 
+
 select ActualYds = sum(fp.TicketYds - fp.ActualYds), t.SuppID
 into #Ltmp
 from FIR f
@@ -493,8 +515,9 @@ select --distinct
     Tmp.SuppID 
 	,Tmp.refno 
     ,Tmp.abben 
+	,Tmp.BrandID
     ,Tmp.stockqty 
-    ,Tmp.TotalInspYds 
+    ,totalYds.TotalInspYds 
     ,[Total PoCnt] = isnull(TLSP.cnt,0)
     ,[Total Dyelot] =isnull(TLDyelot.cnt,0)
 	,[Test Report] = isnull(TestReport.cnt,0)
@@ -506,9 +529,9 @@ select --distinct
 	,[GradeA Roll]= isnull(GACount.GradeA_Roll,0)
 	,[GradeB Roll]= isnull(GBCount.GradeB_Roll,0)
 	,[GradeC Roll]= isnull(GCCount.GradeC_Roll,0)
-    ,[Inspected] = iif(Tmp.stockqty = 0, 0, round(Tmp.TotalInspYds/Tmp.stockqty,4)) 
-    ,Tmp.yrds 
-    ,Tmp.[Fabric(%)]
+    ,[Inspected] = iif(Tmp.stockqty = 0, 0, round(totalYds.TotalInspYds/totalStockqty.stockqty,4)) 
+    ,Tmp.yrds     
+	,[Fabric(%)] = IIF(totalYds.TotalInspYds!=0, round((Tmp.yrds/totalYds.TotalInspYds), 4), 0)        		
     ,id = sl.ID
     ,[Point] = point.defect
     ,[SHRINKAGEyards] = isnull(SHRINKAGE.SHRINKAGEyards,0)
@@ -528,11 +551,10 @@ select --distinct
     ,SHORTWIDTHLevel = sl6.ID
 into #TmpFinal
 from (
-	select distinct SuppID, refno, abben, stockqty, TotalInspYds, yrds			
-	,[Fabric(%)] = IIF(TotalInspYds!=0, round((yrds/TotalInspYds), 4), 0)        		
-	from #tmp	
-)Tmp 	
-outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(tmp.[Fabric(%)],0) * 100 between range1 and range2 )sl
+	select distinct SuppID, refno, abben, BrandID, stockqty, isnull(TotalInspYds,0)TotalInspYds
+	, yrds	
+	from #tmp		
+)Tmp 
 outer apply
 (
 	select Defect = stuff(( 
@@ -542,21 +564,42 @@ outer apply
 		for xml path('')
 	),1,1,'') 
 ) point
+outer apply(
+select suppid ,sum(stockqty) stockqty from (
+	select distinct suppid,refno,brandid,abben,stockqty
+	from #tmp ) a
+	where suppid=tmp.suppid
+	group by SuppID
+) totalStockqty
+outer apply(
+select suppid ,sum(TotalInspYds) TotalInspYds from (
+	select distinct suppid,refno,brandid,abben,TotalInspYds
+	from #tmp ) a
+	where suppid=tmp.suppid
+	group by SuppID
+) totalYds
+outer apply(
+	select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
+	and IIF(totalYds.TotalInspYds!=0, round((Tmp.yrds/totalYds.TotalInspYds), 4), 0) * 100 between range1 and range2 )sl
 left join #SHtmp SHRINKAGE on SHRINKAGE.SuppID = tmp.SuppID
-outer apply(select SHINGKAGE = iif(Tmp.stockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/Tmp.stockqty,4)))SHINGKAGELevel
+outer apply(select SHINGKAGE = iif(totalStockqty.stockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/totalStockqty.stockqty,4)))SHINGKAGELevel
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) * 100 between range1 and range2)sl2
-left join #mtmp MIGRATION on MIGRATION.SuppID = tmp.SuppID
-outer apply(select MIGRATION =  iif(Tmp.stockqty = 0, 0, round(MIGRATION.MIGRATIONyards/Tmp.stockqty,4)))MIGRATIONLevel 
+left join #mtmp MIGRATION on MIGRATION.SuppID = tmp.SuppID 
+outer apply(
+	select MIGRATION =  iif(totalStockqty.stockqty = 0, 0, round(MIGRATION.MIGRATIONyards/totalStockqty.stockqty,4))
+)MIGRATIONLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(MIGRATIONLevel.MIGRATION,0) * 100 between range1 and range2)sl3
 left join #Stmp SHADING on SHADING.SuppID = tmp.SuppID
-outer apply(select SHADING = iif(Tmp.stockqty=0, 0, round(SHADING.SHADINGyards/Tmp.stockqty,4)))SHADINGLevel 
+outer apply(select SHADING = iif(totalStockqty.stockqty=0, 0, round(SHADING.SHADINGyards/totalStockqty.stockqty,4)))SHADINGLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHADINGLevel.SHADING,0) * 100 between range1 and range2)sl4
 left join #Ltmp LACKINGYARDAGE on LACKINGYARDAGE.SuppID= Tmp.SuppID
-outer apply(select LACKINGYARDAGE = iif(Tmp.stockqty=0, 0, round(LACKINGYARDAGE.ActualYds/Tmp.stockqty,4)))LACKINGYARDAGELevel
+outer apply(select LACKINGYARDAGE = iif(totalStockqty.stockqty=0, 0, round(LACKINGYARDAGE.ActualYds/totalStockqty.stockqty,4)))LACKINGYARDAGELevel
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0) * 100 between range1 and range2)sl5
 left join #Sdtmp SHORTyards on SHORTyards.Suppid = Tmp.SuppID
-outer apply(select SHORTWIDTH = iif(Tmp.stockqty=0, 0, round(SHORTyards.SHORTWIDTH/Tmp.TotalInspYds,4)))SHORTWIDTHLevel 
-outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) * 100 between range1 and range2)sl6
+outer apply(select SHORTWIDTH = iif(totalYds.TotalInspYds=0, 0, round(SHORTyards.SHORTWIDTH/totalYds.TotalInspYds,4)))SHORTWIDTHLevel 
+outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
+and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) * 100 between range1 and range2
+)sl6
 outer apply (select cnt from #tmpDyelot where Suppid=Tmp.SuppID ) TLDyelot
 outer apply (select TotalPoint from #tmpTotalPoint where Suppid=tmp.SuppID) TLPoint
 outer apply (select TotalRoll from #tmpTotalRoll where Suppid=tmp.SuppID) TLRoll
@@ -569,6 +612,7 @@ outer apply (select cnt from #InspReport where Suppid=tmp.SuppID) InspReport
 outer apply (select cnt from #tmpContinuityCard where Suppid=tmp.SuppID) ContCard
 outer apply (select cnt from #BulkDyelot where Suppid=tmp.SuppID) BulkDyelot
 order by Tmp.SuppID
+
 --準備比重#table不然每筆資料都要重撈7次  
 select DISTINCT
 	[Fabric Defect] = (select Weight from Inspweight WITH (NOLOCK) where id ='Fabric Defect')
@@ -590,7 +634,9 @@ from(
 ) a
 ,SuppLevel s
 where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 " + sqlSuppWhere +
-@"  ORDER BY SUPPID
+@"  ORDER BY SUPPID,refno
+
+select distinct SuppID from #TmpFinal
 
 drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
 ,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
@@ -604,7 +650,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res;
-            res = DBProxy.Current.Select("", cmd, lis, out dt);
+            res = DBProxy.Current.Select("", cmd, lis, out allDatas);
             if (!res)
             {
                 return res;
@@ -615,34 +661,57 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(dt.Rows.Count);
-            if (dt == null || dt.Rows.Count == 0)
+            SetCount(allDatas[0].Rows.Count);
+            if (allDatas[0] == null || allDatas[0].Rows.Count == 0)
             {
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
+            this.ShowWaitMessage("Starting EXCEL...");
             Microsoft.Office.Interop.Excel._Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_R06.xltx");
-            MyUtility.Excel.CopyToXls(dt, "", "Quality_R06.xltx", 6, false, null, objApp);
+            MyUtility.Excel.CopyToXls(allDatas[0], "", "Quality_R06.xltx", 6, false, null, objApp);
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+            objApp.DisplayAlerts = false; // 禁止Excel跳出合併提示視窗
+            int line = 7;
+            // 依SuppID跑回圈合併欄位
+            for (int i = 0; i < allDatas[1].Rows.Count; i++)
+            {
+                string supp = allDatas[1].Rows[i]["Suppid"].ToString();
+                DataRow[] dr = allDatas[0].Select($@"suppid = '{supp}'");
+                int cnt = dr.Length;
+                for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                {
+                    // Columns=2,4,5 是不需要合併的
+                    if (ii == 2 || ii == 4 || ii == 5)
+                    {
+                        continue;
+                    }
+                    // 合併儲存格,尾端要-1不然會重疊
+                    Microsoft.Office.Interop.Excel.Range rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
+                    rang.Merge();
+                }                
+                line = line + cnt;
+            }
+
             #region 調整欄寬
-            objSheets.Columns[6].ColumnWidth = 21;
-            objSheets.Columns[7].ColumnWidth = 20;
-            objSheets.Columns[8].ColumnWidth = 14.5;            
-            objSheets.Columns[9].ColumnWidth = 17;
-            objSheets.Columns[10].ColumnWidth = 20;
+            objSheets.Columns[7].ColumnWidth = 21;
+            objSheets.Columns[8].ColumnWidth = 20;
+            objSheets.Columns[9].ColumnWidth = 14.5;            
+            objSheets.Columns[10].ColumnWidth = 17;
             objSheets.Columns[11].ColumnWidth = 20;
-            objSheets.Columns[12].ColumnWidth = 14.5;
+            objSheets.Columns[12].ColumnWidth = 20;
+            objSheets.Columns[13].ColumnWidth = 14.5;
 
-
-            objSheets.Columns[13].ColumnWidth = 14;
             objSheets.Columns[14].ColumnWidth = 14;
             objSheets.Columns[15].ColumnWidth = 14;
             objSheets.Columns[16].ColumnWidth = 14;
+            objSheets.Columns[17].ColumnWidth = 14;
 
-            objSheets.Columns[18].ColumnWidth = 8;
             objSheets.Columns[19].ColumnWidth = 8;
-            objSheets.Columns[20].ColumnWidth = 5;
+            objSheets.Columns[20].ColumnWidth = 8;
+            objSheets.Columns[21].ColumnWidth = 5;
             #endregion
+            this.HideWaitMessage();
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Quality_R06");
