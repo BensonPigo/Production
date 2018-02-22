@@ -121,6 +121,7 @@ Category =
         WHEN o.Category = 'S' THEN 'Sample'
         WHEN o.Category = 'O' THEN 'Other'
         WHEN o.Category = 'M' THEN 'Material'
+        WHEN o.Category = 'T' THEN 'SMTL'
         END)
     ,o.SeasonID,o.SewInLine,o.LETA,o.KPILETA,o.BuyerDelivery,o.SciDelivery,
     o.BrandID,o.CPU,o.SewETA,o.PackETA,o.MDivisionID,o.FactoryID,dbo.getPass1(o.LocalMR) as LocalMR,
@@ -172,7 +173,7 @@ where 1=1", this._excludeReplacement == 1 ? "and psd.SEQ1 not between '50' and '
                 }
                 else if (this._orderType == "M")
                 {
-                    sqlCmd.Append(" and o.Category = 'M'");
+                    sqlCmd.Append(" and (o.Category = 'M' or o.Category = 'T')");
                 }
                 else
                 {
