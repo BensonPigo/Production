@@ -63,6 +63,7 @@
             this.textID = new Sci.Win.UI.TextBox();
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
+            this.buttonToPDF = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -70,6 +71,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.buttonToPDF);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
             this.btmcont.Size = new System.Drawing.Size(1008, 40);
@@ -79,6 +81,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
+            this.btmcont.Controls.SetChildIndex(this.buttonToPDF, 0);
             // 
             // gridcont
             // 
@@ -427,6 +430,16 @@
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
             this.dateArriveWHDate.TabIndex = 138;
             // 
+            // buttonToPDF
+            // 
+            this.buttonToPDF.Location = new System.Drawing.Point(531, 5);
+            this.buttonToPDF.Name = "buttonToPDF";
+            this.buttonToPDF.Size = new System.Drawing.Size(90, 30);
+            this.buttonToPDF.TabIndex = 133;
+            this.buttonToPDF.Text = "To PDF";
+            this.buttonToPDF.UseVisualStyleBackColor = true;
+            this.buttonToPDF.Click += new System.EventHandler(this.buttonToPDF_Click);
+            // 
             // P01_Weight
             // 
             this.ClientSize = new System.Drawing.Size(1008, 733);
@@ -552,5 +565,6 @@
         private Win.UI.TextBox textID;
         private Win.UI.DateBox dateLastInspectionDate;
         private Win.UI.DateBox dateArriveWHDate;
+        private Win.UI.Button buttonToPDF;
     }
 }
