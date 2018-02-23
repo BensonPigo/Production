@@ -162,30 +162,37 @@ namespace Sci.Production.Logistic
                             using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(dr["FullFileName"]), System.Text.Encoding.UTF8))
                             {
                                 string line;
-                                while ((line = reader.ReadLine()) != null)
+                                try
                                 {
-                                    DataRow newRow = notdist.NewRow();
-                                    newRow["selected"] = 1;
-                                    string custPoNo = line.Substring(520, 15).TrimEnd();
-                                    if (custPoNo.Length <= 10)
+                                    while ((line = reader.ReadLine()) != null)
                                     {
-                                        custPoNo = custPoNo.Substring(0, 7);
-                                    }
-                                    else
-                                    {
-                                        custPoNo = custPoNo.Substring(0, 10);
-                                    }
+                                        DataRow newRow = notdist.NewRow();
+                                        newRow["selected"] = 1;
+                                        string custPoNo = line.Substring(520, 15).TrimEnd();
+                                        if (custPoNo.Length <= 10)
+                                        {
+                                            custPoNo = custPoNo.Substring(0, 7);
+                                        }
+                                        else
+                                        {
+                                            custPoNo = custPoNo.Substring(0, 10);
+                                        }
 
-                                    newRow["CustPoNo"] = custPoNo;
-                                    newRow["Brand"] = this.comboBrand.Text;
-                                    newRow["styleid"] = line.Substring(550, 8).TrimEnd();
-                                    newRow["stylename"] = MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
-                                    newRow["Article"] = line.Substring(558, 10).TrimEnd();
-                                    newRow["Size"] = line.Substring(595, 5).TrimEnd().TrimStart('0');
-                                    string xxxBarCode = line.Substring(632, 40).Trim();
-                                    IList<string> sl = xxxBarCode.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                                    newRow["BarCode"] = sl[sl.Count - 1].Substring(sl[sl.Count - 1].Length - 12, 12);
-                                    notdist.Rows.Add(newRow);
+                                        newRow["CustPoNo"] = custPoNo;
+                                        newRow["Brand"] = this.comboBrand.Text;
+                                        newRow["styleid"] = line.Substring(550, 8).TrimEnd();
+                                        newRow["stylename"] = newRow["styleid"] + "-" + MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
+                                        newRow["Article"] = line.Substring(558, 10).TrimEnd();
+                                        newRow["Size"] = line.Substring(595, 5).TrimEnd().TrimStart('0');
+                                        string xxxBarCode = line.Substring(632, 40).Trim();
+                                        IList<string> sl = xxxBarCode.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                                        newRow["BarCode"] = sl[sl.Count - 1].Substring(sl[sl.Count - 1].Length - 12, 12);
+                                        notdist.Rows.Add(newRow);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    dr["Status"] = "Error Import File";
                                 }
                             }
                         }
@@ -197,13 +204,13 @@ namespace Sci.Production.Logistic
                             {
                                 excel = new Microsoft.Office.Interop.Excel.Application();
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
                                 dr["Status"] = "can not find file!!";
-                                dr["ErrMsg"] = ex.Message;
                                 continue;
                             }
 
+                            excel.DisplayAlerts = false;
                             excel.Workbooks.Open(MyUtility.Convert.GetString(dr["FullFileName"]));
                             excel.Visible = false;
                             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -276,7 +283,7 @@ namespace Sci.Production.Logistic
                                     newRow["CustPoNo"] = custPoNo;
                                     newRow["Brand"] = this.comboBrand.Text;
                                     newRow["styleid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 23], "C");
-                                    newRow["stylename"] = MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
+                                    newRow["stylename"] = newRow["styleid"] + "-" + MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
                                     newRow["Article"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 24], "C");
                                     string size2 = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 25], "C"));
                                     if (size2.Contains("("))
@@ -306,13 +313,13 @@ namespace Sci.Production.Logistic
                             {
                                 excel = new Microsoft.Office.Interop.Excel.Application();
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
                                 dr["Status"] = "can not find file!!";
-                                dr["ErrMsg"] = ex.Message;
                                 continue;
                             }
 
+                            excel.DisplayAlerts = false;
                             excel.Workbooks.Open(MyUtility.Convert.GetString(dr["FullFileName"]));
                             excel.Visible = false;
                             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
@@ -327,7 +334,7 @@ namespace Sci.Production.Logistic
                             string size = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C");
                             string barCode = (string)MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C");
 
-                            if (!sp.ToUpper().EqualString("PO") ||
+                            if (!sp.ToUpper().EqualString("PO#") ||
                                 !brandid.ToUpper().EqualString("Brand") ||
                                 !styleid.ToUpper().EqualString("Style") ||
                                 !article.ToUpper().EqualString("Article") ||
@@ -392,7 +399,7 @@ namespace Sci.Production.Logistic
                                     newRow["CustPoNo"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
                                     newRow["Brand"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
                                     newRow["styleid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
-                                    newRow["stylename"] = MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
+                                    newRow["stylename"] = newRow["styleid"] + "-" + MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
                                     newRow["Article"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C");
                                     string size2 = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C"));
                                     if (size2.Contains("("))
