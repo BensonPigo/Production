@@ -845,6 +845,10 @@ where o.ID = '{0}'
                                     msg = "category: < Material >, it can't be created!";
                                     returnData = true;
                                     break;
+                                case "T":
+                                    msg = "category: < Sample MTL Booking >, it can't be created!";
+                                    returnData = true;
+                                    break;
                                 case "O":
                                     msg = "category: < Other >, it can't be created!";
                                     returnData = true;
