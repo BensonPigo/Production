@@ -59,6 +59,7 @@
             this.txtsupplierSupp = new Sci.Production.Class.txtsupplier();
             this.labelDescription = new Sci.Win.UI.Label();
             this.editDescription = new Sci.Win.UI.EditBox();
+            this.btntoPDF = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -66,6 +67,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btntoPDF);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 545);
             this.btmcont.Size = new System.Drawing.Size(974, 40);
@@ -75,6 +77,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
+            this.btmcont.Controls.SetChildIndex(this.btntoPDF, 0);
             // 
             // gridcont
             // 
@@ -91,7 +94,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(9, 9);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(46, 23);
@@ -100,7 +102,6 @@
             // 
             // labelWkno
             // 
-            this.labelWkno.Lines = 0;
             this.labelWkno.Location = new System.Drawing.Point(9, 38);
             this.labelWkno.Name = "labelWkno";
             this.labelWkno.Size = new System.Drawing.Size(46, 23);
@@ -109,7 +110,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(9, 68);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(46, 23);
@@ -118,7 +118,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(9, 96);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(46, 23);
@@ -127,7 +126,6 @@
             // 
             // labelSEQ
             // 
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(184, 9);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(51, 23);
@@ -136,7 +134,6 @@
             // 
             // labelSupp
             // 
-            this.labelSupp.Lines = 0;
             this.labelSupp.Location = new System.Drawing.Point(184, 38);
             this.labelSupp.Name = "labelSupp";
             this.labelSupp.Size = new System.Drawing.Size(86, 23);
@@ -145,7 +142,6 @@
             // 
             // labelSCIRefno
             // 
-            this.labelSCIRefno.Lines = 0;
             this.labelSCIRefno.Location = new System.Drawing.Point(184, 67);
             this.labelSCIRefno.Name = "labelSCIRefno";
             this.labelSCIRefno.Size = new System.Drawing.Size(86, 23);
@@ -154,7 +150,6 @@
             // 
             // labelBrandRefno
             // 
-            this.labelBrandRefno.Lines = 0;
             this.labelBrandRefno.Location = new System.Drawing.Point(184, 96);
             this.labelBrandRefno.Name = "labelBrandRefno";
             this.labelBrandRefno.Size = new System.Drawing.Size(86, 25);
@@ -163,7 +158,6 @@
             // 
             // labelColor
             // 
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(309, 9);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(47, 23);
@@ -172,7 +166,6 @@
             // 
             // labelArriveQty
             // 
-            this.labelArriveQty.Lines = 0;
             this.labelArriveQty.Location = new System.Drawing.Point(472, 9);
             this.labelArriveQty.Name = "labelArriveQty";
             this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
@@ -181,7 +174,6 @@
             // 
             // labelArriveWHDate
             // 
-            this.labelArriveWHDate.Lines = 0;
             this.labelArriveWHDate.Location = new System.Drawing.Point(675, 9);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(144, 23);
@@ -190,7 +182,6 @@
             // 
             // labelLastInspectionDate
             // 
-            this.labelLastInspectionDate.Lines = 0;
             this.labelLastInspectionDate.Location = new System.Drawing.Point(675, 38);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
             this.labelLastInspectionDate.Size = new System.Drawing.Size(144, 23);
@@ -199,7 +190,6 @@
             // 
             // labelResult
             // 
-            this.labelResult.Lines = 0;
             this.labelResult.Location = new System.Drawing.Point(472, 38);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(75, 23);
@@ -341,6 +331,7 @@
             // 
             // btnToExcel
             // 
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.btnToExcel.Location = new System.Drawing.Point(718, 5);
             this.btnToExcel.Name = "btnToExcel";
@@ -379,7 +370,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(472, 67);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 25);
@@ -397,6 +387,18 @@
             this.editDescription.ReadOnly = true;
             this.editDescription.Size = new System.Drawing.Size(320, 54);
             this.editDescription.TabIndex = 158;
+            // 
+            // btntoPDF
+            // 
+            this.btntoPDF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btntoPDF.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btntoPDF.Location = new System.Drawing.Point(632, 5);
+            this.btntoPDF.Name = "btntoPDF";
+            this.btntoPDF.Size = new System.Drawing.Size(80, 30);
+            this.btntoPDF.TabIndex = 96;
+            this.btntoPDF.Text = "To PDF";
+            this.btntoPDF.UseVisualStyleBackColor = true;
+            this.btntoPDF.Click += new System.EventHandler(this.btntoPDF_Click);
             // 
             // P03_Crocking
             // 
@@ -509,5 +511,6 @@
         private Class.txtsupplier txtsupplierSupp;
         private Win.UI.Label labelDescription;
         private Win.UI.EditBox editDescription;
+        private Win.UI.Button btntoPDF;
     }
 }
