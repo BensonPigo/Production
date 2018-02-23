@@ -636,7 +636,7 @@ from(
 where s.type='F' and s.Junk=0 and [AVG] * 100 between s.range1 and s.range2 " + sqlSuppWhere +
 @"  ORDER BY SUPPID,refno
 
-select distinct SuppID from #TmpFinal
+select distinct SuppID from #TmpFinal order by suppid
 
 drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupbyDyelot,#tmp2groupByRoll,#spr
 ,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
