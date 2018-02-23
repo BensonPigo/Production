@@ -110,7 +110,7 @@ From GMTBooking g
 Left join PackingList p on g.ID = p.InvNo
 Left join PackingList_Detail pd on p.ID = pd.ID
 Inner join Orders o on pd.OrderID = o.ID
-inner join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
+inner join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and ot.IsGMTMaster != 1
 Left join Brand b on b.ID = o.BrandID
 outer apply
 (	
@@ -119,7 +119,7 @@ outer apply
 	inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
 	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate 
 ) cpucost
-Where 1=1 and ot.IsGMTMaster != 1");
+Where 1=1 ");
 
             if (!MyUtility.Check.Empty(this.FCR_date1))
             {
