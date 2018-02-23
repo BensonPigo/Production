@@ -8,7 +8,7 @@
     [ClogLocationID] VARCHAR (10) CONSTRAINT [DF_ClogReceive_Detail_ClogLocationId] DEFAULT ('') NULL,
     [AddDate]        DATETIME     NULL,
     [OldID]          VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OldID] DEFAULT ('') NULL,
-    [AddName]        VARCHAR (10) NULL,
+    [AddName]        VARCHAR (10) NULL DEFAULT (''),
     CONSTRAINT [PK_ClogReceive_Detail_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

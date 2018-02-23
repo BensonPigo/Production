@@ -160,7 +160,7 @@ from (
             , cr.ClogLocationId
             , cr.AddDate
             , pd.Id
-            , cr.AddName
+			, AddName = (select concat(id,'-',Name) from pass1 where id = cr.AddName)
     from ClogReceive cr WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
