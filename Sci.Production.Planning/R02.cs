@@ -35,6 +35,7 @@ namespace Sci.Production.Planning
         private DataTable printData;
         private decimal totalpoqty;
         private decimal totalpartsqty;
+        private string category;
 
         /// <summary>
         /// R02
@@ -46,7 +47,6 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.txtMdivision.Text = Sci.Env.User.Keyword;
             this.txtfactory.Text = Sci.Env.User.Factory;
-            this.comboCategory.SelectedIndex = 1;
         }
 
         /// <summary>
@@ -85,8 +85,8 @@ namespace Sci.Production.Planning
             this.subcons = this.txtMultiSubconSubcon.Subcons;
             this.mdivision = this.txtMdivision.Text;
             this.factory = this.txtfactory.Text;
-            this.selectindex = this.comboCategory.SelectedIndex;
             this.artworktype = this.txtartworktype_ftySubProcess.Text;
+            this.category = this.comboCategory.SelectedValue.ToString();
 
             return base.ValidateInput();
         }
@@ -207,18 +207,7 @@ namespace Sci.Production.Planning
                 cmds.Add(sp_factory);
             }
 
-            switch (this.selectindex)
-            {
-                case 0:
-                    sqlCmd.Append(@" and (o1.Category = 'B' or o1.Category = 'S')");
-                    break;
-                case 1:
-                    sqlCmd.Append(@" and o1.Category = 'B' ");
-                    break;
-                case 2:
-                    sqlCmd.Append(@" and (o1.Category = 'S')");
-                    break;
-            }
+            sqlCmd.Append($" and o1.Category in ({this.category})");
             #endregion
 
             sqlCmd.Append(string.Format(@" group by o1.MDivisionID,o1.ID,o1.StyleID,o1.StyleUkey,o1.FactoryID,o1.SewLine

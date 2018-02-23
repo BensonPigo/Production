@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateInLineDate = new Sci.Win.UI.DateRange();
@@ -43,7 +44,6 @@
             this.labelSubProcess = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
             this.labelCategory = new Sci.Win.UI.Label();
             this.checkIncludeFarmOutInDate = new Sci.Win.UI.CheckBox();
             this.labelSubcon = new Sci.Win.UI.Label();
@@ -51,6 +51,7 @@
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtartworktype_ftySubProcess = new Sci.Production.Class.txtartworktype_fty();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -70,7 +71,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(13, 12);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -85,6 +85,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(115, 12);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -93,6 +107,20 @@
             // 
             // dateInLineDate
             // 
+            // 
+            // 
+            // 
+            this.dateInLineDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateInLineDate.DateBox1.Name = "";
+            this.dateInLineDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateInLineDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateInLineDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateInLineDate.DateBox2.Name = "";
+            this.dateInLineDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateInLineDate.DateBox2.TabIndex = 1;
             this.dateInLineDate.IsRequired = false;
             this.dateInLineDate.Location = new System.Drawing.Point(115, 48);
             this.dateInLineDate.Name = "dateInLineDate";
@@ -101,7 +129,6 @@
             // 
             // labelInLineDate
             // 
-            this.labelInLineDate.Lines = 0;
             this.labelInLineDate.Location = new System.Drawing.Point(13, 48);
             this.labelInLineDate.Name = "labelInLineDate";
             this.labelInLineDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -134,7 +161,6 @@
             // 
             // label10
             // 
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(245, 155);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
@@ -143,7 +169,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(13, 155);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -156,6 +181,20 @@
             // 
             // dateCutInline
             // 
+            // 
+            // 
+            // 
+            this.dateCutInline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCutInline.DateBox1.Name = "";
+            this.dateCutInline.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateCutInline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCutInline.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateCutInline.DateBox2.Name = "";
+            this.dateCutInline.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateCutInline.DateBox2.TabIndex = 1;
             this.dateCutInline.IsRequired = false;
             this.dateCutInline.Location = new System.Drawing.Point(115, 120);
             this.dateCutInline.Name = "dateCutInline";
@@ -164,7 +203,6 @@
             // 
             // labelCutInline
             // 
-            this.labelCutInline.Lines = 0;
             this.labelCutInline.Location = new System.Drawing.Point(13, 120);
             this.labelCutInline.Name = "labelCutInline";
             this.labelCutInline.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -179,6 +217,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(115, 84);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -187,7 +239,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 84);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -202,7 +253,6 @@
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Lines = 0;
             this.labelSubProcess.Location = new System.Drawing.Point(13, 302);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(98, 23);
@@ -211,7 +261,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 226);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
@@ -220,31 +269,14 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 264);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
             this.labelFactory.TabIndex = 132;
             this.labelFactory.Text = "Factory";
             // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Items.AddRange(new object[] {
-            "Bulk+Sample",
-            "Bulk",
-            "Sample"});
-            this.comboCategory.Location = new System.Drawing.Point(115, 337);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 9;
-            // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 338);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(98, 23);
@@ -255,7 +287,7 @@
             // 
             this.checkIncludeFarmOutInDate.AutoSize = true;
             this.checkIncludeFarmOutInDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeFarmOutInDate.Location = new System.Drawing.Point(283, 339);
+            this.checkIncludeFarmOutInDate.Location = new System.Drawing.Point(326, 339);
             this.checkIncludeFarmOutInDate.Name = "checkIncludeFarmOutInDate";
             this.checkIncludeFarmOutInDate.Size = new System.Drawing.Size(184, 21);
             this.checkIncludeFarmOutInDate.TabIndex = 10;
@@ -264,7 +296,6 @@
             // 
             // labelSubcon
             // 
-            this.labelSubcon.Lines = 0;
             this.labelSubcon.Location = new System.Drawing.Point(13, 192);
             this.labelSubcon.Name = "labelSubcon";
             this.labelSubcon.Size = new System.Drawing.Size(98, 23);
@@ -286,12 +317,13 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 264);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 7;
-            this.txtfactory.IssupportJunk = true;
             // 
             // txtartworktype_ftySubProcess
             // 
@@ -313,13 +345,25 @@
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 6;
             // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(115, 336);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(205, 24);
+            this.comboCategory.TabIndex = 144;
+            this.comboCategory.Type = "Pms_ReportForProduct";
+            // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(522, 410);
+            this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.labelSubcon);
             this.Controls.Add(this.txtMultiSubconSubcon);
             this.Controls.Add(this.checkIncludeFarmOutInDate);
-            this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtartworktype_ftySubProcess);
@@ -365,10 +409,10 @@
             this.Controls.SetChildIndex(this.txtartworktype_ftySubProcess, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
-            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.checkIncludeFarmOutInDate, 0);
             this.Controls.SetChildIndex(this.txtMultiSubconSubcon, 0);
             this.Controls.SetChildIndex(this.labelSubcon, 0);
+            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -394,10 +438,10 @@
         private Win.UI.Label labelFactory;
         private Class.txtartworktype_fty txtartworktype_ftySubProcess;
         private Class.txtfactory txtfactory;
-        private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
         private Win.UI.CheckBox checkIncludeFarmOutInDate;
         private Class.txtMultiSubcon txtMultiSubconSubcon;
         private Win.UI.Label labelSubcon;
+        private Class.comboDropDownList comboCategory;
     }
 }
