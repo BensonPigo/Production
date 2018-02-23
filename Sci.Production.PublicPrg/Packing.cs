@@ -1289,14 +1289,84 @@ order by pd.Seq", PackingListID);
             }
 
             sqlCmd = string.Format(@"
-select  distinct pd.RefNo
-        , li.Description
-        , Dimension = STR(li.CtnLength,8,4)+'\'+STR(li.CtnWidth,8,4)+'\'+STR(li.CtnHeight,8,4)
-        , li.CtnUnit
-from PackingList_Detail pd WITH (NOLOCK) 
-left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
-left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
-where pd.ID = '{0}'", PackingListID);
+Declare @packinglistid VARCHAR(13),
+		@refno VARCHAR(21), 
+		@ctnstartno VARCHAR(6),
+		@firstctnno VARCHAR(6),
+		@lastctnno VARCHAR(6),
+		@orirefnno VARCHAR(21),
+		@insertrefno VARCHAR(13)
+
+set @packinglistid = '{0}'
+
+--建立暫存PackingList_Detail資料
+DECLARE @tempPackingListDetail TABLE (
+   RefNo VARCHAR(21),
+   CTNNo VARCHAR(13)
+)
+
+--撈出PackingList_Detail
+DECLARE cursor_PackingListDetail CURSOR FOR
+	SELECT RefNo,CTNStartNo FROM PackingList_Detail WITH (NOLOCK) WHERE ID = @packinglistid and CTNQty > 0 ORDER BY Seq
+
+--開始run cursor
+OPEN cursor_PackingListDetail
+--將第一筆資料填入變數
+FETCH NEXT FROM cursor_PackingListDetail INTO @refno, @ctnstartno
+SET @firstctnno = @ctnstartno
+SET @lastctnno = @ctnstartno
+SET @orirefnno = @refno
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	IF(@orirefnno <> @refno)
+		BEGIN
+			IF(@firstctnno = @lastctnno)
+				BEGIN
+					SET @insertrefno = @firstctnno
+				END
+			ELSE
+				BEGIN
+					SET @insertrefno = @firstctnno + '-' + @lastctnno
+				END
+			INSERT INTO @tempPackingListDetail (RefNo,CTNNo) VALUES (@orirefnno,@insertrefno)
+
+			--數值重新記錄
+			SET @orirefnno = @refno
+			SET @firstctnno = @ctnstartno
+			SET @lastctnno = @ctnstartno
+		END
+	ELSE
+		BEGIN
+			--紀錄箱號
+			SET @lastctnno = @ctnstartno
+		END
+
+	FETCH NEXT FROM cursor_PackingListDetail INTO @refno, @ctnstartno
+END
+--最後一筆資料
+--最後一筆資料
+IF(@orirefnno <> '')
+	BEGIN
+		IF(@firstctnno = @lastctnno)
+			BEGIN
+				SET @insertrefno = @firstctnno
+			END
+		ELSE
+			BEGIN
+				SET @insertrefno = @firstctnno + '-' + @lastctnno
+			END
+		INSERT INTO @tempPackingListDetail (RefNo,CTNNo) VALUES (@orirefnno,@insertrefno)
+	END
+--關閉cursor與參數的關聯
+CLOSE cursor_PackingListDetail
+--將cursor物件從記憶體移除
+DEALLOCATE cursor_PackingListDetail
+
+select distinct t.RefNo,l.Description, STR(l.CtnLength,8,4)+'\'+STR(l.CtnWidth,8,4)+'\'+STR(l.CtnHeight,8,4) as Dimension, l.CtnUnit, 
+Ctn = concat('(CTN#:',stuff((select concat(',',CTNNo) from @tempPackingListDetail where RefNo = t.RefNo for xml path('')),1,1,''),')')
+from @tempPackingListDetail t
+left join LocalItem l on l.RefNo = t.RefNo
+order by RefNo", PackingListID);
             result = DBProxy.Current.Select(null, sqlCmd, out ctnDim);
             if (!result)
             {
@@ -1603,7 +1673,7 @@ where   p.ID = '{0}'
             StringBuilder ctnDimension = new StringBuilder();
             foreach (DataRow dr in CtnDim.Rows)
             {
-                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"])));
+                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}, {4}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"]), MyUtility.Convert.GetString(dr["CTN"])));
             }
 
             foreach (DataRow dr in QtyCtn.Rows)

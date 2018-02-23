@@ -20,13 +20,13 @@ namespace Sci.Production.Warehouse
     {
         DataTable dt;
 
-        int selectindex = 0;
+        private string category;
+
         public R18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             this.EditMode = true;
-            comboCategory.SelectedIndex = 0;
         }
 
         protected override bool ValidateInput()
@@ -43,7 +43,12 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("SP#, Ref#, Location, Buyer Delivery, SCI Delivery, Supplier can't be empty!!");
                 return false;
             }
-            selectindex = comboCategory.SelectedIndex;
+
+            category = string.Empty;
+            if (!MyUtility.Check.Empty(this.comboCategory.Text))
+            {
+                category = this.comboCategory.SelectedValue.ToString();
+            }
             return base.ValidateInput();
         }
 
@@ -104,7 +109,6 @@ namespace Sci.Production.Warehouse
             string colorid = txtColor.Text;
             string factoryid = txtfactory.Text;
             string sizespec = txtSizeCode.Text;
-
             bool chkbalance = checkBalanceQty.Checked;
             
 
@@ -259,20 +263,10 @@ with cte as (
             sqlcmd.Append(@"
 ) select * from cte where 1= 1 ");
             if (chkbalance) sqlcmd.Append(" and balanceqty > 0");
-            switch (selectindex)
+
+            if (!MyUtility.Check.Empty(category))
             {
-                case 0:
-                    sqlcmd.Append(@" and (Category = 'B' or Category = 'S')");
-                    break;
-                case 1:
-                    sqlcmd.Append(@" and Category = 'B' ");
-                    break;
-                case 2:
-                    sqlcmd.Append(@" and (Category = 'S')");
-                    break;
-                case 3:
-                    sqlcmd.Append(@" and (Category = 'M' )");
-                    break;
+                sqlcmd.Append($"and Category in ({category})");
             }
 
             if (!MyUtility.Check.Empty(style)) sqlcmd.Append(string.Format(@" and StyleID ='{0}'", style));
