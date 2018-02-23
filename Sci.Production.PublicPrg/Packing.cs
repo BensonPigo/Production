@@ -1363,7 +1363,7 @@ CLOSE cursor_PackingListDetail
 DEALLOCATE cursor_PackingListDetail
 
 select distinct t.RefNo,l.Description, STR(l.CtnLength,8,4)+'\'+STR(l.CtnWidth,8,4)+'\'+STR(l.CtnHeight,8,4) as Dimension, l.CtnUnit, 
-Ctn = concat('(CTN#:',(select CTNNo+',' from @tempPackingListDetail where RefNo = t.RefNo for xml path('')),')')
+Ctn = concat('(CTN#:',stuff((select concat(',',CTNNo) from @tempPackingListDetail where RefNo = t.RefNo for xml path('')),1,1,''),')')
 from @tempPackingListDetail t
 left join LocalItem l on l.RefNo = t.RefNo
 order by RefNo", PackingListID);
