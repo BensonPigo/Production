@@ -23,7 +23,6 @@ namespace Sci.Production.Quality
         {
 
             InitializeComponent();
-            this.comboCategory.Type = "Pms_GMT_Simple";
             this.comboCategory.SelectedIndex = 0;
 
             DataTable Material = null;

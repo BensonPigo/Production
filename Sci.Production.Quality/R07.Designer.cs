@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.comboMaterialType = new Sci.Win.UI.ComboBox();
             this.txtsupplier = new Sci.Production.Class.txtsupplier();
@@ -55,7 +56,6 @@
             this.labelEstCuttingDate = new Sci.Win.UI.Label();
             this.labelSewingInLineDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -99,6 +99,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(499, 478);
             this.panel1.TabIndex = 96;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(161, 320);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(185, 24);
+            this.comboCategory.TabIndex = 121;
+            this.comboCategory.Type = "Pms_MtlCategory";
             // 
             // comboFactory
             // 
@@ -362,18 +374,6 @@
             this.labelSCIDelivery.Size = new System.Drawing.Size(135, 23);
             this.labelSCIDelivery.TabIndex = 96;
             this.labelSCIDelivery.Text = "SCI Delivery";
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(161, 320);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(185, 24);
-            this.comboCategory.TabIndex = 121;
-            this.comboCategory.Type = null;
             // 
             // R07
             // 

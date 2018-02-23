@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.radioPanel = new Sci.Win.UI.RadioPanel();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.radioDetail = new Sci.Win.UI.RadioButton();
             this.radioSummary = new Sci.Win.UI.RadioButton();
             this.labelReportType = new Sci.Win.UI.Label();
@@ -38,7 +39,6 @@
             this.labelCategory = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,6 +61,18 @@
             this.radioPanel.Name = "radioPanel";
             this.radioPanel.Size = new System.Drawing.Size(440, 217);
             this.radioPanel.TabIndex = 94;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(128, 63);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(185, 24);
+            this.comboCategory.TabIndex = 122;
+            this.comboCategory.Type = "Pms_ReportForProduct";
             // 
             // radioDetail
             // 
@@ -150,18 +162,6 @@
             this.labelSCIDelivery.Size = new System.Drawing.Size(93, 23);
             this.labelSCIDelivery.TabIndex = 98;
             this.labelSCIDelivery.Text = "SCI Delivery";
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(128, 63);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(185, 24);
-            this.comboCategory.TabIndex = 122;
-            this.comboCategory.Type = null;
             // 
             // R05
             // 

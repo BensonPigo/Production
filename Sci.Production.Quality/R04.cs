@@ -26,8 +26,6 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            this.comboCategory.Type = "Pms_ReportCategory";
-            this.comboCategory.SelectedIndex = 0;
             DataTable M;
             DBProxy.Current.Select(null, "select '' as id union all select distinct id from MDivision WITH (NOLOCK)  ", out M);
             MyUtility.Tool.SetupCombox(comboM, 1, M);
@@ -94,7 +92,7 @@ namespace Sci.Production.Quality
                 sqlArrDate.Add("WhseArrival <= @DateArrEnd");
                 lis.Add(new SqlParameter("@DateArrEnd", DateArrEnd));
             }
-            if (!this.comboCategory.SelectedItem.ToString().Empty())
+            if (!MyUtility.Check.Empty(this.comboCategory.Text))
             {
                 sqlWheres.Add($"Category in ({this.comboCategory.SelectedValue})");
             }

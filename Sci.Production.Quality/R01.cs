@@ -26,8 +26,6 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            this.comboCategory.Type = "Pms_ReportCategory";
-            this.comboCategory.SelectedIndex = 1;
             this.comboOverallResultStatus.SelectedIndex = 0;
             
             print.Enabled = false;
@@ -140,7 +138,7 @@ namespace Sci.Production.Quality
             {
                 sqlWheres.Add("P.Refno = @Ref");
                 lis.Add(new SqlParameter("@Ref", Ref));
-            } if (!this.comboCategory.SelectedItem.ToString().Empty())
+            } if (!MyUtility.Check.Empty(this.comboCategory.Text))
             {
                 if (Category != "")
                 {

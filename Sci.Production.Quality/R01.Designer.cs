@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.txtSeason = new Sci.Production.Class.txtseason();
+            this.txtBrand = new Sci.Production.Class.txtbrand();
+            this.txtsupplier = new Sci.Production.Class.txtsupplier();
             this.comboOverallResultStatus = new Sci.Win.UI.ComboBox();
             this.txtRefno = new Sci.Win.UI.TextBox();
             this.label13 = new Sci.Win.UI.Label();
@@ -53,10 +57,6 @@
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.labellastPhysicalInspDate = new Sci.Win.UI.Label();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.txtSeason = new Sci.Production.Class.txtseason();
-            this.txtBrand = new Sci.Production.Class.txtbrand();
-            this.txtsupplier = new Sci.Production.Class.txtsupplier();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,6 +93,46 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(491, 506);
             this.panel1.TabIndex = 94;
+            // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(192, 373);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(185, 24);
+            this.comboCategory.TabIndex = 51;
+            this.comboCategory.Type = "Pms_MtlCategory";
+            // 
+            // txtSeason
+            // 
+            this.txtSeason.BackColor = System.Drawing.Color.White;
+            this.txtSeason.BrandObjectName = null;
+            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeason.Location = new System.Drawing.Point(192, 249);
+            this.txtSeason.Name = "txtSeason";
+            this.txtSeason.Size = new System.Drawing.Size(135, 23);
+            this.txtSeason.TabIndex = 50;
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(192, 291);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(108, 23);
+            this.txtBrand.TabIndex = 28;
+            // 
+            // txtsupplier
+            // 
+            this.txtsupplier.DisplayBox1Binding = "";
+            this.txtsupplier.Location = new System.Drawing.Point(192, 414);
+            this.txtsupplier.Name = "txtsupplier";
+            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier.TabIndex = 27;
+            this.txtsupplier.TextBox1Binding = "";
             // 
             // comboOverallResultStatus
             // 
@@ -374,46 +414,6 @@
             this.labellastPhysicalInspDate.Size = new System.Drawing.Size(154, 23);
             this.labellastPhysicalInspDate.TabIndex = 0;
             this.labellastPhysicalInspDate.Text = "last Physical Insp Date";
-            // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(192, 373);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(185, 24);
-            this.comboCategory.TabIndex = 51;
-            this.comboCategory.Type = null;
-            // 
-            // txtSeason
-            // 
-            this.txtSeason.BackColor = System.Drawing.Color.White;
-            this.txtSeason.BrandObjectName = null;
-            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason.Location = new System.Drawing.Point(192, 249);
-            this.txtSeason.Name = "txtSeason";
-            this.txtSeason.Size = new System.Drawing.Size(135, 23);
-            this.txtSeason.TabIndex = 50;
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.White;
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(192, 291);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.Size = new System.Drawing.Size(108, 23);
-            this.txtBrand.TabIndex = 28;
-            // 
-            // txtsupplier
-            // 
-            this.txtsupplier.DisplayBox1Binding = "";
-            this.txtsupplier.Location = new System.Drawing.Point(192, 414);
-            this.txtsupplier.Name = "txtsupplier";
-            this.txtsupplier.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier.TabIndex = 27;
-            this.txtsupplier.TextBox1Binding = "";
             // 
             // R01
             // 

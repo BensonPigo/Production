@@ -28,8 +28,6 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            this.comboCategory.Type = "Pms_ReportCategory";
-            this.comboCategory.SelectedIndex = 0;
             DataTable Material = null;
             string sqlM = (@" 
                         SELECT distinct case fabrictype
@@ -146,7 +144,7 @@ namespace Sci.Production.Quality
             {
                 sqlWheres.Add("psd.Refno = @Ref");
                 lis.Add(new SqlParameter("@Ref", RefNo));
-            } if (!this.comboCategory.SelectedItem.ToString().Empty())
+            } if (!MyUtility.Check.Empty(this.comboCategory.Text))
             {
                 OWheres.Add($"O.Category in ({this.comboCategory.SelectedValue})");
             } if (!this.txtsupplier.Text.Empty())
