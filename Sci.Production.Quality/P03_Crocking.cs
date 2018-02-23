@@ -773,8 +773,11 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 MyUtility.Msg.WarningBox("Data not found!");
                 return;
             }
-
-            string submitDate = ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("yyyy")+"/"+ ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("MM")+"/"+ ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("dd");
+            string submitDate = string.Empty;
+            if (!MyUtility.Check.Empty(this.maindr["ReceiveSampleDate"]))
+            {
+                submitDate = ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("yyyy") + "/" + ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("MM") + "/" + ((DateTime)MyUtility.Convert.GetDate(this.maindr["ReceiveSampleDate"])).ToString("dd");
+            }
 
             string sqlcmd = $@"
 SELECT distinct oc.article,fd.InspDate,a.Name
@@ -819,7 +822,11 @@ order by fd.InspDate,oc.article
             {
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[j + 1];   // 取得工作表
                 worksheet.Cells[4, 3] = submitDate;
-                worksheet.Cells[4, 5] = ((DateTime)row["InspDate"]).ToString("yyyy")+"/"+ ((DateTime)row["InspDate"]).ToString("MM")+"/"+ ((DateTime)row["InspDate"]).ToString("dd");
+                if (!MyUtility.Check.Empty(row["InspDate"]))
+                {
+                    worksheet.Cells[4, 5] = ((DateTime)row["InspDate"]).ToString("yyyy") + "/" + ((DateTime)row["InspDate"]).ToString("MM") + "/" + ((DateTime)row["InspDate"]).ToString("dd");
+                }
+                
                 worksheet.Cells[6, 9] = row["article"];
                 worksheet.Cells[4, 7] = txtSP.Text;
                 worksheet.Cells[4, 10] = txtBrand.Text;
