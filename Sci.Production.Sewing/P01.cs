@@ -1335,6 +1335,42 @@ where not exists (select 1
             }
             #endregion
 
+            #region 檢查SewingOutput_Detail與SewingOutput_Detail_Detail QAQty是否相符，不相符就更新
+            string chkQAQty_sql = $@"select SD.OrderId,SD.ComboType,SD.QAQty as OriginalQty,SDD_Qty as ActualQty ,ExceesQty =SD.QAQty-SDD_Qty 
+from  SewingOutput_Detail SD WITH (NOLOCK)
+outer apply 
+( 
+select isnull(SUM(SDD.QAQty),0) as SDD_Qty from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.ID=SD.ID and SDD.SewingOutput_DetailUKey=SD.UKey 
+) as SDD 
+where SD.QAQty!=SDD.SDD_Qty and SD.ID = '{this.CurrentMaintain["ID"]}'";
+
+            // 有QAQty不相等的資料
+            if (MyUtility.Check.Seek(chkQAQty_sql))
+            {
+                string updQAQty_sql = $@"update SD set  SD.QAQty = SDD.SDD_Qty,SD.InlineQty = SDD.SDD_Qty,SD.DefectQty = 0 
+from  SewingOutput_Detail SD WITH (NOLOCK)
+outer apply 
+( 
+select isnull(SUM(SDD.QAQty),0) as SDD_Qty from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.ID=SD.ID and SDD.SewingOutput_DetailUKey=SD.UKey 
+) as SDD 
+where SD.QAQty!=SDD.SDD_Qty and SD.ID = '{this.CurrentMaintain["ID"]}'";
+
+                // 更新SewingOutput_Detail.QAQty
+                DualResult updQAQty_result = DBProxy.Current.Execute(null, updQAQty_sql);
+                if (!updQAQty_result)
+                {
+                    this.ShowErr(updQAQty_result);
+                }
+
+                // 重新計算SewingOutput QAQty,InlineQty,DefectQty,TMS,Efficiency,detail workhours
+                // 觸發edit->share <working hours> to SP#->save按鈕事件依照原本流程重算重存
+                this.toolbar.cmdEdit.PerformClick();
+                this.btnShareWorkingHoursToSP.PerformClick();
+                this.toolbar.cmdSave.PerformClick();
+                return;
+            }
+            #endregion
+
             #region 更新 SewingOutputID 子單 WorkHour
             List<SqlParameter> listSqlParmeter = new List<SqlParameter>();
             listSqlParmeter.Add(new SqlParameter("@SewingID", this.CurrentMaintain["ID"]));
