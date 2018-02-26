@@ -32,7 +32,7 @@ BEGIN
             and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID)
             group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
 
-            Select a.poid,a.id,a.article,a.sizecode,order_cpu = o.cpu,min(isnull(b.cutqty,0)) as cutqty ,cpu = o.cpu*min(isnull(b.cutqty,0)),min(isnull(b.pre_cutqty,0)) as pre_cutqty ,day_cpu = o.cpu*min(isnull(b.pre_cutqty,0))
+            Select a.poid,a.id,a.article,a.sizecode,order_cpu = o.cpu,min(isnull(b.cutqty,0)) as cutqty ,cpu = o.cpu*min(isnull(b.cutqty,0)),min(isnull(b.pre_cutqty,0)) as pre_cutqty ,pre_cpu = o.cpu*min(isnull(b.pre_cutqty,0))
 			into #tmp3
             from #tmp1 a 
             left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
@@ -45,7 +45,7 @@ BEGIN
 		BEGIN
 			Declare @ActTTCPU numeric(10,3),@PPH numeric(8,2),@ActGarment int,@ncpu numeric
 
-			select @ncpu = sum((a.cutqty - isnull(cw.Qty,0)) * a.order_cpu),@ActTTCPU =sum(a.cpu) - sum(a.day_cpu),@ActGarment = sum(a.cutqty)  - sum(a.pre_cutqty) 
+			select @ncpu = sum((a.cutqty - isnull(cw.Qty,0)) * a.order_cpu),@ActTTCPU =sum(a.cpu) - sum(a.pre_cpu),@ActGarment = sum(a.cutqty)  - sum(a.pre_cutqty) 
 			from #tmp3 a
 			left join CuttingOutput_WIP cw WITH (NOLOCK) on cw.Orderid = a.id and cw.Article = a.Article and cw.Size = a.SizeCode
 
@@ -75,29 +75,13 @@ BEGIN
 		END
 
 		--merge CuttingOutput_WIP 
-		IF(@Run_type = 'Confirm')
-		BEGIN
-			MERGE CuttingOutput_WIP AS T
+		MERGE CuttingOutput_WIP AS T
 			USING #tmp3 AS S
 			ON (T.Orderid = S.id and T.Article = S.Article and T.Size = S.SizeCode) 
 			WHEN NOT MATCHED BY TARGET 
 			    THEN INSERT(Orderid,Article,Size ,Qty) VALUES(S.id,  S.Article,  S.SizeCode  ,S.cutqty)
 			WHEN MATCHED 
 			    THEN UPDATE SET T.Qty = S.cutqty;
-		END
-		ELSE
-		BEGIN
-			--UnConfirm 更新不包含該單當天的資料
-			MERGE CuttingOutput_WIP AS T
-			USING #tmp3 AS S
-			ON (T.Orderid = S.id and T.Article = S.Article and T.Size = S.SizeCode) 
-			WHEN NOT MATCHED BY TARGET 
-			    THEN INSERT(Orderid,Article,Size ,Qty) VALUES(S.id,  S.Article,  S.SizeCode  ,S.pre_cutqty)
-			WHEN MATCHED 
-			    THEN UPDATE SET T.Qty = S.cutqty;
-		END
-		
-
 
 		--update Cutting.FirstCutDate/ LastCutDate 
 		update c
