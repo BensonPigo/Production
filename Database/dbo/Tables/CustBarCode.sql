@@ -6,7 +6,7 @@
     [SizeCode] VARCHAR (8)  NOT NULL,
     [BarCode]  VARCHAR (30) NULL,
     [EditName] VARCHAR (10) NULL,
-    [EditDate] DATETIME     NOT NULL,
+    [EditDate] DATETIME     NULL,
     CONSTRAINT [PK_CustBarCode] PRIMARY KEY CLUSTERED ([BrandID] ASC, [CustPONo] ASC, [StyleID] ASC, [Article] ASC, [SizeCode] ASC)
 );
 
