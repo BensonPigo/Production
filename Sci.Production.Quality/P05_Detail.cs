@@ -1128,6 +1128,7 @@ SET IDENTITY_INSERT oven off";
                 return;
             }
             DataTable dtOrders;
+            string StyleUkey;
             string StyleID;
             string SeasonID;
             string CustPONo;
@@ -1139,13 +1140,15 @@ SET IDENTITY_INSERT oven off";
             }
             if (dtOrders.Rows.Count == 0)
             {
-                StyleID = "";
+                StyleUkey = "";
                 SeasonID = "";
                 CustPONo = "";
                 BrandID = "";
+                StyleID = "";
             }
             else
             {
+                StyleUkey = dtOrders.Rows[0]["StyleUkey"].ToString();
                 StyleID = dtOrders.Rows[0]["StyleID"].ToString();
                 SeasonID = dtOrders.Rows[0]["SeasonID"].ToString();
                 CustPONo = dtOrders.Rows[0]["CustPONo"].ToString();
@@ -1174,7 +1177,7 @@ SET IDENTITY_INSERT oven off";
                 worksheet.Cells[6, 3] = StyleID;
                 worksheet.Cells[6, 6] = CustPONo;
                 worksheet.Cells[6, 9] = txtArticle.Text;
-                worksheet.Cells[7, 3] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where id='{StyleID}'", null));
+                worksheet.Cells[7, 3] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where Ukey ='{StyleUkey}'", null));
                 worksheet.Cells[7, 6] = SeasonID;
                 worksheet.Cells[10, 3] = this.numTemperature.Value+ "˚C";
                 worksheet.Cells[10, 7] = this.numTime.Value + "hrs";               
