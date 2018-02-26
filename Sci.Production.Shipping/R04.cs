@@ -114,10 +114,10 @@ select 	oq.BuyerDelivery
 		,oq.OutstandingRemark
 from Orders o WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
-inner join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 left join Brand b WITH (NOLOCK) on o.BrandID=b.id
-where 1=1 and ot.IsGMTMaster != 1
+where 1=1 and isnull(ot.IsGMTMaster,0) != 1
 and o.PulloutComplete=0 and o.Qty > 0"));
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))

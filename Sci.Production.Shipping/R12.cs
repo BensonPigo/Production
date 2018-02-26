@@ -110,7 +110,7 @@ From GMTBooking g
 Left join PackingList p on g.ID = p.InvNo
 Left join PackingList_Detail pd on p.ID = pd.ID
 Inner join Orders o on pd.OrderID = o.ID
-inner join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and ot.IsGMTMaster != 1
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join Brand b on b.ID = o.BrandID
 outer apply
 (	

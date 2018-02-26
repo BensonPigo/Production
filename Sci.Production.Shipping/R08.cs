@@ -85,9 +85,9 @@ from Orders o WITH (NOLOCK)
 inner join Order_Qty q WITH (NOLOCK) on q.ID = o.ID
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.Id = oqd.Id and oq.Seq = oqd.Seq and q.Article = oqd.Article and q.SizeCode = oqd.SizeCode
-inner join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-where 1=1 and ot.IsGMTMaster != 1");
+where 1=1 and isnull(ot.IsGMTMaster,0) != 1");
 
             if (!MyUtility.Check.Empty(this.sciDlv1))
             {

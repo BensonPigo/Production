@@ -106,7 +106,7 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 					,0),3)
 
 From Orders o
-inner join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and ot.IsGMTMaster != 1
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 outer apply
 (
