@@ -164,6 +164,7 @@ namespace Sci.Production.Logistic
                                 string line;
                                 try
                                 {
+                                    string forsizesplit = string.Empty;
                                     while ((line = reader.ReadLine()) != null)
                                     {
                                         DataRow newRow = notdist.NewRow();
@@ -183,7 +184,20 @@ namespace Sci.Production.Logistic
                                         newRow["styleid"] = line.Substring(550, 8).TrimEnd();
                                         newRow["stylename"] = newRow["styleid"] + "-" + MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
                                         newRow["Article"] = line.Substring(558, 10).TrimEnd();
-                                        newRow["Size"] = line.Substring(595, 5).TrimEnd().TrimStart('0');
+                                        string size = line.Substring(595, 15).TrimEnd().TrimStart('0');
+                                        IList<string> sizeSplit = size.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                                        if (sizeSplit.Count > 1)
+                                        {
+                                            forsizesplit = sizeSplit[1].Trim();
+                                        }
+
+                                        string size2 = sizeSplit[0].TrimEnd().TrimStart('0');
+                                        if (!forsizesplit.Empty() && size2.Contains(forsizesplit))
+                                        {
+                                            size2 = size2.Replace(forsizesplit, string.Empty);
+                                        }
+
+                                        newRow["Size"] = size2;
                                         string xxxBarCode = line.Substring(632, 40).Trim();
                                         IList<string> sl = xxxBarCode.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                                         newRow["BarCode"] = sl[sl.Count - 1].Substring(sl[sl.Count - 1].Length - 12, 12);
