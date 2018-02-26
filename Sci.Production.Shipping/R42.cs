@@ -21,7 +21,7 @@ namespace Sci.Production.Shipping
         private DateTime? date2;
         private string mDivision;
         private string factory;
-        private int category;
+        private string category;
 
         /// <summary>
         /// R42
@@ -31,13 +31,11 @@ namespace Sci.Production.Shipping
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "Bulk,Sample,Bulk+Sample");
             DataTable mDivision, factory;
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboCategory.SelectedIndex = 2;
             this.comboM.Text = Sci.Env.User.Keyword;
             this.comboFactory.SelectedIndex = -1;
         }
@@ -60,7 +58,7 @@ namespace Sci.Production.Shipping
 
             this.date1 = this.dateBuyerDelivery.Value1;
             this.date2 = this.dateBuyerDelivery.Value2;
-            this.category = this.comboCategory.SelectedIndex;
+            this.category = this.comboCategory.SelectedValue.ToString();
             this.mDivision = this.comboM.Text;
             this.factory = this.comboFactory.Text;
             return base.ValidateInput();
@@ -93,10 +91,11 @@ from (
 	left join Order_Article oa WITH (NOLOCK) on o.ID = oa.ID and oa.Article = oqd.Article
 	left join Order_SizeCode os WITH (NOLOCK) on o.ID = os.ID and os.SizeCode = oqd.SizeCode
 where 1=1
-and {0}
 and o.LocalOrder = 0
 and o.Junk = 0
-and oqd.Qty > 0", this.category == 0 ? "o.Category = 'B'" : this.category == 1 ? "o.Category = 'S'" : "(o.Category = 'B' or o.Category = 'S')"));
+and oqd.Qty > 0"));
+
+            sqlCmd.Append($" and o.Category in ({this.category})");
 
             if (!MyUtility.Check.Empty(this.date1))
             {

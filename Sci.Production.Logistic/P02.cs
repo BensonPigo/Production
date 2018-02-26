@@ -393,6 +393,7 @@ insert into ClogReceive (
     , CTNStartNo
     , ClogLocationId
     , AddDate
+    , AddName
 ) values (
     GETDATE()
     , '{0}'
@@ -401,12 +402,14 @@ insert into ClogReceive (
     , '{3}'
     , '{4}'
     , GETDATE()
+    , '{5}'
 );",
                     Env.User.Keyword,
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),
-                    MyUtility.Convert.GetString(dr["ClogLocationId"])));
+                    MyUtility.Convert.GetString(dr["ClogLocationId"]),
+                    Sci.Env.User.UserID));
 
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(

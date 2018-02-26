@@ -55,7 +55,8 @@ namespace Sci.Production.Logistic
                 .Text("FactoryID", header: "Factory", width: Widths.Auto(), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.Auto(), iseditable: false)
-                .DateTime("AddDate", header: "Create Date", width: Widths.Auto(), iseditable: false);
+                .DateTime("AddDate", header: "Create Date", width: Widths.Auto(), iseditable: false)
+                .Text("AddName", header: "AddName", width: Widths.Auto(), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -128,6 +129,7 @@ select  1 as selected
         , ClogLocationId
         , AddDate
         , rn = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+        , AddName
 from (
     select  cr.ReceiveDate
             , cr.PackingListID
@@ -158,6 +160,7 @@ from (
             , cr.ClogLocationId
             , cr.AddDate
             , pd.Id
+			, AddName = (select concat(id,'-',Name) from pass1 where id = cr.AddName)
     from ClogReceive cr WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID

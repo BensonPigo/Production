@@ -204,7 +204,7 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P03";
-            this.Text = "P03. Assing Garment Order Sewing output";
+            this.Text = "P03. Assign Garment Order Sewing output";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.grid, 0);
             this.Controls.SetChildIndex(this.buttonSave, 0);

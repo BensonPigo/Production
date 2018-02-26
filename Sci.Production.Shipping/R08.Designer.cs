@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelCutOffDate = new Sci.Win.UI.Label();
@@ -43,8 +44,8 @@
             this.txtCustcd = new Sci.Production.Class.txtcustcd();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
             this.checkOnlyPrintTheIrregularData = new Sci.Win.UI.CheckBox();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -61,7 +62,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 12);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(95, 23);
@@ -70,7 +70,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(13, 48);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
@@ -79,7 +78,6 @@
             // 
             // labelCutOffDate
             // 
-            this.labelCutOffDate.Lines = 0;
             this.labelCutOffDate.Location = new System.Drawing.Point(13, 84);
             this.labelCutOffDate.Name = "labelCutOffDate";
             this.labelCutOffDate.Size = new System.Drawing.Size(95, 23);
@@ -88,7 +86,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 120);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(95, 23);
@@ -97,7 +94,6 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Lines = 0;
             this.labelCustCD.Location = new System.Drawing.Point(13, 156);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(95, 23);
@@ -106,7 +102,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 192);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(95, 23);
@@ -115,7 +110,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 228);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(95, 23);
@@ -124,7 +118,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 264);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(95, 23);
@@ -133,6 +126,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(112, 12);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -141,6 +148,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(112, 48);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -149,6 +170,20 @@
             // 
             // dateCutOffDate
             // 
+            // 
+            // 
+            // 
+            this.dateCutOffDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCutOffDate.DateBox1.Name = "";
+            this.dateCutOffDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateCutOffDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCutOffDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateCutOffDate.DateBox2.Name = "";
+            this.dateCutOffDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateCutOffDate.DateBox2.TabIndex = 1;
             this.dateCutOffDate.IsRequired = false;
             this.dateCutOffDate.Location = new System.Drawing.Point(112, 84);
             this.dateCutOffDate.Name = "dateCutOffDate";
@@ -196,17 +231,6 @@
             this.comboFactory.Size = new System.Drawing.Size(74, 24);
             this.comboFactory.TabIndex = 108;
             // 
-            // comboCategory
-            // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(112, 264);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(196, 24);
-            this.comboCategory.TabIndex = 109;
-            // 
             // checkOnlyPrintTheIrregularData
             // 
             this.checkOnlyPrintTheIrregularData.AutoSize = true;
@@ -218,11 +242,23 @@
             this.checkOnlyPrintTheIrregularData.Text = "Only Print the irregular data";
             this.checkOnlyPrintTheIrregularData.UseVisualStyleBackColor = true;
             // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(112, 263);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(238, 24);
+            this.comboCategory.TabIndex = 140;
+            this.comboCategory.Type = "Pms_GMT_Simple";
+            // 
             // R08
             // 
             this.ClientSize = new System.Drawing.Size(526, 357);
-            this.Controls.Add(this.checkOnlyPrintTheIrregularData);
             this.Controls.Add(this.comboCategory);
+            this.Controls.Add(this.checkOnlyPrintTheIrregularData);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.txtCustcd);
@@ -259,8 +295,8 @@
             this.Controls.SetChildIndex(this.txtCustcd, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
-            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.Controls.SetChildIndex(this.checkOnlyPrintTheIrregularData, 0);
+            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -283,7 +319,7 @@
         private Class.txtcustcd txtCustcd;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
-        private Win.UI.ComboBox comboCategory;
         private Win.UI.CheckBox checkOnlyPrintTheIrregularData;
+        private Class.comboDropDownList comboCategory;
     }
 }
