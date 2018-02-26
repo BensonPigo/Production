@@ -1019,7 +1019,7 @@ where id='{ID}'";
         private void btnToPDF_Click(object sender, EventArgs e)
         {
             DataTable dtSubDate;
-            if (!(result=DBProxy.Current.Select(null,$@"select distinct SubmitDate from ColorFastness_Detail WITH (NOLOCK) where id='{ID}'",out dtSubDate)))
+            if (!(result=DBProxy.Current.Select(null,$@"select distinct CONVERT(varchar(100), SubmitDate, 111) as SubmitDate from ColorFastness_Detail WITH (NOLOCK) where id='{ID}'",out dtSubDate)))
             {
                 ShowErr(result);
                 return;
@@ -1068,50 +1068,51 @@ where id='{ID}'";
             for (int i = 0; i < dtSubDate.Rows.Count; i++)
             {
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
-                worksheet.Cells[4, 4] = dtSubDate.Rows[i]["submitDate"];
-                worksheet.Cells[4, 7] = this.dateTestDate.Text;
-                worksheet.Cells[4, 9] = this.txtSP.Text;
-                worksheet.Cells[4, 13] = BrandID;
+                worksheet.Cells[3, 4] = dtSubDate.Rows[i]["submitDate"].ToString();
+                worksheet.Cells[3, 7] = this.dateTestDate.Text;
+                worksheet.Cells[3, 9] = this.txtSP.Text;
+                worksheet.Cells[3, 13] = BrandID;
 
-                worksheet.Cells[6, 4] = StyleID;
-                worksheet.Cells[6, 10] = CustPONo;
-                worksheet.Cells[6, 13] = this.txtArticle.Text;
-                worksheet.Cells[7, 4] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where id='{StyleID}'", null));
-                worksheet.Cells[7, 10] = SeasonID;
+                worksheet.Cells[5, 4] = StyleID;
+                worksheet.Cells[5, 10] = CustPONo;
+                worksheet.Cells[5, 13] = this.txtArticle.Text;
+                worksheet.Cells[6, 4] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where id='{StyleID}'", null));
+                worksheet.Cells[6, 10] = SeasonID;
 
-                worksheet.Cells[10, 4] = MyUtility.Check.Empty(this.comboTempt.Text) ? "0" : this.comboTempt.Text + "˚C";
-                worksheet.Cells[10, 7] = MyUtility.Check.Empty(this.comboCycle.Text) ? "0" : this.comboCycle.Text;
-                worksheet.Cells[10, 9] = this.comboDetergent.Text;
-                worksheet.Cells[11, 4] = this.comboMachineUs.Text;
-                worksheet.Cells[11, 7] = this.comboDryProcess.Text;
-                worksheet.Cells[51, 8] = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
+                worksheet.Cells[9, 4] = MyUtility.Check.Empty(this.comboTempt.Text) ? "0" : this.comboTempt.Text + "˚C";
+                worksheet.Cells[9, 7] = MyUtility.Check.Empty(this.comboCycle.Text) ? "0" : this.comboCycle.Text;
+                worksheet.Cells[9, 9] = this.comboDetergent.Text;
+                worksheet.Cells[10, 4] = this.comboMachineUs.Text;
+                worksheet.Cells[10, 7] = this.comboDryProcess.Text;
+                worksheet.Cells[45, 8] = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
 
                 DataTable dtBody = (DataTable)gridbs.DataSource;
                 DataRow[] dr = dtBody.Select((MyUtility.Check.Empty(dtSubDate.Rows[i]["submitDate"])) ? $@"submitDate is null" : $"submitDate = '{dtSubDate.Rows[i]["submitDate"]}'");
                 for (int ii = 1; ii < dr.Length; ii++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A14:A14", Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A13:A13", Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);                    
-                    Marshal.ReleaseComObject(rngToInsert);
+                    Marshal.ReleaseComObject(rngToInsert);                    
                 }
 
                 int k = 0;
                 foreach (DataRow row in dr)
-                {                    
-                    worksheet.Cells[14 + k, 2] = row["ColorFastnessGroup"];
-                    worksheet.Cells[14 + k, 3] = row["SEQ"].ToString();
-                    worksheet.Cells[14 + k, 4] = row["Roll"];
-                    worksheet.Cells[14 + k, 5] = row["Dyelot"].ToString();
-                    worksheet.Cells[14 + k, 6] = row["Refno"];
-                    worksheet.Cells[14 + k, 7] = row["Colorid"];
-                    worksheet.Cells[14 + k, 8] = row["changeScale"].ToString();
-                    worksheet.Cells[14 + k, 9] = row["ResultChange"];
-                    worksheet.Cells[14 + k, 10] = row["StainingScale"].ToString();
-                    worksheet.Cells[14 + k, 11] = row["ResultStain"];
-                    worksheet.Cells[14 + k, 12] = row["Remark"].ToString().Trim();
-                    Microsoft.Office.Interop.Excel.Range rang = worksheet.Range[worksheet.Cells[2][14 + k], worksheet.Cells[12][14 + k]];
+                {
+                    Microsoft.Office.Interop.Excel.Range rang = worksheet.Range[worksheet.Cells[2][13 + k], worksheet.Cells[12][13 + k]];
                     rang.NumberFormat = "@";
+                    worksheet.Cells[13 + k, 2] = row["ColorFastnessGroup"];
+                    worksheet.Cells[13 + k, 3] = row["SEQ"].ToString();
+                    worksheet.Cells[13 + k, 4] = row["Roll"];
+                    worksheet.Cells[13 + k, 5] = row["Dyelot"].ToString();
+                    worksheet.Cells[13 + k, 6] = row["Refno"];
+                    worksheet.Cells[13 + k, 7] = row["Colorid"];
+                    worksheet.Cells[13 + k, 8] = row["changeScale"].ToString();
+                    worksheet.Cells[13 + k, 9] = row["ResultChange"];
+                    worksheet.Cells[13 + k, 10] = row["StainingScale"].ToString();
+                    worksheet.Cells[13 + k, 11] = row["ResultStain"];
+                    worksheet.Cells[13 + k, 12] = row["Remark"].ToString().Trim();                    
                     rang.Font.Bold = false;
+                    rang.Font.Size = 12;
                     // 水平,垂直置中
                     rang.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                     rang.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
