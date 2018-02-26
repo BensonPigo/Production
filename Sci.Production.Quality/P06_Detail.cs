@@ -1032,7 +1032,7 @@ where id='{ID}'";
             }
 
             DataTable dtOrders;
-            string StyleID, SeasonID, CustPONo, BrandID;
+            string StyleID, SeasonID, CustPONo, BrandID, StyleUkey;
             if (!(result = DBProxy.Current.Select(null, $@"select * from Orders WITH (NOLOCK) where poid='{PoID}'", out dtOrders)))
             {
                 ShowErr(result);
@@ -1044,10 +1044,12 @@ where id='{ID}'";
                 SeasonID = string.Empty;
                 CustPONo = string.Empty;
                 BrandID = string.Empty;
+                StyleUkey = string.Empty;
             }
             else
             {
                 StyleID = dtOrders.Rows[0]["StyleID"].ToString();
+                StyleUkey = dtOrders.Rows[0]["StyleUkey"].ToString();
                 SeasonID = dtOrders.Rows[0]["SeasonID"].ToString();
                 CustPONo = dtOrders.Rows[0]["CustPONo"].ToString();
                 BrandID = dtOrders.Rows[0]["BrandID"].ToString();
@@ -1076,7 +1078,7 @@ where id='{ID}'";
                 worksheet.Cells[5, 4] = StyleID;
                 worksheet.Cells[5, 10] = CustPONo;
                 worksheet.Cells[5, 13] = this.txtArticle.Text;
-                worksheet.Cells[6, 4] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where id='{StyleID}'", null));
+                worksheet.Cells[6, 4] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where ukey='{StyleUkey}'", null));
                 worksheet.Cells[6, 10] = SeasonID;
 
                 worksheet.Cells[9, 4] = MyUtility.Check.Empty(this.comboTempt.Text) ? "0" : this.comboTempt.Text + "˚C";
