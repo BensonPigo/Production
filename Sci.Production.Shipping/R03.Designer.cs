@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelPulloutDate = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
@@ -37,7 +38,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -54,7 +55,6 @@
             // 
             // labelPulloutDate
             // 
-            this.labelPulloutDate.Lines = 0;
             this.labelPulloutDate.Location = new System.Drawing.Point(13, 12);
             this.labelPulloutDate.Name = "labelPulloutDate";
             this.labelPulloutDate.Size = new System.Drawing.Size(80, 23);
@@ -63,7 +63,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 48);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(80, 23);
@@ -72,7 +71,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 84);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(80, 23);
@@ -81,7 +79,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 120);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(80, 23);
@@ -90,7 +87,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 156);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(80, 23);
@@ -99,6 +95,20 @@
             // 
             // datePulloutDate
             // 
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePulloutDate.DateBox1.Name = "";
+            this.datePulloutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.datePulloutDate.DateBox2.Name = "";
+            this.datePulloutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox2.TabIndex = 1;
             this.datePulloutDate.IsRequired = false;
             this.datePulloutDate.Location = new System.Drawing.Point(97, 12);
             this.datePulloutDate.Name = "datePulloutDate";
@@ -142,10 +152,11 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(97, 156);
+            this.comboCategory.Location = new System.Drawing.Point(97, 155);
             this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(120, 24);
-            this.comboCategory.TabIndex = 103;
+            this.comboCategory.Size = new System.Drawing.Size(280, 24);
+            this.comboCategory.TabIndex = 138;
+            this.comboCategory.Type = "Pms_GMT_Simple";
             // 
             // R03
             // 
@@ -192,6 +203,6 @@
         private Class.txtbrand txtbrand;
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
-        private Win.UI.ComboBox comboCategory;
+        private Class.comboDropDownList comboCategory;
     }
 }

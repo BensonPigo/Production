@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelFCRDate = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
-            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtcountryDestination = new Sci.Production.Class.txtcountry();
             this.txtcustcd = new Sci.Production.Class.txtcustcd();
@@ -48,6 +48,7 @@
             this.labelPulloutDate = new Sci.Win.UI.Label();
             this.txtbuyer = new Sci.Production.Class.txtbuyer();
             this.labelBuyer = new Sci.Win.UI.Label();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -65,7 +66,6 @@
             // 
             // labelFCRDate
             // 
-            this.labelFCRDate.Lines = 0;
             this.labelFCRDate.Location = new System.Drawing.Point(13, 12);
             this.labelFCRDate.Name = "labelFCRDate";
             this.labelFCRDate.Size = new System.Drawing.Size(95, 23);
@@ -74,7 +74,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 227);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(95, 23);
@@ -83,7 +82,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 334);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(95, 23);
@@ -92,23 +90,25 @@
             // 
             // dateFCRDate
             // 
+            // 
+            // 
+            // 
+            this.dateFCRDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateFCRDate.DateBox1.Name = "";
+            this.dateFCRDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFCRDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateFCRDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateFCRDate.DateBox2.Name = "";
+            this.dateFCRDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFCRDate.DateBox2.TabIndex = 1;
             this.dateFCRDate.IsRequired = false;
             this.dateFCRDate.Location = new System.Drawing.Point(112, 12);
             this.dateFCRDate.Name = "dateFCRDate";
             this.dateFCRDate.Size = new System.Drawing.Size(280, 23);
             this.dateFCRDate.TabIndex = 102;
-            // 
-            // txtdropdownlistCategory
-            // 
-            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlistCategory.FormattingEnabled = true;
-            this.txtdropdownlistCategory.IsSupportUnselect = true;
-            this.txtdropdownlistCategory.Location = new System.Drawing.Point(112, 333);
-            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
-            this.txtdropdownlistCategory.Size = new System.Drawing.Size(232, 24);
-            this.txtdropdownlistCategory.TabIndex = 111;
-            this.txtdropdownlistCategory.Type = "Fty_GMT_Simple";
             // 
             // txtbrand
             // 
@@ -140,7 +140,6 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(13, 299);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(95, 23);
@@ -149,7 +148,6 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Lines = 0;
             this.labelCustCD.Location = new System.Drawing.Point(13, 262);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(95, 23);
@@ -159,7 +157,6 @@
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(370, 122);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(22, 23);
@@ -190,7 +187,6 @@
             // 
             // labelGBNo
             // 
-            this.labelGBNo.Lines = 0;
             this.labelGBNo.Location = new System.Drawing.Point(13, 122);
             this.labelGBNo.Name = "labelGBNo";
             this.labelGBNo.Size = new System.Drawing.Size(95, 23);
@@ -199,6 +195,20 @@
             // 
             // dateInvoiceDate
             // 
+            // 
+            // 
+            // 
+            this.dateInvoiceDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateInvoiceDate.DateBox1.Name = "";
+            this.dateInvoiceDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateInvoiceDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateInvoiceDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateInvoiceDate.DateBox2.Name = "";
+            this.dateInvoiceDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateInvoiceDate.DateBox2.TabIndex = 1;
             this.dateInvoiceDate.IsRequired = false;
             this.dateInvoiceDate.Location = new System.Drawing.Point(112, 48);
             this.dateInvoiceDate.Name = "dateInvoiceDate";
@@ -207,7 +217,6 @@
             // 
             // labelInvoiceDate
             // 
-            this.labelInvoiceDate.Lines = 0;
             this.labelInvoiceDate.Location = new System.Drawing.Point(13, 48);
             this.labelInvoiceDate.Name = "labelInvoiceDate";
             this.labelInvoiceDate.Size = new System.Drawing.Size(95, 23);
@@ -216,6 +225,20 @@
             // 
             // datePulloutDate
             // 
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePulloutDate.DateBox1.Name = "";
+            this.datePulloutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePulloutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.datePulloutDate.DateBox2.Name = "";
+            this.datePulloutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.datePulloutDate.DateBox2.TabIndex = 1;
             this.datePulloutDate.IsRequired = false;
             this.datePulloutDate.Location = new System.Drawing.Point(112, 84);
             this.datePulloutDate.Name = "datePulloutDate";
@@ -224,7 +247,6 @@
             // 
             // labelPulloutDate
             // 
-            this.labelPulloutDate.Lines = 0;
             this.labelPulloutDate.Location = new System.Drawing.Point(13, 84);
             this.labelPulloutDate.Name = "labelPulloutDate";
             this.labelPulloutDate.Size = new System.Drawing.Size(95, 23);
@@ -242,16 +264,28 @@
             // 
             // labelBuyer
             // 
-            this.labelBuyer.Lines = 0;
             this.labelBuyer.Location = new System.Drawing.Point(13, 191);
             this.labelBuyer.Name = "labelBuyer";
             this.labelBuyer.Size = new System.Drawing.Size(95, 23);
             this.labelBuyer.TabIndex = 126;
             this.labelBuyer.Text = "Buyer";
             // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(111, 333);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(238, 24);
+            this.comboCategory.TabIndex = 141;
+            this.comboCategory.Type = "Pms_GMT_Simple";
+            // 
             // R12
             // 
             this.ClientSize = new System.Drawing.Size(580, 409);
+            this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.labelBuyer);
             this.Controls.Add(this.txtbuyer);
             this.Controls.Add(this.datePulloutDate);
@@ -266,7 +300,6 @@
             this.Controls.Add(this.txtcustcd);
             this.Controls.Add(this.labelDestination);
             this.Controls.Add(this.labelCustCD);
-            this.Controls.Add(this.txtdropdownlistCategory);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.dateFCRDate);
             this.Controls.Add(this.labelCategory);
@@ -280,7 +313,6 @@
             this.Controls.SetChildIndex(this.labelCategory, 0);
             this.Controls.SetChildIndex(this.dateFCRDate, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
-            this.Controls.SetChildIndex(this.txtdropdownlistCategory, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -298,6 +330,7 @@
             this.Controls.SetChildIndex(this.datePulloutDate, 0);
             this.Controls.SetChildIndex(this.txtbuyer, 0);
             this.Controls.SetChildIndex(this.labelBuyer, 0);
+            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -310,7 +343,6 @@
         private Win.UI.Label labelCategory;
         private Win.UI.DateRange dateFCRDate;
         private Class.txtbrand txtbrand;
-        private Class.txtdropdownlist txtdropdownlistCategory;
         private Class.txtcountry txtcountryDestination;
         private Class.txtcustcd txtcustcd;
         private Win.UI.Label labelDestination;
@@ -325,5 +357,6 @@
         private Win.UI.Label labelPulloutDate;
         private Class.txtbuyer txtbuyer;
         private Win.UI.Label labelBuyer;
+        private Class.comboDropDownList comboCategory;
     }
 }

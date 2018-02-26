@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -36,8 +37,8 @@
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelShipper = new Sci.Win.UI.Label();
             this.comboShipper = new Sci.Win.UI.ComboBox();
-            this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -55,7 +56,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(13, 12);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(95, 23);
@@ -64,7 +64,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 48);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(95, 23);
@@ -73,7 +72,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 123);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(95, 23);
@@ -82,7 +80,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(13, 159);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(95, 23);
@@ -91,6 +88,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(112, 12);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -110,7 +121,6 @@
             // 
             // labelShipper
             // 
-            this.labelShipper.Lines = 0;
             this.labelShipper.Location = new System.Drawing.Point(13, 84);
             this.labelShipper.Name = "labelShipper";
             this.labelShipper.Size = new System.Drawing.Size(95, 23);
@@ -128,18 +138,6 @@
             this.comboShipper.Size = new System.Drawing.Size(74, 24);
             this.comboShipper.TabIndex = 112;
             // 
-            // txtdropdownlistCategory
-            // 
-            this.txtdropdownlistCategory.BackColor = System.Drawing.Color.White;
-            this.txtdropdownlistCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtdropdownlistCategory.FormattingEnabled = true;
-            this.txtdropdownlistCategory.IsSupportUnselect = true;
-            this.txtdropdownlistCategory.Location = new System.Drawing.Point(112, 159);
-            this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
-            this.txtdropdownlistCategory.Size = new System.Drawing.Size(200, 24);
-            this.txtdropdownlistCategory.TabIndex = 111;
-            this.txtdropdownlistCategory.Type = "Fty_CMT_Forecast";
-            // 
             // txtbrand
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
@@ -149,11 +147,23 @@
             this.txtbrand.Size = new System.Drawing.Size(84, 23);
             this.txtbrand.TabIndex = 105;
             // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(112, 158);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.Size = new System.Drawing.Size(238, 24);
+            this.comboCategory.TabIndex = 142;
+            this.comboCategory.Type = "Pms_RepGMTForecast";
+            // 
             // R13
             // 
             this.ClientSize = new System.Drawing.Size(526, 225);
+            this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.comboShipper);
-            this.Controls.Add(this.txtdropdownlistCategory);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.dateBuyerDelivery);
@@ -173,11 +183,11 @@
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
-            this.Controls.SetChildIndex(this.txtdropdownlistCategory, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.comboShipper, 0);
+            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -192,8 +202,8 @@
         private Win.UI.DateRange dateBuyerDelivery;
         private Class.txtbrand txtbrand;
         private Win.UI.ComboBox comboFactory;
-        private Class.txtdropdownlist txtdropdownlistCategory;
         private Win.UI.Label labelShipper;
         private Win.UI.ComboBox comboShipper;
+        private Class.comboDropDownList comboCategory;
     }
 }

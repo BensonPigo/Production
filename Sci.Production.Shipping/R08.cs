@@ -27,7 +27,7 @@ namespace Sci.Production.Shipping
         private string custcd;
         private string mDivision;
         private string factory;
-        private int category;
+        private string category;
         private bool onlyirregular;
         private DataTable printData;
 
@@ -46,8 +46,6 @@ namespace Sci.Production.Shipping
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.SelectedIndex = -1;
-            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, "Bulk,Sample,Bulk+Sample");
-            this.comboCategory.SelectedIndex = 2;
         }
 
         /// <inheritdoc/>
@@ -69,7 +67,7 @@ namespace Sci.Production.Shipping
             this.custcd = this.txtCustcd.Text;
             this.mDivision = this.comboM.Text;
             this.factory = this.comboFactory.Text;
-            this.category = this.comboCategory.SelectedIndex;
+            this.category = this.comboCategory.SelectedValue.ToString();
             this.onlyirregular = this.checkOnlyPrintTheIrregularData.Checked;
             return base.ValidateInput();
         }
@@ -87,8 +85,9 @@ from Orders o WITH (NOLOCK)
 inner join Order_Qty q WITH (NOLOCK) on q.ID = o.ID
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id
 inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.Id = oqd.Id and oq.Seq = oqd.Seq and q.Article = oqd.Article and q.SizeCode = oqd.SizeCode
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
-where 1=1");
+where 1=1 and isnull(ot.IsGMTMaster,0) != 1");
 
             if (!MyUtility.Check.Empty(this.sciDlv1))
             {
@@ -120,18 +119,7 @@ where 1=1");
                 sqlCmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.mDivision));
             }
 
-            if (this.category == 0)
-            {
-                sqlCmd.Append(" and o.Category = 'B'");
-            }
-            else if (this.category == 1)
-            {
-                sqlCmd.Append(" and o.Category = 'S'");
-            }
-            else if (this.category == 2)
-            {
-                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
-            }
+            sqlCmd.Append($" and o.Category in ({this.category})");
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))
             {

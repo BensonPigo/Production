@@ -54,7 +54,7 @@ namespace Sci.Production.Shipping
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.txtdropdownlistCategory.Text))
+            if (MyUtility.Check.Empty(this.comboCategory.Text))
             {
                 MyUtility.Msg.WarningBox("Category can't empty!!");
                 return false;
@@ -65,7 +65,7 @@ namespace Sci.Production.Shipping
             this.brand = this.txtbrand.Text;
             this.Shipper = this.comboShipper.Text.ToString().Trim();
             this.factory = this.comboFactory.Text;
-            this.category = this.txtdropdownlistCategory.SelectedValue.ToString();
+            this.category = this.comboCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -106,6 +106,7 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 					,0),3)
 
 From Orders o
+left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 outer apply
 (
@@ -140,30 +141,7 @@ Where o.LocalOrder = 0 ");
                 sqlCmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.factory));
             }
 
-            if (this.category == "B")
-            {
-                sqlCmd.Append(" and o.Category = 'B'");
-            }
-            else if (this.category == "S")
-            {
-                sqlCmd.Append(" and o.Category = 'S'");
-            }
-            else if (this.category == "BS")
-            {
-                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S')");
-            }
-            else if (this.category == "BF")
-            {
-                sqlCmd.Append(" and (o.Category = 'B' or o.IsForecast = 1)");
-            }
-            else if (this.category == "SF")
-            {
-                sqlCmd.Append(" and (o.Category = 'S' or o.IsForecast = 1)");
-            }
-            else if (this.category == "BSF")
-            {
-                sqlCmd.Append(" and (o.Category = 'B' or o.Category = 'S' or o.IsForecast = 1)");
-            }
+            sqlCmd.Append($" and o.Category in ({this.category})");
 
             sqlCmd.Append(@" ) 
                             select *
@@ -212,7 +190,7 @@ Where o.LocalOrder = 0 ");
             objSheets.Cells[2, 5] = MyUtility.Convert.GetString(this.brand);
             objSheets.Cells[2, 7] = MyUtility.Convert.GetString(this.Shipper);
             objSheets.Cells[2, 9] = MyUtility.Convert.GetString(this.factory);
-            objSheets.Cells[2, 11] = MyUtility.Convert.GetString(this.txtdropdownlistCategory.Text.ToString().Replace(this.category + "-", string.Empty));
+            objSheets.Cells[2, 11] = MyUtility.Convert.GetString(this.comboCategory.Text.Replace(this.category + "-", string.Empty));
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_R13_FactoryCMTForecast");
