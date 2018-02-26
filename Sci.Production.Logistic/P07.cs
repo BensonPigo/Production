@@ -464,7 +464,7 @@ namespace Sci.Production.Logistic
 select 1
 from orders o with(nolock)
 inner join Order_Article oa with(nolock) on oa.id = o.id
-inner join order_sizecode os with(nolock) on os.id = o.id
+inner join order_sizecode os with(nolock) on os.id = o.poid
 where o.CustPoNo = '{item["CustPoNo"]}' and o.BrandID = '{item["Brand"]}' and o.StyleID = '{item["StyleID"]}' 
 and oa.article = '{item["article"]}' and os.SizeCode = '{item["Size"]}'";
 
