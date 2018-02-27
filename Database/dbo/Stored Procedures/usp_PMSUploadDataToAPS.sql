@@ -98,6 +98,7 @@ Select
 ,[sCUSTOMERORDERNO] = o.orderTypeID
 into #tmp
 From [Production].dbo.Orders o
+inner join Factory on Factory.id = o.FactoryID and Factory.IsProduceFty = 1
 outer apply (select [dbo].getMTLExport(o.POID,o.MTLExport) as mtlOk )as mtlExport
 outer apply (select [dbo].GetHaveDelaySupp(o.POID)  as SuppDelay) as SDelay
 Inner Join [Production].dbo.Order_Qty oq on o.ID = oq.ID
