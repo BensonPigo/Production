@@ -93,7 +93,7 @@ BEGIN
 		FirstCutDate = min(CO.cDate), LastCutDate = max(CO.cDate) ,COD.CuttingID
 		FROM CuttingOutput_Detail COD
 		LEFT JOIN CuttingOutput CO on CO.ID=COD.ID
-		WHERE CO.Status='Confirmed' and COD.CuttingID IN (SELECT CuttingID from CuttingOutput_Detail where id = @ID)
+		WHERE CO.Status <> 'New' and COD.CuttingID IN (SELECT CuttingID from CuttingOutput_Detail where id = @ID)
 		group by COD.CuttingID
 		)a,Cutting c
 		where c.ID =a.CuttingID
