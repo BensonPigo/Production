@@ -39,11 +39,17 @@
             this.labelRef = new Sci.Win.UI.Label();
             this.labelSupplier = new Sci.Win.UI.Label();
             this.dateArriveWHDate = new Sci.Win.UI.DateRange();
+            this.labelReportType = new Sci.Win.UI.Label();
+            this.radioRefNo = new Sci.Win.UI.RadioButton();
+            this.radioSupplier = new Sci.Win.UI.RadioButton();
+            this.radioPanel = new Sci.Win.UI.RadioPanel();
             this.panel1.SuspendLayout();
+            this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labelReportType);
             this.panel1.Controls.Add(this.labelArriveWHDate);
             this.panel1.Controls.Add(this.txtseason);
             this.panel1.Controls.Add(this.txtbrand);
@@ -54,9 +60,10 @@
             this.panel1.Controls.Add(this.labelRef);
             this.panel1.Controls.Add(this.labelSupplier);
             this.panel1.Controls.Add(this.dateArriveWHDate);
+            this.panel1.Controls.Add(this.radioPanel);
             this.panel1.Location = new System.Drawing.Point(29, 24);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(477, 242);
+            this.panel1.Size = new System.Drawing.Size(477, 292);
             this.panel1.TabIndex = 94;
             // 
             // labelArriveWHDate
@@ -164,9 +171,53 @@
             this.dateArriveWHDate.Size = new System.Drawing.Size(280, 23);
             this.dateArriveWHDate.TabIndex = 17;
             // 
+            // labelReportType
+            // 
+            this.labelReportType.Location = new System.Drawing.Point(16, 226);
+            this.labelReportType.Name = "labelReportType";
+            this.labelReportType.Size = new System.Drawing.Size(113, 23);
+            this.labelReportType.TabIndex = 98;
+            this.labelReportType.Text = "Report Type";
+            // 
+            // radioRefNo
+            // 
+            this.radioRefNo.AutoSize = true;
+            this.radioRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioRefNo.Location = new System.Drawing.Point(9, 40);
+            this.radioRefNo.Name = "radioRefNo";
+            this.radioRefNo.Size = new System.Drawing.Size(75, 21);
+            this.radioRefNo.TabIndex = 108;
+            this.radioRefNo.Text = "by Ref#";
+            this.radioRefNo.UseVisualStyleBackColor = true;
+            this.radioRefNo.Value = "Refno";
+            // 
+            // radioSupplier
+            // 
+            this.radioSupplier.AutoSize = true;
+            this.radioSupplier.Checked = true;
+            this.radioSupplier.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSupplier.Location = new System.Drawing.Point(9, 13);
+            this.radioSupplier.Name = "radioSupplier";
+            this.radioSupplier.Size = new System.Drawing.Size(97, 21);
+            this.radioSupplier.TabIndex = 107;
+            this.radioSupplier.TabStop = true;
+            this.radioSupplier.Text = "by Supplier";
+            this.radioSupplier.UseVisualStyleBackColor = true;
+            this.radioSupplier.Value = "supplier";
+            // 
+            // radioPanel
+            // 
+            this.radioPanel.Controls.Add(this.radioRefNo);
+            this.radioPanel.Controls.Add(this.radioSupplier);
+            this.radioPanel.Location = new System.Drawing.Point(132, 215);
+            this.radioPanel.Name = "radioPanel";
+            this.radioPanel.Size = new System.Drawing.Size(195, 69);
+            this.radioPanel.TabIndex = 109;
+            this.radioPanel.Value = "supplier";
+            // 
             // R06
             // 
-            this.ClientSize = new System.Drawing.Size(627, 314);
+            this.ClientSize = new System.Drawing.Size(627, 345);
             this.Controls.Add(this.panel1);
             this.Name = "R06";
             this.Text = "R06. Supplier Score - Fabric";
@@ -176,6 +227,8 @@
             this.Controls.SetChildIndex(this.panel1, 0);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.radioPanel.ResumeLayout(false);
+            this.radioPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -194,5 +247,9 @@
         private Win.UI.Label labelRef;
         private Win.UI.Label labelSupplier;
         private Win.UI.Label labelArriveWHDate;
+        private Win.UI.Label labelReportType;
+        private Win.UI.RadioButton radioRefNo;
+        private Win.UI.RadioButton radioSupplier;
+        private Win.UI.RadioPanel radioPanel;
     }
 }

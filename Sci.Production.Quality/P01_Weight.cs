@@ -621,7 +621,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
             DataRow drOrder;
             MyUtility.Check.Seek($@"select o.CustPONo,s.StyleName from dbo.orders o WITH (NOLOCK) 
-left join dbo.style s on o.StyleID = s.ID and o.BrandID = s.BrandID and o.SeasonID = s.SeasonID where o.ID = '{maindr["POID"].ToString()}'",out drOrder);
+left join dbo.style s on o.StyleUkey = s.ukey where o.ID = '{maindr["POID"].ToString()}'",out drOrder);
             excelHeadData.PONumber = drOrder["CustPONo"].ToString();
             excelHeadData.StyleName = drOrder["StyleName"].ToString();
             excelHeadData.ArriveQty = maindr["arriveQty"].ToString();

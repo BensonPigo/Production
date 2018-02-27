@@ -832,7 +832,7 @@ order by fd.InspDate,oc.article
                 worksheet.Cells[4, 10] = txtBrand.Text;
                 worksheet.Cells[6, 3] = txtStyle.Text;
                 worksheet.Cells[6, 6] = MyUtility.GetValue.Lookup($"select CustPONo from orders where id = '{txtSP.Text}'");
-                worksheet.Cells[7, 3] = MyUtility.GetValue.Lookup($@"select StyleName from Style s, orders o where o.id = '{txtSP.Text}' and o.brandid = s.brandid and o.StyleID = s.id");
+                worksheet.Cells[7, 3] = MyUtility.GetValue.Lookup($@"select StyleName from Style s, orders o where o.id = '{txtSP.Text}' and  o.StyleUkey = s.ukey");
                 worksheet.Cells[7, 9] = txtArriveQty.Text;
                 worksheet.Cells[22, 8] = row["Name"];
 
