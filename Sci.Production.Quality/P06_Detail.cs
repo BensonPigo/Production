@@ -1073,11 +1073,11 @@ where id='{ID}'";
                 worksheet.Cells[3, 4] = dtSubDate.Rows[i]["submitDate"].ToString();
                 worksheet.Cells[3, 7] = this.dateTestDate.Text;
                 worksheet.Cells[3, 9] = this.txtSP.Text;
-                worksheet.Cells[3, 13] = BrandID;
+                worksheet.Cells[3, 12] = BrandID;
 
                 worksheet.Cells[5, 4] = StyleID;
                 worksheet.Cells[5, 10] = CustPONo;
-                worksheet.Cells[5, 13] = this.txtArticle.Text;
+                worksheet.Cells[5, 12] = this.txtArticle.Text;
                 worksheet.Cells[6, 4] = Convert.ToString(MyUtility.GetValue.Lookup($@"select StyleName from Style WITH (NOLOCK) where ukey='{StyleUkey}'", null));
                 worksheet.Cells[6, 10] = SeasonID;
 
