@@ -175,7 +175,7 @@ select  SewingLineID
 from (
     select  s.SewingLineID
             , s.MDivisionID
-            , s.FactoryID
+            , o.FactoryID
             , s.OrderID
             , s.ComboType
             , ( select CONCAT(Article,',') 
