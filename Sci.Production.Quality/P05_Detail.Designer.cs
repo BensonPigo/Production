@@ -42,8 +42,13 @@
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.btnEncode = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
-            this.txtuserInspector = new Sci.Production.Class.txtuser();
             this.dateTestDate = new Sci.Win.UI.DateBox();
+            this.btnToPDF = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numTemperature = new Sci.Win.UI.NumericBox();
+            this.numTime = new Sci.Win.UI.NumericBox();
+            this.txtuserInspector = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -51,6 +56,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnToPDF);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Size = new System.Drawing.Size(1008, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
@@ -59,6 +65,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnToPDF, 0);
             // 
             // gridcont
             // 
@@ -78,7 +85,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(436, 67);
+            this.labelRemark.Location = new System.Drawing.Point(436, 47);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
             this.labelRemark.TabIndex = 1;
@@ -86,23 +93,23 @@
             // 
             // labelNoofTest
             // 
-            this.labelNoofTest.Location = new System.Drawing.Point(15, 23);
+            this.labelNoofTest.Location = new System.Drawing.Point(15, 12);
             this.labelNoofTest.Name = "labelNoofTest";
-            this.labelNoofTest.Size = new System.Drawing.Size(86, 23);
+            this.labelNoofTest.Size = new System.Drawing.Size(108, 23);
             this.labelNoofTest.TabIndex = 2;
             this.labelNoofTest.Text = "No of Test";
             // 
             // labelInspector
             // 
-            this.labelInspector.Location = new System.Drawing.Point(15, 67);
+            this.labelInspector.Location = new System.Drawing.Point(15, 47);
             this.labelInspector.Name = "labelInspector";
-            this.labelInspector.Size = new System.Drawing.Size(86, 23);
+            this.labelInspector.Size = new System.Drawing.Size(108, 23);
             this.labelInspector.TabIndex = 3;
             this.labelInspector.Text = "Inspector";
             // 
             // labelArticle
             // 
-            this.labelArticle.Location = new System.Drawing.Point(651, 23);
+            this.labelArticle.Location = new System.Drawing.Point(651, 12);
             this.labelArticle.Name = "labelArticle";
             this.labelArticle.Size = new System.Drawing.Size(53, 23);
             this.labelArticle.TabIndex = 4;
@@ -110,7 +117,7 @@
             // 
             // labelSP
             // 
-            this.labelSP.Location = new System.Drawing.Point(222, 23);
+            this.labelSP.Location = new System.Drawing.Point(244, 12);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(43, 23);
             this.labelSP.TabIndex = 5;
@@ -118,7 +125,7 @@
             // 
             // labelResult
             // 
-            this.labelResult.Location = new System.Drawing.Point(843, 23);
+            this.labelResult.Location = new System.Drawing.Point(843, 12);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(55, 23);
             this.labelResult.TabIndex = 6;
@@ -126,7 +133,7 @@
             // 
             // labelTestDate
             // 
-            this.labelTestDate.Location = new System.Drawing.Point(436, 23);
+            this.labelTestDate.Location = new System.Drawing.Point(436, 12);
             this.labelTestDate.Name = "labelTestDate";
             this.labelTestDate.Size = new System.Drawing.Size(75, 23);
             this.labelTestDate.TabIndex = 7;
@@ -137,7 +144,7 @@
             this.txtNoofTest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtNoofTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtNoofTest.IsSupportEditMode = false;
-            this.txtNoofTest.Location = new System.Drawing.Point(104, 23);
+            this.txtNoofTest.Location = new System.Drawing.Point(126, 12);
             this.txtNoofTest.Name = "txtNoofTest";
             this.txtNoofTest.ReadOnly = true;
             this.txtNoofTest.Size = new System.Drawing.Size(100, 23);
@@ -148,7 +155,7 @@
             this.txtSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtSP.IsSupportEditMode = false;
-            this.txtSP.Location = new System.Drawing.Point(268, 23);
+            this.txtSP.Location = new System.Drawing.Point(290, 12);
             this.txtSP.Name = "txtSP";
             this.txtSP.ReadOnly = true;
             this.txtSP.Size = new System.Drawing.Size(132, 23);
@@ -158,7 +165,7 @@
             // 
             this.txtArticle.BackColor = System.Drawing.Color.White;
             this.txtArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtArticle.Location = new System.Drawing.Point(707, 23);
+            this.txtArticle.Location = new System.Drawing.Point(707, 12);
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(122, 23);
             this.txtArticle.TabIndex = 3;
@@ -172,7 +179,7 @@
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(901, 23);
+            this.comboResult.Location = new System.Drawing.Point(901, 12);
             this.comboResult.Name = "comboResult";
             this.comboResult.ReadOnly = true;
             this.comboResult.Size = new System.Drawing.Size(98, 24);
@@ -182,7 +189,7 @@
             // 
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(514, 67);
+            this.txtRemark.Location = new System.Drawing.Point(514, 47);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(315, 23);
             this.txtRemark.TabIndex = 6;
@@ -190,7 +197,7 @@
             // btnEncode
             // 
             this.btnEncode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnEncode.Location = new System.Drawing.Point(843, 62);
+            this.btnEncode.Location = new System.Drawing.Point(843, 42);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(96, 30);
             this.btnEncode.TabIndex = 7;
@@ -209,27 +216,96 @@
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.btnToExcel_Click);
             // 
+            // dateTestDate
+            // 
+            this.dateTestDate.Location = new System.Drawing.Point(515, 12);
+            this.dateTestDate.Name = "dateTestDate";
+            this.dateTestDate.Size = new System.Drawing.Size(130, 23);
+            this.dateTestDate.TabIndex = 98;
+            this.dateTestDate.TextChanged += new System.EventHandler(this.TextChanged);
+            // 
+            // btnToPDF
+            // 
+            this.btnToPDF.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnToPDF.Location = new System.Drawing.Point(617, 5);
+            this.btnToPDF.Name = "btnToPDF";
+            this.btnToPDF.Size = new System.Drawing.Size(101, 30);
+            this.btnToPDF.TabIndex = 93;
+            this.btnToPDF.Text = "To PDF";
+            this.btnToPDF.UseVisualStyleBackColor = true;
+            this.btnToPDF.Click += new System.EventHandler(this.btnToPDF_Click);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(15, 81);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(108, 23);
+            this.label1.TabIndex = 99;
+            this.label1.Text = "Temperature(˚C)";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(436, 81);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 100;
+            this.label2.Text = "Time(hrs)";
+            // 
+            // numTemperature
+            // 
+            this.numTemperature.BackColor = System.Drawing.Color.White;
+            this.numTemperature.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTemperature.Location = new System.Drawing.Point(126, 81);
+            this.numTemperature.Name = "numTemperature";
+            this.numTemperature.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTemperature.Size = new System.Drawing.Size(100, 23);
+            this.numTemperature.TabIndex = 103;
+            this.numTemperature.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numTime
+            // 
+            this.numTime.BackColor = System.Drawing.Color.White;
+            this.numTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTime.Location = new System.Drawing.Point(515, 81);
+            this.numTime.Name = "numTime";
+            this.numTime.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTime.Size = new System.Drawing.Size(100, 23);
+            this.numTime.TabIndex = 104;
+            this.numTime.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // txtuserInspector
             // 
             this.txtuserInspector.DisplayBox1Binding = "";
-            this.txtuserInspector.Location = new System.Drawing.Point(104, 67);
+            this.txtuserInspector.Location = new System.Drawing.Point(126, 47);
             this.txtuserInspector.Name = "txtuserInspector";
             this.txtuserInspector.Size = new System.Drawing.Size(296, 23);
             this.txtuserInspector.TabIndex = 5;
             this.txtuserInspector.TextBox1Binding = "";
             this.txtuserInspector.Validating += new System.ComponentModel.CancelEventHandler(this.txtuserInspector_Validating);
             // 
-            // dateTestDate
-            // 
-            this.dateTestDate.Location = new System.Drawing.Point(515, 23);
-            this.dateTestDate.Name = "dateTestDate";
-            this.dateTestDate.Size = new System.Drawing.Size(130, 23);
-            this.dateTestDate.TabIndex = 98;
-            this.dateTestDate.TextChanged += new System.EventHandler(this.TextChanged);
-            // 
             // P05_Detail
             // 
             this.ClientSize = new System.Drawing.Size(1008, 497);
+            this.Controls.Add(this.numTime);
+            this.Controls.Add(this.numTemperature);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.dateTestDate);
             this.Controls.Add(this.btnEncode);
             this.Controls.Add(this.txtRemark);
@@ -269,6 +345,10 @@
             this.Controls.SetChildIndex(this.txtRemark, 0);
             this.Controls.SetChildIndex(this.btnEncode, 0);
             this.Controls.SetChildIndex(this.dateTestDate, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.numTemperature, 0);
+            this.Controls.SetChildIndex(this.numTime, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -295,5 +375,10 @@
         private Win.UI.TextBox txtRemark;
         private Win.UI.Button btnEncode;
         private Win.UI.DateBox dateTestDate;
+        private Win.UI.Button btnToPDF;
+        private Win.UI.Label label1;
+        private Win.UI.Label label2;
+        private Win.UI.NumericBox numTemperature;
+        private Win.UI.NumericBox numTime;
     }
 }

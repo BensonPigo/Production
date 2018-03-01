@@ -8,7 +8,7 @@
     [Result]             VARCHAR (4)  CONSTRAINT [DF_ColorFastness_Detail_Result] DEFAULT ('') NULL,
     [changeScale]        VARCHAR (8)  CONSTRAINT [DF_ColorFastness_Detail_changeScale] DEFAULT ('') NULL,
     [StainingScale]      VARCHAR (8)  CONSTRAINT [DF_ColorFastness_Detail_StainingScale] DEFAULT ('') NULL,
-    [Remark]             NCHAR (60)   CONSTRAINT [DF_ColorFastness_Detail_Remark] DEFAULT ('') NULL,
+    [Remark]             VARCHAR(60)   CONSTRAINT [DF_ColorFastness_Detail_Remark] DEFAULT ('') NULL,
     [AddName]            VARCHAR (10) CONSTRAINT [DF_ColorFastness_Detail_AddName] DEFAULT ('') NULL,
     [AddDate]            DATETIME     NULL,
     [EditName]           VARCHAR (10) CONSTRAINT [DF_ColorFastness_Detail_EditName] DEFAULT ('') NULL,
