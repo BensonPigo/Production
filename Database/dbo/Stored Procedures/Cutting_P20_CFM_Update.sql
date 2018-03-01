@@ -7,8 +7,8 @@ CREATE PROCEDURE [dbo].[Cutting_P20_CFM_Update]
 	-- Add the parameters for the stored procedure here
 	@ID varchar(13)='',
 	@Cdate date ='',
-	@ManPower  numeric(3,0) = '',
-	@ManHours  numeric(5,1) = '',
+	@ManPower  numeric(3,0) = 0,
+	@ManHours  numeric(5,1) = 0,
 	@Run_type  varchar(10) = ''
 AS
 BEGIN
@@ -50,7 +50,7 @@ BEGIN
 			left join CuttingOutput_WIP cw WITH (NOLOCK) on cw.Orderid = a.id and cw.Article = a.Article and cw.Size = a.SizeCode
 
 
-			IF(datalength(@ManPower) = 0 OR datalength(@ManHours) = 0)
+			IF(@ManPower = 0 OR @ManHours = 0 )
 			BEGIN
 				SET @PPH = 0
 			END
