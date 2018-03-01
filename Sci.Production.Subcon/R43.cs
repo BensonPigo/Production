@@ -105,7 +105,7 @@ from (
            , [Sub-process] = bio.SubProcessId
            , [Receive Qty] = sum(bd.qty)
            , [Release Qty] = (select sum(bd.qty)  
-                              where (bio.InComing-bio.OutGoing) <= s.BCSDate)
+                              where DATEDIFF(day,bio.InComing,bio.OutGoing)  <= s.BCSDate)
     from Bundle b WITH (NOLOCK) 
     inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
     inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
