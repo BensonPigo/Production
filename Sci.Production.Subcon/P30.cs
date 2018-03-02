@@ -191,6 +191,39 @@ namespace Sci.Production.Subcon
                 return false;
             }
 
+
+            //Issue ISP20180084 LocalPO_Detail RequestID,OrderID,RefNo需為unique 只針對CARTON
+            if (this.CurrentMaintain["category"].ToString().ToUpper().TrimEnd().Equals("CARTON"))
+            {
+                DataTable resulttb;
+                string check_sql = $@"select lpd.ID,a.RequestId,a.OrderId,a.Refno from #TmpSource a inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}'";
+                DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "", check_sql, out resulttb, "#TmpSource");
+                if (!result)
+                {
+                    ShowErr(result);
+                    return false;
+                }
+
+                //有重複資料
+                if (resulttb.Rows.Count > 0)
+                {
+                    var m = new Sci.Win.UI.MsgGridForm(resulttb, "The following SP#,Refno,RequestID has been imported:", "Warning", null, MessageBoxButtons.OK);
+
+                    m.Width = 600;
+                    m.grid1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    m.grid1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    m.grid1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    m.grid1.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    m.text_Find.Width = 140;
+                    m.btn_Find.Location = new Point(150, 6);
+                    m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+                    m.ShowDialog();
+                    
+                    return false;
+                }
+            }
+            //Issue ISP20180084 end
+
             //取單號： getID(MyApp.cKeyword+GetDocno('PMS', 'LocalPO1'), 'LocalPO', IssueDate, 2)
             if (this.IsDetailInserting)
             {
@@ -273,20 +306,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             #endregion
 
             #region 開始更新相關table資料
-            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
-            {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    if (dr.RowState == DataRowState.Deleted)
-                    {
-                        if (dr["requestid", DataRowVersion.Original].ToString() != "")
-                        {
-                            sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '' where id = '{0}'", dr["requestid", DataRowVersion.Original].ToString());
-                        }
-                    }
-                }
-            }
-            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+            if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
             {
                 //針對表身資料將ThreadRequisition_Detail.poid塞值
                 foreach (DataRow dr in dt.Rows)
@@ -303,20 +323,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 }
             }
 
-            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
-            {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    if (dr.RowState == DataRowState.Added || dr.RowState == DataRowState.Modified)
-                    {
-                        if (dr["requestid"].ToString() != "")
-                        {
-                            sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '{0}' where id = '{1}'", CurrentMaintain["id"], dr["requestid"]);
-                        }
-                    }
-                }
-            }
-            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+            if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
             {
                 //針對表身資料將ThreadRequisition_Detail.poid塞值
                 foreach (DataRow dr in dt.Rows)
@@ -369,17 +376,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             DataTable dt = (DataTable)detailgridbs.DataSource;
             String sqlupd2 = "";
             DualResult result2;
-            if (CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "CARTON")
-            {
-                foreach (DataRow dr in dt.Rows)
-                {                    
-                    if (dr["requestid", DataRowVersion.Original].ToString() != "")
-                    {
-                        sqlupd2 += string.Format(@"update dbo.PackingList set LocalPOID = '' where id = '{0}'", dr["requestid", DataRowVersion.Original].ToString());
-                    }                    
-                }
-            }
-            else if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+           if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
             {
                 //針對表身資料將ThreadRequisition_Detail.poid塞值
                 foreach (DataRow dr in dt.Rows)

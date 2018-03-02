@@ -803,7 +803,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
             DataTable max_st;
             if (DBProxy.Current.Select(null, max_cmd, out max_st))
             {
-                if (max_st.Rows[0][0] != DBNull.Value) return Convert.ToInt16(max_st.Rows[0]["Start"]);
+                if (max_st.Rows[0][0] != DBNull.Value) return Convert.ToInt32(max_st.Rows[0]["Start"]);
                 else return 1;
             }
             else

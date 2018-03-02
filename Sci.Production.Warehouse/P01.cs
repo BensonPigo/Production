@@ -473,8 +473,8 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
                 if (!(result = DBProxy.Current.ExecuteSP("", "dbo.usp_WarehouseClose", cmds)))
                 {
                     //MyUtility.Msg.WarningBox(result.Messages[1].ToString()); 
-                    Exception ex = result.GetException();
-                    MyUtility.Msg.WarningBox(ex.Message);
+                    Exception ex =  result.GetException();
+                    MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
                     return;
                 }
                 MyUtility.Msg.WarningBox("Finished!");

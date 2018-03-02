@@ -121,7 +121,7 @@ select '' FTYGroup
 
 union 
 select distinct FTYGroup 
-from Factory 
+from Factory  WITH (NOLOCK)
 where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
@@ -182,7 +182,7 @@ Select
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join dbo.order_Eachcons e WITH (NOLOCK) on e.Ukey = a.Order_EachconsUkey 
-outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc
+outer apply(select RefNo from ShrinkageConcern WITH (NOLOCK) where RefNo=a.RefNo and Junk=0) shc
 outer apply
 (
 	select article = stuff(
@@ -363,7 +363,7 @@ order by id,article,sizecode"
             //用來檢查size是否存在
             string sqlsizechk = string.Format(@"
 select distinct w.SizeCode
-from Workorder_SizeRatio w
+from Workorder_SizeRatio w  WITH (NOLOCK) 
 where w.ID = '{0}'", masterID);
             DBProxy.Current.Select(null, sqlsizechk, out chksize);
             #endregion
@@ -376,7 +376,7 @@ where w.ID = '{0}'", masterID);
         {
             string masterID = (e.Detail == null) ? "0" : MyUtility.Convert.GetString(e.Detail["UKey"]);
             this.SubDetailSelectCommand = string.Format(@"
-select * from WorkOrder_PatternPanel
+select * from WorkOrder_PatternPanel  WITH (NOLOCK)
 where WorkOrderUkey={0}", masterID);
 
             return base.OnSubDetailSelectCommandPrepare(e);
