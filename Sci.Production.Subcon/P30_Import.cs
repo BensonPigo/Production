@@ -152,7 +152,7 @@ where a.ApvToPurchase = 1
 select * from #tmp a
 where  not exists (select orderID 
                       from LocalPo_Detail 
-                      where RequestID = a.ID 
+                      where (RequestID = '' or RequestID = a.RequestID)
                       		and Poid = a.POID 
                       		and OrderID = a.OrderID 
                       		and Refno = a.RefNo
