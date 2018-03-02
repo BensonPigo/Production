@@ -29,10 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.dateRangeBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtFromPoNo = new Sci.Win.UI.TextBox();
             this.labelPoNo = new Sci.Win.UI.Label();
@@ -43,8 +45,6 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new System.Windows.Forms.Label();
-            this.dateRangeBuyerDelivery = new Sci.Win.UI.DateRange();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -63,7 +63,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(971, 0);
+            this.panel2.Location = new System.Drawing.Point(998, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 454);
             this.panel2.TabIndex = 2;
@@ -80,12 +80,43 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(961, 80);
+            this.panel3.Size = new System.Drawing.Size(988, 80);
             this.panel3.TabIndex = 3;
+            // 
+            // dateRangeBuyerDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateRangeBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRangeBuyerDelivery.DateBox1.Name = "";
+            this.dateRangeBuyerDelivery.DateBox1.Size = new System.Drawing.Size(148, 23);
+            this.dateRangeBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRangeBuyerDelivery.DateBox2.Location = new System.Drawing.Point(170, 0);
+            this.dateRangeBuyerDelivery.DateBox2.Name = "";
+            this.dateRangeBuyerDelivery.DateBox2.Size = new System.Drawing.Size(148, 23);
+            this.dateRangeBuyerDelivery.DateBox2.TabIndex = 1;
+            this.dateRangeBuyerDelivery.IsRequired = false;
+            this.dateRangeBuyerDelivery.Location = new System.Drawing.Point(117, 44);
+            this.dateRangeBuyerDelivery.Name = "dateRangeBuyerDelivery";
+            this.dateRangeBuyerDelivery.Size = new System.Drawing.Size(318, 23);
+            this.dateRangeBuyerDelivery.TabIndex = 26;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(265, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(22, 17);
+            this.label1.TabIndex = 25;
+            this.label1.Text = "～";
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(878, 7);
+            this.btnQuery.Location = new System.Drawing.Point(902, 7);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 6;
@@ -133,13 +164,13 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 407);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(961, 47);
+            this.panel4.Size = new System.Drawing.Size(988, 47);
             this.panel4.TabIndex = 4;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(869, 9);
+            this.btnClose.Location = new System.Drawing.Point(896, 9);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 0;
@@ -153,7 +184,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 80);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(961, 327);
+            this.panel5.Size = new System.Drawing.Size(988, 327);
             this.panel5.TabIndex = 5;
             // 
             // gridDetail
@@ -172,57 +203,26 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(0, 0);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(961, 327);
+            this.gridDetail.Size = new System.Drawing.Size(988, 327);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(265, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(22, 17);
-            this.label1.TabIndex = 25;
-            this.label1.Text = "～";
-            // 
-            // dateRangeBuyerDelivery
-            // 
-            // 
-            // 
-            // 
-            this.dateRangeBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateRangeBuyerDelivery.DateBox1.Name = "";
-            this.dateRangeBuyerDelivery.DateBox1.Size = new System.Drawing.Size(148, 23);
-            this.dateRangeBuyerDelivery.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateRangeBuyerDelivery.DateBox2.Location = new System.Drawing.Point(170, 0);
-            this.dateRangeBuyerDelivery.DateBox2.Name = "";
-            this.dateRangeBuyerDelivery.DateBox2.Size = new System.Drawing.Size(148, 23);
-            this.dateRangeBuyerDelivery.DateBox2.TabIndex = 1;
-            this.dateRangeBuyerDelivery.IsRequired = false;
-            this.dateRangeBuyerDelivery.Location = new System.Drawing.Point(117, 44);
-            this.dateRangeBuyerDelivery.Name = "dateRangeBuyerDelivery";
-            this.dateRangeBuyerDelivery.Size = new System.Drawing.Size(318, 23);
-            this.dateRangeBuyerDelivery.TabIndex = 26;
-            // 
             // P16
             // 
-            this.ClientSize = new System.Drawing.Size(981, 454);
+            this.ClientSize = new System.Drawing.Size(1008, 454);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);

@@ -40,13 +40,13 @@ namespace Sci.Production.Packing
             this.gridDetail.IsEditingReadOnly = false;
             this.gridDetail.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridDetail)
-                .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(30), iseditable: false)
+                .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(19), iseditable: false)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(13), iseditable: false)
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(2), iseditable: false)
                 .Text("ShipmodeID", header: "Shipmode", width: Widths.AnsiChars(10), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
                 .Text("CustCDID", header: "CustCD", width: Widths.AnsiChars(16), iseditable: false)
-                .Text("Dest", header: "Dest", width: Widths.AnsiChars(2), iseditable: false)
+                .Text("Alias", header: "Dest", width: Widths.AnsiChars(18), iseditable: false)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(15), iseditable: false);
         }
 
@@ -68,11 +68,12 @@ namespace Sci.Production.Packing
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
 select *,DENSE_RANK() OVER (PARTITION BY muti_flag ORDER BY CustPONo,BuyerDelivery,ShipModeID,CustCDID) as changeColorRank from (
-select o.CustPONo,o.ID,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.CustCDID,o.Dest,oq.Qty ,
+select o.CustPONo,o.ID,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.CustCDID,co.Alias,oq.Qty ,
 iif(count(*) over (PARTITION BY o.CustPONo,oq.BuyerDelivery,oq.ShipModeID,o.CustCDID )>1,2,1)  as muti_flag
 from Orders o  WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id 
 inner join CustCD c  WITH (NOLOCK)  on c.BrandID=o.BrandID  and c.id = o.CustCDID
+left join Country co WITH (NOLOCK)  on o.Dest=co.ID
 where o.BrandID = 'U.ARMOUR' 
 and o.ProjectID = 'VMI' 
 and exists (select 1 from OrderType where IsGMTMaster = 0 and BrandID = 'U.ARMOUR' and ID = o.OrderTypeID) ");
