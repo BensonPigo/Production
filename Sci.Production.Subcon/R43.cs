@@ -94,7 +94,7 @@ select DetailData.M
        , DetailData.[Sub-Process]
        , [Receive Qty] = sum (DetailData.[Receive Qty])
        , [Release Qty] = sum (DetailData.[Release Qty])
-       , BCS = Round ((sum (DetailData.[Receive Qty]) / sum (DetailData.[Release Qty]) * 100), 2)
+       , BCS = Round ((sum (DetailData.[Release Qty]) / sum (DetailData.[Receive Qty]) * 100), 2)
 from (
     select [M] = b.MDivisionid
            , [Factory] = o.FtyGroup
