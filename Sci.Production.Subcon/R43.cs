@@ -94,7 +94,7 @@ select DetailData.M
        , DetailData.[Sub-Process]
        , [Receive Qty] = sum (DetailData.[Receive Qty])
        , [Release Qty] = sum (DetailData.[Release Qty])
-       , BCS = Round ((sum (DetailData.[Receive Qty]) / sum (DetailData.[Release Qty]) * 100), 2)
+       , BCS = Round ((sum (DetailData.[Release Qty]) / sum (DetailData.[Receive Qty]) * 100), 2)
 from (
     select [M] = b.MDivisionid
            , [Factory] = o.FtyGroup
@@ -105,7 +105,7 @@ from (
            , [Sub-process] = bio.SubProcessId
            , [Receive Qty] = sum(bd.qty)
            , [Release Qty] = (select sum(bd.qty)  
-                              where (bio.InComing-bio.OutGoing) <= s.BCSDate)
+                              where DATEDIFF(day,bio.InComing,bio.OutGoing)  <= s.BCSDate)
     from Bundle b WITH (NOLOCK) 
     inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
     inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
