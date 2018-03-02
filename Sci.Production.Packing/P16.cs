@@ -67,9 +67,9 @@ namespace Sci.Production.Packing
 
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-select *,DENSE_RANK() OVER (PARTITION BY muti_flag ORDER BY CustPONo,BuyerDelivery,ID,CustCDID) as changeColorRank from (
+select *,DENSE_RANK() OVER (PARTITION BY muti_flag ORDER BY CustPONo,BuyerDelivery,ShipModeID,CustCDID) as changeColorRank from (
 select o.CustPONo,o.ID,oq.Seq,oq.ShipmodeID,oq.BuyerDelivery,o.CustCDID,o.Dest,oq.Qty ,
-iif(count(*) over (PARTITION BY o.CustPONo,oq.BuyerDelivery,o.ID,o.CustCDID )>1,2,1)  as muti_flag
+iif(count(*) over (PARTITION BY o.CustPONo,oq.BuyerDelivery,oq.ShipModeID,o.CustCDID )>1,2,1)  as muti_flag
 from Orders o  WITH (NOLOCK) 
 inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id 
 inner join CustCD c  WITH (NOLOCK)  on c.BrandID=o.BrandID  and c.id = o.CustCDID
