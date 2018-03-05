@@ -1086,7 +1086,7 @@ where id='{ID}'";
                 worksheet.Cells[9, 9] = this.comboDetergent.Text;
                 worksheet.Cells[10, 4] = this.comboMachineUs.Text;
                 worksheet.Cells[10, 7] = this.comboDryProcess.Text;
-                worksheet.Cells[45, 8] = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
+                worksheet.Cells[72, 8] = MyUtility.GetValue.Lookup("Name", this.txtuserInspector.TextBox1Binding, "Pass1", "ID");
 
                 DataTable dtBody = (DataTable)gridbs.DataSource;
                 DataRow[] dr = dtBody.Select((MyUtility.Check.Empty(dtSubDate.Rows[i]["submitDate"])) ? $@"submitDate is null" : $"submitDate = '{dtSubDate.Rows[i]["submitDate"]}'");
