@@ -2072,7 +2072,6 @@
     <PageFooter>
       <Height>2.54cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
         <Textbox Name="Textbox57">
           <CanGrow>true</CanGrow>
@@ -2092,12 +2091,14 @@
           <Left>0.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
+          <Visibility>
+            <Hidden>=Globals!PageNumber&gt;1</Hidden>
+          </Visibility>
           <Style>
             <Border>
               <Style>None</Style>
             </Border>
             <TopBorder>
-              <Color>Black</Color>
               <Style>Solid</Style>
               <Width>1.5pt</Width>
             </TopBorder>
@@ -2126,6 +2127,9 @@
           <Height>0.6cm</Height>
           <Width>7cm</Width>
           <ZIndex>1</ZIndex>
+          <Visibility>
+            <Hidden>=Globals!PageNumber&gt;1</Hidden>
+          </Visibility>
           <Style>
             <Border>
               <Style>None</Style>
@@ -2160,6 +2164,9 @@
           <Height>0.6cm</Height>
           <Width>7cm</Width>
           <ZIndex>2</ZIndex>
+          <Visibility>
+            <Hidden>=Globals!PageNumber&gt;1</Hidden>
+          </Visibility>
           <Style>
             <Border>
               <Style>None</Style>
@@ -2194,6 +2201,9 @@
           <Height>0.6cm</Height>
           <Width>7cm</Width>
           <ZIndex>3</ZIndex>
+          <Visibility>
+            <Hidden>=Globals!PageNumber&gt;1</Hidden>
+          </Visibility>
           <Style>
             <Border>
               <Style>None</Style>
