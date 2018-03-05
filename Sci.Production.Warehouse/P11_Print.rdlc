@@ -2070,7 +2070,7 @@
       </Style>
     </PageHeader>
     <PageFooter>
-      <Height>2.54cm</Height>
+      <Height>0.74083cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -2089,15 +2089,18 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox39</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>0.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
+          <Visibility>
+            <Hidden>=Globals!PageNumber&gt;1</Hidden>
+          </Visibility>
           <Style>
             <Border>
               <Style>None</Style>
             </Border>
             <TopBorder>
-              <Color>Black</Color>
               <Style>Solid</Style>
               <Width>1.5pt</Width>
             </TopBorder>
@@ -2122,10 +2125,14 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox40</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>7.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
           <ZIndex>1</ZIndex>
+          <Visibility>
+            <Hidden>=Globals!PageNumber&gt;1</Hidden>
+          </Visibility>
           <Style>
             <Border>
               <Style>None</Style>
@@ -2156,10 +2163,14 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox41</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>14.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
           <ZIndex>2</ZIndex>
+          <Visibility>
+            <Hidden>=Globals!PageNumber&gt;1</Hidden>
+          </Visibility>
           <Style>
             <Border>
               <Style>None</Style>
@@ -2190,10 +2201,14 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>21.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
           <ZIndex>3</ZIndex>
+          <Visibility>
+            <Hidden>=Globals!PageNumber&gt;1</Hidden>
+          </Visibility>
           <Style>
             <Border>
               <Style>None</Style>
