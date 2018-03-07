@@ -344,8 +344,8 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                 .Text("BLNo", header: "B/L No.", width: Widths.AnsiChars(13), settings: bLNo)
                 .Text(MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18), settings: wKNO)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("GW", header: "G.W.", decimal_places: 2, iseditingreadonly: true)
-                .Numeric("CBM", header: "CBM", decimal_places: 2, iseditingreadonly: true)
+                .Numeric("GW", header: "G.W.", decimal_places: 3, iseditingreadonly: true)
+                .Numeric("CBM", header: "CBM", decimal_places: 3, iseditingreadonly: true)
                 .Numeric("Amount", header: "Total Amount", decimal_places: 2, iseditingreadonly: true);
             this.gridBLNo.SelectionChanged += (s, e) =>
             {

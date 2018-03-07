@@ -597,7 +597,7 @@
             // 
             this.numttlGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numttlGW.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalGW", true));
-            this.numttlGW.DecimalPlaces = 2;
+            this.numttlGW.DecimalPlaces = 3;
             this.numttlGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numttlGW.IsSupportEditMode = false;
             this.numttlGW.Location = new System.Drawing.Point(420, 112);
@@ -620,7 +620,7 @@
             // 
             this.numttlMeas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numttlMeas.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalCBM", true));
-            this.numttlMeas.DecimalPlaces = 2;
+            this.numttlMeas.DecimalPlaces = 3;
             this.numttlMeas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numttlMeas.IsSupportEditMode = false;
             this.numttlMeas.Location = new System.Drawing.Point(420, 139);
@@ -643,7 +643,7 @@
             // 
             this.numttlNW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numttlNW.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalNW", true));
-            this.numttlNW.DecimalPlaces = 2;
+            this.numttlNW.DecimalPlaces = 3;
             this.numttlNW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numttlNW.IsSupportEditMode = false;
             this.numttlNW.Location = new System.Drawing.Point(420, 166);
@@ -666,7 +666,7 @@
             // 
             this.numttlNNW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numttlNNW.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalNNW", true));
-            this.numttlNNW.DecimalPlaces = 2;
+            this.numttlNNW.DecimalPlaces = 3;
             this.numttlNNW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numttlNNW.IsSupportEditMode = false;
             this.numttlNNW.Location = new System.Drawing.Point(420, 193);

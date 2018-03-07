@@ -724,10 +724,10 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             // 將表身加總的資料回寫回表頭
             this.CurrentMaintain["TotalShipQty"] = ttlshipqty;
             this.CurrentMaintain["TotalCTNQty"] = ttlctnqty;
-            this.CurrentMaintain["TotalNW"] = MyUtility.Math.Round(ttlnw, 2);
-            this.CurrentMaintain["TotalGW"] = MyUtility.Math.Round(ttlgw, 2);
-            this.CurrentMaintain["TotalNNW"] = MyUtility.Math.Round(ttlnnw, 2);
-            this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 2);
+            this.CurrentMaintain["TotalNW"] = MyUtility.Math.Round(ttlnw, 3);
+            this.CurrentMaintain["TotalGW"] = MyUtility.Math.Round(ttlgw, 3);
+            this.CurrentMaintain["TotalNNW"] = MyUtility.Math.Round(ttlnnw, 3);
+            this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 3);
 
             return base.ClickSaveBefore();
         }
