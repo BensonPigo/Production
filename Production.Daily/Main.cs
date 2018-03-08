@@ -1007,7 +1007,7 @@ declare @PullOutLock date = (select PullOutLock from Trade_To_Pms.dbo.TradeSyste
 select distinct p.*
 from Pullout p
 inner join Pullout_Detail pd on p.id = pd.ID
-where AddDate <= @Lockdate
+where p.PulloutDate <= @Lockdate
 	  and LockDate is null";
             DataTable tableCheckLock;
 
