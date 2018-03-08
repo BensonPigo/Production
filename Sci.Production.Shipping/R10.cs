@@ -476,7 +476,7 @@ inner join ShareExpense b on a.ID=b.InvNo ");
                          sqlCmd.ToString(),
                          string.Format(@" 
 select distinct a.* from (
-select AccountID as Accno from #temp4 where AccountID not in ('61022001','61022002','61022003','61022004','61022005','59121111')
+select AccountID as Accno from #temp4 where AccountID not in ('61022001','61022002','59122222','61022003','61022004','61022005','59121111')
 and AccountID <> ''
 ) a
 order by Accno"));
@@ -488,7 +488,7 @@ order by Accno"));
                     }
 
                     StringBuilder allAccno = new StringBuilder();
-                    allAccno.Append("[61022001],[61022002],[61022003],[61022004],[61022005],[59121111]");
+                    allAccno.Append("[61022001],[61022002],[59122222],[61022003],[61022004],[61022005],[59121111]");
                     foreach (DataRow dr in this.accnoData.Rows)
                     {
                         allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
@@ -722,7 +722,7 @@ where s.Type = 'EXPORT'");
                         sqlCmd.ToString(),
                         string.Format(@") 
 select distinct a.* from (
-select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','61012003','61012004','61012005','59121111')
+select Accountid as Accno from tmpMaterialData where AccountID not in ('61012001','61012002','59122222','61012003','61012004','61012005','59121111')
 and AccountID <> ''
 ) a
 order by Accno"));
@@ -734,7 +734,7 @@ order by Accno"));
                     }
 
                     StringBuilder allAccno = new StringBuilder();
-                    allAccno.Append("[61012001],[61012002],[61012003],[61012004],[61012005],[59121111]");
+                    allAccno.Append("[61012001],[61012002],[59122222],[61012003],[61012004],[61012005],[59121111]");
                     foreach (DataRow dr in this.accnoData.Rows)
                     {
                         allAccno.Append(string.Format(",[{0}]", MyUtility.Convert.GetString(dr["Accno"])));
@@ -861,7 +861,7 @@ where s.Type = 'EXPORT'");
                 this.printData.Columns.RemoveAt(2);
             }
 
-            int allColumn = this.reportType == 1 ? 23 : 27;
+            int allColumn = this.reportType == 1 ? 25 : 29;
             int i = 0;
             int counts = 0;
             if (this.reportType != 3)
@@ -907,14 +907,16 @@ where s.Type = 'EXPORT'");
                         objArray[0, 17] = MyUtility.Check.Empty(dr[17]) ? 0 : dr[17];
                         objArray[0, 18] = MyUtility.Check.Empty(dr[18]) ? 0 : dr[18];
                         objArray[0, 19] = MyUtility.Check.Empty(dr[19]) ? 0 : dr[19];
-                        objArray[0, 20] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
-                        objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
-                        objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
+                        objArray[0, 20] = Convert.ToDecimal(MyUtility.Check.Empty(dr[18]) ? 0 : dr[18]) + Convert.ToDecimal(MyUtility.Check.Empty(dr[19]) ? 0 : dr[19]);
+                        objArray[0, 21] = MyUtility.Check.Empty(dr[20]) ? 0 : dr[20];
+                        objArray[0, 22] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
+                        objArray[0, 23] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
+                        objArray[0, 24] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
                         if (counts > 0)
                         {
                             for (int t = 1; t <= counts; t++)
                             {
-                                objArray[0, 22 + t] = MyUtility.Check.Empty(dr[22 + t]) ? 0 : dr[22 + t];
+                                objArray[0, 24 + t] = MyUtility.Check.Empty(dr[23 + t]) ? 0 : dr[23 + t];
                             }
                         }
                     }
@@ -928,15 +930,17 @@ where s.Type = 'EXPORT'");
                         objArray[0, 21] = MyUtility.Check.Empty(dr[21]) ? 0 : dr[21];
                         objArray[0, 22] = MyUtility.Check.Empty(dr[22]) ? 0 : dr[22];
                         objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
+                        objArray[0, 24] = Convert.ToDecimal(MyUtility.Check.Empty(dr[22]) ? 0 : dr[22]) + Convert.ToDecimal(MyUtility.Check.Empty(dr[23]) ? 0 : dr[23]);
+                        objArray[0, 25] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
 
-                        objArray[0, 24] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
-                        objArray[0, 25] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
-                        objArray[0, 26] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
+                        objArray[0, 26] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
+                        objArray[0, 27] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
+                        objArray[0, 28] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
 
                         // 動態增加欄位會因來源沒資料沒有，先判斷來源資料數量後再塞
-                        if (this.printData.Columns.Count > 27)
+                        if (this.printData.Columns.Count > 28)
                         {
-                            objArray[0, 27] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
+                            objArray[0, 29] = MyUtility.Check.Empty(dr[28]) ? 0 : dr[28];
                         }
 
                         // if (counts > 0)
@@ -948,14 +952,14 @@ where s.Type = 'EXPORT'");
                         // }
                     }
 
-                    i = 0;
-                    foreach (DataRow ddr in this.accnoData.Rows)
-                    {
-                        i++;
-                        objArray[0, allColumn - (1 + i)] = MyUtility.Check.Empty(dr[allColumn - (1 + i)]) ? 0 : dr[allColumn - (1 + i)];
-                    }
+                    //i = 0;
+                    //foreach (DataRow ddr in this.accnoData.Rows)
+                    //{
+                    //    i++;
+                    //    objArray[0, allColumn - (1 + i)] = MyUtility.Check.Empty(dr[allColumn - (1 + i)]) ? 0 : dr[allColumn - (1 + i)];
+                    //}
 
-                    objArray[0, allColumn + i] = string.Format("=SUM({2}{0}:{1}{0})", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V");
+                    objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) - {3}{0}", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V", this.reportType == 1 ? "U" : "Y");
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;
                     intRowsStart++;
                 }
