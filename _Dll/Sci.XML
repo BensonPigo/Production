@@ -8416,6 +8416,37 @@
             Inner class for internal use.
             </summary>
         </member>
+        <member name="T:Sci.Win.Tems.Input1.LocateForHelper.CompareHelper.Property.BoolDateTimeNumeric_Compare">
+            <summary>
+            定義各種 Compare的delegate
+            </summary>
+            <param name="value">代表Cell中的Value</param>
+            <returns>有符合</returns>
+        </member>
+        <member name="F:Sci.Win.Tems.Input1.LocateForHelper.CompareHelper.Property.Compare_BoolDateTimeNumericString">
+            <summary>
+            各種 Compare通用的method
+            </summary>
+        </member>
+        <member name="F:Sci.Win.Tems.Input1.LocateForHelper.CompareHelper.Property.Compare_String">
+            <summary>
+            string compare 分Like/ Full 兩種, 提供置換
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tems.Input1.LocateForHelper.CompareHelper.Property.CompareString_ByFull(System.Object)">
+            <summary>
+            用長度相當的方式比對字串
+            </summary>
+            <param name="value">Grid's Cell Value</param>
+            <returns>true 有符合; false 不符合</returns>
+        </member>
+        <member name="M:Sci.Win.Tems.Input1.LocateForHelper.CompareHelper.Property.CompareString_ByLike(System.Object)">
+            <summary>
+            用包含的方式比對字串
+            </summary>
+            <param name="value">Grid's Cell Value</param>
+            <returns>true 有符合; false 不符合</returns>
+        </member>
         <member name="T:Sci.Win.Tems.Input1.DetailHelper">
             <summary>
             Inner class for internal use.
@@ -14740,6 +14771,11 @@
             SelectItem subpage class.
             </summary>
         </member>
+        <member name="P:Sci.Win.Tools.SelectItem.NeedGridAutofit">
+            <summary>
+            當 constructor傳入的 ColumnWidths是空的, 不指定任何欄寬的時候, 就要讓 Grid作 Autofit
+            </summary>
+        </member>
         <member name="M:Sci.Win.Tools.SelectItem.#ctor">
             <summary>
             Constructor of SelectItem.
@@ -14887,6 +14923,11 @@
         <member name="T:Sci.Win.Tools.SelectItem2">
             <summary>
             SelectItem2 subpage class.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.SelectItem2.NeedGridAutofit">
+            <summary>
+            當 constructor傳入的 ColumnWidths是空的, 不指定任何欄寬的時候, 就要讓 Grid作 Autofit
             </summary>
         </member>
         <member name="M:Sci.Win.Tools.SelectItem2.#ctor">
@@ -15343,7 +15384,12 @@
         </member>
         <member name="P:Sci.Win.UI.ComboBox.OldValue">
             <summary>
-            get/set Old value.
+            get/set Old value; be changed while comboBox GotFocused(); so, no loss focus, no OldValue changed..
+            </summary>
+        </member>
+        <member name="P:Sci.Win.UI.ComboBox.OldText">
+            <summary>
+            get/ set Old Text, will be changed while comboBox is clicked. (before it display dropdown list)
             </summary>
         </member>
         <member name="F:Sci.Win.UI.ComboBox._editmode">
