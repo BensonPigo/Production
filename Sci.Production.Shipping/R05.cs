@@ -92,6 +92,7 @@ select  Supplier = s.LocalSuppID + ' - ' + isnull(l.Abb,'')
                                      ) a for xml path(''))
                                     , 1, 1, '')
                              , '')
+        , s.SubType
 from ShippingAP s WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on s.LocalSuppID = l.ID
 where s.ApvDate is null
@@ -165,15 +166,16 @@ where s.ApvDate is null
                 objArray[0, 0] = dr["Supplier"];
                 objArray[0, 1] = dr["ID"];
                 objArray[0, 2] = dr["Type"];
-                objArray[0, 3] = dr["CDate"];
-                objArray[0, 4] = dr["Handle"];
-                objArray[0, 5] = dr["Brand"];
-                objArray[0, 6] = dr["MDivisionID"];
-                objArray[0, 7] = dr["CurrencyID"];
-                objArray[0, 8] = dr["Amount"];
-                objArray[0, 9] = dr["BLNo"];
-                objArray[0, 10] = dr["InvNo"];
-                objArray[0, 11] = dr["ExportInv"];
+                objArray[0, 3] = dr["SubType"];
+                objArray[0, 4] = dr["CDate"];
+                objArray[0, 5] = dr["Handle"];
+                objArray[0, 6] = dr["Brand"];
+                objArray[0, 7] = dr["MDivisionID"];
+                objArray[0, 8] = dr["CurrencyID"];
+                objArray[0, 9] = dr["Amount"];
+                objArray[0, 10] = dr["BLNo"];
+                objArray[0, 11] = dr["InvNo"];
+                objArray[0, 12] = dr["ExportInv"];
                 worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
