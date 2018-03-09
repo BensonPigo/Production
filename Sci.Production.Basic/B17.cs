@@ -22,5 +22,19 @@ namespace Sci.Production.Basic
         {
             this.InitializeComponent();
         }
+
+        /// <inheritdoc/>
+        protected override void ClickNewAfter()
+        {
+            this.txtID.Enabled = true;
+            base.ClickNewAfter();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDetailEntered()
+        {
+            this.txtID.Enabled = false;
+            base.OnDetailEntered();
+        }
     }
 }

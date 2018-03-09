@@ -29,8 +29,10 @@
         private void InitializeComponent()
         {
             this.checkJunk = new Sci.Win.UI.CheckBox();
-            this.displayID = new Sci.Win.UI.DisplayBox();
             this.labelID = new Sci.Win.UI.Label();
+            this.txtID = new Sci.Win.UI.TextBox();
+            this.labelDESC = new Sci.Win.UI.Label();
+            this.editDESC = new Sci.Win.UI.EditBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -39,11 +41,30 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(912, 395);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editDESC);
+            this.detailcont.Controls.Add(this.labelDESC);
+            this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Controls.Add(this.displayID);
             this.detailcont.Controls.Add(this.labelID);
+            this.detailcont.Size = new System.Drawing.Size(912, 357);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Size = new System.Drawing.Size(912, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(912, 395);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(920, 424);
             // 
             // checkJunk
             // 
@@ -57,16 +78,6 @@
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
-            // displayID
-            // 
-            this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayID.Location = new System.Drawing.Point(139, 39);
-            this.displayID.Name = "displayID";
-            this.displayID.Size = new System.Drawing.Size(100, 23);
-            this.displayID.TabIndex = 6;
-            // 
             // labelID
             // 
             this.labelID.Location = new System.Drawing.Point(61, 39);
@@ -75,18 +86,47 @@
             this.labelID.TabIndex = 5;
             this.labelID.Text = "ID";
             // 
+            // txtID
+            // 
+            this.txtID.BackColor = System.Drawing.Color.White;
+            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtID.Enabled = false;
+            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtID.IsSupportEditMode = false;
+            this.txtID.Location = new System.Drawing.Point(139, 39);
+            this.txtID.Name = "txtID";
+            this.txtID.Size = new System.Drawing.Size(110, 23);
+            this.txtID.TabIndex = 8;
+            // 
+            // labelDESC
+            // 
+            this.labelDESC.Location = new System.Drawing.Point(61, 80);
+            this.labelDESC.Name = "labelDESC";
+            this.labelDESC.Size = new System.Drawing.Size(75, 23);
+            this.labelDESC.TabIndex = 9;
+            this.labelDESC.Text = "Description";
+            // 
+            // editDESC
+            // 
+            this.editDESC.BackColor = System.Drawing.Color.White;
+            this.editDESC.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.editDESC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editDESC.Location = new System.Drawing.Point(139, 80);
+            this.editDESC.Multiline = true;
+            this.editDESC.Name = "editDESC";
+            this.editDESC.Size = new System.Drawing.Size(345, 97);
+            this.editDESC.TabIndex = 11;
+            // 
             // B17
             // 
-            this.ClientSize = new System.Drawing.Size(905, 457);
-            this.ConnectionName = "Machine";
+            this.ClientSize = new System.Drawing.Size(920, 457);
+            this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
-            this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B17";
             this.Text = "B17.Local Unit";
-            this.WorkAlias = "MMSUnit";
+            this.WorkAlias = "LocalUnit";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -103,7 +143,9 @@
         #endregion
 
         private Win.UI.CheckBox checkJunk;
-        private Win.UI.DisplayBox displayID;
         private Win.UI.Label labelID;
+        private Win.UI.Label labelDESC;
+        private Win.UI.TextBox txtID;
+        private Win.UI.EditBox editDESC;
     }
 }
