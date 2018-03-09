@@ -76,6 +76,7 @@
             this.labelTtlGW = new Sci.Win.UI.Label();
             this.labelPullOutNo = new Sci.Win.UI.Label();
             this.displayBoxPullOutNo = new Sci.Win.UI.DisplayBox();
+            this.btnUpdateBarcode = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -92,6 +93,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnUpdateBarcode);
             this.masterpanel.Controls.Add(this.numTtlGW);
             this.masterpanel.Controls.Add(this.labelTtlGW);
             this.masterpanel.Controls.Add(this.btnImportFromExcel);
@@ -140,7 +142,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateCartonEstBooking);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 269);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 269);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -190,11 +192,12 @@
             this.masterpanel.Controls.SetChildIndex(this.labelTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUpdateBarcode, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 269);
-            this.detailpanel.Size = new System.Drawing.Size(892, 80);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 249);
             // 
             // gridicon
             // 
@@ -207,7 +210,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 80);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 249);
             // 
             // detail2
             // 
@@ -223,16 +226,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1000, 556);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1000, 518);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 518);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -298,6 +301,7 @@
             this.comboSortby.IsSupportUnselect = true;
             this.comboSortby.Location = new System.Drawing.Point(75, 242);
             this.comboSortby.Name = "comboSortby";
+            this.comboSortby.OldText = "";
             this.comboSortby.Size = new System.Drawing.Size(121, 24);
             this.comboSortby.TabIndex = 18;
             this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.ComboSortby_SelectedIndexChanged);
@@ -535,7 +539,7 @@
             // btnCartonSummary
             // 
             this.btnCartonSummary.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCartonSummary.Location = new System.Drawing.Point(816, 56);
+            this.btnCartonSummary.Location = new System.Drawing.Point(815, 28);
             this.btnCartonSummary.Name = "btnCartonSummary";
             this.btnCartonSummary.Size = new System.Drawing.Size(178, 30);
             this.btnCartonSummary.TabIndex = 48;
@@ -546,7 +550,7 @@
             // btnRecalculateWeight
             // 
             this.btnRecalculateWeight.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnRecalculateWeight.Location = new System.Drawing.Point(815, 93);
+            this.btnRecalculateWeight.Location = new System.Drawing.Point(815, 60);
             this.btnRecalculateWeight.Name = "btnRecalculateWeight";
             this.btnRecalculateWeight.Size = new System.Drawing.Size(179, 30);
             this.btnRecalculateWeight.TabIndex = 49;
@@ -557,7 +561,7 @@
             // btnUnConfirmHistory
             // 
             this.btnUnConfirmHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnUnConfirmHistory.Location = new System.Drawing.Point(815, 128);
+            this.btnUnConfirmHistory.Location = new System.Drawing.Point(815, 92);
             this.btnUnConfirmHistory.Name = "btnUnConfirmHistory";
             this.btnUnConfirmHistory.Size = new System.Drawing.Size(179, 30);
             this.btnUnConfirmHistory.TabIndex = 50;
@@ -629,9 +633,9 @@
             // 
             this.labelCofirmed.BackColor = System.Drawing.Color.Transparent;
             this.labelCofirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelCofirmed.Location = new System.Drawing.Point(839, 6);
+            this.labelCofirmed.Location = new System.Drawing.Point(839, 0);
             this.labelCofirmed.Name = "labelCofirmed";
-            this.labelCofirmed.Size = new System.Drawing.Size(161, 39);
+            this.labelCofirmed.Size = new System.Drawing.Size(161, 26);
             this.labelCofirmed.TabIndex = 58;
             this.labelCofirmed.Text = "Shipping Lock";
             this.labelCofirmed.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -641,7 +645,7 @@
             // 
             // btnDownloadSampleFile
             // 
-            this.btnDownloadSampleFile.Location = new System.Drawing.Point(815, 164);
+            this.btnDownloadSampleFile.Location = new System.Drawing.Point(815, 156);
             this.btnDownloadSampleFile.Name = "btnDownloadSampleFile";
             this.btnDownloadSampleFile.Size = new System.Drawing.Size(179, 30);
             this.btnDownloadSampleFile.TabIndex = 59;
@@ -653,7 +657,7 @@
             // btnImportFromExcel
             // 
             this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportFromExcel.Location = new System.Drawing.Point(815, 200);
+            this.btnImportFromExcel.Location = new System.Drawing.Point(815, 188);
             this.btnImportFromExcel.Name = "btnImportFromExcel";
             this.btnImportFromExcel.Size = new System.Drawing.Size(179, 30);
             this.btnImportFromExcel.TabIndex = 60;
@@ -704,6 +708,7 @@
             this.txtshipmode.IsSupportUnselect = true;
             this.txtshipmode.Location = new System.Drawing.Point(83, 111);
             this.txtshipmode.Name = "txtshipmode";
+            this.txtshipmode.OldText = "";
             this.txtshipmode.Size = new System.Drawing.Size(121, 24);
             this.txtshipmode.TabIndex = 3;
             this.txtshipmode.UseFunction = "ORDER";
@@ -757,6 +762,18 @@
             this.displayBoxPullOutNo.Name = "displayBoxPullOutNo";
             this.displayBoxPullOutNo.Size = new System.Drawing.Size(160, 23);
             this.displayBoxPullOutNo.TabIndex = 39;
+            // 
+            // btnUpdateBarcode
+            // 
+            this.btnUpdateBarcode.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnUpdateBarcode.Location = new System.Drawing.Point(815, 124);
+            this.btnUpdateBarcode.Name = "btnUpdateBarcode";
+            this.btnUpdateBarcode.Size = new System.Drawing.Size(179, 30);
+            this.btnUpdateBarcode.TabIndex = 63;
+            this.btnUpdateBarcode.Text = "Update Barcode";
+            this.btnUpdateBarcode.UseVisualStyleBackColor = true;
+            this.btnUpdateBarcode.Visible = false;
+            this.btnUpdateBarcode.Click += new System.EventHandler(this.BtnUpdateBarcode_Click);
             // 
             // P03
             // 
@@ -850,5 +867,6 @@
         private Win.UI.Label labelTtlGW;
         private Win.UI.DisplayBox displayBoxPullOutNo;
         private Win.UI.Label labelPullOutNo;
+        private Win.UI.Button btnUpdateBarcode;
     }
 }

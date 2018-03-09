@@ -810,7 +810,7 @@ where Qty is not null
                         this.ShowWaitMessage($"Data Processing ({intProcessIndex} / {intProcessCount}) ...", 500);
 
                         List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-                        listSQLParameter.Add(new SqlParameter("@UserName", Sci.Env.User.UserName));
+                        listSQLParameter.Add(new SqlParameter("@UserName", Sci.Env.User.UserID));
                         listSQLParameter.Add(new SqlParameter("@OrderID", drPPASchedule["OrderID"]));
                         listSQLParameter.Add(new SqlParameter("@StartDate", this.objStartDate));
                         listSQLParameter.Add(new SqlParameter("@EndDate", this.objEndDate));

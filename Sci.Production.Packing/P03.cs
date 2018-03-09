@@ -692,7 +692,8 @@ order by os.Seq",
                 .Date("TransferDate", header: "Transfer CLOG", iseditingreadonly: true)
                 .Date("ReceiveDate", header: "CLOG CFM", iseditingreadonly: true)
                 .Text("ClogLocationId", header: "Location No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("ReturnDate", header: "Return Date", iseditingreadonly: true);
+                .Date("ReturnDate", header: "Return Date", iseditingreadonly: true)
+                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
             #region 欄位的Validating
             this.detailgrid.CellValidating += (s, e) =>
@@ -2045,6 +2046,69 @@ from #tmp t inner join Order_QtyShip o with (nolock) on t.OrderID = o.id and t.O
 
             Sci.Production.Packing.P03_ExcelImport nextForm = new Sci.Production.Packing.P03_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
             nextForm.ShowDialog(this);
+        }
+
+        private void BtnUpdateBarcode_Click(object sender, EventArgs e)
+        {
+            // 檢查是否已經pullout
+            if (MyUtility.Check.Seek($"select status from Pullout where  ID = '{this.CurrentMaintain["PulloutID"]}' and status = 'Confirmed' "))
+            {
+                MyUtility.Msg.WarningBox($"<#{this.CurrentMaintain["ID"]}> Already pullout!, Cannot update barcode!!");
+                return;
+            }
+
+            DataTable custbarcode_result;
+            string sqlcmd = $@"select distinct o.StyleID,pd.Article,pd.SizeCode,cb.Barcode from PackingList_Detail pd WITH (NOLOCK)
+inner join orders o WITH (NOLOCK) on o.ID = pd.OrderID
+inner join CustBarCode cb WITH (NOLOCK) on o.CustPONo = cb.CustPONo and o.BrandID = cb.BrandID and o.StyleID = cb.StyleID and pd.Article = cb.Article and pd.SizeCode = cb.SizeCode
+where pd.id = '{this.CurrentMaintain["ID"]}'";
+
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out custbarcode_result);
+            if (result)
+            {
+                using (custbarcode_result)
+                {
+                    if (custbarcode_result.Rows.Count > 0)
+                    {
+                        string upd_sql = $@"update pd set pd.Barcode = cb.BarCode
+from PackingList_Detail pd WITH (NOLOCK)
+inner join orders o WITH (NOLOCK) on o.ID = pd.OrderID
+inner join CustBarCode cb WITH (NOLOCK) on o.CustPONo = cb.CustPONo and o.BrandID = cb.BrandID and o.StyleID = cb.StyleID and pd.Article = cb.Article and pd.SizeCode = cb.SizeCode
+where pd.id = '{this.CurrentMaintain["ID"]}'";
+                        DualResult upd_result = DBProxy.Current.Execute(null, upd_sql);
+                        if (!upd_result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+                        else
+                        {
+                            var m = new Sci.Win.UI.MsgGridForm(custbarcode_result, "Updated as follows barcode", "Update successful", null, MessageBoxButtons.OK);
+
+                            m.Width = 600;
+                            m.grid1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                            m.grid1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                            m.grid1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                            m.grid1.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                            m.text_Find.Width = 140;
+                            m.btn_Find.Location = new Point(150, 6);
+                            m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+                            m.ShowDialog();
+                            this.RenewData();
+                        }
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Please go to Clog.P07 Import Scan & Pack Barcode file first");
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                this.ShowErr(result);
+                return;
+            }
         }
     }
 }

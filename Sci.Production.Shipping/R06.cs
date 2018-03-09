@@ -78,6 +78,7 @@ namespace Sci.Production.Shipping
             if (this.radioDetail.Checked == true)
             {
                 sqlCmd.Append(@"select	s.Type,
+        s.SubType,
 		Supplier = s.LocalSuppID + ls.Abb,
 		s.ID,
 		s.VoucherID,
@@ -110,7 +111,7 @@ where s.Status = 'Approved'");
             }
             else
             {
-                sqlCmd.Append(@"select s.Type,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
+                sqlCmd.Append(@"select s.Type,s.SubType,s.LocalSuppID+'-'+ISNULL(l.Abb,'') as Supplier,s.ID,s.VoucherID,
 s.CDate,CONVERT(DATE,s.ApvDate) as ApvDate,s.MDivisionID,s.CurrencyID,s.Amount+s.VAT as Amt,s.BLNo,s.Remark,s.InvNo,
 isnull((select CONCAT(InvNo,'/') from (select distinct InvNo from ShareExpense WITH (NOLOCK) where ShippingAPID = s.ID) a for xml path('')),'') as ExportInv
 from ShippingAP s WITH (NOLOCK) 
@@ -209,23 +210,24 @@ where s.Status = 'Approved'");
             {
                 // 填內容值
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 13];
+                object[,] objArray = new object[1, 14];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["Type"];
-                    objArray[0, 1] = dr["Supplier"];
-                    objArray[0, 2] = dr["ID"];
-                    objArray[0, 3] = dr["VoucherID"];
-                    objArray[0, 4] = dr["CDate"];
-                    objArray[0, 5] = dr["ApvDate"];
-                    objArray[0, 6] = dr["MDivisionID"];
-                    objArray[0, 7] = dr["CurrencyID"];
-                    objArray[0, 8] = dr["Amt"];
-                    objArray[0, 9] = dr["BLNo"];
-                    objArray[0, 10] = dr["Remark"];
-                    objArray[0, 11] = dr["InvNo"];
-                    objArray[0, 12] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0, MyUtility.Convert.GetString(dr["ExportInv"]).Length - 1);
-                    worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 1] = dr["SubType"];
+                    objArray[0, 2] = dr["Supplier"];
+                    objArray[0, 3] = dr["ID"];
+                    objArray[0, 4] = dr["VoucherID"];
+                    objArray[0, 5] = dr["CDate"];
+                    objArray[0, 6] = dr["ApvDate"];
+                    objArray[0, 7] = dr["MDivisionID"];
+                    objArray[0, 8] = dr["CurrencyID"];
+                    objArray[0, 9] = dr["Amt"];
+                    objArray[0, 10] = dr["BLNo"];
+                    objArray[0, 11] = dr["Remark"];
+                    objArray[0, 12] = dr["InvNo"];
+                    objArray[0, 13] = MyUtility.Check.Empty(dr["ExportInv"]) ? string.Empty : MyUtility.Convert.GetString(dr["ExportInv"]).Substring(0, MyUtility.Convert.GetString(dr["ExportInv"]).Length - 1);
+                    worksheet.Range[string.Format("A{0}:N{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
