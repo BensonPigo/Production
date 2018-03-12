@@ -1494,6 +1494,13 @@
             <param name="dt"> target datatable </param>
             <returns> column name with space </returns>
         </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.KillExcelProcess(Microsoft.Office.Interop.Excel.Application)">
+            <summary>
+            透過Excel.Application 關閉工作管理員畫面裡的Excel.exe
+            </summary>
+            <param name="excelApp"></param>
+            <returns></returns>
+        </member>
         <member name="T:Sci.Utility.Excel.SaveDataToExcel">
             <summary>
             Edward : Data轉存成Excel，可自設是否加Pivot Table及其他屬性

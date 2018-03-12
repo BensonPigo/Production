@@ -176,7 +176,7 @@ where s.ApvDate is null
                 objArray[0, 10] = dr["BLNo"];
                 objArray[0, 11] = dr["InvNo"];
                 objArray[0, 12] = dr["ExportInv"];
-                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:M{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
