@@ -951,14 +951,15 @@ from (
 		select *
 		from (		
 			select	distinct tcc.ThreadCombID
-			from ThreadColorComb tcc
-			inner join Orders o on tcc.StyleUkey = o.StyleUkey
+			from ThreadColorComb tcc  WITH (NOLOCK)
+			inner join Orders o  WITH (NOLOCK) on tcc.StyleUkey = o.StyleUkey
 			where o.id = '{0}'
 		) tmp
 		cross apply (
-			select	Article
-			from Order_Qty
-			where id = '{0}'
+			select distinct	Article
+			from Orders o WITH (NOLOCK)
+			INNER JOIN  Order_Qty oq WITH (NOLOCK) on o.id = oq.id
+			where o.poid = '{0}' and o.Junk = 0 and o.Category <> 'G'
 		) orders
 
 		Except
@@ -972,9 +973,10 @@ from (
 	select ThreadCombID
 	from #tmp_P01 t
 	where (t.ThreadColorid = '' or t.Refno = '')
-		  and Article in (select	Article
-				   		  from Order_Qty
-						  where id = '{0}')
+		  and Article in (select distinct	Article
+			                from Orders o WITH (NOLOCK)
+			                INNER JOIN  Order_Qty oq WITH (NOLOCK) on o.id = oq.id
+			                where o.poid = '{0}' and o.Junk = 0 and o.Category <> 'G')
 
 	union all
 	-- Thread P01 某一項 Refno, Color, Article 都是空值 --
