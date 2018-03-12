@@ -3840,6 +3840,12 @@
             <param name="keyData">Which key is pressed.</param>
             <returns>Completed or not.</returns>
         </member>
+        <member name="M:Sci.Win.Forms.Base.OnActivated(System.EventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:Sci.Win.Forms.Base.OnDeactivate(System.EventArgs)">
+            <inheritdoc />
+        </member>
         <member name="M:Sci.Win.Forms.Base.NeedUserClosingConfirm">
             <summary>
             implementation by Input1 etc.
@@ -12544,29 +12550,6 @@
             Clip01 subpage Class.
             </summary>
         </member>
-        <member name="M:Sci.Win.Tools.Clip01.#ctor">
-            <summary>
-            Constructor of Clip01.
-            </summary>
-        </member>
-        <member name="M:Sci.Win.Tools.Clip01.#ctor(System.String,System.String,System.String)">
-            <summary>
-            Constructor of Clip01 with parameter.
-            </summary>
-            <param name="tablename">Table name</param>
-            <param name="uid">usercode of login.</param>
-            <param name="yyyymm">none used parameter</param>
-        </member>
-        <member name="M:Sci.Win.Tools.Clip01.OnFormLoaded">
-            <summary>
-            On form loaded method.
-            </summary>
-        </member>
-        <member name="M:Sci.Win.Tools.Clip01.OnFormDispose">
-            <summary>
-            On form dispose method.
-            </summary>
-        </member>
         <member name="F:Sci.Win.Tools.Clip01.col_file">
             <summary>
             grid column of filename.
@@ -12614,45 +12597,46 @@
         </member>
         <member name="F:Sci.Win.Tools.Clip01._uid">
             <summary>
-            FIeld of user code.
+            Field of user code.
             </summary>
         </member>
         <member name="P:Sci.Win.Tools.Clip01.UID">
-            <summary>
-            Property of usercode.
-            </summary>
+            <inheritdoc />
         </member>
         <member name="P:Sci.Win.Tools.Clip01.Inserteds">
-            <summary>
-            Get the new add datas.
-            </summary>
+            <inheritdoc />
         </member>
-        <member name="M:Sci.Win.Tools.Clip01.Initialize">
-            <summary>
-            Initialize the default value.
-            </summary>
-            <returns>Result of process.</returns>
+        <member name="M:Sci.Win.Tools.Clip01.#ctor">
+            <inheritdoc />
         </member>
-        <member name="M:Sci.Win.Tools.Clip01.grid_CellMouseClick(System.Object,System.Windows.Forms.DataGridViewCellMouseEventArgs)">
-            <summary>
-            The Cell of grid mouse click event method.
-            </summary>
-            <param name="sender">sender object.</param>
-            <param name="e">Event Args information.</param>
+        <member name="M:Sci.Win.Tools.Clip01.#ctor(System.String,System.String,System.String)">
+            <inheritdoc />
         </member>
-        <member name="M:Sci.Win.Tools.Clip01.save_Click(System.Object,System.EventArgs)">
+        <member name="M:Sci.Win.Tools.Clip01.OnFormLoaded">
+            <inheritdoc />
+        </member>
+        <member name="M:Sci.Win.Tools.Clip01.OnFormDispose">
+            <inheritdoc />
+        </member>
+        <member name="M:Sci.Win.Tools.Clip01.UI_btnSave_Click(System.Object,System.EventArgs)">
             <summary>
             The Save button event method.
             </summary>
             <param name="sender">sender object.</param>
             <param name="e">Event Args information.</param>
         </member>
-        <member name="M:Sci.Win.Tools.Clip01.close_Click(System.Object,System.EventArgs)">
+        <member name="M:Sci.Win.Tools.Clip01.UI_btnClose_Click(System.Object,System.EventArgs)">
             <summary>
             The Close button event method.
             </summary>
             <param name="sender">sender object.</param>
             <param name="e">Event Args information.</param>
+        </member>
+        <member name="M:Sci.Win.Tools.Clip01.Initialize">
+            <summary>
+            Initialize the default value.
+            </summary>
+            <returns>Result of process.</returns>
         </member>
         <member name="F:Sci.Win.Tools.Clip01.components">
             <summary>
@@ -12963,6 +12947,127 @@
             MailTo subpage class.
             </summary>
         </member>
+        <member name="T:Sci.Win.Tools.MailTo.catchMailError">
+            <summary>
+            寄信失敗時後的處理常式委派介面定義
+            </summary>
+            <inheritdoc />
+        </member>
+        <member name="T:Sci.Win.Tools.MailTo.SendMailBeforeArg">
+            <summary>
+            SendingBefore使用的參數
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.SendMailBeforeArg.Mail">
+            <summary>
+            將要寄出的信件本體，供掛載端加工或檢查
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.SendMailBeforeArg.CancelMessage">
+            <summary>
+            如果設定e.Cancel = true，則會中止寄信，並顯示此屬性作為提示文字，如果為空，會顯示『canceled』
+            </summary>
+        </member>
+        <member name="M:Sci.Win.Tools.MailTo.SendMailBeforeArg.#ctor(System.Net.Mail.MailMessage)">
+            <summary>
+            SendingBefore使用的參數
+            </summary>
+            <param name="mail">將要寄出的信件本體，供掛載端加工或檢查</param>
+        </member>
+        <member name="M:Sci.Win.Tools.MailTo.StaticCatchMailError(Ict.DualResult)">
+            <inheritdoc />
+        </member>
+        <member name="E:Sci.Win.Tools.MailTo.SendingBefore">
+            <summary>
+            組裝信件完成後，將準備用於寄出的信件主體，交給呼叫端做加工或是檢查，如果e.Cancel = true，則寄信動作會停止
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.CatchMailError">
+            <summary>
+            當寄信失敗時後的處理常式
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.dualResult">
+            <inheritdoc />
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.SendMailResult">
+            <inheritdoc />
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.From">
+            <summary>
+            From of mail.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.To">
+            <summary>
+            To of mail.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.CC">
+            <summary>
+            CC of mail.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.Subject">
+            <summary>
+            Subject of mail.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.Description">
+            <summary>
+            Description of mail.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.Attachment">
+            <summary>
+            Attachment of mail.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.AttachmentList">
+            <summary>
+            AttachmentList of mail.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.IsSendNow">
+            <summary>
+            Property of IsSendNow.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.IsNoShowMessage">
+            <summary>
+             Property of IsNoShowMessage.
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.MailServerIP">
+            <summary>
+            Property of MailServerIP
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.MailServerPort">
+            <summary>
+            Property of MailServerPort
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.MailServerAccount">
+            <summary>
+            Property of MailServerAccount
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.MailServerPassword">
+            <summary>
+            Property of MailServerPassword
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Tools.MailTo.Notification">
+            <summary>
+            Mail傳送回條.
+            </summary>
+        </member>
+        <member name="F:Sci.Win.Tools.MailTo.openfiledialog">
+            <summary>
+            Open file dialog object.
+            </summary>
+        </member>
         <member name="M:Sci.Win.Tools.MailTo.#ctor">
             <summary>
             Constructor of MailTo.
@@ -13000,110 +13105,33 @@
             On foem dispose method.
             </summary>
         </member>
-        <member name="F:Sci.Win.Tools.MailTo.openfiledialog">
+        <member name="M:Sci.Win.Tools.MailTo.UI_btnAddfile_Click(System.Object,System.EventArgs)">
             <summary>
-            Open file dialog object.
+            The Add button event method.
             </summary>
+            <param name="sender">sender object.</param>
+            <param name="e">Event Args information.</param>
         </member>
-        <member name="P:Sci.Win.Tools.MailTo.From">
+        <member name="M:Sci.Win.Tools.MailTo.UI_btnRemovefile_Click(System.Object,System.EventArgs)">
             <summary>
-            From of mail.
+            The Remove button event method.
             </summary>
+            <param name="sender">sender object.</param>
+            <param name="e">Event Args information.</param>
         </member>
-        <member name="P:Sci.Win.Tools.MailTo.To">
+        <member name="M:Sci.Win.Tools.MailTo.UI_btnSend_Click(System.Object,System.EventArgs)">
             <summary>
-            To of mail.
+            The Send button event method.
             </summary>
+            <param name="sender">sender object.</param>
+            <param name="e">Event Args information.</param>
         </member>
-        <member name="P:Sci.Win.Tools.MailTo.CC">
+        <member name="M:Sci.Win.Tools.MailTo.UI_btnCancel_Click(System.Object,System.EventArgs)">
             <summary>
-            CC of mail.
+            The Cancel button event method.
             </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.Subject">
-            <summary>
-            Subject of mail.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.Description">
-            <summary>
-            Description of mail.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.Attachment">
-            <summary>
-            Attachment of mail.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.AttachmentList">
-            <summary>
-            AttachmentList of mail.
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.MailTo._issendnow">
-            <summary>
-            Field of issendnow.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.IsSendNow">
-            <summary>
-            Property of IsSendNow.
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.MailTo._isnoshowmessage">
-            <summary>
-            Field of isnoshowmessage.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.IsNoShowMessage">
-            <summary>
-             Property of IsNoShowMessage.
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.MailTo._mailserverip">
-            <summary>
-            Field of mail server ip.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.MailServerIP">
-            <summary>
-            Property of MailServerIP
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.MailTo._mailserverport">
-            <summary>
-            Field of mail server port number.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.MailServerPort">
-            <summary>
-            Property of MailServerPort
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.MailTo._mailserveraccount">
-            <summary>
-            Field of mail server account.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.MailServerAccount">
-            <summary>
-            Property of MailServerAccount
-            </summary>
-        </member>
-        <member name="F:Sci.Win.Tools.MailTo._mailserverpassword">
-            <summary>
-            Field of mail server account password.
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.MailServerPassword">
-            <summary>
-            Property of MailServerPassword
-            </summary>
-        </member>
-        <member name="P:Sci.Win.Tools.MailTo.Notification">
-            <summary>
-            Mail傳送回條.
-            </summary>
+            <param name="sender">sender object.</param>
+            <param name="e">Event Args information.</param>
         </member>
         <member name="M:Sci.Win.Tools.MailTo.Send">
             <summary>
@@ -13117,34 +13145,6 @@
             </summary>
             <param name="text">mail address string.</param>
             <returns>mail address list.</returns>
-        </member>
-        <member name="M:Sci.Win.Tools.MailTo.addfile_Click(System.Object,System.EventArgs)">
-            <summary>
-            The Add button event method.
-            </summary>
-            <param name="sender">sender object.</param>
-            <param name="e">Event Args information.</param>
-        </member>
-        <member name="M:Sci.Win.Tools.MailTo.removefile_Click(System.Object,System.EventArgs)">
-            <summary>
-            The Remove button event method.
-            </summary>
-            <param name="sender">sender object.</param>
-            <param name="e">Event Args information.</param>
-        </member>
-        <member name="M:Sci.Win.Tools.MailTo.send_Click(System.Object,System.EventArgs)">
-            <summary>
-            The Send button event method.
-            </summary>
-            <param name="sender">sender object.</param>
-            <param name="e">Event Args information.</param>
-        </member>
-        <member name="M:Sci.Win.Tools.MailTo.cancel_Click(System.Object,System.EventArgs)">
-            <summary>
-            The Cancel button event method.
-            </summary>
-            <param name="sender">sender object.</param>
-            <param name="e">Event Args information.</param>
         </member>
         <member name="F:Sci.Win.Tools.MailTo.components">
             <summary>
@@ -15656,6 +15656,11 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
+        </member>
+        <member name="M:Sci.Win.UI.Grid.ToExcel(System.Boolean)">
+            <summary>
+            在提示使用者是否確認後，轉呼叫 Sci.Utils.ExportGridToExcel 
+            </summary>
         </member>
         <member name="P:Sci.Win.UI.Grid.CurrentDataRow">
             <summary>
