@@ -259,6 +259,11 @@ namespace Sci.Production.Warehouse
                     var frm = new Sci.Production.Warehouse.P03_Scrap(dr);
                     frm.ShowDialog(this);
                 }
+                else if (dr["From_Program"].Equals("P04"))
+                {
+                    var frm = new Sci.Production.Warehouse.P04_ScrapQty(dr["ID"].ToString(), dr["refno"].ToString(), dr["ColorID"].ToString());
+                    frm.ShowDialog(this);
+                }
 
             };
             #endregion
@@ -348,7 +353,7 @@ namespace Sci.Production.Warehouse
             .Text("LInvQty", header: "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts7)  //29
             //.Numeric("LObQty", header: "Scrap Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //30
             .Text("LObQty", header: "Scrap Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts8)  //30
-            .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
+            .EditText("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10)  //33
             .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)  //34
@@ -729,7 +734,7 @@ select ROW_NUMBER_D = 1
        , [AdjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
        , [balanceqty] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
        , [LInvQty] =  '-' 
-       , [LObQty] =  '-'
+       , [LObQty] = iif (l.LobQty = 0, '',format(l.LobQty,'#,###,###,###.##'))
        , [ALocation] = l.ALocation
        , [BLocation] = '-' 
        , [ThirdCountry] = 0

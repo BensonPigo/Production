@@ -55,10 +55,10 @@
             this.panel1.Size = new System.Drawing.Size(1008, 49);
             this.panel1.TabIndex = 3;
             // 
-            // button1
+            // btnNewSearch
             // 
             this.btnNewSearch.Location = new System.Drawing.Point(272, 8);
-            this.btnNewSearch.Name = "button1";
+            this.btnNewSearch.Name = "btnNewSearch";
             this.btnNewSearch.Size = new System.Drawing.Size(104, 30);
             this.btnNewSearch.TabIndex = 7;
             this.btnNewSearch.Text = "New Search";
@@ -76,7 +76,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(9, 12);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(109, 23);
@@ -115,6 +114,7 @@
             this.gridMaterialStatus.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridMaterialStatus.RowTemplate.Height = 24;
             this.gridMaterialStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridMaterialStatus.ShowCellToolTips = false;
             this.gridMaterialStatus.Size = new System.Drawing.Size(1008, 573);
             this.gridMaterialStatus.TabIndex = 4;
             this.gridMaterialStatus.TabStop = false;

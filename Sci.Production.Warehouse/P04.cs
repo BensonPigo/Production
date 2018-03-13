@@ -99,6 +99,19 @@ namespace Sci.Production.Warehouse
                     form.Show(this);
                 }
             };
+            #endregion
+            #region Scrap Qty 開窗 P04_ScrapQty
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings setScrapQty = new DataGridViewGeneratorNumericColumnSettings();
+            setScrapQty.CellMouseDoubleClick += (s, e) =>
+            {
+                var dataRow = this.gridMaterialStatus.GetDataRow<DataRow>(e.RowIndex);
+                if (dataRow != null)
+                {
+                    //var form = new Sci.Production.Warehouse.P04_ScrapQty(string Poid, string Refno, string Color);
+                    var form = new Sci.Production.Warehouse.P04_ScrapQty(dataRow["sp"].ToString(), dataRow["refno"].ToString(), dataRow["threadColor"].ToString());
+                    form.Show(this);
+                }
+            };
             #endregion 
             #region Set Grid
             Helper.Controls.Grid.Generator(this.gridMaterialStatus)
@@ -112,7 +125,8 @@ namespace Sci.Production.Warehouse
                 .Numeric("outQty", header: "OutQty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("adjustQty", header: "Adjust Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6))
                 .Numeric("balance", header: "Balance", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6), settings: setBalance)
-                .EditText("Alocation", header: "Bulk Location", iseditingreadonly: true, width: Widths.AnsiChars(10));
+                .EditText("Alocation", header: "Bulk Location", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Numeric("ScrapQty", header: "Scrap Qty", decimal_places: 2, integer_places: 10, iseditingreadonly: true, width: Widths.AnsiChars(6), settings: setScrapQty);
             #endregion
         }
 
@@ -158,6 +172,7 @@ select  [sp] = l.OrderID
         , [adjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
         , [Balance] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
         , [ALocation] = l.ALocation
+        , [ScrapQty] = l.LobQty
 from LocalInventory l
 left join LocalItem b on l.Refno=b.RefNo
 left join LocalSupp c on b.LocalSuppid=c.ID
