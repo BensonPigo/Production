@@ -93,6 +93,32 @@ From (
 	inner join localissue_Detail b ON a.id=b.id
 	WHERE b.OrderId = @Poid and b.Refno = @Refno and b.ThreadColorID = @ColorID
         and a.Status = 'CONFIRMED'
+
+    Union all
+
+	SELECT 	[date] = a.IssueDate
+			,[transactionID] = a.ID
+			,[Name] ='P39. Adjust Bulk Qty (Local)' 
+			,[arrivedQty] = iif(QtyAfter > QtyBefore,QtyAfter - QtyBefore , 0)
+			,[releasedQty] = iif(QtyBefore > QtyAfter,QtyBefore - QtyAfter , 0)
+			,[remark] = isnull(a.Remark, '')
+	FROM AdjustLocal  a 
+	inner join AdjustLocal_Detail b ON a.id=b.id
+	WHERE b.POID = @Poid and b.Refno = @Refno and b.Color = @ColorID and a.Type = 'A'
+        and a.Status = 'CONFIRMED'
+
+    Union all
+
+	SELECT 	[date] = a.IssueDate
+			,[transactionID] = a.ID
+			,[Name] ='P47. Transfer Bulk to Scrap (A2C)(Local)' 
+			,[arrivedQty] = 0
+			,[releasedQty] =  b.Qty
+			,[remark] = isnull(a.Remark, '')
+	FROM SubTransferlocal  a 
+	inner join SubTransferlocal_Detail b ON a.id=b.id
+	WHERE b.POID = @Poid and b.Refno = @Refno and b.Color = @ColorID
+        and a.Status = 'CONFIRMED'
 ) s	
 order by s.date, s.Name, arrivedQty, releasedQty        
 ";
@@ -149,6 +175,7 @@ order by s.date, s.Name, arrivedQty, releasedQty
 update LocalInventory 
 set InQty= isNull(s.InQty,0) 
 	, outqty= isNull(s.OutQty,0)
+    , AdjustQty = isNull(adj.Adjqty,0)
 from LocalInventory
 outer apply(
 	SELECT	[InQty]=sum([Arrived Qty]),
@@ -175,8 +202,27 @@ outer apply(
 		inner join localissue_Detail b ON a.id=b.id
 		WHERE b.OrderId = LocalInventory.OrderID and b.Refno = LocalInventory.Refno and b.ThreadColorID = LocalInventory.ThreadColorID
             and a.Status = 'CONFIRMED'
+
+        Union all
+
+	    SELECT  [OrderId] = b.POID
+				,b.Refno
+				,[ThreadColorID] = b.Color
+	    		,[Arrived Qty] = 0
+	    		,[Released Qty] =  b.Qty
+	    FROM SubTransferlocal  a 
+	    inner join SubTransferlocal_Detail b ON a.id=b.id
+	    WHERE b.POID = LocalInventory.OrderID and b.Refno = LocalInventory.Refno and b.Color = LocalInventory.ThreadColorID
+            and a.Status = 'CONFIRMED'
 	) s
 )s
+outer apply (
+SELECT 	[Adjqty] = sum(isnull(QtyAfter,0) - isnull(QtyBefore,0))
+	    FROM AdjustLocal  a 
+	    inner join AdjustLocal_Detail b ON a.id=b.id
+	    WHERE b.POID = LocalInventory.OrderID and b.Refno = LocalInventory.Refno and b.Color = LocalInventory.ThreadColorID and a.Type = 'A'
+            and a.Status = 'CONFIRMED'
+) adj
 WHERE OrderId = @Poid and Refno = @Refno and ThreadColorID = @ColorID
 ";
             #endregion
