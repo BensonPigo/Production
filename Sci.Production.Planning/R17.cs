@@ -106,7 +106,8 @@ SELECT
 ,M = CONVERT(char(10), p.PulloutDate, 20)
 ,N = Order_QS.ShipmodeID
 ,O = Cast(isnull(op.PulloutDate,0) as int)
-,P = CASE WHEN o.GMTComplete   = 'C' OR o.GMTComplete   = 'S' THEN 'Y' ELSE '' END
+,P = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
+                        WHEN 'S' THEN 'S' ELSE '' END
 ,Q = Order_QS.ReasonID
 ,R = case o.Category when 'B' then r.Name
   when 'S' then rs.Name
@@ -139,15 +140,13 @@ outer apply (
 	select COUNT(op.PulloutDate) PulloutDate 
 	from Pullout_Detail op 
 	where op.OrderID = o.id 
-    and op.ShipQty> 0
 	and op.OrderShipmodeSeq = Order_QS.Seq
 ) op 
 outer apply (
-    select [PulloutDate] = MAX(PulloutDate) 
+    select top 1 PulloutDate
     from Pullout_Detail pd 
     where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
-    and pd.ShipQty> 0
-    and pd.PulloutDate >  Order_QS.FtyKPI
+    Order by PulloutDate desc
 ) p
 where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
 
