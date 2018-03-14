@@ -101,7 +101,7 @@ SELECT
 ,H = convert(varchar(10),Order_QS.FtyKPI,111)
 ,I = Order_QS.ShipmodeID
 ,J = Cast(Order_QS.QTY as int)
-,K = Cast(isnull(pd.Qty,0)+isnull(os.Qty,0) as int)
+,K = Cast(isnull(pd.Qty,0) as int)
 ,L = Cast(isnull(pd.FailQty,Order_QS.QTY) as int)
 ,M = CONVERT(char(10), p.PulloutDate, 20)
 ,N = Order_QS.ShipmodeID
@@ -125,12 +125,6 @@ inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
 LEFT JOIN PO ON o.POID = PO.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
-outer apply (
-    select sum(qty) Qty 
-    from Order_Specdetail os 
-    where o.id = os.id and os.Respons = 'P' 
-    group by os.id
-) os 
 outer apply (
 	Select 
 		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,Order_QS.FtyKPI,'<='),
