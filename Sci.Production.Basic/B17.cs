@@ -24,17 +24,13 @@ namespace Sci.Production.Basic
         }
 
         /// <inheritdoc/>
-        protected override void ClickNewAfter()
-        {
-            this.txtID.Enabled = true;
-            base.ClickNewAfter();
+        protected override void ClickEditAfter()
+      {
+            base.ClickEditAfter();
+            this.txtID.ReadOnly = true;
         }
 
         /// <inheritdoc/>
-        protected override void OnDetailEntered()
-        {
-            this.txtID.Enabled = false;
-            base.OnDetailEntered();
-        }
+
     }
 }
