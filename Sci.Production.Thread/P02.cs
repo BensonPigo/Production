@@ -1234,6 +1234,7 @@ and {0} <= tas.UpperBound",
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn("Refno"));
             dt.Columns.Add(new DataColumn("description"));
+            dt.Columns.Add(new DataColumn("Article"));
             dt.Columns.Add(new DataColumn("ThreadColorid"));
             dt.Columns.Add(new DataColumn("Colordesc"));
             dt.Columns.Add(new DataColumn("MeterToCone"));
@@ -1247,6 +1248,7 @@ and {0} <= tas.UpperBound",
                 DataRow dr = dt.NewRow();
                 dr["Refno"] = row.Cells["Refno"].Value.ToString();
                 dr["description"] = row.Cells["description"].Value.ToString();
+                dr["Article"] = row.Cells["Article"].Value.ToString();
                 dr["ThreadColorid"] = row.Cells["ThreadColorid"].Value.ToString();
                 dr["Colordesc"] = row.Cells["Colordesc"].Value.ToString();
                 dr["MeterToCone"] = row.Cells["MeterToCone"].Value.ToString();

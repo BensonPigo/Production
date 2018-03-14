@@ -1797,41 +1797,6 @@ BEGIN
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
--------------------Order_SpecDetail -------------------------
-	MERGE Production.dbo.Order_SpecDetail AS t 
-	using ( 
-                SELECT     a.* 
-                FROM       Trade_To_Pms.dbo.Order_SpecDetail a WITH (nolock) 
-                INNER JOIN #TOrder b 
-                ON         a.id=b.id
-	) AS s 
-	ON t.ukey=s.ukey 
-	WHEN matched THEN 
-	UPDATE 
-	SET          t.id= s.id, 
-                 t.qty= s.qty, 
-                 t.amount= s.amount, 
-                 t.respons= s.respons, 
-                 t.responsdep= s.responsdep, 
-                 t.incharge= s.incharge, 
-                 t.no= s.no, 
-                 t.remark= s.remark, 
-                 t.addr= s.addr, 
-                 t.brokers= s.brokers, 
-                 t.belong= s.belong, 
-                 t.addname= s.addname, 
-                 t.adddate= s.adddate, 
-                 t.editname= s.editname, 
-                 t.editdate= s.editdate
-	when not matched BY target THEN 
-	INSERT ( id ,qty ,amount ,respons ,responsdep ,incharge ,no ,remark , 
-             addr ,brokers ,belong ,ukey ,addname ,adddate ,editname ,editdate) 
-    VALUES ( s.id,s.qty,s.amount,s.respons,s.responsdep,s.incharge,s.no,s.remark, 
-             s.addr,s.brokers,s.belong,s.ukey,s.addname,s.adddate,s.editname,s.editdate) 
-	WHEN NOT matched BY source AND t.id IN ( SELECT id FROM   #TOrder) THEN 
-          DELETE;
-
-
 ----------------order_markerlist_Article-----------------
 	Merge Production.dbo.order_markerlist_Article as t
 	Using (select a.* from Trade_To_Pms.dbo.order_markerlist_Article a inner join #TOrder b on a.id = b.id) as s

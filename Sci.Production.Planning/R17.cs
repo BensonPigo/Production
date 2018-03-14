@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using Sci.Production.Class;
 using System.Linq;
 using Sci.Production.Class.Commons;
+using System.Linq;
 
 namespace Sci.Production.Planning
 {
@@ -20,7 +21,6 @@ namespace Sci.Production.Planning
     {
         private DataTable gdtOrderDetail;
         private DataTable gdtPullOut;
-        private DataTable gdtFailDetail;
         private DataTable gdtSP;
         private DataTable gdtSDP;
 
@@ -101,12 +101,13 @@ SELECT
 ,H = convert(varchar(10),Order_QS.FtyKPI,111)
 ,I = Order_QS.ShipmodeID
 ,J = Cast(Order_QS.QTY as int)
-,K = Cast(isnull(pd.Qty,0)+isnull(os.Qty,0) as int)
+,K = Cast(isnull(pd.Qty,0) as int)
 ,L = Cast(isnull(pd.FailQty,Order_QS.QTY) as int)
 ,M = CONVERT(char(10), p.PulloutDate, 20)
 ,N = Order_QS.ShipmodeID
 ,O = Cast(isnull(op.PulloutDate,0) as int)
-,P = CASE WHEN o.GMTComplete   = 'C' OR o.GMTComplete   = 'S' THEN 'Y' ELSE '' END
+,P = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
+                        WHEN 'S' THEN 'S' ELSE '' END
 ,Q = Order_QS.ReasonID
 ,R = case o.Category when 'B' then r.Name
   when 'S' then rs.Name
@@ -116,6 +117,7 @@ SELECT
 ,U = PO.POHandle
 ,V = PO.POSMR
 ,W = c.alias
+into #tmp
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
 LEFT JOIN Factory f ON o.FACTORYID = f.ID 
@@ -124,12 +126,6 @@ inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
 LEFT JOIN PO ON o.POID = PO.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
-outer apply (
-    select sum(qty) Qty 
-    from Order_Specdetail os 
-    where o.id = os.id and os.Respons = 'P' 
-    group by os.id
-) os 
 outer apply (
 	Select 
 		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,Order_QS.FtyKPI,'<='),
@@ -144,14 +140,12 @@ outer apply (
 	select COUNT(op.PulloutDate) PulloutDate 
 	from Pullout_Detail op 
 	where op.OrderID = o.id 
-    and op.ShipQty> 0
 	and op.OrderShipmodeSeq = Order_QS.Seq
 ) op 
 outer apply (
-    select top 1 PulloutDate 
+    select top 1 PulloutDate
     from Pullout_Detail pd 
     where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
-    and pd.ShipQty> 0
     Order by PulloutDate desc
 ) p
 where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
@@ -184,8 +178,13 @@ where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
                     strSQL += string.Format(" AND f.KpiCode = '{0}' ", this.txtFactory.Text);
                 }
 
-                strSQL += @"
-ORDER BY  o.ID, f.CountryID, f.KpiCode";
+                strSQL += @"select * from (
+select * from #tmp 
+union all
+select A, B, C, D, E, F, G, H, I, J = 0, K = 0, L = J - (K +L), M = '', N, O = 0, P, Q, R, S, T, U, V, W
+from #tmp where (K +L) < J) as result
+order by D,E,J desc
+ ";
 
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);
                 if (!result)
@@ -628,69 +627,6 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
                     }
 
                     #endregion On time Order List by PullOut
-
-                    #region Fail Detail
-                    strSQL = $@" 
-SELECT A = c.alias 
-     , B =  f.KpiCode
-     , C = o.FactoryID
-     , D = o.ID
-     , E = Order_QS.Seq
-     , F = convert(varchar(10),Order_QS.FtyKPI ,111)
-     , G = Order_QS.ShipmodeID
-     , H = Order_QS.QTY
-     , I = isnull(opd.sQty, Order_QS.QTY)
-     , J = convert(varchar(10),pd.PulloutDate,111)
-     , K = Order_QS.ShipmodeID
-     , L = Order_QS.ReasonID
-     , M = case o.Category when 'B' then r.Name
-           when 'S' then rs.Name
-           else '' end 
-     , N = ''                                                 
-FROM ORDERS o WITH (NOLOCK)
-LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
-LEFT JOIN FACTORY f ON o.FACTORYID = f.ID 
-LEFT JOIN COUNTRY c ON f.COUNTRYID = c.ID 
-INNER JOIN Order_QtyShip Order_QS on o.ID = Order_QS.ID
-LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
-LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
-OUTER APPLY (select sum(ShipQty) as sQty 
-             from Pullout_Detail pd 
-             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate > Order_QS.FtyKPI ) opd
-OUTER APPLY (select top 1 PulloutDate 
-             from Pullout_Detail pd where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
-             and pd.ShipQty> 0
-             Order by PulloutDate desc) pd
-where Order_QS.Qty > 0 and (opd.sQty > 0 or pd.PulloutDate is null) and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') {where}";
-
-                    result = DBProxy.Current.Select(null, strSQL, null, out this.gdtFailDetail);
-                    if (!result)
-                    {
-                        return result;
-                    }
-
-                    if (this.gdtFailDetail != null)
-                    {
-                        IList<DataRow> lstDataRows;
-                        for (int intIndex = 0; intIndex < this.gdtFailDetail.Rows.Count; intIndex++)
-                        {
-                            DataRow drData = this.gdtFailDetail.Rows[intIndex];
-                            #region Set P、Q Column Data
-                            lstDataRows = null;
-                            if (dictionary_TradeHis_OrderIDs.TryGetValue(drData["D"].ToString(), out lstDataRows))
-                            {
-                                if ((lstDataRows != null) && (lstDataRows.Count > 0))
-                                {
-                                    drData["L"] = lstDataRows[0]["ReasonID"].ToString();
-                                    drData["M"] = lstDataRows[0]["Name"].ToString();
-                                    drData["N"] = lstDataRows[0]["Remark"].ToString();
-                                }
-                            }
-                            #endregion Set P、Q Column Data
-                        }
-                    }
-                    #endregion Fail Detail
-
                 }
 
                 #region 顯示筆數
@@ -903,7 +839,25 @@ where Order_QS.Qty > 0 and (opd.sQty > 0 or pd.PulloutDate is null) and (ot.IsGM
                     #endregion
 
                     #region 匯出 Fail Detail
-                    if ((this.gdtFailDetail != null) && (this.gdtFailDetail.Rows.Count > 0))
+                    var gdtFailDetail = from data in this.gdtOrderDetail.AsEnumerable()
+                                     where data.Field<int>("L") > 0
+                                     select new
+                                    {
+                                        A = data.Field<string>("A"),
+                                        B= data.Field<string>("B"),
+                                        C= data.Field<string>("C"),
+                                        D= data.Field<string>("D"),
+                                        E= data.Field<string>("E"),
+                                        F= data.Field<string>("H"),
+                                        G= data.Field<string>("I"),
+                                        H= data.Field<int>("J").ToString(),
+                                        I= data.Field<int>("L").ToString(),
+                                        J= data.Field<string>("M"),
+                                        K= data.Field<string>("N"),
+                                        L= data.Field<string>("Q"),
+                                        M= data.Field<string>("R")
+                                     };
+                    if ((gdtFailDetail != null) && (gdtFailDetail.Count() > 0))
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
@@ -921,15 +875,25 @@ where Order_QS.Qty > 0 and (opd.sQty > 0 or pd.PulloutDate is null) and (ot.IsGM
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Borders.Color = Color.Black;
                         excel.ActiveWorkbook.Worksheets[5].Columns(6).NumberFormatlocal = "yyyy/MM/dd";
                         excel.ActiveSheet.Columns(10).NumberFormatlocal = "yyyy/MM/dd";
-                        int rc = this.gdtFailDetail.Rows.Count;
-                        for (int intIndex = 0; intIndex < rc; intIndex++)
+                        int rc = gdtFailDetail.Count();
+                        int i = 1;
+                        foreach (var dr in gdtFailDetail)
                         {
-                            for (int intIndex_0 = 0; intIndex_0 < aryTitles.Length; intIndex_0++)
-                            {
-                                objArray_1[0, intIndex_0] = this.gdtFailDetail.Rows[intIndex][aryAlpha[intIndex_0]].ToString();
-                            }
-
-                            worksheet.Range[string.Format("A{0}:{1}{0}", intIndex + 2, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
+                            i++;
+                            objArray_1[0, 0] = dr.A;
+                            objArray_1[0, 1] = dr.B;
+                            objArray_1[0, 2] = dr.C;
+                            objArray_1[0, 3] = dr.D;
+                            objArray_1[0, 4] = dr.E;
+                            objArray_1[0, 5] = dr.F;
+                            objArray_1[0, 6] = dr.G;
+                            objArray_1[0, 7] = dr.H;
+                            objArray_1[0, 8] = dr.I;
+                            objArray_1[0, 9] = dr.J;
+                            objArray_1[0, 10] = dr.K;
+                            objArray_1[0, 11] = dr.L;
+                            objArray_1[0, 12] = dr.M;
+                            worksheet.Range[string.Format("A{0}:{1}{0}", i, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
 
                         worksheet.Columns.AutoFit();
