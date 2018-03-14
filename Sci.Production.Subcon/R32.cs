@@ -92,13 +92,15 @@ SELECT  O.FactoryID
 		, Color = Concat(B.Article, ' ', B.Colorid)
 		, BT.IssueDate
 		, BTD_IN.ReceiveDate
-		, '' remark
+        , [Subcon] = BT.EndSite + '-' + ls.Abb 
+		, '' remark        
 FROM BundleTrack BT
 left join BundleTrack_detail BTD on BT.Id=BTD.Id
 left join Orders O on O.ID=BTD.orderid
 left join Bundle_Detail BD on BD.BundleNo=BTD.BundleNo
 left join Bundle B on B.ID =BD.Id
 left join BundleTrack_detail BTD_IN on BTD_IN.Id like 'TC%' and BD.BundleNo=BTD_IN.BundleNo  --Farm In Date
+left join localSupp ls on ls.id=bt.endsite
 WHERE	BT.Id LIKE 'TB%'  --Farm out
 		and BT.IssueDate >= @StartDate  --Farm Out Date start
 		and BT.IssueDate <= @EndDate  --Farm Out Date End
