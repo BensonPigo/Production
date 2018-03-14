@@ -13,7 +13,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R22 : Sci.Win.Tems.PrintForm
     {
-        string category, factory, subcon, mdivision;
+        string category, factory, subcon, mdivision,OrderID;
         DateTime? issueDate1, issueDate2, approveDate1, approveDate2;
         DataTable printData;
 
@@ -49,6 +49,7 @@ namespace Sci.Production.Subcon
             approveDate1 = dateApproveDate.Value1;
             approveDate2 = dateApproveDate.Value2;
             category = txtartworktype_ftyCategory.Text;
+            OrderID = txtOrderID.Text;
             mdivision = txtMdivisionM.Text;
             factory = comboFactory.Text;
             subcon = txtsubconSupplier.TextBox1.Text;
@@ -151,6 +152,9 @@ where 1=1"));
             System.Data.SqlClient.SqlParameter sp_category = new System.Data.SqlClient.SqlParameter();
             sp_category.ParameterName = "@category";
 
+            System.Data.SqlClient.SqlParameter sp_orderid = new System.Data.SqlClient.SqlParameter();
+            sp_orderid.ParameterName = "@OrderID";
+
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
 
@@ -195,6 +199,13 @@ where 1=1"));
                 sqlCmd.Append(" and a.category = @category");
                 sp_category.Value = category;
                 cmds.Add(sp_category);
+            }
+
+            if (!MyUtility.Check.Empty(OrderID))
+            {
+                sqlCmd.Append(" and b.OrderID = @OrderID");
+                sp_orderid.Value = OrderID;
+                cmds.Add(sp_orderid);
             }
 
             if (!MyUtility.Check.Empty(mdivision))

@@ -41,6 +41,8 @@
             this.dateApproveDate = new Sci.Win.UI.DateRange();
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.checkSummary = new Sci.Win.UI.CheckBox();
+            this.labIOrderID = new Sci.Win.UI.Label();
+            this.txtOrderID = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
@@ -60,8 +62,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
-            this.labelFactory.Location = new System.Drawing.Point(13, 155);
+            this.labelFactory.Location = new System.Drawing.Point(13, 188);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
             this.labelFactory.TabIndex = 94;
@@ -69,8 +70,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
-            this.labelCategory.Location = new System.Drawing.Point(13, 84);
+            this.labelCategory.Location = new System.Drawing.Point(13, 117);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(98, 23);
             this.labelCategory.TabIndex = 95;
@@ -78,7 +78,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(13, 12);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -93,8 +92,7 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
-            this.labelSupplier.Location = new System.Drawing.Point(13, 192);
+            this.labelSupplier.Location = new System.Drawing.Point(13, 225);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(98, 23);
             this.labelSupplier.TabIndex = 98;
@@ -106,13 +104,28 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(114, 154);
+            this.comboFactory.Location = new System.Drawing.Point(114, 187);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 4;
             // 
             // dateIssueDate
             // 
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateIssueDate.DateBox1.Name = "";
+            this.dateIssueDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateIssueDate.DateBox2.Name = "";
+            this.dateIssueDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox2.TabIndex = 1;
             this.dateIssueDate.IsRequired = false;
             this.dateIssueDate.Location = new System.Drawing.Point(115, 12);
             this.dateIssueDate.Name = "dateIssueDate";
@@ -121,8 +134,7 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
-            this.labelM.Location = new System.Drawing.Point(13, 120);
+            this.labelM.Location = new System.Drawing.Point(13, 153);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
             this.labelM.TabIndex = 103;
@@ -132,7 +144,7 @@
             // 
             this.txtMdivisionM.BackColor = System.Drawing.Color.White;
             this.txtMdivisionM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivisionM.Location = new System.Drawing.Point(114, 120);
+            this.txtMdivisionM.Location = new System.Drawing.Point(114, 153);
             this.txtMdivisionM.Name = "txtMdivisionM";
             this.txtMdivisionM.Size = new System.Drawing.Size(66, 23);
             this.txtMdivisionM.TabIndex = 3;
@@ -141,7 +153,7 @@
             // 
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = true;
-            this.txtsubconSupplier.Location = new System.Drawing.Point(115, 192);
+            this.txtsubconSupplier.Location = new System.Drawing.Point(115, 225);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(170, 23);
             this.txtsubconSupplier.TabIndex = 5;
@@ -153,13 +165,27 @@
             this.txtartworktype_ftyCategory.cClassify = "\'P\'";
             this.txtartworktype_ftyCategory.cSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(114, 84);
+            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(114, 117);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyCategory.TabIndex = 2;
             // 
             // dateApproveDate
             // 
+            // 
+            // 
+            // 
+            this.dateApproveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateApproveDate.DateBox1.Name = "";
+            this.dateApproveDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateApproveDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateApproveDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateApproveDate.DateBox2.Name = "";
+            this.dateApproveDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateApproveDate.DateBox2.TabIndex = 1;
             this.dateApproveDate.IsRequired = false;
             this.dateApproveDate.Location = new System.Drawing.Point(115, 48);
             this.dateApproveDate.Name = "dateApproveDate";
@@ -168,7 +194,6 @@
             // 
             // labelApproveDate
             // 
-            this.labelApproveDate.Lines = 0;
             this.labelApproveDate.Location = new System.Drawing.Point(13, 48);
             this.labelApproveDate.Name = "labelApproveDate";
             this.labelApproveDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -185,16 +210,35 @@
             // 
             this.checkSummary.AutoSize = true;
             this.checkSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSummary.Location = new System.Drawing.Point(300, 194);
+            this.checkSummary.Location = new System.Drawing.Point(300, 227);
             this.checkSummary.Name = "checkSummary";
             this.checkSummary.Size = new System.Drawing.Size(86, 21);
             this.checkSummary.TabIndex = 6;
             this.checkSummary.Text = "Summary";
             this.checkSummary.UseVisualStyleBackColor = true;
             // 
+            // labIOrderID
+            // 
+            this.labIOrderID.Location = new System.Drawing.Point(13, 84);
+            this.labIOrderID.Name = "labIOrderID";
+            this.labIOrderID.Size = new System.Drawing.Size(98, 23);
+            this.labIOrderID.TabIndex = 106;
+            this.labIOrderID.Text = "SP#";
+            // 
+            // txtOrderID
+            // 
+            this.txtOrderID.BackColor = System.Drawing.Color.White;
+            this.txtOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtOrderID.Location = new System.Drawing.Point(114, 84);
+            this.txtOrderID.Name = "txtOrderID";
+            this.txtOrderID.Size = new System.Drawing.Size(140, 23);
+            this.txtOrderID.TabIndex = 107;
+            // 
             // R22
             // 
-            this.ClientSize = new System.Drawing.Size(522, 249);
+            this.ClientSize = new System.Drawing.Size(522, 273);
+            this.Controls.Add(this.txtOrderID);
+            this.Controls.Add(this.labIOrderID);
             this.Controls.Add(this.checkSummary);
             this.Controls.Add(this.dateApproveDate);
             this.Controls.Add(this.labelApproveDate);
@@ -229,6 +273,8 @@
             this.Controls.SetChildIndex(this.labelApproveDate, 0);
             this.Controls.SetChildIndex(this.dateApproveDate, 0);
             this.Controls.SetChildIndex(this.checkSummary, 0);
+            this.Controls.SetChildIndex(this.labIOrderID, 0);
+            this.Controls.SetChildIndex(this.txtOrderID, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -249,5 +295,7 @@
         private Win.UI.DateRange dateApproveDate;
         private Win.UI.Label labelApproveDate;
         private Win.UI.CheckBox checkSummary;
+        private Win.UI.Label labIOrderID;
+        private Win.UI.TextBox txtOrderID;
     }
 }
