@@ -2260,6 +2260,7 @@
     <Build Include="dbo\Tables\FabricInspDoc_Detail.sql" />
     <Build Include="dbo\Tables\CustBarCode.sql" />
     <Build Include="dbo\Stored Procedures\Cutting_P20_CFM_Update.sql" />
+    <Build Include="dbo\Tables\LocalUnit.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -51,7 +51,6 @@
             this.labelW = new Sci.Win.UI.Label();
             this.labelH = new Sci.Win.UI.Label();
             this.txtRefno = new Sci.Win.UI.TextBox();
-            this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_fty();
             this.txtDescription = new Sci.Win.UI.TextBox();
             this.txtcurrencyPrice = new Sci.Production.Class.txtcurrency();
             this.displayPrice = new Sci.Win.UI.DisplayBox();
@@ -80,6 +79,7 @@
             this.btnPaymentHistory = new Sci.Win.UI.Button();
             this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
             this.dateQuotDate = new Sci.Win.UI.DateBox();
+            this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_local();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -96,6 +96,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtunit_ftyUnit);
             this.detailcont.Controls.Add(this.dateQuotDate);
             this.detailcont.Controls.Add(this.txtSubconSupplier);
             this.detailcont.Controls.Add(this.btnPaymentHistory);
@@ -107,7 +108,6 @@
             this.detailcont.Controls.Add(this.displayPrice);
             this.detailcont.Controls.Add(this.txtcurrencyPrice);
             this.detailcont.Controls.Add(this.txtDescription);
-            this.detailcont.Controls.Add(this.txtunit_ftyUnit);
             this.detailcont.Controls.Add(this.txtRefno);
             this.detailcont.Controls.Add(this.labelAccountNo);
             this.detailcont.Controls.Add(this.labelSupplier);
@@ -339,16 +339,6 @@
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(209, 23);
             this.txtRefno.TabIndex = 0;
-            // 
-            // txtunit_ftyUnit
-            // 
-            this.txtunit_ftyUnit.BackColor = System.Drawing.Color.White;
-            this.txtunit_ftyUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "unitid", true));
-            this.txtunit_ftyUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtunit_ftyUnit.Location = new System.Drawing.Point(93, 72);
-            this.txtunit_ftyUnit.Name = "txtunit_ftyUnit";
-            this.txtunit_ftyUnit.Size = new System.Drawing.Size(88, 23);
-            this.txtunit_ftyUnit.TabIndex = 3;
             // 
             // txtDescription
             // 
@@ -870,6 +860,16 @@
             this.dateQuotDate.TabIndex = 8;
             this.dateQuotDate.TabStop = false;
             // 
+            // txtunit_ftyUnit
+            // 
+            this.txtunit_ftyUnit.BackColor = System.Drawing.Color.White;
+            this.txtunit_ftyUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "unitid", true));
+            this.txtunit_ftyUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtunit_ftyUnit.Location = new System.Drawing.Point(92, 72);
+            this.txtunit_ftyUnit.Name = "txtunit_ftyUnit";
+            this.txtunit_ftyUnit.Size = new System.Drawing.Size(66, 23);
+            this.txtunit_ftyUnit.TabIndex = 21;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 527);
@@ -903,7 +903,6 @@
         #endregion
 
         private Win.UI.TextBox txtDescription;
-        private Class.txtunit_fty txtunit_ftyUnit;
         private Win.UI.TextBox txtRefno;
         private Win.UI.Label labelH;
         private Win.UI.Label labelW;
@@ -954,5 +953,6 @@
         private Win.UI.Label labelCTNWeight;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtArtTkt;
+        private Class.txtunit_local txtunit_ftyUnit;
     }
 }
