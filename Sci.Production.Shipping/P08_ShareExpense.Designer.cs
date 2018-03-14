@@ -143,7 +143,7 @@
             // numTtlCBM
             // 
             this.numTtlCBM.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTtlCBM.DecimalPlaces = 2;
+            this.numTtlCBM.DecimalPlaces = 3;
             this.numTtlCBM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlCBM.IsSupportEditMode = false;
             this.numTtlCBM.Location = new System.Drawing.Point(493, 6);
@@ -174,7 +174,7 @@
             // numTtlGW
             // 
             this.numTtlGW.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTtlGW.DecimalPlaces = 2;
+            this.numTtlGW.DecimalPlaces = 3;
             this.numTtlGW.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlGW.IsSupportEditMode = false;
             this.numTtlGW.Location = new System.Drawing.Point(337, 6);

@@ -25,8 +25,8 @@ namespace Sci.Production.PublicPrg
 
             sqlCmd = string.Format(@"--宣告變數: 
 DECLARE @id VARCHAR(13),
-		@ttlgw NUMERIC(10,2),
-		@ttlcbm NUMERIC(10,2),
+		@ttlgw NUMERIC(10,3),
+		@ttlcbm NUMERIC(10,3),
 		@ttlcount INT,
 		@accno VARCHAR(8),
 		@login VARCHAR(10),
@@ -38,7 +38,7 @@ SET @id = '{0}'
 SET @login = '{1}'
 SET @adddate = GETDATE()
 SELECT @ttlgw = isnull(sum(GW),0), @ttlcbm = isnull(sum(CBM),0), @ttlcount = isnull(count(ShippingAPID),0) 
-FROM (SELECT distinct ShippingAPID,BLNo,WKNo,InvNo,GW,CBM FROM ShareExpense WITH (NOLOCK) WHERE ShippingAPID = @id) a
+FROM (SELECT distinct ShippingAPID,BLNo,WKNo,InvNo,GW,CBM FROM ShareExpense WITH (NOLOCK) WHERE ShippingAPID = @id and junk = 0) a
 
 SELECT @exact = isnull(c.Exact,0) FROM ShippingAP s WITH (NOLOCK) , Currency c WITH (NOLOCK) WHERE s.ID = @id and c.ID = s.CurrencyID
 
@@ -55,7 +55,7 @@ DECLARE cursor_ttlAmount CURSOR FOR
 				group by se.AccountID, a.Name, s.CurrencyID) a,
 				(select distinct BLNo,WKNo,InvNo,Type,GW,CBM,ShipModeID,FtyWK
 				from ShareExpense WITH (NOLOCK) 
-				where ShippingAPID = @id) b) a
+				where ShippingAPID = @id and junk = 0) b) a
 	left join ShareRule sr WITH (NOLOCK) on sr.AccountID = a.AccountID and sr.ExpenseReason = a.Type and (sr.ShipModeID = '' or sr.ShipModeID like '%'+a.ShipModeID+'%')
 	left join ShareRule sr1 WITH (NOLOCK) on sr1.AccountID = left(a.AccountID,4) and sr1.ExpenseReason = a.Type and (sr1.ShipModeID = '' or sr1.ShipModeID like '%'+a.ShipModeID+'%')
 	order by a.AccountID,GW,CBM
@@ -86,8 +86,8 @@ DECLARE @amount NUMERIC(15,4),
 		@wkno VARCHAR(13),
 		@invno VARCHAR(25),
 		@type VARCHAR(15),
-		@gw NUMERIC(9,2),
-		@cbm NUMERIC(9,2),
+		@gw NUMERIC(9,3),
+		@cbm NUMERIC(9,3),
 		@shipmodeid VARCHAR(10),
 		@sharebase VARCHAR(1),
 		@count INT,
