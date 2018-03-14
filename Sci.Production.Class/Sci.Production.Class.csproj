@@ -287,6 +287,12 @@
     <Compile Include="txtunit.Designer.cs">
       <DependentUpon>txtunit.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtunit_local.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtunit_local.Designer.cs">
+      <DependentUpon>txtunit_local.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtunit_fty.cs">
       <SubType>Component</SubType>
     </Compile>

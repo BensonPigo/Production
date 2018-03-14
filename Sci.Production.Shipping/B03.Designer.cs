@@ -46,8 +46,8 @@
             this.btnPaymentHistory = new Sci.Win.UI.Button();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
             this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.txtUnit = new Sci.Production.Class.txtunit();
             this.labelUnit = new Sci.Win.UI.Label();
+            this.txtUnit = new Sci.Production.Class.txtunit_local();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -62,8 +62,8 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.txtUnit);
+            this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.btnPaymentHistory);
             this.detailcont.Controls.Add(this.btnCanvassRecord);
             this.detailcont.Controls.Add(this.checkBox1);
@@ -87,7 +87,7 @@
             // detailbtm
             // 
             this.detailbtm.Size = new System.Drawing.Size(828, 38);
-            //  
+            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(828, 395);
@@ -111,7 +111,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(27, 22);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(90, 23);
@@ -120,7 +119,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(27, 57);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(90, 23);
@@ -129,7 +127,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(27, 120);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(90, 23);
@@ -138,7 +135,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(27, 187);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(90, 23);
@@ -147,7 +143,6 @@
             // 
             // labelPrice
             // 
-            this.labelPrice.Lines = 0;
             this.labelPrice.Location = new System.Drawing.Point(27, 222);
             this.labelPrice.Name = "labelPrice";
             this.labelPrice.Size = new System.Drawing.Size(90, 23);
@@ -156,7 +151,6 @@
             // 
             // labelCanvassDate
             // 
-            this.labelCanvassDate.Lines = 0;
             this.labelCanvassDate.Location = new System.Drawing.Point(27, 257);
             this.labelCanvassDate.Name = "labelCanvassDate";
             this.labelCanvassDate.Size = new System.Drawing.Size(90, 23);
@@ -165,7 +159,6 @@
             // 
             // labelAccountNo
             // 
-            this.labelAccountNo.Lines = 0;
             this.labelAccountNo.Location = new System.Drawing.Point(27, 292);
             this.labelAccountNo.Name = "labelAccountNo";
             this.labelAccountNo.Size = new System.Drawing.Size(90, 23);
@@ -306,24 +299,23 @@
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 1;
             // 
-            // txtUnit
-            // 
-            this.txtUnit.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "UnitID", true));
-            this.txtUnit.DisplayBox1Binding = "";
-            this.txtUnit.Location = new System.Drawing.Point(120, 154);
-            this.txtUnit.Name = "txtUnit";
-            this.txtUnit.Size = new System.Drawing.Size(320, 23);
-            this.txtUnit.TabIndex = 18;
-            this.txtUnit.TextBox1Binding = "";
-            // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(27, 154);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(90, 23);
             this.labelUnit.TabIndex = 19;
             this.labelUnit.Text = "Unit";
+            // 
+            // txtUnit
+            // 
+            this.txtUnit.BackColor = System.Drawing.Color.White;
+            this.txtUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "UnitID", true));
+            this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtUnit.Location = new System.Drawing.Point(120, 154);
+            this.txtUnit.Name = "txtUnit";
+            this.txtUnit.Size = new System.Drawing.Size(66, 23);
+            this.txtUnit.TabIndex = 20;
             // 
             // B03
             // 
@@ -331,12 +323,12 @@
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "editDescription";
             this.DefaultOrder = "ID";
+            this.EnableGridJunkColor = true;
             this.IsSupportDelete = false;
             this.Name = "B03";
             this.Text = "B03. Shipping Expense";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ShipExpense";
-            this.EnableGridJunkColor = true;
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -371,6 +363,6 @@
         private Win.UI.Button btnCanvassRecord;
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label labelUnit;
-        private Class.txtunit txtUnit;
+        private Class.txtunit_local txtUnit;
     }
 }
