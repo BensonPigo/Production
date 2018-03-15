@@ -42,7 +42,9 @@
             this.labelApproveDate = new Sci.Win.UI.Label();
             this.checkSummary = new Sci.Win.UI.CheckBox();
             this.labIOrderID = new Sci.Win.UI.Label();
-            this.txtOrderID = new Sci.Win.UI.TextBox();
+            this.txtSPNo2 = new Sci.Win.UI.TextBox();
+            this.txtSPNo1 = new Sci.Win.UI.TextBox();
+            this.label13 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -225,19 +227,40 @@
             this.labIOrderID.TabIndex = 106;
             this.labIOrderID.Text = "SP#";
             // 
-            // txtOrderID
+            // txtSPNo2
             // 
-            this.txtOrderID.BackColor = System.Drawing.Color.White;
-            this.txtOrderID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtOrderID.Location = new System.Drawing.Point(114, 84);
-            this.txtOrderID.Name = "txtOrderID";
-            this.txtOrderID.Size = new System.Drawing.Size(140, 23);
-            this.txtOrderID.TabIndex = 107;
+            this.txtSPNo2.BackColor = System.Drawing.Color.White;
+            this.txtSPNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo2.Location = new System.Drawing.Point(269, 84);
+            this.txtSPNo2.Name = "txtSPNo2";
+            this.txtSPNo2.Size = new System.Drawing.Size(128, 23);
+            this.txtSPNo2.TabIndex = 124;
+            // 
+            // txtSPNo1
+            // 
+            this.txtSPNo1.BackColor = System.Drawing.Color.White;
+            this.txtSPNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSPNo1.Location = new System.Drawing.Point(115, 84);
+            this.txtSPNo1.Name = "txtSPNo1";
+            this.txtSPNo1.Size = new System.Drawing.Size(128, 23);
+            this.txtSPNo1.TabIndex = 123;
+            // 
+            // label13
+            // 
+            this.label13.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.label13.Location = new System.Drawing.Point(244, 84);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(22, 23);
+            this.label13.TabIndex = 126;
+            this.label13.Text = "～";
+            this.label13.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R22
             // 
             this.ClientSize = new System.Drawing.Size(522, 273);
-            this.Controls.Add(this.txtOrderID);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.txtSPNo2);
+            this.Controls.Add(this.txtSPNo1);
             this.Controls.Add(this.labIOrderID);
             this.Controls.Add(this.checkSummary);
             this.Controls.Add(this.dateApproveDate);
@@ -274,7 +297,9 @@
             this.Controls.SetChildIndex(this.dateApproveDate, 0);
             this.Controls.SetChildIndex(this.checkSummary, 0);
             this.Controls.SetChildIndex(this.labIOrderID, 0);
-            this.Controls.SetChildIndex(this.txtOrderID, 0);
+            this.Controls.SetChildIndex(this.txtSPNo1, 0);
+            this.Controls.SetChildIndex(this.txtSPNo2, 0);
+            this.Controls.SetChildIndex(this.label13, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -296,6 +321,8 @@
         private Win.UI.Label labelApproveDate;
         private Win.UI.CheckBox checkSummary;
         private Win.UI.Label labIOrderID;
-        private Win.UI.TextBox txtOrderID;
+        private Win.UI.TextBox txtSPNo2;
+        private Win.UI.TextBox txtSPNo1;
+        private Win.UI.Label label13;
     }
 }

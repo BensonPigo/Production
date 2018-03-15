@@ -13,7 +13,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R22 : Sci.Win.Tems.PrintForm
     {
-        string category, factory, subcon, mdivision,OrderID;
+        string category, factory, subcon, mdivision,spNoStart,spNoEnd;
         DateTime? issueDate1, issueDate2, approveDate1, approveDate2;
         DataTable printData;
 
@@ -49,7 +49,8 @@ namespace Sci.Production.Subcon
             approveDate1 = dateApproveDate.Value1;
             approveDate2 = dateApproveDate.Value2;
             category = txtartworktype_ftyCategory.Text;
-            OrderID = txtOrderID.Text;
+            spNoStart = txtSPNo1.Text;
+            spNoEnd = txtSPNo2.Text;
             mdivision = txtMdivisionM.Text;
             factory = comboFactory.Text;
             subcon = txtsubconSupplier.TextBox1.Text;
@@ -152,8 +153,11 @@ where 1=1"));
             System.Data.SqlClient.SqlParameter sp_category = new System.Data.SqlClient.SqlParameter();
             sp_category.ParameterName = "@category";
 
-            System.Data.SqlClient.SqlParameter sp_orderid = new System.Data.SqlClient.SqlParameter();
-            sp_orderid.ParameterName = "@OrderID";
+            System.Data.SqlClient.SqlParameter sp_spNoStart = new System.Data.SqlClient.SqlParameter();
+            sp_spNoStart.ParameterName = "@OrderID1";
+
+            System.Data.SqlClient.SqlParameter sp_spNoEnd = new System.Data.SqlClient.SqlParameter();
+            sp_spNoEnd.ParameterName = "@OrderID2";
 
             System.Data.SqlClient.SqlParameter sp_mdivision = new System.Data.SqlClient.SqlParameter();
             sp_mdivision.ParameterName = "@MDivision";
@@ -201,11 +205,18 @@ where 1=1"));
                 cmds.Add(sp_category);
             }
 
-            if (!MyUtility.Check.Empty(OrderID))
+            if (!MyUtility.Check.Empty(spNoStart))
             {
-                sqlCmd.Append(" and b.OrderID = @OrderID");
-                sp_orderid.Value = OrderID;
-                cmds.Add(sp_orderid);
+                sqlCmd.Append(" and b.OrderID >= @OrderID1");
+                sp_spNoStart.Value = spNoStart;
+                cmds.Add(sp_spNoStart);
+            }
+
+            if (!MyUtility.Check.Empty(spNoEnd))
+            {
+                sqlCmd.Append(" and b.OrderID <= @OrderID2");
+                sp_spNoEnd.Value = spNoEnd;
+                cmds.Add(sp_spNoEnd);
             }
 
             if (!MyUtility.Check.Empty(mdivision))
