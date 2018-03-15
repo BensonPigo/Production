@@ -78,6 +78,27 @@ namespace Sci.Production.Packing
         }
 
         /// <summary>
+        /// ToPrint
+        /// </summary>
+        /// <returns>bool</returns>
+        protected override bool ToPrint()
+        {
+            this.ValidateInput();
+
+            this.ShowWaitMessage("Data Loading ...");
+            DualResult result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+
+            if (result == false)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return false;
+            }
+
+            this.HideWaitMessage();
+            return true;
+        }
+
+        /// <summary>
         /// OnAsyncDataLoad非同步取資料
         /// </summary>
         /// <param name="e">e</param>
