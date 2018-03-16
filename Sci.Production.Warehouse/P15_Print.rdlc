@@ -632,10 +632,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox10</rd:DefaultName>
-          <Top>3.58688cm</Top>
+          <Top>3.4cm</Top>
           <Left>14.39015cm</Left>
           <Height>0.6cm</Height>
-          <Width>2.30188cm</Width>
+          <Width>2.40771cm</Width>
           <ZIndex>6</ZIndex>
           <Style>
             <Border>
@@ -662,7 +662,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox11</rd:DefaultName>
-          <Top>4.36327cm</Top>
+          <Top>4.47cm</Top>
           <Left>14.39015cm</Left>
           <Height>0.6cm</Height>
           <Width>2.30188cm</Width>
@@ -782,7 +782,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox15</rd:DefaultName>
-          <Top>3.58688cm</Top>
+          <Top>3.4cm</Top>
           <Left>16.79786cm</Left>
           <Height>0.6cm</Height>
           <Width>3.81cm</Width>
@@ -814,7 +814,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox16</rd:DefaultName>
-          <Top>4.36327cm</Top>
+          <Top>4.47cm</Top>
           <Left>16.79786cm</Left>
           <Height>0.6cm</Height>
           <Width>3.51896cm</Width>
@@ -1068,6 +1068,66 @@
             </Border>
           </Style>
         </Line>
+        <Textbox Name="Textbox20">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>Apv. Date:</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox10</rd:DefaultName>
+          <Top>3.97cm</Top>
+          <Left>14.39015cm</Left>
+          <Height>0.6cm</Height>
+          <Width>2.30188cm</Width>
+          <ZIndex>22</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox25">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!appvdate.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox15</rd:DefaultName>
+          <Top>3.97cm</Top>
+          <Left>16.79786cm</Left>
+          <Height>0.6cm</Height>
+          <Width>3.81cm</Width>
+          <ZIndex>23</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
       </ReportItems>
       <Style>
         <Border>
@@ -1337,6 +1397,12 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="issuedate">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="appvdate">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
