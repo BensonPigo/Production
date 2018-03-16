@@ -688,7 +688,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             string Remark = row["Remark"].ToString();
             string Requestid = row["Requestid"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-            string appvdate = MyUtility.Check.Empty(this.displayApvDate.Text) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.displayApvDate.Text)).ToShortDateString();
+            string appvdate = MyUtility.Check.Empty(this.displayApvDate.Text) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.displayApvDate.Text)).ToString("yyyy/MM/dd HH:mm:ss");
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
