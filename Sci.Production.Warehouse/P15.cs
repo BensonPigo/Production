@@ -688,6 +688,7 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             string Remark = row["Remark"].ToString();
             string Requestid = row["Requestid"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+            string appvdate = MyUtility.Check.Empty(this.displayApvDate.Text) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(this.displayApvDate.Text)).ToString("yyyy/MM/dd HH:mm:ss");
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -712,6 +713,7 @@ where id = @MDivision", pars, out dt);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Requestid", Requestid));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("appvdate", appvdate));
             #endregion
 
             #region  抓表身資料
