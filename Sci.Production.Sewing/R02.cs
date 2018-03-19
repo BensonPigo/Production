@@ -489,18 +489,36 @@ tmpSubconOutCPU as (
 ),
 tmpTtlManPower as (
 	select SewingLineID
-		   , ManPower = Sum(Manpower) 
+		   , ManPower = Sum(a.Manpower) - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
 	from (
-	    select OutputDate
-	    	   , FactoryID
-	    	   , SewingLineID
-	    	   , LastShift
-	    	   , Team
-	    	   , ManPower = Max(ActManPower)
-	    from #tmp
-	    where LastShift <> 'O'
-	    group by OutputDate, FactoryID, SewingLineID, LastShift, Team
+		select OutputDate
+			   , FactoryID
+			   , SewingLineID
+			   , LastShift
+			   , Team
+			   , ManPower = Max(ActManPower)
+		from #tmp
+		where LastShift <> 'O'
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
 	) a
+	outer apply(
+		select ManPower
+		from (
+			select OutputDate
+				   , FactoryID
+				   , SewingLineID
+				   , LastShift
+				   , Team
+				   , ManPower = Max(ActManPower)
+			from #tmp
+			where LastShift <> 'O'
+			group by OutputDate, FactoryID, SewingLineID, LastShift, Team
+		) m2
+		where m2.LastShift = 'I' 
+			  and m2.Team = a.Team 
+			  and m2.SewingLineID = a.SewingLineID	
+			  and a.OutputDate = m2.OutputDate
+	) d
 	group by SewingLineID
 )
 select aLine.SewingLineID
