@@ -161,4 +161,32 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="OrderId" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="b108d7ed-f17f-4165-aea0-13916a100826" ChangeDateTime="03/20/2018 03:38:26">
+    <Property Name="ElementName" Value="[dbo].[TransferToCFA].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[TransferToCFA]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3ef2fff2-238f-472e-a4aa-19c9feae8a90" ChangeDateTime="03/20/2018 03:43:11">
+    <Property Name="ElementName" Value="[dbo].[ClogReceiveCFA].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ClogReceiveCFA]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2d666e3f-20c5-4bea-afd4-5eef4e2b6f59" ChangeDateTime="03/20/2018 03:56:06">
+    <Property Name="ElementName" Value="[dbo].[CFAReceive].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CFAReceive]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1bce73c3-12c5-4c62-ad5f-fb5e6c04ac17" ChangeDateTime="03/20/2018 03:58:42">
+    <Property Name="ElementName" Value="[dbo].[CFAReturn].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CFAReturn]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
 </Operations>
