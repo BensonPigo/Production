@@ -8,7 +8,7 @@
     [RequestID]   VARCHAR (13)  CONSTRAINT [DF_IssueLack_RequestID] DEFAULT ('') NULL,
     [Remark]      NVARCHAR (60) CONSTRAINT [DF_IssueLack_Remark] DEFAULT ('') NULL,
     [ApvName]     VARCHAR (10)  CONSTRAINT [DF_IssueLack_ApvName] DEFAULT ('') NULL,
-    [ApvDate]     DATE          NULL,
+    [ApvDate]     DATETIME          NULL,
     [FabricType]  VARCHAR (1)   CONSTRAINT [DF_IssueLack_FabricType] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_IssueLack_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME      NULL,

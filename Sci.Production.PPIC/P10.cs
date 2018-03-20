@@ -32,6 +32,21 @@ namespace Sci.Production.PPIC
             this.displayIssueLackDate.ReadOnly = true;
         }
 
+        /// <summary>
+        /// P10
+        /// </summary>
+        /// <param name="menuitem">menuitem</param>
+        /// <param name="id">id</param>
+        public P10(ToolStripMenuItem menuitem, string id)
+        {
+            this.InitializeComponent();
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' and FabricType = 'F' and ID = '" + id + "'";
+            this.txtuserApprove.TextBox1.ReadOnly = true;
+            this.txtuserApprove.TextBox1.IsSupportEditMode = false;
+            this.InsertDetailGridOnDoubleClick = false;
+            this.displayIssueLackDate.ReadOnly = true;
+        }
+
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -765,6 +780,15 @@ where a.RequestQty > a.StockQty",
             {
                 this.displayIssueLackDate.Text = string.Empty;
             }
+
+            if (this.comboShift.SelectedValue.Equals("O") && this.EditMode)
+            {
+                this.txtSubconName.ReadOnly = false;
+            }
+            else
+            {
+                this.txtSubconName.ReadOnly = true;
+            }
         }
 
         #region -- SelePoItem --
@@ -801,6 +825,7 @@ where a.RequestQty > a.StockQty",
 				                                                    uu.ExtensionUnit), 
 			                                                    ff.UsageUnit)))--p.StockUnit
                                                     where p.id ='{0}'";
+        private string v;
 
         /// <summary>
         /// selePoItemSqlCmd
@@ -871,5 +896,23 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             frm.ShowDialog(this);
             this.RenewData();
         }
+
+        private void ComboShift_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.comboShift.SelectedValue) && this.EditMode)
+            {
+                if (this.comboShift.SelectedValue.Equals("O"))
+                {
+                    this.txtSubconName.ReadOnly = false;
+                }
+                else
+                {
+                    this.txtSubconName.ReadOnly = true;
+                    this.CurrentMaintain["Shift"] = this.comboShift.SelectedValue;
+                    this.CurrentMaintain["SubconName"] = string.Empty;
+                }
+            }
+        }
+
     }
 }

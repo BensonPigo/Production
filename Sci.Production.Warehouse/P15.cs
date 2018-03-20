@@ -57,6 +57,14 @@ namespace Sci.Production.Warehouse
 
         }
 
+        //PPIC_P15 Called        
+        public static void Call(string PPIC_id, ToolStripMenuItem menuitem)
+        {
+          
+            P15 call = new P15(menuitem, PPIC_id);
+            call.Show();
+        }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -210,13 +218,21 @@ namespace Sci.Production.Warehouse
             //Lack.ApvDate
             if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"]))))
             {
-                DateTime dt = Convert.ToDateTime(MyUtility.GetValue.Lookup(string.Format(@"select apvdate from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"])));
-                this.displayApvDate.Text = dt.ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                DataRow dr;
+                if (MyUtility.Check.Seek(string.Format(@"select apvdate,Shift,SubconName from lack WITH (NOLOCK) where id = '{0}'", CurrentMaintain["requestid"]), out dr))
+                {
+                    this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+                    this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
+                    this.displayBoxSubconName.Text = dr["SubconName"].ToString();
+                }
             }
             else
             {
                 this.displayApvDate.Text = "";
+                this.displayBoxShift.Text = "";
+                this.displayBoxSubconName.Text = "";
             }
+            
         }
 
         // detail 新增時設定預設值
@@ -325,7 +341,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             }
             #region -- 更新表頭狀態資料 --
             string nowtime = DateTime.Now.ToAppDateTimeFormatString();
-            sqlupd3 = string.Format(@"update IssueLack set status='Confirmed', editname = '{0}' , editdate = '{2}'
+            sqlupd3 = string.Format(@"update IssueLack set status='Confirmed', editname = '{0}' , editdate = '{2}',apvname = '{0}',apvdate = '{2}'
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["id"], nowtime);
 
             #endregion 更新表頭狀態資料
@@ -486,7 +502,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             }
             #region -- 更新表頭狀態資料 --
 
-            sqlupd3 = string.Format(@"update IssueLack set status='New', editname = '{0}' , editdate = GETDATE()
+            sqlupd3 = string.Format(@"update IssueLack set status='New', editname = '{0}' , editdate = GETDATE(),apvname = '',apvdate = null
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
@@ -577,6 +593,37 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
            
         }
 
+        protected override void ClickClose()
+        {
+            base.ClickClose();
+            String sqlcmd;
+            sqlcmd = string.Format("update IssueLack set status = 'Closed' , editname = '{0}' , editdate = GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            DualResult result;
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+        }
+
+        protected override void ClickUnclose()
+        {
+            base.ClickUnclose();
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unclose it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            if (dResult.ToString().ToUpper() == "NO") return;
+            String sqlcmd;
+            sqlcmd = string.Format("update IssueLack set status = 'Confirmed' , editname = '{0}' , editdate = GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            DualResult result;
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+        }
         //寫明細撈出的sql command
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -650,7 +697,7 @@ Where a.id = '{0}'", masterID);
         private void txtRequest_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
-            if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid] from dbo.lack WITH (NOLOCK) 
+            if (!MyUtility.Check.Seek(string.Format(@"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) 
 where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
                 , txtRequest.Text, Sci.Env.User.Keyword), out dr, null))
             {
@@ -677,6 +724,9 @@ where id='{0}' and fabrictype='A' and mdivisionid='{1}'"
             }
             CurrentMaintain["requestid"] = txtRequest.Text;
             CurrentMaintain["type"] = dr["type"].ToString();
+            this.displayApvDate.Text = ((DateTime)dr["apvdate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
+            this.displayBoxShift.Text = dr["Shift"].Equals("D") ? "Day" : dr["Shift"].Equals("N") ? "Night" : "Subcon-Out";
+            this.displayBoxSubconName.Text = dr["SubconName"].ToString();
         }
 
         protected override bool ClickPrint()
