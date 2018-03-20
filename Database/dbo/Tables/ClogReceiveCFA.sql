@@ -1,13 +1,13 @@
 ﻿CREATE TABLE [dbo].[ClogReceiveCFA]
 (
 	[ID] BIGINT NOT NULL PRIMARY KEY IDENTITY, 
-    [ReceiveDate] DATE NULL, 
-    [MDivisionID] VARCHAR(8) NULL DEFAULT (''), 
-    [OrderID] VARCHAR(13) NULL DEFAULT (''), 
-    [PackingListID] VARCHAR(13) NULL DEFAULT (''), 
-    [CTNStartNo] VARCHAR(6) NULL DEFAULT (''), 
-    [AddName] VARCHAR(10) NULL DEFAULT (''), 
-    [AddDate] DATETIME NULL
+    [ReceiveDate] DATE NOT NULL, 
+    [MDivisionID] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [OrderID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [PackingListID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [CTNStartNo] VARCHAR(6) NOT NULL DEFAULT (''), 
+    [AddName] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [AddDate] DATETIME NOT NULL
 )
 
 GO

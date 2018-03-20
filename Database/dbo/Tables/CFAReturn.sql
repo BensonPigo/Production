@@ -1,14 +1,14 @@
 ﻿CREATE TABLE [dbo].[CFAReturn]
 (
 	[ID] BIGINT NOT NULL PRIMARY KEY IDENTITY, 
-    [ReturnDate] DATE NULL, 
-    [MDivisionID] VARCHAR(8) NULL DEFAULT (''), 
-    [OrderID] VARCHAR(13) NULL DEFAULT (''), 
-    [PackingListID] VARCHAR(13) NULL DEFAULT (''), 
-    [CTNStartNo] VARCHAR(6) NULL DEFAULT (''), 
-    [ReturnTo] VARCHAR(7) NULL DEFAULT (''), 
-    [AddName] VARCHAR(10) NULL DEFAULT (''), 
-    [AddDate] DATETIME NULL
+    [ReturnDate] DATE NOT NULL, 
+    [MDivisionID] VARCHAR(8) NOT NULL DEFAULT (''), 
+    [OrderID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [PackingListID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [CTNStartNo] VARCHAR(6) NOT NULL DEFAULT (''), 
+    [ReturnTo] VARCHAR(7) NOT NULL DEFAULT (''), 
+    [AddName] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [AddDate] DATETIME NOT NULL
 )
 
 GO

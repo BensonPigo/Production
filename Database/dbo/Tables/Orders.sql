@@ -146,7 +146,7 @@
     [KPIMNotice]           DATE           NULL,
     [GMTComplete]          VARCHAR (1)    CONSTRAINT [DF__Orders__GMTCompl__6C39D5A3] DEFAULT ('') NULL,
     [GFR]                  BIT            CONSTRAINT [DF__Orders__GFR__6D2DF9DC] DEFAULT ((0)) NULL,
-    [CfaCTN] INT NULL DEFAULT ((0)), 
+    [CfaCTN] INT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
