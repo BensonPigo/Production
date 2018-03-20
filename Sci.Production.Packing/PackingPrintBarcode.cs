@@ -17,7 +17,7 @@ namespace Sci.Production.Packing
 {
     internal class PackingPrintBarcode
     {
-        public DualResult PrintBarcode(string packingID, string ctn1, string ctn2)
+        public DualResult PrintBarcode(string packingID, string ctn1, string ctn2, string print_type = "")
         {
             DataTable printData;
             DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
@@ -127,7 +127,7 @@ namespace Sci.Production.Packing
                     break;
                 case "PH":
                 default:
-                    printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Barcode.dotx";
+                    printFile = Sci.Env.Cfg.XltPathDir + (print_type.Equals("New") ? "\\Packing_P03_Barcode_New.dotx" : "\\Packing_P03_Barcode.dotx");
                     document = winword.Documents.Add(ref printFile);
                     #region PH
                     try
@@ -154,26 +154,57 @@ namespace Sci.Production.Packing
                         {
                             tables = table[i + 1];
 
-                            #region 準備資料
-                            string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
-                            string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
-                            string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
-                            string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
-                            string poNo = "　　　　PO No.: " + printData.Rows[i]["PONo"];
-                            string sizeQty = "　　　　Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
-                            #endregion
+                            if (print_type.Equals("New"))
+                            {
+                                #region New format
+                                #region 準備資料
+                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
+                                string packingNo = "PackingNo.: " + printData.Rows[i]["ID"];
+                                string spNo = "SP No.: " + printData.Rows[i]["OrderID"];
+                                string cartonNo = "Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
+                                string poNo = printData.Rows[i]["PONo"].ToString();
+                                string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
+                                #endregion
 
-                            Bitmap oriBitmap = this.NewBarcode(barcode);
-                            Clipboard.SetImage(oriBitmap);
-                            tables.Cell(1, 1).Range.Paste();
-                            tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 40f;
-                            tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
+                                Bitmap oriBitmap = this.NewBarcode(barcode);
+                                Clipboard.SetImage(oriBitmap);
+                                tables.Cell(4, 1).Range.Paste();
+                                tables.Cell(4, 1).Range.InlineShapes[1].ScaleHeight = 40f;
+                                tables.Cell(4, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
 
-                            tables.Cell(2, 1).Range.Text = packingNo;
-                            tables.Cell(3, 1).Range.Text = spNo;
-                            tables.Cell(4, 1).Range.Text = cartonNo;
-                            tables.Cell(5, 1).Range.Text = poNo;
-                            tables.Cell(6, 1).Range.Text = sizeQty;
+                                tables.Cell(1, 1).Range.Text = packingNo;
+                                tables.Cell(2, 1).Range.Text = spNo;
+                                tables.Cell(2, 2).Range.Text = cartonNo;
+                                tables.Cell(1, 2).Range.Text = sizeQty;
+                                tables.Cell(3, 2).Range.Text = poNo;
+                                #endregion
+                            }
+                            else
+                            {
+                                #region old format
+                                #region 準備資料
+                                string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
+                                string packingNo = "　　　　PackingNo.: " + printData.Rows[i]["ID"];
+                                string spNo = "　　　　SP No.: " + printData.Rows[i]["OrderID"];
+                                string cartonNo = "　　　　Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
+                                string poNo = "　　　　PO No.: " + printData.Rows[i]["PONo"];
+                                string sizeQty = "　　　　Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
+                                #endregion
+
+                                Bitmap oriBitmap = this.NewBarcode(barcode);
+                                Clipboard.SetImage(oriBitmap);
+                                tables.Cell(1, 1).Range.Paste();
+                                tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 40f;
+                                tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
+
+                                tables.Cell(2, 1).Range.Text = packingNo;
+                                tables.Cell(3, 1).Range.Text = spNo;
+                                tables.Cell(4, 1).Range.Text = cartonNo;
+                                tables.Cell(5, 1).Range.Text = poNo;
+                                tables.Cell(6, 1).Range.Text = sizeQty;
+                                #endregion
+                            }
+
                         }
                         #endregion
                         winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
