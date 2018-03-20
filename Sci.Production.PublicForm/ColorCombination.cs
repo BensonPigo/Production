@@ -185,6 +185,7 @@ namespace Sci.Production.PublicForm
             string colorsql = string.Format(
                             @"select distinct * from 
                             (
+                                /* 1. 抓 Order_ColorCombo 表層的顏色, 名稱 */
                                 Select d.id,d.name
                                 from Color d WITH (NOLOCK) , 
                                         (
@@ -192,14 +193,11 @@ namespace Sci.Production.PublicForm
 	                                        from Order_ColorCombo a WITH (NOLOCK) 
                                             where a.id='{0}'
                                         ) c 
-	                            where d.id = c.colorid and d.BrandId = 'ADIDAS' 
-	                            and d.ukey not in 
-                                    (
-                                        Select ColorUkey 
-                                        from Color_Multiple WITH (NOLOCK) 
-                                        where brandid = '{1}'
-                                    )
+	                            where d.id = c.colorid and d.BrandId = '{1}' 
+	                           
 	                            union all
+
+                                /* 2. 加上 Order_ColorCombo 裡面有複合色的話, 就再往下帶出內含每個顏色的 id, 名稱  */
                                 select g.id,g.name
                                 from Color g WITH (NOLOCK) ,
                                 (
