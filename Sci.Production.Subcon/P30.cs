@@ -1033,8 +1033,9 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0)
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString().Trim();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString().Trim();
+            string Delivery = dateDeliveryDate.Value.ToString();
 
-            P30_Print callPrintForm = new P30_Print(row, id, issuedate);
+            P30_Print callPrintForm = new P30_Print(row, id, issuedate, Delivery);
             callPrintForm.ShowDialog(this);
 
             return true;   
