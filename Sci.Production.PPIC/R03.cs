@@ -192,7 +192,7 @@ with tmpOrders as (
             , o.ProgramID
             , o.CdCodeID
             , o.CPU
-            , o.Qty
+            , iif ((o.junk = 0 or o.junk is null), o.Qty,0) as Qty
             , o.FOCQty
             , o.LocalOrder
             , o.PoPrice
@@ -256,7 +256,7 @@ with tmpOrders as (
         WHERE Pass1.ID = O.InspHandle
     )I
 	outer apply(select oa.Article from Order_article oa WITH (NOLOCK) where oa.id = o.id)a
-    where  ( o.junk = 0 or o.junk is null) ");
+    where  1=1 ");
             if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
                 sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(this.buyerDlv1).ToString("d")));
@@ -528,7 +528,7 @@ tmpFilterZone as (
         FROM Pass1 WITH (NOLOCK) 
         WHERE Pass1.ID=O.InspHandle
     )I
-    where o.POID IN (select distinct POID from tmpFilterSubProcess) and   ( o.junk = 0 or o.junk is null)
+    where o.POID IN (select distinct POID from tmpFilterSubProcess) 
 )");
             }
             else
@@ -1094,7 +1094,7 @@ with ArtworkData as (
     from #tmp
 ),
 OrderID as(
-    select ID from orders O  WITH (NOLOCK)  where  ( o.junk = 0 or o.junk is null) ");
+    select ID from orders O  WITH (NOLOCK)  where  1=1 ");
 
                         if (!MyUtility.Check.Empty(this.buyerDlv1))
                         {

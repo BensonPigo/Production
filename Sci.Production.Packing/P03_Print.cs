@@ -75,7 +75,7 @@ namespace Sci.Production.Packing
 
         private void RadioBarcodePrint_CheckedChanged(object sender, EventArgs e)
         {
-            this.ControlPrintFunction(this.radioBarcodePrint.Checked);
+            this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
         }
 
         // 控制元件是否可使用
@@ -137,7 +137,15 @@ namespace Sci.Production.Packing
             this.ValidateInput();
 
             this.ShowWaitMessage("Data Loading ...");
-            DualResult result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+            DualResult result;
+            if (this.radioNewBarcodePrint.Checked)
+            {
+                result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, "New");
+            }
+            else
+            {
+                result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+            }
 
             if (result == false)
             {
