@@ -36,7 +36,6 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.comboBoxFbType, 2, 1, "All,All,F,Fabric ,A,Accessory ");
             MyUtility.Tool.SetupCombox(this.comboBoxStatus, 2, 1, "All,All,Waiting,Waiting,Preparing,Preparing,Ready,Ready,Finished,Finished,WPR,Waiting+Preparing+Ready");
             MyUtility.Tool.SetupCombox(this.comboBoxRotate, 2, 1, "15,15/sec,30,30/sec,60,60/sec");
-
             this.comboBoxShift.SelectedIndex = 0;
             this.comboBoxFbType.SelectedIndex = 0;
             this.comboBoxStatus.SelectedIndex = 5;
@@ -107,16 +106,16 @@ namespace Sci.Production.PPIC
 
             this.gridDetail.DataSource = this.detailbs;
             this.Helper.Controls.Grid.Generator(this.gridDetail)
-                .Text("MDivisionID", header: "M", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("MDivisionID", header: "M", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("ID", header: "NO.", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: ts_id)
-                .Date("ApvDate", header: "Approved Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("ApvDate", header: "Approved" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("FabricType", header: "FabricType", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("POID", header: "Master SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("SewingLineID", header: "SewingLine", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("issueLackID", header: "Issue No.", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: ts_issueid);
+                .Text("POID", header: "Master SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("SewingLineID", header: "Sewing" + Environment.NewLine + "Line", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("issueLackID", header: "Issue No.", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: ts_issueid);
             this.ChangeRowColor();
         }
 
@@ -129,15 +128,19 @@ namespace Sci.Production.PPIC
                 {
                     case "Waiting":
                         this.gridDetail.Rows[index].DefaultCellStyle.BackColor = this.red;
+                        this.gridDetail.Rows[index].DefaultCellStyle.SelectionBackColor = this.red;
                         break;
                     case "Preparing":
                         this.gridDetail.Rows[index].DefaultCellStyle.BackColor = this.yelow;
+                        this.gridDetail.Rows[index].DefaultCellStyle.SelectionBackColor = this.yelow;
                         break;
                     case "Ready":
                         this.gridDetail.Rows[index].DefaultCellStyle.BackColor = this.green;
+                        this.gridDetail.Rows[index].DefaultCellStyle.SelectionBackColor = this.green;
                         break;
                     case "Finished":
                         this.gridDetail.Rows[index].DefaultCellStyle.BackColor = this.gray;
+                        this.gridDetail.Rows[index].DefaultCellStyle.SelectionBackColor = this.gray;
                         break;
                     default:
                         break;
@@ -237,6 +240,7 @@ where l.status <> 'New' ";
                 this.comboBoxFbType.ReadOnly = true;
                 this.comboBoxShift.ReadOnly = true;
                 this.comboBoxStatus.ReadOnly = true;
+                this.comboBoxRotate.ReadOnly = true;
                 this.btnQuery.SetReadOnly(true);
                 this.timerRotate.Interval = Convert.ToInt16(this.comboBoxRotate.SelectedValue) * 1000;
                 this.timerRotate.Start();
@@ -248,6 +252,7 @@ where l.status <> 'New' ";
                 this.txtfactory.ReadOnly = false;
                 this.comboBoxFbType.ReadOnly = false;
                 this.comboBoxShift.ReadOnly = false;
+                this.comboBoxRotate.ReadOnly = false;
                 this.comboBoxStatus.ReadOnly = false;
                 this.btnQuery.SetReadOnly(false);
                 this.timerRotate.Stop();

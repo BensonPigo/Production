@@ -781,7 +781,7 @@ where a.RequestQty > a.StockQty",
                 this.displayIssueLackDate.Text = string.Empty;
             }
 
-            if (this.comboShift.SelectedValue.Equals("O") && this.EditMode)
+            if (this.CurrentMaintain["Shift"].Equals("O") && this.EditMode)
             {
                 this.txtSubconName.ReadOnly = false;
             }
