@@ -40,16 +40,21 @@ namespace Sci.Production.Warehouse
             //
         }
 
-        public P15(ToolStripMenuItem menuitem, string transID)
+        public P15(ToolStripMenuItem menuitem, string transID, string callFrom = "")
             : base(menuitem)
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("FabricType='A' and id='{0}'", transID);
-            this.IsSupportNew = false;
-            this.IsSupportEdit = false;
-            this.IsSupportDelete = false;
-            this.IsSupportConfirm = false;
-            this.IsSupportUnconfirm = false;
+            if (!callFrom.Equals("PPIC.P15"))
+            {
+                this.IsSupportNew = false;
+                this.IsSupportEdit = false;
+                this.IsSupportDelete = false;
+                this.IsSupportClose = false;
+                this.IsSupportUnclose = false;
+                this.IsSupportConfirm = false;
+                this.IsSupportUnconfirm = false;
+            }
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -58,10 +63,52 @@ namespace Sci.Production.Warehouse
         }
 
         //PPIC_P15 Called        
-        public static void Call(string PPIC_id, ToolStripMenuItem menuitem)
+        public static void Call(string PPIC_id, Form MdiParent)
         {
-          
-            P15 call = new P15(menuitem, PPIC_id);
+
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Warehouse.P15)
+                {
+                    form.Activate();
+                    Sci.Production.Warehouse.P15 activateForm = (Sci.Production.Warehouse.P15)form;
+                    return;
+                }
+            }
+
+            ToolStripMenuItem P15MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("Issue Transaction"))
+                            {
+
+                                foreach (var endMenuItem in ((ToolStripMenuItem)subMenuItem).DropDown.Items)
+                                {
+                                    if (endMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                                    {
+                                        if (((ToolStripMenuItem)endMenuItem).Text.EqualString("P15. Issue Accessory Lacking  && Replacement"))
+                                        {
+                                            P15MenuItem = ((ToolStripMenuItem)endMenuItem);
+                                            break;
+                                        }
+                                    }
+
+
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            P15 call = new P15(P15MenuItem, PPIC_id, "PPIC.P15");
+            call.MdiParent = MdiParent;
             call.Show();
         }
 

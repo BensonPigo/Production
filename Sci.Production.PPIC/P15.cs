@@ -66,7 +66,7 @@ namespace Sci.Production.PPIC
                 {
                     if (dr["FabricType"].Equals("Fabric"))
                     {
-                        var frm = new P10(this.MenuItem, dr["ID"].ToString());
+                        P10 frm = new P10(this.MenuItem, dr["ID"].ToString());
                         frm.ShowDialog(this);
                     }
                     else
@@ -98,7 +98,7 @@ namespace Sci.Production.PPIC
                     if (myClass != null)
                     {
                         var callMethod = myClass.GetMethod("Call");
-                        callMethod.Invoke(null, new object[] { dr["issueLackID"].ToString(), this.MenuItem });
+                        callMethod.Invoke(null, new object[] { dr["issueLackID"].ToString(), this.MdiParent });
                     }
                 }
             };

@@ -40,16 +40,21 @@ namespace Sci.Production.Warehouse
             //
         }
 
-        public P16(ToolStripMenuItem menuitem, string transID)
+        public P16(ToolStripMenuItem menuitem, string transID, string callFrom = "")
             : base(menuitem)
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("FabricType='F' and id='{0}'", transID);
-            this.IsSupportNew = false;
-            this.IsSupportEdit = false;
-            this.IsSupportDelete = false;
-            this.IsSupportConfirm = false;
-            this.IsSupportUnconfirm = false;
+            if (!callFrom.Equals("PPIC.P16"))
+            {
+                this.IsSupportNew = false;
+                this.IsSupportEdit = false;
+                this.IsSupportDelete = false;
+                this.IsSupportClose = false;
+                this.IsSupportUnclose = false;
+                this.IsSupportConfirm = false;
+                this.IsSupportUnconfirm = false;
+            }
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
@@ -58,12 +63,54 @@ namespace Sci.Production.Warehouse
         }
 
         //PPIC_P15 Called        
-        public static void Call(string PPIC_id, ToolStripMenuItem menuitem)
+        public static void Call(string PPIC_id, Form MdiParent)
         {
 
-            P16 call = new P16(menuitem, PPIC_id);
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Warehouse.P16)
+                {
+                    form.Activate();
+                    Sci.Production.Warehouse.P16 activateForm = (Sci.Production.Warehouse.P16)form;
+                    return;
+                }
+            }
+
+            ToolStripMenuItem P16MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("Issue Transaction"))
+                            {
+
+                                foreach (var endMenuItem in ((ToolStripMenuItem)subMenuItem).DropDown.Items)
+                                {
+                                    if (endMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                                    {
+                                        if (((ToolStripMenuItem)endMenuItem).Text.EqualString("P16. Issue Fabric Lacking  && Replacement"))
+                                        {
+                                            P16MenuItem = ((ToolStripMenuItem)endMenuItem);
+                                            break;
+                                        }
+                                    }
+                                      
+
+                                }
+                                    
+                            }
+                        }
+                    }
+                }
+            }
+            P16 call = new P16(P16MenuItem, PPIC_id, "PPIC.P16");
+            call.MdiParent = MdiParent;
             call.Show();
-            
+
         }
 
         protected override void OnFormLoaded()
