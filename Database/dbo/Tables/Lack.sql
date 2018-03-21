@@ -20,6 +20,7 @@
     [EditDate]     DATETIME      NULL,
     [IssueLackDT]  DATETIME      NULL,
     [Status]       VARCHAR (15)  CONSTRAINT [DF_Lack_Status] DEFAULT ('') NULL,
+    [SubconName] VARCHAR(8) NULL DEFAULT (''), 
     CONSTRAINT [PK_Lack] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

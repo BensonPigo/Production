@@ -49,6 +49,10 @@
             this.labelApvDate = new Sci.Win.UI.Label();
             this.displayApvDate = new Sci.Win.UI.DisplayBox();
             this.comboType = new Sci.Win.UI.ComboBox();
+            this.labelshift = new Sci.Win.UI.Label();
+            this.labelSubconName = new Sci.Win.UI.Label();
+            this.displayBoxShift = new Sci.Win.UI.DisplayBox();
+            this.displayBoxSubconName = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,6 +69,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayBoxSubconName);
+            this.masterpanel.Controls.Add(this.displayBoxShift);
+            this.masterpanel.Controls.Add(this.labelSubconName);
+            this.masterpanel.Controls.Add(this.labelshift);
             this.masterpanel.Controls.Add(this.comboType);
             this.masterpanel.Controls.Add(this.displayApvDate);
             this.masterpanel.Controls.Add(this.labelApvDate);
@@ -107,6 +115,10 @@
             this.masterpanel.Controls.SetChildIndex(this.labelApvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboType, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelshift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBoxShift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBoxSubconName, 0);
             // 
             // detailpanel
             // 
@@ -184,7 +196,7 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Location = new System.Drawing.Point(241, 13);
+            this.labelIssueDate.Location = new System.Drawing.Point(230, 13);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(86, 23);
             this.labelIssueDate.TabIndex = 11;
@@ -214,7 +226,7 @@
             // dateIssueDate
             // 
             this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.dateIssueDate.Location = new System.Drawing.Point(330, 13);
+            this.dateIssueDate.Location = new System.Drawing.Point(319, 13);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
             this.dateIssueDate.TabIndex = 0;
@@ -342,7 +354,7 @@
             // 
             // labelType
             // 
-            this.labelType.Location = new System.Drawing.Point(241, 45);
+            this.labelType.Location = new System.Drawing.Point(230, 45);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(86, 23);
             this.labelType.TabIndex = 67;
@@ -350,9 +362,9 @@
             // 
             // labelApvDate
             // 
-            this.labelApvDate.Location = new System.Drawing.Point(540, 45);
+            this.labelApvDate.Location = new System.Drawing.Point(452, 13);
             this.labelApvDate.Name = "labelApvDate";
-            this.labelApvDate.Size = new System.Drawing.Size(75, 23);
+            this.labelApvDate.Size = new System.Drawing.Size(97, 23);
             this.labelApvDate.TabIndex = 68;
             this.labelApvDate.Text = "Apv. Date";
             // 
@@ -360,7 +372,7 @@
             // 
             this.displayApvDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApvDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApvDate.Location = new System.Drawing.Point(618, 45);
+            this.displayApvDate.Location = new System.Drawing.Point(552, 13);
             this.displayApvDate.Name = "displayApvDate";
             this.displayApvDate.Size = new System.Drawing.Size(154, 23);
             this.displayApvDate.TabIndex = 70;
@@ -373,16 +385,52 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(330, 44);
+            this.comboType.Location = new System.Drawing.Point(319, 44);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.ReadOnly = true;
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 2;
+            // 
+            // labelshift
+            // 
+            this.labelshift.Location = new System.Drawing.Point(452, 45);
+            this.labelshift.Name = "labelshift";
+            this.labelshift.Size = new System.Drawing.Size(97, 23);
+            this.labelshift.TabIndex = 71;
+            this.labelshift.Text = "Shift";
+            // 
+            // labelSubconName
+            // 
+            this.labelSubconName.Location = new System.Drawing.Point(665, 45);
+            this.labelSubconName.Name = "labelSubconName";
+            this.labelSubconName.Size = new System.Drawing.Size(97, 23);
+            this.labelSubconName.TabIndex = 72;
+            this.labelSubconName.Text = "SubconName";
+            // 
+            // displayBoxShift
+            // 
+            this.displayBoxShift.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxShift.Location = new System.Drawing.Point(552, 45);
+            this.displayBoxShift.Name = "displayBoxShift";
+            this.displayBoxShift.Size = new System.Drawing.Size(110, 23);
+            this.displayBoxShift.TabIndex = 73;
+            // 
+            // displayBoxSubconName
+            // 
+            this.displayBoxSubconName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxSubconName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxSubconName.Location = new System.Drawing.Point(765, 45);
+            this.displayBoxSubconName.Name = "displayBoxSubconName";
+            this.displayBoxSubconName.Size = new System.Drawing.Size(66, 23);
+            this.displayBoxSubconName.TabIndex = 74;
             // 
             // P15
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1006, 577);
+            this.CloseChkValue = "Confirmed";
             this.DefaultControl = "txtRequest";
             this.DefaultControlForEdit = "txtRequest";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
@@ -391,13 +439,16 @@
             this.GridAlias = "issuelack_detail";
             this.GridNew = 0;
             this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot";
+            this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnclose = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P15";
             this.Text = "P15. Issue Accessory Lacking & Replacement";
             this.UnApvChkValue = "Confirmed";
+            this.UncloseChkValue = "Closed";
             this.UniqueExpress = "id";
             this.WorkAlias = "Issuelack";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -443,5 +494,9 @@
         private Win.UI.Label labelApvDate;
         private Win.UI.Label labelType;
         private Win.UI.TextBox txtRequest;
+        private Win.UI.Label labelSubconName;
+        private Win.UI.Label labelshift;
+        private Win.UI.DisplayBox displayBoxShift;
+        private Win.UI.DisplayBox displayBoxSubconName;
     }
 }

@@ -47,8 +47,12 @@
             this.txtRequestNo = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.displayBox3 = new Sci.Win.UI.DisplayBox();
+            this.displayApvDate = new Sci.Win.UI.DisplayBox();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
+            this.displayBoxSubconName = new Sci.Win.UI.DisplayBox();
+            this.displayBoxShift = new Sci.Win.UI.DisplayBox();
+            this.labelSubconName = new Sci.Win.UI.Label();
+            this.labelshift = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,8 +69,12 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayBoxSubconName);
+            this.masterpanel.Controls.Add(this.displayBoxShift);
+            this.masterpanel.Controls.Add(this.labelSubconName);
+            this.masterpanel.Controls.Add(this.labelshift);
             this.masterpanel.Controls.Add(this.comboBox1);
-            this.masterpanel.Controls.Add(this.displayBox3);
+            this.masterpanel.Controls.Add(this.displayApvDate);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.txtRequestNo);
@@ -105,8 +113,12 @@
             this.masterpanel.Controls.SetChildIndex(this.txtRequestNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBox3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayApvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelshift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBoxShift, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBoxSubconName, 0);
             // 
             // detailpanel
             // 
@@ -350,20 +362,20 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(540, 45);
+            this.label7.Location = new System.Drawing.Point(463, 13);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
+            this.label7.Size = new System.Drawing.Size(86, 23);
             this.label7.TabIndex = 68;
             this.label7.Text = "Apv. Date";
             // 
-            // displayBox3
+            // displayApvDate
             // 
-            this.displayBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBox3.Location = new System.Drawing.Point(618, 45);
-            this.displayBox3.Name = "displayBox3";
-            this.displayBox3.Size = new System.Drawing.Size(147, 23);
-            this.displayBox3.TabIndex = 70;
+            this.displayApvDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayApvDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayApvDate.Location = new System.Drawing.Point(552, 13);
+            this.displayApvDate.Name = "displayApvDate";
+            this.displayApvDate.Size = new System.Drawing.Size(147, 23);
+            this.displayApvDate.TabIndex = 70;
             // 
             // comboBox1
             // 
@@ -375,14 +387,50 @@
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(330, 44);
             this.comboBox1.Name = "comboBox1";
+            this.comboBox1.OldText = "";
             this.comboBox1.ReadOnly = true;
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 2;
+            // 
+            // displayBoxSubconName
+            // 
+            this.displayBoxSubconName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxSubconName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxSubconName.Location = new System.Drawing.Point(765, 45);
+            this.displayBoxSubconName.Name = "displayBoxSubconName";
+            this.displayBoxSubconName.Size = new System.Drawing.Size(66, 23);
+            this.displayBoxSubconName.TabIndex = 78;
+            // 
+            // displayBoxShift
+            // 
+            this.displayBoxShift.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxShift.Location = new System.Drawing.Point(552, 45);
+            this.displayBoxShift.Name = "displayBoxShift";
+            this.displayBoxShift.Size = new System.Drawing.Size(110, 23);
+            this.displayBoxShift.TabIndex = 77;
+            // 
+            // labelSubconName
+            // 
+            this.labelSubconName.Location = new System.Drawing.Point(665, 45);
+            this.labelSubconName.Name = "labelSubconName";
+            this.labelSubconName.Size = new System.Drawing.Size(97, 23);
+            this.labelSubconName.TabIndex = 76;
+            this.labelSubconName.Text = "SubconName";
+            // 
+            // labelshift
+            // 
+            this.labelshift.Location = new System.Drawing.Point(463, 45);
+            this.labelshift.Name = "labelshift";
+            this.labelshift.Size = new System.Drawing.Size(86, 23);
+            this.labelshift.TabIndex = 75;
+            this.labelshift.Text = "Shift";
             // 
             // P16
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(1006, 577);
+            this.CloseChkValue = "Confirmed";
             this.DefaultControl = "txtRequestNo";
             this.DefaultControlForEdit = "txtRequestNo";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
@@ -391,13 +439,16 @@
             this.GridAlias = "issuelack_detail";
             this.GridNew = 0;
             this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot";
+            this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnclose = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P16";
             this.Text = "P16. Issue Fabric Lacking & Replacement";
             this.UnApvChkValue = "Confirmed";
+            this.UncloseChkValue = "Closed";
             this.UniqueExpress = "id";
             this.WorkAlias = "Issuelack";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -439,9 +490,13 @@
         private Win.UI.Label label2;
         private Win.UI.Button btnAccumulatedQty;
         private Win.UI.ComboBox comboBox1;
-        private Win.UI.DisplayBox displayBox3;
+        private Win.UI.DisplayBox displayApvDate;
         private Win.UI.Label label7;
         private Win.UI.Label label6;
         private Win.UI.TextBox txtRequestNo;
+        private Win.UI.DisplayBox displayBoxSubconName;
+        private Win.UI.DisplayBox displayBoxShift;
+        private Win.UI.Label labelSubconName;
+        private Win.UI.Label labelshift;
     }
 }

@@ -58,6 +58,8 @@
             this.displayIssueLackDate = new Sci.Win.UI.DisplayBox();
             this.labelIssueLackDate = new Sci.Win.UI.Label();
             this.btnImport = new Sci.Win.UI.Button();
+            this.txtSubconName = new Sci.Production.Class.txtscifactory();
+            this.labelSubconName = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -74,6 +76,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtSubconName);
+            this.masterpanel.Controls.Add(this.labelSubconName);
             this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.displayIssueLackDate);
             this.masterpanel.Controls.Add(this.labelIssueLackDate);
@@ -104,7 +108,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(919, 142);
+            this.masterpanel.Size = new System.Drawing.Size(919, 168);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
@@ -136,15 +140,17 @@
             this.masterpanel.Controls.SetChildIndex(this.labelIssueLackDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayIssueLackDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelSubconName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSubconName, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 142);
-            this.detailpanel.Size = new System.Drawing.Size(919, 307);
+            this.detailpanel.Location = new System.Drawing.Point(0, 168);
+            this.detailpanel.Size = new System.Drawing.Size(919, 281);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(811, 107);
+            this.gridicon.Location = new System.Drawing.Point(811, 133);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
@@ -153,7 +159,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(919, 307);
+            this.detailgridcont.Size = new System.Drawing.Size(919, 281);
             // 
             // detail2
             // 
@@ -183,7 +189,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(908, 487);
+            this.browse.Size = new System.Drawing.Size(919, 487);
             // 
             // tabs
             // 
@@ -207,7 +213,7 @@
             // 
             this.labelNo.Location = new System.Drawing.Point(5, 4);
             this.labelNo.Name = "labelNo";
-            this.labelNo.Size = new System.Drawing.Size(55, 23);
+            this.labelNo.Size = new System.Drawing.Size(92, 23);
             this.labelNo.TabIndex = 0;
             this.labelNo.Text = "No.";
             // 
@@ -215,7 +221,7 @@
             // 
             this.labelDate.Location = new System.Drawing.Point(5, 31);
             this.labelDate.Name = "labelDate";
-            this.labelDate.Size = new System.Drawing.Size(55, 23);
+            this.labelDate.Size = new System.Drawing.Size(92, 23);
             this.labelDate.TabIndex = 2;
             this.labelDate.Text = "Date";
             // 
@@ -223,7 +229,7 @@
             // 
             this.labelType.Location = new System.Drawing.Point(5, 58);
             this.labelType.Name = "labelType";
-            this.labelType.Size = new System.Drawing.Size(55, 23);
+            this.labelType.Size = new System.Drawing.Size(92, 23);
             this.labelType.TabIndex = 3;
             this.labelType.Text = "Type";
             // 
@@ -231,15 +237,15 @@
             // 
             this.labelShift.Location = new System.Drawing.Point(5, 85);
             this.labelShift.Name = "labelShift";
-            this.labelShift.Size = new System.Drawing.Size(55, 23);
+            this.labelShift.Size = new System.Drawing.Size(92, 23);
             this.labelShift.TabIndex = 4;
             this.labelShift.Text = "Shift";
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(5, 112);
+            this.labelRemark.Location = new System.Drawing.Point(6, 139);
             this.labelRemark.Name = "labelRemark";
-            this.labelRemark.Size = new System.Drawing.Size(55, 23);
+            this.labelRemark.Size = new System.Drawing.Size(91, 23);
             this.labelRemark.TabIndex = 5;
             this.labelRemark.Text = "Remark";
             // 
@@ -248,7 +254,7 @@
             this.displayNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayNo.Location = new System.Drawing.Point(64, 4);
+            this.displayNo.Location = new System.Drawing.Point(103, 5);
             this.displayNo.Name = "displayNo";
             this.displayNo.Size = new System.Drawing.Size(120, 23);
             this.displayNo.TabIndex = 0;
@@ -257,7 +263,7 @@
             // 
             this.dateDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
             this.dateDate.IsSupportEditMode = false;
-            this.dateDate.Location = new System.Drawing.Point(64, 31);
+            this.dateDate.Location = new System.Drawing.Point(103, 32);
             this.dateDate.Name = "dateDate";
             this.dateDate.ReadOnly = true;
             this.dateDate.Size = new System.Drawing.Size(110, 23);
@@ -271,8 +277,9 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(64, 57);
+            this.comboType.Location = new System.Drawing.Point(103, 58);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
             this.comboType.TabIndex = 0;
             this.comboType.Validated += new System.EventHandler(this.ComboType_Validated);
@@ -284,19 +291,21 @@
             this.comboShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboShift.FormattingEnabled = true;
             this.comboShift.IsSupportUnselect = true;
-            this.comboShift.Location = new System.Drawing.Point(64, 84);
+            this.comboShift.Location = new System.Drawing.Point(103, 85);
             this.comboShift.Name = "comboShift";
+            this.comboShift.OldText = "";
             this.comboShift.Size = new System.Drawing.Size(110, 24);
             this.comboShift.TabIndex = 1;
+            this.comboShift.SelectedIndexChanged += new System.EventHandler(this.ComboShift_SelectedIndexChanged);
             // 
             // txtRemark
             // 
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(64, 112);
+            this.txtRemark.Location = new System.Drawing.Point(103, 139);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(616, 23);
+            this.txtRemark.Size = new System.Drawing.Size(578, 23);
             this.txtRemark.TabIndex = 2;
             // 
             // labelFactory
@@ -482,13 +491,31 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(686, 107);
+            this.btnImport.Location = new System.Drawing.Point(687, 134);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(118, 31);
             this.btnImport.TabIndex = 41;
             this.btnImport.Text = "Batch Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
+            // 
+            // txtSubconName
+            // 
+            this.txtSubconName.BackColor = System.Drawing.Color.White;
+            this.txtSubconName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubconName", true));
+            this.txtSubconName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSubconName.Location = new System.Drawing.Point(103, 112);
+            this.txtSubconName.Name = "txtSubconName";
+            this.txtSubconName.Size = new System.Drawing.Size(66, 23);
+            this.txtSubconName.TabIndex = 43;
+            // 
+            // labelSubconName
+            // 
+            this.labelSubconName.Location = new System.Drawing.Point(5, 112);
+            this.labelSubconName.Name = "labelSubconName";
+            this.labelSubconName.Size = new System.Drawing.Size(92, 23);
+            this.labelSubconName.TabIndex = 42;
+            this.labelSubconName.Text = "SubconName";
             // 
             // P11
             // 
@@ -565,5 +592,7 @@
         private Win.UI.DisplayBox displayIssueLackDate;
         private Win.UI.Label labelIssueLackDate;
         private Win.UI.Button btnImport;
+        private Class.txtscifactory txtSubconName;
+        private Win.UI.Label labelSubconName;
     }
 }
