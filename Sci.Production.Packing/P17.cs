@@ -66,6 +66,11 @@ namespace Sci.Production.Packing
         {
             DualResult result;
 
+            if (MyUtility.Check.Empty(this.txtScanCartonSP.Text))
+            {
+                return;
+            }
+
             // 檢查是否有正在掃packing未刷完
             if (!MyUtility.Check.Empty(this.txtScanCartonSP.OldValue) && this.numBoxScanQty.Value > 0)
             {
@@ -372,6 +377,11 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' ";
         private void TxtScanEAN_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtScanEAN.Text))
+            {
+                return;
+            }
+
+            if (this.scanDetailBS.DataSource == null)
             {
                 return;
             }
