@@ -25,6 +25,7 @@ CREATE TABLE [dbo].[PackingList_Detail] (
     [ScanEditDate]     DATETIME       NULL,
     [Remark]           NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
     [Ukey] BIGINT NOT NULL IDENTITY, 
+    [ScanName] VARCHAR(10) NULL DEFAULT (''), 
     CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY ([Ukey]) 
 );
 
