@@ -2260,6 +2260,10 @@
     <Build Include="dbo\Tables\CustBarCode.sql" />
     <Build Include="dbo\Stored Procedures\Cutting_P20_CFM_Update.sql" />
     <Build Include="dbo\Tables\LocalUnit.sql" />
+    <Build Include="dbo\Tables\TransferToCFA.sql" />
+    <Build Include="dbo\Tables\ClogReceiveCFA.sql" />
+    <Build Include="dbo\Tables\CFAReceive.sql" />
+    <Build Include="dbo\Tables\CFAReturn.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -25,6 +25,12 @@ CREATE TABLE [dbo].[PackingList_Detail] (
     [ScanEditDate]     DATETIME       NULL,
     [Remark]           NVARCHAR (40)  CONSTRAINT [DF_PackingList_Detail_Remark] DEFAULT ('') NULL,
     [Ukey] BIGINT NOT NULL IDENTITY, 
+    [TransferCFADate] DATE NULL, 
+    [CFAReceiveDate] DATE NULL, 
+    [CFAReturnFtyDate] DATE NULL, 
+    [CFAReturnClogDate] DATE NULL, 
+    [ClogReceiveCFADate] DATE NULL, 
+    [CFANeedInsp] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY ([Ukey]) 
 );
 
@@ -162,3 +168,56 @@ GO
 CREATE NONCLUSTERED INDEX [IX_PackingList_Detail_OrgPK] 
     ON PackingList_Detail ( ID,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode )
 Go
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'移轉CFA日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'TransferCFADate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'CFA接收日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CFAReceiveDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'CFA退回Fty日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CFAReturnFtyDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'CFA退回Clog日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CFAReturnClogDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Clog檢驗接收日',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogReceiveCFADate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'CFA需要檢驗的箱子',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'CFANeedInsp'

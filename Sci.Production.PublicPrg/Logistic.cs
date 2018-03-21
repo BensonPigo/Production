@@ -24,12 +24,31 @@ namespace Sci.Production.PublicPrg
         {
             string sqlCmd;
 
-            sqlCmd = string.Format(@"update Orders 
-                                                       set TotalCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
-                                                             FtyCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferDate is not null), 
-                                                             ClogCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ReceiveDate is not null), 
-                                                            ClogLastReceiveDate = (select max(ReceiveDate) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}') 
-                                                       where ID = '{0}'", orderID);
+            sqlCmd = string.Format(@"
+update Orders 
+set TotalCTN = (
+    select sum(b.CTNQty) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
+FtyCTN = (
+    select sum(b.CTNQty) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferDate is not null), 
+ClogCTN = (
+    select sum(b.CTNQty) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ReceiveDate is not null
+    and TransferCFADate is null), 
+ClogLastReceiveDate = (
+    select max(ReceiveDate) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
+cfaCTN = (
+    select sum(b.CTNQty)
+    from PackingList a, PackingList_Detail b 
+    where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.CFAReceiveDate is not null)
+where ID = '{0}'"
+, orderID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
@@ -49,12 +68,31 @@ namespace Sci.Production.PublicPrg
             IList<string> updateCmds = new List<string>();
             foreach (DataRow dr in OrderData.Rows)
             {
-                updateCmds.Add(string.Format(@"update Orders 
-                                                       set TotalCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
-                                                             FtyCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferDate is not null), 
-                                                             ClogCTN = (select sum(b.CTNQty) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ReceiveDate is not null), 
-                                                            ClogLastReceiveDate = (select max(ReceiveDate) from PackingList a, PackingList_Detail b where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}') 
-                                                       where ID = '{0}'", dr["OrderID"].ToString()));
+                updateCmds.Add(string.Format(@"
+update Orders 
+set TotalCTN = (
+    select sum(b.CTNQty) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
+FtyCTN = (
+    select sum(b.CTNQty) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and TransferDate is not null), 
+ClogCTN = (
+    select sum(b.CTNQty) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ReceiveDate is not null
+    and TransferCFADate is null), 
+ClogLastReceiveDate = (
+    select max(ReceiveDate) 
+    from PackingList a, PackingList_Detail b 
+    where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}'), 
+cfaCTN = (
+    select sum(b.CTNQty)
+    from PackingList a, PackingList_Detail b 
+    where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.CFAReceiveDate is not null)
+where ID = '{0}'"
+, dr["OrderID"].ToString()));
             }
             if (updateCmds.Count > 0)
             {

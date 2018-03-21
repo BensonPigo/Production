@@ -159,9 +159,9 @@ namespace Sci.Production.Packing
                                 #region New format
                                 #region 準備資料
                                 string barcode = printData.Rows[i]["ID"].ToString() + printData.Rows[i]["CTNStartNo"].ToString();
-                                string packingNo = "PackingNo.: " + printData.Rows[i]["ID"];
-                                string spNo = "SP No.: " + printData.Rows[i]["OrderID"];
-                                string cartonNo = "Carton No.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
+                                string packingNo = "PG#.: " + printData.Rows[i]["ID"];
+                                string spNo = "SP#.: " + printData.Rows[i]["OrderID"];
+                                string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                                 string poNo = printData.Rows[i]["PONo"].ToString();
                                 string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
                                 #endregion

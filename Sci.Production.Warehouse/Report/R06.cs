@@ -116,9 +116,12 @@ SELECT  --a.MDivisionID,
         ,a.ApvDate
         ,servedDate = iif(a.Status ='Received',a.EditDate,null) 
         ,handle = dbo.getPass1(a.ApplyName) 
+        ,[CloseDate] = iif(il.status = 'Closed',il.editdate,null)
+        ,[MTRtime] =  replace(iif(il.status = 'Closed',Str(Datediff(DAY,il.ApvDate,il.editdate)) + 'D' +  Str(Datediff(HOUR,il.ApvDate,il.editdate) % 24) +'H' + Str(Datediff(Minute,il.ApvDate,il.editdate) % 60) + 'M',null),' ','')
 FROM Lack a WITH (NOLOCK) 
 inner join Lack_detail b WITH (NOLOCK) on a.id = b.id
 inner join po_supp_detail c WITH (NOLOCK) on c.ID = a.poid and c.seq1 = B.Seq1 AND C.SEQ2 = B.Seq2
+left join IssueLack il WITH (NOLOCK) on a.IssueLackId = il.id
 where (a.Status ='Received' or a.Status = 'Confirmed') "));
 
             #region --- 條件組合  ---
