@@ -5,10 +5,10 @@
     [PackingListID]  VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_PackingListId] DEFAULT ('') NOT NULL,
     [OrderID]        VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OrderId] DEFAULT ('') NOT NULL,
     [CTNStartNo]     VARCHAR (6)  CONSTRAINT [DF_ClogReceive_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
-    [ClogLocationID] VARCHAR (10) CONSTRAINT [DF_ClogReceive_Detail_ClogLocationId] DEFAULT ('') NULL,
+    [ClogLocationID] VARCHAR (10) CONSTRAINT [DF_ClogReceive_Detail_ClogLocationId] DEFAULT ('') NOT NULL,
     [AddDate]        DATETIME     NULL,
-    [OldID]          VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OldID] DEFAULT ('') NULL,
-    [AddName]        VARCHAR (10) NULL DEFAULT (''),
+    [OldID]          VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OldID] DEFAULT ('') NOT NULL,
+    [AddName]        VARCHAR (10) NOT NULL DEFAULT (''),
     CONSTRAINT [PK_ClogReceive_Detail_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
