@@ -111,7 +111,7 @@ CFANeedInsp
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
-inner join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
+left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
 inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
@@ -155,7 +155,7 @@ and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
-and po.Status in ('New','')
+and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.CTNStartNo";
             #endregion            
@@ -181,7 +181,8 @@ order by p2.ID,p2.CTNStartNo";
         private void btnSave_Click(object sender, EventArgs e)
         {
             DualResult resule;
-            if (MyUtility.Check.Empty(this.listControlBindingSource.DataSource))
+            DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
+            if (MyUtility.Check.Empty(dt))
             {
                 return;
             }
@@ -189,7 +190,7 @@ order by p2.ID,p2.CTNStartNo";
 
             string updateSqlCmd = string.Empty;
 
-            foreach (DataRow dr in ((DataTable)this.listControlBindingSource.DataSource).Rows)
+            foreach (DataRow dr in dt.Rows)
             {
                 DataRow[] selectData = dtDBSource.Select($@"CFANeedInsp <> {dr["CFANeedInsp"]} and id='{dr["ID"]}' and CTNStartNo='{dr["CTNStartNo"]}'");
                 if (selectData.Length > 0)
