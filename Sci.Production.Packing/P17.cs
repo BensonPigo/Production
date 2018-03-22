@@ -182,7 +182,10 @@ namespace Sci.Production.Packing
                 this.tabControlScanArea.SelectedTab = this.tabControlScanArea.TabPages[1];
                 this.txtScanEAN.Focus();
                 this.numBoxScanQty.Value = 0;
-                this.numBoxScanTtlQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (int)s["QtyPerCTN"]);
+                if (this.scanDetailBS != null)
+                {
+                    this.numBoxScanTtlQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (int)s["QtyPerCTN"]);
+                }
             }
             else if (type.Equals("CARTON"))
             {
@@ -194,9 +197,15 @@ namespace Sci.Production.Packing
         private DualResult LoadScanDetail(int rowidx)
         {
             DualResult result = new DualResult(true);
+            SelectCartonDetail dr = (SelectCartonDetail)this.gridSelectCartonDetail.GetData(rowidx);
 
             if (this.selecedPK != null && this.numBoxScanQty.Value > 0)
             {
+                if (dr.ID == this.selecedPK.ID && dr.CTNStartNo == this.selecedPK.CTNStartNo && dr.Article == this.selecedPK.Article)
+                {
+                    return result;
+                }
+
                 if (MyUtility.Msg.InfoBox("Do you want to change CTN#?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     DataRow[] cleardr = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
@@ -209,7 +218,6 @@ namespace Sci.Production.Packing
                 }
             }
 
-            SelectCartonDetail dr = (SelectCartonDetail)this.gridSelectCartonDetail.GetData(rowidx);
             DataRow[] dr_scanDetail = this.dt_scanDetail.Select($"ID = '{dr.ID}' and CTNStartNo = '{dr.CTNStartNo}' and Article = '{dr.Article}'");
             if (dr_scanDetail.Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count() == 0)
             {
