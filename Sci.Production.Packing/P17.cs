@@ -172,6 +172,11 @@ namespace Sci.Production.Packing
                     this.ShowErr(result_load);
                 }
             }
+            else if (cnt_selectCarton > 1)
+            {
+                e.Cancel = true;
+                this.txtScanCartonSP.SelectAll();
+            }
             #endregion
         }
 
@@ -194,17 +199,14 @@ namespace Sci.Production.Packing
         private DualResult LoadScanDetail(int rowidx)
         {
             DualResult result = new DualResult(true);
-            SelectCartonDetail dr = (SelectCartonDetail)this.gridSelectCartonDetail.GetData(rowidx);
-            DataRow[] dr_scanDetail = this.dt_scanDetail.Select($"ID = '{dr.ID}' and CTNStartNo = '{dr.CTNStartNo}' and Article = '{dr.Article}'");
-            if (dr_scanDetail.Where(s => (short)s["ScanQty"] > 0).Count() > 0)
+
+            if (this.selecedPK != null && this.numBoxScanQty.Value > 0)
             {
                 if (MyUtility.Msg.InfoBox("Do you want to change CTN#?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    if (!(result = this.ClearScanQty(dr_scanDetail, "ALL")))
-                    {
-                        this.ShowErr(result);
-                        return result;
-                    }
+                    DataRow[] cleardr = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+                    this.ClearScanQty(cleardr, string.Empty);
+                    this.LoadSelectCarton();
                 }
                 else
                 {
@@ -212,18 +214,36 @@ namespace Sci.Production.Packing
                 }
             }
 
+            SelectCartonDetail dr = (SelectCartonDetail)this.gridSelectCartonDetail.GetData(rowidx);
+            DataRow[] dr_scanDetail = this.dt_scanDetail.Select($"ID = '{dr.ID}' and CTNStartNo = '{dr.CTNStartNo}' and Article = '{dr.Article}'");
+            if (dr_scanDetail.Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count() == 0)
+            {
+                if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    if (!(result = this.ClearScanQty(dr_scanDetail, "ALL")))
+                    {
+                        return result;
+                    }
+                }
+                else
+                {
+                    this.Tab_Focus("EAN");
+                    return result;
+                }
+            }
+
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
             this.LoadHeadData(dr);
             this.Tab_Focus("EAN");
+
             return result;
         }
 
         private void GridSelectCartonDetail_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (this.selecedPK != null)
+            if (e.RowIndex == -1)
             {
-                DataRow[] cleardr = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
-                this.ClearScanQty(cleardr, string.Empty);
+                return;
             }
 
             this.LoadSelectCarton();
