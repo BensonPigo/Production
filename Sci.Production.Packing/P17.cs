@@ -172,11 +172,6 @@ namespace Sci.Production.Packing
                     this.ShowErr(result_load);
                 }
             }
-            else if (cnt_selectCarton > 1)
-            {
-                e.Cancel = true;
-                this.txtScanCartonSP.SelectAll();
-            }
             #endregion
         }
 
@@ -784,5 +779,6 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             }
         }
 
+     
     }
 }
