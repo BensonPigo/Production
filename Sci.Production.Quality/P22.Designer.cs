@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.dateRangeSCIDelivery = new Sci.Win.UI.DateRange();
@@ -39,9 +39,9 @@
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.btnFind = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnColse = new Sci.Win.UI.Button();
-            this.btnFind = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1.SuspendLayout();
@@ -57,14 +57,14 @@
             this.txtSPNo.Location = new System.Drawing.Point(101, 14);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(114, 23);
-            this.txtSPNo.TabIndex = 2;
+            this.txtSPNo.TabIndex = 0;
             // 
             // labelSPNo
             // 
             this.labelSPNo.Location = new System.Drawing.Point(16, 14);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(82, 23);
-            this.labelSPNo.TabIndex = 3;
+            this.labelSPNo.TabIndex = 7;
             this.labelSPNo.Text = "SP#";
             // 
             // dateRangeSCIDelivery
@@ -87,14 +87,14 @@
             this.dateRangeSCIDelivery.Location = new System.Drawing.Point(101, 46);
             this.dateRangeSCIDelivery.Name = "dateRangeSCIDelivery";
             this.dateRangeSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeSCIDelivery.TabIndex = 7;
+            this.dateRangeSCIDelivery.TabIndex = 3;
             // 
             // labelSCIDelivery
             // 
             this.labelSCIDelivery.Location = new System.Drawing.Point(16, 46);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(82, 23);
-            this.labelSCIDelivery.TabIndex = 6;
+            this.labelSCIDelivery.TabIndex = 10;
             this.labelSCIDelivery.Text = "SCI Delivery";
             // 
             // txtPoNo
@@ -105,14 +105,14 @@
             this.txtPoNo.Location = new System.Drawing.Point(315, 14);
             this.txtPoNo.Name = "txtPoNo";
             this.txtPoNo.Size = new System.Drawing.Size(114, 23);
-            this.txtPoNo.TabIndex = 8;
+            this.txtPoNo.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(252, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(60, 23);
-            this.label1.TabIndex = 9;
+            this.label1.TabIndex = 8;
             this.label1.Text = "PO#";
             // 
             // txtPackID
@@ -123,14 +123,14 @@
             this.txtPackID.Location = new System.Drawing.Point(502, 14);
             this.txtPackID.Name = "txtPackID";
             this.txtPackID.Size = new System.Drawing.Size(114, 23);
-            this.txtPackID.TabIndex = 10;
+            this.txtPackID.TabIndex = 2;
             // 
             // label2
             // 
             this.label2.Location = new System.Drawing.Point(439, 14);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(60, 23);
-            this.label2.TabIndex = 11;
+            this.label2.TabIndex = 9;
             this.label2.Text = "Pack ID";
             // 
             // panel1
@@ -154,7 +154,17 @@
             this.panel1.RectStyle.BorderWidths.Right = 1F;
             this.panel1.RectStyle.BorderWidths.Top = 1F;
             this.panel1.Size = new System.Drawing.Size(725, 79);
-            this.panel1.TabIndex = 12;
+            this.panel1.TabIndex = 0;
+            // 
+            // btnFind
+            // 
+            this.btnFind.Location = new System.Drawing.Point(622, 10);
+            this.btnFind.Name = "btnFind";
+            this.btnFind.Size = new System.Drawing.Size(80, 30);
+            this.btnFind.TabIndex = 4;
+            this.btnFind.Text = "Find";
+            this.btnFind.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // btnSave
             // 
@@ -162,7 +172,7 @@
             this.btnSave.Location = new System.Drawing.Point(536, 46);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
-            this.btnSave.TabIndex = 16;
+            this.btnSave.TabIndex = 5;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -173,20 +183,10 @@
             this.btnColse.Location = new System.Drawing.Point(622, 46);
             this.btnColse.Name = "btnColse";
             this.btnColse.Size = new System.Drawing.Size(80, 30);
-            this.btnColse.TabIndex = 17;
+            this.btnColse.TabIndex = 6;
             this.btnColse.Text = "Close";
             this.btnColse.UseVisualStyleBackColor = true;
             this.btnColse.Click += new System.EventHandler(this.btnColse_Click);
-            // 
-            // btnFind
-            // 
-            this.btnFind.Location = new System.Drawing.Point(622, 10);
-            this.btnFind.Name = "btnFind";
-            this.btnFind.Size = new System.Drawing.Size(80, 30);
-            this.btnFind.TabIndex = 18;
-            this.btnFind.Text = "Find";
-            this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
             // 
             // grid
             // 
@@ -206,27 +206,28 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(9, 91);
             this.grid.Name = "grid";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
             this.grid.Size = new System.Drawing.Size(725, 452);
-            this.grid.TabIndex = 18;
+            this.grid.TabIndex = 0;
             // 
             // P22
             // 
             this.ClientSize = new System.Drawing.Size(744, 555);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.panel1);
+            this.DefaultControl = "txtSPNo";
             this.Name = "P22";
             this.Text = "P22.CFA Select Need Inspection Cartons";
             this.Controls.SetChildIndex(this.panel1, 0);
