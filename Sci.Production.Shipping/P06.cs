@@ -795,6 +795,18 @@ and (s.Status != 'Confirmed' or p.Status = 'New')",
             }
             #endregion
 
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                dr["OrderQty"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select qty from orders where id = '{dr["orderid"]}' "));
+                int ttlshipqty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($@"	
+select isnull((select sum(ShipQty) from Pullout_Detail WITH (NOLOCK) where OrderID = '{dr["orderid"]}'),0)
+	+isnull ((select sum(DiffQty) 
+	from InvAdjust_Qty iq WITH (NOLOCK) 
+	inner join InvAdjust i WITH (NOLOCK) on iq.ID = i.id 
+	where i.orderid = '{dr["orderid"]}'), 0)"));
+                dr["Variance"] = MyUtility.Convert.GetInt(dr["OrderQty"]) - ttlshipqty;
+            }
+
             // 撈所有符合條件的Packing List資料
             #region 組SQL
             sqlCmd = string.Format(
