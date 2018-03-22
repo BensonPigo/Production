@@ -1372,13 +1372,13 @@ left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'
                     if (row.Length > 0)
                     {
                         StringBuilder airPP_err = new StringBuilder();
-                        airPP_err.Append("DO NOT arrange Air-Prepaid shipment due to APP# is not on GM Team Locked status." + Environment.NewLine + Environment.NewLine);
+                        airPP_err.Append("DO NOT arrange Air-Prepaid shipment due to APP# is not on Task Team Locked status." + Environment.NewLine + Environment.NewLine);
                         foreach (DataRow dr in row)
                         {
                             airPP_err.Append($"Packing#{dr["PackingID"]} APP#{dr["AirPPID"]} Status: {dr["StatusDesc"]} - {dr["Followup"]}" + Environment.NewLine);
                         }
 
-                        airPP_err.Append(Environment.NewLine + @"If Shipping arrange Air-Prepaid shipment before GM Team Lock, PPIC and Shipping Dept. have to take the responsibility for the Air-Prepaid. 
+                        airPP_err.Append(Environment.NewLine + @"If Shipping arrange Air-Prepaid shipment before Task Team Lock, PPIC and Shipping Dept. have to take the responsibility for the Air-Prepaid. 
 Please follow up based on the Air-Prepaid Status.");
                         P05_ErrorMsg errMsg = new P05_ErrorMsg(airPP_err.ToString());
                         errMsg.ShowDialog();
