@@ -118,16 +118,16 @@ where o.Id = '{0}'",
                     this.label30.Text = "Junk";
                     break;
                 case "Checked":
-                    this.label30.Text = "PPIC Apv";
+                    this.label30.Text = "PPIC Checked";
                     break;
                 case "Approved":
-                    this.label30.Text = "Fty Apv";
+                    this.label30.Text = "FTY Approved";
                     break;
                 case "Confirmed":
-                    this.label30.Text = "SMR Apv";
+                    this.label30.Text = "SMR Comfirmed";
                     break;
                 case "Locked":
-                    this.label30.Text = "Task Team Lock";
+                    this.label30.Text = "GM Team Locked";
                     break;
                 default:
                     this.label30.Text = string.Empty;
@@ -379,16 +379,16 @@ values ('{0}','Status','','New','{1}',GETDATE())",
                     status = "Junk";
                     break;
                 case "Checked":
-                    status = "PPIC Apv";
+                    status = "PPIC Checked";
                     break;
                 case "Approved":
-                    status = "Fty Apv";
+                    status = "FTY Approved";
                     break;
                 case "Confirmed":
-                    status = "SMR Apv";
+                    status = "SMR Comfirmed";
                     break;
                 case "Locked":
-                    status = "Task Team Lock";
+                    status = "GM Team Locked";
                     break;
                 default:
                     status = string.Empty;
@@ -1242,7 +1242,7 @@ where a.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 StringBuilder content = new StringBuilder();
                 #region 組Content
                 content.Append(string.Format(
-                    @"Hi MR team, cc.Production team/Task Team
+                    @"Hi MR team, cc.Production team/GM Team
 Please refer to attachment – air pp request and refer to below datas.
 
 SMR: {0} Ext.{1}, POSMR: {2} Ext.{3}
