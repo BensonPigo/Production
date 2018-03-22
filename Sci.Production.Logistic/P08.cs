@@ -132,7 +132,7 @@ select distinct
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
-inner join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
+left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
 inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
@@ -151,7 +151,7 @@ and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
 and p2.CFAReturnClogDate is null
-and po.Status in ('New','')
+and (po.Status = 'New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 order by p2.ID,p2.CTNStartNo";
 
@@ -246,7 +246,7 @@ select distinct
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
-inner join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
+left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
 inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
@@ -260,12 +260,12 @@ outer apply(
 	),1,1,'')
 ) o1
 where p2.CTNStartNo<>''
-and p1.Mdivisionid='PM1'
+and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
 and p2.CFAReturnClogDate is null
-and po.Status in ('New','')
+and (po.Status = 'New' or po.Status is null)
 and p2.id='{sl[1].Substring(0, 13)}'
 and p2.CTNStartNo='{sl[1].Substring(13, sl[1].Length - 13)}'
 order by p2.ID,p2.CTNStartNo
