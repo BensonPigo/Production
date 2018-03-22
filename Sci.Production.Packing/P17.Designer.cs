@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelPackID = new Sci.Win.UI.Label();
             this.labelCtnNo = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
@@ -54,6 +54,7 @@
             this.txtScanCartonSP = new Sci.Win.UI.TextBox();
             this.labelTabCarton = new Sci.Win.UI.Label();
             this.tabPageScan = new System.Windows.Forms.TabPage();
+            this.numBoxScanQty = new Sci.Win.UI.NumericBox();
             this.numBoxScanTtlQty = new Sci.Win.UI.NumericBox();
             this.txtScanEAN = new Sci.Win.UI.TextBox();
             this.labelEAN = new Sci.Win.UI.Label();
@@ -76,7 +77,6 @@
             this.numBoxttlPackQty = new Sci.Win.UI.NumericBox();
             this.numBoxRemainCartons = new Sci.Win.UI.NumericBox();
             this.numBoxRemainQty = new Sci.Win.UI.NumericBox();
-            this.numBoxScanQty = new Sci.Win.UI.NumericBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -244,7 +244,8 @@
             this.tabControlScanArea.Name = "tabControlScanArea";
             this.tabControlScanArea.SelectedIndex = 0;
             this.tabControlScanArea.Size = new System.Drawing.Size(319, 196);
-            this.tabControlScanArea.TabIndex = 27;
+            this.tabControlScanArea.TabIndex = 99;
+            this.tabControlScanArea.TabStop = false;
             // 
             // tabPageCarton
             // 
@@ -293,6 +294,29 @@
             this.tabPageScan.TabIndex = 1;
             this.tabPageScan.Text = "Scan";
             // 
+            // numBoxScanQty
+            // 
+            this.numBoxScanQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numBoxScanQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.numBoxScanQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numBoxScanQty.IsSupportEditMode = false;
+            this.numBoxScanQty.Location = new System.Drawing.Point(110, 77);
+            this.numBoxScanQty.Name = "numBoxScanQty";
+            this.numBoxScanQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBoxScanQty.ReadOnly = true;
+            this.numBoxScanQty.Size = new System.Drawing.Size(184, 23);
+            this.numBoxScanQty.TabIndex = 33;
+            this.numBoxScanQty.TabStop = false;
+            this.numBoxScanQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // numBoxScanTtlQty
             // 
             this.numBoxScanTtlQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -309,6 +333,7 @@
             this.numBoxScanTtlQty.ReadOnly = true;
             this.numBoxScanTtlQty.Size = new System.Drawing.Size(184, 23);
             this.numBoxScanTtlQty.TabIndex = 32;
+            this.numBoxScanTtlQty.TabStop = false;
             this.numBoxScanTtlQty.Value = new decimal(new int[] {
             0,
             0,
@@ -322,8 +347,7 @@
             this.txtScanEAN.Location = new System.Drawing.Point(110, 44);
             this.txtScanEAN.Name = "txtScanEAN";
             this.txtScanEAN.Size = new System.Drawing.Size(184, 23);
-            this.txtScanEAN.TabIndex = 2;
-            this.txtScanEAN.TabStop = false;
+            this.txtScanEAN.TabIndex = 1;
             this.txtScanEAN.Validating += new System.ComponentModel.CancelEventHandler(this.TxtScanEAN_Validating);
             // 
             // labelEAN
@@ -376,14 +400,14 @@
             this.gridScanDetail.Location = new System.Drawing.Point(345, 203);
             this.gridScanDetail.Name = "gridScanDetail";
             this.gridScanDetail.ReadOnly = true;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridScanDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridScanDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridScanDetail.RowTemplate.Height = 24;
@@ -391,6 +415,7 @@
             this.gridScanDetail.ShowCellToolTips = false;
             this.gridScanDetail.Size = new System.Drawing.Size(577, 172);
             this.gridScanDetail.TabIndex = 28;
+            this.gridScanDetail.TabStop = false;
             // 
             // label1
             // 
@@ -414,7 +439,7 @@
             this.chkBoxNotScan.Location = new System.Drawing.Point(13, 415);
             this.chkBoxNotScan.Name = "chkBoxNotScan";
             this.chkBoxNotScan.Size = new System.Drawing.Size(198, 21);
-            this.chkBoxNotScan.TabIndex = 29;
+            this.chkBoxNotScan.TabIndex = 3;
             this.chkBoxNotScan.Text = "Only not yet scan complete";
             this.chkBoxNotScan.UseVisualStyleBackColor = true;
             this.chkBoxNotScan.CheckedChanged += new System.EventHandler(this.ChkBoxNotScan_CheckedChanged);
@@ -437,7 +462,7 @@
             this.comboPKFilter.Name = "comboPKFilter";
             this.comboPKFilter.OldText = "";
             this.comboPKFilter.Size = new System.Drawing.Size(121, 24);
-            this.comboPKFilter.TabIndex = 31;
+            this.comboPKFilter.TabIndex = 4;
             this.comboPKFilter.SelectedIndexChanged += new System.EventHandler(this.ComboPKFilter_SelectedIndexChanged);
             // 
             // labelQuickSelCTN
@@ -455,7 +480,7 @@
             this.txtQuickSelCTN.Location = new System.Drawing.Point(608, 413);
             this.txtQuickSelCTN.Name = "txtQuickSelCTN";
             this.txtQuickSelCTN.Size = new System.Drawing.Size(130, 23);
-            this.txtQuickSelCTN.TabIndex = 33;
+            this.txtQuickSelCTN.TabIndex = 5;
             this.txtQuickSelCTN.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TxtQuickSelCTN_KeyUp);
             // 
             // gridSelectCartonDetail
@@ -474,14 +499,14 @@
             this.gridSelectCartonDetail.MultiSelect = false;
             this.gridSelectCartonDetail.Name = "gridSelectCartonDetail";
             this.gridSelectCartonDetail.ReadOnly = true;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSelectCartonDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSelectCartonDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.gridSelectCartonDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSelectCartonDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSelectCartonDetail.RowTemplate.Height = 24;
@@ -489,6 +514,7 @@
             this.gridSelectCartonDetail.ShowCellToolTips = false;
             this.gridSelectCartonDetail.Size = new System.Drawing.Size(909, 234);
             this.gridSelectCartonDetail.TabIndex = 34;
+            this.gridSelectCartonDetail.TabStop = false;
             this.gridSelectCartonDetail.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridSelectCartonDetail_CellMouseDoubleClick);
             // 
             // numBoxttlCatons
@@ -506,6 +532,7 @@
             this.numBoxttlCatons.ReadOnly = true;
             this.numBoxttlCatons.Size = new System.Drawing.Size(242, 23);
             this.numBoxttlCatons.TabIndex = 33;
+            this.numBoxttlCatons.TabStop = false;
             this.numBoxttlCatons.Value = new decimal(new int[] {
             0,
             0,
@@ -527,6 +554,7 @@
             this.numBoxttlQty.ReadOnly = true;
             this.numBoxttlQty.Size = new System.Drawing.Size(242, 23);
             this.numBoxttlQty.TabIndex = 35;
+            this.numBoxttlQty.TabStop = false;
             this.numBoxttlQty.Value = new decimal(new int[] {
             0,
             0,
@@ -548,6 +576,7 @@
             this.numBoxPackedCartons.ReadOnly = true;
             this.numBoxPackedCartons.Size = new System.Drawing.Size(242, 23);
             this.numBoxPackedCartons.TabIndex = 36;
+            this.numBoxPackedCartons.TabStop = false;
             this.numBoxPackedCartons.Value = new decimal(new int[] {
             0,
             0,
@@ -569,6 +598,7 @@
             this.numBoxttlPackQty.ReadOnly = true;
             this.numBoxttlPackQty.Size = new System.Drawing.Size(242, 23);
             this.numBoxttlPackQty.TabIndex = 37;
+            this.numBoxttlPackQty.TabStop = false;
             this.numBoxttlPackQty.Value = new decimal(new int[] {
             0,
             0,
@@ -590,6 +620,7 @@
             this.numBoxRemainCartons.ReadOnly = true;
             this.numBoxRemainCartons.Size = new System.Drawing.Size(242, 23);
             this.numBoxRemainCartons.TabIndex = 38;
+            this.numBoxRemainCartons.TabStop = false;
             this.numBoxRemainCartons.Value = new decimal(new int[] {
             0,
             0,
@@ -611,29 +642,8 @@
             this.numBoxRemainQty.ReadOnly = true;
             this.numBoxRemainQty.Size = new System.Drawing.Size(242, 23);
             this.numBoxRemainQty.TabIndex = 39;
+            this.numBoxRemainQty.TabStop = false;
             this.numBoxRemainQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numBoxScanQty
-            // 
-            this.numBoxScanQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numBoxScanQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.numBoxScanQty.ForeColor = System.Drawing.Color.Red;
-            this.numBoxScanQty.IsSupportEditMode = false;
-            this.numBoxScanQty.Location = new System.Drawing.Point(110, 77);
-            this.numBoxScanQty.Name = "numBoxScanQty";
-            this.numBoxScanQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numBoxScanQty.ReadOnly = true;
-            this.numBoxScanQty.Size = new System.Drawing.Size(184, 23);
-            this.numBoxScanQty.TabIndex = 33;
-            this.numBoxScanQty.Value = new decimal(new int[] {
             0,
             0,
             0,

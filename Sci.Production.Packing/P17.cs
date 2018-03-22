@@ -49,8 +49,8 @@ namespace Sci.Production.Packing
                 .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(17))
                 .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(15))
-                .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(13))
-                .Text("ScanQty", header: "Scanned Qty", width: Widths.AnsiChars(13));
+                .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(12))
+                .Text("ScanQty", header: "Scanned Qty", width: Widths.AnsiChars(12));
 
             this.gridScanDetail.DataSource = this.scanDetailBS;
             this.Helper.Controls.Grid.Generator(this.gridScanDetail)
@@ -86,112 +86,92 @@ namespace Sci.Production.Packing
             // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
             // 2.=Orders.ID
             // 3.=Orders.CustPoNo
-            string scanDetail_sql1 = $@"select distinct
-                                           pd.ID,
-                                           pd.CTNStartNo  ,
-                                           pd.OrderID,
-                                           o.CustPoNo ,
-                                           pd.Article    ,
-                                           pd.Color,
-                                           pd.SizeCode  ,
-                                           pd.QtyPerCTN,
-                                          ScanQty = isnull(pd.ScanQty,0),
-                                           pd.barcode,
-                                           p.BrandID,
-                                           o.StyleID,
-                                           os.Seq,
-                                           pd.Ukey
-                                from PackingList_Detail pd WITH (NOLOCK)
-                                inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
-                                inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-                                left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode
-                                where p.Type in ('B','L') and 
-                                      (pd.ID + pd.CTNStartNo) = '{this.txtScanCartonSP.Text}'";
-
-            string scanDetail_sql2 = $@"select distinct
-                                           pd.ID,
-                                           pd.CTNStartNo  ,
-                                           pd.OrderID,
-                                           o.CustPoNo ,
-                                           pd.Article    ,
-                                           pd.Color,
-                                           pd.SizeCode  ,
-                                           pd.QtyPerCTN,
-                                          ScanQty = isnull(pd.ScanQty,0),
-                                           pd.barcode,
-                                           p.BrandID,
-                                           o.StyleID,
-                                           os.Seq,
-                                           pd.Ukey
-                                from PackingList_Detail pd WITH (NOLOCK)
-                                inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
-                                inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
-                                left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode
-                                where p.Type in ('B','L') and 
-                                      o.ID = '{this.txtScanCartonSP.Text}' or
-                                      o.CustPoNo = '{this.txtScanCartonSP.Text}'";
-
-            if (result = DBProxy.Current.Select(null, scanDetail_sql1, out this.dt_scanDetail))
+            string[] aLLwhere = new string[]
             {
-                if (this.dt_scanDetail.Rows.Count == 0)
+                $" and  (pd.ID + pd.CTNStartNo) = '{this.txtScanCartonSP.Text}'",
+                $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
+                $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'"
+            };
+
+            string scanDetail_sql = $@"select distinct
+                                           pd.ID,
+                                           pd.CTNStartNo  ,
+                                           pd.OrderID,
+                                           o.CustPoNo ,
+                                           pd.Article    ,
+                                           pd.Color,
+                                           pd.SizeCode  ,
+                                           pd.QtyPerCTN,
+                                          ScanQty = isnull(pd.ScanQty,0),
+                                           pd.barcode,
+                                           p.BrandID,
+                                           o.StyleID,
+                                           os.Seq,
+                                           pd.Ukey,
+                                           [PKseq] = pd.Seq
+                                from PackingList_Detail pd WITH (NOLOCK)
+                                inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
+                                inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+                                left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
+                                where p.Type in ('B','L') ";
+
+            foreach (string where in aLLwhere)
+            {
+                result = DBProxy.Current.Select(null, scanDetail_sql + where, out this.dt_scanDetail);
+                if (!result)
                 {
-                    if (result = DBProxy.Current.Select(null, scanDetail_sql2, out this.dt_scanDetail))
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (this.dt_scanDetail.Rows.Count > 0)
+                {
+                    break;
+                }
+            }
+
+            if (this.dt_scanDetail.Rows.Count == 0)
+            {
+                AutoClosingMessageBox.Show($"<{this.txtScanCartonSP.Text}> Invalid CTN#!!", "Warning", 3000);
+                e.Cancel = true;
+                return;
+            }
+
+            // 產生comboPKFilter資料
+            List<string> srcPKFilter = new List<string>() { string.Empty };
+            srcPKFilter.AddRange(this.dt_scanDetail.AsEnumerable().Select(s => s["ID"].ToString()).Distinct().ToList());
+            this.comboPKFilter.DataSource = srcPKFilter;
+
+            // 產生select Carton資料
+            int cnt_selectCarton = this.LoadSelectCarton();
+
+            if (cnt_selectCarton == 1)
+            {
+                // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
+                if (Convert.ToInt16(this.dt_scanDetail.Compute("Sum(ScanQty)", null)) > 0)
+                {
+                    if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        if (this.dt_scanDetail.Rows.Count == 0)
+                        if (!(result = this.ClearScanQty(this.dt_scanDetail.Select(), "ALL")))
                         {
-                            AutoClosingMessageBox.Show($"<{this.txtScanCartonSP.Text}> Invalid CTN#!!", "Warning", 3000);
-                            e.Cancel = true;
+                            this.ShowErr(result);
                             return;
                         }
                     }
                     else
                     {
-                        this.ShowErr(result);
+                        this.ClearAll("ALL");
+                        e.Cancel = true;
                         return;
                     }
                 }
 
-                // 產生comboPKFilter資料
-                List<string> srcPKFilter = new List<string>() { string.Empty };
-                srcPKFilter.AddRange(this.dt_scanDetail.AsEnumerable().Select(s => s["ID"].ToString()).Distinct().ToList());
-                this.comboPKFilter.DataSource = srcPKFilter;
-
-                // 產生select Carton資料
-                int cnt_selectCarton = this.LoadSelectCarton();
-
-                if (cnt_selectCarton == 1)
+                DualResult result_load = this.LoadScanDetail(0);
+                if (!result_load)
                 {
-                    // 1.=PackingList_Detail.ID+PackingList_Detail.CTNStartNo
-                    if (Convert.ToInt16(this.dt_scanDetail.Compute("Sum(ScanQty)", null)) > 0)
-                    {
-                        if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            if (!(result = this.ClearScanQty(this.dt_scanDetail.Select())))
-                            {
-                                this.ShowErr(result);
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-                    }
-
-                    DualResult result_load = this.LoadScanDetail(0);
-                    if (!result_load)
-                    {
-                        this.ShowErr(result_load);
-                    }
+                    this.ShowErr(result_load);
                 }
             }
-            else
-            {
-                this.ShowErr(result);
-                return;
-            }
-
             #endregion
         }
 
@@ -220,7 +200,7 @@ namespace Sci.Production.Packing
             {
                 if (MyUtility.Msg.InfoBox("Do you want to change CTN#?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    if (!(result = this.ClearScanQty(dr_scanDetail)))
+                    if (!(result = this.ClearScanQty(dr_scanDetail, "ALL")))
                     {
                         this.ShowErr(result);
                         return result;
@@ -240,7 +220,14 @@ namespace Sci.Production.Packing
 
         private void GridSelectCartonDetail_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-           DualResult result = this.LoadScanDetail(e.RowIndex);
+            if (this.selecedPK != null)
+            {
+                DataRow[] cleardr = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+                this.ClearScanQty(cleardr, string.Empty);
+            }
+
+            this.LoadSelectCarton();
+            DualResult result = this.LoadScanDetail(e.RowIndex);
             if (!result)
             {
                 this.ShowErr(result);
@@ -252,18 +239,29 @@ namespace Sci.Production.Packing
         /// </summary>
         /// <param name="tmp">tmp</param>
         /// <returns>result</returns>
-        private DualResult ClearScanQty(DataRow[] tmp)
+        private DualResult ClearScanQty(DataRow[] tmp, string clearType)
         {
-            DualResult result;
+            DualResult result = new DualResult(true);
+            if (tmp.Length == 0)
+            {
+                result = new DualResult(false, new BaseResult.MessageInfo("ClearScanQty Error"));
+
+                return result;
+            }
+
             foreach (DataRow dr in tmp)
             {
                 dr["ScanQty"] = 0;
             }
 
-            string upd_sql = $@"update PackingList_Detail set ScanQty = 0,ScanEditDate = NULL 
-where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' ";
-            result = DBProxy.Current.Execute(null, upd_sql);
-            this.LoadSelectCarton();
+            if (clearType.Equals("ALL"))
+            {
+                string upd_sql = $@"update PackingList_Detail set ScanQty = 0,ScanEditDate = NULL 
+where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Article = '{tmp[0]["Article"]}'";
+                result = DBProxy.Current.Execute(null, upd_sql);
+                this.LoadSelectCarton();
+            }
+
             return result;
         }
 
@@ -274,6 +272,11 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' ";
         /// <returns>int</returns>
         private int LoadSelectCarton()
         {
+            if (this.dt_scanDetail == null)
+            {
+                return 0;
+            }
+
             List<SelectCartonDetail> list_selectCarton = (from c in this.dt_scanDetail.AsEnumerable()
                                                           group c by new
                                                           {
@@ -297,20 +300,22 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' ";
                                                               SizeCode = string.Join("/", g.Select(st => st.Field<string>("SizeCode")).ToArray()),
                                                               QtyPerCTN = string.Join("/", g.Select(st => st.Field<int>("QtyPerCTN").ToString()).ToArray()),
                                                               ScanQty = string.Join("/", g.Select(st => st.Field<short>("ScanQty").ToString()).ToArray()),
-                                                              TtlScanQty = g.Sum(st => st.Field<short>("ScanQty"))
-                                                          }).ToList();
+                                                              TtlScanQty = g.Sum(st => st.Field<short>("ScanQty")),
+                                                              TtlQtyPerCTN = g.Sum(st => st.Field<int>("QtyPerCTN")),
+                                                              PKseq = g.Max(st => st.Field<string>("PKseq"))
+                                                          }).OrderBy(s => s.ID).ThenBy(s => s.PKseq).ToList();
             string default_where = string.Empty;
 
             // Only not yet scan complete checkbox
             if (this.chkBoxNotScan.Checked)
             {
-                default_where = " and TtlScanQty = 0 ";
+                default_where = " and TtlScanQty <> TtlQtyPerCTN ";
             }
 
             // Packing No Filter combobox
-            if (!MyUtility.Check.Empty(this.comboPKFilter.SelectedText))
+            if (!MyUtility.Check.Empty(this.comboPKFilter.SelectedValue))
             {
-                default_where += $" and ID = '{this.comboPKFilter.SelectedText}' ";
+                default_where += $" and ID = \"{this.comboPKFilter.SelectedValue}\"";
             }
 
             if (MyUtility.Check.Empty(default_where))
@@ -409,6 +414,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' ";
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
+                        this.txtScanEAN.Text = string.Empty;
                         e.Cancel = true;
                         return;
                     }
@@ -540,6 +546,7 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 this.numBoxRemainQty.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
                 this.selcartonBS.DataSource = null;
+                this.selecedPK = null;
                 if (this.dt_scanDetail != null)
                 {
                     this.dt_scanDetail.Clear();
@@ -566,6 +573,7 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 this.numBoxRemainCartons.Text = string.Empty;
                 this.numBoxRemainQty.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
+                this.selecedPK = null;
             }
         }
 
@@ -582,6 +590,9 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             private string brandId;
             private string styleId;
             private int ttlScanQty;
+            private int ttlQtyPerCTN;
+            private string pKseq;
+
 
             public string ID
             {
@@ -725,6 +736,33 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     ttlScanQty = value;
                 }
             }
+
+            public string PKseq
+            {
+                get
+                {
+                    return pKseq;
+                }
+
+                set
+                {
+                    pKseq = value;
+                }
+            }
+
+            public int TtlQtyPerCTN
+            {
+                get
+                {
+                    return ttlQtyPerCTN;
+                }
+
+                set
+                {
+                    ttlQtyPerCTN = value;
+                }
+            }
         }
+
     }
 }
