@@ -21,14 +21,13 @@ namespace Sci.Production.Subcon
         DualResult result;
         DataTable dtHeader,dtBody,dtexcel;
         DataRow CurrentDataRow;
-        string currentID, currentdate,batchDelivery;
-        public P30_Print(DataRow row, string ID, string issuedate,string Delivery)
+        string currentID, currentdate;
+        public P30_Print(DataRow row, string ID, string issuedate)
         {
             InitializeComponent();
             CurrentDataRow = row;
             currentID = ID;
             currentdate = issuedate;
-            batchDelivery = Delivery;
         }
         //設定畫面
         protected override void OnFormLoaded()
@@ -139,18 +138,23 @@ order by a.Delivery, a.Refno
                 pars.Add(new SqlParameter("@ID", currentID));
                 result = DBProxy.Current.Select("",
                 @"
-select 	      
-        [Refno] = a.Refno 
+select 	 
+		[Refno] = a.Refno 
+		,[Delivery] = a.delivery
         ,[Description] = dbo.getItemDesc(b.Category,a.Refno)
 		,[Order_Qty] = sum(a.Qty) 
 		,[Unit] = a.UnitId 
         ,[UPrice] = a.Price 
         ,[Amount] = format(Cast(sum(a.Price*a.Qty) as decimal(20,4)),'#,###,###,##0.0000') 
+into #temp
 from dbo.LocalPO_Detail a WITH (NOLOCK) 
 left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
-where a.id=@ID
-group by a.refno,b.Category,a.Price ,a.UnitId
-order by a.refno
+where a.id='FACLP16040011'
+group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery
+order by a.delivery,a.refno
+
+select Sort = ROW_NUMBER() Over (Partition By Delivery Order By Delivery),* 
+from #temp
 ", pars, out dtBody);
                 if (!result) { this.ShowErr(result); }
                 #endregion
@@ -271,7 +275,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", currentID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", currentdate));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery", batchDelivery));                
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery", ""));                
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
@@ -287,8 +291,10 @@ order by orderid,a.refno,threadcolorid", currentID);
                 // 傳 list 資料            
                 List<P30_PrintData> data = dtBody.AsEnumerable()
                     .Select(row1 => new P30_PrintData()
-                    {   
+                    {
+                        Sort = row1["Sort"].ToString().Trim(),
                         Refno = row1["Refno"].ToString().Trim(),
+                        Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString().Trim(),
                         Description = row1["Description"].ToString().Trim(),
                         UPrice = row1["UPrice"].ToString().Trim(),
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
