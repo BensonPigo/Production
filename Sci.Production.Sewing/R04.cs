@@ -280,7 +280,7 @@ select * from(
         ,t.BuyerDelivery
         ,t.OrderQty
 		,Brand = IIF(t.Category=''M'',MockupBrandID,OrderBrandID)
-		,Category = IIF(t.Category=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(t.Category=''B'',''Bulk'',IIF(t.Category=''S'',''Sample'',''''))))
+		,Category = IIF(t.OrderCategory=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(t.OrderCategory=''B'',''Bulk'',IIF(t.OrderCategory=''S'',''Sample'',IIF(t.OrderCategory=''G'',''Garment'','''')))))
 		,Program = IIF(t.Category=''M'',MockupProgram,OrderProgram)
 		,OrderType
 		,CPURate = IIF(t.Category=''M'',MockupCPUFactor,OrderCPUFactor)
