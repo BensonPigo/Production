@@ -60,6 +60,7 @@ namespace Sci.Production.Subcon
         string B;
         string C;
         string D;
+        string sqlByPoOrder;
         
         protected override bool ValidateInput()
         {
@@ -92,7 +93,8 @@ namespace Sci.Production.Subcon
             Supplier = txtsubconSupplier.TextBox1.Text.ToString();
             Report_Type = comboReportType.SelectedItem.ToString();
             Shipping_Mark = checkShippingMark.Checked.ToString();
-            
+
+            sqlByPoOrder = string.Empty;
             sqlWheres.Clear();
 
             #region where 條件
@@ -148,8 +150,19 @@ namespace Sci.Production.Subcon
             sqlWhere = string.Join(" and ", sqlWheres);
             if (!sqlWhere.Empty())
             {
-                sqlWhere = checkBoxNoClosed.Checked ? @" where a.Status != 'Closed' AND b.qty > b.APQty and " + sqlWhere : " where " + sqlWhere;
+                if (this.Report_Type != "PO Order")
+                {
+                    sqlWhere = checkBoxNoClosed.Checked ? @" where a.Status != 'Closed' AND b.qty > b.APQty and " + sqlWhere : " where " + sqlWhere;
+                }
+                else
+                {
+                    sqlWhere = checkBoxNoClosed.Checked ? @" where a.Status != 'Closed' and " + sqlWhere : " where " + sqlWhere;
+                    sqlByPoOrder = checkBoxNoClosed.Checked ? "having  sum(b.Qty) >  sum(b.APQty)" : "";
+                }
+              
             }
+
+            
             all = @"
 select  Title1
         ,Title2
@@ -257,8 +270,10 @@ inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id
 inner join orders c WITH (NOLOCK) on c.id=b.poid
 left join ThreadColor on b.ThreadColorID = ThreadColor.ID
 " + sqlWhere + @"
-group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID + ' - ' + ThreadColor.Description, a.IssueDate, a.Category, b.UnitId 
-order by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID + ' - ' + ThreadColor.Description, a.IssueDate, a.Category, b.UnitId;
+group by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID + ' - ' + ThreadColor.Description, a.IssueDate, a.Category, b.UnitId "
++ sqlByPoOrder + @"
+order by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.ThreadColorID + ' - ' + ThreadColor.Description, a.IssueDate, a.Category, b.UnitId
+;
 
 select  tmp.LocalPOID
         , tmp.Factory
