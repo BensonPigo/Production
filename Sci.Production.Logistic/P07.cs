@@ -73,7 +73,7 @@ namespace Sci.Production.Logistic
             .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("Brand", header: "Brand", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("StyleName", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Article", header: "Article", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Article", header: "Colorway", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Size", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("BarCode", header: "BarCode", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -298,7 +298,11 @@ namespace Sci.Production.Logistic
                                     newRow["Brand"] = this.comboBrand.Text;
                                     newRow["styleid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 23], "C");
                                     newRow["stylename"] = newRow["styleid"] + "-" + MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
-                                    newRow["Article"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 24], "C");
+
+                                    // article抓取 - - 中間的值
+                                    // **eg01:MTR2315 - FUG / BON - MD 請捉取 FUG/ BON
+                                    // **eg02:XXX - 5A6S - 4D5 - XXX 請捉取 A6S-4D5
+                                    newRow["Article"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 26], "C").ToString().Split('-')[1];
                                     string size2 = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 25], "C"));
                                     if (size2.Contains("("))
                                     {
@@ -439,7 +443,7 @@ namespace Sci.Production.Logistic
                 }
             }
             #endregion
-            this.grid2Data = notdist.DefaultView.ToTable(true, new string[] { "selected" , "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "Status" });
+            this.grid2Data = notdist.DefaultView.ToTable(true, new string[] { "selected", "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "Status" });
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridAttachFile.AutoResizeColumns();
             this.gridDetail.AutoResizeColumns();
