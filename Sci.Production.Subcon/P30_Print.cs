@@ -149,7 +149,7 @@ select
 into #temp
 from dbo.LocalPO_Detail a WITH (NOLOCK) 
 left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
-where a.id='FACLP16040011'
+where a.id=@ID
 group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery
 order by a.delivery,a.refno
 
@@ -268,7 +268,8 @@ order by orderid,a.refno,threadcolorid", currentID);
                 string fTel = dtHeader.Rows[0]["fTel"].ToString().Trim();
                 string Fax = dtHeader.Rows[0]["Fax"].ToString().Trim();
                 decimal amount = MyUtility.Convert.GetDecimal(CurrentDataRow["amount"]);                
-                string CurrencyID = CurrentDataRow["CurrencyID"].ToString();                
+                string CurrencyID = CurrentDataRow["CurrencyID"].ToString();
+                decimal vat = MyUtility.Convert.GetDecimal(CurrentDataRow["vat"]);
                 string Remark = CurrentDataRow["remark"].ToString();
                 decimal Total = (decimal)CurrentDataRow["amount"] + (decimal)CurrentDataRow["vat"];
                 report = new ReportDefinition();
