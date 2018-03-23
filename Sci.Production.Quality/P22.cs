@@ -192,19 +192,26 @@ order by p2.ID,p2.CTNStartNo";
 
             string updateSqlCmd = string.Empty;
 
-            foreach (DataRow dr in dt.Rows)
+            /*
+             透過ProcessWithDatatable將表身table與DB比對不同
+             有不同資料的再跑迴圈
+            */
+            DataTable selectData = null;
+            MyUtility.Tool.ProcessWithDatatable(dt, "ID,CTNStartNo,CFANeedInsp", @"
+select distinct a.* from #tmp a
+inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
+where a.CFANeedInsp <> b.CFANeedInsp ", out selectData);
+
+            foreach (DataRow dr in selectData.Rows)
             {
-                DataRow[] selectData = dtDBSource.Select($@"CFANeedInsp <> {dr["CFANeedInsp"]} and id='{dr["ID"]}' and CTNStartNo='{dr["CTNStartNo"]}'");
-                if (selectData.Length > 0)
-                {
-                    int CFANeedInsp = dr["CFANeedInsp"].ToString() == "True" ? 1 : 0;
-                    updateSqlCmd = updateSqlCmd + $@"
+                int CFANeedInsp = dr["CFANeedInsp"].ToString() == "True" ? 1 : 0;
+                updateSqlCmd = updateSqlCmd + $@"
 update PackingList_Detail 
 set CFANeedInsp ={CFANeedInsp}
 where id='{dr["id"]}'
 and CTNStartNo ='{dr["CTNStartNo"]}'
-";                   
-                }
+";                
+                
             }
            
             if (updateSqlCmd.Length > 0)
@@ -236,7 +243,9 @@ and CTNStartNo ='{dr["CTNStartNo"]}'
             }
             this.HideWaitMessage();
 
-            Find();
+            // 變更比對用的Datatable
+            dtDBSource.Clear();
+            dtDBSource = ((DataTable)this.listControlBindingSource.DataSource).Copy();            
         }
 
         private void btnColse_Click(object sender, EventArgs e)
