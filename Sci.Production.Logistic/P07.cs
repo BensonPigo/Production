@@ -355,7 +355,7 @@ namespace Sci.Production.Logistic
                             if (!sp.ToUpper().EqualString("PO#") ||
                                 !brandid.ToUpper().EqualString("Brand") ||
                                 !styleid.ToUpper().EqualString("Style") ||
-                                !article.ToUpper().EqualString("Article") ||
+                                !article.ToUpper().EqualString("Colorway") ||
                                 !size.ToUpper().EqualString("Size") ||
                                 !barCode.ToUpper().EqualString("Barcode"))
                             {
