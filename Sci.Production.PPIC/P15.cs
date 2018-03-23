@@ -22,7 +22,7 @@ namespace Sci.Production.PPIC
         private Color yelow = Color.FromArgb(255, 255, 184);
         private Color green = Color.FromArgb(204, 255, 204);
         private Color gray = Color.FromArgb(224, 224, 224);
-
+        private DataTable dt_result = new DataTable();
         /// <summary>
         /// P15
         /// </summary>
@@ -56,6 +56,11 @@ namespace Sci.Production.PPIC
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts_id = new DataGridViewGeneratorTextColumnSettings();
             ts_id.CellMouseDoubleClick += (s, e) =>
             {
+                if (this.checkBoxRotate.Checked)
+                {
+                    return;
+                }
+
                 var dr = this.gridDetail.GetDataRow<DataRow>(e.RowIndex);
                 if (dr == null)
                 {
@@ -82,6 +87,11 @@ namespace Sci.Production.PPIC
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts_issueid = new DataGridViewGeneratorTextColumnSettings();
             ts_issueid.CellMouseDoubleClick += (s, e) =>
             {
+                if (this.checkBoxRotate.Checked)
+                {
+                    return;
+                }
+
                 var dr = this.gridDetail.GetDataRow<DataRow>(e.RowIndex);
                 if (dr == null)
                 {
@@ -206,11 +216,11 @@ where l.status <> 'New' ";
 
             query_sql += " order by apvdate ";
 
-            DataTable dt_result;
-            DualResult result = DBProxy.Current.Select(null, query_sql, out dt_result);
+            DualResult result = DBProxy.Current.Select(null, query_sql, out this.dt_result);
             if (result)
-            {
-                this.detailbs.DataSource = dt_result;
+            { 
+                this.detailbs.DataSource = null;
+                this.detailbs.DataSource = this.dt_result;
             }
             else
             {
@@ -264,6 +274,11 @@ where l.status <> 'New' ";
             this.timerRotate.Interval = Convert.ToInt16(this.comboBoxRotate.SelectedValue) * 1000;
             this.QueryData();
             this.ChangeRowColor();
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

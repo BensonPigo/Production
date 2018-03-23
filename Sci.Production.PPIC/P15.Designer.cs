@@ -57,6 +57,7 @@
             this.label4 = new Sci.Win.UI.Label();
             this.detailbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.timerRotate = new System.Windows.Forms.Timer(this.components);
+            this.btnClose = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailbs)).BeginInit();
             this.SuspendLayout();
@@ -254,7 +255,7 @@
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.Transparent;
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
@@ -352,9 +353,21 @@
             this.timerRotate.Interval = 60000;
             this.timerRotate.Tick += new System.EventHandler(this.TimerRotate_Tick);
             // 
+            // btnClose
+            // 
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(916, 43);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 49;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
             // P15
             // 
             this.ClientSize = new System.Drawing.Size(1008, 463);
+            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -405,6 +418,7 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.btnClose, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailbs)).EndInit();
             this.ResumeLayout(false);
@@ -440,5 +454,6 @@
         private Win.UI.Label label4;
         private Win.UI.ListControlBindingSource detailbs;
         private System.Windows.Forms.Timer timerRotate;
+        private Win.UI.Button btnClose;
     }
 }
