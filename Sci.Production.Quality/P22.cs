@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Ict.Win;
 using Sci.Data;
 using System;
 using System.Collections.Generic;
@@ -28,29 +29,24 @@ namespace Sci.Production.Quality
             this.grid.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid)                
                .CheckBox("CFANeedInsp", header: "", trueValue: 1, falseValue: 0,iseditable:true)
-               .Text("ID", header: "Pack ID", iseditingreadonly: true)
-               .Text("CTNStartNo", header: "CTN#", iseditingreadonly: true)
-               .Text("OrderID", header: "SP#", iseditingreadonly: true)
-               .Text("CustPoNo", header: "PO#", iseditingreadonly: true)
-               .Text("StyleID", header: "Style", iseditingreadonly: true)
-               .Text("SeasonID", header: "Season", iseditingreadonly: true)
-               .Text("BrandID", header: "Brand", iseditingreadonly: true)
-               .Text("Article", header: "Colorway", iseditingreadonly: true)
-               .Text("Color", header: "Color", iseditingreadonly: true)
-               .Text("SizeCode", header: "Size", iseditingreadonly: true)
-               .Numeric("QtyPerCTN", header: "Qty", iseditingreadonly: true)
-               .Text("Alias", header: "Destination", iseditingreadonly: true)
-               .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
-               .Text("ClogLocationID", header: "Location No", iseditingreadonly: true)
-               .Text("Remark", header: "Remark", iseditingreadonly: true);
-
-            for (int i = 0; i < this.grid.Columns.Count; i++)
-            {                
-                this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            }
+               .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
+               .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(7), iseditingreadonly: true)
+               .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+               .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("StyleID", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("SeasonID", header: "Season", width: Widths.AnsiChars(7), iseditingreadonly: true)
+               .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("Article", header: "Colorway", width: Widths.AnsiChars(8), iseditingreadonly: true)
+               .Text("Color", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
+               .Text("SizeCode", header: "Size", width: Widths.AnsiChars(7), iseditingreadonly: true)
+               .Numeric("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(8), iseditingreadonly: true)
+               .Text("Alias", header: "Destination", width: Widths.AnsiChars(7), iseditingreadonly: true)
+               .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("ClogLocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
         }
 
-        private void btnFind_Click(object sender, EventArgs e)
+        private void Find()
         {
             string strSciDeliveryStart = this.dateRangeSCIDelivery.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeSCIDelivery.Value1).ToString("yyyy/MM/dd");
             string strSciDeliveryEnd = this.dateRangeSCIDelivery.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeSCIDelivery.Value2).ToString("yyyy/MM/dd");
@@ -65,7 +61,7 @@ namespace Sci.Production.Quality
 
             #region SQL Filter
             List<string> listSQLFilter = new List<string>();
-            if (!MyUtility.Check.Empty(strSciDeliveryStart) 
+            if (!MyUtility.Check.Empty(strSciDeliveryStart)
                 && !MyUtility.Check.Empty(strSciDeliveryEnd))
             {
                 listSQLFilter.Add("and o.SciDelivery between @SciDeliveryStart and @SciDeliveryEnd");
@@ -87,7 +83,7 @@ namespace Sci.Production.Quality
             }
             #endregion
 
-            this.ShowWaitMessage("Data Loading...");
+          
 
             #region Sql Command
 
@@ -175,6 +171,12 @@ order by p2.ID,p2.CTNStartNo";
                 DataTable dt = dtDBSource.Copy();
                 this.listControlBindingSource.DataSource = dt;
             }
+        }
+
+        private void btnFind_Click(object sender, EventArgs e)
+        {
+            this.ShowWaitMessage("Data Loading...");
+            Find();
             this.HideWaitMessage();
         }
 
@@ -234,6 +236,7 @@ and CTNStartNo ='{dr["CTNStartNo"]}'
             }
             this.HideWaitMessage();
 
+            Find();
         }
 
         private void btnColse_Click(object sender, EventArgs e)
