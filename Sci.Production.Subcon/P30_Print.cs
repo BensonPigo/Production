@@ -151,10 +151,10 @@ from dbo.LocalPO_Detail a WITH (NOLOCK)
 left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
 where a.id=@ID
 group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery
-order by a.delivery,a.refno
 
 select Sort = ROW_NUMBER() Over (Partition By Delivery Order By Delivery),* 
 from #temp
+order by delivery,refno
 ", pars, out dtBody);
                 if (!result) { this.ShowErr(result); }
                 #endregion
