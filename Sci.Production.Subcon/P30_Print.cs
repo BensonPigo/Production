@@ -109,6 +109,56 @@ order by a.Delivery, a.Refno
                 #endregion
                
             }
+            else if (radioByRefno.Checked==true)
+            {
+                #region  抓表頭資料
+                List<SqlParameter> pars = new List<SqlParameter>();
+                pars.Add(new SqlParameter("@ID", currentID));
+                DualResult result = DBProxy.Current.Select("",
+                @"select b.NameEN [RptTitle]
+	                ,a.LocalSuppID+'-'+c.Name [Supplier]
+	                ,c.Tel [Tel]
+	                ,c.Address [Address]
+                    ,a.FactoryID
+                    ,b.AddressEN
+                    ,[fTel] =b.Tel
+                    ,c.Fax
+            from dbo.localpo a WITH (NOLOCK) 
+            inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
+	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
+            where b.id = a.factoryid
+            and a.id = @ID", pars, out dtHeader);
+                if (!result) { this.ShowErr(result); }
+
+
+                #endregion
+
+                #region 表身資料
+                pars = new List<SqlParameter>();
+                pars.Add(new SqlParameter("@ID", currentID));
+                result = DBProxy.Current.Select("",
+                @"
+select 	 
+		[Refno] = a.Refno 
+		,[Delivery] = a.delivery
+        ,[Description] = dbo.getItemDesc(b.Category,a.Refno)
+		,[Order_Qty] = sum(a.Qty) 
+		,[Unit] = a.UnitId 
+        ,[UPrice] = a.Price 
+        ,[Amount] = format(Cast(sum(a.Price*a.Qty) as decimal(20,4)),'#,###,###,##0.0000') 
+into #temp
+from dbo.LocalPO_Detail a WITH (NOLOCK) 
+left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
+where a.id=@ID
+group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery
+
+select Sort = ROW_NUMBER() Over (Partition By Delivery Order By Delivery),* 
+from #temp
+order by delivery,refno
+", pars, out dtBody);
+                if (!result) { this.ShowErr(result); }
+                #endregion
+            }
             //To Excel Coats
             else
             {
@@ -150,66 +200,119 @@ order by orderid,a.refno,threadcolorid", currentID);
                 MyUtility.Msg.ErrorBox("Data not found");
                 return false;
             }
-            #region 表頭
-            string RptTitle = dtHeader.Rows[0]["RptTitle"].ToString().Trim();
-            string Supplier = dtHeader.Rows[0]["Supplier"].ToString().Trim();
-            string FactoryID = dtHeader.Rows[0]["FactoryID"].ToString().Trim();
-            string Tel = dtHeader.Rows[0]["Tel"].ToString().Trim();
-            string Address = dtHeader.Rows[0]["Address"].ToString().Trim();
-            string AddressEN = dtHeader.Rows[0]["AddressEN"].ToString().Trim();
-            string fTel = dtHeader.Rows[0]["fTel"].ToString().Trim();
-            string Fax = dtHeader.Rows[0]["Fax"].ToString().Trim();
-            decimal amount = MyUtility.Convert.GetDecimal(CurrentDataRow["amount"]);
-            decimal vat = MyUtility.Convert.GetDecimal(CurrentDataRow["vat"]);
-            string CurrencyID = CurrentDataRow["CurrencyID"].ToString();
-            string vatrate = CurrentDataRow["vatrate"].ToString() + "%";
-            string Remark = CurrentDataRow["remark"].ToString();
-            decimal Total = (decimal)CurrentDataRow["amount"] + (decimal)CurrentDataRow["vat"];
-            report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", currentID));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", currentdate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", FactoryID));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat.ToString("#,0.00")));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatrate", vatrate));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
-            #endregion
 
-            #region 表身
-            // 傳 list 資料            
-            List<P30_PrintData> data = dtBody.AsEnumerable()
-                .Select(row1 => new P30_PrintData()
-                {
-                    Sort = row1["Sort"].ToString().Trim(),
-                    SP = row1["SP"].ToString().Trim(),
-                    Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString().Trim(),
-                    Refno = row1["Refno"].ToString().Trim(),
-                        //Refno2 = row1["Refno2"].ToString().Trim(),
-                        Color_Shade = row1["Color_Shade"].ToString().Trim(),
-                    Description = row1["Description"].ToString().Trim(),
-                    UPrice = row1["UPrice"].ToString().Trim(),
-                    Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
-                    Unit = row1["Unit"].ToString().Trim(),
-                    Amount = Convert.ToDecimal(row1["Amount"]),
-                }).ToList();
+            if (radioNmrmalFormat.Checked == true)
+            {
+                #region 表頭
+                string RptTitle = dtHeader.Rows[0]["RptTitle"].ToString().Trim();
+                string Supplier = dtHeader.Rows[0]["Supplier"].ToString().Trim();
+                string FactoryID = dtHeader.Rows[0]["FactoryID"].ToString().Trim();
+                string Tel = dtHeader.Rows[0]["Tel"].ToString().Trim();
+                string Address = dtHeader.Rows[0]["Address"].ToString().Trim();
+                string AddressEN = dtHeader.Rows[0]["AddressEN"].ToString().Trim();
+                string fTel = dtHeader.Rows[0]["fTel"].ToString().Trim();
+                string Fax = dtHeader.Rows[0]["Fax"].ToString().Trim();
+                decimal amount = MyUtility.Convert.GetDecimal(CurrentDataRow["amount"]);
+                decimal vat = MyUtility.Convert.GetDecimal(CurrentDataRow["vat"]);
+                string CurrencyID = CurrentDataRow["CurrencyID"].ToString();
+                string vatrate = CurrentDataRow["vatrate"].ToString() + "%";
+                string Remark = CurrentDataRow["remark"].ToString();
+                decimal Total = (decimal)CurrentDataRow["amount"] + (decimal)CurrentDataRow["vat"];
+                report = new ReportDefinition();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", currentID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", currentdate));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Address", Address));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FactoryID", FactoryID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vat", vat.ToString("#,0.00")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatrate", vatrate));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
+                #endregion
 
-            report.ReportDataSource = data;
-            #endregion
+                #region 表身
+                // 傳 list 資料            
+                List<P30_PrintData> data = dtBody.AsEnumerable()
+                    .Select(row1 => new P30_PrintData()
+                    {
+                        Sort = row1["Sort"].ToString().Trim(),
+                        SP = row1["SP"].ToString().Trim(),
+                        Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString().Trim(),
+                        Refno = row1["Refno"].ToString().Trim(),
+                    //Refno2 = row1["Refno2"].ToString().Trim(),
+                    Color_Shade = row1["Color_Shade"].ToString().Trim(),
+                        Description = row1["Description"].ToString().Trim(),
+                        UPrice = row1["UPrice"].ToString().Trim(),
+                        Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
+                        Unit = row1["Unit"].ToString().Trim(),
+                        Amount = Convert.ToDecimal(row1["Amount"]),
+                    }).ToList();
+
+                report.ReportDataSource = data;
+                #endregion
+            }
+            else
+            {
+                #region 表頭
+                string RptTitle = dtHeader.Rows[0]["RptTitle"].ToString().Trim();
+                string Supplier = dtHeader.Rows[0]["Supplier"].ToString().Trim();                
+                string Tel = dtHeader.Rows[0]["Tel"].ToString().Trim();                
+                string AddressEN = dtHeader.Rows[0]["AddressEN"].ToString().Trim();
+                string fTel = dtHeader.Rows[0]["fTel"].ToString().Trim();
+                string Fax = dtHeader.Rows[0]["Fax"].ToString().Trim();
+                decimal amount = MyUtility.Convert.GetDecimal(CurrentDataRow["amount"]);                
+                string CurrencyID = CurrentDataRow["CurrencyID"].ToString();
+                decimal vat = MyUtility.Convert.GetDecimal(CurrentDataRow["vat"]);
+                string Remark = CurrentDataRow["remark"].ToString();
+                decimal Total = (decimal)CurrentDataRow["amount"] + (decimal)CurrentDataRow["vat"];
+                report = new ReportDefinition();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", currentID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", currentdate));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Delivery", ""));                
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Supplier", Supplier));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Tel", Tel));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddressEN", AddressEN));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("fTel", fTel));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Fax", Fax));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("amount", amount.ToString("#,0.00")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
+                #endregion
+
+                #region 表身
+                // 傳 list 資料            
+                List<P30_PrintData> data = dtBody.AsEnumerable()
+                    .Select(row1 => new P30_PrintData()
+                    {
+                        Sort = row1["Sort"].ToString().Trim(),
+                        Refno = row1["Refno"].ToString().Trim(),
+                        Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString().Trim(),
+                        Description = row1["Description"].ToString().Trim(),
+                        UPrice = row1["UPrice"].ToString().Trim(),
+                        Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
+                        Unit = row1["Unit"].ToString().Trim(),
+                        Amount = Convert.ToDecimal(row1["Amount"]),
+                    }).ToList();
+
+                report.ReportDataSource = data;
+                #endregion
+            }
+
 
             // 指定是哪個 RDLC
             #region  指定是哪個 RDLC            
             Type ReportResourceNamespace = typeof(P30_PrintData);
             Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
-            string ReportResourceName = "P30_Print.rdlc";
+            string ReportResourceName = this.radioNmrmalFormat.Checked ? "P30_Print.rdlc" : "P30_Print_ByRefno.rdlc";
 
             IReportResource reportresource;
             if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
@@ -255,15 +358,15 @@ order by orderid,a.refno,threadcolorid", currentID);
         //變更radio後調整畫面顯示
         private void radioPanel1_ValueChanged(object sender, EventArgs e)
         {
-            if (radioNmrmalFormat.Checked == true)
-            {
-                print.Visible = true;
-                toexcel.Visible = false;
-            }
-            else
+            if (this.radioCoatsOrderFormat.Checked == true)
             {
                 print.Visible = false;
                 toexcel.Visible = true;
+            }
+            else
+            {
+                print.Visible = true;
+                toexcel.Visible = false;
             }
         }
     }
