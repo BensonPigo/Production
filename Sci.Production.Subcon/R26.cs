@@ -203,6 +203,7 @@ select DISTINCT c.FactoryID
 	        ,b.OrderId
 	        ,c.StyleID
             ,c.SciDelivery
+            ,c.BuyerDelivery
             ,c.SewInLine
             ,c.brandid
 	        ,c.SeasonID
