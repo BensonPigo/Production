@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Linq;
+using Ict.Win;
 
 namespace Sci.Production.Logistic
 {
@@ -41,22 +42,18 @@ namespace Sci.Production.Logistic
 
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                  .CheckBox("Selected", header: string.Empty, iseditable: true, trueValue: 1, falseValue: 0)
-                 .Text("CFANeedInsp", header: "CFA", iseditingreadonly: false)
-                 .Text("ID", header: "Pack ID", iseditingreadonly: true)
-                 .Text("CTNStartNo", header: "CTN#", iseditingreadonly: true)
-                 .Text("OrderID", header: "SP#", iseditingreadonly: true)
-                 .Text("CustPoNo", header: "PO#", iseditingreadonly: true)
-                 .Text("StyleID", header: "Style#", iseditingreadonly: true)
-                 .Text("SeasonID", header: "Season", iseditingreadonly: true)
-                 .Text("BrandID", header: "Brand", iseditingreadonly: true)
-                 .Text("Alias", header: "Destination", iseditingreadonly: true)
-                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
-                 .Text("ClogLocationID", header: "Location No", iseditingreadonly: true)
-                 .Text("Remark", header: "Remark", iseditingreadonly: true);
-            for (int i = 0; i < this.gridDetail.Columns.Count; i++)
-            {
-                this.gridDetail.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            }
+                 .Text("CFANeedInsp", header: "CFA", width: Widths.AnsiChars(3), iseditingreadonly: false)
+                 .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                 .Text("ClogLocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
