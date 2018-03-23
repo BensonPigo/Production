@@ -117,13 +117,13 @@ namespace Sci.Production.PPIC
             this.gridDetail.DataSource = this.detailbs;
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("MDivisionID", header: "M", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("FactoryID", header: "FTY", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("ID", header: "NO.", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: ts_id)
-                .Date("ApvDate", header: "Approved" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("ApvDate", header: "Approved" + Environment.NewLine + "Date", width: Widths.AnsiChars(17), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(11), iseditingreadonly: true)
-                .Text("FabricType", header: "FabricType", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("POID", header: "Master SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("FabricType", header: "FabricType", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                .Text("POID", header: "Master SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("SewingLineID", header: "Sewing" + Environment.NewLine + "Line", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("issueLackID", header: "Issue No.", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: ts_issueid);
             this.ChangeRowColor();
@@ -276,7 +276,7 @@ where l.status <> 'New' ";
             this.ChangeRowColor();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
