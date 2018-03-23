@@ -21,8 +21,6 @@ namespace Sci.Production.PPIC
         private bool needSave = false;
         private bool alreadySave = false;
         private DataTable gridData;
-        private string f;
-        private int query;
 
         /// <summary>
         /// P03
@@ -32,21 +30,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable facData = null;
-            string factoryCmd = string.Format(
-                @"
-            select distinct sp.FactoryID
-            from Style_ProductionKits sp WITH (NOLOCK) 
-            left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
-            where sp.ReceiveDate is null
-            --and sp.MDivisionID ='{0}' ", Sci.Env.User.Keyword);
-            DBProxy.Current.Select(string.Empty, factoryCmd.ToString(), out facData);
-            facData.Rows.Add(new string[] { string.Empty });
-            facData.DefaultView.Sort = "factoryid";
-            this.comboFactory.DataSource = facData;
-            this.comboFactory.ValueMember = "factoryid";
             this.EditMode = true;
-            this.comboFactory.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -98,7 +82,6 @@ namespace Sci.Production.PPIC
         {
             this.gridProductionKitsConfirm.ValidateControl();
             this.listControlBindingSource1.EndEdit();
-            this.f = this.comboFactory.SelectedValue.ToString();
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
                 if (dr.RowState == DataRowState.Modified)
@@ -122,14 +105,13 @@ namespace Sci.Production.PPIC
                 this.needSave = false;
             }
 
-            this.query = 1;
             this.QueryData();
         }
 
         private void QueryData()
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select sp.*,s.ID as StyleID,s.SeasonID,
+            sqlCmd.Append($@"select sp.*,s.ID as StyleID,s.SeasonID,
 (select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'ProductionKits' and ID = sp.DOC) as ReasonName,
 isnull((sp.MRHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle)),sp.MRHandle) as MRName,
 isnull((sp.SMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.SMR)),sp.SMR) as SMRName,
@@ -138,7 +120,9 @@ isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where I
 iif(sp.IsPF = 1,'Y','N') as CPF
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
-where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''  "));
+where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''
+and sp.ProductionKitsGroup='{Sci.Env.User.Keyword}'
+");
 
             if (!MyUtility.Check.Empty(this.txtStyleNo.Text))
             {
@@ -153,18 +137,6 @@ where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''  "));
             if (!MyUtility.Check.Empty(this.dateSendDate.Value))
             {
                sqlCmd.Append(string.Format(" and sp.SendDate = '{0}'", Convert.ToDateTime(this.dateSendDate.Value).ToString("d")));
-            }
-
-            if (this.query == 1)
-            {
-                if (this.f == string.Empty)
-                {
-                }
-
-                if (!this.comboFactory.Text.ToString().Empty() && this.f != string.Empty)
-                {
-                    sqlCmd.Append(string.Format(" and sp.FactoryID = '{0}'", this.f));
-                }
             }
 
              sqlCmd.Append(@" order by FactoryID, StyleID");
@@ -185,7 +157,6 @@ where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''  "));
 
             this.listControlBindingSource1.DataSource = this.gridData;
             this.alreadySave = false;
-            this.query = 0;
         }
 
         // Batch update

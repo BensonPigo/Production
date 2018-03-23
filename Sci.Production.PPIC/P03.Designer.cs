@@ -32,8 +32,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.labelFactory = new Sci.Win.UI.Label();
             this.btnViewDetail = new Sci.Win.UI.Button();
             this.btnBatchUpdate = new Sci.Win.UI.Button();
             this.dateFactoryReceiveDate = new Sci.Win.UI.DateBox();
@@ -45,8 +43,6 @@
             this.labelSeason = new Sci.Win.UI.Label();
             this.txtStyleNo = new Sci.Win.UI.TextBox();
             this.labelStyleNo = new Sci.Win.UI.Label();
-            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
@@ -78,8 +74,6 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.comboFactory);
-            this.panel3.Controls.Add(this.labelFactory);
             this.panel3.Controls.Add(this.btnViewDetail);
             this.panel3.Controls.Add(this.btnBatchUpdate);
             this.panel3.Controls.Add(this.dateFactoryReceiveDate);
@@ -91,32 +85,11 @@
             this.panel3.Controls.Add(this.labelSeason);
             this.panel3.Controls.Add(this.txtStyleNo);
             this.panel3.Controls.Add(this.labelStyleNo);
-            this.panel3.Controls.Add(this.shapeContainer1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(924, 88);
             this.panel3.TabIndex = 3;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(71, 12);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.Size = new System.Drawing.Size(73, 24);
-            this.comboFactory.TabIndex = 10;
-            // 
-            // labelFactory
-            // 
-            this.labelFactory.Lines = 0;
-            this.labelFactory.Location = new System.Drawing.Point(8, 13);
-            this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(60, 23);
-            this.labelFactory.TabIndex = 9;
-            this.labelFactory.Text = "Factory";
             // 
             // btnViewDetail
             // 
@@ -149,7 +122,6 @@
             // 
             // labelFactoryReceiveDate
             // 
-            this.labelFactoryReceiveDate.Lines = 0;
             this.labelFactoryReceiveDate.Location = new System.Drawing.Point(8, 55);
             this.labelFactoryReceiveDate.Name = "labelFactoryReceiveDate";
             this.labelFactoryReceiveDate.Size = new System.Drawing.Size(129, 23);
@@ -170,18 +142,17 @@
             // dateSendDate
             // 
             this.dateSendDate.IsSupportEditMode = false;
-            this.dateSendDate.Location = new System.Drawing.Point(675, 13);
+            this.dateSendDate.Location = new System.Drawing.Point(575, 16);
             this.dateSendDate.Name = "dateSendDate";
             this.dateSendDate.Size = new System.Drawing.Size(110, 23);
-            this.dateSendDate.ValueChanged += new System.EventHandler(this.DateSendDate_ValueChanged);
             this.dateSendDate.TabIndex = 4;
+            this.dateSendDate.ValueChanged += new System.EventHandler(this.DateSendDate_ValueChanged);
             // 
             // labelSenddate
             // 
-            this.labelSenddate.Lines = 0;
-            this.labelSenddate.Location = new System.Drawing.Point(604, 13);
+            this.labelSenddate.Location = new System.Drawing.Point(494, 16);
             this.labelSenddate.Name = "labelSenddate";
-            this.labelSenddate.Size = new System.Drawing.Size(67, 23);
+            this.labelSenddate.Size = new System.Drawing.Size(78, 23);
             this.labelSenddate.TabIndex = 4;
             this.labelSenddate.Text = "Send date";
             // 
@@ -190,17 +161,16 @@
             this.txtSeason.BackColor = System.Drawing.Color.White;
             this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSeason.IsSupportEditMode = false;
-            this.txtSeason.Location = new System.Drawing.Point(471, 13);
+            this.txtSeason.Location = new System.Drawing.Point(360, 16);
             this.txtSeason.Name = "txtSeason";
             this.txtSeason.Size = new System.Drawing.Size(92, 23);
             this.txtSeason.TabIndex = 3;
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
-            this.labelSeason.Location = new System.Drawing.Point(416, 13);
+            this.labelSeason.Location = new System.Drawing.Point(282, 16);
             this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(51, 23);
+            this.labelSeason.Size = new System.Drawing.Size(75, 23);
             this.labelSeason.TabIndex = 2;
             this.labelSeason.Text = "Season";
             // 
@@ -209,40 +179,18 @@
             this.txtStyleNo.BackColor = System.Drawing.Color.White;
             this.txtStyleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtStyleNo.IsSupportEditMode = false;
-            this.txtStyleNo.Location = new System.Drawing.Point(239, 13);
+            this.txtStyleNo.Location = new System.Drawing.Point(73, 16);
             this.txtStyleNo.Name = "txtStyleNo";
-            this.txtStyleNo.Size = new System.Drawing.Size(140, 23);
+            this.txtStyleNo.Size = new System.Drawing.Size(178, 23);
             this.txtStyleNo.TabIndex = 2;
             // 
             // labelStyleNo
             // 
-            this.labelStyleNo.Lines = 0;
-            this.labelStyleNo.Location = new System.Drawing.Point(174, 13);
+            this.labelStyleNo.Location = new System.Drawing.Point(8, 16);
             this.labelStyleNo.Name = "labelStyleNo";
             this.labelStyleNo.Size = new System.Drawing.Size(61, 23);
             this.labelStyleNo.TabIndex = 8;
             this.labelStyleNo.Text = "Style No.";
-            // 
-            // shapeContainer1
-            // 
-            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(924, 88);
-            this.shapeContainer1.TabIndex = 1;
-            this.shapeContainer1.TabStop = false;
-            // 
-            // lineShape1
-            // 
-            this.lineShape1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lineShape1.BorderColor = System.Drawing.Color.DarkGray;
-            this.lineShape1.Name = "lineShape1";
-            this.lineShape1.X1 = 0;
-            this.lineShape1.X2 = 920;
-            this.lineShape1.Y1 = 45;
-            this.lineShape1.Y2 = 45;
             // 
             // panel4
             // 
@@ -306,6 +254,7 @@
             this.gridProductionKitsConfirm.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridProductionKitsConfirm.RowTemplate.Height = 24;
             this.gridProductionKitsConfirm.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridProductionKitsConfirm.ShowCellToolTips = false;
             this.gridProductionKitsConfirm.Size = new System.Drawing.Size(924, 352);
             this.gridProductionKitsConfirm.TabIndex = 0;
             this.gridProductionKitsConfirm.TabStop = false;
@@ -353,8 +302,6 @@
         private Win.UI.Label labelSeason;
         private Win.UI.TextBox txtStyleNo;
         private Win.UI.Label labelStyleNo;
-        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
-        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.Panel panel4;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnSave;
@@ -362,7 +309,5 @@
         private Win.UI.Grid gridProductionKitsConfirm;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Button btnViewDetail;
-        private Win.UI.Label labelFactory;
-        private Win.UI.ComboBox comboFactory;
     }
 }
