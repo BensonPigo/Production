@@ -171,7 +171,7 @@ left join LocalPO_Detail LD WITH (NOLOCK) on LD.OrderId = O.ID
 left join LocalPO L1 WITH (NOLOCK) on L1.Id=LD.Id 
 cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
 where o.id = o.poid
-and  L1.MdivisionID= '{0}'
+and  o.MdivisionID= '{0}'
       " + sqlWhere + @"  
 order by O.ID
                     

@@ -22,7 +22,7 @@ namespace Sci.Production.PPIC
         private Color yelow = Color.FromArgb(255, 255, 184);
         private Color green = Color.FromArgb(204, 255, 204);
         private Color gray = Color.FromArgb(224, 224, 224);
-
+        private DataTable dt_result = new DataTable();
         /// <summary>
         /// P15
         /// </summary>
@@ -56,6 +56,11 @@ namespace Sci.Production.PPIC
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts_id = new DataGridViewGeneratorTextColumnSettings();
             ts_id.CellMouseDoubleClick += (s, e) =>
             {
+                if (this.checkBoxRotate.Checked)
+                {
+                    return;
+                }
+
                 var dr = this.gridDetail.GetDataRow<DataRow>(e.RowIndex);
                 if (dr == null)
                 {
@@ -82,6 +87,11 @@ namespace Sci.Production.PPIC
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts_issueid = new DataGridViewGeneratorTextColumnSettings();
             ts_issueid.CellMouseDoubleClick += (s, e) =>
             {
+                if (this.checkBoxRotate.Checked)
+                {
+                    return;
+                }
+
                 var dr = this.gridDetail.GetDataRow<DataRow>(e.RowIndex);
                 if (dr == null)
                 {
@@ -107,13 +117,13 @@ namespace Sci.Production.PPIC
             this.gridDetail.DataSource = this.detailbs;
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("MDivisionID", header: "M", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("FactoryID", header: "FTY", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("ID", header: "NO.", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: ts_id)
-                .Date("ApvDate", header: "Approved" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("ApvDate", header: "Approved" + Environment.NewLine + "Date", width: Widths.AnsiChars(17), iseditingreadonly: true)
                 .Text("Type", header: "Type", width: Widths.AnsiChars(11), iseditingreadonly: true)
-                .Text("FabricType", header: "FabricType", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("POID", header: "Master SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("FabricType", header: "FabricType", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                .Text("POID", header: "Master SP#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("SewingLineID", header: "Sewing" + Environment.NewLine + "Line", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("issueLackID", header: "Issue No.", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: ts_issueid);
             this.ChangeRowColor();
@@ -206,11 +216,11 @@ where l.status <> 'New' ";
 
             query_sql += " order by apvdate ";
 
-            DataTable dt_result;
-            DualResult result = DBProxy.Current.Select(null, query_sql, out dt_result);
+            DualResult result = DBProxy.Current.Select(null, query_sql, out this.dt_result);
             if (result)
-            {
-                this.detailbs.DataSource = dt_result;
+            { 
+                this.detailbs.DataSource = null;
+                this.detailbs.DataSource = this.dt_result;
             }
             else
             {
@@ -264,6 +274,11 @@ where l.status <> 'New' ";
             this.timerRotate.Interval = Convert.ToInt16(this.comboBoxRotate.SelectedValue) * 1000;
             this.QueryData();
             this.ChangeRowColor();
+        }
+
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

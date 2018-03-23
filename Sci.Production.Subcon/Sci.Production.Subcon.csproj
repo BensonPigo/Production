@@ -577,6 +577,7 @@
       <DependentUpon>P26_ImportBarcode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P30_Print.rdlc" />
+    <EmbeddedResource Include="P30_Print_ByRefno.rdlc" />
     <EmbeddedResource Include="P32.resx">
       <DependentUpon>P32.cs</DependentUpon>
     </EmbeddedResource>

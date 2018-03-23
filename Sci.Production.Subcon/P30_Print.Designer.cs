@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioByRefno = new Sci.Win.UI.RadioButton();
             this.radioCoatsOrderFormat = new Sci.Win.UI.RadioButton();
             this.radioNmrmalFormat = new Sci.Win.UI.RadioButton();
             this.radioPanel1.SuspendLayout();
@@ -48,6 +49,7 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioByRefno);
             this.radioPanel1.Controls.Add(this.radioCoatsOrderFormat);
             this.radioPanel1.Controls.Add(this.radioNmrmalFormat);
             this.radioPanel1.Location = new System.Drawing.Point(12, 12);
@@ -56,6 +58,18 @@
             this.radioPanel1.TabIndex = 95;
             this.radioPanel1.Value = "Material Status";
             this.radioPanel1.ValueChanged += new System.EventHandler(this.radioPanel1_ValueChanged);
+            // 
+            // radioByRefno
+            // 
+            this.radioByRefno.AutoSize = true;
+            this.radioByRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioByRefno.Location = new System.Drawing.Point(26, 51);
+            this.radioByRefno.Name = "radioByRefno";
+            this.radioByRefno.Size = new System.Drawing.Size(84, 21);
+            this.radioByRefno.TabIndex = 2;
+            this.radioByRefno.Text = "By Refno";
+            this.radioByRefno.UseVisualStyleBackColor = true;
+            this.radioByRefno.Value = "Material Status";
             // 
             // radioCoatsOrderFormat
             // 
@@ -74,7 +88,7 @@
             this.radioNmrmalFormat.AutoSize = true;
             this.radioNmrmalFormat.Checked = true;
             this.radioNmrmalFormat.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioNmrmalFormat.Location = new System.Drawing.Point(26, 32);
+            this.radioNmrmalFormat.Location = new System.Drawing.Point(26, 24);
             this.radioNmrmalFormat.Name = "radioNmrmalFormat";
             this.radioNmrmalFormat.Size = new System.Drawing.Size(115, 21);
             this.radioNmrmalFormat.TabIndex = 0;
@@ -105,5 +119,6 @@
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioCoatsOrderFormat;
         private Win.UI.RadioButton radioNmrmalFormat;
+        private Win.UI.RadioButton radioByRefno;
     }
 }
