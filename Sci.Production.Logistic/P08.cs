@@ -469,7 +469,8 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
         private void grid_Filter()
         {
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            if (dt.Rows.Count > 0)
+
+            if (!MyUtility.Check.Empty(dt) && dt.Rows.Count > 0)
             {
                 string filter = string.Empty;
                 switch (this.chkCFA.Checked)
