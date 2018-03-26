@@ -49,7 +49,7 @@ namespace Sci.Production.Logistic
                  .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("SeasonID", header: "Season", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(7), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Text("ClogLocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -62,7 +62,6 @@ namespace Sci.Production.Logistic
             string strSciDeliveryEnd = this.dateSciDelivery.Value2.Empty() ? string.Empty : ((DateTime)this.dateSciDelivery.Value2).ToString("yyyy/MM/dd");
             string strReceiveDateStart = this.dateReceiveDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateReceiveDate.Value1).ToString("yyyy/MM/dd");
             string strReceiveDateEnd = this.dateReceiveDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateReceiveDate.Value2).ToString("yyyy/MM/dd");
-            int intCFA = this.chkCFA.Checked ? 1 : 0;
 
             #region SqlParameter
             List<SqlParameter> listSQLParameter = new List<SqlParameter>();
@@ -73,7 +72,6 @@ namespace Sci.Production.Logistic
             listSQLParameter.Add(new SqlParameter("@SciDeliveryEnd", strSciDeliveryEnd));
             listSQLParameter.Add(new SqlParameter("@ReceiveDateStart", strReceiveDateStart));
             listSQLParameter.Add(new SqlParameter("@ReceiveDateEnd", strReceiveDateEnd));
-            listSQLParameter.Add(new SqlParameter("@CFANeedInsp", intCFA));
             #endregion
 
             #region SQL Filter
@@ -105,7 +103,6 @@ namespace Sci.Production.Logistic
                 listSQLFilter.Add("and p2.id= @PackID");
             }
 
-            listSQLFilter.Add("and p2.CFANeedInsp=@CFANeedInsp");
             #endregion
 
             this.ShowWaitMessage("Data Loading...");
@@ -168,6 +165,7 @@ order by p2.ID,p2.CTNStartNo";
             else
             {
                 this.listControlBindingSource1.DataSource = dtDBSource;
+                this.grid_Filter();
             }
 
             this.HideWaitMessage();
@@ -466,6 +464,42 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             {
                 this.listControlBindingSource1.DataSource = null;
             }
+        }
+
+        private void grid_Filter()
+        {
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt.Rows.Count > 0)
+            {
+                string filter = string.Empty;
+                switch (this.chkCFA.Checked)
+                {
+                    case false:
+                        if (MyUtility.Check.Empty(this.gridDetail))
+                        {
+                            break;
+                        }
+
+                        filter = string.Empty;
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case true:
+                        if (MyUtility.Check.Empty(this.gridDetail))
+                        {
+                            break;
+                        }
+
+                        filter = " CFANeedInsp= 'Y' ";
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+                }
+            }
+        }
+
+        private void ChkCFA_CheckedChanged(object sender, EventArgs e)
+        {
+            this.grid_Filter();
         }
     }
 }
