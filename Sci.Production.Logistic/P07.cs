@@ -376,9 +376,9 @@ namespace Sci.Production.Logistic
                                     columnName.Append("< Style >, ");
                                 }
 
-                                if (article.ToUpper() != "Article")
+                                if (article.ToUpper() != "Colorway")
                                 {
-                                    columnName.Append("< Article >, ");
+                                    columnName.Append("< Colorway >, ");
                                 }
 
                                 if (size.ToUpper() != "Size")
