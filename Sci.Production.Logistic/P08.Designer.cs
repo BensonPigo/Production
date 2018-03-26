@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.chkCFA = new Sci.Win.UI.CheckBox();
+            this.BtnSave = new Sci.Win.UI.Button();
+            this.BtnClose = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
             this.btnImportFromBarcode = new Sci.Win.UI.Button();
             this.panel6 = new System.Windows.Forms.Panel();
@@ -49,16 +53,12 @@
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.chkCFA = new Sci.Win.UI.CheckBox();
-            this.BtnSave = new Sci.Win.UI.Button();
-            this.BtnClose = new Sci.Win.UI.Button();
             this.panel3.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.panel7.SuspendLayout();
             this.panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel3
@@ -71,6 +71,53 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(873, 164);
             this.panel3.TabIndex = 2;
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.chkCFA);
+            this.panel1.Controls.Add(this.BtnSave);
+            this.panel1.Controls.Add(this.BtnClose);
+            this.panel1.Location = new System.Drawing.Point(5, 118);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(863, 42);
+            this.panel1.TabIndex = 109;
+            // 
+            // chkCFA
+            // 
+            this.chkCFA.AutoSize = true;
+            this.chkCFA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCFA.IsSupportEditMode = false;
+            this.chkCFA.Location = new System.Drawing.Point(11, 11);
+            this.chkCFA.Name = "chkCFA";
+            this.chkCFA.Size = new System.Drawing.Size(229, 21);
+            this.chkCFA.TabIndex = 0;
+            this.chkCFA.Text = "Only Show CFA Selected Carton";
+            this.chkCFA.UseVisualStyleBackColor = true;
+            this.chkCFA.CheckedChanged += new System.EventHandler(this.ChkCFA_CheckedChanged);
+            // 
+            // BtnSave
+            // 
+            this.BtnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.BtnSave.Location = new System.Drawing.Point(683, 5);
+            this.BtnSave.Name = "BtnSave";
+            this.BtnSave.Size = new System.Drawing.Size(80, 30);
+            this.BtnSave.TabIndex = 1;
+            this.BtnSave.Text = "Save";
+            this.BtnSave.UseVisualStyleBackColor = true;
+            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
+            // 
+            // BtnClose
+            // 
+            this.BtnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.BtnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.BtnClose.Location = new System.Drawing.Point(769, 5);
+            this.BtnClose.Name = "BtnClose";
+            this.BtnClose.Size = new System.Drawing.Size(80, 30);
+            this.BtnClose.TabIndex = 2;
+            this.BtnClose.Text = "Close";
+            this.BtnClose.UseVisualStyleBackColor = true;
+            this.BtnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // panel7
             // 
@@ -285,52 +332,6 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // panel1
-            // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.chkCFA);
-            this.panel1.Controls.Add(this.BtnSave);
-            this.panel1.Controls.Add(this.BtnClose);
-            this.panel1.Location = new System.Drawing.Point(5, 118);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(863, 42);
-            this.panel1.TabIndex = 109;
-            // 
-            // chkCFA
-            // 
-            this.chkCFA.AutoSize = true;
-            this.chkCFA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkCFA.IsSupportEditMode = false;
-            this.chkCFA.Location = new System.Drawing.Point(11, 11);
-            this.chkCFA.Name = "chkCFA";
-            this.chkCFA.Size = new System.Drawing.Size(229, 21);
-            this.chkCFA.TabIndex = 0;
-            this.chkCFA.Text = "Only Show CFA Selected Carton";
-            this.chkCFA.UseVisualStyleBackColor = true;
-            // 
-            // BtnSave
-            // 
-            this.BtnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.BtnSave.Location = new System.Drawing.Point(683, 5);
-            this.BtnSave.Name = "BtnSave";
-            this.BtnSave.Size = new System.Drawing.Size(80, 30);
-            this.BtnSave.TabIndex = 1;
-            this.BtnSave.Text = "Save";
-            this.BtnSave.UseVisualStyleBackColor = true;
-            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
-            // 
-            // BtnClose
-            // 
-            this.BtnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.BtnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.BtnClose.Location = new System.Drawing.Point(769, 5);
-            this.BtnClose.Name = "BtnClose";
-            this.BtnClose.Size = new System.Drawing.Size(80, 30);
-            this.BtnClose.TabIndex = 2;
-            this.BtnClose.Text = "Close";
-            this.BtnClose.UseVisualStyleBackColor = true;
-            this.BtnClose.Click += new System.EventHandler(this.BtnClose_Click);
-            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(873, 438);
@@ -342,13 +343,13 @@
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.gridDetail, 0);
             this.panel3.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.panel7.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
