@@ -9,6 +9,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -38,9 +39,9 @@ namespace Sci.Production.Quality
                  .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
@@ -117,11 +118,13 @@ namespace Sci.Production.Quality
             }
             #endregion
 
+            this.ShowWaitMessage("Data Loading....");
+
             #region Sql Command
 
             string strCmd = $@"
 select distinct
-[selected] = '' 
+[selected] = 0 
 ,p2.ID
 ,p2.CTNStartNo
 ,o1.OrderID 
@@ -171,6 +174,8 @@ order by p2.ID,p2.CTNStartNo";
             {
                 this.listControlBindingSource1.DataSource = selectDataTable;
             }
+
+            this.HideWaitMessage();
         }
        
         private void btnFind_Click(object sender, EventArgs e)
@@ -189,8 +194,7 @@ order by p2.ID,p2.CTNStartNo";
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
 Select distinct  0 as selected, b.ID , b.OrderID, 
-TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
-, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery, '' as Remark 
+b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery, '' as Remark 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -283,7 +287,10 @@ order by p2.ID,p2.CTNStartNo
                                 }
                                 else
                                 {
-                                    notFoundErr.Rows.Add(dr.ItemArray);
+                                    DataRow drError = notFoundErr.NewRow();
+                                    drError["ID"] = sl[1].Substring(0, 13).ToString();
+                                    drError["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13).ToString();
+                                    notFoundErr.Rows.Add(drError);
                                 }
                             }
                             else
@@ -333,11 +340,12 @@ order by p2.ID,p2.CTNStartNo
             DataRow[] selectedData = dt.Select("Selected = 1");
             if (selectedData.Length == 0)
             {
-                MyUtility.Msg.WarningBox("No data need to import!");
+                MyUtility.Msg.WarningBox("Please select data first!");
                 return;
             }
-
+            this.ShowWaitMessage("Data Processing...");
             DataRow drSelect;
+
             StringBuilder warningmsg = new StringBuilder();
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
@@ -412,20 +420,25 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
                         result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
                     }
 
-                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
+                    if (updateCmds.Count > 0 && insertCmds.Count > 0)
+                    {
 
-                    if (result1 && result2 && prgResult)
-                    {
-                        transactionScope.Complete();
-                        transactionScope.Dispose();
-                        MyUtility.Msg.InfoBox("Complete!!");
+                        DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
+
+                        if (result1 && result2 && prgResult)
+                        {
+                            transactionScope.Complete();
+                            transactionScope.Dispose();
+                            MyUtility.Msg.InfoBox("Complete!!");
+                        }
+                        else
+                        {
+                            transactionScope.Dispose();
+                            MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
+                            return;
+                        }
                     }
-                    else
-                    {
-                        transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
-                        return;
-                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -439,6 +452,16 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
             }
+
+            if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+            {
+                this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+            }
+            else
+            {
+                this.listControlBindingSource1.DataSource = null;
+            }
+            this.HideWaitMessage();
         }
 
         private void btnClose_Click(object sender, EventArgs e)

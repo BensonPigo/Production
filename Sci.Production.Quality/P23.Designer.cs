@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.dateTransferDate = new Sci.Win.UI.DateRange();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
             this.txtPackID = new Sci.Win.UI.TextBox();
@@ -45,7 +46,6 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.dateTransferDate = new Sci.Win.UI.DateRange();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -69,6 +69,28 @@
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(864, 63);
             this.panel6.TabIndex = 40;
+            // 
+            // dateTransferDate
+            // 
+            // 
+            // 
+            // 
+            this.dateTransferDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateTransferDate.DateBox1.Name = "";
+            this.dateTransferDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateTransferDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateTransferDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateTransferDate.DateBox2.Name = "";
+            this.dateTransferDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateTransferDate.DateBox2.TabIndex = 1;
+            this.dateTransferDate.IsSupportEditMode = false;
+            this.dateTransferDate.Location = new System.Drawing.Point(103, 34);
+            this.dateTransferDate.Name = "dateTransferDate";
+            this.dateTransferDate.Size = new System.Drawing.Size(280, 23);
+            this.dateTransferDate.TabIndex = 119;
             // 
             // labelSPNo
             // 
@@ -220,27 +242,6 @@
             this.shapeContainer2.Size = new System.Drawing.Size(928, 152);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
-            // 
-            // dateTransferDate
-            // 
-            // 
-            // 
-            // 
-            this.dateTransferDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateTransferDate.DateBox1.Name = "";
-            this.dateTransferDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateTransferDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateTransferDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateTransferDate.DateBox2.Name = "";
-            this.dateTransferDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateTransferDate.DateBox2.TabIndex = 1;
-            this.dateTransferDate.Location = new System.Drawing.Point(103, 34);
-            this.dateTransferDate.Name = "dateTransferDate";
-            this.dateTransferDate.Size = new System.Drawing.Size(280, 23);
-            this.dateTransferDate.TabIndex = 119;
             // 
             // openFileDialog1
             // 
