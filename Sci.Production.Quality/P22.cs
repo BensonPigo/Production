@@ -38,8 +38,8 @@ namespace Sci.Production.Quality
                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("Article", header: "Colorway", width: Widths.AnsiChars(8), iseditingreadonly: true)
                .Text("Color", header: "Color", width: Widths.AnsiChars(7), iseditingreadonly: true)
-               .Text("SizeCode", header: "Size", width: Widths.AnsiChars(7), iseditingreadonly: true)
-               .Numeric("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(8), iseditingreadonly: true)
+               .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("Alias", header: "Destination", width: Widths.AnsiChars(7), iseditingreadonly: true)
                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("ClogLocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -130,9 +130,15 @@ outer apply(
 	select QtyPerCTN = stuff((
 		select concat('/',QtyPerCTN)
 		from (
-			select distinct QtyPerCTN from PackingList_Detail pd WITH (NOLOCK)
+			select distinct QtyPerCTN,sizecode 
+			from PackingList_Detail pd WITH (NOLOCK)
 			where p2.id=pd.id and p2.CTNStartNo = pd.CTNStartNo			
 		) q
+		outer apply (
+			select seq from Order_SizeCode WITH (NOLOCK)
+			where sizecode = q.sizecode and id=o.poid
+		)s2
+		order by s2.Seq 
 		for xml path('')
 	),1,1,'')
 ) q
