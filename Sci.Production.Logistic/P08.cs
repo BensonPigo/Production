@@ -165,7 +165,7 @@ order by p2.ID,p2.CTNStartNo";
             else
             {
                 this.listControlBindingSource1.DataSource = dtDBSource;
-                this.grid_Filter();
+                this.Grid_Filter();
             }
 
             this.HideWaitMessage();
@@ -428,19 +428,31 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
                         result2 = Sci.Data.DBProxy.Current.Executes(null, insertCmds);
                     }
 
-                    DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
+                    if (updateCmds.Count > 0 && insertCmds.Count > 0)
+                    {
+                        DualResult prgResult = Prgs.UpdateOrdersCTN(selectData);
 
-                    if (result1 && result2 && prgResult)
-                    {
-                        transactionScope.Complete();
-                        transactionScope.Dispose();
-                        MyUtility.Msg.InfoBox("Complete!!");
-                    }
-                    else
-                    {
-                        transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
-                        return;
+                        if (result1 && result2 && prgResult)
+                        {
+                            transactionScope.Complete();
+                            transactionScope.Dispose();
+                            MyUtility.Msg.InfoBox("Complete!!");
+
+                            if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
+                            {
+                                this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
+                            }
+                            else
+                            {
+                                this.listControlBindingSource1.DataSource = null;
+                            }
+                        }
+                        else
+                        {
+                            transactionScope.Dispose();
+                            MyUtility.Msg.WarningBox("Save failed, Pleaes re-try");
+                            return;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -455,18 +467,9 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             {
                 MyUtility.Msg.WarningBox(warningmsg.ToString());
             }
-
-            if (dt.AsEnumerable().Any(row => !row["Selected"].EqualDecimal(1)))
-            {
-                this.listControlBindingSource1.DataSource = dt.AsEnumerable().Where(row => !row["Selected"].EqualDecimal(1)).CopyToDataTable();
-            }
-            else
-            {
-                this.listControlBindingSource1.DataSource = null;
-            }
         }
 
-        private void grid_Filter()
+        private void Grid_Filter()
         {
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
 
@@ -500,7 +503,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
 
         private void ChkCFA_CheckedChanged(object sender, EventArgs e)
         {
-            this.grid_Filter();
+            this.Grid_Filter();
         }
     }
 }
