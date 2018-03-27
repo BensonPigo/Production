@@ -76,7 +76,7 @@ namespace Sci.Production.Subcon
             #region sqlcmd
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"Select distinct
-            [Bundle#] = bd.BundleNo,
+            [Bundle#] = bt.BundleNo,
             [Cut Ref#] = b.CutRef,
             [SP#] = b.Orderid,
             [Master SP#] = b.POID,
@@ -106,11 +106,10 @@ namespace Sci.Production.Subcon
             [TransferDate] = CAST(TransferDate AS DATE),
             [TransferTime] = TransferDate
             --CAST ( bt.TransferDate AS DATE) AS TransferDate
-
-            from Bundle b WITH (NOLOCK) 
-            inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-            inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
-            left join BundleTransfer bt WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
+            from BundleTransfer  bt WITH (NOLOCK)
+            left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
+            left join Bundle b WITH (NOLOCK) on bd.Id = b.Id
+            left join orders o WITH (NOLOCK) on o.Id = b.OrderId
             outer apply(
 	             select sub= (
 		             Select distinct concat('+', bda.SubprocessId)

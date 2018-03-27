@@ -296,7 +296,7 @@ order by o.FtyGroup,o.StyleID,o.SeasonID
 
 drop table #tmpo,#tmpol,#tmp_AR_Basic,#tmp_A,#tmp_R,#tmp_P,#cls");
 
-            DBProxy.Current.DefaultTimeout = 1800;
+            DBProxy.Current.DefaultTimeout = 10800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
             DBProxy.Current.DefaultTimeout = 0;
             if (!result)
