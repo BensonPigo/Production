@@ -139,6 +139,8 @@ select  ID
         , BuyerDelivery
         , ClogLocationId
         , Remark 
+        ,TransferCFADate
+        ,CFAReturnClogDate
         , rn = ROW_NUMBER() over (order by PackingListID, OrderID, (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
         , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))	
 from (
@@ -158,6 +160,8 @@ from (
             , c.BuyerDelivery
             , b.ClogLocationId
             , '' as Remark 
+            , b.TransferCFADate 
+            , b.CFAReturnClogDate 
     from PackingList a WITH (NOLOCK) 
          , PackingList_Detail b WITH (NOLOCK) 
          , Orders c WITH (NOLOCK) 
@@ -167,6 +171,8 @@ from (
 	        and a.Id = b.Id 
 	        and b.CTNStartNo != '' 
 	        and b.ReceiveDate is not null
+            and b.TransferCFADate is null
+            and b.CFAReturnClogDate is null
 	        and c.Dest = d.ID 
             and a.MDivisionID = '{0}' 
             and (a.Type = 'B' or a.Type = 'L') 
@@ -255,7 +261,7 @@ Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.
 TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
 ,0 as rn
 ,0 as rn1
-, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
+, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark, b.TransferCFADate ,b.CFAReturnClogDate 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -291,6 +297,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                             string sqlCmd = string.Format(
                                 @"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
+,pd.TransferCFADate ,pd.CFAReturnClogDate 
 from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                 dr["PackingListID"].ToString(),
@@ -313,6 +320,11 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                     dr["Remark"] = "This carton has been return.";
                                 }
 
+                                if (MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"]))
+                                {
+                                    dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
+                                }
+
                                 if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
                                 {
                                     dr["Remark"] = "The order's M is not equal to login M.";
@@ -321,6 +333,8 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                 dr["OrderID"] = seekData["OrderID"];
                                 dr["ClogLocationId"] = seekData["ClogLocationId"];
                                 dr["ReceiveDate"] = seekData["ReceiveDate"];
+                                dr["TransferCFADate"] = seekData["TransferCFADate"];
+                                dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
                                 string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
                                 sqlCmd = string.Format(
                                     @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
@@ -389,6 +403,12 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                     MyUtility.Msg.WarningBox("Some data cannot be received, please check again.");
                     return;
                 }
+
+                if (MyUtility.Check.Empty(dr["TransferCFADate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"]) && MyUtility.Check.Empty(dr["CFAReturnClogDate"]))
+                {
+                    MyUtility.Msg.WarningBox($@"<CNT#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!");
+                    return;
+                }
             }
 
             IList<string> insertCmds = new List<string>();
@@ -408,10 +428,9 @@ values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE());",
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(
                     @"update PackingList_Detail 
-set TransferDate = null, ReceiveDate = null, ClogLocationId = '', ReturnDate = GETDATE()
-where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ",
+set TransferDate = null, ReceiveDate = null, ClogLocationId = '', ReturnDate = GETDATE(), CFAReturnClogDate =null
+where ID = '{0}' and CTNStartNo = '{1}'; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
-                    MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
             }
 
