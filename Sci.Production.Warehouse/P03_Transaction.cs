@@ -312,7 +312,7 @@ namespace Sci.Production.Warehouse
 								          )x			
 								          for xml path('')),1,1,'') 
 			) MtlLocation 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
+            where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  
                 and a.id = b.id and Type='R'  "
                 , dr["id"].ToString()
                 , dr["seq1"].ToString()

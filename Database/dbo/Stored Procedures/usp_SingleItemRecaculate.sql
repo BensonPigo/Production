@@ -84,12 +84,12 @@ BEGIN
 					SELECT b.poid,b.seq1,b.seq2,b.roll,
 						sum(AInqty) AInqty,sum(AOutqty) AOutqty,sum(AAdjustQty) AAdjustQty 
 						FROM View_TransactionList b WITH (NOLOCK)
-						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
+						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll
 				), groupDyelot as(
 					SELECT b.poid,b.seq1,b.seq2,b.roll,Dyelot
 						FROM View_TransactionList b WITH (NOLOCK)
-						where  b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
+						where  b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll,Dyelot
 				)				
 				MERGE  DBO.FTYINVENTORY AS T
@@ -108,12 +108,12 @@ BEGIN
 					SELECT b.poid,b.seq1,b.seq2,b.roll,
 						sum(BInqty) BInqty,sum(BOutqty) BOutqty,sum(BAdjustQty) BAdjustQty 
 						FROM View_TransactionList b WITH (NOLOCK)
-						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
+						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll
 				), groupDyelot as(
 					SELECT b.poid,b.seq1,b.seq2,b.roll,Dyelot
 						FROM View_TransactionList b WITH (NOLOCK)
-						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
+						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll,Dyelot
 				)
 				MERGE  DBO.FTYINVENTORY AS T
@@ -132,12 +132,12 @@ BEGIN
 					SELECT b.poid,b.seq1,b.seq2,b.roll,
 						sum(CInqty) CInqty,sum(COutqty) COutqty,sum(CAdjustQty) CAdjustQty 
 						FROM View_TransactionList b WITH (NOLOCK)
-						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
+						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll
 				), groupDyelot as(
 					SELECT b.poid,b.seq1,b.seq2,b.roll,Dyelot
 						FROM View_TransactionList b WITH (NOLOCK)
-						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status='confirmed'
+						where b.poid = @Poid and b.seq1 = @Seq1 and b.seq2 = @Seq2 AND b.status in ('confirmed','Closed')
 						group by b.poid,b.seq1,b.seq2,b.roll,Dyelot
 				)
 				MERGE  DBO.FTYINVENTORY AS T
@@ -160,7 +160,7 @@ BEGIN
 						 , sum(BInqty) - sum(Boutqty) + sum(BAdjustQty) BBalance  
 						 , sum(CInqty) - sum(COutqty) + sum(CAdjustQty) CBalance
 						 FROM View_TransactionList a WITH (NOLOCK)
-						 where a.PoId = @Poid and a.seq1 = @Seq1 and a.seq2 = @Seq2 AND a.status='confirmed'
+						 where a.PoId = @Poid and a.seq1 = @Seq1 and a.seq2 = @Seq2 AND a.status in ('confirmed','Closed')
 						 group by a.PoId,a.seq1,a.seq2
 						) T
 				 on t.PoId = MDivisionPoDetail.POID and t.seq1 =MDivisionPoDetail.seq1 and t.seq2 =  MDivisionPoDetail.Seq2 
