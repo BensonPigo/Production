@@ -18,8 +18,7 @@ using System.Windows.Forms;
 namespace Sci.Production.Quality
 {
     public partial class P24 : Sci.Win.Tems.QueryForm
-    {
-        private string selectDataTable_DefaultView_Sort = string.Empty;
+    {   
         private DataTable selectDataTable;
 
         public P24(ToolStripMenuItem menuitem)
@@ -30,7 +29,7 @@ namespace Sci.Production.Quality
 
         protected override void OnFormLoaded()
         {
-            cellDropDownList dropdown = (cellDropDownList)cellDropDownList.GetGridCell("CFAReturnReason");
+            cellDropDownList dropdown = (cellDropDownList)cellDropDownList.GetGridCell("Pms_CFAReturnReason");
 
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
@@ -49,38 +48,7 @@ namespace Sci.Production.Quality
                  .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .ComboBox("ReturnTo", header: "Return to", width: Widths.AnsiChars(12), settings: dropdown)
                  .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
-
-            #region CTNStartNo 有中文字的情況之下 按照我們希望的順序排
-            int rowIndex = 0;
-            int columIndex = 0;
-            this.grid.CellClick += (s, e) =>
-            {
-                rowIndex = e.RowIndex;
-                columIndex = e.ColumnIndex;
-            };
-
-            this.grid.Sorted += (s, e) =>
-            {
-                if ((rowIndex == -1) & (columIndex == 4))
-                {
-                    this.listControlBindingSource1.DataSource = null;
-
-                    if (this.selectDataTable_DefaultView_Sort == "DESC")
-                    {
-                        this.selectDataTable.DefaultView.Sort = "rn1 DESC";
-                        this.selectDataTable_DefaultView_Sort = string.Empty;
-                    }
-                    else
-                    {
-                        this.selectDataTable.DefaultView.Sort = "rn1 ASC";
-                        this.selectDataTable_DefaultView_Sort = "DESC";
-                    }
-
-                    this.listControlBindingSource1.DataSource = this.selectDataTable;
-                    return;
-                }
-            };
-            #endregion
+            this.grid.Columns["ReturnTo"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         // Find
@@ -384,7 +352,7 @@ where p2.id='{dr["id"].ToString().Trim()}' and p2.CTNStartNo='{dr["CTNStartNo"].
                         switch (dr["Returnto"].ToString())
                         {
                             // Clog
-                            case "1": 
+                            case "Clog": 
                                 updateCmds.Add($@"
 update PackingList_Detail 
 set TransferCFADate = null
@@ -395,7 +363,7 @@ where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToStri
                                 break;
 
                             // Factory
-                            case "2":
+                            case "Factory":
                                 updateCmds.Add($@"
 update PackingList_Detail 
 set TransferCFADate = null
@@ -502,13 +470,20 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             int pos = this.listControlBindingSource1.Position;     // 記錄目前指標位置
 
-            if (MyUtility.Check.Empty(dt))
+            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Please select data first!");
                 return;
             }
 
-            foreach (DataRow dr in dt.Rows)
+            DataRow[] selectedData = dt.Select("Selected = 1");
+            if (selectedData.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            foreach (DataRow dr in selectedData)
             {
                 dr["Returnto"] = txtReturnTo;
             }

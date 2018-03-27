@@ -262,7 +262,7 @@
             this.comboDropDownList1.OldText = "";
             this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
             this.comboDropDownList1.TabIndex = 51;
-            this.comboDropDownList1.Type = "CFAReturnReason";
+            this.comboDropDownList1.Type = "Pms_CFAReturnReason";
             // 
             // btnUpdateAll
             // 
