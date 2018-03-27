@@ -489,8 +489,39 @@ where a.id in (select id from @T)) as s
 				s.MasterGroupID
 				);
 		
-
-
+		-----------RepairType------------------------
+		Merge Machine.dbo.RepairType as t
+		using Trade_To_Pms.dbo.RepairType as s 
+		on t.id=s.id
+		when matched then
+				update set 
+				t.ID= s.ID,
+				t.Name		   = s.Name			,
+				t.Description  = s.Description	,
+				t.Junk		   = s.Junk			,
+				t.AddDate	   = s.AddDate		,
+				t.AddName	   = s.AddName		,
+				t.EditDate	   = s.EditDate		,
+				t.EditName	   = s.EditName
+		when not matched by target then
+				insert(Id
+					  ,Name
+					  ,Description
+					  ,Junk
+					  ,AddDate
+					  ,AddName
+					  ,EditDate
+					  ,EditName
+				)
+				values(s.Id
+					  ,s.Name
+					  ,s.Description
+					  ,s.Junk
+					  ,s.AddDate
+					  ,s.AddName
+					  ,s.EditDate
+					  ,s.EditName
+				);
 
 END
 
