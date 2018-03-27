@@ -130,7 +130,7 @@ union all
                               when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
 	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
 from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
-where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
     --and a.MDivisionID='{3}' and a.type != 'L'  --新增MDivisionID條件，避免下面DataRelation出錯 1026新增排除Lacking
 group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot                                                               
 union all
