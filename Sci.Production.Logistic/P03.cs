@@ -320,7 +320,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                     dr["Remark"] = "This carton has been return.";
                                 }
 
-                                if (MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"]))
+                                if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
                                 {
                                     dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
                                 }
@@ -404,7 +404,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                     return;
                 }
 
-                if (MyUtility.Check.Empty(dr["TransferCFADate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"]) && MyUtility.Check.Empty(dr["CFAReturnClogDate"]))
+                if (!(MyUtility.Check.Empty(dr["TransferCFADate"]) && !MyUtility.Check.Empty(dr["ReceiveDate"]) && MyUtility.Check.Empty(dr["CFAReturnClogDate"])))
                 {
                     MyUtility.Msg.WarningBox($@"<CNT#:{dr["PackingListID"]}{dr["CTNStartNo"]}> does not exist Clog!");
                     return;
@@ -428,7 +428,7 @@ values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE());",
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(
                     @"update PackingList_Detail 
-set TransferDate = null, ReceiveDate = null, ClogLocationId = '', ReturnDate = GETDATE(), CFAReturnClogDate =null
+set TransferDate = null, ReceiveDate = null, ClogLocationId = '', ReturnDate = GETDATE(), ClogReceiveCFADate =null
 where ID = '{0}' and CTNStartNo = '{1}'; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
