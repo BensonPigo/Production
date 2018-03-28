@@ -201,12 +201,14 @@ order by p.ID,pd.Seq", this.orderID);
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
-                .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
-                .Date("TransferCFADate", header: "Trans. CFA Date", width: Widths.AnsiChars(10))
-                .Date("CFAReceiveDate", header: "CFA Rec. Clog Date", width: Widths.AnsiChars(10))
-                .Date("CFAReturnClogDate", header: "CFA Return Clog Date", width: Widths.AnsiChars(10))
-                .Date("ClogReceiveCFADate", header: "Clog Rec. CFA Date", width: Widths.AnsiChars(10))
-                .Date("CFAReturnFtyDate", header: "CFA Return Fty Date", width: Widths.AnsiChars(10))
+                //20180328 mark by dyson for <PJP201801> 先註解，專案上線在開啟功能 -- begin
+                //.Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
+                //.Date("TransferCFADate", header: "Trans. CFA Date", width: Widths.AnsiChars(10))
+                //.Date("CFAReceiveDate", header: "CFA Rec. Clog Date", width: Widths.AnsiChars(10))
+                //.Date("CFAReturnClogDate", header: "CFA Return Clog Date", width: Widths.AnsiChars(10))
+                //.Date("ClogReceiveCFADate", header: "Clog Rec. CFA Date", width: Widths.AnsiChars(10))
+                //.Date("CFAReturnFtyDate", header: "CFA Return Fty Date", width: Widths.AnsiChars(10))
+                //20180328 mark by dyson for <PJP201801> 先註解，專案上線在開啟功能 -- end
                 .Date("PulloutDate", header: "Pull-out Date", width: Widths.AnsiChars(10))
                 .Text("ClogLocationId", header: "Location", width: Widths.AnsiChars(8))
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(20));
