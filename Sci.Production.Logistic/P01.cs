@@ -47,8 +47,28 @@ namespace Sci.Production.Logistic
 
             this.displayActPullout.Value = this.CurrentMaintain["PulloutComplete"].ToString().ToUpper() == "TRUE" ? "OK" : MyUtility.GetValue.Lookup(string.Format("select COUNT(distinct ID) as CntID from Pullout_Detail where OrderID = '{0}' and ShipQty > 0", this.CurrentMaintain["ID"].ToString()));
             this.displayCFAFinalInspDate.Value = this.CurrentMaintain["InspResult"].ToString() == "P" ? "Pass" : this.CurrentMaintain["InspResult"].ToString() == "F" ? "Fail" : string.Empty;
-
-            this.numCtnQtyOnTransit.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["ClogCTN"]);
+            this.numCtnQtyOnTransit.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(
+                $@"
+SELECT isnull(sum(b.CTNQty),0)
+   FROM PackingList a,
+        PackingList_Detail b
+   WHERE a.ID = b.ID
+     AND (a.Type = 'B'
+          OR a.Type = 'L')
+     AND b.OrderID = '{this.CurrentMaintain["ID"].ToString()}'
+     AND b.TransferDate is not null and b.ReceiveDate is null
+", null));
+            this.numCtnTransit.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(
+                $@"
+SELECT isnull(sum(b.CTNQty),0)
+   FROM PackingList a,
+        PackingList_Detail b
+   WHERE a.ID = b.ID
+     AND (a.Type = 'B'
+          OR a.Type = 'L')
+     AND b.OrderID = '{this.CurrentMaintain["ID"].ToString()}'
+     AND (b.TransferCFADate is not null and b.CFAReceiveDate is null or b.CFAReturnClogDate is not null and b.ClogReceiveCFADate is null)
+", null));
             this.numCtnQtyInFactory.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]);
             this.numttlCtnTransferred.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["ClogCTN"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) * 100, 2);
 
@@ -62,6 +82,10 @@ namespace Sci.Production.Logistic
             this.btnCartonStatus.ForeColor = MyUtility.Check.Seek(string.Format("select ID from PackingList_Detail WITH (NOLOCK) where OrderID = '{0}' and ReceiveDate is not null", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
             this.btnOrderRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
             this.btnCMPQSheet.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["CMPQDate"]);
+            this.numCtnQtyInClog.BackColor = Color.FromArgb(181, 230, 29);
+            this.numCtnQtyOnTransit.BackColor = Color.FromArgb(181, 230, 29);
+            this.numCtnCFA.BackColor = Color.FromArgb(255, 174, 201);
+            this.numCtnTransit.BackColor = Color.FromArgb(255, 174, 201);
             if (this.btnCMPQSheet.Enabled)
             {
                 this.btnCMPQSheet.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Packing"]) || !MyUtility.Check.Empty(this.CurrentMaintain["MarkFront"]) || !MyUtility.Check.Empty(this.CurrentMaintain["Label"]) || haveOrder_Qty || MyUtility.Check.Seek(string.Format("select ID from Order_Article where ID = '{0}'", this.CurrentMaintain["ID"].ToString())) || MyUtility.Check.Seek(string.Format("select ID from Order_SizeCode where ID = '{0}'", this.CurrentMaintain["POID"].ToString())) || MyUtility.Check.Seek(string.Format("select ID from Order_ColorCombo where ID = '{0}'", this.CurrentMaintain["POID"].ToString())) || MyUtility.Check.Seek(string.Format("select ID from Orders where POID = '{0}' and ID != '{0}'", this.CurrentMaintain["ID"].ToString())) ? Color.Blue : Color.Black;
@@ -117,7 +141,28 @@ namespace Sci.Production.Logistic
             Sci.Production.PPIC.P01_CTNStatus callNextForm = new Sci.Production.PPIC.P01_CTNStatus(this.CurrentMaintain["ID"].ToString(), true);
             callNextForm.ShowDialog(this);
             this.RenewData();
-            this.numCtnQtyOnTransit.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["ClogCTN"]);
+            this.numCtnQtyOnTransit.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(
+               $@"
+SELECT isnull(sum(b.CTNQty),0)
+   FROM PackingList a,
+        PackingList_Detail b
+   WHERE a.ID = b.ID
+     AND (a.Type = 'B'
+          OR a.Type = 'L')
+     AND b.OrderID = '{this.CurrentMaintain["ID"].ToString()}'
+     AND b.TransferDate is not null and b.ReceiveDate is null
+", null));
+            this.numCtnTransit.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(
+               $@"
+SELECT isnull(sum(b.CTNQty),0)
+   FROM PackingList a,
+        PackingList_Detail b
+   WHERE a.ID = b.ID
+     AND (a.Type = 'B'
+          OR a.Type = 'L')
+     AND b.OrderID = '{this.CurrentMaintain["ID"].ToString()}'
+     AND (b.TransferCFADate is not null and b.CFAReceiveDate is null or b.CFAReturnClogDate is not null and b.ClogReceiveCFADate is null)
+", null));
             this.numCtnQtyInFactory.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]);
             this.numttlCtnTransferred.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["ClogCTN"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) * 100, 2);
         }
