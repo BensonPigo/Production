@@ -466,6 +466,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
 
         private void btnUpdateAll_Click(object sender, EventArgs e)
         {
+            this.grid.ValidateControl();
             string txtReturnTo = this.comboDropDownList1.SelectedValue.ToString();
             DataTable dt = (DataTable)listControlBindingSource1.DataSource;
             int pos = this.listControlBindingSource1.Position;     // 記錄目前指標位置
@@ -486,6 +487,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             foreach (DataRow dr in selectedData)
             {
                 dr["Returnto"] = txtReturnTo;
+                dr.EndEdit();
             }
 
             this.listControlBindingSource1.Position = pos;
