@@ -38,7 +38,7 @@ ClogCTN = (
     select sum(b.CTNQty) 
     from PackingList a, PackingList_Detail b 
     where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ReceiveDate is not null
-    and TransferCFADate is null), 
+    and TransferCFADate is null AND CFAReturnClogDate is null), 
 ClogLastReceiveDate = (
     select max(ReceiveDate) 
     from PackingList a, PackingList_Detail b 
@@ -82,7 +82,7 @@ ClogCTN = (
     select sum(b.CTNQty) 
     from PackingList a, PackingList_Detail b 
     where a.ID = b.ID and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and ReceiveDate is not null
-    and TransferCFADate is null), 
+    and TransferCFADate is null AND CFAReturnClogDate is null), 
 ClogLastReceiveDate = (
     select max(ReceiveDate) 
     from PackingList a, PackingList_Detail b 

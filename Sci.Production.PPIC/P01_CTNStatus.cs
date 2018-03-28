@@ -79,14 +79,14 @@ order by Seq", this.orderID);
             string sqlCmd = string.Format(
                 @"with Transferclog
 as(
-select t.PackingListID,t.CTNStartNo,'Send to clog' as Type,t.ID,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
+select t.PackingListID,t.CTNStartNo,'Fty Send to Clog' as Type,t.ID,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
 from TransferToClog t WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo
 where t.OrderID = '{0}' and pd.CTNQty > 0
 ),
 CReceive
 as(
-select c.PackingListId,c.CTNStartNo,'Receive' as Type,c.ID,c.ReceiveDate as TypeDate,c.ClogLocationId as Location,
+select c.PackingListId,c.CTNStartNo,'Clog Receive from Fty' as Type,c.ID,c.ReceiveDate as TypeDate,c.ClogLocationId as Location,
 c.AddDate UpdateDate, isnull(pd.Seq,0) as Seq
 from ClogReceive c WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
@@ -94,17 +94,58 @@ where c.OrderId = '{0}' and pd.CTNQty > 0
 ),
 CReturn 
 as (
-select c.PackingListId,c.CTNStartNo,'Return' as Type,c.ID,c.ReturnDate as TypeDate,'' as Location,
+select c.PackingListId,c.CTNStartNo,'Clog Return to Fty' as Type,c.ID,c.ReturnDate as TypeDate,'' as Location,
 c.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
 from ClogReturn c WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
 where c.OrderId = '{0}' and pd.CTNQty > 0
+),
+TransferCFA
+as (
+select t.PackingListID,t.CTNStartNo,'Clog Send to CFA' as Type,t.id,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate
+,isnull(pd.Seq,0) as Seq
+from TransferToCFA t WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo
+where t.OrderID = '{0}' and pd.CTNQty > 0  
+),
+ReceiveCFA
+as (
+select c.PackingListId,c.CTNStartNo,'CFA Receive from Clog' as Type,c.id,c.ReceiveDate as TypeDate,'' as Location,
+c.AddDate UpdateDate ,isnull(pd.Seq,0) as Seq
+from CFAReceive c WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+where c.OrderId = '{0}' and pd.CTNQty > 0
+),
+ReturnCFA
+as (
+select c.PackingListId,c.CTNStartNo,'CFA Return to ' + c.ReturnTo as Type ,c.id,c.ReturnDate as TypeDate,'' as Location,
+c.AddDate as UpdateDate ,isnull(pd.Seq,0) as Seq
+from CFAReturn c WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+where c.OrderId = '{0}' and pd.CTNQty > 0 
+),
+CReceiveCFA 
+as (
+select c.PackingListId,c.CTNStartNo,'Clog Receive from CFA'  as Type, c.id,c.ReceiveDate as TypeDate,'' as Location,
+c.AddDate as UpdateDate ,isnull(pd.Seq,0) as Seq
+from ClogReceiveCFA c WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+where c.OrderId = '{0}' and pd.CTNQty > 0  
 )
+
 select * from Transferclog
 union all
 select * from CReceive
 union all
 select * from CReturn
+union all
+select * from TransferCFA
+union all
+select * from ReceiveCFA
+union all
+select * from ReturnCFA
+union all
+select * from CReceiveCFA 
 order by PackingListID,Seq,UpdateDate", this.orderID);
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out transferDetail);
@@ -116,7 +157,20 @@ order by PackingListID,Seq,UpdateDate", this.orderID);
             this.listControlBindingSource1.DataSource = transferDetail;
 
             sqlCmd = string.Format(
-                @"select p.ID as PackingListID,pd.CTNStartNo,pd.TransferDate,pd.ReceiveDate,p.PulloutDate,pd.ClogLocationId,pd.Remark,pd.Seq
+                @"select [PackingListID] =  p.ID 
+,pd.CTNStartNo
+,pd.TransferDate
+,pd.ReceiveDate
+,pd.ReturnDate
+,pd.TransferCFADate
+,pd.CFAReceiveDate
+,pd.CFAReturnClogDate
+,pd.ClogReceiveCFADate
+,pd.CFAReturnFtyDate
+,p.PulloutDate
+,pd.ClogLocationId
+,pd.Remark
+,pd.Seq
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 where pd.OrderID = '{0}' and pd.CTNStartNo <> '' and pd.CTNQty > 0 and p.ID = pd.ID
 order by p.ID,pd.Seq", this.orderID);
@@ -134,7 +188,7 @@ order by p.ID,pd.Seq", this.orderID);
             this.Helper.Controls.Grid.Generator(this.gridTransactionDetali)
                 .Text("PackingListID", header: "Packing List ID", width: Widths.AnsiChars(15))
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
-                .Text("Type", header: "Trans. Type", width: Widths.AnsiChars(12))
+                .Text("Type", header: "Trans. Type", width: Widths.AnsiChars(20))
                 .Date("TypeDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Text("Location", header: "Location", width: Widths.AnsiChars(8))
                 .DateTime("UpdateDate", header: "Last update datetime", width: Widths.AnsiChars(20));
@@ -147,6 +201,14 @@ order by p.ID,pd.Seq", this.orderID);
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
+                //20180328 mark by dyson for <PJP201801> 先註解，專案上線在開啟功能 -- begin
+                //.Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
+                //.Date("TransferCFADate", header: "Trans. CFA Date", width: Widths.AnsiChars(10))
+                //.Date("CFAReceiveDate", header: "CFA Rec. Clog Date", width: Widths.AnsiChars(10))
+                //.Date("CFAReturnClogDate", header: "CFA Return Clog Date", width: Widths.AnsiChars(10))
+                //.Date("ClogReceiveCFADate", header: "Clog Rec. CFA Date", width: Widths.AnsiChars(10))
+                //.Date("CFAReturnFtyDate", header: "CFA Return Fty Date", width: Widths.AnsiChars(10))
+                //20180328 mark by dyson for <PJP201801> 先註解，專案上線在開啟功能 -- end
                 .Date("PulloutDate", header: "Pull-out Date", width: Widths.AnsiChars(10))
                 .Text("ClogLocationId", header: "Location", width: Widths.AnsiChars(8))
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(20));

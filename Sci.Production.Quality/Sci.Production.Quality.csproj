@@ -81,6 +81,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.Smo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -327,6 +329,12 @@
     <Compile Include="P23.Designer.cs">
       <DependentUpon>P23.cs</DependentUpon>
     </Compile>
+    <Compile Include="P24.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P24.Designer.cs">
+      <DependentUpon>P24.cs</DependentUpon>
+    </Compile>
     <Compile Include="P30.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -559,6 +567,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P23.resx">
       <DependentUpon>P23.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P24.resx">
+      <DependentUpon>P24.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P30.resx">
       <DependentUpon>P30.cs</DependentUpon>

@@ -144,7 +144,7 @@ where 1=1 "));
 
             if (!MyUtility.Check.Empty(this.mDivision))
             {
-                sqlCmd.Append(string.Format(" and sp.MDivisionID = '{0}'", this.mDivision));
+                sqlCmd.Append(string.Format(" and sp.ProductionKitsGroup = '{0}'", this.mDivision));
             }
 
             if (!MyUtility.Check.Empty(this.mr))

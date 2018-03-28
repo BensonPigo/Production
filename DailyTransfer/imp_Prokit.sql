@@ -152,7 +152,7 @@ from Trade_To_Pms.dbo.Style_ProductionKits as b WITH (NOLOCK)
 left join Trade_To_Pms.dbo.Factory as c WITH (NOLOCK) ON c.ID=b.FactoryID
 where not exists(select 1 from Production.dbo.Style_ProductionKits as a WITH (NOLOCK) where a.ukey=b.ukey-- AND a.FactoryID=b.FactoryID
 )
-	and b.FactoryID in (select id from Production.dbo.Factory WITH (NOLOCK))
+	and b.FactoryID in (select id from Production.dbo.Factory WITH (NOLOCK) where IsProduceFty=1)
 
 
 

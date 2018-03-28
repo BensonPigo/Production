@@ -285,7 +285,8 @@ into m
                                 Dest = m.First()["Dest"].ToString(),
                                 BuyerDelivery = m.First()["BuyerDelivery"].ToString(),
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
-                                TransferSlipNo = m.First()["TransferSlipNo"].ToString()
+                                TransferSlipNo = m.First()["TransferSlipNo"].ToString(),
+                                Customize1 = m.First()["Customize1"].ToString()
                             }).ToList();
                 string sql = @"
 select  t.TTL_Qty, 
@@ -297,7 +298,8 @@ select  t.TTL_Qty,
         t.Dest,
         t.BuyerDelivery,
         t.CartonNum,
-        t.TransferSlipNo
+        t.TransferSlipNo,        
+        isnull(t.Customize1,'') as Customize1
 from  #Tmp t
 outer apply(
 	select ClogLocationId = stuff((
@@ -326,7 +328,8 @@ outer apply(
                   Dest = row1["Dest"].ToString().Trim(),
                   BuyerDelivery = row1["BuyerDelivery"].ToString().Trim(),
                   CartonNum = row1["CartonNum"].ToString().Trim(),
-                  TransferSlipNo = row1["TransferSlipNo"].ToString().Trim()
+                  TransferSlipNo = row1["TransferSlipNo"].ToString().Trim(),
+                  Customize1 = row1["Customize1"].ToString().Trim()
               }).ToList();
 
             report.ReportDataSource = data;
@@ -571,6 +574,11 @@ outer apply(
             /// CartonNum
             /// </summary>
             public string CartonNum { get; set; }
+
+            /// <summary>
+            /// Customize1
+            /// </summary>
+            public string Customize1 { get; set; }
         }
     }
 }
