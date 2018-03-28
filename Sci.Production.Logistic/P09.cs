@@ -457,6 +457,7 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
 
         private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
+            this.grid.ValidateControl();
             string location = this.txtcloglocationLocationNo.Text.Trim();
             int pos = this.listControlBindingSource1.Position;     // 記錄目前指標位置
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
@@ -476,10 +477,11 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             foreach (DataRow currentRecord in selectedData)
             {
                 currentRecord["ClogLocationId"] = location;
+                currentRecord.EndEdit();
             }
 
-            this.listControlBindingSource1.Position = pos;
             this.grid.SuspendLayout();
+            this.listControlBindingSource1.Position = pos;
             this.grid.DataSource = null;
             this.grid.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource1.Position = pos;
