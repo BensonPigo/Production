@@ -103,7 +103,7 @@ where c.OrderId = '{0}' and pd.CTNQty > 0
 TransferCFA
 as (
 select t.PackingListID,t.CTNStartNo,'Clog Send to CFA' as Type,t.id,t.TransferDate as TypeDate,'' as Location,t.AddDate as UpdateDate
-,0 as Seq
+,isnull(pd.Seq,0) as Seq
 from TransferToCFA t WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = t.PackingListID and pd.OrderID = t.OrderID and pd.CTNStartNo = t.CTNStartNo
 where t.OrderID = '{0}' and pd.CTNQty > 0  
@@ -111,7 +111,7 @@ where t.OrderID = '{0}' and pd.CTNQty > 0
 ReceiveCFA
 as (
 select c.PackingListId,c.CTNStartNo,'CFA Receive from Clog' as Type,c.id,c.ReceiveDate as TypeDate,'' as Location,
-c.AddDate UpdateDate ,0 as Seq
+c.AddDate UpdateDate ,isnull(pd.Seq,0) as Seq
 from CFAReceive c WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
 where c.OrderId = '{0}' and pd.CTNQty > 0
@@ -119,7 +119,7 @@ where c.OrderId = '{0}' and pd.CTNQty > 0
 ReturnCFA
 as (
 select c.PackingListId,c.CTNStartNo,'CFA Return to ' + c.ReturnTo as Type ,c.id,c.ReturnDate as TypeDate,'' as Location,
-c.AddDate as UpdateDate ,0 as Seq
+c.AddDate as UpdateDate ,isnull(pd.Seq,0) as Seq
 from CFAReturn c WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
 where c.OrderId = '{0}' and pd.CTNQty > 0 
@@ -127,7 +127,7 @@ where c.OrderId = '{0}' and pd.CTNQty > 0
 CReceiveCFA 
 as (
 select c.PackingListId,c.CTNStartNo,'Clog Receive from CFA'  as Type, c.id,c.ReceiveDate as TypeDate,'' as Location,
-c.AddDate as UpdateDate ,0 as Seq
+c.AddDate as UpdateDate ,isnull(pd.Seq,0) as Seq
 from ClogReceiveCFA c WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
 where c.OrderId = '{0}' and pd.CTNQty > 0  
