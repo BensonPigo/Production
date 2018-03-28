@@ -245,7 +245,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(976, 594);
+            this.browse.Size = new System.Drawing.Size(976, 600);
             // 
             // tabs
             // 
@@ -1010,7 +1010,6 @@
             // numTtlCtnQty
             // 
             this.numTtlCtnQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTtlCtnQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TotalCTN", true));
             this.numTtlCtnQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlCtnQty.IsSupportEditMode = false;
             this.numTtlCtnQty.Location = new System.Drawing.Point(135, 9);
@@ -1031,8 +1030,7 @@
             // 
             // numCtnQtyInClog
             // 
-            this.numCtnQtyInClog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(181)))), ((int)(((byte)(230)))), ((int)(((byte)(29)))));
-            this.numCtnQtyInClog.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ClogCTN", true));
+            this.numCtnQtyInClog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnQtyInClog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnQtyInClog.IsSupportEditMode = false;
             this.numCtnQtyInClog.Location = new System.Drawing.Point(339, 9);
@@ -1069,7 +1067,7 @@
             // 
             // numCtnQtyOnTransit
             // 
-            this.numCtnQtyOnTransit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(181)))), ((int)(((byte)(230)))), ((int)(((byte)(29)))));
+            this.numCtnQtyOnTransit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnQtyOnTransit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnQtyOnTransit.IsSupportEditMode = false;
             this.numCtnQtyOnTransit.Location = new System.Drawing.Point(340, 36);
@@ -1406,8 +1404,7 @@
             // 
             // numCtnCFA
             // 
-            this.numCtnCFA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(174)))), ((int)(((byte)(201)))));
-            this.numCtnCFA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CfaCTN", true));
+            this.numCtnCFA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnCFA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnCFA.IsSupportEditMode = false;
             this.numCtnCFA.Location = new System.Drawing.Point(546, 9);
@@ -1428,7 +1425,7 @@
             // 
             // numCtnTransit
             // 
-            this.numCtnTransit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(174)))), ((int)(((byte)(201)))));
+            this.numCtnTransit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnTransit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnTransit.IsSupportEditMode = false;
             this.numCtnTransit.Location = new System.Drawing.Point(546, 36);

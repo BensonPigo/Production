@@ -72,6 +72,10 @@ SELECT isnull(sum(b.CTNQty),0)
             this.numCtnQtyInFactory.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]);
             this.numttlCtnTransferred.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["ClogCTN"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) * 100, 2);
 
+            this.numCtnCFA.Value = MyUtility.Check.Empty(this.CurrentMaintain["CfaCTN"]) ? 0 : MyUtility.Convert.GetInt(this.CurrentMaintain["CfaCTN"]);
+            this.numCtnQtyInClog.Value = MyUtility.Check.Empty(this.CurrentMaintain["ClogCTN"]) ? 0 : MyUtility.Convert.GetInt(this.CurrentMaintain["ClogCTN"]);
+            this.numTtlCtnQty.Value = MyUtility.Check.Empty(this.CurrentMaintain["TotalCTN"]) ? 0 : MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]);
+
             // 按鈕變色
             bool haveOrder_Qty = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
             this.btnQuantityBreakdown.ForeColor = haveOrder_Qty ? Color.Blue : Color.Black;
@@ -165,6 +169,9 @@ SELECT isnull(sum(b.CTNQty),0)
 ", null));
             this.numCtnQtyInFactory.Value = MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["FtyCTN"]);
             this.numttlCtnTransferred.Value = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["ClogCTN"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCTN"]) * 100, 2);
+            this.numCtnCFA.Value = MyUtility.Check.Empty(this.CurrentMaintain["CfaCTN"]) ? 0 : MyUtility.Convert.GetInt(this.CurrentMaintain["CfaCTN"]);
+            this.numCtnQtyInClog.Value = MyUtility.Check.Empty(this.CurrentMaintain["ClogCTN"]) ? 0 : MyUtility.Convert.GetInt(this.CurrentMaintain["ClogCTN"]);
+            this.numTtlCtnQty.Value = MyUtility.Check.Empty(this.CurrentMaintain["TotalCTN"]) ? 0 : MyUtility.Convert.GetInt(this.CurrentMaintain["TotalCTN"]);
         }
 
         // Order remark
