@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using Sci.Win.UI;
 using Sci.Data;
 using Ict.Win;
+using Ict;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Class
 {
@@ -40,7 +42,7 @@ namespace Sci.Production.Class
                 string sql = "select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) order by ID";
                 if (this.mDivisionObject != null && !string.IsNullOrWhiteSpace((string)this.mDivisionObject.Text))
                 {
-                    sql = string.Format("select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' order by ID", this.mDivisionObject.Text);
+                    sql = string.Format("select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) where MDivisionID = '{0}' and junk=0 order by ID", this.mDivisionObject.Text);
                 }
                 DataTable tbClogLocation;
                 DBProxy.Current.Select("Production", sql, out tbClogLocation);
@@ -90,4 +92,60 @@ namespace Sci.Production.Class
             }
         }
     }
+
+    public class CellClogLocation : DataGridViewGeneratorTextColumnSettings
+    {   
+        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string mdivisionID)
+        {
+            //pur 為ture 表示需判斷PurchaseFrom
+            CellClogLocation ts = new CellClogLocation();
+            ts.EditingMouseDown += (s, e) =>
+            {   
+                // 右鍵彈出功能
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    DataTable tbClogLocation;                    
+                    string sql = $@"select ID,Description,MDivisionID from ClogLocation WITH (NOLOCK) where MDivisionID = '{mdivisionID.ToString().Trim()}' and junk=0 order by ID ";
+                    DBProxy.Current.Select("Production", sql, out tbClogLocation);
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbClogLocation, "ID,Description,MDivisionID", "10,40,10", row["ClogLocationID"].ToString(), "ID,Description,M");
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    var sellist = item.GetSelecteds();
+                    e.EditingControl.Text = item.GetSelectedString();              
+                }
+            };
+            // 正確性檢查
+            ts.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                // Parent form 若是非編輯狀態就 return 
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
+                // 右鍵彈出功能
+                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                String oldValue = row["ClogLocationID"].ToString();
+                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                string sql;
+
+                sql = $@"select ID from ClogLocation WITH (NOLOCK) where MDivisionID = '{mdivisionID.ToString().Trim()}' and ID = '{newValue}' and junk=0 ";
+                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
+                {
+                    if (!MyUtility.Check.Seek(sql))
+                    {
+                        row["ClogLocationID"] = "";
+                        row.EndEdit();
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox($"< ClogLocation : {newValue}> not found.");
+                        return;
+                    }
+                }
+            };
+            return ts;
+        }
+
+    }
+
 }
