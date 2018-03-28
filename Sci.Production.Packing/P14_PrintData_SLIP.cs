@@ -18,5 +18,6 @@ namespace Sci.Production.Packing
         public string BuyerDelivery { get; set; }
         public string CartonNum { get; set; }
         public string TransferSlipNo { get; set; }
+        public string Customize1 { get; set; }
     }
 }
