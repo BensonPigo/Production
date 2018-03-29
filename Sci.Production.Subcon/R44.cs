@@ -456,7 +456,7 @@ with step1 as ( --InComing有日期同PatternCode加總，算出每個Pattern總
 				Left Join dbo.Orders b WITH (NOLOCK) On a.ID = b.ID  
 				left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = a.Id and bof.FabricCode = a.FabricCode
 				left join Order_EachCons_PatternPanel oe WITH (NOLOCK) on oe.Order_EachConsUkey = a.Ukey
-				Where a.ID = o.POID and bof.kind !=0 )
+				Where a.ID = o.POID and bof.Kind not in ('0','3') )
 			  group by o.FactoryID,
 				 b.Orderid,
 				 b.Article,
