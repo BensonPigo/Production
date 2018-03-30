@@ -92,6 +92,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(893, 442);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.numOrderQty);
@@ -150,7 +154,13 @@
             this.detailcont.Controls.Add(this.labelStyleNo);
             this.detailcont.Controls.Add(this.labelSeason);
             this.detailcont.Controls.Add(this.labelCuttingSPNo);
+            this.detailcont.Size = new System.Drawing.Size(893, 404);
             this.detailcont.TabIndex = 1;
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 404);
+            this.detailbtm.Size = new System.Drawing.Size(893, 38);
             // 
             // browse
             // 
@@ -228,7 +238,7 @@
             // 
             this.labelSewingScheduleCuttingInLine.Location = new System.Drawing.Point(28, 196);
             this.labelSewingScheduleCuttingInLine.Name = "labelSewingScheduleCuttingInLine";
-            this.labelSewingScheduleCuttingInLine.Size = new System.Drawing.Size(109, 23);
+            this.labelSewingScheduleCuttingInLine.Size = new System.Drawing.Size(165, 23);
             this.labelSewingScheduleCuttingInLine.TabIndex = 14;
             this.labelSewingScheduleCuttingInLine.Text = "Cutting In-Line";
             // 
@@ -236,7 +246,7 @@
             // 
             this.labelSewingScheduleCuttingOffLine.Location = new System.Drawing.Point(28, 221);
             this.labelSewingScheduleCuttingOffLine.Name = "labelSewingScheduleCuttingOffLine";
-            this.labelSewingScheduleCuttingOffLine.Size = new System.Drawing.Size(109, 23);
+            this.labelSewingScheduleCuttingOffLine.Size = new System.Drawing.Size(165, 23);
             this.labelSewingScheduleCuttingOffLine.TabIndex = 15;
             this.labelSewingScheduleCuttingOffLine.Text = "Cutting Off-Line";
             // 
@@ -244,7 +254,7 @@
             // 
             this.labelSewingScheduleLastMtlETA.Location = new System.Drawing.Point(28, 246);
             this.labelSewingScheduleLastMtlETA.Name = "labelSewingScheduleLastMtlETA";
-            this.labelSewingScheduleLastMtlETA.Size = new System.Drawing.Size(109, 23);
+            this.labelSewingScheduleLastMtlETA.Size = new System.Drawing.Size(165, 23);
             this.labelSewingScheduleLastMtlETA.TabIndex = 16;
             this.labelSewingScheduleLastMtlETA.Text = "Last Mtl ETA";
             // 
@@ -252,9 +262,9 @@
             // 
             this.labelSewingScheduleRMtlETA.Location = new System.Drawing.Point(28, 271);
             this.labelSewingScheduleRMtlETA.Name = "labelSewingScheduleRMtlETA";
-            this.labelSewingScheduleRMtlETA.Size = new System.Drawing.Size(109, 23);
+            this.labelSewingScheduleRMtlETA.Size = new System.Drawing.Size(165, 23);
             this.labelSewingScheduleRMtlETA.TabIndex = 17;
-            this.labelSewingScheduleRMtlETA.Text = "R/Mtl ETA";
+            this.labelSewingScheduleRMtlETA.Text = "Act. MTL ETA(Master SP)";
             // 
             // labelPOCombo
             // 
@@ -322,7 +332,7 @@
             // dateCuttingInLine
             // 
             this.dateCuttingInLine.IsSupportEditMode = false;
-            this.dateCuttingInLine.Location = new System.Drawing.Point(140, 196);
+            this.dateCuttingInLine.Location = new System.Drawing.Point(196, 196);
             this.dateCuttingInLine.Name = "dateCuttingInLine";
             this.dateCuttingInLine.ReadOnly = true;
             this.dateCuttingInLine.Size = new System.Drawing.Size(130, 23);
@@ -331,7 +341,7 @@
             // dateSewingScheduleCuttingOffLine
             // 
             this.dateSewingScheduleCuttingOffLine.IsSupportEditMode = false;
-            this.dateSewingScheduleCuttingOffLine.Location = new System.Drawing.Point(140, 221);
+            this.dateSewingScheduleCuttingOffLine.Location = new System.Drawing.Point(196, 221);
             this.dateSewingScheduleCuttingOffLine.Name = "dateSewingScheduleCuttingOffLine";
             this.dateSewingScheduleCuttingOffLine.ReadOnly = true;
             this.dateSewingScheduleCuttingOffLine.Size = new System.Drawing.Size(130, 23);
@@ -340,7 +350,7 @@
             // dateSewingScheduleLastMtlETA
             // 
             this.dateSewingScheduleLastMtlETA.IsSupportEditMode = false;
-            this.dateSewingScheduleLastMtlETA.Location = new System.Drawing.Point(140, 246);
+            this.dateSewingScheduleLastMtlETA.Location = new System.Drawing.Point(196, 246);
             this.dateSewingScheduleLastMtlETA.Name = "dateSewingScheduleLastMtlETA";
             this.dateSewingScheduleLastMtlETA.ReadOnly = true;
             this.dateSewingScheduleLastMtlETA.Size = new System.Drawing.Size(130, 23);
@@ -349,7 +359,7 @@
             // dateSewingScheduleRMtlETA
             // 
             this.dateSewingScheduleRMtlETA.IsSupportEditMode = false;
-            this.dateSewingScheduleRMtlETA.Location = new System.Drawing.Point(140, 271);
+            this.dateSewingScheduleRMtlETA.Location = new System.Drawing.Point(196, 271);
             this.dateSewingScheduleRMtlETA.Name = "dateSewingScheduleRMtlETA";
             this.dateSewingScheduleRMtlETA.ReadOnly = true;
             this.dateSewingScheduleRMtlETA.Size = new System.Drawing.Size(130, 23);

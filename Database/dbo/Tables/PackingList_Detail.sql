@@ -32,6 +32,7 @@ CREATE TABLE [dbo].[PackingList_Detail] (
     [ClogReceiveCFADate] DATE NULL, 
     [CFANeedInsp] BIT NOT NULL DEFAULT ((0)), 
     [CFAInspDate] DATE NULL, 
+    [ScanName] VARCHAR(10) NULL DEFAULT (''), 
     CONSTRAINT [PK_PackingList_Detail] PRIMARY KEY ([Ukey]) 
 );
 
