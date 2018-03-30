@@ -1477,11 +1477,11 @@
             // 
             // labelRMTLETAMasterSP
             // 
-            this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(7, 443);
+            this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 443);
             this.labelRMTLETAMasterSP.Name = "labelRMTLETAMasterSP";
-            this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(142, 21);
+            this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(144, 21);
             this.labelRMTLETAMasterSP.TabIndex = 146;
-            this.labelRMTLETAMasterSP.Text = "R/MTL ETA(Master SP)";
+            this.labelRMTLETAMasterSP.Text = "Act. MTL ETA(Master SP)";
             // 
             // displayMTLCmpltSP
             // 
@@ -1768,6 +1768,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(346, 83);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(121, 23);
             this.comboCategory.TabIndex = 183;
             // 

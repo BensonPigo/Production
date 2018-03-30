@@ -587,10 +587,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -824,6 +824,7 @@
             this.txtdropdownlistPackingMethod.IsSupportUnselect = true;
             this.txtdropdownlistPackingMethod.Location = new System.Drawing.Point(101, 479);
             this.txtdropdownlistPackingMethod.Name = "txtdropdownlistPackingMethod";
+            this.txtdropdownlistPackingMethod.OldText = "";
             this.txtdropdownlistPackingMethod.ReadOnly = true;
             this.txtdropdownlistPackingMethod.Size = new System.Drawing.Size(277, 23);
             this.txtdropdownlistPackingMethod.TabIndex = 92;
@@ -874,6 +875,7 @@
             this.txtdropdownlistArtworkCost.IsSupportUnselect = true;
             this.txtdropdownlistArtworkCost.Location = new System.Drawing.Point(269, 401);
             this.txtdropdownlistArtworkCost.Name = "txtdropdownlistArtworkCost";
+            this.txtdropdownlistArtworkCost.OldText = "";
             this.txtdropdownlistArtworkCost.ReadOnly = true;
             this.txtdropdownlistArtworkCost.Size = new System.Drawing.Size(121, 23);
             this.txtdropdownlistArtworkCost.TabIndex = 87;
@@ -1479,7 +1481,7 @@
             // 
             this.displayRMTLETAMasterSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayRMTLETAMasterSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayRMTLETAMasterSP.Location = new System.Drawing.Point(251, 170);
+            this.displayRMTLETAMasterSP.Location = new System.Drawing.Point(269, 170);
             this.displayRMTLETAMasterSP.Name = "displayRMTLETAMasterSP";
             this.displayRMTLETAMasterSP.Size = new System.Drawing.Size(27, 21);
             this.displayRMTLETAMasterSP.TabIndex = 21;
@@ -1497,7 +1499,7 @@
             // 
             this.dateRMTLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MTLETA", true));
             this.dateRMTLETAMasterSP.IsSupportEditMode = false;
-            this.dateRMTLETAMasterSP.Location = new System.Drawing.Point(150, 170);
+            this.dateRMTLETAMasterSP.Location = new System.Drawing.Point(163, 170);
             this.dateRMTLETAMasterSP.Name = "dateRMTLETAMasterSP";
             this.dateRMTLETAMasterSP.ReadOnly = true;
             this.dateRMTLETAMasterSP.Size = new System.Drawing.Size(100, 21);
@@ -1507,7 +1509,7 @@
             // 
             this.datePkgMTLETASP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PackETA", true));
             this.datePkgMTLETASP.IsSupportEditMode = false;
-            this.datePkgMTLETASP.Location = new System.Drawing.Point(150, 143);
+            this.datePkgMTLETASP.Location = new System.Drawing.Point(163, 143);
             this.datePkgMTLETASP.Name = "datePkgMTLETASP";
             this.datePkgMTLETASP.ReadOnly = true;
             this.datePkgMTLETASP.Size = new System.Drawing.Size(100, 21);
@@ -1517,7 +1519,7 @@
             // 
             this.dateSewMTLETASP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SewETA", true));
             this.dateSewMTLETASP.IsSupportEditMode = false;
-            this.dateSewMTLETASP.Location = new System.Drawing.Point(150, 116);
+            this.dateSewMTLETASP.Location = new System.Drawing.Point(163, 116);
             this.dateSewMTLETASP.Name = "dateSewMTLETASP";
             this.dateSewMTLETASP.ReadOnly = true;
             this.dateSewMTLETASP.Size = new System.Drawing.Size(100, 21);
@@ -1527,7 +1529,7 @@
             // 
             this.dateSCHDLETAMasterSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LETA", true));
             this.dateSCHDLETAMasterSP.IsSupportEditMode = false;
-            this.dateSCHDLETAMasterSP.Location = new System.Drawing.Point(150, 89);
+            this.dateSCHDLETAMasterSP.Location = new System.Drawing.Point(163, 89);
             this.dateSCHDLETAMasterSP.Name = "dateSCHDLETAMasterSP";
             this.dateSCHDLETAMasterSP.ReadOnly = true;
             this.dateSCHDLETAMasterSP.Size = new System.Drawing.Size(100, 21);
@@ -1537,7 +1539,7 @@
             // 
             this.dateKPILETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "KPILETA", true));
             this.dateKPILETA.IsSupportEditMode = false;
-            this.dateKPILETA.Location = new System.Drawing.Point(150, 62);
+            this.dateKPILETA.Location = new System.Drawing.Point(163, 62);
             this.dateKPILETA.Name = "dateKPILETA";
             this.dateKPILETA.ReadOnly = true;
             this.dateKPILETA.Size = new System.Drawing.Size(100, 21);
@@ -1555,15 +1557,15 @@
             // 
             this.labelRMTLETAMasterSP.Location = new System.Drawing.Point(5, 170);
             this.labelRMTLETAMasterSP.Name = "labelRMTLETAMasterSP";
-            this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(142, 21);
+            this.labelRMTLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelRMTLETAMasterSP.TabIndex = 13;
-            this.labelRMTLETAMasterSP.Text = "R/MTL ETA(Master SP)";
+            this.labelRMTLETAMasterSP.Text = "Act. MTL ETA(Master SP)";
             // 
             // labelPkgMTLETASP
             // 
             this.labelPkgMTLETASP.Location = new System.Drawing.Point(5, 143);
             this.labelPkgMTLETASP.Name = "labelPkgMTLETASP";
-            this.labelPkgMTLETASP.Size = new System.Drawing.Size(142, 21);
+            this.labelPkgMTLETASP.Size = new System.Drawing.Size(149, 21);
             this.labelPkgMTLETASP.TabIndex = 12;
             this.labelPkgMTLETASP.Text = "Pkg. MTL ETA (SP)";
             // 
@@ -1571,7 +1573,7 @@
             // 
             this.labelSewMTLETASP.Location = new System.Drawing.Point(5, 116);
             this.labelSewMTLETASP.Name = "labelSewMTLETASP";
-            this.labelSewMTLETASP.Size = new System.Drawing.Size(142, 21);
+            this.labelSewMTLETASP.Size = new System.Drawing.Size(149, 21);
             this.labelSewMTLETASP.TabIndex = 11;
             this.labelSewMTLETASP.Text = "Sew. MTL ETA (SP)";
             // 
@@ -1579,7 +1581,7 @@
             // 
             this.labelSCHDLETAMasterSP.Location = new System.Drawing.Point(5, 89);
             this.labelSCHDLETAMasterSP.Name = "labelSCHDLETAMasterSP";
-            this.labelSCHDLETAMasterSP.Size = new System.Drawing.Size(142, 21);
+            this.labelSCHDLETAMasterSP.Size = new System.Drawing.Size(149, 21);
             this.labelSCHDLETAMasterSP.TabIndex = 10;
             this.labelSCHDLETAMasterSP.Text = "SCHD L/ETA(Master SP)";
             // 
@@ -1587,7 +1589,7 @@
             // 
             this.labelKPILETA.Location = new System.Drawing.Point(5, 62);
             this.labelKPILETA.Name = "labelKPILETA";
-            this.labelKPILETA.Size = new System.Drawing.Size(142, 21);
+            this.labelKPILETA.Size = new System.Drawing.Size(149, 21);
             this.labelKPILETA.TabIndex = 9;
             this.labelKPILETA.Text = "KPI L/ETA";
             // 
@@ -1655,7 +1657,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -3061,6 +3063,7 @@
             this.txtdropdownlistCategory.IsSupportUnselect = true;
             this.txtdropdownlistCategory.Location = new System.Drawing.Point(346, 84);
             this.txtdropdownlistCategory.Name = "txtdropdownlistCategory";
+            this.txtdropdownlistCategory.OldText = "";
             this.txtdropdownlistCategory.ReadOnly = true;
             this.txtdropdownlistCategory.Size = new System.Drawing.Size(100, 23);
             this.txtdropdownlistCategory.TabIndex = 13;

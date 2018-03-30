@@ -173,15 +173,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(913, 588);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(907, 542);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(907, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -219,7 +219,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(30, 11);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(96, 23);
@@ -228,7 +227,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(30, 39);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(96, 23);
@@ -237,7 +235,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(30, 66);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(96, 23);
@@ -246,7 +243,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(30, 92);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(96, 23);
@@ -255,7 +251,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(30, 119);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(96, 23);
@@ -264,7 +259,6 @@
             // 
             // labelProject
             // 
-            this.labelProject.Lines = 0;
             this.labelProject.Location = new System.Drawing.Point(30, 146);
             this.labelProject.Name = "labelProject";
             this.labelProject.Size = new System.Drawing.Size(96, 23);
@@ -273,7 +267,6 @@
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Lines = 0;
             this.labelOrderQty.Location = new System.Drawing.Point(30, 173);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(96, 23);
@@ -282,7 +275,6 @@
             // 
             // labelMDFinished
             // 
-            this.labelMDFinished.Lines = 0;
             this.labelMDFinished.Location = new System.Drawing.Point(30, 200);
             this.labelMDFinished.Name = "labelMDFinished";
             this.labelMDFinished.Size = new System.Drawing.Size(96, 23);
@@ -366,6 +358,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(129, 119);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.ReadOnly = true;
             this.comboCategory.Size = new System.Drawing.Size(150, 24);
             this.comboCategory.TabIndex = 17;
@@ -408,7 +401,6 @@
             // 
             // labelMCHandle
             // 
-            this.labelMCHandle.Lines = 0;
             this.labelMCHandle.Location = new System.Drawing.Point(314, 64);
             this.labelMCHandle.Name = "labelMCHandle";
             this.labelMCHandle.Size = new System.Drawing.Size(102, 23);
@@ -417,7 +409,6 @@
             // 
             // labelSewingInline
             // 
-            this.labelSewingInline.Lines = 0;
             this.labelSewingInline.Location = new System.Drawing.Point(314, 91);
             this.labelSewingInline.Name = "labelSewingInline";
             this.labelSewingInline.Size = new System.Drawing.Size(102, 23);
@@ -426,7 +417,6 @@
             // 
             // labelSewingOffline
             // 
-            this.labelSewingOffline.Lines = 0;
             this.labelSewingOffline.Location = new System.Drawing.Point(314, 118);
             this.labelSewingOffline.Name = "labelSewingOffline";
             this.labelSewingOffline.Size = new System.Drawing.Size(102, 23);
@@ -435,7 +425,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(314, 145);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(102, 23);
@@ -444,7 +433,6 @@
             // 
             // labelSDPDate
             // 
-            this.labelSDPDate.Lines = 0;
             this.labelSDPDate.Location = new System.Drawing.Point(314, 172);
             this.labelSDPDate.Name = "labelSDPDate";
             this.labelSDPDate.Size = new System.Drawing.Size(102, 23);
@@ -453,12 +441,11 @@
             // 
             // labelRMTLETA
             // 
-            this.labelRMTLETA.Lines = 0;
             this.labelRMTLETA.Location = new System.Drawing.Point(314, 200);
             this.labelRMTLETA.Name = "labelRMTLETA";
-            this.labelRMTLETA.Size = new System.Drawing.Size(102, 23);
+            this.labelRMTLETA.Size = new System.Drawing.Size(165, 23);
             this.labelRMTLETA.TabIndex = 26;
-            this.labelRMTLETA.Text = "R/MTL ETA";
+            this.labelRMTLETA.Text = "Act. MTL ETA(Master SP)";
             // 
             // btnFinished
             // 
@@ -495,7 +482,7 @@
             // 
             this.dateSDPDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "sdpdate", true));
             this.dateSDPDate.IsSupportEditMode = false;
-            this.dateSDPDate.Location = new System.Drawing.Point(422, 172);
+            this.dateSDPDate.Location = new System.Drawing.Point(422, 173);
             this.dateSDPDate.Name = "dateSDPDate";
             this.dateSDPDate.ReadOnly = true;
             this.dateSDPDate.Size = new System.Drawing.Size(120, 23);
@@ -525,7 +512,7 @@
             // 
             this.dateRMTLETA.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "mtleta", true));
             this.dateRMTLETA.IsSupportEditMode = false;
-            this.dateRMTLETA.Location = new System.Drawing.Point(422, 199);
+            this.dateRMTLETA.Location = new System.Drawing.Point(482, 200);
             this.dateRMTLETA.Name = "dateRMTLETA";
             this.dateRMTLETA.ReadOnly = true;
             this.dateRMTLETA.Size = new System.Drawing.Size(120, 23);
