@@ -11,6 +11,7 @@ using Ict.Win;
 using Sci.Win.Tools;
 using Sci.Data;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Quality
 {
@@ -59,17 +60,18 @@ where sd.id='{0}' order by sd.No
             
             DualResult result;
             DateTime sendDate = DateTime.Now;
-            string sqlcmd = string.Format(@"update SampleGarmentTest_Detail set Sender ='{0}',SendDate='{1}' where id='{2}' and No = '{3}';
-                                           update SampleGarmentTest set ReleasedDate = '{1}' where  id='{2}';", loginID, sendDate.ToShortDateString(), CurrentMaintain["ID"], CurrentDetailData["No"]);
-            result = DBProxy.Current.Execute(null, sqlcmd);
+            string sqlcmd = string.Format(@"update SampleGarmentTest_Detail set Sender ='{0}',SendDate=@sendate where id='{1}' and No = '{2}';
+                                           update SampleGarmentTest set ReleasedDate = @sendate where  id='{1}';", loginID, CurrentMaintain["ID"], CurrentDetailData["No"]);
+            List<SqlParameter> listSendate = new List<SqlParameter>() { new SqlParameter("@sendate", sendDate) };
+           result = DBProxy.Current.Execute(null, sqlcmd, listSendate);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("ErrorMsg: " + result);
                 return;
             }
             this.CurrentDetailData["Sender"] = loginID;
-            this.CurrentDetailData["SendDate"] = sendDate.ToShortDateString();
-            this.CurrentMaintain["ReleasedDate"] = sendDate.ToShortDateString();
+            this.CurrentDetailData["SendDate"] = sendDate;
+            this.CurrentMaintain["ReleasedDate"] = sendDate;
             
             Send_Mail();
         }
@@ -104,17 +106,22 @@ where sd.id='{0}' order by sd.No
             {
                 deadLine = receivedDate.AddDays(3);
             }
-            string sqlcmd = string.Format(@"update SampleGarmentTest_Detail set Receiver ='{0}',ReceivedDate='{1}' where id='{2}'  and No = '{3}';
-                                            update SampleGarmentTest set ReceivedDate = '{1}',Deadline = '{4}' where  id='{2}';", loginID, receivedDate.ToShortDateString(), CurrentMaintain["ID"], CurrentDetailData["No"], deadLine.ToShortDateString());
-            result = DBProxy.Current.Execute(null, sqlcmd);
+            string sqlcmd = string.Format(@"update SampleGarmentTest_Detail set Receiver ='{0}',ReceivedDate=@receivedDate where id='{1}'  and No = '{2}';
+                                            update SampleGarmentTest set ReceivedDate = @receivedDate,Deadline = @deadLine where  id='{1}';", loginID, CurrentMaintain["ID"], CurrentDetailData["No"]);
+            List<SqlParameter> sqlpar = new List<SqlParameter>()
+            {
+                new SqlParameter("@receivedDate", receivedDate) ,
+                new SqlParameter("@deadLine", deadLine)
+            };
+            result = DBProxy.Current.Execute(null, sqlcmd, sqlpar);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("ErrorMsg: " + result);
                 return;
             }
             this.CurrentDetailData["Receiver"] = loginID;
-            this.CurrentDetailData["ReceivedDate"] = receivedDate.ToShortDateString();
-            this.CurrentMaintain["ReceivedDate"] = receivedDate.ToShortDateString();
+            this.CurrentDetailData["ReceivedDate"] = receivedDate;
+            this.CurrentMaintain["ReceivedDate"] = receivedDate;
             this.CurrentMaintain["Deadline"] = deadLine;
             
         }
@@ -144,7 +151,7 @@ where sd.id='{0}' order by sd.No
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
 
                 dr["EditName"] = loginID;
-                dr["EditDate"] = DateTime.Now.ToShortDateString();
+                dr["EditDate"] = DateTime.Now;
                 if (!MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["inspdate"] = e.FormattedValue;
@@ -197,7 +204,7 @@ where sd.id='{0}' order by sd.No
                 if (MyUtility.Check.Seek(cmd, out dr_cmd))
                 {
                     dr["EditName"] = loginID;
-                    dr["EditDate"] = DateTime.Now.ToShortDateString();
+                    dr["EditDate"] = DateTime.Now;
                     dr["Technician"] = e.FormattedValue;
                     if (MyUtility.Check.Seek(string.Format(@"select * from view_ShowName where id ='{0}'", e.FormattedValue), out dr_showname))
                     {
@@ -207,7 +214,7 @@ where sd.id='{0}' order by sd.No
                 else
                 {
                     dr["EditName"] = loginID;
-                    dr["EditDate"] = DateTime.Now.ToShortDateString();
+                    dr["EditDate"] = DateTime.Now;
                     dr["Technician"] = "";
                     dr["TechnicianName"] = "";
                     dr.EndEdit();
