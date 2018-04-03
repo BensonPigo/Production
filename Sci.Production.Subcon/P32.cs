@@ -37,6 +37,7 @@ namespace Sci.Production.Subcon
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("OrderId", header: "Mother SP#", width: Widths.AnsiChars(15),iseditingreadonly:true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Earliest BuyerDlv", iseditingreadonly: true)
                 .Date("SciDelivery", header: "Earliest SciDlv", iseditingreadonly: true)
                 .Date("SewinLine", header: "Earliest SewInline", iseditingreadonly: true)
                 .Text("Carton", header: "Carton", width: Widths.AnsiChars(5), iseditingreadonly: true)
@@ -158,6 +159,7 @@ select  DISTINCT o.Poid
         , o.FactoryID
 	    , OrderId = O.id
 	    , O.StyleID
+        , BuyerDelivery = GetSCI.MinBuyerDelivery
         , SciDelivery = GetSCI.MinSciDelivery
         , SewinLine = GetSCI.MinSewinLine
 	    , c = (select distinct L.Category+',' 
@@ -179,6 +181,7 @@ SELECT DISTINCT #tmp1.Poid
        , #tmp1.FactoryID
        , #tmp1.OrderId
 	   , #tmp1.StyleID
+	   , #tmp1.BuyerDelivery
 	   , #tmp1.SciDelivery
        , #tmp1.SewinLine
        , Category = (SELECT TMP2.c+''
@@ -192,6 +195,7 @@ select  #tmp.Poid
         , #tmp.FactoryID
         , #tmp.OrderId
 		, #tmp.StyleID
+		, #tmp.BuyerDelivery
 		, #tmp.SciDelivery
 		, #tmp.SewinLine
 		, Carton = case
