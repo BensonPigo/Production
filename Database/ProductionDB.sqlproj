@@ -2264,6 +2264,7 @@
     <Build Include="dbo\Tables\ClogReceiveCFA.sql" />
     <Build Include="dbo\Tables\CFAReceive.sql" />
     <Build Include="dbo\Tables\CFAReturn.sql" />
+    <Build Include="dbo\Stored Procedures\usp_switchWorkorder_BySP.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
