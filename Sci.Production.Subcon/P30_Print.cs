@@ -123,9 +123,11 @@ order by a.Delivery, a.Refno
                     ,b.AddressEN
                     ,[fTel] =b.Tel
                     ,c.Fax
+                    , AddName = p.Name
             from dbo.localpo a WITH (NOLOCK) 
             inner join dbo.factory  b WITH (NOLOCK) on b.id = a.factoryid   
 	        left join dbo.LocalSupp c WITH (NOLOCK) on c.id=a.LocalSuppID
+            left join dbo.Pass1 p with (nolock) on p.id = a.AddName
             where b.id = a.factoryid
             and a.id = @ID", pars, out dtHeader);
                 if (!result) { this.ShowErr(result); }
@@ -272,6 +274,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                 decimal vat = MyUtility.Convert.GetDecimal(CurrentDataRow["vat"]);
                 string Remark = CurrentDataRow["remark"].ToString();
                 decimal Total = (decimal)CurrentDataRow["amount"] + (decimal)CurrentDataRow["vat"];
+                string AddName = dtHeader.Rows[0]["AddName"].ToString();
                 report = new ReportDefinition();
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", currentID));
@@ -286,6 +289,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("total", Total.ToString("#,0.00")));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddName", AddName));
                 #endregion
 
                 #region 表身
