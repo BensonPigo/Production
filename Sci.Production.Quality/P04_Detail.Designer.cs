@@ -29,10 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabDetail = new System.Windows.Forms.TabPage();
             this.comboNeck = new Sci.Win.UI.ComboBox();
@@ -55,7 +53,6 @@
             this.label9 = new Sci.Win.UI.Label();
             this.label8 = new Sci.Win.UI.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.txtResult = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
             this.numArriveQty = new Sci.Win.UI.NumericBox();
             this.label5 = new Sci.Win.UI.Label();
@@ -71,72 +68,73 @@
             this.txtStyle = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.tabShrinkage = new System.Windows.Forms.TabPage();
-            this.numOuterL = new Sci.Win.UI.NumericBox();
-            this.numOuterS2 = new Sci.Win.UI.NumericBox();
-            this.numOuterS1 = new Sci.Win.UI.NumericBox();
-            this.numTwisTingOuter = new Sci.Win.UI.NumericBox();
-            this.label34 = new System.Windows.Forms.Label();
-            this.label35 = new System.Windows.Forms.Label();
-            this.label36 = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
-            this.label38 = new System.Windows.Forms.Label();
-            this.numInnerL = new Sci.Win.UI.NumericBox();
-            this.numInnerS2 = new Sci.Win.UI.NumericBox();
-            this.numInnerS1 = new Sci.Win.UI.NumericBox();
-            this.numTwisTingInner = new Sci.Win.UI.NumericBox();
-            this.label29 = new System.Windows.Forms.Label();
-            this.label30 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
-            this.label33 = new System.Windows.Forms.Label();
-            this.numTopL = new Sci.Win.UI.NumericBox();
-            this.numBottomL = new Sci.Win.UI.NumericBox();
-            this.numTopS2 = new Sci.Win.UI.NumericBox();
-            this.numBottomS1 = new Sci.Win.UI.NumericBox();
-            this.numTopS1 = new Sci.Win.UI.NumericBox();
-            this.numTwisTingBottom = new Sci.Win.UI.NumericBox();
-            this.numTwisTingTop = new Sci.Win.UI.NumericBox();
-            this.label28 = new System.Windows.Forms.Label();
-            this.label27 = new System.Windows.Forms.Label();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
+            this.panel5 = new Sci.Win.UI.Panel();
             this.gridActualShrinkage = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.flowLayoutPanel1 = new Sci.Win.UI.FlowLayoutPanel();
+            this.panel1 = new Sci.Win.UI.Panel();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.numTwisTingTop = new Sci.Win.UI.NumericBox();
+            this.numTopS1 = new Sci.Win.UI.NumericBox();
+            this.numTopS2 = new Sci.Win.UI.NumericBox();
+            this.numTopL = new Sci.Win.UI.NumericBox();
+            this.panel2 = new Sci.Win.UI.Panel();
+            this.label33 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
+            this.numTwisTingInner = new Sci.Win.UI.NumericBox();
+            this.numInnerS1 = new Sci.Win.UI.NumericBox();
+            this.numInnerS2 = new Sci.Win.UI.NumericBox();
+            this.numInnerL = new Sci.Win.UI.NumericBox();
+            this.panel3 = new Sci.Win.UI.Panel();
+            this.label38 = new System.Windows.Forms.Label();
+            this.label37 = new System.Windows.Forms.Label();
+            this.numOuterL = new Sci.Win.UI.NumericBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.label36 = new System.Windows.Forms.Label();
+            this.numOuterS2 = new Sci.Win.UI.NumericBox();
+            this.label35 = new System.Windows.Forms.Label();
+            this.numOuterS1 = new Sci.Win.UI.NumericBox();
+            this.label34 = new System.Windows.Forms.Label();
+            this.numTwisTingOuter = new Sci.Win.UI.NumericBox();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.numBottomL = new Sci.Win.UI.NumericBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.numBottomS1 = new Sci.Win.UI.NumericBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.numTwisTingBottom = new Sci.Win.UI.NumericBox();
             this.label19 = new System.Windows.Forms.Label();
             this.tabAppearance = new System.Windows.Forms.TabPage();
+            this.gridAppearance = new Sci.Win.UI.Grid();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnEncode = new Sci.Win.UI.Button();
             this.btnAmend = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnPDF = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.gridAppearance = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.panel1 = new Sci.Win.UI.Panel();
-            this.flowLayoutPanel1 = new Sci.Win.UI.FlowLayoutPanel();
-            this.panel2 = new Sci.Win.UI.Panel();
-            this.panel3 = new Sci.Win.UI.Panel();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.panel5 = new Sci.Win.UI.Panel();
-            this.label39 = new System.Windows.Forms.Label();
+            this.comboResult = new Sci.Win.UI.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabDetail.SuspendLayout();
             this.tabShrinkage.SuspendLayout();
+            this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridActualShrinkage)).BeginInit();
-            this.tabAppearance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
-            this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
-            this.panel5.SuspendLayout();
+            this.tabAppearance.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -155,6 +153,7 @@
             // 
             // tabDetail
             // 
+            this.tabDetail.Controls.Add(this.comboResult);
             this.tabDetail.Controls.Add(this.comboNeck);
             this.tabDetail.Controls.Add(this.comboMachineModel);
             this.tabDetail.Controls.Add(this.rdbtnHand);
@@ -175,7 +174,6 @@
             this.tabDetail.Controls.Add(this.label9);
             this.tabDetail.Controls.Add(this.label8);
             this.tabDetail.Controls.Add(this.label7);
-            this.tabDetail.Controls.Add(this.txtResult);
             this.tabDetail.Controls.Add(this.label6);
             this.tabDetail.Controls.Add(this.numArriveQty);
             this.tabDetail.Controls.Add(this.label5);
@@ -299,11 +297,10 @@
             // 
             this.txtRemark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtRemark.IsSupportEditMode = false;
             this.txtRemark.Location = new System.Drawing.Point(379, 264);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.ReadOnly = true;
-            this.txtRemark.Size = new System.Drawing.Size(312, 23);
+            this.txtRemark.Size = new System.Drawing.Size(492, 23);
             this.txtRemark.TabIndex = 32;
             // 
             // txtFibreComposition
@@ -404,17 +401,6 @@
             this.label7.Size = new System.Drawing.Size(171, 25);
             this.label7.TabIndex = 15;
             this.label7.Text = "Washing Cindition";
-            // 
-            // txtResult
-            // 
-            this.txtResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtResult.IsSupportEditMode = false;
-            this.txtResult.Location = new System.Drawing.Point(576, 80);
-            this.txtResult.Name = "txtResult";
-            this.txtResult.ReadOnly = true;
-            this.txtResult.Size = new System.Drawing.Size(115, 23);
-            this.txtResult.TabIndex = 14;
             // 
             // label6
             // 
@@ -568,345 +554,143 @@
             this.tabShrinkage.TabIndex = 1;
             this.tabShrinkage.Text = "Shrinkage";
             // 
-            // numOuterL
+            // panel5
             // 
-            this.numOuterL.BackColor = System.Drawing.Color.White;
-            this.numOuterL.DecimalPlaces = 2;
-            this.numOuterL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numOuterL.Location = new System.Drawing.Point(845, 3);
-            this.numOuterL.Name = "numOuterL";
-            this.numOuterL.NullValue = new decimal(new int[] {
+            this.panel5.Controls.Add(this.gridActualShrinkage);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(3, 3);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(1045, 287);
+            this.panel5.TabIndex = 55;
+            // 
+            // gridActualShrinkage
+            // 
+            this.gridActualShrinkage.AllowUserToAddRows = false;
+            this.gridActualShrinkage.AllowUserToDeleteRows = false;
+            this.gridActualShrinkage.AllowUserToResizeRows = false;
+            this.gridActualShrinkage.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridActualShrinkage.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridActualShrinkage.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridActualShrinkage.DataSource = this.listControlBindingSource1;
+            this.gridActualShrinkage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridActualShrinkage.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridActualShrinkage.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridActualShrinkage.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridActualShrinkage.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridActualShrinkage.Location = new System.Drawing.Point(0, 0);
+            this.gridActualShrinkage.Name = "gridActualShrinkage";
+            this.gridActualShrinkage.ReadOnly = true;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridActualShrinkage.RowTemplate.Height = 24;
+            this.gridActualShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridActualShrinkage.ShowCellToolTips = false;
+            this.gridActualShrinkage.Size = new System.Drawing.Size(1045, 287);
+            this.gridActualShrinkage.TabIndex = 17;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.panel1);
+            this.flowLayoutPanel1.Controls.Add(this.panel2);
+            this.flowLayoutPanel1.Controls.Add(this.panel3);
+            this.flowLayoutPanel1.Controls.Add(this.panel4);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 290);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1045, 145);
+            this.flowLayoutPanel1.TabIndex = 54;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label20);
+            this.panel1.Controls.Add(this.label22);
+            this.panel1.Controls.Add(this.label24);
+            this.panel1.Controls.Add(this.label26);
+            this.panel1.Controls.Add(this.label28);
+            this.panel1.Controls.Add(this.numTwisTingTop);
+            this.panel1.Controls.Add(this.numTopS1);
+            this.panel1.Controls.Add(this.numTopS2);
+            this.panel1.Controls.Add(this.numTopL);
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1042, 32);
+            this.panel1.TabIndex = 53;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label20.Location = new System.Drawing.Point(3, 5);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(150, 17);
+            this.label20.TabIndex = 18;
+            this.label20.Text = "TWIS TING (TOP)%";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label22.Location = new System.Drawing.Point(378, 5);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(82, 17);
+            this.label22.TabIndex = 20;
+            this.label22.Text = "FOR TOP:";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label24.Location = new System.Drawing.Point(515, 5);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(25, 17);
+            this.label24.TabIndex = 22;
+            this.label24.Text = "S1";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label26.Location = new System.Drawing.Point(671, 5);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(25, 17);
+            this.label26.TabIndex = 24;
+            this.label26.Text = "S2";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label28.Location = new System.Drawing.Point(823, 5);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(16, 17);
+            this.label28.TabIndex = 26;
+            this.label28.Text = "L";
+            // 
+            // numTwisTingTop
+            // 
+            this.numTwisTingTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTwisTingTop.DecimalPlaces = 2;
+            this.numTwisTingTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTwisTingTop.IsSupportEditMode = false;
+            this.numTwisTingTop.Location = new System.Drawing.Point(196, 5);
+            this.numTwisTingTop.Name = "numTwisTingTop";
+            this.numTwisTingTop.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numOuterL.Size = new System.Drawing.Size(73, 23);
-            this.numOuterL.TabIndex = 52;
-            this.numOuterL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numOuterS2
-            // 
-            this.numOuterS2.BackColor = System.Drawing.Color.White;
-            this.numOuterS2.DecimalPlaces = 2;
-            this.numOuterS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numOuterS2.Location = new System.Drawing.Point(702, 3);
-            this.numOuterS2.Name = "numOuterS2";
-            this.numOuterS2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numOuterS2.Size = new System.Drawing.Size(73, 23);
-            this.numOuterS2.TabIndex = 51;
-            this.numOuterS2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numOuterS1
-            // 
-            this.numOuterS1.BackColor = System.Drawing.Color.White;
-            this.numOuterS1.DecimalPlaces = 2;
-            this.numOuterS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numOuterS1.Location = new System.Drawing.Point(542, 3);
-            this.numOuterS1.Name = "numOuterS1";
-            this.numOuterS1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numOuterS1.Size = new System.Drawing.Size(73, 23);
-            this.numOuterS1.TabIndex = 50;
-            this.numOuterS1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numTwisTingOuter
-            // 
-            this.numTwisTingOuter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingOuter.DecimalPlaces = 2;
-            this.numTwisTingOuter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingOuter.IsSupportEditMode = false;
-            this.numTwisTingOuter.Location = new System.Drawing.Point(196, 3);
-            this.numTwisTingOuter.Name = "numTwisTingOuter";
-            this.numTwisTingOuter.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTwisTingOuter.ReadOnly = true;
-            this.numTwisTingOuter.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingOuter.TabIndex = 49;
-            this.numTwisTingOuter.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label34.Location = new System.Drawing.Point(823, 3);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(16, 17);
-            this.label34.TabIndex = 48;
-            this.label34.Text = "L";
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label35.Location = new System.Drawing.Point(671, 3);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(25, 17);
-            this.label35.TabIndex = 47;
-            this.label35.Text = "S2";
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label36.Location = new System.Drawing.Point(515, 3);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(25, 17);
-            this.label36.TabIndex = 46;
-            this.label36.Text = "S1";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label37.Location = new System.Drawing.Point(378, 3);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(104, 17);
-            this.label37.TabIndex = 45;
-            this.label37.Text = "FOR OUTER:";
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label38.Location = new System.Drawing.Point(3, 3);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(172, 17);
-            this.label38.TabIndex = 44;
-            this.label38.Text = "TWIS TING (OUTER)%";
-            // 
-            // numInnerL
-            // 
-            this.numInnerL.BackColor = System.Drawing.Color.White;
-            this.numInnerL.DecimalPlaces = 2;
-            this.numInnerL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerL.Location = new System.Drawing.Point(845, 3);
-            this.numInnerL.Name = "numInnerL";
-            this.numInnerL.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numInnerL.Size = new System.Drawing.Size(73, 23);
-            this.numInnerL.TabIndex = 43;
-            this.numInnerL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numInnerS2
-            // 
-            this.numInnerS2.BackColor = System.Drawing.Color.White;
-            this.numInnerS2.DecimalPlaces = 2;
-            this.numInnerS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerS2.Location = new System.Drawing.Point(702, 3);
-            this.numInnerS2.Name = "numInnerS2";
-            this.numInnerS2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numInnerS2.Size = new System.Drawing.Size(73, 23);
-            this.numInnerS2.TabIndex = 42;
-            this.numInnerS2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numInnerS1
-            // 
-            this.numInnerS1.BackColor = System.Drawing.Color.White;
-            this.numInnerS1.DecimalPlaces = 2;
-            this.numInnerS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerS1.Location = new System.Drawing.Point(542, 3);
-            this.numInnerS1.Name = "numInnerS1";
-            this.numInnerS1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numInnerS1.Size = new System.Drawing.Size(73, 23);
-            this.numInnerS1.TabIndex = 41;
-            this.numInnerS1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numTwisTingInner
-            // 
-            this.numTwisTingInner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingInner.DecimalPlaces = 2;
-            this.numTwisTingInner.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingInner.IsSupportEditMode = false;
-            this.numTwisTingInner.Location = new System.Drawing.Point(196, 3);
-            this.numTwisTingInner.Name = "numTwisTingInner";
-            this.numTwisTingInner.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTwisTingInner.ReadOnly = true;
-            this.numTwisTingInner.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingInner.TabIndex = 40;
-            this.numTwisTingInner.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label29.Location = new System.Drawing.Point(823, 3);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(16, 17);
-            this.label29.TabIndex = 39;
-            this.label29.Text = "L";
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label30.Location = new System.Drawing.Point(671, 3);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(25, 17);
-            this.label30.TabIndex = 38;
-            this.label30.Text = "S2";
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label31.Location = new System.Drawing.Point(515, 3);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(25, 17);
-            this.label31.TabIndex = 37;
-            this.label31.Text = "S1";
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label32.Location = new System.Drawing.Point(378, 3);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(97, 17);
-            this.label32.TabIndex = 36;
-            this.label32.Text = "FOR INNER:";
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label33.Location = new System.Drawing.Point(3, 3);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(165, 17);
-            this.label33.TabIndex = 35;
-            this.label33.Text = "TWIS TING (INNER)%";
-            // 
-            // numTopL
-            // 
-            this.numTopL.BackColor = System.Drawing.Color.White;
-            this.numTopL.DecimalPlaces = 2;
-            this.numTopL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTopL.Location = new System.Drawing.Point(845, 5);
-            this.numTopL.Name = "numTopL";
-            this.numTopL.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTopL.Size = new System.Drawing.Size(73, 23);
-            this.numTopL.TabIndex = 34;
-            this.numTopL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numBottomL
-            // 
-            this.numBottomL.BackColor = System.Drawing.Color.White;
-            this.numBottomL.DecimalPlaces = 2;
-            this.numBottomL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBottomL.Location = new System.Drawing.Point(702, 2);
-            this.numBottomL.Name = "numBottomL";
-            this.numBottomL.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numBottomL.Size = new System.Drawing.Size(73, 23);
-            this.numBottomL.TabIndex = 33;
-            this.numBottomL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numTopS2
-            // 
-            this.numTopS2.BackColor = System.Drawing.Color.White;
-            this.numTopS2.DecimalPlaces = 2;
-            this.numTopS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numTopS2.Location = new System.Drawing.Point(702, 5);
-            this.numTopS2.Name = "numTopS2";
-            this.numTopS2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTopS2.Size = new System.Drawing.Size(73, 23);
-            this.numTopS2.TabIndex = 32;
-            this.numTopS2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numBottomS1
-            // 
-            this.numBottomS1.BackColor = System.Drawing.Color.White;
-            this.numBottomS1.DecimalPlaces = 2;
-            this.numBottomS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBottomS1.Location = new System.Drawing.Point(542, 2);
-            this.numBottomS1.Name = "numBottomS1";
-            this.numBottomS1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numBottomS1.Size = new System.Drawing.Size(73, 23);
-            this.numBottomS1.TabIndex = 31;
-            this.numBottomS1.Value = new decimal(new int[] {
+            this.numTwisTingTop.ReadOnly = true;
+            this.numTwisTingTop.Size = new System.Drawing.Size(100, 23);
+            this.numTwisTingTop.TabIndex = 28;
+            this.numTwisTingTop.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -932,6 +716,447 @@
             0,
             0});
             // 
+            // numTopS2
+            // 
+            this.numTopS2.BackColor = System.Drawing.Color.White;
+            this.numTopS2.DecimalPlaces = 2;
+            this.numTopS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTopS2.Location = new System.Drawing.Point(702, 5);
+            this.numTopS2.Name = "numTopS2";
+            this.numTopS2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopS2.Size = new System.Drawing.Size(73, 23);
+            this.numTopS2.TabIndex = 32;
+            this.numTopS2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numTopL
+            // 
+            this.numTopL.BackColor = System.Drawing.Color.White;
+            this.numTopL.DecimalPlaces = 2;
+            this.numTopL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTopL.Location = new System.Drawing.Point(845, 5);
+            this.numTopL.Name = "numTopL";
+            this.numTopL.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTopL.Size = new System.Drawing.Size(73, 23);
+            this.numTopL.TabIndex = 34;
+            this.numTopL.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.label33);
+            this.panel2.Controls.Add(this.label32);
+            this.panel2.Controls.Add(this.label31);
+            this.panel2.Controls.Add(this.label30);
+            this.panel2.Controls.Add(this.label29);
+            this.panel2.Controls.Add(this.numTwisTingInner);
+            this.panel2.Controls.Add(this.numInnerS1);
+            this.panel2.Controls.Add(this.numInnerS2);
+            this.panel2.Controls.Add(this.numInnerL);
+            this.panel2.Location = new System.Drawing.Point(3, 41);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1042, 30);
+            this.panel2.TabIndex = 54;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label33.Location = new System.Drawing.Point(3, 3);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(165, 17);
+            this.label33.TabIndex = 35;
+            this.label33.Text = "TWIS TING (INNER)%";
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label32.Location = new System.Drawing.Point(378, 3);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(97, 17);
+            this.label32.TabIndex = 36;
+            this.label32.Text = "FOR INNER:";
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label31.Location = new System.Drawing.Point(515, 3);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(25, 17);
+            this.label31.TabIndex = 37;
+            this.label31.Text = "S1";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label30.Location = new System.Drawing.Point(671, 3);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(25, 17);
+            this.label30.TabIndex = 38;
+            this.label30.Text = "S2";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label29.Location = new System.Drawing.Point(823, 3);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(16, 17);
+            this.label29.TabIndex = 39;
+            this.label29.Text = "L";
+            // 
+            // numTwisTingInner
+            // 
+            this.numTwisTingInner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTwisTingInner.DecimalPlaces = 2;
+            this.numTwisTingInner.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTwisTingInner.IsSupportEditMode = false;
+            this.numTwisTingInner.Location = new System.Drawing.Point(196, 3);
+            this.numTwisTingInner.Name = "numTwisTingInner";
+            this.numTwisTingInner.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTwisTingInner.ReadOnly = true;
+            this.numTwisTingInner.Size = new System.Drawing.Size(100, 23);
+            this.numTwisTingInner.TabIndex = 40;
+            this.numTwisTingInner.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numInnerS1
+            // 
+            this.numInnerS1.BackColor = System.Drawing.Color.White;
+            this.numInnerS1.DecimalPlaces = 2;
+            this.numInnerS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInnerS1.Location = new System.Drawing.Point(542, 3);
+            this.numInnerS1.Name = "numInnerS1";
+            this.numInnerS1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numInnerS1.Size = new System.Drawing.Size(73, 23);
+            this.numInnerS1.TabIndex = 41;
+            this.numInnerS1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numInnerS2
+            // 
+            this.numInnerS2.BackColor = System.Drawing.Color.White;
+            this.numInnerS2.DecimalPlaces = 2;
+            this.numInnerS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInnerS2.Location = new System.Drawing.Point(702, 3);
+            this.numInnerS2.Name = "numInnerS2";
+            this.numInnerS2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numInnerS2.Size = new System.Drawing.Size(73, 23);
+            this.numInnerS2.TabIndex = 42;
+            this.numInnerS2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numInnerL
+            // 
+            this.numInnerL.BackColor = System.Drawing.Color.White;
+            this.numInnerL.DecimalPlaces = 2;
+            this.numInnerL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInnerL.Location = new System.Drawing.Point(845, 3);
+            this.numInnerL.Name = "numInnerL";
+            this.numInnerL.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numInnerL.Size = new System.Drawing.Size(73, 23);
+            this.numInnerL.TabIndex = 43;
+            this.numInnerL.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.label38);
+            this.panel3.Controls.Add(this.label37);
+            this.panel3.Controls.Add(this.numOuterL);
+            this.panel3.Controls.Add(this.label39);
+            this.panel3.Controls.Add(this.label36);
+            this.panel3.Controls.Add(this.numOuterS2);
+            this.panel3.Controls.Add(this.label35);
+            this.panel3.Controls.Add(this.numOuterS1);
+            this.panel3.Controls.Add(this.label34);
+            this.panel3.Controls.Add(this.numTwisTingOuter);
+            this.panel3.Location = new System.Drawing.Point(3, 77);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(1042, 30);
+            this.panel3.TabIndex = 55;
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label38.Location = new System.Drawing.Point(3, 3);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(172, 17);
+            this.label38.TabIndex = 44;
+            this.label38.Text = "TWIS TING (OUTER)%";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label37.Location = new System.Drawing.Point(378, 3);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(104, 17);
+            this.label37.TabIndex = 45;
+            this.label37.Text = "FOR OUTER:";
+            // 
+            // numOuterL
+            // 
+            this.numOuterL.BackColor = System.Drawing.Color.White;
+            this.numOuterL.DecimalPlaces = 2;
+            this.numOuterL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numOuterL.Location = new System.Drawing.Point(845, 3);
+            this.numOuterL.Name = "numOuterL";
+            this.numOuterL.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOuterL.Size = new System.Drawing.Size(73, 23);
+            this.numOuterL.TabIndex = 52;
+            this.numOuterL.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label39.Location = new System.Drawing.Point(670, -56);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(25, 17);
+            this.label39.TabIndex = 24;
+            this.label39.Text = "S2";
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label36.Location = new System.Drawing.Point(515, 3);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(25, 17);
+            this.label36.TabIndex = 46;
+            this.label36.Text = "S1";
+            // 
+            // numOuterS2
+            // 
+            this.numOuterS2.BackColor = System.Drawing.Color.White;
+            this.numOuterS2.DecimalPlaces = 2;
+            this.numOuterS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numOuterS2.Location = new System.Drawing.Point(702, 3);
+            this.numOuterS2.Name = "numOuterS2";
+            this.numOuterS2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOuterS2.Size = new System.Drawing.Size(73, 23);
+            this.numOuterS2.TabIndex = 51;
+            this.numOuterS2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label35.Location = new System.Drawing.Point(671, 3);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(25, 17);
+            this.label35.TabIndex = 47;
+            this.label35.Text = "S2";
+            // 
+            // numOuterS1
+            // 
+            this.numOuterS1.BackColor = System.Drawing.Color.White;
+            this.numOuterS1.DecimalPlaces = 2;
+            this.numOuterS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numOuterS1.Location = new System.Drawing.Point(542, 3);
+            this.numOuterS1.Name = "numOuterS1";
+            this.numOuterS1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOuterS1.Size = new System.Drawing.Size(73, 23);
+            this.numOuterS1.TabIndex = 50;
+            this.numOuterS1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label34.Location = new System.Drawing.Point(823, 3);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(16, 17);
+            this.label34.TabIndex = 48;
+            this.label34.Text = "L";
+            // 
+            // numTwisTingOuter
+            // 
+            this.numTwisTingOuter.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTwisTingOuter.DecimalPlaces = 2;
+            this.numTwisTingOuter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTwisTingOuter.IsSupportEditMode = false;
+            this.numTwisTingOuter.Location = new System.Drawing.Point(196, 3);
+            this.numTwisTingOuter.Name = "numTwisTingOuter";
+            this.numTwisTingOuter.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTwisTingOuter.ReadOnly = true;
+            this.numTwisTingOuter.Size = new System.Drawing.Size(100, 23);
+            this.numTwisTingOuter.TabIndex = 49;
+            this.numTwisTingOuter.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.label21);
+            this.panel4.Controls.Add(this.label23);
+            this.panel4.Controls.Add(this.numBottomL);
+            this.panel4.Controls.Add(this.label25);
+            this.panel4.Controls.Add(this.numBottomS1);
+            this.panel4.Controls.Add(this.label27);
+            this.panel4.Controls.Add(this.numTwisTingBottom);
+            this.panel4.Location = new System.Drawing.Point(3, 113);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(1042, 26);
+            this.panel4.TabIndex = 56;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label21.Location = new System.Drawing.Point(3, 5);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(184, 17);
+            this.label21.TabIndex = 19;
+            this.label21.Text = "TWIS TING (BOTTOM)%";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label23.Location = new System.Drawing.Point(378, 5);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(116, 17);
+            this.label23.TabIndex = 21;
+            this.label23.Text = "FOR BOTTOM:";
+            // 
+            // numBottomL
+            // 
+            this.numBottomL.BackColor = System.Drawing.Color.White;
+            this.numBottomL.DecimalPlaces = 2;
+            this.numBottomL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomL.Location = new System.Drawing.Point(702, 2);
+            this.numBottomL.Name = "numBottomL";
+            this.numBottomL.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomL.Size = new System.Drawing.Size(73, 23);
+            this.numBottomL.TabIndex = 33;
+            this.numBottomL.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label25.Location = new System.Drawing.Point(515, 5);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(17, 17);
+            this.label25.TabIndex = 23;
+            this.label25.Text = "S";
+            // 
+            // numBottomS1
+            // 
+            this.numBottomS1.BackColor = System.Drawing.Color.White;
+            this.numBottomS1.DecimalPlaces = 2;
+            this.numBottomS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomS1.Location = new System.Drawing.Point(542, 2);
+            this.numBottomS1.Name = "numBottomS1";
+            this.numBottomS1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBottomS1.Size = new System.Drawing.Size(73, 23);
+            this.numBottomS1.TabIndex = 31;
+            this.numBottomS1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label27.Location = new System.Drawing.Point(671, 5);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(16, 17);
+            this.label27.TabIndex = 25;
+            this.label27.Text = "L";
+            // 
             // numTwisTingBottom
             // 
             this.numTwisTingBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -954,151 +1179,6 @@
             0,
             0});
             // 
-            // numTwisTingTop
-            // 
-            this.numTwisTingTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingTop.DecimalPlaces = 2;
-            this.numTwisTingTop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingTop.IsSupportEditMode = false;
-            this.numTwisTingTop.Location = new System.Drawing.Point(196, 5);
-            this.numTwisTingTop.Name = "numTwisTingTop";
-            this.numTwisTingTop.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTwisTingTop.ReadOnly = true;
-            this.numTwisTingTop.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingTop.TabIndex = 28;
-            this.numTwisTingTop.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label28.Location = new System.Drawing.Point(823, 5);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(16, 17);
-            this.label28.TabIndex = 26;
-            this.label28.Text = "L";
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label27.Location = new System.Drawing.Point(671, 5);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(16, 17);
-            this.label27.TabIndex = 25;
-            this.label27.Text = "L";
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label26.Location = new System.Drawing.Point(671, 5);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(25, 17);
-            this.label26.TabIndex = 24;
-            this.label26.Text = "S2";
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label25.Location = new System.Drawing.Point(515, 5);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(17, 17);
-            this.label25.TabIndex = 23;
-            this.label25.Text = "S";
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label24.Location = new System.Drawing.Point(515, 5);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(25, 17);
-            this.label24.TabIndex = 22;
-            this.label24.Text = "S1";
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label23.Location = new System.Drawing.Point(378, 5);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(116, 17);
-            this.label23.TabIndex = 21;
-            this.label23.Text = "FOR BOTTOM:";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label22.Location = new System.Drawing.Point(378, 5);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(82, 17);
-            this.label22.TabIndex = 20;
-            this.label22.Text = "FOR TOP:";
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label21.Location = new System.Drawing.Point(3, 5);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(184, 17);
-            this.label21.TabIndex = 19;
-            this.label21.Text = "TWIS TING (BOTTOM)%";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label20.Location = new System.Drawing.Point(3, 5);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(150, 17);
-            this.label20.TabIndex = 18;
-            this.label20.Text = "TWIS TING (TOP)%";
-            // 
-            // gridActualShrinkage
-            // 
-            this.gridActualShrinkage.AllowUserToAddRows = false;
-            this.gridActualShrinkage.AllowUserToDeleteRows = false;
-            this.gridActualShrinkage.AllowUserToResizeRows = false;
-            this.gridActualShrinkage.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridActualShrinkage.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridActualShrinkage.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridActualShrinkage.DataSource = this.listControlBindingSource1;
-            this.gridActualShrinkage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridActualShrinkage.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridActualShrinkage.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridActualShrinkage.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridActualShrinkage.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridActualShrinkage.Location = new System.Drawing.Point(0, 0);
-            this.gridActualShrinkage.Name = "gridActualShrinkage";
-            this.gridActualShrinkage.ReadOnly = true;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
-            this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridActualShrinkage.RowTemplate.Height = 24;
-            this.gridActualShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridActualShrinkage.ShowCellToolTips = false;
-            this.gridActualShrinkage.Size = new System.Drawing.Size(1045, 287);
-            this.gridActualShrinkage.TabIndex = 17;
-            // 
             // label19
             // 
             this.label19.AutoSize = true;
@@ -1118,6 +1198,41 @@
             this.tabAppearance.Size = new System.Drawing.Size(1051, 438);
             this.tabAppearance.TabIndex = 2;
             this.tabAppearance.Text = "Appearance";
+            // 
+            // gridAppearance
+            // 
+            this.gridAppearance.AllowUserToAddRows = false;
+            this.gridAppearance.AllowUserToDeleteRows = false;
+            this.gridAppearance.AllowUserToResizeRows = false;
+            this.gridAppearance.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridAppearance.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridAppearance.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridAppearance.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridAppearance.DataSource = this.listControlBindingSource2;
+            this.gridAppearance.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridAppearance.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridAppearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridAppearance.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridAppearance.Location = new System.Drawing.Point(6, 21);
+            this.gridAppearance.Name = "gridAppearance";
+            this.gridAppearance.ReadOnly = true;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridAppearance.RowTemplate.Height = 24;
+            this.gridAppearance.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAppearance.ShowCellToolTips = false;
+            this.gridAppearance.Size = new System.Drawing.Size(865, 286);
+            this.gridAppearance.TabIndex = 0;
             // 
             // btnEncode
             // 
@@ -1174,150 +1289,17 @@
             this.btnPDF.UseVisualStyleBackColor = true;
             this.btnPDF.Click += new System.EventHandler(this.btnPDF_Click);
             // 
-            // gridAppearance
+            // comboResult
             // 
-            this.gridAppearance.AllowUserToAddRows = false;
-            this.gridAppearance.AllowUserToDeleteRows = false;
-            this.gridAppearance.AllowUserToResizeRows = false;
-            this.gridAppearance.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridAppearance.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridAppearance.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
-            this.gridAppearance.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridAppearance.DataSource = this.listControlBindingSource2;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridAppearance.DefaultCellStyle = dataGridViewCellStyle7;
-            this.gridAppearance.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridAppearance.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridAppearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridAppearance.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridAppearance.Location = new System.Drawing.Point(6, 21);
-            this.gridAppearance.Name = "gridAppearance";
-            this.gridAppearance.ReadOnly = true;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridAppearance.RowTemplate.Height = 24;
-            this.gridAppearance.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridAppearance.ShowCellToolTips = false;
-            this.gridAppearance.Size = new System.Drawing.Size(865, 286);
-            this.gridAppearance.TabIndex = 0;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.label20);
-            this.panel1.Controls.Add(this.label22);
-            this.panel1.Controls.Add(this.label24);
-            this.panel1.Controls.Add(this.label26);
-            this.panel1.Controls.Add(this.label28);
-            this.panel1.Controls.Add(this.numTwisTingTop);
-            this.panel1.Controls.Add(this.numTopS1);
-            this.panel1.Controls.Add(this.numTopS2);
-            this.panel1.Controls.Add(this.numTopL);
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1042, 32);
-            this.panel1.TabIndex = 53;
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.Controls.Add(this.panel1);
-            this.flowLayoutPanel1.Controls.Add(this.panel2);
-            this.flowLayoutPanel1.Controls.Add(this.panel3);
-            this.flowLayoutPanel1.Controls.Add(this.panel4);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 290);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1045, 145);
-            this.flowLayoutPanel1.TabIndex = 54;
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.label33);
-            this.panel2.Controls.Add(this.label32);
-            this.panel2.Controls.Add(this.label31);
-            this.panel2.Controls.Add(this.label30);
-            this.panel2.Controls.Add(this.label29);
-            this.panel2.Controls.Add(this.numTwisTingInner);
-            this.panel2.Controls.Add(this.numInnerS1);
-            this.panel2.Controls.Add(this.numInnerS2);
-            this.panel2.Controls.Add(this.numInnerL);
-            this.panel2.Location = new System.Drawing.Point(3, 41);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1042, 30);
-            this.panel2.TabIndex = 54;
-            // 
-            // panel3
-            // 
-            this.panel3.Controls.Add(this.label38);
-            this.panel3.Controls.Add(this.label37);
-            this.panel3.Controls.Add(this.numOuterL);
-            this.panel3.Controls.Add(this.label39);
-            this.panel3.Controls.Add(this.label36);
-            this.panel3.Controls.Add(this.numOuterS2);
-            this.panel3.Controls.Add(this.label35);
-            this.panel3.Controls.Add(this.numOuterS1);
-            this.panel3.Controls.Add(this.label34);
-            this.panel3.Controls.Add(this.numTwisTingOuter);
-            this.panel3.Location = new System.Drawing.Point(3, 77);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1042, 30);
-            this.panel3.TabIndex = 55;
-            // 
-            // panel4
-            // 
-            this.panel4.Controls.Add(this.label21);
-            this.panel4.Controls.Add(this.label23);
-            this.panel4.Controls.Add(this.numBottomL);
-            this.panel4.Controls.Add(this.label25);
-            this.panel4.Controls.Add(this.numBottomS1);
-            this.panel4.Controls.Add(this.label27);
-            this.panel4.Controls.Add(this.numTwisTingBottom);
-            this.panel4.Location = new System.Drawing.Point(3, 113);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1042, 26);
-            this.panel4.TabIndex = 56;
-            // 
-            // panel5
-            // 
-            this.panel5.Controls.Add(this.gridActualShrinkage);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(3, 3);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1045, 287);
-            this.panel5.TabIndex = 55;
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label39.Location = new System.Drawing.Point(670, -56);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(25, 17);
-            this.label39.TabIndex = 24;
-            this.label39.Text = "S2";
+            this.comboResult.BackColor = System.Drawing.Color.White;
+            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboResult.FormattingEnabled = true;
+            this.comboResult.IsSupportUnselect = true;
+            this.comboResult.Location = new System.Drawing.Point(576, 79);
+            this.comboResult.Name = "comboResult";
+            this.comboResult.OldText = "";
+            this.comboResult.Size = new System.Drawing.Size(121, 24);
+            this.comboResult.TabIndex = 40;
             // 
             // P04_Detail
             // 
@@ -1329,27 +1311,28 @@
             this.Controls.Add(this.btnEncode);
             this.Controls.Add(this.tabControl1);
             this.Name = "P04_Detail";
+            this.Text = "Garment Test";
             this.Load += new System.EventHandler(this.P04_Detail_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabDetail.ResumeLayout(false);
             this.tabDetail.PerformLayout();
             this.tabShrinkage.ResumeLayout(false);
             this.tabShrinkage.PerformLayout();
+            this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridActualShrinkage)).EndInit();
-            this.tabAppearance.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.flowLayoutPanel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
-            this.panel5.ResumeLayout(false);
+            this.tabAppearance.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1380,7 +1363,6 @@
         private Win.UI.Label label9;
         private Win.UI.Label label8;
         private System.Windows.Forms.Label label7;
-        private Win.UI.TextBox txtResult;
         private Win.UI.Label label6;
         private Win.UI.NumericBox numArriveQty;
         private Win.UI.Label label5;
@@ -1446,5 +1428,6 @@
         private Win.UI.Panel panel3;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Label label39;
+        private Win.UI.ComboBox comboResult;
     }
 }

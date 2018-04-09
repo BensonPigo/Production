@@ -13,6 +13,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
+using Sci.Win.Tems;
 
 namespace Sci.Production.Quality
 {
@@ -29,19 +30,46 @@ namespace Sci.Production.Quality
         {                
             InitializeComponent();         
             DefaultFilter = string.Format("MDivisionid='{0}'", Factory);
-            this.detailgrid.ContextMenuStrip = detailgridmenus;
+            //this.detailgrid.ContextMenuStrip = detailgridmenus;
+            this.detailgrid.ContextMenuShowing += new System.EventHandler<Ict.Win.ContextMenuShowingEventArgs>(this.detailgrid_ContextMenuShowing);
+        }
+
+        protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
+        {
+            if (!this.EditMode) return DetailGridContextMenuMode.Editable;
+            return DetailGridContextMenuMode.None;
+        }
+
+        private  void detailgrid_ContextMenuShowing(object sender, ContextMenuShowingEventArgs e)
+        {
+            if (EditMode)
+            {
+                foreach (ToolStripItem m in detailgridmenus.Items)
+                {
+                    m.Visible = false;
+                }
+            }
+            else
+            {
+
+                foreach (ToolStripItem m in detailgridmenus.Items)
+                {
+                    m.Visible = true;
+                }
+            }
         }
 
         protected override void OnFormLoaded()
         {
             detailgridmenus.Items.Clear();//清空原有的Menu Item
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
+            //Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
-            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
+            //Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
             
             base.OnFormLoaded();
         }
-        private void CreateNewTest()
+
+        private void EditThisDetail()
         {
             if (EditMode) return;
             Sci.Production.Quality.P04_Detail callNewDetailForm = new P04_Detail(this.EditMode,this.CurrentMaintain, this.CurrentDetailData);
@@ -49,14 +77,6 @@ namespace Sci.Production.Quality
             callNewDetailForm.Dispose();
             this.RenewData();
             OnDetailEntered();
-        }
-
-        private void EditThisDetail()
-        {
-        }
-
-        private void DeleteThisDetail()
-        {
         }
 
         protected override void OnDetailEntered()
@@ -385,7 +405,7 @@ namespace Sci.Production.Quality
 
 
             #region SizeComboCell
-            SizeCell.CellMouseClick += (s, e) =>
+            SizeCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
                 if (!this.EditMode) return;

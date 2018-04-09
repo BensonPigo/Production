@@ -37,15 +37,24 @@ namespace Sci.Production.Quality
             Helper.Controls.Grid.Generator(this.gridActualShrinkage)
             .Text("Location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
-            .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2)
-            .Numeric("SizeSpec", header: "Size Spec Meas.", width: Widths.AnsiChars(8), decimal_places: 2)
-            .Numeric("AfterWash1", header: "After Wash 1", width: Widths.AnsiChars(6), decimal_places: 2)
-            .Numeric("Shrinkage1", header: "Shrinkage 1", width: Widths.AnsiChars(8), decimal_places: 2)
-            .Numeric("AfterWash2", header: "After Wash 2", width: Widths.AnsiChars(6), decimal_places: 2)
-            .Numeric("Shrinkage2", header: "Shrinkage 2", width: Widths.AnsiChars(8), decimal_places: 2)
-            .Numeric("AfterWash3", header: "After Wash 3", width: Widths.AnsiChars(6), decimal_places: 2)
-            .Numeric("Shrinkage3", header: "Shrinkage 3", width: Widths.AnsiChars(8), decimal_places: 2);
-            
+            .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2,minimum:-9999999)
+            .Numeric("SizeSpec", header: "Size Spec Meas.", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -9999999)
+            .Numeric("AfterWash1", header: "After Wash 1", width: Widths.AnsiChars(6), decimal_places: 2, minimum: -9999999)
+            .Numeric("Shrinkage1", header: "Shrinkage 1", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -9999999)
+            .Numeric("AfterWash2", header: "After Wash 2", width: Widths.AnsiChars(6), decimal_places: 2, minimum: -9999999)
+            .Numeric("Shrinkage2", header: "Shrinkage 2", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -9999999)
+            .Numeric("AfterWash3", header: "After Wash 3", width: Widths.AnsiChars(6), decimal_places: 2, minimum: -9999999)
+            .Numeric("Shrinkage3", header: "Shrinkage 3", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -9999999);
+
+
+            Dictionary<string, string> ResultPF = new Dictionary<string, string>();
+            ResultPF.Add("P", "Pass");
+            ResultPF.Add("F", "Fail");
+            comboResult.DataSource = new BindingSource(ResultPF, null);
+            comboResult.ValueMember = "Key";
+            comboResult.DisplayMember = "Value";
+
+
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
             ResultCombo.Add("N/A", "N/A");
@@ -82,7 +91,7 @@ namespace Sci.Production.Quality
 
             dateSubmit.Value = MyUtility.Convert.GetDate(Deatilrow["SubmitDate"]);
             numArriveQty.Value = MyUtility.Convert.GetInt(Deatilrow["ArrivedQty"]);
-            txtResult.Text = MyUtility.Convert.GetString(Deatilrow["Result"]);
+            comboResult.Text = MyUtility.Convert.GetString(Deatilrow["Result"]);
             txtRemark.Text = MyUtility.Convert.GetString(Deatilrow["Remark"]);
             rdbtnLine.Checked = MyUtility.Convert.GetBool(Deatilrow["LineDry"]);
             rdbtnTumble.Checked = MyUtility.Convert.GetBool(Deatilrow["TumbleDry"]);
@@ -200,7 +209,7 @@ from[GarmentTest_Detail_Shrinkage] where id = {this.Deatilrow["ID"]} and No = {t
 update GarmentTest_Detail set
     SubmitDate = iif('{SubmitDate}'='',null,'{SubmitDate}'),
     ArrivedQty =  {numArriveQty.Value},
-    Result = '{txtResult.Text}',
+    Result = '{comboResult.SelectedValue}',
     Remark =  '{txtRemark.Text}',
     LineDry =  '{rdbtnLine.Checked}',
     Temperature =  '{comboTemperature.Text}',
