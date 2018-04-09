@@ -88,7 +88,10 @@ IF OBJECT_ID(N'dbo.MachineIn_Detail') IS NOT NULL
 BEGIN
   DROP TABLE MachineIn_Detail
 END
-
+IF OBJECT_ID(N'dbo.Machine') IS NOT NULL
+BEGIN
+  DROP TABLE Machine
+END
 
 SELECT * 
 INTO  PartPO
@@ -216,6 +219,13 @@ INTO MachineIn_Detail
 FROM Pms_To_Trade.dbo.MachineIn, Machine.dbo.MachineIn_Detail AS MachIn2
 WHERE MachineIn.ID = MachIn2.ID ORDER BY MachineIn.ID 
 
+-----------------------------------Machine-------------------------------------
+select MDivisionID, MachineGroupID 
+INTO Machine
+from Machine.dbo.Machine
+where Status in ('Good', 'Repairing', 'Lent')
+and Junk = 0
+group by MDivisionID, MachineGroupID
 
 
 drop table #TPI_MachIn1
