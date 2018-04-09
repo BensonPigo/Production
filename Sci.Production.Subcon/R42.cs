@@ -148,7 +148,8 @@ namespace Sci.Production.Subcon
             }
             if (!MyUtility.Check.Empty(dateBundleTransDate2))
             {
-                sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'",Convert.ToDateTime(dateBundleTransDate2).ToString("d")));
+                // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
+                sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'",Convert.ToDateTime(((DateTime)dateBundleTransDate2).AddDays(1)).ToString("d")));
             }
             if (!MyUtility.Check.Empty(M))
             {
