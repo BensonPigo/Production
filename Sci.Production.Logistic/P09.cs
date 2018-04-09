@@ -210,7 +210,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                             DataRow dr = this.selectDataTable.NewRow();
 
                             // PackingID+CTN# 是連起來的ex: MA2PG180105821 前13碼是PackID 13碼後都是CTN#
-                            if (sl[1].Length >= 13)
+                            if (sl[2].Length >= 13)
                             {
                                 string sqlCmd = $@"
 select distinct
@@ -224,11 +224,12 @@ select distinct
 ,o.BrandID
 ,c.Alias
 ,o.BuyerDelivery
-,p2.ClogLocationID
+,[ClogLocationID] = cl.ID
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
+outer apply (select ID from  ClogLocation WITH (NOLOCK) where ID = '{sl[1]}' and MDivisionID ='{Sci.Env.User.Keyword}') as cl
 inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
@@ -247,8 +248,8 @@ and p1.Type in ('B','L')
 and p2.CFAReturnClogDate is not null
 and p2.ClogReceiveCFADate is null
 and (po.Status ='New' or po.Status is null)
-and p2.id='{sl[1].Substring(0, 13)}'
-and p2.CTNStartNo='{sl[1].Substring(13, sl[1].Length - 13)}'
+and p2.id='{sl[2].Substring(0, 13)}'
+and p2.CTNStartNo='{sl[2].Substring(13, sl[2].Length - 13)}'
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -271,8 +272,8 @@ order by p2.ID,p2.CTNStartNo
                                 else
                                 {
                                     DataRow drError = notFoundErr.NewRow();
-                                    drError["ID"] = sl[1].Substring(0, 13).ToString();
-                                    drError["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13).ToString();
+                                    drError["ID"] = sl[2].Substring(0, 13).ToString();
+                                    drError["CTNStartNo"] = sl[2].Substring(13, sl[2].Length - 13).ToString();
                                     notFoundErr.Rows.Add(drError);
                                 }
                             }
