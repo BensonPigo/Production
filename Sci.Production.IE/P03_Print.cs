@@ -801,7 +801,8 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
             }
             else
             {
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, (decimal)this.masterData["CurrentOperators"]);
+                decimal currentOperators = this.masterData["CurrentOperators"] == null ? 0 : Convert.ToDecimal(this.masterData["CurrentOperators"]);
+                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, currentOperators);
                 excel.ActiveWorkbook.Worksheets[5].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[6].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[7].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
