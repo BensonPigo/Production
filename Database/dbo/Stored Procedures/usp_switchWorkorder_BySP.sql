@@ -21,7 +21,7 @@ Select distinct @POID = POID,@FactoryID=FactoryID From Orders  WITH (NOLOCK) Whe
 select *,Order_EachConsUkey = 0 into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
 alter table #tmp_WorkOrder_Distribute add colorid varchar(6)
 alter table #tmp_WorkOrder_Distribute add newKey int
-select *,newKey=0 into #tmp_Workorder from WorkOrder where 1=0
+select *,newKey=0 into #tmp_Workorder from CURSOR_WorkOrder where 1=0
 select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrder_SizeRatio where 1=0
 select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrder_PatternPanel where 1=0
 --主要資料
@@ -91,9 +91,9 @@ Declare @MixedSizeMarker varchar(2),@id varchar(13),@SizeCode varchar(8),@FirstS
 @MarkerDownloadID varchar(25),@FabricCombo varchar(2),@FabricCode varchar(3),@FabricPanelCode varchar(2),@Order_EachConsUkey bigint,
 @Orderqty int,@ThisMarkerColor_Layer int,@ThisMarkerColor_MaxLayer int,@rowid int,@FirstRatio int,@SizeRatio int, @tmpUkey int = 0, @tmpUkey2 int = 0
 --主要資料迴圈
-DECLARE WorkOrder CURSOR FOR select * from #WorkOrderMix order by Rowid
-OPEN WorkOrder
-FETCH NEXT FROM WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Refno,@SCIRefno,@MarkerNo,@MarkerVersion,@type,@username,@AddDate,
+DECLARE CURSOR_WorkOrder CURSOR FOR select * from #WorkOrderMix order by Rowid
+OPEN CURSOR_WorkOrder
+FETCH NEXT FROM CURSOR_WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Refno,@SCIRefno,@MarkerNo,@MarkerVersion,@type,@username,@AddDate,
 @MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid
 While @@FETCH_STATUS = 0
 Begin	
@@ -336,11 +336,11 @@ Begin
 	CLOSE insertWorkorder
 	DEALLOCATE insertWorkorder
 
-FETCH NEXT FROM WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Refno,@SCIRefno,@MarkerNo,@MarkerVersion,@type,@username,@AddDate,
+FETCH NEXT FROM CURSOR_WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Refno,@SCIRefno,@MarkerNo,@MarkerVersion,@type,@username,@AddDate,
 @MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid
 End
-CLOSE WorkOrder
-DEALLOCATE WorkOrder
+CLOSE CURSOR_WorkOrder
+DEALLOCATE CURSOR_WorkOrder
 --select * from #tmp_Workorder order by newkey
 --select newkey,orderid,Article,sizecode from #tmp_WorkOrder_Distribute group by newkey,orderid,Article,sizecode having count(1)>1
 --select * from #tmp_WorkOrder_Distribute order by newkey
@@ -354,7 +354,7 @@ OPEN insertALL
 FETCH NEXT FROM insertALL INTO @insertRow
 While @@FETCH_STATUS = 0
 Begin
-	insert into WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
+	insert into CURSOR_WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 					EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
 					AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode)
 	Select id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
