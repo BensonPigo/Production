@@ -325,12 +325,15 @@ namespace Sci.Production.Thread
                         }
                     }
 
-                    if (refDT.Rows.Count == 0)
+                    if (refDT.Rows.Count != this.tbArticle.Rows.Count)
                     {
                         // Ref有值且無資料
-                        for (int i = 0; i < this.tbArticle.Rows.Count; i++)
+                        foreach (DataRow item in this.tbArticle.Rows)
                         {
-                            insertSql.Append(string.Format(@"Insert into ThreadColorComb_Detail(id,Machinetypeid,ThreadCombid,Refno,Article,ThreadColorid,SEQ,ThreadLocationID) Values({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}');", this.detailRow["ID"], this.detailRow["Machinetypeid"], this.detailRow["Threadcombid"], dr["Refno"], this.tbArticle.Rows[i]["article"].ToString().Trim(), dr[this.tbArticle.Rows[i]["article"].ToString().Trim()], dr["SEQ"], dr["ThreadLocation"]));
+                            if (refDT.Select($"Article = '{item[0]}'").Length == 0)
+                            {
+                                insertSql.Append(string.Format(@"Insert into ThreadColorComb_Detail(id,Machinetypeid,ThreadCombid,Refno,Article,ThreadColorid,SEQ,ThreadLocationID) Values({0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}');", this.detailRow["ID"], this.detailRow["Machinetypeid"], this.detailRow["Threadcombid"], dr["Refno"], item["article"].ToString().Trim(), dr[item["article"].ToString().Trim()], dr["SEQ"], dr["ThreadLocation"]));
+                            }
                         }
                     }
                 }
