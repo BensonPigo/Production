@@ -25,7 +25,7 @@ namespace Sci.Production.Quality
             this.Deatilrow = deatilrow;
             this.EditMode = editmode;
         }
-
+        
         private void P04_Detail_Load(object sender, EventArgs e)
         {
             btnenable();
@@ -37,14 +37,14 @@ namespace Sci.Production.Quality
             Helper.Controls.Grid.Generator(this.gridActualShrinkage)
             .Text("Location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Text("Type", header: "Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
-            .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2,minimum:-9999999)
-            .Numeric("SizeSpec", header: "Size Spec Meas.", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -9999999)
-            .Numeric("AfterWash1", header: "After Wash 1", width: Widths.AnsiChars(6), decimal_places: 2, minimum: -9999999)
-            .Numeric("Shrinkage1", header: "Shrinkage 1", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -9999999)
-            .Numeric("AfterWash2", header: "After Wash 2", width: Widths.AnsiChars(6), decimal_places: 2, minimum: -9999999)
-            .Numeric("Shrinkage2", header: "Shrinkage 2", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -9999999)
-            .Numeric("AfterWash3", header: "After Wash 3", width: Widths.AnsiChars(6), decimal_places: 2, minimum: -9999999)
-            .Numeric("Shrinkage3", header: "Shrinkage 3", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -9999999);
+            .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2)
+            .Numeric("SizeSpec", header: "Size Spec Meas.", width: Widths.AnsiChars(8), decimal_places: 2)
+            .Numeric("AfterWash1", header: "After Wash 1", width: Widths.AnsiChars(6), decimal_places: 2)
+            .Numeric("Shrinkage1", header: "Shrinkage 1", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999)
+            .Numeric("AfterWash2", header: "After Wash 2", width: Widths.AnsiChars(6), decimal_places: 2)
+            .Numeric("Shrinkage2", header: "Shrinkage 2", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999)
+            .Numeric("AfterWash3", header: "After Wash 3", width: Widths.AnsiChars(6), decimal_places: 2)
+            .Numeric("Shrinkage3", header: "Shrinkage 3", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999);
 
 
             Dictionary<string, string> ResultPF = new Dictionary<string, string>();
@@ -100,6 +100,7 @@ namespace Sci.Production.Quality
             comboMachineModel.Text = MyUtility.Convert.GetString(Deatilrow["Machine"]);
             txtFibreComposition.Text = MyUtility.Convert.GetString(Deatilrow["Composition"]);
             comboNeck.Text = MyUtility.Convert.GetString(Deatilrow["Neck"]);
+            comboResult.Text = MyUtility.Convert.GetString(Deatilrow["Result"])=="P"?"Pass":"Fail";
         }
 
         DataTable dtShrinkage;
@@ -119,22 +120,22 @@ from[GarmentTest_Detail_Shrinkage] where id = {this.Deatilrow["ID"]} and No = {t
             listControlBindingSource1.DataSource = null;
             listControlBindingSource1.DataSource = dtShrinkage;
             int i = 4;
-            if (dtShrinkage.Select("Location = 'T'").Length==0)
+            if (dtShrinkage.Select("Location = 'TOP'").Length==0)
             {
                 panel1.Visible = false;
                 i--;
             }
-            if (dtShrinkage.Select("Location = 'I'").Length == 0)
+            if (dtShrinkage.Select("Location = 'INNER'").Length == 0)
             {
                 panel2.Visible = false;
                 i--;
             }
-            if (dtShrinkage.Select("Location = 'O'").Length == 0)
+            if (dtShrinkage.Select("Location = 'OUTER'").Length == 0)
             {
                 panel3.Visible = false;
                 i--;
             }
-            if (dtShrinkage.Select("Location = 'B'").Length == 0)
+            if (dtShrinkage.Select("Location = 'BOTTOM'").Length == 0)
             {
                 panel4.Visible = false;
                 i--;
@@ -203,6 +204,7 @@ from[GarmentTest_Detail_Shrinkage] where id = {this.Deatilrow["ID"]} and No = {t
         {
             if (this.EditMode)
            {
+
                 #region update GarmentTest_Detail 1
                 string SubmitDate = MyUtility.Check.Empty(dateSubmit.Value) ? string.Empty : ((DateTime)MyUtility.Convert.GetDate(dateSubmit.Value)).ToString("yyyy/MM/dd");
                 string updateGarmentTest_Detail = $@"
@@ -234,9 +236,12 @@ where id = {Deatilrow["ID"]} and No = {Deatilrow["NO"]}
                 tab3Load();
 
                 btnenable();
+                gridAppearance.ForeColor = Color.Black;
             }
             else
             {
+                gridAppearance.ForeColor = Color.Red;
+                gridAppearance.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
                 btnEncode.Enabled = false;
                 btnAmend.Enabled = false;
             }
@@ -254,6 +259,11 @@ where id = {Deatilrow["ID"]} and No = {Deatilrow["NO"]}
         private void tab2ShrinkageSave()
         {
             string savetab2Shrinkage = $@"
+update #tmp set Location = 'B' where Location = 'BOTTOM'
+update #tmp set Location = 'T' where Location = 'TOP'
+update #tmp set Location = 'I' where Location = 'INNER'
+update #tmp set Location = 'O' where Location = 'OUTER'
+
   merge [GarmentTest_Detail_Shrinkage] t
   using #tmp s
   on s.id = t.id and s.no = t.no and s.Location = t.Location and s.type = t.type
@@ -351,7 +361,8 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             worksheet.Cells[6, 10] = MyUtility.Convert.GetString(MasterRow["Article"]);
             worksheet.Cells[7, 4] = MyUtility.GetValue.Lookup($"select StyleName from Style with(nolock) where id = '{MasterRow["Styleid"]}' and seasonid = '{MasterRow["seasonid"]}' and brandid = '{MasterRow["brandid"]}'");
             worksheet.Cells[7, 8] = MyUtility.Convert.GetDecimal(numArriveQty.Value);
-            worksheet.Cells[8, 4] = MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Year + "/" + MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Month + "/" + MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Day;
+            if (!MyUtility.Check.Empty(Deatilrow["SendDate"]))
+                worksheet.Cells[8, 4] = MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Year + "/" + MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Month + "/" + MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Day;
             worksheet.Cells[8, 8] = MyUtility.Convert.GetString(txtSize.Text);
 
             worksheet.Cells[11, 4] = rdbtnLine.Checked ? "V" : string.Empty;

@@ -29,10 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabDetail = new System.Windows.Forms.TabPage();
+            this.comboResult = new Sci.Win.UI.ComboBox();
             this.comboNeck = new Sci.Win.UI.ComboBox();
             this.comboMachineModel = new Sci.Win.UI.ComboBox();
             this.rdbtnHand = new System.Windows.Forms.RadioButton();
@@ -120,7 +121,6 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnPDF = new Sci.Win.UI.Button();
-            this.comboResult = new Sci.Win.UI.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabDetail.SuspendLayout();
             this.tabShrinkage.SuspendLayout();
@@ -194,6 +194,18 @@
             this.tabDetail.Size = new System.Drawing.Size(1051, 438);
             this.tabDetail.TabIndex = 0;
             this.tabDetail.Text = "Detail";
+            // 
+            // comboResult
+            // 
+            this.comboResult.BackColor = System.Drawing.Color.White;
+            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboResult.FormattingEnabled = true;
+            this.comboResult.IsSupportUnselect = true;
+            this.comboResult.Location = new System.Drawing.Point(576, 79);
+            this.comboResult.Name = "comboResult";
+            this.comboResult.OldText = "";
+            this.comboResult.Size = new System.Drawing.Size(121, 24);
+            this.comboResult.TabIndex = 40;
             // 
             // comboNeck
             // 
@@ -580,14 +592,14 @@
             this.gridActualShrinkage.Location = new System.Drawing.Point(0, 0);
             this.gridActualShrinkage.Name = "gridActualShrinkage";
             this.gridActualShrinkage.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridActualShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridActualShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridActualShrinkage.RowTemplate.Height = 24;
@@ -1218,20 +1230,20 @@
             this.gridAppearance.Location = new System.Drawing.Point(6, 21);
             this.gridAppearance.Name = "gridAppearance";
             this.gridAppearance.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAppearance.RowTemplate.Height = 24;
             this.gridAppearance.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAppearance.ShowCellToolTips = false;
-            this.gridAppearance.Size = new System.Drawing.Size(865, 286);
+            this.gridAppearance.Size = new System.Drawing.Size(865, 411);
             this.gridAppearance.TabIndex = 0;
             // 
             // btnEncode
@@ -1288,18 +1300,6 @@
             this.btnPDF.Text = "To PDF";
             this.btnPDF.UseVisualStyleBackColor = true;
             this.btnPDF.Click += new System.EventHandler(this.btnPDF_Click);
-            // 
-            // comboResult
-            // 
-            this.comboResult.BackColor = System.Drawing.Color.White;
-            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboResult.FormattingEnabled = true;
-            this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(576, 79);
-            this.comboResult.Name = "comboResult";
-            this.comboResult.OldText = "";
-            this.comboResult.Size = new System.Drawing.Size(121, 24);
-            this.comboResult.TabIndex = 40;
             // 
             // P04_Detail
             // 

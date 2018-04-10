@@ -72,6 +72,10 @@ namespace Sci.Production.Quality
         private void EditThisDetail()
         {
             if (EditMode) return;
+            if (DetailDatas.Count == 0)
+            {
+                return;
+            }
             Sci.Production.Quality.P04_Detail callNewDetailForm = new P04_Detail(this.EditMode,this.CurrentMaintain, this.CurrentDetailData);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
