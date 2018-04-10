@@ -659,13 +659,59 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
             }
             #endregion
 
+            int startIndex = 0;
+            int endIndex = 0;
+            int dataRow = 0;
+            // Carton Dimension:
+            StringBuilder ctnDimension = new StringBuilder();
+            foreach (DataRow dr in ctnDim.Rows)
+            {
+                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"])));
+            }
+
+            foreach (DataRow dr in qtyCtn.Rows)
+            {
+                if (!MyUtility.Check.Empty(dr["Article"]))
+                {
+                    ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
+                }
+            }
+
+            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : string.Empty;
+            string[] cdsab = cds.Split('\r');
+            int cdsi = 0;
+            int cdsl = 113;
+            foreach (string cdsc in cdsab)
+            {
+                if (cdsc.Length > cdsl)
+                {
+                    int h = cdsc.Length / cdsl;
+                    for (int i = 0; i < h; i++)
+                    {
+                        cdsi += 1;
+                    }
+                }
+            }
+
+            int cdinst = 0;
+            cdsi += cdsab.Length - 2;
+            if (cdsi > 0)
+            {
+                for (int i = 0; i < cdsi; i++)
+                {
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row + 1)), Type.Missing).EntireRow;
+                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
+                    cdinst++;
+                }
+            }
+
+            worksheet.Cells[row, 2] = ctnDimension.Length > 0 ? cds : string.Empty;
+            row = row + cdinst + 2;
             worksheet.Cells[row, 1] = "Remark: " + MyUtility.Convert.GetString(this.CurrentMaintain["Remark"]);
 
             // 填Special Instruction
             // 先取得Special Instruction總共有幾行
-            int startIndex = 0;
-            int endIndex = 0;
-            int dataRow = 0;
             string tmp = MyUtility.Convert.GetString(this.CurrentMaintain["SpecialInstruction"]);
 
             string[] tmpab = tmp.Split('\r');
@@ -724,51 +770,6 @@ order by oa.Seq,os.Seq", MyUtility.Convert.GetString(this.CurrentMaintain["Order
                 worksheet.Cells[row, 2] = MyUtility.Convert.GetString(this.CurrentMaintain["SpecialInstruction"]);
             }
 
-            // Carton Dimension:
-            StringBuilder ctnDimension = new StringBuilder();
-            foreach (DataRow dr in ctnDim.Rows)
-            {
-                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"])));
-            }
-
-            foreach (DataRow dr in qtyCtn.Rows)
-            {
-                if (!MyUtility.Check.Empty(dr["Article"]))
-                {
-                    ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
-                }
-            }
-
-            row = row + (dataRow > 2 ? dataRow - 1 : 2);
-
-            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : string.Empty;
-            string[] cdsab = cds.Split('\r');
-            int cdsi = 0;
-            int cdsl = 113;
-            foreach (string cdsc in cdsab)
-            {
-                if (cdsc.Length > cdsl)
-                {
-                    int h = cdsc.Length / cdsl;
-                    for (int i = 0; i < h; i++)
-                    {
-                        cdsi += 1;
-                    }
-                }
-            }
-
-            cdsi += cdsab.Length - 2;
-            if (cdsi > 0)
-            {
-                for (int i = 0; i < cdsi; i++)
-                {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(row + 1)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    Marshal.ReleaseComObject(rngToInsert);
-                }
-            }
-
-            worksheet.Cells[row, 2] = ctnDimension.Length > 0 ? cds : string.Empty;
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P02");
