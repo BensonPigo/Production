@@ -377,7 +377,7 @@ with cte as(
         left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
 		where b.SCIRefno = tmpB.SciRefno 
 			  and b.poid = tmpB.ID 
-              and (b.SizeSpec = isnull(tmpB.SizeSpec, ''))     
+              and b.SizeSpec = tmpB.SizeSpec
 			  and b.ColorID = tmpB.ColorID       
               and b.CompareBoAExpandSeq1 = ob.Seq1
 	) tbColor
@@ -392,7 +392,7 @@ with cte as(
         left join order_boa ob on tmpB.Order_BOAUkey = ob.Ukey		
 		where b.SCIRefno = tmpB.SciRefno 
 			  and b.poid = tmpB.ID 
-              and (b.SizeSpec = isnull(tmpB.SizeSpec, ''))            
+              and b.SizeSpec = tmpB.SizeSpec           
               and b.CompareBoAExpandSeq1 = ob.Seq1
 	) tbNonColor    
     outer apply (
