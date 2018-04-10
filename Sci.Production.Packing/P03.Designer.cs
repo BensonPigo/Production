@@ -77,6 +77,10 @@
             this.labelPullOutNo = new Sci.Win.UI.Label();
             this.displayBoxPullOutNo = new Sci.Win.UI.DisplayBox();
             this.btnUpdateBarcode = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.datesciDelivery = new Sci.Win.UI.DateBox();
+            this.datekpileta = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -93,6 +97,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.datekpileta);
+            this.masterpanel.Controls.Add(this.datesciDelivery);
+            this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnUpdateBarcode);
             this.masterpanel.Controls.Add(this.numTtlGW);
             this.masterpanel.Controls.Add(this.labelTtlGW);
@@ -142,7 +150,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateCartonEstBooking);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 269);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 287);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -193,15 +201,19 @@
             this.masterpanel.Controls.SetChildIndex(this.numTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateBarcode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datesciDelivery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datekpileta, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 269);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 249);
+            this.detailpanel.Location = new System.Drawing.Point(0, 287);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 231);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(894, 234);
+            this.gridicon.Location = new System.Drawing.Point(894, 252);
             this.gridicon.TabIndex = 8;
             // 
             // refresh
@@ -210,7 +222,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 249);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 231);
             // 
             // detail2
             // 
@@ -276,7 +288,7 @@
             // 
             // labelSortby
             // 
-            this.labelSortby.Location = new System.Drawing.Point(5, 243);
+            this.labelSortby.Location = new System.Drawing.Point(5, 261);
             this.labelSortby.Name = "labelSortby";
             this.labelSortby.Size = new System.Drawing.Size(66, 23);
             this.labelSortby.TabIndex = 8;
@@ -299,7 +311,7 @@
             this.comboSortby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSortby.FormattingEnabled = true;
             this.comboSortby.IsSupportUnselect = true;
-            this.comboSortby.Location = new System.Drawing.Point(75, 242);
+            this.comboSortby.Location = new System.Drawing.Point(75, 260);
             this.comboSortby.Name = "comboSortby";
             this.comboSortby.OldText = "";
             this.comboSortby.Size = new System.Drawing.Size(121, 24);
@@ -348,7 +360,7 @@
             // 
             // labelPurchaseCtn
             // 
-            this.labelPurchaseCtn.Location = new System.Drawing.Point(520, 166);
+            this.labelPurchaseCtn.Location = new System.Drawing.Point(521, 227);
             this.labelPurchaseCtn.Name = "labelPurchaseCtn";
             this.labelPurchaseCtn.Size = new System.Drawing.Size(126, 22);
             this.labelPurchaseCtn.TabIndex = 24;
@@ -434,7 +446,7 @@
             // 
             this.displayPurchaseCtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPurchaseCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPurchaseCtn.Location = new System.Drawing.Point(651, 167);
+            this.displayPurchaseCtn.Location = new System.Drawing.Point(652, 228);
             this.displayPurchaseCtn.Name = "displayPurchaseCtn";
             this.displayPurchaseCtn.Size = new System.Drawing.Size(27, 23);
             this.displayPurchaseCtn.TabIndex = 30;
@@ -465,7 +477,7 @@
             // 
             // labelCartonEstBooking
             // 
-            this.labelCartonEstBooking.Location = new System.Drawing.Point(519, 109);
+            this.labelCartonEstBooking.Location = new System.Drawing.Point(520, 170);
             this.labelCartonEstBooking.Name = "labelCartonEstBooking";
             this.labelCartonEstBooking.Size = new System.Drawing.Size(127, 22);
             this.labelCartonEstBooking.TabIndex = 35;
@@ -473,7 +485,7 @@
             // 
             // labelCartonEstArrived
             // 
-            this.labelCartonEstArrived.Location = new System.Drawing.Point(519, 138);
+            this.labelCartonEstArrived.Location = new System.Drawing.Point(520, 199);
             this.labelCartonEstArrived.Name = "labelCartonEstArrived";
             this.labelCartonEstArrived.Size = new System.Drawing.Size(127, 22);
             this.labelCartonEstArrived.TabIndex = 36;
@@ -512,7 +524,7 @@
             // dateCartonEstBooking
             // 
             this.dateCartonEstBooking.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNBooking", true));
-            this.dateCartonEstBooking.Location = new System.Drawing.Point(650, 109);
+            this.dateCartonEstBooking.Location = new System.Drawing.Point(651, 170);
             this.dateCartonEstBooking.Name = "dateCartonEstBooking";
             this.dateCartonEstBooking.Size = new System.Drawing.Size(130, 23);
             this.dateCartonEstBooking.TabIndex = 6;
@@ -520,7 +532,7 @@
             // dateCartonEstArrived
             // 
             this.dateCartonEstArrived.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNArrive", true));
-            this.dateCartonEstArrived.Location = new System.Drawing.Point(650, 138);
+            this.dateCartonEstArrived.Location = new System.Drawing.Point(651, 199);
             this.dateCartonEstArrived.Name = "dateCartonEstArrived";
             this.dateCartonEstArrived.Size = new System.Drawing.Size(130, 23);
             this.dateCartonEstArrived.TabIndex = 7;
@@ -571,7 +583,7 @@
             // 
             // labelLocateforTransferClog
             // 
-            this.labelLocateforTransferClog.Location = new System.Drawing.Point(289, 243);
+            this.labelLocateforTransferClog.Location = new System.Drawing.Point(289, 261);
             this.labelLocateforTransferClog.Name = "labelLocateforTransferClog";
             this.labelLocateforTransferClog.Size = new System.Drawing.Size(156, 23);
             this.labelLocateforTransferClog.TabIndex = 51;
@@ -580,7 +592,7 @@
             // dateLocateforTransferClog
             // 
             this.dateLocateforTransferClog.IsSupportEditMode = false;
-            this.dateLocateforTransferClog.Location = new System.Drawing.Point(450, 243);
+            this.dateLocateforTransferClog.Location = new System.Drawing.Point(450, 261);
             this.dateLocateforTransferClog.Name = "dateLocateforTransferClog";
             this.dateLocateforTransferClog.Size = new System.Drawing.Size(130, 23);
             this.dateLocateforTransferClog.TabIndex = 52;
@@ -590,14 +602,14 @@
             this.txtLocateforTransferClog.BackColor = System.Drawing.Color.White;
             this.txtLocateforTransferClog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateforTransferClog.IsSupportEditMode = false;
-            this.txtLocateforTransferClog.Location = new System.Drawing.Point(450, 243);
+            this.txtLocateforTransferClog.Location = new System.Drawing.Point(450, 261);
             this.txtLocateforTransferClog.Name = "txtLocateforTransferClog";
             this.txtLocateforTransferClog.Size = new System.Drawing.Size(80, 23);
             this.txtLocateforTransferClog.TabIndex = 53;
             // 
             // btnFindNow
             // 
-            this.btnFindNow.Location = new System.Drawing.Point(592, 238);
+            this.btnFindNow.Location = new System.Drawing.Point(592, 256);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(80, 30);
             this.btnFindNow.TabIndex = 54;
@@ -775,6 +787,36 @@
             this.btnUpdateBarcode.Visible = false;
             this.btnUpdateBarcode.Click += new System.EventHandler(this.BtnUpdateBarcode_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(519, 111);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(127, 22);
+            this.label1.TabIndex = 64;
+            this.label1.Text = "SCI Div.";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(520, 140);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(127, 22);
+            this.label2.TabIndex = 65;
+            this.label2.Text = "KPI L/ETA";
+            // 
+            // datesciDelivery
+            // 
+            this.datesciDelivery.Location = new System.Drawing.Point(652, 110);
+            this.datesciDelivery.Name = "datesciDelivery";
+            this.datesciDelivery.Size = new System.Drawing.Size(130, 23);
+            this.datesciDelivery.TabIndex = 66;
+            // 
+            // datekpileta
+            // 
+            this.datekpileta.Location = new System.Drawing.Point(652, 139);
+            this.datekpileta.Name = "datekpileta";
+            this.datekpileta.Size = new System.Drawing.Size(130, 23);
+            this.datekpileta.TabIndex = 7;
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -868,5 +910,9 @@
         private Win.UI.DisplayBox displayBoxPullOutNo;
         private Win.UI.Label labelPullOutNo;
         private Win.UI.Button btnUpdateBarcode;
+        private Win.UI.DateBox datekpileta;
+        private Win.UI.DateBox datesciDelivery;
+        private Win.UI.Label label2;
+        private Win.UI.Label label1;
     }
 }
