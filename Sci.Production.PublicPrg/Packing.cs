@@ -547,6 +547,8 @@ select  a.*
                             for xml path('')
                           ),1,1,'')
         , sortCTNNo = TRY_Convert(int , a.CTNStartNo)
+        , sciDelivery = min(o.sciDelivery) over()
+        , kpileta = min(o.kpileta) over()
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID 
