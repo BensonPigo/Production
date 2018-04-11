@@ -21,7 +21,7 @@ Select distinct @POID = POID,@FactoryID=FactoryID From Orders  WITH (NOLOCK) Whe
 select *,Order_EachConsUkey = 0 into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
 alter table #tmp_WorkOrder_Distribute add colorid varchar(6)
 alter table #tmp_WorkOrder_Distribute add newKey int
-select *,newKey=0 into #tmp_Workorder from CURSOR_WorkOrder where 1=0
+select *,newKey=0 into #tmp_Workorder from WorkOrder where 1=0
 select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrder_SizeRatio where 1=0
 select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrder_PatternPanel where 1=0
 --主要資料
@@ -354,7 +354,7 @@ OPEN insertALL
 FETCH NEXT FROM insertALL INTO @insertRow
 While @@FETCH_STATUS = 0
 Begin
-	insert into CURSOR_WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
+	insert into WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 					EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
 					AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode)
 	Select id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
