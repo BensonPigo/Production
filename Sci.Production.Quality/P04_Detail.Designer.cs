@@ -642,9 +642,9 @@
             this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label20.Location = new System.Drawing.Point(3, 5);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(150, 17);
+            this.label20.Size = new System.Drawing.Size(145, 17);
             this.label20.TabIndex = 18;
-            this.label20.Text = "TWIS TING (TOP)%";
+            this.label20.Text = "TWISTING (TOP)%";
             // 
             // label22
             // 
@@ -790,9 +790,9 @@
             this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label33.Location = new System.Drawing.Point(3, 3);
             this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(165, 17);
+            this.label33.Size = new System.Drawing.Size(160, 17);
             this.label33.TabIndex = 35;
-            this.label33.Text = "TWIS TING (INNER)%";
+            this.label33.Text = "TWISTING (INNER)%";
             // 
             // label32
             // 
@@ -939,9 +939,9 @@
             this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label38.Location = new System.Drawing.Point(3, 3);
             this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(172, 17);
+            this.label38.Size = new System.Drawing.Size(167, 17);
             this.label38.TabIndex = 44;
-            this.label38.Text = "TWIS TING (OUTER)%";
+            this.label38.Text = "TWISTING (OUTER)%";
             // 
             // label37
             // 
@@ -1095,9 +1095,9 @@
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
             this.label21.Location = new System.Drawing.Point(3, 5);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(184, 17);
+            this.label21.Size = new System.Drawing.Size(179, 17);
             this.label21.TabIndex = 19;
-            this.label21.Text = "TWIS TING (BOTTOM)%";
+            this.label21.Text = "TWISTING (BOTTOM)%";
             // 
             // label23
             // 

@@ -155,8 +155,9 @@ namespace Sci.Production.Quality
                 dr["NewKey"] = i;
                 dr["Send"] = "";
                 dr["Receive"] = "";
-                dr["AddName"] = dt.Rows[i]["AddName"].ToString() + " - " + dt.Rows[i]["AddDate"].ToString();
-                dr["LastEditName"] = dt.Rows[i]["EditName"].ToString() + " - " + dt.Rows[i]["EditDate"].ToString();
+                dr["AddName"] = dt.Rows[i]["AddName"].ToString() + " - " + ((DateTime)MyUtility.Convert.GetDate(dt.Rows[i]["AddDATE"])).ToString("yyyy/MM/dd HH:mm:ss");
+                if (!MyUtility.Check.Empty(dt.Rows[i]["EditName"]))
+                    dr["LastEditName"] = dt.Rows[i]["EditName"].ToString() + " - " +((DateTime)MyUtility.Convert.GetDate(dt.Rows[i]["EditDate"])).ToString("yyyy/MM/dd HH:mm:ss");
                 i++;
             }
             return base.OnRenewDataDetailPost(e);
@@ -580,14 +581,14 @@ inner join style s with(nolock) on s.id = gt.StyleID
 inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
 where gt.id = @ID and sl.Location ='B'
 CREATE TABLE #type2([type] [varchar](20))
-insert into #type2 (type)values('Waistband (relax)')
-insert into #type2 (type)values('Hip Width')
-insert into #type2 (type)values('Thigh Width')
-insert into #type2 (type)values('Side Seam')
-insert into #type2 (type)values('Leg Opening')
-INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type])
+insert into #type2 (type,seq)values('Waistband (relax)',1)
+insert into #type2 (type,seq)values('Hip Width',2)
+insert into #type2 (type,seq)values('Thigh Width',3)
+insert into #type2 (type,seq)values('Side Seam',4)
+insert into #type2 (type,seq)values('Leg Opening',5)
+INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
 select @ID,@NO,* from #Location1,#type1
-INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type])
+INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
 select @ID,@NO,* from #Location2,#type2
 
 INSERT INTO [dbo].[GarmentTest_Detail_Twisting]([ID],[No],[Location])
