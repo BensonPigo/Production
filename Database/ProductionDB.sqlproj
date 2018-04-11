@@ -2268,6 +2268,7 @@
     <Build Include="dbo\Tables\SampleGarmentTest_Detail.sql" />
     <Build Include="dbo\Stored Procedures\GenSampleGarmentTest.sql" />
     <Build Include="dbo\Tables\Technician.sql" />
+    <Build Include="dbo\Stored Procedures\usp_switchWorkorder_BySP.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

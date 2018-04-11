@@ -186,8 +186,15 @@ drop table #tmp1,#tmp2
                         ShowErr(cmd, worRes);
                         return;
                     }
-
-                    string exswitch = string.Format("exec dbo.usp_switchWorkorder '{0}','{1}','{2}','{3}'", worktype, cuttingid, keyWord, loginID);
+                    string exswitch;
+                    if (worktype=="1")
+                    {
+                        exswitch = string.Format("exec dbo.usp_switchWorkorder '{0}','{1}','{2}','{3}'", worktype, cuttingid, keyWord, loginID);
+                    }
+                    else//By SP worktype = 2
+                    {
+                        exswitch = string.Format("exec dbo.usp_switchWorkorder_BySP '{0}','{1}','{2}','{3}'", worktype, cuttingid, keyWord, loginID);
+                    }
                     DBProxy sp_excute = new DBProxy();
                     sp_excute.DefaultTimeout = 1200;//因為資料量多會執行較久所以設定timeout20分鐘
                     //DualResult dResult = DBProxy.Current.Execute(null, exswitch);
