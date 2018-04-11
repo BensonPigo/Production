@@ -97,11 +97,11 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.datekpileta);
-            this.masterpanel.Controls.Add(this.datesciDelivery);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnUpdateBarcode);
+            this.masterpanel.Controls.Add(this.datekpileta);
+            this.masterpanel.Controls.Add(this.datesciDelivery);
             this.masterpanel.Controls.Add(this.numTtlGW);
             this.masterpanel.Controls.Add(this.labelTtlGW);
             this.masterpanel.Controls.Add(this.btnImportFromExcel);
@@ -200,11 +200,11 @@
             this.masterpanel.Controls.SetChildIndex(this.labelTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datesciDelivery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.datekpileta, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateBarcode, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.datesciDelivery, 0);
-            this.masterpanel.Controls.SetChildIndex(this.datekpileta, 0);
             // 
             // detailpanel
             // 
@@ -805,15 +805,19 @@
             // 
             // datesciDelivery
             // 
+            this.datesciDelivery.IsSupportEditMode = false;
             this.datesciDelivery.Location = new System.Drawing.Point(652, 110);
             this.datesciDelivery.Name = "datesciDelivery";
+            this.datesciDelivery.ReadOnly = true;
             this.datesciDelivery.Size = new System.Drawing.Size(130, 23);
             this.datesciDelivery.TabIndex = 66;
             // 
             // datekpileta
             // 
+            this.datekpileta.IsSupportEditMode = false;
             this.datekpileta.Location = new System.Drawing.Point(652, 139);
             this.datekpileta.Name = "datekpileta";
+            this.datekpileta.ReadOnly = true;
             this.datekpileta.Size = new System.Drawing.Size(130, 23);
             this.datekpileta.TabIndex = 7;
             // 
