@@ -22,14 +22,9 @@ namespace Sci.Production.IE
         private DataRow masterData;
         private string display;
         private string contentType;
-        private DataTable actCycleTime;
         private DataTable operationCode;
-        private DataTable summt;
         private DataTable nodist;
         private DataTable noppa;
-        private DataTable atct;
-        private DataTable GCTime;
-        private DataTable maxcycle;
         private decimal styleCPU;
         private decimal takt1;
         private decimal takt2;
@@ -45,12 +40,7 @@ namespace Sci.Production.IE
         private decimal totalGSD1;
         private decimal totalGSD2;
         private bool change = false;
-        private DataTable summt2;
-        private DataTable actCycleTime2;
-        private DataTable GCTime2;
-        private DataTable atct2;
         private DataTable nodist2;
-        private DataTable maxcycle2;
 
         /// <summary>
         /// P03_Print
@@ -201,7 +191,7 @@ order by ld.No,ld.GroupKey", MyUtility.Convert.GetString(this.masterData["ID"]))
             if (!this.change)
             {
                 sqlCmd = string.Format(
-                    @"select No,CT = COUNT(1)
+                    @"select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
 from LineMapping_Detail ld WITH (NOLOCK) 
 where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
 GROUP BY NO
@@ -212,367 +202,11 @@ order by no", MyUtility.Convert.GetString(this.masterData["ID"]));
                     DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
                     return failResult;
                 }
-
-
-                sqlCmd = string.Format(
-                    @"
-select MachineTypeID,sumct = sum(ct)
-from(
-	SELECT No,MachineTypeID,ct=count(1)
-	FROM(
-		select ld.No,ld.MachineTypeID,ThreadColor=isnull(ThreadColor,''),Attachment=isnull(Attachment,''),Template=isnull(Template,'')
-		from LineMapping_Detail ld WITH (NOLOCK) 
-		left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-		where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
-		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-	)A
-	group by No,MachineTypeID
-)x
-group by MachineTypeID", MyUtility.Convert.GetString(this.masterData["ID"]));
-                result = DBProxy.Current.Select(null, sqlCmd, out this.summt);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                sqlCmd = string.Format(
-                    @"
-select * from(
-select a_ct = count(a.no)
-from(
-	select Attachment=isnull(Attachment,'')
-	from LineMapping_Detail ld WITH (NOLOCK) 
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (isnull(Attachment,'') !='' or isnull(Template,'') !='')
-	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-)x
-outer apply(select * from SplitString(Attachment,','))a
-)z,(
-select t_ct = count(t.no)
-from(
-	select Template=isnull(Template,'')
-	from LineMapping_Detail ld WITH (NOLOCK) 
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (isnull(Attachment,'') !='' or isnull(Template,'') !='')
-	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-)x
-outer apply(select * from SplitString(Template,','))t)z2", MyUtility.Convert.GetString(this.masterData["ID"]));
-                result = DBProxy.Current.Select(null, sqlCmd, out this.atct);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                // 圖1用
-                sqlCmd = string.Format(
-                    @"
-select distinct No,ActCycle,{1} as TaktTime
-from LineMapping_Detail ld WITH (NOLOCK) 
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-order by No",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    MyUtility.Convert.GetString(this.masterData["TaktTime"]));
-                result = DBProxy.Current.Select(null, sqlCmd, out this.actCycleTime);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query cycle time data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                // 圖2用
-                sqlCmd = string.Format(
-                    @"
-select distinct No,TotalGSD,TotalCycle
-from LineMapping_Detail ld WITH (NOLOCK) 
-where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-order by No",
-                    MyUtility.Convert.GetString(this.masterData["ID"]));
-                result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query cycle time data fail\r\n" + result.ToString());
-                    return failResult;
-                }
             }
             #endregion
             #region 第二頁 有分頁
             else
             {
-                #region MACHINE INVENTORY
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
-	and no <= {1}
-)x
-group by ID
-
-select MachineTypeID,sumct = sum(ct)
-from(
-	SELECT No,MachineTypeID,ct=count(1)
-	FROM(
-		select ld.No,ld.MachineTypeID,ThreadColor=isnull(ThreadColor,''),Attachment=isnull(Attachment,''),Template=isnull(Template,'')
-		from LineMapping_Detail ld WITH (NOLOCK) 
-		left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-		inner join #tmp t on ld.ID = t.ID
-		where  (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null) and no between t.minno and t.maxno
-		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-	)A
-	group by No,MachineTypeID
-)x
-group by MachineTypeID",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.summt);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
-	and no > {1}
-)x
-group by ID
-
-select MachineTypeID,sumct = sum(ct)
-from(
-	SELECT No,MachineTypeID,ct=count(1)
-	FROM(
-		select ld.No,ld.MachineTypeID,ThreadColor=isnull(ThreadColor,''),Attachment=isnull(Attachment,''),Template=isnull(Template,'')
-		from LineMapping_Detail ld WITH (NOLOCK) 
-		left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-		inner join #tmp t on ld.ID = t.ID
-		where  (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null) and no between t.minno and t.maxno
-		GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-	)A
-	group by No,MachineTypeID
-)x
-group by MachineTypeID",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.summt2);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-                #endregion
-
-                #region 長條圖資料
-
-                // 圖1用
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	and no <= {1}
-)x
-group by ID
-
-select distinct No,ActCycle
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
-order by No",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.actCycleTime);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query cycle time data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) 
-	and no > {1}
-)x
-group by ID
-
-select distinct No,ActCycle
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by No",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.actCycleTime2);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query cycle time data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                // 圖2用
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	and no <= {1}
-)x
-group by ID
-
-select distinct No,TotalGSD,TotalCycle
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by No",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query cycle time data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	and no > {1}
-)x
-group by ID
-
-select distinct No,TotalGSD,TotalCycle
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-order by No",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.GCTime2);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query cycle time data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-                #endregion
-
-                #region MACHINE
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
-	and no <= {1}
-)x
-group by ID
-
-select*from(
-select a_ct = count(a.no)
-from(
-	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
-	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join #tmp t on ld.ID = t.ID
-	where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
-	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-)x
-outer apply(select * from SplitString(Attachment,','))a
-)z,(
-select t_ct = count(t.no)
-from(
-	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
-	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join #tmp t on ld.ID = t.ID
-	where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
-	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-)x
-outer apply(select * from SplitString(Template,','))t)z2
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.atct);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
-	and no > {1}
-)x
-group by ID
-
-select*from(
-select a_ct = count(a.no)
-from(
-	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
-	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join #tmp t on ld.ID = t.ID
-	where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
-	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-)x
-outer apply(select * from SplitString(Attachment,','))a
-)z,(
-select t_ct = count(t.no)
-from(
-	select Attachment=isnull(Attachment,''),Template=isnull(Template,'')
-	from LineMapping_Detail ld WITH (NOLOCK) 
-	inner join #tmp t on ld.ID = t.ID
-	where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
-	and (isnull(Attachment,'') !='' or isnull(Template,'') !='') 
-	GROUP BY ld.No,ld.MachineTypeID,isnull(ThreadColor,''),isnull(Attachment,''),isnull(Template,'')
-)x
-outer apply(select * from SplitString(Template,','))t)z2
-",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.atct2);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-                #endregion
-
                 #region
                 sqlCmd = string.Format(
                     @"
@@ -586,7 +220,7 @@ from(
 )x
 group by ID
 
-select No,CT = COUNT(1)
+select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno
@@ -615,7 +249,7 @@ from(
 )x
 group by ID
 
-select No,CT = COUNT(1)
+select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
 where  (IsPPa = 0 or IsPPa is null) and no between t.minno and t.maxno
@@ -626,59 +260,6 @@ order by no
                     MyUtility.Convert.GetString(this.masterData["ID"]),
                     this.changp);
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-                #endregion
-
-                #region maxHighCycle
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null)
-	and no <= {1}
-)x
-group by ID
-
-select maxHighCycle = max(TotalCycle)
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.maxcycle);
-                if (!result)
-                {
-                    DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
-                    return failResult;
-                }
-
-                sqlCmd = string.Format(
-                    @"
-select id, minno = min(no), maxno = max(no)
-into #tmp
-from(
-	select distinct ld.ID,no
-	from LineMapping_Detail ld WITH (NOLOCK)
-	left join MachineType m WITH (NOLOCK) on m.id =  MachineTypeID
-	where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and (m.MachineGroupID != '' or m.MachineGroupID is null)
-	and no > {1}
-)x
-group by ID
-
-select maxHighCycle = max(TotalCycle)
-from LineMapping_Detail ld WITH (NOLOCK) 
-inner join #tmp t on ld.ID = t.ID
-where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
-                    MyUtility.Convert.GetString(this.masterData["ID"]),
-                    this.changp);
-                result = DBProxy.Current.Select(null, sqlCmd, out this.maxcycle2);
                 if (!result)
                 {
                     DualResult failResult = new DualResult(false, "Query print data fail\r\n" + result.ToString());
@@ -840,10 +421,6 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
             worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,7,0)),\"\",VLOOKUP(D{rownum},Operation,7,0))";
             worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,7,0)),\"\",VLOOKUP(O{rownum},Operation,7,0))";
 
-            // Act Cycle Time
-            worksheet.Cells[rownum, 11] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,8,0)),\"\",VLOOKUP(D{rownum},Operation,8,0))";
-            worksheet.Cells[rownum, 14] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,8,0)),\"\",VLOOKUP(O{rownum},Operation,8,0))";
-
             // Machine Type
             worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",IF(VLOOKUP(D{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0)))";
             worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,3,0)),\"\",IF(VLOOKUP(O{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum},Operation,3,0)))";
@@ -870,8 +447,8 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
             worksheet.Cells[9, 6] = this.styleCPU;
 
             // 右下簽名位置
-            worksheet.Cells[28, 16] = DateTime.Now.ToString("d");
-            worksheet.Cells[31, 16] = Sci.Env.User.UserName;
+            worksheet.Cells[29, 16] = DateTime.Now.ToString("d");
+            worksheet.Cells[32, 16] = Sci.Env.User.UserName;
 
             // 左下表頭資料
             worksheet.Cells[56, 4] = this.masterData["Version"];
@@ -1123,6 +700,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                     {
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
+                        worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1149,7 +727,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                     {
                         nocolumn = 13;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
-
+                        worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1252,7 +830,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                     {
                         nocolumn = 10;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
-
+                        worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                         int ridx = 2;
                         string machinetype = string.Empty;
@@ -1276,7 +854,7 @@ where  (IsPPa = 0 or IsPPa is null)  and no between t.minno and t.maxno",
                     {
                         nocolumn = 13;
                         worksheet.Cells[norow, nocolumn] = MyUtility.Convert.GetString(nodr["No"]);
-
+                        worksheet.Cells[norow, nocolumn + 1] = MyUtility.Convert.GetString(nodr["ActCycle"]);
                         DataRow[] nodrs = this.operationCode.Select(string.Format("no = '{0}'", MyUtility.Convert.GetString(nodr["No"])));
                         int ridx = 2;
                         string machinetype = string.Empty;
