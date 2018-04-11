@@ -547,6 +547,8 @@ select  a.*
                             for xml path('')
                           ),1,1,'')
         , sortCTNNo = TRY_Convert(int , a.CTNStartNo)
+        , sciDelivery = min(o.sciDelivery) over()
+        , kpileta = min(o.kpileta) over()
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID 
@@ -1602,9 +1604,49 @@ where   p.ID = '{0}'
                     Marshal.ReleaseComObject(rng);
                 }
             }
-
-            //填Remarks
+            
+            //Carton Dimension:
             excelRow++;
+            StringBuilder ctnDimension = new StringBuilder();
+            foreach (DataRow dr in CtnDim.Rows)
+            {
+                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}, {4}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"]), MyUtility.Convert.GetString(dr["CTN"])));
+            }
+
+            foreach (DataRow dr in QtyCtn.Rows)
+            {
+                if (!MyUtility.Check.Empty(dr["Article"]))
+                {
+                    ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
+                }
+            }
+            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
+            string[] cdsab = cds.Split('\r');
+            int cdsi = 0;
+            int cdsl = 150;
+            foreach (string cdsc in cdsab)
+            {
+                if (cdsc.Length > cdsl)
+                {
+                    int h = cdsc.Length / cdsl;
+                    for (int i = 0; i < h; i++)
+                    {
+                        cdsi += 1;
+                    }
+                }
+            }
+            cdsi += cdsab.Length - 1;
+            
+            for (int i = 1; i <= cdsi; i++)
+            {
+                Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
+                rangeRowCD.RowHeight = 19.5 * (i + 1);
+                Marshal.ReleaseComObject(rangeRowCD);
+            }
+            worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
+            
+            //填Remarks
+            excelRow = excelRow + 2;
             worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(PacklistData["Remark"]);
             //填Special Instruction
             //先取得Special Instruction總共有幾行
@@ -1667,46 +1709,8 @@ where   p.ID = '{0}'
             //因為SpecialInstruction中有參雜=等特殊字元，在開頭加單引號強迫轉為字串避免<Exception from HRESULT: 0x800A03EC>問題發生
             worksheet.Cells[excelRow, 3] = "'" + SpecialInstruction;
 
-            //Carton Dimension:
             excelRow = excelRow + (dataRow > 2 ? dataRow - 1 : 2);
             
-            StringBuilder ctnDimension = new StringBuilder();
-            foreach (DataRow dr in CtnDim.Rows)
-            {
-                ctnDimension.Append(string.Format("{0} / {1} / {2} {3}, {4}  \r\n", MyUtility.Convert.GetString(dr["RefNo"]), MyUtility.Convert.GetString(dr["Description"]), MyUtility.Convert.GetString(dr["Dimension"]), MyUtility.Convert.GetString(dr["CtnUnit"]), MyUtility.Convert.GetString(dr["CTN"])));
-            }
-
-            foreach (DataRow dr in QtyCtn.Rows)
-            {
-                if (!MyUtility.Check.Empty(dr["Article"]))
-                {
-                    ctnDimension.Append(string.Format("{0} -> {1} / {2}, ", MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"])));
-                }
-            }
-            string cds = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
-            string[] cdsab = cds.Split('\r');
-            int cdsi = 0;
-            int cdsl = 150;
-            foreach (string cdsc in cdsab)
-            {
-                if (cdsc.Length > cdsl)
-                {
-                    int h = cdsc.Length / cdsl;
-                    for (int i = 0; i < h; i++)
-                    {
-                        cdsi += 1;
-                    }
-                }
-            }
-            cdsi += cdsab.Length - 1;
-            for (int i = 1; i <= cdsi; i++)
-            {
-                Microsoft.Office.Interop.Excel.Range rangeRowCD = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[excelRow, System.Type.Missing];
-                rangeRowCD.RowHeight = 19.5 * (i + 1);
-                Marshal.ReleaseComObject(rangeRowCD);
-            }    
-            worksheet.Cells[excelRow, 3] = ctnDimension.Length > 0 ? ctnDimension.ToString().Substring(0, ctnDimension.ToString().Length - 2) : "";
-
             //貼圖
             int picCount = 0;
             excelRow = excelRow + 5;

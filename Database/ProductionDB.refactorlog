@@ -189,4 +189,46 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="bfb63dca-75ab-4547-8313-ffc4eb266cad" ChangeDateTime="03/22/2018 02:01:33">
+    <Property Name="ElementName" Value="[dbo].[SampleGarmentTest].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SampleGarmentTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d7956817-6cc1-4579-a43c-ace26454f451" ChangeDateTime="03/22/2018 02:07:58">
+    <Property Name="ElementName" Value="[dbo].[SampleGarmentTest_Detail].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SampleGarmentTest_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ddff2311-23af-4d39-819f-06eb53b0d6a5" ChangeDateTime="03/29/2018 03:57:02">
+    <Property Name="ElementName" Value="[dbo].[SampleGarmentTest].[ReceiveDate]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SampleGarmentTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ReceivedDate" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9babb38e-6061-4b5c-9b93-dba47bf99d90" ChangeDateTime="03/29/2018 03:58:25">
+    <Property Name="ElementName" Value="[dbo].[SampleGarmentTest_Detail].[ReceiveDate]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SampleGarmentTest_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ReceivedDate" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a45194ad-b7eb-4aed-9969-f334c79eacd4" ChangeDateTime="03/29/2018 08:57:53">
+    <Property Name="ElementName" Value="[dbo].[SampleGarmentTest].[ReleasedDate ]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SampleGarmentTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ReleasedDate" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="aa1f3557-2e58-45c6-a0fc-8924dd737629" ChangeDateTime="03/30/2018 03:17:27">
+    <Property Name="ElementName" Value="[dbo].[Technician].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Technician]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
 </Operations>

@@ -264,6 +264,9 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 this.gridicon.Insert.Enabled = true;
                 this.gridicon.Remove.Enabled = true;
             }
+
+            this.datesciDelivery.Value = MyUtility.Convert.GetDate(this.DetailDatas[0]["sciDelivery"]);
+            this.datekpileta.Value = MyUtility.Convert.GetDate(this.DetailDatas[0]["kpileta"]);
         }
 
         // 檢查OrderID+Seq不可以重複建立
