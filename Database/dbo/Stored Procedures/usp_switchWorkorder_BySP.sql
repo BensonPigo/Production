@@ -59,9 +59,9 @@ outer apply
 	(
 		select cts = count(1) 
 		from PO_Supp_Detail pin with(nolock) 
-		where id=@POID and pin.Scirefno=ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and pin.seq1 like '7%' and pin.OutputSeq2 = ''
+		where id=@POID and pin.Scirefno=ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and pin.seq1 like '7%' and pin.OutputSeq2 != ''
 	)counts2
-	where id = @POID and psd.Scirefno = ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 = ''
+	where id = @POID and psd.Scirefno = ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 != ''
 )s2
 outer apply(select top 1 A=0 from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=oe.Ukey)hasforArticle--排序用,有ForArticle排前
 Where oe.id = @Cuttingid and oe.CuttingPiece = 0--測試用--and colorid = 'BLK'and FabricCombo = 'FA'and MarkerName = 'MAB9'
