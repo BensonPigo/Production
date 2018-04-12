@@ -245,6 +245,7 @@
             this.comboTeam.IsSupportUnselect = true;
             this.comboTeam.Location = new System.Drawing.Point(48, 85);
             this.comboTeam.Name = "comboTeam";
+            this.comboTeam.OldText = "";
             this.comboTeam.Size = new System.Drawing.Size(57, 24);
             this.comboTeam.TabIndex = 3;
             // 
@@ -311,7 +312,7 @@
             // 
             this.numWHours.BackColor = System.Drawing.Color.White;
             this.numWHours.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WorkHour", true));
-            this.numWHours.DecimalPlaces = 1;
+            this.numWHours.DecimalPlaces = 2;
             this.numWHours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numWHours.Location = new System.Drawing.Point(331, 31);
             this.numWHours.Maximum = new decimal(new int[] {
@@ -338,7 +339,7 @@
             // 
             this.numManhours.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numManhours.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ManHour", true));
-            this.numManhours.DecimalPlaces = 2;
+            this.numManhours.DecimalPlaces = 3;
             this.numManhours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numManhours.IsSupportEditMode = false;
             this.numManhours.Location = new System.Drawing.Point(331, 58);
@@ -544,6 +545,7 @@
             this.txtdropdownlistShift.IsSupportUnselect = true;
             this.txtdropdownlistShift.Location = new System.Drawing.Point(49, 58);
             this.txtdropdownlistShift.Name = "txtdropdownlistShift";
+            this.txtdropdownlistShift.OldText = "";
             this.txtdropdownlistShift.Size = new System.Drawing.Size(121, 24);
             this.txtdropdownlistShift.TabIndex = 2;
             this.txtdropdownlistShift.Type = "SewingOutput_Shift";

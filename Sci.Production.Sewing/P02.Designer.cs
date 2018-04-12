@@ -187,7 +187,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(5, 4);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(52, 23);
@@ -196,7 +195,6 @@
             // 
             // labelLine
             // 
-            this.labelLine.Lines = 0;
             this.labelLine.Location = new System.Drawing.Point(5, 31);
             this.labelLine.Name = "labelLine";
             this.labelLine.Size = new System.Drawing.Size(52, 23);
@@ -205,7 +203,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(5, 58);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(52, 23);
@@ -233,7 +230,6 @@
             // 
             // labelManpower
             // 
-            this.labelManpower.Lines = 0;
             this.labelManpower.Location = new System.Drawing.Point(226, 4);
             this.labelManpower.Name = "labelManpower";
             this.labelManpower.Size = new System.Drawing.Size(113, 23);
@@ -242,7 +238,6 @@
             // 
             // labelWHours
             // 
-            this.labelWHours.Lines = 0;
             this.labelWHours.Location = new System.Drawing.Point(226, 31);
             this.labelWHours.Name = "labelWHours";
             this.labelWHours.Size = new System.Drawing.Size(113, 23);
@@ -251,7 +246,6 @@
             // 
             // labelManhours
             // 
-            this.labelManhours.Lines = 0;
             this.labelManhours.Location = new System.Drawing.Point(226, 58);
             this.labelManhours.Name = "labelManhours";
             this.labelManhours.Size = new System.Drawing.Size(113, 23);
@@ -260,7 +254,6 @@
             // 
             // labelCostingTMS
             // 
-            this.labelCostingTMS.Lines = 0;
             this.labelCostingTMS.Location = new System.Drawing.Point(226, 85);
             this.labelCostingTMS.Name = "labelCostingTMS";
             this.labelCostingTMS.Size = new System.Drawing.Size(113, 23);
@@ -303,7 +296,7 @@
             // 
             this.numWHours.BackColor = System.Drawing.Color.White;
             this.numWHours.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "WorkHour", true));
-            this.numWHours.DecimalPlaces = 1;
+            this.numWHours.DecimalPlaces = 2;
             this.numWHours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numWHours.Location = new System.Drawing.Point(343, 31);
             this.numWHours.Maximum = new decimal(new int[] {
@@ -335,7 +328,7 @@
             // 
             this.numManhours.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numManhours.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ManHour", true));
-            this.numManhours.DecimalPlaces = 2;
+            this.numManhours.DecimalPlaces = 3;
             this.numManhours.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numManhours.IsSupportEditMode = false;
             this.numManhours.Location = new System.Drawing.Point(343, 58);
@@ -380,7 +373,6 @@
             // 
             // labelQAOutput
             // 
-            this.labelQAOutput.Lines = 0;
             this.labelQAOutput.Location = new System.Drawing.Point(462, 4);
             this.labelQAOutput.Name = "labelQAOutput";
             this.labelQAOutput.Size = new System.Drawing.Size(92, 23);
@@ -389,7 +381,6 @@
             // 
             // labelDefectOutput
             // 
-            this.labelDefectOutput.Lines = 0;
             this.labelDefectOutput.Location = new System.Drawing.Point(462, 31);
             this.labelDefectOutput.Name = "labelDefectOutput";
             this.labelDefectOutput.Size = new System.Drawing.Size(92, 23);
@@ -398,7 +389,6 @@
             // 
             // labelInLineOutput
             // 
-            this.labelInLineOutput.Lines = 0;
             this.labelInLineOutput.Location = new System.Drawing.Point(462, 58);
             this.labelInLineOutput.Name = "labelInLineOutput";
             this.labelInLineOutput.Size = new System.Drawing.Size(92, 23);
@@ -407,7 +397,6 @@
             // 
             // labelEFF
             // 
-            this.labelEFF.Lines = 0;
             this.labelEFF.Location = new System.Drawing.Point(462, 85);
             this.labelEFF.Name = "labelEFF";
             this.labelEFF.Size = new System.Drawing.Size(92, 23);
@@ -521,7 +510,6 @@
             // label12
             // 
             this.label12.BackColor = System.Drawing.Color.Transparent;
-            this.label12.Lines = 0;
             this.label12.Location = new System.Drawing.Point(622, 85);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(16, 23);
