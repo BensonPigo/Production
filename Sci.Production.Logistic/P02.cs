@@ -372,11 +372,6 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
                 }
             }
 
-            foreach (DataRow dr in selectedData)
-            {
-                dr["ClogLocationId"] = this.txtcloglocationLocationNo.Text.Trim();
-            }
-
             IList<string> insertCmds = new List<string>();
             IList<string> updateCmds = new List<string>();
 
