@@ -1700,7 +1700,7 @@ drop table #Child, #updateChild";
         // 計算ManHour
         private void CalculateManHour()
         {
-            this.CurrentMaintain["ManHour"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Manpower"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]), 2);
+            this.CurrentMaintain["ManHour"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Manpower"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]), 3);
         }
 
         // Share < working hours > to SP#
