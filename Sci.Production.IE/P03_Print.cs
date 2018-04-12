@@ -156,13 +156,13 @@ where ld.ID = {0} and (IsPPa = 0 or IsPPa is null) and no>{1}
             #region 第一頁
             sqlCmd = string.Format(
                 @"
-select a.GroupKey,a.OperationID,a.Annotation,a.GSD,MachineTypeID = iif(m.MachineGroupID = '','',a.MachineTypeID),a.Attachment,a.Template
+select a.GroupKey,a.OperationID,a.Annotation,a.GSD,MachineTypeID = iif(m.MachineGroupID = '','',a.MachineTypeID),a.Attachment,a.Template,a.ThreadColor
 ,isnull(o.DescEN,'') as DescEN,rn = ROW_NUMBER() over(order by iif(IsPPa=1,1,0) ,a.No),a.Cycle,a.ActCycle,IsPPa,a.No
 from LineMapping_Detail a 
 left join Operation o WITH (NOLOCK) on o.ID = a.OperationID
 left join MachineType m WITH (NOLOCK) on m.id =  a.MachineTypeID
 where a.ID = {0}
-order by iif(IsPPa=1,1,0) ,a.No", MyUtility.Convert.GetString(this.masterData["ID"]));
+order by iif(IsPPa=1,1,0) ,a.No,iif(m.MachineGroupID = '','',a.MachineTypeID),a.Attachment,a.Template,a.ThreadColor", MyUtility.Convert.GetString(this.masterData["ID"]));
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.operationCode);
             if (!result)
             {
@@ -305,11 +305,11 @@ order by no
             worksheet.Cells[2, 2] = style + " " + season + " " + brand + " " + combotype;
 
             // excel 範圍別名宣告 公式使用
-            excel.ActiveWorkbook.Names.Add("Operation", worksheet.Range["A6", "I" + this.operationCode.Rows.Count + 5]);
+            excel.ActiveWorkbook.Names.Add("Operation", worksheet.Range["A6", "J" + this.operationCode.Rows.Count + 5]);
 
             // 填Operation
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 9];
+            object[,] objArray = new object[1, 10];
             foreach (DataRow dr in this.operationCode.Rows)
             {
                 objArray[0, 0] = dr["rn"];
@@ -319,9 +319,10 @@ order by no
                 objArray[0, 4] = dr["Template"];
                 objArray[0, 5] = dr["GSD"];
                 objArray[0, 6] = dr["Cycle"];
-                objArray[0, 7] = dr["ActCycle"];
+                objArray[0, 7] = dr["ThreadColor"];
                 objArray[0, 8] = dr["OperationID"];
-                worksheet.Range[string.Format("A{0}:I{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 9] = $"=CONCATENATE(C{intRowsStart},\" \",D{intRowsStart},\" \",E{intRowsStart},\" \",H{intRowsStart})";
+                worksheet.Range[string.Format("A{0}:J{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
@@ -422,16 +423,16 @@ order by no
             worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,7,0)),\"\",VLOOKUP(O{rownum},Operation,7,0))";
 
             // Machine Type
-            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",IF(VLOOKUP(D{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum - 1},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0)))";
-            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,3,0)),\"\",IF(VLOOKUP(O{rownum},Operation,3,0)=IF(ISNA(VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum - 1},Operation,3,0)),\"\",VLOOKUP(O{rownum},Operation,3,0)))";
+            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,10,0)),\"\",IF(VLOOKUP(D{rownum},Operation,10,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,10,0)),\"\",VLOOKUP(D{rownum - 1},Operation,10,0)),\"\",VLOOKUP(D{rownum},Operation,10,0)))";
+            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,10,0)),\"\",IF(VLOOKUP(O{rownum},Operation,10,0)=IF(ISNA(VLOOKUP(O{rownum - 1},Operation,10,0)),\"\",VLOOKUP(O{rownum - 1},Operation,10,0)),\"\",VLOOKUP(O{rownum},Operation,10,0)))";
 
             // Attachment
-            worksheet.Cells[rownum, 26] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,4,0)),\"\",IF(VLOOKUP(D{rownum},Operation,4,0)=\"\",\"\",\"Attachment\"))";
-            worksheet.Cells[rownum, 17] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,4,0)),\"\",IF(VLOOKUP(O{rownum},Operation,4,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 26] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,4,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,4,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 17] = $"=IF(OR(ISNA(VLOOKUP(O{rownum},Operation,4,0)),M{rownum}=\"\"),\"\",IF(VLOOKUP(O{rownum},Operation,4,0)=\"\",\"\",\"Attachment\"))";
 
             // Template
-            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,5,0)),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
-            worksheet.Cells[rownum, 18] = $"=IF(ISNA(VLOOKUP(O{rownum},Operation,5,0)),\"\",IF(VLOOKUP(O{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 27] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,5,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 18] = $"=IF(OR(ISNA(VLOOKUP(O{rownum},Operation,5,0)),M{rownum}=\"\"),\"\",IF(VLOOKUP(O{rownum},Operation,5,0)=\"\",\"\",\"Template\"))";
         }
 
         private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators)
@@ -760,12 +761,6 @@ order by no
                         maxct = MyUtility.Convert.GetInt(nodist.Rows[l]["ct"]) > maxct ? MyUtility.Convert.GetInt(nodist.Rows[l]["ct"]) : maxct;
                     }
 
-                    // 將公式填入對應預設的3個格子中
-                    for (int q = 1; q <= 3; q++)
-                    {
-                        this.AddLineMappingFormula(worksheet, norow + q);
-                    }
-
                     ct++;
                     if (ct == 2)
                     {
@@ -776,13 +771,16 @@ order by no
                             worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
                             worksheet.get_Range(string.Format("P{0}:R{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
 
-                            // 將公式填入增加的格子
-                            this.AddLineMappingFormula(worksheet, norow + i);
-
                             if (indx > 2)
                             {
                                 addct++;
                             }
+                        }
+
+                        // 將公式填入對應的格子中
+                        for (int q = 1; q <= maxct; q++)
+                        {
+                            this.AddLineMappingFormula(worksheet, norow + q + 1);
                         }
 
                         norow = norow - 5;
