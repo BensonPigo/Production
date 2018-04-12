@@ -567,12 +567,12 @@ inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
 where gt.id = @ID and sl.Location !='B'
 group by sl.Location
 order by sl.Location desc
-CREATE TABLE #type1([type] [varchar](20))
-insert into #type1 (type)values('Chest Width')
-insert into #type1 (type)values('Sleeve Width')
-insert into #type1 (type)values('Sleeve Length')
-insert into #type1 (type)values('Back Length')
-insert into #type1 (type)values('Hem Opening')
+CREATE TABLE #type1([type] [varchar](20),seq numeric(6,0))
+insert into #type1 values('Chest Width',1)
+insert into #type1 values('Sleeve Width',2)
+insert into #type1 values('Sleeve Length',3)
+insert into #type1 values('Back Length',4)
+insert into #type1 values('Hem Opening',5)
 ---
 select distinct sl.Location
 into #Location2
@@ -580,12 +580,12 @@ from GarmentTest gt with(nolock)
 inner join style s with(nolock) on s.id = gt.StyleID
 inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
 where gt.id = @ID and sl.Location ='B'
-CREATE TABLE #type2([type] [varchar](20))
-insert into #type2 (type,seq)values('Waistband (relax)',1)
-insert into #type2 (type,seq)values('Hip Width',2)
-insert into #type2 (type,seq)values('Thigh Width',3)
-insert into #type2 (type,seq)values('Side Seam',4)
-insert into #type2 (type,seq)values('Leg Opening',5)
+CREATE TABLE #type2([type] [varchar](20),seq numeric(6,0))
+insert into #type2 values('Waistband (relax)',1)
+insert into #type2 values('Hip Width',2)
+insert into #type2 values('Thigh Width',3)
+insert into #type2 values('Side Seam',4)
+insert into #type2 values('Leg Opening',5)
 INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
 select @ID,@NO,* from #Location1,#type1
 INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
