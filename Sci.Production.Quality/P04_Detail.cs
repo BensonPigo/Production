@@ -348,6 +348,11 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
 
         private void btnPDF_Click(object sender, EventArgs e)
         {
+            if(dtApperance.Rows.Count == 0 || dtShrinkage.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Datas not found!");
+                return;
+            }
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P04_GarmentWash.xltx");
             objApp.DisplayAlerts = false; // 設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
