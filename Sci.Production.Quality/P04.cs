@@ -417,7 +417,7 @@ namespace Sci.Production.Quality
                 if (e.Button != System.Windows.Forms.MouseButtons.Right) return;
 
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                string sql = $@"select sizecode from Order_Qty where id = '{this.CurrentMaintain["orderid"]}'";
+                string sql = $@"select distinct(sizecode) from Order_Qty where id = '{this.CurrentMaintain["orderid"]}'";
                 //DataTable sizecodedt;
                 //DualResult sizecoderesult = DBProxy.Current.Select(null, sql, out sizecodedt);
                 SelectItem item = new SelectItem(sql, "10,10", dr["SizeCode"].ToString());
