@@ -99,7 +99,7 @@ namespace Sci.Production.Quality
             comboTemperature.Text = MyUtility.Convert.GetString(Deatilrow["Temperature"]);
             comboMachineModel.Text = MyUtility.Convert.GetString(Deatilrow["Machine"]);
             txtFibreComposition.Text = MyUtility.Convert.GetString(Deatilrow["Composition"]);
-            comboNeck.Text = MyUtility.Convert.GetString(Deatilrow["Neck"]);
+            comboNeck.Text = MyUtility.Convert.GetBool(Deatilrow["Neck"])?"YES":"No";
             comboResult.Text = MyUtility.Convert.GetString(Deatilrow["Result"])=="P"?"Pass":"Fail";
         }
 
@@ -115,7 +115,7 @@ namespace Sci.Production.Quality
                                when Location='B' then 'BOTTOM' end
       ,[Type]      ,[BeforeWash]      ,[SizeSpec]      ,[AfterWash1]      ,[Shrinkage1]      ,[AfterWash2]      ,[Shrinkage2]      ,[AfterWash3]      ,[Shrinkage3]
 from[GarmentTest_Detail_Shrinkage] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}
-order by seq";
+order by Location desc, seq";
             
             DBProxy.Current.Select(null, sqlShrinkage, out dtShrinkage);
             listControlBindingSource1.DataSource = null;
@@ -220,7 +220,7 @@ update GarmentTest_Detail set
     Machine =  '{comboMachineModel.Text}',
     HandWash =  '{rdbtnHand.Checked}',
     Composition =  '{txtFibreComposition.Text}',
-    Neck ='{comboMachineModel.Text.EqualString("Yes")}'
+    Neck ='{MyUtility.Convert.GetString(comboNeck.Text).EqualString("YES")}'
 where id = {Deatilrow["ID"]} and No = {Deatilrow["NO"]}
 ";
                 DualResult dr = DBProxy.Current.Execute(null, updateGarmentTest_Detail);
@@ -364,13 +364,13 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             worksheet.Cells[4, 10] = MyUtility.Convert.GetString(MasterRow["OrderID"]);
             worksheet.Cells[4, 12] = MyUtility.Convert.GetString(MasterRow["BrandID"]);
             worksheet.Cells[6, 4] = MyUtility.Convert.GetString(MasterRow["StyleID"]);
-            worksheet.Cells[6, 8] = MyUtility.GetValue.Lookup($"select CustPONo from Orders with(nolock) where id = '{MasterRow["OrderID"]}'");
-            worksheet.Cells[6, 10] = MyUtility.Convert.GetString(MasterRow["Article"]);
-            worksheet.Cells[7, 4] = MyUtility.GetValue.Lookup($"select StyleName from Style with(nolock) where id = '{MasterRow["Styleid"]}' and seasonid = '{MasterRow["seasonid"]}' and brandid = '{MasterRow["brandid"]}'");
-            worksheet.Cells[7, 8] = MyUtility.Convert.GetDecimal(numArriveQty.Value);
+            worksheet.Cells[7, 8] = MyUtility.GetValue.Lookup($"select CustPONo from Orders with(nolock) where id = '{MasterRow["OrderID"]}'");
+            worksheet.Cells[7, 4] = MyUtility.Convert.GetString(MasterRow["Article"]);
+            worksheet.Cells[6, 8] = MyUtility.GetValue.Lookup($"select StyleName from Style with(nolock) where id = '{MasterRow["Styleid"]}' and seasonid = '{MasterRow["seasonid"]}' and brandid = '{MasterRow["brandid"]}'");
+            worksheet.Cells[8, 8] = MyUtility.Convert.GetDecimal(numArriveQty.Value);
             if (!MyUtility.Check.Empty(Deatilrow["SendDate"]))
                 worksheet.Cells[8, 4] = MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Year + "/" + MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Month + "/" + MyUtility.Convert.GetDate(Deatilrow["SendDate"]).Value.Day;
-            worksheet.Cells[8, 8] = MyUtility.Convert.GetString(txtSize.Text);
+            worksheet.Cells[8, 10] = MyUtility.Convert.GetString(txtSize.Text);
 
             worksheet.Cells[11, 4] = rdbtnLine.Checked ? "V" : string.Empty;
             worksheet.Cells[12, 4] = rdbtnTumble.Checked ? "V" : string.Empty;
@@ -637,10 +637,10 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             if (dtShrinkage.Select("Location = 'OUTER'").Length > 0)
             {
 
-                worksheet.Cells[54, 4] = numTwisTingTop.Text + "%";
-                worksheet.Cells[54, 7] = numTopS1.Value;
-                worksheet.Cells[54, 9] = numTopS2.Value;
-                worksheet.Cells[54, 11] = numTopL.Value;
+                worksheet.Cells[54, 4] = numTwisTingOuter.Text + "%";
+                worksheet.Cells[54, 7] = numOuterS1.Value;
+                worksheet.Cells[54, 9] = numOuterS2.Value;
+                worksheet.Cells[54, 11] = numOuterL.Value;
             }
             else
             {
