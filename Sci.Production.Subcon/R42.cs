@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,12 +12,12 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
-    public partial class R42 : Sci.Win.Tems.PrintForm
+    public partial class R42 : Win.Tems.PrintForm
     {
         DataTable printData;
-
+        StringBuilder sqlCmd;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
-        DateTime?  dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
+        DateTime? dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -74,7 +75,7 @@ namespace Sci.Production.Subcon
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             #region sqlcmd
-            StringBuilder sqlCmd = new StringBuilder();
+            this.sqlCmd = new StringBuilder();
             sqlCmd.Append(@"Select distinct
             [Bundle#] = bt.BundleNo,
             [Cut Ref#] = b.CutRef,
@@ -126,7 +127,7 @@ namespace Sci.Production.Subcon
             {
                 sqlCmd.Append(string.Format(@" and (bt.SubprocessId = '{0}' or '{0}' = 'ALL') ", SubProcess));
             }
-            if (!MyUtility.Check.Empty(CutRef1)&&(!MyUtility.Check.Empty(CutRef1))) 
+            if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef1)))
             {
                 sqlCmd.Append(string.Format(@" and b.CutRef between '{0}' and '{1}'", CutRef1, CutRef2));
             }
@@ -136,20 +137,20 @@ namespace Sci.Production.Subcon
             }
             if (!MyUtility.Check.Empty(dateBundle1))
             {
-                sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'",Convert.ToDateTime(dateBundle1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateBundle2))
             {
-                sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'",Convert.ToDateTime(dateBundle2).ToString("d")));
+                sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateBundleTransDate1))
             {
-                sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'",Convert.ToDateTime(dateBundleTransDate1).ToString("d")));
+                sqlCmd.Append(string.Format(@" and bt.TransferDate >= '{0}'", Convert.ToDateTime(dateBundleTransDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateBundleTransDate2))
             {
                 // TransferDate 是 datetime, 直接用日期做判斷的話要加一天才不會漏掉最後一天的資料
-                sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'",Convert.ToDateTime(((DateTime)dateBundleTransDate2).AddDays(1)).ToString("d")));
+                sqlCmd.Append(string.Format(@" and bt.TransferDate <= '{0}'", Convert.ToDateTime(((DateTime)dateBundleTransDate2).AddDays(1)).ToString("d")));
             }
             if (!MyUtility.Check.Empty(M))
             {
@@ -161,11 +162,11 @@ namespace Sci.Production.Subcon
             }
             #endregion
 
-            sqlCmd.Append(@"order by [Bundle#],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size]");
+            string result_cnt_cmd = "select [resultcnt] = count(*) from  (" + sqlCmd.ToString() + ") resultCnt";
 
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
-     
-            
+            DualResult result = DBProxy.Current.Select(null, result_cnt_cmd, out printData);
+
+
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -173,18 +174,64 @@ namespace Sci.Production.Subcon
             }
             return Result.True;
         }
-        
+
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            SetCount(printData.Rows.Count);
-            if (printData.Rows.Count <= 0)
+            int data_cnt = MyUtility.Convert.GetInt(printData.Rows[0]["resultcnt"]);
+            SetCount(data_cnt);
+            if (data_cnt <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
+                printData.Clear();
+                printData.Dispose();
                 return false;
             }
+            
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", 1, false, null, objApp);// 將datatable copy to excel
+
+            //因為一次載入太多筆資料到DataTable 會造成程式佔用大量記憶體，改為每1萬筆載入一次並貼在excel上
+            #region 分段抓取資料填入excel
+            this.ShowLoadingText($"Data Loading , please wait …");
+            DataTable tmpDatas = new DataTable();
+            SqlConnection conn = null;
+            DBProxy.Current.OpenConnection(this.ConnectionName, out conn);
+            var cmd = new SqlCommand(sqlCmd.ToString(), conn);
+            cmd.CommandTimeout = 300;
+            var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
+            int loadCounts = 0;
+            using (conn)
+            using (reader)
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    tmpDatas.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
+                }
+
+                while (reader.Read())
+                {
+                  
+                    object[] items = new object[reader.FieldCount];
+                    reader.GetValues(items);
+                    tmpDatas.LoadDataRow(items, true);
+                    loadCounts++;
+                    if (loadCounts % 10000 == 0)
+                    {
+                        this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
+                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts - 9999, false, null, objApp);// 將datatable copy to excel
+                        this.DataTableClearAll(tmpDatas);
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            tmpDatas.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
+                        }
+                    }
+                }
+
+                MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts - (loadCounts % 10000) + 1, false, null, objApp);// 將datatable copy to excel
+                this.DataTableClearAll(tmpDatas);
+            }
+            this.HideLoadingText();
+            #endregion
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             #region Save & Show Excel
@@ -196,11 +243,21 @@ namespace Sci.Production.Subcon
             Marshal.ReleaseComObject(objSheets);    //釋放sheet
             Marshal.ReleaseComObject(objApp);          //釋放objApp
             Marshal.ReleaseComObject(workbook);
-
+            printData.Clear();
+            printData.Dispose();
             strExcelName.OpenFile();
             #endregion             
             return true;
         }
         #endregion
+        private void DataTableClearAll(DataTable target)
+        {
+            target.Rows.Clear();
+            target.Constraints.Clear();
+            target.Columns.Clear();
+            target.ExtendedProperties.Clear();
+            target.ChildRelations.Clear();
+            target.ParentRelations.Clear();
+        }
     }
 }
