@@ -55,6 +55,7 @@ namespace Sci.Production.Cutting
                 List<SqlParameter> pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
                 pars.Add(new SqlParameter("@CutRef", CurrentDataRow["cutref"].ToString()));
+                pars.Add(new SqlParameter("@POID", CurrentDataRow["POID"].ToString()));
                 if (checkExtendAllParts.Checked)
                     pars.Add(new SqlParameter("@extend", "1"));
                 else
@@ -73,7 +74,7 @@ from (
         ,b.SewingCell [Cell]
         ,b.Orderid [SP]
         ,c.StyleID [Style]
-        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
+        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 	    ,a.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
@@ -111,7 +112,7 @@ from (
         ,b.SewingCell [Cell]
         ,b.Orderid [SP]
         ,c.StyleID [Style]
-        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
+        ,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'') as [MarkerNo]
         , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 	    ,d.Parts [Parts]
         ,b.Article + '\' + b.Colorid [Color]
@@ -167,7 +168,7 @@ from (
 			,b.SewingCell [Cell]
 			,b.Orderid [SP]
 			,c.StyleID [Style]
-			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
+			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
             , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
@@ -198,7 +199,7 @@ from (
 			,b.SewingCell [Cell]
 			,b.Orderid [SP]
 			,c.StyleID [Style]
-			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef),'') as [MarkerNo]
+			,iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @poid),'') as [MarkerNo]
             , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
 			,a.Parts [Parts]
 			,b.Article + '\' + b.Colorid [Color]
@@ -440,7 +441,7 @@ order by x.[Bundle]");
             objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
             objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
             objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString() == "" ? ""
-                : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}'", CurrentDataRow["cutref"].ToString())));
+                : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}' and id = '{1}'", CurrentDataRow["cutref"].ToString(), CurrentDataRow["poid"].ToString())));
             objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
             objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
             objSheets.Cells[3, 11] = "ID: " + CurrentDataRow["ID"].ToString();
@@ -629,7 +630,7 @@ order by x.[Bundle]");
                     objSheets.Cells[3, 3] = "Cell: " + CurrentDataRow["SewingCell"].ToString();
                     objSheets.Cells[3, 4] = "Comb: " + CurrentDataRow["PatternPanel"].ToString();
                     objSheets.Cells[3, 5] = "Marker No: " + (CurrentDataRow["cutref"].ToString() == "" ? ""
-                        : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}'", CurrentDataRow["cutref"].ToString())));
+                        : MyUtility.GetValue.Lookup(string.Format(@"select top 1 MarkerNo from WorkOrder where  CutRef='{0}' and id = '{1}'", CurrentDataRow["cutref"].ToString(), CurrentDataRow["poid"].ToString())));
                     objSheets.Cells[3, 7] = "Item: " + CurrentDataRow["item"].ToString();
                     objSheets.Cells[3, 9] = "Article/Color: " + CurrentDataRow["article"].ToString() + "/ " + CurrentDataRow["colorid"].ToString();
                     objSheets.Cells[3, 11] = "ID: " + CurrentDataRow["ID"].ToString();
