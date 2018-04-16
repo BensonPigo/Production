@@ -341,6 +341,12 @@
     <Compile Include="P24.Designer.cs">
       <DependentUpon>P24.cs</DependentUpon>
     </Compile>
+    <Compile Include="P26.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P26.Designer.cs">
+      <DependentUpon>P26.cs</DependentUpon>
+    </Compile>
     <Compile Include="P30.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -579,6 +585,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P24.resx">
       <DependentUpon>P24.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P26.resx">
+      <DependentUpon>P26.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P30.resx">
       <DependentUpon>P30.cs</DependentUpon>
