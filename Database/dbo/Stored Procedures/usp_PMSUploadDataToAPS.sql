@@ -9,7 +9,7 @@ CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
 AS
 BEGIN
 declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varchar(20)='', @LoginPwd varchar(20)=''
-	--select�X�ؼ�table�Ҧb��m
+	--select出目標table所在位置
 	BEGIN
 		select TOP 1
 			@ServerName = [SQLServerName],
@@ -18,27 +18,27 @@ declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varch
 			@LoginPwd = [APSLoginPwd]
 		from [Production].[dbo].system
 	END
-
-	--�Y�䤤�@���ťիh�����榹�{��
+	
+	--若其中一欄位空白則不執行此程式
 	IF @ServerName ='' or @DatabaseName = '' or @loginId = '' or @LoginPwd = '' 
 	BEGIN
 		PRINT 'Connection information has not set' 
 		RETURN  
 	END
-
-	--�Y���s�b�h�s�W�s�u	
+	
+	--若不存在則新增連線	
 	IF NOT EXISTS (SELECT * FROM sys.servers WHERE name = @ServerName)
 	BEGIN
-		--�s�سs�u
+		--新建連線
 		EXEC master.dbo.sp_addlinkedserver @server = @ServerName, @srvproduct=N'SQL Server'
-		--�]�w�s�u�n�J��T
+		--設定連線登入資訊
 		EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname = @ServerName, @locallogin = NULL , @useself = N'False', @rmtuser = @loginId, @rmtpassword = @LoginPwd
 	END
 
-	BEGIN--4�����r��
---cmd,cmd2�s��Table
+	BEGIN
+--cmd,cmd2連的Table
 --...[dbo].[OPDWF510]
--------------------------------------------------�Ĥ@����-------------------------------------------------
+-------------------------------------------------第一部分-------------------------------------------------
 Declare @SerDbDboTb varchar(66)
 Set @SerDbDboTb = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[OPDWF510]')
 Declare @cmd varchar(max)
@@ -54,7 +54,7 @@ not exists(select 1 from [Production].dbo.Orders o where t.SONO collate Chinese_
 and(CONVERT(date, OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()) 
 or CONVERT(date, COTD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -60, GETDATE()))
 and DELF <> ''Y'''
--------------------------------------------------�ĤG����-------------------------------------------------
+-------------------------------------------------第二部分-------------------------------------------------
 set @cmd2 =N'
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp
 Select 
@@ -185,7 +185,7 @@ select [sRCID], iif(Junk = 0,''N'',''Y'') ,[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST
 ,[sPPRO],[sPRGM],UPDT = format(GETDATE(),''yyyy-MM-dd'')
 ,[sCUSY],[sCUSTOMERORDERNO]
 from #tmp2
-where C is null--�ؼШS��
+where C is null--目標沒有
 
 select * from #tmp2 where C is null
 '
