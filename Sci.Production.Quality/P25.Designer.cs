@@ -230,7 +230,7 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P25";
-            this.Text = "P25. Query For Clog Receive CFA Record";
+            this.Text = "P25. Query For CFA Receive Record";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
