@@ -480,7 +480,7 @@ where id = '{4}'"
         {
            
             if (CurrentMaintain["status"].ToString() == "Junked"){return false;}
-            if (Sci.Env.User.UserID!=CurrentMaintain["handle"].ToString()){return false;}
+            //if (Sci.Env.User.UserID!=CurrentMaintain["handle"].ToString()){return false;}//20170416 mark by dyson
 
             //如果已經列印過的，則提醒是否再次列印。
             string printdate = Sci.MyUtility.GetValue.Lookup(string.Format("select convert(varchar, printdate, 120) from localdebit WITH (NOLOCK) where ID ='{0}'", CurrentMaintain["id"]));

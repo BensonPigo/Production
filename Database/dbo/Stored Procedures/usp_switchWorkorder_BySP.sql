@@ -59,9 +59,9 @@ outer apply
 	(
 		select cts = count(1) 
 		from PO_Supp_Detail pin with(nolock) 
-		where id=@POID and pin.Scirefno=ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and pin.seq1 like '7%' and pin.OutputSeq2 = ''
+		where id=@POID and pin.Scirefno=ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and pin.seq1 like '7%' and pin.OutputSeq2 != ''
 	)counts2
-	where id = @POID and psd.Scirefno = ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 = ''
+	where id = @POID and psd.Scirefno = ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 != ''
 )s2
 outer apply(select top 1 A=0 from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=oe.Ukey)hasforArticle--排序用,有ForArticle排前
 Where oe.id = @Cuttingid and oe.CuttingPiece = 0--測試用--and colorid = 'BLK'and FabricCombo = 'FA'and MarkerName = 'MAB9'
@@ -170,7 +170,7 @@ Begin
 
 			if (@nextQty > 0 and @OldOrderID != @orderid)or(@nextQty > 0 and @OldOrderID = @orderid and @OldArticle!=@Article)
 			Begin
-				select @nextQtyC = min(i)from(select i= @ThisTotalCutQty union all select @nextQty)i
+				select @nextQtyC = min(i)from(select i= @ThisTotalCutQty union all select @nextQty union all select @mQty)i
 				insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article,@SizeCode,@nextQtyC,@Order_EachConsUkey,@colorid,@tmpUkey)
 				update #_tmpdisQty set [Size_orderqty] = [Size_orderqty] - @nextQtyC where identRowid = @identRowid--減去使用的
 				set @ThisTotalCutQty = @ThisTotalCutQty - @nextQtyC
