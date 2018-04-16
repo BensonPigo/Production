@@ -1310,9 +1310,9 @@ DECLARE @currentqty INT, --目前數量
 		@seq VARCHAR(6), --排序用編號
 		@remaindercount INT, --餘箱資料個數
 		@ttlshipqty INT, --總件數，寫入PackingList時使用
-		@ttlnw NUMERIC(8,3), --總淨重，寫入PackingList時使用
-		@ttlgw NUMERIC(8,3), --總毛重，寫入PackingList時使用
-		@ttlnnw NUMERIC(7,3), --總淨淨重，寫入PackingList時使用
+		@ttlnw NUMERIC(9,3), --總淨重，寫入PackingList時使用
+		@ttlgw NUMERIC(9,3), --總毛重，寫入PackingList時使用
+		@ttlnnw NUMERIC(9,3), --總淨淨重，寫入PackingList時使用
 		@firstsize VARCHAR(8), --第一筆的SizeCode
 		@minctn INT, --最少箱數
 		@_i INT --計算迴圈用
@@ -1634,9 +1634,9 @@ DECLARE @currentqty INT, --目前數量
 		@seq VARCHAR(6), --排序用編號
 		@remaindercount INT, --餘箱資料個數
 		@ttlshipqty INT, --總件數，寫入PackingList時使用
-		@ttlnw NUMERIC(8,3), --總淨重，寫入PackingList時使用
-		@ttlgw NUMERIC(8,3), --總毛重，寫入PackingList時使用
-		@ttlnnw NUMERIC(7,3) --總淨淨重，寫入PackingList時使用
+		@ttlnw NUMERIC(9,3), --總淨重，寫入PackingList時使用
+		@ttlgw NUMERIC(9,3), --總毛重，寫入PackingList時使用
+		@ttlnnw NUMERIC(9,3) --總淨淨重，寫入PackingList時使用
 SET @ctnno = @ctnstartno
 SET @seqcount = 0
 SET @remaindercount = 0
@@ -1884,9 +1884,9 @@ DECLARE @currentqty INT, --目前數量
 		@articleSeq VARCHAR(6), --排序用編號
 		@remaindercount INT, --餘箱資料個數
 		@ttlshipqty INT, --總件數，寫入PackingList時使用
-		@ttlnw NUMERIC(8,3), --總淨重，寫入PackingList時使用
-		@ttlgw NUMERIC(8,3), --總毛重，寫入PackingList時使用
-		@ttlnnw NUMERIC(7,3), --總淨淨重，寫入PackingList時使用
+		@ttlnw NUMERIC(9,3), --總淨重，寫入PackingList時使用
+		@ttlgw NUMERIC(9,3), --總毛重，寫入PackingList時使用
+		@ttlnnw NUMERIC(9,3), --總淨淨重，寫入PackingList時使用
 		@firstsize VARCHAR(8), --第一筆的SizeCode
 		@minctn INT, --最少箱數
 		@_i INT --計算迴圈用
@@ -2191,9 +2191,9 @@ DECLARE @currentqty INT, --目前數量
 		@seq VARCHAR(6), --排序用編號
 		@remaindercount INT, --餘箱資料個數
 		@ttlshipqty INT, --總件數，寫入PackingList時使用
-		@ttlnw NUMERIC(8,3), --總淨重，寫入PackingList時使用
-		@ttlgw NUMERIC(8,3), --總毛重，寫入PackingList時使用
-		@ttlnnw NUMERIC(7,3) --總淨淨重，寫入PackingList時使用
+		@ttlnw NUMERIC(9,3), --總淨重，寫入PackingList時使用
+		@ttlgw NUMERIC(9,3), --總毛重，寫入PackingList時使用
+		@ttlnnw NUMERIC(9,3) --總淨淨重，寫入PackingList時使用
 
 DECLARE @lastctn varchar(2)
 DECLARE @articlecnt INT
