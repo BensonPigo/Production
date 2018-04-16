@@ -41,22 +41,18 @@ namespace Sci.Production.Logistic
             this.gridTransferDate.IsEditingReadOnly = false;
             this.gridTransferDate.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridTransferDate)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-                .Date("TransferDate", header: "Receive Date", iseditable: false)
-                .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditable: false)
-                .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditable: false)
-                .Text("seq", header: "SEQ", width: Widths.Auto(), iseditable: false)
-                .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
-                .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditable: false)
-                .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditable: false)
-                .Text("Customize1", header: "Order#", width: Widths.Auto(), iseditable: false)
-                .Text("CustPONo", header: "PO No.", width: Widths.Auto(), iseditable: false)
-                .Text("Dest", header: "Destination", width: Widths.Auto(), iseditable: false)
-                .Text("FactoryID", header: "Factory", width: Widths.Auto(), iseditable: false)
-                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
-                .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.Auto(), iseditable: false)
-                .DateTime("AddDate", header: "Create Date", width: Widths.Auto(), iseditable: false)
-                .Text("AddName", header: "AddName", width: Widths.Auto(), iseditable: false);
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+            .Date("TransferDate", header: "Receive Date", iseditable: false)
+            .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditable: false)
+            .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
+            .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditable: false)
+            .Text("CustPONo", header: "PO No.", width: Widths.Auto(), iseditable: false)
+            .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditable: false)
+            .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditable: false)
+            .Text("Dest", header: "Destination", width: Widths.Auto(), iseditable: false)
+            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
+            .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditable: false)
+            .Text("AddName", header: "Received By", width: Widths.Auto(), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
