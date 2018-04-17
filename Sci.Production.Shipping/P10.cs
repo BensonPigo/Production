@@ -371,7 +371,7 @@ order by g.ID", masterID);
 
             string sqlCmd = string.Format(
                 @"select p.ShipPlanID,p.INVNo,g.BrandID,g.ShipModeID, (g.Forwarder+'-'+ls.Abb) as Forwarder, g.CYCFS,
-g.SONo,g.CutOffDate,isnull(fd.WhseNo,'') as WhseNo,
+g.SONo,g.CutOffDate,concat(fd.WhseNo,'-',fd.Address) as WhseNo,
 iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,
 g.TotalCTNQty,g.TotalCBM,
 (select isnull(sum(pd1.CTNQty),0) from PackingList p1 WITH (NOLOCK) ,PackingList_Detail pd1 WITH (NOLOCK) where p1.INVNo = g.ID and p1.ID = pd1.ID and pd1.ReceiveDate is not null) as ClogCTNQty,
