@@ -183,7 +183,7 @@ where 1=1
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             int num = 200000;
 
-            using (var cn = new SqlConnection(Env.Cfg.GetConnection("").ConnectionString))
+            using (var cn = new SqlConnection(Env.Cfg.GetConnection("", DBProxy.Current.DefaultModuleName).ConnectionString))
             using (var cm = cn.CreateCommand())
             {
                 cm.CommandText = cmd1;
