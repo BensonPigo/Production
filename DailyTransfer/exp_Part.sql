@@ -16,6 +16,12 @@ IF OBJECT_ID(N'dbo.PartPO') IS NOT NULL
 BEGIN
   DROP TABLE PartPO
 END
+
+IF OBJECT_ID(N'dbo.RepairPO') IS NOT NULL
+BEGIN
+  DROP TABLE RepairPO
+END
+
 IF OBJECT_ID(N'dbo.MiscPO') IS NOT NULL
 BEGIN
   DROP TABLE MiscPO
@@ -29,6 +35,11 @@ END
 IF OBJECT_ID(N'dbo.PartPO_Detail') IS NOT NULL
 BEGIN
   DROP TABLE PartPO_Detail
+END
+
+IF OBJECT_ID(N'dbo.RepairPO_Detail') IS NOT NULL
+BEGIN
+  DROP TABLE RepairPO_Detail
 END
 
 IF OBJECT_ID(N'dbo.MachinePO_Detail') IS NOT NULL
@@ -102,6 +113,12 @@ And Status <> 'Junked'
 AND PurchaseFrom = 'T'
 
 SELECT * 
+INTO  RepairPO
+FROM Machine.dbo.RepairPO 
+WHERE (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
+And Status = 'Confirmed'
+
+SELECT * 
 INTO  MiscPO
 FROM Machine.dbo.MiscPO 
 WHERE Approve IS NOT NULL
@@ -125,6 +142,14 @@ FROM Pms_To_Trade.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
 WHERE PartPO.id= pod.id  
 ORDER BY PartPO.id 
 
+SELECT 
+rpod.ID,rpod.Seq2,rpod.Type,rpod.MachineGroupID,rpod.BrandID,rpod.Refno,rpod.Model,rpod.SerialNo,rpod.MfgDate,rpod.RepairTypeID,
+rpod.BoxName,rpod.BoxType,rpod.BoardNo,rpod.Reason,rpod.UnitID,rpod.CurrencyID,rpod.Qty,rpod.Remark
+INTO  RepairPO_Detail
+FROM Pms_To_Trade.dbo.RepairPO, Machine.dbo.RepairPO_Detail  rpod
+WHERE RepairPO.id= rpod.id  
+ORDER BY RepairPO.id 
+
 SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid
 INTO  MachinePO_Detail
 FROM Pms_To_Trade.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
@@ -142,6 +167,12 @@ SET TranstoTPE = CONVERT(date, GETDATE())
 FROM Machine.dbo.PartPO AS Partpo1
 LEFT JOIN PartPO ON Partpo1.ID = PartPO.ID
 WHERE Partpo1.TranstoTPE  IS NULL
+
+UPDATE Machine.dbo.RepairPO
+SET TranstoTPE = CONVERT(date, GETDATE())
+FROM Machine.dbo.RepairPO AS RepairPO1
+INNER JOIN RepairPO ON RepairPO1.ID = RepairPO.ID
+WHERE RepairPO1.TranstoTPE  IS NULL
 
 UPDATE Machine.dbo.MiscPO
 SET TranstoTPE = CONVERT(date, GETDATE())
