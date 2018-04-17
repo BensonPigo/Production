@@ -99,24 +99,27 @@ SELECT
 ,F = o.BRANDID
 ,G = convert(varchar(10),Order_QS.BuyerDelivery,111)
 ,H = convert(varchar(10),Order_QS.FtyKPI,111)
-,I = Order_QS.ShipmodeID
-,J = Cast(Order_QS.QTY as int)
-,K = Cast(isnull(pd.Qty,0) as int)
-,L = Cast(isnull(pd.FailQty,Order_QS.QTY) as int)
-,M = CONVERT(char(10), p.PulloutDate, 20)
-,N = Order_QS.ShipmodeID
-,O = Cast(isnull(op.PulloutDate,0) as int)
-,P = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
+,I = convert(varchar(10),DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), 111)
+,J = Order_QS.ShipmodeID
+,K = Cast(Order_QS.QTY as int)
+,L = CASE o.GMTComplete WHEN 'S' THEN Cast(isnull(Order_QS.QTY,0) as int)
+                        ELSE Cast(isnull(pd.Qty,0) as int) END
+,M = CASE o.GMTComplete WHEN 'S' THEN 0
+                        ELSE Cast(isnull(pd.FailQty,Order_QS.QTY) as int) END
+,N = CONVERT(char(10), p.PulloutDate, 20)
+,O = Order_QS.ShipmodeID
+,P = Cast(isnull(op.PulloutDate,0) as int)
+,Q = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
                         WHEN 'S' THEN 'S' ELSE '' END
-,Q = Order_QS.ReasonID
-,R = case o.Category when 'B' then r.Name
+,R = Order_QS.ReasonID
+,S = case o.Category when 'B' then r.Name
   when 'S' then rs.Name
   else '' end
-,S = o.MRHandle
-,T = o.SMR
-,U = PO.POHandle
-,V = PO.POSMR
-,W = c.alias
+,T = o.MRHandle
+,U = o.SMR
+,V = PO.POHandle
+,W = PO.POSMR
+,X = c.alias
 into #tmp
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -126,13 +129,14 @@ inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
 LEFT JOIN PO ON o.POID = PO.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
 LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
+LEFT JOIN Brand b on o.BrandID = b.ID
 outer apply (
 	Select 
-		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,Order_QS.FtyKPI,'<='),
-		FailQty = Sum(rB.Qty)  - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,Order_QS.FtyKPI,'>')
+		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI),'<='),
+		FailQty = Sum(rB.Qty)  - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI),'>')
 	From Pullout_Detail pd
-	Outer apply (Select Qty = IIF(pd.PulloutDate <= Order_QS.FtyKPI, pd.shipqty, 0)) rA
-	Outer apply (Select Qty = IIF(pd.PulloutDate >  Order_QS.FtyKPI, pd.shipqty, 0)) rB
+	Outer apply (Select Qty = IIF(pd.PulloutDate <= DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), pd.shipqty, 0)) rA
+	Outer apply (Select Qty = IIF(pd.PulloutDate >  DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), pd.shipqty, 0)) rB
 	where pd.OrderID = o.ID 
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 ) pd
@@ -181,9 +185,9 @@ where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
                 strSQL += @"select * from (
 select * from #tmp 
 union all
-select A, B, C, D, E, F, G, H, I, J = 0, K = 0, L = J - (K +L), M = '', N, O = 0, P, Q, R, S, T, U, V, W
-from #tmp where (K +L) < J) as result
-order by D,E,J desc
+select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X 
+from #tmp where (L +M) < K and I < G) as result
+order by D,E,K desc
  ";
 
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtOrderDetail);
@@ -219,11 +223,11 @@ SELECT  '' AS A
 , '' AS F
 , '' AS G
 , '' AS H
-, '' AS I
-, 0 AS J
-, 0 AS K
-, 0 AS L
-, '' AS M
+,  '' AS I
+,  '' AS J
+,  0 AS K
+,  0 AS L
+,  0 AS M
 , '' AS N
 , '' AS O
 , '' AS P
@@ -234,6 +238,7 @@ SELECT  '' AS A
 , '' AS U
 , '' AS V 
 , '' AS W
+, '' AS X
 FROM ORDERS
 WHERE 1 = 0 ";
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
@@ -438,10 +443,10 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                 var groupQty = this.gdtOrderDetail.AsEnumerable().Select(row => new
                 {
                     PoId = row.Field<string>("D"),
-                    OrderQty = row.Field<int>("J"),
-                    PullQty = row.Field<int>("K"),
-                    FailQty = row.Field<int>("L"),
-                    P = row.Field<int>("O")
+                    OrderQty = row.Field<int>("K"),
+                    PullQty = row.Field<int>("L"),
+                    FailQty = row.Field<int>("M"),
+                    P = row.Field<int>("P")
                 }).GroupBy(group => group.PoId).Select(g => new
                 {
                     PoID = g.Key,
@@ -461,11 +466,6 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                 {
                     DataRow drData = this.gdtOrderDetail.Rows[intIndex];
                     string handleName = string.Empty;
-                    if (UserPrg.GetName(drData["S"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
-                    {
-                        drData["S"] = handleName;
-                    }
-
                     if (UserPrg.GetName(drData["T"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
                     {
                         drData["T"] = handleName;
@@ -481,32 +481,37 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                         drData["V"] = handleName;
                     }
 
+                    if (UserPrg.GetName(drData["W"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
+                    {
+                        drData["W"] = handleName;
+                    }
+
                     #region Calc SDP Data
-                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["W"].ToString()); // A
+                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["X"].ToString()); // A
                     DataRow drSDP;
                     if (intIndex_SDP < 0)
                     {
                         drSDP = this.gdtSDP.NewRow();
                         drSDP["A"] = drData["B"].ToString();
-                        drSDP["B"] = drData["W"].ToString(); // A
+                        drSDP["B"] = drData["X"].ToString(); // A
                         this.gdtSDP.Rows.Add(drSDP);
-                        lstSDP.Add(drData["B"].ToString() + "___" + drData["W"].ToString()); // A
+                        lstSDP.Add(drData["B"].ToString() + "___" + drData["X"].ToString()); // A
                     }
                     else
                     {
                         drSDP = this.gdtSDP.Rows[intIndex_SDP];
                     }
 
-                    drSDP["C"] = (drSDP["C"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["C"].ToString()) : 0) + (drData["J"].ToString() != string.Empty ? Convert.ToDecimal(drData["J"].ToString()) : 0);
-                    drSDP["D"] = (drSDP["D"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["D"].ToString()) : 0) + (drData["K"].ToString() != string.Empty ? Convert.ToDecimal(drData["K"].ToString()) : 0);
-                    drSDP["E"] = (drSDP["E"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["E"].ToString()) : 0) + (drData["L"].ToString() != string.Empty ? Convert.ToDecimal(drData["L"].ToString()) : 0);
+                    drSDP["C"] = (drSDP["C"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["C"].ToString()) : 0) + (drData["K"].ToString() != string.Empty ? Convert.ToDecimal(drData["K"].ToString()) : 0);
+                    drSDP["D"] = (drSDP["D"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["D"].ToString()) : 0) + (drData["L"].ToString() != string.Empty ? Convert.ToDecimal(drData["L"].ToString()) : 0);
+                    drSDP["E"] = (drSDP["E"].ToString() != string.Empty ? Convert.ToDecimal(drSDP["E"].ToString()) : 0) + (drData["M"].ToString() != string.Empty ? Convert.ToDecimal(drData["M"].ToString()) : 0);
                     drSDP["F"] = drSDP["C"].ToString() == "0" ? 0 : Convert.ToDecimal(drSDP["D"].ToString()) / Convert.ToDecimal(drSDP["C"].ToString()) * 100;
                     #endregion Calc SDP Data
 
                     #region Calc Fail Order List by SP Data
 
                     // By SP# 明細, group by SPNO 顯示
-                    if ((drData["L"].ToString() != string.Empty) && (Convert.ToDecimal(drData["L"].ToString()) > 0) && poid != drData["D"].ToString())
+                    if ((drData["M"].ToString() != string.Empty) && (Convert.ToDecimal(drData["M"].ToString()) > 0) && poid != drData["D"].ToString())
                     {
                         DataRow drSP = this.gdtSP.NewRow();
                         drSP.ItemArray = drData.ItemArray;
@@ -517,10 +522,10 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                             {
                                 if (i.PoID == drData["D"].ToString())
                                 {
-                                    drSP["J"] = i.sumOrderQty;
-                                    drSP["K"] = i.sumPullQty;
-                                    drSP["L"] = i.sumFailQty;
-                                    drSP["O"] = i.sumP;
+                                    drSP["K"] = i.sumOrderQty;
+                                    drSP["L"] = i.sumPullQty;
+                                    drSP["M"] = i.sumFailQty;
+                                    drSP["P"] = i.sumP;
                                 }
                             }
                         }
@@ -552,8 +557,8 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
                                     }
                                 }
 
-                                dtData["I"] = strTemp;
-                                dtData["N"] = strShipmodeID;
+                                dtData["J"] = strTemp;
+                                dtData["O"] = strShipmodeID;
                             }
                         }
                     }
@@ -598,26 +603,29 @@ SELECT A = c.alias
      , D = o.ID
      , E = Order_QS.Seq
      , F = convert(varchar(10),Order_QS.FtyKPI ,111)
-     , G = Order_QS.ShipmodeID
-     , H = Order_QS.QTY
-     , I = isnull(opd.sQty,0)
-     , J = convert(varchar(10),pd.PulloutDate,111) 
-     , K = Order_QS.ShipmodeID
-     , L = ''                                                 
+     , G = convert(varchar(10),DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), 111)
+     , H = Order_QS.ShipmodeID
+     , I = Order_QS.QTY
+     , J = CASE o.GMTComplete WHEN 'S' THEN Order_QS.QTY
+	                    ELSE isnull(opd.sQty,0) END
+     , K = convert(varchar(10),pd.PulloutDate,111) 
+     , L = Order_QS.ShipmodeID
+     , M = ''                                                 
 FROM ORDERS o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 LEFT JOIN FACTORY f ON o.FACTORYID = f.ID 
 LEFT JOIN COUNTRY c ON f.COUNTRYID = c.ID 
 INNER JOIN Order_QtyShip Order_QS on o.ID = Order_QS.ID
+LEFT JOIN Brand b on o.BrandID = b.ID
 OUTER APPLY (select sum(ShipQty) as sQty 
              from Pullout_Detail pd 
-             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate <= Order_QS.FtyKPI ) opd
+             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate <= DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI) ) opd
 OUTER APPLY (select top 1 PulloutDate 
              from Pullout_Detail pd 
              where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
              and pd.ShipQty> 0
              Order by PulloutDate desc) pd 
-where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
 {where}
 ";
                     result = DBProxy.Current.Select(null, strSQL, null, out this.gdtPullOut);
@@ -714,7 +722,7 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
                 {
                     worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
-                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
+                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
                     for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                     {
@@ -739,9 +747,9 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
 
                     worksheet.Columns.AutoFit();
                     worksheet.Cells[rc + 2, 2] = "Total:";
-                    worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
                     worksheet.Cells[rc + 2, 12] = string.Format("=SUM(L2:L{0})", MyUtility.Convert.GetString(rc + 1));
+                    worksheet.Cells[rc + 2, 13] = string.Format("=SUM(M2:M{0})", MyUtility.Convert.GetString(rc + 1));
 
                     // 設定分割列數
                     excel.ActiveWindow.SplitRow = 1;
@@ -757,7 +765,7 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -783,9 +791,9 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 12] = string.Format("=SUM(L2:L{0})", MyUtility.Convert.GetString(rc + 1));
+                        worksheet.Cells[rc + 2, 13] = string.Format("=SUM(M2:M{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
@@ -800,7 +808,7 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -827,8 +835,8 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 8] = string.Format("=SUM(H2:H{0})", MyUtility.Convert.GetString(rc + 1));
                         worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
+                        worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
@@ -840,7 +848,7 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
 
                     #region 匯出 Fail Detail
                     var gdtFailDetail = from data in this.gdtOrderDetail.AsEnumerable()
-                                     where data.Field<int>("L") > 0
+                                     where data.Field<int>("M") > 0
                                      select new
                                     {
                                         A = data.Field<string>("A"),
@@ -849,19 +857,20 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
                                         D= data.Field<string>("D"),
                                         E= data.Field<string>("E"),
                                         F= data.Field<string>("H"),
-                                        G= data.Field<string>("I"),
-                                        H= data.Field<int>("J").ToString(),
-                                        I= data.Field<int>("L").ToString(),
-                                        J= data.Field<string>("M"),
+                                        G = data.Field<string>("I"),
+                                        H = data.Field<string>("J"),
+                                        I= data.Field<int>("K").ToString(),
+                                        J= data.Field<int>("M").ToString(),
                                         K= data.Field<string>("N"),
-                                        L= data.Field<string>("Q"),
-                                        M= data.Field<string>("R")
+                                        L= data.Field<string>("O"),
+                                        M= data.Field<string>("R"),
+                                        N= data.Field<string>("S")
                                      };
                     if ((gdtFailDetail != null) && (gdtFailDetail.Count() > 0))
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -893,14 +902,15 @@ where Order_QS.Qty > 0 and opd.sQty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID
                             objArray_1[0, 10] = dr.K;
                             objArray_1[0, 11] = dr.L;
                             objArray_1[0, 12] = dr.M;
+                            objArray_1[0, 13] = dr.N;
                             worksheet.Range[string.Format("A{0}:{1}{0}", i, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 8] = string.Format("=SUM(H2:H{0})", MyUtility.Convert.GetString(rc + 1));
-
                         worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
+
+                        worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
