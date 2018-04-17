@@ -18,6 +18,7 @@ namespace Sci.Production.Cutting
         private DataTable curTb;
         private DataTable detailTb;
         private DataTable sp;
+        private string Poid;
 
         public P02_BatchAssignCellCutDate(DataTable cursor)
         {
@@ -31,6 +32,10 @@ namespace Sci.Production.Cutting
             btnFilter_Click(null, null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 
             MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
+            if (cursor != null)
+            {
+                Poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{cursor.Rows[0]["ID"]}'");
+            }
         }
 
         private void gridsetup()
@@ -198,8 +203,6 @@ namespace Sci.Production.Cutting
 
                 if (dr["Sel"].ToString() == "True")
                 {
-                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
-                    //  detaildr[0]["Cutcellid"] = cell;
                     dr["Cutcellid"] = cell;
                     dr.EndEdit();
                     string strMsg = checkCuttingWidth(dr["Cutcellid"].ToString(), dr["SciRefno"].ToString());
@@ -228,19 +231,58 @@ namespace Sci.Production.Cutting
                     continue;
 
                 if (dr["Sel"].ToString() == "True")
-                {
-                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                {   
                     if (cdate != "")
                     {
-                        //  detaildr[0]["estcutdate"] = cdate;
                         dr["estcutdate"] = cdate;
                     }
                     else
-                    {
-                        //  detaildr[0]["estcutdate"] = DBNull.Value;
+                    {   
                         dr["estcutdate"] = DBNull.Value;
                     }
                 }
+            }
+        }
+
+        private void btnBatchUpdSeq_Click(object sender, EventArgs e)
+        {
+            List<string> warningMsg = new List<string>();
+            string Seq1 = txtSeq1.Text;
+            string Seq2 = txtSeq2.Text;
+
+            // 不可輸入空白
+            if (MyUtility.Check.Empty(Seq1) || MyUtility.Check.Empty(Seq2))
+            {
+                MyUtility.Msg.WarningBox("Seq1 and Seq2 can't be empty.");
+                return;
+            }
+
+            foreach (DataRow dr in curTb.Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+
+                if (dr["Sel"].ToString() == "True")
+                {
+                    string poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{dr["id"]}' ");
+
+                    if (MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{poid}' and Seq1='{Seq1}' and Seq2='{Seq2}' and Junk=0"))
+                    {
+                        dr["Seq1"] = Seq1;
+                        dr["Seq2"] = Seq2;
+                    }
+                    else
+                    {
+                        dr["Seq1"] = string.Empty;
+                        dr["Seq2"] = string.Empty;
+                        warningMsg.Add($@"<Seq1: {Seq1}, Seq2: {Seq2}> cannot found! ");
+                    }
+                    dr.EndEdit();
+                }
+            }
+            if (warningMsg.Count > 0)
+            {
+                MyUtility.Msg.WarningBox(warningMsg.Select(x => x).Distinct().ToList().JoinToString("\n"));
             }
         }
 
@@ -248,6 +290,8 @@ namespace Sci.Production.Cutting
         {
             this.gridBatchAssignCellEstCutDate.ValidateControl();
             string cell = txtCell2.Text; string cdate = "";
+            string Seq1 = txtSeq1.Text;
+            string Seq2 = txtSeq2.Text;
             if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
             {
                 cdate = txtBatchUpdateEstCutDate.Text;
@@ -262,22 +306,24 @@ namespace Sci.Production.Cutting
                         detaildr[0]["Cutcellid"] = cell;
                         dr["Cutcellid"] = cell;
                     }
+
                     if (dr["Cutcellid"].ToString() != "")
                     {
                         string CUTCELL = dr["Cutcellid"].ToString();
                         detaildr[0]["Cutcellid"] = CUTCELL;
-
                     }
                     else
                     {
                         detaildr[0]["Cutcellid"] = DBNull.Value;
                         dr["Cutcellid"] = DBNull.Value;
                     }
+
                     if (cdate != "")
                     {
                         detaildr[0]["estcutdate"] = cdate;
                         dr["estcutdate"] = cdate;
                     }
+
                     if (dr["estcutdate"].ToString() != "")
                     {
                         string ESTDATE = dr["estcutdate"].ToString();
@@ -287,6 +333,24 @@ namespace Sci.Production.Cutting
                     {
                         detaildr[0]["estcutdate"] = DBNull.Value;
                         dr["estcutdate"] = DBNull.Value;
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["Seq1"]))
+                    {
+                        detaildr[0]["Seq1"] = dr["Seq1"];
+                    }
+                    else
+                    {
+                        detaildr[0]["Seq1"] = string.Empty;
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["Seq2"]))
+                    {
+                        detaildr[0]["Seq2"] = dr["Seq2"];
+                    }
+                    else
+                    {
+                        detaildr[0]["Seq2"] = string.Empty;
                     }
                 }
             }
@@ -363,6 +427,36 @@ where   id = '{0}'
             if (!Msg.Empty())
             {
                 MyUtility.Msg.WarningBox(Msg);
+            }
+        }
+
+        private void txtSeq1_Validating(object sender, CancelEventArgs e)
+        {
+            string Seq1 = txtSeq1.Text;
+            if (!MyUtility.Check.Empty(Seq1))
+            {                
+                if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq1='{Seq1}'  and Junk=0"))
+                {
+                    MyUtility.Msg.WarningBox($@"Seq1: {Seq1} data not found!");
+                    txtSeq1.Text = string.Empty;
+                    txtSeq1.Focus();
+                    return;
+                }
+            }
+        }
+
+        private void txtSeq2_Validating(object sender, CancelEventArgs e)
+        {
+            string Seq2 = txtSeq2.Text;
+            if (!MyUtility.Check.Empty(Seq2))
+            {
+                if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq2='{Seq2}' and Junk=0"))
+                {
+                    MyUtility.Msg.WarningBox($@"Seq2: {Seq2} data not found!");
+                    txtSeq2.Text = string.Empty;
+                    txtSeq2.Focus();
+                    return;
+                }
             }
         }
     }
