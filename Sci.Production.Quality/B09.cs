@@ -25,6 +25,11 @@ namespace Sci.Production.Quality
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            this.chkJunk.ForeColor = Color.Blue;
+            this.chkP10.ForeColor = Color.Blue;
+            this.chkP11.ForeColor = Color.Blue;
+            this.chkP12.ForeColor = Color.Blue;
+            this.chkP13.ForeColor = Color.Blue;
             this.txtID.SetReadOnly(false);
             /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
             if (MyUtility.Check.Empty(this.CurrentMaintain["SignaturePic"]))
