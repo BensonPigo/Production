@@ -360,9 +360,9 @@ select * from [GarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} 
             if (!MyUtility.Check.Empty(dateSubmit.Value))
                 worksheet.Cells[4, 4] = MyUtility.Convert.GetDate(dateSubmit.Value).Value.Year + "/" + MyUtility.Convert.GetDate(dateSubmit.Value).Value.Month + "/" + MyUtility.Convert.GetDate(dateSubmit.Value).Value.Day;
             if (!MyUtility.Check.Empty(Deatilrow["inspdate"]))
-                worksheet.Cells[4, 8] = MyUtility.Convert.GetDate(Deatilrow["inspdate"]).Value.Year + "/" + MyUtility.Convert.GetDate(Deatilrow["inspdate"]).Value.Month + "/" + MyUtility.Convert.GetDate(Deatilrow["inspdate"]).Value.Day;
-            worksheet.Cells[4, 10] = MyUtility.Convert.GetString(MasterRow["OrderID"]);
-            worksheet.Cells[4, 12] = MyUtility.Convert.GetString(MasterRow["BrandID"]);
+                worksheet.Cells[4, 7] = MyUtility.Convert.GetDate(Deatilrow["inspdate"]).Value.Year + "/" + MyUtility.Convert.GetDate(Deatilrow["inspdate"]).Value.Month + "/" + MyUtility.Convert.GetDate(Deatilrow["inspdate"]).Value.Day;
+            worksheet.Cells[4, 9] = MyUtility.Convert.GetString(MasterRow["OrderID"]);
+            worksheet.Cells[4, 11] = MyUtility.Convert.GetString(MasterRow["BrandID"]);
             worksheet.Cells[6, 4] = MyUtility.Convert.GetString(MasterRow["StyleID"]);
             worksheet.Cells[7, 8] = MyUtility.GetValue.Lookup($"select CustPONo from Orders with(nolock) where id = '{MasterRow["OrderID"]}'");
             worksheet.Cells[7, 4] = MyUtility.Convert.GetString(MasterRow["Article"]);
