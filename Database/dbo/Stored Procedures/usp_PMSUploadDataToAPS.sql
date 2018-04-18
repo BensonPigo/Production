@@ -1,5 +1,4 @@
-﻿
--- =============================================
+﻿-- =============================================
 -- Author:		<JEFF S01952>
 -- Create date: <2016/11/19>
 -- Description:	<PMSUploadDataToAPS>
@@ -18,14 +17,14 @@ declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varch
 			@LoginPwd = [APSLoginPwd]
 		from [Production].[dbo].system
 	END
-	
+
 	--若其中一欄位空白則不執行此程式
 	IF @ServerName ='' or @DatabaseName = '' or @loginId = '' or @LoginPwd = '' 
 	BEGIN
 		PRINT 'Connection information has not set' 
 		RETURN  
 	END
-	
+
 	--若不存在則新增連線	
 	IF NOT EXISTS (SELECT * FROM sys.servers WHERE name = @ServerName)
 	BEGIN
@@ -35,7 +34,7 @@ declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varch
 		EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname = @ServerName, @locallogin = NULL , @useself = N'False', @rmtuser = @loginId, @rmtpassword = @LoginPwd
 	END
 
-	BEGIN
+	BEGIN--4部分字串
 --cmd,cmd2連的Table
 --...[dbo].[OPDWF510]
 -------------------------------------------------第一部分-------------------------------------------------
@@ -172,6 +171,70 @@ into #tmp2
 from #tmp s
 left join '+@SerDbDboTb+N' t on t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
 
+IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp
+
+update t set
+	[DELF] = iif(s.Junk = 0,''N'',''Y'')
+	,[SONO] = s.[sSONO]
+	,[LOT] = s.[sLOT]
+	,[CRNM] = s.[sCRNM]
+	,[PRIO] = s.[sPRIO]
+	,[ODST] = s.[sODST]
+	,[NCTR] = s.[sNCTR]
+	,[CSSE] = s.[sCSSE]
+	,[CSNM] = s.[sCSNM]
+	,[CUNM] = s.[sCUNM]
+	,[CFTY] = s.[sCFTY]
+	,[SYD1] = s.[sSYD1]
+	,[GTMH] = s.[sGTMH]
+	,[OTDD] = s.[sOTDD]
+	,[COTD] = s.[sCOTD]
+	,[OTTD] = s.[sOTTD]
+	,[QTYN] = s.[sQTYN]
+	,[FIRM] = s.[sFIRM]
+	,[COLR] = s.[sCOLR]
+	,[SZE] = s.[sSZE]
+	,[SHIP] = s.[sSHIP]
+	,[SMOD] = s.[sSMOD]
+	,[PlcOrdDate] = s.[sPlcOrdDate]
+	,[REMK] = s.[sREMK]
+	,[AOTT] = s.[sAOTT]
+	,[UPUS] = s.[sUPUS]
+	,[UPNM] = s.[sUPNM]
+	,[SYCO] = s.[sSYCO]
+	,[MASTERMATERIALDATE] = s.[sMASTERMATERIALDATE]
+	,[MASTERMATERIALRECEIVEDDATE] = s.[sMASTERMATERIALRECEIVEDDATE]
+	,[MATERIALDATE] = s.[sMATERIALDATE]
+	,[MATERIALRECEIVEDDATE] = s.[sMATERIALRECEIVEDDATE]
+	,[PPRO] = s.[sPPRO]
+	,[PRGM] = s.[sPRGM]
+	,UPDT= format(GETDATE(),''yyyy-MM-dd'')
+	,[CUSY] =[sCUSY]
+	,[CUSTOMERORDERNO] = [sCUSTOMERORDERNO]
+from #tmp2 s,'+@SerDbDboTb+N't
+where C is not null and PulloutComplete = 0 and Finished = 0
+and t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
+and (
+	isnull(t.[SONO],'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(s.sSONO,'''')
+	or isnull(QTYN,0) != isnull(sQTYN,0)
+	or isnull(COTD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCOTD,'''')
+	or isnull(OTDD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sOTDD,'''')
+	or isnull(AOTT,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sAOTT,'''')
+	or isnull(MASTERMATERIALRECEIVEDDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMASTERMATERIALRECEIVEDDATE,'''')
+	or isnull(MASTERMATERIALDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMASTERMATERIALDATE,'''')
+	or isnull(MATERIALDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMATERIALDATE,'''')
+	or isnull(GTMH,0) != isnull(sGTMH,0)
+	or isnull(PPRO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPPRO,'''')
+	or isnull(ODST,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sODST,'''')
+	or isnull(SMOD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSMOD,'''')
+	or isnull(SHIP,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSHIP,'''')
+	or isnull(PRGM,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPRGM,'''')
+	or isnull(REMK,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sREMK,'''')	
+	or isnull(DELF,'''') collate Chinese_Taiwan_Stroke_CI_AS != iif(s.Junk = 0,''N'',''Y'')
+	or isnull(CUSY,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSY,'''')
+	or isnull(CUSTOMERORDERNO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSTOMERORDERNO,'''')
+)
+
 insert into '+@SerDbDboTb+N'
 ([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CFTY],[SYD1]
 ,[GTMH],[OTDD],[COTD],[OTTD],[QTYN],[FIRM],[COLR],[SZE],[SHIP],[SMOD],[PlcOrdDate],[REMK],[AOTT]
@@ -197,6 +260,7 @@ and DELF <> ''Y''
 
 IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp2
 '
+
 -------------------------------------------------第三部分-------------------------------------------------
 --Style圖檔資料：APS的中間表Table Name為IMAGEMAPPING
 --key要注意production這有3個key,目標table 只有兩個key,多筆取top 1
