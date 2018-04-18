@@ -13,7 +13,7 @@ namespace Sci.Production.Quality
     public partial class B09 : Sci.Win.Tems.Input1
     {
         private string destination_path; // 放圖檔的路徑
-
+        private bool attach_flag = false;
         public B09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -31,6 +31,17 @@ namespace Sci.Production.Quality
             this.chkP12.ForeColor = Color.Blue;
             this.chkP13.ForeColor = Color.Blue;
             this.txtID.SetReadOnly(false);
+            if (this.EditMode == true)
+            {
+                this.btnAttach.Enabled = true;
+                this.btnDelete.Enabled = true;
+            }
+            else
+            {
+                this.btnAttach.Enabled = false;
+                this.btnDelete.Enabled = false;
+            }
+          
             /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
             if (MyUtility.Check.Empty(this.CurrentMaintain["SignaturePic"]))
             {
@@ -74,28 +85,9 @@ namespace Sci.Production.Quality
             file.RestoreDirectory = true;
             if (file.ShowDialog() == DialogResult.OK)
             {
-                try
-                {
-                    if ((fileOpened = file.OpenFile()) != null)
-                    {
-                        {
-                            string local_path_file = file.FileName;
-                            string local_file_type = Path.GetExtension(local_path_file);
-                            string destination_fileName = "QA_B09_" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]).Trim() + local_file_type;
-
-                            System.IO.File.Copy(local_path_file, this.destination_path + destination_fileName, true);
-
-                            // update picture1 path
-                            DualResult result = Sci.Data.DBProxy.Current.Execute(null, "update Technician set SignaturePic ='" + destination_fileName.Trim() + "' where ID ='" + this.CurrentMaintain["ID"] + "'");
-                            this.CurrentMaintain["SignaturePic"] = destination_fileName.Trim();
-                            this.pictureBoxSignature.ImageLocation = MyUtility.Convert.GetString(this.destination_path.Trim() + destination_fileName.Trim());
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MyUtility.Msg.ErrorBox("Error: Could not read file from disk. Original error: " + ex.Message);
-                }
+                string local_path_file = file.FileName;
+                this.pictureBoxSignature.ImageLocation = MyUtility.Convert.GetString(local_path_file);
+                this.attach_flag = true;
             }
         }
 
@@ -104,37 +96,48 @@ namespace Sci.Production.Quality
             DialogResult deleteResult1 = MyUtility.Msg.QuestionBox("Are you sure delete the <Signature Picture>?", buttons: MessageBoxButtons.YesNo);
             if (deleteResult1 == System.Windows.Forms.DialogResult.Yes)
             {
-                if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"])))
+                this.pictureBoxSignature.ImageLocation = string.Empty;
+                        this.attach_flag = true;
+            }
+        }
+
+        protected override bool ClickSaveBefore()
+        {
+            //依照attach_flag判斷新增編輯資料時是否有上傳圖檔
+            if (this.attach_flag == true)
+            {
+                //如果this.pictureBoxSignature.ImageLocation是空的表示刪除
+                if (MyUtility.Check.Empty(this.pictureBoxSignature.ImageLocation) && !MyUtility.Check.Empty(this.CurrentMaintain["SignaturePic"]))
                 {
+                    //清掉存放路徑的檔案
                     try
                     {
                         System.IO.File.Delete(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"]));
                         this.CurrentMaintain["SignaturePic"] = string.Empty;
-                        this.pictureBoxSignature.ImageLocation = MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"]);
-                        DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Technician set SignaturePic='' where ID='{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-                        if (!result)
-                        {
-                            MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
-                            return;
-                        }
                     }
                     catch (System.IO.IOException exception)
                     {
                         MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
                     }
                 }
-                else
+                else if (!MyUtility.Check.Empty(this.pictureBoxSignature.ImageLocation))
                 {
-                    this.CurrentMaintain["SignaturePic"] = string.Empty;
-                    this.pictureBoxSignature.ImageLocation = MyUtility.Convert.GetString(this.CurrentMaintain["SignaturePic"]);
-                    DualResult result = Sci.Data.DBProxy.Current.Execute(null, string.Format("update Technician set SignaturePic='' where ID='{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-                    if (!result)
+                    string local_path_file = this.pictureBoxSignature.ImageLocation;
+                    string local_file_type = Path.GetExtension(local_path_file);
+                    string destination_fileName = "QA_B09_" + MyUtility.Convert.GetString(this.CurrentMaintain["ID"]).Trim() + local_file_type;
+                    try
                     {
-                        MyUtility.Msg.ErrorBox("Update data fail!!\r\n" + result.ToString());
-                        return;
+                        System.IO.File.Copy(local_path_file, this.destination_path + destination_fileName, true);
+                        this.CurrentMaintain["SignaturePic"] = destination_fileName.Trim();
+                    }
+                    catch (System.IO.IOException exception)
+                    {
+                        MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
                     }
                 }
+
             }
+            return base.ClickSaveBefore();
         }
     }
 }
