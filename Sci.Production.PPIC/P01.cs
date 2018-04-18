@@ -532,7 +532,7 @@ insert into Order_Artwork(ID,ArtworkTypeID,Article,PatternCode,PatternDesc,Artwo
 select ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,loginID,today,rownumber-row
 from (
 select '{0}'as ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,'{1}' as 'loginID',GETDATE() as 'today'
-,(select min(Ukey) from Order_Artwork)as 'rownumber', Row_Number() OVER( order by PatternCode ) as 'row'
+,(select isnull(MIN(UKey),0) from Order_Artwork)as 'rownumber', Row_Number() OVER( order by PatternCode ) as 'row'
 from Style_Artwork where StyleUkey = {2}
 ) x",
                          MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),

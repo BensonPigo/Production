@@ -321,7 +321,7 @@ namespace Sci.Production.PPIC
                         else
                         {
                             // insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},'{4}',GETDATE(),(select MIN(UKey)-1 from Order_QtyShip_Detail));", orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID));
-                            insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,OriQty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},{3},'{4}',GETDATE(),(select MIN(UKey)-1 from Order_QtyShip_Detail));", this.orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID));
+                            insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,OriQty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},{3},'{4}',GETDATE(),(select isnull(MIN(UKey),0)-1 from Order_QtyShip_Detail));", this.orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID));
                         }
                     }
                 }
@@ -342,7 +342,7 @@ namespace Sci.Production.PPIC
                 {
                     if (dr.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(dr["Qty"]))
                     {
-                        insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},'{4}',GETDATE(),(select MIN(UKey)-1 from Order_QtyShip_Detail));", this.orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID));
+                        insertCmds.Add(string.Format("insert into Order_QtyShip_Detail(ID,Seq,Article,SizeCode,Qty,AddName,AddDate,UKey) values ('{0}','01','{1}','{2}',{3},'{4}',GETDATE(),(select isnull(MIN(UKey),0)-1 from Order_QtyShip_Detail));", this.orderID, MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), MyUtility.Convert.GetString(dr["Qty"]), Sci.Env.User.UserID));
                     }
                 }
             }
