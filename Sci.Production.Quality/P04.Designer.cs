@@ -478,6 +478,7 @@
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1008, 556);
+            this.ContextMenuStrip = this.detailgridmenus;
             this.DefaultControlForEdit = "txtSP";
             this.DefaultOrder = "StyleID";
             this.GridAlias = "Garmenttest_Detail";

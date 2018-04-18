@@ -1,5 +1,4 @@
-﻿
--- =============================================
+﻿-- =============================================
 -- Author:		<JEFF S01952>
 -- Create date: <2016/11/19>
 -- Description:	<PMSUploadDataToAPS>
@@ -18,14 +17,14 @@ declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varch
 			@LoginPwd = [APSLoginPwd]
 		from [Production].[dbo].system
 	END
-	
+
 	--若其中一欄位空白則不執行此程式
 	IF @ServerName ='' or @DatabaseName = '' or @loginId = '' or @LoginPwd = '' 
 	BEGIN
 		PRINT 'Connection information has not set' 
 		RETURN  
 	END
-	
+
 	--若不存在則新增連線	
 	IF NOT EXISTS (SELECT * FROM sys.servers WHERE name = @ServerName)
 	BEGIN
@@ -35,7 +34,7 @@ declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varch
 		EXEC master.dbo.sp_addlinkedsrvlogin @rmtsrvname = @ServerName, @locallogin = NULL , @useself = N'False', @rmtuser = @loginId, @rmtpassword = @LoginPwd
 	END
 
-	BEGIN
+	BEGIN--4部分字串
 --cmd,cmd2連的Table
 --...[dbo].[OPDWF510]
 -------------------------------------------------第一部分-------------------------------------------------
@@ -172,6 +171,69 @@ into #tmp2
 from #tmp s
 left join '+@SerDbDboTb+N' t on t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
 
+IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp
+
+update t set
+	[DELF] = iif(s.Junk = 0,''N'',''Y'')
+	,[SONO] = s.[sSONO]
+	,[LOT] = s.[sLOT]
+	,[CRNM] = s.[sCRNM]
+	,[PRIO] = s.[sPRIO]
+	,[ODST] = s.[sODST]
+	,[NCTR] = s.[sNCTR]
+	,[CSSE] = s.[sCSSE]
+	,[CSNM] = s.[sCSNM]
+	,[CUNM] = s.[sCUNM]
+	,[CFTY] = s.[sCFTY]
+	,[SYD1] = s.[sSYD1]
+	,[GTMH] = s.[sGTMH]
+	,[OTDD] = s.[sOTDD]
+	,[COTD] = s.[sCOTD]
+	,[OTTD] = s.[sOTTD]
+	,[QTYN] = s.[sQTYN]
+	,[FIRM] = s.[sFIRM]
+	,[COLR] = s.[sCOLR]
+	,[SZE] = s.[sSZE]
+	,[SHIP] = s.[sSHIP]
+	,[SMOD] = s.[sSMOD]
+	,[PlcOrdDate] = s.[sPlcOrdDate]
+	,[REMK] = s.[sREMK]
+	,[AOTT] = s.[sAOTT]
+	,[UPUS] = s.[sUPUS]
+	,[UPNM] = s.[sUPNM]
+	,[SYCO] = s.[sSYCO]
+	,[MASTERMATERIALDATE] = s.[sMASTERMATERIALDATE]
+	,[MASTERMATERIALRECEIVEDDATE] = s.[sMASTERMATERIALRECEIVEDDATE]
+	,[MATERIALDATE] = s.[sMATERIALDATE]
+	,[MATERIALRECEIVEDDATE] = s.[sMATERIALRECEIVEDDATE]
+	,[PPRO] = s.[sPPRO]
+	,[PRGM] = s.[sPRGM]
+	,UPDT= format(GETDATE(),''yyyy-MM-dd'')
+	,[CUSY] =[sCUSY]
+	,[CUSTOMERORDERNO] = [sCUSTOMERORDERNO]
+from #tmp2 s,'+@SerDbDboTb+N't
+where C is not null and PulloutComplete = 0 and Finished = 0
+and t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
+and (
+	isnull(t.[SONO],'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(s.sSONO,'''')
+	or isnull(QTYN,0) != isnull(sQTYN,0)
+	or isnull(COTD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCOTD,'''')
+	or isnull(OTDD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sOTDD,'''')
+	or isnull(AOTT,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sAOTT,'''')
+	or isnull(MASTERMATERIALRECEIVEDDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMASTERMATERIALRECEIVEDDATE,'''')
+	or isnull(MASTERMATERIALDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMASTERMATERIALDATE,'''')
+	or isnull(MATERIALDATE,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sMATERIALDATE,'''')
+	or isnull(GTMH,0) != isnull(sGTMH,0)
+	or isnull(PPRO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPPRO,'''')
+	or isnull(ODST,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sODST,'''')
+	or isnull(SMOD,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSMOD,'''')
+	or isnull(SHIP,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sSHIP,'''')
+	or isnull(PRGM,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sPRGM,'''')
+	or isnull(REMK,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sREMK,'''')	
+	or isnull(DELF,'''') collate Chinese_Taiwan_Stroke_CI_AS != iif(s.Junk = 0,''N'',''Y'')
+	or isnull(CUSY,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSY,'''')
+	or isnull(CUSTOMERORDERNO,'''') collate Chinese_Taiwan_Stroke_CI_AS != isnull(sCUSTOMERORDERNO,'''')
+)
 
 insert into '+@SerDbDboTb+N'
 ([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CFTY],[SYD1]
@@ -187,11 +249,128 @@ select [sRCID], iif(Junk = 0,''N'',''Y'') ,[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST
 from #tmp2
 where C is null--目標沒有
 
-select * from #tmp2 where C is null
+Update t
+set DELF=''Y'',
+	UPDT= format(GETDATE(),''yyyy-MM-dd'')
+FROM '+@SerDbDboTb+N' t
+where 
+not exists(select 1 from #tmp2 s where t.RCID collate Chinese_Taiwan_Stroke_CI_AS =s.sRCID)
+and CONVERT(date, t.OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -15, GETDATE())
+and DELF <> ''Y''
+
+IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp2
 '
+
+-------------------------------------------------第三部分-------------------------------------------------
+--Style圖檔資料：APS的中間表Table Name為IMAGEMAPPING
+--key要注意production這有3個key,目標table 只有兩個key,多筆取top 1
+Declare @SerDbDboTb2 varchar(66)
+Set @SerDbDboTb2 = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[IMAGEMAPPING]')
 Declare @cmd3 varchar(max)
-set @cmd =N'select * from #tmp2 where C is null'
+set @cmd3 =N'
+update '+@SerDbDboTb2+N'
+set
+[FULLPATH] = [sFULLPATH]
+From (
+	Select Distinct [sSTYLENO] = ID
+	,[sSEASONCD] = SeasonID
+	,[sFULLPATH] = concat((select PicPath from System),Picture1)
+	from Style s
+	inner join '+@SerDbDboTb2+N' t 
+	on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID
+	and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
+)s
+where STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.sSTYLENO 
+and SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.sSEASONCD
+and FULLPATH collate Chinese_Taiwan_Stroke_CI_AS != s.sFULLPATH
+
+IF OBJECT_ID(''tempdb.dbo.#tmps'', ''U'') IS NOT NULL DROP TABLE #tmps
+Select Distinct  ID
+,SeasonID
+,BrandID
+into #tmps
+from Style s
+left join '+@SerDbDboTb2+N' t 
+on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID 
+and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
+where t.STYLENO is null
+insert into '+@SerDbDboTb2+N'
+([STYLENO],[SEASONCD],[FULLPATH])
+select distinct s.ID,s.SeasonID
+,[FULLPATH] = 
+(
+	select top 1 concat((select PicPath from System),s2.Picture1) 
+	from Style s2 where s2.id = s.id  and s2.SeasonID = s.SeasonID
+)
+from #tmps s
+IF OBJECT_ID(''tempdb.dbo.#tmps'', ''U'') IS NOT NULL DROP TABLE #tmps'
+
+
+-------------------------------------------------第四部分-------------------------------------------------
+--Sewing Daily Output：APS的中間表Table Name為OPDWF220
+Declare @SerDbDboTb3 varchar(66)
+Set @SerDbDboTb3 = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[OPDWF220]')
+Declare @cmd4 varchar(max)
+set @cmd4 =N'
+Delete from '+@SerDbDboTb3+N'
+INSERT INTO '+@SerDbDboTb3+N'
+([POCODE],[PROCESS],[FACILITY],[PDATE],[COLOR],[XSIZE],[QTY],[WORKERS],[HOURS])
+select 
+	[POCode],[Process],[Facility],[PDate],[Color],[XSize]
+	,[Qty] = sum([Qty])
+	,[Workers]=AVG([Workers])
+	,[Hours]=SUM([Hours])
+from
+(
+	Select
+	[POCode] = s.FactoryID+sd.OrderID+IIF((select StyleUnit from Orders where ID = sd.OrderID) = ''PCS'', '''', ''(''+sd.ComboType+'')'')
+	,[Process] = ''SEWING''
+	,[Facility] = s.SewingLineID
+	,[PDate] = CONVERT(varchar(10), s.OutputDate, 120)
+	,[Color] = sd.Article
+	,[XSize] = sdd.SizeCode
+	,[Qty] = sdd.QAQty
+	,[Workers] = s.Manpower
+	,[Hours] = round( (cast(sdd.QAQty as float) / cast(sd.QAQty as float)) * sd.WorkHour , 3)
+	from SewingOutput s
+	inner join SewingOutput_Detail sd on s.ID = sd.ID
+	inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
+	where sdd.OrderID in (Select distinct sd.OrderID 
+						  from SewingOutput s, SewingOutput_Detail sd
+						  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
+						  and s.ID = sd.ID)
+)l
+group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
+'
 	END
-	EXEC(@Cmd2)
-	EXEC(@Cmd3)
+
+	Begin Try
+		EXEC(@Cmd)		
+	End Try
+	Begin Catch
+		PRINT 'ERROR command1' 
+		rollback tran
+		EXECUTE [usp_GetErrorString];
+	End Catch
+	Begin Try
+		EXEC(@Cmd2)
+	End Try
+	Begin Catch
+		PRINT 'ERROR command2' 
+		EXECUTE [usp_GetErrorString];
+	End Catch
+	Begin Try
+		EXEC(@Cmd3)
+	End Try
+	Begin Catch
+		PRINT 'ERROR command3' 
+		EXECUTE [usp_GetErrorString];
+	End Catch
+	Begin Try
+		EXEC(@Cmd4)
+	End Try
+	Begin Catch
+		PRINT 'ERROR command4'
+		EXECUTE [usp_GetErrorString];
+	End Catch
 END
