@@ -178,9 +178,11 @@ namespace Sci.Production.Quality
             get_total_point();
         }
 
-        protected void get_total_point() {
-            double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);
+        protected void get_total_point()
+        {
+            double double_ActualYds = MyUtility.Convert.GetDouble(CurrentData["ActualYds"]);            
             double ActualYdsT = Math.Floor(MyUtility.Convert.GetDouble(CurrentData["ActualYds"])  -0.01);
+            double ActualWidth = MyUtility.Convert.GetDouble(CurrentData["actualwidth"]);
             double ActualYdsF = ActualYdsT - (ActualYdsT % 5);
             double def_locT = 0d;
             double def_locF = 0d;
@@ -231,8 +233,17 @@ namespace Sci.Production.Quality
             Double SumPoint = MyUtility.Convert.GetDouble(Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", CurrentData["NewKey"])));
             //PointRate 國際公式每五碼最高20點
             CurrentData["TotalPoint"] = SumPoint;
+
+            if (displayBrand.Text == "LLL")
+            {
+                CurrentData["PointRate"] = (double_ActualYds == 0 || ActualWidth == 0) ? 0 : Math.Round((SumPoint * 3600) / (double_ActualYds * ActualWidth), 2);
+            }
+            else
+            {
+                CurrentData["PointRate"] = (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
+            }
            
-            CurrentData["PointRate"] = (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
+            
             #region Grade,Result
             string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
             string grade_cmd = String.Format(@"
