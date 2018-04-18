@@ -13,6 +13,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using System.Data.SqlClient;
+using Sci.Win.Tems;
 
 namespace Sci.Production.Quality
 {
@@ -20,12 +21,66 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
-          
+
+        // 宣告Context Menu Item
+        ToolStripMenuItem add, edit, delete;
+
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {                
             InitializeComponent();         
-            DefaultFilter = string.Format("MDivisionid='{0}'",Factory);                     
+            DefaultFilter = string.Format("MDivisionid='{0}'", Factory);
+            //this.detailgrid.ContextMenuStrip = detailgridmenus;
+            this.detailgrid.ContextMenuShowing += new System.EventHandler<Ict.Win.ContextMenuShowingEventArgs>(this.detailgrid_ContextMenuShowing);
+        }
+
+        protected override DetailGridContextMenuMode CurrentDetailGridContextMenuMode()
+        {
+            if (!this.EditMode) return DetailGridContextMenuMode.Editable;
+            return DetailGridContextMenuMode.None;
+        }
+
+        private  void detailgrid_ContextMenuShowing(object sender, ContextMenuShowingEventArgs e)
+        {
+            if (EditMode)
+            {
+                foreach (ToolStripItem m in detailgridmenus.Items)
+                {
+                    m.Visible = false;
+                }
+            }
+            else
+            {
+
+                foreach (ToolStripItem m in detailgridmenus.Items)
+                {
+                    m.Visible = true;
+                }
+            }
+        }
+
+        protected override void OnFormLoaded()
+        {
+            detailgridmenus.Items.Clear();//清空原有的Menu Item
+            //Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Create New Test", onclick: (s, e) => CreateNewTest()).Get(out add);
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
+            //Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);
+            
+            base.OnFormLoaded();
+        }
+
+        private void EditThisDetail()
+        {
+            if (EditMode) return;
+            if (DetailDatas.Count == 0)
+            {
+                return;
+            }
+            Sci.Production.Quality.P04_Detail callNewDetailForm = new P04_Detail(this.EditMode,this.CurrentMaintain, this.CurrentDetailData);
+            callNewDetailForm.ShowDialog(this);
+            callNewDetailForm.Dispose();
+            this.RenewData();
+            OnDetailEntered();
         }
 
         protected override void OnDetailEntered()
@@ -75,6 +130,7 @@ namespace Sci.Production.Quality
             else dateDeadLine.Value = Convert.ToDateTime(CurrentMaintain["Deadline"]);
 
             DataTable datas = (DataTable)detailgridbs.DataSource;
+            
         }
 
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
@@ -99,8 +155,9 @@ namespace Sci.Production.Quality
                 dr["NewKey"] = i;
                 dr["Send"] = "";
                 dr["Receive"] = "";
-                dr["AddName"] = dt.Rows[i]["AddName"].ToString() + " - " + dt.Rows[i]["AddDate"].ToString();
-                dr["LastEditName"] = dt.Rows[i]["EditName"].ToString() + " - " + dt.Rows[i]["EditDate"].ToString();
+                dr["AddName"] = dt.Rows[i]["AddName"].ToString() + " - " + ((DateTime)MyUtility.Convert.GetDate(dt.Rows[i]["AddDATE"])).ToString("yyyy/MM/dd HH:mm:ss");
+                if (!MyUtility.Check.Empty(dt.Rows[i]["EditName"]))
+                    dr["LastEditName"] = dt.Rows[i]["EditName"].ToString() + " - " +((DateTime)MyUtility.Convert.GetDate(dt.Rows[i]["EditDate"])).ToString("yyyy/MM/dd HH:mm:ss");
                 i++;
             }
             return base.OnRenewDataDetailPost(e);
@@ -145,8 +202,6 @@ namespace Sci.Production.Quality
 
         protected override void OnDetailGridSetup()
         {
-            
-            
             DataGridViewGeneratorDateColumnSettings inspDateCell = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings inspectorCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings CommentsCell = new DataGridViewGeneratorTextColumnSettings();
@@ -155,9 +210,8 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorTextColumnSettings ReceiveCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ReceiverCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorComboBoxColumnSettings ResultValid = new DataGridViewGeneratorComboBoxColumnSettings();
-            DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();          
-            
-            
+            DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings SizeCell = new DataGridViewGeneratorTextColumnSettings();
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
             ResultCombo.Add("P", "Pass");
@@ -165,7 +219,7 @@ namespace Sci.Production.Quality
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
-      
+
 
             #region inspDateCell
             inspDateCell.CellValidating += (s, e) =>
@@ -351,25 +405,53 @@ namespace Sci.Production.Quality
                     }
                 }
             };
-           
-            #endregion
 
-            #region ResultComboCell
-            //ResultComboCell.CellEditable += (s, e) =>
-            //{
-            //    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-            //    if (this.EditMode == true && (MyUtility.Check.Empty(dr["SendDate"]) || MyUtility.Check.Empty(dr["ReceiveDate"]))) e.IsEditable = false;
-            //};
-            
             #endregion
 
 
-            
+            #region SizeComboCell
+            SizeCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (!this.EditMode) return;
+                if (e.Button != System.Windows.Forms.MouseButtons.Right) return;
 
-           // Ict.Win.UI.DataGridViewComboBoxColumn ResultComboCell;// 一定要加Ict.Win.UI 不然會跟C#原生的有所衝突
-            
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                string sql = $@"select distinct(sizecode) from Order_Qty where id = '{this.CurrentMaintain["orderid"]}'";
+                //DataTable sizecodedt;
+                //DualResult sizecoderesult = DBProxy.Current.Select(null, sql, out sizecodedt);
+                SelectItem item = new SelectItem(sql, "10,10", dr["SizeCode"].ToString());
+                DialogResult dresult = item.ShowDialog();
+                if (dresult == DialogResult.Cancel) return;
+
+                dr["SizeCode"] = item.GetSelectedString();
+                dr.EndEdit();
+            };
+
+             SizeCell.CellValidating += (s, e) =>
+             {
+                 if (e.RowIndex == -1) return;
+                 if (!this.EditMode) return;
+                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                 string sql = $@"select sizecode from Order_Qty where id = '{this.CurrentMaintain["orderid"]}' and sizecode =  '{e.FormattedValue}' ";
+                 string sizecode = MyUtility.GetValue.Lookup(sql);
+                 if (MyUtility.Check.Empty(sizecode))
+                 {
+                     dr["SizeCode"] = string.Empty;
+
+                 }
+                 else
+                 {
+                     dr["SizeCode"] = sizecode;
+                 }
+                 dr.EndEdit();
+             };
+
+            #endregion
+
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("No", header: "No. Of Test", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), settings: SizeCell)
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)//.Get(out ResultComboCell)
             .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(10),settings:inspectorCell)
@@ -384,8 +466,6 @@ namespace Sci.Production.Quality
             .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10),iseditingreadonly:true)
             .Text("AddName", header: "Add Name", width: Widths.AnsiChars(25),iseditingreadonly:true)// addName + addDate
             .Text("LastEditName", header: "Last Edit Name", width: Widths.AnsiChars(25),iseditingreadonly:true);//editName + editDate
-            
-            
         }
 
         protected override void ClickNewAfter()
@@ -439,16 +519,12 @@ namespace Sci.Production.Quality
 
         protected override DualResult ClickSave()
         {
-
             DualResult upResult = new DualResult(true);
-            bool DELETE = false;
             string update_cmd = ""; 
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {               
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    DELETE = true;
-
                     if (!MyUtility.Check.Empty(dr["senddate", DataRowVersion.Original])) return new DualResult(false, "SendDate is existed, can not delete.", "Warning");
 
                     List<SqlParameter> spamDet = new List<SqlParameter>();
@@ -456,14 +532,96 @@ namespace Sci.Production.Quality
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
                     spamDet.Add(new SqlParameter("@no", dr["NO", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
-                    continue;
                 }
              
             }
-                
+
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    string delete3sub = $@"
+Delete GarmentTest_Detail_Shrinkage  where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete GarmentTest_Detail_Twisting where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete GarmentTest_Detail_Apperance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+";
+                    DBProxy.Current.Execute(null, delete3sub);
+                }
+                else
+                {
+                    if (MyUtility.Check.Empty(dr["Status"]))
+                    {
+                        dr["Status"] = "New";
+                    }
+                    if (!MyUtility.Check.Seek($"select 1 from GarmentTest_Detail_Shrinkage with(nolock) where id = '{this.CurrentMaintain["ID"]}' and NO = '{dr["NO"]}'"))
+                    {
+                        List<SqlParameter> spam = new List<SqlParameter>();
+                        spam.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
+                        spam.Add(new SqlParameter("@NO", dr["NO"]));
+                        string insertShrinkage = $@"
+select sl.Location
+into #Location1
+from GarmentTest gt with(nolock)
+inner join style s with(nolock) on s.id = gt.StyleID
+inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
+where gt.id = @ID and sl.Location !='B'
+group by sl.Location
+order by sl.Location desc
+CREATE TABLE #type1([type] [varchar](20),seq numeric(6,0))
+insert into #type1 values('Chest Width',1)
+insert into #type1 values('Sleeve Width',2)
+insert into #type1 values('Sleeve Length',3)
+insert into #type1 values('Back Length',4)
+insert into #type1 values('Hem Opening',5)
+---
+select distinct sl.Location
+into #Location2
+from GarmentTest gt with(nolock)
+inner join style s with(nolock) on s.id = gt.StyleID
+inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
+where gt.id = @ID and sl.Location ='B'
+CREATE TABLE #type2([type] [varchar](20),seq numeric(6,0))
+insert into #type2 values('Waistband (relax)',1)
+insert into #type2 values('Hip Width',2)
+insert into #type2 values('Thigh Width',3)
+insert into #type2 values('Side Seam',4)
+insert into #type2 values('Leg Opening',5)
+INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
+select @ID,@NO,* from #Location1,#type1
+INSERT INTO [dbo].[GarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
+select @ID,@NO,* from #Location2,#type2
+
+INSERT INTO [dbo].[GarmentTest_Detail_Twisting]([ID],[No],[Location])
+select @ID,@NO,* from #Location1
+INSERT INTO [dbo].[GarmentTest_Detail_Twisting]([ID],[No],[Location])
+select @ID,@NO,* from #Location2
+
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Print / Heat Transfer',1)
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Embroidery',2)
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Label',3)
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Zipper/ snap button/ button/tie cord/etc.',4)
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Discoloration (colour change )',5)
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Colour Staining',6)
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Pilling',7)
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Shrinkage & Twisting',8)
+INSERT INTO [dbo].[GarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Appearance of garment after wash',9)
+";
+                        DBProxy.Current.Execute(null, insertShrinkage, spam);
+                    }
+                }
+            }
 
             DataTable dt = (DataTable)detailgridbs.DataSource;
-            if (DELETE) dt.AcceptChanges();
+
             if (dt.Rows.Count > 0)
             {
                 string maxNo = dt.Compute("MAX(NO)", "").ToString();
@@ -473,7 +631,6 @@ namespace Sci.Production.Quality
                 CurrentMaintain["Result"] = DetailRow["Result"];
                 CurrentMaintain["Date"] = DetailRow["inspdate"];
                 CurrentMaintain["Remark"] = DetailRow["remark"];
-                
             }
             else
             {
@@ -481,11 +638,9 @@ namespace Sci.Production.Quality
                 CurrentMaintain["Date"] = DBNull.Value;
                 CurrentMaintain["Remark"] = "";
             }
-           
+
 
             return base.ClickSave();
-
-          
         }
 
         private void txtSP_Validated(object sender, EventArgs e)
