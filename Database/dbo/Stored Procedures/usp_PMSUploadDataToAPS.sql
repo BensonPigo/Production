@@ -172,7 +172,6 @@ into #tmp2
 from #tmp s
 left join '+@SerDbDboTb+N' t on t.RCID collate Chinese_Taiwan_Stroke_CI_AS = s.sRCID
 
-
 insert into '+@SerDbDboTb+N'
 ([RCID],[DELF],[SONO],[LOT],[CRNM],[PRIO],[ODST],[NCTR],[CSSE],[CSNM],[CUNM],[CFTY],[SYD1]
 ,[GTMH],[OTDD],[COTD],[OTTD],[QTYN],[FIRM],[COLR],[SZE],[SHIP],[SMOD],[PlcOrdDate],[REMK],[AOTT]
@@ -187,11 +186,127 @@ select [sRCID], iif(Junk = 0,''N'',''Y'') ,[sSONO],[sLOT],[sCRNM],[sPRIO],[sODST
 from #tmp2
 where C is null--目標沒有
 
-select * from #tmp2 where C is null
+Update t
+set DELF=''Y'',
+	UPDT= format(GETDATE(),''yyyy-MM-dd'')
+FROM '+@SerDbDboTb+N' t
+where 
+not exists(select 1 from #tmp2 s where t.RCID collate Chinese_Taiwan_Stroke_CI_AS =s.sRCID)
+and CONVERT(date, t.OTDD collate Chinese_Taiwan_Stroke_CI_AS) >= DATEADD(DAY, -15, GETDATE())
+and DELF <> ''Y''
+
+IF OBJECT_ID(''tempdb.dbo.#tmp'', ''U'') IS NOT NULL DROP TABLE #tmp2
 '
+-------------------------------------------------第三部分-------------------------------------------------
+--Style圖檔資料：APS的中間表Table Name為IMAGEMAPPING
+--key要注意production這有3個key,目標table 只有兩個key,多筆取top 1
+Declare @SerDbDboTb2 varchar(66)
+Set @SerDbDboTb2 = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[IMAGEMAPPING]')
 Declare @cmd3 varchar(max)
-set @cmd =N'select * from #tmp2 where C is null'
+set @cmd3 =N'
+update '+@SerDbDboTb2+N'
+set
+[FULLPATH] = [sFULLPATH]
+From (
+	Select Distinct [sSTYLENO] = ID
+	,[sSEASONCD] = SeasonID
+	,[sFULLPATH] = concat((select PicPath from System),Picture1)
+	from Style s
+	inner join '+@SerDbDboTb2+N' t 
+	on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID
+	and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
+)s
+where STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.sSTYLENO 
+and SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.sSEASONCD
+and FULLPATH collate Chinese_Taiwan_Stroke_CI_AS != s.sFULLPATH
+
+IF OBJECT_ID(''tempdb.dbo.#tmps'', ''U'') IS NOT NULL DROP TABLE #tmps
+Select Distinct  ID
+,SeasonID
+,BrandID
+into #tmps
+from Style s
+left join '+@SerDbDboTb2+N' t 
+on t.STYLENO collate Chinese_Taiwan_Stroke_CI_AS = s.ID 
+and t.SEASONCD collate Chinese_Taiwan_Stroke_CI_AS = s.SeasonID
+where t.STYLENO is null
+insert into '+@SerDbDboTb2+N'
+([STYLENO],[SEASONCD],[FULLPATH])
+select distinct s.ID,s.SeasonID
+,[FULLPATH] = 
+(
+	select top 1 concat((select PicPath from System),s2.Picture1) 
+	from Style s2 where s2.id = s.id  and s2.SeasonID = s.SeasonID
+)
+from #tmps s
+IF OBJECT_ID(''tempdb.dbo.#tmps'', ''U'') IS NOT NULL DROP TABLE #tmps'
+
+
+-------------------------------------------------第四部分-------------------------------------------------
+--Sewing Daily Output：APS的中間表Table Name為OPDWF220
+Declare @SerDbDboTb3 varchar(66)
+Set @SerDbDboTb3 = concat('[',@ServerName,'].[',@DatabaseName,N'].[dbo].[OPDWF220]')
+Declare @cmd4 varchar(max)
+set @cmd4 =N'
+Delete from '+@SerDbDboTb3+N'
+INSERT INTO '+@SerDbDboTb3+N'
+([POCODE],[PROCESS],[FACILITY],[PDATE],[COLOR],[XSIZE],[QTY],[WORKERS],[HOURS])
+select 
+	[POCode],[Process],[Facility],[PDate],[Color],[XSize]
+	,[Qty] = sum([Qty])
+	,[Workers]=AVG([Workers])
+	,[Hours]=SUM([Hours])
+from
+(
+	Select
+	[POCode] = s.FactoryID+sd.OrderID+IIF((select StyleUnit from Orders where ID = sd.OrderID) = ''PCS'', '''', ''(''+sd.ComboType+'')'')
+	,[Process] = ''SEWING''
+	,[Facility] = s.SewingLineID
+	,[PDate] = CONVERT(varchar(10), s.OutputDate, 120)
+	,[Color] = sd.Article
+	,[XSize] = sdd.SizeCode
+	,[Qty] = sdd.QAQty
+	,[Workers] = s.Manpower
+	,[Hours] = round( (cast(sdd.QAQty as float) / cast(sd.QAQty as float)) * sd.WorkHour , 3)
+	from SewingOutput s
+	inner join SewingOutput_Detail sd on s.ID = sd.ID
+	inner join SewingOutput_Detail_Detail sdd on sdd.SewingOutput_DetailUKey = sd.UKey 
+	where sdd.OrderID in (Select distinct sd.OrderID 
+						  from SewingOutput s, SewingOutput_Detail sd
+						  where (s.LockDate is null or s.LockDate >= DATEADD(DAY, -7, CONVERT(date,GETDATE())))
+						  and s.ID = sd.ID)
+)l
+group by [POCode],[Process],[Facility],[PDate],[Color],[XSize]
+'
 	END
-	EXEC(@Cmd2)
-	EXEC(@Cmd3)
+
+	Begin Try
+		EXEC(@Cmd)		
+	End Try
+	Begin Catch
+		PRINT 'ERROR command1' 
+		rollback tran
+		EXECUTE [usp_GetErrorString];
+	End Catch
+	Begin Try
+		EXEC(@Cmd2)
+	End Try
+	Begin Catch
+		PRINT 'ERROR command2' 
+		EXECUTE [usp_GetErrorString];
+	End Catch
+	Begin Try
+		EXEC(@Cmd3)
+	End Try
+	Begin Catch
+		PRINT 'ERROR command3' 
+		EXECUTE [usp_GetErrorString];
+	End Catch
+	Begin Try
+		EXEC(@Cmd4)
+	End Try
+	Begin Catch
+		PRINT 'ERROR command4'
+		EXECUTE [usp_GetErrorString];
+	End Catch
 END
