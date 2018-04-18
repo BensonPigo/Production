@@ -234,16 +234,16 @@ namespace Sci.Production.Quality
             //PointRate 國際公式每五碼最高20點
             CurrentData["TotalPoint"] = SumPoint;
 
-            if (displayBrand.Text == "LLL")
-            {
-                CurrentData["PointRate"] = (double_ActualYds == 0 || ActualWidth == 0) ? 0 : Math.Round((SumPoint * 3600) / (double_ActualYds * ActualWidth), 2);
-            }
-            else
-            {
-                CurrentData["PointRate"] = (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
-            }
-           
-            
+            #region 依dbo.PointRate 來判斷新的PointRate計算公式
+            DataRow drPoint;
+            string PointRateID = (MyUtility.Check.Seek($@"select * from PointRate where Brandid='{displayBrand.Text}'", out drPoint)) ? drPoint["id"].ToString() : "1";
+
+            CurrentData["PointRate"] = (PointRateID == "2") ?
+                ((double_ActualYds == 0 || ActualWidth == 0) ? 0 : Math.Round((SumPoint * 3600) / (double_ActualYds * ActualWidth), 2)) :
+                (double_ActualYds == 0) ? 0 : Math.Round((SumPoint / double_ActualYds) * 100, 2);
+         
+            #endregion
+
             #region Grade,Result
             string WeaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
             string grade_cmd = String.Format(@"
