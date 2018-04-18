@@ -132,9 +132,10 @@ namespace Sci.Production.Quality
                     }
                     catch (System.IO.IOException exception)
                     {
-                        MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
+                        MyUtility.Msg.ErrorBox("Error: update file fail. Original error: " + exception.Message);
                     }
                 }
+                this.attach_flag = false;
 
             }
             return base.ClickSaveBefore();
