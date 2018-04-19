@@ -300,6 +300,12 @@
     <Compile Include="txtunit_fty.Designer.cs">
       <DependentUpon>txtunit_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtTechnician.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtTechnician.Designer.cs">
+      <DependentUpon>txtTechnician.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtuser.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -514,6 +520,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtunit.resx">
       <DependentUpon>txtunit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtTechnician.resx">
+      <DependentUpon>txtTechnician.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtuser.resx">
       <DependentUpon>txtuser.cs</DependentUpon>
