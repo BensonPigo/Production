@@ -1662,6 +1662,12 @@ where WorkOrderUkey={0}", masterID);
             DataTable workorderdt = ((DataTable)detailgridbs.DataSource);
             string maxref = MyUtility.GetValue.Lookup(string.Format("Select isnull(Max(cutref),'000000') from Workorder WITH (NOLOCK) where mDivisionid = '{0}'", keyWord)); //找最大Cutref
             string updatecutref = "", newcutref = "";
+            updatecutref = @"
+
+DECLARE @chk tinyint
+SET @chk = 0
+Begin Transaction [Trans_Name] -- Trans_Name 
+";
             foreach (DataRow dr in workordertmp.Rows) //寫入空的Cutref
             {
                 DataRow[] findrow = cutreftb.Select(string.Format(@"MarkerName = '{0}' and FabricCombo = '{1}' and Cutno = {2} and estcutdate = '{3}' ", dr["MarkerName"], dr["FabricCombo"], dr["Cutno"], dr["estcutdate"]));
@@ -1681,37 +1687,46 @@ where WorkOrderUkey={0}", masterID);
                     cutreftb.Rows.Add(newdr);
                     newcutref = maxref;
                 }
-                updatecutref = updatecutref + string.Format("Update Workorder set cutref = '{0}' where ukey = '{1}';", newcutref, dr["ukey"]);
+                updatecutref = updatecutref + string.Format($@"
+    if (select COUNT(1) from Workorder where cutref = '{newcutref}' and mDivisionid = '{keyWord}')>0
+	begin
+		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
+		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+	end
+    Update Workorder set cutref = '{newcutref}' where ukey = '{dr["ukey"]}';");
             }
-            #region update Inqty,Status
+            updatecutref = updatecutref + @"
+    IF @@Error <> 0 BEGIN SET @chk = 1 END
+IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
+    Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+END
+ELSE BEGIN
+    Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
+END";
+
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
-                try
+
+                if (!MyUtility.Check.Empty(updatecutref))
                 {
-                    if (!MyUtility.Check.Empty(updatecutref))
+                    if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
                     {
-                        if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
+                        if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
                         {
-                            _transactionscope.Dispose();
-                            ShowErr(updatecutref, upResult);
-                            return;
+                            MyUtility.Msg.WarningBox("Duplicate Cutref. Please redo Auto Ref#");
                         }
-                        _transactionscope.Complete();
+                        else
+                        {
+                            ShowErr(upResult);
+                        }
+                        return;
                     }
                 }
-                catch (Exception ex)
-                {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
-                    return;
-                }
-            }
-            _transactionscope.Dispose();
-            _transactionscope = null;
 
-            #endregion
+                _transactionscope.Complete();
+            }
             this.RenewData();
             sorting(comboBox1.Text);  //避免順序亂掉
             this.OnDetailEntered();
