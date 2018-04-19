@@ -39,7 +39,6 @@ namespace Sci.Production.Quality
             this.gridReceiveDate.IsEditingReadOnly = false;
             this.gridReceiveDate.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridReceiveDate)
-            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
             .Date("ReceiveDate", header: "Receive Date", iseditable: false)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditable: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
