@@ -383,9 +383,9 @@
             // 
             // labSeq
             // 
-            this.labSeq.Location = new System.Drawing.Point(757, 87);
+            this.labSeq.Location = new System.Drawing.Point(768, 87);
             this.labSeq.Name = "labSeq";
-            this.labSeq.Size = new System.Drawing.Size(48, 23);
+            this.labSeq.Size = new System.Drawing.Size(35, 23);
             this.labSeq.TabIndex = 27;
             this.labSeq.Text = "Seq";
             // 
@@ -418,6 +418,7 @@
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(54, 23);
             this.txtSeq1.TabIndex = 30;
+            this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq1_PopUp);
             this.txtSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq1_Validating);
             // 
             // txtSeq2
@@ -428,6 +429,7 @@
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(41, 23);
             this.txtSeq2.TabIndex = 31;
+            this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq2_PopUp);
             this.txtSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq2_Validating);
             // 
             // P02_BatchAssignCellCutDate
