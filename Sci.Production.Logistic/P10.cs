@@ -41,7 +41,6 @@ namespace Sci.Production.Logistic
             this.gridTransferDate.IsEditingReadOnly = false;
             this.gridTransferDate.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridTransferDate)
-            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
             .Date("TransferDate", header: "Receive Date", iseditable: false)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditable: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
