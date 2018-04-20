@@ -671,14 +671,14 @@ order by no
                 norow = 17 + ((j - 2) * 5) + addct;
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
-                int endRow = norow + 5;
-                worksheet.Names.Add("MachineINV", worksheet.Range["J17", "M" + endRow]);
-                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow]);
-                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow]);
-                worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$T$17:$T${endRow}))/2,0)");
-                worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$S$17:$S${endRow}))/2,0)");
-                worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$T$17:$T${endRow})");
-
+                string endRow = (norow + 5).ToString();
+                worksheet.Names.Add("MachineINV1", worksheet.Range["J17", "J" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["M17", "M" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow], Type.Missing);
+                worksheet.Names.Add("TtlTMS", $"=ROUND((SUM('{worksheet.Name}'!$B$17:$B${endRow})+SUM('{worksheet.Name}'!$T$17:$T${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("TtlGSD", $"=ROUND((SUM('{worksheet.Name}'!$C$17:$C${endRow})+SUM('{worksheet.Name}'!$S$17:$S${endRow}))/2,0)", Type.Missing);
+                worksheet.Names.Add("MaxTMS", $"=Max('{worksheet.Name}'!$B$17:$B${endRow},'{worksheet.Name}'!$T$17:$T${endRow})", Type.Missing);
                 int m = 0;
 
                 foreach (DataRow nodr in nodist.Rows)
@@ -798,7 +798,8 @@ order by no
 
                 // excel 範圍別名宣告 公式使用 for MACHINE INVENTORY計算用
                 int endRow = norow + 5;
-                worksheet.Names.Add("MachineINV", worksheet.Range["J17", "M" + endRow]);
+                worksheet.Names.Add("MachineINV1", worksheet.Range["J17", "J" + endRow], Type.Missing);
+                worksheet.Names.Add("MachineINV2", worksheet.Range["M17", "M" + endRow], Type.Missing);
                 worksheet.Names.Add("MachineAttachmentTemplateL", worksheet.Range["Z19", "AA" + endRow]);
                 worksheet.Names.Add("MachineAttachmentTemplateR", worksheet.Range["Q17", "R" + endRow]);
                 worksheet.Names.Add("TtlTMS", $"=(SUM('Line Mapping'!$B$17:$B${endRow})+SUM('Line Mapping'!$T$17:$T${endRow}))/2");
