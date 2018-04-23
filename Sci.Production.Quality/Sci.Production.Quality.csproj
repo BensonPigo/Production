@@ -314,6 +314,18 @@
     <Compile Include="P10.Designer.cs">
       <DependentUpon>P10.cs</DependentUpon>
     </Compile>
+    <Compile Include="P13_Detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P13_Detail.Designer.cs">
+      <DependentUpon>P13_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P13.Designer.cs">
+      <DependentUpon>P13.cs</DependentUpon>
+    </Compile>
     <Compile Include="P12_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -591,6 +603,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P10.resx">
       <DependentUpon>P10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P13_Detail.resx">
+      <DependentUpon>P13_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P13.resx">
+      <DependentUpon>P13.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P12_Detail.resx">
       <DependentUpon>P12_Detail.cs</DependentUpon>
