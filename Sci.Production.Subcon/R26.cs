@@ -231,6 +231,7 @@ select DISTINCT c.FactoryID
 	        ,b.Price
 	        ,[Amount] = b.Qty*b.Price
 	        ,b.InQty
+            ,b.qty-b.InQty
 	        ,b.APQty
             ,a.id
 	        ,b.Remark
@@ -291,6 +292,7 @@ select  tmp.LocalPOID
         , tmp.Price
         , tmp.Amount
         , tmp.[In-Coming]
+        ,tmp.Order_Qty-tmp.[In-Coming] as 'On Road/Balance'
         , tmp.AP_Qty
 from #tmp tmp;
 

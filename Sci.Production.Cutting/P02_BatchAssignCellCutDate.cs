@@ -18,6 +18,7 @@ namespace Sci.Production.Cutting
         private DataTable curTb;
         private DataTable detailTb;
         private DataTable sp;
+        private string Poid;
 
         public P02_BatchAssignCellCutDate(DataTable cursor)
         {
@@ -31,11 +32,17 @@ namespace Sci.Production.Cutting
             btnFilter_Click(null, null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 
             MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
+            if (cursor != null)
+            {
+                Poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{cursor.Rows[0]["ID"]}'");
+            }
         }
 
         private void gridsetup()
         {
             DataGridViewGeneratorTextColumnSettings Cell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Seq1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings col_Seq2 = new DataGridViewGeneratorTextColumnSettings();
             this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             bool cellchk = true;
             Cell.EditingMouseDown += (s, e) =>
@@ -115,6 +122,167 @@ namespace Sci.Production.Cutting
                 }
             };
 
+            #region Seq1
+            col_Seq1.EditingMouseDown += (s, e) =>
+            {   
+                if (e.Button == MouseButtons.Right)
+                {
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!this.EditMode) { return; }
+                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                    if (!MyUtility.Check.Empty(dr["Cutplanid"])) return;
+                    SelectItem sele;
+                    DataTable poTb;
+                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}' and junk=0 ", Poid, dr["SCIRefno"]), out poTb);
+                    sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ1"].ToString(), false, ",");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+
+                    dr["SEQ2"] = sele.GetSelecteds()[0]["SEQ2"];
+                    dr["Colorid"] = sele.GetSelecteds()[0]["Colorid"];
+                    e.EditingControl.Text = sele.GetSelectedString();
+                }
+            };
+            col_Seq1.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+            };
+            col_Seq1.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            col_Seq1.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) { return; }
+                // 右鍵彈出功能
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                string oldvalue = dr["seq1"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (oldvalue == newvalue) return;
+                DataRow seledr;
+                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}'", Poid, newvalue)))
+                {
+                    dr["SEQ1"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SEQ1> : {0} data not found!", newvalue));
+                    return;
+                }
+                else
+                {
+                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", Poid, newvalue, dr["SEQ2"]), out seledr))
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, dr["SEQ2"]));
+                        dr["SEQ2"] = "";
+                        dr["Colorid"] = "";
+                    }
+                    else
+                    {
+                        dr["Colorid"] = seledr["Colorid"];
+                    }
+                }
+                dr["SEQ1"] = newvalue;
+                dr.EndEdit();
+            };
+            #endregion
+
+            #region Seq2
+            col_Seq2.EditingMouseDown += (s, e) =>
+            {   
+                if (e.Button == MouseButtons.Right)
+                {
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!this.EditMode) { return; }
+                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                    if (!MyUtility.Check.Empty(dr["Cutplanid"])) return;
+                    SelectItem sele;
+                    DataTable poTb;
+                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}' and junk=0", Poid, dr["SCIRefno"]), out poTb);
+                    sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ2"].ToString(), false, ",");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+
+                    dr["SEQ1"] = sele.GetSelecteds()[0]["SEQ1"];
+                    dr["Colorid"] = sele.GetSelecteds()[0]["Colorid"];
+                    e.EditingControl.Text = sele.GetSelectedString();
+
+                }
+            };
+            col_Seq2.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+
+            };
+            col_Seq2.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            col_Seq2.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) { return; }
+                // 右鍵彈出功能
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                string oldvalue = dr["seq2"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (oldvalue == newvalue) return;
+                DataRow seledr;
+                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq2 ='{1}'", Poid, newvalue)))
+                {
+                    dr["SEQ2"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SEQ2> : {0} data not found!", newvalue));
+                    return;
+                }
+                else
+                {
+                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", Poid, dr["SEQ1"], newvalue), out seledr))
+                    {
+                        MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, dr["SEQ1"]));
+                        dr["SEQ1"] = "";
+                        dr["Colorid"] = "";
+                    }
+                    else
+                    {
+                        dr["Colorid"] = seledr["Colorid"];
+                    }
+                }
+
+                dr["SEQ2"] = newvalue;
+                dr.EndEdit();
+            };
+            #endregion
+
 
             Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
              .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
@@ -130,8 +298,8 @@ namespace Sci.Production.Cutting
              .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
              .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-             .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
-             .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+             .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), settings: col_Seq1)
+             .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), settings:col_Seq2)
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: EstCutDate)
              .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true);
@@ -198,8 +366,6 @@ namespace Sci.Production.Cutting
 
                 if (dr["Sel"].ToString() == "True")
                 {
-                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
-                    //  detaildr[0]["Cutcellid"] = cell;
                     dr["Cutcellid"] = cell;
                     dr.EndEdit();
                     string strMsg = checkCuttingWidth(dr["Cutcellid"].ToString(), dr["SciRefno"].ToString());
@@ -228,26 +394,55 @@ namespace Sci.Production.Cutting
                     continue;
 
                 if (dr["Sel"].ToString() == "True")
-                {
-                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                {   
                     if (cdate != "")
                     {
-                        //  detaildr[0]["estcutdate"] = cdate;
                         dr["estcutdate"] = cdate;
                     }
                     else
-                    {
-                        //  detaildr[0]["estcutdate"] = DBNull.Value;
+                    {   
                         dr["estcutdate"] = DBNull.Value;
                     }
                 }
             }
         }
 
+        private void btnBatchUpdSeq_Click(object sender, EventArgs e)
+        {   
+            string Seq1 = txtSeq1.Text;
+            string Seq2 = txtSeq2.Text;
+
+            // 不可輸入空白
+            if (MyUtility.Check.Empty(Seq1) || MyUtility.Check.Empty(Seq2))
+            {
+                MyUtility.Msg.WarningBox("Seq1 and Seq2 can't be empty.");
+                return;
+            }
+
+            foreach (DataRow dr in curTb.Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+
+                if (dr["Sel"].ToString() == "True")
+                {
+
+                    if (MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq1='{Seq1}' and Seq2='{Seq2}' and Scirefno='{dr["SciRefno"]}' and Junk=0"))
+                    {
+                        dr["Seq1"] = Seq1;
+                        dr["Seq2"] = Seq2;
+                    }
+                    dr.EndEdit();
+                }
+            }         
+        }
+
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             this.gridBatchAssignCellEstCutDate.ValidateControl();
             string cell = txtCell2.Text; string cdate = "";
+            string Seq1 = txtSeq1.Text;
+            string Seq2 = txtSeq2.Text;
             if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
             {
                 cdate = txtBatchUpdateEstCutDate.Text;
@@ -262,22 +457,24 @@ namespace Sci.Production.Cutting
                         detaildr[0]["Cutcellid"] = cell;
                         dr["Cutcellid"] = cell;
                     }
+
                     if (dr["Cutcellid"].ToString() != "")
                     {
                         string CUTCELL = dr["Cutcellid"].ToString();
                         detaildr[0]["Cutcellid"] = CUTCELL;
-
                     }
                     else
                     {
                         detaildr[0]["Cutcellid"] = DBNull.Value;
                         dr["Cutcellid"] = DBNull.Value;
                     }
+
                     if (cdate != "")
                     {
                         detaildr[0]["estcutdate"] = cdate;
                         dr["estcutdate"] = cdate;
                     }
+
                     if (dr["estcutdate"].ToString() != "")
                     {
                         string ESTDATE = dr["estcutdate"].ToString();
@@ -287,6 +484,24 @@ namespace Sci.Production.Cutting
                     {
                         detaildr[0]["estcutdate"] = DBNull.Value;
                         dr["estcutdate"] = DBNull.Value;
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["Seq1"]))
+                    {
+                        detaildr[0]["Seq1"] = dr["Seq1"];
+                    }
+                    else
+                    {
+                        detaildr[0]["Seq1"] = string.Empty;
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["Seq2"]))
+                    {
+                        detaildr[0]["Seq2"] = dr["Seq2"];
+                    }
+                    else
+                    {
+                        detaildr[0]["Seq2"] = string.Empty;
                     }
                 }
             }
@@ -364,6 +579,58 @@ where   id = '{0}'
             {
                 MyUtility.Msg.WarningBox(Msg);
             }
+        }
+
+        private void txtSeq1_Validating(object sender, CancelEventArgs e)
+        {
+            string Seq1 = txtSeq1.Text;
+            if (!MyUtility.Check.Empty(Seq1))
+            {                
+                if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq1='{Seq1}'  and Junk=0"))
+                {
+                    MyUtility.Msg.WarningBox($@"Seq1: {Seq1} data not found!");
+                    txtSeq1.Text = string.Empty;
+                    txtSeq1.Focus();
+                    return;
+                }
+            }
+            else
+            {
+                txtSeq1.Text = string.Empty;
+            }
+        }
+
+        private void txtSeq2_Validating(object sender, CancelEventArgs e)
+        {
+            string Seq2 = txtSeq2.Text;
+            if (!MyUtility.Check.Empty(Seq2))
+            {
+                if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq2='{Seq2}' and Junk=0"))
+                {
+                    MyUtility.Msg.WarningBox($@"Seq2: {Seq2} data not found!");
+                    txtSeq2.Text = string.Empty;
+                    txtSeq2.Focus();
+                    return;
+                }
+            }
+        }
+
+        private void txtSeq1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {           
+            SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{Poid}' and junk=0", "SEQ1,SEQ2,Colorid", txtSeq1.Text, false, ",");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            txtSeq1.Text = item.GetSelectedString();
+            txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
+        }
+
+        private void txtSeq2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{Poid}' and junk=0", "SEQ1,SEQ2,Colorid", txtSeq2.Text, false, ",");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            txtSeq1.Text = item.GetSelecteds()[0]["Seq1"].ToString();
+            txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
         }
     }
 }

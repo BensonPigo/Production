@@ -59,6 +59,12 @@
             this.txtCell2 = new Sci.Production.Class.txtCell();
             this.txtCutCell = new Sci.Production.Class.txtCell();
             this.btnConfirm = new Sci.Win.UI.Button();
+            this.btnBatchUpdSeq = new Sci.Win.UI.Button();
+            this.labSeq = new Sci.Win.UI.Label();
+            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtSeq1 = new Sci.Win.UI.TextBox();
+            this.txtSeq2 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssignCellEstCutDate)).BeginInit();
             this.SuspendLayout();
             // 
@@ -91,7 +97,8 @@
             this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchAssignCellEstCutDate.RowTemplate.Height = 24;
             this.gridBatchAssignCellEstCutDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(983, 338);
+            this.gridBatchAssignCellEstCutDate.ShowCellToolTips = false;
+            this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(1052, 338);
             this.gridBatchAssignCellEstCutDate.TabIndex = 0;
             this.gridBatchAssignCellEstCutDate.TabStop = false;
             // 
@@ -99,7 +106,7 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.AutoSize = true;
-            this.btnClose.Location = new System.Drawing.Point(909, 467);
+            this.btnClose.Location = new System.Drawing.Point(978, 467);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 15;
@@ -266,7 +273,7 @@
             // 
             // labelBatchUpdateEstCutCell
             // 
-            this.labelBatchUpdateEstCutCell.Location = new System.Drawing.Point(12, 87);
+            this.labelBatchUpdateEstCutCell.Location = new System.Drawing.Point(8, 87);
             this.labelBatchUpdateEstCutCell.Name = "labelBatchUpdateEstCutCell";
             this.labelBatchUpdateEstCutCell.Size = new System.Drawing.Size(92, 23);
             this.labelBatchUpdateEstCutCell.TabIndex = 19;
@@ -274,7 +281,7 @@
             // 
             // txtBatchUpdateEstCutDate
             // 
-            this.txtBatchUpdateEstCutDate.Location = new System.Drawing.Point(450, 87);
+            this.txtBatchUpdateEstCutDate.Location = new System.Drawing.Point(410, 87);
             this.txtBatchUpdateEstCutDate.Name = "txtBatchUpdateEstCutDate";
             this.txtBatchUpdateEstCutDate.Size = new System.Drawing.Size(130, 23);
             this.txtBatchUpdateEstCutDate.TabIndex = 12;
@@ -282,7 +289,7 @@
             // 
             // labelBatchUpdateEstCutDate
             // 
-            this.labelBatchUpdateEstCutDate.Location = new System.Drawing.Point(359, 87);
+            this.labelBatchUpdateEstCutDate.Location = new System.Drawing.Point(319, 87);
             this.labelBatchUpdateEstCutDate.Name = "labelBatchUpdateEstCutDate";
             this.labelBatchUpdateEstCutDate.Size = new System.Drawing.Size(88, 23);
             this.labelBatchUpdateEstCutDate.TabIndex = 21;
@@ -292,12 +299,12 @@
             // 
             this.panel1.Location = new System.Drawing.Point(6, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(990, 75);
+            this.panel1.Size = new System.Drawing.Size(1053, 75);
             this.panel1.TabIndex = 23;
             // 
             // btnBatchUpdateEstCutCell
             // 
-            this.btnBatchUpdateEstCutCell.Location = new System.Drawing.Point(143, 83);
+            this.btnBatchUpdateEstCutCell.Location = new System.Drawing.Point(139, 83);
             this.btnBatchUpdateEstCutCell.Name = "btnBatchUpdateEstCutCell";
             this.btnBatchUpdateEstCutCell.Size = new System.Drawing.Size(175, 30);
             this.btnBatchUpdateEstCutCell.TabIndex = 11;
@@ -307,7 +314,7 @@
             // 
             // btnBatchUpdateEstCutDate
             // 
-            this.btnBatchUpdateEstCutDate.Location = new System.Drawing.Point(586, 83);
+            this.btnBatchUpdateEstCutDate.Location = new System.Drawing.Point(546, 83);
             this.btnBatchUpdateEstCutDate.Name = "btnBatchUpdateEstCutDate";
             this.btnBatchUpdateEstCutDate.Size = new System.Drawing.Size(199, 30);
             this.btnBatchUpdateEstCutDate.TabIndex = 13;
@@ -320,9 +327,7 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(1003, 503);
+            this.shapeContainer1.Size = new System.Drawing.Size(1072, 503);
             this.shapeContainer1.TabIndex = 24;
             this.shapeContainer1.TabStop = false;
             // 
@@ -337,9 +342,9 @@
             // txtCell2
             // 
             this.txtCell2.BackColor = System.Drawing.Color.White;
-            this.txtCell2.MDivisionID = "";
             this.txtCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell2.Location = new System.Drawing.Point(107, 87);
+            this.txtCell2.Location = new System.Drawing.Point(103, 87);
+            this.txtCell2.MDivisionID = "";
             this.txtCell2.Name = "txtCell2";
             this.txtCell2.Size = new System.Drawing.Size(30, 23);
             this.txtCell2.TabIndex = 10;
@@ -347,9 +352,9 @@
             // txtCutCell
             // 
             this.txtCutCell.BackColor = System.Drawing.Color.White;
-            this.txtCutCell.MDivisionID = "";
             this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCutCell.Location = new System.Drawing.Point(693, 46);
+            this.txtCutCell.MDivisionID = "";
             this.txtCutCell.Name = "txtCutCell";
             this.txtCutCell.Size = new System.Drawing.Size(30, 23);
             this.txtCutCell.TabIndex = 7;
@@ -358,7 +363,7 @@
             // 
             this.btnConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConfirm.AutoSize = true;
-            this.btnConfirm.Location = new System.Drawing.Point(812, 467);
+            this.btnConfirm.Location = new System.Drawing.Point(881, 467);
             this.btnConfirm.Name = "btnConfirm";
             this.btnConfirm.Size = new System.Drawing.Size(80, 30);
             this.btnConfirm.TabIndex = 14;
@@ -366,9 +371,75 @@
             this.btnConfirm.UseVisualStyleBackColor = true;
             this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);
             // 
+            // btnBatchUpdSeq
+            // 
+            this.btnBatchUpdSeq.Location = new System.Drawing.Point(916, 83);
+            this.btnBatchUpdSeq.Name = "btnBatchUpdSeq";
+            this.btnBatchUpdSeq.Size = new System.Drawing.Size(143, 30);
+            this.btnBatchUpdSeq.TabIndex = 26;
+            this.btnBatchUpdSeq.Text = "Batch update Seq";
+            this.btnBatchUpdSeq.UseVisualStyleBackColor = true;
+            this.btnBatchUpdSeq.Click += new System.EventHandler(this.btnBatchUpdSeq_Click);
+            // 
+            // labSeq
+            // 
+            this.labSeq.Location = new System.Drawing.Point(768, 87);
+            this.labSeq.Name = "labSeq";
+            this.labSeq.Size = new System.Drawing.Size(35, 23);
+            this.labSeq.TabIndex = 27;
+            this.labSeq.Text = "Seq";
+            // 
+            // shapeContainer2
+            // 
+            this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape1});
+            this.shapeContainer2.Size = new System.Drawing.Size(1003, 503);
+            this.shapeContainer2.TabIndex = 24;
+            this.shapeContainer2.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.label2.Location = new System.Drawing.Point(856, 83);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(19, 25);
+            this.label2.TabIndex = 29;
+            this.label2.Text = "-";
+            // 
+            // txtSeq1
+            // 
+            this.txtSeq1.BackColor = System.Drawing.Color.White;
+            this.txtSeq1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeq1.Location = new System.Drawing.Point(806, 87);
+            this.txtSeq1.Name = "txtSeq1";
+            this.txtSeq1.Size = new System.Drawing.Size(54, 23);
+            this.txtSeq1.TabIndex = 30;
+            this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq1_PopUp);
+            this.txtSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq1_Validating);
+            // 
+            // txtSeq2
+            // 
+            this.txtSeq2.BackColor = System.Drawing.Color.White;
+            this.txtSeq2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeq2.Location = new System.Drawing.Point(869, 87);
+            this.txtSeq2.Name = "txtSeq2";
+            this.txtSeq2.Size = new System.Drawing.Size(41, 23);
+            this.txtSeq2.TabIndex = 31;
+            this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq2_PopUp);
+            this.txtSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq2_Validating);
+            // 
             // P02_BatchAssignCellCutDate
             // 
-            this.ClientSize = new System.Drawing.Size(1003, 503);
+            this.ClientSize = new System.Drawing.Size(1072, 503);
+            this.Controls.Add(this.txtSeq2);
+            this.Controls.Add(this.txtSeq1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.btnBatchUpdSeq);
+            this.Controls.Add(this.labSeq);
             this.Controls.Add(this.btnConfirm);
             this.Controls.Add(this.btnBatchUpdateEstCutDate);
             this.Controls.Add(this.btnBatchUpdateEstCutCell);
@@ -439,5 +510,11 @@
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private Win.UI.Button btnConfirm;
+        private Win.UI.Button btnBatchUpdSeq;
+        private Win.UI.Label labSeq;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
+        private System.Windows.Forms.Label label2;
+        private Win.UI.TextBox txtSeq1;
+        private Win.UI.TextBox txtSeq2;
     }
 }
