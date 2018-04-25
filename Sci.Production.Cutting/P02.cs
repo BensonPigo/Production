@@ -1688,7 +1688,7 @@ Begin Transaction [Trans_Name] -- Trans_Name
                     newcutref = maxref;
                 }
                 updatecutref = updatecutref + string.Format($@"
-    if (select COUNT(1) from Workorder where cutref = '{newcutref}' and mDivisionid = '{keyWord}')>0
+    if (select COUNT(1) from Workorder WITH (NOLOCK) where cutref = '{newcutref}' and mDivisionid = '{keyWord}')>0
 	begin
 		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
 		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
@@ -1708,7 +1708,6 @@ END";
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
-
                 if (!MyUtility.Check.Empty(updatecutref))
                 {
                     if (!(upResult = DBProxy.Current.Execute(null, updatecutref)))
@@ -1721,7 +1720,6 @@ END";
                         {
                             ShowErr(upResult);
                         }
-                        return;
                     }
                 }
 
