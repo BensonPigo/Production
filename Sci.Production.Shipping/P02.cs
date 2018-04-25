@@ -972,7 +972,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
             {
                 if (this.CurrentMaintain["ToTag"].ToString() == "3")
                 {
-                    sqlCmd = "select ID,AbbCH,AbbEN from Supp WITH (NOLOCK) where Junk = 0";
+                    sqlCmd = "select ID,AbbCH,AbbEN from Supp WITH (NOLOCK) where Junk = 0 union all select ID,AbbCH = Abb,AbbEN = Abb from LocalSupp WITH (NOLOCK) where Junk = 0";
                     item = new Sci.Win.Tools.SelectItem(sqlCmd, "8,20,20", this.txtTO.Text);
                 }
                 else
@@ -1060,7 +1060,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                         if (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3")
                         {
                             DataTable suppData;
-                            string sqlCmd = "select AbbEN from Supp WITH (NOLOCK) where Junk = 0 and ID = @id";
+                            string sqlCmd = "select AbbEN from Supp WITH (NOLOCK) where Junk = 0 and ID = @id  union all select AbbEN = Abb from LocalSupp WITH (NOLOCK) where Junk = 0  and ID = @id";
                             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out suppData);
 
                             if (!result || suppData.Rows.Count <= 0)
@@ -1145,7 +1145,7 @@ Order by ed.CTNNo,ed.Seq1,ed.Seq2", masterID);
                         toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from SCIFty WITH (NOLOCK) where ID = '{0}'", toSite));
                         break;
                     case "3":
-                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Supp WITH (NOLOCK) where ID = '{0}'", toSite));
+                        toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Supp WITH (NOLOCK) where ID = '{0}'  union all select CountryID from LocalSupp WITH (NOLOCK) where ID = '{0}'", toSite));
                         break;
                     case "4":
                         toCountry = MyUtility.GetValue.Lookup(string.Format("select CountryID from Brand WITH (NOLOCK) where ID = '{0}'", toSite));
@@ -1161,8 +1161,9 @@ select @4th=ID from Carrier_FtyRule where FromCountry = '{1}' and ToCountry = '{
 select @5th=ID from Carrier_FtyRule where FromSite = '{0}';
 select @6th=ID from Carrier_FtyRule where FromCountry = '{1}';
 
-select c.ID,c.Account,c.SuppID,isnull(s.AbbEN,'') as Abb from Carrier c WITH (NOLOCK) 
+select c.ID,c.Account,c.SuppID,isnull(s.AbbEN,isnull(ls.Abb,'')) as Abb from Carrier c WITH (NOLOCK) 
 left join Supp s WITH (NOLOCK) on c.SuppID = s.ID
+left join Localsupp ls WITH (NOLOCK) on c.SuppID = ls.ID
 where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4th is null,iif(@5th is null,@6th,@5th),@4th),@3rd),@2nd)),@1st));",
                     fromSite,
                     fromCountry,
@@ -1247,9 +1248,10 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
         // Carrier按右鍵帶出的資料
         private void CarrierPopup()
         {
-            string sqlCmd = @"select c.ID,c.SuppID,isnull(s.AbbEN,'') as Abb,c.Account
+            string sqlCmd = @"select c.ID,c.SuppID,isnull(s.AbbEN,isnull(ls.Abb,'')) as Abb,c.Account
 from Carrier c WITH (NOLOCK) 
-left join Supp s WITH (NOLOCK) on c.SuppID = s.ID";
+left join Supp s WITH (NOLOCK) on c.SuppID = s.ID
+left join Localsupp ls WITH (NOLOCK) on c.SuppID = ls.ID";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,8,20,20", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
