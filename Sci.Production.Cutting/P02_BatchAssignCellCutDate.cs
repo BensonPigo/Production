@@ -408,8 +408,7 @@ namespace Sci.Production.Cutting
         }
 
         private void btnBatchUpdSeq_Click(object sender, EventArgs e)
-        {
-            List<string> warningMsg = new List<string>();
+        {   
             string Seq1 = txtSeq1.Text;
             string Seq2 = txtSeq2.Text;
 
@@ -427,9 +426,8 @@ namespace Sci.Production.Cutting
 
                 if (dr["Sel"].ToString() == "True")
                 {
-                    string poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{dr["id"]}' ");
 
-                    if (MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{poid}' and Seq1='{Seq1}' and Seq2='{Seq2}' and Junk=0"))
+                    if (MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq1='{Seq1}' and Seq2='{Seq2}' and Scirefno='{dr["SciRefno"]}' and Junk=0"))
                     {
                         dr["Seq1"] = Seq1;
                         dr["Seq2"] = Seq2;
@@ -438,16 +436,11 @@ namespace Sci.Production.Cutting
                     {
                         dr["Seq1"] = string.Empty;
                         dr["Seq2"] = string.Empty;
-                        warningMsg.Add($@"<Seq1: {Seq1}, Seq2: {Seq2}> data not found!");
                     }
                     dr.EndEdit();
 
                 }
-            }
-            if (warningMsg.Count > 0)
-            {
-                MyUtility.Msg.WarningBox(warningMsg.Select(x => x).Distinct().ToList().JoinToString("\n"));
-            }
+            }         
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
