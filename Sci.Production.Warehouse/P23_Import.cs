@@ -182,6 +182,7 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 DataTable TaipeiInput = dsTmp.Tables[0];
                 dsTmp.Tables[0].TableName = "TaipeiInput";
                 DataTable FtyDetail = dsTmp.Tables[1];
+                dsTmp.Tables[1].TableName = "FtyDetail";
                 foreach (DataRow dr in FtyDetail.Rows)
                 {
                     string ToLocation = dr["ToLocation"].ToString();
@@ -197,9 +198,9 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 dsTmp.Relations.Add(relation);
                 TaipeiInputBS.DataSource = dsTmp;
                 TaipeiInputBS.DataMember = "TaipeiInput";
-                FtyDetailBS.DataSource = TaipeiInputBS;
-                FtyDetailBS.DataMember = "rel1";
-
+                FtyDetailBS.DataSource = dsTmp;
+                FtyDetailBS.DataMember = "FtyDetail";
+                
                 TaipeiInput.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
                 TaipeiInput.Columns.Add("balanceqty", typeof(decimal), "Taipei_qty - accu_qty - sum(child.qty)");
                 myFilter();
@@ -229,6 +230,18 @@ drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
                 .Numeric("total_qty", header: "Total" + Environment.NewLine + "Transfer", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //7
                 .Numeric("balanceqty", header: "Balance", integer_places: 8, decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(8))      //8
                ;
+
+            this.grid_TaipeiInput.RowSelecting += (s, e) =>
+            {
+                if (e.RowIndex < 0  || !TaipeiInputBS.Current.GetType().FullName.Equals("System.Data.DataRowView"))
+                {
+                    return;
+                }
+
+                DataRow dr = grid_TaipeiInput.GetDataRow(e.RowIndex);
+                FtyDetailBS.Filter = $" toPoid = '{dr["Poid"]}' and toSeq1 = '{dr["Seq1"]}' and toSeq2 = '{dr["Seq2"]}' ";
+            };
+
             this.grid_ftyDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.grid_ftyDetail.DataSource = FtyDetailBS;
             
@@ -315,7 +328,6 @@ WHERE   StockType='{0}'
             {
                 scrollnb = this.grid_ftyDetail.FirstDisplayedScrollingRowIndex;
                 DataRow dr = grid_ftyDetail.GetDataRow(e.RowIndex);
-                
                 if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_chk.Name)
                 {
                     if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
@@ -332,10 +344,10 @@ WHERE   StockType='{0}'
                     {
                         dr["qty"] = 0;
                     }
-                    
+
                 }
                 if (grid_ftyDetail.Columns[e.ColumnIndex].Name == col_Qty.Name)
-                {                  
+                {
                     dr["selected"] = true;
                 }
                 dr.EndEdit();
@@ -343,8 +355,10 @@ WHERE   StockType='{0}'
                 this.grid_ftyDetail.FirstDisplayedScrollingRowIndex = scrollnb;
             };
 
+           DataGridViewGeneratorCheckBoxColumnSettings sel = new DataGridViewGeneratorCheckBoxColumnSettings();
+
             Helper.Controls.Grid.Generator(this.grid_ftyDetail)
-                .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1,  falseValue: 0).Get(out col_chk)   //0
+                .CheckBox("selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1,  falseValue: 0,settings: sel).Get(out col_chk)   //0
                 .Text("Frompoid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //0
                 .Text("Fromseq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(4)) //1
                 .Text("Fromseq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(3)) //2
