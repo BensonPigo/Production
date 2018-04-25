@@ -1721,9 +1721,11 @@ END";
                             ShowErr(upResult);
                         }
                     }
+                    else
+                    {
+                        _transactionscope.Complete();
+                    }
                 }
-
-                _transactionscope.Complete();
             }
             this.RenewData();
             sorting(comboBox1.Text);  //避免順序亂掉
