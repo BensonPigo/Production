@@ -432,13 +432,7 @@ namespace Sci.Production.Cutting
                         dr["Seq1"] = Seq1;
                         dr["Seq2"] = Seq2;
                     }
-                    else
-                    {
-                        dr["Seq1"] = string.Empty;
-                        dr["Seq2"] = string.Empty;
-                    }
                     dr.EndEdit();
-
                 }
             }         
         }
