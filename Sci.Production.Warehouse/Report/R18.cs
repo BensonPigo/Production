@@ -166,9 +166,9 @@ with cte as (
                             where export.Junk=0 and poid = pd.id and seq1 = pd.seq1 and seq2 = pd.seq2 and Blno !='')t 
                       for xml path(''))
     from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
-    inner join dbo.Po_Supp po with (NoLock) on pd.ID = po.ID
+    left join dbo.Po_Supp po with (NoLock) on pd.ID = po.ID
                                                and pd.Seq1 = po.Seq1
-    inner join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id 
+    left join dbo.MDivisionPoDetail mpd WITH (NOLOCK) on mpd.POID = pd.id 
                                                           and mpd.seq1 = pd.seq1 
                                                           and mpd.seq2= pd.SEQ2
     outer apply

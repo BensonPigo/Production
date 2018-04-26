@@ -48,7 +48,7 @@ Select  a.FtyGroup
         , md.BLocation
 from orders a WITH (NOLOCK) 
      , po_supp_detail b WITH (NOLOCK) 
-inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+left join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
      , po_supp c WITH (NOLOCK) 
 where   b.refno = '{0}'
         and a.id = b.id
