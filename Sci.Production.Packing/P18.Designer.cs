@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Packing
 {
-    partial class P17
+    partial class P18
     {
         /// <summary>
         /// 設計工具所需的變數。

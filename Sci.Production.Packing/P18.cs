@@ -16,18 +16,18 @@ using Sci.Win.Tools;
 namespace Sci.Production.Packing
 {
     /// <summary>
-    /// P17
+    /// P18
     /// </summary>
-    public partial class P17 : Sci.Win.Tems.QueryForm
+    public partial class P18 : Sci.Win.Tems.QueryForm
     {
         private DataTable dt_scanDetail;
         private SelectCartonDetail selecedPK;
 
         /// <summary>
-        /// P17
+        /// P18
         /// </summary>
         /// <param name="menuitem">menuitem</param>
-        public P17(ToolStripMenuItem menuitem)
+        public P18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();

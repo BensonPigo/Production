@@ -891,13 +891,13 @@ where f.Junk = 0",
             worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)", insertRow);
             insertRow++;
-            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["QAQty"]);
-            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["TotalCPU"]);
-            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["CPUSewer"]);
-            worksheet.Cells[insertRow, 7] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["AvgWorkHour"]);
-            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["ManPower"]);
-            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString(this.excludeInOutTotal.Rows[0]["ManHour"]);
-            worksheet.Cells[insertRow, 10] = string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
+            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["QAQty"]);
+            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["TotalCPU"]);
+            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["CPUSewer"]);
+            worksheet.Cells[insertRow, 7] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["AvgWorkHour"]);
+            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["ManPower"]);
+            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["ManHour"]);
+            worksheet.Cells[insertRow, 10] = (this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
 
             // CPU Factor
             insertRow = insertRow + 2;
