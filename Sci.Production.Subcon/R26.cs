@@ -446,9 +446,13 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
             if ("PO List".EqualString(this.comboReportType.Text))
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx"); //預先開啟excel app
-                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R26_Local_PO_List.xltx", 2, excelApp: objApp, wSheet: objSheets, showExcel: false, showSaveMsg: false);      // 將datatable copy to excel
+                
+                //MyUtility.Excel.CopyToXls(dtt, "", "Subcon_R26_Local_PO_List.xltx", 2, excelApp: objApp, showExcel: false, showSaveMsg: false);      // 將datatable copy to excel
+                Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_R26_Local_PO_List.xltx", objApp);
+                com.ColumnsAutoFit = false;
+                com.WriteTable(dtt, 3);
 
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 objSheets.get_Range("B2").ColumnWidth = 9.63;
                 objSheets.get_Range("A2").RowHeight = 31.5;
 
