@@ -203,7 +203,7 @@ select
 	,OutputDate
 	,SewingLineID
 into #tmp_AR_Basic
-from System s,(select distinct StyleID,CdCodeID from  #tmpo) o2
+from System s,(select distinct StyleID,CdCodeID,SciDelivery from  #tmpo) o2
 inner join Orders o WITH (NOLOCK) on o2.StyleID = o.StyleID and o2.CdCodeID = o.CdCodeID
 inner join SewingOutput_Detail sod  WITH (NOLOCK) on sod.OrderId = o.ID
 inner join SewingOutput so  WITH (NOLOCK) on sod.id = so.id
