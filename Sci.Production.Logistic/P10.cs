@@ -1,6 +1,4 @@
-﻿#pragma warning disable SA1652 // Enable XML documentation output
-using System;
-#pragma warning restore SA1652 // Enable XML documentation output
+﻿using System;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
@@ -12,12 +10,12 @@ using System.Runtime.InteropServices;
 namespace Sci.Production.Logistic
 {
     /// <summary>
-    /// Logistic_P10
+    /// Logistic_P11
     /// </summary>
     public partial class P10 : Sci.Win.Tems.QueryForm
     {
         /// <summary>
-        /// P10
+        /// P11
         /// </summary>
         /// <param name="menuitem">ToolStripMenuItem</param>
         public P10(ToolStripMenuItem menuitem)
@@ -38,10 +36,10 @@ namespace Sci.Production.Logistic
             base.OnFormLoaded();
 
             // Grid設定
-            this.gridTransferDate.IsEditingReadOnly = false;
-            this.gridTransferDate.DataSource = this.listControlBindingSource1;
-            this.Helper.Controls.Grid.Generator(this.gridTransferDate)
-            .Date("TransferDate", header: "Receive Date", iseditable: false)
+            this.gridReceiveDate.IsEditingReadOnly = false;
+            this.gridReceiveDate.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridReceiveDate)
+            .Date("ReceiveDate", header: "Receive Date", iseditable: false)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditable: false)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditable: false)
@@ -56,13 +54,13 @@ namespace Sci.Production.Logistic
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
             int columIndex = 0;
-            this.gridTransferDate.CellClick += (s, e) =>
+            this.gridReceiveDate.CellClick += (s, e) =>
             {
                 rowIndex = e.RowIndex;
                 columIndex = e.ColumnIndex;
             };
 
-            this.gridTransferDate.Sorted += (s, e) =>
+            this.gridReceiveDate.Sorted += (s, e) =>
             {
                 #region 如果準備排序的欄位 = "CTNStartNo" 則用以下方法排序
                 if ((rowIndex == -1) && this.gridData.Columns[columIndex].ColumnName.ToString().EqualString("CTNStartNo"))
@@ -95,7 +93,7 @@ namespace Sci.Production.Logistic
             sqlCmd.Append(string.Format(
                 @"
 select  1 as selected
-        , TransferDate
+        , ReceiveDate
         , PackingListID
         , CTNStartNo
         , OrderID
@@ -108,7 +106,7 @@ select  1 as selected
         , AddName
         , rn = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
-        select  cr.TransferDate
+    select  cr.ReceiveDate
             , cr.PackingListID
             , cr.CTNStartNo
             , cr.OrderID
@@ -119,24 +117,24 @@ from (
             , o.BuyerDelivery
             , o.SciDelivery
             , AddName = dbo.getPass1(cr.AddName)
-    from TransferToCFA cr WITH (NOLOCK) 
+    from ClogReceiveCFA cr WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
-    where 1=1 
+    where   cr.MDivisionID = '{0}'
 ", Sci.Env.User.Keyword));
 
-            if (!MyUtility.Check.Empty(this.dateTransferDate.Value1))
+            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value1))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.TransferDate >= '{0}'", Convert.ToDateTime(this.dateTransferDate.Value1).ToString("d")));
+            and cr.ReceiveDate >= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value1).ToString("d")));
             }
 
-            if (!MyUtility.Check.Empty(this.dateTransferDate.Value2))
+            if (!MyUtility.Check.Empty(this.dateReceiveDate.Value2))
             {
                 sqlCmd.Append(string.Format(
                     @" 
-            and cr.TransferDate <= '{0}'", Convert.ToDateTime(this.dateTransferDate.Value2).ToString("d")));
+            and cr.ReceiveDate <= '{0}'", Convert.ToDateTime(this.dateReceiveDate.Value2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
@@ -155,7 +153,7 @@ from (
 
             sqlCmd.Append(@"
 )a
-order by PackingListID,rn,TransferDate");
+order by PackingListID,rn,ReceiveDate");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
             if (!result)
@@ -164,7 +162,7 @@ order by PackingListID,rn,TransferDate");
             }
 
             this.listControlBindingSource1.DataSource = this.gridData;
-            this.gridTransferDate.AutoResizeColumns();
+            this.gridReceiveDate.AutoResizeColumns();
             this.HideWaitMessage();
         }
 

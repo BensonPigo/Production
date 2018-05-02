@@ -38,17 +38,17 @@
             this.labelSPNo = new Sci.Win.UI.Label();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.labelPackID = new Sci.Win.UI.Label();
-            this.dateTransferDate = new Sci.Win.UI.DateRange();
-            this.labelTransferDate = new Sci.Win.UI.Label();
+            this.dateReceiveDate = new Sci.Win.UI.DateRange();
+            this.labelReceiveDate = new Sci.Win.UI.Label();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
-            this.gridTransferDate = new Sci.Win.UI.Grid();
+            this.gridReceiveDate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridTransferDate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,8 +75,8 @@
             this.panel3.Controls.Add(this.labelSPNo);
             this.panel3.Controls.Add(this.txtPackID);
             this.panel3.Controls.Add(this.labelPackID);
-            this.panel3.Controls.Add(this.dateTransferDate);
-            this.panel3.Controls.Add(this.labelTransferDate);
+            this.panel3.Controls.Add(this.dateReceiveDate);
+            this.panel3.Controls.Add(this.labelReceiveDate);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
@@ -128,35 +128,35 @@
             this.labelPackID.TabIndex = 2;
             this.labelPackID.Text = "Pack ID";
             // 
-            // dateTransferDate
+            // dateReceiveDate
             // 
             // 
             // 
             // 
-            this.dateTransferDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateTransferDate.DateBox1.Name = "";
-            this.dateTransferDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateTransferDate.DateBox1.TabIndex = 0;
+            this.dateReceiveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateReceiveDate.DateBox1.Name = "";
+            this.dateReceiveDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateReceiveDate.DateBox1.TabIndex = 0;
             // 
             // 
             // 
-            this.dateTransferDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateTransferDate.DateBox2.Name = "";
-            this.dateTransferDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateTransferDate.DateBox2.TabIndex = 1;
-            this.dateTransferDate.IsRequired = false;
-            this.dateTransferDate.Location = new System.Drawing.Point(100, 13);
-            this.dateTransferDate.Name = "dateTransferDate";
-            this.dateTransferDate.Size = new System.Drawing.Size(280, 23);
-            this.dateTransferDate.TabIndex = 1;
+            this.dateReceiveDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateReceiveDate.DateBox2.Name = "";
+            this.dateReceiveDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateReceiveDate.DateBox2.TabIndex = 1;
+            this.dateReceiveDate.IsRequired = false;
+            this.dateReceiveDate.Location = new System.Drawing.Point(100, 13);
+            this.dateReceiveDate.Name = "dateReceiveDate";
+            this.dateReceiveDate.Size = new System.Drawing.Size(280, 23);
+            this.dateReceiveDate.TabIndex = 1;
             // 
-            // labelTransferDate
+            // labelReceiveDate
             // 
-            this.labelTransferDate.Location = new System.Drawing.Point(7, 13);
-            this.labelTransferDate.Name = "labelTransferDate";
-            this.labelTransferDate.Size = new System.Drawing.Size(89, 23);
-            this.labelTransferDate.TabIndex = 0;
-            this.labelTransferDate.Text = "Transfer Date";
+            this.labelReceiveDate.Location = new System.Drawing.Point(7, 13);
+            this.labelReceiveDate.Name = "labelReceiveDate";
+            this.labelReceiveDate.Size = new System.Drawing.Size(89, 23);
+            this.labelReceiveDate.TabIndex = 0;
+            this.labelReceiveDate.Text = "Receive Date";
             // 
             // panel4
             // 
@@ -180,29 +180,29 @@
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.gridTransferDate);
+            this.panel5.Controls.Add(this.gridReceiveDate);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 80);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(719, 327);
             this.panel5.TabIndex = 5;
             // 
-            // gridTransferDate
+            // gridReceiveDate
             // 
-            this.gridTransferDate.AllowUserToAddRows = false;
-            this.gridTransferDate.AllowUserToDeleteRows = false;
-            this.gridTransferDate.AllowUserToResizeRows = false;
-            this.gridTransferDate.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridTransferDate.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridTransferDate.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridTransferDate.DataSource = this.listControlBindingSource1;
-            this.gridTransferDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridTransferDate.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridTransferDate.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridTransferDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridTransferDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridTransferDate.Location = new System.Drawing.Point(0, 0);
-            this.gridTransferDate.Name = "gridTransferDate";
+            this.gridReceiveDate.AllowUserToAddRows = false;
+            this.gridReceiveDate.AllowUserToDeleteRows = false;
+            this.gridReceiveDate.AllowUserToResizeRows = false;
+            this.gridReceiveDate.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridReceiveDate.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridReceiveDate.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridReceiveDate.DataSource = this.listControlBindingSource1;
+            this.gridReceiveDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridReceiveDate.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridReceiveDate.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridReceiveDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridReceiveDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridReceiveDate.Location = new System.Drawing.Point(0, 0);
+            this.gridReceiveDate.Name = "gridReceiveDate";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -210,15 +210,15 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridTransferDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.gridTransferDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridTransferDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridTransferDate.RowTemplate.Height = 24;
-            this.gridTransferDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridTransferDate.ShowCellToolTips = false;
-            this.gridTransferDate.Size = new System.Drawing.Size(719, 327);
-            this.gridTransferDate.TabIndex = 0;
-            this.gridTransferDate.TabStop = false;
+            this.gridReceiveDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridReceiveDate.RowTemplate.Height = 24;
+            this.gridReceiveDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridReceiveDate.ShowCellToolTips = false;
+            this.gridReceiveDate.Size = new System.Drawing.Size(719, 327);
+            this.gridReceiveDate.TabIndex = 0;
+            this.gridReceiveDate.TabStop = false;
             // 
             // P10
             // 
@@ -230,7 +230,7 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P10";
-            this.Text = "P10.  Query For Clog Transfer To CFA Record";
+            this.Text = "P10. Query For Clog Receive CFA Record";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
@@ -240,7 +240,7 @@
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridTransferDate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
@@ -252,11 +252,11 @@
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel3;
         private Win.UI.Label labelPackID;
-        private Win.UI.DateRange dateTransferDate;
-        private Win.UI.Label labelTransferDate;
+        private Win.UI.DateRange dateReceiveDate;
+        private Win.UI.Label labelReceiveDate;
         private Win.UI.Panel panel4;
         private Win.UI.Panel panel5;
-        private Win.UI.Grid gridTransferDate;
+        private Win.UI.Grid gridReceiveDate;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Label labelSPNo;
         private Win.UI.TextBox txtPackID;

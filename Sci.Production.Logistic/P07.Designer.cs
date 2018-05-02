@@ -23,139 +23,267 @@
         #region Windows Form 設計工具產生的程式碼
 
         /// <summary>
-        /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器
-        /// 修改這個方法的內容。
+        /// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器修改
+        /// 這個方法的內容。
         /// </summary>
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.comboBrand = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.panel4 = new Sci.Win.UI.Panel();
-            this.Btnexit = new Sci.Win.UI.Button();
-            this.btnImport = new Sci.Win.UI.Button();
-            this.panel5 = new Sci.Win.UI.Panel();
-            this.panel7 = new Sci.Win.UI.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.chkCFA = new Sci.Win.UI.CheckBox();
+            this.BtnSave = new Sci.Win.UI.Button();
+            this.BtnClose = new Sci.Win.UI.Button();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.btnImportFromBarcode = new Sci.Win.UI.Button();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.dateSciDelivery = new Sci.Win.UI.DateRange();
+            this.dateReceiveDate = new Sci.Win.UI.DateRange();
+            this.labelReceiveDate = new Sci.Win.UI.Label();
+            this.labSCIDelivery = new Sci.Win.UI.Label();
+            this.txtPO = new Sci.Win.UI.TextBox();
+            this.labelSP = new Sci.Win.UI.Label();
+            this.txtSP = new Sci.Win.UI.TextBox();
+            this.labelPO = new Sci.Win.UI.Label();
+            this.labelPackID = new Sci.Win.UI.Label();
+            this.txtPackID = new Sci.Win.UI.TextBox();
+            this.BtnFind = new Sci.Win.UI.Button();
             this.gridDetail = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.panel6 = new Sci.Win.UI.Panel();
-            this.panel10 = new Sci.Win.UI.Panel();
-            this.panel12 = new Sci.Win.UI.Panel();
-            this.gridAttachFile = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.panel11 = new Sci.Win.UI.Panel();
-            this.btnClose = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
-            this.btnCheckImport = new Sci.Win.UI.Button();
-            this.btnRemoveExcel = new Sci.Win.UI.Button();
-            this.btnAddExcel = new Sci.Win.UI.Button();
+            this.labelSCIDelivery = new Sci.Win.UI.Label();
+            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.panel1 = new Sci.Win.UI.Panel();
-            this.panel2 = new Sci.Win.UI.Panel();
             this.panel3.SuspendLayout();
-            this.panel4.SuspendLayout();
-            this.panel5.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.panel7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel6.SuspendLayout();
-            this.panel10.SuspendLayout();
-            this.panel12.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridAttachFile)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            this.btnClose.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.comboBrand);
-            this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.panel1);
+            this.panel3.Controls.Add(this.panel7);
+            this.panel3.Controls.Add(this.panel6);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel3.Location = new System.Drawing.Point(10, 0);
+            this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(929, 33);
+            this.panel3.Size = new System.Drawing.Size(873, 164);
             this.panel3.TabIndex = 2;
             // 
-            // comboBrand
+            // panel1
             // 
-            this.comboBrand.BackColor = System.Drawing.Color.White;
-            this.comboBrand.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBrand.FormattingEnabled = true;
-            this.comboBrand.IsSupportUnselect = true;
-            this.comboBrand.Items.AddRange(new object[] {
-            "N.FACE",
-            "DOME",
-            "Other"});
-            this.comboBrand.Location = new System.Drawing.Point(70, 6);
-            this.comboBrand.Name = "comboBrand";
-            this.comboBrand.OldText = "";
-            this.comboBrand.Size = new System.Drawing.Size(121, 24);
-            this.comboBrand.TabIndex = 2;
-            this.comboBrand.SelectedIndexChanged += new System.EventHandler(this.ComboBrand_SelectedIndexChanged);
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.chkCFA);
+            this.panel1.Controls.Add(this.BtnSave);
+            this.panel1.Controls.Add(this.BtnClose);
+            this.panel1.Location = new System.Drawing.Point(5, 118);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(863, 42);
+            this.panel1.TabIndex = 109;
             // 
-            // label1
+            // chkCFA
             // 
-            this.label1.Location = new System.Drawing.Point(3, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 23);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Brand";
+            this.chkCFA.AutoSize = true;
+            this.chkCFA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCFA.IsSupportEditMode = false;
+            this.chkCFA.Location = new System.Drawing.Point(11, 11);
+            this.chkCFA.Name = "chkCFA";
+            this.chkCFA.Size = new System.Drawing.Size(229, 21);
+            this.chkCFA.TabIndex = 0;
+            this.chkCFA.Text = "Only Show CFA Selected Carton";
+            this.chkCFA.UseVisualStyleBackColor = true;
+            this.chkCFA.CheckedChanged += new System.EventHandler(this.ChkCFA_CheckedChanged);
             // 
-            // panel4
+            // BtnSave
             // 
-            this.panel4.Controls.Add(this.Btnexit);
-            this.panel4.Controls.Add(this.btnImport);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(10, 486);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(929, 42);
-            this.panel4.TabIndex = 3;
+            this.BtnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.BtnSave.Location = new System.Drawing.Point(683, 5);
+            this.BtnSave.Name = "BtnSave";
+            this.BtnSave.Size = new System.Drawing.Size(80, 30);
+            this.BtnSave.TabIndex = 1;
+            this.BtnSave.Text = "Save";
+            this.BtnSave.UseVisualStyleBackColor = true;
+            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
-            // Btnexit
+            // BtnClose
             // 
-            this.Btnexit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Btnexit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Btnexit.Location = new System.Drawing.Point(843, 6);
-            this.Btnexit.Name = "Btnexit";
-            this.Btnexit.Size = new System.Drawing.Size(80, 30);
-            this.Btnexit.TabIndex = 3;
-            this.Btnexit.Text = "Exit";
-            this.Btnexit.UseVisualStyleBackColor = true;
-            this.Btnexit.Click += new System.EventHandler(this.Btnclose_click);
-            // 
-            // btnImport
-            // 
-            this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImport.Location = new System.Drawing.Point(757, 6);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(80, 30);
-            this.btnImport.TabIndex = 2;
-            this.btnImport.Text = "Import";
-            this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.BtnWriteIn_Click_1);
-            // 
-            // panel5
-            // 
-            this.panel5.Controls.Add(this.panel7);
-            this.panel5.Controls.Add(this.panel6);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(10, 33);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(929, 453);
-            this.panel5.TabIndex = 4;
+            this.BtnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.BtnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.BtnClose.Location = new System.Drawing.Point(769, 5);
+            this.BtnClose.Name = "BtnClose";
+            this.BtnClose.Size = new System.Drawing.Size(80, 30);
+            this.BtnClose.TabIndex = 2;
+            this.BtnClose.Text = "Close";
+            this.BtnClose.UseVisualStyleBackColor = true;
+            this.BtnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // panel7
             // 
-            this.panel7.Controls.Add(this.gridDetail);
-            this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel7.Location = new System.Drawing.Point(0, 169);
+            this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel7.Controls.Add(this.btnImportFromBarcode);
+            this.panel7.Location = new System.Drawing.Point(5, 78);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(929, 284);
-            this.panel7.TabIndex = 1;
+            this.panel7.Size = new System.Drawing.Size(863, 42);
+            this.panel7.TabIndex = 3;
+            // 
+            // btnImportFromBarcode
+            // 
+            this.btnImportFromBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportFromBarcode.Location = new System.Drawing.Point(614, 3);
+            this.btnImportFromBarcode.Name = "btnImportFromBarcode";
+            this.btnImportFromBarcode.Size = new System.Drawing.Size(236, 30);
+            this.btnImportFromBarcode.TabIndex = 0;
+            this.btnImportFromBarcode.Text = "Import From Barcode";
+            this.btnImportFromBarcode.UseVisualStyleBackColor = true;
+            this.btnImportFromBarcode.Click += new System.EventHandler(this.BtnImportFromBarcode_Click);
+            // 
+            // panel6
+            // 
+            this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel6.Controls.Add(this.dateSciDelivery);
+            this.panel6.Controls.Add(this.dateReceiveDate);
+            this.panel6.Controls.Add(this.labelReceiveDate);
+            this.panel6.Controls.Add(this.labSCIDelivery);
+            this.panel6.Controls.Add(this.txtPO);
+            this.panel6.Controls.Add(this.labelSP);
+            this.panel6.Controls.Add(this.txtSP);
+            this.panel6.Controls.Add(this.labelPO);
+            this.panel6.Controls.Add(this.labelPackID);
+            this.panel6.Controls.Add(this.txtPackID);
+            this.panel6.Controls.Add(this.BtnFind);
+            this.panel6.Location = new System.Drawing.Point(5, 3);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(863, 77);
+            this.panel6.TabIndex = 108;
+            // 
+            // dateSciDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateSciDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSciDelivery.DateBox1.Name = "";
+            this.dateSciDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSciDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSciDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSciDelivery.DateBox2.Name = "";
+            this.dateSciDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSciDelivery.DateBox2.TabIndex = 1;
+            this.dateSciDelivery.IsRequired = false;
+            this.dateSciDelivery.IsSupportEditMode = false;
+            this.dateSciDelivery.Location = new System.Drawing.Point(100, 45);
+            this.dateSciDelivery.Name = "dateSciDelivery";
+            this.dateSciDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSciDelivery.TabIndex = 3;
+            // 
+            // dateReceiveDate
+            // 
+            // 
+            // 
+            // 
+            this.dateReceiveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateReceiveDate.DateBox1.Name = "";
+            this.dateReceiveDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateReceiveDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateReceiveDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateReceiveDate.DateBox2.Name = "";
+            this.dateReceiveDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateReceiveDate.DateBox2.TabIndex = 1;
+            this.dateReceiveDate.IsRequired = false;
+            this.dateReceiveDate.IsSupportEditMode = false;
+            this.dateReceiveDate.Location = new System.Drawing.Point(484, 45);
+            this.dateReceiveDate.Name = "dateReceiveDate";
+            this.dateReceiveDate.Size = new System.Drawing.Size(280, 23);
+            this.dateReceiveDate.TabIndex = 4;
+            // 
+            // labelReceiveDate
+            // 
+            this.labelReceiveDate.Location = new System.Drawing.Point(383, 45);
+            this.labelReceiveDate.Name = "labelReceiveDate";
+            this.labelReceiveDate.Size = new System.Drawing.Size(98, 23);
+            this.labelReceiveDate.TabIndex = 0;
+            this.labelReceiveDate.Text = "Receive Date";
+            // 
+            // labSCIDelivery
+            // 
+            this.labSCIDelivery.Location = new System.Drawing.Point(12, 45);
+            this.labSCIDelivery.Name = "labSCIDelivery";
+            this.labSCIDelivery.Size = new System.Drawing.Size(85, 23);
+            this.labSCIDelivery.TabIndex = 10;
+            this.labSCIDelivery.Text = "SCI Delivery";
+            // 
+            // txtPO
+            // 
+            this.txtPO.BackColor = System.Drawing.Color.White;
+            this.txtPO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPO.IsSupportEditMode = false;
+            this.txtPO.Location = new System.Drawing.Point(310, 9);
+            this.txtPO.Name = "txtPO";
+            this.txtPO.Size = new System.Drawing.Size(171, 23);
+            this.txtPO.TabIndex = 1;
+            // 
+            // labelSP
+            // 
+            this.labelSP.Location = new System.Drawing.Point(12, 9);
+            this.labelSP.Name = "labelSP";
+            this.labelSP.Size = new System.Drawing.Size(85, 23);
+            this.labelSP.TabIndex = 6;
+            this.labelSP.Text = "SP#";
+            // 
+            // txtSP
+            // 
+            this.txtSP.BackColor = System.Drawing.Color.White;
+            this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP.IsSupportEditMode = false;
+            this.txtSP.Location = new System.Drawing.Point(100, 9);
+            this.txtSP.Name = "txtSP";
+            this.txtSP.Size = new System.Drawing.Size(129, 23);
+            this.txtSP.TabIndex = 0;
+            // 
+            // labelPO
+            // 
+            this.labelPO.Location = new System.Drawing.Point(250, 9);
+            this.labelPO.Name = "labelPO";
+            this.labelPO.Size = new System.Drawing.Size(57, 23);
+            this.labelPO.TabIndex = 7;
+            this.labelPO.Text = "PO#";
+            // 
+            // labelPackID
+            // 
+            this.labelPackID.Location = new System.Drawing.Point(528, 9);
+            this.labelPackID.Name = "labelPackID";
+            this.labelPackID.Size = new System.Drawing.Size(83, 23);
+            this.labelPackID.TabIndex = 9;
+            this.labelPackID.Text = "PackID";
+            // 
+            // txtPackID
+            // 
+            this.txtPackID.BackColor = System.Drawing.Color.White;
+            this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPackID.IsSupportEditMode = false;
+            this.txtPackID.Location = new System.Drawing.Point(614, 9);
+            this.txtPackID.Name = "txtPackID";
+            this.txtPackID.Size = new System.Drawing.Size(150, 23);
+            this.txtPackID.TabIndex = 2;
+            // 
+            // BtnFind
+            // 
+            this.BtnFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.BtnFind.Location = new System.Drawing.Point(770, 6);
+            this.BtnFind.Name = "BtnFind";
+            this.BtnFind.Size = new System.Drawing.Size(80, 30);
+            this.BtnFind.TabIndex = 5;
+            this.BtnFind.Text = "Find";
+            this.BtnFind.UseVisualStyleBackColor = true;
+            this.BtnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // gridDetail
             // 
@@ -165,230 +293,92 @@
             this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridDetail.DataSource = this.listControlBindingSource2;
+            this.gridDetail.DataSource = this.listControlBindingSource1;
             this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridDetail.Location = new System.Drawing.Point(0, 164);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridDetail.RowHeadersVisible = false;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(929, 284);
+            this.gridDetail.Size = new System.Drawing.Size(873, 274);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
-            // panel6
+            // labelSCIDelivery
             // 
-            this.panel6.Controls.Add(this.panel10);
-            this.panel6.Controls.Add(this.btnClose);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel6.Location = new System.Drawing.Point(0, 0);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(929, 169);
-            this.panel6.TabIndex = 0;
+            this.labelSCIDelivery.Location = new System.Drawing.Point(9, 48);
+            this.labelSCIDelivery.Name = "labelSCIDelivery";
+            this.labelSCIDelivery.Size = new System.Drawing.Size(97, 23);
+            this.labelSCIDelivery.TabIndex = 100;
+            this.labelSCIDelivery.Text = "SCI Delivery";
             // 
-            // panel10
+            // shapeContainer1
             // 
-            this.panel10.Controls.Add(this.panel12);
-            this.panel10.Controls.Add(this.panel11);
-            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel10.Location = new System.Drawing.Point(0, 0);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(769, 169);
-            this.panel10.TabIndex = 2;
-            // 
-            // panel12
-            // 
-            this.panel12.Controls.Add(this.gridAttachFile);
-            this.panel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel12.Location = new System.Drawing.Point(0, 0);
-            this.panel12.Name = "panel12";
-            this.panel12.Size = new System.Drawing.Size(769, 159);
-            this.panel12.TabIndex = 1;
-            // 
-            // gridAttachFile
-            // 
-            this.gridAttachFile.AllowUserToAddRows = false;
-            this.gridAttachFile.AllowUserToDeleteRows = false;
-            this.gridAttachFile.AllowUserToResizeRows = false;
-            this.gridAttachFile.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridAttachFile.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridAttachFile.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridAttachFile.DataSource = this.listControlBindingSource1;
-            this.gridAttachFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridAttachFile.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridAttachFile.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridAttachFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridAttachFile.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridAttachFile.Location = new System.Drawing.Point(0, 0);
-            this.gridAttachFile.Name = "gridAttachFile";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAttachFile.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.gridAttachFile.RowHeadersVisible = false;
-            this.gridAttachFile.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridAttachFile.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridAttachFile.RowTemplate.Height = 24;
-            this.gridAttachFile.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridAttachFile.ShowCellToolTips = false;
-            this.gridAttachFile.Size = new System.Drawing.Size(769, 159);
-            this.gridAttachFile.TabIndex = 0;
-            this.gridAttachFile.TabStop = false;
-            // 
-            // panel11
-            // 
-            this.panel11.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel11.Location = new System.Drawing.Point(0, 159);
-            this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(769, 10);
-            this.panel11.TabIndex = 0;
-            // 
-            // btnClose
-            // 
-            this.btnClose.Controls.Add(this.button1);
-            this.btnClose.Controls.Add(this.btnCheckImport);
-            this.btnClose.Controls.Add(this.btnRemoveExcel);
-            this.btnClose.Controls.Add(this.btnAddExcel);
-            this.btnClose.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnClose.Location = new System.Drawing.Point(769, 0);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(160, 169);
-            this.btnClose.TabIndex = 1;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(7, 115);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(146, 44);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Download Other Template";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Btndowload_click);
-            // 
-            // btnCheckImport
-            // 
-            this.btnCheckImport.Location = new System.Drawing.Point(7, 79);
-            this.btnCheckImport.Name = "btnCheckImport";
-            this.btnCheckImport.Size = new System.Drawing.Size(146, 30);
-            this.btnCheckImport.TabIndex = 2;
-            this.btnCheckImport.Text = "Check File";
-            this.btnCheckImport.UseVisualStyleBackColor = true;
-            this.btnCheckImport.Click += new System.EventHandler(this.BtnCheckImport_Click);
-            // 
-            // btnRemoveExcel
-            // 
-            this.btnRemoveExcel.Location = new System.Drawing.Point(6, 43);
-            this.btnRemoveExcel.Name = "btnRemoveExcel";
-            this.btnRemoveExcel.Size = new System.Drawing.Size(146, 30);
-            this.btnRemoveExcel.TabIndex = 1;
-            this.btnRemoveExcel.Text = "Remove File";
-            this.btnRemoveExcel.UseVisualStyleBackColor = true;
-            this.btnRemoveExcel.Click += new System.EventHandler(this.BtnRemoveExcel_Click);
-            // 
-            // btnAddExcel
-            // 
-            this.btnAddExcel.Location = new System.Drawing.Point(6, 6);
-            this.btnAddExcel.Name = "btnAddExcel";
-            this.btnAddExcel.Size = new System.Drawing.Size(146, 30);
-            this.btnAddExcel.TabIndex = 0;
-            this.btnAddExcel.Text = "Add File";
-            this.btnAddExcel.UseVisualStyleBackColor = true;
-            this.btnAddExcel.Click += new System.EventHandler(this.BtnAddExcel_Click);
+            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer1.Name = "shapeContainer2";
+            this.shapeContainer1.Size = new System.Drawing.Size(862, 123);
+            this.shapeContainer1.TabIndex = 0;
+            this.shapeContainer1.TabStop = false;
             // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(10, 528);
-            this.panel1.TabIndex = 0;
-            // 
-            // panel2
-            // 
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(939, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 528);
-            this.panel2.TabIndex = 1;
-            // 
             // P07
             // 
-            this.ClientSize = new System.Drawing.Size(949, 528);
-            this.Controls.Add(this.panel5);
-            this.Controls.Add(this.panel4);
+            this.ClientSize = new System.Drawing.Size(873, 438);
+            this.Controls.Add(this.gridDetail);
             this.Controls.Add(this.panel3);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
+            this.DefaultControl = "txtSP";
             this.Name = "P07";
-            this.Text = "P07. Import Scan & Pack Barcode";
-            this.Controls.SetChildIndex(this.panel1, 0);
-            this.Controls.SetChildIndex(this.panel2, 0);
+            this.Text = "P07.Carton Transfer to CFA Input";
             this.Controls.SetChildIndex(this.panel3, 0);
-            this.Controls.SetChildIndex(this.panel4, 0);
-            this.Controls.SetChildIndex(this.panel5, 0);
+            this.Controls.SetChildIndex(this.gridDetail, 0);
             this.panel3.ResumeLayout(false);
-            this.panel4.ResumeLayout(false);
-            this.panel5.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.panel7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.panel6.ResumeLayout(false);
-            this.panel10.ResumeLayout(false);
-            this.panel12.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridAttachFile)).EndInit();
+            this.panel6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            this.btnClose.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
         private Win.UI.Panel panel3;
-        private Win.UI.Panel panel4;
-        private Win.UI.Panel panel5;
-        private Win.UI.Panel panel7;
+        private Win.UI.Button btnImportFromBarcode;
         private Win.UI.Grid gridDetail;
-        private Win.UI.ListControlBindingSource listControlBindingSource2;
-        private Win.UI.Panel panel6;
-        private Win.UI.Panel panel10;
-        private Win.UI.Grid gridAttachFile;
-        private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Panel btnClose;
-        private Win.UI.Button btnCheckImport;
-        private Win.UI.Button btnRemoveExcel;
-        private Win.UI.Button btnAddExcel;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;        
+        private Win.UI.Label labelSCIDelivery;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private Win.UI.Panel panel12;
-        private Win.UI.Panel panel11;
-        private Win.UI.ComboBox comboBrand;
-        private Win.UI.Label label1;
-        private Win.UI.Panel panel1;
-        private Win.UI.Panel panel2;
-        private Win.UI.Button Btnexit;
-        private Win.UI.Button btnImport;
-        private Win.UI.Button button1;
+        private System.Windows.Forms.Panel panel6;
+        private Win.UI.DateRange dateSciDelivery;
+        private Win.UI.DateRange dateReceiveDate;
+        private Win.UI.Label labelReceiveDate;
+        private Win.UI.Label labSCIDelivery;
+        private Win.UI.TextBox txtPO;
+        private Win.UI.Label labelSP;
+        private Win.UI.TextBox txtSP;
+        private Win.UI.Label labelPO;
+        private Win.UI.Label labelPackID;
+        private Win.UI.TextBox txtPackID;
+        private Win.UI.Button BtnFind;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.Panel panel1;
+        private Win.UI.CheckBox chkCFA;
+        private Win.UI.Button BtnSave;
+        private Win.UI.Button BtnClose;
     }
 }

@@ -649,7 +649,7 @@
             0,
             0});
             // 
-            // P17
+            // P18
             // 
             this.ClientSize = new System.Drawing.Size(934, 688);
             this.Controls.Add(this.numBoxRemainQty);
@@ -686,8 +686,8 @@
             this.Controls.Add(this.labelCtnNo);
             this.Controls.Add(this.labelPackID);
             this.KeyPreview = true;
-            this.Name = "P17";
-            this.Text = "P17. Scan & Pack";
+            this.Name = "P18";
+            this.Text = "P18. Scan & Pack";
             this.Controls.SetChildIndex(this.labelPackID, 0);
             this.Controls.SetChildIndex(this.labelCtnNo, 0);
             this.Controls.SetChildIndex(this.labelSP, 0);
