@@ -307,7 +307,7 @@ order by MDivisionID,FactoryID",
                     objArray[0, 12] = dr["Type"];
                     objArray[0, 13] = dr["Description"];
                     objArray[0, 14] = dr["OnTime"];
-                    objArray[0, 15] = string.Empty;
+                    objArray[0, 15] = dr["Remark"];
                     objArray[0, 16] = string.Empty;
                 }
 
