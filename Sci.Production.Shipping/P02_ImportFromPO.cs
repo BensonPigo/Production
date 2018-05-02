@@ -229,7 +229,7 @@ where Factory.IsProduceFty=1 and psd.ID = '{0}'{1}{2}) a",
                                             MyUtility.Convert.GetString(dr["Receiver"]),
                                             MyUtility.Convert.GetString(dr["BrandID"]),
                                             MyUtility.Convert.GetString(dr["LeaderID"]),
-                                            this.txtRemark.Text,
+                                            this.txtRemark.Text.Replace("'", "''"),
                                             Sci.Env.User.UserID));
             }
 
