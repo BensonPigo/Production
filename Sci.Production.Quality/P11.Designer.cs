@@ -38,14 +38,14 @@
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.displayID = new Sci.Win.UI.DisplayBox();
-            this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtseason = new Sci.Production.Class.txtseason();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtArticle = new Sci.Win.UI.TextBox();
             this.dateBoxReceivedDate = new Sci.Win.UI.DateBox();
             this.dateBoxReleasedDate = new Sci.Win.UI.DateBox();
-            this.txtT1 = new Sci.Production.Class.txtLocalSupp();
             this.txtRemark = new Sci.Win.UI.TextBox();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtseason = new Sci.Production.Class.txtseason();
+            this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtT1 = new Sci.Production.Class.txtLocalSuppForQA();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,8 +62,8 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.txtT1);
+            this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.txtArticle);
             this.masterpanel.Controls.Add(this.txtbrand);
             this.masterpanel.Controls.Add(this.txtseason);
@@ -98,8 +98,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtseason, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtbrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtArticle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtT1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtT1, 0);
             // 
             // detailpanel
             // 
@@ -109,7 +109,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1502, 145);
+            this.gridicon.Location = new System.Drawing.Point(1610, 145);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -215,7 +215,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(379, 96);
+            this.label9.Location = new System.Drawing.Point(275, 96);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(101, 23);
             this.label9.TabIndex = 9;
@@ -230,38 +230,6 @@
             this.displayID.Name = "displayID";
             this.displayID.Size = new System.Drawing.Size(140, 23);
             this.displayID.TabIndex = 10;
-            // 
-            // txtstyle
-            // 
-            this.txtstyle.BackColor = System.Drawing.Color.White;
-            this.txtstyle.BrandObjectName = this.txtbrand;
-            this.txtstyle.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
-            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(625, 13);
-            this.txtstyle.Name = "txtstyle";
-            this.txtstyle.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle.TabIndex = 2;
-            // 
-            // txtseason
-            // 
-            this.txtseason.BackColor = System.Drawing.Color.White;
-            this.txtseason.BrandObjectName = this.txtbrand;
-            this.txtseason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeasonID", true));
-            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason.Location = new System.Drawing.Point(865, 13);
-            this.txtseason.Name = "txtseason";
-            this.txtseason.Size = new System.Drawing.Size(130, 23);
-            this.txtseason.TabIndex = 3;
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(379, 13);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(130, 23);
-            this.txtbrand.TabIndex = 1;
             // 
             // txtArticle
             // 
@@ -295,25 +263,59 @@
             this.dateBoxReleasedDate.Size = new System.Drawing.Size(130, 23);
             this.dateBoxReleasedDate.TabIndex = 6;
             // 
-            // txtT1
-            // 
-            this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "T1Subcon", true));
-            this.txtT1.DisplayBox1Binding = "";
-            this.txtT1.Location = new System.Drawing.Point(124, 96);
-            this.txtT1.Name = "txtT1";
-            this.txtT1.Size = new System.Drawing.Size(252, 23);
-            this.txtT1.TabIndex = 7;
-            this.txtT1.TextBox1Binding = "";
-            // 
             // txtRemark
             // 
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(483, 96);
+            this.txtRemark.Location = new System.Drawing.Point(379, 96);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(390, 23);
             this.txtRemark.TabIndex = 8;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(379, 13);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(130, 23);
+            this.txtbrand.TabIndex = 1;
+            // 
+            // txtseason
+            // 
+            this.txtseason.BackColor = System.Drawing.Color.White;
+            this.txtseason.BrandObjectName = this.txtbrand;
+            this.txtseason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeasonID", true));
+            this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtseason.Location = new System.Drawing.Point(865, 13);
+            this.txtseason.Name = "txtseason";
+            this.txtseason.Size = new System.Drawing.Size(130, 23);
+            this.txtseason.TabIndex = 3;
+            // 
+            // txtstyle
+            // 
+            this.txtstyle.BackColor = System.Drawing.Color.White;
+            this.txtstyle.BrandObjectName = this.txtbrand;
+            this.txtstyle.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
+            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle.Location = new System.Drawing.Point(625, 13);
+            this.txtstyle.Name = "txtstyle";
+            this.txtstyle.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle.TabIndex = 2;
+            this.txtstyle.tarBrand = this.txtbrand;
+            this.txtstyle.tarSeason = this.txtseason;
+            // 
+            // txtT1
+            // 
+            this.txtT1.BackColor = System.Drawing.Color.White;
+            this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "T1Subcon", true));
+            this.txtT1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtT1.Location = new System.Drawing.Point(124, 96);
+            this.txtT1.Name = "txtT1";
+            this.txtT1.Size = new System.Drawing.Size(140, 23);
+            this.txtT1.TabIndex = 11;
             // 
             // P11
             // 
@@ -357,12 +359,12 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtRemark;
-        private Class.txtLocalSupp txtT1;
         private Win.UI.DateBox dateBoxReleasedDate;
         private Win.UI.DateBox dateBoxReceivedDate;
         private Win.UI.TextBox txtArticle;
         private Class.txtbrand txtbrand;
         private Class.txtseason txtseason;
         private Class.txtstyle txtstyle;
+        private Class.txtLocalSuppForQA txtT1;
     }
 }

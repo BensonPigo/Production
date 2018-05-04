@@ -425,7 +425,7 @@ namespace Sci.Production.Quality
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             //設定表頭資料
-            worksheet.Cells[4,2] = this.displayNo.Text;
+            worksheet.Cells[4,2] = this.displayReportNo.Text;
             worksheet.Cells[5,2 ] = this.masterDr["T1Subcon"].ToString();
             worksheet.Cells[6,2 ] = this.masterDr["BrandID"].ToString();
             worksheet.Cells[4,6 ] = MyUtility.Check.Empty(this.dateBoxReleasedDate.Value) ? string.Empty : this.dateBoxReleasedDate.Text;
@@ -482,8 +482,8 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             foreach (DataRow dr in gridData.Rows)
             {
                 worksheet.Cells[start_row, 1] = styleNo;
-                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColor"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + "_ " + dr["FabricColor"].ToString(); 
-                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["ArtworkColor"].ToString() : dr["ArtworkColor"].ToString() + "_ " + dr["ArtworkTypeID"].ToString(); 
+                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + "_ " + dr["FabricColorName"].ToString(); 
+                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["ArtworkColorName"].ToString() : dr["ArtworkColorName"].ToString() + "_ " + dr["ArtworkTypeID"].ToString(); 
                 worksheet.Cells[start_row, 4] = MyUtility.Check.Empty(dr["DryScale"]) ? string.Empty : "GRADE" + dr["DryScale"].ToString();
                 worksheet.Cells[start_row, 5] = MyUtility.Check.Empty(dr["WetScale"]) ? string.Empty : "GRADE" + dr["WetScale"].ToString();
                 worksheet.Cells[start_row, 6] = dr["Result"].ToString();

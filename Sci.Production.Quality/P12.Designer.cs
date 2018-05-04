@@ -43,11 +43,11 @@
             this.dateBoxReleasedDate = new Sci.Win.UI.DateBox();
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.txtT1 = new Sci.Production.Class.txtLocalSupp();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.txtT2 = new Sci.Production.Class.txtLocalTPESupp();
+            this.txtT1 = new Sci.Production.Class.txtLocalSuppForQA();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -64,10 +64,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtT1);
             this.masterpanel.Controls.Add(this.txtT2);
             this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.txtRemark);
-            this.masterpanel.Controls.Add(this.txtT1);
             this.masterpanel.Controls.Add(this.txtArticle);
             this.masterpanel.Controls.Add(this.txtbrand);
             this.masterpanel.Controls.Add(this.txtseason);
@@ -102,10 +102,10 @@
             this.masterpanel.Controls.SetChildIndex(this.txtseason, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtbrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtArticle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtT1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtT2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtT1, 0);
             // 
             // detailpanel
             // 
@@ -115,7 +115,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1718, 162);
+            this.gridicon.Location = new System.Drawing.Point(1934, 162);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -165,7 +165,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(521, 13);
+            this.label2.Location = new System.Drawing.Point(524, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(101, 23);
             this.label2.TabIndex = 2;
@@ -173,7 +173,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(761, 13);
+            this.label3.Location = new System.Drawing.Point(764, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(101, 23);
             this.label3.TabIndex = 3;
@@ -183,7 +183,7 @@
             // 
             this.label4.Location = new System.Drawing.Point(275, 13);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(101, 23);
+            this.label4.Size = new System.Drawing.Size(113, 23);
             this.label4.TabIndex = 4;
             this.label4.Text = "Brand";
             // 
@@ -199,13 +199,13 @@
             // 
             this.label6.Location = new System.Drawing.Point(275, 52);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(101, 23);
+            this.label6.Size = new System.Drawing.Size(113, 23);
             this.label6.TabIndex = 6;
             this.label6.Text = "Received Date";
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(521, 52);
+            this.label7.Location = new System.Drawing.Point(524, 52);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(101, 23);
             this.label7.TabIndex = 7;
@@ -253,7 +253,7 @@
             // 
             this.dateBoxReceivedDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReceivedDate", true));
             this.dateBoxReceivedDate.IsSupportEditMode = false;
-            this.dateBoxReceivedDate.Location = new System.Drawing.Point(379, 52);
+            this.dateBoxReceivedDate.Location = new System.Drawing.Point(391, 52);
             this.dateBoxReceivedDate.Name = "dateBoxReceivedDate";
             this.dateBoxReceivedDate.ReadOnly = true;
             this.dateBoxReceivedDate.Size = new System.Drawing.Size(130, 23);
@@ -263,7 +263,7 @@
             // 
             this.dateBoxReleasedDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ReleasedDate", true));
             this.dateBoxReleasedDate.IsSupportEditMode = false;
-            this.dateBoxReleasedDate.Location = new System.Drawing.Point(625, 52);
+            this.dateBoxReleasedDate.Location = new System.Drawing.Point(628, 52);
             this.dateBoxReleasedDate.Name = "dateBoxReleasedDate";
             this.dateBoxReleasedDate.ReadOnly = true;
             this.dateBoxReleasedDate.Size = new System.Drawing.Size(130, 23);
@@ -276,33 +276,23 @@
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(124, 130);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(368, 23);
+            this.txtRemark.Size = new System.Drawing.Size(385, 23);
             this.txtRemark.TabIndex = 8;
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(379, 91);
+            this.label10.Location = new System.Drawing.Point(275, 91);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(113, 23);
             this.label10.TabIndex = 11;
             this.label10.Text = "T2/SupplierName";
-            // 
-            // txtT1
-            // 
-            this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "T1Subcon", true));
-            this.txtT1.DisplayBox1Binding = "";
-            this.txtT1.Location = new System.Drawing.Point(124, 91);
-            this.txtT1.Name = "txtT1";
-            this.txtT1.Size = new System.Drawing.Size(252, 23);
-            this.txtT1.TabIndex = 7;
-            this.txtT1.TextBox1Binding = "";
             // 
             // txtbrand
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(379, 13);
+            this.txtbrand.Location = new System.Drawing.Point(391, 13);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(130, 23);
             this.txtbrand.TabIndex = 1;
@@ -313,9 +303,9 @@
             this.txtseason.BrandObjectName = this.txtbrand;
             this.txtseason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeasonID", true));
             this.txtseason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtseason.Location = new System.Drawing.Point(865, 13);
+            this.txtseason.Location = new System.Drawing.Point(868, 13);
             this.txtseason.Name = "txtseason";
-            this.txtseason.Size = new System.Drawing.Size(130, 23);
+            this.txtseason.Size = new System.Drawing.Size(124, 23);
             this.txtseason.TabIndex = 3;
             // 
             // txtstyle
@@ -324,20 +314,32 @@
             this.txtstyle.BrandObjectName = this.txtbrand;
             this.txtstyle.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(625, 13);
+            this.txtstyle.Location = new System.Drawing.Point(628, 13);
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 2;
+            this.txtstyle.tarBrand = this.txtbrand;
+            this.txtstyle.tarSeason = this.txtseason;
             // 
             // txtT2
             // 
-            this.txtT2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "T2Supplier", true));
-            this.txtT2.DisplayBox1Binding = "";
-            this.txtT2.Location = new System.Drawing.Point(495, 91);
+            this.txtT2.BackColor = System.Drawing.Color.White;
+            this.txtT2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "T2Supplier", true));
+            this.txtT2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtT2.Location = new System.Drawing.Point(391, 91);
             this.txtT2.Name = "txtT2";
-            this.txtT2.Size = new System.Drawing.Size(260, 23);
+            this.txtT2.Size = new System.Drawing.Size(118, 23);
             this.txtT2.TabIndex = 12;
-            this.txtT2.TextBox1Binding = "";
+            // 
+            // txtT1
+            // 
+            this.txtT1.BackColor = System.Drawing.Color.White;
+            this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "T1Subcon", true));
+            this.txtT1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtT1.Location = new System.Drawing.Point(124, 91);
+            this.txtT1.Name = "txtT1";
+            this.txtT1.Size = new System.Drawing.Size(140, 23);
+            this.txtT1.TabIndex = 13;
             // 
             // P12
             // 
@@ -381,7 +383,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtRemark;
-        private Class.txtLocalSupp txtT1;
         private Win.UI.DateBox dateBoxReleasedDate;
         private Win.UI.DateBox dateBoxReceivedDate;
         private Win.UI.TextBox txtArticle;
@@ -390,5 +391,6 @@
         private Class.txtstyle txtstyle;
         private Win.UI.Label label10;
         private Class.txtLocalTPESupp txtT2;
+        private Class.txtLocalSuppForQA txtT1;
     }
 }

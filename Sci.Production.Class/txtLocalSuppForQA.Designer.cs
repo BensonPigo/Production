@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Class
 {
-    partial class txtLocalTPESupp
+    partial class txtLocalSuppForQA
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -30,7 +30,7 @@
         {
             this.SuspendLayout();
             // 
-            // txtLocalTPESupp
+            // txtLocalSuppForQA
             // 
             this.Size = new System.Drawing.Size(252, 22);
             this.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.textBox1_PopUp);
