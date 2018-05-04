@@ -33,6 +33,15 @@ namespace Sci.Production.Class
             get { return this.displayBox1; }
         }
 
+        public string textbox1_text
+        {
+            set {
+                textBox1.Text = value;
+                Sci.Production.Class.Commons.UserPrg.GetName(this.TextBox1.Text, out myUsername, Sci.Production.Class.Commons.UserPrg.NameType.nameAndExt);
+                this.DisplayBox1.Text = myUsername;
+            }
+        }
+
         [Bindable(true)]
         public string TextBox1Binding
         {

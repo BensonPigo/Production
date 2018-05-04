@@ -21,6 +21,9 @@ namespace Sci.Production.Class
             this.Size = new System.Drawing.Size(130, 23);
         }
 
+        public txtbrand tarBrand { get; set; }
+        public txtseason tarSeason { get; set; }
+
         private Control brandObject;
         [Category("Custom Properties")]
         public Control BrandObjectName
@@ -80,6 +83,14 @@ namespace Sci.Production.Class
             
             if (returnResult == DialogResult.Cancel) { return; }
             this.Text = item.GetSelectedString();
+            if (this.tarBrand != null && this.tarSeason != null)
+            {
+                this.ValidateControl();
+                this.tarBrand.Text = item.GetSelecteds()[0]["BrandID"].ToString();
+                this.tarBrand.ValidateControl();
+                this.tarSeason.Text = item.GetSelecteds()[0]["SeasonID"].ToString();
+                this.tarSeason.ValidateControl();
+            }
         }
     }
 }
