@@ -111,9 +111,10 @@ with tmpAllArtwork as (
     from Order_TmsCost ot WITH (NOLOCK) 
          , ArtworkType at WITH (NOLOCK) 
     where   ot.ArtworkTypeID = at.ID
-            and (ot.Price > 0 or at.Classify = 'O')
-            and (at.Classify = 'S' or at.IsSubprocess = 1)
+            and (ot.Price > 0 or at.Classify in ('O','I') )
+            and (at.Classify in ('S','I') or at.IsSubprocess = 1)
             and (ot.TMS > 0 or ot.Qty > 0)
+            and at.Abbreviation !=''
 ), 
 tmpArtWork as (
     select * from (
@@ -126,7 +127,7 @@ tmpArtWork as (
         select  ID
                 , Abbreviation+':'+Convert(varchar,TMS) as Artwork 
         from tmpAllArtwork 
-        where TMS > 0 and Classify = 'O'
+        where TMS > 0 and Classify in ('O','I')
     ) a
 ), 
 tmpOrderArtwork as (
