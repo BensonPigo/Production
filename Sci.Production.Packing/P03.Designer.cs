@@ -784,7 +784,6 @@
             this.btnUpdateBarcode.TabIndex = 63;
             this.btnUpdateBarcode.Text = "Update Barcode";
             this.btnUpdateBarcode.UseVisualStyleBackColor = true;
-            this.btnUpdateBarcode.Visible = false;
             this.btnUpdateBarcode.Click += new System.EventHandler(this.BtnUpdateBarcode_Click);
             // 
             // label1
