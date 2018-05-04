@@ -331,6 +331,7 @@
     </Compile>
     <Compile Include="P25.Designer.cs">
       <DependentUpon>P25.cs</DependentUpon>
+    </Compile>
     <Compile Include="P13_Detail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -635,6 +636,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P25.resx">
       <DependentUpon>P25.cs</DependentUpon>
+    </EmbeddedResource> 
     <EmbeddedResource Include="P13_Detail.resx">
       <DependentUpon>P13_Detail.cs</DependentUpon>
     </EmbeddedResource>
