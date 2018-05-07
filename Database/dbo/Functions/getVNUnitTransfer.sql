@@ -1,5 +1,5 @@
 ﻿
-CREATE FUNCTION [dbo].[getVNUnitTransfer](@type varchar(20), @oriunit varchar(8), @customsunit varchar(8), @oriqty numeric(10,2), @width numeric(3,1), @pcswidth numeric(7,4), @pcslength numeric(7,4), @pcskg numeric(7,4),@ratevalue numeric(28,18),@rate varchar(22))
+CREATE FUNCTION [dbo].[getVNUnitTransfer](@type varchar(20), @oriunit varchar(8), @customsunit varchar(8), @oriqty numeric(11,2), @width numeric(3,1), @pcswidth numeric(7,4), @pcslength numeric(7,4), @pcskg numeric(7,4),@ratevalue numeric(28,18),@rate varchar(22))
 RETURNS numeric(16,6)
 BEGIN
 	DECLARE @returnQty numeric(16,6) --要回傳的數值
