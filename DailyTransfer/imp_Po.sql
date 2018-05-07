@@ -445,12 +445,12 @@ where not exists(select id from Production.dbo.PO_Supp_Detail as a WITH (NOLOCK)
 
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.PO_Supp_Detail
-from Production.dbo.PO_Supp_Detail as a left join Trade_To_Pms.dbo.PO_Supp_Detail as b 
+from Production.dbo.PO_Supp_Detail as a 
+left join Trade_To_Pms.dbo.PO_Supp_Detail as b 
 on a.id = b.id and a.SEQ1=b.Seq1 and a.SEQ2=b.Seq2
-where b.id is null
---and  a.id in (select id from #Trade_To_Pms_PO)
+left join MDivisionPoDetail c on a.id = c.poid and a.SEQ1=c.Seq1 and a.SEQ2=c.Seq2
+where b.id is null and (c.poid is null or c.InQty=0)
 and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
-and a.InputQty = 0
 
 UPDATE a
 SET  

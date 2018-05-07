@@ -2102,7 +2102,7 @@ where pd.id = '{this.CurrentMaintain["ID"]}'";
                     }
                     else
                     {
-                        MyUtility.Msg.WarningBox("Please go to Clog.P07 Import Scan & Pack Barcode file first");
+                        MyUtility.Msg.WarningBox("Please go to Packing.P17 Import Scan & Pack Barcode file first");
                         return;
                     }
                 }
