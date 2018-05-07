@@ -85,20 +85,20 @@ where MDivisionID = '{0}'",
             this.label7.Text = this.CurrentMaintain["Status"].ToString();
 
             DataRow dr;
-            if (MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["OrderID"].ToString()), out dr))
+            if (MyUtility.Check.Seek(string.Format("Select GetSCI.MinSciDelivery,GetSCI.MinSewinLine from Orders WITH (NOLOCK) cross apply dbo.GetSCI(Orders.ID , Orders.Category) as GetSCI where orders.id='{0}'", this.CurrentMaintain["OrderID"].ToString()), out dr))
             {
-                if (!MyUtility.Check.Empty(dr["SciDelivery"]))
+                if (!MyUtility.Check.Empty(dr["MinSciDelivery"]))
                 {
-                    this.dateSCIDelivery.Value = Convert.ToDateTime(dr["SciDelivery"]);
+                    this.dateSCIDelivery.Value = Convert.ToDateTime(dr["MinSciDelivery"]);
                 }
                 else
                 {
                     this.dateSCIDelivery.Text = string.Empty;
                 }
 
-                if (!MyUtility.Check.Empty(dr["SewInLine"]))
+                if (!MyUtility.Check.Empty(dr["MinSewinLine"]))
                 {
-                    this.dateSewingInLine.Value = Convert.ToDateTime(dr["SewInLine"]);
+                    this.dateSewingInLine.Value = Convert.ToDateTime(dr["MinSewinLine"]);
                 }
                 else
                 {
@@ -720,7 +720,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             }
 
             // 輸入的POno帶出其他6個表頭
-            if (!MyUtility.Check.Seek(string.Format("Select GetSCI.MinSciDelivery,GetSCI.MinSewinLine,Styleid,Seasonid,Brandid,FtyGroup from Orders WITH (NOLOCK) cross apply dbo.GetSCI(Orders.ID , Orders.Category) as GetSCI where poid='{0}' ", id), out drOrder))
+            if (!MyUtility.Check.Seek(string.Format("Select GetSCI.MinSciDelivery,GetSCI.MinSewinLine,Styleid,Seasonid,Brandid,FtyGroup from Orders WITH (NOLOCK) cross apply dbo.GetSCI(Orders.ID , Orders.Category) as GetSCI where Orders.poid='{0}' ", id), out drOrder))
             {
                 return;
             }
