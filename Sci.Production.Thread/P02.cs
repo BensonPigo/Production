@@ -720,13 +720,13 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             }
 
             // 輸入的POno帶出其他6個表頭
-            if (!MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where poid='{0}'", id), out drOrder))
+            if (!MyUtility.Check.Seek(string.Format("Select GetSCI.MinSciDelivery,GetSCI.MinSewinLine,Styleid,Seasonid,Brandid,FtyGroup from Orders WITH (NOLOCK) cross apply dbo.GetSCI(Orders.ID , Orders.Category) as GetSCI where poid='{0}' ", id), out drOrder))
             {
                 return;
             }
 
-            this.dateSCIDelivery.Value = MyUtility.Convert.GetDate(drOrder["SciDelivery"]);
-            this.dateSewingInLine.Value = MyUtility.Convert.GetDate(drOrder["SewInLine"]);
+            this.dateSCIDelivery.Value = MyUtility.Convert.GetDate(drOrder["MinSciDelivery"]);
+            this.dateSewingInLine.Value = MyUtility.Convert.GetDate(drOrder["MinSewinLine"]);
             this.CurrentMaintain["Styleid"] = drOrder["Styleid"].ToString();
             this.CurrentMaintain["Seasonid"] = drOrder["Seasonid"].ToString();
             this.CurrentMaintain["Brandid"] = drOrder["Brandid"].ToString();
