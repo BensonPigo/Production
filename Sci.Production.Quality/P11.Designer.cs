@@ -45,7 +45,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtstyle = new Sci.Production.Class.txtstyle();
-            this.txtT1 = new Sci.Production.Class.txtLocalSuppForQA();
+            this.txtT1 = new Sci.Production.Class.txtsubcon();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -109,7 +109,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1610, 145);
+            this.gridicon.Location = new System.Drawing.Point(1718, 145);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -215,7 +215,7 @@
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(275, 96);
+            this.label9.Location = new System.Drawing.Point(296, 96);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(101, 23);
             this.label9.TabIndex = 9;
@@ -268,7 +268,7 @@
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(379, 96);
+            this.txtRemark.Location = new System.Drawing.Point(400, 96);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(390, 23);
             this.txtRemark.TabIndex = 8;
@@ -309,13 +309,14 @@
             // 
             // txtT1
             // 
-            this.txtT1.BackColor = System.Drawing.Color.White;
-            this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "T1Subcon", true));
-            this.txtT1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "T1Subcon", true));
+            this.txtT1.DisplayBox1Binding = "";
+            this.txtT1.IsIncludeJunk = false;
             this.txtT1.Location = new System.Drawing.Point(124, 96);
             this.txtT1.Name = "txtT1";
-            this.txtT1.Size = new System.Drawing.Size(140, 23);
-            this.txtT1.TabIndex = 11;
+            this.txtT1.Size = new System.Drawing.Size(169, 23);
+            this.txtT1.TabIndex = 12;
+            this.txtT1.TextBox1Binding = "";
             // 
             // P11
             // 
@@ -365,6 +366,6 @@
         private Class.txtbrand txtbrand;
         private Class.txtseason txtseason;
         private Class.txtstyle txtstyle;
-        private Class.txtLocalSuppForQA txtT1;
+        private Class.txtsubcon txtT1;
     }
 }

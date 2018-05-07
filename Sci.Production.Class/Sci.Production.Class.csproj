@@ -168,14 +168,8 @@
     <Compile Include="txtlocalitem.Designer.cs">
       <DependentUpon>txtlocalitem.cs</DependentUpon>
     </Compile>
-    <Compile Include="txtLocalSuppForQA.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="txtLocalSuppForQA.Designer.cs">
-      <DependentUpon>txtLocalSuppForQA.cs</DependentUpon>
-    </Compile>
     <Compile Include="txtLocalTPESupp.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="txtLocalTPESupp.Designer.cs">
       <DependentUpon>txtLocalTPESupp.cs</DependentUpon>
@@ -497,9 +491,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtcutReason.resx">
       <DependentUpon>txtcutReason.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="txtLocalSuppForQA.resx">
-      <DependentUpon>txtLocalSuppForQA.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtLocalTPESupp.resx">
       <DependentUpon>txtLocalTPESupp.cs</DependentUpon>

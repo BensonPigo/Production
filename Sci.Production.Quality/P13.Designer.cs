@@ -46,8 +46,8 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.txtstyle = new Sci.Production.Class.txtstyle();
+            this.txtT1 = new Sci.Production.Class.txtsubcon();
             this.txtT2 = new Sci.Production.Class.txtLocalTPESupp();
-            this.txtT1 = new Sci.Production.Class.txtLocalSuppForQA();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -64,8 +64,8 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtT1);
             this.masterpanel.Controls.Add(this.txtT2);
+            this.masterpanel.Controls.Add(this.txtT1);
             this.masterpanel.Controls.Add(this.label10);
             this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.txtArticle);
@@ -104,8 +104,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtArticle, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtT2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtT1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtT2, 0);
             // 
             // detailpanel
             // 
@@ -115,7 +115,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(2150, 162);
+            this.gridicon.Location = new System.Drawing.Point(2258, 162);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -276,12 +276,12 @@
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(124, 130);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(397, 23);
+            this.txtRemark.Size = new System.Drawing.Size(459, 23);
             this.txtRemark.TabIndex = 8;
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(275, 91);
+            this.label10.Location = new System.Drawing.Point(297, 91);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(113, 23);
             this.label10.TabIndex = 11;
@@ -321,25 +321,27 @@
             this.txtstyle.tarBrand = this.txtbrand;
             this.txtstyle.tarSeason = this.txtseason;
             // 
-            // txtT2
-            // 
-            this.txtT2.BackColor = System.Drawing.Color.White;
-            this.txtT2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "T2Supplier", true));
-            this.txtT2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtT2.Location = new System.Drawing.Point(391, 91);
-            this.txtT2.Name = "txtT2";
-            this.txtT2.Size = new System.Drawing.Size(130, 23);
-            this.txtT2.TabIndex = 12;
-            // 
             // txtT1
             // 
-            this.txtT1.BackColor = System.Drawing.Color.White;
-            this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "T1Subcon", true));
-            this.txtT1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtT1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "T1Subcon", true));
+            this.txtT1.DisplayBox1Binding = "";
+            this.txtT1.IsIncludeJunk = false;
             this.txtT1.Location = new System.Drawing.Point(124, 91);
             this.txtT1.Name = "txtT1";
-            this.txtT1.Size = new System.Drawing.Size(140, 23);
-            this.txtT1.TabIndex = 13;
+            this.txtT1.Size = new System.Drawing.Size(170, 23);
+            this.txtT1.TabIndex = 15;
+            this.txtT1.TextBox1Binding = "";
+            // 
+            // txtT2
+            // 
+            this.txtT2.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "T2Supplier", true));
+            this.txtT2.DisplayBox1Binding = "";
+            this.txtT2.IsIncludeJunk = false;
+            this.txtT2.Location = new System.Drawing.Point(413, 91);
+            this.txtT2.Name = "txtT2";
+            this.txtT2.Size = new System.Drawing.Size(170, 23);
+            this.txtT2.TabIndex = 16;
+            this.txtT2.TextBox1Binding = "";
             // 
             // P13
             // 
@@ -390,7 +392,7 @@
         private Class.txtseason txtseason;
         private Class.txtstyle txtstyle;
         private Win.UI.Label label10;
+        private Class.txtsubcon txtT1;
         private Class.txtLocalTPESupp txtT2;
-        private Class.txtLocalSuppForQA txtT1;
     }
 }

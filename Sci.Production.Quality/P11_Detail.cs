@@ -76,7 +76,7 @@ namespace Sci.Production.Quality
 
             return base.OnRequery();
         }
-
+        
         protected override void OnRequeryPost(DataTable datas)
         {
             base.OnRequeryPost(datas);
@@ -86,7 +86,15 @@ namespace Sci.Production.Quality
             #region 跑迴圈丟值進去
             foreach (DataRow dr in datas.Rows)
             {
-                dr["LastUpdate"] = MyUtility.GetValue.Lookup("Name",dr["EditName"].ToString(),"Pass1","ID") + " - " + dr["EditDate"].ToString();
+                if (MyUtility.Check.Empty(dr["EditName"]))
+                {
+                    dr["LastUpdate"] = MyUtility.GetValue.Lookup("Name", dr["AddName"].ToString(), "Pass1", "ID") + " - " + dr["AddDate"].ToString();
+                }
+                else
+                {
+                    dr["LastUpdate"] = MyUtility.GetValue.Lookup("Name", dr["EditName"].ToString(), "Pass1", "ID") + " - " + dr["EditDate"].ToString();
+                }
+                
                 dr["ArtworkColorName"] = MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{dr["ArtworkColor"].ToString()}'  and BrandID =  '{this.masterDr["BrandID"]}'");
                 dr["FabricColorName"] = MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{dr["FabricColor"].ToString()}'  and BrandID =  '{this.masterDr["BrandID"]}'");
             }
@@ -285,7 +293,7 @@ namespace Sci.Production.Quality
             
             return true;
         }
-
+        
         private void txtCombineStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string item_cmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
@@ -350,6 +358,10 @@ namespace Sci.Production.Quality
                 {
                     result = "Pass";
                 }
+                else if (group_result.First().Result.Equals("Fail"))
+                {
+                    result = "Fail";
+                }
             }
 
             sql_par.AddRange( new List<SqlParameter>()
@@ -373,6 +385,12 @@ namespace Sci.Production.Quality
         private void txtCombineStyle_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
+        }
+
+        protected override void OnInsertPrepare(DataRow data)
+        {
+            base.OnInsertPrepare(data);
+            data["Result"] = "Pass";
         }
 
         private void btnSendMR_Click(object sender, EventArgs e)
@@ -426,7 +444,7 @@ namespace Sci.Production.Quality
 
             //設定表頭資料
             worksheet.Cells[4,2] = this.displayReportNo.Text;
-            worksheet.Cells[5,2 ] = this.masterDr["T1Subcon"].ToString();
+            worksheet.Cells[5,2 ] = this.masterDr["T1Subcon"].ToString() + "-" + MyUtility.GetValue.Lookup("Abb", this.masterDr["T1Subcon"].ToString(),"LocalSupp","ID");
             worksheet.Cells[6,2 ] = this.masterDr["BrandID"].ToString();
             worksheet.Cells[4,6 ] = MyUtility.Check.Empty(this.dateBoxReleasedDate.Value) ? string.Empty : this.dateBoxReleasedDate.Text;
             worksheet.Cells[5,6 ] = MyUtility.Check.Empty(this.dateBoxSubmitDate.Value) ? string.Empty : this.dateBoxSubmitDate.Text;

@@ -133,6 +133,15 @@ where ID = '{0}'"
             {
                 this.detailgrid.ContextMenuStrip = detailgridmenus;
             }
+
+        }
+
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.txtbrand.ReadOnly = true;
+            this.txtstyle.ReadOnly = true;
+            this.txtseason.ReadOnly = true;
         }
 
         private void txtArticle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -149,8 +158,8 @@ where ID = '{0}'"
             Sci.Win.Tools.SelectItem item;
             string selectCommand = $"select Article,ArticleName from Style_Article WITH (NOLOCK) where StyleUkey = {styleUkey}";
 
-            item = new Sci.Win.Tools.SelectItem(selectCommand, "11", this.Text);
-            item.Width = 300;
+            item = new Sci.Win.Tools.SelectItem(selectCommand, "11,33", this.Text);
+            item.Width = 520;
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.txtArticle.Text = item.GetSelectedString();

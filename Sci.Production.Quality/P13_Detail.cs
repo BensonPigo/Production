@@ -145,7 +145,14 @@ namespace Sci.Production.Quality
             #region 跑迴圈丟值進去
             foreach (DataRow dr in datas.Rows)
             {
-                dr["LastUpdate"] = MyUtility.GetValue.Lookup("Name",dr["EditName"].ToString(),"Pass1","ID") + " - " + dr["EditDate"].ToString();
+                if (MyUtility.Check.Empty(dr["EditName"]))
+                {
+                    dr["LastUpdate"] = MyUtility.GetValue.Lookup("Name", dr["AddName"].ToString(), "Pass1", "ID") + " - " + dr["AddDate"].ToString();
+                }
+                else
+                {
+                    dr["LastUpdate"] = MyUtility.GetValue.Lookup("Name", dr["EditName"].ToString(), "Pass1", "ID") + " - " + dr["EditDate"].ToString();
+                }
                 dr["ArtworkColorName"] = MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{dr["ArtworkColor"].ToString()}'  and BrandID =  '{this.masterDr["BrandID"]}'");
                 dr["FabricColorName"] = MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{dr["FabricColor"].ToString()}'  and BrandID =  '{this.masterDr["BrandID"]}'");
             }
@@ -389,6 +396,10 @@ namespace Sci.Production.Quality
                 {
                     result = "Pass";
                 }
+                else if (group_result.First().Result.Equals("Fail"))
+                {
+                    result = "Fail";
+                }
             }
 
             sql_par.AddRange( new List<SqlParameter>()
@@ -450,7 +461,11 @@ namespace Sci.Production.Quality
             ProcessStartInfo startInfo = new ProcessStartInfo(pdf_path);
             Process.Start(startInfo);
         }
-
+        protected override void OnInsertPrepare(DataRow data)
+        {
+            base.OnInsertPrepare(data);
+            data["Result"] = "Pass";
+        }
         private string CreatePDF()
         {
             this.ShowWaitMessage("PDF Processing...");
@@ -467,8 +482,9 @@ namespace Sci.Production.Quality
 
             //設定表頭資料
             worksheet.Cells[4,2] = this.displayReportNo.Text;
-            worksheet.Cells[5,2] = this.masterDr["T1Subcon"].ToString();
-            worksheet.Cells[6,2] = this.masterDr["T2Supplier"].ToString();
+            worksheet.Cells[5,2] = this.masterDr["T1Subcon"].ToString() + "-" + MyUtility.GetValue.Lookup("Abb", this.masterDr["T1Subcon"].ToString(), "LocalSupp", "ID");
+            worksheet.Cells[6,2] = this.masterDr["T2Supplier"].ToString() + "-" + MyUtility.GetValue.Lookup($"select Abb from LocalSupp WITH (NOLOCK) where  Junk =  0  and ID = '{this.masterDr["T2Supplier"].ToString()}'   union all select [Abb] = AbbEN from Supp WITH (NOLOCK) where  Junk =  0 and ID = '{this.masterDr["T2Supplier"].ToString()}' "
+                , "Production");
             worksheet.Cells[7,2] = this.comboTestingMethod.SelectedValue;
             worksheet.Cells[4,6] = MyUtility.Check.Empty(this.dateBoxReleasedDate.Value) ? string.Empty : this.dateBoxReleasedDate.Text;
             worksheet.Cells[5,6] = MyUtility.Check.Empty(this.dateBoxSubmitDate.Value) ? string.Empty : this.dateBoxSubmitDate.Text;
@@ -476,7 +492,7 @@ namespace Sci.Production.Quality
             worksheet.Cells[7,6] = this.masterDr["SeasonID"].ToString();
 
             //插入圖片與Technician名字
-            sql_cmd = $@"select [name] = p.name + ' / LAB TECHNICIAN',[SignaturePic] = s.PicPath + t.SignaturePic
+            sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
 from Technician t WITH (NOLOCK)
 inner join pass1 p WITH (NOLOCK) on t.ID = p.ID  
 outer apply (select PicPath from system) s 
@@ -517,6 +533,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
                 for (int i = 1; i < gridData.Rows.Count; i++)
                 {
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                    worksheet.get_Range(string.Format("E{0}:G{0}", MyUtility.Convert.GetString(10 + i - 1))).Merge(false);
                 }
                 Marshal.ReleaseComObject(rngToInsert);
             }
@@ -532,6 +549,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
                 worksheet.Rows[start_row].Font.Bold = false;
                 worksheet.Rows[start_row].WrapText = true;
                 worksheet.Rows[start_row].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                worksheet.Rows[start_row].AutoFit();
                 start_row++;
             }
             #endregion
@@ -555,7 +573,7 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             }
         }
     }
-
+    
     public partial class ComboxBoxEx : Sci.Win.UI.ComboBox
     {
         [DllImport("user32.dll")]
@@ -585,6 +603,8 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
         private int _hwndDropDown = 0;
 
         internal List<int> ItemHeights = new List<int>();
+
+
 
         protected override void WndProc(ref Message m)
         {
@@ -620,6 +640,8 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             base.WndProc(ref m);
         }
         
+
+
         protected override void OnDropDownClosed(EventArgs e)
         {
             _hwndDropDown = 0;
