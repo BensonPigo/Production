@@ -168,6 +168,12 @@
     <Compile Include="txtlocalitem.Designer.cs">
       <DependentUpon>txtlocalitem.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtLocalTPESupp.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtLocalTPESupp.Designer.cs">
+      <DependentUpon>txtLocalTPESupp.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtLocalSupp.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -299,6 +305,12 @@
     </Compile>
     <Compile Include="txtunit_fty.Designer.cs">
       <DependentUpon>txtunit_fty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtTechnician.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtTechnician.Designer.cs">
+      <DependentUpon>txtTechnician.cs</DependentUpon>
     </Compile>
     <Compile Include="txtuser.cs">
       <SubType>UserControl</SubType>
@@ -480,6 +492,9 @@
     <EmbeddedResource Include="txtcutReason.resx">
       <DependentUpon>txtcutReason.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="txtLocalTPESupp.resx">
+      <DependentUpon>txtLocalTPESupp.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="txtLocalSupp.resx">
       <DependentUpon>txtLocalSupp.cs</DependentUpon>
     </EmbeddedResource>
@@ -514,6 +529,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtunit.resx">
       <DependentUpon>txtunit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtTechnician.resx">
+      <DependentUpon>txtTechnician.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtuser.resx">
       <DependentUpon>txtuser.cs</DependentUpon>
