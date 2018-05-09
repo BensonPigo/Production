@@ -109,7 +109,7 @@ INTO  PartPO
 FROM Machine.dbo.PartPO 
 WHERE Approve IS NOT NULL
 AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
-And Status <> 'Junked'
+And Status = 'Approved'
 AND PurchaseFrom = 'T'
 
 SELECT * 
@@ -123,16 +123,15 @@ INTO  MiscPO
 FROM Machine.dbo.MiscPO 
 WHERE Approve IS NOT NULL
 AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
-And Status <> 'Junked'
+And Status = 'Approved'
 AND PurchaseFrom = 'T'
 
 SELECT * 
 INTO  MachinePO
 FROM Machine.dbo.MachinePO 
 WHERE Approve IS NOT NULL
---AND (cdate>=DATEADD(DAY,-7,GETDATE()) OR TranstoTPE IS NULL OR EditDate >= DATEADD(DAY,-7,GETDATE()))
 AND (cdate>=DATEADD(DAY,-7,GETDATE())  OR EditDate >= DATEADD(DAY,-7,GETDATE()))
-And Status <> 'Junked'
+And Status = 'Approved'
 AND PurchaseFrom = 'T'
 ------------------------------------------------
 
