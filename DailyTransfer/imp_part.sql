@@ -265,16 +265,16 @@ s.EditDate
 	----------------RepairPO_Detail-------------------------
 
 	update [Machine].[dbo].[RepairPO_Detail]
-	set a.ShipQty = b.ShipQty ,
-		a.ShipFoc = b.ShipFoc ,
-		a.EstCost = b.EstCost ,
-		a.ActCost = b.ActCost ,
-		a.NewCost = b.NewCost ,
-		a.ETA = b.ETA ,
-		a.Cancel = b.Cancel ,
-		a.Complete = b.Complete ,
-		a.TPEPOID = b.TradePOID
-	from [Machine].[dbo].[PartPO_Detail] a
+	set ShipQty = b.ShipQty ,
+		ShipFoc = b.ShipFoc ,
+		EstCost = b.EstCost ,
+		ActCost = b.ActCost ,
+		NewCost = b.NewCost ,
+		ETA = b.ETA ,
+		Cancel = b.Cancel ,
+		Complete = b.Complete ,
+		TPEPOID = b.TradePOID
+	from [Machine].[dbo].[RepairPO_Detail] a
 	inner join [Trade_To_Pms].[dbo].[RepairReq_Detail] b on a.id=b.ID and a.Seq2=b.Seq2
 
 	----------------PartPO2-------------------------
