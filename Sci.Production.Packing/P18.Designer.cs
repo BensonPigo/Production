@@ -77,6 +77,12 @@
             this.numBoxttlPackQty = new Sci.Win.UI.NumericBox();
             this.numBoxRemainCartons = new Sci.Win.UI.NumericBox();
             this.numBoxRemainQty = new Sci.Win.UI.NumericBox();
+            this.lbCustomize1 = new Sci.Win.UI.Label();
+            this.lbCustomize2 = new Sci.Win.UI.Label();
+            this.lbCustomize3 = new Sci.Win.UI.Label();
+            this.displayCustomize1 = new Sci.Win.UI.DisplayBox();
+            this.displayCustomize2 = new Sci.Win.UI.DisplayBox();
+            this.displayCustomize3 = new Sci.Win.UI.DisplayBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -136,7 +142,7 @@
             // 
             // labelPackedCartons
             // 
-            this.labelPackedCartons.Location = new System.Drawing.Point(345, 67);
+            this.labelPackedCartons.Location = new System.Drawing.Point(631, 67);
             this.labelPackedCartons.Name = "labelPackedCartons";
             this.labelPackedCartons.Size = new System.Drawing.Size(118, 23);
             this.labelPackedCartons.TabIndex = 7;
@@ -144,7 +150,7 @@
             // 
             // labelttlCatons
             // 
-            this.labelttlCatons.Location = new System.Drawing.Point(345, 9);
+            this.labelttlCatons.Location = new System.Drawing.Point(631, 9);
             this.labelttlCatons.Name = "labelttlCatons";
             this.labelttlCatons.Size = new System.Drawing.Size(118, 23);
             this.labelttlCatons.TabIndex = 8;
@@ -152,7 +158,7 @@
             // 
             // labelttlQty
             // 
-            this.labelttlQty.Location = new System.Drawing.Point(345, 38);
+            this.labelttlQty.Location = new System.Drawing.Point(631, 38);
             this.labelttlQty.Name = "labelttlQty";
             this.labelttlQty.Size = new System.Drawing.Size(118, 23);
             this.labelttlQty.TabIndex = 9;
@@ -160,7 +166,7 @@
             // 
             // labelttlPackQty
             // 
-            this.labelttlPackQty.Location = new System.Drawing.Point(345, 96);
+            this.labelttlPackQty.Location = new System.Drawing.Point(631, 96);
             this.labelttlPackQty.Name = "labelttlPackQty";
             this.labelttlPackQty.Size = new System.Drawing.Size(118, 23);
             this.labelttlPackQty.TabIndex = 10;
@@ -168,7 +174,7 @@
             // 
             // labelRemainCartons
             // 
-            this.labelRemainCartons.Location = new System.Drawing.Point(345, 125);
+            this.labelRemainCartons.Location = new System.Drawing.Point(631, 125);
             this.labelRemainCartons.Name = "labelRemainCartons";
             this.labelRemainCartons.Size = new System.Drawing.Size(118, 23);
             this.labelRemainCartons.TabIndex = 11;
@@ -176,7 +182,7 @@
             // 
             // labelRemainQty
             // 
-            this.labelRemainQty.Location = new System.Drawing.Point(345, 154);
+            this.labelRemainQty.Location = new System.Drawing.Point(631, 154);
             this.labelRemainQty.Name = "labelRemainQty";
             this.labelRemainQty.Size = new System.Drawing.Size(118, 23);
             this.labelRemainQty.TabIndex = 12;
@@ -522,7 +528,7 @@
             this.numBoxttlCatons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxttlCatons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxttlCatons.IsSupportEditMode = false;
-            this.numBoxttlCatons.Location = new System.Drawing.Point(466, 9);
+            this.numBoxttlCatons.Location = new System.Drawing.Point(752, 9);
             this.numBoxttlCatons.Name = "numBoxttlCatons";
             this.numBoxttlCatons.NullValue = new decimal(new int[] {
             0,
@@ -530,7 +536,7 @@
             0,
             0});
             this.numBoxttlCatons.ReadOnly = true;
-            this.numBoxttlCatons.Size = new System.Drawing.Size(242, 23);
+            this.numBoxttlCatons.Size = new System.Drawing.Size(170, 23);
             this.numBoxttlCatons.TabIndex = 33;
             this.numBoxttlCatons.TabStop = false;
             this.numBoxttlCatons.Value = new decimal(new int[] {
@@ -544,7 +550,7 @@
             this.numBoxttlQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxttlQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxttlQty.IsSupportEditMode = false;
-            this.numBoxttlQty.Location = new System.Drawing.Point(466, 38);
+            this.numBoxttlQty.Location = new System.Drawing.Point(752, 38);
             this.numBoxttlQty.Name = "numBoxttlQty";
             this.numBoxttlQty.NullValue = new decimal(new int[] {
             0,
@@ -552,7 +558,7 @@
             0,
             0});
             this.numBoxttlQty.ReadOnly = true;
-            this.numBoxttlQty.Size = new System.Drawing.Size(242, 23);
+            this.numBoxttlQty.Size = new System.Drawing.Size(170, 23);
             this.numBoxttlQty.TabIndex = 35;
             this.numBoxttlQty.TabStop = false;
             this.numBoxttlQty.Value = new decimal(new int[] {
@@ -566,7 +572,7 @@
             this.numBoxPackedCartons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxPackedCartons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxPackedCartons.IsSupportEditMode = false;
-            this.numBoxPackedCartons.Location = new System.Drawing.Point(466, 67);
+            this.numBoxPackedCartons.Location = new System.Drawing.Point(752, 67);
             this.numBoxPackedCartons.Name = "numBoxPackedCartons";
             this.numBoxPackedCartons.NullValue = new decimal(new int[] {
             0,
@@ -574,7 +580,7 @@
             0,
             0});
             this.numBoxPackedCartons.ReadOnly = true;
-            this.numBoxPackedCartons.Size = new System.Drawing.Size(242, 23);
+            this.numBoxPackedCartons.Size = new System.Drawing.Size(170, 23);
             this.numBoxPackedCartons.TabIndex = 36;
             this.numBoxPackedCartons.TabStop = false;
             this.numBoxPackedCartons.Value = new decimal(new int[] {
@@ -588,7 +594,7 @@
             this.numBoxttlPackQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxttlPackQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxttlPackQty.IsSupportEditMode = false;
-            this.numBoxttlPackQty.Location = new System.Drawing.Point(466, 96);
+            this.numBoxttlPackQty.Location = new System.Drawing.Point(752, 96);
             this.numBoxttlPackQty.Name = "numBoxttlPackQty";
             this.numBoxttlPackQty.NullValue = new decimal(new int[] {
             0,
@@ -596,7 +602,7 @@
             0,
             0});
             this.numBoxttlPackQty.ReadOnly = true;
-            this.numBoxttlPackQty.Size = new System.Drawing.Size(242, 23);
+            this.numBoxttlPackQty.Size = new System.Drawing.Size(170, 23);
             this.numBoxttlPackQty.TabIndex = 37;
             this.numBoxttlPackQty.TabStop = false;
             this.numBoxttlPackQty.Value = new decimal(new int[] {
@@ -610,7 +616,7 @@
             this.numBoxRemainCartons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxRemainCartons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxRemainCartons.IsSupportEditMode = false;
-            this.numBoxRemainCartons.Location = new System.Drawing.Point(466, 125);
+            this.numBoxRemainCartons.Location = new System.Drawing.Point(752, 125);
             this.numBoxRemainCartons.Name = "numBoxRemainCartons";
             this.numBoxRemainCartons.NullValue = new decimal(new int[] {
             0,
@@ -618,7 +624,7 @@
             0,
             0});
             this.numBoxRemainCartons.ReadOnly = true;
-            this.numBoxRemainCartons.Size = new System.Drawing.Size(242, 23);
+            this.numBoxRemainCartons.Size = new System.Drawing.Size(170, 23);
             this.numBoxRemainCartons.TabIndex = 38;
             this.numBoxRemainCartons.TabStop = false;
             this.numBoxRemainCartons.Value = new decimal(new int[] {
@@ -632,7 +638,7 @@
             this.numBoxRemainQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numBoxRemainQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numBoxRemainQty.IsSupportEditMode = false;
-            this.numBoxRemainQty.Location = new System.Drawing.Point(466, 154);
+            this.numBoxRemainQty.Location = new System.Drawing.Point(752, 154);
             this.numBoxRemainQty.Name = "numBoxRemainQty";
             this.numBoxRemainQty.NullValue = new decimal(new int[] {
             0,
@@ -640,7 +646,7 @@
             0,
             0});
             this.numBoxRemainQty.ReadOnly = true;
-            this.numBoxRemainQty.Size = new System.Drawing.Size(242, 23);
+            this.numBoxRemainQty.Size = new System.Drawing.Size(170, 23);
             this.numBoxRemainQty.TabIndex = 39;
             this.numBoxRemainQty.TabStop = false;
             this.numBoxRemainQty.Value = new decimal(new int[] {
@@ -649,9 +655,66 @@
             0,
             0});
             // 
+            // lbCustomize1
+            // 
+            this.lbCustomize1.Location = new System.Drawing.Point(331, 9);
+            this.lbCustomize1.Name = "lbCustomize1";
+            this.lbCustomize1.Size = new System.Drawing.Size(118, 23);
+            this.lbCustomize1.TabIndex = 100;
+            this.lbCustomize1.Text = "Brand.Customize1";
+            // 
+            // lbCustomize2
+            // 
+            this.lbCustomize2.Location = new System.Drawing.Point(331, 38);
+            this.lbCustomize2.Name = "lbCustomize2";
+            this.lbCustomize2.Size = new System.Drawing.Size(118, 23);
+            this.lbCustomize2.TabIndex = 101;
+            this.lbCustomize2.Text = "Brand.Customize2";
+            // 
+            // lbCustomize3
+            // 
+            this.lbCustomize3.Location = new System.Drawing.Point(331, 67);
+            this.lbCustomize3.Name = "lbCustomize3";
+            this.lbCustomize3.Size = new System.Drawing.Size(118, 23);
+            this.lbCustomize3.TabIndex = 102;
+            this.lbCustomize3.Text = "Brand.Customize3";
+            // 
+            // displayCustomize1
+            // 
+            this.displayCustomize1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCustomize1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCustomize1.Location = new System.Drawing.Point(452, 9);
+            this.displayCustomize1.Name = "displayCustomize1";
+            this.displayCustomize1.Size = new System.Drawing.Size(176, 23);
+            this.displayCustomize1.TabIndex = 103;
+            // 
+            // displayCustomize2
+            // 
+            this.displayCustomize2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCustomize2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCustomize2.Location = new System.Drawing.Point(452, 38);
+            this.displayCustomize2.Name = "displayCustomize2";
+            this.displayCustomize2.Size = new System.Drawing.Size(176, 23);
+            this.displayCustomize2.TabIndex = 104;
+            // 
+            // displayCustomize3
+            // 
+            this.displayCustomize3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCustomize3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCustomize3.Location = new System.Drawing.Point(452, 67);
+            this.displayCustomize3.Name = "displayCustomize3";
+            this.displayCustomize3.Size = new System.Drawing.Size(176, 23);
+            this.displayCustomize3.TabIndex = 105;
+            // 
             // P18
             // 
             this.ClientSize = new System.Drawing.Size(934, 688);
+            this.Controls.Add(this.displayCustomize3);
+            this.Controls.Add(this.displayCustomize2);
+            this.Controls.Add(this.displayCustomize1);
+            this.Controls.Add(this.lbCustomize3);
+            this.Controls.Add(this.lbCustomize2);
+            this.Controls.Add(this.lbCustomize1);
             this.Controls.Add(this.numBoxRemainQty);
             this.Controls.Add(this.numBoxRemainCartons);
             this.Controls.Add(this.numBoxttlPackQty);
@@ -721,6 +784,12 @@
             this.Controls.SetChildIndex(this.numBoxttlPackQty, 0);
             this.Controls.SetChildIndex(this.numBoxRemainCartons, 0);
             this.Controls.SetChildIndex(this.numBoxRemainQty, 0);
+            this.Controls.SetChildIndex(this.lbCustomize1, 0);
+            this.Controls.SetChildIndex(this.lbCustomize2, 0);
+            this.Controls.SetChildIndex(this.lbCustomize3, 0);
+            this.Controls.SetChildIndex(this.displayCustomize1, 0);
+            this.Controls.SetChildIndex(this.displayCustomize2, 0);
+            this.Controls.SetChildIndex(this.displayCustomize3, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -783,5 +852,11 @@
         private Win.UI.NumericBox numBoxRemainCartons;
         private Win.UI.NumericBox numBoxRemainQty;
         private Win.UI.NumericBox numBoxScanQty;
+        private Win.UI.Label lbCustomize1;
+        private Win.UI.Label lbCustomize2;
+        private Win.UI.Label lbCustomize3;
+        private Win.UI.DisplayBox displayCustomize1;
+        private Win.UI.DisplayBox displayCustomize2;
+        private Win.UI.DisplayBox displayCustomize3;
     }
 }
