@@ -114,18 +114,36 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             else
             {
                 sqlCmd = string.Format(
-@"select c.cDate, [CutRef] = isnull(cd.CutRef, w.CutRef), wp.PatternPanel, w.FabricPanelCode, w.Cutno
-        , isNull( sum(iif(c.Status <> 'New', wd.Qty, 0)) , 0) AS CutQty
- from Orders o WITH (NOLOCK) 
- left join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
- left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
- left join WorkOrder w WITH (NOLOCK) on w.ID = wp.ID and w.Ukey = wp.WorkOrderUkey
- left join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
- left join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
- where {0}
- group by c.cDate,cd.CutRef,w.CutRef,wp.PatternPanel,w.FabricPanelCode,w.Cutno,Status
- order by wp.PatternPanel ",
-                    string.Format("o.ID = '{0}'", this.id),
+@"
+select c.cDate, [CutRef] = isnull(cd.CutRef, w.CutRef), wp.PatternPanel, w.FabricPanelCode, w.Cutno,wd.Article,wd.SizeCode
+    , isNull( sum(iif(c.Status <> 'New', wd.Qty, 0)) , 0) AS CutQty
+into #tmp2
+from Orders o WITH (NOLOCK) 
+left join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
+left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
+left join WorkOrder w WITH (NOLOCK) on w.ID = wp.ID and w.Ukey = wp.WorkOrderUkey
+left join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
+left join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
+where o.ID = '{0}'
+group by c.cDate,cd.CutRef,w.CutRef,wp.PatternPanel,w.FabricPanelCode,w.Cutno,Status,wd.Article,wd.SizeCode
+order by wp.PatternPanel 
+
+Select distinct d.*,e.Colorid,e.PatternPanel
+into #tmp1
+from 
+(
+	Select POID=(select poid from orders WITH (NOLOCK) where id = c.id),c.ID,c.Article,c.SizeCode,c.Qty 
+	from order_Qty c WITH (NOLOCK)
+	where c.id = '{0}' and c.Article = '{1}' and SizeCode = '{2}'
+) d,Order_ColorCombo e,order_Eachcons cons
+where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and
+d.poid = cons.id and cons.CuttingPiece='0' --and  cons.FabricCombo = e.PatternPanel
+
+select b.cDate,b.CutRef,a.PatternPanel,b.FabricPanelCode,b.Cutno,CutQty = isnull(b.CutQty,0)
+from #tmp1 a
+left join #tmp2 b on a.Article=b.Article and a.SizeCode = b.SizeCode and a.PatternPanel = b.PatternPanel
+",
+                    this.id,
                     this.article,
                     this.sizeCode);
             }
