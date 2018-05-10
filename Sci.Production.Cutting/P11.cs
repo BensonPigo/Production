@@ -1121,6 +1121,13 @@ order by ArticleGroup", patternukey);
 
         public void calpart() //計算Parts,TotalParts
         {
+            if (gridArticleSize.GetSelecteds(SelectedSort.Index).Count == 0)
+            {
+                string cutref = MyUtility.Convert.GetString(((DataRowView)gridCutRef.GetSelecteds(SelectedSort.Index)[0]).Row["cutref"]);
+                MyUtility.Msg.WarningBox($@"Distribution no data!!
+Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P02)");
+                return;
+            }
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             int allpart = MyUtility.Convert.GetInt(allpartTb.Compute("Sum(Parts)", string.Format("iden={0}", selectDr["iden"])));
             DataRow[] allpartdr = patternTb.Select(string.Format("PatternCode='ALLPARTS' and iden={0}", selectDr["iden"]));
