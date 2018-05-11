@@ -63,6 +63,7 @@ namespace Sci.Production.Quality
                 this.displayCell.Text = "";
                 this.txtCPU.Text = "0";
                 this.txtSP.Focus();
+                this.dateBuyerDelivery.Text = string.Empty;
                 return;
             }
 
@@ -71,7 +72,7 @@ namespace Sci.Production.Quality
                 DataTable dt; 
                 DualResult result;
                 string cmd = string.Format(@"
-select o.id,o.styleid,o.dest,o.cpu 
+select o.id,o.styleid,o.dest,o.cpu ,o.BuyerDelivery
 from Orders o WITH (NOLOCK) 
 inner join Factory f WITH (NOLOCK) on o.FactoryID=f.ID
 where o.ID='{0}' and o.FtyGroup='{1}'
@@ -86,6 +87,7 @@ and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
                         displayStyle.Text = "";
                         displayDestination.Text = "";                        
                         this.displayCell.Text = "";
+                        this.dateBuyerDelivery.Text = string.Empty;
                         this.txtCPU.Text = "0";
                         this.txtSP.Focus(); 
                         e.Cancel = true;
@@ -103,6 +105,7 @@ and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
                         CurrentMaintain["sewinglineid"]="";
                         CurrentMaintain["OrderID"] = textValue;
                         displayStyle.Text = "";
+                        this.dateBuyerDelivery.Text = string.Empty;
                         displayDestination.Text = "";   
                         this.displayCell.Text = "";
                         this.txtCPU.Text = "0";
@@ -111,6 +114,7 @@ and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
                     else
                     {
                         displayStyle.Text = dt.Rows[0]["styleid"].ToString();
+                        this.dateBuyerDelivery.Text = (MyUtility.Check.Empty(dt.Rows[0]["BuyerDelivery"])) ? string.Empty : ((DateTime)dt.Rows[0]["BuyerDelivery"]).ToString("yyyy/MM/dd");
                         displayDestination.Text = MyUtility.Check.Empty(dt.Rows[0]["dest"].ToString()) ? "" : dt.Rows[0]["dest"].ToString() + " - " + MyUtility.GetValue.Lookup("NameEN", dt.Rows[0]["dest"].ToString(), "dbo.Country", "ID");
                         txtCPU.Text = dt.Rows[0]["cpu"].ToString();
                     }
@@ -133,7 +137,13 @@ and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
             }           
 
             DataRow dr;
-            sql = string.Format(@"select B.StyleID , C.SewingCell , case when B.Dest is null then '' else B.Dest+'-'+D.NameEN end as Dest , B.CPU , [RFT_percentage]=isnull(Convert(varchar(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0)
+            sql = string.Format(@"
+select B.StyleID 
+, C.SewingCell 
+, case when B.Dest is null then '' else B.Dest+'-'+D.NameEN end as Dest 
+, B.CPU 
+, [RFT_percentage] = isnull(Convert(varchar(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0)
+, B.BuyerDelivery
                                 from Rft A WITH (NOLOCK) 
                                 left join Orders B WITH (NOLOCK) on B.ID=A.OrderID
                                 left join SewingLine C WITH (NOLOCK) on C.ID=A.SewinglineID and C.FactoryID=A.FactoryID
@@ -146,6 +156,7 @@ and f.IsProduceFty=1 ", textValue, Sci.Env.User.Factory);
                 this.displayDestination.Text = dr["Dest"].ToString().Trim();
                 this.txtCPU.Text = MyUtility.Check.Empty(dr["CPU"].ToString()) ? "0" : dr["CPU"].ToString();
                 this.txtRFT.Text = dr["RFT_percentage"].ToString().Trim();
+                this.dateBuyerDelivery.Text = (MyUtility.Check.Empty(dr["BuyerDelivery"])) ? string.Empty : ((DateTime)dr["BuyerDelivery"]).ToString("yyyy/MM/dd");
             }
 
             base.OnDetailEntered();
