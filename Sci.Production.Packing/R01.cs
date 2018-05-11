@@ -71,6 +71,8 @@ namespace Sci.Production.Packing
         // 驗證輸入條件
         private string _scandate2;
 
+        // 驗證輸入條件
+        private string _ScanName;
         /// <summary>
         /// ValidateInput
         /// </summary>
@@ -122,6 +124,7 @@ namespace Sci.Production.Packing
             this._brand = this.txtbrand.Text;
             this._mDivision = this.txtMdivision1.Text;
             this._factory = this.comboFactory.Text;
+            this._ScanName = this.txtuser1.TextBox1.Text;
 
             return base.ValidateInput();
         }
@@ -223,6 +226,11 @@ namespace Sci.Production.Packing
                 sqlwhere.Append(string.Format(" and pl.FactoryID = '{0}'", this._factory));
             }
 
+            if (!MyUtility.Check.Empty(this._ScanName))
+            {
+                sqlwhere.Append(string.Format(" and pld.ScanName = '{0}'", this._ScanName));
+            }
+
             if (this.rdbtnDetail.Checked)
             {
                 sqlwhere.Append(" and (pld.ScanEditDate !='' or pld.ScanEditDate is not null)");
@@ -251,6 +259,7 @@ select
 	,[CTN#] = pld.CTNStartNo
 	,[Qty] = pld.ShipQty
 	,[Scan Date] = format(pld.ScanEditDate,'yyyy/MM/dd')
+    ,[Scan Name] = dbo.getPass1_ExtNo(pld.ScanName)
 INTO #TMP
 from PackingList_Detail pld with (nolock)
 inner join PackingList pl with (nolock) on pl.ID = pld.ID
@@ -270,6 +279,7 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],Customize1
 	,[PC/CTN Scanned] = c6.ScanQty
 	,[Ref. Barcode] = c7.Barcode
 	,[Scan Date]
+    ,[Scan Name]
 FROM #TMP T
 outer apply(
 	select colorway = stuff((
@@ -326,7 +336,7 @@ outer apply(
 	),1,1,'')
 )c7
 group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
-	,[CTN#]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode
+	,[CTN#]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name]
 order by ROW_NUMBER() OVER(ORDER BY [Packing#],[SP#], RIGHT(REPLICATE('0', 3) + CAST([CTN#] as NVARCHAR), 3))
 DROP TABLE #TMP
 ", sqlwhere.ToString());

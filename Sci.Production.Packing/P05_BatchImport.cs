@@ -152,6 +152,8 @@ PulloutData as (
             , Pullout_Detail_Detail pdd WITH (NOLOCK) 
     where   pdd.OrderID = fd.ID
             and pd.UKey = pdd.Pullout_DetailUKey
+            and fd.Article = pdd.Article
+		    and fd.SizeCode = pdd.SizeCode
     group by pdd.OrderID, pd.OrderShipmodeSeq, pdd.Article, pdd.SizeCode
 )
 select  0 as Selected

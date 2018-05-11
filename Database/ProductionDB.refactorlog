@@ -231,4 +231,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="6d643068-a8c8-4cfd-9d75-81bb25ca7cfb" ChangeDateTime="04/17/2018 02:18:21">
+    <Property Name="ElementName" Value="[dbo].[MockupCrocking].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MockupCrocking]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="927b42ab-a089-4776-a4f7-7fd559437286" ChangeDateTime="04/17/2018 02:24:01">
+    <Property Name="ElementName" Value="[dbo].[MockupCrocking_Detail].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MockupCrocking_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="11e40de1-420b-4532-b47a-bce2b6a3db4c" ChangeDateTime="04/17/2018 02:26:30">
+    <Property Name="ElementName" Value="[dbo].[MockupCrocking_Detail_Detail].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MockupCrocking_Detail_Detail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
 </Operations>

@@ -67,12 +67,9 @@ where not exists(select 1 from Production.dbo.Style_Location as a WITH (NOLOCK) 
 RAISERROR('imp_Style - Starts',0,0)
 UPDATE a
 SET  
---a.ID	= b.ID
 a.Ukey	= b.Ukey
---,a.BrandID	= b.BrandID
 ,a.ProgramID	= b.ProgramID
---,a.SeasonID	= b.SeasonID
-,a.Model	= b.Model
+,a.Model	= IsNull(b.Model,'')
 ,a.Description	= b.Description
 ,a.StyleName	= b.StyleName
 ,a.CdCodeID	= b.CdCodeID
@@ -168,8 +165,6 @@ ID
 ,StdCost
 ,Processes
 ,ArtworkCost
---,Picture1
---,Picture2
 ,Label
 ,Packing
 ,IETMSID
@@ -200,7 +195,7 @@ ID
 ,BrandID
 ,ProgramID
 ,SeasonID
-,Model
+,IsNull(Model,'')
 ,Description
 ,StyleName
 ,CdCodeID
@@ -225,8 +220,6 @@ ID
 ,StdCost
 ,Processes
 ,ArtworkCost
---,Picture1
---,Picture2
 ,Label
 ,Packing
 ,IETMSID

@@ -45,7 +45,7 @@ namespace Sci.Production.Basic
             this.Helper.Controls.Grid.Generator(this.grid1)
                  .Text("Year", header: "Year", width: Widths.AnsiChars(4))
                  .Text("Month", header: "Month", width: Widths.AnsiChars(2))
-                 .Text("ArtworkTypeID", header: "Artwork", width: Widths.AnsiChars(20))
+                 .Text("Artwork", header: "Artwork", width: Widths.AnsiChars(30))
                  .Numeric("TMS", header: "GSD", width: Widths.AnsiChars(8));
 
             // 設定Grid2的顯示欄位
@@ -101,7 +101,10 @@ namespace Sci.Production.Basic
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(sp1);
 
-            string selectCommand1 = "select * from Factory_TMS WITH (NOLOCK) where ID = @id";
+            string selectCommand1 = @"select FT.*,Artwork=FT.ArtworkTypeID +' (' + iif(ArtworkUnit = 'PCS','PCS', iif(ArtworkUnit = 'STITCH', 'STITCH in thousands','TMS/Min'))+')'
+                                                                        from Factory_TMS FT WITH (NOLOCK)
+                                                                        inner join ArtworkType AT WITH (NOLOCK) on FT.ArtworkTypeID=AT.ID 
+                                                                        where FT.ID = @id";
             DataTable selectDataTable1;
             DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand1, cmds, out selectDataTable1);
             this.listControlBindingSource1.DataSource = selectDataTable1;
