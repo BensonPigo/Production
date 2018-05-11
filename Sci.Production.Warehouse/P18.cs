@@ -365,8 +365,6 @@ where a.id = @ID", pars, out dtDetail);
             CurrentDetailData["Stocktype"] = 'B';
         }
 
-        
-
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
@@ -1532,6 +1530,29 @@ where TD.Ukey = '{2}'", row["Roll"], row["Dyelot"], row["Ukey"]));
             }
             #endregion 
             return true;
+        }
+        /// <summary>
+        /// 表身新增資料,會將上一筆資料copy並填入新增的資料列裡
+        /// </summary>
+        protected override void OnDetailGridAppendClick()
+        {
+            base.OnDetailGridAppendClick();
+            DataRow lastRow = detailgrid.GetDataRow(detailgrid.GetSelectedRowIndex() - 1);
+            if (MyUtility.Check.Empty(lastRow)) return;
+            DataRow newrow = detailgrid.GetDataRow(detailgrid.CurrentRow.Cells[1].RowIndex);
+            newrow["id"] = lastRow["id"];
+            newrow["poid"] = lastRow["poid"];
+            newrow["seq1"] = lastRow["seq1"];
+            newrow["seq2"] = lastRow["seq2"];
+            newrow["seq"] = lastRow["seq"];
+            newrow["Dyelot"] = lastRow["Dyelot"];
+            newrow["Description"] = lastRow["Description"];
+            newrow["StockUnit"] = lastRow["StockUnit"];
+            newrow["Qty"] = lastRow["Qty"];
+            newrow["StockType"] = lastRow["StockType"];
+            newrow["Location"] = lastRow["Location"];
+            newrow["FabricType"] = lastRow["FabricType"];
+            newrow["DataFrom"] = lastRow["DataFrom"];
         }
     }
 }
