@@ -86,6 +86,7 @@ where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and (p.PulloutID = '' or po.Status = 'New')
 and o.PulloutComplete = 0
+and o.junk!=1 
 ");
 
             if (!MyUtility.Check.Empty(this.po1))
