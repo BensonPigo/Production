@@ -1,14 +1,12 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -17,6 +15,7 @@ namespace Sci.Production.Quality
     public partial class P22 : Sci.Win.Tems.QueryForm
     {
         private DataTable dtDBSource;
+        private string excelFile;
         public P22(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -190,11 +189,14 @@ order by p2.ID,p2.CTNStartNo";
         {
             DualResult resule;
             DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
+            DataTable dtToExcel;
             if (MyUtility.Check.Empty(dt))
             {
                 return;
             }
             this.ShowWaitMessage("Data Processing ...");
+
+         
 
             string updateSqlCmd = string.Empty;
 
@@ -203,7 +205,12 @@ order by p2.ID,p2.CTNStartNo";
              有不同資料的再跑迴圈
             */
             DataTable selectData = null;
-            MyUtility.Tool.ProcessWithDatatable(dt, "ID,CTNStartNo,CFANeedInsp", @"
+            //            MyUtility.Tool.ProcessWithDatatable(dt, @"CFANeedInsp, ID, CTNStartNo, OrderID, CustPONo, StyleID
+            //, SeasonID, BrandID, Article, Color, SizeCode, QtyPerCTN, Alias, BuyerDelivery, ClogLocationId, remark ", @"
+            //select distinct a.* from #tmp a
+            //inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
+            //where a.CFANeedInsp <> b.CFANeedInsp ", out selectData);
+            MyUtility.Tool.ProcessWithDatatable(dt,string.Empty, @"
 select distinct a.* from #tmp a
 inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
 where a.CFANeedInsp <> b.CFANeedInsp ", out selectData);
@@ -251,7 +258,43 @@ and CTNStartNo ='{dr["CTNStartNo"]}'
 
             // 變更比對用的Datatable
             dtDBSource.Clear();
-            dtDBSource = ((DataTable)this.listControlBindingSource.DataSource).Copy();            
+            dtDBSource = ((DataTable)this.listControlBindingSource.DataSource).Copy();
+            
+
+            #region to Excel
+            if (selectData.Rows.Count > 0)
+            {
+                Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P22.xltx"); //預先開啟excel app;
+                MyUtility.Excel.CopyToXls(selectData, "", "Quality_P22.xltx", 2, false, null, objApp);
+                Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
+                objApp.Cells.EntireRow.AutoFit();       ////自動欄高
+                Microsoft.Office.Interop.Excel.Range rangeColumnA = objSheets.Columns["A", System.Type.Missing];
+                rangeColumnA.Hidden = true;
+                this.excelFile = Sci.Production.Class.MicrosoftFile.GetName("Quality_P22");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(this.excelFile);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(workbook);
+
+                DataRow dr;
+                if (MyUtility.Check.Seek($@"select * from MailTo where id='015'",out dr))
+                {
+                    string userEmail = MyUtility.GetValue.Lookup($@"select email from pass1 where id='{Env.User.UserID}'");
+
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString()+";"+ userEmail, dr["Subject"].ToString(), excelFile, dr["Content"].ToString(), false, true);
+                    email.ShowDialog(this);
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("MailTo #15 not yet to setting!");
+                }
+
+               
+            }
+            #endregion
         }
 
         private void btnColse_Click(object sender, EventArgs e)
