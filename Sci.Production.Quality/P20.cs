@@ -158,6 +158,15 @@ select B.StyleID
                 this.txtRFT.Text = dr["RFT_percentage"].ToString().Trim();
                 this.dateBuyerDelivery.Text = (MyUtility.Check.Empty(dr["BuyerDelivery"])) ? string.Empty : ((DateTime)dr["BuyerDelivery"]).ToString("yyyy/MM/dd");
             }
+            else
+            {
+                this.displayStyle.Text = string.Empty;
+                this.displayCell.Text = string.Empty;
+                this.displayDestination.Text = string.Empty;
+                this.txtCPU.Text = "0";
+                this.txtRFT.Text = string.Empty;
+                this.dateBuyerDelivery.Text = string.Empty;
+            }
 
             base.OnDetailEntered();
         }
