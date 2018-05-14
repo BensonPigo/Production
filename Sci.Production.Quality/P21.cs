@@ -95,7 +95,7 @@ from Factory ";
             string sql_cmd =
         @"SELECT a.ID,a.cDate,a.OrderID,a.FactoryID,a.InspectQty,
 		a.DefectQty,a.SewingLineID,a.Team,a.GarmentOutput,a.Stage,a.CFA,a.Shift,a.Result,a.Remark,a.Status,
-		b.StyleID,b.Dest,b.CustPONo,b.Qty	
+		b.StyleID,b.Dest,b.CustPONo,b.Qty, b.BuyerDelivery
 		FROM [Production].[dbo].[Cfa] a WITH (NOLOCK) 
         left join Orders b WITH (NOLOCK) on a.OrderID=b.ID 
         where a.id=@id";
@@ -106,8 +106,9 @@ from Factory ";
                 this.txtStyle.Text = dr["StyleID"].ToString();
                 this.txtDestination.Text = dr["dest"].ToString();
                 this.txtPO.Text = dr["custPONo"].ToString();
-                this.numOrderQty.Text = dr["qty"].ToString();            
-               
+                this.numOrderQty.Text = dr["qty"].ToString();
+                this.dateBuyerDelivery.Text = (MyUtility.Check.Empty(dr["BuyerDelivery"])) ? string.Empty : ((DateTime)dr["BuyerDelivery"]).ToString("yyyy/MM/dd");
+
                 if (MyUtility.Check.Empty(this.numInspectQty.Text) || Convert.ToInt32(this.numInspectQty.Text)==0)
                 {
                     this.numInspectQty.Text = "0";
@@ -127,7 +128,8 @@ from Factory ";
                 this.numOrderQty.Text = "0";
                 this.txtPO.Text = "";
                 this.numInspectQty.Text = "0";   
-                this.numSQR.Text = "0";   
+                this.numSQR.Text = "0";
+                this.dateBuyerDelivery.Text = string.Empty;
             }  
             base.OnDetailEntered();            
         }
@@ -693,12 +695,13 @@ where a.ID='{0}'",
                 this.numOrderQty.Text = "0";
                 this.numSQR.Text = "0";
                 this.txtSP.Focus();
+                this.dateBuyerDelivery.Text = string.Empty;
                 return;
             }
             DataTable dt;   
             DualResult result;
             string sqlcmd = string.Format(@"
-select a.ID,a.FtyGroup,a.StyleID,a.Dest,a.CustPONo,a.Qty 
+select a.ID,a.FtyGroup,a.StyleID,a.Dest,a.CustPONo,a.Qty, a.BuyerDelivery
 from Orders a WITH (NOLOCK) 
 inner join Factory f WITH (NOLOCK) on a.FactoryID=f.ID
 where a.ID='{0}'
@@ -715,6 +718,7 @@ and f.IsProduceFty=1 ", txtSP.Text);
                     this.numOrderQty.Text = "0";
                     this.numSQR.Text = "0";
                     this.txtSP.Focus();
+                    this.dateBuyerDelivery.Text = string.Empty;
                     
                     MyUtility.Msg.WarningBox(string.Format("<SP#: {0}> Data is not found! ", this.txtSP.Text));
                     return;
@@ -724,6 +728,7 @@ and f.IsProduceFty=1 ", txtSP.Text);
                     this.txtStyle.Text = dt.Rows[0]["StyleID"].ToString();
                     this.txtDestination.Text = dt.Rows[0]["Dest"].ToString();
                     //this.txtFactory.Text = dt.Rows[0]["FtyGroup"].ToString();
+                    this.dateBuyerDelivery.Text = (MyUtility.Check.Empty(dt.Rows[0]["BuyerDelivery"])) ? string.Empty : ((DateTime)dt.Rows[0]["BuyerDelivery"]).ToString("yyyy/MM/dd");
                     this.txtPO.Text = dt.Rows[0]["CustPONo"].ToString();
                     this.numOrderQty.Text = dt.Rows[0]["Qty"].ToString();
                     CurrentMaintain["FactoryID"]= dt.Rows[0]["FtyGroup"].ToString();

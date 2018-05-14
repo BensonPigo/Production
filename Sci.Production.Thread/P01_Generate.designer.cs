@@ -32,6 +32,8 @@
             this.txtMachineType = new Sci.Win.UI.TextBox();
             this.btnFilter = new Sci.Win.UI.Button();
             this.panel2 = new Sci.Win.UI.Panel();
+            this.displayBoxEdit = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.btnBatchUpdate = new Sci.Win.UI.Button();
             this.labelThreadCombination = new Sci.Win.UI.Label();
             this.txtthreadcomb = new Sci.Production.Class.txtthreadcomb();
@@ -40,10 +42,10 @@
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.cmbDescription = new Sci.Win.UI.ComboBox();
             this.checkOnlyShowNotYetAssignCombination = new Sci.Win.UI.CheckBox();
             this.labelMachineType = new Sci.Win.UI.Label();
-            this.displayBoxEdit = new Sci.Win.UI.DisplayBox();
-            this.label1 = new Sci.Win.UI.Label();
+            this.lblanguage = new Sci.Win.UI.Label();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -86,6 +88,23 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(946, 77);
             this.panel2.TabIndex = 11;
+            // 
+            // displayBoxEdit
+            // 
+            this.displayBoxEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxEdit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxEdit.Location = new System.Drawing.Point(81, 40);
+            this.displayBoxEdit.Name = "displayBoxEdit";
+            this.displayBoxEdit.Size = new System.Drawing.Size(309, 23);
+            this.displayBoxEdit.TabIndex = 21;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(69, 23);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Edit By:";
             // 
             // btnBatchUpdate
             // 
@@ -160,12 +179,15 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
             this.gridDetail.Size = new System.Drawing.Size(946, 372);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lblanguage);
+            this.panel1.Controls.Add(this.cmbDescription);
             this.panel1.Controls.Add(this.txtMachineType);
             this.panel1.Controls.Add(this.checkOnlyShowNotYetAssignCombination);
             this.panel1.Controls.Add(this.labelMachineType);
@@ -175,6 +197,24 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(946, 58);
             this.panel1.TabIndex = 10;
+            // 
+            // cmbDescription
+            // 
+            this.cmbDescription.BackColor = System.Drawing.Color.White;
+            this.cmbDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbDescription.FormattingEnabled = true;
+            this.cmbDescription.IsSupportUnselect = true;
+            this.cmbDescription.Items.AddRange(new object[] {
+            "English",
+            "Chinese",
+            "Vietnamese",
+            "Cambodian"});
+            this.cmbDescription.Location = new System.Drawing.Point(695, 16);
+            this.cmbDescription.Name = "cmbDescription";
+            this.cmbDescription.OldText = "";
+            this.cmbDescription.Size = new System.Drawing.Size(121, 24);
+            this.cmbDescription.TabIndex = 19;
+            this.cmbDescription.SelectedIndexChanged += new System.EventHandler(this.cmbDescription_SelectedIndexChanged);
             // 
             // checkOnlyShowNotYetAssignCombination
             // 
@@ -195,22 +235,13 @@
             this.labelMachineType.TabIndex = 13;
             this.labelMachineType.Text = "Machine Type";
             // 
-            // displayBoxEdit
+            // lblanguage
             // 
-            this.displayBoxEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxEdit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxEdit.Location = new System.Drawing.Point(81, 40);
-            this.displayBoxEdit.Name = "displayBoxEdit";
-            this.displayBoxEdit.Size = new System.Drawing.Size(309, 23);
-            this.displayBoxEdit.TabIndex = 21;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(9, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 23);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "Edit By:";
+            this.lblanguage.Location = new System.Drawing.Point(617, 16);
+            this.lblanguage.Name = "lblanguage";
+            this.lblanguage.Size = new System.Drawing.Size(75, 23);
+            this.lblanguage.TabIndex = 20;
+            this.lblanguage.Text = "language";
             // 
             // P01_Generate
             // 
@@ -247,5 +278,7 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.DisplayBox displayBoxEdit;
         private Win.UI.Label label1;
+        private Win.UI.ComboBox cmbDescription;
+        private Win.UI.Label lblanguage;
     }
 }

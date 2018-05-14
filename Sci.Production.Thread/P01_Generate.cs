@@ -42,6 +42,7 @@ namespace Sci.Production.Thread
         {
             this.InitializeComponent();
 
+            this.cmbDescription.SelectedIndex = 0;
             this.styleUkey = str_styleukey;
             this.strstyleid = str_styleid;
             this.strseason = str_season;
@@ -56,6 +57,26 @@ s.id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
                 this.strbrandid,
                 this.strseason));
 
+            DataGridViewGeneratorTextColumnSettings threadcombcell = cellthreadcomb.GetGridCell(true);
+            this.gridDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+            .CheckBox("Sel", header: string.Empty, width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+            .Text("ComboType", header: "ComboType", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Seq", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Operationid", header: "Operation Code", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Description", header: "Operation Description", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Annotation", header: "Annotation", width: Widths.Auto(true), iseditingreadonly: true)
+            .Numeric("Seamlength", header: "Seam Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
+           .Numeric("Frequency", header: "Frequency", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
+            .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
+            .Text("Threadcombid", header: "Thread Combination", width: Widths.Auto(true), settings: threadcombcell);
+            this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.Loadgrid();
+        }
+
+        private void Loadgrid()
+        {
             string sql = string.Format(
             @"
 with a as (
@@ -64,9 +85,15 @@ with a as (
     where a.id = b.id and a.styleukey = f.ukey and 
     f.id = '{0}' and f.seasonid = '{1}' and f.brandid = '{2}'
 ),b as(
-    Select c.ComboType,seq,operationid,d.annotation,e.SeamLength,d.MachineTypeID,descEN,styleid,seasonid,brandid,d.Frequency
+    Select c.ComboType,seq,operationid,d.annotation,e.SeamLength,d.MachineTypeID,
+        Description = case when '{3}' = 'English' then e.descEN
+                                    when '{3}' = 'Chinese' then g.DescCHS
+                                    when '{3}' = 'Vietnamese' then g.DescVI
+                                    when '{3}' = 'Cambodian' then g.DescKH end,
+        styleid,seasonid,brandid,d.Frequency
     from timestudy c WITH (NOLOCK) ,timestudy_Detail d WITH (NOLOCK)  
     join operation e on e.id = d.operationid left join MachineType f on d.MachineTypeID=f.id
+    left join OperationDesc g WITH (NOLOCK) on g.id = e.id
     where c.id = d.id and c.styleid = '{0}' and c.seasonid = '{1}' and c.brandid = '{2}' and e.SeamLength>0 and f.isThread=1
 )
 
@@ -75,9 +102,10 @@ from b WITH (NOLOCK)
 left join a WITH (NOLOCK) on a.operationid = b.operationid and b.styleid = a.styleid 
 and a.seasonid  = b.seasonid and a.brandid = b.brandid and a.combotype= b.ComboType and a.seq=b.Seq
 order by seq",
-            str_styleid,
-            str_season,
-            str_brandid);
+            this.strstyleid,
+            this.strseason,
+            this.strbrandid,
+            this.cmbDescription.Text);
 
             DualResult dResult = DBProxy.Current.Select(null, sql, out this.gridTable);
             if (dResult)
@@ -89,40 +117,6 @@ order by seq",
                 this.ShowErr(sql);
                 return;
             }
-
-            DataGridViewGeneratorTextColumnSettings threadcombcell = cellthreadcomb.GetGridCell(true);
-
-            // 自動複製相同machinetypeid && operationid的Threadcombid到第二筆，JK：不需此功能，先註解掉
-            //// DataGridViewGeneratorTextColumnSettings  combCell = new DataGridViewGeneratorTextColumnSettings();
-            // threadcombcell.CellValidating += (s, e) =>
-            // {
-            //    string newValue = e.FormattedValue.ToString();
-            //    string operationid = gridTable.DefaultView.ToTable().Rows[e.RowIndex]["operationid"].ToString();
-            //    string machinetypeid = gridTable.DefaultView.ToTable().Rows[e.RowIndex]["machinetypeid"].ToString();
-            //    foreach (DataRowView dr in gridTable.DefaultView)
-            //    {
-            //        if (dr["operationid"].ToString() == operationid && dr["machinetypeid"].ToString() == machinetypeid)
-            //        {
-            //            dr["threadcombid"] = newValue;
-            //            dr.EndEdit();
-            //        }
-            //    }
-
-            // };
-            this.gridDetail.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
-            this.Helper.Controls.Grid.Generator(this.gridDetail)
-            .CheckBox("Sel", header: string.Empty, width: Widths.Auto(true), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-            .Text("ComboType", header: "ComboType", width: Widths.Auto(true), iseditingreadonly: true)
-            .Text("Seq", header: "SEQ", width: Widths.Auto(true), iseditingreadonly: true)
-            .Text("Operationid", header: "Operation Code", width: Widths.Auto(true), iseditingreadonly: true)
-            .Text("descEN", header: "Operation Description", width: Widths.Auto(true), iseditingreadonly: true)
-            .Text("Annotation", header: "Annotation", width: Widths.Auto(true), iseditingreadonly: true)
-            .Numeric("Seamlength", header: "Seam Length", width: Widths.Auto(true), integer_places: 9, decimal_places: 2, iseditingreadonly: true)
-           .Numeric("Frequency", header: "Frequency", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
-            .Text("MachineTypeid", header: "Machine Type", width: Widths.Auto(true), iseditingreadonly: true)
-            .Text("Threadcombid", header: "Thread Combination", width: Widths.Auto(true), settings: threadcombcell);
-            this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridDetail.Columns["Threadcombid"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void BtnFilter_Click(object sender, EventArgs e)
@@ -382,6 +376,11 @@ where id = '{0}' and BrandID ='{1}' and SeasonID = '{2}'",
                 //    this.textBox1.Text = "";
                 // }
             }
+        }
+
+        private void cmbDescription_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.Loadgrid();
         }
     }
 }
