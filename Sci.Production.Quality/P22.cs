@@ -205,11 +205,6 @@ order by p2.ID,p2.CTNStartNo";
              有不同資料的再跑迴圈
             */
             DataTable selectData = null;
-            //            MyUtility.Tool.ProcessWithDatatable(dt, @"CFANeedInsp, ID, CTNStartNo, OrderID, CustPONo, StyleID
-            //, SeasonID, BrandID, Article, Color, SizeCode, QtyPerCTN, Alias, BuyerDelivery, ClogLocationId, remark ", @"
-            //select distinct a.* from #tmp a
-            //inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
-            //where a.CFANeedInsp <> b.CFANeedInsp ", out selectData);
             MyUtility.Tool.ProcessWithDatatable(dt,string.Empty, @"
 select distinct a.* from #tmp a
 inner join PackingList_Detail b on a.id=b.id and a.ctnstartno=b.ctnstartno
@@ -259,13 +254,16 @@ and CTNStartNo ='{dr["CTNStartNo"]}'
             // 變更比對用的Datatable
             dtDBSource.Clear();
             dtDBSource = ((DataTable)this.listControlBindingSource.DataSource).Copy();
-            
 
             #region to Excel
-            if (selectData.Rows.Count > 0)
+
+            MyUtility.Tool.ProcessWithDatatable(selectData, string.Empty, @"
+select * from #tmp 
+where CFANeedInsp = 1 ", out dtToExcel);
+            if (dtToExcel != null && dtToExcel.Rows.Count > 0)
             {
                 Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P22.xltx"); //預先開啟excel app;
-                MyUtility.Excel.CopyToXls(selectData, "", "Quality_P22.xltx", 2, false, null, objApp);
+                MyUtility.Excel.CopyToXls(dtToExcel, "", "Quality_P22.xltx", 2, false, null, objApp);
                 Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
                 objApp.Cells.EntireRow.AutoFit();       ////自動欄高
@@ -280,19 +278,17 @@ and CTNStartNo ='{dr["CTNStartNo"]}'
                 Marshal.ReleaseComObject(workbook);
 
                 DataRow dr;
-                if (MyUtility.Check.Seek($@"select * from MailTo where id='015'",out dr))
+                if (MyUtility.Check.Seek($@"select * from MailTo where id='015'", out dr))
                 {
                     string userEmail = MyUtility.GetValue.Lookup($@"select email from pass1 where id='{Env.User.UserID}'");
 
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString()+";"+ userEmail, dr["Subject"].ToString(), excelFile, dr["Content"].ToString(), false, true);
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString() + ";" + userEmail, dr["Subject"].ToString(), excelFile, dr["Content"].ToString(), false, true);
                     email.ShowDialog(this);
                 }
                 else
                 {
                     MyUtility.Msg.WarningBox("MailTo #15 not yet to setting!");
                 }
-
-               
             }
             #endregion
         }
