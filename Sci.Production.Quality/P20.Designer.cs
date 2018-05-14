@@ -59,6 +59,8 @@
             this.txtCPU = new Sci.Win.UI.TextBox();
             this.txtLine = new Sci.Production.Class.txtSewingScheduleLine();
             this.comboShift = new Sci.Production.Class.txtdropdownlist();
+            this.labBuyerDelivery = new Sci.Win.UI.Label();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,6 +77,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.dateBuyerDelivery);
+            this.masterpanel.Controls.Add(this.labBuyerDelivery);
             this.masterpanel.Controls.Add(this.txtLine);
             this.masterpanel.Controls.Add(this.txtCPU);
             this.masterpanel.Controls.Add(this.labConfirm);
@@ -139,6 +143,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCPU, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLine, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labBuyerDelivery, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             // 
             // detailpanel
             // 
@@ -300,7 +306,7 @@
             // 
             // labelQtyInspected
             // 
-            this.labelQtyInspected.Location = new System.Drawing.Point(243, 33);
+            this.labelQtyInspected.Location = new System.Drawing.Point(243, 57);
             this.labelQtyInspected.Name = "labelQtyInspected";
             this.labelQtyInspected.Size = new System.Drawing.Size(100, 23);
             this.labelQtyInspected.TabIndex = 121;
@@ -308,7 +314,7 @@
             // 
             // labelQtyRejected
             // 
-            this.labelQtyRejected.Location = new System.Drawing.Point(243, 60);
+            this.labelQtyRejected.Location = new System.Drawing.Point(243, 84);
             this.labelQtyRejected.Name = "labelQtyRejected";
             this.labelQtyRejected.Size = new System.Drawing.Size(100, 23);
             this.labelQtyRejected.TabIndex = 122;
@@ -316,7 +322,7 @@
             // 
             // labelTtlDefectQty
             // 
-            this.labelTtlDefectQty.Location = new System.Drawing.Point(243, 87);
+            this.labelTtlDefectQty.Location = new System.Drawing.Point(243, 111);
             this.labelTtlDefectQty.Name = "labelTtlDefectQty";
             this.labelTtlDefectQty.Size = new System.Drawing.Size(100, 23);
             this.labelTtlDefectQty.TabIndex = 123;
@@ -324,7 +330,7 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Location = new System.Drawing.Point(243, 114);
+            this.labelDestination.Location = new System.Drawing.Point(513, 114);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(100, 23);
             this.labelDestination.TabIndex = 124;
@@ -335,7 +341,7 @@
             this.numQtyInspected.BackColor = System.Drawing.Color.White;
             this.numQtyInspected.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspectQty", true));
             this.numQtyInspected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numQtyInspected.Location = new System.Drawing.Point(346, 33);
+            this.numQtyInspected.Location = new System.Drawing.Point(346, 57);
             this.numQtyInspected.Name = "numQtyInspected";
             this.numQtyInspected.NullValue = new decimal(new int[] {
             0,
@@ -355,7 +361,7 @@
             this.numQtyRejected.BackColor = System.Drawing.Color.White;
             this.numQtyRejected.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RejectQty", true));
             this.numQtyRejected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numQtyRejected.Location = new System.Drawing.Point(346, 60);
+            this.numQtyRejected.Location = new System.Drawing.Point(346, 84);
             this.numQtyRejected.Name = "numQtyRejected";
             this.numQtyRejected.NullValue = new decimal(new int[] {
             0,
@@ -376,7 +382,7 @@
             this.numTtlDefectQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
             this.numTtlDefectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlDefectQty.IsSupportEditMode = false;
-            this.numTtlDefectQty.Location = new System.Drawing.Point(346, 87);
+            this.numTtlDefectQty.Location = new System.Drawing.Point(346, 111);
             this.numTtlDefectQty.Name = "numTtlDefectQty";
             this.numTtlDefectQty.NullValue = new decimal(new int[] {
             0,
@@ -450,7 +456,7 @@
             this.displayDestination.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayDestination.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayDestination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayDestination.Location = new System.Drawing.Point(346, 116);
+            this.displayDestination.Location = new System.Drawing.Point(616, 116);
             this.displayDestination.Name = "displayDestination";
             this.displayDestination.Size = new System.Drawing.Size(252, 21);
             this.displayDestination.TabIndex = 10;
@@ -464,6 +470,7 @@
             this.comboTeam.IsSupportUnselect = true;
             this.comboTeam.Location = new System.Drawing.Point(576, 6);
             this.comboTeam.Name = "comboTeam";
+            this.comboTeam.OldText = "";
             this.comboTeam.Size = new System.Drawing.Size(121, 24);
             this.comboTeam.TabIndex = 2;
             // 
@@ -523,9 +530,27 @@
             this.comboShift.IsSupportUnselect = true;
             this.comboShift.Location = new System.Drawing.Point(296, 5);
             this.comboShift.Name = "comboShift";
+            this.comboShift.OldText = "";
             this.comboShift.Size = new System.Drawing.Size(150, 24);
             this.comboShift.TabIndex = 1;
             this.comboShift.Type = "SewingOutput_Shift";
+            // 
+            // labBuyerDelivery
+            // 
+            this.labBuyerDelivery.Location = new System.Drawing.Point(243, 31);
+            this.labBuyerDelivery.Name = "labBuyerDelivery";
+            this.labBuyerDelivery.Size = new System.Drawing.Size(100, 23);
+            this.labBuyerDelivery.TabIndex = 141;
+            this.labBuyerDelivery.Text = "Buyer Delivery ";
+            // 
+            // dateBuyerDelivery
+            // 
+            this.dateBuyerDelivery.IsSupportEditMode = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(346, 33);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.ReadOnly = true;
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(120, 23);
+            this.dateBuyerDelivery.TabIndex = 142;
             // 
             // P20
             // 
@@ -599,6 +624,7 @@
         private Win.UI.TextBox txtRFT;
         private System.Windows.Forms.Label labConfirm;
         private Win.UI.TextBox txtCPU;
-        
+        private Win.UI.Label labBuyerDelivery;
+        private Win.UI.DateBox dateBuyerDelivery;
     }
 }
