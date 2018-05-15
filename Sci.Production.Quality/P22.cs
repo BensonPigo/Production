@@ -282,7 +282,7 @@ where CFANeedInsp = 1 ", out dtToExcel);
                 {
                     string userEmail = MyUtility.GetValue.Lookup($@"select email from pass1 where id='{Env.User.UserID}'");
 
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString() + ";" + userEmail, dr["Subject"].ToString(), excelFile, dr["Content"].ToString(), false, true);
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString() + ";" + userEmail, "["+ DateTime.Now.ToString("yyyy-MM-dd") + "] "+ dr["Subject"].ToString(), excelFile, dr["Content"].ToString(), false, true);
                     email.ShowDialog(this);
                 }
                 else
