@@ -951,5 +951,10 @@ where a.id= @ID", pars, out dd);
             return true;
 
         }
+
+        private void btnPrintFabricSticker_Click(object sender, EventArgs e)
+        {
+            new P22_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+        }
     }
 }
