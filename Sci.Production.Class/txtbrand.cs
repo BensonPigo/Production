@@ -27,7 +27,7 @@ namespace Sci.Production.Class
 
         protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
+            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Production.dbo.Brand WITH (NOLOCK) WHERE Junk=0  ORDER BY Id";
             if (multi_select)
             {
                 Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere,"", "10,29,35", "", null, null, null);
@@ -59,7 +59,7 @@ namespace Sci.Production.Class
                     string err_brand = "";
                     foreach (string chk_str in str_multi)
                     {
-                        if (MyUtility.Check.Seek(chk_str, "Brand", "id") == false)
+                        if (MyUtility.Check.Seek(chk_str, "Brand", "id","Production") == false)
                         {
                             err_brand += "," + chk_str;
                         }
@@ -74,7 +74,7 @@ namespace Sci.Production.Class
 
                 }
                 else {
-                    if (MyUtility.Check.Seek(str, "Brand", "id") == false)
+                    if (MyUtility.Check.Seek(str, "Brand", "id","Production") == false)
                     {
                         this.Text = "";
                         e.Cancel = true;

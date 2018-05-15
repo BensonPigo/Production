@@ -53,7 +53,7 @@ namespace Sci.Production.Class
             #region SQL CMD
             string sqlcmd = string.Format(@"
 Select DISTINCT FtyGroup as Factory 
-from Factory WITH (NOLOCK) 
+from Production.dbo.Factory WITH (NOLOCK) 
 {0}
 order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "");
             #endregion
@@ -88,7 +88,7 @@ order by FtyGroup", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\
             #region SQL CMD
             string sqlcmd = string.Format(@"
 Select DISTINCT FtyGroup
-from Factory WITH (NOLOCK) 
+from Production.dbo.Factory WITH (NOLOCK) 
 {0}", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : "");
             #endregion
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
