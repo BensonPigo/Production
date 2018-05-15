@@ -441,6 +441,7 @@ select
 	[OrderID] = A.ORDERID,
 	[Brand] = C.BRANDID,
 	[Style] = C.STYLEID,
+    C.BuyerDelivery ,
 	[Team] = A.TEAM,
 	[Shift] = Case when A.SHIFT = 'D' then 'Day' 
 				   when A.SHIFT = 'N' then 'NIGHT' 
@@ -566,6 +567,7 @@ select
 	[OrderID] = Z.OrderID,
 	[Brand] = C.BRANDID,
 	[Style] = C.STYLEID,
+    c.BuyerDelivery ,
 	[Team] = A.TEAM,
 	[Shift] = Case when A.SHIFT = 'D' then 'Day' 
 				   when A.SHIFT = 'N' then 'NIGHT' 
