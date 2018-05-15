@@ -309,7 +309,7 @@ namespace Sci.Production.Packing
                                         size2 = size2.Substring(0, size2.IndexOf("("));
                                     }
 
-                                    newRow["Size"] = size2;
+                                    newRow["Size"] = size2.Replace("/", string.Empty);
                                     newRow["BarCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 28], "C");
 
                                     notdist.Rows.Add(newRow);
