@@ -158,6 +158,15 @@ namespace Sci.Production.Warehouse
             label25.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            if (CurrentMaintain["status"].ToString().EqualString("Confirmed"))
+            {
+                this.btnPrintFabricSticker.Enabled = true;
+            }
+            else
+            {
+                this.btnPrintFabricSticker.Enabled = false;
+            }
         }
 
         // detail 新增時設定預設值
