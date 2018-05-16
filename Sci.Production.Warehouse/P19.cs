@@ -179,6 +179,15 @@ namespace Sci.Production.Warehouse
             label25.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            if (CurrentMaintain["status"].ToString().EqualString("Confirmed"))
+            {
+                this.btnPrintFabricSticker.Enabled = true;
+            }
+            else
+            {
+                this.btnPrintFabricSticker.Enabled = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -783,6 +792,11 @@ where a.id= @ID", pars, out dd);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.txtFromFactory.Text = item.GetSelectedString();
+        }
+
+        private void btnPrintFabricSticker_Click(object sender, EventArgs e)
+        {
+            new P19_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
         }
     }
 }
