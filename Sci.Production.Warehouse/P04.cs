@@ -161,22 +161,30 @@ namespace Sci.Production.Warehouse
             #endregion 
             #region SQL Command & SqlParameter 
             string sql = string.Format(@"
-select  [sp] = l.OrderID
-        , [unit] = l.UnitID
-        , [refno] = l.Refno
+select OrderID,Refno,ThreadColorID,UnitID
+into #tmp
+from LocalPO_Detail with(nolock)
+where OrderID like @spno
+Group by OrderID,RefNo,ThreadColorID,UnitID
+
+select [sp] = a.OrderID
+        , [unit] = a.UnitID
+        , [refno] = a.Refno
         , [desc] = b.Description
         , [supp] = c.ID + '-' + c.Abb
-        , [threadColor] = l.ThreadColorID
+        , [threadColor] = a.ThreadColorID
         , [inQty] = iif (l.InQty = 0, '', Convert (varchar, l.InQty))
         , [outQty] = iif (l.OutQty = 0, '', Convert (varchar, l.OutQty))
         , [adjustQty] = iif (l.AdjustQty = 0, '', Convert (varchar, l.AdjustQty))
         , [Balance] = iif (InQty - OutQty + AdjustQty = 0, '', Convert (varchar, InQty - OutQty + AdjustQty))
         , [ALocation] = l.ALocation
         , [ScrapQty] = l.LobQty
-from LocalInventory l
+from #tmp a
+left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
 left join LocalItem b on l.Refno=b.RefNo
 left join LocalSupp c on b.LocalSuppid=c.ID
-where l.OrderID like @spno
+order by a.OrderID
+drop table #tmp
 ");
 
             string spno = txtSPNo.Text.TrimEnd() + "%";

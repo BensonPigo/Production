@@ -455,7 +455,12 @@ declare @id varchar(20) = @sp1
 select distinct StyleID,BrandID,POID,FtyGroup 
 into #tmpOrder
 from orders where id like @id
-			
+
+select OrderID,Refno,ThreadColorID,UnitID
+into #tmpLocalPO_Detail
+from LocalPO_Detail with(nolock)
+where OrderID like @id
+Group by OrderID,RefNo,ThreadColorID,UnitID
 
 ;WITH QA AS (
 	Select  c.InvNo InvNo
@@ -703,7 +708,7 @@ where ROW_NUMBER_D =1
 union all
 select ROW_NUMBER_D = 1
 	   , [ukey] = null
-       , [ID] = l.orderid
+       , [ID] = a.orderid
        , [seq1] = '-'
        , [seq2] = '-'
        , [StyleID] = '-'
@@ -711,12 +716,12 @@ select ROW_NUMBER_D = 1
        , [SuppCountry] = '-'
        , [eta] = '-'
        , [RevisedETA] = '-'
-       , [Refno]		= l.Refno
+       , [Refno]		= a.Refno
        , [SCIRefno] = '-'
-       , [FabricType] = l.UnitID
+       , [FabricType] = a.UnitID
        , [fabrictype2] = '-'
        , [fabrictypeOrderby] = null
-       , [ColorID] = l.ThreadColorID
+       , [ColorID] = a.ThreadColorID
        , [SizeSpec] = '-'
        , [unitqty] = '-'
        , [Qty] = '-'
@@ -747,12 +752,13 @@ select ROW_NUMBER_D = 1
        , [Remark] = '-'
        , [OrderIdList] = l.OrderID
        , [From_Program] = 'P04'
-from LocalInventory l
-left join LocalItem b on l.Refno = b.RefNo
-left join LocalSupp c on b.LocalSuppid = c.ID
+from #tmpLocalPO_Detail a
+left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
+left join LocalItem b on l.Refno=b.RefNo
+left join LocalSupp c on b.LocalSuppid=c.ID
 where l.OrderID like @id + '%'
 
-drop table #tmpOrder
+drop table #tmpOrder,#tmpLocalPO_Detail
             ";
             #endregion
             #region -- 準備sql參數資料 --
