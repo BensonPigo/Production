@@ -18,8 +18,6 @@ namespace Sci.Production.Logistic
     /// </summary>
     public partial class P03 : Sci.Win.Tems.QueryForm
     {
-        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-
         /// <summary>
         /// P03
         /// </summary>
@@ -59,25 +57,35 @@ namespace Sci.Production.Logistic
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
+            col_chk.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.gridReceiveDate.GetDataRow<DataRow>(e.RowIndex);
+                dr["selected"] = e.FormattedValue;
+                dr.EndEdit();
+                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
+                this.numSelectedCTNQty.Value = sint;
+            };
+
             this.gridReceiveDate.IsEditingReadOnly = false;
             this.gridReceiveDate.DataSource = this.listControlBindingSource1;
 
             this.Helper.Controls.Grid.Generator(this.gridReceiveDate)
-                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-                 .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                 .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
-                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
+            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
+            .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
+            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -119,11 +127,13 @@ namespace Sci.Production.Logistic
                 return;
             }
 
+            this.numSelectedCTNQty.Value = 0;
+            this.numTotalCTNQty.Value = 0;
             StringBuilder sqlCmd = new StringBuilder();
 
             sqlCmd.Append(string.Format(
                 @"
-select  ID
+select ID
         , selected
         , ReceiveDate
         , PackingListID
@@ -238,6 +248,8 @@ order by rn ");
             }
 
             this.listControlBindingSource1.DataSource = this.selectDataTable;
+            this.numTotalCTNQty.Value = this.selectDataTable.Rows.Count;
+            this.numSelectedCTNQty.Value = this.selectDataTable.Rows.Count;
         }
 
         // Find
@@ -255,6 +267,8 @@ order by rn ");
             // 開窗且有選擇檔案
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                this.numSelectedCTNQty.Value = 0;
+                this.numTotalCTNQty.Value = 0;
                 // 先將Grid的結構給開出來
                 string selectCommand = @"
 Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.OrderID, 
@@ -373,6 +387,8 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                     this.ControlButton4Text("Cancel");
                 }
             }
+
+            this.Countselectcount();
         }
 
         // Save
@@ -507,6 +523,22 @@ where ID = '{0}' and CTNStartNo = '{1}'; ",
         private void ControlButton4Text(string showText)
         {
             this.btnClose.Text = showText;
+        }
+
+        private void GridReceiveDate_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            this.Countselectcount();
+        }
+
+        private void Countselectcount()
+        {
+            this.gridReceiveDate.ValidateControl();
+            DataGridViewColumn column = this.gridReceiveDate.Columns["Selected"];
+            if (!MyUtility.Check.Empty(column))
+            {
+                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
+                this.numSelectedCTNQty.Value = sint;
+            }
         }
     }
 }
