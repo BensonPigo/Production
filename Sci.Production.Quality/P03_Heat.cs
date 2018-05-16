@@ -820,7 +820,7 @@ Each Dyelot must be tested!", d));
         {
             DataTable dt = (DataTable)gridbs.DataSource;
             string[] columnNames = new string[] 
-            { "Roll", "Dyelot", "HorizontalOriginal", "VerticalOriginal", "Result", "HorizontalTest1", "HorizontalTest2", "HorizontalTest3", "Vertical_Average","Horizontalrate",
+            { "Roll", "Dyelot", "HorizontalOriginal", "VerticalOriginal", "Result", "HorizontalTest1", "HorizontalTest2", "HorizontalTest3", "Horizontal_Average","Horizontalrate",
                 "VerticalTest1","VerticalTest2","VerticalTest3","Vertical_Average","VerticalRate","InspDate", "Inspector", "Inspector", "Remark", "Last update" };
             var ret = Array.CreateInstance(typeof(object), dt.Rows.Count, grid.Columns.Count) as object[,];
             for (int i = 0; i < dt.Rows.Count; i++)
