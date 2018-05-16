@@ -35,6 +35,7 @@ namespace Sci.Production.Subcon
             String sp_b = this.txtSPNoStart.Text;
             String sp_e = this.txtSPNoEnd.Text;
             String brandid = this.txtbrand.Text;
+            String factory = this.txtfactory1.Text;
 
             string booking_b, booking_e, sewinline_b, sewinline_e, arrived_b, arrived_e, approved_b, approved_e, scidelivery_b, scidelivery_e, sql, tmp;
             booking_b = null;
@@ -137,6 +138,7 @@ where a.ApvToPurchase = 1
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
+                    if (!MyUtility.Check.Empty(factory)) { strSQLCmd += $" and a.FactoryID = '{factory}'"; }
                     if (!MyUtility.Check.Empty(sewinline_b)) { strSQLCmd += string.Format(" and c.sewinline >= '{0}' ", sewinline_b); }
                     if (!MyUtility.Check.Empty(sewinline_e)) { strSQLCmd += string.Format(" and c.sewinline <= '{0}' ", sewinline_e); }
                     if (!MyUtility.Check.Empty(scidelivery_b)) { strSQLCmd += string.Format(" and c.scidelivery >= '{0}' ", scidelivery_b); }
@@ -181,6 +183,8 @@ where  not exists (select orderID
                 }
                 else
                 {
+                    string wf = string.Empty;
+                    if (!MyUtility.Check.Empty(factory)) { wf = $" and c.FactoryID = '{factory}'"; }
                     strSQLCmd = string.Format(@"
 select distinct 1 as Selected
        , c.POID 
@@ -227,6 +231,7 @@ where a.status = 'Approved'
       and exists (select id from orders where poid=b.OrderID and junk=0)
       and b.PurchaseQty > 0 
       and b.PoId = ''
+      {5}
       and not exists (select orderID 
       				  from LocalPo_Detail 
       				  where RequestID = a.OrderID
@@ -238,7 +243,8 @@ where a.status = 'Approved'
                      , Env.User.Keyword
                      , dr_localPO["category"]
                      , dr_localPO["localsuppid"]
-                     , dr_localPO["ID"]);
+                     , dr_localPO["ID"]
+                     , wf);
 
                     if (!MyUtility.Check.Empty(sp_b)) { strSQLCmd += " and c.id between @sp1 and @sp2"; }
                     if (!MyUtility.Check.Empty(brandid)) { strSQLCmd += " and c.brandid = @brandid"; }
