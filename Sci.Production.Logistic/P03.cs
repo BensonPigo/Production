@@ -512,6 +512,7 @@ where ID = '{0}' and CTNStartNo = '{1}'; ",
             {
                 this.listControlBindingSource1.DataSource = null;
             }
+            this.Countselectcount();
         }
 
         // Cancel
@@ -539,6 +540,7 @@ where ID = '{0}' and CTNStartNo = '{1}'; ",
                 int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
                 this.numSelectedCTNQty.Value = sint;
             }
+            this.numTotalCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
         }
     }
 }
