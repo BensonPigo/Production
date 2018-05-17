@@ -699,7 +699,7 @@ tmpAllSubprocess as(
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
 --	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --												 and sl.Location = a.ComboType
-	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift not in ('O','I'))) 
+	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
 			and ot.Price > 0 		    
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType)
 )
