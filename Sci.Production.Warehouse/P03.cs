@@ -754,7 +754,7 @@ select ROW_NUMBER_D = 1
        , [From_Program] = 'P04'
 from #tmpLocalPO_Detail a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
-left join LocalItem b on l.Refno=b.RefNo
+left join LocalItem b on a.Refno=b.RefNo
 left join LocalSupp c on b.LocalSuppid=c.ID
 where l.OrderID like @id + '%'
 

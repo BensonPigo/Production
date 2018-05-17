@@ -181,7 +181,7 @@ select [sp] = a.OrderID
         , [ScrapQty] = l.LobQty
 from #tmp a
 left join LocalInventory l on a.OrderId = l.OrderID and a.Refno = l.Refno and a.ThreadColorID = l.ThreadColorID
-left join LocalItem b on l.Refno=b.RefNo
+left join LocalItem b on a.Refno=b.RefNo
 left join LocalSupp c on b.LocalSuppid=c.ID
 order by a.OrderID
 drop table #tmp
