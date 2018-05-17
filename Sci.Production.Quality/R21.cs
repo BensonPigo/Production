@@ -61,6 +61,7 @@ namespace Sci.Production.Quality
                 #region 組撈Summary Data SQL
                 sqlCmd_Summary.Append(@"
 select DISTINCT c.StyleID
+       , c.BuyerDelivery 
 	   , a.OrderID
 	   , 'VAS/SHAS' = iif(c.VasShas=0,'','v')
 	   , c.BrandID
@@ -154,6 +155,7 @@ c.FactoryID
 ,a.OrderID
 ,[VAS/SHAS]= iif(c.VasShas=0,'','v') 
 ,c.StyleID
+, c.BuyerDelivery 
 ,c.BrandID
 ,c.CustPONo
 ,a.cDate

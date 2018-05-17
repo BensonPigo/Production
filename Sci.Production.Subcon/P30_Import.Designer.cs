@@ -37,6 +37,7 @@
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelApproveDate = new Sci.Win.UI.Label();
@@ -53,7 +54,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label8 = new System.Windows.Forms.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -140,6 +142,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtfactory1);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.txtbrand);
             this.groupBox1.Controls.Add(this.labelBrand);
@@ -163,6 +167,15 @@
             this.groupBox1.Size = new System.Drawing.Size(1008, 147);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(268, 85);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(22, 17);
+            this.label8.TabIndex = 20;
+            this.label8.Text = "～";
             // 
             // txtbrand
             // 
@@ -191,6 +204,20 @@
             // 
             // dateApproveDate
             // 
+            // 
+            // 
+            // 
+            this.dateApproveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateApproveDate.DateBox1.Name = "";
+            this.dateApproveDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateApproveDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateApproveDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateApproveDate.DateBox2.Name = "";
+            this.dateApproveDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateApproveDate.DateBox2.TabIndex = 1;
             this.dateApproveDate.IsRequired = false;
             this.dateApproveDate.Location = new System.Drawing.Point(590, 82);
             this.dateApproveDate.Name = "dateApproveDate";
@@ -207,6 +234,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(590, 15);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -223,6 +264,20 @@
             // 
             // dateEstArrivedDate
             // 
+            // 
+            // 
+            // 
+            this.dateEstArrivedDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateEstArrivedDate.DateBox1.Name = "";
+            this.dateEstArrivedDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateEstArrivedDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateEstArrivedDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateEstArrivedDate.DateBox2.Name = "";
+            this.dateEstArrivedDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateEstArrivedDate.DateBox2.TabIndex = 1;
             this.dateEstArrivedDate.IsRequired = false;
             this.dateEstArrivedDate.Location = new System.Drawing.Point(140, 48);
             this.dateEstArrivedDate.Name = "dateEstArrivedDate";
@@ -247,6 +302,20 @@
             // 
             // dateSewingInlineDate
             // 
+            // 
+            // 
+            // 
+            this.dateSewingInlineDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingInlineDate.DateBox1.Name = "";
+            this.dateSewingInlineDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInlineDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingInlineDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingInlineDate.DateBox2.Name = "";
+            this.dateSewingInlineDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInlineDate.DateBox2.TabIndex = 1;
             this.dateSewingInlineDate.IsRequired = false;
             this.dateSewingInlineDate.Location = new System.Drawing.Point(590, 48);
             this.dateSewingInlineDate.Name = "dateSewingInlineDate";
@@ -255,6 +324,20 @@
             // 
             // dateEstBookingDate
             // 
+            // 
+            // 
+            // 
+            this.dateEstBookingDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateEstBookingDate.DateBox1.Name = "";
+            this.dateEstBookingDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateEstBookingDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateEstBookingDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateEstBookingDate.DateBox2.Name = "";
+            this.dateEstBookingDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateEstBookingDate.DateBox2.TabIndex = 1;
             this.dateEstBookingDate.IsRequired = false;
             this.dateEstBookingDate.Location = new System.Drawing.Point(140, 15);
             this.dateEstBookingDate.Name = "dateEstBookingDate";
@@ -299,18 +382,29 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(1008, 353);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
-            // label8
+            // label1
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(268, 85);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(22, 17);
-            this.label8.TabIndex = 20;
-            this.label8.Text = "～";
+            this.label1.Location = new System.Drawing.Point(9, 117);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(128, 23);
+            this.label1.TabIndex = 21;
+            this.label1.Text = "Factory";
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.FilteMDivision = true;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(140, 118);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 22;
             // 
             // P30_Import
             // 
@@ -358,5 +452,7 @@
         private Win.UI.DateRange dateSCIDelivery;
         private Win.UI.Button btnToExcel;
         private System.Windows.Forms.Label label8;
+        private Class.txtfactory txtfactory1;
+        private Win.UI.Label label1;
     }
 }

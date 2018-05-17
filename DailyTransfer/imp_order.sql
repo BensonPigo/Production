@@ -1841,6 +1841,12 @@ BEGIN
 	where b.mdivisionid <> a.mdivisionid and (b.adddate > dateadd(day,90,getdate()) or b.editdate > dateadd(day,90,getdate()))
 
 
+----更新的判斷必須要依照#Torder的區間作更新
+Update b set b.MDivisionId='',FactoryID=''
+from Production.dbo.WorkOrder b
+where id in (select id from #tmpOrders as t 
+where not exists(select 1 from #TOrder as s where t.id=s.ID))
+
 
 ----刪除的判斷必須要依照#Torder的區間作刪除
 
