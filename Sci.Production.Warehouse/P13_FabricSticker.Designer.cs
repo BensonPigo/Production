@@ -79,7 +79,7 @@
             this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.grid1);
             this.Name = "P13_FabricSticker";
-            this.Text = "P13_FabricSticker";
+            this.Text = "P13_Print Fabric Sticker";
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).EndInit();
             this.ResumeLayout(false);
