@@ -78,6 +78,7 @@ p.MDivisionID
 ,o.CustPONo
 ,pd.ClogLocationId
 ,p.BrandID
+,Cancelled = iif(o.junk=1,'Y','N')
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -86,7 +87,6 @@ where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and (p.PulloutID = '' or po.Status = 'New')
 and o.PulloutComplete = 0
-and o.junk!=1 
 ");
 
             if (!MyUtility.Check.Empty(this.po1))
@@ -180,7 +180,7 @@ and o.junk!=1
 
             // 填內容值
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 8];
+            object[,] objArray = new object[1, 9];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
@@ -191,7 +191,8 @@ and o.junk!=1
                 objArray[0, 5] = dr["CustPONo"];
                 objArray[0, 6] = dr["ClogLocationId"];
                 objArray[0, 7] = dr["BrandID"];
-                worksheet.Range[string.Format("A{0}:H{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 8] = dr["Cancelled"];
+                worksheet.Range[string.Format("A{0}:I{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
