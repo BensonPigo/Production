@@ -47,6 +47,10 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.numTotalCTNQty = new Sci.Win.UI.NumericBox();
+            this.numSelectedCTNQty = new Sci.Win.UI.NumericBox();
+            this.lbTotalCTNQty = new Sci.Win.UI.Label();
+            this.lbSelectedCTNQty = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.lbFactory = new Sci.Win.UI.Label();
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
@@ -59,6 +63,7 @@
             this.lineShape3 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -94,9 +99,11 @@
             this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiveDate.RowTemplate.Height = 24;
             this.gridReceiveDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridReceiveDate.ShowCellToolTips = false;
             this.gridReceiveDate.Size = new System.Drawing.Size(692, 343);
             this.gridReceiveDate.TabIndex = 10;
             this.gridReceiveDate.TabStop = false;
+            this.gridReceiveDate.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridReceiveDate_ColumnHeaderMouseClick);
             // 
             // txtPONo
             // 
@@ -224,6 +231,10 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.numTotalCTNQty);
+            this.panel3.Controls.Add(this.numSelectedCTNQty);
+            this.panel3.Controls.Add(this.lbTotalCTNQty);
+            this.panel3.Controls.Add(this.lbSelectedCTNQty);
             this.panel3.Controls.Add(this.txtfactory);
             this.panel3.Controls.Add(this.lbFactory);
             this.panel3.Controls.Add(this.dateTimePicker2);
@@ -246,6 +257,64 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(712, 159);
             this.panel3.TabIndex = 19;
+            // 
+            // numTotalCTNQty
+            // 
+            this.numTotalCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalCTNQty.IsSupportEditMode = false;
+            this.numTotalCTNQty.Location = new System.Drawing.Point(488, 127);
+            this.numTotalCTNQty.Name = "numTotalCTNQty";
+            this.numTotalCTNQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalCTNQty.ReadOnly = true;
+            this.numTotalCTNQty.Size = new System.Drawing.Size(44, 23);
+            this.numTotalCTNQty.TabIndex = 49;
+            this.numTotalCTNQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numSelectedCTNQty
+            // 
+            this.numSelectedCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numSelectedCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numSelectedCTNQty.IsSupportEditMode = false;
+            this.numSelectedCTNQty.Location = new System.Drawing.Point(329, 127);
+            this.numSelectedCTNQty.Name = "numSelectedCTNQty";
+            this.numSelectedCTNQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numSelectedCTNQty.ReadOnly = true;
+            this.numSelectedCTNQty.Size = new System.Drawing.Size(41, 23);
+            this.numSelectedCTNQty.TabIndex = 48;
+            this.numSelectedCTNQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // lbTotalCTNQty
+            // 
+            this.lbTotalCTNQty.Location = new System.Drawing.Point(385, 127);
+            this.lbTotalCTNQty.Name = "lbTotalCTNQty";
+            this.lbTotalCTNQty.Size = new System.Drawing.Size(100, 23);
+            this.lbTotalCTNQty.TabIndex = 47;
+            this.lbTotalCTNQty.Text = "Total CTN Qty:";
+            // 
+            // lbSelectedCTNQty
+            // 
+            this.lbSelectedCTNQty.Location = new System.Drawing.Point(206, 127);
+            this.lbSelectedCTNQty.Name = "lbSelectedCTNQty";
+            this.lbSelectedCTNQty.Size = new System.Drawing.Size(120, 23);
+            this.lbSelectedCTNQty.TabIndex = 46;
+            this.lbSelectedCTNQty.Text = "Selected CTN Qty:";
             // 
             // txtfactory
             // 
@@ -356,6 +425,15 @@
             this.lineShape1.Y1 = 7;
             this.lineShape1.Y2 = 7;
             // 
+            // shapeContainer1
+            // 
+            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer1.Name = "shapeContainer2";
+            this.shapeContainer1.Size = new System.Drawing.Size(877, 152);
+            this.shapeContainer1.TabIndex = 0;
+            this.shapeContainer1.TabStop = false;
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(712, 512);
@@ -413,5 +491,10 @@
         private System.Windows.Forms.Label label2;
         private Win.UI.Label lbFactory;
         private Class.txtfactory txtfactory;
+        private Win.UI.NumericBox numTotalCTNQty;
+        private Win.UI.NumericBox numSelectedCTNQty;
+        private Win.UI.Label lbTotalCTNQty;
+        private Win.UI.Label lbSelectedCTNQty;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
     }
 }
