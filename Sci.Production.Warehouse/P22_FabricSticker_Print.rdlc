@@ -119,7 +119,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>SP#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -191,7 +193,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Roll</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -294,7 +298,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Ref#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -396,7 +402,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Color</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -498,7 +506,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Location</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -602,7 +612,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Prepared By</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -674,7 +686,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Remarks</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -848,7 +862,6 @@
         </TablixRowHierarchy>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
-        <Top>0cm</Top>
         <Left>0.76729cm</Left>
         <Height>6.80557cm</Height>
         <Width>8.36995cm</Width>
@@ -975,7 +988,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>SP#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1047,7 +1062,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Roll</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1150,7 +1167,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Ref#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1252,7 +1271,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Color</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1354,7 +1375,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Location</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1458,7 +1481,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Prepared By</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1530,7 +1555,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Remarks</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1704,7 +1731,6 @@
         </TablixRowHierarchy>
         <KeepTogether>true</KeepTogether>
         <DataSetName>DataSet1</DataSetName>
-        <Top>0cm</Top>
         <Left>11.51765cm</Left>
         <Height>6.80557cm</Height>
         <Width>8.36995cm</Width>
