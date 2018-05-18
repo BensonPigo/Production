@@ -35,7 +35,6 @@ namespace Sci.Production.Warehouse
 
         public P11_AutoPick_Detail(bool _combo, string _poid, string _orderid, DataTable _dt, int _DataRowIndex, int _DataColumIndex, Sci.Production.Warehouse.P11_AutoPick _P11Autopick)
         {
-
             combo = _combo;//上面GRID使用
             poid = _poid;//上面GRID使用
             orderid = _orderid;//上面GRID使用
@@ -129,13 +128,11 @@ inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID
 where o.POID = '{0}'
 group by sizecode", poid), out dtIssueBreakdown);
                 DBProxy.Current.Select(null, string.Format(@"
-select * 
-from dbo.Order_SizeCode WITH (NOLOCK) 
-where id = (
-        select poid 
-        from dbo.orders WITH (NOLOCK) 
-        where id='{0}'
-      ) 
+select distinct os.* 
+from dbo.Order_SizeCode os WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on o.POID = os.Id
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+where  o.POID='{0}'
 order by seq", poid), out dtX);
                 DBProxy.Current.Select(null, string.Format(@"
 select  sum(oq.qty) Total
