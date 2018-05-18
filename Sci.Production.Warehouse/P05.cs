@@ -63,32 +63,32 @@ namespace Sci.Production.Warehouse
             };
             #region Set Grid1
             Helper.Controls.Grid.Generator(this.grid1)
-            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0,settings: col_chk)
-            .Text("ID", header: "SP# (Child SP)", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("Article", header: "Article", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true, width: Widths.AnsiChars(13),settings:qty)
-            .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Date("SciDelivery", header: "Sci Delivery", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("SewInLine", header: "Sewing Inline", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("SewLine", header: "Sewing Line#", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("VasShas", header: "VAS/SHAS", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("CustCDID", header: "CustCD", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("Alias", header: "Destination", iseditingreadonly: true, width: Widths.AnsiChars(13))
+            .CheckBox("Selected", header: string.Empty, width: Widths.Auto(), iseditable: true, trueValue: 1, falseValue: 0,settings: col_chk)
+            .Text("ID", header: "SP# (Child SP)", iseditingreadonly: true, width: Widths.Auto())
+            .Text("Article", header: "Article", iseditingreadonly: true, width: Widths.Auto())
+            .Numeric("OrderQty", header: "Order Qty", iseditingreadonly: true, width: Widths.Auto(), settings:qty)
+            .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true, width: Widths.Auto())
+            .Date("SciDelivery", header: "Sci Delivery", iseditingreadonly: true, width: Widths.Auto())
+            .Text("SewInLine", header: "Sewing Inline", iseditingreadonly: true, width: Widths.Auto())
+            .Text("SewLine", header: "Sewing Line#", iseditingreadonly: true, width: Widths.Auto())
+            .Text("VasShas", header: "VAS/SHAS", iseditingreadonly: true, width: Widths.Auto())
+            .Text("CustCDID", header: "CustCD", iseditingreadonly: true, width: Widths.Auto())
+            .Text("Alias", header: "Destination", iseditingreadonly: true, width: Widths.Auto())
             ;
             #endregion
 
             #region Set Grid2
             Helper.Controls.Grid.Generator(this.grid2)
-            .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("ColorID", header: "Color", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Text("ETA", header: "ETA", iseditingreadonly: true, width: Widths.AnsiChars(13))
-            .Numeric("Qty", header: "Purchase Qty", iseditingreadonly: true, width: Widths.AnsiChars(13),decimal_places:2, settings: qty2)
-            .Numeric("Wqty", header: "On Warehouse Qty", iseditingreadonly: true, width: Widths.AnsiChars(13), decimal_places: 2)
-            .Numeric("bqty", header: "On board Qty", iseditingreadonly: true, width: Widths.AnsiChars(13), decimal_places: 2)
-            .Numeric("Uqty", header: "Usable Qty", iseditingreadonly: true, width: Widths.AnsiChars(13), decimal_places: 2)
-            .Numeric("EstUsageQty", header: "Est. Usage Qty", iseditingreadonly: true, width: Widths.AnsiChars(13), decimal_places: 2)
-            .Numeric("BlanceQty", header: "Blance Qty", iseditingreadonly: true, width: Widths.AnsiChars(13), decimal_places: 2,minimum:-999999)
+            .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.Auto())
+            .Text("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(22))
+            .Text("ColorID", header: "Color", iseditingreadonly: true, width: Widths.Auto())
+            .Text("ETA", header: "ETA", iseditingreadonly: true, width: Widths.Auto())
+            .Numeric("Qty", header: "Purchase Qty", iseditingreadonly: true, width: Widths.Auto(),decimal_places:2, settings: qty2)
+            .Numeric("Wqty", header: "On Warehouse Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
+            .Numeric("bqty", header: "On board Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
+            .Numeric("Uqty", header: "Usable Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
+            .Numeric("EstUsageQty", header: "Est. Usage Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
+            .Numeric("BlanceQty", header: "Blance Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2,minimum:-999999)
             ;
             #endregion
         }
@@ -155,7 +155,7 @@ inner join Order_Qty oq with(nolock) on o.ID = oq.ID
 left join Country c with(nolock) on o.Dest = c.ID
 where o.poid = '{txtSPNo.Text}'
 group by o.ID,oq.Article,o.BuyerDelivery,o.SciDelivery,o.SewInLine,o.SewLine,o.VasShas,o.CustCDID,c.Alias
-order by BuyerDelivery
+order by o.BuyerDelivery,o.ID
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
@@ -164,6 +164,7 @@ order by BuyerDelivery
                 return;
             }
             this.listControlBindingSource1.DataSource = dt;
+            ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "ID";
             this.grid1.AutoResizeColumns();
             #endregion
             #region 2
@@ -245,15 +246,19 @@ drop table #tmp
             foreach (DataRow dr in dt.Rows)
             {
                 sqlcmd3 += $@"
-select ob.refno,oec.ColorID,TtlConsPC = avg(oe.conspc)*{dr["OrderQty"]},dtkey={dr["dtkey"]}
-from Order_EachCons oe
-inner join dbo.Order_BOF ob on oe.Id = ob.Id and oe.FabricCode = ob.FabricCode
-inner join dbo.Order_EachCons_Color oec on oe.Id = oec.Id and oe.Ukey = oec.Order_EachConsUkey
-where oe.ID='{txtSPNo.Text}'
-and (0 = iif(exists (select 1 from Order_EachCons_Article where Order_EachConsUkey = oe.Ukey),1,0) --若Order_EachCons_Article有資料,要確認Article是否存在於Order_EachCons_Article
-	or '{dr["Article"]}' in(select Article from Order_EachCons_Article oea where oea.Order_EachConsUkey = oe.Ukey))
-group by oe.ID,ob.refno,oec.ColorID
-order by ob.refno,oec.ColorID
+select refno,ColorID,TtlConsPC = avg(ConsPC)*{dr["OrderQty"]},dtkey={dr["dtkey"]}
+from (
+    select ob.refno,oec.ColorID,oes.SizeCode,ConsPC = sum(oe.conspc)
+    from Order_EachCons oe
+    inner join dbo.Order_BOF ob on oe.Id = ob.Id and oe.FabricCode = ob.FabricCode
+    inner join dbo.Order_EachCons_Color oec on oe.Id = oec.Id and oe.Ukey = oec.Order_EachConsUkey
+    inner join dbo.Order_EachCons_SizeQty oes on oe.Ukey = oes.Order_EachConsUkey
+    where oe.ID='{txtSPNo.Text}'
+    and (0 = iif(exists (select 1 from Order_EachCons_Article where Order_EachConsUkey = oe.Ukey),1,0) --若Order_EachCons_Article有資料,要確認Article是否存在於Order_EachCons_Article
+	    or '{dr["Article"]}' in(select Article from Order_EachCons_Article oea where oea.Order_EachConsUkey = oe.Ukey))
+    group by ob.refno ,oec.ColorID,oes.SizeCode
+)a
+group by refno,ColorID
 ";
             }
             DualResult result3 = DBProxy.Current.Select(null, sqlcmd3, out dt3);
