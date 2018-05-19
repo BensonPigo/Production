@@ -17,6 +17,8 @@ namespace Sci.Production.Logistic
     /// </summary>
     public partial class P02 : Sci.Win.Tems.QueryForm
     {
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+
         /// <summary>
         /// P02
         /// </summary>
@@ -43,34 +45,27 @@ namespace Sci.Production.Logistic
             a.Text = Sci.Env.User.Keyword;
             this.txtcloglocationLocationNo.MDivisionObjectName = a;
 
-            Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings col_chk = new Ict.Win.DataGridViewGeneratorCheckBoxColumnSettings();
-            col_chk.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
-                dr["selected"] = e.FormattedValue;
-                dr.EndEdit();
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
-                this.numSelectedCTNQty.Value = sint;
-            };
             this.gridImport.IsEditingReadOnly = false;
             this.gridImport.DataSource = this.listControlBindingSource1;
 
             this.Helper.Controls.Grid.Generator(this.gridImport)
-            .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
-            .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
-            .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
-            .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
-            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
+                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
+                 .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
+                 .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                 .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(4), iseditingreadonly: true)
+
+                // .Numeric("CTNStartNo2", header: "CTN#22", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
+                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                 .Text("CustPONo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.AnsiChars(10))
+                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -115,8 +110,6 @@ namespace Sci.Production.Logistic
                 return;
             }
 
-            this.numSelectedCTNQty.Value = 0;
-            this.numTotalCTNQty.Value = 0;
             #region SQL Filte
 
             // 若有輸入 TransferSlipNo 必須增加條件對應至 PackingList_Detail 【OrderID, CtnNum】
@@ -209,7 +202,6 @@ order by rn", Sci.Env.User.Keyword,
             }
 
             this.listControlBindingSource1.DataSource = this.selectDataTable;
-            this.numTotalCTNQty.Value = this.selectDataTable.Rows.Count;
         }
 
         private void ButtonFind_Click(object sender, EventArgs e)
@@ -226,8 +218,6 @@ order by rn", Sci.Env.User.Keyword,
             // 開窗且有選擇檔案
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                this.numSelectedCTNQty.Value = 0;
-                this.numTotalCTNQty.Value = 0;
                 // 先將Grid的結構給開出來
                 string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
 TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo', 
@@ -351,8 +341,6 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
                     this.ControlButton4Text("Cancel");
                 }
             }
-
-            this.Countselectcount();
         }
 
         // Save
@@ -496,7 +484,6 @@ where   ID = '{0}'
             {
                 this.listControlBindingSource1.DataSource = null;
             }
-            this.Countselectcount();
         }
 
         // Cancel
@@ -533,23 +520,6 @@ where   ID = '{0}'
         private void ControlButton4Text(string showText)
         {
             this.btnClose.Text = showText;
-        }
-
-        private void GridImport_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            this.Countselectcount();
-        }
-
-        private void Countselectcount()
-        {
-            this.gridImport.ValidateControl();
-            DataGridViewColumn column = this.gridImport.Columns["Selected"];
-            if (!MyUtility.Check.Empty(column))
-            {
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
-                this.numSelectedCTNQty.Value = sint;
-            }
-            this.numTotalCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
         }
     }
 }
