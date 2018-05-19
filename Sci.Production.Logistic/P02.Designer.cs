@@ -59,18 +59,14 @@
             this.label3 = new Sci.Win.UI.Label();
             this.txtTransferSlipNo = new Sci.Win.UI.TextBox();
             this.panel3 = new Sci.Win.UI.Panel();
-            this.numTotalCTNQty = new Sci.Win.UI.NumericBox();
-            this.numSelectedCTNQty = new Sci.Win.UI.NumericBox();
-            this.lbTotalCTNQty = new Sci.Win.UI.Label();
-            this.lbSelectedCTNQty = new Sci.Win.UI.Label();
-            this.panel7 = new System.Windows.Forms.Panel();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.panel7 = new System.Windows.Forms.Panel();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
-            this.panel7.SuspendLayout();
             this.panel6.SuspendLayout();
+            this.panel7.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel5
@@ -102,11 +98,9 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(857, 350);
             this.gridImport.TabIndex = 10;
             this.gridImport.TabStop = false;
-            this.gridImport.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridImport_ColumnHeaderMouseClick);
             // 
             // panel2
             // 
@@ -345,10 +339,6 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.numTotalCTNQty);
-            this.panel3.Controls.Add(this.numSelectedCTNQty);
-            this.panel3.Controls.Add(this.lbTotalCTNQty);
-            this.panel3.Controls.Add(this.lbSelectedCTNQty);
             this.panel3.Controls.Add(this.panel7);
             this.panel3.Controls.Add(this.panel6);
             this.panel3.Controls.Add(this.txtcloglocationLocationNo);
@@ -362,73 +352,6 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(877, 152);
             this.panel3.TabIndex = 19;
-            // 
-            // numTotalCTNQty
-            // 
-            this.numTotalCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTotalCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTotalCTNQty.IsSupportEditMode = false;
-            this.numTotalCTNQty.Location = new System.Drawing.Point(641, 121);
-            this.numTotalCTNQty.Name = "numTotalCTNQty";
-            this.numTotalCTNQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTotalCTNQty.ReadOnly = true;
-            this.numTotalCTNQty.Size = new System.Drawing.Size(44, 23);
-            this.numTotalCTNQty.TabIndex = 45;
-            this.numTotalCTNQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numSelectedCTNQty
-            // 
-            this.numSelectedCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numSelectedCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numSelectedCTNQty.IsSupportEditMode = false;
-            this.numSelectedCTNQty.Location = new System.Drawing.Point(482, 121);
-            this.numSelectedCTNQty.Name = "numSelectedCTNQty";
-            this.numSelectedCTNQty.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numSelectedCTNQty.ReadOnly = true;
-            this.numSelectedCTNQty.Size = new System.Drawing.Size(41, 23);
-            this.numSelectedCTNQty.TabIndex = 44;
-            this.numSelectedCTNQty.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // lbTotalCTNQty
-            // 
-            this.lbTotalCTNQty.Location = new System.Drawing.Point(538, 121);
-            this.lbTotalCTNQty.Name = "lbTotalCTNQty";
-            this.lbTotalCTNQty.Size = new System.Drawing.Size(100, 23);
-            this.lbTotalCTNQty.TabIndex = 43;
-            this.lbTotalCTNQty.Text = "Total CTN Qty:";
-            // 
-            // lbSelectedCTNQty
-            // 
-            this.lbSelectedCTNQty.Location = new System.Drawing.Point(359, 121);
-            this.lbSelectedCTNQty.Name = "lbSelectedCTNQty";
-            this.lbSelectedCTNQty.Size = new System.Drawing.Size(120, 23);
-            this.lbSelectedCTNQty.TabIndex = 41;
-            this.lbSelectedCTNQty.Text = "Selected CTN Qty:";
-            // 
-            // panel7
-            // 
-            this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel7.Controls.Add(this.btnImportFromBarcode);
-            this.panel7.Location = new System.Drawing.Point(3, 65);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(864, 42);
-            this.panel7.TabIndex = 40;
             // 
             // panel6
             // 
@@ -453,6 +376,15 @@
             this.panel6.Size = new System.Drawing.Size(864, 63);
             this.panel6.TabIndex = 39;
             // 
+            // panel7
+            // 
+            this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel7.Controls.Add(this.btnImportFromBarcode);
+            this.panel7.Location = new System.Drawing.Point(3, 65);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(864, 42);
+            this.panel7.TabIndex = 40;
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(877, 512);
@@ -474,9 +406,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            this.panel7.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
+            this.panel7.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -520,9 +452,5 @@
         private Win.UI.Panel panel3;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Panel panel6;
-        private Win.UI.NumericBox numTotalCTNQty;
-        private Win.UI.NumericBox numSelectedCTNQty;
-        private Win.UI.Label lbTotalCTNQty;
-        private Win.UI.Label lbSelectedCTNQty;
     }
 }
