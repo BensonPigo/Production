@@ -298,6 +298,15 @@ where t.id= @ID";
             labelNotApprove.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            if (CurrentMaintain["status"].ToString().EqualString("Confirmed"))
+            {
+                this.btnPrintFabricSticker.Enabled = true;
+            }
+            else
+            {
+                this.btnPrintFabricSticker.Enabled = false;
+            }
         }
 
         // detail 新增時設定預設值
@@ -721,6 +730,10 @@ Where a.id = '{0}'", masterID);
             var frm = new Sci.Production.Warehouse.P10_CutRef(CurrentMaintain);
             frm.ShowDialog(this);
         }
-       
+
+        private void btnPrintFabricSticker_Click(object sender, EventArgs e)
+        {
+            new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+        }
     }
 }

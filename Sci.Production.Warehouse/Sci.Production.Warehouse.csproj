@@ -261,6 +261,13 @@
       <DependentUpon>P07.cs</DependentUpon>
     </Compile>
     <Compile Include="P12_PrintData.cs" />
+    <Compile Include="P13_FabricSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P13_FabricSticker.Designer.cs">
+      <DependentUpon>P13_FabricSticker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P13_FabricSticker_PrintData.cs" />
     <Compile Include="P13_PrintData.cs" />
     <Compile Include="P15_PrintData.cs" />
     <Compile Include="P15_Unfinish.cs">
@@ -1282,6 +1289,10 @@
       <DependentUpon>P19_FabricSticker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P19_FabricSticker_Print.rdlc" />
+    <EmbeddedResource Include="P13_FabricSticker.resx">
+      <DependentUpon>P13_FabricSticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P13_FabricSticker_Print.rdlc" />
     <EmbeddedResource Include="P23_FabricSticker.resx">
       <DependentUpon>P23_FabricSticker.cs</DependentUpon>
     </EmbeddedResource>
@@ -1911,6 +1922,7 @@
     <None Include="Properties\DataSources\P12_PrintData1.datasource" />
     <None Include="Properties\DataSources\P13.datasource" />
     <None Include="Properties\DataSources\P13_AccumulatedQty.datasource" />
+    <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_Import.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
     <None Include="Properties\DataSources\P15.datasource" />
