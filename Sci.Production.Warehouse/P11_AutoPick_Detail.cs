@@ -53,8 +53,15 @@ namespace Sci.Production.Warehouse
                 gridbs.DataSource = null;
             }
             //datas.AcceptChanges();
-            dt_detail = datas;
-            gridbs.DataSource = datas;
+            string[] sary = new string[dtX.Rows.Count];
+            for (int i = 0; i < dtX.Rows.Count; i++)
+            {
+                sary[i] = "sizecode = '" + MyUtility.Convert.GetString(dtX.Rows[i]["sizecode"])+"'";
+            }
+            string sc = string.Join(" or ", sary) ;
+            DataTable datas2 = datas.Select(sc).CopyToDataTable();
+            dt_detail = datas2;
+            gridbs.DataSource = datas2;
             gridbs.MoveFirst();
         }
        
@@ -85,10 +92,10 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 //Rate = Convert.ToDecimal(dr["RATE"].ToString());
             }
         }
-
+        
+        DataTable dtIssueBreakdown, dtX, dtY;
         public void SetTopGrid()
         {
-            DataTable dtIssueBreakdown, dtX, dtY;
             #region -- matrix breakdown setting
             gridBreakDown.DataSource = listControlBindingSource1;
             _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, listControlBindingSource1); // 建立 Matrix 物件           
@@ -170,9 +177,11 @@ from dbo.Order_Qty WITH (NOLOCK)
 where id='{0}' 
 group by sizecode", orderid), out dtIssueBreakdown);
                 DBProxy.Current.Select(null, string.Format(@"
-select * 
-from dbo.Order_SizeCode WITH (NOLOCK) 
-where id = (
+select os.* 
+from dbo.Order_SizeCode os WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on o.POID = os.Id
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+where  o.id = (
             select poid 
             from dbo.orders WITH (NOLOCK) 
             where id='{0}'

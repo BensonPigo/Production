@@ -747,7 +747,7 @@ order by z.seq1,z.seq2,z.Seq", sbSizecode.ToString().Substring(0, sbSizecode.ToS
 
         public DataTable getAutoDetailDataTable(int RowIndex)
         {
-            DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(RowIndex)].Select("qty <>0 ").CopyToDataTable();
+            DataTable tmpDt = dictionaryDatas[gridAutoPick.GetDataRow(RowIndex)];
             return tmpDt;
         }
 
