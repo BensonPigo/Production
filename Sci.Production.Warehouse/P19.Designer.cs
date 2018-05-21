@@ -45,6 +45,7 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.txtFromFactory = new Sci.Win.UI.TextBox();
+            this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,6 +62,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.txtFromFactory);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnImport);
@@ -95,6 +97,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFromFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             // 
             // detailpanel
             // 
@@ -290,7 +293,7 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(800, 108);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(800, 90);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 4;
@@ -302,7 +305,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(856, 71);
+            this.btnImport.Location = new System.Drawing.Point(856, 55);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 3;
@@ -330,6 +333,18 @@
             this.txtFromFactory.TabIndex = 0;
             this.txtFromFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtFromFactory_PopUp);
             this.txtFromFactory.Validating += new System.ComponentModel.CancelEventHandler(this.txtFromFactory_Validating);
+            // 
+            // btnPrintFabricSticker
+            // 
+            this.btnPrintFabricSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPrintFabricSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnPrintFabricSticker.Location = new System.Drawing.Point(780, 126);
+            this.btnPrintFabricSticker.Name = "btnPrintFabricSticker";
+            this.btnPrintFabricSticker.Size = new System.Drawing.Size(165, 31);
+            this.btnPrintFabricSticker.TabIndex = 64;
+            this.btnPrintFabricSticker.Text = "Print Fabric Sticker";
+            this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
+            this.btnPrintFabricSticker.Click += new System.EventHandler(this.btnPrintFabricSticker_Click);
             // 
             // P19
             // 
@@ -390,5 +405,6 @@
         private Win.UI.Button btnImport;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtFromFactory;
+        private Win.UI.Button btnPrintFabricSticker;
     }
 }
