@@ -63,7 +63,16 @@ namespace Sci.Production.Shipping
             this.DetailSelectCommand = string.Format(
                 @"
 select  p.GMTBookingLock
-        , p.FactoryID,p.ID
+        , FactoryID = STUFF ((select CONCAT (',',a.FactoryID) 
+                            from (
+                                select distinct o.FactoryID
+                                from PackingList_Detail pd WITH (NOLOCK) 
+								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
+                                where pd.ID = p.id
+                            ) a 
+                            for xml path('')
+                          ), 1, 1, '') 
+		, p.ID
         , OrderID = STUFF ((select CONCAT (',', cast (a.OrderID as nvarchar)) 
                             from (
                                 select pd.OrderID 
