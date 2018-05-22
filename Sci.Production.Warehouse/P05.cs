@@ -259,6 +259,7 @@ from (
     inner join dbo.Order_BOF ob on oe.Id = ob.Id and oe.FabricCode = ob.FabricCode
     inner join dbo.Order_EachCons_Color oec on oe.Id = oec.Id and oe.Ukey = oec.Order_EachConsUkey
     inner join dbo.Order_EachCons_SizeQty oes on oe.Ukey = oes.Order_EachConsUkey
+    inner join dbo.Order_ColorCombo oc on oc.Id=oe.Id and oc.Article = '{dr["Article"]}' and oc.FabricPanelCode = oe.FabricPanelCode and oc.colorID=oec.ColorID
     where oe.ID='{txtSPNo.Text}'
     and (0 = iif(exists (select 1 from Order_EachCons_Article where Order_EachConsUkey = oe.Ukey),1,0) --若Order_EachCons_Article有資料,要確認Article是否存在於Order_EachCons_Article
 	    or '{dr["Article"]}' in(select Article from Order_EachCons_Article oea where oea.Order_EachConsUkey = oe.Ukey))
