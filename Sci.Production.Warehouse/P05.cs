@@ -169,10 +169,12 @@ order by o.BuyerDelivery,o.ID
             #endregion
             #region 2
             string sqlcmd2 = $@"
-select Refno,ColorID,FabricType,id,Qty = Sum(Po_Supp_Detail.Qty)
+select Refno,ColorID,FabricType,id,
+Qty = Sum(Round(dbo.getUnitQty(Po_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, isnull(Po_Supp_Detail.Qty, 0)), 2)) +
+      Sum(Round(dbo.getUnitQty(Po_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, isnull(Po_Supp_Detail.FOC, 0)), 2))
 into #tmp 
 from Po_Supp_Detail with(nolock)
-where FabricType = 'F' and id = '{txtSPNo.Text}'
+where FabricType = 'F' and id = '{txtSPNo.Text}' and junk=0
 group by Refno,ColorID,FabricType,id
 
 select 
@@ -180,7 +182,7 @@ select
 	f.Description,	
 	t.ColorID,	a.ETA,	t.Qty,
 	Wqty = isnull(b.InQty,0)+isnull(c.InQty,0),
-	bqty = isnull(b.bqty,0),
+	bqty = IIF(isnull(b.bqty,0)<0,0,isnull(b.bqty,0)),
 	Uqty = iif('{checkBox1.Checked}'='True',isnull(b.InQty,0)+isnull(c.InQty,0), isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0)),
 	Uqty2 = iif('{checkBox1.Checked}'='True',isnull(b.InQty,0)+isnull(c.InQty,0), isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0)),
 	EstUsageQty = 0.00,
@@ -192,7 +194,7 @@ outer apply(
 		from(
 			select distinct ETA
 			from Po_Supp_Detail with(nolock) 
-			where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and ETA is not null
+			where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and ETA is not null  and junk=0
 		)x
 		for xml path('')),
 	1,1,'')
@@ -206,7 +208,7 @@ outer apply(
 			where f.SCIRefno in (
 				select distinct SCIRefno 
 				from Po_Supp_Detail with(nolock) 
-				where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID)
+				where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID)  and junk=0
 		)a
 		for xml path('')),
 	1,1,'')
@@ -219,14 +221,13 @@ outer apply(
 	from Po_Supp_Detail a with(nolock) 
 	left join MDivisionPoDetail b with(nolock) on a.id = b.POID and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2
 	where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and a.seq1 not like '7%'
-	and a.seq1 <> 'A1'and a.seq1 <> 'A2'
+	and a.seq1 <> 'A1'and a.seq1 <> 'A2'  and a.junk=0
 )b
 outer apply(
-	select InQty = sum(InQty)
+	select InQty = SUM(Round(dbo.getUnitQty(POUnit, StockUnit, isnull(QTY, 0)), 2))
 	from Po_Supp_Detail a with(nolock) 
-	inner join MDivisionPoDetail b with(nolock) on a.id = b.POID and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2
-	where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and a.seq1 like '7%' and 
-	(select ShipETA from Po_Supp_Detail with(nolock) where id = a.StockPOID and Seq1 = a.StockSeq1 and Seq2 = StockSeq2)<=GETDATE()
+	where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and a.seq1 like '7%'  and a.junk=0 and
+	(select ShipETA from Po_Supp_Detail with(nolock) where id = a.StockPOID and Seq1 = a.StockSeq1 and Seq2 = A.StockSeq2)<=GETDATE()
 )c
 order by  t.Refno
 drop table #tmp
