@@ -212,16 +212,21 @@ outer apply(
 	1,1,'')
 )f
 outer apply(
-	select InQty = sum(b.InQty), bqty = sum(a.ShipQty + a.ShipFOC - b.InQty)
+	select InQty = sum(b.InQty), 
+		bqty = sum(Round(dbo.getUnitQty(POUnit, StockUnit, isnull(ShipQty, 0)), 2)) +
+			   sum(Round(dbo.getUnitQty(POUnit, StockUnit, isnull(ShipFOC, 0)), 2)) - 
+			   sum(b.InQty)
 	from Po_Supp_Detail a with(nolock) 
 	left join MDivisionPoDetail b with(nolock) on a.id = b.POID and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2
 	where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and a.seq1 not like '7%'
+	and a.seq1 <> 'A1'and a.seq1 <> 'A2'
 )b
 outer apply(
 	select InQty = sum(InQty)
 	from Po_Supp_Detail a with(nolock) 
 	inner join MDivisionPoDetail b with(nolock) on a.id = b.POID and a.SEQ1 = b.Seq1 and a.SEQ2 = b.Seq2
-	where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and a.seq1 like '7%' and ShipETA <=GETDATE()
+	where FabricType = t.FabricType and id = t.ID and Refno = t.Refno and ColorID = t.ColorID and a.seq1 like '7%' and 
+	(select ShipETA from Po_Supp_Detail with(nolock) where id = a.StockPOID and Seq1 = a.StockSeq1 and Seq2 = StockSeq2)<=GETDATE()
 )c
 order by  t.Refno
 drop table #tmp
@@ -357,6 +362,21 @@ group by refno,ColorID
             foreach (DataRow dr2 in dt2.Rows)
             {
                 dr2["BlanceQty"] = MyUtility.Convert.GetDecimal(dr2["Uqty"]) - MyUtility.Convert.GetDecimal(dr2["EstUsageQty"]);
+            }
+        }
+
+        private void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            Countselectcount();
+        }
+
+        private void Countselectcount()
+        {
+            this.grid1.ValidateControl();
+            DataGridViewColumn column = this.grid1.Columns["Selected"];
+            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+            {
+                calEstUsageAndBalance();
             }
         }
     }
