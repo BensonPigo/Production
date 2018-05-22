@@ -59,7 +59,7 @@ namespace Sci.Production.Warehouse
                 sary[i] = "sizecode = '" + MyUtility.Convert.GetString(dtX.Rows[i]["sizecode"])+"'";
             }
             string sc = string.Join(" or ", sary) ;
-            DataTable datas2 = datas.Select(sc).CopyToDataTable();
+            DataTable datas2 = datas.Select(sc, "seq").CopyToDataTable();
             dt_detail = datas2;
             gridbs.DataSource = datas2;
             gridbs.MoveFirst();
@@ -147,7 +147,8 @@ select  sum(oq.qty) Total
         , o.ID 
 from dbo.Orders o WITH (NOLOCK) 
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
-where o.POID = '{0}' group by O.ID,Article 
+where o.POID = '{0}' 
+group by O.ID,Article 
 
 union all
 select  sum(oq.qty) Total
@@ -165,7 +166,8 @@ select  '' as Total
         , article
         , sizecode
         , convert(varchar,qty) as qty2 
-from dbo.Order_Qty WITH (NOLOCK) where id = '{0}'
+from dbo.Order_Qty WITH (NOLOCK) 
+where id = '{0}'
 
 union all 
 select  '' as Total

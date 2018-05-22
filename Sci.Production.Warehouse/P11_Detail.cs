@@ -100,13 +100,11 @@ inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID
 where o.POID = '{0}'
 group by sizecode", CurrentDetailData["poid"]), out dtIssueBreakdown);
                 DBProxy.Current.Select(null, string.Format(@"
-select * 
-from dbo.Order_SizeCode WITH (NOLOCK) 
-where id = (
-            select poid 
-            from dbo.orders WITH (NOLOCK) 
-            where id = '{0}'
-      )
+select distinct os.* 
+from dbo.Order_SizeCode os WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on o.POID = os.Id
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+where  o.POID='{0}'
 order by seq", CurrentDetailData["poid"]), out dtX);
                 DBProxy.Current.Select(null, string.Format(@"
 select  sum(oq.qty) Total
@@ -146,12 +144,14 @@ from dbo.Order_Qty WITH (NOLOCK)
 where id='{0}' 
 group by sizecode", Orderid), out dtIssueBreakdown);
                 DBProxy.Current.Select(null, string.Format(@"
-select * 
-from dbo.Order_SizeCode WITH (NOLOCK) 
-where id = (
+select os.* 
+from dbo.Order_SizeCode os WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on o.POID = os.Id
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+where  o.id = (
             select poid 
             from dbo.orders WITH (NOLOCK) 
-            where id = '{0}'
+            where id='{0}'
       ) 
 order by seq", Orderid), out dtX);
                 DBProxy.Current.Select(null, string.Format(@"
