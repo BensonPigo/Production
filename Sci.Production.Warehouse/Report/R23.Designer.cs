@@ -152,7 +152,7 @@
             this.txtLocationEnd.Name = "txtLocationEnd";
             this.txtLocationEnd.Size = new System.Drawing.Size(100, 23);
             this.txtLocationEnd.StockTypeFilte = "";
-            this.txtLocationEnd.TabIndex = 108;
+            this.txtLocationEnd.TabIndex = 4;
             // 
             // txtfactory
             // 
@@ -163,7 +163,7 @@
             this.txtfactory.Location = new System.Drawing.Point(100, 109);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 107;
+            this.txtfactory.TabIndex = 5;
             // 
             // txtMtlLocationStart
             // 
@@ -173,7 +173,7 @@
             this.txtMtlLocationStart.Name = "txtMtlLocationStart";
             this.txtMtlLocationStart.Size = new System.Drawing.Size(100, 23);
             this.txtMtlLocationStart.StockTypeFilte = "";
-            this.txtMtlLocationStart.TabIndex = 108;
+            this.txtMtlLocationStart.TabIndex = 3;
             // 
             // label2
             // 

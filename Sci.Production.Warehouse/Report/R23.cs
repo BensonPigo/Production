@@ -92,7 +92,7 @@ where 1=1
 
             if (!MyUtility.Check.Empty(factory))
             {
-                sqlcmd.Append(" and o.FactoryID = '{factory}'");
+                sqlcmd.Append($" and o.ftygroup = '{factory}'");
             }
 
             if (chkbalance)
