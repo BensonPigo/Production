@@ -35,7 +35,6 @@ namespace Sci.Production.Warehouse
 
         public P11_AutoPick_Detail(bool _combo, string _poid, string _orderid, DataTable _dt, int _DataRowIndex, int _DataColumIndex, Sci.Production.Warehouse.P11_AutoPick _P11Autopick)
         {
-
             combo = _combo;//上面GRID使用
             poid = _poid;//上面GRID使用
             orderid = _orderid;//上面GRID使用
@@ -54,8 +53,15 @@ namespace Sci.Production.Warehouse
                 gridbs.DataSource = null;
             }
             //datas.AcceptChanges();
-            dt_detail = datas;
-            gridbs.DataSource = datas;
+            string[] sary = new string[dtX.Rows.Count];
+            for (int i = 0; i < dtX.Rows.Count; i++)
+            {
+                sary[i] = "sizecode = '" + MyUtility.Convert.GetString(dtX.Rows[i]["sizecode"])+"'";
+            }
+            string sc = string.Join(" or ", sary) ;
+            DataTable datas2 = datas.Select(sc, "seq").CopyToDataTable();
+            dt_detail = datas2;
+            gridbs.DataSource = datas2;
             gridbs.MoveFirst();
         }
        
@@ -86,10 +92,10 @@ where id='{0}' and seq1='{1}' and seq2='{2}'"
                 //Rate = Convert.ToDecimal(dr["RATE"].ToString());
             }
         }
-
+        
+        DataTable dtIssueBreakdown, dtX, dtY;
         public void SetTopGrid()
         {
-            DataTable dtIssueBreakdown, dtX, dtY;
             #region -- matrix breakdown setting
             gridBreakDown.DataSource = listControlBindingSource1;
             _matrix = new Sci.Win.MatrixHelper(this, gridBreakDown, listControlBindingSource1); // 建立 Matrix 物件           
@@ -129,13 +135,11 @@ inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID
 where o.POID = '{0}'
 group by sizecode", poid), out dtIssueBreakdown);
                 DBProxy.Current.Select(null, string.Format(@"
-select * 
-from dbo.Order_SizeCode WITH (NOLOCK) 
-where id = (
-        select poid 
-        from dbo.orders WITH (NOLOCK) 
-        where id='{0}'
-      ) 
+select distinct os.* 
+from dbo.Order_SizeCode os WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on o.POID = os.Id
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+where  o.POID='{0}'
 order by seq", poid), out dtX);
                 DBProxy.Current.Select(null, string.Format(@"
 select  sum(oq.qty) Total
@@ -143,7 +147,8 @@ select  sum(oq.qty) Total
         , o.ID 
 from dbo.Orders o WITH (NOLOCK) 
 inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID 
-where o.POID = '{0}' group by O.ID,Article 
+where o.POID = '{0}' 
+group by O.ID,Article 
 
 union all
 select  sum(oq.qty) Total
@@ -161,7 +166,8 @@ select  '' as Total
         , article
         , sizecode
         , convert(varchar,qty) as qty2 
-from dbo.Order_Qty WITH (NOLOCK) where id = '{0}'
+from dbo.Order_Qty WITH (NOLOCK) 
+where id = '{0}'
 
 union all 
 select  '' as Total
@@ -173,9 +179,11 @@ from dbo.Order_Qty WITH (NOLOCK)
 where id='{0}' 
 group by sizecode", orderid), out dtIssueBreakdown);
                 DBProxy.Current.Select(null, string.Format(@"
-select * 
-from dbo.Order_SizeCode WITH (NOLOCK) 
-where id = (
+select os.* 
+from dbo.Order_SizeCode os WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on o.POID = os.Id
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+where  o.id = (
             select poid 
             from dbo.orders WITH (NOLOCK) 
             where id='{0}'
