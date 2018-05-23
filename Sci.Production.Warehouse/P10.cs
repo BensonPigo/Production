@@ -628,6 +628,15 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
             labelNotApprove.Text = CurrentMaintain["status"].ToString();
 
             #endregion Status Label
+
+            if (CurrentMaintain["status"].ToString().EqualString("Confirmed"))
+            {
+                this.btnPrintFabricSticker.Enabled = true;
+            }
+            else
+            {
+                this.btnPrintFabricSticker.Enabled = false;
+            }
         }
 
         protected override void ClickConfirm()
@@ -1126,6 +1135,11 @@ where t.id= @ID";
             frm.Show();
   
             return true;
+        }
+
+        private void btnPrintFabricSticker_Click(object sender, EventArgs e)
+        {
+            new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
         }
     }
 }

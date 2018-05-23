@@ -44,6 +44,7 @@
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelReason = new Sci.Win.UI.Label();
             this.btnAccumulatedQty = new Sci.Win.UI.Button();
+            this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             this.txtwhseReason = new Sci.Production.Class.txtwhseReason();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -61,6 +62,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
             this.masterpanel.Controls.Add(this.labelReason);
             this.masterpanel.Controls.Add(this.txtwhseReason);
@@ -77,7 +79,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.shapeContainer1);
-            this.masterpanel.Size = new System.Drawing.Size(981, 184);
+            this.masterpanel.Size = new System.Drawing.Size(953, 184);
             this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -95,16 +97,17 @@
             this.masterpanel.Controls.SetChildIndex(this.txtwhseReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 184);
-            this.detailpanel.Size = new System.Drawing.Size(981, 293);
+            this.detailpanel.Size = new System.Drawing.Size(953, 293);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(828, 144);
+            this.gridicon.Location = new System.Drawing.Point(828, 147);
             this.gridicon.TabIndex = 8;
             // 
             // refresh
@@ -114,40 +117,40 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(981, 293);
+            this.detailgridcont.Size = new System.Drawing.Size(953, 293);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(953, 515);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(947, 469);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(947, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(981, 515);
+            this.detail.Size = new System.Drawing.Size(953, 515);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(981, 477);
+            this.detailcont.Size = new System.Drawing.Size(953, 477);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(981, 38);
+            this.detailbtm.Size = new System.Drawing.Size(953, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(981, 515);
+            this.browse.Size = new System.Drawing.Size(953, 515);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(989, 544);
+            this.tabs.Size = new System.Drawing.Size(961, 544);
             // 
             // createby
             // 
@@ -182,7 +185,7 @@
             // 
             this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
             this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNotApprove.Location = new System.Drawing.Point(793, 13);
+            this.labelNotApprove.Location = new System.Drawing.Point(793, 8);
             this.labelNotApprove.Name = "labelNotApprove";
             this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
             this.labelNotApprove.TabIndex = 43;
@@ -211,7 +214,7 @@
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(803, 43);
+            this.btnImport.Location = new System.Drawing.Point(828, 35);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 3;
@@ -226,7 +229,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(981, 184);
+            this.shapeContainer1.Size = new System.Drawing.Size(953, 184);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -235,13 +238,13 @@
             this.lineShape1.Name = "lineShape1";
             this.lineShape1.X1 = 17;
             this.lineShape1.X2 = 929;
-            this.lineShape1.Y1 = 137;
-            this.lineShape1.Y2 = 137;
+            this.lineShape1.Y1 = 140;
+            this.lineShape1.Y2 = 140;
             // 
             // btnFind
             // 
             this.btnFind.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnFind.Location = new System.Drawing.Point(279, 144);
+            this.btnFind.Location = new System.Drawing.Point(279, 146);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 6;
@@ -254,14 +257,14 @@
             this.txtLocateForSP.BackColor = System.Drawing.Color.White;
             this.txtLocateForSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateForSP.IsSupportEditMode = false;
-            this.txtLocateForSP.Location = new System.Drawing.Point(128, 148);
+            this.txtLocateForSP.Location = new System.Drawing.Point(128, 150);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
             this.txtLocateForSP.TabIndex = 5;
             // 
             // labelLocateForSP
             // 
-            this.labelLocateForSP.Location = new System.Drawing.Point(16, 148);
+            this.labelLocateForSP.Location = new System.Drawing.Point(16, 150);
             this.labelLocateForSP.Name = "labelLocateForSP";
             this.labelLocateForSP.Size = new System.Drawing.Size(109, 23);
             this.labelLocateForSP.TabIndex = 58;
@@ -270,7 +273,7 @@
             // btnClearQtyIsEmpty
             // 
             this.btnClearQtyIsEmpty.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 144);
+            this.btnClearQtyIsEmpty.Location = new System.Drawing.Point(355, 146);
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
             this.btnClearQtyIsEmpty.TabIndex = 7;
@@ -280,7 +283,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(16, 78);
+            this.labelRemark.Location = new System.Drawing.Point(16, 77);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(75, 23);
             this.labelRemark.TabIndex = 59;
@@ -291,10 +294,10 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(97, 78);
+            this.editRemark.Location = new System.Drawing.Point(97, 77);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(658, 51);
+            this.editRemark.Size = new System.Drawing.Size(658, 60);
             this.editRemark.TabIndex = 2;
             // 
             // labelReason
@@ -309,13 +312,25 @@
             // 
             this.btnAccumulatedQty.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAccumulatedQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAccumulatedQty.Location = new System.Drawing.Point(779, 80);
+            this.btnAccumulatedQty.Location = new System.Drawing.Point(779, 71);
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 4;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
             this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
+            // 
+            // btnPrintFabricSticker
+            // 
+            this.btnPrintFabricSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPrintFabricSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnPrintFabricSticker.Location = new System.Drawing.Point(761, 106);
+            this.btnPrintFabricSticker.Name = "btnPrintFabricSticker";
+            this.btnPrintFabricSticker.Size = new System.Drawing.Size(165, 31);
+            this.btnPrintFabricSticker.TabIndex = 64;
+            this.btnPrintFabricSticker.Text = "Print Fabric Sticker";
+            this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
+            this.btnPrintFabricSticker.Click += new System.EventHandler(this.btnPrintFabricSticker_Click);
             // 
             // txtwhseReason
             // 
@@ -331,7 +346,7 @@
             // P13
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(989, 577);
+            this.ClientSize = new System.Drawing.Size(961, 577);
             this.DefaultControl = "txtwhseReason";
             this.DefaultControlForEdit = "txtwhseReason";
             this.DefaultDetailOrder = "poid,seq1,seq2,dyelot,roll";
@@ -388,5 +403,6 @@
         private Win.UI.Label labelReason;
         private Class.txtwhseReason txtwhseReason;
         private Win.UI.Button btnAccumulatedQty;
+        private Win.UI.Button btnPrintFabricSticker;
     }
 }

@@ -261,6 +261,13 @@
       <DependentUpon>P07.cs</DependentUpon>
     </Compile>
     <Compile Include="P12_PrintData.cs" />
+    <Compile Include="P13_FabricSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P13_FabricSticker.Designer.cs">
+      <DependentUpon>P13_FabricSticker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P13_FabricSticker_PrintData.cs" />
     <Compile Include="P13_PrintData.cs" />
     <Compile Include="P15_PrintData.cs" />
     <Compile Include="P15_Unfinish.cs">
@@ -272,6 +279,13 @@
     <Compile Include="P16_PrintData.cs" />
     <Compile Include="P17_PrintData.cs" />
     <Compile Include="P18_PrintData.cs" />
+    <Compile Include="P19_FabricSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19_FabricSticker.Designer.cs">
+      <DependentUpon>P19_FabricSticker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P19_FabricSticker_PrintData.cs" />
     <Compile Include="P19_PrintData.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -543,6 +557,12 @@
     </Compile>
     <Compile Include="Report\R05.Designer.cs">
       <DependentUpon>R05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R23.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R23.Designer.cs">
+      <DependentUpon>R23.cs</DependentUpon>
     </Compile>
     <Compile Include="Report\R17.cs">
       <SubType>Form</SubType>
@@ -1271,6 +1291,14 @@
       <DependentUpon>P22_FabricSticker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P22_FabricSticker_Print.rdlc" />
+    <EmbeddedResource Include="P19_FabricSticker.resx">
+      <DependentUpon>P19_FabricSticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19_FabricSticker_Print.rdlc" />
+    <EmbeddedResource Include="P13_FabricSticker.resx">
+      <DependentUpon>P13_FabricSticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P13_FabricSticker_Print.rdlc" />
     <EmbeddedResource Include="P23_FabricSticker.resx">
       <DependentUpon>P23_FabricSticker.cs</DependentUpon>
     </EmbeddedResource>
@@ -1417,6 +1445,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R13.resx">
       <DependentUpon>R13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R23.resx">
+      <DependentUpon>R23.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R17.resx">
       <DependentUpon>R17.cs</DependentUpon>
@@ -1900,6 +1931,7 @@
     <None Include="Properties\DataSources\P12_PrintData1.datasource" />
     <None Include="Properties\DataSources\P13.datasource" />
     <None Include="Properties\DataSources\P13_AccumulatedQty.datasource" />
+    <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_Import.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
     <None Include="Properties\DataSources\P15.datasource" />
@@ -1919,6 +1951,7 @@
     <None Include="Properties\DataSources\P18_PrintData.datasource" />
     <None Include="Properties\DataSources\P19.datasource" />
     <None Include="Properties\DataSources\P19_AccumulatedQty.datasource" />
+    <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_Import.datasource" />
     <None Include="Properties\DataSources\P19_PrintData.datasource" />
     <None Include="Properties\DataSources\P20.datasource" />
