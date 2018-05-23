@@ -655,6 +655,12 @@
             this.modifyContinuityTestToolStripMenuItem.Text = "Modify Continuity Test";
             this.modifyContinuityTestToolStripMenuItem.Click += new System.EventHandler(this.modifyContinuityTestToolStripMenuItem_Click);
             // 
+            this.detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                this.modifyPhysicalInspectionToolStripMenuItem,
+                this.modifyWeightTestToolStripMenuItem,
+                this.modifyShadeBondTestToolStripMenuItem,
+                this.modifyContinuityTestToolStripMenuItem
+                        });
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(845, 730);

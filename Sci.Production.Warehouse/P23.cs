@@ -758,7 +758,7 @@ left join FtyInventory f WITH (NOLOCK) on   d.toPoId = f.PoId
                                             and d.toSeq2 = f.seq2 
                                             and d.toStocktype = f.StockType 
                                             and d.toRoll = f.Roll
-where (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - d.Qty < 0) ", CurrentMaintain["id"]);
+where (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + d.Qty < 0) ", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 ShowErr(sqlcmd, result2);
