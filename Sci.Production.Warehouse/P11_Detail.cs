@@ -213,6 +213,47 @@ where p.id='{0}' and p.seq1='{1}' and p.seq2='{2}'"
                 ShowErr(result);
             }
 
+            string sql = string.Empty;
+            if (combo)
+            {
+                sql = $@"
+select sizes = stuff((
+	select concat(' or sizecode =''',sizecode,'''') 
+	from(
+        select distinct seq,os.sizecode
+        from dbo.Order_SizeCode os WITH(NOLOCK)
+        inner join orders o WITH(NOLOCK) on o.POID = os.Id
+        inner join dbo.Order_Qty oq WITH(NOLOCK) on o.id = oq.ID and os.SizeCode = oq.SizeCode
+        where o.POID = '{CurrentDetailData["poid"]}'
+	)a
+	for xml path('')
+	),1,3,'')
+";
+            }
+            else
+            {
+                sql = $@"
+select sizes = stuff((
+	select concat(' or sizecode =''',sizecode,'''') 
+	from(
+		select distinct seq,os.sizecode
+        from dbo.Order_SizeCode os WITH (NOLOCK) 
+        inner join orders o WITH (NOLOCK) on o.POID = os.Id
+        inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+        where  o.id = (
+                    select poid 
+                    from dbo.orders WITH (NOLOCK) 
+                    where id='{Orderid}'
+              ) 
+	)a
+	for xml path('')
+	),1,3,'')
+";
+            }
+
+            string f = MyUtility.GetValue.Lookup(sql);
+            this.gridbs.Filter = f;
+
             #endregion
             #region 重新計算 Total Issue Qty
             computeTotalIssueQty();
