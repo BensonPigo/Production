@@ -372,6 +372,7 @@ select
 	[OrderID] = A.ORDERID,
 	[Brand] = C.BRANDID,
 	[Style] = C.STYLEID,
+    c.BuyerDelivery ,
 	[CDCode] = C.CDCODEID,
 	[Team] = A.TEAM,
 	[Shift] = A.SHIFT,
