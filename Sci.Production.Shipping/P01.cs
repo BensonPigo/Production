@@ -597,7 +597,6 @@ values ('{0}','Status','','New','{1}',GETDATE())",
         private void ControlSubconRatio(bool readOnly)
         {
             this.numSubconRatio.ReadOnly = readOnly;
-            this.txtDebitMemo.ReadOnly = readOnly;
             this.txtSubconName.ReadOnly = readOnly;
         }
 

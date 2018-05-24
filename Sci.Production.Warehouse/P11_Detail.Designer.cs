@@ -300,6 +300,7 @@
             this.gridBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBreakDown.RowTemplate.Height = 24;
             this.gridBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridBreakDown.ShowCellToolTips = false;
             this.gridBreakDown.Size = new System.Drawing.Size(986, 205);
             this.gridBreakDown.TabIndex = 111;
             this.gridBreakDown.TabStop = false;

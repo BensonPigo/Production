@@ -120,7 +120,9 @@
                             <TextRun>
                               <Value>Inventory
 SP#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -192,7 +194,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Bulk</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -203,7 +207,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>SP#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -275,7 +281,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Roll</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -378,7 +386,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Ref#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -480,7 +490,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Color</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -582,7 +594,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Prepared By</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -684,7 +698,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Remarks</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -985,7 +1001,9 @@ SP#</Value>
                             <TextRun>
                               <Value>Inventory
 SP#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1057,7 +1075,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Bulk</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1068,7 +1088,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>SP#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1140,7 +1162,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Roll</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1243,7 +1267,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Ref#</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1345,7 +1371,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Color</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1447,7 +1475,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Prepared By</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1549,7 +1579,9 @@ SP#</Value>
                           <TextRuns>
                             <TextRun>
                               <Value>Remarks</Value>
-                              <Style />
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>

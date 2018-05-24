@@ -18,7 +18,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from dbo.MDivision WITH (NOLOCK) ", "8", this.Text, false, ",");
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Production.dbo.MDivision WITH (NOLOCK) ", "8", this.Text, false, ",");
             item.Size = new System.Drawing.Size(300, 250);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
@@ -33,7 +33,7 @@ namespace Sci.Production.Class
             string str = this.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
-                if (MyUtility.Check.Seek(string.Format("select ID from dbo.MDivision WITH (NOLOCK) where id = '{0}'", str)) == false)
+                if (MyUtility.Check.Seek(string.Format("select ID from Production.dbo.MDivision WITH (NOLOCK) where id = '{0}'", str)) == false)
                 {
                     this.Text = "";
                     e.Cancel = true;

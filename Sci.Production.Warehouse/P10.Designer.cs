@@ -45,6 +45,7 @@
             this.btnAutoPick = new Sci.Win.UI.Button();
             this.labelNotApprove = new Sci.Win.UI.Label();
             this.btnCutRef = new Sci.Win.UI.Button();
+            this.btnPrintFabricSticker = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,6 +62,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnPrintFabricSticker);
             this.masterpanel.Controls.Add(this.btnCutRef);
             this.masterpanel.Controls.Add(this.labelNotApprove);
             this.masterpanel.Controls.Add(this.btnAutoPick);
@@ -78,7 +80,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 105);
+            this.masterpanel.Size = new System.Drawing.Size(1009, 109);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -97,16 +99,17 @@
             this.masterpanel.Controls.SetChildIndex(this.btnAutoPick, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNotApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnCutRef, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPrintFabricSticker, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 105);
-            this.detailpanel.Size = new System.Drawing.Size(892, 244);
+            this.detailpanel.Location = new System.Drawing.Point(0, 109);
+            this.detailpanel.Size = new System.Drawing.Size(1009, 334);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3359, 70);
+            this.gridicon.Location = new System.Drawing.Point(3476, 74);
             // 
             // refresh
             // 
@@ -114,7 +117,20 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 244);
+            this.detailgridcont.Size = new System.Drawing.Size(1009, 334);
+            // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1009, 481);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1009, 443);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 443);
+            this.detailbtm.Size = new System.Drawing.Size(1009, 38);
             // 
             // browse
             // 
@@ -122,7 +138,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(990, 510);
+            this.tabs.Size = new System.Drawing.Size(1017, 510);
             // 
             // createby
             // 
@@ -196,7 +212,7 @@
             this.displayLineNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayLineNo.Location = new System.Drawing.Point(302, 40);
             this.displayLineNo.Name = "displayLineNo";
-            this.displayLineNo.Size = new System.Drawing.Size(211, 23);
+            this.displayLineNo.Size = new System.Drawing.Size(214, 23);
             this.displayLineNo.TabIndex = 8;
             // 
             // labelLineNo
@@ -213,7 +229,7 @@
             this.displayCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCutCell.Location = new System.Drawing.Point(87, 71);
             this.displayCutCell.Name = "displayCutCell";
-            this.displayCutCell.Size = new System.Drawing.Size(100, 23);
+            this.displayCutCell.Size = new System.Drawing.Size(107, 23);
             this.displayCutCell.TabIndex = 10;
             // 
             // labelCutCell
@@ -229,16 +245,16 @@
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(302, 71);
+            this.txtRemark.Location = new System.Drawing.Point(299, 71);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(562, 23);
+            this.txtRemark.Size = new System.Drawing.Size(217, 23);
             this.txtRemark.TabIndex = 12;
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(224, 71);
+            this.labelRemark.Location = new System.Drawing.Point(221, 71);
             this.labelRemark.Name = "labelRemark";
-            this.labelRemark.Size = new System.Drawing.Size(75, 23);
+            this.labelRemark.Size = new System.Drawing.Size(78, 23);
             this.labelRemark.TabIndex = 11;
             this.labelRemark.Text = "Remark";
             // 
@@ -252,9 +268,6 @@
             // 
             // editCutNo
             // 
-            this.editCutNo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.editCutNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editCutNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editCutNo.IsSupportEditMode = false;
@@ -262,14 +275,14 @@
             this.editCutNo.Multiline = true;
             this.editCutNo.Name = "editCutNo";
             this.editCutNo.ReadOnly = true;
-            this.editCutNo.Size = new System.Drawing.Size(236, 54);
+            this.editCutNo.Size = new System.Drawing.Size(314, 94);
             this.editCutNo.TabIndex = 14;
             // 
             // btnAutoPick
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(784, 32);
+            this.btnAutoPick.Location = new System.Drawing.Point(839, 34);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 15;
@@ -282,7 +295,7 @@
             this.labelNotApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
             this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNotApprove.Location = new System.Drawing.Point(761, 8);
+            this.labelNotApprove.Location = new System.Drawing.Point(863, 8);
             this.labelNotApprove.Name = "labelNotApprove";
             this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
             this.labelNotApprove.TabIndex = 44;
@@ -293,7 +306,7 @@
             // 
             this.btnCutRef.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCutRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCutRef.Location = new System.Drawing.Point(784, 64);
+            this.btnCutRef.Location = new System.Drawing.Point(921, 34);
             this.btnCutRef.Name = "btnCutRef";
             this.btnCutRef.Size = new System.Drawing.Size(80, 30);
             this.btnCutRef.TabIndex = 45;
@@ -301,16 +314,29 @@
             this.btnCutRef.UseVisualStyleBackColor = true;
             this.btnCutRef.Click += new System.EventHandler(this.btnCutRef_Click);
             // 
+            // btnPrintFabricSticker
+            // 
+            this.btnPrintFabricSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPrintFabricSticker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnPrintFabricSticker.Location = new System.Drawing.Point(839, 67);
+            this.btnPrintFabricSticker.Name = "btnPrintFabricSticker";
+            this.btnPrintFabricSticker.Size = new System.Drawing.Size(162, 31);
+            this.btnPrintFabricSticker.TabIndex = 65;
+            this.btnPrintFabricSticker.Text = "Print Fabric Sticker";
+            this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
+            this.btnPrintFabricSticker.Click += new System.EventHandler(this.btnPrintFabricSticker_Click);
+            // 
             // P10
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(990, 543);
+            this.ClientSize = new System.Drawing.Size(1017, 543);
             this.DefaultControl = "txtRequest";
             this.DefaultControlForEdit = "txtRequest";
             this.DefaultDetailOrder = "poid,scirefno,colorid,sizespec";
             this.DefaultOrder = "issuedate,id";
             this.DefaultSubDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.GridAlias = "Issue_Summary";
+            this.GridUniqueKey = "poid,scirefno,colorid";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
@@ -320,7 +346,6 @@
             this.SubDetailKeyField2 = "Issue_SummaryUkey";
             this.SubGridAlias = "Issue_Detail";
             this.Text = "P10. Issue Fabric to Cutting Section";
-            this.GridUniqueKey = "poid,scirefno,colorid";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "Issue";
             this.Controls.SetChildIndex(this.tabs, 0);
@@ -362,5 +387,6 @@
         private Win.UI.Button btnAutoPick;
         private Win.UI.Label labelNotApprove;
         private Win.UI.Button btnCutRef;
+        private Win.UI.Button btnPrintFabricSticker;
     }
 }

@@ -1374,11 +1374,13 @@
             // 
             // txtDebitMemo
             // 
-            this.txtDebitMemo.BackColor = System.Drawing.Color.White;
+            this.txtDebitMemo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtDebitMemo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubconDBCNo", true));
-            this.txtDebitMemo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDebitMemo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtDebitMemo.IsSupportEditMode = false;
             this.txtDebitMemo.Location = new System.Drawing.Point(400, 342);
             this.txtDebitMemo.Name = "txtDebitMemo";
+            this.txtDebitMemo.ReadOnly = true;
             this.txtDebitMemo.Size = new System.Drawing.Size(105, 21);
             this.txtDebitMemo.TabIndex = 22;
             // 
