@@ -53,15 +53,17 @@ namespace Sci.Production.Warehouse
                 gridbs.DataSource = null;
             }
             //datas.AcceptChanges();
+            dt_detail = datas;
+            gridbs.DataSource = datas;
+
             string[] sary = new string[dtX.Rows.Count];
             for (int i = 0; i < dtX.Rows.Count; i++)
             {
-                sary[i] = "sizecode = '" + MyUtility.Convert.GetString(dtX.Rows[i]["sizecode"])+"'";
+                sary[i] = "sizecode = '" + MyUtility.Convert.GetString(dtX.Rows[i]["sizecode"]) + "'";
             }
-            string sc = string.Join(" or ", sary) ;
-            DataTable datas2 = datas.Select(sc, "seq").CopyToDataTable();
-            dt_detail = datas2;
-            gridbs.DataSource = datas2;
+            string sc = string.Join(" or ", sary);
+
+            this.gridbs.Filter = sc;
             gridbs.MoveFirst();
         }
        
@@ -239,19 +241,18 @@ where id='{0}' ", orderid), out dtY);
         bool isSaved = false;
         private void btnSave_Click(object sender, EventArgs e)
         {
-            
-                SetRightGrid(P11Autopick.getAutoDetailDataTable(DataRowIndex));
-                DataRow tmpDt = P11Autopick.getAutoDetailDataRow(DataRowIndex);
-                SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
+            SetRightGrid(P11Autopick.getAutoDetailDataTable(DataRowIndex));
+            DataRow tmpDt = P11Autopick.getAutoDetailDataRow(DataRowIndex);
+            SetDisplayBox(tmpDt["Poid"].ToString(), tmpDt["seq1"].ToString(), tmpDt["seq2"].ToString());
 
-                //DataRowIndex//要改變原本表單的資料 要現在的索引
-                P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex), P11Autopick.getAutoDetailDataTable(DataRowIndex));         
+            //DataRowIndex//要改變原本表單的資料 要現在的索引
+            P11Autopick.sum_subDetail(P11Autopick.getNeedChangeDataRow(DataRowIndex), P11Autopick.getAutoDetailDataTable(DataRowIndex));
 
             //
             P11Autopick.BOA_PO.AcceptChanges();
             isSaved = true;
             this.Close();
-               
+
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
