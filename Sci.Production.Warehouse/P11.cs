@@ -595,19 +595,19 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
             }
 
             //刪除第三層qty為0的資料
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (GetSubDetailDatas(dr, out subDT))
-                {
-                    foreach (DataRow dr2 in subDT.ToList())
-                    {
-                        if (dr2.RowState != DataRowState.Deleted && Convert.ToDecimal(dr2["QTY"].ToString()) == 0 && dr2.RowState != DataRowState.Modified)
-                        {
-                            subDT.Rows.Remove(dr2);
-                        }
-                    }
-                }
-            }
+            //foreach (DataRow dr in DetailDatas)
+            //{
+            //    if (GetSubDetailDatas(dr, out subDT))
+            //    {
+            //        foreach (DataRow dr2 in subDT.ToList())
+            //        {
+            //            if (dr2.RowState != DataRowState.Deleted && Convert.ToDecimal(dr2["QTY"].ToString()) == 0 && dr2.RowState != DataRowState.Modified)
+            //            {
+            //                subDT.Rows.Remove(dr2);
+            //            }
+            //        }
+            //    }
+            //}
 
             foreach (DataRow dr in DetailDatas)
             {
