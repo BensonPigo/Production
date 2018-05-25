@@ -60,7 +60,7 @@ BEGIN
 
 		-- 新增 報廢單主檔 & 明細檔
 		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = @poid AND S.Status='Confirmed')
-			update [dbo].[SubTransfer] set [EditName]= @loginid , [EditDate] = GETDATE()		
+			update [dbo].[SubTransfer] set [EditName]= @loginid , [EditDate] = GETDATE() WHERE ID = @poid  
 		ELSE 
 		BEGIN
 			INSERT INTO [dbo].[SubTransfer]
