@@ -87,7 +87,7 @@ select Ukey = isnull((
 	from Pattern p WITH (NOLOCK)
 	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
 	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-	and Status = 'Completed' and s.PhaseID = 'bluk'
+	and Status = 'Completed' and s.PhaseID = 'bulk'
 	order by ActFinDate Desc
 ),
 (
