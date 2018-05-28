@@ -187,25 +187,43 @@ select * from allpass1 where ID = '{1}' or Supervisor = '{1}' or Deputy = '{1}'"
             if (MyUtility.Check.Empty(cutref))
             {
                 patidsql = String.Format(
-                            @"SELECT ukey
-                              FROM [Production].[dbo].[Pattern] WITH (NOLOCK) 
-                              WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
-                              AND EDITdATE = 
-                              (
-                                SELECT MAX(EditDate) 
-                                from pattern WITH (NOLOCK) 
-                                where styleukey = '{0}' and Status = 'Completed'
-                              )
+                            @"
+SELECT ukey
+FROM [Production].[dbo].[Pattern] a WITH (NOLOCK) 
+outer apply(
+	SELECT EditDate = MAX(p.EditDate)
+	from pattern p WITH (NOLOCK) 
+	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
+	where styleukey = '{0}' and Status = 'Completed' and s.PhaseID = 'Bulk'
+)b
+outer apply(
+	SELECT EditDate = MAX(p.EditDate)
+	from pattern p WITH (NOLOCK) 
+	where styleukey = '{0}' and Status = 'Completed' 
+)c
+WHERE STYLEUKEY = '{0}'  and Status = 'Completed' 
+AND a.EDITdATE = iif(b.EditDate is null,c.EditDate,b.EditDate)
              ", Styleyukey);
             }
             else
             {
                 patidsql = String.Format(
-                            @"select top 1 Ukey 
-                            from Pattern WITH (NOLOCK)
-                            where PatternNo = (select top 1  substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
-                            and Status = 'Completed'
-                            order by ActFinDate Desc
+                            @"
+select Ukey = isnull((
+	select top 1 Ukey 
+	from Pattern p WITH (NOLOCK)
+	left join smnotice_detail s WITH (NOLOCK) on s.id=p.id and (s.PhaseID is not null and Rtrim(s.phaseId)!='' ) 
+	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
+	and Status = 'Completed' and s.PhaseID = 'bulk'
+	order by ActFinDate Desc
+),
+(
+	select top 1 Ukey 
+	from Pattern p WITH (NOLOCK)
+	where PatternNo = (select top 1 substring(MarkerNo,1,9)+'N' from WorkOrder WITH (NOLOCK) where CutRef = '{0}' and ID='{1}')
+	and Status = 'Completed'
+	order by ActFinDate Desc
+))
                             ", cutref, OrderID);
             }
             string patternukey = MyUtility.GetValue.Lookup(patidsql);
