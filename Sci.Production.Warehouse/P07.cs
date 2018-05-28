@@ -849,7 +849,8 @@ where   v.FROM_U ='{0}'
             {
                 if(MyUtility.Convert.GetDecimal(item["stockqty"]) <0)
                 {
-                    sq += $"SP#: {item["poid"]} Seq#: {item["seq"]}-{item["seq"]} Roll#: {item["Roll"]}'s Receiving Qty must not be less than 0 ! ";                    
+                    sq += $"SP#: {item["poid"]} Seq#: {item["seq"]}-{item["seq"]} Roll#: {item["Roll"]}'s Receiving Qty must not be less than 0 ! 
+";                    
                 }
             }
 
