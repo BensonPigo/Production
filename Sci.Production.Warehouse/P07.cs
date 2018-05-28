@@ -853,7 +853,7 @@ where   v.FROM_U ='{0}'
                 }
             }
 
-            if (MyUtility.Check.Empty(sq))
+            if (!MyUtility.Check.Empty(sq))
             {
                 MyUtility.Msg.WarningBox(sq);
                 return;
