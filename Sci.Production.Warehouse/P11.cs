@@ -393,7 +393,7 @@ select  a.Id
                               from (
                                 select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty 
                                 from dbo.Issue_Size WITH (NOLOCK) 
-                                where   Issue_Size.Issue_DetailUkey = a.ukey and qty >0
+                                where   Issue_Size.Issue_DetailUkey = a.ukey and qty <>0
                              ) v for xml path(''))
                             ,'') 
         , a.Ukey
@@ -1339,7 +1339,7 @@ where id = @MDivision", pars, out dt);
             string sqlcmd1 = string.Format(@"select  sizecode
 	                    from dbo.Order_SizeCode WITH (NOLOCK) 
 	                    where id in (select  poid from orders where id =   @OrderID ) and 
-                        sizecode in ( select distinct  sizecode from dbo.Issue_Size WITH (NOLOCK)  where id = @ID) order by seq");
+                        sizecode in ( select distinct  sizecode from dbo.Issue_Size WITH (NOLOCK)  where id = @ID and qty <>0) order by seq");
 
             string sizecodes = "";
             result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
@@ -1378,6 +1378,7 @@ from(
                 , qty
         from dbo.Issue_Size WITH (NOLOCK) 
         where id = @ID
+        and qty <>0
     ) as s
     PIVOT
     (
@@ -1814,7 +1815,7 @@ select  a.SizeCode
         , isnull(b.Qty,0) QTY 
 from dbo.Order_SizeCode a WITH (NOLOCK) 
 left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode 
-                                            and b.id = '{1}' 
+                                            and b.id = '{1}'
                                             --and b.Issue_DetailUkey = {2}
 where   a.id = '{0}' 
 order by Seq ", this.poid, CurrentMaintain["id"], ndr["ukey"]), out sizeRange);
