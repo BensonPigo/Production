@@ -844,6 +844,22 @@ where   v.FROM_U ='{0}'
             }
             #endregion
 
+            string sq = string.Empty;
+            foreach (DataRow item in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if(MyUtility.Convert.GetDecimal(item["stockqty"]) <0)
+                {
+                    sq += $@"SP#: {item["poid"]} Seq#: {item["seq"]}-{item["seq"]} Roll#: {item["Roll"]}'s Receiving Qty must not be less than 0 ! 
+";                    
+                }
+            }
+
+            if (!MyUtility.Check.Empty(sq))
+            {
+                MyUtility.Msg.WarningBox(sq);
+                return;
+            }
+
             //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
             if (!checkRoll())
                 return;
