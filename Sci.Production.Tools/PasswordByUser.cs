@@ -193,12 +193,6 @@ namespace Sci.Production.Tools
             if (MyUtility.Check.Empty(txtEMailAddr.Text))
             {
                 MyUtility.Msg.WarningBox("<E-Mail Addr.> can not be empty! ");
-                return false;
-            }
-
-            if (!IsValidEmail(this.txtEMailAddr.Text))
-            {
-                MyUtility.Msg.WarningBox("<E-Mail Addr.> Invalid !");
                 this.txtEMailAddr.Focus();
                 return false;
             }
@@ -257,12 +251,12 @@ namespace Sci.Production.Tools
 
         private void txtEMailAddr_Validating(object sender, CancelEventArgs e)
         {
-            if (!IsValidEmail(this.txtEMailAddr.Text))
+            if (!IsValidEmail(this.txtEMailAddr.Text) && !MyUtility.Check.Empty(this.txtEMailAddr.Text))
             {
                 MyUtility.Msg.WarningBox("<E-Mail Addr.> Invalid !");
                 e.Cancel = true;
                 return;
-            }            
+            }           
         }
 
         // 驗證email格式正確性
