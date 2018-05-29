@@ -92,9 +92,8 @@ SELECT [ID]
 INTO AirPP
 FROM Production.dbo.AirPP AS A
 WHERE 
-((EditDate >= DATEADD(DAY, -30, GETDATE()) AND CONVERT(DATETIME, TPEEditDate) <= CONVERT(DATETIME, EditDate))
-OR 
-(CONVERT(DATETIME, EditDate) >= DATEADD(DAY, -30, GETDATE()) AND CONVERT(DATETIME,AddDate) <= CONVERT(DATETIME, EditDate)))
+CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+ AND CONVERT(DATETIME, isnull(TPEEditDate,'')) <= CONVERT(DATETIME, isnull(EditDate,''))
 AND Status IN ('New','Checked','Approved','Junked')
 ORDER BY Id 
 
@@ -102,10 +101,8 @@ ORDER BY Id
 UPDATE Production.dbo.AirPP
 SET FtySendDate = GETDATE()
 WHERE 
-((EditDate >= DATEADD(DAY, -30, GETDATE()) AND CONVERT(DATETIME, TPEEditDate) <= CONVERT(DATETIME, EditDate))
-OR
-(CONVERT(DATETIME, EditDate) >= DATEADD(DAY, -30, GETDATE()) 
-AND CONVERT(DATETIME, AddDate) <= CONVERT(DATETIME, EditDate)))
+CONVERT(datetime,isnull(EditDate,AddDate)) >= DATEADD(DAY, -30, GETDATE()) 
+ AND CONVERT(DATETIME, isnull(TPEEditDate,'')) <= CONVERT(DATETIME, isnull(EditDate,''))
 AND Status IN ('New','Checked','Approved','Junked') AND FtyMgrApvDate is not null AND FtySendDate is null
 END
 
