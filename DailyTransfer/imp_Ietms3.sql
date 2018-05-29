@@ -130,7 +130,8 @@ delete t
 from Production.dbo.smnotice_detail t
 left join Trade_To_Pms.dbo.smnotice_detail s on t.id = s.id and t.type = s.type
 WHERE s.id is null 
-and t.id in(select id from Trade_To_Pms.dbo.SMNotice a where a.StyleUkey in(select ukey from Trade_To_Pms.dbo.Style))
+and exists (select 1 from Trade_To_Pms.dbo.SMNotice a where a.id = t.id)
+
 --MarkerSend
 --Marker_Send
 ----------------------�R���DTABLE�h�����
