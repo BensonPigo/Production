@@ -452,18 +452,22 @@ as
  group by o.ID
 )
 
-select isnull(s.ID,0) as ID, o.ID as OrderID, SUBSTRING(o.SewLine,1,2) as SewingLineID,o.Qty as AlloQty,
-o.SewInLine as Inline, o.SewOffLine as Offline,o.FtyGroup as FactoryID,sl.Sewer,st.ttlSewTime as TotalSewingTime,
-100 as MaxEff,iif(st.ttlSewTime*sl.Sewer = 0,0,(3600.0/st.ttlSewTime*sl.Sewer)) as StandardOutput,
-(select count(SewingLineID) from WorkHour WITH (NOLOCK) where Hours > 0 and FactoryID = o.FtyGroup and Date between o.SewInLine and o.SewOffLine and SewingLineID = o.SewLine) as WorkDay,
-iif((3600.0/st.ttlSewTime*sl.Sewer) = 0,0,floor(o.Qty/(3600.0/st.ttlSewTime*sl.Sewer))) as WorkHour,0 as APSNo, o.Finished as OrderFinished,'{1}'as AddName,GETDATE() as AddDate
+select isnull(s.ID,0) as ID, o.ID as OrderID, ComboType = ''
+    , SUBSTRING(o.SewLine,1,2) as SewingLineID,o.Qty as AlloQty,
+    o.SewInLine as Inline, o.SewOffLine as Offline,
+    o.MDivisionID,
+    o.FtyGroup as FactoryID,sl.Sewer,st.ttlSewTime as TotalSewingTime,
+    100 as MaxEff,iif(st.ttlSewTime*sl.Sewer = 0,0,(3600.0/st.ttlSewTime*sl.Sewer)) as StandardOutput,
+    (select count(SewingLineID) from WorkHour WITH (NOLOCK) where Hours > 0 and FactoryID = o.FtyGroup and Date between o.SewInLine and o.SewOffLine and SewingLineID = o.SewLine) as WorkDay,
+    iif((3600.0/st.ttlSewTime*sl.Sewer) = 0,0,floor(o.Qty/(3600.0/st.ttlSewTime*sl.Sewer))) as WorkHour,0 as APSNo, o.Finished as OrderFinished,'{1}'as AddName,GETDATE() as AddDate,EditName = iif(s.id is null, '', '{1}'),EditDate =iif(s.id is null, null, '{2}')
 from Orders o WITH (NOLOCK) 
 left join SewingSchedule s WITH (NOLOCK) on s.OrderID = o.ID
 left join SewingLine sl WITH (NOLOCK) on sl.ID = o.SewLine and sl.FactoryID = o.FtyGroup
 left join ttlSewTime st on st.ID = o.ID
 where o.ID in ({0})",
                         MyUtility.Convert.GetString(allSP).Substring(0, MyUtility.Convert.GetString(allSP).Length - 1),
-                        Env.User.UserID);
+                        Env.User.UserID,
+                        DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
                     DualResult result1 = DBProxy.Current.Select(null, sqlCmd, out sewingData);
 
@@ -490,7 +494,7 @@ and not exists (select * from Order_Qty where ID = OrderID and Article = Article
                             null,
                             string.Format(
                             @"
-select isnull(s.ID,0) as ID,o.ID as OrderID,'' as ComboType,
+select isnull(s.ID,0) as ID,o.ID as OrderID, ComboType = '',
 o.SewLine as SewingLineID,oq.Article,oq.SizeCode,oq.Qty as AlloQty
 from Orders o WITH (NOLOCK) 
 left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
@@ -610,7 +614,7 @@ FROM   orders ord WITH (nolock),
                AND e.cuttingsp NOT IN (SELECT id 
                                        FROM   cutting WITH (nolock))) cut 
 WHERE  ord.cuttingsp = cut.cuttingsp 
-       AND ord.factoryid = '{1}' 
+       AND ord.FtyGroup = '{1}' 
 GROUP  BY ord.cuttingsp 
 ORDER  BY ord.cuttingsp ",
                 sewdate,
