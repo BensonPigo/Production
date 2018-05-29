@@ -98,7 +98,7 @@ where not exists(select id from Production.dbo.SMNotice as a WITH (NOLOCK) where
 
 --SMNotice_Detail
 Merge Production.dbo.smnotice_detail as t
-Using (select * from Trade_To_Pms.dbo.smnotice_detail a WITH (NOLOCK) where id in (select id from smnotice WITH (NOLOCK)))as s
+Using (select * from Trade_To_Pms.dbo.smnotice_detail a WITH (NOLOCK) where id in (select id from Trade_To_Pms.dbo.smnotice WITH (NOLOCK)))as s
 on t.id = s.id and t.type = s.type
 when matched then
 	update set 
@@ -123,9 +123,14 @@ when not matched by target then
 insert([ID],[Type],[UseFor],[PhaseID],[RequireDate],[Apv2SampleTime],[Apv2SampleHandle],[ApvName],[ApvDate],[Factory]
 ,[IEConfirmMR],[PendingStatus],[BasicPattern],[Remark1],[Remark2],[AddName],[AddDate],[EditName],[EditDate])
 values(s.[ID],s.[Type],s.[UseFor],s.[PhaseID],s.[RequireDate],s.[Apv2SampleTime],s.[Apv2SampleHandle],s.[ApvName],s.[ApvDate]
-,s.[Factory],s.[IEConfirmMR],s.[PendingStatus],s.[BasicPattern],s.[Remark1],s.[Remark2],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])	
-when not matched by source then delete;
+,s.[Factory],s.[IEConfirmMR],s.[PendingStatus],s.[BasicPattern],s.[Remark1],s.[Remark2],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])	;
 
+
+delete t
+from Production.dbo.smnotice_detail t
+left join Trade_To_Pms.dbo.smnotice_detail s on t.id = s.id and t.type = s.type
+WHERE s.id is null 
+and t.id in(select id from Trade_To_Pms.dbo.SMNotice a where a.StyleUkey in(select ukey from Trade_To_Pms.dbo.Style))
 --MarkerSend
 --Marker_Send
 ----------------------�R���DTABLE�h�����
