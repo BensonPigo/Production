@@ -228,9 +228,13 @@ namespace Sci.Production.Warehouse
                     frm.ShowDialog(this);
                     if (MyUtility.Check.Empty(dr["ukey"]))
                     {
-                        dr["ukey"] = MyUtility.GetValue.Lookup($@"select ukey from MDivisionPoDetail 
-where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'");
-                        dr.EndEdit();
+                        DataRow drukey ;
+                        if (MyUtility.Check.Seek($@"select ukey from MDivisionPoDetail 
+where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out drukey))
+                        {
+                            dr["ukey"] = drukey["ukey"];
+                            dr.EndEdit();
+                        }
                     }                   
                 }
                 else if (dr["From_Program"].Equals("P04"))
