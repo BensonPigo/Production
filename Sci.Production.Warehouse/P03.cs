@@ -226,6 +226,12 @@ namespace Sci.Production.Warehouse
                 {
                     var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
                     frm.ShowDialog(this);
+                    if (MyUtility.Check.Empty(dr["ukey"]))
+                    {
+                        dr["ukey"] = MyUtility.GetValue.Lookup($@"select ukey from MDivisionPoDetail 
+where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'");
+                        dr.EndEdit();
+                    }                   
                 }
                 else if (dr["From_Program"].Equals("P04"))
                 {
