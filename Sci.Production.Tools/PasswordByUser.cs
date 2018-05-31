@@ -9,7 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Win;
-
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Tools
 {
@@ -190,6 +190,13 @@ namespace Sci.Production.Tools
                 CurrentMaintain["ID"] = dtSystem.Rows[0]["AccountKeyword"].ToString() + CurrentMaintain["ID"].ToString().Trim();
             }
 
+            if (MyUtility.Check.Empty(txtEMailAddr.Text))
+            {
+                MyUtility.Msg.WarningBox("<E-Mail Addr.> can not be empty! ");
+                this.txtEMailAddr.Focus();
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -240,6 +247,24 @@ namespace Sci.Production.Tools
                 return;
             }
             this.listControlBindingSource1.DataSource = dtPass2;
+        }
+
+        private void txtEMailAddr_Validating(object sender, CancelEventArgs e)
+        {
+            if (!IsValidEmail(this.txtEMailAddr.Text) && !MyUtility.Check.Empty(this.txtEMailAddr.Text))
+            {
+                MyUtility.Msg.WarningBox("<E-Mail Addr.> Invalid !");
+                e.Cancel = true;
+                return;
+            }           
+        }
+
+        // 驗證email格式正確性
+        private static bool IsValidEmail(string email)
+        {
+            return Regex.IsMatch(email,
+             @"^(?("")("".+?""@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))" +
+             @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$");
         }
     }
 }
