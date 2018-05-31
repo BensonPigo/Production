@@ -19,6 +19,7 @@ namespace Sci.Production.Warehouse
 {
     public partial class P05 : Sci.Win.Tems.QueryForm
     {
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_balance;
         public P05(ToolStripMenuItem menuitem)
             :base(menuitem)
         {
@@ -50,16 +51,20 @@ namespace Sci.Production.Warehouse
             Ict.Win.DataGridViewGeneratorNumericColumnSettings qty2 = new DataGridViewGeneratorNumericColumnSettings();
             qty2.CellMouseDoubleClick += (s, e) =>
             {
-
+                DataRow dr = grid2.GetDataRow<DataRow>(e.RowIndex);
+                //DataRow[] drType = dt2.Select("")
                 if (callP03 != null && callP03.Visible == true)
-                {
+                {                    
                     callP03.P03Data(txtSPNo.Text);
+                   
                     callP03.Activate();
                 }
                 else
                 {
                     P03FormOpen();
-                }
+                   
+                }                
+                callP03.P05Filter(txtSPNo.Text, dr["Refno"].ToString(), "F", dr["ColorID"].ToString());
             };
             #region Set Grid1
             Helper.Controls.Grid.Generator(this.grid1)
@@ -88,9 +93,31 @@ namespace Sci.Production.Warehouse
             .Numeric("bqty", header: "On board Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
             .Numeric("Uqty", header: "Usable Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
             .Numeric("EstUsageQty", header: "Est. Usage Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
-            .Numeric("BlanceQty", header: "Blance Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2,minimum:-999999)
+            .Numeric("BlanceQty", header: "Blance Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2,minimum:-999999).Get(out col_balance)
             ;
+            this.grid2.Columns["Description"].Width = 200;
             #endregion
+        }
+
+        private void Change_Color()
+        {
+            this.col_balance.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.grid2.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetDecimal(dr["BlanceQty"]) < 0)
+                {
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
         }
 
         Sci.Production.Warehouse.P03 callP03 = null;
@@ -134,12 +161,6 @@ namespace Sci.Production.Warehouse
             callP03.ChangeDetailColor();
         }
 
-        private void txtSPNo_Validating(object sender, CancelEventArgs e)
-        {
-            Query();
-            calBalance();
-        }
-
         DataTable dt;
         DataTable dt2;
         DataTable[] dt3;
@@ -180,7 +201,7 @@ group by Refno,ColorID,FabricType,id
 select 
 	t.Refno,
 	f.Description,	
-	t.ColorID,	a.ETA,	t.Qty,
+	t.ColorID,	a.ETA,	t.Qty,t.FabricType,
 	Wqty = isnull(b.InQty,0)+isnull(c.InQty,0),
 	bqty = IIF(isnull(b.bqty,0)<0,0,isnull(b.bqty,0)),
 	Uqty = iif('{checkBox1.Checked}'='True',isnull(b.InQty,0)+isnull(c.InQty,0), isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0)),
@@ -238,9 +259,10 @@ drop table #tmp
                 this.ShowErr(result2);
                 return;
             }
+
             this.listControlBindingSource2.DataSource = dt2;
-            this.grid2.AutoResizeColumns();
-            this.grid2.Columns["Description"].Width = 200;
+            this.grid2.AutoResizeColumns();            
+                      
             #endregion
             #region 3
             if (dt.Rows.Count == 0)
@@ -365,6 +387,7 @@ group by refno,ColorID
             {
                 dr2["BlanceQty"] = MyUtility.Convert.GetDecimal(dr2["Uqty"]) - MyUtility.Convert.GetDecimal(dr2["EstUsageQty"]);
             }
+            Change_Color();
         }
 
         private void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -380,6 +403,27 @@ group by refno,ColorID
             {
                 calEstUsageAndBalance();
             }
+        }
+
+        private void btnQuery_Click(object sender, EventArgs e)
+        {
+            Query();
+            calBalance();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (txtSPNo.Focused)
+            {
+                switch (keyData)
+                {
+                    case Keys.Enter:
+                        Query();
+                        calBalance();
+                        break;
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }

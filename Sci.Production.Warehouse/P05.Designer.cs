@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
@@ -49,6 +50,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Controls.Add(this.txtSPNo);
             this.panel1.Controls.Add(this.labelSPNo);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -56,6 +58,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 49);
             this.panel1.TabIndex = 3;
+            // 
+            // btnQuery
+            // 
+            this.btnQuery.Location = new System.Drawing.Point(272, 8);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(102, 30);
+            this.btnQuery.TabIndex = 19;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // txtSPNo
             // 
@@ -65,7 +77,6 @@
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(145, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // labelSPNo
             // 
@@ -212,5 +223,6 @@
         private Win.UI.CheckBox checkBox1;
         private System.Windows.Forms.Button btnAutoCal;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.Button btnQuery;
     }
 }
