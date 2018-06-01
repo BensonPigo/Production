@@ -167,12 +167,10 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 ");
             if (styleVersion != this.CurrentMaintain["IETMSVersion"].ToString())
             {
-                this.labVersionNo.Visible = true;
                 this.labVersionWarning.Visible = true;
             }
             else
             {
-                this.labVersionNo.Visible = false;
                 this.labVersionWarning.Visible = false;
             }
         }
