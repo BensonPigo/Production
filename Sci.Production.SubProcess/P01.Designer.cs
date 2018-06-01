@@ -477,7 +477,7 @@
             this.DefaultDetailOrder = "orderid";
             this.DefaultOrder = "OutputDate,Shift,Team";
             this.GridAlias = "SubProcessOutput_Detail";
-            this.GridUniqueKey = "ID,orderID";
+            this.GridUniqueKey = "ID,orderID,Article";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
