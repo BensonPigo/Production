@@ -502,7 +502,15 @@ CREATE CLUSTERED INDEX IDX_PO3_index ON #deletePo3
 	[Seq2] asc
 )
 
---Create tamp #Po2
+-- Create temp #PO_Supp_Detail_OrderList
+select t.*
+into #deletePo_OrderList
+from PO_Supp_Detail_OrderList t
+inner join #deletePo3 s on t.ID=s.ID
+and t.SEQ1=s.SEQ1 and t.SEQ2=s.SEQ2
+
+
+--Create temp #Po2
 select distinct id,SEQ1 
 into #deletePo2
 from #deletePo3 t
@@ -519,8 +527,8 @@ CREATE CLUSTERED INDEX IDX_PO2_index ON #deletePo2
 	[seq1] asc
 )
 
---Create tamp #Po
-select * 
+--Create temp #Po
+select distinct id
 into #deletePo
 from #deletePo2 t
 where not exists (
@@ -544,7 +552,11 @@ delete t
 from Production.dbo.PO_Supp_Detail t
 inner join #deletePo3 s on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 
-drop table #deletePo,#deletePo2,#deletePo3
+delete t
+from Production.dbo.PO_Supp_Detail_OrderList t
+inner join #deletePo_OrderList s on t.ID=s.id and t.SEQ1=s.seq1 and t.SEQ2=s.seq2
+
+drop table #deletePo,#deletePo2,#deletePo3,#deletePo_OrderList
 
 END
 
