@@ -62,7 +62,7 @@ namespace Sci.Production.Sewing
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
-select s.OutputDate,s.SewingLineID as SewingLine,sdd.ComboType,sdd.Article,sdd.SizeCode as Size,sum(sdd.QAQty) as 'QA Output' 
+select s.OutputDate,s.SewingLineID as SewingLine,sdd.OrderId,sdd.ComboType,sdd.Article,sdd.SizeCode as Size,sum(sdd.QAQty) as 'QA Output' 
 from SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sdd.SewingOutput_DetailUKey=sd.UKey 
 inner join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID 
@@ -105,8 +105,8 @@ where 1=1
             }
 
             sqlCmd.Append(string.Format(@"
-group by s.OutputDate,s.SewingLineID,sdd.ComboType,sdd.Article,sdd.SizeCode 
-order by s.OutputDate,s.SewingLineID
+group by s.OutputDate,s.SewingLineID,sdd.OrderId,sdd.ComboType,sdd.Article,sdd.SizeCode 
+order by s.OutputDate,s.SewingLineID,sdd.OrderId,sdd.ComboType,sdd.Article,sdd.SizeCode 
                 "));
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
