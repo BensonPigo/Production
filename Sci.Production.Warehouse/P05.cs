@@ -55,16 +55,19 @@ namespace Sci.Production.Warehouse
                 //DataRow[] drType = dt2.Select("")
                 if (callP03 != null && callP03.Visible == true)
                 {                    
-                    callP03.P03Data(txtSPNo.Text);
-                   
+                    callP03.P03Data(txtSPNo.Text);                   
                     callP03.Activate();
+                    
                 }
                 else
                 {
                     P03FormOpen();
-                   
-                }                
-                callP03.P05Filter(txtSPNo.Text, dr["Refno"].ToString(), "F", dr["ColorID"].ToString());
+                }
+
+                if (callP03 != null)
+                {
+                    callP03.P05Filter(txtSPNo.Text, dr["Refno"].ToString(), "F", dr["ColorID"].ToString());
+                }
             };
             #region Set Grid1
             Helper.Controls.Grid.Generator(this.grid1)
@@ -424,6 +427,12 @@ group by refno,ColorID
                 }
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void btnNewSearch_Click(object sender, EventArgs e)
+        {
+            txtSPNo.ResetText();
+            txtSPNo.Select();
         }
     }
 }

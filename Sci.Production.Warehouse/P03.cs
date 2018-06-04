@@ -90,6 +90,10 @@ namespace Sci.Production.Warehouse
             SpNo = P01SPNo;
             this.txtSPNo.Text = SpNo.Trim();
             ButtonOpen = true;
+            if (gridMaterialStatus.RowCount == 0)
+            {
+                Query();
+            }
             grid_Filter();
             ChangeDetailColor();
             _Refno = string.Empty;

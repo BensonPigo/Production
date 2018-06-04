@@ -41,6 +41,7 @@
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.btnAutoCal = new System.Windows.Forms.Button();
+            this.btnNewSearch = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -50,6 +51,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnNewSearch);
             this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Controls.Add(this.txtSPNo);
             this.panel1.Controls.Add(this.labelSPNo);
@@ -61,7 +63,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(272, 8);
+            this.btnQuery.Location = new System.Drawing.Point(382, 8);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(102, 30);
             this.btnQuery.TabIndex = 19;
@@ -178,6 +180,16 @@
             this.btnAutoCal.UseVisualStyleBackColor = true;
             this.btnAutoCal.Click += new System.EventHandler(this.btnAutoCal_Click);
             // 
+            // btnNewSearch
+            // 
+            this.btnNewSearch.Location = new System.Drawing.Point(272, 8);
+            this.btnNewSearch.Name = "btnNewSearch";
+            this.btnNewSearch.Size = new System.Drawing.Size(104, 30);
+            this.btnNewSearch.TabIndex = 20;
+            this.btnNewSearch.Text = "New Search";
+            this.btnNewSearch.UseVisualStyleBackColor = true;
+            this.btnNewSearch.Click += new System.EventHandler(this.btnNewSearch_Click);
+            // 
             // P05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -224,5 +236,6 @@
         private System.Windows.Forms.Button btnAutoCal;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.Button btnQuery;
+        private Win.UI.Button btnNewSearch;
     }
 }
