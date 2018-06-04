@@ -158,6 +158,21 @@ order by td.Seq", masterID);
             this.detailgrid.AutoResizeColumn(12);
             this.detailgrid.AutoResizeColumn(13);
             this.detailgrid.AutoResizeColumn(14);
+
+            string styleVersion = MyUtility.GetValue.Lookup($@"
+select IETMSVersion from Style 
+where id= '{this.CurrentMaintain["StyleID"]}'
+and SeasonID= '{this.CurrentMaintain["SeasonID"]}'
+and BrandID = '{this.CurrentMaintain["BrandID"]}'
+");
+            if (styleVersion != this.CurrentMaintain["IETMSVersion"].ToString() && this.EditMode == false)
+            {
+                this.labVersionWarning.Visible = true;
+            }
+            else
+            {
+                this.labVersionWarning.Visible = false;
+            }
         }
 
         /// <summary>
