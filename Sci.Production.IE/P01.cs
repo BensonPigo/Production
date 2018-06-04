@@ -165,7 +165,7 @@ where id= '{this.CurrentMaintain["StyleID"]}'
 and SeasonID= '{this.CurrentMaintain["SeasonID"]}'
 and BrandID = '{this.CurrentMaintain["BrandID"]}'
 ");
-            if (styleVersion != this.CurrentMaintain["IETMSVersion"].ToString())
+            if (styleVersion != this.CurrentMaintain["IETMSVersion"].ToString() && this.EditMode == false)
             {
                 this.labVersionWarning.Visible = true;
             }
