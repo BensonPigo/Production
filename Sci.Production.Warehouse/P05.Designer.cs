@@ -31,6 +31,8 @@
             this.components = new System.ComponentModel.Container();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.btnNewSearch = new Sci.Win.UI.Button();
+            this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
@@ -49,27 +51,47 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnNewSearch);
+            this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Controls.Add(this.txtSPNo);
             this.panel1.Controls.Add(this.labelSPNo);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 49);
+            this.panel1.Size = new System.Drawing.Size(1008, 37);
             this.panel1.TabIndex = 3;
+            // 
+            // btnNewSearch
+            // 
+            this.btnNewSearch.Location = new System.Drawing.Point(271, 3);
+            this.btnNewSearch.Name = "btnNewSearch";
+            this.btnNewSearch.Size = new System.Drawing.Size(104, 30);
+            this.btnNewSearch.TabIndex = 20;
+            this.btnNewSearch.Text = "New Search";
+            this.btnNewSearch.UseVisualStyleBackColor = true;
+            this.btnNewSearch.Click += new System.EventHandler(this.btnNewSearch_Click);
+            // 
+            // btnQuery
+            // 
+            this.btnQuery.Location = new System.Drawing.Point(381, 3);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(102, 30);
+            this.btnQuery.TabIndex = 19;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
             // txtSPNo
             // 
             this.txtSPNo.BackColor = System.Drawing.Color.White;
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNo.Location = new System.Drawing.Point(121, 12);
+            this.txtSPNo.Location = new System.Drawing.Point(120, 7);
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(145, 23);
             this.txtSPNo.TabIndex = 0;
-            this.txtSPNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtSPNo_Validating);
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(9, 12);
+            this.labelSPNo.Location = new System.Drawing.Point(8, 7);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(109, 23);
             this.labelSPNo.TabIndex = 18;
@@ -104,7 +126,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 52);
+            this.label1.Location = new System.Drawing.Point(8, 40);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(109, 23);
             this.label1.TabIndex = 19;
@@ -112,7 +134,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 391);
+            this.label2.Location = new System.Drawing.Point(8, 368);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(109, 23);
             this.label2.TabIndex = 20;
@@ -134,14 +156,14 @@
             this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(0, 417);
+            this.grid2.Location = new System.Drawing.Point(0, 398);
             this.grid2.Name = "grid2";
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(1008, 242);
+            this.grid2.Size = new System.Drawing.Size(1008, 261);
             this.grid2.TabIndex = 21;
             this.grid2.TabStop = false;
             // 
@@ -149,19 +171,19 @@
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox1.Location = new System.Drawing.Point(444, 391);
+            this.checkBox1.Location = new System.Drawing.Point(486, 371);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(302, 21);
+            this.checkBox1.Size = new System.Drawing.Size(235, 21);
             this.checkBox1.TabIndex = 22;
-            this.checkBox1.Text = "Usable Qty include On Warehouse Qty only";
+            this.checkBox1.Text = "usable qty excludes on board qty";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // btnAutoCal
             // 
-            this.btnAutoCal.Location = new System.Drawing.Point(444, 52);
+            this.btnAutoCal.Location = new System.Drawing.Point(486, 40);
             this.btnAutoCal.Name = "btnAutoCal";
-            this.btnAutoCal.Size = new System.Drawing.Size(131, 23);
+            this.btnAutoCal.Size = new System.Drawing.Size(131, 32);
             this.btnAutoCal.TabIndex = 23;
             this.btnAutoCal.Text = "Auto-Calculate";
             this.btnAutoCal.UseVisualStyleBackColor = true;
@@ -212,5 +234,7 @@
         private Win.UI.CheckBox checkBox1;
         private System.Windows.Forms.Button btnAutoCal;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.Button btnQuery;
+        private Win.UI.Button btnNewSearch;
     }
 }

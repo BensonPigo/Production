@@ -473,9 +473,92 @@ where  exists (select 1
                              and po.seq1 = fty.Seq1
                              and po.seq2 = fty.Seq2)
 ------------------------------------------------------------------PO3 END
-------------------------------------------------------
+
+------Delete Po from Trade PO_Delete function
+-- Create #deletePo3
+if exists (select 1 from Trade_To_Pms.dbo.sysobjects where name='PO_Delete')
+BEGIN 
+select po3.* 
+into #deletePo3
+from PO_Supp_Detail po3
+outer apply(
+	select isnull(sum(InQty+OutQty+AdjustQty),0) ttlQty from FtyInventory 
+	where POID=po3.ID and Seq1=po3.SEQ1 and Seq2=po3.SEQ2
+	and AdjustQty =0
+)fty
+outer apply(
+	select isnull(sum(InQty+OutQty+AdjustQty),0) ttlQty from MDivisionPoDetail  
+	where POID=po3.ID and Seq1=po3.SEQ1 and Seq2=po3.SEQ2
+	and AdjustQty =0
+)MDPoDetail
+where id in (select POID from Trade_To_Pms.dbo.PO_Delete)
+and (MDPoDetail.ttlQty+fty.ttlQty) = 0
 
 
+CREATE CLUSTERED INDEX IDX_PO3_index ON #deletePo3
+(
+	[id] asc,
+	[Seq1] asc,
+	[Seq2] asc
+)
+
+-- Create temp #PO_Supp_Detail_OrderList
+select t.*
+into #deletePo_OrderList
+from PO_Supp_Detail_OrderList t
+inner join #deletePo3 s on t.ID=s.ID
+and t.SEQ1=s.SEQ1 and t.SEQ2=s.SEQ2
+
+
+--Create temp #Po2
+select distinct id,SEQ1 
+into #deletePo2
+from #deletePo3 t
+where not exists (
+	select 1 from PO_Supp_Detail t1 
+	left join #deletePo3 s1 on t1.ID=s1.ID and t1.SEQ1=s1.seq1 and t1.seq2=s1.SEQ2
+	where s1.ID is null 
+	and t1.ID =t.ID and t1.SEQ1=t.SEQ1 
+)
+
+CREATE CLUSTERED INDEX IDX_PO2_index ON #deletePo2
+(
+	[id] asc,
+	[seq1] asc
+)
+
+--Create temp #Po
+select distinct id
+into #deletePo
+from #deletePo2 t
+where not exists (
+	select 1 from PO_Supp t1 	
+	left join #deletePo2 s1 on t1.ID=s1.ID and t1.SEQ1=s1.seq1
+	where s1.ID is null
+	and t1.ID =t.ID
+)
+
+
+
+delete t
+ from Production.dbo.PO t
+inner join #deletePo s on t.id=s.id
+
+delete t
+from Production.dbo.PO_Supp t
+inner join #deletePo2 s on t.id=s.id and t.seq1=s.seq1
+
+delete t
+from Production.dbo.PO_Supp_Detail t
+inner join #deletePo3 s on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
+
+delete t
+from Production.dbo.PO_Supp_Detail_OrderList t
+inner join #deletePo_OrderList s on t.ID=s.id and t.SEQ1=s.seq1 and t.SEQ2=s.seq2
+
+drop table #deletePo,#deletePo2,#deletePo3,#deletePo_OrderList
+
+END
 
 ------------------------------------------------------------------PO4 START
 --PO4

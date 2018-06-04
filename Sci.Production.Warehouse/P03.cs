@@ -25,6 +25,7 @@ namespace Sci.Production.Warehouse
         string userCountry = "";
         string SpNo = "";                   
         bool ButtonOpen = false;
+        private string _Refno, _MaterialType, _Color;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -78,6 +79,28 @@ namespace Sci.Production.Warehouse
             
         }
 
+        // Form to Form W/H.P05
+        public void P05Filter(string P01SPNo,string Refno,string MaterialType, string Color)
+        {           
+            _Refno = Refno;
+            _MaterialType = (MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : "";
+            _Color = Color;
+
+            this.EditMode = true;
+            SpNo = P01SPNo;
+            this.txtSPNo.Text = SpNo.Trim();
+            ButtonOpen = true;
+            if (gridMaterialStatus.RowCount == 0)
+            {
+                Query();
+            }
+            grid_Filter();
+            ChangeDetailColor();
+            _Refno = string.Empty;
+            _MaterialType = string.Empty;
+            _Color = string.Empty;
+        }
+
         //PPIC_P01 Called        
         public static void Call(string PPIC_SPNo, Form MdiParent)
         {
@@ -120,6 +143,7 @@ namespace Sci.Production.Warehouse
             call.Activate();
             call.ChangeDetailColor();
         }
+
 
         //隨著 P01上下筆SP#切換資料
         public void P03Data(string P01SPNo)  
@@ -795,6 +819,9 @@ drop table #tmpOrder,#tmpLocalPO_Detail
             {
                 ShowErr(result);
             }
+            _Refno = string.Empty;
+            _Color = string.Empty;
+            _MaterialType = string.Empty;
             this.HideWaitMessage();
         }
 
@@ -900,24 +927,38 @@ drop table #tmpOrder,#tmpLocalPO_Detail
 
         private void grid_Filter()
         {
+            string filter = "";
             if (gridMaterialStatus.RowCount > 0)
             {
-                string filter = "";
                 switch (chk_includeJunk.Checked)
                 {                    
                     case true:
                         if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        filter = "";
+                        if (!MyUtility.Check.Empty(_Refno) && !MyUtility.Check.Empty(_Color) && !MyUtility.Check.Empty(_MaterialType))
+                        {
+                            filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2='{_MaterialType}'";
+                        }
+                        else
+                        {
+                            filter = "";
+                        }
                         ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
 
                     case false:
                         if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        filter = " junk=0 ";
+                        if (!MyUtility.Check.Empty(_Refno) && !MyUtility.Check.Empty(_Color) && !MyUtility.Check.Empty(_MaterialType))
+                        {
+                            filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2='{_MaterialType}' and junk=0";
+                        }
+                        else
+                        {
+                            filter = " junk=0";
+                        }                        
                         ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
-                }
-            }
+                }               
+            }           
         }
 
         private void grid1_sorting()

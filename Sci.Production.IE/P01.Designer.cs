@@ -59,6 +59,7 @@
             this.displayApplyVersion = new Sci.Win.UI.DisplayBox();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.btnDel = new Sci.Win.UI.Button();
+            this.labVersionWarning = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,6 +76,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labVersionWarning);
             this.masterpanel.Controls.Add(this.btnDel);
             this.masterpanel.Controls.Add(this.displayApplyVersion);
             this.masterpanel.Controls.Add(this.displayApplyNo);
@@ -137,6 +139,7 @@
             this.masterpanel.Controls.SetChildIndex(this.displayApplyNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApplyVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnDel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labVersionWarning, 0);
             // 
             // detailpanel
             // 
@@ -145,7 +148,7 @@
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(785, 114);
+            this.gridicon.Location = new System.Drawing.Point(797, 114);
             this.gridicon.TabIndex = 9;
             // 
             // refresh
@@ -376,7 +379,7 @@
             // btnNewVersion
             // 
             this.btnNewVersion.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnNewVersion.Location = new System.Drawing.Point(782, 4);
+            this.btnNewVersion.Location = new System.Drawing.Point(794, 4);
             this.btnNewVersion.Name = "btnNewVersion";
             this.btnNewVersion.Size = new System.Drawing.Size(103, 30);
             this.btnNewVersion.TabIndex = 16;
@@ -387,7 +390,7 @@
             // btnNewStatus
             // 
             this.btnNewStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnNewStatus.Location = new System.Drawing.Point(782, 38);
+            this.btnNewStatus.Location = new System.Drawing.Point(794, 38);
             this.btnNewStatus.Name = "btnNewStatus";
             this.btnNewStatus.Size = new System.Drawing.Size(103, 30);
             this.btnNewStatus.TabIndex = 17;
@@ -398,7 +401,7 @@
             // btnHistory
             // 
             this.btnHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnHistory.Location = new System.Drawing.Point(782, 72);
+            this.btnHistory.Location = new System.Drawing.Point(794, 72);
             this.btnHistory.Name = "btnHistory";
             this.btnHistory.Size = new System.Drawing.Size(103, 30);
             this.btnHistory.TabIndex = 18;
@@ -541,6 +544,17 @@
             this.btnDel.UseVisualStyleBackColor = true;
             this.btnDel.Click += new System.EventHandler(this.BtnDel_Click);
             // 
+            // labVersionWarning
+            // 
+            this.labVersionWarning.AutoSize = true;
+            this.labVersionWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labVersionWarning.ForeColor = System.Drawing.Color.Red;
+            this.labVersionWarning.Location = new System.Drawing.Point(464, 67);
+            this.labVersionWarning.Name = "labVersionWarning";
+            this.labVersionWarning.Size = new System.Drawing.Size(329, 16);
+            this.labVersionWarning.TabIndex = 4;
+            this.labVersionWarning.Text = "The Apply No. and Apply Version is not latest. ";
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(995, 543);
@@ -609,5 +623,6 @@
         private Win.UI.Label labelApplyVersion;
         private Win.UI.Label labelApplyNo;
         private Win.UI.Button btnDel;
+        private System.Windows.Forms.Label labVersionWarning;
     }
 }
