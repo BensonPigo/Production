@@ -50,7 +50,7 @@ namespace Sci.Production.PPIC
         private void BtnDownload_Click(object sender, EventArgs e)
         {
             DataRow dr;
-            MyUtility.Check.Seek(string.Format("select SQLServerName,APSDatabaseName from MDivision WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword), out dr);
+            MyUtility.Check.Seek(string.Format("select SQLServerName,APSDatabaseName from System WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Keyword), out dr);
             if (MyUtility.Check.Empty(dr["SQLServerName"]) || MyUtility.Check.Empty(dr["APSDatabaseName"]))
             {
                 MyUtility.Msg.WarningBox("Still not yet set APS Server data, Please contact Taipei MIS. Thank you.");
