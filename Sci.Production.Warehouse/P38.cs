@@ -98,7 +98,9 @@ namespace Sci.Production.Warehouse
                   ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
             gridMaterialLock.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
-            
+            gridMaterialLock.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            gridMaterialLock.Columns["Remark"].DefaultCellStyle.ForeColor = Color.Red;
+
             #endregion
         }
 
