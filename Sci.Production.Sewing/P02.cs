@@ -86,9 +86,9 @@ select  mo.ID
         , mo.SeasonID
         , mo.BrandID 
 from MockupOrder mo WITH (NOLOCK) 
-inner join Factory f on mo.FtyGroup = f.ID
+inner join Factory f on mo.factoryid = f.ID
 where   mo.Junk = 0 
-        and mo.FTYGroup = '{0}'
+        and mo.factoryid = '{0}'
         and f.IsProduceFty = 1",
                                 Sci.Env.User.Factory);
 
@@ -113,7 +113,7 @@ where   mo.Junk = 0
                                     cmdse.Add(sp1e);
                                     cmdse.Add(sp2e);
                                     DataTable moDatae;
-                                    string sqlCmde = "select * from MockupOrder WITH (NOLOCK) where Junk = 0 and FTYGroup = @factoryid and ID = @id";
+                                    string sqlCmde = "select * from MockupOrder WITH (NOLOCK) where Junk = 0 and factoryid = @factoryid and ID = @id";
                                     DualResult result = DBProxy.Current.Select(null, sqlCmde, cmdse, out moDatae);
                                     if (!result || moDatae.Rows.Count <= 0)
                                     {
@@ -182,9 +182,9 @@ where   mo.Junk = 0
                         string sqlCmd = @"
 select mo.* 
 from MockupOrder mo WITH (NOLOCK) 
-inner join Factory f on mo.FtyGroup = f.ID
+inner join Factory f on mo.factoryid = f.ID
 where   mo.Junk = 0 
-        and mo.FTYGroup = @factoryid 
+        and mo.factoryid = @factoryid 
         and mo.ID = @id
         and f.IsProduceFty = 1";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out moData);

@@ -118,7 +118,7 @@ Order_TmsCost.artworkoffline,
 '' message            
 ,Order_TmsCost.apvdate 
 FROM Order_TmsCost WITH (NOLOCK) inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
-inner join factory WITH (NOLOCK) on orders.ftygroup = factory.id
+inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join view_order_artworks v on v.id = Order_TmsCost.id and v.artworktypeid = Order_TmsCost.artworktypeid
 WHERE not exists(select * from artworkpo a WITH (NOLOCK) inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
 and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID) 
@@ -192,7 +192,7 @@ Orders.SewInLine,
 Order_TmsCost.ApvDate,
 '' message
 FROM Order_TmsCost WITH (NOLOCK) inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
-inner join factory WITH (NOLOCK) on orders.ftygroup = factory.id
+inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join order_qty v WITH (NOLOCK) on v.id = order_tmscost.id
 WHERE not exists(select * from artworkpo a WITH (NOLOCK) inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
 and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID ) 
