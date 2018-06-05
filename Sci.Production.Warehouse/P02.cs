@@ -124,7 +124,7 @@ select  FactoryID = iif(ed.potype='M'
         , ed.Ukey
         , PoidSeq1 = rtrim(ed.Poid) + Ltrim(Rtrim(ed.Seq1))
         , PoidSeq = rtrim(ed.PoID)+(Ltrim(Rtrim(ed.Seq1)) + ' ' + ed.Seq2)
-        , Preshrink = iif(f.Preshrink = 1, 'V' ,''),
+        , Preshrink = iif(f.Preshrink = 1, 'V' ,'')
         , ed.Carton
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
@@ -164,7 +164,6 @@ where ed.ID = '{0}'", masterID);
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             ts.CellMouseDoubleClick += (s, e) =>
             {
-                if (!EditMode) return;
                 if (e.RowIndex == -1) return;
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
