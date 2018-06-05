@@ -124,7 +124,8 @@ select  FactoryID = iif(ed.potype='M'
         , ed.Ukey
         , PoidSeq1 = rtrim(ed.Poid) + Ltrim(Rtrim(ed.Seq1))
         , PoidSeq = rtrim(ed.PoID)+(Ltrim(Rtrim(ed.Seq1)) + ' ' + ed.Seq2)
-        , Preshrink = iif(f.Preshrink = 1, 'V' ,'')
+        , Preshrink = iif(f.Preshrink = 1, 'V' ,''),
+        , ed.Carton
 from Export_Detail ed WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = ed.PoID
 left join Supp s WITH (NOLOCK) on s.id = ed.SuppID 
@@ -160,10 +161,22 @@ where ed.ID = '{0}'", masterID);
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            ts.CellMouseDoubleClick += (s, e) =>
+            {
+                if (!EditMode) return;
+                if (e.RowIndex == -1) return;
+                var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                var frm = new Sci.Production.Warehouse.P02_Cartondetail(MyUtility.Convert.GetString(dr["Ukey"]));
+                frm.ShowDialog(this);
+            };
+
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("FactoryID", header: "Prod. Factory", width: Widths.AnsiChars(7))
                 .Text("ProjectID", header: "Project Name", width: Widths.AnsiChars(5))
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13))
+                .Text("Carton", header: "Carton#", width: Widths.AnsiChars(20),iseditingreadonly: true , settings: ts)
                 .Date("SCIDlv", header: "Earliest SCI Del", width: Widths.AnsiChars(9))
                 .Text("Category", header: "Category", width: Widths.AnsiChars(8))
                 .Date("InspDate", header: "Inspect Dead Line", width: Widths.AnsiChars(9))
