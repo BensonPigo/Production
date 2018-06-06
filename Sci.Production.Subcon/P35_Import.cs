@@ -64,9 +64,9 @@ and id='{txtReceiving.Text}'
 
             if ((MyUtility.Check.Empty(issuedate_b) && MyUtility.Check.Empty(issuedate_e)) &&
                 (MyUtility.Check.Empty(delivery_b) && MyUtility.Check.Empty(delivery_e ))  &&
-                MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && MyUtility.Check.Empty(poid_b) && MyUtility.Check.Empty(poid_e))
+                MyUtility.Check.Empty(sp_b) && MyUtility.Check.Empty(sp_e) && MyUtility.Check.Empty(poid_b) && MyUtility.Check.Empty(poid_e) && MyUtility.Check.Empty(txtReceiving.Text))
             {
-                MyUtility.Msg.WarningBox("< PO Issue Date > or < Delivery > or < PO ID > or < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< PO Issue Date > or < Delivery > or < PO ID > or < SP# > or < Receiving Incoming# > can't be empty!!");
                 txtSPNoStart.Focus();
                 return;
             }
