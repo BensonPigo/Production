@@ -257,7 +257,7 @@ drop table #tmp,#tmp2
 
             // 填內容值
             int intRowsStart = 4;
-            object[,] objArray = new object[1, 35];
+            object[,] objArray = new object[1, 36];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["FactoryID"];
@@ -290,12 +290,13 @@ drop table #tmp,#tmp2
                 objArray[0, 27] = string.Format("=Z{0}-AA{0}", MyUtility.Convert.GetString(intRowsStart));
                 objArray[0, 28] = string.Format("=IF(Z{0}=0,0,ROUND(AA{0}/Z{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
                 objArray[0, 29] = dr["PullQty"];
-                objArray[0, 30] = dr["GMTQty"];
-                objArray[0, 31] = dr["ClogGMTQty"];
-                objArray[0, 32] = string.Format("=AE{0}-AF{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 33] = string.Format("=IF(AE{0}=0,0,ROUND(AF{0}/AE{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 34] = dr["PullGMTQty"];
-                worksheet.Range[string.Format("A{0}:AI{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 30] = string.Format("=AA{0}-AD{0}", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 31] = dr["GMTQty"];
+                objArray[0, 32] = dr["ClogGMTQty"];
+                objArray[0, 33] = string.Format("=AF{0}-AJ{0}", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 34] = string.Format("=IF(AF{0}=0,0,ROUND(AG{0}/AF{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
+                objArray[0, 35] = dr["PullGMTQty"];
+                worksheet.Range[string.Format("A{0}:AJ{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
