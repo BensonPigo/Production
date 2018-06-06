@@ -184,7 +184,7 @@ select mo.*
 from MockupOrder mo WITH (NOLOCK) 
 inner join Factory f on mo.factoryid = f.ID
 where   mo.Junk = 0 
-        and mo.factoryid = @factoryid 
+        and mo.FTYGroup = @factoryid 
         and mo.ID = @id
         and f.IsProduceFty = 1";
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out moData);
