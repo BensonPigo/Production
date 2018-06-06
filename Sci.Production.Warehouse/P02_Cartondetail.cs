@@ -55,6 +55,7 @@ order by edc.poid,edc.seq1,edc.seq2,edc.Carton";
             .Text("NetKg", header: "NW", width: Widths.AnsiChars(6))
             .Text("WeightKg", header: "GW", width: Widths.AnsiChars(6))
             ;
+            this.grid1.AutoResizeColumns();
         }
 
         private void btnClose_Click(object sender, EventArgs e)

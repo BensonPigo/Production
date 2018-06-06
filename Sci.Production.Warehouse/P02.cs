@@ -175,7 +175,7 @@ where ed.ID = '{0}'", masterID);
                 .Text("FactoryID", header: "Prod. Factory", width: Widths.AnsiChars(7))
                 .Text("ProjectID", header: "Project Name", width: Widths.AnsiChars(5))
                 .Text("POID", header: "SP#", width: Widths.AnsiChars(13))
-                .Text("Carton", header: "Carton#", width: Widths.AnsiChars(20),iseditingreadonly: true , settings: ts)
+                .Text("Carton", header: "Carton#", width: Widths.AnsiChars(8),iseditingreadonly: true , settings: ts)
                 .Date("SCIDlv", header: "Earliest SCI Del", width: Widths.AnsiChars(9))
                 .Text("Category", header: "Category", width: Widths.AnsiChars(8))
                 .Date("InspDate", header: "Inspect Dead Line", width: Widths.AnsiChars(9))
