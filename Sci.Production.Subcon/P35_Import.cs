@@ -44,7 +44,6 @@ namespace Sci.Production.Subcon
             issuedate_e = null;
             delivery_b = null;
             delivery_e = null;
-            string receivingjoin = string.Empty;
             string receivingwhere = string.Empty;
 
 
@@ -53,14 +52,14 @@ namespace Sci.Production.Subcon
             if (dateDelivery.Value1 != null) delivery_b = this.dateDelivery.Text1;
             if (dateDelivery.Value2 != null) { delivery_e = this.dateDelivery.Text2; }
             if (!MyUtility.Check.Empty(txtReceiving.Text))
-            {
-                receivingjoin = $@"
-outer apply(
-	select * from LocalReceiving_Detail
-	where b.Ukey=LocalPo_detailukey
-	and b.Id=LocalPoId	
-)receiving";
-                receivingwhere = $@" and receiving.Id = '{txtReceiving.Text}'";
+            {               
+                receivingwhere = $@" 
+and exists(
+select 1 from LocalReceiving_Detail
+where b.Ukey=LocalPo_detailukey
+and b.Id=LocalPoId	
+and id='{txtReceiving.Text}'
+)";
             }
 
             if ((MyUtility.Check.Empty(issuedate_b) && MyUtility.Check.Empty(issuedate_e)) &&
@@ -94,7 +93,6 @@ outer apply(
                                                                                 ,b.apqty
                                                                                 ,b.inqty - b.apqty AS balance
                                                                         from localpo a WITH (NOLOCK) , localpo_detail b WITH (NOLOCK) 
-                                                                        {receivingjoin}
                                                                         where a.id = b.id and a.status != 'New' and b.apqty < inqty
                                                                         {receivingwhere}
                                                                         and a.category = '{dr_localAp["category"]}' 
