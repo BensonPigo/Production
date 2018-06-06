@@ -44,12 +44,24 @@ namespace Sci.Production.Subcon
             issuedate_e = null;
             delivery_b = null;
             delivery_e = null;
-            
+            string receivingjoin = string.Empty;
+            string receivingwhere = string.Empty;
+
 
             if (datePOIssueDate.Value1 != null) issuedate_b = this.datePOIssueDate.Text1;
             if (datePOIssueDate.Value2 != null) { issuedate_e = this.datePOIssueDate.Text2; }
             if (dateDelivery.Value1 != null) delivery_b = this.dateDelivery.Text1;
             if (dateDelivery.Value2 != null) { delivery_e = this.dateDelivery.Text2; }
+            if (!MyUtility.Check.Empty(txtReceiving.Text))
+            {
+                receivingjoin = $@"
+outer apply(
+	select * from LocalReceiving_Detail
+	where b.Ukey=LocalPo_detailukey
+	and b.Id=LocalPoId	
+)receiving";
+                receivingwhere = $@" and receiving.Id = '{txtReceiving.Text}'";
+            }
 
             if ((MyUtility.Check.Empty(issuedate_b) && MyUtility.Check.Empty(issuedate_e)) &&
                 (MyUtility.Check.Empty(delivery_b) && MyUtility.Check.Empty(delivery_e ))  &&
@@ -64,7 +76,7 @@ namespace Sci.Production.Subcon
             {
                 // 建立可以符合回傳的Cursor
 
-                string strSQLCmd = string.Format(@"Select 1 as Selected
+                string strSQLCmd = $@"Select 1 as Selected
                                                                                 ,b.id as localpoid
                                                                                 , b.orderid
                                                                                 ,b.refno
@@ -77,16 +89,16 @@ namespace Sci.Production.Subcon
                                                                                 ,b.inqty - apqty as qty  --預帶待付款，[已收數]-[已付款]
                                                                                 ,b.ukey localpo_detailukey
                                                                                 ,'' id
-                                                                                
                                                                                 ,0.0 amount
                                                                                 ,b.inqty
                                                                                 ,b.apqty
                                                                                 ,b.inqty - b.apqty AS balance
                                                                         from localpo a WITH (NOLOCK) , localpo_detail b WITH (NOLOCK) 
+                                                                        {receivingjoin}
                                                                         where a.id = b.id and a.status != 'New' and b.apqty < inqty
-                                                                        and a.category = '{0}' 
-                                                                        and a.localsuppid = '{1}' and a.mdivisionid = '{2}'", dr_localAp["category"],
-                                                                                                            dr_localAp["localsuppid"],Env.User.Keyword);
+                                                                        {receivingwhere}
+                                                                        and a.category = '{dr_localAp["category"]}' 
+                                                                        and a.localsuppid = '{dr_localAp["localsuppid"]}' and a.mdivisionid = '{Env.User.Keyword}'";
                 if(!MyUtility.Check.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
                 if (!MyUtility.Check.Empty(poid_b)) { strSQLCmd += " and b.id between @localpoid1 and  @localpoid2"; }
                 if (!MyUtility.Check.Empty(delivery_b)) { strSQLCmd += string.Format(" and b.Delivery >= '{0}' ", delivery_b); }
