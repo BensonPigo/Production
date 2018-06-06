@@ -86,7 +86,7 @@ select  mo.ID
         , mo.SeasonID
         , mo.BrandID 
 from MockupOrder mo WITH (NOLOCK) 
-inner join Factory f on mo.FtyGroup = f.ID
+inner join Factory f on mo.factoryid = f.ID
 where   mo.Junk = 0 
         and mo.FTYGroup = '{0}'
         and f.IsProduceFty = 1",
@@ -182,7 +182,7 @@ where   mo.Junk = 0
                         string sqlCmd = @"
 select mo.* 
 from MockupOrder mo WITH (NOLOCK) 
-inner join Factory f on mo.FtyGroup = f.ID
+inner join Factory f on mo.factoryid = f.ID
 where   mo.Junk = 0 
         and mo.FTYGroup = @factoryid 
         and mo.ID = @id

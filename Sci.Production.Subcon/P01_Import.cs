@@ -104,6 +104,7 @@ inner join order_qty q WITH (NOLOCK) on q.id = o.ID
 inner join dbo.View_Order_Artworks oa on oa.ID = o.ID AND OA.Article = Q.Article AND OA.SizeCode=Q.SizeCode
 inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
 left join ArtworkType at WITH (NOLOCK) on at.id = oa.ArtworkTypeID
+inner join factory f WITH (NOLOCK) on o.factoryid=f.id
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD, ArtworkPO A
@@ -111,7 +112,8 @@ outer apply (
 ) IssueQty
 outer apply(select ott.price from Order_TmsCost ott where ott.artworktypeid = oa.ArtworkTypeID and ott.id = o.ID)bb
 where   1=1 
-        and o.category  in ('B','S')
+and f.IsProduceFty=1
+and o.category  in ('B','S')
 ");
 
                 strSQLCmd += string.Format(" and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
