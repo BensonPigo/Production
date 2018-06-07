@@ -184,6 +184,12 @@
     <Compile Include="P01_TrimCardPrint.Designer.cs">
       <DependentUpon>P01_TrimCardPrint.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_Cartondetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_Cartondetail.Designer.cs">
+      <DependentUpon>P02_Cartondetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="P03_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1170,6 +1176,12 @@
     <Compile Include="P39_Import.Designer.cs">
       <DependentUpon>P39_Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R24.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R24.Designer.cs">
+      <DependentUpon>R24.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R37.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1216,6 +1228,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_TrimCardPrint.resx">
       <DependentUpon>P01_TrimCardPrint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_Cartondetail.resx">
+      <DependentUpon>P02_Cartondetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_Print.resx">
       <DependentUpon>P03_Print.cs</DependentUpon>
@@ -1814,6 +1829,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P52_StocktakingList.rdlc" />
+    <EmbeddedResource Include="Report\R24.resx">
+      <DependentUpon>R24.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R37.resx">
       <DependentUpon>R37.cs</DependentUpon>
     </EmbeddedResource>

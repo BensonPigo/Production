@@ -166,7 +166,35 @@ BEGIN
 		values (TE2.[ID],TE2.[PoID],TE2.[Seq1],TE2.[Seq2],TE2.[ExportIDOld],TE2.[Ukey],TE2.[Qty],TE2.[Foc],TE2.[Carton],TE2.[Confirm],TE2.[UnitID],TE2.[Price],TE2.[NetKg],TE2.[WeightKg],TE2.[Remark],TE2.[PayDesc],TE2.[LastEta],TE2.[Refno],TE2.[SuppID],TE2.[Pino],TE2.[Description],TE2.[UnitOld],TE2.[PinoOld],TE2.[SuppIDOld],TE2.[PriceOld],TE2.[ShipPlanID],TE2.[ShipPlanHandle],TE2.[PoHandle],TE2.[PcHandle],TE2.[IsFormA],TE2.[FormXDraftCFM],TE2.[FormXINV],TE2.[FormXReceived],TE2.[FormXFTYEdit],TE2.[FormXEdit],TE2.[FormXPayINV],TE2.[FormXType],TE2.[FormXAwb],TE2.[FormXCarrier],TE2.[FormXRemark],TE2.[AddName],TE2.[AddDate],TE2.[EditDate],TE2.[EditName],TE2.[BalanceQty],TE2.[BalanceFOC],Te2.PoType,Te2.FabricType)
 	  when not matched by source and PE2.id in (select id from @T)then
 	  	delete;
-
+		
+-----------------------Export_Detail_Carton-----------------------------
+	RAISERROR('Import Export_Detail_Carton - Starts',0,0)
+	Merge Production.dbo.Export_Detail_Carton as t
+	Using (select * from Trade_To_Pms.dbo.Export_Detail_Carton a WITH (NOLOCK) 
+		where exists (select ukey from Trade_To_Pms.dbo.Export_Detail WITH (NOLOCK) where ukey = a.Export_DetailUkey) 
+		and exists (select ID from @T where id = a.id))as s
+	on t.ukey = s.ukey
+	when matched then
+		update set
+		 t.[Export_DetailUkey] =s.[Export_DetailUkey]
+		,t.[Id]				   =s.[Id]
+		,t.[PoID]			   =s.[PoID]
+		,t.[Seq1]			   =s.[Seq1]
+		,t.[Seq2]			   =s.[Seq2]
+		,t.[Carton]			   =s.[Carton]
+		,t.[LotNo]			   =s.[LotNo]
+		,t.[Qty]			   =s.[Qty]
+		,t.[Foc]			   =s.[Foc]
+		,t.[NetKg]			   =s.[NetKg]
+		,t.[WeightKg]		   =s.[WeightKg]
+		,t.[EditName]		   =s.[EditName]
+		,t.[EditDate]		   =s.[EditDate]
+	when not matched by target then 	
+	insert([Export_DetailUkey],[Id],[PoID],[Seq1],[Seq2],[Carton],[LotNo],[Qty],[Foc],[NetKg],[WeightKg],[EditName],[EditDate])
+	values(s.[Export_DetailUkey],s.[Id],s.[PoID],s.[Seq1],s.[Seq2],s.[Carton],s.[LotNo],s.[Qty],s.[Foc],s.[NetKg],s.[WeightKg]
+	,s.[EditName],s.[EditDate])
+	when not matched by source and exists (select ID from @T where id = t.id)then
+	  		delete;
 
 drop table #TExport;
 

@@ -67,11 +67,26 @@
             this.comboM.IsSupportUnselect = true;
             this.comboM.Location = new System.Drawing.Point(110, 83);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(75, 24);
             this.comboM.TabIndex = 98;
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(110, 12);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -80,7 +95,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(9, 120);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(97, 23);
@@ -89,7 +103,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(9, 84);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(97, 23);
@@ -98,7 +111,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(9, 12);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(97, 23);
@@ -107,6 +119,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(110, 48);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -115,7 +141,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(9, 48);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(97, 23);
