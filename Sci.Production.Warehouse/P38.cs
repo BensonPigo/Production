@@ -12,6 +12,7 @@ using Sci.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Sci.Win.Tools;
+using System.Transactions;
 
 namespace Sci.Production.Warehouse
 {
@@ -33,6 +34,7 @@ namespace Sci.Production.Warehouse
             comboStockType.SelectedIndex = 0;
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
             
             ns.CellMouseDoubleClick += (s, e) =>
                 {
@@ -46,12 +48,26 @@ namespace Sci.Production.Warehouse
                         {
                             if (tempstatus == "0") dr["selected"] = true;
                             else dr["selected"] = false;
-
-                        }
-                                             
+                        }                    
                     }
                 };
-            
+            remark.CellValidating += (s, e) =>
+             {                 
+                 if (e.RowIndex != -1)
+                 {
+                     DataRow dr = this.gridMaterialLock.GetDataRow(e.RowIndex);
+                     if (!MyUtility.Check.Empty(dr["Remark"]))
+                     {
+                         if (dr["Remark"].ToString().Length > 500)
+                         {
+                             MyUtility.Msg.WarningBox("<Remark> length cannot exceed 500");
+                             e.Cancel = true;
+                             return;
+                         }
+                     }
+                 }
+             };
+
             #region -- 設定Grid1的顯示欄位 --
             this.gridMaterialLock.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridMaterialLock.DataSource = listControlBindingSource1;
@@ -65,6 +81,7 @@ namespace Sci.Production.Warehouse
                   .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
                   .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                  .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12),iseditingreadonly:false,settings: remark)
                   .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
@@ -81,7 +98,9 @@ namespace Sci.Production.Warehouse
                   ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
             gridMaterialLock.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
-            
+            gridMaterialLock.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            gridMaterialLock.Columns["Remark"].DefaultCellStyle.ForeColor = Color.Red;
+
             #endregion
         }
 
@@ -129,6 +148,7 @@ select 0 as [selected]
         , o.BrandID
         , o.FactoryID
         , x.*
+        , fi.Remark,fi.ukey
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
@@ -304,7 +324,7 @@ txtReceivingid.Text));
             StringBuilder sqlcmd = new StringBuilder();
             foreach (DataRow item in find)
             {
-                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE() where ukey ={0};", item["ukey"],flag,Sci.Env.User.UserID));
+                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", item["ukey"],flag,Sci.Env.User.UserID,item["Remark"]));
             }
 
             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd.ToString())))
@@ -392,6 +412,7 @@ select t.POID
 	   , t.earliest_SciDelivery
 	   , t.BrandID
 	   , t.FactoryID
+       , t.Remark
 	   , LockDate = f.LockDate
 	   , LockName = f.LockName
 from #tmp t
@@ -426,5 +447,6 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
 
             return true;
         }
+        
     }
 }
