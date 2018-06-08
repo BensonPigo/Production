@@ -249,7 +249,6 @@
             this.txtEMailAddr.Name = "txtEMailAddr";
             this.txtEMailAddr.Size = new System.Drawing.Size(362, 23);
             this.txtEMailAddr.TabIndex = 9;
-            this.txtEMailAddr.Validating += new System.ComponentModel.CancelEventHandler(this.txtEMailAddr_Validating);
             // 
             // editFactory
             // 

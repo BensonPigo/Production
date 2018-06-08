@@ -109,22 +109,6 @@ namespace Sci.Production.Tools
 
             }
         }
-
-        //protected override bool OnGridSetup()
-        //{
-        //    DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
-        //    ts.UseSystemPasswordChar = true;  // 預設為*
-        //    //ts.PasswordChar = "*";
-
-        //    Helper.Controls.Grid.Generator(this.grid)
-        //        .Text("ID", header: "User ID", width: Widths.AnsiChars(10))
-        //        .Text("NAME", header: "Name", width: Widths.AnsiChars(20))
-        //        .Text("PASSWORD", header: "Password", width: Widths.AnsiChars(10), settings: ts)
-        //        .CheckBox("ISADMIN", header: "Administrator", width: Widths.AnsiChars(1))
-        //        .DateTime("LastLoginTime", header: "Last Login Time", width: Widths.AnsiChars(20));
-        //    return true;
-        //}
-
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -189,14 +173,6 @@ namespace Sci.Production.Tools
                 }
                 CurrentMaintain["ID"] = dtSystem.Rows[0]["AccountKeyword"].ToString() + CurrentMaintain["ID"].ToString().Trim();
             }
-
-            if (MyUtility.Check.Empty(txtEMailAddr.Text))
-            {
-                MyUtility.Msg.WarningBox("<E-Mail Addr.> can not be empty! ");
-                this.txtEMailAddr.Focus();
-                return false;
-            }
-
             return base.ClickSaveBefore();
         }
 
@@ -247,24 +223,6 @@ namespace Sci.Production.Tools
                 return;
             }
             this.listControlBindingSource1.DataSource = dtPass2;
-        }
-
-        private void txtEMailAddr_Validating(object sender, CancelEventArgs e)
-        {
-            if (!IsValidEmail(this.txtEMailAddr.Text) && !MyUtility.Check.Empty(this.txtEMailAddr.Text))
-            {
-                MyUtility.Msg.WarningBox("<E-Mail Addr.> Invalid !");
-                e.Cancel = true;
-                return;
-            }           
-        }
-
-        // 驗證email格式正確性
-        private static bool IsValidEmail(string email)
-        {
-            return Regex.IsMatch(email,
-             @"^(?("")("".+?""@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))" +
-             @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$");
         }
     }
 }
