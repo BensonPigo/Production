@@ -7,6 +7,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Transactions;
+using Sci.Win.Tools;
 
 namespace Sci.Production.IE
 {
@@ -740,6 +741,30 @@ and s.StyleUnit='PCS'
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 若ThreadColorComb已有資料要自動發信通知Style.ThreadEditname(去串pass1.EMail若為空或null則不需要發信)，通知使用者資料有變更。
+            string sqlcmd = $@"
+select distinct p.EMail
+from TimeStudy ts with(nolock)
+inner join style s with(nolock) on s.id = ts.StyleID and s.SeasonID = ts.SeasonID and s.BrandID = ts.BrandID
+inner join ThreadColorComb tcc with(nolock) on tcc.StyleUkey = s.Ukey
+inner join pass1 p on p.id = s.ThreadEditname
+where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["ID"]}'";
+            DataRow dr;
+            if (MyUtility.Check.Seek(sqlcmd,out dr))
+            {
+                string toAddress = MyUtility.Convert.GetString(dr[0]);
+                string subject = $"IE P01 Factory GSD Style：{this.CurrentMaintain["StyleID"]} ,Brand：{this.CurrentMaintain["BrandID"]} ,Season：{this.CurrentMaintain["SeasonID"]} have changed ";
+                string description = $@"Please regenerate Thread P01.Thread Color Combination data.";
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, string.Empty, subject, string.Empty, description, true, true);
+                email.ShowDialog();
+            }
         }
 
         /// <summary>
