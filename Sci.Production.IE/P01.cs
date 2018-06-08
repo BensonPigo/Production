@@ -760,8 +760,8 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
             if (MyUtility.Check.Seek(sqlcmd,out dr))
             {
                 string toAddress = MyUtility.Convert.GetString(dr[0]);
-                string subject = $"IE P01 Factory GSD Style：{this.CurrentMaintain["StyleID"]},Brand：{this.CurrentMaintain["BrandID"]},Season：{this.CurrentMaintain["SeasonID"]} have changed ";
-                string description = $@"please regenerate Thread P01.Thread Color Combination data.";
+                string subject = $"IE P01 Factory GSD Style：{this.CurrentMaintain["StyleID"]} ,Brand：{this.CurrentMaintain["BrandID"]} ,Season：{this.CurrentMaintain["SeasonID"]} have changed ";
+                string description = $@"Please regenerate Thread P01.Thread Color Combination data.";
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, string.Empty, subject, string.Empty, description, true, true);
                 email.ShowDialog();
             }
