@@ -189,14 +189,6 @@ namespace Sci.Production.Tools
                 }
                 CurrentMaintain["ID"] = dtSystem.Rows[0]["AccountKeyword"].ToString() + CurrentMaintain["ID"].ToString().Trim();
             }
-
-            if (MyUtility.Check.Empty(txtEMailAddr.Text))
-            {
-                MyUtility.Msg.WarningBox("<E-Mail Addr.> can not be empty! ");
-                this.txtEMailAddr.Focus();
-                return false;
-            }
-
             return base.ClickSaveBefore();
         }
 
@@ -248,17 +240,7 @@ namespace Sci.Production.Tools
             }
             this.listControlBindingSource1.DataSource = dtPass2;
         }
-
-        private void txtEMailAddr_Validating(object sender, CancelEventArgs e)
-        {
-            if (!IsValidEmail(this.txtEMailAddr.Text) && !MyUtility.Check.Empty(this.txtEMailAddr.Text))
-            {
-                MyUtility.Msg.WarningBox("<E-Mail Addr.> Invalid !");
-                e.Cancel = true;
-                return;
-            }           
-        }
-
+        
         // 驗證email格式正確性
         private static bool IsValidEmail(string email)
         {
