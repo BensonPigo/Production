@@ -64,10 +64,16 @@ namespace Sci.Production.Packing
             }
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select distinct 0 as Selected, pl.ID, iif(pl.Type = 'B','Bulk','Sample') as Type, pld.OrderID, o.SciDelivery, o.SewInLine, pl.EstCTNBooking, pl.EstCTNArrive
+            sqlCmd.Append(@"
+select distinct 0 as Selected, 
+	Type = case when pl.Type = 'B' then 'Bulk'
+	                   when pl.Type = 'S' then 'Sample'
+	                   when pl.Type = 'L' then 'Local'
+		               end, 
+    pld.OrderID, o.SciDelivery, o.SewInLine, pl.EstCTNBooking, pl.EstCTNArrive
 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) , Orders o WITH (NOLOCK) 
 where pl.MDivisionID = @mdivisionid
-and (pl.Type = 'B' or pl.Type = 'S')
+and (pl.Type = 'B' or pl.Type = 'S' or pl.Type = 'L')
 and pl.ApvToPurchase = 0
 and pl.EstCTNBooking is not null
 and pl.EstCTNArrive is not null

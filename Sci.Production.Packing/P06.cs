@@ -81,6 +81,25 @@ namespace Sci.Production.Packing
                 this.displaySeason.Value = dr["SeasonID"].ToString();
                 this.displayPONo.Value = dr["CustPONo"].ToString();
             }
+
+            // Carton Summary按鈕變色
+            string chksql = $@"
+select 1
+from PackingList pl WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK)
+left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
+where pl.Type = 'L'
+and pd.ID = pl.ID
+and pd.ID = '{this.CurrentMaintain["ID"]}'
+";
+            if (MyUtility.Check.Seek(chksql))
+            {
+                this.btnCartonSummary.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnCartonSummary.ForeColor = Color.Black;
+            }
         }
 
         /// <summary>
@@ -971,6 +990,12 @@ and p.ID = pl.PulloutID",
             {
                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
             }
+        }
+
+        private void btnCartonSummary_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Packing.P03_CartonSummary callNextForm = new Sci.Production.Packing.P03_CartonSummary(this.CurrentMaintain["ID"].ToString());
+            callNextForm.ShowDialog(this);
         }
     }
 }
