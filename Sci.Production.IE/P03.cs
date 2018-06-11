@@ -719,7 +719,20 @@ order by ld.No, ld.GroupKey", masterID);
                 this.txtStyleComboType.Focus();
                 return false;
             }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
+            {
+                MyUtility.Msg.WarningBox("Factory can't empty");
+                this.txtFactory.Focus();
+                return false;
+            }
             #endregion
+
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Detail can not empty!");
+                return false;
+            }
 
             this.ComputeTaktTime();
 
@@ -882,6 +895,7 @@ order by ld.No, ld.GroupKey", masterID);
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
+
             var temptable = this.DetailDatas.CopyToDataTable();
             temptable.DefaultView.Sort = "No";
             string no = string.Empty;
@@ -943,19 +957,6 @@ order by ld.No, ld.GroupKey", masterID);
         private void NumOprtsIdeal_Validated(object sender, EventArgs e)
         {
             this.CalculateValue(0);
-        }
-
-        // Factory
-        private void TxtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID", "8", this.txtFactory.Text);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            this.txtFactory.Text = item.GetSelectedString();
         }
 
         // Style#
