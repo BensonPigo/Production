@@ -65,7 +65,7 @@ namespace Sci.Production.Packing
 
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-select distinct 0 as Selected, 
+select distinct 0 as Selected, pl.id,
 	Type = case when pl.Type = 'B' then 'Bulk'
 	                   when pl.Type = 'S' then 'Sample'
 	                   when pl.Type = 'L' then 'Local'
