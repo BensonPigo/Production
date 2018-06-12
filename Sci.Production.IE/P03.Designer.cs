@@ -36,7 +36,6 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelDesc = new Sci.Win.UI.Label();
             this.numVersion = new Sci.Win.UI.NumericBox();
-            this.txtFactory = new Sci.Win.UI.TextBox();
             this.txtStyleComboType = new Sci.Win.UI.TextBox();
             this.displaySeason = new Sci.Win.UI.DisplayBox();
             this.displayBrand = new Sci.Win.UI.DisplayBox();
@@ -106,6 +105,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtFactory = new Sci.Production.Class.txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -127,6 +127,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtFactory);
             this.masterpanel.Controls.Add(this.labelOprts);
             this.masterpanel.Controls.Add(this.numEffieiency);
             this.masterpanel.Controls.Add(this.numHighestTimeDiff);
@@ -182,7 +183,6 @@
             this.masterpanel.Controls.Add(this.displayBrand);
             this.masterpanel.Controls.Add(this.displaySeason);
             this.masterpanel.Controls.Add(this.txtStyleComboType);
-            this.masterpanel.Controls.Add(this.txtFactory);
             this.masterpanel.Controls.Add(this.numVersion);
             this.masterpanel.Controls.Add(this.labelDesc);
             this.masterpanel.Controls.Add(this.labelBrand);
@@ -200,7 +200,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDesc, 0);
             this.masterpanel.Controls.SetChildIndex(this.numVersion, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtStyleComboType, 0);
             this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
@@ -257,6 +256,7 @@
             this.masterpanel.Controls.SetChildIndex(this.numHighestTimeDiff, 0);
             this.masterpanel.Controls.SetChildIndex(this.numEffieiency, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelOprts, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
             // 
             // detailpanel
             // 
@@ -400,17 +400,6 @@
             0,
             0,
             0});
-            // 
-            // txtFactory
-            // 
-            this.txtFactory.BackColor = System.Drawing.Color.White;
-            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtFactory.Location = new System.Drawing.Point(57, 35);
-            this.txtFactory.Name = "txtFactory";
-            this.txtFactory.Size = new System.Drawing.Size(70, 21);
-            this.txtFactory.TabIndex = 1;
-            this.txtFactory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtFactory_PopUp);
             // 
             // txtStyleComboType
             // 
@@ -789,6 +778,7 @@
             this.comboSewingLineTeam.IsSupportUnselect = true;
             this.comboSewingLineTeam.Location = new System.Drawing.Point(400, 147);
             this.comboSewingLineTeam.Name = "comboSewingLineTeam";
+            this.comboSewingLineTeam.OldText = "";
             this.comboSewingLineTeam.Size = new System.Drawing.Size(51, 23);
             this.comboSewingLineTeam.TabIndex = 5;
             // 
@@ -1333,7 +1323,7 @@
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
             this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline.factoryobjectName = this.txtFactory;
+            this.txtsewingline.factoryobjectName = null;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(322, 147);
             this.txtsewingline.Name = "txtsewingline";
@@ -1375,6 +1365,18 @@
             this.splitContainer1.Size = new System.Drawing.Size(996, 417);
             this.splitContainer1.SplitterDistance = 751;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // txtFactory
+            // 
+            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IssupportJunk = true;
+            this.txtFactory.Location = new System.Drawing.Point(58, 35);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.Size = new System.Drawing.Size(66, 21);
+            this.txtFactory.TabIndex = 75;
             // 
             // P03
             // 
@@ -1473,7 +1475,6 @@
         private Win.UI.DisplayBox displayBrand;
         private Win.UI.DisplayBox displaySeason;
         private Win.UI.TextBox txtStyleComboType;
-        private Win.UI.TextBox txtFactory;
         private Win.UI.NumericBox numVersion;
         private Win.UI.Label labelDesc;
         private Win.UI.Label labelBrand;
@@ -1500,5 +1501,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.Grid grid1;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private Class.txtfactory txtFactory;
     }
 }
