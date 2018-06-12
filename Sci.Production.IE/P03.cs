@@ -728,10 +728,10 @@ order by ld.No, ld.GroupKey", masterID);
             }
             #endregion
 
-            string chkfactory = $@"select 1 from factory where id = '{this.txtFactory.Text}'";
+            string chkfactory = $@"select 1 from factory where FTYGroup = '{this.txtFactory.Text}'";
             if (!MyUtility.Check.Seek(chkfactory))
             {
-                MyUtility.Msg.WarningBox($"Factory:{this.txtFactory.Text} not bound");
+                MyUtility.Msg.WarningBox($"Factory:{this.txtFactory.Text} not found");
                 return false;
             }
 
