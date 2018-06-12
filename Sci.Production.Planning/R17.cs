@@ -99,7 +99,7 @@ SELECT
 ,F = o.BRANDID
 ,G = convert(varchar(10),Order_QS.BuyerDelivery,111)
 ,H = convert(varchar(10),Order_QS.FtyKPI,111)
-,I = convert(varchar(10),DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), 111)
+,I = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)
 ,J = Order_QS.ShipmodeID
 ,K = Cast(Order_QS.QTY as int)
 ,L = CASE o.GMTComplete WHEN 'S' THEN Cast(isnull(Order_QS.QTY,0) as int)
@@ -135,8 +135,8 @@ outer apply (
 		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI),'<='),
 		FailQty = Sum(rB.Qty)  - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI),'>')
 	From Pullout_Detail pd
-	Outer apply (Select Qty = IIF(pd.PulloutDate <= DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), pd.shipqty, 0)) rA
-	Outer apply (Select Qty = IIF(pd.PulloutDate >  DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), pd.shipqty, 0)) rB
+    Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), pd.shipqty, 0)) rA --On Time
+	Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), pd.shipqty, 0)) rB --Fail
 	where pd.OrderID = o.ID 
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 ) pd
@@ -602,8 +602,8 @@ SELECT A = c.alias
      , C = o.FactoryID
      , D = o.ID
      , E = Order_QS.Seq
-     , F = convert(varchar(10),Order_QS.FtyKPI ,111)
-     , G = convert(varchar(10),DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), 111)
+     , F = convert(varchar(10),Order_QS.FtyKPI ,111)     
+     , G = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)
      , H = Order_QS.ShipmodeID
      , I = Order_QS.QTY
      , J = CASE o.GMTComplete WHEN 'S' THEN Order_QS.QTY
@@ -618,8 +618,8 @@ LEFT JOIN COUNTRY c ON f.COUNTRYID = c.ID
 INNER JOIN Order_QtyShip Order_QS on o.ID = Order_QS.ID
 LEFT JOIN Brand b on o.BrandID = b.ID
 OUTER APPLY (select sum(ShipQty) as sQty 
-             from Pullout_Detail pd 
-             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate <= DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI) ) opd
+             from Pullout_Detail pd              
+             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.pulloutdate <= iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI))) opd
 OUTER APPLY (select top 1 PulloutDate 
              from Pullout_Detail pd 
              where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
