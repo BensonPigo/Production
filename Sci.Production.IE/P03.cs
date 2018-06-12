@@ -728,6 +728,13 @@ order by ld.No, ld.GroupKey", masterID);
             }
             #endregion
 
+            string chkfactory = $@"select 1 from factory where id = '{this.txtFactory.Text}'";
+            if (!MyUtility.Check.Seek(chkfactory))
+            {
+                MyUtility.Msg.WarningBox($"Factory:{this.txtFactory.Text} not bound");
+                return false;
+            }
+
             if (this.DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail can not empty!");
