@@ -173,9 +173,9 @@
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(486, 371);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(235, 21);
+            this.checkBox1.Size = new System.Drawing.Size(232, 21);
             this.checkBox1.TabIndex = 22;
-            this.checkBox1.Text = "usable qty excludes on board qty";
+            this.checkBox1.Text = "usable qty includes on board qty";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 

@@ -114,11 +114,11 @@ namespace Sci.Production.Warehouse
                 DataRow dr = this.grid2.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(dr["BlanceQty"]) < 0)
                 {
-                    e.CellStyle.ForeColor = Color.Red;
+                    e.CellStyle.BackColor = Color.Pink;
                 }
                 else
                 {
-                    e.CellStyle.ForeColor = Color.Black;
+                    e.CellStyle.BackColor = Color.White;
                 }
             };
         }
@@ -207,8 +207,8 @@ select
 	t.ColorID,	a.ETA,	t.Qty,t.FabricType,
 	Wqty = isnull(b.InQty,0)+isnull(c.InQty,0),
 	bqty = IIF(isnull(b.bqty,0)<0,0,isnull(b.bqty,0)),
-	Uqty = iif('{checkBox1.Checked}'='True',isnull(b.InQty,0)+isnull(c.InQty,0), isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0)),
-	Uqty2 = iif('{checkBox1.Checked}'='True',isnull(b.InQty,0)+isnull(c.InQty,0), isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0)),
+	Uqty = iif('{checkBox1.Checked}'='True', isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0),isnull(b.InQty,0)+isnull(c.InQty,0)),
+	Uqty2 = iif('{checkBox1.Checked}'='True', isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0),isnull(b.InQty,0)+isnull(c.InQty,0)),
 	EstUsageQty = 0.00,
 	BlanceQty = 0.00
 from #tmp t
@@ -410,6 +410,12 @@ group by refno,ColorID
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            string chk = $@"select 1 from orders where finished = 1 and poid = '{txtSPNo.Text}'";
+            if (MyUtility.Check.Seek(chk))
+            {
+                MyUtility.Msg.WarningBox($"{txtSPNo.Text} PPIC already close !! ");
+                return;
+            }
             Query();
             calBalance();
         }
