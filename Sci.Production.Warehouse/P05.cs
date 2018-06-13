@@ -114,11 +114,13 @@ namespace Sci.Production.Warehouse
                 DataRow dr = this.grid2.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(dr["BlanceQty"]) < 0)
                 {
-                    e.CellStyle.BackColor = Color.Pink;
+                    //e.CellStyle.BackColor = Color.Pink;
+                    this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Pink;
                 }
                 else
                 {
-                    e.CellStyle.BackColor = Color.White;
+                    //e.CellStyle.BackColor = Color.White;
+                    this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
                 }
             };
         }
