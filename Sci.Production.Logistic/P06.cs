@@ -53,7 +53,8 @@ namespace Sci.Production.Logistic
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
-                .DateTime("AddDate", header: "Create Date", iseditable: false);
+                .DateTime("AddDate", header: "Create Date", iseditable: false)
+                .Text("AddName", header: "Createby", width: Widths.Auto(), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -112,6 +113,7 @@ from (
             , isnull (o.FactoryID, '') as FactoryID
             , oq.BuyerDelivery
             , cr.AddDate
+			, AddName = (select concat(id,'-',Name) from pass1 where id = cr.AddName)
     from ClogReturn cr WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on cr.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
