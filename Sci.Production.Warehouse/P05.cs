@@ -308,8 +308,8 @@ group by refno,ColorID
         {
             foreach (DataRow dr2 in dt2.Rows)
             {
-                dr2["Uqty"] = checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
-                dr2["Uqty2"] = checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
+                dr2["Uqty"] = !checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
+                dr2["Uqty2"] = !checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
             }
 
             calBalance();
