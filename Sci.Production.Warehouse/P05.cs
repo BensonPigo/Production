@@ -412,6 +412,8 @@ group by refno,ColorID
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            this.listControlBindingSource1.DataSource = null;
+            this.listControlBindingSource2.DataSource = null;
             string chk = $@"select 1 from orders where finished = 1 and poid = '{txtSPNo.Text}'";
             if (MyUtility.Check.Seek(chk))
             {
@@ -441,6 +443,52 @@ group by refno,ColorID
         {
             txtSPNo.ResetText();
             txtSPNo.Select();
+        }
+
+        private void btnAutoCalc_Click(object sender, EventArgs e)
+        {
+            foreach (DataRow dr in dt.Rows)
+            {
+                dr["selected"] = false;
+            }
+
+            foreach (DataRow dr2 in dt2.Rows)
+            {
+                dr2["Uqty2"] = dr2["Uqty"];
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                DataTable dt3c = dt3[MyUtility.Convert.GetInt(dr["dtkey"])];
+                bool flag = true;
+                foreach (DataRow dr2 in dt2.Rows)
+                {
+                    DataRow[] dr3s = dt3c.Select($"Refno = '{dr2["Refno"]}' and ColorID = '{dr2["ColorID"]}'");
+                    if (dr3s.Length > 0)
+                    {
+                        if (MyUtility.Convert.GetDecimal(dr2["Uqty2"]) - MyUtility.Convert.GetDecimal(dr3s[0]["TtlConsPC"]) < 0)
+                        {
+                            flag = false;
+                        }
+                    }
+                }
+
+                if (flag)
+                {
+                    foreach (DataRow dr2 in dt2.Rows)
+                    {
+                        DataRow[] dr3s = dt3c.Select($"Refno = '{dr2["Refno"]}' and ColorID = '{dr2["ColorID"]}'");
+                        if (dr3s.Length > 0)
+                        {
+                            dr2["Uqty2"] = MyUtility.Convert.GetDecimal(dr2["Uqty2"]) - MyUtility.Convert.GetDecimal(dr3s[0]["TtlConsPC"]);
+                        }
+                    }
+                    dr["selected"] = true;
+                }
+            }
+            calEstUsageAndBalance();
+            this.grid1.ValidateControl();
+            this.grid2.ValidateControl();
         }
     }
 }
