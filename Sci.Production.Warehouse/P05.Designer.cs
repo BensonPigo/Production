@@ -41,7 +41,7 @@
             this.grid2 = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.checkBox1 = new Sci.Win.UI.CheckBox();
-            this.btnAutoCal = new System.Windows.Forms.Button();
+            this.btnAutoCalc = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -173,28 +173,28 @@
             this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkBox1.Location = new System.Drawing.Point(486, 371);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(235, 21);
+            this.checkBox1.Size = new System.Drawing.Size(232, 21);
             this.checkBox1.TabIndex = 22;
-            this.checkBox1.Text = "usable qty excludes on board qty";
+            this.checkBox1.Text = "usable qty includes on board qty";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // btnAutoCal
+            // btnAutoCalc
             // 
-            this.btnAutoCal.Location = new System.Drawing.Point(486, 40);
-            this.btnAutoCal.Name = "btnAutoCal";
-            this.btnAutoCal.Size = new System.Drawing.Size(131, 32);
-            this.btnAutoCal.TabIndex = 23;
-            this.btnAutoCal.Text = "Auto-Calculate";
-            this.btnAutoCal.UseVisualStyleBackColor = true;
-            this.btnAutoCal.Click += new System.EventHandler(this.btnAutoCal_Click);
+            this.btnAutoCalc.Location = new System.Drawing.Point(486, 41);
+            this.btnAutoCalc.Name = "btnAutoCalc";
+            this.btnAutoCalc.Size = new System.Drawing.Size(134, 30);
+            this.btnAutoCalc.TabIndex = 19;
+            this.btnAutoCalc.Text = "Auto-Calculate";
+            this.btnAutoCalc.UseVisualStyleBackColor = true;
+            this.btnAutoCalc.Click += new System.EventHandler(this.btnAutoCalc_Click);
             // 
             // P05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 661);
-            this.Controls.Add(this.btnAutoCal);
+            this.Controls.Add(this.btnAutoCalc);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.grid2);
             this.Controls.Add(this.label2);
@@ -209,7 +209,7 @@
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.grid2, 0);
             this.Controls.SetChildIndex(this.checkBox1, 0);
-            this.Controls.SetChildIndex(this.btnAutoCal, 0);
+            this.Controls.SetChildIndex(this.btnAutoCalc, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -232,9 +232,9 @@
         private Win.UI.Label label2;
         private Win.UI.Grid grid2;
         private Win.UI.CheckBox checkBox1;
-        private System.Windows.Forms.Button btnAutoCal;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnNewSearch;
+        private Win.UI.Button btnAutoCalc;
     }
 }
