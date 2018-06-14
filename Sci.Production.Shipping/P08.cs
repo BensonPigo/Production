@@ -435,6 +435,13 @@ where sd.ID = '{0}'", masterID);
                 MyUtility.Msg.WarningBox("Currency cannot be empty!!");
                 return false;
             }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
+            {
+                this.txtInvoice.Focus();
+                MyUtility.Msg.WarningBox("Invoice# can't be empty!!");
+                return false;
+            }
             #endregion
 
             // InvNo + B/L No不可以重複建立
