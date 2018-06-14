@@ -414,12 +414,19 @@ group by refno,ColorID
         {
             this.listControlBindingSource1.DataSource = null;
             this.listControlBindingSource2.DataSource = null;
-            string chk = $@"select 1 from orders where finished = 1 and poid = '{txtSPNo.Text}'";
+
+            string chk2 = $@"select Category from orders where poid = '{txtSPNo.Text}' and Category in ('B','S')";
+            if (!MyUtility.Check.Seek(chk2))
+            {
+                return;
+            }
+            string chk = $@"select 1 from orders where finished = 1 and id = '{txtSPNo.Text}'";
             if (MyUtility.Check.Seek(chk))
             {
                 MyUtility.Msg.WarningBox($"{txtSPNo.Text} PPIC already close !! ");
                 return;
             }
+
             Query();
             calBalance();
         }
