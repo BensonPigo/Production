@@ -42,6 +42,7 @@
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.btnAutoCalc = new Sci.Win.UI.Button();
+            this.labNotice = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -51,6 +52,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labNotice);
             this.panel1.Controls.Add(this.btnNewSearch);
             this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Controls.Add(this.txtSPNo);
@@ -189,6 +191,17 @@
             this.btnAutoCalc.UseVisualStyleBackColor = true;
             this.btnAutoCalc.Click += new System.EventHandler(this.btnAutoCalc_Click);
             // 
+            // labNotice
+            // 
+            this.labNotice.AutoSize = true;
+            this.labNotice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labNotice.ForeColor = System.Drawing.Color.Red;
+            this.labNotice.Location = new System.Drawing.Point(489, 10);
+            this.labNotice.Name = "labNotice";
+            this.labNotice.Size = new System.Drawing.Size(191, 15);
+            this.labNotice.TabIndex = 21;
+            this.labNotice.Text = "Category for Bulk,Sample can use";
+            // 
             // P05
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -236,5 +249,6 @@
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnNewSearch;
         private Win.UI.Button btnAutoCalc;
+        private System.Windows.Forms.Label labNotice;
     }
 }
