@@ -430,7 +430,8 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                 int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
                 if (no_barcode_cnt == 0)
                 {
-                    AutoClosingMessageBox.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!", "Warning", 3000);
+                    // AutoClosingMessageBox.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!", "Warning", 3000);
+                    MyUtility.Msg.WarningBox($"<{this.txtScanEAN.Text}> Invalid barcode !!");
                     this.txtScanEAN.Text = string.Empty;
                     e.Cancel = true;
                     return;
