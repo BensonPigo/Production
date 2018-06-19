@@ -52,6 +52,7 @@ namespace Sci.Production.Planning
             this.dateBuyerDelivery.Select();
             this.dateBuyerDelivery.Value1 = DateTime.Now;
             this.dateBuyerDelivery.Value2 = DateTime.Now.AddDays(30);
+            this.comboBox1.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -141,7 +142,8 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
 	   , O.SpecialMark     , O.GFR        , O.SampleReason    , O.InspDate          , O.MnorderApv    , O.FtyKPI
        , O.KPIChangeReason , O.StyleUkey  , O.POID            , OrdersBuyerDelivery = o.BuyerDelivery
        , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
-       , InspHandle = o.InspHandle +'-'+ Pass1.Name      
+       , InspHandle = o.InspHandle +'-'+ Pass1.Name
+       ,O.Junk
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
@@ -833,7 +835,18 @@ select t.MDivisionID
        , t.SewETA
        , t.PackETA
        , t.CPU
+       , article_list = (select article + ',' 
+                         from (
+                              select distinct q.Article  
+                              from dbo.Order_Qty q WITH (NOLOCK) 
+                              where q.ID = t.OrderID
+                         ) t 
+                         for xml path('')) 
        , t.Qty
+       ,StandardOutput.StandardOutput
+       ,Artwork.Artwork
+       ,spdX.SubProcessDest
+       ,EstCutDate.EstimatedCutDate
        , #cte2.first_cut_date
        , #cte2.cut_qty
        , [RFID Cut Qty] = isnull (CutQty.AccuOutCome, 0)
@@ -852,6 +865,10 @@ select t.MDivisionID
        , [RFID Emboss Farm Out Qty] = isnull (Embossout.AccuOutGo, 0)
        , [RFID HT Farm In Qty] = isnull (htin.AccuInCome, 0)
        , [RFID HT Farm Out Qty] = isnull (htout.AccuOutGo, 0)
+        , SubProcessStatus=
+			case when t.Junk = 1 then null
+				 when subprocessqty.chksubprocesqty >= inoutcount.ct then 'Y'
+			end
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
        , #cte2.PRINTING_qty
@@ -889,13 +906,6 @@ select t.MDivisionID
                         where p.ID = t.POID)   
        , [MC Handle] = dbo.getTPEPass1(t.McHandle) 
        , t.DoxType
-       , article_list = (select article + ',' 
-                         from (
-                              select distinct q.Article  
-                              from dbo.Order_Qty q WITH (NOLOCK) 
-                              where q.ID = t.OrderID
-                         ) t 
-                         for xml path('')) 
        , [SpecMark] = (select Name 
                        from Reason WITH (NOLOCK) 
                        where ReasonTypeID = 'Style_SpecialMark' 
@@ -932,115 +942,185 @@ outer apply (
 outer apply (
 	select [AccuOutCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #tmpout 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'SORTING'
+	where #tmpout.SP = t.OrderID 
+	      and #tmpout.Factory = t.FactoryID
+          and #tmpout.SubProcessId = 'SORTING'
 ) CutQty
 outer apply (
 	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
     from #tmpin 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'loading'
+	where #tmpin.SP = t.OrderID 
+	      and #tmpin.Factory = t.FactoryID
+          and #tmpin.SubProcessId = 'loading'
 ) loading
 outer apply(
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpin 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'Emb'
+	where #tmpin.SP = t.OrderID 
+	      and #tmpin.Factory = t.FactoryID
+          and #tmpin.SubProcessId = 'Emb'
 ) Embin
 outer apply(
-	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpout 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'Emb'
+	where #tmpout.SP = t.OrderID 
+	      and #tmpout.Factory = t.FactoryID
+          and #tmpout.SubProcessId = 'Emb'
 ) Embout
 outer apply(
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpin 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'BO'
+	where #tmpin.SP = t.OrderID 
+	      and #tmpin.Factory = t.FactoryID
+          and #tmpin.SubProcessId = 'BO'
 ) Bondin
 outer apply(
-	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpout 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'BO'
+	where #tmpout.SP = t.OrderID 
+	      and #tmpout.Factory = t.FactoryID
+          and #tmpout.SubProcessId = 'BO'
 ) Bondout
 outer apply(
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpin 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'PRT'
+	where #tmpin.SP = t.OrderID 
+	      and #tmpin.Factory = t.FactoryID
+          and #tmpin.SubProcessId = 'PRT'
 ) Printin
 outer apply(
-	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpout 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'PRT'
+	where #tmpout.SP = t.OrderID 
+	      and #tmpout.Factory = t.FactoryID
+          and #tmpout.SubProcessId = 'PRT'
 ) Printout
 outer apply(
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpin 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'AT'
+	where #tmpin.SP = t.OrderID 
+	      and #tmpin.Factory = t.FactoryID
+          and #tmpin.SubProcessId = 'AT'
 ) ATin
 outer apply(
-	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpout 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'AT'
+	where #tmpout.SP = t.OrderID 
+	      and #tmpout.Factory = t.FactoryID
+          and #tmpout.SubProcessId = 'AT'
 ) ATout
 outer apply(
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpin 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'PAD-PRT'
+	where #tmpin.SP = t.OrderID 
+	      and #tmpin.Factory = t.FactoryID
+          and #tmpin.SubProcessId = 'PAD-PRT'
 ) PadPrintin
 outer apply(
-	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpout 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'PAD-PRT'
+	where #tmpout.SP = t.OrderID 
+	      and #tmpout.Factory = t.FactoryID
+          and #tmpout.SubProcessId = 'PAD-PRT'
 ) PadPrintout
 outer apply(
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpin 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'SUBCONEMB'
+	where #tmpin.SP = t.OrderID 
+	      and #tmpin.Factory = t.FactoryID
+          and #tmpin.SubProcessId = 'SUBCONEMB'
 ) Embossin
 outer apply(
-	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpout 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'SUBCONEMB'
+	where #tmpout.SP = t.OrderID 
+	      and #tmpout.Factory = t.FactoryID
+          and #tmpout.SubProcessId = 'SUBCONEMB'
 ) Embossout
 outer apply(
-	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpin 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'HT'
+	where #tmpin.SP = t.OrderID 
+	      and #tmpin.Factory = t.FactoryID
+          and #tmpin.SubProcessId = 'HT'
 ) htin
 outer apply(
-	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
+	select [AccuOutGo] = iif (AccuQty > t.Qty, t.Qty, AccuQty)
     from #tmpout 
-	where SP = t.OrderID 
-	      and FactoryID = t.FactoryID
-          and SubProcessId = 'HT'
+	where #tmpout.SP = t.OrderID 
+	      and #tmpout.Factory = t.FactoryID
+          and #tmpout.SubProcessId = 'HT'
 ) htout
+outer apply(
+	select ct = count(1)*2
+	from #tmpin
+	where #tmpin.SP = t.OrderID 
+	and #tmpin.Factory = t.FactoryID
+	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT')
+)inoutcount
+outer apply(
+	select chksubprocesqty = sum(xxx.Accusubprocesqty)
+	from(
+		select [Accusubprocesqty] = iif(iif(#tmpin.AccuQty > t.Qty, t.Qty, #tmpin.AccuQty)>=t.Qty,1,0)+
+									iif(iif(#tmpout.AccuQty > t.Qty, t.Qty, #tmpout.AccuQty)>=t.Qty,1,0)
+		from #tmpin,#tmpout
+		where #tmpin.SP = t.OrderID 
+		and #tmpin.Factory = t.FactoryID
+		and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT')
+		and #tmpout.SP = t.OrderID 
+	    and #tmpout.Factory = t.FactoryID
+		and #tmpout.SubProcessId = #tmpin.SubProcessId
+	)xxx
+)subprocessqty
+outer apply(
+	select StandardOutput =stuff((
+		  select distinct concat(',',ComboType,':',StandardOutput)
+		  from [SewingSchedule]
+		  where orderid = t.OrderID 
+		  for xml path('')
+	  ),1,1,'')
+)StandardOutput
+outer apply(
+	select Artwork =stuff((	
+		select concat('+',ArtworkTypeID)
+		from(
+			select distinct v.ArtworkTypeID
+			from dbo.View_Order_Artworks v 
+			where v.ID=t.OrderID
+		)tmpartwork
+		for xml path('')
+	),1,1,'')
+)Artwork
+outer apply(
+	select SubProcessDest = concat('Inhouse:'+stuff((
+		select concat(',',ArtworkTypeID)
+		from order_tmscost WITH (NOLOCK)
+		where id = t.OrderID and InhouseOSP = 'I'
+		for xml path('')
+	),1,1,'')
+	,'; '+(
+	select opsc=stuff((
+		select concat('; ',ospA.abb+':'+ospB.spdO)
+		from
+		(
+			select distinct abb = isnull(l.abb,'')
+			from order_tmscost ot WITH (NOLOCK)
+			left join localsupp l WITH (NOLOCK) on l.id = ot.LocalSuppID
+			where ot.id = t.OrderID and InhouseOSP = 'o'
+		)ospA
+		outer apply(
+			select spdO = stuff((
+				select concat(',',ArtworkTypeID) 
+				from order_tmscost ot WITH (NOLOCK)
+				left join localsupp l WITH (NOLOCK) on l.id = ot.LocalSuppID
+				where ot.id = t.OrderID and InhouseOSP = 'o'and isnull(l.Abb,'') = ospA.abb
+				for xml path('')
+			),1,1,'')
+		)ospB
+		for xml path('')
+	),1,1,'')))
+)spdX
+outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
 ");
 
             sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
