@@ -432,9 +432,6 @@
             this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "SP#",
-            "Acticle/Size"});
             this.comboBox1.Location = new System.Drawing.Point(115, 448);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.OldText = "";
