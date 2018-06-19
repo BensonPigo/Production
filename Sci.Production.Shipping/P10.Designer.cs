@@ -42,6 +42,10 @@
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
+            this.labelTTLQty = new Sci.Win.UI.Label();
+            this.labelTTLCTN = new Sci.Win.UI.Label();
+            this.numericBoxTTLQTY = new Sci.Win.UI.NumericBox();
+            this.numericBoxTTLCTN = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -61,21 +65,33 @@
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detailgridbs
+            // 
+            this.detailgridbs.ListChanged += new System.ComponentModel.ListChangedEventHandler(this.Detailgridbs_ListChanged);
+            // 
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.btnImportData);
+            this.masterpanel.Controls.Add(this.numericBoxTTLCTN);
+            this.masterpanel.Controls.Add(this.numericBoxTTLQTY);
+            this.masterpanel.Controls.Add(this.labelTTLCTN);
+            this.masterpanel.Controls.Add(this.labelTTLQty);
             this.masterpanel.Controls.Add(this.btnUpdatePulloutDate);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Size = new System.Drawing.Size(914, 87);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUpdatePulloutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTTLQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelTTLCTN, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numericBoxTTLQTY, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numericBoxTTLCTN, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportData, 0);
             // 
             // detailpanel
@@ -90,7 +106,7 @@
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(655, 52);
+            this.gridicon.Location = new System.Drawing.Point(807, 52);
             this.gridicon.TabIndex = 1;
             // 
             // refresh
@@ -149,7 +165,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(4, 4);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(55, 23);
@@ -158,7 +173,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(4, 31);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(55, 23);
@@ -189,7 +203,7 @@
             // btnUpdatePulloutDate
             // 
             this.btnUpdatePulloutDate.Enabled = false;
-            this.btnUpdatePulloutDate.Location = new System.Drawing.Point(593, 7);
+            this.btnUpdatePulloutDate.Location = new System.Drawing.Point(709, 7);
             this.btnUpdatePulloutDate.Name = "btnUpdatePulloutDate";
             this.btnUpdatePulloutDate.Size = new System.Drawing.Size(160, 30);
             this.btnUpdatePulloutDate.TabIndex = 3;
@@ -200,7 +214,7 @@
             // btnImportData
             // 
             this.btnImportData.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportData.Location = new System.Drawing.Point(593, 53);
+            this.btnImportData.Location = new System.Drawing.Point(709, 53);
             this.btnImportData.Name = "btnImportData";
             this.btnImportData.Size = new System.Drawing.Size(116, 30);
             this.btnImportData.TabIndex = 0;
@@ -229,13 +243,13 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
             this.gridDetail.Size = new System.Drawing.Size(914, 145);
             this.gridDetail.TabIndex = 2;
             this.gridDetail.TabStop = false;
             // 
             // labelDetail
             // 
-            this.labelDetail.Lines = 0;
             this.labelDetail.Location = new System.Drawing.Point(4, 5);
             this.labelDetail.Name = "labelDetail";
             this.labelDetail.Size = new System.Drawing.Size(42, 23);
@@ -277,6 +291,64 @@
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(914, 222);
             this.panel4.TabIndex = 5;
+            // 
+            // labelTTLQty
+            // 
+            this.labelTTLQty.Location = new System.Drawing.Point(518, 4);
+            this.labelTTLQty.Name = "labelTTLQty";
+            this.labelTTLQty.Size = new System.Drawing.Size(63, 23);
+            this.labelTTLQty.TabIndex = 4;
+            this.labelTTLQty.Text = "TTL Qty";
+            // 
+            // labelTTLCTN
+            // 
+            this.labelTTLCTN.Location = new System.Drawing.Point(518, 31);
+            this.labelTTLCTN.Name = "labelTTLCTN";
+            this.labelTTLCTN.Size = new System.Drawing.Size(63, 23);
+            this.labelTTLCTN.TabIndex = 5;
+            this.labelTTLCTN.Text = "TTL CTN";
+            // 
+            // numericBoxTTLQTY
+            // 
+            this.numericBoxTTLQTY.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBoxTTLQTY.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBoxTTLQTY.IsSupportEditMode = false;
+            this.numericBoxTTLQTY.Location = new System.Drawing.Point(584, 4);
+            this.numericBoxTTLQTY.Name = "numericBoxTTLQTY";
+            this.numericBoxTTLQTY.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBoxTTLQTY.ReadOnly = true;
+            this.numericBoxTTLQTY.Size = new System.Drawing.Size(109, 23);
+            this.numericBoxTTLQTY.TabIndex = 6;
+            this.numericBoxTTLQTY.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numericBoxTTLCTN
+            // 
+            this.numericBoxTTLCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBoxTTLCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBoxTTLCTN.IsSupportEditMode = false;
+            this.numericBoxTTLCTN.Location = new System.Drawing.Point(584, 31);
+            this.numericBoxTTLCTN.Name = "numericBoxTTLCTN";
+            this.numericBoxTTLCTN.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBoxTTLCTN.ReadOnly = true;
+            this.numericBoxTTLCTN.Size = new System.Drawing.Size(109, 23);
+            this.numericBoxTTLCTN.TabIndex = 7;
+            this.numericBoxTTLCTN.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P10
             // 
@@ -339,5 +411,9 @@
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel3;
         private Win.UI.Panel panel2;
+        private Win.UI.Label labelTTLCTN;
+        private Win.UI.Label labelTTLQty;
+        private Win.UI.NumericBox numericBoxTTLCTN;
+        private Win.UI.NumericBox numericBoxTTLQTY;
     }
 }
