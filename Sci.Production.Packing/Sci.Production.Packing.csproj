@@ -365,6 +365,12 @@
     <Compile Include="P18.Designer.cs">
       <DependentUpon>P18.cs</DependentUpon>
     </Compile>
+    <Compile Include="P18_Message.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P18_Message.Designer.cs">
+      <DependentUpon>P18_Message.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -500,6 +506,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P18.resx">
       <DependentUpon>P18.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P18_Message.resx">
+      <DependentUpon>P18_Message.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
