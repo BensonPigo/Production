@@ -258,7 +258,7 @@ select
 	,[Buyer] = b.BuyerID
 	,[CTN#] = pld.CTNStartNo
 	,[Qty] = pld.ShipQty
-	,[Scan Date] = format(pld.ScanEditDate,'yyyy/MM/dd')
+	,[Scan Date] = pld.ScanEditDate
     ,[Scan Name] = dbo.getPass1_ExtNo(pld.ScanName)
 INTO #TMP
 from PackingList_Detail pld with (nolock)
