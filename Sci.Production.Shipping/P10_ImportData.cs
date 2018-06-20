@@ -79,7 +79,7 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"select distinct 1 as Selected,g.ID,g.BrandID,g.ShipModeID,(g.Forwarder+' - '+ls.Abb) as Forwarder,g.CutOffDate,g.CYCFS,
       g.SONo,g.ForwarderWhse_DetailUKey,isnull((select WhseNo from ForwarderWhse_Detail WITH (NOLOCK) where UKey = g.ForwarderWhse_DetailUKey),'') as WhseNo,iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed')) as Status,
-	  g.TotalCTNQty,g.TotalCBM,(select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null) as ClogCTNQty
+	  g.TotalCTNQty,g.TotalShipQty,g.TotalCBM,(select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null) as ClogCTNQty
 	  from GMTBooking g WITH (NOLOCK) , Order_QtyShip oq WITH (NOLOCK) , PackingList p WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK) ,LocalSupp ls WITH (NOLOCK) 
 	  where g.ShipPlanID = ''
 	  and g.SOCFMDate is not null
@@ -224,7 +224,7 @@ and pd.OrderShipmodeSeq = oq.Seq", allID.ToString().Substring(0, allID.Length - 
 iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
 iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
 p.Status,p.CTNQty,p.CBM,(select sum(CTNQty) from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID and pd.ReceiveDate is not null) as ClogCTNQty,
-p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo
+p.InspDate,p.InspStatus,p.PulloutDate,p.InvNo, p.ShipQty
 from PackingList p WITH (NOLOCK) 
 where p.InvNo in ({0})", allID.ToString().Substring(0, allID.Length - 1));
                 DataTable packData;

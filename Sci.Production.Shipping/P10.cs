@@ -69,6 +69,7 @@ select p.ID
 , p.PulloutDate
 , p.InvNo
 , p.MDivisionID
+, p.ShipQty
 from PackingList p WITH (NOLOCK) 
 where {0} 
 order by p.ID", masterID);
@@ -87,12 +88,13 @@ select g.ID
 , g.ForwarderWhse_DetailUKey
 , WhseNo = isnull(fd.WhseNo,'')
 , Status = iif(g.Status='Confirmed','GB Confirmed',iif(g.SOCFMDate is null,'','S/O Confirmed'))
-, g.TotalCTNQty
+, [TotalCTNQty] = isnull(g.TotalCTNQty,0)
 , g.TotalCBM
 , ClogCTNQty = (
 	select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 	where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null
 )
+,[TotalShipQty] =  isnull(g.TotalShipQty,0)
 from GMTBooking g WITH (NOLOCK) 
 left join ForwarderWhse_Detail fd WITH (NOLOCK) on g.ForwarderWhse_DetailUKey = fd.UKey
 where {0} 
@@ -106,6 +108,27 @@ order by g.ID", masterID);
         {
             base.OnDetailEntered();
             this.btnUpdatePulloutDate.Enabled = !this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Confirmed" && PublicPrg.Prgs.GetAuthority(Sci.Env.User.UserID, "P10. Ship Plan", "CanEdit");
+            this.SumData();
+        }
+
+        private void SumData()
+        {
+            DataTable tmp_dt = (DataTable)this.detailgridbs.DataSource;
+            if (tmp_dt == null)
+            {
+                return;
+            }
+
+            if (tmp_dt.Rows.Count > 0)
+            {
+                this.numericBoxTTLCTN.Value = decimal.Parse(tmp_dt.Compute("Sum(TotalCTNQty)", string.Empty).ToString());
+                this.numericBoxTTLQTY.Value = decimal.Parse(tmp_dt.Compute("Sum(TotalShipQty)", string.Empty).ToString());
+            }
+            else
+            {
+                this.numericBoxTTLCTN.Value = 0;
+                this.numericBoxTTLQTY.Value = 0;
+            }
         }
 
         /// <inheritdoc/>
@@ -137,7 +160,8 @@ order by g.ID", masterID);
                 .DateTime("CutOffdate", header: "Cut-off Date/Time", iseditingreadonly: true)
                 .Numeric("WhseNo", header: "Container Terminals", iseditingreadonly: true)
                 .Text("Status", header: "GB Status", width: Widths.AnsiChars(16), iseditingreadonly: true)
-                .Numeric("TotalCTNQty", header: "Total Cartons", iseditingreadonly: true)
+                .Numeric("TotalShipQty", header: "TTL Qty", iseditingreadonly: true)
+                .Numeric("TotalCTNQty", header: "TTL CTN", iseditingreadonly: true)
                 .Numeric("TotalCBM", header: "Total CBM", decimal_places: 2, iseditingreadonly: true)
                 .Numeric("ClogCTNQty", header: "Total CTN Q'ty at C-Logs", iseditingreadonly: true);
             this.detailgrid.SelectionChanged += (s, e) =>
@@ -158,7 +182,8 @@ order by g.ID", masterID);
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
                 .Text("Status", header: "Packing Status", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                .Numeric("CTNQty", header: "CTN Qty", iseditingreadonly: true)
+                .Numeric("ShipQty", header: "TTL Qty", iseditingreadonly: true)
+                .Numeric("CTNQty", header: "TTL CTN", iseditingreadonly: true)
                 .Numeric("CBM", header: "CBM", decimal_places: 3, iseditingreadonly: true)
                 .Numeric("ClogCTNQty", header: "CTN Q'ty at C-Logs", iseditingreadonly: true)
                 .Date("InspDate", header: "Est. Inspection Date").Get(out this.col_inspdate)
@@ -673,6 +698,11 @@ and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
                 MyUtility.Msg.WarningBox("Unconfirm fail !\r\n" + result.ToString());
                 return;
             }
+        }
+
+        private void Detailgridbs_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            this.SumData();
         }
     }
 }
