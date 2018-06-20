@@ -1823,11 +1823,9 @@ outer apply(
 		for xml path('')
 	),1,1,'')))
 )spdX
-outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
- order by orderid 
-DROP TABLE #cte2, #cte
-           ,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout
-");
+outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate");
+
+                sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
             }
 
             DBProxy.Current.DefaultTimeout = 2700;
