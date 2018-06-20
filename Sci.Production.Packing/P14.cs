@@ -59,7 +59,7 @@ namespace Sci.Production.Packing
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
                 .DateTime("AddDate", header: "Create Date", iseditable: false)
                 .Date("ReceiveDate", header: "Rec. Date", iseditable: false)
-                .Text("AddName", header: "Createby", width: Widths.Auto(), iseditable: false);
+                .Text("AddName", header: "AddName", width: Widths.AnsiChars(15), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;

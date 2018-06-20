@@ -54,7 +54,7 @@ namespace Sci.Production.Logistic
                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
                 .DateTime("AddDate", header: "Create Date", iseditable: false)
-                .Text("AddName", header: "Createby", width: Widths.Auto(), iseditable: false);
+                .Text("AddName", header: "AddName", width: Widths.AnsiChars(15), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
@@ -216,7 +216,7 @@ order by PackingListID, OrderID, rn");
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
 
             int r = printDT.Rows.Count;
-            objSheets.get_Range(string.Format("A4:L{0}", r + 3)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            objSheets.get_Range(string.Format("A4:M{0}", r + 3)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             DataRow dr;
             MyUtility.Check.Seek(string.Format(@"select NameEN from Factory where id = '{0}'", Sci.Env.User.Factory), out dr, null);

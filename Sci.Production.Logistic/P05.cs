@@ -56,7 +56,7 @@ namespace Sci.Production.Logistic
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
                 .CellClogLocation("ClogLocationId", header: "Location No", width: Widths.Auto(), iseditable: false)
                 .DateTime("AddDate", header: "Create Date", width: Widths.Auto(), iseditable: false)
-                .Text("AddName", header: "Createby", width: Widths.Auto(), iseditable: false);
+                .Text("AddName", header: "AddName", width: Widths.Auto(), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
             int rowIndex = 0;
