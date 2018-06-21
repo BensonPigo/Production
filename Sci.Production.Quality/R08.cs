@@ -57,21 +57,30 @@ namespace Sci.Production.Quality
             #region 主Sql
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"
+
 SELECT [Inspected Date] = FP.InspDate,
        [Inspector] = FP.Inspector,
        [SP#] = F.POID,
        [SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2),
+	   [Supplier]=f.SuppID,
+	   [Supplier Name]=(select AbbEN from Supp where id = f.SuppID),
+	   [ATA] = p.FinalETA ,
        [Roll#] = fp.Roll,
        [Dyelot#] = fp.Dyelot,
+	   [Ref#]=p.RefNo,
+	   [Color]=dbo.GetColorMultipleID(o.BrandID,p.ColorID) ,
        [Arrived YDS] = RD.StockQty,
        [Actual YDS] = FP.ActualYds,
        [Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
 	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)),
+	   [Total Defect Points]=FP.TotalPoint,
        [Grade] = FP.Grade
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
 LEFT JOIN Receiving_Detail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
 								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
+LEFT join PO_Supp_Detail p on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
+LEFT join orders o on o.id=f.POID
 WHERE 1=1
 {0}
 ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]
