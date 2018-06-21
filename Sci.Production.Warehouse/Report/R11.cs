@@ -147,14 +147,19 @@ with cte as (
             ,scrapqty = Round(dbo.GetUnitQty(p.StockUnit, p.POUnit, sum(sd.Qty)), 2)
             ,location = dbo.Getlocation(fi.ukey)
             ,s.IssueDate
+			,o.StyleID
+			,o.OrderTypeID
+			,o.Category 
+			,ps.SuppID
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
 inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = sd.FromPOID and p.seq1 = sd.FromSeq1 and p.seq2 = sd.FromSeq2
 left join dbo.FtyInventory Fi on sd.FromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
     and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype
+left join PO_Supp ps on ps.id = p.id and ps. SEQ1 = p.SEQ1
 where s.Status = 'Confirmed' 
-" );
+");
 
             #region --- 條件組合  ---
             if (!MyUtility.Check.Empty(stocktype))
@@ -260,7 +265,7 @@ where s.Status = 'Confirmed'
             }
             #endregion
 
-            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID, o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey,p.ColorID, p.SizeSpec)");
+            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID, o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey,p.ColorID, p.SizeSpec,o.StyleID,o.OrderTypeID, o.Category,ps.SuppID)");
 
             // List & Summary 各撈自己需要的欄位
             if (this.radioSummary.Checked)
@@ -272,6 +277,17 @@ select  t.orderid
         ,t.seq2
         ,t.Refno
         ,t.description
+		,t.StyleID
+		,t.OrderTypeID 
+		,Category = case when t.Category ='B' then 'Bulk'
+					     when t.Category ='S' then 'Sample'
+					     when t.Category ='M' then 'Material'
+					     when t.Category ='O' then 'Other'
+					     when t.Category ='G' then 'Garment'
+					     when t.Category ='T' then 'SMLT'
+					end
+		,t.SuppID
+		,(select AbbEN from Supp where id = t.SuppID)
         ,t.fabrictype
         ,t.weaventype
         ,t.ColorID
@@ -281,6 +297,7 @@ select  t.orderid
         ,t.BrandID
         ,t.SeasonID
         ,t.POUnit
+		,CurrencyID         
         ,unitprice
         ,t.Qty
         ,t.unitprice*t.Qty
@@ -290,7 +307,7 @@ select  t.orderid
         ,t.unitprice*sum(t.scrapqty)
         ,t.IssueDate
 from cte t
-group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate,t.ColorID,t.SizeSpec"));
+group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate,t.ColorID,t.SizeSpec,t.StyleID,t.OrderTypeID, t.Category,t.SuppID,CurrencyID"));
                 #endregion
             }
             else
@@ -302,6 +319,17 @@ select  t.orderid
         ,t.seq2
         ,t.roll
         ,t.dyelot
+		,t.StyleID
+		,t.OrderTypeID 
+		,Category = case when t.Category ='B' then 'Bulk'
+					     when t.Category ='S' then 'Sample'
+					     when t.Category ='M' then 'Material'
+					     when t.Category ='O' then 'Other'
+					     when t.Category ='G' then 'Garment'
+					     when t.Category ='T' then 'SMLT'
+					end
+		,t.SuppID
+		,(select AbbEN from Supp where id = t.SuppID)
         ,t.description
         ,t.Refno
         ,t.fabrictype
@@ -312,6 +340,7 @@ select  t.orderid
         ,t.BrandID
         ,t.SeasonID
         ,t.pounit
+		,CurrencyID 
         ,unitprice
         ,t.scrapqty
         ,t.unitprice*t.scrapqty
