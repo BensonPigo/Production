@@ -4,7 +4,7 @@
     [ThreadCombID]                 VARCHAR (10)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_ThreadCombID] DEFAULT ('') NULL,
     [ThreadRequisition_DetailUkey] BIGINT         CONSTRAINT [DF_ThreadRequisition_Detail_Cons_ThreadRequisition_DetailUkey] DEFAULT ('') NOT NULL,
     [Operationid]                  VARCHAR (20)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_Operationid] DEFAULT ('') NULL,
-    [SeamLength]                   NUMERIC (6, 2) CONSTRAINT [DF_ThreadRequisition_Detail_Cons_SeamLength] DEFAULT ((0)) NULL,
+    [SeamLength]                   NUMERIC (12, 2) CONSTRAINT [DF_ThreadRequisition_Detail_Cons_SeamLength] DEFAULT ((0)) NULL,
     [SEQ]                          VARCHAR (2)    CONSTRAINT [DF_ThreadRequisition_Detail_Cons_SEQ] DEFAULT ('') NULL,
     [ThreadLocationID]             VARCHAR (20)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_ThreadLocationID] DEFAULT ('') NULL,
     [UseRatio]                     VARCHAR (15)   CONSTRAINT [DF_ThreadRequisition_Detail_Cons_UseRatio] DEFAULT ('') NULL,
