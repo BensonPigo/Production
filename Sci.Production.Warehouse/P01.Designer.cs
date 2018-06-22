@@ -176,6 +176,7 @@
             this.btnCloseMTL = new Sci.Win.UI.Button();
             this.btnMeterialStatus = new Sci.Win.UI.Button();
             this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
+            this.btnReCalculate = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -191,6 +192,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnReCalculate);
             this.detailcont.Controls.Add(this.btnMeterialStatus_Local);
             this.detailcont.Controls.Add(this.btnMeterialStatus);
             this.detailcont.Controls.Add(this.btnCloseMTL);
@@ -1816,6 +1818,17 @@
             this.btnMeterialStatus_Local.UseVisualStyleBackColor = true;
             this.btnMeterialStatus_Local.Click += new System.EventHandler(this.btnMeterialStatus_Local_Click);
             // 
+            // btnReCalculate
+            // 
+            this.btnReCalculate.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnReCalculate.Location = new System.Drawing.Point(406, 630);
+            this.btnReCalculate.Name = "btnReCalculate";
+            this.btnReCalculate.Size = new System.Drawing.Size(183, 27);
+            this.btnReCalculate.TabIndex = 188;
+            this.btnReCalculate.Text = "Material Re-Calculate";
+            this.btnReCalculate.UseVisualStyleBackColor = true;
+            this.btnReCalculate.Click += new System.EventHandler(this.btnReCalculate_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 721);
@@ -1993,5 +2006,6 @@
         private Win.UI.Button btnMeterialStatus_Local;
         private Win.UI.Button btnMeterialStatus;
         private Win.UI.DisplayBox displaySPNo;
+        private Win.UI.Button btnReCalculate;
     }
 }
