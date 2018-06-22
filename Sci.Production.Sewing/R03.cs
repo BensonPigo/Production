@@ -27,7 +27,6 @@ namespace Sci.Production.Sewing
         private string brand;
         private string mDivision;
         private string factory;
-        private string chx;
         private string style;
         private string category;
         private DataTable Factory;
@@ -58,8 +57,6 @@ namespace Sci.Production.Sewing
             this.comboFactory.Text = Sci.Env.User.Factory;
             this.comboDropDownListCategory.SelectedIndex = 0;
 
-            MyUtility.Tool.SetupCombox(this.comboLocal, 1, 1, "Exclude,Include");
-            this.comboLocal.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -81,7 +78,6 @@ namespace Sci.Production.Sewing
             this.brand = this.txtbrand.Text;
             this.mDivision = this.comboM.Text;
             this.factory = this.comboFactory.Text;
-            this.chx = this.comboLocal.Text;
             this.style = this.txtstyle.Text;
             this.category = this.comboDropDownListCategory.SelectedValue.ToString();
             return base.ValidateInput();
@@ -128,13 +124,10 @@ with tmp1stData as (
 --                                                  and sl.Location = sod.ComboType
     where   1=1
             and so.Shift <> 'O'
-            and o.Category in ({0})",
+            and o.Category in ({0})
+            --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
+            and ((o.LocalOrder = 1 and o.SubconInSisterFty = 1) or (o.LocalOrder = 0 and o.SubconInSisterFty = 0))",
                 this.category));
-
-            if (this.chx == "Exclude")
-            {
-                sqlCmd.Append(" and o.LocalOrder = 0 ");
-            }
 
             if (!MyUtility.Check.Empty(this.output1))
             {
@@ -200,7 +193,7 @@ with tmp1stData as (
 		   , OrderId
 		   , ComboType
            , ActManPower= Sum(Round(ActManPower,2))
-		   , WorkHour = sum(Round(WorkHour,2))
+		   , WorkHour = sum(Round(WorkHour,3))
 		   , QAQty = sum(QAQty)
 		   , SCategory
 		   , LocalOrder

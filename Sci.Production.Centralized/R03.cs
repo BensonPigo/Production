@@ -35,8 +35,7 @@ namespace Sci.Production.Centralized
         private string gstrMRTeam = string.Empty;
 
         private string gstrCategory = string.Empty;
-
-        private string chx = string.Empty;
+        
         private System.Data.DataTable gdtData1o;
         private System.Data.DataTable gdtData2o;
         private System.Data.DataTable gdtData3o;
@@ -75,9 +74,6 @@ namespace Sci.Production.Centralized
             this.InitializeComponent();
             this.EditMode = true;
             this.print.Visible = false;
-
-            MyUtility.Tool.SetupCombox(this.comboLocal, 1, 1, "Exclude,Include");
-            this.comboLocal.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -111,7 +107,6 @@ namespace Sci.Production.Centralized
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.chx = this.comboLocal.Text;
             this.gstrCategory = this.comboDropDownListCategory.SelectedValue.ToString();
             return base.ValidateInput();
         }
@@ -190,6 +185,8 @@ Where SewingOutput_Detail.OrderID = Orders.ID
 And SewingOutput.ID = SewingOutput_Detail.ID And SewingOutput.Shift <> 'O'  
 And  Orders.BrandID = Brand.ID AND Orders.FactoryID  = Factory.ID AND Orders.CdCodeID = CDCode.ID AND Orders.StyleUkey  = Style.Ukey 
 and Factory.IsProduceFty = '1'
+--排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
+and ((Orders.LocalOrder = 1 and Orders.SubconInSisterFty = 1) or (Orders.LocalOrder = 0 and Orders.SubconInSisterFty = 0))
 ";
                 if (this.dateRange1.Value1.HasValue)
                 {
@@ -249,11 +246,6 @@ and Factory.IsProduceFty = '1'
                 if (this.gstrCategory != string.Empty)
                 {
                     strSQL += string.Format(" AND Orders.Category in ({0})", this.gstrCategory);
-                }
-
-                if (this.chx == "Exclude")
-                {
-                    strSQL += " and Orders.LocalOrder = 0 ";
                 }
 
                 if (this.txtCountry1.TextBox1.Text != string.Empty)

@@ -9,6 +9,8 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Linq;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Sewing
 {
@@ -24,15 +26,17 @@ namespace Sci.Production.Sewing
         private string mDivision;
         private DateTime? date1;
         private DateTime? date2;
-        private int excludeHolday;
-        private int excludeSubconin;
         private int reportType;
         private int orderby;
         private DataTable SewOutPutData;
         private DataTable printData;
         private DataTable excludeInOutTotal;
+        private DataTable NonSisterInTotal;
+        private DataTable SisterInTotal;
         private DataTable cpuFactor;
         private DataTable subprocessData;
+        private DataTable subprocessSubconInData;
+        private DataTable subprocessSubconOutData;
         private DataTable subconData;
         private DataTable vphData;
 
@@ -55,13 +59,9 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
 
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            MyUtility.Tool.SetupCombox(this.comboHoliday, 1, 1, "Included,Excluded");
-            MyUtility.Tool.SetupCombox(this.comboSubconIn, 1, 1, "Included,Excluded");
             MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "By Date,By Sewing Line");
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
-            this.comboHoliday.SelectedIndex = 0;
-            this.comboSubconIn.SelectedIndex = 0;
             this.comboReportType.SelectedIndex = 0;
             this.comboFactory.Text = Sci.Env.User.Factory;
             this.comboOrderBy.SelectedIndex = 0;
@@ -133,18 +133,6 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 return false;
             }
 
-            if (this.comboHoliday.SelectedIndex == -1)
-            {
-                MyUtility.Msg.WarningBox("Holiday can't empty!!");
-                return false;
-            }
-
-            if (this.comboSubconIn.SelectedIndex == -1)
-            {
-                MyUtility.Msg.WarningBox("Subcon-in can't empty!!");
-                return false;
-            }
-
             if (this.comboReportType.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Report type can't empty!!");
@@ -172,8 +160,6 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             this.line2 = this.txtSewingLineEnd.Text;
             this.factory = this.comboFactory.Text;
             this.mDivision = this.comboM.Text;
-            this.excludeHolday = this.comboHoliday.SelectedIndex;
-            this.excludeSubconin = this.comboSubconIn.SelectedIndex;
             this.reportType = this.comboReportType.SelectedIndex;
             this.orderby = this.comboOrderBy.SelectedIndex;
             return base.ValidateInput();
@@ -211,11 +197,14 @@ select  s.OutputDate
 		, [MockupStyle] = isnull(mo.StyleID,'')
         , [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100
 		, System.StdTMS
+        , o.SubconInSisterFty
+        , [SubconOutFty] = iif(sf.id is null,'Other',s.SubconOutFty)
 INTO #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+left join SCIFty sf WITH (NOLOCK) on sf.ID = s.SubconOutFty
 --left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --											 and sl.Location = sd.ComboType
 left join factory f WITH (NOLOCK) on f.id=s.FactoryID
@@ -256,7 +245,7 @@ select OutputDate,Category
 	   , Team
 	   , OrderId
 	   , ComboType
-	   , WorkHour = sum(Round(WorkHour,2))
+	   , WorkHour = sum(Round(WorkHour,3))
 	   , QAQty = sum(QAQty)
 	   , InlineQty = sum(InlineQty)
 	   , OrderCategory
@@ -273,12 +262,14 @@ select OutputDate,Category
 	   , Rate
 	   , StdTMS
 	   , IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
+       , SubconInSisterFty
+       , [SubconOutFty] = isnull(SubconOutFty,'')
 INTO #tmpSewingGroup
 from #tmpSewingDetail
 group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
 		 , OrderCategory, LocalOrder, FactoryID, OrderProgram, MockupProgram
 		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
-		 , MockupStyle, Rate, StdTMS
+		 , MockupStyle, Rate, StdTMS,SubconInSisterFty,isnull(SubconOutFty,'')
 
 select t.*
 	   , isnull(w.Holiday, 0) as Holiday
@@ -289,20 +280,12 @@ left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID
 									  and w.Date = t.OutputDate 
 									  and w.SewingLineID = t.SewingLineID
 where 1 = 1");
-            if (this.excludeSubconin == 1)
-            {
-                sqlCmd.Append(" and t.LastShift <> 'I'");
-            }
 
             sqlCmd.Append(@"
 select * 
 into #tmp2ndFilter
 from #tmp1stFilter t
 where 1 = 1");
-            if (this.excludeHolday == 1)
-            {
-                sqlCmd.Append(" and Holiday = 0");
-            }
 
             sqlCmd.Append(@"
 select OutputDate
@@ -328,6 +311,8 @@ select OutputDate
 	   , LastShift
 	   , ComboType
 	   , FactoryID
+       , SubconInSisterFty
+       , SubconOutFty
 from #tmp2ndFilter");
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.SewOutPutData);
@@ -566,7 +551,7 @@ order by {0}",
                 #region 組SQL
                 failResult = MyUtility.Tool.ProcessWithDatatable(
                     this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
+                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
                     string.Format(@"
 ;with tmpQty as (
 	select StdTMS
@@ -575,7 +560,9 @@ order by {0}",
 		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
 	from #tmp
 	where LastShift <> 'O' 
-		  and LastShift <> 'I'
+          --排除Subcon in non sister資料
+          and LastShift <> 'I'
+		  or (LastShift = 'I' and SubconInSisterFty = 1)
 	group by StdTMS
 ),
 tmpTtlManPower as (
@@ -589,7 +576,9 @@ tmpTtlManPower as (
 			   , ManPower = Max(ActManPower) 
 		from #tmp
 		where LastShift <> 'O' 
-			  and LastShift <> 'I'
+			  --排除Subcon in non sister資料
+              and LastShift <> 'I'
+		      or (LastShift = 'I' and SubconInSisterFty = 1)
 		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
 	) a
 )
@@ -597,7 +586,6 @@ select q.QAQty
 	   , q.TotalCPU
 	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
 	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
-	   , mp.ManPower
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
@@ -612,7 +600,83 @@ left join tmpTtlManPower mp on 1 = 1"),
             }
             catch (Exception ex)
             {
-                failResult = new DualResult(false, "Query total data fail\r\n" + ex.ToString());
+                failResult = new DualResult(false, "Total Exclude Subcon-In & Out total data fail\r\n" + ex.ToString());
+                return failResult;
+            }
+            #endregion
+
+            #region 整理non Sister SubCon In
+            try
+            {
+                #region 組SQL
+                failResult = MyUtility.Tool.ProcessWithDatatable(
+                    this.SewOutPutData,
+                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
+                    string.Format(@"
+;with tmpQty as (
+	select StdTMS
+		   , QAQty = Sum(QAQty)
+		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+	from #tmp
+	where LastShift = 'I' and SubconInSisterFty = 0
+	group by StdTMS
+)
+select q.QAQty
+	   , q.TotalCPU
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , q.ManHour
+	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
+from tmpQty q"),
+                    out this.NonSisterInTotal);
+
+                if (failResult == false)
+                {
+                    return failResult;
+                }
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                failResult = new DualResult(false, "Non Sister SubCon In data fail\r\n" + ex.ToString());
+                return failResult;
+            }
+            #endregion
+
+            #region 整理Sister SubCon In
+            try
+            {
+                #region 組SQL
+                failResult = MyUtility.Tool.ProcessWithDatatable(
+                    this.SewOutPutData,
+                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
+                    string.Format(@"
+;with tmpQty as (
+	select StdTMS
+		   , QAQty = Sum(QAQty)
+		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
+		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+	from #tmp
+	where LastShift = 'I' and SubconInSisterFty = 1
+	group by StdTMS
+)
+select q.QAQty
+	   , q.TotalCPU
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , q.ManHour
+	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
+from tmpQty q"),
+                    out this.SisterInTotal);
+
+                if (failResult == false)
+                {
+                    return failResult;
+                }
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                failResult = new DualResult(false, "Sister SubCon In data fail\r\n" + ex.ToString());
                 return failResult;
             }
             #endregion
@@ -678,7 +742,7 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
                 {
                     failResult = MyUtility.Tool.ProcessWithDatatable(
                         this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift",
+                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty",
                         string.Format(@"
 ;with tmpArtwork as(
 	Select ID
@@ -699,8 +763,10 @@ tmpAllSubprocess as(
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
 --	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --												 and sl.Location = a.ComboType
-	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
-			and ot.Price > 0 		    
+	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+            --排除 subcon in non sister的數值
+          and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInSisterFty <> 0 ))           
+          and ot.Price > 0 		    
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType)
 )
 select ArtworkTypeID = t1.ID
@@ -725,6 +791,118 @@ order by t1.ID"),
             }
             #endregion
 
+            #region 整理Subprocess by Company Subcon-In資料 Orders.program
+            if (this.printData.Rows.Count > 0)
+            {
+                try
+                {
+                    failResult = MyUtility.Tool.ProcessWithDatatable(
+                        this.SewOutPutData,
+                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty,Program",
+                        string.Format(@"
+;with tmpArtwork as(
+	Select ID
+		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   									, iif(ProductionUnit = 'QTY', 'AMT'
+		   																, ''))
+	from ArtworkType WITH (NOLOCK)
+	where Classify in ('I','A','P') 
+		  and IsTtlTMS = 0
+),
+tmpAllSubprocess as(
+	select ot.ArtworkTypeID
+		   , a.OrderId
+		   , a.ComboType
+           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), 2)
+           , a.Program 
+	from #tmp a
+	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
+--	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
+--												 and sl.Location = a.ComboType
+	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+			and ot.Price > 0 		    
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType),a.Program
+)
+select ArtworkTypeID = t1.ID
+	   , Price = isnull(sum(Price), 0)
+	   , rs
+       , [Company] = t2.Program
+from tmpArtwork t1
+left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
+group by t1.ID, rs,t2.Program having isnull(sum(Price), 0) > 0
+order by t1.ID"),
+                        out this.subprocessSubconInData);
+
+                    if (failResult == false)
+                    {
+                        return failResult;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    failResult = new DualResult(false, "Query sub process data fail\r\n" + ex.ToString());
+                    return failResult;
+                }
+            }
+            #endregion
+
+            #region 整理Subprocess by Company Subcon-Out資料 SewingOutput.SubconOutFty
+            if (this.printData.Rows.Count > 0)
+            {
+                try
+                {
+                    failResult = MyUtility.Tool.ProcessWithDatatable(
+                        this.SewOutPutData,
+                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty,SubconOutFty",
+                        string.Format(@"
+;with tmpArtwork as(
+	Select ID
+		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   									, iif(ProductionUnit = 'QTY', 'AMT'
+		   																, ''))
+	from ArtworkType WITH (NOLOCK)
+	where Classify in ('I','A','P') 
+		  and IsTtlTMS = 0
+),
+tmpAllSubprocess as(
+	select ot.ArtworkTypeID
+		   , a.OrderId
+		   , a.ComboType
+           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), 2)
+           , a.SubconOutFty 
+	from #tmp a
+	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
+	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
+--	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
+--												 and sl.Location = a.ComboType
+	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+			and ot.Price > 0 		    
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType),a.SubconOutFty
+)
+select ArtworkTypeID = t1.ID
+	   , Price = isnull(sum(Price), 0)
+	   , rs
+       , [Company] = t2.SubconOutFty
+from tmpArtwork t1
+left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
+group by t1.ID, rs,t2.SubconOutFty having isnull(sum(Price), 0) > 0
+order by t1.ID"),
+                        out this.subprocessSubconOutData);
+
+                    if (failResult == false)
+                    {
+                        return failResult;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    failResult = new DualResult(false, "Query sub process data fail\r\n" + ex.ToString());
+                    return failResult;
+                }
+            }
+            #endregion
+
             #region 整理Subcon資料
             if (this.printData.Rows.Count > 0)
             {
@@ -732,31 +910,29 @@ order by t1.ID"),
                 {
                     failResult = MyUtility.Tool.ProcessWithDatatable(
                         this.SewOutPutData,
-                        "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID",
+                        "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID,SubconOutFty",
                         string.Format(@"
 ;with tmpSubconIn as (
 	Select 'I' as Type
 		   , Company = Program 
 		   , TtlCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
-		   , SewingLineID = ''
 	from #tmp
 	where LastShift = 'I'
 	group by Program
 ),
 tmpSubconOut as (
     Select Type = 'O'
-		   , Company = s.Description
+		   , Company = t.SubconOutFty
 		   , TtlCPU = sum(ROUND(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate),2))
-		   , t.SewingLineID
 	from #tmp t
-	left join SewingLine s WITH (NOLOCK) on s.ID = t.SewingLineID 
-											and s.FactoryID = t.FactoryID
 	where LastShift = 'O'
-	group by s.Description, t.SewingLineID
+	group by t.SubconOutFty
 )
+select * from (
 select * from tmpSubconIn
 union all
-select * from tmpSubconOut"),
+select * from tmpSubconOut ) as a 
+order by Type,iif(Company = 'Other','Z','A'),Company"),
                         out this.subconData);
 
                     if (failResult == false)
@@ -822,6 +998,8 @@ where f.Junk = 0",
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            Microsoft.Office.Interop.Excel.Range rngToInsert;
+            Microsoft.Office.Interop.Excel.Range rngBorders;
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
 
@@ -842,16 +1020,13 @@ where f.Junk = 0",
             // excel.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            worksheet.Cells[2, 1] = string.Format("Fm:{0}", this.factoryName);
+            worksheet.Cells[2, 1] = string.Format("{0}", this.factoryName);
             worksheet.Cells[3, 1] = string.Format(
-                "{0} Monthly CMP Report, MTH:{1} (Excluded Subcon-Out,{2}{3}) {4}",
+                "All Factory Monthly CMP Report, MTH:{1}",
                 MyUtility.Check.Empty(this.factory) ? "All Factory" : this.factory,
-                Convert.ToDateTime(this.date1).ToString("yyyy/MM"),
-                this.excludeHolday == 0 ? "Included Holiday" : "Excluded Holiday",
-                this.excludeSubconin == 0 ? ", Subcon-In" : string.Empty,
-                this.reportType == 0 ? string.Empty : "By Sewing Line");
+                Convert.ToDateTime(this.date1).ToString("yyyy/MM"));
 
-            worksheet.Cells[4, 3] = this.excludeSubconin == 0 ? "Total CPU Included Subcon-In" : "Total CPU";
+            worksheet.Cells[4, 3] = "Total CPU Included Subcon-In";
 
             int insertRow = 5;
             object[,] objArray = new object[1, 11];
@@ -872,7 +1047,7 @@ where f.Junk = 0",
                 insertRow++;
 
                 // 插入一筆Record
-                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToInsert);
             }
@@ -891,24 +1066,41 @@ where f.Junk = 0",
             worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)", insertRow);
             insertRow++;
+
+            // Excluded non sister Subcon In
             worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["QAQty"]);
             worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["TotalCPU"]);
             worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["CPUSewer"]);
             worksheet.Cells[insertRow, 7] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["AvgWorkHour"]);
-            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["ManPower"]);
             worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["ManHour"]);
             worksheet.Cells[insertRow, 10] = (this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
+            insertRow++;
+
+            // non sister Subcon In
+            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["QAQty"]);
+            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["TotalCPU"]);
+            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["CPUSewer"]);
+            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["ManHour"]);
+            worksheet.Cells[insertRow, 10] = (this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
+            insertRow++;
+
+            // sister Subcon In
+            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["QAQty"]);
+            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["TotalCPU"]);
+            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["CPUSewer"]);
+            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["ManHour"]);
+            worksheet.Cells[insertRow, 10] = (this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
 
             // CPU Factor
             insertRow = insertRow + 2;
-            worksheet.Cells[insertRow, 3] = this.excludeSubconin == 0 ? "Total CPU Included Subcon-In" : "Total CPU";
+            worksheet.Cells[insertRow, 3] = "Total CPU Included Subcon-In";
             insertRow++;
             if (this.cpuFactor.Rows.Count > 2)
             {
                 // 插入Record
                 for (int i = 0; i < this.cpuFactor.Rows.Count - 2; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
+                    rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
                 }
@@ -924,7 +1116,7 @@ where f.Junk = 0",
 
                 worksheet.Range[string.Format("A{0}:D{0}", insertRow)].Value2 = objArray;
                 insertRow++;
-                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                 rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToInsert);
             }
@@ -958,7 +1150,7 @@ where f.Junk = 0",
                     insertRow++;
 
                     // 插入一筆Record
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                    rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
                 }
@@ -998,6 +1190,7 @@ where LastShift <> 'O'";
             worksheet.Cells[insertRow, 11] = intWorkDay;
 
             // Subcon
+            int RevenueStartRow = 0;
             insertRow = insertRow + 2;
             int insertSubconIn = 0, insertSubconOut = 0;
             objArray = new object[1, 3];
@@ -1015,9 +1208,60 @@ where LastShift <> 'O'";
                         worksheet.Range[string.Format("A{0}:C{0}", insertRow)].Value2 = objArray;
 
                         // 插入一筆Record
-                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
+                        rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         Marshal.ReleaseComObject(rngToInsert);
+
+                        #region Sub-Process Total Revenue for Company Subcon-In
+                        insertRec = 0;
+                        if (this.subprocessSubconInData.AsEnumerable().Where(s => s["Company"].Equals(dr["Company"])).Any())
+                        {
+                            insertRow++;
+                            RevenueStartRow = insertRow;
+
+                            // title
+                            worksheet.Cells[insertRow, 1] = "Sub-Process Total Revenue";
+                            worksheet.Cells[insertRow, 9] = "(Unit:US$)";
+
+                            rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
+                            rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                            Marshal.ReleaseComObject(rngToInsert);
+
+                            insertRow++;
+                            foreach (DataRow dr_sub in this.subprocessSubconInData.Select($" Company = '{dr["Company"]}'"))
+                            {
+                                insertRec++;
+                                if (insertRec % 2 == 1)
+                                {
+                                    worksheet.Cells[insertRow, 2] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr_sub["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr_sub["rs"]));
+                                    worksheet.Cells[insertRow, 4] = MyUtility.Convert.GetString(dr_sub["Price"]);
+                                }
+                                else
+                                {
+                                    worksheet.Cells[insertRow, 6] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr_sub["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr_sub["rs"]));
+                                    worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(dr_sub["Price"]);
+                                    insertRow++;
+
+                                    // 插入一筆Record
+                                    rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                                    Marshal.ReleaseComObject(rngToInsert);
+                                }
+                            }
+
+                            // 畫框線
+                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{1}", MyUtility.Convert.GetString(RevenueStartRow), MyUtility.Convert.GetString(insertRow)), Type.Missing);
+                            rngBorders.BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());     // 給單元格加邊框
+                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(RevenueStartRow)), Type.Missing);
+                            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
+                            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+
+                            // 插入一筆Record
+                            rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow+1)), Type.Missing).EntireRow;
+                            rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                            Marshal.ReleaseComObject(rngToInsert);
+                        }
+                        #endregion
                     }
                     else
                     {
@@ -1025,26 +1269,70 @@ where LastShift <> 'O'";
                         {
                             if (insertSubconIn == 0)
                             {
-                                // 刪除資料
-                                this.DeleteExcelRow(5, insertRow, excel);
+                                this.DeleteExcelRow(2, insertRow, excel);
+                                insertRow = insertRow + 3;
                             }
                             else
                             {
-                                // 刪除資料
-                                this.DeleteExcelRow(2, insertRow + 1, excel);
-                                insertRow = insertRow + 3;
+                                insertRow = insertRow + 5;
                             }
                         }
 
                         insertSubconOut = 1;
                         insertRow++;
-                        objArray[0, 0] = dr["Company"];
+                        objArray[0, 0] = dr["Company"].Equals("Other") ? "SUBCON-OUT TO OTHER COMPANIES" : dr["Company"];
                         objArray[0, 1] = string.Empty;
                         objArray[0, 2] = dr["TtlCPU"];
                         worksheet.Range[string.Format("A{0}:C{0}", insertRow)].Value2 = objArray;
 
+                        #region Sub-Process Total Revenue for Company Subcon-OUT
+                        insertRec = 0;
+                        if (this.subprocessSubconOutData.AsEnumerable().Where(s => s["Company"].Equals(dr["Company"])).Any())
+                        {
+                            insertRow++;
+                            RevenueStartRow = insertRow;
+
+                            // title
+                            worksheet.Cells[insertRow, 1] = "Sub-Process Total Revenue";
+                            worksheet.Cells[insertRow, 9] = "(Unit:US$)";
+
+                            rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
+                            rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                            Marshal.ReleaseComObject(rngToInsert);
+
+                            insertRow++;
+                            foreach (DataRow dr_sub in this.subprocessSubconOutData.Select($" Company = '{dr["Company"]}'"))
+                            {
+                                insertRec++;
+                                if (insertRec % 2 == 1)
+                                {
+                                    worksheet.Cells[insertRow, 2] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr_sub["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr_sub["rs"]));
+                                    worksheet.Cells[insertRow, 4] = MyUtility.Convert.GetString(dr_sub["Price"]);
+                                }
+                                else
+                                {
+                                    worksheet.Cells[insertRow, 6] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr_sub["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr_sub["rs"]));
+                                    worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetString(dr_sub["Price"]);
+                                    insertRow++;
+
+                                    // 插入一筆Record
+                                    rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                                    Marshal.ReleaseComObject(rngToInsert);
+                                }
+                            }
+
+                            // 畫框線
+                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{1}", MyUtility.Convert.GetString(RevenueStartRow), MyUtility.Convert.GetString(insertRow)), Type.Missing);
+                            rngBorders.BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick, Excel.XlColorIndex.xlColorIndexAutomatic, System.Drawing.Color.Black.ToArgb());     // 給單元格加邊框
+                            rngBorders = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(RevenueStartRow)), Type.Missing);
+                            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
+                            rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
+                        }
+                        #endregion
+
                         // 插入一筆Record
-                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
+                        rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                         Marshal.ReleaseComObject(rngToInsert);
                     }
@@ -1053,14 +1341,7 @@ where LastShift <> 'O'";
                 if (insertSubconOut == 0)
                 {
                     // 刪除資料
-                    this.DeleteExcelRow(2, insertRow + 1, excel);
-                    insertRow = insertRow + 3;
-                    this.DeleteExcelRow(4, insertRow, excel);
-                }
-                else
-                {
-                    // 刪除資料
-                    this.DeleteExcelRow(2, insertRow + 1, excel);
+                    this.DeleteExcelRow(2, insertRow + 5, excel);
                 }
             }
             else
