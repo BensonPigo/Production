@@ -3,7 +3,7 @@
     [Operationid]         VARCHAR (20) CONSTRAINT [DF_ThreadColorComb_operation_Operationid] DEFAULT ('') NOT NULL,
     [ComboType] VARCHAR(1) NOT NULL DEFAULT (''), 
     [Seq] VARCHAR(4) NOT NULL DEFAULT (''), 
-    [Frequency] NUMERIC(4, 2) NULL DEFAULT ((0)), 
+    [Frequency] NUMERIC(7, 2) NULL DEFAULT ((0)), 
     CONSTRAINT [PK_ThreadColorComb_operation] PRIMARY KEY CLUSTERED ([Id] ASC, [Operationid] ASC,[ComboType] ASC ,[Seq] ASC)
 );
 

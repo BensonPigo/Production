@@ -39,6 +39,7 @@ namespace Sci.Production.Quality
             txtuserApprover.TextBox1.ReadOnly = true;
             maindr = mainDr;
             this.textID.Text = keyvalue1;
+            QueryHeader();
         }
 
         protected override void OnEditModeChanged()
@@ -48,6 +49,12 @@ namespace Sci.Production.Quality
         }
 
         protected override DualResult OnRequery()
+        {
+            QueryHeader();
+            return base.OnRequery();
+        }
+
+        private void QueryHeader()
         {
             #region Encode/Approve Enable
             button_enable();
@@ -72,11 +79,11 @@ namespace Sci.Production.Quality
             string Receiving_cmd = string.Format("select a.exportid,a.WhseArrival ,b.Refno from Receiving a WITH (NOLOCK) inner join FIR b WITH (NOLOCK) on a.Id=b.Receivingid where b.id='{0}'", maindr["id"]);
             DataRow rec_dr;
             if (MyUtility.Check.Seek(Receiving_cmd, out rec_dr))
-            {               
+            {
                 displayBrandRefno.Text = rec_dr["Refno"].ToString();
             }
             else
-            {  
+            {
                 displayBrandRefno.Text = "";
             }
             string po_cmd = string.Format("Select * from po_supp WITH (NOLOCK) where id='{0}' and seq1 = '{1}'", maindr["POID"], maindr["seq1"]);
@@ -93,14 +100,14 @@ namespace Sci.Production.Quality
             string po_supp_detail_cmd = string.Format("select SCIRefno,colorid from PO_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1='{1}' and seq2='{2}'", maindr["POID"], maindr["seq1"], maindr["seq2"]);
             DataRow po_supp_detail_dr;
             if (MyUtility.Check.Seek(po_supp_detail_cmd, out po_supp_detail_dr))
-            {               
+            {
                 displayColor.Text = po_supp_detail_dr["colorid"].ToString();
             }
             else
             {
                 displayColor.Text = "";
             }
-            displaySCIRefno.Text = maindr["SCIRefno"].ToString();               
+            displaySCIRefno.Text = maindr["SCIRefno"].ToString();
             displayApprover.Text = maindr["ApproveDate"].ToString();
             displayArriveQty.Text = maindr["arriveQty"].ToString();
             dateArriveWHDate.Value = MyUtility.Convert.GetDate(maindr["whseArrival"]);
@@ -113,12 +120,9 @@ namespace Sci.Production.Quality
             checkNonInspection.Value = maindr["nonphysical"].ToString();
             displayResult.Text = maindr["physical"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
-            
-            return base.OnRequery();
-            
         }
 
-        DataTable datas2;
+            DataTable datas2;
 
         protected override void OnRequeryPost(DataTable datas)
         {
@@ -270,8 +274,6 @@ where	WEAVETYPEID = '{0}'
 
         protected override bool OnGridSetup()
         {
-
-            
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings Ydscell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings TotalPointcell = new DataGridViewGeneratorNumericColumnSettings();
@@ -929,7 +931,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            ToExcel(false);
+            ToExcel(false);            
         }
 
         private bool ToExcel(bool isSendMail)
@@ -942,7 +944,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             {
                 if (dtBasic.Rows.Count < 1)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
+                    MessageBox.Show("Data not found!", "Warring!");
                     return false;
                 }
             }
@@ -953,7 +955,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             {
                 if (dt.Rows.Count < 1)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
+                    MessageBox.Show("Data not found!", "Warring!");
                 }
             }
             DataTable dt1;
@@ -963,7 +965,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             {
                 if (dt1.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
+                    MessageBox.Show("Data not found!", "Warring!");
                     return false;
                 }
             }
@@ -973,7 +975,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             {
                 if (dtSupvisor.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
+                    MessageBox.Show("Data not found!", "Warring!");
                     return false;
                 }
             }
@@ -983,13 +985,14 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             {
                 if (dtSumQty.Rows.Count <= 0)
                 {
-                    MyUtility.Msg.WarningBox("Data not found!");
+                    MessageBox.Show("Data not found!", "Warring!");
                     return false ;
                 }
             }
 
             #endregion
             int addline = 0;
+            DualResult dcResult;
             string strXltName = Sci.Env.Cfg.XltPathDir + "\\Quality_P01_Physical_Inspection_Report.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             excel.Visible = false;
@@ -998,7 +1001,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #region FabricDefect 基本資料
             int counts = dtBasic.Rows.Count;
             int int_X = 6;
-            int int_Y = 1;
+            int int_Y = 2;
             int int_z = 0;//判斷是否為第一次
 
             string typeColumn = "typeColumn";
@@ -1009,9 +1012,9 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 if (dtBasic.Rows[i]["type"].ToString() != typeColumn && dtBasic.Rows[i]["type"].ToString() != null)
                 {
                     int_X = 6;
-                    if (int_Y == 1 && int_z == 0) //first time
+                    if (int_Y == 2 && int_z == 0) //first time
                     {
-                        worksheet.Cells[6, int_Y] = "Code".ToString();
+                        worksheet.Cells[6, int_Y - 1] = "Code";
                         typeColumn = dtBasic.Rows[i]["type"].ToString();
                         worksheet.Cells[6, int_Y + 1] = typeColumn.ToString();
                         int_X++;
@@ -1020,13 +1023,20 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                     else
                     {
                         int_X++;
-                        int_Y = int_Y + 2;
+                        int_Y += 2;
                         worksheet.Cells[6, int_Y] = "Code".ToString();
                         typeColumn = dtBasic.Rows[i]["type"].ToString();
                         worksheet.Cells[6, int_Y + 1] = typeColumn.ToString();
                     }
                 }
-                worksheet.Cells[int_X, int_Y] = dtBasic.Rows[i]["id"].ToString();
+                if (int_Y==2)
+                {
+                    worksheet.Cells[int_X, int_Y - 1] = dtBasic.Rows[i]["id"].ToString();
+                }
+                else
+                {
+                    worksheet.Cells[int_X, int_Y] = dtBasic.Rows[i]["id"].ToString();
+                }                
                 worksheet.Cells[int_X, int_Y + 1] = dtBasic.Rows[i]["DescriptionEN"].ToString();
                 int_X++;
             }
@@ -1034,53 +1044,87 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #region FIR_Physical
             #region 表頭
 
-            excel.Cells[1, 2] = this.displaySP.Text + "-" + displaySEQ.Text;
-            excel.Cells[1, 4] = this.displayColor.Text;
-            excel.Cells[1, 6] = this.displayStyle.Text;
-            excel.Cells[1, 8] = dt1.Rows[0]["SeasonID"];
-            excel.Cells[1, 10] = dt1.Rows[0]["Inspector"];
-            excel.Cells[2, 2] = this.displaySCIRefno.Text;
-            excel.Cells[2, 4] = this.displayResult.Text;
-            excel.Cells[2, 6] = this.dateLastInspectionDate.Value;
-            excel.Cells[2, 8] = this.displayBrand.Text;
-            excel.Cells[2, 10] = dt1.Rows[0]["TotalInspYds"];
-            excel.Cells[3, 2] = this.displayBrandRefno.Text;
-            excel.Cells[3, 4] = this.txtsupplier.DisplayBox1.Text.ToString();
-            excel.Cells[3, 6] = this.displayWKNo.Text;
-            excel.Cells[3, 8] = dtSupvisor.Rows[0]["Supervisor"];
-            excel.Cells[4, 2] = this.dateArriveWHDate.Value;
+            excel.Cells[1, 3] = this.displaySP.Text + "-" + displaySEQ.Text;
+            excel.Cells[1, 5] = this.displayColor.Text;
+            excel.Cells[1, 7] = this.displayStyle.Text;
+            excel.Cells[1, 9] = dt1.Rows[0]["SeasonID"];
+            excel.Cells[1, 11] = dt1.Rows[0]["Inspector"];
+            excel.Cells[2, 3] = this.displaySCIRefno.Text;
+            excel.Cells[2, 5] = this.displayResult.Text;
+            excel.Cells[2, 7] = this.dateLastInspectionDate.Value;
+            excel.Cells[2, 9] = this.displayBrand.Text;
+            excel.Cells[2, 11] = dt1.Rows[0]["TotalInspYds"];
+            excel.Cells[3, 3] = this.displayBrandRefno.Text;
+            excel.Cells[3, 5] = this.txtsupplier.DisplayBox1.Text.ToString();
+            excel.Cells[3, 7] = this.displayWKNo.Text;
+            excel.Cells[3, 9] = dtSupvisor.Rows[0]["Supervisor"];
+            excel.Cells[4, 3] = this.dateArriveWHDate.Value;
 
 
 
 
-            excel.Cells[4, 4] = this.displayArriveQty.Text;
-            excel.Cells[4, 6] = dtSumQty.Rows[0]["TotalTicketYds"];//Inspected Qty
-            excel.Cells[4, 8] = dt1.Rows[0]["PhysicalEncode"].ToString() == "1" ? "Y" : "N";
+            excel.Cells[4, 5] = this.displayArriveQty.Text;
+            excel.Cells[4, 7] = dtSumQty.Rows[0]["TotalTicketYds"];//Inspected Qty
+            excel.Cells[4, 9] = dt1.Rows[0]["PhysicalEncode"].ToString() == "1" ? "Y" : "N";
 
 
             #endregion
 
-            DataTable dtGrid = (DataTable)gridbs.DataSource;
-            int gridCounts = grid.RowCount;
+            DataTable dtGrid;
+            int gridCounts = 0;
+            if (gridbs.DataSource == null || grid == null)
+            {
+                string sqlcmd = $@"select * from Production.dbo.FIR_Physical where id = {this.textID.Text}";
+                if (dcResult = DBProxy.Current.Select(string.Empty, sqlcmd, out dtGrid))
+                {
+                    gridCounts = dtGrid.Rows.Count;
+                }
+                dtGrid.ColumnsDecimalAdd("CutWidth");
+                dtGrid.Columns.Add("Name", typeof(string));
+                dtGrid.Columns.Add("POID", typeof(string));
+                dtGrid.Columns.Add("SEQ1", typeof(string));
+                dtGrid.Columns.Add("SEQ2", typeof(string));
+                foreach (DataRow dr in dtGrid.Rows)
+                {
+                    dr["CutWidth"] = MyUtility.GetValue.Lookup(string.Format(@"
+                                                                        select width
+                                                                        from Fabric 
+                                                                        inner join Fir on Fabric.SCIRefno = fir.SCIRefno
+                                                                        where Fir.ID = '{0}'", dr["id"]), null, null);
+                    dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
+                    dr["poid"] = maindr["poid"];
+                    dr["SEQ1"] = maindr["SEQ1"];
+                    dr["SEQ2"] = maindr["SEQ2"];
+                }
+
+            }
+            else
+            {
+                dtGrid = (DataTable)gridbs.DataSource;
+                gridCounts = grid.RowCount;
+            }
+            
             int rowcount = 0;
 
             for (int i = 0; i < gridCounts; i++)
-            {                
-                excel.Cells[14 + (i * 8) + addline, 1] = this.grid.Rows[rowcount].Cells["Roll"].Value.ToString() + " - " + this.grid.Rows[rowcount].Cells["Dyelot"].Value.ToString();
-                excel.Cells[14 + (i * 8) + addline, 2] = this.grid.Rows[rowcount].Cells["Ticketyds"].Value.ToString();
+            {
+
+                excel.Cells[14 + (i * 8) + addline, 1] = dtGrid.Rows[rowcount]["Roll"].ToString();
+                excel.Cells[14 + (i * 8) + addline, 2] = dtGrid.Rows[rowcount]["Dyelot"].ToString();
+                excel.Cells[14 + (i * 8) + addline, 3] = dtGrid.Rows[rowcount]["Ticketyds"].ToString();
                 // 指定欄位轉型
-                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[14 + (i * 8) + addline, 2];
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[14 + (i * 8) + addline, 3];
                 worksheet.get_Range(cell, cell).NumberFormat = "0.00";
 
-                excel.Cells[14 + (i * 8)+addline, 3] = this.grid.Rows[rowcount].Cells["Actualyds"].Value.ToString();
-                excel.Cells[14 + (i * 8)+addline, 4] = this.grid.Rows[rowcount].Cells["Cutwidth"].Value.ToString();
-                excel.Cells[14 + (i * 8)+addline, 5] = this.grid.Rows[rowcount].Cells["fullwidth"].Value.ToString();
-                excel.Cells[14 + (i * 8)+addline, 6] = this.grid.Rows[rowcount].Cells["actualwidth"].Value.ToString();
-                excel.Cells[14 + (i * 8)+addline, 7] = this.grid.Rows[rowcount].Cells["totalpoint"].Value.ToString();
-                excel.Cells[14 + (i * 8)+addline, 8] = this.grid.Rows[rowcount].Cells["pointRate"].Value.ToString();
-                excel.Cells[14 + (i * 8)+addline, 9] = this.grid.Rows[rowcount].Cells["Grade"].Value.ToString();
-                excel.Cells[14 + (i * 8)+addline, 10] = this.grid.Rows[rowcount].Cells["Result"].Value.ToString();
-                excel.Cells[14 + (i * 8) + addline, 11] = this.grid.Rows[rowcount].Cells["Remark"].Value.ToString();
+                excel.Cells[14 + (i * 8)+addline, 4] = dtGrid.Rows[rowcount]["Actualyds"].ToString();
+                excel.Cells[14 + (i * 8)+addline, 5] = dtGrid.Rows[rowcount]["Cutwidth"].ToString();
+                excel.Cells[14 + (i * 8)+addline, 6] = dtGrid.Rows[rowcount]["fullwidth"].ToString();
+                excel.Cells[14 + (i * 8)+addline, 7] = dtGrid.Rows[rowcount]["actualwidth"].ToString();
+                excel.Cells[14 + (i * 8)+addline, 8] = dtGrid.Rows[rowcount]["totalpoint"].ToString();
+                excel.Cells[14 + (i * 8)+addline, 9] = dtGrid.Rows[rowcount]["pointRate"].ToString();
+                excel.Cells[14 + (i * 8)+addline, 10] = dtGrid.Rows[rowcount]["Grade"].ToString();
+                excel.Cells[14 + (i * 8)+addline, 11] = dtGrid.Rows[rowcount]["Result"].ToString();
+                excel.Cells[14 + (i * 8) + addline, 12] = dtGrid.Rows[rowcount]["Remark"].ToString();
                 rowcount++;
 
 
@@ -1136,7 +1180,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 worksheet.Range[excel.Cells[17 + (i * 8) + addline, 1], excel.Cells[17 + (i * 8) + addline, 10]].Font.Bold = true;
                 #endregion
                 DataTable dtcombo;
-                DualResult dcResult;
+            
 
                 if (dcResult = DBProxy.Current.Select("Production", string.Format(@"
 select  a.ID
@@ -1175,7 +1219,7 @@ from FIR_Physical a WITH (NOLOCK)
 left join FIR_Shadebone b WITH (NOLOCK) on a.ID=b.ID and a.Roll=b.Roll
 left join FIR_Weight c WITH (NOLOCK) on a.ID=c.ID and a.Roll=c.Roll
 left join FIR_Continuity d WITH (NOLOCK) on a.id=d.ID and a.Roll=d.roll
-where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[rowcount-1].Cells["Roll"].Value.ToString()), out dtcombo))
+where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, dtGrid.Rows[rowcount-1]["Roll"].ToString()), out dtcombo))
                 {
                     if (dtcombo.Rows.Count < 1)
                     {
@@ -1248,7 +1292,5 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, this.grid.Rows[
             this.HideWaitMessage();
             return true;
         }
-
-       
     }
 }
