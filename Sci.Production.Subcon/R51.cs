@@ -75,12 +75,12 @@ namespace Sci.Production.Subcon
             #region SQL CMD
             string sqlCmd = string.Format(@"
 select	AP.ID
-       ,O.poid
+		,O.poid
 		, AP.FactoryId
 		, AP.Remark
 		, AP.Handle
 		, AP.CurrencyId
-		, Amount = Sum(sum(OQ.Qty)*OA.Cost) over(partition by AP.ID)
+		, Amount = Sum(APD.PoQty * OA.Cost) over(partition by AP.ID)
 		, AP.VatRate
 		, AP.Vat
 		, AP.AddName
@@ -99,11 +99,12 @@ select	AP.ID
 		, APD.ArtworkTypeID
 		, FirstCutDate = isnull(C.FirstCutDate,O.CutInLine)
 		, AP.Delivery
-		, OA.Article,QTY = sum(OQ.Qty) 
+		, OA.Article
+		, QTY = APD.PoQty
 		, UnitPrice = OA.Cost 
-		, Detail_Amount = sum(OQ.Qty)*OA.Cost		
-        , O.AddDate as OrderAdddate
-        , O.EditDate as OrderEditDate
+		, Detail_Amount = APD.PoQty * OA.Cost		
+		, O.AddDate as OrderAdddate
+		, O.EditDate as OrderEditDate
 From ArtworkPO AP
 Inner join ArtworkPO_Detail APD on AP.ID=APD.ID
 Inner join Orders O on APD.OrderID=O.ID
