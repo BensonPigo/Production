@@ -271,7 +271,7 @@ select OutputDate
 , MDivisionID
 , QAQty = sum(QAQty)
 , ActManPower= Sum(Round(ActManPower,2))
-, WorkHour = sum(Round(WorkHour,2))
+, WorkHour = sum(Round(WorkHour,3))
 into #stmp2		
 from #stmp
 group by OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID
