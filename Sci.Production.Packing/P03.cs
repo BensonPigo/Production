@@ -11,6 +11,7 @@ using Sci.Production.PublicPrg;
 using System.Transactions;
 using System.Linq;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
@@ -265,8 +266,11 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 this.gridicon.Remove.Enabled = true;
             }
 
-            this.datesciDelivery.Value = MyUtility.Convert.GetDate(this.DetailDatas[0]["sciDelivery"]);
-            this.datekpileta.Value = MyUtility.Convert.GetDate(this.DetailDatas[0]["kpileta"]);
+            if (this.DetailDatas.Count > 0)
+            {
+                this.datesciDelivery.Value = MyUtility.Convert.GetDate(this.DetailDatas[0]["sciDelivery"]);
+                this.datekpileta.Value = MyUtility.Convert.GetDate(this.DetailDatas[0]["kpileta"]);
+            }
         }
 
         // 檢查OrderID+Seq不可以重複建立
@@ -696,7 +700,7 @@ order by os.Seq",
                 .Date("ReceiveDate", header: "CLOG CFM", iseditingreadonly: true)
                 .Text("ClogLocationId", header: "Location No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("ReturnDate", header: "Return Date", iseditingreadonly: true)
-                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(30), iseditingreadonly: true);
+                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
             #region 欄位的Validating
             this.detailgrid.CellValidating += (s, e) =>
@@ -2004,53 +2008,6 @@ from #tmp t inner join Order_QtyShip o with (nolock) on t.OrderID = o.id and t.O
             }
         }
 
-        private void BtnDownloadSample_Click(object sender, EventArgs e)
-        {
-            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_ImportExcelFormat.xltx";
-            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            if (excel == null)
-            {
-                return;
-            }
-
-            excel.Visible = true;
-        }
-
-        private void BtnImportFromExcel_Click(object sender, EventArgs e)
-        {
-            #region chech Brand, CustCD, Destination, ShipMode not empty
-            List<string> errMsg = new List<string>();
-            if (MyUtility.Check.Empty(this.txtbrand.Text.ToString()))
-            {
-                errMsg.Add("< Brand >");
-            }
-
-            if (MyUtility.Check.Empty(this.txtcustcd.Text.ToString()))
-            {
-                errMsg.Add("< CustCD >");
-            }
-
-            if (MyUtility.Check.Empty(this.txtcountry.TextBox1.Text.ToString()))
-            {
-                errMsg.Add("< Destination >");
-            }
-
-            if (MyUtility.Check.Empty(this.txtshipmode.Text.ToString()))
-            {
-                errMsg.Add("< Ship Mode >");
-            }
-
-            if (errMsg.Count > 0)
-            {
-                MyUtility.Msg.InfoBox(errMsg.JoinToString("\n") + " Can not be Empty!!");
-                return;
-            }
-            #endregion
-
-            Sci.Production.Packing.P03_ExcelImport nextForm = new Sci.Production.Packing.P03_ExcelImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
-            nextForm.ShowDialog(this);
-        }
-
         private void BtnUpdateBarcode_Click(object sender, EventArgs e)
         {
             // 檢查是否已經pullout
@@ -2111,6 +2068,164 @@ where pd.id = '{this.CurrentMaintain["ID"]}'";
             {
                 this.ShowErr(result);
                 return;
+            }
+        }
+
+        private void BtnUPCSticker_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Packing.P03_UPCSticker callNextForm = new Sci.Production.Packing.P03_UPCSticker(this.CurrentMaintain["ID"].ToString());
+            callNextForm.ShowDialog(this);
+        }
+
+        private void BtnDownload_Click(object sender, EventArgs e)
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            DataTable printData;
+            string sqlcmd = $@"
+SELECT 
+DISTINCT
+PD.OrderID AS 'SP No.',
+O.CustPONo AS 'P.O. No.',
+PD.ID AS 'Pack ID',
+PD.CTNStartNo AS 'CTN#',
+PD.Article AS 'ColorWay',
+pd.Color as 'Color',
+pd.SizeCode as 'SizeCode',
+PD.CustCTN AS 'Cust CTN#',
+pd.seq
+ FROM PackingList_Detail PD 
+LEFT JOIN Orders O ON PD.OrderID = O.ID
+WHERE PD.ID ='{this.CurrentMaintain["ID"]}' --放入該表頭的Pack ID
+order by PD.seq
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out printData);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (printData.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
+            }
+
+            printData.Columns.Remove("seq");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Packing_P03_CustCTN.xltx");
+            MyUtility.Excel.CopyToXls(printData, string.Empty, "Packing_P03_CustCTN.xltx", 1, false, null, objApp);// 將datatable copy to excel
+            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            objSheets.Range["H2", $"H{printData.Rows.Count + 1}"].Interior.Color = Color.PaleVioletRed;
+            objApp.Visible = true;
+        }
+
+        private void BtnImportFromExcel_Click(object sender, EventArgs e)
+        {
+            DataTable dtexcel;
+            if (this.EditMode)
+            {
+                return;
+            }
+
+            this.openFileDialog1.Filter = "Excel files (*.xlsx;*.xls;*.xlt)|*.xlsx;*.xls;*.xlt";
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string msg;
+
+                dtexcel = this.GetExcel(this.openFileDialog1.FileName, out msg);
+                if (!MyUtility.Check.Empty(msg))
+                {
+                    MyUtility.Msg.ErrorBox(msg);
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(dtexcel.Columns["Pack ID"]) || MyUtility.Check.Empty(dtexcel.Columns["CTN#"]) || MyUtility.Check.Empty(dtexcel.Columns["Cust CTN#"]))
+                {
+                    MyUtility.Msg.WarningBox("excel file format error !!");
+                    return;
+                }
+
+                foreach (DataRow item in dtexcel.Rows)
+                {
+                    if (!MyUtility.Convert.GetString(item["Pack ID"]).EqualString(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+                    {
+                        MyUtility.Msg.WarningBox("excel file format error !!");
+                        return;
+                    }
+                }
+
+                string updateSqlCmd = $@"
+update b set b.CustCTN = a.[Cust CTN#]
+from #tmp a
+inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
+";
+                DataTable udt;
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, updateSqlCmd, out udt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox("Import Success !!");
+                }
+            }
+        }
+
+        /// <summary>
+        /// GetExcel
+        /// </summary>
+        /// <param name="strPath">strPath</param>
+        /// <param name="strMsg">strMsg</param>
+        /// <returns>DataTable</returns>
+        public DataTable GetExcel(string strPath, out string strMsg)
+        {
+            try
+            {
+                Microsoft.Office.Interop.Excel.Application xlsApp = new Microsoft.Office.Interop.Excel.Application();
+                xlsApp.Visible = false;
+                Microsoft.Office.Interop.Excel.Workbook xlsBook = xlsApp.Workbooks.Open(strPath);
+                Microsoft.Office.Interop.Excel.Worksheet xlsSheet = xlsBook.ActiveSheet;
+                Microsoft.Office.Interop.Excel.Range xlsRangeFirstCell = xlsSheet.get_Range("A1");
+                Microsoft.Office.Interop.Excel.Range xlsRangeLastCell = xlsSheet.Cells.SpecialCells(Microsoft.Office.Interop.Excel.XlCellType.xlCellTypeLastCell);
+                Microsoft.Office.Interop.Excel.Range xlsRange = xlsSheet.get_Range(xlsRangeFirstCell, xlsRangeLastCell);
+                object[,] objValue = xlsRange.Value2 as object[,];
+
+                // Array[][] to DataTable
+                long lngColumnCount = objValue.GetLongLength(1);
+                long lngRowCount = objValue.GetLongLength(0);
+                DataTable dtExcel = new DataTable();
+                for (int j = 1; j <= lngColumnCount; j++)
+                {
+                    dtExcel.Columns.Add(objValue[1, j].ToString());
+                }
+
+                for (int i = 2; i <= lngRowCount; i++)
+                {
+                    DataRow drRow = dtExcel.NewRow();
+                    for (int j = 1; j <= lngColumnCount; j++)
+                    {
+                        drRow[j - 1] = MyUtility.Check.Empty(objValue[i, j]) ? "0" : objValue[i, j].ToString();
+                    }
+
+                    dtExcel.Rows.Add(drRow);
+                }
+
+                xlsBook.Close();
+                xlsApp.Quit();
+                strMsg = string.Empty;
+                return dtExcel;
+            }
+            catch (Exception ex)
+            {
+                strMsg = ex.Message;
+                return null;
             }
         }
     }
