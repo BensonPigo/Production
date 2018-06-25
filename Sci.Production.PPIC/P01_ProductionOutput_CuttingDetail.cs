@@ -135,13 +135,15 @@ from
 	Select POID=(select poid from orders WITH (NOLOCK) where id = c.id),c.ID,c.Article,c.SizeCode,c.Qty 
 	from order_Qty c WITH (NOLOCK)
 	where c.id = '{0}' and c.Article = '{1}' and SizeCode = '{2}'
-) d,Order_ColorCombo e,order_Eachcons cons
-where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and
-d.poid = cons.id and cons.CuttingPiece='0' --and  cons.FabricCombo = e.PatternPanel
+) d
+inner join order_Eachcons cons on d.poid = cons.id
+left join Order_ColorCombo e on d.POID=e.id and d.Article = e.Article and cons.id =e.id and cons.FabricCombo = e.PatternPanel
+where e.FabricCode is not null and e.FabricCode !=''and cons.CuttingPiece='0' 
 
 select b.cDate,b.CutRef,a.PatternPanel,b.FabricPanelCode,b.Cutno,CutQty = isnull(b.CutQty,0)
 from #tmp1 a
 left join #tmp2 b on a.Article=b.Article and a.SizeCode = b.SizeCode and a.PatternPanel = b.PatternPanel
+order by a.PatternPanel,b.cDate
 ",
                     this.id,
                     this.article,
