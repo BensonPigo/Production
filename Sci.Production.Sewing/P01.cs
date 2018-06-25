@@ -994,6 +994,13 @@ order by a.OrderId,os.Seq",
                 return false;
             }
 
+            if (this.CurrentMaintain["Shift"].Equals("O") && MyUtility.Check.Empty(this.CurrentMaintain["SubconOutFty"]))
+            {
+                this.txtSubconOutFty.Focus();
+                MyUtility.Msg.WarningBox("Subcon-Out-Fty can't empty!!");
+                return false;
+            }
+
             #endregion
 
             this.CalculateManHour();
@@ -1011,7 +1018,7 @@ order by a.OrderId,os.Seq",
             #endregion
 
             #region 檢查資料是否已存在
-            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and SubconOutFty = '{6}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]))))
                 {
                     MyUtility.Msg.WarningBox(string.Format(
                         "Date:{0}, Line:{1}, Shift:{2}, Team:{3} already exist, can't save!!",
@@ -1950,6 +1957,25 @@ WHERE  sewqty < packqty ",
             }
 
             return true;
+        }
+
+        private void txtdropdownlistShift_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.txtdropdownlistShift.SelectedValue == null)
+            {
+                return;
+            }
+
+            if (this.txtdropdownlistShift.SelectedValue.Equals("O"))
+            {
+                this.txtSubconOutFty.SetReadOnly(false);
+            }
+            else
+            {
+                this.txtSubconOutFty.SetReadOnly(true);
+                this.CurrentMaintain["Shift"] = this.txtdropdownlistShift.SelectedValue;
+                this.CurrentMaintain["SubconOutFty"] = string.Empty;
+            }
         }
     }
 }
