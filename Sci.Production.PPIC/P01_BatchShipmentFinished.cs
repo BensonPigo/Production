@@ -337,7 +337,8 @@ from (
 		  and o.MDivisionID = '{0}'
 		  and (o.Junk = 1 or o.PulloutComplete = 1)
 		  and (o.Category = 'B' or o.Category = 'S')
-
+        --orders.CFMDate15天(包含)內的資料不能被關單 
+          and o.CFMDate < convert(date,getdate()-15)
 	union all
 	select distinct A.ID
 	from PO_Supp_Detail A WITH (NOLOCK) 
@@ -353,6 +354,8 @@ from (
 		  and p.Complete = 0
 	      and o.Finished = 0 
 		  and o.Category = 'M'
+          --orders.CFMDate15天(包含)內的資料不能被關單 
+          and o.CFMDate < convert(date,getdate()-15)
 ) wantToClose
 
 select *

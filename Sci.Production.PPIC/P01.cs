@@ -1201,6 +1201,13 @@ where POID = @poid group by POID,b.spno";
         // Shipment Finished
         private void BtnShipmentFinished_Click(object sender, EventArgs e)
         {
+            // orders.CFMDate15天(包含)內的資料不能被關單
+            if (MyUtility.Check.Seek($"select 1 from dbo.orders WITH (NOLOCK) where id = '{this.CurrentMaintain["ID"]}' and CFMDate >= convert(date,getdate()-15)"))
+            {
+                MyUtility.Msg.WarningBox($"The order CFMDate is {((DateTime)this.CurrentMaintain["CFMDate"]).ToString("yyyy/MM/dd")}, when CFMDate within 15 days ,you can't close it.");
+                return;
+            }
+
             string sqlCmd;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "M" || MyUtility.Convert.GetString(this.CurrentMaintain["Category"]) == "T")
             {
