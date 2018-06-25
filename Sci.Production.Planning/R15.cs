@@ -1099,9 +1099,9 @@ outer apply(
 )Artwork
 outer apply(
 	select SubProcessDest = concat('Inhouse:'+stuff((
-		select concat(',',ArtworkTypeID)
-		from order_tmscost WITH (NOLOCK)
-		where id = t.OrderID and InhouseOSP = 'I'
+		select concat(',',ot.ArtworkTypeID)
+		from order_tmscost ot WITH (NOLOCK)
+		where ot.id = t.OrderID and ot.InhouseOSP = 'I' 
 		for xml path('')
 	),1,1,'')
 	,'; '+(
@@ -1111,15 +1111,19 @@ outer apply(
 		(
 			select distinct abb = isnull(l.abb,'')
 			from order_tmscost ot WITH (NOLOCK)
+			inner join artworktype WITH (NOLOCK) on ot.artworktypeid = artworktype.id 
 			left join localsupp l WITH (NOLOCK) on l.id = ot.LocalSuppID
-			where ot.id = t.OrderID and InhouseOSP = 'o'
+			where ot.id = t.OrderID and ot.InhouseOSP = 'o'
+			and artworktype.isSubprocess = 1
 		)ospA
 		outer apply(
 			select spdO = stuff((
-				select concat(',',ArtworkTypeID) 
+				select concat(',',ot.ArtworkTypeID) 
 				from order_tmscost ot WITH (NOLOCK)
+				inner join artworktype WITH (NOLOCK) on ot.artworktypeid = artworktype.id 
 				left join localsupp l WITH (NOLOCK) on l.id = ot.LocalSuppID
-				where ot.id = t.OrderID and InhouseOSP = 'o'and isnull(l.Abb,'') = ospA.abb
+				where ot.id = t.OrderID and ot.InhouseOSP = 'o'and isnull(l.Abb,'') = ospA.abb
+			    and artworktype.isSubprocess = 1
 				for xml path('')
 			),1,1,'')
 		)ospB
@@ -1798,7 +1802,7 @@ outer apply(
 	select SubProcessDest = concat('Inhouse:'+stuff((
 		select concat(',',ot.ArtworkTypeID)
 		from order_tmscost ot WITH (NOLOCK)
-		where ot.id = t.OrderID and InhouseOSP = 'I' 
+		where ot.id = t.OrderID and ot.InhouseOSP = 'I' 
 		for xml path('')
 	),1,1,'')
 	,'; '+(
@@ -1808,15 +1812,19 @@ outer apply(
 		(
 			select distinct abb = isnull(l.abb,'')
 			from order_tmscost ot WITH (NOLOCK)
+			inner join artworktype WITH (NOLOCK) on ot.artworktypeid = artworktype.id 
 			left join localsupp l WITH (NOLOCK) on l.id = ot.LocalSuppID
-			where ot.id = t.OrderID and InhouseOSP = 'o'
+			where ot.id = t.OrderID and ot.InhouseOSP = 'o'
+			and artworktype.isSubprocess = 1
 		)ospA
 		outer apply(
 			select spdO = stuff((
-				select concat(',',ArtworkTypeID) 
+				select concat(',',ot.ArtworkTypeID) 
 				from order_tmscost ot WITH (NOLOCK)
+				inner join artworktype WITH (NOLOCK) on ot.artworktypeid = artworktype.id 
 				left join localsupp l WITH (NOLOCK) on l.id = ot.LocalSuppID
-				where ot.id = t.OrderID and InhouseOSP = 'o'and isnull(l.Abb,'') = ospA.abb
+				where ot.id = t.OrderID and ot.InhouseOSP = 'o'and isnull(l.Abb,'') = ospA.abb
+			    and artworktype.isSubprocess = 1
 				for xml path('')
 			),1,1,'')
 		)ospB
