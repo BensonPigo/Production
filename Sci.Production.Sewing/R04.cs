@@ -76,6 +76,8 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
 	,InspectQty = isnull(r.InspectQty,0),RejectQty = isnull(r.RejectQty,0)
     ,BuyerDelivery = format(o.BuyerDelivery,'yyyy/MM/dd')
     ,OrderQty = o.Qty
+    ,s.SubconOutFty
+    ,o.SubconInSisterFty
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -117,7 +119,7 @@ where 1=1 "));
 
             sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
 select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionID,OrderId,ComboType
-	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType),WorkHour = sum(Round(WorkHour,2))over(partition by id,OrderId,ComboType)
+	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType),WorkHour = sum(Round(WorkHour,3))over(partition by id,OrderId,ComboType)
 	,QAQty = sum(QAQty)over(partition by id,OrderId,ComboType),InlineQty = sum(InlineQty)over(partition by id,OrderId,ComboType)
 	,LocalOrder,CustPONo,OrderCategory,OrderType
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
@@ -125,6 +127,8 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
 	,Rate,StdTMS,InspectQty,RejectQty
     ,BuyerDelivery
     ,OrderQty
+    ,SubconOutFty
+    ,SubconInSisterFty
 into #tmpSewingGroup
 from #tmpSewingDetail
 --↓計算累計天數 function table太慢直接寫在這
@@ -203,8 +207,8 @@ where 1=1");
                 sqlCmd.Append(string.Format(" and (t.OrderCdCodeID = '{0}' or t.MockupCDCodeID = '{0}')", this.cdcode));
             }
 
-            sqlCmd.Append(@"-----Artwork
-select ID,Seq,ArtworkUnit,ProductionUnit
+            sqlCmd.Append($@"-----Artwork
+{(this.chk_Include_Artwork.Checked ? @"select ID,Seq,ArtworkUnit,ProductionUnit
 into #AT
 from ArtworkType WITH (NOLOCK)
 where Classify in ('I','A','P') and IsTtlTMS = 0 and Junk = 0
@@ -225,7 +229,7 @@ from(
 	Select ID,Seq,'' from #AT where ArtworkUnit ='' AND ProductionUnit =''
 )a
 
-select*
+select *
 into #atall2
 from(
 	select a.ID,a.Seq,c=1,a.ArtworkType_Unit,a.Unit from #atall a
@@ -250,10 +254,10 @@ declare @TTLZ nvarchar(max) =
 ,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType)'))
 ,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType),2)'
 ,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType),2)'))
-)from #atall for xml path(''))
+)from #atall for xml path(''))" : " ")}
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
-select orderid,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
+{(this.chk_Include_Artwork.Checked ? @"select orderid,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
 into #oid_at
 from
 (
@@ -263,7 +267,7 @@ from
 )a
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
 where orderid is not null
---group by orderid
+--group by orderid" : " ")}
 '
 +N'
 select * from(
@@ -273,8 +277,13 @@ select * from(
 		,FtyCountry
         ,t.OutputDate
         ,t.SewingLineID
-		,Shift = IIF(t.LastShift=''D'',''Day'',IIF(t.LastShift=''N'',''Night'',IIF(t.LastShift=''O'',''Subcon-Out'',''Subcon-In'')))
-		,t.Team
+		,Shift =    CASE    WHEN t.LastShift=''D'' then ''Day''
+                            WHEN t.LastShift=''N'' then ''Night''
+                            WHEN t.LastShift=''O'' then ''Subcon-Out''
+                            WHEN t.LastShift=''I'' and SubconInSisterFty = 1 then ''Subcon-In(Sister)''
+                            else ''Subcon-In(Non Sister)'' end
+		,t.SubconOutFty
+        ,t.Team
         ,t.OrderId
         ,CustPONo
         ,t.BuyerDelivery
@@ -309,10 +318,10 @@ select * from(
                             ");
             }
 
-            sqlCmd.Append(@",Diff = t.QAQty-InlineQty
+            sqlCmd.Append($@",Diff = t.QAQty-InlineQty
 		,rate
-		'+@TTLZ+N'
-	from #tmp1stFilter t");
+		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
+    from #tmp1stFilter t");
             if (this.show_Accumulate_output == true)
             {
                 sqlCmd.Append(@"
@@ -324,19 +333,23 @@ select * from(
                                                and S.OutputDate <= t.OutputDate) acc_output");
             }
 
-            sqlCmd.Append(@" 
-        left join #oid_at o on o.orderid = t.OrderId and 
+            if (this.chk_Include_Artwork.Checked)
+            {
+                sqlCmd.Append(@" left join #oid_at o on o.orderid = t.OrderId and 
                            o.FactoryID = t.FactoryID and
                            o.Team       = t.Team and
                            o.OutputDate           = t.OutputDate    and
                            o.SewingLineID          = t.SewingLineID and
                            o.LastShift          = t.LastShift       and
                            o.Category          = t.Category and
-                           o.ComboType      =   t.ComboType
-)a
+                           o.ComboType      =   t.ComboType");
+            }
+
+ sqlCmd.Append($@" )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
 
-drop table #AT,#atall,#idat,#tmpSewingDetail,#oid_at,#tmp1stFilter,#tmpSewingGroup,#cl,#stmp,#wtmp,#atall2
+drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup,#cl,#stmp,#wtmp
+{(this.chk_Include_Artwork.Checked ? "drop table #atall2,#AT,#atall,#idat,#oid_at" : " ")}
 '
 EXEC sp_executesql @lastSql
 ");
@@ -369,12 +382,12 @@ EXEC sp_executesql @lastSql
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {
-                start_column = 39;
+                start_column = 40;
             }
             else
             {
-                start_column = 37;
-                objSheets.get_Range("AJ:AK").EntireColumn.Delete();
+                start_column = 38;
+                objSheets.get_Range("AK:AL").EntireColumn.Delete();
             }
 
             for (int i = start_column; i < this.printData.Columns.Count; i++)

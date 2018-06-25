@@ -46,8 +46,6 @@
             this.comboM = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
-            this.comboLocal = new Sci.Win.UI.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
             this.txtstyle = new Sci.Production.Class.txtstyle();
             this.SuspendLayout();
@@ -135,11 +133,11 @@
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.label9.Location = new System.Drawing.Point(13, 357);
+            this.label9.Location = new System.Drawing.Point(13, 327);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(286, 23);
+            this.label9.Size = new System.Drawing.Size(416, 23);
             this.label9.TabIndex = 8;
-            this.label9.Text = "Hint:  All subcon-out are excluded.";
+            this.label9.Text = "Hint:  All subcon-out、non sister subcon-in excluded.";
             this.label9.TextStyle.BorderColor = System.Drawing.Color.Red;
             this.label9.TextStyle.Color = System.Drawing.Color.Red;
             this.label9.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
@@ -147,6 +145,20 @@
             // 
             // dateSewingOutputDate
             // 
+            // 
+            // 
+            // 
+            this.dateSewingOutputDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingOutputDate.DateBox1.Name = "";
+            this.dateSewingOutputDate.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateSewingOutputDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingOutputDate.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateSewingOutputDate.DateBox2.Name = "";
+            this.dateSewingOutputDate.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateSewingOutputDate.DateBox2.TabIndex = 1;
             this.dateSewingOutputDate.IsRequired = false;
             this.dateSewingOutputDate.Location = new System.Drawing.Point(145, 12);
             this.dateSewingOutputDate.Name = "dateSewingOutputDate";
@@ -155,6 +167,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(145, 48);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -163,6 +189,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(102, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(124, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(102, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(145, 84);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -196,6 +236,7 @@
             this.comboM.IsSupportUnselect = true;
             this.comboM.Location = new System.Drawing.Point(145, 223);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(80, 24);
             this.comboM.TabIndex = 5;
             // 
@@ -207,6 +248,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(145, 259);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
             this.comboFactory.TabIndex = 6;
             // 
@@ -218,28 +260,10 @@
             this.comboDropDownListCategory.IsSupportUnselect = true;
             this.comboDropDownListCategory.Location = new System.Drawing.Point(145, 295);
             this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.OldText = "";
             this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
             this.comboDropDownListCategory.TabIndex = 7;
             this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
-            // 
-            // comboLocal
-            // 
-            this.comboLocal.BackColor = System.Drawing.Color.White;
-            this.comboLocal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboLocal.FormattingEnabled = true;
-            this.comboLocal.IsSupportUnselect = true;
-            this.comboLocal.Location = new System.Drawing.Point(145, 330);
-            this.comboLocal.Name = "comboLocal";
-            this.comboLocal.Size = new System.Drawing.Size(80, 24);
-            this.comboLocal.TabIndex = 102;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(13, 330);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(128, 23);
-            this.label1.TabIndex = 103;
-            this.label1.Text = "Local Order";
             // 
             // labelStyle
             // 
@@ -258,13 +282,13 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 104;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
             // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(551, 412);
+            this.ClientSize = new System.Drawing.Size(551, 378);
             this.Controls.Add(this.txtstyle);
-            this.Controls.Add(this.comboLocal);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.comboDropDownListCategory);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
@@ -309,8 +333,6 @@
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.comboDropDownListCategory, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.comboLocal, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -336,8 +358,6 @@
         private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboFactory;
         private Class.comboDropDownList comboDropDownListCategory;
-        private Win.UI.ComboBox comboLocal;
-        private Win.UI.Label label1;
         private Win.UI.Label labelStyle;
         private Class.txtstyle txtstyle;
     }

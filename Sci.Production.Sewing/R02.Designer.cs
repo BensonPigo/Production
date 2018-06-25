@@ -30,8 +30,6 @@
         {
             this.labelDate = new Sci.Win.UI.Label();
             this.labelSewingLine = new Sci.Win.UI.Label();
-            this.labelHoliday = new Sci.Win.UI.Label();
-            this.labelSubconIn = new Sci.Win.UI.Label();
             this.labelReportType = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelOrderBy = new Sci.Win.UI.Label();
@@ -41,8 +39,6 @@
             this.txtSewingLineStart = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
             this.txtSewingLineEnd = new Sci.Win.UI.TextBox();
-            this.comboHoliday = new Sci.Win.UI.ComboBox();
-            this.comboSubconIn = new Sci.Win.UI.ComboBox();
             this.comboReportType = new Sci.Win.UI.ComboBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
@@ -83,25 +79,9 @@
             this.labelSewingLine.TabIndex = 95;
             this.labelSewingLine.Text = "Sewing Line";
             // 
-            // labelHoliday
-            // 
-            this.labelHoliday.Location = new System.Drawing.Point(13, 84);
-            this.labelHoliday.Name = "labelHoliday";
-            this.labelHoliday.Size = new System.Drawing.Size(80, 23);
-            this.labelHoliday.TabIndex = 96;
-            this.labelHoliday.Text = "Holiday";
-            // 
-            // labelSubconIn
-            // 
-            this.labelSubconIn.Location = new System.Drawing.Point(13, 120);
-            this.labelSubconIn.Name = "labelSubconIn";
-            this.labelSubconIn.Size = new System.Drawing.Size(80, 23);
-            this.labelSubconIn.TabIndex = 97;
-            this.labelSubconIn.Text = "Subcon-In";
-            // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(13, 156);
+            this.labelReportType.Location = new System.Drawing.Point(13, 84);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(80, 23);
             this.labelReportType.TabIndex = 98;
@@ -109,7 +89,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 231);
+            this.labelFactory.Location = new System.Drawing.Point(13, 159);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(80, 23);
             this.labelFactory.TabIndex = 99;
@@ -117,7 +97,7 @@
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Location = new System.Drawing.Point(13, 269);
+            this.labelOrderBy.Location = new System.Drawing.Point(13, 197);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(80, 23);
             this.labelOrderBy.TabIndex = 100;
@@ -186,36 +166,15 @@
             this.txtSewingLineEnd.TabIndex = 3;
             this.txtSewingLineEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLineEnd_PopUp);
             // 
-            // comboHoliday
-            // 
-            this.comboHoliday.BackColor = System.Drawing.Color.White;
-            this.comboHoliday.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboHoliday.FormattingEnabled = true;
-            this.comboHoliday.IsSupportUnselect = true;
-            this.comboHoliday.Location = new System.Drawing.Point(97, 84);
-            this.comboHoliday.Name = "comboHoliday";
-            this.comboHoliday.Size = new System.Drawing.Size(90, 24);
-            this.comboHoliday.TabIndex = 4;
-            // 
-            // comboSubconIn
-            // 
-            this.comboSubconIn.BackColor = System.Drawing.Color.White;
-            this.comboSubconIn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboSubconIn.FormattingEnabled = true;
-            this.comboSubconIn.IsSupportUnselect = true;
-            this.comboSubconIn.Location = new System.Drawing.Point(97, 120);
-            this.comboSubconIn.Name = "comboSubconIn";
-            this.comboSubconIn.Size = new System.Drawing.Size(90, 24);
-            this.comboSubconIn.TabIndex = 5;
-            // 
             // comboReportType
             // 
             this.comboReportType.BackColor = System.Drawing.Color.White;
             this.comboReportType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboReportType.FormattingEnabled = true;
             this.comboReportType.IsSupportUnselect = true;
-            this.comboReportType.Location = new System.Drawing.Point(97, 156);
+            this.comboReportType.Location = new System.Drawing.Point(97, 84);
             this.comboReportType.Name = "comboReportType";
+            this.comboReportType.OldText = "";
             this.comboReportType.Size = new System.Drawing.Size(121, 24);
             this.comboReportType.TabIndex = 6;
             this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.ComboReportType_SelectedIndexChanged);
@@ -226,8 +185,9 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(97, 231);
+            this.comboFactory.Location = new System.Drawing.Point(97, 159);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(65, 24);
             this.comboFactory.TabIndex = 7;
             // 
@@ -237,15 +197,16 @@
             this.comboOrderBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboOrderBy.FormattingEnabled = true;
             this.comboOrderBy.IsSupportUnselect = true;
-            this.comboOrderBy.Location = new System.Drawing.Point(97, 269);
+            this.comboOrderBy.Location = new System.Drawing.Point(97, 197);
             this.comboOrderBy.Name = "comboOrderBy";
+            this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
             this.comboOrderBy.TabIndex = 8;
             // 
             // label10
             // 
             this.label10.BackColor = System.Drawing.Color.Transparent;
-            this.label10.Location = new System.Drawing.Point(13, 296);
+            this.label10.Location = new System.Drawing.Point(13, 224);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(341, 47);
             this.label10.TabIndex = 9;
@@ -262,14 +223,15 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(96, 195);
+            this.comboM.Location = new System.Drawing.Point(96, 123);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(66, 24);
             this.comboM.TabIndex = 106;
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 195);
+            this.labelM.Location = new System.Drawing.Point(13, 123);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(80, 23);
             this.labelM.TabIndex = 107;
@@ -279,7 +241,7 @@
             // 
             this.checkSampleFty.AutoSize = true;
             this.checkSampleFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSampleFty.Location = new System.Drawing.Point(241, 269);
+            this.checkSampleFty.Location = new System.Drawing.Point(241, 197);
             this.checkSampleFty.Name = "checkSampleFty";
             this.checkSampleFty.Size = new System.Drawing.Size(178, 21);
             this.checkSampleFty.TabIndex = 108;
@@ -288,7 +250,7 @@
             // 
             // R02
             // 
-            this.ClientSize = new System.Drawing.Size(447, 377);
+            this.ClientSize = new System.Drawing.Size(447, 299);
             this.Controls.Add(this.checkSampleFty);
             this.Controls.Add(this.comboM);
             this.Controls.Add(this.labelM);
@@ -296,8 +258,6 @@
             this.Controls.Add(this.comboOrderBy);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboReportType);
-            this.Controls.Add(this.comboSubconIn);
-            this.Controls.Add(this.comboHoliday);
             this.Controls.Add(this.txtSewingLineEnd);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.txtSewingLineStart);
@@ -307,8 +267,6 @@
             this.Controls.Add(this.labelOrderBy);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.labelReportType);
-            this.Controls.Add(this.labelSubconIn);
-            this.Controls.Add(this.labelHoliday);
             this.Controls.Add(this.labelSewingLine);
             this.Controls.Add(this.labelDate);
             this.DefaultControl = "dateDateStart";
@@ -318,8 +276,6 @@
             this.Text = "R02. Monthly Production output Report";
             this.Controls.SetChildIndex(this.labelDate, 0);
             this.Controls.SetChildIndex(this.labelSewingLine, 0);
-            this.Controls.SetChildIndex(this.labelHoliday, 0);
-            this.Controls.SetChildIndex(this.labelSubconIn, 0);
             this.Controls.SetChildIndex(this.labelReportType, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelOrderBy, 0);
@@ -329,8 +285,6 @@
             this.Controls.SetChildIndex(this.txtSewingLineStart, 0);
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.txtSewingLineEnd, 0);
-            this.Controls.SetChildIndex(this.comboHoliday, 0);
-            this.Controls.SetChildIndex(this.comboSubconIn, 0);
             this.Controls.SetChildIndex(this.comboReportType, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.comboOrderBy, 0);
@@ -350,8 +304,6 @@
 
         private Win.UI.Label labelDate;
         private Win.UI.Label labelSewingLine;
-        private Win.UI.Label labelHoliday;
-        private Win.UI.Label labelSubconIn;
         private Win.UI.Label labelReportType;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelOrderBy;
@@ -361,8 +313,6 @@
         private Win.UI.TextBox txtSewingLineStart;
         private Win.UI.Label label9;
         private Win.UI.TextBox txtSewingLineEnd;
-        private Win.UI.ComboBox comboHoliday;
-        private Win.UI.ComboBox comboSubconIn;
         private Win.UI.ComboBox comboReportType;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.ComboBox comboOrderBy;
