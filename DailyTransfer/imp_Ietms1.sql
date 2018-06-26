@@ -123,7 +123,37 @@ where not exists(select 1 from Production.dbo.IETMS_Detail as a WITH (NOLOCK) wh
 -------------------------------------------------------aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 --Operation
 --Operation
+merge IETMS_Summary t
+using (select * from trade_to_pms.dbo.IETMS_Summary) s
+on t.[IETMSUkey] = s.[IETMSUkey] and t.[MachineTypeID]=s.[MachineTypeID] 
+and t.[ArtworkTypeID]=s.[ArtworkTypeID]  and t.[Location]=s.[Location]
+and exists (select 1 from dbo.IETMS where Ukey = s.IETMSUkey)
+when matched then update set 
+	t.[StyleUkey]	=s.[StyleUkey],
+	t.[SMV]			=s.[SMV]	  , 
+	t.[TMS]			=s.[TMS]	  , 
+	t.[Price]		=s.[Price]	  , 
+	t.[ProSMV]		=s.[ProSMV]   ,
+	t.[ProTMS]		=s.[ProTMS]
+when not matched by target then
+insert ([IETMSUkey],[StyleUkey],[MachineTypeID],[ArtworkTypeID],[Location],[SMV],[TMS],[Price],[ProSMV],[ProTMS],[ProPrice])
+values (s.[IETMSUkey],s.[StyleUkey],s.[MachineTypeID],s.[ArtworkTypeID],s.[Location],s.[SMV],s.[TMS],s.[Price],s.[ProSMV],s.[ProTMS],s.[ProPrice]);
 
+merge IETMS_Summary_Detail t
+using (select * from trade_to_pms.dbo.IETMS_Summary_Detail) s
+on t.[IETMSUkey] = s.[IETMSUkey] and t.[ArtworkTypeID]=s.[ArtworkTypeID] and t.[CIPF]=s.[CIPF]
+and exists (select 1 from dbo.IETMS where Ukey = s.IETMSUkey)
+when matched then update set 
+ t.[StyleUkey]		=s.[StyleUkey]
+,t.[SMV]			=s.[SMV]		 
+,t.[TMS]			=s.[TMS]		 
+,t.[Price]			=s.[Price]	 
+,t.[ProSMV]			=s.[ProSMV]	 
+,t.[ProTMS]			=s.[ProTMS]	 
+,t.[ProPrice]		=s.[ProPrice] 
+when not matched by target then
+insert ([IETMSUkey],[StyleUkey],[ArtworkTypeID],[SMV],[TMS],[Price],[ProSMV],[ProTMS],[ProPrice],[CIPF])
+values (s.[IETMSUkey],s.[StyleUkey],s.[ArtworkTypeID],s.[SMV],s.[TMS],s.[Price],s.[ProSMV],s.[ProTMS],s.[ProPrice],s.[CIPF]);
 END
 
 
