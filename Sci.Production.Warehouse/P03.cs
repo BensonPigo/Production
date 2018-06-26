@@ -25,7 +25,7 @@ namespace Sci.Production.Warehouse
         string userCountry = "";
         string SpNo = "";                   
         bool ButtonOpen = false;
-        private string _Refno, _MaterialType, _Color;
+        private static string _Refno, _MaterialType, _Color;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -89,9 +89,6 @@ namespace Sci.Production.Warehouse
                     form.Activate();
                     Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
                     activateForm.setTxtSPNo(P01SPNo);
-                    activateForm.set_Refno(Refno);
-                    activateForm.set_MaterialType((MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : "");
-                    activateForm.set_Color(Color);
                     activateForm.Query();
                     return;
                 }
@@ -122,6 +119,9 @@ namespace Sci.Production.Warehouse
             //改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
             call.P03Data(P01SPNo);
             call.Activate();
+            _Refno = Refno;
+            _MaterialType = ((MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : "");
+            _Color = Color;
             call.grid_Filter();
             call.ChangeDetailColor();
 
@@ -1080,20 +1080,20 @@ drop table #tmpOrder,#tmpLocalPO_Detail
             this.txtSPNo.Text = spNo;
         }
 
-        public void set_Refno(string Refno)
-        {
-            this._Refno = Refno;
-        }
+        //public void set_Refno(string Refno)
+        //{
+        //    this._Refno = Refno;
+        //}
 
-        public void set_MaterialType(string MaterialType)
-        {
-            this._MaterialType = MaterialType;
-        }
+        //public void set_MaterialType(string MaterialType)
+        //{
+        //    this._MaterialType = MaterialType;
+        //}
 
-        public void set_Color(string Color)
-        {
-            this._Color = Color;
-        }
+        //public void set_Color(string Color)
+        //{
+        //    this._Color = Color;
+        //}
         private void gridMaterialStatus_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             this.ShowErr(e.Exception);
