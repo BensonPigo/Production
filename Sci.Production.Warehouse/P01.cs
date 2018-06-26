@@ -634,10 +634,12 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             DualResult result;
             DataTable dtPo;
             string sqlcmd = $@"
-select po3.ID as Poid,po3.SEQ1,po3.SEQ2,mdp.Ukey from PO_Supp_Detail po3
+select po3.ID as Poid,po3.SEQ1,po3.SEQ2,mdp.Ukey 
+from PO_Supp_Detail po3
 left join MDivisionPoDetail mdp on mdp.POID=po3.ID
 and mdp.Seq1=po3.SEQ1 and mdp.Seq2=po3.SEQ2
 where po3.ID in (select poid from orders where id='{CurrentMaintain["id"]}')
+and po3.junk=0
 ";
             if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtPo)))
             {
@@ -645,8 +647,8 @@ where po3.ID in (select poid from orders where id='{CurrentMaintain["id"]}')
                 return;
             }
             if (dtPo == null) return;
-
-            this.ShowWaitMessage("Data Processing...");
+            int cnt = 1;
+            
             foreach (DataRow dr in dtPo.Rows)
             {
                 List<SqlParameter> listSQLParameter = new List<SqlParameter>();
@@ -662,9 +664,12 @@ where po3.ID in (select poid from orders where id='{CurrentMaintain["id"]}')
                     this.HideWaitMessage();
                     return;
                 }
+                this.ShowWaitMessage($"Data Processing.... ({cnt}/{dtPo.Rows.Count})");
+                cnt++;
             }
-            MyUtility.Msg.InfoBox("Finished!!");
             this.HideWaitMessage();
+            MyUtility.Msg.InfoBox("Finished!!");
+            
         }
     }
 }
