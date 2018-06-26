@@ -410,6 +410,9 @@ group by refno,ColorID
 
         private void btnAutoCalc_Click(object sender, EventArgs e)
         {
+            if (this.dt == null) return;
+            if (this.dt.Rows.Count == 0) return;
+
             foreach (DataRow dr in this.dt.Rows)
             {
                 dr["selected"] = false;
