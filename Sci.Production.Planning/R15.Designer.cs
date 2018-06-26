@@ -56,6 +56,8 @@
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -285,7 +287,7 @@
             // 
             this.checkIncludeArtowkData.AutoSize = true;
             this.checkIncludeArtowkData.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkIncludeArtowkData.Location = new System.Drawing.Point(13, 447);
+            this.checkIncludeArtowkData.Location = new System.Drawing.Point(13, 485);
             this.checkIncludeArtowkData.Name = "checkIncludeArtowkData";
             this.checkIncludeArtowkData.Size = new System.Drawing.Size(157, 21);
             this.checkIncludeArtowkData.TabIndex = 13;
@@ -360,6 +362,7 @@
             this.comboOrderBy.IsSupportUnselect = true;
             this.comboOrderBy.Location = new System.Drawing.Point(115, 408);
             this.comboOrderBy.Name = "comboOrderBy";
+            this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
             this.comboOrderBy.TabIndex = 12;
             // 
@@ -410,13 +413,36 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(115, 371);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(280, 24);
             this.comboCategory.TabIndex = 152;
             this.comboCategory.Type = "Pms_ReportForProduct";
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(13, 448);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(98, 23);
+            this.label1.TabIndex = 153;
+            this.label1.Text = "SummaryBy";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.BackColor = System.Drawing.Color.White;
+            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.IsSupportUnselect = true;
+            this.comboBox1.Location = new System.Drawing.Point(115, 448);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.OldText = "";
+            this.comboBox1.Size = new System.Drawing.Size(121, 24);
+            this.comboBox1.TabIndex = 154;
+            // 
             // R15
             // 
-            this.ClientSize = new System.Drawing.Size(522, 509);
+            this.ClientSize = new System.Drawing.Size(522, 540);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.comboOrderBy);
             this.Controls.Add(this.labelCustCD);
@@ -479,6 +505,8 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.comboBox1, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -513,5 +541,7 @@
         private Win.UI.Label labelCustCD;
         private Win.UI.ComboBox comboOrderBy;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboBox1;
     }
 }
