@@ -1202,10 +1202,21 @@ where POID = @poid group by POID,b.spno";
         private void BtnShipmentFinished_Click(object sender, EventArgs e)
         {
             // orders.CFMDate15天(包含)內的資料不能被關單
-            if (MyUtility.Check.Seek($"select 1 from dbo.orders WITH (NOLOCK) where id = '{this.CurrentMaintain["ID"]}' and CFMDate >= convert(date,getdate()-15)"))
+            System.Data.DataTable chkDt;
+            DualResult result = DBProxy.Current.Select(null, $"select [Result] = 'SP:' + id + ' order CFMDate is ' + FORMAT(CFMDate,'yyyy/MM/dd') from dbo.orders WITH (NOLOCK) where POID = '{this.CurrentMaintain["POID"]}' and CFMDate >= convert(date,getdate()-15)", out chkDt);
+            if (result == false)
             {
-                MyUtility.Msg.WarningBox($"The order CFMDate is {((DateTime)this.CurrentMaintain["CFMDate"]).ToString("yyyy/MM/dd")}, when CFMDate within 15 days ,you can't close it.");
+                this.ShowErr(result);
                 return;
+            }
+            else
+            {
+                if (chkDt.Rows.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox($"When Order CFMDate within 15 days ,you can't close it." + Environment.NewLine +
+                        chkDt.AsEnumerable().Select(s => s["Result"].ToString()).ToList().JoinToString(Environment.NewLine));
+                    return;
+                }
             }
 
             string sqlCmd;
@@ -1247,7 +1258,7 @@ where POID = @poid group by POID,b.spno";
             }
 
             sqlCmd = string.Format("exec [dbo].usp_closeOrder '{0}','1'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
-            DualResult result = DBProxy.Current.Execute(null, sqlCmd);
+            result = DBProxy.Current.Execute(null, sqlCmd);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Shipment finished fail !!" + result.ToString());

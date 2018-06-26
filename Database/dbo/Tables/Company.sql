@@ -9,7 +9,7 @@
     [NameEN]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameEN] DEFAULT ('') NULL,
     [hasTax]    BIT            CONSTRAINT [DF_Company_hasTax] DEFAULT ((0)) NULL,
     [IsDefault] BIT            CONSTRAINT [DF_Company_IsDefault] DEFAULT ((0)) NULL,
-    [VatNO]     VARCHAR (8)    CONSTRAINT [DF_Company_VatNO] DEFAULT ('') NULL,
+    [VatNO]     VARCHAR (25)    CONSTRAINT [DF_Company_VatNO] DEFAULT ('') NULL,
     [AddressCH] NVARCHAR (MAX) CONSTRAINT [DF_Company_AddressCH] DEFAULT ('') NULL,
     [AddressEN] NVARCHAR (MAX) CONSTRAINT [DF_Company_AddressEN] DEFAULT ('') NULL,
     [Tel]       VARCHAR (30)   CONSTRAINT [DF_Company_Tel] DEFAULT ('') NULL,
