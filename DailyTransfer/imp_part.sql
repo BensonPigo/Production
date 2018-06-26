@@ -353,7 +353,8 @@ update t
 		set t.TpePOID = s.id,
 		t.seq1=s.seq1,
 		t.SuppDelivery=s.SuppDelivery,
-		t.EstETA=s.EstETA
+		t.EstETA=s.EstETA,
+		t.Complete = isnull(s.Complete,0)
 		from  Machine.dbo.PartPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
@@ -365,7 +366,8 @@ update t
 		set t.TpePOID = s.id,
 		t.seq1=s.seq1,
 		t.SuppDelivery=s.SuppDelivery,
-		t.EstETA=s.EstETA
+		t.EstETA=s.EstETA,
+		t.Complete = isnull(s.Complete,0)
 		from  Machine.dbo.MiscPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
