@@ -627,5 +627,49 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
             callP04.MdiParent = MdiParent;
             callP04.Show();
         }
+
+        private void btnReCalculate_Click(object sender, EventArgs e)
+        {
+            // 母單批次Re-Cal
+            DualResult result;
+            DataTable dtPo;
+            string sqlcmd = $@"
+select po3.ID as Poid,po3.SEQ1,po3.SEQ2,mdp.Ukey 
+from PO_Supp_Detail po3
+left join MDivisionPoDetail mdp on mdp.POID=po3.ID
+and mdp.Seq1=po3.SEQ1 and mdp.Seq2=po3.SEQ2
+where po3.ID in (select poid from orders where id='{CurrentMaintain["id"]}')
+and po3.junk=0
+";
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtPo)))
+            {
+                ShowErr(result);
+                return;
+            }
+            if (dtPo == null) return;
+            int cnt = 1;
+            
+            foreach (DataRow dr in dtPo.Rows)
+            {
+                List<SqlParameter> listSQLParameter = new List<SqlParameter>();
+                listSQLParameter.Add(new SqlParameter("@Ukey", dr["Ukey"]));
+                listSQLParameter.Add(new SqlParameter("@Poid", dr["Poid"]));
+                listSQLParameter.Add(new SqlParameter("@Seq1", dr["Seq1"]));
+                listSQLParameter.Add(new SqlParameter("@Seq2", dr["Seq2"]));
+                
+                if (!(result = DBProxy.Current.ExecuteSP("", "dbo.usp_SingleItemRecaculate", listSQLParameter)))
+                {
+                    Exception ex = result.GetException();
+                    MyUtility.Msg.WarningBox(ex.Message);
+                    this.HideWaitMessage();
+                    return;
+                }
+                this.ShowWaitMessage($"Data Processing.... ({cnt}/{dtPo.Rows.Count})");
+                cnt++;
+            }
+            this.HideWaitMessage();
+            MyUtility.Msg.InfoBox("Finished!!");
+            
+        }
     }
 }
