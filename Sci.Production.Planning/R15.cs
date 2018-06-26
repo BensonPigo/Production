@@ -304,339 +304,6 @@ pivot
                 }
                 #endregion
 
-                #region -- 產生所有 SubProcessID Qty --
-                sqlCmd.Append(@"/*Cur_bdltrack2*/
-/*
-Step1
-取得基礎訂單
-1.排除掉SewinLine and SewinOffLine 空值的訂單
-*/
-select masterID = o.POID
-		, o.orderID 
-		, StyleID
-		, o.Finished
-		, o.FactoryID
-		, o.SewLine
-		, o.SewInLine
-		, o.SewOffLine
-into  #tsp
-from #cte o
-inner join Factory f on o.FactoryID = f.ID
-where o.SewInLine is not null and o.SewInLine != '' and o.SewOffLine is not null and o.SewOffLine != '' --o.Junk != 1
-----------------------------------------------------------------------------------------------------------
-/*
-	依照 Poid，取得製作一件衣服所有需要的 【FabricCode & PatternCode】
-*/
-select	Poid = o.POID, pt.UKey
-into #TablePatternUkey
-from #tsp p
-inner join Orders o on p.orderID = o.ID
-inner join Pattern pt on pt.StyleUkey = o.StyleUkey
-						 and pt.Status = 'Completed' 
-						 and pt.EDITdATE = (SELECT MAX(EditDate) 
-											from pattern WITH (NOLOCK) 
-											where styleukey = o.StyleUkey
-											and Status = 'Completed') 
-------------------------------------------------------------------------------------------------------------------
-/*														
-*	取得所有 PatternPanel
-*	※ C# 中 SubStrin (10) 代表第 11 個字元，SQL 中 SubString (11) 代表第 11 個字元
-*
-*	FabricPanelCode 只需要取 FabricCode 不為空白
-*	Distinct 原因是會有多筆 Article Group
-*	PatternCode 只要 Annotation = 空值，則 PatterCode = 'ALLPARTS'	
-*   
-*   ※除了 SORTING, LOADING 
-*   ※其他 SubProcess 需依照 Pattern_GL.Annotation
-*   ※計算各個部位如何才能算一件成衣
-*/
-Select	distinct tpu.Poid
-		, PatternCode = case
-							when pg.Annotation = '' or pg.Annotation is null then 'ALLPARTS'
-							else PatternCode.value
-						end
-		, F_CODE = a.FabricPanelCode
-        , SubProcessID = SubProcessID.Data
-into #TablePatternCode
-from #TablePatternUkey tpu
-inner join Pattern_GL pg WITH (NOLOCK) on tpu.UKey = pg.PatternUKEY
-inner join Pattern_GL_LectraCode a WITH (NOLOCK) on	 a.PatternUkey = tpu.Ukey
-														and a.FabricCode != ''
-														and pg.SEQ = a.SEQ
-outer apply (
-	select value = iif(a.SEQ = '0001', SubString(a.PatternCode, 11, Len(a.PatternCode)), a.PatternCode)
-) PatternCode
-outer apply (
-	select Data = splitAnnotation.Data
-	from dbo.SplitString(pg.Annotation, '+') splitAnnotation
-	inner join SubProcess sp on splitAnnotation.Data = sp.Id
-
-	union all 
-	select Data = 'SORTING'
-
-	union all
-	select Data = 'LOADING'
-) SubProcessID
-
-------------------------------------------------------------------------------------------------------------------
-/*
-*	取出的訂單，執行以下判斷流程 (#CutComb 儲存 整件衣服 應該裁剪的部位【須展開至 PatterCode】)
-*	Step1 找出同 Article、Comb 的 bundel card 有幾個不同的 artwork bundle
-*	Step2 組出 SP# 的剪裁 Comb
-*		排除
-*			1. Order_BOF.Kind = 0 (表Other) 
-*			2. Order_BOF.Kind = 3 (表Polyfill)的資料
-*			3. 外裁項 (Order_EachCons.CuttingPiece == 0) 【0 代表非外裁項】
-*/
-select	#tsp.masterID
-		, #tsp.orderID
-		, #tsp.StyleID
-		, #cur_artwork.FabricCombo
-		, #cur_artwork.PatternCode
-		, #cur_artwork.Article
-		, #cur_artwork.artwork 
-		, #tsp.SewLine
-		, #tsp.FactoryID
-        , #cur_artwork.SubProcessID
-        , isInComing = isInComing.value
-into #cutcomb
-from #tsp
-inner join (
-	select	distinct #tsp.orderID
-			, b.Article
-			, FabricCombo = tpc.F_CODE
-			, artwork = isnull (stuff ((select '+' + subprocessid
-										from (
-											select distinct bda.subprocessid
-											from Bundle_Detail_Art bda
-											where bd.BundleNo = bda.Bundleno
-										) k
-										for xml path('')
-									  ), 1, 1, '')
-							  , '')
-			, PatternCode = tpc.PatternCode
-            , tpc.SubProcessID
-	from #TablePatternCode tpc
-	left join Bundle b on b.POID = tpc.Poid
-	left join Bundle_Detail bd on b.id = bd.id
-								  and tpc.PatternCode = bd.Patterncode
-	left join #tsp on b.Orderid = #tsp.orderID
-	left join WorkOrder wo on b.POID = wo.id
-							   and b.CutRef = wo.CutRef
-	left join Order_BOF ob on ob.Id = wo.Id 
-							  and ob.FabricCode = wo.FabricCode
-	left join Order_EachCons oec on oec.ID = ob.ID 
-								    and oec.MarkerName = wo.Markername 
-									and oec.FabricCombo = wo.FabricCombo 
-									and oec.FabricPanelCode = wo.FabricPanelCode 
-									and oec.FabricCode = wo.FabricCode
-	where ob.Kind not in ('0','3')
-	      and oec.CuttingPiece = 0
-)#cur_artwork on #tsp.orderID = #cur_artwork.orderID
-outer apply (
-    select value = 'T'
-    union all
-    select value = 'F'
-) isInComing
-
-/*
-* Step3
-* 取出被各個部門收下的 Bundle Data
-*		排除
-*			1. Order_BOF.Kind = 0 (表Other) 
-*			2. Order_BOF.Kind = 3 (表Polyfill)的資料
-*			3. 外裁項 【Bundle_Detail 不會出現外裁項的資料】
-*		BundleGroup 必須是同 Group 組合才能算一件衣服，因為不同 Group 可能會有色差
-*/
-select	b.orderid
-		, bd.SizeCode
-		, b.Article
-		, bd.BundleGroup
-		, FabricCombo = wo.FabricPanelCode
-		, PatternCode = bd.Patterncode
-		, artwork = isnull(ArtWork.value, '')
-		, qty = isnull (bd.qty, 0)
-        , bio.SubProcessId
-        , haveOutGoing = case 
-                            when bio.OutGoing is not null then 'T'
-                            else 'F'
-                         end
-into #tmpBundleInOutQty
-from BundleInOut bio
-inner join Bundle_Detail bd on bio.BundleNo = bd.BundleNo
-inner join Bundle b on b.id = bd.id
-inner join WorkOrder wo on b.POID = wo.id
-						    and b.CutRef = wo.CutRef
-left join Order_BOF ob on ob.Id = wo.Id 
-						    and ob.FabricCode = wo.FabricCode
-inner join #tsp on b.Orderid = #tsp.orderID
-outer apply (
-	select value = stuff ((	select '+' + subprocessid
-							from (
-								select distinct bda.subprocessid
-								from Bundle_Detail_Art bda
-								where bd.BundleNo = bda.Bundleno
-							) k
-							for xml path('')
-							), 1, 1, '')
-) ArtWork
-where	ob.Kind not in ('0','3')
-
-/*
- * 分成兩個群組 
- * 1. InComing
- * 2. OutGoing
- */ 
-select *
-into #cur_bdltrack2
-from (
-    select 	orderid
-		    , SizeCode
-		    , Article
-		    , BundleGroup
-		    , FabricCombo
-		    , PatternCode
-		    , artwork
-		    , qty = sum (isnull (qty, 0))
-            , SubProcessId
-            , isInComing = 'T'
-    from #tmpBundleInOutQty
-    group by orderid, SizeCode, Article, BundleGroup, FabricCombo, PatternCode
-             , artwork, SubProcessId
-
-    union all
-    select  orderid
-		    , SizeCode
-		    , Article
-		    , BundleGroup
-		    , FabricCombo
-		    , PatternCode
-		    , artwork
-		    , qty = sum (isnull (qty, 0))
-            , SubProcessId
-            , isInComing = 'F'
-    from #tmpBundleInOutQty
-    where haveOutGoing = 'T'
-    group by orderid, SizeCode, Article, BundleGroup, FabricCombo, PatternCode
-             , artwork, SubProcessId
-) x;
-
-------------------------------------------------------------------------------------------------------------------
-
-/*	
-*	Step4 已收的 bundle 資料中找出 
-*			article 
-*			size
-*			部位
-*			artwork
-*		  各個部門的加總數量
-*	Step5 計算 sp# 的產出
-*/
-select	NewCutComb.FactoryID
-		, NewCutComb.orderid
-		, NewCutComb.StyleID
-		, NewCutComb.SewLine
-		, NewCutComb.Article
-		, NewCutComb.SizeCode
-		, NewCutComb.BundleGroup
-		, NewCutComb.FabricCombo
-		, NewCutComb.PatternCode
-		, NewCutComb.artwork
-		, AccuInComingQty = sum(isnull(#cur_bdltrack2.qty, 0))
-        , SubProcessId = NewCutComb.SubProcessId
-        , isInComing = NewCutComb.isInComing
-into #Min_cut
-from (
-/*
-*	組出，同 OrderID, Artwork, Article, SizeCode 需要的 FabricCombe & PatternCode
-*/
-	select	distinct #cutcomb.*
-			, SizeCode = SizeCode.value
-			, BundleGroup = BundleGroup.value
-	from #cutcomb
-	outer apply (
-		select distinct value = SizeCode
-		from #cur_bdltrack2 
-		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
-	) SizeCode
-	outer apply (
-		select distinct value = BundleGroup
-		from #cur_bdltrack2 
-		where	#cutcomb.orderID = #cur_bdltrack2.Orderid
-	) BundleGroup
-) NewCutComb 
-left join #cur_bdltrack2 on	NewCutComb.artwork = #cur_bdltrack2.artwork 
-							and NewCutComb.FabricCombo = #cur_bdltrack2.FabricCombo
-							and NewCutComb.PatternCode = #cur_bdltrack2.PatternCode
-							and NewCutComb.orderID = #cur_bdltrack2.orderid
-							and NewCutComb.Article = #cur_bdltrack2.Article 
-							and NewCutComb.SizeCode = #cur_bdltrack2.SizeCode
-							and NewCutComb.BundleGroup = #cur_bdltrack2.BundleGroup
-                            and NewCutComb.SubProcessId = #cur_bdltrack2.SubProcessId
-                            and NewCutComb.isInComing = #cur_bdltrack2.isInComing
-group by NewCutComb.FactoryID, NewCutComb.orderid, NewCutComb.StyleID, NewCutComb.SewLine, NewCutComb.Article
-         , NewCutComb.SizeCode, NewCutComb.BundleGroup, NewCutComb.FabricCombo, NewCutComb.PatternCode
-         , NewCutComb.artwork, NewCutComb.SubProcessId, NewCutComb.isInComing;
---order by orderid, Article, SizeCode, FabricCombo, PatternCode, artwork
-
------------------------------------------------------------
-
-/*
-*	準備 InComing & OutGoing 資料
-*/
-select	FactoryID
-		, SP
-		, StyleID
-		, Line
-        , SubProcessId
-		, AccuQty = AccuInComing
-        , isInComing
-into #AccuInComeData
-from (
-	select	FactoryID
-			, SP = orderID
-			, StyleID
-			, Line = SewLine
-            , SubProcessId
-			, AccuInComing = sum (isnull(MinInComingQty, 0))
-            , isInComing
-	from (
-/*
-*		依照【SP#, Article, Size, Comb, Artwork】取最小數量 (因為每個部位都要有，才能成為一件衣服)
-*		判斷 BundleGroup
-*			第一次群組判斷最小數量需要加上 BundleGroup 
-*                 (BundleGroup 必須是同 Group 組合才能算一件衣服，因為不同 Group 可能會有色差)
-*			第二次群組加總所有成衣數量		
-*/
-		select FactoryID
-				, orderID
-				, StyleID
-				, SewLine
-				, Article
-                , SizeCode
-                , SubProcessId
-				, MinInComingQty = sum (MinInComingQty)
-                , isInComing
-		from (
-			select	FactoryID
-					, orderID
-					, StyleID
-					, SewLine
-					, Article
-                    , SizeCode
-                    , SubProcessId
-					, MinInComingQty = min(AccuInComingQty)
-                    , isInComing
-			from #Min_cut 
-			group by FactoryID, orderID	,StyleID, SewLine, Article, SizeCode, BundleGroup, SubProcessId, isInComing
-		)w
-		group by FactoryID, orderID	,StyleID, SewLine, Article, SizeCode, SubProcessId, isInComing
-	)x 
-	group by FactoryID, orderID, StyleID, SewLine, SubProcessId, isInComing
-) a
-");
-                #endregion
-
                 sqlCmd.Append(string.Format(@"
                 -- 依撈出來的order資料(cte)去找各製程的WIP
 select t.OrderID
@@ -787,10 +454,10 @@ into #tmp4
 from #tmp3
 group by [M],[Factory],[SP],[Subprocessid],article,[Size]
 
-select [M],[Factory],[SP],[Subprocessid],article,accuQty = sum(accuQty)
+select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
 into #tmpin
 from #tmp4
-group by [M],[Factory],[SP],[Subprocessid],article
+group by [M],[Factory],[SP],[Subprocessid]
 ------
 select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,Qty = iif(OutGoing is null ,0,Qty)
 into #tmpout1
@@ -806,16 +473,15 @@ into #tmpout3
 from #tmpout2
 group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
 
-
 select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
 into #tmpout4
 from #tmpout3
 group by [M],[Factory],[SP],[Subprocessid],article,[Size]
 
-select [M],[Factory],[SP],[Subprocessid],article,accuQty = sum(accuQty)
+select [M],[Factory],[SP],[Subprocessid],accuQty = sum(accuQty)
 into #tmpout
 from #tmpout4
-group by [M],[Factory],[SP],[Subprocessid],article
+group by [M],[Factory],[SP],[Subprocessid]
 ------
 ----------↑計算累計成衣件數
 select t.MDivisionID
@@ -1101,7 +767,9 @@ outer apply(
 	select SubProcessDest = concat('Inhouse:'+stuff((
 		select concat(',',ot.ArtworkTypeID)
 		from order_tmscost ot WITH (NOLOCK)
+		inner join artworktype WITH (NOLOCK) on ot.artworktypeid = artworktype.id 
 		where ot.id = t.OrderID and ot.InhouseOSP = 'I' 
+		and artworktype.isSubprocess = 1
 		for xml path('')
 	),1,1,'')
 	,'; '+(
@@ -1802,7 +1470,9 @@ outer apply(
 	select SubProcessDest = concat('Inhouse:'+stuff((
 		select concat(',',ot.ArtworkTypeID)
 		from order_tmscost ot WITH (NOLOCK)
+		inner join artworktype WITH (NOLOCK) on ot.artworktypeid = artworktype.id 
 		where ot.id = t.OrderID and ot.InhouseOSP = 'I' 
+		and artworktype.isSubprocess = 1
 		for xml path('')
 	),1,1,'')
 	,'; '+(
