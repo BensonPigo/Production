@@ -1,6 +1,6 @@
-﻿namespace Sci.Production.Warehouse
+﻿namespace Sci.Production.PPIC
 {
-    partial class P05
+    partial class P16
     {
         /// <summary>
         /// Required designer variable.
@@ -202,7 +202,7 @@
             this.labNotice.TabIndex = 21;
             this.labNotice.Text = "Category for Bulk,Sample can use";
             // 
-            // P05
+            // P16
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -214,8 +214,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.panel1);
-            this.Name = "P05";
-            this.Text = "P05. Material Consumption Calculation";
+            this.Name = "P16";
+            this.Text = "P16. Material Consumption Calculation";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
             this.Controls.SetChildIndex(this.label1, 0);

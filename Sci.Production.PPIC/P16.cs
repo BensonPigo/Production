@@ -14,63 +14,61 @@ using System.Data.SqlClient;
 using Sci.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
-namespace Sci.Production.Warehouse
+namespace Sci.Production.PPIC
 {
-    public partial class P05 : Sci.Win.Tems.QueryForm
+    public partial class P16 : Sci.Win.Tems.QueryForm
     {
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_balance;
-        public P05(ToolStripMenuItem menuitem)
+
+        public P16(ToolStripMenuItem menuitem)
             :base(menuitem)
         {
             this.EditMode = true;
-            InitializeComponent();
+            this.InitializeComponent();
             this.grid1.IsEditingReadOnly = false;
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
             DataGridViewGeneratorCheckBoxColumnSettings col_chk = new DataGridViewGeneratorCheckBoxColumnSettings();
             col_chk.CellValidating += (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow<DataRow>(e.RowIndex);
+                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
-                calEstUsageAndBalance();
+                this.calEstUsageAndBalance();
             };
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
             qty.CellMouseDoubleClick += (s, e) =>
             {
-                DataRow dr = grid1.GetDataRow<DataRow>(e.RowIndex);
-                Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(dr["ID"]),txtSPNo.Text);
+                DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                Sci.Production.PPIC.P01_QtyShip callNextForm = new Sci.Production.PPIC.P01_QtyShip(MyUtility.Convert.GetString(dr["ID"]),this.txtSPNo.Text);
                 callNextForm.ShowDialog(this);
             };
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings qty2 = new DataGridViewGeneratorNumericColumnSettings();
             qty2.CellMouseDoubleClick += (s, e) =>
             {
-                DataRow dr = grid2.GetDataRow<DataRow>(e.RowIndex);
-                //DataRow[] drType = dt2.Select("")
-                if (callP03 != null && callP03.Visible == true)
-                {                    
-                    callP03.P03Data(txtSPNo.Text);                   
-                    callP03.Activate();
-                    
-                }
-                else
-                {
-                    P03FormOpen();
-                }
+                DataRow dr = this.grid2.GetDataRow<DataRow>(e.RowIndex);
 
-                if (callP03 != null)
+                string fullpath = System.Windows.Forms.Application.StartupPath + ".\\Sci.Production.Warehouse.dll";
+                var assemblys = Assembly.LoadFile(fullpath);
+                var types = assemblys.GetTypes().ToList();
+                var myClass = types.Where(x => x.FullName == "Sci.Production.Warehouse.P03").First();
+
+                if (myClass != null)
                 {
-                    callP03.P05Filter(txtSPNo.Text, dr["Refno"].ToString(), "F", dr["ColorID"].ToString());
+                    var callMethod = myClass.GetMethod("P05Filter");
+                    callMethod.Invoke(null, new object[] { this.txtSPNo.Text, dr["Refno"].ToString(), "F", dr["ColorID"].ToString(), this.MdiParent });
                 }
             };
             #region Set Grid1
-            Helper.Controls.Grid.Generator(this.grid1)
+            this.Helper.Controls.Grid.Generator(this.grid1)
             .CheckBox("Selected", header: string.Empty, width: Widths.Auto(), iseditable: true, trueValue: 1, falseValue: 0,settings: col_chk)
             .Text("ID", header: "SP# (Child SP)", iseditingreadonly: true, width: Widths.Auto())
             .Text("Article", header: "Article", iseditingreadonly: true, width: Widths.Auto())
@@ -86,7 +84,7 @@ namespace Sci.Production.Warehouse
             #endregion
 
             #region Set Grid2
-            Helper.Controls.Grid.Generator(this.grid2)
+            this.Helper.Controls.Grid.Generator(this.grid2)
             .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.Auto())
             .Text("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(22))
             .Text("ColorID", header: "Color", iseditingreadonly: true, width: Widths.Auto())
@@ -96,7 +94,7 @@ namespace Sci.Production.Warehouse
             .Numeric("bqty", header: "On board Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
             .Numeric("Uqty", header: "Usable Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
             .Numeric("EstUsageQty", header: "Est. Usage Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2)
-            .Numeric("BlanceQty", header: "Blance Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2,minimum:-999999).Get(out col_balance)
+            .Numeric("BlanceQty", header: "Blance Qty", iseditingreadonly: true, width: Widths.Auto(), decimal_places: 2,minimum:-999999).Get(out this.col_balance)
             ;
             this.grid2.Columns["Description"].Width = 200;
             #endregion
@@ -114,61 +112,18 @@ namespace Sci.Production.Warehouse
                 DataRow dr = this.grid2.GetDataRow(e.RowIndex);
                 if (MyUtility.Convert.GetDecimal(dr["BlanceQty"]) < 0)
                 {
-                    //e.CellStyle.BackColor = Color.Pink;
                     this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Pink;
                 }
                 else
                 {
-                    //e.CellStyle.BackColor = Color.White;
                     this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
                 }
             };
         }
 
-        Sci.Production.Warehouse.P03 callP03 = null;
-        private void P03FormOpen()
-        {
-            foreach (Form form in Application.OpenForms)
-            {
-                if (form is Sci.Production.Warehouse.P03)
-                {
-                    form.Activate();
-                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
-                    activateForm.setTxtSPNo(txtSPNo.Text);
-                    activateForm.Query();
-                    return;
-                }
-            }
-
-            ToolStripMenuItem P03MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
-            {
-                if (toolMenuItem.Text.EqualString("Warehouse"))
-                {
-                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
-                    {
-                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
-                        {
-                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
-                            {
-                                P03MenuItem = ((ToolStripMenuItem)subMenuItem);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            callP03 = new P03(txtSPNo.Text, P03MenuItem);
-            callP03.MdiParent = MdiParent;
-            callP03.Show();
-            callP03.P03Data(txtSPNo.Text);
-            callP03.ChangeDetailColor();
-        }
-
-        DataTable dt;
-        DataTable dt2;
-        DataTable[] dt3;
+        private DataTable dt;
+        private DataTable dt2;
+        private DataTable[] dt3;
 
         private void Query()
         {
@@ -179,18 +134,18 @@ select 	selected = 0,	o.ID,	oq.Article,	OrderQty = sum(oq.Qty),	o.BuyerDelivery,
 from Orders o with(nolock)
 inner join Order_Qty oq with(nolock) on o.ID = oq.ID
 left join Country c with(nolock) on o.Dest = c.ID
-where o.poid = '{txtSPNo.Text}'
+where o.poid = '{this.txtSPNo.Text}'
 group by o.ID,oq.Article,o.BuyerDelivery,o.SciDelivery,o.SewInLine,o.SewLine,o.VasShas,o.CustCDID,c.Alias
 order by o.BuyerDelivery,o.ID
 ";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.dt);
             if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
-            this.listControlBindingSource1.DataSource = dt;
-            ((DataTable)listControlBindingSource1.DataSource).DefaultView.Sort = "ID";
+            this.listControlBindingSource1.DataSource = this.dt;
+            ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.Sort = "ID";
             this.grid1.AutoResizeColumns();
             #endregion
             #region 2
@@ -200,7 +155,7 @@ Qty = Sum(Round(dbo.getUnitQty(Po_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, 
       Sum(Round(dbo.getUnitQty(Po_Supp_Detail.POUnit, Po_Supp_Detail.StockUnit, isnull(Po_Supp_Detail.FOC, 0)), 2))
 into #tmp 
 from Po_Supp_Detail with(nolock)
-where FabricType = 'F' and id = '{txtSPNo.Text}' and junk=0
+where FabricType = 'F' and id = '{this.txtSPNo.Text}' and junk=0
 group by Refno,ColorID,FabricType,id
 
 select 
@@ -209,8 +164,8 @@ select
 	t.ColorID,	a.ETA,	t.Qty,t.FabricType,
 	Wqty = isnull(b.InQty,0)+isnull(c.InQty,0),
 	bqty = IIF(isnull(b.bqty,0)<0,0,isnull(b.bqty,0)),
-	Uqty = iif('{checkBox1.Checked}'='True', isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0),isnull(b.InQty,0)+isnull(c.InQty,0)),
-	Uqty2 = iif('{checkBox1.Checked}'='True', isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0),isnull(b.InQty,0)+isnull(c.InQty,0)),
+	Uqty = iif('{this.checkBox1.Checked}'='True', isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0),isnull(b.InQty,0)+isnull(c.InQty,0)),
+	Uqty2 = iif('{this.checkBox1.Checked}'='True', isnull(b.InQty,0)+isnull(c.InQty,0)+isnull(b.bqty,0),isnull(b.InQty,0)+isnull(c.InQty,0)),
 	EstUsageQty = 0.00,
 	BlanceQty = 0.00
 from #tmp t
@@ -258,25 +213,25 @@ outer apply(
 order by  t.Refno
 drop table #tmp
 ";
-            DualResult result2 = DBProxy.Current.Select(null, sqlcmd2, out dt2);
+            DualResult result2 = DBProxy.Current.Select(null, sqlcmd2, out this.dt2);
             if (!result2)
             {
                 this.ShowErr(result2);
                 return;
             }
 
-            this.listControlBindingSource2.DataSource = dt2;
+            this.listControlBindingSource2.DataSource = this.dt2;
             this.grid2.AutoResizeColumns();            
                       
             #endregion
             #region 3
-            if (dt.Rows.Count == 0)
+            if (this.dt.Rows.Count == 0)
             {
                 return;
             }
 
             string sqlcmd3 = string.Empty;
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in this.dt.Rows)
             {
                 sqlcmd3 += $@"
 select refno,ColorID,TtlConsPC = avg(ConsPC)*{dr["OrderQty"]},dtkey={dr["dtkey"]}
@@ -287,7 +242,7 @@ from (
     inner join dbo.Order_EachCons_Color oec on oe.Id = oec.Id and oe.Ukey = oec.Order_EachConsUkey
     inner join dbo.Order_EachCons_SizeQty oes on oe.Ukey = oes.Order_EachConsUkey
     inner join dbo.Order_ColorCombo oc on oc.Id=oe.Id and oc.Article = '{dr["Article"]}' and oc.FabricPanelCode = oe.FabricPanelCode and oc.colorID=oec.ColorID
-    where oe.ID='{txtSPNo.Text}'
+    where oe.ID='{this.txtSPNo.Text}'
     and (0 = iif(exists (select 1 from Order_EachCons_Article where Order_EachConsUkey = oe.Ukey),1,0) --若Order_EachCons_Article有資料,要確認Article是否存在於Order_EachCons_Article
 	    or '{dr["Article"]}' in(select Article from Order_EachCons_Article oea where oea.Order_EachConsUkey = oe.Ukey))
     group by ob.refno ,oec.ColorID,oes.SizeCode
@@ -295,7 +250,7 @@ from (
 group by refno,ColorID
 ";
             }
-            DualResult result3 = DBProxy.Current.Select(null, sqlcmd3, out dt3);
+            DualResult result3 = DBProxy.Current.Select(null, sqlcmd3, out this.dt3);
             if (!result3)
             {
                 this.ShowErr(result3);
@@ -306,32 +261,32 @@ group by refno,ColorID
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            foreach (DataRow dr2 in dt2.Rows)
+            foreach (DataRow dr2 in this.dt2.Rows)
             {
-                dr2["Uqty"] = !checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
-                dr2["Uqty2"] = !checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
+                dr2["Uqty"] = !this.checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
+                dr2["Uqty2"] = !this.checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
             }
 
-            calBalance();
+            this.calBalance();
         }
 
         private void btnAutoCal_Click(object sender, EventArgs e)
         {
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in this.dt.Rows)
             {
                 dr["selected"] = false;
             }
 
-            foreach (DataRow dr2 in dt2.Rows)
+            foreach (DataRow dr2 in this.dt2.Rows)
             {
                 dr2["Uqty2"] = dr2["Uqty"];
             }
 
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in this.dt.Rows)
             {
-                DataTable dt3c = dt3[MyUtility.Convert.GetInt(dr["dtkey"])];
+                DataTable dt3c = this.dt3[MyUtility.Convert.GetInt(dr["dtkey"])];
                 bool flag = true;
-                foreach (DataRow dr2 in dt2.Rows)
+                foreach (DataRow dr2 in this.dt2.Rows)
                 {
                     DataRow[] dr3s = dt3c.Select($"Refno = '{dr2["Refno"]}' and ColorID = '{dr2["ColorID"]}'");
                     if (dr3s.Length > 0)
@@ -345,7 +300,7 @@ group by refno,ColorID
 
                 if (flag)
                 {
-                    foreach (DataRow dr2 in dt2.Rows)
+                    foreach (DataRow dr2 in this.dt2.Rows)
                     {
                         DataRow[] dr3s = dt3c.Select($"Refno = '{dr2["Refno"]}' and ColorID = '{dr2["ColorID"]}'");
                         if (dr3s.Length > 0)
@@ -356,24 +311,24 @@ group by refno,ColorID
                     dr["selected"] = true;
                 }
             }
-            calEstUsageAndBalance();
+            this.calEstUsageAndBalance();
             this.grid1.ValidateControl();
             this.grid2.ValidateControl();
         }
 
         private void calEstUsageAndBalance()
         {
-            foreach (DataRow dr2 in dt2.Rows)
+            foreach (DataRow dr2 in this.dt2.Rows)
             {
                 dr2["EstUsageQty"] = 0;
             }
 
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in this.dt.Rows)
             {
                 if (MyUtility.Convert.GetInt(dr["selected"])==1)
                 {
-                    DataTable dt3c = dt3[MyUtility.Convert.GetInt(dr["dtkey"])];
-                    foreach (DataRow dr2 in dt2.Rows)
+                    DataTable dt3c = this.dt3[MyUtility.Convert.GetInt(dr["dtkey"])];
+                    foreach (DataRow dr2 in this.dt2.Rows)
                     {
                         DataRow[] dr3s = dt3c.Select($"Refno = '{dr2["Refno"]}' and ColorID = '{dr2["ColorID"]}'");
                         if (dr3s.Length > 0)
@@ -383,30 +338,30 @@ group by refno,ColorID
                     }
                 }
             }
-            calBalance();
+            this.calBalance();
         }
 
         private void calBalance()
         {
-            foreach (DataRow dr2 in dt2.Rows)
+            foreach (DataRow dr2 in this.dt2.Rows)
             {
                 dr2["BlanceQty"] = MyUtility.Convert.GetDecimal(dr2["Uqty"]) - MyUtility.Convert.GetDecimal(dr2["EstUsageQty"]);
             }
-            Change_Color();
+            this.Change_Color();
         }
 
         private void grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            Countselectcount();
+            this.Countselectcount();
         }
 
         private void Countselectcount()
         {
             this.grid1.ValidateControl();
             DataGridViewColumn column = this.grid1.Columns["Selected"];
-            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
-                calEstUsageAndBalance();
+                this.calEstUsageAndBalance();
             }
         }
 
@@ -415,31 +370,32 @@ group by refno,ColorID
             this.listControlBindingSource1.DataSource = null;
             this.listControlBindingSource2.DataSource = null;
 
-            string chk2 = $@"select Category from orders where poid = '{txtSPNo.Text}' and Category in ('B','S')";
+            string chk2 = $@"select Category from orders where poid = '{this.txtSPNo.Text}' and Category in ('B','S')";
             if (!MyUtility.Check.Seek(chk2))
             {
                 return;
             }
-            string chk = $@"select 1 from orders where finished = 1 and id = '{txtSPNo.Text}'";
+            string chk = $@"select 1 from orders where finished = 1 and id = '{this.txtSPNo.Text}'";
             if (MyUtility.Check.Seek(chk))
             {
-                MyUtility.Msg.WarningBox($"{txtSPNo.Text} PPIC already close !! ");
+                MyUtility.Msg.WarningBox($"{this.txtSPNo.Text} PPIC already close !! ");
                 return;
             }
 
-            Query();
-            calBalance();
+            this.Query();
+            this.calBalance();
         }
 
+        /// <inheritdoc/>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (txtSPNo.Focused)
+            if (this.txtSPNo.Focused)
             {
                 switch (keyData)
                 {
                     case Keys.Enter:
-                        Query();
-                        calBalance();
+                        this.Query();
+                        this.calBalance();
                         break;
                 }
             }
@@ -448,27 +404,27 @@ group by refno,ColorID
 
         private void btnNewSearch_Click(object sender, EventArgs e)
         {
-            txtSPNo.ResetText();
-            txtSPNo.Select();
+            this.txtSPNo.ResetText();
+            this.txtSPNo.Select();
         }
 
         private void btnAutoCalc_Click(object sender, EventArgs e)
         {
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in this.dt.Rows)
             {
                 dr["selected"] = false;
             }
 
-            foreach (DataRow dr2 in dt2.Rows)
+            foreach (DataRow dr2 in this.dt2.Rows)
             {
                 dr2["Uqty2"] = dr2["Uqty"];
             }
 
-            foreach (DataRow dr in dt.Rows)
+            foreach (DataRow dr in this.dt.Rows)
             {
-                DataTable dt3c = dt3[MyUtility.Convert.GetInt(dr["dtkey"])];
+                DataTable dt3c = this.dt3[MyUtility.Convert.GetInt(dr["dtkey"])];
                 bool flag = true;
-                foreach (DataRow dr2 in dt2.Rows)
+                foreach (DataRow dr2 in this.dt2.Rows)
                 {
                     DataRow[] dr3s = dt3c.Select($"Refno = '{dr2["Refno"]}' and ColorID = '{dr2["ColorID"]}'");
                     if (dr3s.Length > 0)
@@ -482,7 +438,7 @@ group by refno,ColorID
 
                 if (flag)
                 {
-                    foreach (DataRow dr2 in dt2.Rows)
+                    foreach (DataRow dr2 in this.dt2.Rows)
                     {
                         DataRow[] dr3s = dt3c.Select($"Refno = '{dr2["Refno"]}' and ColorID = '{dr2["ColorID"]}'");
                         if (dr3s.Length > 0)
@@ -493,7 +449,7 @@ group by refno,ColorID
                     dr["selected"] = true;
                 }
             }
-            calEstUsageAndBalance();
+            this.calEstUsageAndBalance();
             this.grid1.ValidateControl();
             this.grid2.ValidateControl();
         }

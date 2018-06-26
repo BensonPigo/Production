@@ -80,25 +80,68 @@ namespace Sci.Production.Warehouse
         }
 
         // Form to Form W/H.P05
-        public void P05Filter(string P01SPNo,string Refno,string MaterialType, string Color)
-        {           
-            _Refno = Refno;
-            _MaterialType = (MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : "";
-            _Color = Color;
-
-            this.EditMode = true;
-            SpNo = P01SPNo;
-            this.txtSPNo.Text = SpNo.Trim();
-            ButtonOpen = true;
-            if (gridMaterialStatus.RowCount == 0)
+        public static void P05Filter(string P01SPNo,string Refno,string MaterialType, string Color, Form MdiParent)
+        {
+            foreach (Form form in Application.OpenForms)
             {
-                Query();
+                if (form is Sci.Production.Warehouse.P03)
+                {
+                    form.Activate();
+                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    activateForm.setTxtSPNo(P01SPNo);
+                    activateForm.set_Refno(Refno);
+                    activateForm.set_MaterialType((MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : "");
+                    activateForm.set_Color(Color);
+                    activateForm.Query();
+                    return;
+                }
             }
-            grid_Filter();
-            ChangeDetailColor();
-            _Refno = string.Empty;
-            _MaterialType = string.Empty;
-            _Color = string.Empty;
+
+            ToolStripMenuItem P03MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
+                            {
+                                P03MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            P03 call = new P03(P01SPNo, P03MenuItem);
+
+            call.MdiParent = MdiParent;
+            call.Show();
+            //改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
+            call.P03Data(P01SPNo);
+            call.Activate();
+            call.grid_Filter();
+            call.ChangeDetailColor();
+
+            //_Refno = Refno;
+            //_MaterialType = (MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : "";
+            //_Color = Color;
+
+            //this.EditMode = true;
+            //SpNo = P01SPNo;
+            //this.txtSPNo.Text = SpNo.Trim();
+            //ButtonOpen = true;
+            //if (gridMaterialStatus.RowCount == 0)
+            //{
+            //    Query();
+            //}
+            //grid_Filter();
+            //ChangeDetailColor();
+            //_Refno = string.Empty;
+            //_MaterialType = string.Empty;
+            //_Color = string.Empty;
         }
 
         //PPIC_P01 Called        
@@ -143,7 +186,6 @@ namespace Sci.Production.Warehouse
             call.Activate();
             call.ChangeDetailColor();
         }
-
 
         //隨著 P01上下筆SP#切換資料
         public void P03Data(string P01SPNo)  
@@ -1038,6 +1080,20 @@ drop table #tmpOrder,#tmpLocalPO_Detail
             this.txtSPNo.Text = spNo;
         }
 
+        public void set_Refno(string Refno)
+        {
+            this._Refno = Refno;
+        }
+
+        public void set_MaterialType(string MaterialType)
+        {
+            this._MaterialType = MaterialType;
+        }
+
+        public void set_Color(string Color)
+        {
+            this._Color = Color;
+        }
         private void gridMaterialStatus_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             this.ShowErr(e.Exception);
