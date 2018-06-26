@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -56,13 +55,14 @@
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.gridStdGSD = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.gridSummaryByArtwork = new Sci.Win.UI.Grid();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.gridSummaryByMachine = new Sci.Win.UI.Grid();
-            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource();
+            this.btnCIPF = new Sci.Win.UI.Button();
             this.panel3.SuspendLayout();
             this.panel5.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -95,6 +95,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnCIPF);
             this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Controls.Add(this.comboTypeFilter);
             this.panel3.Controls.Add(this.labelTypeFilter);
@@ -138,13 +139,13 @@
             this.comboTypeFilter.IsSupportUnselect = true;
             this.comboTypeFilter.Location = new System.Drawing.Point(79, 100);
             this.comboTypeFilter.Name = "comboTypeFilter";
+            this.comboTypeFilter.OldText = "";
             this.comboTypeFilter.Size = new System.Drawing.Size(121, 24);
             this.comboTypeFilter.TabIndex = 17;
             this.comboTypeFilter.SelectedIndexChanged += new System.EventHandler(this.comboTypeFilter_SelectedIndexChanged);
             // 
             // labelTypeFilter
             // 
-            this.labelTypeFilter.Lines = 0;
             this.labelTypeFilter.Location = new System.Drawing.Point(0, 101);
             this.labelTypeFilter.Name = "labelTypeFilter";
             this.labelTypeFilter.Size = new System.Drawing.Size(75, 23);
@@ -175,7 +176,6 @@
             // 
             // labelTotalSMV
             // 
-            this.labelTotalSMV.Lines = 0;
             this.labelTotalSMV.Location = new System.Drawing.Point(511, 61);
             this.labelTotalSMV.Name = "labelTotalSMV";
             this.labelTotalSMV.Size = new System.Drawing.Size(100, 23);
@@ -206,7 +206,6 @@
             // 
             // labelTotalCPUTMS
             // 
-            this.labelTotalCPUTMS.Lines = 0;
             this.labelTotalCPUTMS.Location = new System.Drawing.Point(250, 61);
             this.labelTotalCPUTMS.Name = "labelTotalCPUTMS";
             this.labelTotalCPUTMS.Size = new System.Drawing.Size(131, 23);
@@ -237,7 +236,6 @@
             // 
             // labelTotalGSD
             // 
-            this.labelTotalGSD.Lines = 0;
             this.labelTotalGSD.Location = new System.Drawing.Point(1, 61);
             this.labelTotalGSD.Name = "labelTotalGSD";
             this.labelTotalGSD.Size = new System.Drawing.Size(99, 23);
@@ -255,7 +253,6 @@
             // 
             // labelRequireFinish
             // 
-            this.labelRequireFinish.Lines = 0;
             this.labelRequireFinish.Location = new System.Drawing.Point(511, 7);
             this.labelRequireFinish.Name = "labelRequireFinish";
             this.labelRequireFinish.Size = new System.Drawing.Size(95, 23);
@@ -282,7 +279,6 @@
             // 
             // labelVersion
             // 
-            this.labelVersion.Lines = 0;
             this.labelVersion.Location = new System.Drawing.Point(250, 34);
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(52, 23);
@@ -291,7 +287,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(250, 7);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(52, 23);
@@ -318,7 +313,6 @@
             // 
             // labelApplyNo
             // 
-            this.labelApplyNo.Lines = 0;
             this.labelApplyNo.Location = new System.Drawing.Point(1, 34);
             this.labelApplyNo.Name = "labelApplyNo";
             this.labelApplyNo.Size = new System.Drawing.Size(66, 23);
@@ -327,7 +321,6 @@
             // 
             // labelStyleNo
             // 
-            this.labelStyleNo.Lines = 0;
             this.labelStyleNo.Location = new System.Drawing.Point(1, 7);
             this.labelStyleNo.Name = "labelStyleNo";
             this.labelStyleNo.Size = new System.Drawing.Size(66, 23);
@@ -393,6 +386,7 @@
             this.gridStdGSD.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridStdGSD.RowTemplate.Height = 24;
             this.gridStdGSD.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridStdGSD.ShowCellToolTips = false;
             this.gridStdGSD.Size = new System.Drawing.Size(848, 387);
             this.gridStdGSD.TabIndex = 0;
             this.gridStdGSD.TabStop = false;
@@ -427,6 +421,7 @@
             this.gridSummaryByArtwork.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSummaryByArtwork.RowTemplate.Height = 24;
             this.gridSummaryByArtwork.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSummaryByArtwork.ShowCellToolTips = false;
             this.gridSummaryByArtwork.Size = new System.Drawing.Size(848, 387);
             this.gridSummaryByArtwork.TabIndex = 0;
             this.gridSummaryByArtwork.TabStop = false;
@@ -434,10 +429,10 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.gridSummaryByMachine);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(854, 393);
+            this.tabPage3.Size = new System.Drawing.Size(854, 396);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Summary by machine";
             // 
@@ -461,9 +456,20 @@
             this.gridSummaryByMachine.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSummaryByMachine.RowTemplate.Height = 24;
             this.gridSummaryByMachine.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSummaryByMachine.Size = new System.Drawing.Size(848, 387);
+            this.gridSummaryByMachine.ShowCellToolTips = false;
+            this.gridSummaryByMachine.Size = new System.Drawing.Size(848, 390);
             this.gridSummaryByMachine.TabIndex = 0;
             this.gridSummaryByMachine.TabStop = false;
+            // 
+            // btnCIPF
+            // 
+            this.btnCIPF.Location = new System.Drawing.Point(481, 96);
+            this.btnCIPF.Name = "btnCIPF";
+            this.btnCIPF.Size = new System.Drawing.Size(60, 30);
+            this.btnCIPF.TabIndex = 19;
+            this.btnCIPF.Text = "CIPF";
+            this.btnCIPF.UseVisualStyleBackColor = true;
+            this.btnCIPF.Click += new System.EventHandler(this.btnCIPF_Click);
             // 
             // StdGSDList
             // 
@@ -473,7 +479,6 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "StdGSDList";
             this.Text = "Std. GSD List";
             this.panel3.ResumeLayout(false);
@@ -529,5 +534,6 @@
         private Win.UI.NumericBox numTotalCPUTMS;
         private Win.UI.Label labelTotalCPUTMS;
         private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnCIPF;
     }
 }
