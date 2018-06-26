@@ -157,8 +157,10 @@ order by PackingListID,Seq,UpdateDate", this.orderID);
             this.listControlBindingSource1.DataSource = transferDetail;
 
             sqlCmd = string.Format(
-                @"select [PackingListID] =  p.ID 
+                @"
+select [PackingListID] =  p.ID 
 ,pd.CTNStartNo
+,[Scanned] = iif(Scanned.QtyPerCTN=Scanned.ScanQty,'Y','')
 ,pd.TransferDate
 ,pd.ReceiveDate
 ,pd.ReturnDate
@@ -172,6 +174,11 @@ order by PackingListID,Seq,UpdateDate", this.orderID);
 ,pd.Remark
 ,pd.Seq
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
+outer apply(
+	select sum(QtyPerCTN) QtyPerCTN ,sum(ScanQty) ScanQty 
+	from PackingList_Detail
+	where ID=pd.id and CTNStartNo=pd.CTNStartNo
+)Scanned
 where pd.OrderID = '{0}' and pd.CTNStartNo <> '' and pd.CTNQty > 0 and p.ID = pd.ID
 order by p.ID,pd.Seq", this.orderID);
             result = DBProxy.Current.Select(null, sqlCmd, out ctnLastStatus);
@@ -199,6 +206,7 @@ order by p.ID,pd.Seq", this.orderID);
             this.Helper.Controls.Grid.Generator(this.gridLastStatus)
                 .Text("PackingListID", header: "Packing List ID", width: Widths.AnsiChars(15))
                 .Text("CTNStartNo", header: "Ctn#", width: Widths.AnsiChars(6))
+                .Text("Scanned", header: "Scanned", width: Widths.AnsiChars(6))
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
