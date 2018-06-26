@@ -190,7 +190,7 @@ select 0 as Selected,c.POID,EachConsApv = format(a.EachConsApv,'yyyy/MM/dd'),b.F
 from orders a WITH (NOLOCK) inner join Po_supp_detail b WITH (NOLOCK) on a.poid = b.id
 inner join dbo.cuttingtape_detail c WITH (NOLOCK) on c.mdivisionid = '{0}' and c.poid = b.id and c.seq1 = b.seq1 and c.seq2 = b.seq2
 outer apply( select value =  iif(b.stockunit = '',dbo.GetStockUnitBySPSeq( b.id,B.SEQ1,B.SEQ2),b.stockunit) ) stockunit
-WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0
+WHERE A.IsForecast = 0 AND A.Junk = 0 AND A.LocalOrder = 0 AND a.category not in('M','T')
 AND B.SEQ1 = 'A1'
 AND ((B.Special NOT LIKE ('%DIE CUT%')) and B.Special is not null)", Sci.Env.User.Keyword);
             if (!(MyUtility.Check.Empty(sciDelivery_b)))
