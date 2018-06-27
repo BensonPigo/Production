@@ -50,21 +50,10 @@ where s.Ukey = {0} order by id.SEQ", styleUkey);
 
             #region Summary by artwork
             sqlCmd =$@"
-select id.Location,M.ArtworkTypeID,
-iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
-from Style s WITH (NOLOCK) 
-inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
-inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
-inner join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
-where s.Ukey = {styleUkey}
-group by id.Location,M.ArtworkTypeID
-union all
-select i.Location,i.ArtworkTypeID,type='',i.ProTMS
+select  i.Location, i.ArtworkTypeID,type = iif(i.Location = 'T','Top',iif(i.Location = 'B','Bottom',iif(i.Location = 'I','Inner',iif(i.Location = 'O','Outer','')))),tms = sum(i.ProTMS)
 from IETMS_Summary i
-where i.location = '' 
-and i.IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{styleUkey}')
+where i.IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{styleUkey}')
+group by i.Location,i.ArtworkTypeID
 ";
             result = DBProxy.Current.Select(null, sqlCmd, out gridData2);
             if (!result)
@@ -266,15 +255,16 @@ where s.ukey = '{styleUkey}'
                 ");
 
                 string sqlCmd = string.Empty;
-                sqlCmd = $@"select 
+                sqlCmd = $@"
+select 
     seq = '0',	Type = null,	OperationID = '--CUTTING',	MachineDesc = null,Mold = null,OperationDescEN = null,Annotation = null,
-	Frequency = round(ProSMV, 4),	MtlFactorID = null,	SMV = round(ProSMV, 4),	newSMV = round(ProSMV, 4),
+	Frequency = round(ProTMS, 4),	MtlFactorID = null,	SMV = round(ProTMS, 4),	newSMV = round(ProTMS, 4),
 	SeamLength = null,	ttlSeamLength = null
 from[IETMS_Summary] where location = '' and[IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Cutting'
 union all
 select
     seq = '0', Type = null, OperationID = 'SIOCIPF00001', MachineDesc = 'CUT', Mold = null, OperationDescEN = '**Cutting', Annotation = null,
-    Frequency = round(ProSMV, 4), MtlFactorID = 'ENL', SMV = round(ProSMV, 4), newSMV = round(ProSMV, 4),
+    Frequency = round(ProTMS, 4), MtlFactorID = 'ENL', SMV = round(ProTMS, 4), newSMV = round(ProTMS, 4),
     SeamLength = null, ttlSeamLength = null
 from[IETMS_Summary] where location = '' and[IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Cutting'
 union all
@@ -285,25 +275,25 @@ union all
 union all
 select 
 	seq = '9960',	Type = null,	OperationID = '--IPF',	MachineDesc=null,Mold=null,OperationDescEN=null,Annotation=null,
-	Frequency = sum(round(ProSMV,4)),	MtlFactorID=null,	SMV = sum(round(ProSMV,4)),	newSMV = sum(round(ProSMV,4)),
+	Frequency = sum(round(ProTMS,4)),	MtlFactorID=null,	SMV = sum(round(ProTMS,4)),	newSMV = sum(round(ProTMS,4)),
 	SeamLength = null,	ttlSeamLength = null
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID <> 'Cutting'
 union all
 select 
 	seq = '9970',Type = null,OperationID = 'SIOCIPF00002',MachineDesc='M',Mold=null,OperationDescEN='**Inspection',Annotation=null,
-	Frequency = round(ProSMV,4),	MtlFactorID='ENL',	SMV = round(ProSMV,4),	newSMV = round(ProSMV,4),
+	Frequency = round(ProTMS,4),	MtlFactorID='ENL',	SMV = round(ProTMS,4),	newSMV = round(ProTMS,4),
 	SeamLength = null,	ttlSeamLength = null
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Inspection'
 union all
 select 
 	seq = '9980',Type = null,OperationID = 'SIOCIPF00004',MachineDesc='MM2',Mold=null,OperationDescEN='**Pressing',Annotation=null,
-	Frequency = round(ProSMV,4),	MtlFactorID='ENL',	SMV = round(ProSMV,4),	newSMV = round(ProSMV,4),
+	Frequency = round(ProTMS,4),	MtlFactorID='ENL',	SMV = round(ProTMS,4),	newSMV = round(ProTMS,4),
 	SeamLength = null,	ttlSeamLength = null
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Pressing'
 union all
 select 
 	seq = '9990',Type = null,OperationID = 'SIOCIPF00003',MachineDesc='MM2',Mold=null,OperationDescEN='**Packing',Annotation=null,
-	Frequency = round(ProSMV,4),	MtlFactorID='ENL',	SMV = round(ProSMV,4),	newSMV = round(ProSMV,4),
+	Frequency = round(ProTMS,4),	MtlFactorID='ENL',	SMV = round(ProTMS,4),	newSMV = round(ProTMS,4),
 	SeamLength = null,	ttlSeamLength = null
 from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Packing'
 order by seq
