@@ -8,6 +8,7 @@ using Ict;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.IE
 {
@@ -1289,6 +1290,14 @@ where ID = {0}",
             }
 
             return;
+        }
+
+        private void btnCIPF_Click(object sender, EventArgs e)
+        {
+            string ietmsUKEY = MyUtility.GetValue.Lookup($"select ukey from IETMS where id = '{this.CurrentMaintain["Ietmsid"]}' and Version = '{this.CurrentMaintain["ietmsversion"]}'");
+
+            var dlg = new CIPF(MyUtility.Convert.GetLong(ietmsUKEY));
+            dlg.Show();
         }
     }
 }
