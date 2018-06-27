@@ -60,6 +60,26 @@ group by i.Location,i.ArtworkTypeID
             {
                 MyUtility.Msg.ErrorBox("Query Summary by artwork fail!\r\n" + result.ToString());
             }
+            if (gridData2.Rows.Count == 0)
+            {
+                sqlCmd = $@"
+select id.Location,M.ArtworkTypeID,
+iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
+round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
+from Style s WITH (NOLOCK) 
+inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+inner join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
+where s.Ukey = {styleUkey}
+group by id.Location,M.ArtworkTypeID
+";
+                result = DBProxy.Current.Select(null, sqlCmd, out gridData2);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Query Summary by artwork fail!\r\n" + result.ToString());
+                }
+            }
             listControlBindingSource2.DataSource = gridData2;
             #endregion
 
