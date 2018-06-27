@@ -126,6 +126,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CIPF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CIPF.Designer.cs">
+      <DependentUpon>CIPF.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditRemark.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -189,6 +195,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CIPF.resx">
+      <DependentUpon>CIPF.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EditRemark.resx">
       <DependentUpon>EditRemark.cs</DependentUpon>
     </EmbeddedResource>

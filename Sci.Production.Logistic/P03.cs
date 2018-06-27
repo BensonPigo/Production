@@ -434,12 +434,13 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
             foreach (DataRow dr in selectedData)
             {
                 insertCmds.Add(string.Format(
-                    @"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate)
-values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE());",
+                    @"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName)
+values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}');",
                     Sci.Env.User.Keyword,
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
-                    MyUtility.Convert.GetString(dr["CTNStartNo"])));
+                    MyUtility.Convert.GetString(dr["CTNStartNo"]),
+                    Sci.Env.User.UserID));
 
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(

@@ -79,7 +79,39 @@ select MachineTypeID+'*'+CONVERT(varchar,cnt) as Machine from (
 select td.MachineTypeID,COUNT(td.MachineTypeID) as cnt from TimeStudy_Detail td WITH (NOLOCK) left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID where td.ID = {0} and td.MachineTypeID <> ''{1} group by MachineTypeID) a) b
 FOR XML PATH('')", MyUtility.Convert.GetString(this.masterData["ID"]),
                 MyUtility.Check.Empty(this.artworktype) ? string.Empty : " and m.ArtworkTypeID = '" + this.artworktype + "'"));
-            string sqlCmd = string.Format(
+
+            string ietmsUKEY = MyUtility.GetValue.Lookup($@"select i.Ukey from IETMS i WITH (NOLOCK) where  i.ID = '{this.masterData["IETMSID"]}' and i.Version='{this.masterData["IETMSversion"]}'");
+
+            string sqlCmd = string.Empty;
+            sqlCmd = $@"
+select 
+    seq = '0',
+	OperationID = '--CUTTING',	
+	MachineTypeID = null,
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour = round(3600/ProTMS, 1),
+	Sewer=0,
+	Annotation = null,	
+	DescEN = null
+from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+union all
+select 
+    seq = '0',
+	OperationID = 'SIOCIPF00001',	
+	MachineTypeID = 'CUT',
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour = round(3600/ProTMS, 1),
+	Sewer=0,
+	Annotation = 	null,
+	DescEN = '**Cutting'
+from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+union all
+";
+            sqlCmd += string.Format(
                 @"select td.Seq,td.OperationID,td.MachineTypeID,td.Mold,td.Frequency,td.SMV,td.PcsPerHour,td.Sewer,
 td.Annotation,o.DescEN
 from TimeStudy_Detail td WITH (NOLOCK) 
@@ -87,8 +119,63 @@ left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
 where td.ID = {0}{1}
-order by td.Seq", MyUtility.Convert.GetString(this.masterData["ID"]),
+", MyUtility.Convert.GetString(this.masterData["ID"]),
                 MyUtility.Check.Empty(this.artworktype) ? string.Empty : string.Format(" and ATD.ArtworkTypeID = '{0}'", this.artworktype));
+            sqlCmd += $@"
+union all
+select 
+    seq = '9960',
+	OperationID = '--IPF',	
+	MachineTypeID = null,
+	Mold = null,
+	Frequency = sum(round(ProTMS, 4)),
+	SMV = sum(round(ProTMS, 4)),	
+	PcsPerHour = sum(round(3600/ProTMS, 1)),
+	Sewer=0,
+	Annotation = null,	
+	DescEN = null
+from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID <> 'Cutting'
+union all
+select
+    seq = '9970',
+	OperationID = 'SIOCIPF00002',	
+	MachineTypeID = 'M',
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour = round(3600/ProTMS, 1),
+	Sewer=0,
+	Annotation = null,
+	DescEN = '**Inspection'
+from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Inspection'
+union all
+select 
+    seq = '9980',
+	OperationID = 'SIOCIPF00004',	
+	MachineTypeID = 'MM2',
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour = round(3600/ProTMS, 1),
+	Sewer=0,
+	Annotation = null,
+	DescEN = '**Pressing'
+from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Pressing'
+union all
+select 	
+    seq = '9990',
+	OperationID = 'SIOCIPF00003',	
+	MachineTypeID = 'MM2',
+	Mold = null,
+	Frequency = round(ProTMS, 4),
+	SMV = round(ProTMS, 4),	
+	PcsPerHour = round(3600/ProTMS, 1),
+	Sewer=0,
+	Annotation = null,
+	DescEN =  '**Packing'
+from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Packing'
+order by seq
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
             if (!result)
             {
