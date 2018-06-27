@@ -700,7 +700,8 @@ order by os.Seq",
                 .Date("ReceiveDate", header: "CLOG CFM", iseditingreadonly: true)
                 .Text("ClogLocationId", header: "Location No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("ReturnDate", header: "Return Date", iseditingreadonly: true)
-                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(20), iseditingreadonly: true);
+                .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("CustCTN", header: "Cust CTN#", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
             #region 欄位的Validating
             this.detailgrid.CellValidating += (s, e) =>
@@ -2075,6 +2076,8 @@ where pd.id = '{this.CurrentMaintain["ID"]}'";
         {
             Sci.Production.Packing.P03_UPCSticker callNextForm = new Sci.Production.Packing.P03_UPCSticker(this.CurrentMaintain["ID"].ToString());
             callNextForm.ShowDialog(this);
+            this.RenewData();
+            this.OnDetailEntered();
         }
 
         private void BtnDownload_Click(object sender, EventArgs e)
@@ -2119,7 +2122,7 @@ order by PD.seq
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Packing_P03_CustCTN.xltx");
             MyUtility.Excel.CopyToXls(printData, string.Empty, "Packing_P03_CustCTN.xltx", 1, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-            objSheets.Range["H2", $"H{printData.Rows.Count + 1}"].Interior.Color = Color.PaleVioletRed;
+            objSheets.Range["H2", $"H{printData.Rows.Count + 1}"].Interior.Color = Color.FromArgb(255, 199, 206);
             objApp.Visible = true;
         }
 
@@ -2174,6 +2177,8 @@ inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
                 else
                 {
                     MyUtility.Msg.InfoBox("Import Success !!");
+                    this.RenewData();
+                    this.OnDetailEntered();
                 }
             }
         }

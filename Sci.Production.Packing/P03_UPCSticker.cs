@@ -65,6 +65,7 @@ ORDER BY O.StyleID,pd.Article,OS.Seq ASC
             .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(9), iseditingreadonly: true)
             .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(16))
             ;
+            this.grid1.Columns["Barcode"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
@@ -86,6 +87,7 @@ WHERE O.StyleID=#tmp.StyleID AND O.BrandID=#tmp.BrandID AND PD.Article=#tmp.Arti
             else
             {
                 MyUtility.Msg.InfoBox("Update success!");
+                this.Close();
             }
         }
 
