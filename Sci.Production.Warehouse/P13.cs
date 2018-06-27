@@ -120,13 +120,21 @@ where id = @MDivision", pars, out dt);
                 MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dt");
                 return false;
             }
-            
+
+            string FtyGroup = string.Empty;
+            foreach (DataRow item in ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "FtyGroup").Rows)
+            {
+                FtyGroup += MyUtility.Convert.GetString(item["FtyGroup"]) + ",";
+            }
+            FtyGroup = FtyGroup.Substring(0, FtyGroup.Length - 1 >= 0 ? FtyGroup.Length - 1 : 0);
+
             string RptTitle = dt.Rows[0]["NameEN"].ToString();
             ReportDefinition report = new ReportDefinition();
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", Remark));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("CDate", CDate));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FtyGroup", FtyGroup));
 
             #endregion
             #region -- 撈表身資料 --

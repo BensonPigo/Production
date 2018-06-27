@@ -192,6 +192,7 @@ select  poid
         , Reasonid
         , Reason
         , InventoryUkey
+        , ProjectID
 from (
     select  i.poid
             , i.seq1
@@ -208,6 +209,7 @@ from (
             , Reason = (select InvtransReason.ReasonEN from InvtransReason WITH (NOLOCK) where id=t.ReasonID) 
             , T.InventoryUkey
             , t.TransferUkey
+            , i.ProjectID
     from inventory i WITH (NOLOCK) 
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
     inner join invtrans t WITH (NOLOCK) on t.InventoryUkey = i.Ukey
@@ -248,6 +250,7 @@ from (
             , (select InvtransReason.ReasonEN from InvtransReason WITH (NOLOCK) where id=t.ReasonID) name
             , t.TransferUkey
             , T.InventoryUkey
+            , i.ProjectID
     from inventory i WITH (NOLOCK) 
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
     inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type=3
@@ -374,10 +377,10 @@ where   stocktype='I'");
 
             dtInvtrans.TableName = "dtInvtrans";
             dtFtyInventory.Columns.Add("balance", typeof(decimal), "InQty-outqty+adjustqty");
-            
+
             DataRelation relation = new DataRelation("rel1"
-                , new DataColumn[] { dtTpeIventory.Columns["Ukey"] }
-                , new DataColumn[] { dtInvtrans.Columns["InventoryUkey"] }
+                , new DataColumn[] { dtTpeIventory.Columns["PoID"], dtTpeIventory.Columns["Seq1"], dtTpeIventory.Columns["Seq2"], dtTpeIventory.Columns["ProjectID"] }
+                , new DataColumn[] { dtInvtrans.Columns["PoID"], dtInvtrans.Columns["Seq1"], dtInvtrans.Columns["Seq2"], dtInvtrans.Columns["ProjectID"] }
                 );
             data.Relations.Add(relation);
             
