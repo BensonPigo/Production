@@ -75,7 +75,6 @@ namespace Sci.Production.PPIC
 
             #region Summery
 
-          
             string sqlFty = $@"
 select distinct FactoryID from sewingschedule s
 where 1=1
@@ -109,10 +108,10 @@ SELECT distinct
 ,[OrderType] = o.OrderTypeID
 ,[PoNo] = o.CustPONo
 ,[Brand] = o.BrandID
-,[Qty] = o.Qty
+,[Qty] = os.Qty
 ,[SewingOutputQty] = SewingOutput.Qty
-,[InLine] = s.inline
-,[OffLine] = s.Offline
+,[InLine] = ss.inline
+,[OffLine] = convert(date, s.Offline)
 ,[FirstSewnDate] = SewDate.FirstDate
 ,[LastSewnDate] = SewDate.LastDate
 ,[%]= iif(pdm.TotalCTN=0,0, (convert(float,pdm.ClogCTN) / convert(float,pdm.TotalCTN))*100)
@@ -152,6 +151,11 @@ outer apply(
 	left join SewingOutput_Detail b on a.id=b.id
 	where b.OrderId =s.OrderID
 )SewDate
+outer apply(
+	select convert(date, min(inline)) inline
+	from SewingSchedule 
+	where OrderID=s.OrderID 
+)ss
 outer apply( 
 	select Sum( pd.CTNQty) PackingCTN ,
 	Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN,
