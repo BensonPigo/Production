@@ -326,7 +326,6 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["Shipper"] = Sci.Env.User.Factory;
             this.CurrentMaintain["InvDate"] = DateTime.Today;
             this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["ShipModeID"] = "SEA";
@@ -487,7 +486,7 @@ where   pl.INVNo = '{0}'
             if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
             {
                 this.txtfactoryShipper.Focus();
-                MyUtility.Msg.WarningBox("Shipper can't empty!!");
+                MyUtility.Msg.WarningBox("Shipper can't empty!!" + Environment.NewLine + "Please contact Taipei Finance Dept. to set up the Shipper");
                 return false;
             }
 
@@ -885,6 +884,28 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             if (this.EditMode && this.txtbrand.OldValue != this.txtbrand.Text)
             {
                 this.GetPaytermAP();
+
+                #region 將Brand,LogingFty 帶入FtyShipper_Detail　取得ShipperID
+                DataRow dr;
+                string sqlcmd = $@"
+select ShipperID from FtyShipper_Detail
+where BrandID='{this.txtbrand.Text}'
+and FactoryID='{Sci.Env.User.Factory}'
+and CONVERT(date,GETDATE()) between BeginDate and EndDate";
+                if (MyUtility.Check.Seek(sqlcmd, out dr))
+                {
+                    this.txtfactoryShipper.Text = dr["ShipperID"].ToString();
+                    this.CurrentMaintain["Shipper"] = dr["ShipperID"].ToString();
+                }
+                else
+                {
+                    this.txtfactoryShipper.Text = string.Empty;
+                    this.CurrentMaintain["Shipper"] = string.Empty;
+                    MyUtility.Msg.WarningBox("Please contact Taipei Finance Dept. to set up the Shipper");
+                    return;
+                }
+                #endregion
+
             }
         }
 
@@ -1538,52 +1559,5 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
         {
             MyUtility.Msg.InfoBox("validated");
         }
-
-        private void TxtfactoryShipper_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            #region SQL CMD
-            string sqlcmd = string.Format(@"
-Select DISTINCT Factory = ID
-from Factory WITH (NOLOCK) 
-where Junk = 0
-order by ID");
-            #endregion
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8", this.txtfactoryShipper.Text, false, ",");
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            this.txtfactoryShipper.Text = item.GetSelectedString();
-        }
-
-        private void TxtfactoryShipper_Validating(object sender, CancelEventArgs e)
-        {
-            #region SQL Parameter
-            List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@str", this.txtfactoryShipper.Text));
-            #endregion
-            string str = this.txtfactoryShipper.Text;
-            #region SQL CMD
-            string sqlcmd = string.Format(@"
-Select DISTINCT Factory = ID
-from Factory WITH (NOLOCK) 
-where Junk = 0
-      and ID = @str
-order by ID");
-            #endregion
-            if (!string.IsNullOrWhiteSpace(str) && str != this.txtfactoryShipper.OldValue)
-            {
-                if (MyUtility.Check.Seek(sqlcmd, listSqlPar) == false)
-                {
-                    this.txtfactoryShipper.Text = string.Empty;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
-                    return;
-                }
-            }
-        }
-
     }
 }
