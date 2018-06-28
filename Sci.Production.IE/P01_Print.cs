@@ -134,7 +134,7 @@ select
 	Sewer=0,
 	Annotation = null,	
 	DescEN = null
-from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID <> 'Cutting'
+from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID <> 'Cutting'
 union all
 select
     seq = '9970',
@@ -147,7 +147,7 @@ select
 	Sewer=0,
 	Annotation = null,
 	DescEN = '**Inspection'
-from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Inspection'
+from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
 union all
 select 
     seq = '9980',
@@ -160,7 +160,7 @@ select
 	Sewer=0,
 	Annotation = null,
 	DescEN = '**Pressing'
-from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Pressing'
+from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
 union all
 select 	
     seq = '9990',
@@ -173,7 +173,7 @@ select
 	Sewer=0,
 	Annotation = null,
 	DescEN =  '**Packing'
-from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and ArtworkTypeID = 'Packing'
+from [IETMS_Summary] where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
 order by seq
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
@@ -208,6 +208,48 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
         /// <returns>bool</returns>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
+            string chkdata = string.Empty;
+            if (this.chkCutting.Checked || this.chkInspection.Checked || this.chkPacking.Checked || this.chkPressing.Checked)
+            {
+                if (this.chkCutting.Checked)
+                {
+                    if (this.printData.Select("OperationID = 'SIOCIPF00001'").Length == 0)
+                    {
+                        chkdata += "Cutting,";
+                    }
+                }
+
+                if (this.chkInspection.Checked)
+                {
+                    if (this.printData.Select("OperationID = 'SIOCIPF00002'").Length == 0)
+                    {
+                        chkdata += "Inspection,";
+                    }
+                }
+
+                if (this.chkPacking.Checked)
+                {
+                    if (this.printData.Select("OperationID = 'SIOCIPF00003'").Length == 0)
+                    {
+                        chkdata += "Packing,";
+                    }
+                }
+
+                if (this.chkPressing.Checked)
+                {
+                    if (this.printData.Select("OperationID = 'SIOCIPF00004'").Length == 0)
+                    {
+                        chkdata += "Pressing,";
+                    }
+                }
+            }
+
+            if (chkdata.Length > 0)
+            {
+                MyUtility.Msg.WarningBox($"CIPF no have {chkdata} data");
+                return false;
+            }
+
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
 
@@ -231,7 +273,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[3, 7] = this.custcdID;
             worksheet.Cells[3, 11] = Convert.ToDateTime(DateTime.Today).ToString("d");
             worksheet.Cells[4, 12] = MyUtility.Convert.GetString(this.efficiency) + "%";
-
+            worksheet.Columns[3].ColumnWidth = 18.4;
             // 填內容值
             int intRowsStart = 5;
             object[,] objArray = new object[1, 12];
@@ -269,6 +311,7 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
 
             worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).Weight = 3; // 1: 虛線, 2:實線, 3:粗體線
             worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom).LineStyle = 1;
+
             intRowsStart++;
             worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
             worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
@@ -277,6 +320,56 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Cells[intRowsStart, 5] = "Sec.";
             worksheet.Cells[intRowsStart, 7] = "Prepared by:";
             worksheet.Range[string.Format("H{0}:L{0}", intRowsStart)].Merge(Type.Missing);
+            string cipfrow = string.Empty;
+            if (this.chkCutting.Checked || this.chkInspection.Checked || this.chkPacking.Checked || this.chkPressing.Checked)
+            {
+                intRowsStart++;
+                worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].Merge(Type.Missing);
+                worksheet.Range[string.Format("A{0}:C{0}", intRowsStart)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                string chk = string.Empty;
+                decimal ttl = 0;
+                if (this.chkCutting.Checked)
+                {
+                    if (this.printData.Select("OperationID = 'SIOCIPF00001'").Length>0)
+                    {
+                        chk += "Cutting,";
+                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'SIOCIPF00001'")[0]["SMV"]);
+                    }
+                }
+
+                if (this.chkInspection.Checked)
+                {
+                    if (this.printData.Select("OperationID = 'SIOCIPF00002'").Length > 0)
+                    {
+                        chk += "Inspection,";
+                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'SIOCIPF00002'")[0]["SMV"]);
+                    }
+                }
+
+                if (this.chkPacking.Checked)
+                {
+                    if (this.printData.Select("OperationID = 'SIOCIPF00003'").Length > 0)
+                    {
+                        chk += "Packing,";
+                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'SIOCIPF00003'")[0]["SMV"]);
+                    }
+                }
+
+                if (this.chkPressing.Checked)
+                {
+                    if (this.printData.Select("OperationID = 'SIOCIPF00004'").Length > 0)
+                    {
+                        chk += "Pressing";
+                        ttl += MyUtility.Convert.GetDecimal(this.printData.Select("OperationID = 'SIOCIPF00004'")[0]["SMV"]);
+                    }
+                }
+
+                worksheet.Cells[intRowsStart, 1] = $"Total Time/Pc(Include {chk}):";
+                worksheet.Cells[intRowsStart, 4] = MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(this.masterData["TotalSewingTime"]) + ttl);
+                worksheet.Cells[intRowsStart, 5] = "Sec.";
+                worksheet.Range[string.Format("H{0}:L{0}", intRowsStart)].Merge(Type.Missing);
+                cipfrow = $"A{intRowsStart}";
+            }
 
             intRowsStart++;
             worksheet.Range[string.Format("A{0}:F{0}", intRowsStart)].Merge(Type.Missing);
@@ -340,6 +433,10 @@ group by isnull(m.ArtworkTypeID,'')", MyUtility.Convert.GetString(this.masterDat
             worksheet.Range[string.Format("H{0}:L{0}", intRowsStart)].Merge(Type.Missing);
 
             excel.Cells.EntireRow.AutoFit();
+            if (!MyUtility.Check.Empty(cipfrow))
+            {
+                worksheet.get_Range(cipfrow).RowHeight = 33;
+            }
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("IE_P01_Print");
