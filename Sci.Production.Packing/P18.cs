@@ -90,7 +90,8 @@ namespace Sci.Production.Packing
             {
                 $" and  (pd.ID + pd.CTNStartNo) = '{this.txtScanCartonSP.Text}'",
                 $" and  pd.ID = '{this.txtScanCartonSP.Text}'",
-                $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'"
+                $@" and o.ID = '{this.txtScanCartonSP.Text}' or o.CustPoNo = '{this.txtScanCartonSP.Text}'",
+                $@" and pd.CustCTN = '{this.txtScanCartonSP.Text}'"
             };
 
             string scanDetail_sql = $@"select distinct

@@ -66,7 +66,7 @@
             this.labelCustCD = new Sci.Win.UI.Label();
             this.labelDestination = new Sci.Win.UI.Label();
             this.labelCofirmed = new Sci.Win.UI.Label();
-            this.btnDownloadSampleFile = new Sci.Win.UI.Button();
+            this.btnDownload = new Sci.Win.UI.Button();
             this.btnImportFromExcel = new Sci.Win.UI.Button();
             this.txtcountry = new Sci.Production.Class.txtcountry();
             this.txtcustcd = new Sci.Production.Class.txtcustcd();
@@ -81,6 +81,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.datesciDelivery = new Sci.Win.UI.DateBox();
             this.datekpileta = new Sci.Win.UI.DateBox();
+            this.btnUPCSticker = new Sci.Win.UI.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -97,6 +99,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnUPCSticker);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnUpdateBarcode);
@@ -105,7 +108,7 @@
             this.masterpanel.Controls.Add(this.numTtlGW);
             this.masterpanel.Controls.Add(this.labelTtlGW);
             this.masterpanel.Controls.Add(this.btnImportFromExcel);
-            this.masterpanel.Controls.Add(this.btnDownloadSampleFile);
+            this.masterpanel.Controls.Add(this.btnDownload);
             this.masterpanel.Controls.Add(this.labelCofirmed);
             this.masterpanel.Controls.Add(this.txtcountry);
             this.masterpanel.Controls.Add(this.txtcustcd);
@@ -195,7 +198,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtcustcd, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtcountry, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCofirmed, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnDownloadSampleFile, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownload, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportFromExcel, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTtlGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTtlGW, 0);
@@ -205,6 +208,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateBarcode, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnUPCSticker, 0);
             // 
             // detailpanel
             // 
@@ -655,27 +659,26 @@
             this.labelCofirmed.TextStyle.Color = System.Drawing.Color.Red;
             this.labelCofirmed.Visible = false;
             // 
-            // btnDownloadSampleFile
+            // btnDownload
             // 
-            this.btnDownloadSampleFile.Location = new System.Drawing.Point(815, 156);
-            this.btnDownloadSampleFile.Name = "btnDownloadSampleFile";
-            this.btnDownloadSampleFile.Size = new System.Drawing.Size(179, 30);
-            this.btnDownloadSampleFile.TabIndex = 59;
-            this.btnDownloadSampleFile.Text = "Download Sample File";
-            this.btnDownloadSampleFile.UseVisualStyleBackColor = true;
-            this.btnDownloadSampleFile.Visible = false;
-            this.btnDownloadSampleFile.Click += new System.EventHandler(this.BtnDownloadSample_Click);
+            this.btnDownload.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnDownload.Location = new System.Drawing.Point(815, 188);
+            this.btnDownload.Name = "btnDownload";
+            this.btnDownload.Size = new System.Drawing.Size(179, 30);
+            this.btnDownload.TabIndex = 59;
+            this.btnDownload.Text = "Download Cust# Temp";
+            this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
             // 
             // btnImportFromExcel
             // 
-            this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportFromExcel.Location = new System.Drawing.Point(815, 188);
+            this.btnImportFromExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnImportFromExcel.Location = new System.Drawing.Point(815, 220);
             this.btnImportFromExcel.Name = "btnImportFromExcel";
             this.btnImportFromExcel.Size = new System.Drawing.Size(179, 30);
             this.btnImportFromExcel.TabIndex = 60;
-            this.btnImportFromExcel.Text = "Import From Excel";
+            this.btnImportFromExcel.Text = "Import Cust# File";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
-            this.btnImportFromExcel.Visible = false;
             this.btnImportFromExcel.Click += new System.EventHandler(this.BtnImportFromExcel_Click);
             // 
             // txtcountry
@@ -820,6 +823,21 @@
             this.datekpileta.Size = new System.Drawing.Size(130, 23);
             this.datekpileta.TabIndex = 7;
             // 
+            // btnUPCSticker
+            // 
+            this.btnUPCSticker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnUPCSticker.Location = new System.Drawing.Point(815, 156);
+            this.btnUPCSticker.Name = "btnUPCSticker";
+            this.btnUPCSticker.Size = new System.Drawing.Size(179, 30);
+            this.btnUPCSticker.TabIndex = 67;
+            this.btnUPCSticker.Text = "UPC Sticker";
+            this.btnUPCSticker.UseVisualStyleBackColor = true;
+            this.btnUPCSticker.Click += new System.EventHandler(this.BtnUPCSticker_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -907,7 +925,7 @@
         private Win.UI.Label labelBrand;
         private Win.UI.Label labelCofirmed;
         private Win.UI.Button btnImportFromExcel;
-        private Win.UI.Button btnDownloadSampleFile;
+        private Win.UI.Button btnDownload;
         private Win.UI.NumericBox numTtlGW;
         private Win.UI.Label labelTtlGW;
         private Win.UI.DisplayBox displayBoxPullOutNo;
@@ -917,5 +935,7 @@
         private Win.UI.DateBox datesciDelivery;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.Button btnUPCSticker;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
