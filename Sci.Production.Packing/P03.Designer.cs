@@ -677,7 +677,7 @@
             this.btnImportFromExcel.Name = "btnImportFromExcel";
             this.btnImportFromExcel.Size = new System.Drawing.Size(179, 30);
             this.btnImportFromExcel.TabIndex = 60;
-            this.btnImportFromExcel.Text = "Import Cust# file";
+            this.btnImportFromExcel.Text = "Import Cust# File";
             this.btnImportFromExcel.UseVisualStyleBackColor = true;
             this.btnImportFromExcel.Click += new System.EventHandler(this.BtnImportFromExcel_Click);
             // 
