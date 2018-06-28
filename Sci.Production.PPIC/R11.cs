@@ -81,15 +81,15 @@ select distinct FactoryID from sewingschedule s
 where 1=1
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}";
             StringBuilder sbFtycode = new StringBuilder();
-            DBProxy.Current.Select(string.Empty, sqlFty, out dtFty);
-            if (dtFty != null )
+            DBProxy.Current.Select(string.Empty, sqlFty, out this.dtFty);
+            if (this.dtFty != null )
             {
-                for (int i = 0; i < dtFty.Rows.Count; i++)
+                for (int i = 0; i < this.dtFty.Rows.Count; i++)
                 {
-                    sbFtycode.Append($@"[{dtFty.Rows[i]["FactoryID"].ToString().TrimEnd()}],");
+                    sbFtycode.Append($@"[{this.dtFty.Rows[i]["FactoryID"].ToString().TrimEnd()}],");
                 }
             }
-        
+
             #endregion
 
             #region Sql Command
@@ -97,7 +97,7 @@ where 1=1
 
 
 SELECT distinct
-[ReadyDate] = convert(date,s.Offline+{MyUtility.Convert.GetInt(Gap)})
+[ReadyDate] = convert(date,s.Offline+{MyUtility.Convert.GetInt(this.Gap)})
 ,[M] = o.MDivisionID
 ,[Factory] = o.FactoryID
 ,[Delivery] = o.BuyerDelivery
@@ -111,8 +111,8 @@ SELECT distinct
 ,[Brand] = o.BrandID
 ,[Qty] = o.Qty
 ,[SewingOutputQty] = SewingOutput.Qty
-,[InLine] = lineDate.inline
-,[OffLine] = lineDate.Offline
+,[InLine] = s.inline
+,[OffLine] = s.Offline
 ,[FirstSewnDate] = SewDate.FirstDate
 ,[LastSewnDate] = SewDate.LastDate
 ,[%]= iif(pdm.TotalCTN=0,0, (convert(float,pdm.ClogCTN) / convert(float,pdm.TotalCTN))*100)
@@ -135,13 +135,16 @@ outer apply(
 	,convert(date,cfa.EditDate) FinalInsDate
 	from cfa
 	left join Pass1 on cfa.CFA=pass1.ID
-	where convert(date,cfa.EditDate) <= '{dateRangeReadyOrl}'
+	where convert(date,cfa.EditDate) <= CONVERT(date, DATEADD(DAY,{MyUtility.Convert.GetInt(this.Gap)}, s.Offline))
 	and cfa.OrderID=s.OrderID
 	order by cfa.EditDate desc
 )cfa
 outer apply(
-	select sum(QAQty) Qty from SewingOutput_Detail so2
+	select sum(so2.QAQty) Qty 
+	from SewingOutput_Detail so2
+	left join SewingOutput so1 on so2.ID=so1.ID
 	where so2.OrderId=s.OrderID
+	and so1.OutputDate <= CONVERT(date, s.Offline)
 )SewingOutput
 outer apply(
 	select MIN(OutputDate) FirstDate,MAX(OutputDate) LastDate
@@ -149,11 +152,6 @@ outer apply(
 	left join SewingOutput_Detail b on a.id=b.id
 	where b.OrderId =s.OrderID
 )SewDate
-outer apply(
-	select inline = MIN(Inline), Offline = MAX(Offline)
-	from SewingSchedule
-	where OrderID=s.OrderID
-)lineDate
 outer apply( 
 	select Sum( pd.CTNQty) PackingCTN ,
 	Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN,
@@ -167,6 +165,7 @@ outer apply(
 	from PackingList_Detail pd WITH (NOLOCK) 
     LEFT JOIN PackingList p on pd.ID = p.ID 
     where  pd.OrderID = os.ID 
+	having Max (ReceiveDate) <= CONVERT(date, DATEADD(DAY,{MyUtility.Convert.GetInt(this.Gap)}, s.Offline))
 )  pdm
 outer apply(
 	select Line = stuff((
@@ -182,7 +181,7 @@ outer apply(
 where 1=1
 and pdm.TotalCTN>0
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
-order by ReadyDate,m,Factory
+
 
 select [M],[Factory],[Delivery],[SPNO],[Category],[Cancelled],[Dest],[Style],[OrderType],[PoNo]
 ,[Brand],[Qty],[SewingOutputQty],[InLine],[OffLine],[FirstSewnDate],[LastSewnDate],[%]
@@ -245,7 +244,7 @@ drop table #tmp
 
             #region SQL get DataTable
             DualResult result;
-            result = DBProxy.Current.Select(null, sqlCmd, out dtList);
+            result = DBProxy.Current.Select(null, sqlCmd, out this.dtList);
             if (!result)
             {
                 return result;
@@ -267,11 +266,11 @@ drop table #tmp
             string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir + "\\PPIC_R11.xltx");
             sxrc sxr = new sxrc(xltPath, keepApp: true);
             sxr.boOpenFile = true;
-            sxrc.xltRptTable xrtSummery1 = new sxrc.xltRptTable(dtList[1]);
+            sxrc.xltRptTable xrtSummery1 = new sxrc.xltRptTable(this.dtList[1]);
             xrtSummery1.ShowHeader = false;
             sxr.dicDatas.Add("##Summery", xrtSummery1);
 
-            sxrc.xltRptTable xrtDetail = new sxrc.xltRptTable(dtList[0]);
+            sxrc.xltRptTable xrtDetail = new sxrc.xltRptTable(this.dtList[0]);
             xrtDetail.ShowHeader = false;
             sxr.dicDatas.Add("##detail", xrtDetail);
 
@@ -287,16 +286,16 @@ drop table #tmp
 
             #region Summery by ReadyDate 變色及調整excel格式邊框
             // 變色
-            int cntSummery = dtList[2].Rows.Count;
+            int cntSummery = this.dtList[2].Rows.Count;
 
-            DateTime date1 = (DateTime)dateRangeReadyDate.Value1;
-            TimeSpan ts1 = new TimeSpan(((DateTime)dateRangeReadyDate.Value1).Ticks);
-            TimeSpan ts2 = new TimeSpan(((DateTime)dateRangeReadyDate.Value2).Ticks);
+            DateTime date1 = (DateTime)this.dateRangeReadyDate.Value1;
+            TimeSpan ts1 = new TimeSpan(((DateTime)this.dateRangeReadyDate.Value1).Ticks);
+            TimeSpan ts2 = new TimeSpan(((DateTime)this.dateRangeReadyDate.Value2).Ticks);
             TimeSpan ts = ts1.Subtract(ts2).Duration();
             int range = ts.Days + 1;
             // Summery header
             wkcolor.Cells[1, 8].Value = "Date";
-            wkcolor.Cells[1, 8].Interior.Color = BackGray;
+            wkcolor.Cells[1, 8].Interior.Color = this.BackGray;
             wkcolor.Cells[1, 8].Font.Bold = true;
             for (int d = 0; d < range; d++)
             {
@@ -304,35 +303,40 @@ drop table #tmp
                 wkcolor.Cells[2 + d, 8].Font.Bold = true;
             }
 
-            for (int f = 0; f < dtFty.Rows.Count; f++)
+            for (int f = 0; f < this.dtFty.Rows.Count; f++)
             {
-                wkcolor.Cells[1, 9 + f].Value = dtFty.Rows[f]["FactoryID"];
-                wkcolor.Cells[1, 9 + f].Interior.Color = BackGray;
+                wkcolor.Cells[1, 9 + f].Value = this.dtFty.Rows[f]["FactoryID"];
+                wkcolor.Cells[1, 9 + f].Interior.Color = this.BackGray;
                 wkcolor.Cells[1, 9 + f].Font.Bold = true;
-                string fty = dtFty.Rows[f]["FactoryID"].ToString();
+                string fty = this.dtFty.Rows[f]["FactoryID"].ToString();
 
                 int cnt = 0;
                 for (int i = 0; i < range; i++)
                 {
-                    if (MyUtility.Convert.GetDate((DateTime)dtList[2].Rows[cnt]["ReadyDate"]) == MyUtility.Convert.GetDate(date1.AddDays(i)))
+                    if ((this.dtList[2].Rows.Count > cnt) && (MyUtility.Convert.GetDate((DateTime)this.dtList[2].Rows[cnt]["ReadyDate"]) == MyUtility.Convert.GetDate(date1.AddDays(i))))
                     {
-                        wkcolor.Cells[2 + i, 9 + f].Value = dtList[2].Rows[cnt][fty] + "%";
-                        if (MyUtility.Convert.GetDecimal(dtList[2].Rows[cnt][fty]) > 90)
+                        wkcolor.Cells[2 + i, 9 + f].Value = MyUtility.Check.Empty(this.dtList[2].Rows[cnt][fty]) ? string.Empty : this.dtList[2].Rows[cnt][fty] + "%";
+                        if (MyUtility.Convert.GetDecimal(this.dtList[2].Rows[cnt][fty]) > 90)
                         {
-                            wkcolor.Cells[2 + i, 9 + f].Interior.Color = BackGreen;
-                            wkcolor.Cells[2 + i, 9 + f].Font.Color = FontGreen;
+                            wkcolor.Cells[2 + i, 9 + f].Interior.Color = this.BackGreen;
+                            wkcolor.Cells[2 + i, 9 + f].Font.Color = this.FontGreen;
+                        }
+                        else if (MyUtility.Check.Empty(this.dtList[2].Rows[cnt][fty]))
+                        {
+                            wkcolor.Cells[2 + i, 9 + f].Interior.Color = Color.Red;
                         }
                         else
                         {
-                            wkcolor.Cells[2 + i, 9 + f].Interior.Color = BackRed;
-                            wkcolor.Cells[2 + i, 9 + f].Font.Color = FontRed;
+                            wkcolor.Cells[2 + i, 9 + f].Interior.Color = this.BackRed;
+                            wkcolor.Cells[2 + i, 9 + f].Font.Color = this.FontRed;
                         }
+
                         cnt++;
                     }
                     else
                     {
                         string rowformat1 = MyExcelPrg.GetExcelColumnName(8);
-                        string rowformat2 = MyExcelPrg.GetExcelColumnName(8 + dtFty.Rows.Count);
+                        string rowformat2 = MyExcelPrg.GetExcelColumnName(8 + this.dtFty.Rows.Count);
                         string rowformat3 = MyExcelPrg.GetExcelColumnName(9);
                         wkcolor.Range[$"{rowformat1}{2 + i}", $"{rowformat2}{2 + i}"].Interior.Color = Color.Red;
                         wkcolor.Range[$"{rowformat3}{2 + i}", $"{rowformat2}{2 + i}"].Merge();
@@ -342,7 +346,7 @@ drop table #tmp
 
             //畫框線
             Microsoft.Office.Interop.Excel.Range rg1;
-            rg1 = wkcolor.Range["H1", $"{MyExcelPrg.GetExcelColumnName(8 + dtFty.Rows.Count)}{range + 1}"];
+            rg1 = wkcolor.Range["H1", $"{MyExcelPrg.GetExcelColumnName(8 + this.dtFty.Rows.Count)}{range + 1}"];
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
@@ -360,15 +364,15 @@ drop table #tmp
 
             #region Summery by M,Fty
 
-            for (int i = 0; i < dtList[1].Rows.Count; i++)
+            for (int i = 0; i < this.dtList[1].Rows.Count; i++)
             {
-                if (dtList[1].Rows[i]["Fty"].ToString() == "Total")
+                if (this.dtList[1].Rows[i]["Fty"].ToString() == "Total")
                 {
 
                     wkcolor.Range[$"B{i + 2}", $"E{i + 2}"].Font.Bold = true;
                 }
 
-                if (dtList[1].Rows[i]["Fty"].ToString() == "Grand Total")
+                if (this.dtList[1].Rows[i]["Fty"].ToString() == "Grand Total")
                 {
                     wkcolor.Cells[i + 2, 1].Value = "";
                     wkcolor.Range[$"B{i + 2}", $"F{i + 2}"].Font.Bold = true;
@@ -377,7 +381,7 @@ drop table #tmp
 
             //畫框線
             Microsoft.Office.Interop.Excel.Range rg2;
-            rg2 = wkcolor.Range["A1", $"F{dtList[1].Rows.Count + 1}"];
+            rg2 = wkcolor.Range["A1", $"F{this.dtList[1].Rows.Count + 1}"];
             rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
             rg2.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
