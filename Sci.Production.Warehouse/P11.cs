@@ -97,6 +97,10 @@ namespace Sci.Production.Warehouse
                     {
                         DataTable subDt;
                         GetSubDetailDatas(dr, out subDt);
+                        //if (subDt == null)
+                        //{
+                        //    return;
+                        //}
                         DataTable keepDt = subDt.Clone();
 
                         foreach (DataRow subDr in subDt.Rows)
@@ -552,29 +556,12 @@ SET QTY = S.QTY
 WHEN NOT MATCHED THEN
 INSERT (ID,ORDERID,ARTICLE,SIZECODE,QTY)
 VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
-;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));//.Replace("[", "[_")
+;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));
 
-                string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");//.Replace("[", "").Replace("]", "")
-
-
-
-                //            sqlcmd = string.Format(string.Format(@";WITH UNPIVOT_1
-                //AS
-                //(
-                //SELECT * FROM #tmp
-                //UNPIVOT
-                //(
-                //QTY
-                //FOR SIZECODE IN ({1})
-                //)
-                //AS PVT
-                //)SELECT * FROM UNPIVOT_1;", Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
-
-
+                string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");
 
                 ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + aaa
                     , sqlcmd, out result, "#tmp");
-                //MyUtility.Msg.InfoBox("Save completed!!");
             }
 
 
@@ -593,38 +580,18 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                     }
                 }
             }
-
-            //刪除第三層qty為0的資料
-            //foreach (DataRow dr in DetailDatas)
-            //{
-            //    if (GetSubDetailDatas(dr, out subDT))
-            //    {
-            //        foreach (DataRow dr2 in subDT.ToList())
-            //        {
-            //            if (dr2.RowState != DataRowState.Deleted && Convert.ToDecimal(dr2["QTY"].ToString()) == 0 && dr2.RowState != DataRowState.Modified)
-            //            {
-            //                subDT.Rows.Remove(dr2);
-            //            }
-            //        }
-            //    }
-            //}
-
-            //foreach (DataRow dr in DetailDatas)
-            //{
-            //    if (GetSubDetailDatas(dr, out subDT))
-            //    {
-            //        foreach (DataRow dr2 in subDT.Rows)
-            //        {
-            //            if (Convert.ToDecimal(dr2["QTY"].ToString()) == 0 && dr2.RowState == DataRowState.Modified)
-            //            {
-            //                dr2.Delete();
-            //            }
-            //        }
-            //    }
-            //}
-       
-
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            string deleteSql = $@"delete Issue_Size where id = '{this.CurrentMaintain["id"]}' and Qty = 0";
+            DualResult result = DBProxy.Current.Execute(null, deleteSql);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
 
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
@@ -910,12 +877,14 @@ where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"]), out sizeRange
             string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
             string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
             this.SubDetailSelectCommand = string.Format(@"
-select  a.SizeCode
-        , b.Id
-        , '{2}' AS Issue_DetailUkey
-        , isnull(b.Qty,0) QTY
-        , IIF(b.Qty IS NULL , 1 ,0) isvirtual
-
+select  
+     a.SizeCode
+    , b.Id
+    , Issue_DetailUkey =  '{2}'
+    , QTY = isnull(b.Qty,0)
+    , isvirtual = IIF(b.Qty IS NULL , 1 ,0)
+    , seq
+into #tmp
 from  dbo.Issue_Size b WITH (NOLOCK) 
 inner join dbo.Order_SizeCode a WITH (NOLOCK) on b.SizeCode = a.SizeCode
 outer apply(select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{3}')poid1
@@ -924,6 +893,28 @@ where a.id= iif(isnull(poid1.POID,'')='',poid2.POID,poid1.poid)
 and b.id = '{1}' and b.Issue_DetailUkey = {2}
 order by Seq"
             , CurrentMaintain["cutplanid"].ToString(), masterID, ukey, Sci.Env.User.Keyword, CurrentMaintain["orderid"].ToString());
+            if (!MyUtility.Check.Empty(CurrentMaintain["cutplanid"]))
+            {
+                SubDetailSelectCommand += $@"
+select SizeCode,Id,Issue_DetailUkey,QTY,isvirtual
+	from(
+	select SizeCode,Id,Issue_DetailUkey,QTY,isvirtual,seq
+	from #tmp
+	union all
+	select distinct os.sizecode,ID = '{CurrentMaintain["orderid"]}',Issue_DetailUkey = '{ukey}',QTY=0,isvirtual = 1,seq
+	from dbo.Order_SizeCode os WITH(NOLOCK)
+	inner join orders o WITH(NOLOCK) on o.POID = os.Id
+	inner join dbo.Order_Qty oq WITH(NOLOCK) on o.id = oq.ID and os.SizeCode = oq.SizeCode
+	where o.POID = (select POID from orders where id = '{CurrentMaintain["orderid"]}' )and os.sizecode not in(select SizeCode from #tmp)
+)x
+order by seq
+";
+            }
+            else
+            {
+                SubDetailSelectCommand += " select * from #tmp";
+            }
+
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 
@@ -1844,7 +1835,60 @@ order by Seq ", this.poid, CurrentMaintain["id"], ndr["ukey"]), out sizeRange);
             {
                 dtIssueBreakDown.DefaultView.RowFilter = string.Format("OrderID='{0}'", txtOrderID.Text);
             }
+            string sql = string.Empty;
 
+            if (CurrentMaintain == null)
+            {
+                return;
+            }
+//            if (checkByCombo.Checked)
+//            {
+//                sql = $@"
+//select distinct seq,os.sizecode
+//from dbo.Order_SizeCode os WITH(NOLOCK)
+//inner join orders o WITH(NOLOCK) on o.POID = os.Id
+//inner join dbo.Order_Qty oq WITH(NOLOCK) on o.id = oq.ID and os.SizeCode = oq.SizeCode
+//where o.POID = (select poid from orders  WITH(NOLOCK) where id = '{CurrentMaintain["orderid"]}')
+//";
+//            }
+//            else
+//            {
+//                sql = $@"
+//select distinct seq,os.sizecode
+//from dbo.Order_SizeCode os WITH (NOLOCK) 
+//inner join orders o WITH (NOLOCK) on o.POID = os.Id
+//inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+//where  o.id ='{CurrentMaintain["orderid"]}'
+//";
+//            }
+//            DataTable sizecodeDt;
+//            DBProxy.Current.Select(null, sql, out sizecodeDt);
+
+//            foreach (DataRow dr in DetailDatas)
+//            {
+//                if (dr.RowState != DataRowState.Deleted)
+//                {
+//                    DataTable subDt;
+//                    GetSubDetailDatas(dr, out subDt);
+//                    foreach (DataRow subdr in subDt.Rows)
+//                    {
+//                        if (!sizecodeDt.AsEnumerable().Any(r => r["Sizecode"].ToString() == MyUtility.Convert.GetString(subdr["sizecode"])))
+//                        {
+//                            subdr["Qty"] = 0;
+//                        }
+//                    }
+//                    dr["output"] = string.Join(", ",
+//                            subDt.AsEnumerable()
+//                                 .Where(row => !MyUtility.Check.Empty(row["Qty"]))
+//                                 .Select(row => row["SizeCode"].ToString() + "*" + Convert.ToDecimal(row["qty"]).ToString("0.00"))
+//                        );
+//                    dr["qty"] = Math.Round(subDt.AsEnumerable()
+//                                                .Where(row => !MyUtility.Check.Empty(row["Qty"]))
+//                                                .Sum(row => Convert.ToDouble(row["Qty"].ToString()))
+//                                                , 2);
+
+//                }
+//            }
         }
 
         protected override void OnDetailGridRowChanged()
