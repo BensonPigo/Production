@@ -261,6 +261,8 @@ group by refno,ColorID
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
+            if (this.dt == null) return;
+            if (this.dt.Rows.Count == 0) return;
             foreach (DataRow dr2 in this.dt2.Rows)
             {
                 dr2["Uqty"] = !this.checkBox1.Checked ? dr2["Wqty"] : MyUtility.Convert.GetDecimal(dr2["Wqty"]) + MyUtility.Convert.GetDecimal(dr2["bqty"]);
