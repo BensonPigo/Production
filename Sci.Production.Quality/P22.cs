@@ -154,7 +154,7 @@ outer apply(
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
-and p2.ReceiveDate is not null
+--and p2.ReceiveDate is not null
 and p2.TransferCFADate is null
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
