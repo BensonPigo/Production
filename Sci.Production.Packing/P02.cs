@@ -145,6 +145,7 @@ order by e.Seq, f.Seq", masterID);
 
             // Switch to Packing list是否有權限使用
             this.btnSwitchToPackingList.Enabled = !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P02. Packing Guide", "CanEdit");
+            this.btnSwitchToPLByArticle.Enabled = !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P02. Packing Guide", "CanEdit");
         }
 
         /// <summary>
