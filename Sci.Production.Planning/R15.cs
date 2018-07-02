@@ -738,7 +738,7 @@ outer apply(
 		from #tmpin,#tmpout
 		where #tmpin.SP = t.OrderID 
 		and #tmpin.Factory = t.FactoryID
-		and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT')
+		and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
 		and #tmpout.SP = t.OrderID 
 	    and #tmpout.Factory = t.FactoryID
 		and #tmpout.SubProcessId = #tmpin.SubProcessId
@@ -802,10 +802,7 @@ outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NO
 ");
 
                 sqlCmd.Append(string.Format(@" order by {0}", this.orderby));
-                sqlCmd.Append(@" 
-DROP TABLE #cte2, #cte, #tsp, #cutcomb, #tmpBundleInOutQty, #cur_bdltrack2, #Min_cut
-           , #AccuInComeData, #TablePatternUkey, #TablePatternCode,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout
-");
+                sqlCmd.Append(@" DROP TABLE #cte2, #cte,#tmp,#tmp2,#tmp3,#tmp4,#tmpout1,#tmpout2,#tmpout3,#tmpout4,#tmpin,#tmpout");
                 if (this.isArtwork)
                 {
                     sqlCmd.Append(@" drop table #rawdata_tmscost,#tmscost_pvt");
@@ -1172,10 +1169,10 @@ group by [M],[Factory],[SP],[Subprocessid],article,[Size]
 ----------↑計算累計成衣件數
 select t.MDivisionID
        , t.FactoryID
-       , t.SewLine
+       , SewingSchedule.SewingLineID
        , t.OrdersBuyerDelivery
-       , t.SewInLine
-       , t.SewOffLine
+       , SewingSchedule2.Inline
+       , SewingSchedule2.Offline
        , t.BrandID
        , t.OrderID
        , Dest = Country.Alias
@@ -1438,7 +1435,7 @@ outer apply(
 		from #tmpin,#tmpout
 		where #tmpin.SP = t.OrderID 
 		and #tmpin.Factory = t.FactoryID
-		and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT')
+		and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
 		and #tmpout.SP = t.OrderID 
 	    and #tmpout.Factory = t.FactoryID
 		and #tmpout.SubProcessId = #tmpin.SubProcessId
@@ -1446,6 +1443,21 @@ outer apply(
 		and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
 	)xxx
 )subprocessqty
+outer apply(
+	select SewingLineID =stuff((
+		  select distinct concat(',',ssd.SewingLineID)
+		  from [SewingSchedule] ss
+		  inner join SewingSchedule_Detail ssd on ssd.id = ss.id
+		  where ssd.orderid = t.OrderID and ssd.Article = t.Article and ssd.SizeCode = t.SizeCode
+		  for xml path('')
+	  ),1,1,'')
+)SewingSchedule
+outer apply(
+	select Inline = MIN(ss.Inline),Offline = MIN(SS.Offline)
+	from [SewingSchedule] ss
+	inner join SewingSchedule_Detail ssd on ssd.id = ss.id
+	where ssd.orderid = t.OrderID and ssd.Article = t.Article and ssd.SizeCode = t.SizeCode
+)SewingSchedule2
 outer apply(
 	select StandardOutput =stuff((
 		  select distinct concat(',',ssd.ComboType,':',StandardOutput)
