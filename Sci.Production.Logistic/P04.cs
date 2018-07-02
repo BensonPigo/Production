@@ -450,12 +450,11 @@ namespace Sci.Production.Logistic
                 }
             }
         }
-
-        private string inPackingIDs;
+        
+        private string whereS;
 
         private void BtnImportFromBarcode_Click(object sender, EventArgs e)
         {
-            this.inPackingIDs = string.Empty;
             // 設定只能選txt檔
             this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
 
@@ -463,7 +462,8 @@ namespace Sci.Production.Logistic
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 // 讀檔案
-                List<string> packingIDs = new List<string>();
+                string wheresql = string.Empty;
+                this.whereS = string.Empty;
                 using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
                 {
                     string line;
@@ -476,18 +476,19 @@ namespace Sci.Production.Logistic
                         {
                             if (item.Length >= 13)
                             {
-                                packingIDs.Add(item.Substring(0,13));
+                                wheresql = $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13, item.Length-13)}') ";
                             }
                         }
                     }
 
-                    if (packingIDs.Count == 0)
+                    if (MyUtility.Check.Empty(wheresql))
                     {
                         MyUtility.Msg.WarningBox("Connection faile.!");
                         return;
                     }
 
-                    this.inPackingIDs = "'" + packingIDs.JoinToString("','") + "'";
+                    this.whereS = $" and(1=0 {wheresql} )";
+
                     this.gridData = null;
                     this.listControlBindingSource1.DataSource = null;
                     this.Query(true);
@@ -598,7 +599,7 @@ from (
             }
             else
             {
-                sqlCmd.Append($" and PL.ID in ({ this.inPackingIDs })");
+                sqlCmd.Append(this.whereS);
             }
             #endregion
             sqlCmd.Append(@"
