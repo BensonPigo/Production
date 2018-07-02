@@ -1453,7 +1453,7 @@ outer apply(
 	  ),1,1,'')
 )SewingSchedule
 outer apply(
-	select Inline = MIN(ss.Inline),Offline = MIN(SS.Offline)
+	select Inline = MIN(ss.Inline),Offline = max(SS.Offline)
 	from [SewingSchedule] ss
 	inner join SewingSchedule_Detail ssd on ssd.id = ss.id
 	where ssd.orderid = t.OrderID and ssd.Article = t.Article and ssd.SizeCode = t.SizeCode
