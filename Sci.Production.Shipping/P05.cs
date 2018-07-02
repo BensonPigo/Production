@@ -1375,15 +1375,22 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             {
                 string sqlCmd = string.Format(
                     @";with AirPPChk as (
-select p.ID, isnull(a.ID,'') as AirPPID,o.Category,isnull(a.status,'') as status
+select p.OrderID,p.OrderShipmodeSeq,p.ID, isnull(a.ID,'') as AirPPID,o.Category,isnull(a.status,'') as status
 from (Select distinct a.ID,b.OrderID,b.OrderShipmodeSeq 
       from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) 
       where a.INVNo = '{0}' and a.ID = b.ID) p
 left join orders o WITH (NOLOCK) on o.ID = p.OrderID
-left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq)
+left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq),
+AirPPChk_JunkChk as (
+select *,
+--相同SP + seq 有一筆以上，若其中一筆是Junked，這筆就不做判斷
+[ShowFlag] = (select iif((count(*) - sum(iif(status = 'Junked',1,0))) > 0 and apc.status = 'Junked',0,1) from AirPPChk where orderid = apc.OrderID and OrderShipmodeSeq = apc.OrderShipmodeSeq )
+ from AirPPChk apc
+)
 select apc.ID as PackingID, apc.AirPPID,apc.Category,apc.status as AirPPStatus,aps.status as StatusDesc,aps.Followup
-from AirPPChk apc
-left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+from AirPPChk_JunkChk apc
+left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'')
+where apc.status <> 'Locked' and ShowFlag = 1 ", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.selectData);
                 if (result)
                 {
@@ -1392,11 +1399,11 @@ left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'
                     DataRow[] row;
                     if (this.CurrentMaintain["ShipModeID"].Equals("E/P"))
                     {
-                        row = this.selectData.Select(" Category <> 'S' and AirPPStatus <> 'Locked'");
+                        row = this.selectData.Select(" Category <> 'S' ");
                     }
                     else
                     {
-                       row = this.selectData.Select(" AirPPStatus <> 'Locked'");
+                        row = this.selectData.Select();
                     }
 
                     if (row.Length > 0)
