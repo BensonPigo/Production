@@ -2216,7 +2216,7 @@ inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
                     DataRow drRow = dtExcel.NewRow();
                     for (int j = 1; j <= lngColumnCount; j++)
                     {
-                        drRow[j - 1] = MyUtility.Check.Empty(objValue[i, j]) ? "0" : objValue[i, j].ToString();
+                        drRow[j - 1] = MyUtility.Check.Empty(objValue[i, j]) ? "" : objValue[i, j].ToString();
                     }
 
                     dtExcel.Rows.Add(drRow);
