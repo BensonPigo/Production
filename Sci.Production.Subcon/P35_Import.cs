@@ -44,22 +44,27 @@ namespace Sci.Production.Subcon
             issuedate_e = null;
             delivery_b = null;
             delivery_e = null;
-            string receivingwhere = string.Empty;
-
+            string receivingClm = string.Empty;
+            string receivingjoin = string.Empty;
 
             if (datePOIssueDate.Value1 != null) issuedate_b = this.datePOIssueDate.Text1;
             if (datePOIssueDate.Value2 != null) { issuedate_e = this.datePOIssueDate.Text2; }
             if (dateDelivery.Value1 != null) delivery_b = this.dateDelivery.Text1;
             if (dateDelivery.Value2 != null) { delivery_e = this.dateDelivery.Text2; }
             if (!MyUtility.Check.Empty(txtReceiving.Text))
-            {               
-                receivingwhere = $@" 
-and exists(
-select 1 from LocalReceiving_Detail
-where b.Ukey=LocalPo_detailukey
-and b.Id=LocalPoId	
-and id='{txtReceiving.Text}'
-)";
+            {
+                receivingClm =@"
+,qty = iif(b.inqty - apqty< LocalReceiving_Detail.qty,
+                b.inqty - apqty,
+				LocalReceiving_Detail.qty)--預帶待付款，[已收數]-[已付款]";
+
+                receivingjoin = $@" 
+cross apply(
+	select qty
+	from LocalReceiving_Detail lrd
+	where lrd.LocalPo_detailukey = b.ukey and lrd.LocalPoId = b.id and lrd.id = '{this.txtReceiving.Text}'
+)LocalReceiving_Detail
+";
             }
 
             if ((MyUtility.Check.Empty(issuedate_b) && MyUtility.Check.Empty(issuedate_e)) &&
@@ -75,28 +80,38 @@ and id='{txtReceiving.Text}'
             {
                 // 建立可以符合回傳的Cursor
 
-                string strSQLCmd = $@"Select 1 as Selected
-                                                                                ,b.id as localpoid
-                                                                                , b.orderid
-                                                                                ,b.refno
-                                                                                ,b.threadcolorid
-                                                                                ,[description]=dbo.getItemDesc(a.category,b.refno)
-                                                                                ,b.qty as poqty
-                                                                                ,b.unitid
-                                                                                ,b.price
-                                                                                ,b.inqty - apqty unpaid
-                                                                                ,b.inqty - apqty as qty  --預帶待付款，[已收數]-[已付款]
-                                                                                ,b.ukey localpo_detailukey
-                                                                                ,'' id
-                                                                                ,0.0 amount
-                                                                                ,b.inqty
-                                                                                ,b.apqty
-                                                                                ,b.inqty - b.apqty AS balance
-                                                                        from localpo a WITH (NOLOCK) , localpo_detail b WITH (NOLOCK) 
-                                                                        where a.id = b.id and a.status != 'New' and b.apqty < inqty
-                                                                        {receivingwhere}
-                                                                        and a.category = '{dr_localAp["category"]}' 
-                                                                        and a.localsuppid = '{dr_localAp["localsuppid"]}' and a.mdivisionid = '{Env.User.Keyword}'";
+                string strSQLCmd = $@"
+Select 1 as Selected
+    ,b.id as localpoid
+    , b.orderid
+    ,b.refno
+    ,b.threadcolorid
+    ,[description]=dbo.getItemDesc(a.category,b.refno)
+    ,b.qty as poqty
+    ,b.unitid
+    ,b.price
+    ,b.inqty - apqty unpaid
+";
+                if (!MyUtility.Check.Empty(receivingClm))
+                {
+                    strSQLCmd += receivingClm;
+                }
+                else
+                {
+                    strSQLCmd += "    ,qty = b.inqty - apqty  --預帶待付款，[已收數]-[已付款]";
+                }
+                strSQLCmd += $@"
+    ,b.ukey localpo_detailukey
+    ,'' id
+    ,0.0 amount
+    ,b.inqty
+    ,b.apqty
+    ,b.inqty - b.apqty AS balance
+from localpo a WITH (NOLOCK) , localpo_detail b WITH (NOLOCK) 
+{receivingjoin}
+where a.id = b.id and a.status != 'New' and b.apqty < inqty
+and a.category = '{dr_localAp["category"]}' 
+and a.localsuppid = '{dr_localAp["localsuppid"]}' and a.mdivisionid = '{Env.User.Keyword}'";
                 if(!MyUtility.Check.Empty(sp_b)){strSQLCmd+= " and b.orderid between @sp1 and @sp2";}
                 if (!MyUtility.Check.Empty(poid_b)) { strSQLCmd += " and b.id between @localpoid1 and  @localpoid2"; }
                 if (!MyUtility.Check.Empty(delivery_b)) { strSQLCmd += string.Format(" and b.Delivery >= '{0}' ", delivery_b); }
