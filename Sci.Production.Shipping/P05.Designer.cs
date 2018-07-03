@@ -348,7 +348,7 @@
             // labelShipper
             // 
             this.labelShipper.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelShipper.Location = new System.Drawing.Point(5, 112);
+            this.labelShipper.Location = new System.Drawing.Point(4, 85);
             this.labelShipper.Name = "labelShipper";
             this.labelShipper.Size = new System.Drawing.Size(66, 23);
             this.labelShipper.TabIndex = 24;
@@ -357,7 +357,7 @@
             // labelBrand
             // 
             this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrand.Location = new System.Drawing.Point(4, 85);
+            this.labelBrand.Location = new System.Drawing.Point(4, 112);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(66, 23);
             this.labelBrand.TabIndex = 25;
@@ -952,7 +952,6 @@
             this.comboContainerType.IsSupportUnselect = true;
             this.comboContainerType.Location = new System.Drawing.Point(658, 57);
             this.comboContainerType.Name = "comboContainerType";
-            this.comboContainerType.OldText = "";
             this.comboContainerType.Size = new System.Drawing.Size(121, 24);
             this.comboContainerType.TabIndex = 12;
             // 
@@ -1020,7 +1019,6 @@
             this.txtShipmodeShippingMode.IsSupportUnselect = true;
             this.txtShipmodeShippingMode.Location = new System.Drawing.Point(420, 4);
             this.txtShipmodeShippingMode.Name = "txtShipmodeShippingMode";
-            this.txtShipmodeShippingMode.OldText = "";
             this.txtShipmodeShippingMode.Size = new System.Drawing.Size(121, 24);
             this.txtShipmodeShippingMode.TabIndex = 8;
             this.txtShipmodeShippingMode.UseFunction = "ORDER";
@@ -1050,7 +1048,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(73, 85);
+            this.txtbrand.Location = new System.Drawing.Point(73, 112);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(84, 23);
             this.txtbrand.TabIndex = 3;
@@ -1058,15 +1056,15 @@
             // 
             // txtfactoryShipper
             // 
-            this.txtfactoryShipper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtfactoryShipper.BackColor = System.Drawing.Color.White;
             this.txtfactoryShipper.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Shipper", true));
-            this.txtfactoryShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtfactoryShipper.IsSupportEditMode = false;
-            this.txtfactoryShipper.Location = new System.Drawing.Point(74, 112);
+            this.txtfactoryShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryShipper.Location = new System.Drawing.Point(73, 85);
             this.txtfactoryShipper.Name = "txtfactoryShipper";
-            this.txtfactoryShipper.ReadOnly = true;
             this.txtfactoryShipper.Size = new System.Drawing.Size(64, 23);
             this.txtfactoryShipper.TabIndex = 0;
+            this.txtfactoryShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtfactoryShipper_PopUp);
+            this.txtfactoryShipper.Validating += new System.ComponentModel.CancelEventHandler(this.TxtfactoryShipper_Validating);
             // 
             // btnAirPPStatus
             // 
@@ -1083,8 +1081,8 @@
             // 
             this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(998, 662);
-            this.DefaultControl = "txtbrand";
-            this.DefaultControlForEdit = "txtInvSerial";
+            this.DefaultControl = "txtfactoryShipper";
+            this.DefaultControlForEdit = "txtfactoryShipper";
             this.DefaultOrder = "ID";
             this.GridAlias = "PackingList";
             this.GridNew = 0;
