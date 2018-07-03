@@ -326,6 +326,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["Shipper"] = Sci.Env.User.Factory;
             this.CurrentMaintain["InvDate"] = DateTime.Today;
             this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["ShipModeID"] = "SEA";
@@ -486,7 +487,7 @@ where   pl.INVNo = '{0}'
             if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
             {
                 this.txtfactoryShipper.Focus();
-                MyUtility.Msg.WarningBox("Shipper can't empty!!" + Environment.NewLine + "Please contact Taipei Finance Dept. to set up the Shipper");
+                MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return false;
             }
 
@@ -884,28 +885,6 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             if (this.EditMode && this.txtbrand.OldValue != this.txtbrand.Text)
             {
                 this.GetPaytermAP();
-
-                #region 將Brand,LogingFty 帶入FtyShipper_Detail　取得ShipperID
-                DataRow dr;
-                string sqlcmd = $@"
-select ShipperID from FtyShipper_Detail
-where BrandID='{this.txtbrand.Text}'
-and FactoryID='{Sci.Env.User.Factory}'
-and CONVERT(date,GETDATE()) between BeginDate and EndDate";
-                if (MyUtility.Check.Seek(sqlcmd, out dr))
-                {
-                    this.txtfactoryShipper.Text = dr["ShipperID"].ToString();
-                    this.CurrentMaintain["Shipper"] = dr["ShipperID"].ToString();
-                }
-                else
-                {
-                    this.txtfactoryShipper.Text = string.Empty;
-                    this.CurrentMaintain["Shipper"] = string.Empty;
-                    MyUtility.Msg.WarningBox("Please contact Taipei Finance Dept. to set up the Shipper");
-                    return;
-                }
-                #endregion
-
             }
         }
 
@@ -1375,15 +1354,22 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             {
                 string sqlCmd = string.Format(
                     @";with AirPPChk as (
-select p.ID, isnull(a.ID,'') as AirPPID,o.Category,isnull(a.status,'') as status
+select p.OrderID,p.OrderShipmodeSeq,p.ID, isnull(a.ID,'') as AirPPID,o.Category,isnull(a.status,'') as status
 from (Select distinct a.ID,b.OrderID,b.OrderShipmodeSeq 
       from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) 
       where a.INVNo = '{0}' and a.ID = b.ID) p
 left join orders o WITH (NOLOCK) on o.ID = p.OrderID
-left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq)
+left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq),
+AirPPChk_JunkChk as (
+select *,
+--相同SP + seq 有一筆以上，若其中一筆是Junked，這筆就不做判斷
+[ShowFlag] = (select iif((count(*) - sum(iif(status = 'Junked',1,0))) > 0 and apc.status = 'Junked',0,1) from AirPPChk where orderid = apc.OrderID and OrderShipmodeSeq = apc.OrderShipmodeSeq )
+ from AirPPChk apc
+)
 select apc.ID as PackingID, apc.AirPPID,apc.Category,apc.status as AirPPStatus,aps.status as StatusDesc,aps.Followup
-from AirPPChk apc
-left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+from AirPPChk_JunkChk apc
+left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'')
+where apc.status <> 'Locked' and ShowFlag = 1 ", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.selectData);
                 if (result)
                 {
@@ -1392,11 +1378,11 @@ left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'
                     DataRow[] row;
                     if (this.CurrentMaintain["ShipModeID"].Equals("E/P"))
                     {
-                        row = this.selectData.Select(" Category <> 'S' and AirPPStatus <> 'Locked'");
+                        row = this.selectData.Select(" Category <> 'S' ");
                     }
                     else
                     {
-                       row = this.selectData.Select(" AirPPStatus <> 'Locked'");
+                        row = this.selectData.Select();
                     }
 
                     if (row.Length > 0)
@@ -1559,5 +1545,52 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
         {
             MyUtility.Msg.InfoBox("validated");
         }
+
+        private void TxtfactoryShipper_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            #region SQL CMD
+            string sqlcmd = string.Format(@"
+Select DISTINCT Factory = ID
+from Factory WITH (NOLOCK) 
+where Junk = 0
+order by ID");
+            #endregion
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8", this.txtfactoryShipper.Text, false, ",");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtfactoryShipper.Text = item.GetSelectedString();
+        }
+
+        private void TxtfactoryShipper_Validating(object sender, CancelEventArgs e)
+        {
+            #region SQL Parameter
+            List<SqlParameter> listSqlPar = new List<SqlParameter>();
+            listSqlPar.Add(new SqlParameter("@str", this.txtfactoryShipper.Text));
+            #endregion
+            string str = this.txtfactoryShipper.Text;
+            #region SQL CMD
+            string sqlcmd = string.Format(@"
+Select DISTINCT Factory = ID
+from Factory WITH (NOLOCK) 
+where Junk = 0
+      and ID = @str
+order by ID");
+            #endregion
+            if (!string.IsNullOrWhiteSpace(str) && str != this.txtfactoryShipper.OldValue)
+            {
+                if (MyUtility.Check.Seek(sqlcmd, listSqlPar) == false)
+                {
+                    this.txtfactoryShipper.Text = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
+                    return;
+                }
+            }
+        }
+
     }
 }
