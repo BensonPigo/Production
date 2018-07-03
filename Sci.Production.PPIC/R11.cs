@@ -184,7 +184,7 @@ outer apply (
     LEFT JOIN PackingList p on pd.ID = p.ID 
     where  pd.OrderID = os.ID 
 	and pd.OrderShipmodeSeq = os.Seq
-	having Max (ReceiveDate) <= CONVERT(date, DATEADD(DAY,{MyUtility.Convert.GetInt(this.Gap)}, s.Offline))
+    and (ReceiveDate) <= CONVERT(date, DATEADD(DAY,{MyUtility.Convert.GetInt(this.Gap)}, s.Offline))	
 ) Receive
 outer apply(
 	select Line = stuff((
