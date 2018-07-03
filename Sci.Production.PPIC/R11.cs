@@ -128,7 +128,9 @@ end
 ,[FirstSewnDate] = SewDate.FirstDate
 ,[LastSewnDate] = SewDate.LastDate
 ,[%]= iif(pdm.TotalCTN=0,0, ( isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)
-,[TtlCTN] = pdm.TotalCTN,[FtyCTN] = pdm.FtyCtn,[ClogCTN] = isnull(Receive.ClogCTN,0)
+,[TtlCTN] = pdm.TotalCTN
+,[FtyCTN] = pdm.TotalCTN - isnull(Receive.ClogCTN,0)
+,[ClogCTN] = isnull(Receive.ClogCTN,0)
 ,[cLogRecDate] = Receive.ClogRcvDate
 ,[FinalInspDate]=cfa.FinalInsDate,cfa.Result
 ,[CfaName] = cfa.CfaName
@@ -170,8 +172,7 @@ outer apply(
 	where OrderID=s.OrderID 
 )ss
 outer apply( 
-	select Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN,
-	Sum( case when p.Type in ('B', 'L') and pd.TransferDate is null then pd.CTNQty else 0 end) FtyCtn
+	select Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN
 	from PackingList_Detail pd WITH (NOLOCK) 
     LEFT JOIN PackingList p on pd.ID = p.ID 
     where  pd.OrderID = os.ID 
