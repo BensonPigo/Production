@@ -152,7 +152,7 @@ outer apply (
     where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
     Order by PulloutDate desc
 ) p
-where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
+where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0)";
 
                 if (this.radioBulk.Checked)
                 {
@@ -258,7 +258,7 @@ Select Order_QS.ID
 From Order_QtyShip Order_QS, Orders o
 Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 Left Join Factory f On o.FactoryID = f.ID 
-Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) 
 ";
 
                 if (this.radioBulk.Checked)
@@ -307,7 +307,7 @@ Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
 Left Join Factory f ON o.FACTORYID = f.ID 
 Where pd.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
-and pd.ShipQty> 0 
+and pd.ShipQty> 0  and (o.Junk is null or o.Junk = 0) 
 ";
                 if (this.radioBulk.Checked)
                 {
@@ -353,7 +353,7 @@ Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
 Left Join Factory f ON o.FactoryID = f.ID 
 Where p.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
-and p.ShipQty> 0
+and p.ShipQty> 0  and (o.Junk is null or o.Junk = 0)
 ";
                 if (this.radioBulk.Checked)
                 {
@@ -405,7 +405,7 @@ Left Join Factory f ON o.FACTORYID = f.ID
 Where TH_Order.SourceID = o.ID 
 AND TH_Order.HisType = 'Delivery' 
 AND r.ReasonTypeID = TH_Order.ReasonTypeID 
-AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
+AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) ";
                 if (this.radioBulk.Checked)
                 {
                     strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
@@ -625,7 +625,7 @@ OUTER APPLY (select top 1 PulloutDate
              where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
              and pd.ShipQty> 0
              Order by PulloutDate desc) pd 
-where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) 
 {where}
 ";
                     result = DBProxy.Current.Select(null, strSQL, null, out this.gdtPullOut);

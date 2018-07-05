@@ -52,7 +52,9 @@ namespace Sci.Production.Warehouse
             
             StringBuilder sqlcmd = new StringBuilder();
             sqlcmd.Append(@"
-select a.OrderID,
+select
+    o.ftygroup ,
+    a.OrderID,
 	a.UnitID,
 	a.Refno,
 	b.Description,
