@@ -32,6 +32,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnImportFromBarcode = new Sci.Win.UI.Button();
             this.comboFilter2 = new Sci.Win.UI.ComboBox();
             this.comboFilter = new Sci.Win.UI.ComboBox();
             this.labelFilter = new Sci.Win.UI.Label();
@@ -64,6 +65,7 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridPackID = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -82,13 +84,14 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(850, 0);
+            this.panel2.Location = new System.Drawing.Point(907, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(5, 563);
             this.panel2.TabIndex = 2;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnImportFromBarcode);
             this.panel3.Controls.Add(this.comboFilter2);
             this.panel3.Controls.Add(this.comboFilter);
             this.panel3.Controls.Add(this.labelFilter);
@@ -114,8 +117,19 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(845, 106);
+            this.panel3.Size = new System.Drawing.Size(902, 106);
             this.panel3.TabIndex = 3;
+            // 
+            // btnImportFromBarcode
+            // 
+            this.btnImportFromBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportFromBarcode.Location = new System.Drawing.Point(715, 69);
+            this.btnImportFromBarcode.Name = "btnImportFromBarcode";
+            this.btnImportFromBarcode.Size = new System.Drawing.Size(176, 30);
+            this.btnImportFromBarcode.TabIndex = 22;
+            this.btnImportFromBarcode.Text = "Import From Barcode";
+            this.btnImportFromBarcode.UseVisualStyleBackColor = true;
+            this.btnImportFromBarcode.Click += new System.EventHandler(this.BtnImportFromBarcode_Click);
             // 
             // comboFilter2
             // 
@@ -125,6 +139,7 @@
             this.comboFilter2.IsSupportUnselect = true;
             this.comboFilter2.Location = new System.Drawing.Point(543, 73);
             this.comboFilter2.Name = "comboFilter2";
+            this.comboFilter2.OldText = "";
             this.comboFilter2.Size = new System.Drawing.Size(166, 24);
             this.comboFilter2.TabIndex = 12;
             this.comboFilter2.SelectedIndexChanged += new System.EventHandler(this.ComboFilter2_SelectedIndexChanged);
@@ -137,6 +152,7 @@
             this.comboFilter.IsSupportUnselect = true;
             this.comboFilter.Location = new System.Drawing.Point(453, 73);
             this.comboFilter.Name = "comboFilter";
+            this.comboFilter.OldText = "";
             this.comboFilter.Size = new System.Drawing.Size(85, 24);
             this.comboFilter.TabIndex = 11;
             this.comboFilter.SelectedIndexChanged += new System.EventHandler(this.ComboFilter_SelectedIndexChanged);
@@ -323,7 +339,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(845, 106);
+            this.shapeContainer1.Size = new System.Drawing.Size(902, 106);
             this.shapeContainer1.TabIndex = 17;
             this.shapeContainer1.TabStop = false;
             // 
@@ -345,13 +361,13 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 514);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(845, 49);
+            this.panel4.Size = new System.Drawing.Size(902, 49);
             this.panel4.TabIndex = 4;
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(752, 8);
+            this.btnCancel.Location = new System.Drawing.Point(809, 8);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
             this.btnCancel.TabIndex = 1;
@@ -362,7 +378,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(666, 8);
+            this.btnSave.Location = new System.Drawing.Point(723, 8);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 0;
@@ -388,6 +404,7 @@
             this.comboRequestby.IsSupportUnselect = true;
             this.comboRequestby.Location = new System.Drawing.Point(302, 12);
             this.comboRequestby.Name = "comboRequestby";
+            this.comboRequestby.OldText = "";
             this.comboRequestby.Size = new System.Drawing.Size(104, 24);
             this.comboRequestby.TabIndex = 2;
             // 
@@ -405,7 +422,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 106);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(845, 408);
+            this.panel5.Size = new System.Drawing.Size(902, 408);
             this.panel5.TabIndex = 5;
             // 
             // gridPackID
@@ -429,13 +446,18 @@
             this.gridPackID.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridPackID.RowTemplate.Height = 24;
             this.gridPackID.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridPackID.Size = new System.Drawing.Size(845, 408);
+            this.gridPackID.ShowCellToolTips = false;
+            this.gridPackID.Size = new System.Drawing.Size(902, 408);
             this.gridPackID.TabIndex = 0;
             this.gridPackID.TabStop = false;
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // P04
             // 
-            this.ClientSize = new System.Drawing.Size(855, 563);
+            this.ClientSize = new System.Drawing.Size(912, 563);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -496,5 +518,7 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.TextBox textTransferSlipNo;
         private Win.UI.Label labelTransferSlipNo;
+        private Win.UI.Button btnImportFromBarcode;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
