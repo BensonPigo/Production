@@ -31,9 +31,10 @@ namespace Sci.Production.Cutting
             gridDetail.DataSource = gridbs;
             gridbs.DataSource = detailTb;
             setDetailGrid();
-
-
+            txtCell1.MDivisionID = keyWord;
         }
+
+        Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
         public void setDetailGrid()
         {
             this.gridDetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -41,27 +42,32 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorCheckBoxColumnSettings col_check = new DataGridViewGeneratorCheckBoxColumnSettings();
             #region set grid
             Helper.Controls.Grid.Generator(this.gridDetail)
-                .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_check)
-                .Text("factoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("ID", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Date("estcutdate", header: "Org.Est.\nCut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("newestcutdate", header: "New.Est.\nCut Date", width: Widths.AnsiChars(10)).Get(out col_estcutdate)
-                .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("CutReasonid", header: "Reason", width: Widths.AnsiChars(6), settings: col_cutreason)
-                .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true);
-                this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-                this.gridDetail.Columns["CutReasonid"].DefaultCellStyle.BackColor = Color.Pink;
+            .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_check)
+            .Text("factoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("ID", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
+            .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Date("estcutdate", header: "Org.Est.\nCut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("newestcutdate", header: "New.Est.\nCut Date", width: Widths.AnsiChars(10)).Get(out col_estcutdate)
+            .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), iseditingreadonly: true)
+
+            .Text("Cutcellid", header: "Org Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("NewCutcellid", header: "New Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
+
+            .Text("CutReasonid", header: "Reason", width: Widths.AnsiChars(6), settings: col_cutreason)
+            .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("PatternPanel", header: "PatternPanel", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true);
+            this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["CutReasonid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["NewCutcellid"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             col_estcutdate.CellValidating += (s, e) =>
@@ -79,9 +85,62 @@ namespace Sci.Production.Cutting
             {
                 e.CellStyle.BackColor = Color.Pink;
                 e.CellStyle.ForeColor = Color.Red; 
-            };            
+            };
+            changeeditable();
         }
 
+        private void changeeditable()// Grid Cell 物件設定
+        {
+            #region cutcell
+            col_cutcell.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    // Parent form 若是非編輯狀態就 return 
+                    DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                    SelectItem sele;
+                    DataTable cellTb;
+                    DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
+                    sele = new SelectItem(cellTb, "ID", "10@300,300", dr["CutCellid"].ToString(), false, ",");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    dr["NewCutcellid"] = sele.GetSelectedString();
+                    dr.EndEdit();                    
+                }
+            };
+            col_cutcell.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) { return; }
+                // 右鍵彈出功能
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+
+                // 空白不檢查
+                if (e.FormattedValue.ToString().Empty()) return;
+
+                string oldvalue = dr["NewCutcellid"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+
+                if (oldvalue == newvalue) return;
+
+                DataTable cellTb;
+                DBProxy.Current.Select(null, string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord), out cellTb);
+
+                DataRow[] seledr = cellTb.Select(string.Format("ID='{0}'", newvalue));
+                if (seledr.Length == 0)
+                {
+                    dr["cutCellid"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
+                    return;
+                }
+
+                dr["cutCellid"] = newvalue;
+                dr.EndEdit();
+            };
+            #endregion
+        }
         private void btnQuery_Click(object sender, EventArgs e)
         {
             if (detailTb != null) detailTb.Clear();
@@ -131,6 +190,7 @@ From
 	    Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
     )  as actcutdate,
     '' as NewestcutDate, '' as cutreasonid ,0 as sel
+    ,NewCutcellid=''
     from Workorder a";
             string where = string.Format(" Where cutplanid!='' and MDivisionId = '{0}'", keyWord);
             if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and id='{0}'",cutsp);
@@ -170,12 +230,14 @@ From
             if (detailTb == null) return;
             string estcutdate = dateNewEstCutDate.Text;
             string reason = txtcutReason.TextBox1.Text;
+            string cell = txtCell1.Text;
             foreach (DataRow dr in detailTb.Rows)
             {
                 if(dr["Sel"].ToString()=="1")
                 {
                     dr["newestcutdate"] = estcutdate;
                     dr["cutreasonid"] = reason;
+                    dr["NewCutcellid"] = cell;
                 }
             }
         }
@@ -200,7 +262,15 @@ From
                         MyUtility.Msg.WarningBox("<Reason> can not be empty.");
                         return;
                     }
-                    update = update + string.Format("Update Workorder Set estcutdate ='{0}' where Ukey = {1}; ", dr["newestcutdate"],dr["Ukey"]);
+                    if (MyUtility.Check.Empty(dr["NewCutcellid"]))
+                    {
+                        update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}' where Ukey = {dr["Ukey"]}; ";
+                    }
+                    else
+                    {
+                        update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}',CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
+                    }
+
                     update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"]);
                     
                 }
