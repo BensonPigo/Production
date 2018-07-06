@@ -253,26 +253,33 @@ From
             string update = "";
             if (MyUtility.Check.Empty(detailTb))return;
             if (detailTb.Rows.Count == 0) return;
+
             foreach (DataRow dr in detailTb.Rows)
             {
-                if (dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty(dr["NewEstCutDate"]))
+
+                if (dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty(dr["NewEstCutDate"]) && !MyUtility.Check.Empty(dr["NewCutcellid"]))
                 {
                     if (MyUtility.Check.Empty(dr["CutReasonid"]))
                     {
                         MyUtility.Msg.WarningBox("<Reason> can not be empty.");
                         return;
                     }
+
                     if (MyUtility.Check.Empty(dr["NewCutcellid"]))
                     {
                         update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}' where Ukey = {dr["Ukey"]}; ";
+                    }
+                    else if (!MyUtility.Check.Empty(dr["NewCutcellid"]))
+                    {
+                        update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
                     }
                     else
                     {
                         update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}',CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
                     }
 
+
                     update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"]);
-                    
                 }
             }
 
