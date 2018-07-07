@@ -5,6 +5,8 @@
     [CutReasonid]   VARCHAR (5)  CONSTRAINT [DF_WorkOrder_Estcutdate_Reason] DEFAULT ('') NULL,
     [Ukey]          BIGINT       IDENTITY (1, 1) NOT NULL,
     [ID]            VARCHAR (13) CONSTRAINT [DF_WorkOrder_Estcutdate_ID] DEFAULT ('') NULL,
+    [OrgCutCellid] VARCHAR(2) NULL, 
+    [NewCutCellid] VARCHAR(2) NULL, 
     CONSTRAINT [PK_WorkOrder_Estcutdate] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

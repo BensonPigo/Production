@@ -232,6 +232,7 @@ from (
                     ),'') as PFRemark
             , o.MTLETA
             , o.MTLExport
+            ,O.CutInLine
             , s.Inline
             , s.Offline
             , o.SciDelivery
