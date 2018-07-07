@@ -43,18 +43,18 @@ namespace Sci.Production.Cutting
             #region set grid
             Helper.Controls.Grid.Generator(this.gridDetail)
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_check)
-            .Text("factoryID", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("factoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("ID", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Date("estcutdate", header: "Org.Est.\nCut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Date("newestcutdate", header: "New.Est.\nCut Date", width: Widths.AnsiChars(10)).Get(out col_estcutdate)
+            .Date("newestcutdate", header: "New Est.\nCut Date", width: Widths.AnsiChars(10)).Get(out col_estcutdate)
             .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), iseditingreadonly: true)
 
-            .Text("Cutcellid", header: "Org Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("Cutcellid", header: "Org. Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("NewCutcellid", header: "New Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
 
             .Text("CutReasonid", header: "Reason", width: Widths.AnsiChars(6), settings: col_cutreason)
@@ -212,7 +212,6 @@ From
             }
             gridDetail.DataSource = gridbs;
             gridbs.DataSource = detailTb;
-            this.gridDetail.AutoResizeColumns();
         }
 
         private void dateNewEstCutDate_Validating(object sender, CancelEventArgs e)
@@ -257,7 +256,7 @@ From
             foreach (DataRow dr in detailTb.Rows)
             {
 
-                if (dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty(dr["NewEstCutDate"]) && !MyUtility.Check.Empty(dr["NewCutcellid"]))
+                if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", "")))) || (dr["Cutcellid"] != dr["NewCutcellid"] && !MyUtility.Check.Empty(dr["NewCutcellid"])))
                 {
                     if (MyUtility.Check.Empty(dr["CutReasonid"]))
                     {
@@ -269,7 +268,7 @@ From
                     {
                         update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}' where Ukey = {dr["Ukey"]}; ";
                     }
-                    else if (!MyUtility.Check.Empty(dr["NewCutcellid"]))
+                    else if (!MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", ""))))
                     {
                         update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
                     }
@@ -279,7 +278,7 @@ From
                     }
 
 
-                    update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"]);
+                    update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID,OrgCutCellid,NewCutCellid) Values({0},'{1}','{2}','{3}','{4}','{5}','{6}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"], dr["Cutcellid"], dr["NewCutcellid"]);
                 }
             }
 
@@ -294,9 +293,10 @@ left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = m
 			from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = cutting.ID
 where cutting.ID = '{0}';", tmp_id);
 
-                //orders.CutInLine及CutOffLine也要連帶更新
-                update = update + string.Format(@"update orders set CutInLine =  wk.Min_Wk_estcutdate, CutOffLine = wk.Max_Wk_estcutdate
-                                                from dbo.orders WITH (NOLOCK)
+                //orders.CutInLine及CutOffLine也要連帶更新_Wk_estcutdate
+                                               
+                update = update + string.Format(@"update orders set CutInLine =  wk.Min_Wk_estcutdate, CutOffLine = wk.Max_Wk_estcutdate 
+                                                 from dbo.orders WITH (NOLOCK)
                                                 left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = max(estcutdate) 
 			                                                from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = orders.POID
                                                 where orders.POID = '{0}';", tmp_id);

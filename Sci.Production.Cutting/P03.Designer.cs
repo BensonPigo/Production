@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnUpdate = new Sci.Win.UI.Button();
             this.txtCutRefNo = new Sci.Win.UI.TextBox();
             this.txtSEQ = new Sci.Win.UI.TextBox();
@@ -52,12 +52,12 @@
             this.txtfactoryByM = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.txtCell1 = new Sci.Production.Class.txtCell();
+            this.label2 = new Sci.Win.UI.Label();
             this.txtcutReason = new Sci.Production.Class.txtcutReason();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.gridbs = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtCell1 = new Sci.Production.Class.txtCell();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -162,7 +162,7 @@
             // 
             // labelReason
             // 
-            this.labelReason.Location = new System.Drawing.Point(669, 51);
+            this.labelReason.Location = new System.Drawing.Point(7, 83);
             this.labelReason.Name = "labelReason";
             this.labelReason.Size = new System.Drawing.Size(89, 23);
             this.labelReason.TabIndex = 25;
@@ -225,14 +225,14 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(8, 121);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
@@ -283,18 +283,37 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.txtCell1);
-            this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.txtcutReason);
+            this.groupBox2.Controls.Add(this.labelReason);
+            this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Location = new System.Drawing.Point(662, 6);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(337, 109);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             // 
+            // txtCell1
+            // 
+            this.txtCell1.BackColor = System.Drawing.Color.White;
+            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell1.Location = new System.Drawing.Point(99, 48);
+            this.txtCell1.MDivisionID = "";
+            this.txtCell1.Name = "txtCell1";
+            this.txtCell1.Size = new System.Drawing.Size(30, 23);
+            this.txtCell1.TabIndex = 39;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(7, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 23);
+            this.label2.TabIndex = 38;
+            this.label2.Text = "Cell";
+            // 
             // txtcutReason
             // 
             this.txtcutReason.DisplayBox1Binding = "";
-            this.txtcutReason.Location = new System.Drawing.Point(98, 43);
+            this.txtcutReason.Location = new System.Drawing.Point(99, 79);
             this.txtcutReason.Name = "txtcutReason";
             this.txtcutReason.Size = new System.Drawing.Size(234, 27);
             this.txtcutReason.TabIndex = 0;
@@ -323,24 +342,6 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(7, 76);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 38;
-            this.label2.Text = "Cell";
-            // 
-            // txtCell1
-            // 
-            this.txtCell1.BackColor = System.Drawing.Color.White;
-            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell1.Location = new System.Drawing.Point(99, 76);
-            this.txtCell1.MDivisionID = "";
-            this.txtCell1.Name = "txtCell1";
-            this.txtCell1.Size = new System.Drawing.Size(30, 23);
-            this.txtCell1.TabIndex = 39;
-            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(1008, 439);
@@ -351,7 +352,6 @@
             this.Controls.Add(this.dateNewEstCutDate);
             this.Controls.Add(this.dateEstCutDate);
             this.Controls.Add(this.txtCuttingSPNo);
-            this.Controls.Add(this.labelReason);
             this.Controls.Add(this.labelEstCutDate);
             this.Controls.Add(this.labelCuttingSPNo);
             this.Controls.Add(this.gridDetail);
@@ -367,7 +367,6 @@
             this.Controls.SetChildIndex(this.gridDetail, 0);
             this.Controls.SetChildIndex(this.labelCuttingSPNo, 0);
             this.Controls.SetChildIndex(this.labelEstCutDate, 0);
-            this.Controls.SetChildIndex(this.labelReason, 0);
             this.Controls.SetChildIndex(this.txtCuttingSPNo, 0);
             this.Controls.SetChildIndex(this.dateEstCutDate, 0);
             this.Controls.SetChildIndex(this.dateNewEstCutDate, 0);
