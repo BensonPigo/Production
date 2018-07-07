@@ -267,18 +267,18 @@ From
                     if (MyUtility.Check.Empty(dr["NewCutcellid"]))
                     {
                         update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"]);
                     }
-                    else if (!MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", ""))))
+                    else if (MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", ""))))
                     {
                         update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
+                        update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,CutReasonid,ID,OrgCutCellid,NewCutCellid) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], dr["CutReasonid"], dr["ID"], dr["Cutcellid"], dr["NewCutcellid"]);
                     }
                     else
                     {
                         update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}',CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
-                    }
-
-
-                    update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID,OrgCutCellid,NewCutCellid) Values({0},'{1}','{2}','{3}','{4}','{5}','{6}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"], dr["Cutcellid"], dr["NewCutcellid"]);
+                        update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID,OrgCutCellid,NewCutCellid) Values({0},'{1}','{2}','{3}','{4}','{5}','{6}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"], dr["Cutcellid"], dr["NewCutcellid"]);
+                    }                  
                 }
             }
 
