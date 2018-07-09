@@ -163,6 +163,7 @@ select  SewingLineID
         , PFRemark
         , MTLETA
         , MTLExport
+        ,CutInLine
         , Inline
         , Offline
         , SciDelivery
