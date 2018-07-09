@@ -76,6 +76,10 @@
             this.txtLocateSP2 = new Sci.Win.UI.TextBox();
             this.btnFind = new Sci.Win.UI.Button();
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtPort = new Sci.Win.UI.TextBox();
+            this.txtCountry = new Sci.Win.UI.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -92,6 +96,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Controls.Add(this.txtCountry);
+            this.masterpanel.Controls.Add(this.txtPort);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnFind);
             this.masterpanel.Controls.Add(this.txtLocateSP2);
             this.masterpanel.Controls.Add(this.label23);
@@ -190,6 +198,10 @@
             this.masterpanel.Controls.SetChildIndex(this.label23, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtLocateSP2, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtPort, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtCountry, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             // 
             // detailpanel
             // 
@@ -770,6 +782,48 @@
             this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserHandle.TabIndex = 36;
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label1.Location = new System.Drawing.Point(577, 168);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 23);
+            this.label1.TabIndex = 49;
+            this.label1.Text = "Loading";
+            // 
+            // txtPort
+            // 
+            this.txtPort.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExportPort", true));
+            this.txtPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtPort.Location = new System.Drawing.Point(672, 168);
+            this.txtPort.Name = "txtPort";
+            this.txtPort.ReadOnly = true;
+            this.txtPort.Size = new System.Drawing.Size(131, 23);
+            this.txtPort.TabIndex = 50;
+            // 
+            // txtCountry
+            // 
+            this.txtCountry.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCountry.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExportCountry", true));
+            this.txtCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCountry.Location = new System.Drawing.Point(805, 168);
+            this.txtCountry.Name = "txtCountry";
+            this.txtCountry.ReadOnly = true;
+            this.txtCountry.Size = new System.Drawing.Size(48, 23);
+            this.txtCountry.TabIndex = 51;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.label2.Location = new System.Drawing.Point(852, 168);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(44, 18);
+            this.label2.TabIndex = 52;
+            this.label2.Text = "(port)";
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(998, 662);
@@ -859,5 +913,9 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelETA;
         private Win.UI.Label labelWKNo;
+        private System.Windows.Forms.Label label2;
+        private Win.UI.TextBox txtCountry;
+        private Win.UI.TextBox txtPort;
+        private Win.UI.Label label1;
     }
 }
