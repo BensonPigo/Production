@@ -95,6 +95,7 @@ namespace Sci.Production.Shipping
                 string sqlCmd = string.Format(
                     @"select e.ID,e.Eta,e.Blno,e.InvNo,e.PackingArrival,e.PortArrival,e.WhseArrival,e.DocArrival,e.Sono,e.Vessel,isnull(t.Name,'') as Name,isnull(t.ExtNo,'') as ExtNo,isnull(t.EMail,'') as EMail ,
 case when e.Payer= 'S' then 'By Sci Taipei Office(Sender)' when e.Payer= 'M' then 'By Mill(Sender)' when e.Payer= 'F' then 'By Factory(Receiver)' else '' end as Payer
+,[Loading] = e.ExportPort+'-'+e.ExportCountry
 from Export e WITH (NOLOCK) 
 left join TPEPass1 t WITH (NOLOCK) on e.Handle = t.ID
 where 1=1{0}{1}{2}
@@ -144,7 +145,8 @@ order by e.ID",
                 worksheet.Cells[6, 6] = MyUtility.Convert.GetString(this.masterData["NetKg"]) + " / " + MyUtility.Convert.GetString(this.masterData["WeightKg"]);
                 worksheet.Cells[7, 2] = MyUtility.Convert.GetString(this.masterData["Sono"]);
                 worksheet.Cells[7, 6] = MyUtility.Convert.GetString(this.masterData["Cbm"]);
-                worksheet.Cells[8, 2] = MyUtility.Convert.GetString(this.masterData["Remark"]);
+                worksheet.Cells[8, 2] = MyUtility.Convert.GetString(this.masterData["ExportPort"] + "-" + this.masterData["ExportCountry"]);
+                worksheet.Cells[8, 6] = MyUtility.Convert.GetString(this.masterData["Remark"]);
                 worksheet.Cells[9, 2] = this.handle;
                 worksheet.Cells[9, 6] = this.ext;
                 worksheet.Cells[9, 8] = this.email;
@@ -209,7 +211,7 @@ order by e.ID",
                 worksheet.Cells[2, 7] = MyUtility.Check.Empty(this.factory) ? "All" : this.factory;
 
                 int rownum = 4;
-                object[,] objArray = new object[1, 14];
+                object[,] objArray = new object[1, 15];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -223,9 +225,10 @@ order by e.ID",
                     objArray[0, 8] = dr["DocArrival"];
                     objArray[0, 9] = dr["Sono"];
                     objArray[0, 10] = dr["Vessel"];
-                    objArray[0, 11] = dr["Name"];
-                    objArray[0, 12] = dr["ExtNo"];
-                    objArray[0, 13] = dr["EMail"];
+                    objArray[0, 11] = dr["Loading"];
+                    objArray[0, 12] = dr["Name"];
+                    objArray[0, 13] = dr["ExtNo"];
+                    objArray[0, 14] = dr["EMail"];
                     worksheet.Range[string.Format("A{0}:N{0}", rownum)].Value2 = objArray;
 
                     rownum++;
