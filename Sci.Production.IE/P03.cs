@@ -1259,32 +1259,7 @@ select
 	ID = null
 	,No = ''
 	,OriNo = '0'
-	,Annotation = ''
-	,GSD = round(ProTMS, 4)
-	,TotalGSD = round(ProTMS, 4)
-	,Cycle = round(ProTMS, 4)
-	,TotalCycle =round(ProTMS, 4)
-	,MachineTypeID = ''
-    ,Attachment = null
-    ,Template = null
-	,OperationID = '--CUTTING'
-	,MoldID = null
-	,GroupKey = 0
-	,New = 0
-	,EmployeeID = ''
-	,Description = null
-	,EmployeeName = ''
-	,EmployeeSkill = ''
-	,Efficiency = 100
-	,IsPPA = 0
-from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
-union all
-
-select 
-	ID = null
-	,No = ''
-	,OriNo = '0'
-	,Annotation = ''
+	,Annotation = '**Cutting'
 	,GSD = round(ProTMS, 4)
 	,TotalGSD = round(ProTMS, 4)
 	,Cycle = round(ProTMS, 4)
@@ -1341,7 +1316,7 @@ select
 	ID = null
 	,No = ''
 	,OriNo = '9970'
-	,Annotation = ''
+	,Annotation = '**Inspection'
 	,GSD = round(ProTMS, 4)
 	,TotalGSD = round(ProTMS, 4)
 	,Cycle = round(ProTMS, 4)
@@ -1371,7 +1346,7 @@ select
 	ID = null
 	,No = ''
 	,OriNo = '9980'
-	,Annotation = ''
+	,Annotation = '**Pressing'
 	,GSD = round(ProTMS, 4)
 	,TotalGSD = round(ProTMS, 4)
 	,Cycle = round(ProTMS, 4)
@@ -1401,7 +1376,7 @@ select
 	ID = null
 	,No = ''
 	,OriNo = '9990'
-	,Annotation = ''
+	,Annotation =  '**Packing'
 	,GSD = round(ProTMS, 4)
 	,TotalGSD = round(ProTMS, 4)
 	,Cycle = round(ProTMS, 4)
