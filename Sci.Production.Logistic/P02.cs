@@ -233,7 +233,7 @@ order by rn", Sci.Env.User.Keyword,
 TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo', 
 0 as rn,
 0 as rn1,
-c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark 
+c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark ,b.CustCTN
 from PackingList a WITH (NOLOCK) , 
 PackingList_Detail b WITH (NOLOCK) , 
 Orders c WITH (NOLOCK) , 
@@ -266,85 +266,211 @@ where 1=0";
                         else
                         {
                             DataRow dr = selectDataTable.NewRow();
-                            try
+                            if (sl.Count > 2 && sl[2].Length > 13)
                             {
                                 dr["ID"] = string.Empty;
                                 dr["selected"] = 0;
                                 dr["PackingListID"] = sl[2].Substring(0, 13);
-                                dr["CTNStartNo"] = sl[2].Substring(13);
+                                dr["CTNStartNo"] = MyUtility.Convert.GetInt(sl[2].Substring(13));
                                 dr["ClogLocationId"] = sl[1];
-                            }
-                            catch (Exception)
-                            {
-                                MyUtility.Msg.WarningBox("Format is not correct!");
-                                return;
-                            }
 
-                            string sqlCmd = string.Format(
-                                @"
+                                string sqlCmd = string.Format(
+                                    @"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID
 from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
-                                dr["PackingListID"].ToString(),
-                                dr["CTNStartNo"].ToString());
-                            if (MyUtility.Check.Seek(sqlCmd, out seekData))
-                            {
-                                if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
+                                    dr["PackingListID"].ToString(),
+                                    dr["CTNStartNo"].ToString());
+                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
-                                    if (MyUtility.Check.Empty(seekData["TransferDate"]))
+                                    if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
                                     {
-                                        dr["Remark"] = "This carton not yet transfer to clog.";
+                                        if (MyUtility.Check.Empty(seekData["TransferDate"]))
+                                        {
+                                            dr["Remark"] = "This carton not yet transfer to clog.";
+                                        }
+                                        else
+                                        {
+                                            dr["selected"] = 1;
+                                        }
                                     }
                                     else
                                     {
-                                        dr["selected"] = 1;
+                                        dr["Remark"] = "This carton already in clog.";
                                     }
-                                }
-                                else
-                                {
-                                    dr["Remark"] = "This carton already in clog.";
-                                }
 
-                                dr["OrderID"] = seekData["OrderID"];
-                                dr["TransferDate"] = seekData["TransferDate"];
+                                    dr["OrderID"] = seekData["OrderID"];
+                                    dr["TransferDate"] = seekData["TransferDate"];
 
-                                string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
-                                if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
-                                {
-                                    dr["Remark"] = "The order's M is not equal to login M.";
-                                }
+                                    string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    {
+                                        dr["Remark"] = "The order's M is not equal to login M.";
+                                    }
 
-                                sqlCmd = string.Format(
-                                    @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
+                                    sqlCmd = string.Format(
+                                        @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
                                                                             left join Country b WITH (NOLOCK) on b.ID = a.Dest
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'",
-                                    dr["OrderID"].ToString(),
-                                    Sci.Env.User.Keyword,
-                                    seq);
-                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
-                                {
-                                    dr["StyleID"] = seekData["StyleID"];
-                                    dr["SeasonID"] = seekData["SeasonID"];
-                                    dr["BrandID"] = seekData["BrandID"];
-                                    dr["Customize1"] = seekData["Customize1"];
-                                    dr["CustPONo"] = seekData["CustPONo"];
-                                    dr["Alias"] = seekData["Alias"];
-                                    dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                        dr["OrderID"].ToString(),
+                                        Sci.Env.User.Keyword,
+                                        seq);
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        dr["StyleID"] = seekData["StyleID"];
+                                        dr["SeasonID"] = seekData["SeasonID"];
+                                        dr["BrandID"] = seekData["BrandID"];
+                                        dr["Customize1"] = seekData["Customize1"];
+                                        dr["CustPONo"] = seekData["CustPONo"];
+                                        dr["Alias"] = seekData["Alias"];
+                                        dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    }
                                 }
+                                else
+                                {
+                                    dr["CustCTN"] = sl[2];
+                                    sqlCmd = $@"
+select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID,pd.id,pd.CTNStartNo
+from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
+
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
+                                        {
+                                            if (MyUtility.Check.Empty(seekData["TransferDate"]))
+                                            {
+                                                dr["Remark"] = "This carton not yet transfer to clog.";
+                                            }
+                                            else
+                                            {
+                                                dr["selected"] = 1;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            dr["Remark"] = "This carton already in clog.";
+                                        }
+
+                                        dr["OrderID"] = seekData["OrderID"];
+                                        dr["TransferDate"] = seekData["TransferDate"];
+
+                                        string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
+                                        if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                        {
+                                            dr["Remark"] = "The order's M is not equal to login M.";
+                                        }
+
+                                        string packinglistid = seekData["id"].ToString().Trim();
+                                        string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                        sqlCmd = string.Format(
+                                            @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
+                                                                            from Orders a WITH (NOLOCK) 
+                                                                            left join Country b WITH (NOLOCK) on b.ID = a.Dest
+                                                                            left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
+                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'",
+                                            dr["OrderID"].ToString(),
+                                            Sci.Env.User.Keyword,
+                                            seq);
+                                        if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                        {
+                                            dr["packinglistid"] = packinglistid.Trim();
+                                            dr["CTNStartNo"] = CTNStartNo.Trim();
+                                            dr["StyleID"] = seekData["StyleID"];
+                                            dr["SeasonID"] = seekData["SeasonID"];
+                                            dr["BrandID"] = seekData["BrandID"];
+                                            dr["Customize1"] = seekData["Customize1"];
+                                            dr["CustPONo"] = seekData["CustPONo"];
+                                            dr["Alias"] = seekData["Alias"];
+                                            dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        dr["Remark"] = "This carton is not in packing list.";
+                                    }
+                                }
+
+                                if (dr["Remark"].ToString().Trim() != string.Empty)
+                                {
+                                    dr["selected"] = 0;
+                                }
+
+                                selectDataTable.Rows.Add(dr);
                             }
                             else
                             {
-                                dr["Remark"] = "This carton is not in packing list.";
-                            }
+                                dr["CustCTN"] = sl[2];
+                                string sqlCmd = $@"
+select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID,pd.id,pd.CTNStartNo
+from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
 
-                            if (dr["Remark"].ToString().Trim() != string.Empty)
-                            {
-                                dr["selected"] = 0;
-                            }
+                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                {
+                                    if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
+                                    {
+                                        if (MyUtility.Check.Empty(seekData["TransferDate"]))
+                                        {
+                                            dr["Remark"] = "This carton not yet transfer to clog.";
+                                        }
+                                        else
+                                        {
+                                            dr["selected"] = 1;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        dr["Remark"] = "This carton already in clog.";
+                                    }
 
-                            selectDataTable.Rows.Add(dr);
+                                    dr["OrderID"] = seekData["OrderID"];
+                                    dr["TransferDate"] = seekData["TransferDate"];
+
+                                    string packinglistid = seekData["id"].ToString().Trim();
+                                    string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                    string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    {
+                                        dr["Remark"] = "The order's M is not equal to login M.";
+                                    }
+
+                                    sqlCmd = string.Format(
+                                        @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
+                                                                            from Orders a WITH (NOLOCK) 
+                                                                            left join Country b WITH (NOLOCK) on b.ID = a.Dest
+                                                                            left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
+                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'",
+                                        dr["OrderID"].ToString(),
+                                        Sci.Env.User.Keyword,
+                                        seq);
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        dr["packinglistid"] = packinglistid.Trim();
+                                        dr["CTNStartNo"] = CTNStartNo.Trim();
+                                        dr["StyleID"] = seekData["StyleID"];
+                                        dr["SeasonID"] = seekData["SeasonID"];
+                                        dr["BrandID"] = seekData["BrandID"];
+                                        dr["Customize1"] = seekData["Customize1"];
+                                        dr["CustPONo"] = seekData["CustPONo"];
+                                        dr["Alias"] = seekData["Alias"];
+                                        dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    }
+                                }
+                                else
+                                {
+                                    dr["Remark"] = "This carton is not in packing list.";
+                                }
+
+                                if (dr["Remark"].ToString().Trim() != string.Empty)
+                                {
+                                    dr["selected"] = 0;
+                                }
+
+                                selectDataTable.Rows.Add(dr);
+                            }
                         }
                     }
 

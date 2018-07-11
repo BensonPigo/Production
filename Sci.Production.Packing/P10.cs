@@ -164,7 +164,7 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 // 先將Grid的結構給開出來
-                string selectCommand = @"Select distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery 
+                string selectCommand = @"Select distinct '' as ID, 1 as selected, b.Id as PackingListID, b.OrderID, b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery ,b.CustCTN
                                                              from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
                 DataTable selectDataTable;
                 DualResult selectResult;
@@ -201,11 +201,14 @@ ORDER BY Id, OrderID, orderByCTNStartNo, CTNSTartNo;");
                             {
                                 dr["ID"] = string.Empty;
                                 dr["selected"] = 1;
-                                dr["PackingListID"] = sl[1].Substring(0, 13);
-                                dr["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13);
 
-                                string sqlCmd = string.Format(
-                                    @"
+                                string sqlCmd = string.Empty;
+                                if (sl.Count > 1 && sl[1].Length > 13)
+                                {
+                                    dr["PackingListID"] = sl[1].Substring(0, 13);
+                                    dr["CTNStartNo"] = MyUtility.Convert.GetInt(sl[1].Substring(13));
+                                    sqlCmd = string.Format(
+                                        @"
 select  pd.OrderID
         , pd.OrderShipmodeSeq  
         , o.MDivisionID
@@ -216,8 +219,10 @@ where   pd.ID = '{0}'
         and pd.CTNStartNo = '{1}' 
         and pd.CTNQty > 0 
 ",
-                                    dr["PackingListID"].ToString(),
-                                    dr["CTNStartNo"].ToString());
+                                        dr["PackingListID"].ToString(),
+                                        dr["CTNStartNo"].ToString());
+                                }
+
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
                                     #region checkM & checkTransfer
@@ -271,12 +276,171 @@ where   a.ID = '{0}'",
                                 }
                                 else
                                 {
-                                    notFoundErr.Rows.Add(dr.ItemArray);
+                                    sqlCmd = string.Empty;
+                                    if (sl.Count > 1)
+                                    {
+                                        dr["CustCTN"] = sl[1];
+                                        sqlCmd = $@"
+select  pd.OrderID
+        , pd.OrderShipmodeSeq  
+        , o.MDivisionID
+        , pd.TransferDate
+		,pd.id,pd.CTNStartNo
+from    PackingList_Detail pd WITH (NOLOCK) 
+inner join Orders o on pd.OrderID = o.id
+where   pd.CustCTN= '{dr["CustCTN"]}' 
+        and pd.CTNQty > 0 
+";
+
+                                        if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                        {
+                                            #region checkM & checkTransfer
+                                            if (!seekData["MDivisionID"].ToString().EqualString(Sci.Env.User.Keyword))
+                                            {
+                                                loginMErr.Rows.Add(dr.ItemArray);
+                                                continue;
+                                            }
+
+                                            if (!seekData["TransferDate"].ToString().Empty())
+                                            {
+                                                transferErr.Rows.Add(dr.ItemArray);
+                                                continue;
+                                            }
+                                            #endregion
+
+                                            dr["OrderID"] = seekData["OrderID"].ToString().Trim();
+                                            string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
+                                            string packinglistid = seekData["id"].ToString().Trim();
+                                            string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                            sqlCmd = string.Format(
+                                                @"
+select  a.StyleID
+        , a.SeasonID
+        , a.BrandID
+        , a.Customize1
+        , a.CustPONo
+        , b.Alias
+        , oq.BuyerDelivery 
+from Orders a WITH (NOLOCK) 
+left join Country b WITH (NOLOCK) on b.ID = a.Dest
+left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{1}'
+where   a.ID = '{0}'",
+                                                dr["OrderID"].ToString(),
+                                                seq);
+                                            if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                            {
+                                                dr["StyleID"] = seekData["StyleID"].ToString().Trim();
+                                                dr["SeasonID"] = seekData["SeasonID"].ToString().Trim();
+                                                dr["BrandID"] = seekData["BrandID"].ToString().Trim();
+                                                dr["Customize1"] = seekData["Customize1"].ToString().Trim();
+                                                dr["CustPONo"] = seekData["CustPONo"].ToString().Trim();
+                                                dr["Alias"] = seekData["Alias"].ToString().Trim();
+                                                dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                                dr["packinglistid"] = packinglistid.Trim();
+                                                dr["CTNStartNo"] = CTNStartNo.Trim();
+
+                                                selectDataTable.Rows.Add(dr);
+                                                insertCount++;
+                                            }
+                                            else
+                                            {
+                                                notFoundErr.Rows.Add(dr.ItemArray);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            notFoundErr.Rows.Add(dr.ItemArray);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        notFoundErr.Rows.Add(dr.ItemArray);
+                                    }
                                 }
                             }
                             else
                             {
-                                notFoundErr.Rows.Add(dr.ItemArray);
+                                string sqlCmd = string.Empty;
+                                if (sl.Count > 1)
+                                {
+                                    dr["CustCTN"] = sl[1];
+                                    sqlCmd = $@"
+select  pd.OrderID
+        , pd.OrderShipmodeSeq  
+        , o.MDivisionID
+        , pd.TransferDate
+        , pd.TransferDate
+		,pd.id,pd.CTNStartNo
+from    PackingList_Detail pd WITH (NOLOCK) 
+inner join Orders o on pd.OrderID = o.id
+where   pd.CustCTN= '{dr["CustCTN"]}' 
+        and pd.CTNQty > 0 
+";
+
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        #region checkM & checkTransfer
+                                        if (!seekData["MDivisionID"].ToString().EqualString(Sci.Env.User.Keyword))
+                                        {
+                                            loginMErr.Rows.Add(dr.ItemArray);
+                                            continue;
+                                        }
+
+                                        if (!seekData["TransferDate"].ToString().Empty())
+                                        {
+                                            transferErr.Rows.Add(dr.ItemArray);
+                                            continue;
+                                        }
+                                        #endregion
+
+                                        dr["OrderID"] = seekData["OrderID"].ToString().Trim();
+                                        string packinglistid = seekData["id"].ToString().Trim();
+                                        string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                        string seq = seekData["OrderShipmodeSeq"].ToString().Trim();
+                                        sqlCmd = string.Format(
+                                            @"
+select  a.StyleID
+        , a.SeasonID
+        , a.BrandID
+        , a.Customize1
+        , a.CustPONo
+        , b.Alias
+        , oq.BuyerDelivery 
+from Orders a WITH (NOLOCK) 
+left join Country b WITH (NOLOCK) on b.ID = a.Dest
+left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{1}'
+where   a.ID = '{0}'",
+                                            dr["OrderID"].ToString(),
+                                            seq);
+                                        if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                        {
+                                            dr["StyleID"] = seekData["StyleID"].ToString().Trim();
+                                            dr["SeasonID"] = seekData["SeasonID"].ToString().Trim();
+                                            dr["BrandID"] = seekData["BrandID"].ToString().Trim();
+                                            dr["Customize1"] = seekData["Customize1"].ToString().Trim();
+                                            dr["CustPONo"] = seekData["CustPONo"].ToString().Trim();
+                                            dr["Alias"] = seekData["Alias"].ToString().Trim();
+                                            dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                            dr["packinglistid"] = packinglistid.Trim();
+                                            dr["CTNStartNo"] = CTNStartNo.Trim();
+
+                                            selectDataTable.Rows.Add(dr);
+                                            insertCount++;
+                                        }
+                                        else
+                                        {
+                                            notFoundErr.Rows.Add(dr.ItemArray);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        notFoundErr.Rows.Add(dr.ItemArray);
+                                    }
+                                }
+                                else
+                                {
+                                    notFoundErr.Rows.Add(dr.ItemArray);
+                                }
                             }
                         }
                     }
@@ -336,7 +500,6 @@ where   a.ID = '{0}'",
                 }
             }
         }
-
         // Save
         private void BtnSave_Click(object sender, EventArgs e)
         {
