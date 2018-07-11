@@ -91,6 +91,7 @@ namespace Sci.Production.Packing
                 this.gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             #endregion
+            this.gridDetail.Columns["CustCTN"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         // Add Excel
@@ -516,6 +517,12 @@ pd.Article = ed.Article and pd.Size =ed.Size and pd.Seq = ed.seq
                 return;
             }
             #endregion
+
+            // 清空 status
+            foreach (DataRow item in this.grid2Data.Rows)
+            {
+                item["status"] = string.Empty;
+            }
 
             DualResult result;
             DataRow[] selectrows = this.grid2Data.Select("selected = 1");
