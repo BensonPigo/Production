@@ -94,6 +94,14 @@ namespace Sci.Production.Logistic
                 }
             };
 
+            this.gridPackID.CellValueChanged += (s, e) =>
+            {
+                if (this.gridPackID.Columns[e.ColumnIndex].Name == this.col_chk.Name)
+                {
+                    this.calcCTNQty();
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.gridPackID)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
 
@@ -154,7 +162,8 @@ namespace Sci.Production.Logistic
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
                 return;
             }
-
+            this.numSelectQty.Value = 0;
+            this.numTTLCTNQty.Value = 0;
             this.gridData = null;
             this.listControlBindingSource1.DataSource = null;
 
@@ -461,6 +470,8 @@ namespace Sci.Production.Logistic
             // 開窗且有選擇檔案
             if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                this.numSelectQty.Value = 0;
+                this.numTTLCTNQty.Value = 0;
                 // 讀檔案
                 string wheresql = string.Empty;
                 this.whereS = string.Empty;
@@ -657,7 +668,18 @@ order by rn");
             ((List<string>)this.comboBox2_RowSource4).Sort();
             ((List<string>)this.comboBox2_RowSource5).Sort();
 
+            this.calcCTNQty();
             return true;
+        }
+
+        private void calcCTNQty()
+        {
+            if (this.listControlBindingSource1.DataSource != null)
+            {
+                this.gridPackID.ValidateControl();
+                this.numTTLCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
+                this.numSelectQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
+            }
         }
     }
 }
