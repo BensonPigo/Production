@@ -66,6 +66,10 @@
             this.gridPackID = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.label1 = new Sci.Win.UI.Label();
+            this.numSelectQty = new Sci.Win.UI.NumericBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numTTLCTNQty = new Sci.Win.UI.NumericBox();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -91,6 +95,10 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.numTTLCTNQty);
+            this.panel3.Controls.Add(this.label2);
+            this.panel3.Controls.Add(this.numSelectQty);
+            this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.btnImportFromBarcode);
             this.panel3.Controls.Add(this.comboFilter2);
             this.panel3.Controls.Add(this.comboFilter);
@@ -455,6 +463,64 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(593, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(116, 23);
+            this.label1.TabIndex = 23;
+            this.label1.Text = "Selected CTN Qty";
+            // 
+            // numSelectQty
+            // 
+            this.numSelectQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numSelectQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numSelectQty.IsSupportEditMode = false;
+            this.numSelectQty.Location = new System.Drawing.Point(712, 35);
+            this.numSelectQty.Name = "numSelectQty";
+            this.numSelectQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numSelectQty.ReadOnly = true;
+            this.numSelectQty.Size = new System.Drawing.Size(40, 23);
+            this.numSelectQty.TabIndex = 24;
+            this.numSelectQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(755, 35);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(100, 23);
+            this.label2.TabIndex = 25;
+            this.label2.Text = "Total CTN Qty:";
+            // 
+            // numTTLCTNQty
+            // 
+            this.numTTLCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTTLCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTTLCTNQty.IsSupportEditMode = false;
+            this.numTTLCTNQty.Location = new System.Drawing.Point(858, 35);
+            this.numTTLCTNQty.Name = "numTTLCTNQty";
+            this.numTTLCTNQty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTTLCTNQty.ReadOnly = true;
+            this.numTTLCTNQty.Size = new System.Drawing.Size(40, 23);
+            this.numTTLCTNQty.TabIndex = 26;
+            this.numTTLCTNQty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(912, 563);
@@ -520,5 +586,9 @@
         private Win.UI.Label labelTransferSlipNo;
         private Win.UI.Button btnImportFromBarcode;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private Win.UI.NumericBox numTTLCTNQty;
+        private Win.UI.Label label2;
+        private Win.UI.NumericBox numSelectQty;
+        private Win.UI.Label label1;
     }
 }
