@@ -279,6 +279,8 @@ where   a.ID = '{0}'",
                                     sqlCmd = string.Empty;
                                     if (sl.Count > 1)
                                     {
+                                        dr["ID"] = string.Empty;
+                                        dr["selected"] = 1;
                                         dr["CustCTN"] = sl[1];
                                         sqlCmd = $@"
 select  pd.OrderID
@@ -363,6 +365,8 @@ where   a.ID = '{0}'",
                                 string sqlCmd = string.Empty;
                                 if (sl.Count > 1)
                                 {
+                                    dr["ID"] = string.Empty;
+                                    dr["selected"] = 1;
                                     dr["CustCTN"] = sl[1];
                                     sqlCmd = $@"
 select  pd.OrderID

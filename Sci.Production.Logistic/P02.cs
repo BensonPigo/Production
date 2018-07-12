@@ -331,6 +331,9 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
                                 else
                                 {
                                     dr["CustCTN"] = sl[2];
+                                    dr["ID"] = string.Empty;
+                                    dr["selected"] = 0;
+                                    dr["ClogLocationId"] = sl[1];
                                     sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID,pd.id,pd.CTNStartNo
 from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
@@ -403,6 +406,9 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                             else
                             {
                                 dr["CustCTN"] = sl[2];
+                                dr["ID"] = string.Empty;
+                                dr["selected"] = 0;
+                                dr["ClogLocationId"] = sl[1];
                                 string sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID,pd.id,pd.CTNStartNo
 from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
