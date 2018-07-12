@@ -708,8 +708,8 @@ Where a.id = '{0}'", masterID);
                 return;
             }
             //string aa = comboBox1.Text;
-            var frm = new Sci.Production.Warehouse.P16_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboType.Text, "P15_Import");
-            frm.P16 = this;
+            var frm = new Sci.Production.Warehouse.P15_Import(CurrentMaintain, (DataTable)detailgridbs.DataSource, comboType.Text, "P15_Import");
+            frm.P15 = this;
             frm.ShowDialog(this);
             this.RenewData();
         }
