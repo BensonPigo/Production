@@ -63,6 +63,9 @@ namespace Sci.Production.Packing
             this.grid2Data.Columns.Add("Article", typeof(string));
             this.grid2Data.Columns.Add("Size", typeof(string));
             this.grid2Data.Columns.Add("BarCode", typeof(string));
+            this.grid2Data.Columns.Add("PackID", typeof(string));
+            this.grid2Data.Columns.Add("CTN", typeof(string));
+            this.grid2Data.Columns.Add("CustCTN", typeof(string));
             this.grid2Data.Columns.Add("Status", typeof(string));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
@@ -76,6 +79,9 @@ namespace Sci.Production.Packing
             .Text("Article", header: "Colorway", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Size", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("BarCode", header: "BarCode", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("PackID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("CTN", header: "CTN#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("CustCTN", header: "Cust CTN#", width: Widths.AnsiChars(15))
             .Text("Status", header: "Status", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
             #endregion
@@ -85,6 +91,7 @@ namespace Sci.Production.Packing
                 this.gridDetail.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             #endregion
+            this.gridDetail.Columns["CustCTN"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         // Add Excel
@@ -184,6 +191,7 @@ namespace Sci.Production.Packing
                                         newRow["styleid"] = line.Substring(550, 8).TrimEnd();
                                         newRow["stylename"] = newRow["styleid"] + "-" + MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
                                         newRow["Article"] = line.Substring(558, 10).TrimEnd();
+                                        newRow["CustCTN"] = line.Substring(726, 20).TrimEnd();
                                         string size = line.Substring(595, 15).TrimEnd().TrimStart('0');
                                         IList<string> sizeSplit = size.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                                         if (sizeSplit.Count > 1)
@@ -298,7 +306,7 @@ namespace Sci.Production.Packing
                                     newRow["Brand"] = this.comboBrand.Text;
                                     newRow["styleid"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 23], "C");
                                     newRow["stylename"] = newRow["styleid"] + "-" + MyUtility.GetValue.Lookup($"select stylename from style where id = '{newRow["styleid"]}'");
-
+                                    newRow["CustCTN"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
                                     // article抓取 - - 中間的值
                                     // **eg01:MTR2315 - FUG / BON - MD 請捉取 FUG/ BON
                                     // **eg02:XXX - 5A6S - 4D5 - XXX 請捉取 A6S-4D5
@@ -439,11 +447,48 @@ namespace Sci.Production.Packing
                             excel = null;
                             #endregion
                         }
+
+                        // 取得Pack ID,CTN#
+                        if (notdist.Rows.Count > 0)
+                        {
+                            string sql_cmd = $@"
+;with keyTable as (
+select distinct CustPoNo,Brand,StyleID ,StyleName,Article  ,Barcode, Size
+from #tmp
+),
+PackingList_Detailtmp as
+(
+select t.CustPoNo,t.Brand,t.Styleid,t.StyleName,t.Article,t.Barcode,t.Size,[PackID] = PL.ID,[CTN] = PL.CTNStartNo,
+[mapSeq] = ROW_NUMBER() OVER (PARTITION BY t.CustPoNo,t.Brand,t.Styleid,t.Article,t.Size, PL.ID ORDER BY PL.seq),pl.Seq
+from keyTable as t
+left join ORDERS O  WITH (NOLOCK) ON  O.custpono= t.CustPoNo and O.StyleID= t.Styleid
+left join PackingList_Detail PL  WITH (NOLOCK) on    PL.Article= t.Article and PL.SizeCode=t.Size and O.ID = PL.OrderID
+left join PackingList P WITH (NOLOCK) ON P.BrandID= t.Brand and p.id = pl.id
+),
+excelData as
+(
+select *,[mapSeq] = ROW_NUMBER() OVER (PARTITION BY CustPoNo,Brand,Styleid,Article,Size ORDER BY CustCTN)
+from   #tmp
+)
+select  [selected] = isnull(ed.selected,1),pd.CustPoNo,pd.Brand,pd.Styleid,pd.StyleName,pd.Article,pd.Barcode,pd.Size,pd.PackID,pd.CTN,[CustCTN]= isnull(ed.CustCTN,''),[Status] = isnull(ed.Status,''),pd.Seq
+from PackingList_Detailtmp pd
+left join excelData ed on pd.CustPoNo =  ed.CustPoNo and pd.Brand = ed.Brand and pd.Styleid = ed.Styleid and 
+pd.Article = ed.Article and pd.Size =ed.Size and pd.mapSeq = ed.mapSeq
+order by pd.PackID,pd.Seq
+";
+                            DualResult result = MyUtility.Tool.ProcessWithDatatable(notdist, string.Empty, sql_cmd, out notdist);
+
+                            if (!result)
+                            {
+                                this.ShowErr(result);
+                                return;
+                            }
+                        }
                     }
                 }
             }
             #endregion
-            this.grid2Data = notdist.DefaultView.ToTable(true, new string[] { "selected", "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "Status" });
+            this.grid2Data = notdist.DefaultView.ToTable(false, new string[] { "selected", "CustPoNo", "Brand", "Styleid", "StyleName", "Article", "Size", "BarCode", "PackID", "CTN", "CustCTN", "Status" });
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridAttachFile.AutoResizeColumns();
             this.gridDetail.AutoResizeColumns();
@@ -474,52 +519,82 @@ namespace Sci.Production.Packing
             }
             #endregion
 
+            // 清空 status
+            foreach (DataRow item in this.grid2Data.Rows)
+            {
+                item["status"] = string.Empty;
+            }
+
             DualResult result;
             DataRow[] selectrows = this.grid2Data.Select("selected = 1");
             foreach (DataRow item in selectrows)
+            {
+                if (MyUtility.Check.Empty(item["PackID"]) || MyUtility.Check.Empty(item["CTN"]) || MyUtility.Check.Empty(item["CustCTN"]))
+                {
+                    item["status"] = "Cust CTN can not mapping!!";
+                    continue;
+                }
+
+                string upd_cmd = $@"update PackingList_Detail set CustCTN = '{item["CustCTN"]}' where id = '{item["PackID"]}' and CTNStartNo = '{item["CTN"]}' ";
+                result = DBProxy.Current.Execute(null, upd_cmd);
+                if (!result)
+                {
+                    item["status"] = result.Messages;
+                }
+            }
+
+            foreach (var item in selectrows.Select(s => new
+            {
+                CustPoNo = s["CustPoNo"].ToString(),
+                Brand = s["Brand"].ToString(),
+                StyleID = s["StyleID"].ToString(),
+                Article = s["Article"].ToString(),
+                Size = s["Size"].ToString(),
+                Barcode = s["Barcode"].ToString()
+            }).Distinct())
             {
                 string checkorderexists = $@"
 select 1
 from orders o with(nolock)
 inner join Order_Article oa with(nolock) on oa.id = o.id
 inner join order_sizecode os with(nolock) on os.id = o.poid
-where o.CustPoNo = '{item["CustPoNo"]}' and o.BrandID = '{item["Brand"]}' and o.StyleID = '{item["StyleID"]}' 
-and oa.article = '{item["article"]}' and os.SizeCode = '{item["Size"]}'";
+where o.CustPoNo = '{item.CustPoNo}' and o.BrandID = '{item.Brand}' and o.StyleID = '{item.StyleID}' 
+and oa.article = '{item.Article}' and os.SizeCode = '{item.Size}'";
 
                 if (!MyUtility.Check.Seek(checkorderexists))
                 {
-                    item["status"] = "The system cannot find this data!!";
+                    this.Updategrid2DataStatus(item.Brand, item.CustPoNo, item.StyleID, item.Article, item.Size, "The system cannot find this data!!");
                     continue;
                 }
 
                 string checkCustBarCodeExists = $@"
 select Barcode
 from CustBarCode with(nolock)
-where CustPoNo = '{item["CustPoNo"]}' and BrandID = '{item["Brand"]}' and StyleID = '{item["StyleID"]}' 
-and article = '{item["article"]}' and SizeCode = '{item["Size"]}'";
+where CustPoNo = '{item.CustPoNo}' and BrandID = '{item.Brand}' and StyleID = '{item.StyleID}' 
+and article = '{item.Article}' and SizeCode = '{item.Size}'";
 
                 DataRow custBarCodeDr;
                 if (MyUtility.Check.Seek(checkCustBarCodeExists, out custBarCodeDr))
                 {
                     string updateCustBarCode = $@"
 update CustBarCode set
-    barcode='{item["barcode"]}',
+    barcode='{item.Barcode}',
     EditName='{Sci.Env.User.UserID}',
     EditDate= getdate()
-where CustPoNo = '{item["CustPoNo"]}' and BrandID = '{item["Brand"]}' and StyleID = '{item["StyleID"]}' 
-and article = '{item["article"]}' and SizeCode = '{item["Size"]}'
+where CustPoNo = '{item.CustPoNo}' and BrandID = '{item.Brand}' and StyleID = '{item.StyleID}' 
+and article = '{item.Article}' and SizeCode = '{item.Size}'
 ";
                     result = DBProxy.Current.Execute(null, updateCustBarCode);
-                    item["status"] = $"This data already exists ,update barcode {custBarCodeDr["barcode"]} to {item["barcode"]}";
+                    this.Updategrid2DataStatus(item.Brand, item.CustPoNo, item.StyleID, item.Article, item.Size, $"This data already exists ,update barcode {custBarCodeDr["barcode"]} to {item.Barcode}");
                 }
                 else
                 {
                     string insertCustBarCode = $@"
 insert CustBarCode(BrandID,CustPONo,StyleID,Article,SizeCode,BarCode,EditName,EditDate)
-values('{item["Brand"]}','{item["CustPoNo"]}','{item["StyleID"]}','{item["article"]}','{item["Size"]}','{item["barcode"]}','{Sci.Env.User.UserID}',getdate())
+values('{item.Brand}','{item.CustPoNo}','{item.StyleID}','{item.Article}','{item.Size}','{item.Barcode}','{Sci.Env.User.UserID}',getdate())
 ";
                     result = DBProxy.Current.Execute(null, insertCustBarCode);
-                    item["status"] = $"Created success!!";
+                    this.Updategrid2DataStatus(item.Brand, item.CustPoNo, item.StyleID, item.Article, item.Size, $"Created success!!");
                 }
 
                 string checkPackingList_DetailExists = $@"
@@ -528,7 +603,7 @@ from PackingList_Detail pd with(nolock)
 inner join Orders o with(nolock) on o.id = pd.orderid
 inner join PackingList p with(nolock) on p.id = pd.id and p.type in ('B','L')
 left join Pullout with(nolock) on Pullout.id = p.PulloutID
-where  p.BrandID = '{item["Brand"]}' and o.CustPoNo ='{item["CustPoNo"]}' and o.StyleID = '{item["StyleID"]}' and pd.Article = '{item["article"]}' and pd.SizeCode = '{item["Size"]}'
+where  p.BrandID = '{item.Brand}' and o.CustPoNo ='{item.CustPoNo}' and o.StyleID = '{item.StyleID}' and pd.Article = '{item.Article}' and pd.SizeCode = '{item.Size}'
 and (Pullout.Status = 'New' or Pullout.Status is null)
 ";
                 DataRow packingList_Detail;
@@ -536,21 +611,36 @@ and (Pullout.Status = 'New' or Pullout.Status is null)
                 {
                     string updatePackingList_Detai = $@"
 update pd set
-    pd.BarCode ='{item["BarCode"]}'
+    pd.BarCode ='{item.Barcode}'
 from PackingList_Detail pd with(nolock)
 inner join Orders o with(nolock) on o.id = pd.orderid
 inner join PackingList p with(nolock) on p.id = pd.id and p.type in ('B','L')
 left join Pullout with(nolock) on Pullout.id = p.PulloutID
-where  p.BrandID = '{item["Brand"]}' and o.CustPoNo ='{item["CustPoNo"]}' and o.StyleID = '{item["StyleID"]}' and pd.Article = '{item["article"]}' and pd.SizeCode = '{item["Size"]}'
+where  p.BrandID = '{item.Brand}' and o.CustPoNo ='{item.CustPoNo}' and o.StyleID = '{item.StyleID}' and pd.Article = '{item.Article}' and pd.SizeCode = '{item.Size}'
 and (Pullout.Status = 'New' or Pullout.Status is null)
 ";
                     result = DBProxy.Current.Execute(null, updatePackingList_Detai);
-                    item["status"] = MyUtility.Convert.GetString(item["status"]) + " Barcode has been updated to packingList";
+                    this.Updategrid2DataStatus(item.Brand, item.CustPoNo, item.StyleID, item.Article, item.Size, " Barcode has been updated to packingList");
                 }
             }
 
             this.gridDetail.AutoResizeColumns();
             MyUtility.Msg.InfoBox("Created success, Refer to the Status field description");
+        }
+
+        private void Updategrid2DataStatus(string brand, string custPoNo, string styleID, string article, string size, string status)
+        {
+            foreach (DataRow item in this.grid2Data.Select($@"selected = 1 and Brand = '{brand}' and CustPoNo = '{custPoNo}' and StyleID = '{styleID}' and Article = '{article}' and Size = '{size}'"))
+            {
+                if (MyUtility.Check.Empty(item["status"]))
+                {
+                    item["status"] = status;
+                }
+                else
+                {
+                    item["status"] = item["status"] + " " + status;
+                }
+            }
         }
 
         private void Btnclose_click(object sender, EventArgs e)
