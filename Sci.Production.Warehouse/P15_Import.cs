@@ -163,10 +163,10 @@ where a.id = '{0}' and c.lock = 0 ", dr_master["requestid"]));
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) //2
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //3
-                .Numeric("Stock", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //3
-                .Numeric("RequestQty", header: "Request Qty", iseditable: true, decimal_places: 2, integer_places: 10) //4
-                .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns)  //4
-                .Numeric("balance", header: "Balance Qty", iseditable: true, decimal_places: 2, integer_places: 10) //6
+                .Numeric("Stock", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(8)) //3
+                .Numeric("RequestQty", header: "Request Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(8)) //4
+                .Numeric("qty", header: "Issue Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(8))  //4
+                .Numeric("balance", header: "Balance Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(8)) //6
                 .Text("location", header: "Bulk Location", iseditingreadonly: true)      //5
                 ;
             this.gridlack.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;

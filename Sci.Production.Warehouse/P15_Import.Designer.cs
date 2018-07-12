@@ -45,7 +45,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(912, 15);
+            this.btnCancel.Location = new System.Drawing.Point(899, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 3;
@@ -57,7 +57,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(816, 16);
+            this.btnImport.Location = new System.Drawing.Point(803, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 2;
@@ -72,9 +72,9 @@
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox2.Location = new System.Drawing.Point(0, 477);
+            this.groupBox2.Location = new System.Drawing.Point(0, 307);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1008, 53);
+            this.groupBox2.Size = new System.Drawing.Size(995, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
@@ -116,13 +116,13 @@
             this.gridlack.RowTemplate.Height = 24;
             this.gridlack.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridlack.ShowCellToolTips = false;
-            this.gridlack.Size = new System.Drawing.Size(1008, 477);
+            this.gridlack.Size = new System.Drawing.Size(995, 307);
             this.gridlack.TabIndex = 1;
             this.gridlack.TabStop = false;
             // 
             // P15_Import
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 530);
+            this.ClientSize = new System.Drawing.Size(995, 360);
             this.Controls.Add(this.gridlack);
             this.Controls.Add(this.groupBox2);
             this.Name = "P15_Import";
