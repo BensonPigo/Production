@@ -154,7 +154,7 @@ Where a.id = '{0}'
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) //2
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //3
-                .Numeric("balance", header: "Request Qty", iseditable: true, decimal_places: 2, integer_places: 10) //4
+                .Numeric("RequestQty", header: "Request Qty", iseditable: true, decimal_places: 2, integer_places: 10) //4
                 .Numeric("Issueqty", header: "Accu. Issue Qty", decimal_places: 2, integer_places: 10)  //5
                 .Numeric("balance", header: "Balance Qty", iseditable: true, decimal_places: 2, integer_places: 10) //6
                 ;
