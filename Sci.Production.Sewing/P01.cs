@@ -880,6 +880,7 @@ order by a.OrderId,os.Seq",
                 this.comboTeam.ReadOnly = true;
                 this.numManpower.ReadOnly = true;
                 this.numWHours.ReadOnly = true;
+                this.txtSubconOutFty.SetReadOnly(true);
             }
         }
 
