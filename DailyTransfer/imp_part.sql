@@ -392,10 +392,11 @@ where a.id in (select id from @T)) as s
 				t.Price= s.Price,				
 				t.Remark= s.Remark,
 				t.MachineReqID= s.MmsReqID,
-				t.Junk= s.Junk
+				t.Junk= s.Junk,
+				t.RefNo = ISNULL(s.RefNo,'')
 		when not matched by target then
-		insert  (ID,Seq1,Seq2,MachineGroupID,MachineBrandID,Model,Description,Qty,FOC,Price,Remark,MachineReqID,Junk)
-		values	(s.ID,s.Seq1,s.Seq2,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk)
+		insert  (ID,Seq1,Seq2,MachineGroupID,MachineBrandID,Model,Description,Qty,FOC,Price,Remark,MachineReqID,Junk,RefNo)
+		values	(s.ID,s.Seq1,s.Seq2,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk,ISNULL(s.RefNo,''))
 		when not matched by source and t.id in (select id from @T) then
 		delete ;
 
@@ -539,6 +540,37 @@ where a.id in (select id from @T)) as s
 					  ,s.EditName
 				);
 
-END
+	 -----------TPEMachine------------------------
+	Merge Machine.dbo.TPEMachine as t
+	Using (
+		select * 
+		from Trade_To_Pms.dbo.Part WITH (NOLOCK) 
+		where type = 'M' 
+	)as s on t.ID = s.Refno 
+	when matched then 
+		update set 
+			t.MachineGroupID		= s.MachineGroupID
+			,t.Model				= s.Model
+			,t.MachineBrandID		= s.MachineBrandID
+			,t.Description			= s.Description
+			,t.DescriptionDetail	= s.DescriptionDetail
+			,t.Origin				= s.Origin
+			,t.Junk					= s.Junk
+			,t.AddName				= s.AddName
+			,t.AddDate				= s.AddDate
+			,t.EditName				= s.EditName
+			,t.EditDate				= s.EditDate
+	when not matched by target and s.type='M' then 
+		insert 
+			(ID,MachineGroupID,Model,MachineBrandID,Description
+			,DescriptionDetail,Origin,Picture1,Picture2,Junk
+			,AddName,AddDate,EditName,EditDate
+			)
+		values
+			(s.Refno 			, s.MachineGroupID , s.Model 		, s.MachineBrandID 	, s.Description
+			 , s.DescriptionDetail 		, s.Origin 	, '' 		, '' 		, s.Junk
+			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		);
+	
+	END
 
 
