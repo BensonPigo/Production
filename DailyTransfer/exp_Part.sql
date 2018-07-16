@@ -156,10 +156,10 @@ WHERE MachinePO.id= pod.id
 ORDER BY MachinePO.id 
 
 SELECT pod.ID,pod.SEQ1, pod.SEQ2, pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY,pod.MiscBrandID, pod.suppid,pod.MiscReqID,pod.DepartmentID
-	,MiscReqApv =m.Approve,pod.InQty
+	,MiscReqApv =m.Approve,pod.InQty,md.Reason
 INTO  MiscPO_Detail
-FROM Pms_To_Trade.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod,Machine.dbo.MiscReq m
-WHERE MiscPO.id= pod.id  and pod.MiscReqID = m.ID 
+FROM Pms_To_Trade.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod,Machine.dbo.MiscReq m,Machine.dbo.MiscReq_Detail md
+WHERE MiscPO.id= pod.id  and pod.MiscReqID = m.ID and m.id = md.id and md.MiscID = pod.MiscID
 ORDER BY MiscPO.id 
 --------------------------------------------------------------
 UPDATE Machine.dbo.PartPO
