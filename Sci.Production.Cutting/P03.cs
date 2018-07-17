@@ -150,9 +150,10 @@ namespace Sci.Production.Cutting
             string estcutdate = dateEstCutDate.Text;
             string sewinginline = dateSewingInline.Text;
             string cutref = txtCutRefNo.Text;
-            if (MyUtility.Check.Empty(cutsp) && MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(dateEstCutDate.Value))
+            string cutplanID = txtCutplanID.Text;
+            if (MyUtility.Check.Empty(cutsp) && MyUtility.Check.Empty(sp) && MyUtility.Check.Empty(dateEstCutDate.Value) && MyUtility.Check.Empty(cutplanID))
             {
-                MyUtility.Msg.WarningBox("You must be entry conditions <Cutting SP#> or <SP#> or <Est. Cut Date>");
+                MyUtility.Msg.WarningBox("You must be entry conditions <Cutting SP#> or <SP#> or <Est. Cut Date> or <CutplanID>");
                 return;
             }
             string sql = @"
@@ -199,6 +200,7 @@ From
             if (!MyUtility.Check.Empty(dateEstCutDate.Value)) where = where + string.Format("and estcutdate='{0}'",estcutdate);
             if (!MyUtility.Check.Empty(cutref)) where = where + string.Format(" and cutref='{0}'", cutref);
             if (!MyUtility.Check.Empty(txtfactoryByM.Text)) where = where + string.Format(" and a.Factoryid='{0}'", txtfactoryByM.Text);
+            if (!MyUtility.Check.Empty(cutplanID)) where = where + string.Format(" and a.CutplanID='{0}'", cutplanID);
 
             sql = sql + where + " ) as #tmp ";
             where = " Where 1=1 and actcutdate =''";
