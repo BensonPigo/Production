@@ -22,6 +22,7 @@ namespace Sci.Production.Quality
         {
             this.InitializeComponent();
             this.detailgrid.ContextMenuStrip = detailgridmenus;
+            InsertDetailGridOnDoubleClick = false;
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -115,6 +116,10 @@ where ID = '{0}'"
             
             this.detailgrid.CellDoubleClick += (s, e) =>
             {
+                if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+                {
+                    return;
+                }
                 Sci.Production.Quality.P12_Detail callNewDetailForm = new P12_Detail(false, this.CurrentMaintain["ID"].ToString(), this.CurrentDetailData["ReportNo"].ToString(), null, "Query");
                 callNewDetailForm.ShowDialog(this);
                 callNewDetailForm.Dispose();
