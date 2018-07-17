@@ -155,6 +155,10 @@ namespace Sci.Production.PublicPrg
                 cellResult Result = new cellResult();
                 Result.CellMouseDoubleClick += (s, e) =>
                 {
+                    if (e.RowIndex == -1)
+                    {
+                        return;
+                    }
                     DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                     if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) return;
                     DataRow dr = grid.GetDataRow(e.RowIndex);

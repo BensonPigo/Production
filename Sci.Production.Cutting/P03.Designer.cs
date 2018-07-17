@@ -53,11 +53,13 @@
             this.label1 = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.txtCell1 = new Sci.Production.Class.txtCell();
-            this.label2 = new Sci.Win.UI.Label();
             this.txtcutReason = new Sci.Production.Class.txtcutReason();
+            this.label2 = new Sci.Win.UI.Label();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.gridbs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtCutplanID = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -244,6 +246,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtCutplanID);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.txtfactoryByM);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.labelSewingInline);
@@ -302,14 +306,6 @@
             this.txtCell1.Size = new System.Drawing.Size(30, 23);
             this.txtCell1.TabIndex = 39;
             // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(7, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 38;
-            this.label2.Text = "Cell";
-            // 
             // txtcutReason
             // 
             this.txtcutReason.DisplayBox1Binding = "";
@@ -319,6 +315,14 @@
             this.txtcutReason.TabIndex = 0;
             this.txtcutReason.TextBox1Binding = "";
             this.txtcutReason.Type = "RC";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(7, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 23);
+            this.label2.TabIndex = 38;
+            this.label2.Text = "Cell";
             // 
             // btnSave
             // 
@@ -341,6 +345,23 @@
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(6, 79);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(89, 23);
+            this.label3.TabIndex = 29;
+            this.label3.Text = "CutplanID";
+            // 
+            // txtCutplanID
+            // 
+            this.txtCutplanID.BackColor = System.Drawing.Color.White;
+            this.txtCutplanID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutplanID.Location = new System.Drawing.Point(98, 79);
+            this.txtCutplanID.Name = "txtCutplanID";
+            this.txtCutplanID.Size = new System.Drawing.Size(108, 23);
+            this.txtCutplanID.TabIndex = 30;
             // 
             // P03
             // 
@@ -415,5 +436,7 @@
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Class.txtCell txtCell1;
+        private Win.UI.TextBox txtCutplanID;
+        private Win.UI.Label label3;
     }
 }
