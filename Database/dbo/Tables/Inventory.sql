@@ -41,7 +41,7 @@
     [EditDate]         DATETIME        NULL,
     [SCIRefno]         VARCHAR (30)    NULL DEFAULT (''),
     [SuppID]           VARCHAR (6)     NULL DEFAULT (''),
-    CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([POID], [ProjectID], [Seq1], [Seq2], [MDivisionID], [FactoryID], [UnitID], [InventoryRefnoID])
+    CONSTRAINT [PK_Inventory] PRIMARY KEY CLUSTERED ([Ukey])
 );
 
 

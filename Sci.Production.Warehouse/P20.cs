@@ -379,8 +379,8 @@ where   stocktype='I'");
             dtFtyInventory.Columns.Add("balance", typeof(decimal), "InQty-outqty+adjustqty");
 
             DataRelation relation = new DataRelation("rel1"
-                , new DataColumn[] { dtTpeIventory.Columns["PoID"], dtTpeIventory.Columns["Seq1"], dtTpeIventory.Columns["Seq2"], dtTpeIventory.Columns["ProjectID"] }
-                , new DataColumn[] { dtInvtrans.Columns["PoID"], dtInvtrans.Columns["Seq1"], dtInvtrans.Columns["Seq2"], dtInvtrans.Columns["ProjectID"] }
+                , new DataColumn[] { dtTpeIventory.Columns["Ukey"] }
+                , new DataColumn[] { dtInvtrans.Columns["InventoryUkey"] }
                 );
             data.Relations.Add(relation);
             
