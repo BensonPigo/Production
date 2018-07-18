@@ -15,14 +15,14 @@ BEGIN
    -- INVENTORY
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
-SET		a.Ukey					= b.Ukey
-		--,a.POID				= b.POID
-		--,a.Seq1				= b.Seq1
-		-- ,a.Seq2				= b.Seq2
-		--,a.ProjectID			= b.ProjectID
-		-- ,a.FactoryID			= b.FactoryID
-		-- ,a.UnitID			= b.UnitID
-		-- ,a.InventoryRefnoId	= b.InventoryRefnoId
+SET		--a.Ukey					= b.Ukey
+		a.POID				= b.POID
+		,a.Seq1				= b.Seq1
+		 ,a.Seq2				= b.Seq2
+		,a.ProjectID			= b.ProjectID
+		,a.FactoryID			= b.FactoryID
+		 ,a.UnitID			= b.UnitID
+		,a.InventoryRefnoId	= b.InventoryRefnoId
 		, a.SuppID				= b.SuppID 
 		, a.Refno				= b.Refno
 		, a.BrandGroup			= b.BrandGroup
@@ -57,13 +57,7 @@ SET		a.Ukey					= b.Ukey
 		, a.SCIRefno			= b.SCIRefno
 		, A.MDivisionID			= isnull(C.MDivisionID,'')
 from Production.dbo.Inventory as a 
-inner join Trade_To_Pms.dbo.Inventory as b ON	a.POID=b.POID 
-												and a.Seq1=b.Seq1 
-												and a.Seq2=b.Seq2 
-												and a.FactoryID=b.FactoryID 
-												and a.UnitID=b.UnitID 
-												and a.ProjectID=b.ProjectID 
-												and a.InventoryRefnoId=b.InventoryRefnoId
+inner join Trade_To_Pms.dbo.Inventory as b ON	a.ukey = b.ukey
 INNER JOIN Production.DBO.SCIFty C ON A.FactoryID = C.ID 
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Inventory(
@@ -150,6 +144,11 @@ select	Ukey
 		, SCIRefno
 		, isnull((SELECT MDivisionID FROM Production.dbo.SCIFty WITH (NOLOCK) WHERE ID= A.FactoryID ),'')	
 		, SuppID 
+		from Trade_To_Pms.dbo.Inventory as a WITH (NOLOCK)
+		where not exists(select 1 from Production.dbo.Inventory  WITH (NOLOCK) where a.Ukey = Ukey)
+
+
+/* ISP20180567 pkey 改回Ukey 
 from (
 	select	[SameNo] = ROW_NUMBER() over (partition by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId order by POID,Seq1,Seq2,ProjectID,FactoryID,UnitID,InventoryRefnoId)
 			, b.* 
@@ -172,7 +171,7 @@ from (
 						and a.InventoryRefnoId = b.InventoryRefnoId
 			)
 ) as a
-where sameno=1
+where sameno=1*/
 
 /* That code will insert error, because duplicate key will happen.  Edit by willy on 20161227
 from Trade_To_Pms.dbo.Inventory as b
