@@ -857,6 +857,7 @@
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editRemark.Location = new System.Drawing.Point(515, 179);
+            this.editRemark.MaxLength = 100;
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(316, 50);
