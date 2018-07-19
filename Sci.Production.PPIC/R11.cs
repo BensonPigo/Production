@@ -48,16 +48,50 @@ namespace Sci.Production.PPIC
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).AddDays(-MyUtility.Convert.GetInt(this.Gap)).ToString("yyyy/MM/dd");
             this.dateRangeReadyOrl = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
 
+            #region 排除假日及週日
+            DataRow drDate;
+            string sqlcmdDate = $@"
+declare @WeekDay int
+declare @ReadyDate1 date =  '{this.dateRangeReady1}'
+declare @ReadyDate2 date =  '{this.dateRangeReady2}'
+declare @Factory varchar(10) = '{Sci.Env.User.Factory}'
+
+-- 判斷是否為週日,如果是就減一天
+select @WeekDay= DATEPART(WEEKDAY, convert(date, @ReadyDate1))
+if @WeekDay=7
+set @ReadyDate1 = convert(date, DATEADD(DAY,-1, @ReadyDate1))
+
+select @WeekDay= DATEPART(WEEKDAY, convert(date, @ReadyDate2))
+if @WeekDay=7
+set @ReadyDate2 = convert(date, DATEADD(DAY,-1, @ReadyDate2))
+
+-- 判斷是否為Holiday,如果是就減一天
+if exists (select * from Holiday where HolidayDate=@ReadyDate1 and FactoryID=@Factory)
+set @ReadyDate1 = convert(date, DATEADD(DAY,-1, @ReadyDate1))
+
+if exists (select * from Holiday where HolidayDate=@ReadyDate2 and FactoryID=@Factory)
+set @ReadyDate2 = convert(date, DATEADD(DAY,-1, @ReadyDate2))
+
+select @ReadyDate1 date1,@ReadyDate2 date2
+
+";
+            if (MyUtility.Check.Seek(sqlcmdDate,out drDate))
+            {
+                dateRangeReady1 = drDate["date1"].ToString();
+                dateRangeReady2 = drDate["date2"].ToString();
+            }
+            #endregion
+
             this.listSQLFilter = new List<string>();
             #region Sql where Filter
             if (!this.dateRangeReady1.Empty())
             {
-                this.listSQLFilter.Add($"and CONVERT(date, s.Offline) >= '{this.dateRangeReady1}'");
+                this.listSQLFilter.Add($"and CONVERT(date, s.Offline) >={dateRangeReady1}");
             }
 
             if (!this.dateRangeReady2.Empty())
             {
-                this.listSQLFilter.Add($"and CONVERT(date, s.Offline) <= '{this.dateRangeReady2}'");
+                this.listSQLFilter.Add($"and CONVERT(date, s.Offline) <={dateRangeReady2}");
             }
 
             if (!this.F.Empty())
@@ -75,6 +109,7 @@ namespace Sci.Production.PPIC
 
             sbFtycode = new StringBuilder();
             string sqlFty = $@"
+
 select distinct FactoryID from sewingschedule s
 where 1=1
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}";
@@ -101,8 +136,9 @@ where 1=1
         {
             #region Sql Command
             string sqlCmd = $@"
+
 SELECT distinct
-[ReadyDate] = convert(date,s.Offline+2)
+[ReadyDate] = convert(date,s.Offline + {MyUtility.Convert.GetInt(this.Gap)})
 ,[M] = o.MDivisionID
 ,[Factory] = o.FactoryID
 ,[Delivery] = o.BuyerDelivery
@@ -185,7 +221,8 @@ outer apply (
     LEFT JOIN PackingList p on pd.ID = p.ID 
     where  pd.OrderID = os.ID 
 	and pd.OrderShipmodeSeq = os.Seq
-    and (ReceiveDate) <= CONVERT(date, DATEADD(DAY,{MyUtility.Convert.GetInt(this.Gap)}, s.Offline))	
+    and (ReceiveDate) <= CONVERT(date, DATEADD(DAY,{MyUtility.Convert.GetInt(this.Gap)}, s.Offline))    
+
 ) Receive
 outer apply(
 	select Line = stuff((
