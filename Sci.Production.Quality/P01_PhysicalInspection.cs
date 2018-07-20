@@ -15,7 +15,7 @@ using Sci.Win.Tools;
 using Sci.Production.Quality;
 using System.Runtime.InteropServices;
 using Sci.Production.PublicPrg;
-
+using Sci.Utility.Excel;
 
 namespace Sci.Production.Quality
 {
@@ -1188,71 +1188,64 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                             }
                         }
                         break;
+
                     case "DefectYds":
                         DataTable dtRealTime;
                         DBProxy.Current.Select("Production", $@"
-SELECT distinct Yards,FabricdefectID
-FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] --order by AddDate desc 
+SELECT Yards,FabricdefectID,count(1) cnt
+FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] 
 where FIR_PhysicalDetailUkey={dtGrid.Rows[rowcount - 1]["detailUkey"]} 
+group by Yards,FabricdefectID
+order by Yards
 ", out dtRealTime);
-                        /*
-8.400	K
-16.600	K
-70.200	J
-73.500	K
-76.800	K
-                         */
                         int cntRealTime = 0;
-                        int cntDtRealTime = dtRealTime.Rows.Count;
-                        int cntnextLine = 1;
-                        //for (int c = 1; c < cntDtRealTime; c++)
-                        //{
-                        //    if (c == 6 * cntnextLine)
-                        //    {
-                        //        cntnextLine++;
-                        //    }
-                        //}
-                        //加入標題
-                        //for (int ii = 1; ii < cntDtRealTime*2; ii++)
-                        //{
-                        //    if (ii % 2 == 1)
-                        //    {
-
-                        //        excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
-
-                        //    }
-                        //    else
-                        //    {
-                        //        excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
-
-                        //    }
-                        //}
-                        int cntnextline = 0;
-                        for (int ii = 1; ii <= cntDtRealTime * 2; ii++)
+                        if (dtRealTime == null)
                         {
-                            if (ii % 2 == 1)
+                            return false;
+                        }
+                        if (dtRealTime.Rows.Count>0)
+                        {
+                            int cntDtRealTime = dtRealTime.Rows.Count;                            
+                            int cntnextline = 0;
+                            int cntX = 3;
+                            for (int ii = 1; ii <= cntDtRealTime * 2; ii++)
                             {
-                                if (ii > 10 * (cntnextline + 1))
+                                if (ii % 2 == 1)
                                 {
-                                    cntnextline++;
-                                    addline++;
+                                    if (ii > 10 * (cntnextline + 1))
+                                    {
+                                        cntnextline++;
+                                        addline++;
+                                    }
+                                    excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
+                                    excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["Yards"];
+                                    cntRealTime++;
                                 }
-                                excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
-                                excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["DefectLocation"];
-                                cntRealTime++;
-                            }
-                            else
-                            {
-                                excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
-                                excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["DefectRecord"];
+                                else
+                                {
+                                    excel.Cells[15 + (i * 8) + addline, ii] = "Defect";                                    
+                                    excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString();
+
+                                    Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX)}{16 + (i * 8) + addline}");
+                                    formatRange.NumberFormat = "0.00";
+                                    formatRange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                                    cntX += 2;
+                                }
                             }
                         }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("Data not found! ");
+                            return false;
+                        }
+
                         break;
                     default:
                         break;
                 }
+              
 
-         
+
                 worksheet.Range[excel.Cells[17 + (i * 8) + addline, 1], excel.Cells[17 + (i * 8) + addline, 10]].Font.Bold = true;
                 #endregion
                 DataTable dtcombo;
