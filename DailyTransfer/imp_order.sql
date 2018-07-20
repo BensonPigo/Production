@@ -767,12 +767,14 @@ BEGIN
 		when matched then 
 			update set 			
 				t.SizeUnit	= s.SizeUnit,
-				t.SizeDesc	= s.Description
+				t.SizeDesc	= s.Description,
+				t.TolMinus	= s.TolMinus,
+				t.TolPlus	= s.TolPlus
 		when not matched by Target then
 			insert (
-				Id		, SizeItem		, SizeUnit		, SizeDesc		, ukey
+				Id		, SizeItem		, SizeUnit		, SizeDesc		, ukey ,TolMinus ,TolPlus
 			) values (
-				s.Id	, s.SizeItem	, s.SizeUnit	, s.Description	, s.ukey
+				s.Id	, s.SizeItem	, s.SizeUnit	, s.Description	, s.ukey,s.TolMinus ,s.TolPlus
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
