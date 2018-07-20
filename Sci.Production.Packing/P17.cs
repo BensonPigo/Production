@@ -447,11 +447,14 @@ namespace Sci.Production.Packing
                             excel = null;
                             #endregion
                         }
+                    }
+                }
+            }
 
-                        // 取得Pack ID,CTN#
-                        if (notdist.Rows.Count > 0)
-                        {
-                            string sql_cmd = $@"
+            // 取得Pack ID,CTN#
+            if (notdist.Rows.Count > 0)
+            {
+                string sql_cmd = $@"
 ;with keyTable as (
 select distinct CustPoNo,Brand,StyleID ,StyleName,Article  ,Barcode, Size
 from #tmp
@@ -476,15 +479,12 @@ left join excelData ed on pd.CustPoNo =  ed.CustPoNo and pd.Brand = ed.Brand and
 pd.Article = ed.Article and pd.Size =ed.Size and pd.mapSeq = ed.mapSeq
 order by pd.PackID,pd.Seq
 ";
-                            DualResult result = MyUtility.Tool.ProcessWithDatatable(notdist, string.Empty, sql_cmd, out notdist);
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(notdist, string.Empty, sql_cmd, out notdist);
 
-                            if (!result)
-                            {
-                                this.ShowErr(result);
-                                return;
-                            }
-                        }
-                    }
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
                 }
             }
             #endregion
