@@ -782,7 +782,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                     string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text)
                                      + Environment.NewLine
                                      + "Please Approve and Check Fabric Inspection";
-                    ToExcel(true);
+                    ToExcel(true, "Regular");
                     var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, false, true);
                     email.ShowDialog(this);
                 }
@@ -895,7 +895,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
 
-                ToExcel(true);
+                ToExcel(true, "Regular");
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, false, true);
                 email.ShowDialog(this);
             }
@@ -931,10 +931,15 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            ToExcel(false);            
+            ToExcel(false, "Regular");            
         }
 
-        private bool ToExcel(bool isSendMail)
+        private void btnToExcel_defect_Click(object sender, EventArgs e)
+        {
+            ToExcel(false, "DefectYds");
+        }
+
+        private bool ToExcel(bool isSendMail,string Type)
         {
             #region DataTables && 共用變數
             //FabricDefect 基本資料 DB
@@ -1132,51 +1137,122 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 //變色 titile
                 worksheet.Range[excel.Cells[15 + (i * 8) + addline, 1], excel.Cells[15 + (i * 8) + addline, 10]].Interior.colorindex = 38;
                 worksheet.Range[excel.Cells[15 + (i * 8) + addline, 1], excel.Cells[15 + (i * 8) + addline, 10]].Borders.LineStyle = 1;
-                worksheet.Range[excel.Cells[15 + (i * 8) + addline, 1], excel.Cells[15 + (i * 8) + addline, 10]].Font.Bold = true;                
-                DataTable dtDefect;
-                DBProxy.Current.Select("Production", string.Format("select * from  FIR_Physical_Defect WITH (NOLOCK) WHERE FIR_PhysicalDetailUKey='{0}'", dtGrid.Rows[rowcount - 1]["detailUkey"]), out dtDefect);
-                int PDrowcount = 0;
-                int dtRowCount = (int)dtDefect.Rows.Count;
-                int nextLineCount = 1;
-                for (int c = 1; c < dtRowCount; c++)
-                {
-                    if (c==6 * nextLineCount)
-                    {
-                        nextLineCount++;
-                    }
-                }
-                for (int ii = 1; ii < 11; ii++)
-                {
-                    if (ii % 2 == 1)
-                    {
+                worksheet.Range[excel.Cells[15 + (i * 8) + addline, 1], excel.Cells[15 + (i * 8) + addline, 10]].Font.Bold = true;
 
-                        excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
-
-                    }
-                    else
-                    {
-                        excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
-
-                    }                    
-                }                
-                int nextline = 0;
-                for (int ii = 1; ii <= dtRowCount * 2; ii++)
+                // 依照Type來匯出Excel
+                switch (Type)
                 {
-                    if (ii % 2 == 1)
-                    {
-                        if (ii>10 * (nextline+1))
+                    case "Regular":
+                        DataTable dtDefect;
+                        DBProxy.Current.Select("Production", string.Format("select * from  FIR_Physical_Defect WITH (NOLOCK) WHERE FIR_PhysicalDetailUKey='{0}'", dtGrid.Rows[rowcount - 1]["detailUkey"]), out dtDefect);
+                        int PDrowcount = 0;
+                        int dtRowCount = (int)dtDefect.Rows.Count;
+                        int nextLineCount = 1;
+                        for (int c = 1; c < dtRowCount; c++)
                         {
-                            nextline++;
-                            addline++;
+                            if (c == 6 * nextLineCount)
+                            {
+                                nextLineCount++;
+                            }
                         }
-                        excel.Cells[16 + (i * 8)+ addline, ii-(nextline*10)] = dtDefect.Rows[PDrowcount]["DefectLocation"];
-                        PDrowcount++;
-                    }
-                    else
-                    {
-                        excel.Cells[16 + (i * 8)+ addline, ii - (nextline * 10)] = dtDefect.Rows[PDrowcount - 1]["DefectRecord"];
-                    }
+                        for (int ii = 1; ii < 11; ii++)
+                        {
+                            if (ii % 2 == 1)
+                            {
+
+                                excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
+
+                            }
+                            else
+                            {
+                                excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
+
+                            }
+                        }
+                        int nextline = 0;
+                        for (int ii = 1; ii <= dtRowCount * 2; ii++)
+                        {
+                            if (ii % 2 == 1)
+                            {
+                                if (ii > 10 * (nextline + 1))
+                                {
+                                    nextline++;
+                                    addline++;
+                                }
+                                excel.Cells[16 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[PDrowcount]["DefectLocation"];
+                                PDrowcount++;
+                            }
+                            else
+                            {
+                                excel.Cells[16 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[PDrowcount - 1]["DefectRecord"];
+                            }
+                        }
+                        break;
+                    case "DefectYds":
+                        DataTable dtRealTime;
+                        DBProxy.Current.Select("Production", $@"
+SELECT distinct Yards,FabricdefectID
+FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] --order by AddDate desc 
+where FIR_PhysicalDetailUkey={dtGrid.Rows[rowcount - 1]["detailUkey"]} 
+", out dtRealTime);
+                        /*
+8.400	K
+16.600	K
+70.200	J
+73.500	K
+76.800	K
+                         */
+                        int cntRealTime = 0;
+                        int cntDtRealTime = dtRealTime.Rows.Count;
+                        int cntnextLine = 1;
+                        //for (int c = 1; c < cntDtRealTime; c++)
+                        //{
+                        //    if (c == 6 * cntnextLine)
+                        //    {
+                        //        cntnextLine++;
+                        //    }
+                        //}
+                        //加入標題
+                        //for (int ii = 1; ii < cntDtRealTime*2; ii++)
+                        //{
+                        //    if (ii % 2 == 1)
+                        //    {
+
+                        //        excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
+
+                        //    }
+                        //    else
+                        //    {
+                        //        excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
+
+                        //    }
+                        //}
+                        int cntnextline = 0;
+                        for (int ii = 1; ii <= cntDtRealTime * 2; ii++)
+                        {
+                            if (ii % 2 == 1)
+                            {
+                                if (ii > 10 * (cntnextline + 1))
+                                {
+                                    cntnextline++;
+                                    addline++;
+                                }
+                                excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
+                                excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["DefectLocation"];
+                                cntRealTime++;
+                            }
+                            else
+                            {
+                                excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
+                                excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["DefectRecord"];
+                            }
+                        }
+                        break;
+                    default:
+                        break;
                 }
+
+         
                 worksheet.Range[excel.Cells[17 + (i * 8) + addline, 1], excel.Cells[17 + (i * 8) + addline, 10]].Font.Bold = true;
                 #endregion
                 DataTable dtcombo;
@@ -1292,5 +1368,7 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, dtGrid.Rows[row
             this.HideWaitMessage();
             return true;
         }
+
+       
     }
 }
