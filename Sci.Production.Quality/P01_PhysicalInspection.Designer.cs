@@ -64,6 +64,7 @@
             this.dateLastInspectionDate = new Sci.Win.UI.DateBox();
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
             this.displaydescDetail = new Sci.Win.UI.DisplayBox();
+            this.btnToExcel_defect = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -71,6 +72,7 @@
             // 
             // btmcont
             // 
+            this.btmcont.Controls.Add(this.btnToExcel_defect);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 693);
             this.btmcont.Size = new System.Drawing.Size(1008, 40);
@@ -80,6 +82,7 @@
             this.btmcont.Controls.SetChildIndex(this.undo, 0);
             this.btmcont.Controls.SetChildIndex(this.save, 0);
             this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
+            this.btmcont.Controls.SetChildIndex(this.btnToExcel_defect, 0);
             // 
             // gridcont
             // 
@@ -365,7 +368,7 @@
             // 
             // btnToExcel
             // 
-            this.btnToExcel.Location = new System.Drawing.Point(627, 5);
+            this.btnToExcel.Location = new System.Drawing.Point(530, 5);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(90, 30);
             this.btnToExcel.TabIndex = 132;
@@ -437,6 +440,16 @@
             this.displaydescDetail.Name = "displaydescDetail";
             this.displaydescDetail.Size = new System.Drawing.Size(730, 21);
             this.displaydescDetail.TabIndex = 140;
+            // 
+            // btnToExcel_defect
+            // 
+            this.btnToExcel_defect.Location = new System.Drawing.Point(626, 5);
+            this.btnToExcel_defect.Name = "btnToExcel_defect";
+            this.btnToExcel_defect.Size = new System.Drawing.Size(179, 30);
+            this.btnToExcel_defect.TabIndex = 133;
+            this.btnToExcel_defect.Text = "To Excel (Act. defect Yds)";
+            this.btnToExcel_defect.UseVisualStyleBackColor = true;
+            this.btnToExcel_defect.Click += new System.EventHandler(this.btnToExcel_defect_Click);
             // 
             // P01_PhysicalInspection
             // 
@@ -567,5 +580,6 @@
         private Win.UI.DateBox dateLastInspectionDate;
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.DisplayBox displaydescDetail;
+        private Win.UI.Button btnToExcel_defect;
     }
 }
