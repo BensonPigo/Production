@@ -919,18 +919,19 @@ BEGIN
 				t.AddName				= s.AddName,
 				t.AddDate				= s.AddDate,
 				t.EditName				= s.EditName,
-				t.EditDate				= s.EditDate
+				t.EditDate				= s.EditDate,
+				t.SpecialWidth          = s.SpecialWidth
 		when not matched by target then 
 			insert (
 				Id				, FabricCode	, Refno					, SCIRefno				, SuppID
 				, ConsPC		, Seq1			, Kind					, Ukey					, Remark
 				, LossType		, LossPercent	, RainwearTestPassed	, HorizontalCutting		, ColorDetail
-				, AddName		, AddDate		, EditName				, EditDate
+				, AddName		, AddDate		, EditName				, EditDate              , SpecialWidth 
 			) values (
 				s.Id			, s.FabricCode	, s.Refno				, s.SCIRefno			, s.SuppID
 				, s.ConsPC		, s.Seq1		, s.Kind				, s.Ukey				, s.Remark
 				, s.LossType	, s.LossPercent	, s.RainwearTestPassed	, s.HorizontalCutting	, s.ColorDetail
-				, s.AddName		, s.AddDate		, s.EditName			, s.EditDate
+				, s.AddName		, s.AddDate		, s.EditName			, s.EditDate            , s.SpecialWidth
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
@@ -959,18 +960,19 @@ BEGIN
 				t.AddName			= s.AddName,
 				t.AddDate			= s.AddDate,
 				t.EditName			= s.EditName,
-				t.EditDate	= s.EditDate
+				t.EditDate	= s.EditDate,
+				t.Special           = s.Special
 		when not matched by target then 
 			insert ( 
 				Id						, Order_BOFUkey		, ColorId		, SuppColor		, OrderQty
 				, Price					, UsageQty			, UsageUnit		, Width			, SysUsageQty
 				, QTFabricPanelCode		, Remark			, OrderIdList	, AddName		, AddDate
-				, EditName				, EditDate			, UKEY
+				, EditName				, EditDate			, UKEY          , Special
 			) values (
 				s.Id					, s.Order_BOFUkey	, s.ColorId		, s.SuppColor	, s.OrderQty
 				, s.Price				, s.UsageQty		, s.UsageUnit	, s.Width		, s.SysUsageQty
 				, s.QTFabricPanelCode	, s.Remark			, s.OrderIdList	, s.AddName		, s.AddDate
-				, s.EditName			, s.EditDate		, s.UKEY
+				, s.EditName			, s.EditDate		, s.UKEY        , s.Special
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
