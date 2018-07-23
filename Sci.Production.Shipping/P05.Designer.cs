@@ -952,6 +952,7 @@
             this.comboContainerType.IsSupportUnselect = true;
             this.comboContainerType.Location = new System.Drawing.Point(658, 57);
             this.comboContainerType.Name = "comboContainerType";
+            this.comboContainerType.OldText = "";
             this.comboContainerType.Size = new System.Drawing.Size(121, 24);
             this.comboContainerType.TabIndex = 12;
             // 
@@ -1019,6 +1020,7 @@
             this.txtShipmodeShippingMode.IsSupportUnselect = true;
             this.txtShipmodeShippingMode.Location = new System.Drawing.Point(420, 4);
             this.txtShipmodeShippingMode.Name = "txtShipmodeShippingMode";
+            this.txtShipmodeShippingMode.OldText = "";
             this.txtShipmodeShippingMode.Size = new System.Drawing.Size(121, 24);
             this.txtShipmodeShippingMode.TabIndex = 8;
             this.txtShipmodeShippingMode.UseFunction = "ORDER";
@@ -1056,15 +1058,15 @@
             // 
             // txtfactoryShipper
             // 
-            this.txtfactoryShipper.BackColor = System.Drawing.Color.White;
+            this.txtfactoryShipper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtfactoryShipper.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Shipper", true));
-            this.txtfactoryShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtfactoryShipper.IsSupportEditMode = false;
             this.txtfactoryShipper.Location = new System.Drawing.Point(73, 85);
             this.txtfactoryShipper.Name = "txtfactoryShipper";
+            this.txtfactoryShipper.ReadOnly = true;
             this.txtfactoryShipper.Size = new System.Drawing.Size(64, 23);
             this.txtfactoryShipper.TabIndex = 0;
-            this.txtfactoryShipper.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtfactoryShipper_PopUp);
-            this.txtfactoryShipper.Validating += new System.ComponentModel.CancelEventHandler(this.TxtfactoryShipper_Validating);
             // 
             // btnAirPPStatus
             // 

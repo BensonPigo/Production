@@ -15,7 +15,7 @@ using Sci.Win.Tools;
 using Sci.Production.Quality;
 using System.Runtime.InteropServices;
 using Sci.Production.PublicPrg;
-
+using Sci.Utility.Excel;
 
 namespace Sci.Production.Quality
 {
@@ -782,7 +782,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                     string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text)
                                      + Environment.NewLine
                                      + "Please Approve and Check Fabric Inspection";
-                    ToExcel(true);
+                    ToExcel(true, "Regular");
                     var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, false, true);
                     email.ShowDialog(this);
                 }
@@ -895,7 +895,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
                 string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
 
-                ToExcel(true);
+                ToExcel(true, "Regular");
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, false, true);
                 email.ShowDialog(this);
             }
@@ -931,10 +931,15 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-            ToExcel(false);            
+            ToExcel(false, "Regular");            
         }
 
-        private bool ToExcel(bool isSendMail)
+        private void btnToExcel_defect_Click(object sender, EventArgs e)
+        {
+            ToExcel(false, "DefectYds");
+        }
+
+        private bool ToExcel(bool isSendMail,string Type)
         {
             #region DataTables && 共用變數
             //FabricDefect 基本資料 DB
@@ -1132,51 +1137,121 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 //變色 titile
                 worksheet.Range[excel.Cells[15 + (i * 8) + addline, 1], excel.Cells[15 + (i * 8) + addline, 10]].Interior.colorindex = 38;
                 worksheet.Range[excel.Cells[15 + (i * 8) + addline, 1], excel.Cells[15 + (i * 8) + addline, 10]].Borders.LineStyle = 1;
-                worksheet.Range[excel.Cells[15 + (i * 8) + addline, 1], excel.Cells[15 + (i * 8) + addline, 10]].Font.Bold = true;                
-                DataTable dtDefect;
-                DBProxy.Current.Select("Production", string.Format("select * from  FIR_Physical_Defect WITH (NOLOCK) WHERE FIR_PhysicalDetailUKey='{0}'", dtGrid.Rows[rowcount - 1]["detailUkey"]), out dtDefect);
-                int PDrowcount = 0;
-                int dtRowCount = (int)dtDefect.Rows.Count;
-                int nextLineCount = 1;
-                for (int c = 1; c < dtRowCount; c++)
-                {
-                    if (c==6 * nextLineCount)
-                    {
-                        nextLineCount++;
-                    }
-                }
-                for (int ii = 1; ii < 11; ii++)
-                {
-                    if (ii % 2 == 1)
-                    {
+                worksheet.Range[excel.Cells[15 + (i * 8) + addline, 1], excel.Cells[15 + (i * 8) + addline, 10]].Font.Bold = true;
 
-                        excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
-
-                    }
-                    else
-                    {
-                        excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
-
-                    }                    
-                }                
-                int nextline = 0;
-                for (int ii = 1; ii <= dtRowCount * 2; ii++)
+                // 依照Type來匯出Excel
+                switch (Type)
                 {
-                    if (ii % 2 == 1)
-                    {
-                        if (ii>10 * (nextline+1))
+                    case "Regular":
+                        DataTable dtDefect;
+                        DBProxy.Current.Select("Production", string.Format("select * from  FIR_Physical_Defect WITH (NOLOCK) WHERE FIR_PhysicalDetailUKey='{0}'", dtGrid.Rows[rowcount - 1]["detailUkey"]), out dtDefect);
+                        int PDrowcount = 0;
+                        int dtRowCount = (int)dtDefect.Rows.Count;
+                        int nextLineCount = 1;
+                        for (int c = 1; c < dtRowCount; c++)
                         {
-                            nextline++;
-                            addline++;
+                            if (c == 6 * nextLineCount)
+                            {
+                                nextLineCount++;
+                            }
                         }
-                        excel.Cells[16 + (i * 8)+ addline, ii-(nextline*10)] = dtDefect.Rows[PDrowcount]["DefectLocation"];
-                        PDrowcount++;
-                    }
-                    else
-                    {
-                        excel.Cells[16 + (i * 8)+ addline, ii - (nextline * 10)] = dtDefect.Rows[PDrowcount - 1]["DefectRecord"];
-                    }
+                        for (int ii = 1; ii < 11; ii++)
+                        {
+                            if (ii % 2 == 1)
+                            {
+
+                                excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
+
+                            }
+                            else
+                            {
+                                excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
+
+                            }
+                        }
+                        int nextline = 0;
+                        for (int ii = 1; ii <= dtRowCount * 2; ii++)
+                        {
+                            if (ii % 2 == 1)
+                            {
+                                if (ii > 10 * (nextline + 1))
+                                {
+                                    nextline++;
+                                    addline++;
+                                }
+                                excel.Cells[16 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[PDrowcount]["DefectLocation"];
+                                PDrowcount++;
+                            }
+                            else
+                            {
+                                excel.Cells[16 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[PDrowcount - 1]["DefectRecord"];
+                            }
+                        }
+                        break;
+
+                    case "DefectYds":
+                        DataTable dtRealTime;
+                        DBProxy.Current.Select("Production", $@"
+SELECT Yards,FabricdefectID,count(1) cnt
+FROM [Production].[dbo].[FIR_Physical_Defect_Realtime] 
+where FIR_PhysicalDetailUkey={dtGrid.Rows[rowcount - 1]["detailUkey"]} 
+group by Yards,FabricdefectID
+order by Yards
+", out dtRealTime);
+                        int cntRealTime = 0;
+                        if (dtRealTime == null)
+                        {
+                            return false;
+                        }
+                        if (dtRealTime.Rows.Count>0)
+                        {
+                            int cntDtRealTime = dtRealTime.Rows.Count;                            
+                            int cntnextline = 0;
+                            int cntX = 3;
+                            for (int ii = 1; ii <= cntDtRealTime * 2; ii++)
+                            {
+                                if (ii % 2 == 1)
+                                {
+                                    if (ii > 10 * (cntnextline + 1))
+                                    {
+                                        cntnextline++;
+                                        addline++;
+                                    }
+                                    if (cntnextline == 0)
+                                    {
+                                        excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
+                                    }                                   
+                                    excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["Yards"];
+                                    cntRealTime++;
+                                }
+                                else
+                                {
+                                    if (cntnextline == 0)
+                                    {
+                                        excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
+                                    }                                    
+                                    excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString();
+
+                                    Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX - (cntnextline * 10))}{16 + (i * 8) + addline}");
+                                    formatRange.NumberFormat = "0.00";
+                                    formatRange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                                    cntX += 2;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("Data not found! ");
+                            return false;
+                        }
+
+                        break;
+                    default:
+                        break;
                 }
+              
+
+
                 worksheet.Range[excel.Cells[17 + (i * 8) + addline, 1], excel.Cells[17 + (i * 8) + addline, 10]].Font.Bold = true;
                 #endregion
                 DataTable dtcombo;
@@ -1292,5 +1367,7 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, dtGrid.Rows[row
             this.HideWaitMessage();
             return true;
         }
+
+       
     }
 }
