@@ -465,7 +465,7 @@ select t.CustPoNo,t.Brand,t.Styleid,t.StyleName,t.Article,t.Barcode,t.Size,[Pack
 [mapSeq] = ROW_NUMBER() OVER (PARTITION BY t.CustPoNo,t.Brand,t.Styleid,t.Article,t.Size ORDER BY PL.seq),pl.Seq
 from keyTable as t
 left join ORDERS O  WITH (NOLOCK) ON  O.custpono= t.CustPoNo and O.StyleID= t.Styleid
-left join PackingList_Detail PL  WITH (NOLOCK) on    PL.Article= t.Article and PL.SizeCode=t.Size and O.ID = PL.OrderID
+inner join PackingList_Detail PL  WITH (NOLOCK) on    PL.Article= t.Article and PL.SizeCode=t.Size and O.ID = PL.OrderID
 left join PackingList P WITH (NOLOCK) ON P.BrandID= t.Brand and p.id = pl.id
 ),
 excelData as
