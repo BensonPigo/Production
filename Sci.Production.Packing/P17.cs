@@ -447,11 +447,14 @@ namespace Sci.Production.Packing
                             excel = null;
                             #endregion
                         }
+                    }
+                }
+            }
 
-                        // 取得Pack ID,CTN#
-                        if (notdist.Rows.Count > 0)
-                        {
-                            string sql_cmd = $@"
+            // 取得Pack ID,CTN#
+            if (notdist.Rows.Count > 0)
+            {
+                string sql_cmd = $@"
 ;with keyTable as (
 select distinct CustPoNo,Brand,StyleID ,StyleName,Article  ,Barcode, Size
 from #tmp
@@ -459,10 +462,10 @@ from #tmp
 PackingList_Detailtmp as
 (
 select t.CustPoNo,t.Brand,t.Styleid,t.StyleName,t.Article,t.Barcode,t.Size,[PackID] = PL.ID,[CTN] = PL.CTNStartNo,
-[mapSeq] = ROW_NUMBER() OVER (PARTITION BY t.CustPoNo,t.Brand,t.Styleid,t.Article,t.Size, PL.ID ORDER BY PL.seq),pl.Seq
+[mapSeq] = ROW_NUMBER() OVER (PARTITION BY t.CustPoNo,t.Brand,t.Styleid,t.Article,t.Size ORDER BY PL.seq),pl.Seq
 from keyTable as t
 left join ORDERS O  WITH (NOLOCK) ON  O.custpono= t.CustPoNo and O.StyleID= t.Styleid
-left join PackingList_Detail PL  WITH (NOLOCK) on    PL.Article= t.Article and PL.SizeCode=t.Size and O.ID = PL.OrderID
+inner join PackingList_Detail PL  WITH (NOLOCK) on    PL.Article= t.Article and PL.SizeCode=t.Size and O.ID = PL.OrderID
 left join PackingList P WITH (NOLOCK) ON P.BrandID= t.Brand and p.id = pl.id
 ),
 excelData as
@@ -476,15 +479,12 @@ left join excelData ed on pd.CustPoNo =  ed.CustPoNo and pd.Brand = ed.Brand and
 pd.Article = ed.Article and pd.Size =ed.Size and pd.mapSeq = ed.mapSeq
 order by pd.PackID,pd.Seq
 ";
-                            DualResult result = MyUtility.Tool.ProcessWithDatatable(notdist, string.Empty, sql_cmd, out notdist);
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(notdist, string.Empty, sql_cmd, out notdist);
 
-                            if (!result)
-                            {
-                                this.ShowErr(result);
-                                return;
-                            }
-                        }
-                    }
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
                 }
             }
             #endregion
