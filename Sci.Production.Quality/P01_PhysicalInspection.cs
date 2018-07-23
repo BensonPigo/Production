@@ -1217,16 +1217,22 @@ order by Yards
                                         cntnextline++;
                                         addline++;
                                     }
-                                    excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
+                                    if (cntnextline == 0)
+                                    {
+                                        excel.Cells[15 + (i * 8) + addline, ii] = "Yards";
+                                    }                                   
                                     excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["Yards"];
                                     cntRealTime++;
                                 }
                                 else
                                 {
-                                    excel.Cells[15 + (i * 8) + addline, ii] = "Defect";                                    
+                                    if (cntnextline == 0)
+                                    {
+                                        excel.Cells[15 + (i * 8) + addline, ii] = "Defect";
+                                    }                                    
                                     excel.Cells[16 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString();
 
-                                    Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX)}{16 + (i * 8) + addline}");
+                                    Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX - (cntnextline * 10))}{16 + (i * 8) + addline}");
                                     formatRange.NumberFormat = "0.00";
                                     formatRange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                                     cntX += 2;
