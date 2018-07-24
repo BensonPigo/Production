@@ -646,7 +646,7 @@ where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailDa
                        || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
                         return;
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                        (@"Select ID,description  from threadcolor WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
+                        (@"Select ID,description from threadcolor WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
                     item.Size = new System.Drawing.Size(630, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -678,7 +678,7 @@ where refno='{CurrentDetailData["Refno"]}' and ThreadColorID ='{e.FormattedValue
                     CurrentDetailData["price"] = dr["Price"];
                     CurrentDetailData.EndEdit();
                 }
-
+                CurrentDetailData["threadColorid"] = e.FormattedValue;
             };
             #endregion
 

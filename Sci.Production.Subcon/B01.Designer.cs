@@ -68,6 +68,7 @@
             this.numW = new Sci.Win.UI.NumericBox();
             this.numL = new Sci.Win.UI.NumericBox();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.btnThread = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.txtArtTkt = new Sci.Win.UI.TextBox();
             this.numCone = new Sci.Win.UI.NumericBox();
@@ -80,7 +81,6 @@
             this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
             this.dateQuotDate = new Sci.Win.UI.DateBox();
             this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_local();
-            this.btnThread = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -97,7 +97,6 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.btnThread);
             this.detailcont.Controls.Add(this.txtunit_ftyUnit);
             this.detailcont.Controls.Add(this.dateQuotDate);
             this.detailcont.Controls.Add(this.txtSubconSupplier);
@@ -637,6 +636,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnThread);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtArtTkt);
             this.groupBox2.Controls.Add(this.numCone);
@@ -659,6 +659,17 @@
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Thread Only";
+            // 
+            // btnThread
+            // 
+            this.btnThread.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnThread.Location = new System.Drawing.Point(609, 79);
+            this.btnThread.Name = "btnThread";
+            this.btnThread.Size = new System.Drawing.Size(133, 30);
+            this.btnThread.TabIndex = 23;
+            this.btnThread.Text = "Set Color Price";
+            this.btnThread.UseVisualStyleBackColor = true;
+            this.btnThread.Click += new System.EventHandler(this.btnThread_Click);
             // 
             // label1
             // 
@@ -872,17 +883,6 @@
             this.txtunit_ftyUnit.Name = "txtunit_ftyUnit";
             this.txtunit_ftyUnit.Size = new System.Drawing.Size(66, 23);
             this.txtunit_ftyUnit.TabIndex = 21;
-            // 
-            // btnThread
-            // 
-            this.btnThread.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnThread.Location = new System.Drawing.Point(601, 14);
-            this.btnThread.Name = "btnThread";
-            this.btnThread.Size = new System.Drawing.Size(80, 30);
-            this.btnThread.TabIndex = 22;
-            this.btnThread.Text = "Thread";
-            this.btnThread.UseVisualStyleBackColor = true;
-            this.btnThread.Click += new System.EventHandler(this.btnThread_Click);
             // 
             // B01
             // 

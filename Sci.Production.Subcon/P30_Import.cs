@@ -110,8 +110,6 @@ from dbo.PackingList a WITH (NOLOCK)
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID    
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
-left join LocalItem_ThreadColorPrice tc with (nolock) on tc.refno=
-
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
 outer apply(
@@ -198,7 +196,8 @@ select distinct 1 as Selected
        , dbo.getitemdesc('{2}',b.refno) as description 
        , b.threadcolorid
        , b.PurchaseQty as qty
-       , d.UnitID,d.Price
+       , d.UnitID
+       , [Price] = iif(tc.price is null , d.Price,tc.price)
        , b.PurchaseQty * d.Price as amount 
        , [std_price] = round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3)
        , '' as remark 
@@ -213,6 +212,8 @@ inner join ThreadRequisition_Detail b WITH (NOLOCK) on a.OrderID = b.OrderID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
+left join LocalItem_ThreadColorPrice tc with (nolock) 
+    on tc.refno=b.Refno and tc.ThreadColorID=b.ThreadColorID
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
 outer apply(
     select o1.POID
