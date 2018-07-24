@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panelup = new Sci.Win.UI.Panel();
+            this.txtOther = new Sci.Win.UI.TextBox();
+            this.chkOtherMethod = new Sci.Win.UI.CheckBox();
             this.comboTestingMethod = new Sci.Production.Quality.ComboxBoxEx();
             this.label15 = new Sci.Win.UI.Label();
             this.txtTechnician = new Sci.Production.Class.txtTechnician();
@@ -83,8 +85,8 @@
             // 
             this.gridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridcont.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridcont.Location = new System.Drawing.Point(0, 203);
-            this.gridcont.Size = new System.Drawing.Size(995, 231);
+            this.gridcont.Location = new System.Drawing.Point(0, 217);
+            this.gridcont.Size = new System.Drawing.Size(995, 217);
             // 
             // undo
             // 
@@ -96,6 +98,8 @@
             // 
             // panelup
             // 
+            this.panelup.Controls.Add(this.txtOther);
+            this.panelup.Controls.Add(this.chkOtherMethod);
             this.panelup.Controls.Add(this.comboTestingMethod);
             this.panelup.Controls.Add(this.label15);
             this.panelup.Controls.Add(this.txtTechnician);
@@ -127,8 +131,29 @@
             this.panelup.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelup.Location = new System.Drawing.Point(0, 0);
             this.panelup.Name = "panelup";
-            this.panelup.Size = new System.Drawing.Size(995, 203);
+            this.panelup.Size = new System.Drawing.Size(995, 217);
             this.panelup.TabIndex = 98;
+            // 
+            // txtOther
+            // 
+            this.txtOther.BackColor = System.Drawing.Color.White;
+            this.txtOther.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtOther.Location = new System.Drawing.Point(153, 183);
+            this.txtOther.Name = "txtOther";
+            this.txtOther.Size = new System.Drawing.Size(829, 23);
+            this.txtOther.TabIndex = 34;
+            // 
+            // chkOtherMethod
+            // 
+            this.chkOtherMethod.AutoSize = true;
+            this.chkOtherMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkOtherMethod.Location = new System.Drawing.Point(155, 153);
+            this.chkOtherMethod.Name = "chkOtherMethod";
+            this.chkOtherMethod.Size = new System.Drawing.Size(114, 21);
+            this.chkOtherMethod.TabIndex = 33;
+            this.chkOtherMethod.Text = "Other Method";
+            this.chkOtherMethod.UseVisualStyleBackColor = true;
+            this.chkOtherMethod.CheckedChanged += new System.EventHandler(this.chkOtherMethod_CheckedChanged);
             // 
             // comboTestingMethod
             // 
@@ -136,7 +161,7 @@
             this.comboTestingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboTestingMethod.FormattingEnabled = true;
             this.comboTestingMethod.IsSupportUnselect = true;
-            this.comboTestingMethod.Location = new System.Drawing.Point(154, 153);
+            this.comboTestingMethod.Location = new System.Drawing.Point(153, 182);
             this.comboTestingMethod.Name = "comboTestingMethod";
             this.comboTestingMethod.OldText = "";
             this.comboTestingMethod.Size = new System.Drawing.Size(835, 24);
@@ -446,5 +471,7 @@
         private Win.UI.Button btnPDF;
         private Win.UI.Label label15;
         private ComboxBoxEx comboTestingMethod;
+        private Win.UI.TextBox txtOther;
+        private Win.UI.CheckBox chkOtherMethod;
     }
 }
