@@ -35,6 +35,8 @@
             this.labelETA = new Sci.Win.UI.Label();
             this.radioListReport = new Sci.Win.UI.RadioButton();
             this.radioDetailReport = new Sci.Win.UI.RadioButton();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,6 +54,8 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.comboBox1);
+            this.radioPanel1.Controls.Add(this.label1);
             this.radioPanel1.Controls.Add(this.txtfactory);
             this.radioPanel1.Controls.Add(this.dateETA);
             this.radioPanel1.Controls.Add(this.labelFactory);
@@ -60,13 +64,15 @@
             this.radioPanel1.Controls.Add(this.radioDetailReport);
             this.radioPanel1.Location = new System.Drawing.Point(13, 8);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(373, 121);
+            this.radioPanel1.Size = new System.Drawing.Size(373, 151);
             this.radioPanel1.TabIndex = 94;
             // 
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(85, 89);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
@@ -74,6 +80,20 @@
             // 
             // dateETA
             // 
+            // 
+            // 
+            // 
+            this.dateETA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateETA.DateBox1.Name = "";
+            this.dateETA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateETA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateETA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateETA.DateBox2.Name = "";
+            this.dateETA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateETA.DateBox2.TabIndex = 1;
             this.dateETA.IsRequired = false;
             this.dateETA.Location = new System.Drawing.Point(84, 59);
             this.dateETA.Name = "dateETA";
@@ -82,7 +102,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(27, 89);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(54, 23);
@@ -91,7 +110,6 @@
             // 
             // labelETA
             // 
-            this.labelETA.Lines = 0;
             this.labelETA.Location = new System.Drawing.Point(27, 60);
             this.labelETA.Name = "labelETA";
             this.labelETA.Size = new System.Drawing.Size(54, 23);
@@ -123,9 +141,30 @@
             this.radioDetailReport.Text = "Detail Report";
             this.radioDetailReport.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(27, 119);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(74, 23);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Ship Mode";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.BackColor = System.Drawing.Color.White;
+            this.comboBox1.Enabled = false;
+            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.IsSupportUnselect = true;
+            this.comboBox1.Location = new System.Drawing.Point(104, 119);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.OldText = "";
+            this.comboBox1.Size = new System.Drawing.Size(121, 24);
+            this.comboBox1.TabIndex = 7;
+            // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(501, 163);
+            this.ClientSize = new System.Drawing.Size(501, 192);
             this.Controls.Add(this.radioPanel1);
             this.IsSupportToPrint = false;
             this.Name = "P03_Print";
@@ -150,5 +189,7 @@
         private Win.UI.RadioButton radioListReport;
         private Win.UI.RadioButton radioDetailReport;
         private Class.txtfactory txtfactory;
+        private Win.UI.ComboBox comboBox1;
+        private Win.UI.Label label1;
     }
 }
