@@ -33,9 +33,25 @@
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
+            // btmcont
+            // 
+            this.btmcont.Size = new System.Drawing.Size(935, 40);
+            // 
+            // gridcont
+            // 
+            this.gridcont.Size = new System.Drawing.Size(911, 435);
+            // 
+            // undo
+            // 
+            this.undo.Location = new System.Drawing.Point(845, 5);
+            // 
+            // save
+            // 
+            this.save.Location = new System.Drawing.Point(765, 5);
+            // 
             // B01_ThreadColorPrice
             // 
-            this.ClientSize = new System.Drawing.Size(831, 497);
+            this.ClientSize = new System.Drawing.Size(935, 497);
             this.Name = "B01_ThreadColorPrice";
             this.Text = "LocalItem_ThreadColorPrice";
             this.Controls.SetChildIndex(this.btmcont, 0);

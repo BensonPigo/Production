@@ -617,10 +617,11 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0)
                 {
                     string sqlThColor = $@"
 select * from LocalItem_ThreadColorPrice 
-where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailData["dr"]}'";
-                    if (MyUtility.Check.Seek(sqlThColor, out dr))
+where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailData["threadColorid"]}'";
+                    DataRow drPrice;
+                    if (MyUtility.Check.Seek(sqlThColor, out drPrice))
                     {
-                        CurrentDetailData["price"] = dr["Price"];
+                        CurrentDetailData["price"] = drPrice["Price"];
                         CurrentDetailData.EndEdit();
                     }
                     else

@@ -56,7 +56,7 @@ namespace Sci.Production.Subcon
                 {
                     dr["ThreadColorID"] = string.Empty;
                 }
-                if (MyUtility.Check.Seek($@"select 1 from threadcolor WITH (NOLOCK) where junk=0 and id={dr["ThreadColorID"]}"))
+                if (MyUtility.Check.Seek($@"select 1 from threadcolor WITH (NOLOCK) where junk=0 and id='{e.FormattedValue}'"))
                 {
                     dr["ThreadColorID"] = e.FormattedValue;
                 }
@@ -64,6 +64,7 @@ namespace Sci.Production.Subcon
                 {
                     MyUtility.Msg.WarningBox("data not found!");
                     dr["ThreadColorID"] = string.Empty;
+                    e.Cancel = true;
                 }
                 dr.EndEdit();
             };
