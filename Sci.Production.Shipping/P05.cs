@@ -599,6 +599,11 @@ and GETDATE() between f.BeginDate and f.EndDate";
                     {
                         this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
                     }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Shipper not found! ");
+                        return false;
+                    }
                 }
                 else
                 {
@@ -607,7 +612,7 @@ and GETDATE() between f.BeginDate and f.EndDate";
                 }
             }
 
-            if (this.DetailDatas.Count > 0 && MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
             {
                 this.txtfactoryShipper.Focus();
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
@@ -1413,6 +1418,11 @@ and GETDATE() between f.BeginDate and f.EndDate";
                     {
                         this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
                     }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Shipper not found! ");
+                        return;
+                    }
                 }
                 else
                 {
@@ -1422,7 +1432,7 @@ and GETDATE() between f.BeginDate and f.EndDate";
             }
 
             // shipper 不可為空
-            if (this.DetailDatas.Count > 0 && MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
             {
                 this.txtfactoryShipper.Focus();
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
