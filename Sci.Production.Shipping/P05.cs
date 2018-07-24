@@ -585,7 +585,7 @@ order by fwd.WhseNo",
 select distinct f.ShipperID from Orders o
 left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
 where ID in ({SP.Substring(0, SP.Length - 1)})
-and f.BrandID='ADIDAS'
+and f.BrandID='{this.txtbrand.Text}'
 and GETDATE() between f.BeginDate and f.EndDate";
 
                 if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
@@ -1399,7 +1399,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
 select distinct f.ShipperID from Orders o
 left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
 where ID in ({SP.Substring(0, SP.Length - 1)})
-and f.BrandID='ADIDAS'
+and f.BrandID='{this.txtbrand.Text}'
 and GETDATE() between f.BeginDate and f.EndDate";
 
                 if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
