@@ -585,7 +585,7 @@ order by fwd.WhseNo",
 select distinct f.ShipperID from Orders o
 left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
 where ID in ({SP.Substring(0, SP.Length - 1)})
-and f.BrandID='ADIDAS'
+and f.BrandID='{this.txtbrand.Text}'
 and GETDATE() between f.BeginDate and f.EndDate";
 
                 if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
@@ -599,6 +599,11 @@ and GETDATE() between f.BeginDate and f.EndDate";
                     {
                         this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
                     }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Shipper not found! ");
+                        return false;
+                    }
                 }
                 else
                 {
@@ -607,7 +612,7 @@ and GETDATE() between f.BeginDate and f.EndDate";
                 }
             }
 
-            if (this.DetailDatas.Count > 0 && MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
             {
                 this.txtfactoryShipper.Focus();
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
@@ -1399,7 +1404,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
 select distinct f.ShipperID from Orders o
 left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
 where ID in ({SP.Substring(0, SP.Length - 1)})
-and f.BrandID='ADIDAS'
+and f.BrandID='{this.txtbrand.Text}'
 and GETDATE() between f.BeginDate and f.EndDate";
 
                 if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
@@ -1413,6 +1418,11 @@ and GETDATE() between f.BeginDate and f.EndDate";
                     {
                         this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
                     }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Shipper not found! ");
+                        return;
+                    }
                 }
                 else
                 {
@@ -1422,7 +1432,7 @@ and GETDATE() between f.BeginDate and f.EndDate";
             }
 
             // shipper 不可為空
-            if (this.DetailDatas.Count > 0 && MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
             {
                 this.txtfactoryShipper.Focus();
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");

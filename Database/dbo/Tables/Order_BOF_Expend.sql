@@ -1,24 +1,27 @@
 ﻿CREATE TABLE [dbo].[Order_BOF_Expend] (
-    [Id]            VARCHAR (13)   CONSTRAINT [DF_Order_BOF_Expend_Id] DEFAULT ('') NOT NULL,
-    [Order_BOFUkey] BIGINT         CONSTRAINT [DF_Order_BOF_Expend_Order_BOFUkey] DEFAULT ((0)) NOT NULL,
-    [ColorId]       VARCHAR (6)    CONSTRAINT [DF_Order_BOF_Expend_ColorId] DEFAULT ('') NOT NULL,
-    [SuppColor]     NVARCHAR (MAX) CONSTRAINT [DF_Order_BOF_Expend_SuppColor] DEFAULT ('') NULL,
-    [OrderQty]      NUMERIC (10, 4) CONSTRAINT [DF_Order_BOF_Expend_OrderQty] DEFAULT ((0)) NULL,
-    [Price]         NUMERIC (16, 4) CONSTRAINT [DF_Order_BOF_Expend_Price] DEFAULT ((0)) NULL,
-    [UsageQty]      NUMERIC (9, 2) CONSTRAINT [DF_Order_BOF_Expend_UsageQty] DEFAULT ((0)) NULL,
-    [UsageUnit]     VARCHAR (8)    CONSTRAINT [DF_Order_BOF_Expend_UsageUnit] DEFAULT ('') NULL,
-    [Width]         NUMERIC (4, 1) CONSTRAINT [DF_Order_BOF_Expend_Width] DEFAULT ((0)) NULL,
-    [SysUsageQty]   NUMERIC (9, 2) CONSTRAINT [DF_Order_BOF_Expend_SysUsageQty] DEFAULT ((0)) NULL,
-    [QTFabricPanelCode]  NVARCHAR (100) CONSTRAINT [DF_Order_BOF_Expend_QTFabricPanelCode] DEFAULT ('') NULL,
-    [Remark]        NVARCHAR (60)  CONSTRAINT [DF_Order_BOF_Expend_Remark] DEFAULT ('') NULL,
-    [OrderIdList]   NVARCHAR (MAX) CONSTRAINT [DF_Order_BOF_Expend_OrderIdList] DEFAULT ('') NULL,
-    [AddName]       VARCHAR (10)   CONSTRAINT [DF_Order_BOF_Expend_AddName] DEFAULT ('') NULL,
-    [AddDate]       DATETIME       NULL,
-    [EditName]      VARCHAR (10)   CONSTRAINT [DF_Order_BOF_Expend_EditName] DEFAULT ('') NULL,
-    [EditDate]      DATETIME       NULL,
-    [UKEY]          BIGINT         CONSTRAINT [DF_Order_BOF_Expend_UKEY] DEFAULT ((0)) NOT NULL,
+    [Id]                VARCHAR (13)    CONSTRAINT [DF_Order_BOF_Expend_Id] DEFAULT ('') NOT NULL,
+    [Order_BOFUkey]     BIGINT          CONSTRAINT [DF_Order_BOF_Expend_Order_BOFUkey] DEFAULT ((0)) NOT NULL,
+    [ColorId]           VARCHAR (6)     CONSTRAINT [DF_Order_BOF_Expend_ColorId] DEFAULT ('') NOT NULL,
+    [SuppColor]         NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOF_Expend_SuppColor] DEFAULT ('') NULL,
+    [OrderQty]          NUMERIC (10, 4) CONSTRAINT [DF_Order_BOF_Expend_OrderQty] DEFAULT ((0)) NULL,
+    [Price]             NUMERIC (16, 4) CONSTRAINT [DF_Order_BOF_Expend_Price] DEFAULT ((0)) NULL,
+    [UsageQty]          NUMERIC (9, 2)  CONSTRAINT [DF_Order_BOF_Expend_UsageQty] DEFAULT ((0)) NULL,
+    [UsageUnit]         VARCHAR (8)     CONSTRAINT [DF_Order_BOF_Expend_UsageUnit] DEFAULT ('') NULL,
+    [Width]             NUMERIC (4, 1)  CONSTRAINT [DF_Order_BOF_Expend_Width] DEFAULT ((0)) NULL,
+    [SysUsageQty]       NUMERIC (9, 2)  CONSTRAINT [DF_Order_BOF_Expend_SysUsageQty] DEFAULT ((0)) NULL,
+    [QTFabricPanelCode] NVARCHAR (100)  CONSTRAINT [DF_Order_BOF_Expend_QTFabricPanelCode] DEFAULT ('') NULL,
+    [Remark]            NVARCHAR (60)   CONSTRAINT [DF_Order_BOF_Expend_Remark] DEFAULT ('') NULL,
+    [OrderIdList]       NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOF_Expend_OrderIdList] DEFAULT ('') NULL,
+    [AddName]           VARCHAR (10)    CONSTRAINT [DF_Order_BOF_Expend_AddName] DEFAULT ('') NULL,
+    [AddDate]           DATETIME        NULL,
+    [EditName]          VARCHAR (10)    CONSTRAINT [DF_Order_BOF_Expend_EditName] DEFAULT ('') NULL,
+    [EditDate]          DATETIME        NULL,
+    [UKEY]              BIGINT          CONSTRAINT [DF_Order_BOF_Expend_UKEY] DEFAULT ((0)) NOT NULL,
+    [Special]           NVARCHAR (MAX)  NULL,
     CONSTRAINT [PK_Order_BOF_Expend] PRIMARY KEY CLUSTERED ([UKEY] ASC)
 );
+
+
 
 
 GO

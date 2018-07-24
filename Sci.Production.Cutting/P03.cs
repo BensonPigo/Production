@@ -73,7 +73,7 @@ namespace Sci.Production.Cutting
             col_estcutdate.CellValidating += (s, e) =>
             {
                 if (MyUtility.Check.Empty(e.FormattedValue)) return;
-                if (Convert.ToDateTime(e.FormattedValue) < DateTime.Now)
+                if (Convert.ToDateTime(e.FormattedValue) < DateTime.Today)
                 {
                     MyUtility.Msg.WarningBox("<Est Cut Date> can not early today.");
                     DataRow dr = gridDetail.GetDataRow(e.RowIndex);
@@ -218,7 +218,7 @@ From
 
         private void dateNewEstCutDate_Validating(object sender, CancelEventArgs e)
         {
-            if (dateNewEstCutDate.Value != null && dateNewEstCutDate.Value < DateTime.Now)
+            if (dateNewEstCutDate.Value != null && dateNewEstCutDate.Value < DateTime.Today)
             {
                 MyUtility.Msg.WarningBox("<Est Cut Date> can not early today.");
                 dateNewEstCutDate.Value = null;
