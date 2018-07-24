@@ -615,10 +615,22 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0)
                 }
                 else
                 {
+                    string sqlThColor = $@"
+select * from LocalItem_ThreadColorPrice 
+where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailData["dr"]}'";
+                    if (MyUtility.Check.Seek(sqlThColor, out dr))
+                    {
+                        CurrentDetailData["price"] = dr["Price"];
+                        CurrentDetailData.EndEdit();
+                    }
+                    else
+                    {
+                        CurrentDetailData["price"] = dr[2];
+                    }
                     CurrentDetailData["refno"] = dr[0];
-                    CurrentDetailData["unitid"] = dr[1];
-                    CurrentDetailData["price"] = dr[2];
+                    CurrentDetailData["unitid"] = dr[1];                   
                 }
+                
             };
             #endregion
 
@@ -655,6 +667,15 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0)
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Data not found!", "Color Shade");
                     return;
+                }
+
+                string sqlThColor = $@"
+select * from LocalItem_ThreadColorPrice 
+where refno='{CurrentDetailData["Refno"]}' and ThreadColorID ='{e.FormattedValue.ToString()}'";
+                if (MyUtility.Check.Seek(sqlThColor,out dr))
+                {
+                    CurrentDetailData["price"] = dr["Price"];
+                    CurrentDetailData.EndEdit();
                 }
 
             };

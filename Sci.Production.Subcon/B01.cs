@@ -357,5 +357,12 @@ namespace Sci.Production.Subcon
             }
             getCBM();
         }
+
+        private void btnThread_Click(object sender, EventArgs e)
+        {
+            var callfrm = new B01_ThreadColorPrice(true, CurrentMaintain["Refno"].ToString(),string.Empty,string.Empty);
+            callfrm.ShowDialog();
+
+        }
     }
 }

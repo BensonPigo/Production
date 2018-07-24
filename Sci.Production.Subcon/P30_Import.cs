@@ -110,6 +110,8 @@ from dbo.PackingList a WITH (NOLOCK)
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID    
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
+left join LocalItem_ThreadColorPrice tc with (nolock) on tc.refno=
+
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
 outer apply(
