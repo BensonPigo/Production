@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
         private string eta1;
         private string eta2;
         private string factory;
+        private string shipmode;
         private string handle;
         private string ext;
         private string email;
@@ -41,6 +42,11 @@ namespace Sci.Production.Shipping
             this.txtfactory.Enabled = false;
             this.masterData = masterData;
             this.detailData = detailData;
+
+            DataTable dt;
+            DBProxy.Current.Select(null, "select '' as ID union all select ID from ShipMode WITH (NOLOCK) where UseFunction like '%WK%' ", out dt);
+            MyUtility.Tool.SetupCombox(this.comboBox1, 1, dt);
+            this.comboBox1.SelectedIndex = 0;
         }
 
         // 控制ETA & Factory可否輸入
@@ -50,11 +56,13 @@ namespace Sci.Production.Shipping
             {
                 this.dateETA.Enabled = true;
                 this.txtfactory.Enabled = true;
+                this.comboBox1.Enabled = true;
             }
             else
             {
                 this.dateETA.Enabled = false;
                 this.txtfactory.Enabled = false;
+                this.comboBox1.Enabled = false;
             }
         }
 
@@ -65,7 +73,7 @@ namespace Sci.Production.Shipping
             this.eta1 = MyUtility.Check.Empty(this.dateETA.Value1) ? string.Empty : Convert.ToDateTime(this.dateETA.Value1).ToString("d");
             this.eta2 = MyUtility.Check.Empty(this.dateETA.Value2) ? string.Empty : Convert.ToDateTime(this.dateETA.Value2).ToString("d");
             this.factory = this.txtfactory.Text;
-
+            this.shipmode = this.comboBox1.Text;
             return base.ValidateInput();
         }
 
@@ -95,14 +103,16 @@ namespace Sci.Production.Shipping
                 string sqlCmd = string.Format(
                     @"select e.ID,e.Eta,e.Blno,e.InvNo,e.PackingArrival,e.PortArrival,e.WhseArrival,e.DocArrival,e.Sono,e.Vessel,isnull(t.Name,'') as Name,isnull(t.ExtNo,'') as ExtNo,isnull(t.EMail,'') as EMail ,
 case when e.Payer= 'S' then 'By Sci Taipei Office(Sender)' when e.Payer= 'M' then 'By Mill(Sender)' when e.Payer= 'F' then 'By Factory(Receiver)' else '' end as Payer
-,[Loading] = e.ExportPort+'-'+e.ExportCountry
+,[Loading] = e.ExportPort+'-'+e.ExportCountry,e.shipmodeID
 from Export e WITH (NOLOCK) 
 left join TPEPass1 t WITH (NOLOCK) on e.Handle = t.ID
-where 1=1{0}{1}{2}
+where 1=1 and e.Junk = 0 {0}{1}{2}{3}
 order by e.ID",
                     MyUtility.Check.Empty(this.eta1) ? string.Empty : " and e.Eta >= '" + this.eta1 + "'",
                     MyUtility.Check.Empty(this.eta2) ? string.Empty : " and e.Eta <= '" + this.eta2 + "'",
-                    MyUtility.Check.Empty(this.factory) ? string.Empty : " and e.FactoryID = '" + this.factory + "'");
+                    MyUtility.Check.Empty(this.factory) ? string.Empty : " and e.FactoryID = '" + this.factory + "'",
+                    MyUtility.Check.Empty(this.shipmode) ? string.Empty : " and e.shipmodeID = '" + this.shipmode + "'"
+                    );
 
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
                 if (!result)
@@ -211,24 +221,23 @@ order by e.ID",
                 worksheet.Cells[2, 7] = MyUtility.Check.Empty(this.factory) ? "All" : this.factory;
 
                 int rownum = 4;
-                object[,] objArray = new object[1, 15];
+                object[,] objArray = new object[1, 14];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
-                    objArray[0, 1] = dr["Eta"];
-                    objArray[0, 2] = dr["Blno"];
-                    objArray[0, 3] = dr["InvNo"];
-                    objArray[0, 4] = dr["Payer"];
-                    objArray[0, 5] = dr["PackingArrival"];
-                    objArray[0, 6] = dr["PortArrival"];
-                    objArray[0, 7] = dr["WhseArrival"];
-                    objArray[0, 8] = dr["DocArrival"];
-                    objArray[0, 9] = dr["Sono"];
-                    objArray[0, 10] = dr["Vessel"];
-                    objArray[0, 11] = dr["Loading"];
+                    objArray[0, 1] = dr["shipmodeID"];
+                    objArray[0, 2] = dr["Loading"];
+                    objArray[0, 3] = dr["Eta"];
+                    objArray[0, 4] = dr["Blno"];
+                    objArray[0, 5] = dr["Vessel"];
+                    objArray[0, 6] = dr["InvNo"];
+                    objArray[0, 7] = dr["Payer"];
+                    objArray[0, 8] = dr["PackingArrival"];
+                    objArray[0, 9] = dr["PortArrival"];
+                    objArray[0, 10] = dr["WhseArrival"];
+                    objArray[0, 11] = dr["DocArrival"];
                     objArray[0, 12] = dr["Name"];
                     objArray[0, 13] = dr["ExtNo"];
-                    objArray[0, 14] = dr["EMail"];
                     worksheet.Range[string.Format("A{0}:N{0}", rownum)].Value2 = objArray;
 
                     rownum++;
