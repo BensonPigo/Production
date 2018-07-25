@@ -55,9 +55,10 @@ namespace Sci.Production.Subcon
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["ThreadColorID"] = string.Empty;
+                    return;
                 }
                 if (MyUtility.Check.Seek($@"select 1 from threadcolor WITH (NOLOCK) where junk=0 and id='{e.FormattedValue}'"))
-                {
+                {                    
                     dr["ThreadColorID"] = e.FormattedValue;
                 }
                 else
@@ -74,7 +75,7 @@ namespace Sci.Production.Subcon
             Helper.Controls.Grid.Generator(this.grid)
              .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("ThreadColorID", header: "Thread Color", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_threadColor)
-             .Numeric("Price", header: "Price", integer_places: 12, decimal_places: 2, width: Widths.AnsiChars(12))
+             .Numeric("Price", header: "Price", integer_places: 12, decimal_places: 4, width: Widths.AnsiChars(12))
              .DateTime("addDate", header: "Create Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
              .Text("addName", header: "Create Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .DateTime("editDate", header: "Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
@@ -104,7 +105,23 @@ namespace Sci.Production.Subcon
                     MyUtility.Msg.WarningBox("<ThreadColorID> cannot be empty!");
                     return false;
                 }
+
+                if (MyUtility.Check.Empty(dr["Price"]))
+                {
+                    MyUtility.Msg.WarningBox("<Price> cannot be empty!");
+                    return false;
+                }
             }
+
+            #region 判斷Color是否有重複
+            DataTable dtfilter = (DataTable)gridbs.DataSource;
+            if (dtfilter.DefaultView.ToTable(true, new string[] { "Refno", "ThreadColorID" }).Rows.Count !=
+                dtfilter.DefaultView.ToTable(false, new string[] { "Refno", "ThreadColorID" }).Rows.Count)
+            {
+                MyUtility.Msg.WarningBox("<Refno><Thread Color> has been repeating, cannot save!");
+                return false;
+            }
+            #endregion
             return base.OnSaveBefore();
         }
 

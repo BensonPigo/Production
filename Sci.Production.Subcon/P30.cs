@@ -599,7 +599,8 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0)
                     CurrentDetailData["refno"] = x[0][0];
                     CurrentDetailData["unitid"] = x[0][3];
                     CurrentDetailData["price"] = decimal.Parse(x[0][4].ToString());
-                }
+                    CurrentDetailData.EndEdit();
+                }                
             };
             ts.CellValidating += (s, e) =>
             {
@@ -631,7 +632,7 @@ where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailDa
                     CurrentDetailData["refno"] = dr[0];
                     CurrentDetailData["unitid"] = dr[1];                   
                 }
-                
+                CurrentDetailData.EndEdit();
             };
             #endregion
 
@@ -651,6 +652,7 @@ where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailDa
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     CurrentDetailData["Threadcolorid"] = item.GetSelectedString();
+                    CurrentDetailData.EndEdit();
                 }
             };
             ts2.CellValidating += (s, e) =>
@@ -673,12 +675,23 @@ where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailDa
                 string sqlThColor = $@"
 select * from LocalItem_ThreadColorPrice 
 where refno='{CurrentDetailData["Refno"]}' and ThreadColorID ='{e.FormattedValue.ToString()}'";
-                if (MyUtility.Check.Seek(sqlThColor,out dr))
+                if (MyUtility.Check.Seek(sqlThColor, out dr))
                 {
                     CurrentDetailData["price"] = dr["Price"];
-                    CurrentDetailData.EndEdit();
+                }
+                else
+                {
+                    if (MyUtility.Check.Seek($@"
+select refno,unitid,price from localitem WITH (NOLOCK) 
+where refno = '{CurrentDetailData["Refno"]}' 
+and category = '{ CurrentMaintain["category"]}'
+and localsuppid = '{CurrentMaintain["localsuppid"]}'", out dr, null))
+                    {
+                        CurrentDetailData["price"] = dr["Price"];
+                    }
                 }
                 CurrentDetailData["threadColorid"] = e.FormattedValue;
+                CurrentDetailData.EndEdit();
             };
             #endregion
 
