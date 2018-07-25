@@ -578,7 +578,7 @@ order by fwd.WhseNo",
             {
                 foreach (DataRow dr in this.DetailDatas)
                 {
-                    SP += "'" + dr["Orderid"] + "',";
+                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
                 }
 
                 string sqlcmd = $@"
@@ -1397,7 +1397,7 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             {
                 foreach (DataRow dr in this.DetailDatas)
                 {
-                    SP += "'" + dr["Orderid"] + "',";
+                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
                 }
 
                 string sqlcmd = $@"
