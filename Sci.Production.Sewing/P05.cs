@@ -120,6 +120,9 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            this.txtSubConOutFty.SetReadOnly(false);
+            this.txtContractnumber.ReadOnly = false;
+            this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["factoryid"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
         }
@@ -127,10 +130,10 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
+            this.txtSubConOutFty.SetReadOnly(true);
+            this.txtContractnumber.ReadOnly = true;
             if (this.CurrentMaintain["Status"].Equals("Confirm"))
             {
-                this.txtSubConOutFty.SetReadOnly(true);
-                this.txtContractnumber.ReadOnly = true;
                 this.dateIssuedate.ReadOnly = true;
             }
         }
@@ -409,11 +412,13 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                     foreach (DataGridViewColumn item in this.detailgrid.Columns)
                     {
                         item.ReadOnly = true;
+                        item.DefaultCellStyle.ForeColor = Color.Black;
                     }
 
                     if (curDr.RowState == DataRowState.Modified || curDr.RowState == DataRowState.Unchanged)
                     {
-                        this.detailgrid.Columns["OutputQty"].ReadOnly = false;
+                        this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].ReadOnly = false;
+                        this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
                         if ((int)curDr["AccuOutputQty"] > 0)
                         {
                             this.detailgrid.AllowUserToDeleteRows = false;
@@ -425,20 +430,30 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                     }
                     else
                     {
-                        this.detailgrid.Columns["OrderId"].ReadOnly = false;
-                        this.detailgrid.Columns["ComboType"].ReadOnly = false;
-                        this.detailgrid.Columns["Article"].ReadOnly = false;
-                        this.detailgrid.Columns["OutputQty"].ReadOnly = false;
-                        this.detailgrid.Columns["UnitPrice"].ReadOnly = false;
+                        this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].ReadOnly = false;
+                        this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].Style.ForeColor = Color.Red;
+                        this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].ReadOnly = false;
+                        this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].Style.ForeColor = Color.Red;
+                        this.detailgrid.Rows[e.RowIndex].Cells["Article"].ReadOnly = false;
+                        this.detailgrid.Rows[e.RowIndex].Cells["Article"].Style.ForeColor = Color.Red;
+                        this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].ReadOnly = false;
+                        this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
+                        this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].ReadOnly = false;
+                        this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].Style.ForeColor = Color.Red;
                     }
                 }
-                else
+                else if (this.EditMode)
                 {
-                    this.detailgrid.Columns["OrderId"].ReadOnly = false;
-                    this.detailgrid.Columns["ComboType"].ReadOnly = false;
-                    this.detailgrid.Columns["Article"].ReadOnly = false;
-                    this.detailgrid.Columns["OutputQty"].ReadOnly = false;
-                    this.detailgrid.Columns["UnitPrice"].ReadOnly = false;
+                    this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].ReadOnly = false;
+                    this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].Style.ForeColor = Color.Red;
+                    this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].ReadOnly = false;
+                    this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].Style.ForeColor = Color.Red;
+                    this.detailgrid.Rows[e.RowIndex].Cells["Article"].ReadOnly = false;
+                    this.detailgrid.Rows[e.RowIndex].Cells["Article"].Style.ForeColor = Color.Red;
+                    this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].ReadOnly = false;
+                    this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
+                    this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].ReadOnly = false;
+                    this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].Style.ForeColor = Color.Red;
                 }
             };
 

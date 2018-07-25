@@ -1273,7 +1273,8 @@ QAQty: <{3}>  less than AutoCreate Items QAQty: <{4}>",
             #endregion
 
             #region 檢查報的SP,Compotype,article在此合約書是否超額
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["SubConOutContractNumber"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["SubConOutContractNumber"]) &&
+                !MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
             {
                 foreach (DataRow dr in this.DetailDatas)
                 {
