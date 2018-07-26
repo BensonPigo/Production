@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtuser1 = new Sci.Production.Class.txtuser();
             this.dateInspectionDate = new Sci.Win.UI.DateRange();
             this.label9 = new Sci.Win.UI.Label();
             this.txtSPEnd = new Sci.Win.UI.TextBox();
@@ -37,7 +38,8 @@
             this.labelInspectionDate = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelBrand = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,6 +58,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtbrand);
+            this.panel1.Controls.Add(this.labelBrand);
             this.panel1.Controls.Add(this.txtuser1);
             this.panel1.Controls.Add(this.dateInspectionDate);
             this.panel1.Controls.Add(this.label9);
@@ -66,11 +70,34 @@
             this.panel1.Controls.Add(this.labelSP);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(426, 136);
+            this.panel1.Size = new System.Drawing.Size(426, 146);
             this.panel1.TabIndex = 94;
+            // 
+            // txtuser1
+            // 
+            this.txtuser1.DisplayBox1Binding = "";
+            this.txtuser1.Location = new System.Drawing.Point(120, 42);
+            this.txtuser1.Name = "txtuser1";
+            this.txtuser1.Size = new System.Drawing.Size(300, 23);
+            this.txtuser1.TabIndex = 113;
+            this.txtuser1.TextBox1Binding = "";
             // 
             // dateInspectionDate
             // 
+            // 
+            // 
+            // 
+            this.dateInspectionDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateInspectionDate.DateBox1.Name = "";
+            this.dateInspectionDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateInspectionDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateInspectionDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateInspectionDate.DateBox2.Name = "";
+            this.dateInspectionDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateInspectionDate.DateBox2.TabIndex = 1;
             this.dateInspectionDate.IsRequired = false;
             this.dateInspectionDate.Location = new System.Drawing.Point(120, 7);
             this.dateInspectionDate.Name = "dateInspectionDate";
@@ -142,18 +169,26 @@
             this.label10.TabIndex = 97;
             this.label10.Text = "Paper Size A4";
             // 
-            // txtuser1
+            // txtbrand
             // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(120, 42);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 113;
-            this.txtuser1.TextBox1Binding = "";
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(120, 113);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(94, 23);
+            this.txtbrand.TabIndex = 115;
+            // 
+            // labelBrand
+            // 
+            this.labelBrand.Location = new System.Drawing.Point(12, 113);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(105, 23);
+            this.labelBrand.TabIndex = 114;
+            this.labelBrand.Text = "Brand";
             // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(557, 179);
+            this.ClientSize = new System.Drawing.Size(557, 194);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.panel1);
             this.Name = "R08";
@@ -182,5 +217,7 @@
         private Win.UI.Label label9;
         private Win.UI.Label label10;
         private Class.txtuser txtuser1;
+        private Class.txtbrand txtbrand;
+        private Win.UI.Label labelBrand;
     }
 }
