@@ -198,7 +198,7 @@ select distinct 1 as Selected
        , b.PurchaseQty as qty
        , d.UnitID
        , [Price] = iif(tc.price is null , d.Price,tc.price)
-       , b.PurchaseQty * d.Price as amount 
+       , b.PurchaseQty * iif(tc.price is null , d.Price,tc.price) as amount 
        , [std_price] = round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3)
        , '' as remark 
        , a.EstArriveDate etd 
