@@ -38,6 +38,7 @@ namespace Sci.Production.Warehouse
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty)
+    ,[Order Qty] = o.Qty
 	,[Ship Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.ShipQty)
 	,[Roll] = fi.Roll
 	,[Dyelot] = fi.Dyelot
@@ -72,6 +73,7 @@ namespace Sci.Production.Warehouse
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = round(ISNULL(r.RateValue,1) * psd.Qty,2)
+    ,[Order Qty] = o.Qty
 	,[Ship Qty] = round(ISNULL(r.RateValue,1) * psd.ShipQty,2)
 	,[In Qty] = round(mpd.InQty,2)
 	,[Out Qty] = round(mpd.OutQty,2)
