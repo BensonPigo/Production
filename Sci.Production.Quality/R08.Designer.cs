@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.labelBrand = new Sci.Win.UI.Label();
             this.txtuser1 = new Sci.Production.Class.txtuser();
             this.dateInspectionDate = new Sci.Win.UI.DateRange();
             this.label9 = new Sci.Win.UI.Label();
@@ -38,8 +40,6 @@
             this.labelInspectionDate = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
-            this.labelBrand = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -73,13 +73,30 @@
             this.panel1.Size = new System.Drawing.Size(426, 146);
             this.panel1.TabIndex = 94;
             // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(120, 113);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(94, 23);
+            this.txtbrand.TabIndex = 4;
+            // 
+            // labelBrand
+            // 
+            this.labelBrand.Location = new System.Drawing.Point(12, 113);
+            this.labelBrand.Name = "labelBrand";
+            this.labelBrand.Size = new System.Drawing.Size(105, 23);
+            this.labelBrand.TabIndex = 114;
+            this.labelBrand.Text = "Brand";
+            // 
             // txtuser1
             // 
             this.txtuser1.DisplayBox1Binding = "";
             this.txtuser1.Location = new System.Drawing.Point(120, 42);
             this.txtuser1.Name = "txtuser1";
             this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 113;
+            this.txtuser1.TabIndex = 1;
             this.txtuser1.TextBox1Binding = "";
             // 
             // dateInspectionDate
@@ -102,7 +119,7 @@
             this.dateInspectionDate.Location = new System.Drawing.Point(120, 7);
             this.dateInspectionDate.Name = "dateInspectionDate";
             this.dateInspectionDate.Size = new System.Drawing.Size(280, 23);
-            this.dateInspectionDate.TabIndex = 112;
+            this.dateInspectionDate.TabIndex = 0;
             // 
             // label9
             // 
@@ -125,7 +142,7 @@
             this.txtSPEnd.MaxLength = 13;
             this.txtSPEnd.Name = "txtSPEnd";
             this.txtSPEnd.Size = new System.Drawing.Size(116, 23);
-            this.txtSPEnd.TabIndex = 9;
+            this.txtSPEnd.TabIndex = 3;
             // 
             // txtSPStart
             // 
@@ -135,7 +152,7 @@
             this.txtSPStart.MaxLength = 13;
             this.txtSPStart.Name = "txtSPStart";
             this.txtSPStart.Size = new System.Drawing.Size(116, 23);
-            this.txtSPStart.TabIndex = 8;
+            this.txtSPStart.TabIndex = 2;
             // 
             // labelInspected
             // 
@@ -168,23 +185,6 @@
             this.label10.Size = new System.Drawing.Size(92, 22);
             this.label10.TabIndex = 97;
             this.label10.Text = "Paper Size A4";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(120, 113);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(94, 23);
-            this.txtbrand.TabIndex = 115;
-            // 
-            // labelBrand
-            // 
-            this.labelBrand.Location = new System.Drawing.Point(12, 113);
-            this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(105, 23);
-            this.labelBrand.TabIndex = 114;
-            this.labelBrand.Text = "Brand";
             // 
             // R08
             // 
