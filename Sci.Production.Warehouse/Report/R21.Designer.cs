@@ -57,15 +57,18 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(438, 81);
+            this.print.TabIndex = 16;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(438, 9);
+            this.toexcel.TabIndex = 14;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(438, 45);
+            this.close.TabIndex = 15;
             // 
             // rdbtnSummary
             // 
@@ -74,7 +77,7 @@
             this.rdbtnSummary.Location = new System.Drawing.Point(178, 239);
             this.rdbtnSummary.Name = "rdbtnSummary";
             this.rdbtnSummary.Size = new System.Drawing.Size(85, 21);
-            this.rdbtnSummary.TabIndex = 134;
+            this.rdbtnSummary.TabIndex = 12;
             this.rdbtnSummary.Text = "Summary";
             this.rdbtnSummary.UseVisualStyleBackColor = true;
             // 
@@ -86,7 +89,7 @@
             this.rdbtnDetail.Location = new System.Drawing.Point(110, 239);
             this.rdbtnDetail.Name = "rdbtnDetail";
             this.rdbtnDetail.Size = new System.Drawing.Size(62, 21);
-            this.rdbtnDetail.TabIndex = 133;
+            this.rdbtnDetail.TabIndex = 11;
             this.rdbtnDetail.TabStop = true;
             this.rdbtnDetail.Text = "Detail";
             this.rdbtnDetail.UseVisualStyleBackColor = true;
@@ -101,7 +104,7 @@
             this.cmbStockType.Name = "cmbStockType";
             this.cmbStockType.OldText = "";
             this.cmbStockType.Size = new System.Drawing.Size(117, 24);
-            this.cmbStockType.TabIndex = 132;
+            this.cmbStockType.TabIndex = 10;
             // 
             // cmbMaterialType
             // 
@@ -113,7 +116,7 @@
             this.cmbMaterialType.Name = "cmbMaterialType";
             this.cmbMaterialType.OldText = "";
             this.cmbMaterialType.Size = new System.Drawing.Size(117, 24);
-            this.cmbMaterialType.TabIndex = 131;
+            this.cmbMaterialType.TabIndex = 9;
             // 
             // labelReportType
             // 
@@ -147,7 +150,7 @@
             this.textColor.MaxLength = 6;
             this.textColor.Name = "textColor";
             this.textColor.Size = new System.Drawing.Size(66, 23);
-            this.textColor.TabIndex = 127;
+            this.textColor.TabIndex = 8;
             // 
             // labelColor
             // 
@@ -166,7 +169,7 @@
             this.checkQty.Location = new System.Drawing.Point(9, 268);
             this.checkQty.Name = "checkQty";
             this.checkQty.Size = new System.Drawing.Size(73, 21);
-            this.checkQty.TabIndex = 119;
+            this.checkQty.TabIndex = 13;
             this.checkQty.Text = "Qty > 0";
             this.checkQty.UseVisualStyleBackColor = true;
             // 
@@ -180,7 +183,7 @@
             this.txtfactory1.MaxLength = 8;
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 116;
+            this.txtfactory1.TabIndex = 5;
             // 
             // label2
             // 
@@ -204,7 +207,7 @@
             this.textEndRefno.MaxLength = 20;
             this.textEndRefno.Name = "textEndRefno";
             this.textEndRefno.Size = new System.Drawing.Size(146, 23);
-            this.textEndRefno.TabIndex = 118;
+            this.textEndRefno.TabIndex = 7;
             // 
             // textStartRefno
             // 
@@ -214,7 +217,7 @@
             this.textStartRefno.MaxLength = 20;
             this.textStartRefno.Name = "textStartRefno";
             this.textStartRefno.Size = new System.Drawing.Size(146, 23);
-            this.textStartRefno.TabIndex = 117;
+            this.textStartRefno.TabIndex = 6;
             // 
             // label1
             // 
@@ -238,7 +241,7 @@
             this.txtMdivision1.MaxLength = 8;
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(67, 23);
-            this.txtMdivision1.TabIndex = 115;
+            this.txtMdivision1.TabIndex = 4;
             // 
             // textEndSP
             // 
@@ -248,7 +251,7 @@
             this.textEndSP.MaxLength = 13;
             this.textEndSP.Name = "textEndSP";
             this.textEndSP.Size = new System.Drawing.Size(121, 23);
-            this.textEndSP.TabIndex = 114;
+            this.textEndSP.TabIndex = 1;
             // 
             // textStartSP
             // 
@@ -258,7 +261,7 @@
             this.textStartSP.MaxLength = 13;
             this.textStartSP.Name = "textStartSP";
             this.textStartSP.Size = new System.Drawing.Size(121, 23);
-            this.textStartSP.TabIndex = 113;
+            this.textStartSP.TabIndex = 0;
             // 
             // labelRefno
             // 
@@ -315,7 +318,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(110, 35);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(270, 23);
-            this.dateBuyerDelivery.TabIndex = 135;
+            this.dateBuyerDelivery.TabIndex = 3;
             // 
             // labBuyDelivery
             // 
