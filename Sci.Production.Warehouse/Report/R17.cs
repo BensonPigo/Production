@@ -62,10 +62,10 @@ namespace Sci.Production.Warehouse
             
             for (int i = 1; i <= dt.Rows.Count; i++)
             {
-                if (!((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Empty())
-                    objSheets.Cells[i + 1, 10] = ((string)((Excel.Range)objSheets.Cells[i + 1, 10]).Value).Trim();
+                if (!((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Empty())
+                    objSheets.Cells[i + 1, 12] = ((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Trim();
             }
-            objSheets.Columns[10].ColumnWidth = 50;
+            objSheets.Columns[12].ColumnWidth = 50;
             objSheets.Rows.AutoFit();
 
             #region Save & Show Excel
