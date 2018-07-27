@@ -179,8 +179,8 @@ namespace Sci.Production.Quality
 
             cmd = string.Format(@"select A.POID,(A.seq1+'-'+A.seq2)SEQ,x.FactoryID,x.BrandID,x.StyleID,x.SeasonID,t.ExportId,t.InvNo,t.WhseArrival,
 t.StockQty,
-(Select MinSciDelivery from DBO.GetSCI(A.id,x.Category))[MinSciDelivery],
-(Select MinBuyerDelivery from DBO.GetSCI(A.id,x.Category))[MinBuyerDelivery],
+(Select MinSciDelivery from DBO.GetSCI(A.poid,x.Category))[MinSciDelivery],
+(Select MinBuyerDelivery from DBO.GetSCI(A.poid,x.Category))[MinBuyerDelivery],
 A.refno,
 iif(C.Name is null,oc.name,c.name ) name,
 PS.SizeSpec,
