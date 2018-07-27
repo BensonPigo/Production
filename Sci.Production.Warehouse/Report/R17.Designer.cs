@@ -44,8 +44,8 @@
             this.txtSeq = new Sci.Production.Class.txtSeq();
             this.txtMtlLocationStart = new Sci.Production.Class.txtMtlLocation(this.components);
             this.label2 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
             this.dateETA = new Sci.Win.UI.DateRange();
+            this.labelETA = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -238,14 +238,6 @@
             this.label2.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(8, 76);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 23);
-            this.label1.TabIndex = 110;
-            this.label1.Text = "ETA";
-            // 
             // dateETA
             // 
             // 
@@ -268,11 +260,22 @@
             this.dateETA.Size = new System.Drawing.Size(280, 23);
             this.dateETA.TabIndex = 3;
             // 
+            // labelETA
+            // 
+            this.labelETA.BackColor = System.Drawing.Color.PaleGreen;
+            this.labelETA.Location = new System.Drawing.Point(8, 76);
+            this.labelETA.Name = "labelETA";
+            this.labelETA.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.labelETA.Size = new System.Drawing.Size(89, 23);
+            this.labelETA.TabIndex = 111;
+            this.labelETA.Text = "ETA";
+            this.labelETA.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R17
             // 
             this.ClientSize = new System.Drawing.Size(559, 237);
+            this.Controls.Add(this.labelETA);
             this.Controls.Add(this.dateETA);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtMtlLocationStart);
             this.Controls.Add(this.txtLocationEnd);
@@ -308,8 +311,8 @@
             this.Controls.SetChildIndex(this.txtLocationEnd, 0);
             this.Controls.SetChildIndex(this.txtMtlLocationStart, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.dateETA, 0);
+            this.Controls.SetChildIndex(this.labelETA, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -332,7 +335,7 @@
         private Class.txtMtlLocation txtLocationEnd;
         private Class.txtMtlLocation txtMtlLocationStart;
         private Win.UI.Label label2;
-        private Win.UI.Label label1;
         private Win.UI.DateRange dateETA;
+        private Win.UI.Label labelETA;
     }
 }

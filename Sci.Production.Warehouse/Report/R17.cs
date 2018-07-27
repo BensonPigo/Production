@@ -32,11 +32,13 @@ namespace Sci.Production.Warehouse
         {
             if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) 
                 && MyUtility.Check.Empty(dateSCIDelivery.Value2) 
-                && MyUtility.Check.Empty(txtSPNo.Text) 
+                && MyUtility.Check.Empty(txtSPNo.Text)
+                && MyUtility.Check.Empty(dateETA.TextBox1.Value)
+                && MyUtility.Check.Empty(dateETA.TextBox2.Value)
                 && MyUtility.Check.Empty(txtMtlLocationStart.Text) 
                 && MyUtility.Check.Empty(txtLocationEnd.Text))
             {
-                MyUtility.Msg.WarningBox("SP#, SCI Delivery, Location can't be empty!!");
+                MyUtility.Msg.WarningBox("SP#, SCI Delivery, ETA, Location can't be empty!!");
                 return false;
             }
             selectindex = comboStockType.SelectedIndex;
