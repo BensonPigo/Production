@@ -90,6 +90,9 @@ namespace Sci.Production.Warehouse
             string factory = txtfactory.Text;
             bool chkbalance = checkBalanceQty.Checked;
             string locationFilte = "";
+            string eta1 = dateETA.TextBox1.Text;
+            string eta2 = dateETA.TextBox2.Text;
+
 
             if (locationStart.Empty() == false && locationEnd.Empty() == false)
             {
@@ -116,6 +119,9 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
+        p.eta,
+        MaterialType = case when p.FabricType = 'F'then 'Fabric' 
+							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
         color		= p.ColorID,
@@ -162,6 +168,18 @@ where   1=1");
                         sqlcmd.Append(string.Format(@" 
         and orders.FactoryID = '{0}'", factory));
 
+                    if (!MyUtility.Check.Empty(eta1))
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and p.ETA >= '{0}'", eta1));
+                    }
+
+                    if (!MyUtility.Check.Empty(eta2))
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and p.ETA <= '{0}'", eta2));
+                    }
+
                     switch (selectindex)
                     {
                         case 0:
@@ -188,6 +206,9 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
+        p.eta,
+        MaterialType = case when p.FabricType = 'F'then 'Fabric' 
+							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
         color		= p.ColorID,
@@ -235,6 +256,18 @@ where   1=1
                         sqlcmd.Append(string.Format(@" 
         and orders.FactoryID = '{0}'", factory));
 
+                    if (!MyUtility.Check.Empty(eta1))
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and p.ETA >= '{0}'", eta1));
+                    }
+
+                    if (!MyUtility.Check.Empty(eta2))
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and p.ETA <= '{0}'", eta2));
+                    }
+
                     switch (selectindex)
                     {
                         case 0:
@@ -263,6 +296,9 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
+        p.eta,
+        MaterialType = case when p.FabricType = 'F'then 'Fabric' 
+							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
         color		= p.ColorID,
@@ -315,6 +351,18 @@ where   1=1"));
                         sqlcmd.Append(string.Format(@" 
         and orders.FactoryID = '{0}'", factory));
 
+                    if (!MyUtility.Check.Empty(eta1))
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and p.ETA >= '{0}'", eta1));
+                    }
+
+                    if (!MyUtility.Check.Empty(eta2))
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and p.ETA <= '{0}'", eta2));
+                    }
+
                     switch (selectindex)
                     {
                         case 0:
@@ -340,6 +388,9 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
+        p.eta,
+        MaterialType = case when p.FabricType = 'F'then 'Fabric' 
+							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
         color		= p.ColorID,
@@ -390,6 +441,18 @@ where   1=1
 
                     if (!MyUtility.Check.Empty(factory))
                         sqlcmd.Append(string.Format(@" and orders.FactoryId = '{0}'", factory));
+
+                    if (!MyUtility.Check.Empty(eta1))
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and p.ETA >= '{0}'", eta1));
+                    }
+
+                    if (!MyUtility.Check.Empty(eta2))
+                    {
+                        sqlcmd.Append(string.Format(@" 
+        and p.ETA <= '{0}'", eta2));
+                    }
 
                     switch (selectindex)
                     {
