@@ -622,7 +622,7 @@ and GETDATE() between f.BeginDate and f.EndDate";
             // 新增單狀態下，取ID且檢查此ID是否存在
             if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.Lookup("NegoRegion", MyUtility.Convert.GetString(this.CurrentMaintain["Shipper"]), "Factory", "ID").Trim() + Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("yyMM") + "-" + MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]).Trim() + "-" + MyUtility.GetValue.Lookup("ShipCode", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), "Brand", "ID").Trim();
+                string newID = MyUtility.GetValue.Lookup("NegoRegion", MyUtility.Convert.GetString(Env.User.Factory), "Factory", "ID").Trim() + Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("yyMM") + "-" + MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]).Trim() + "-" + MyUtility.GetValue.Lookup("ShipCode", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), "Brand", "ID").Trim();
                 if (MyUtility.Check.Seek(newID, "GMTBooking", "ID"))
                 {
                     this.txtInvSerial.Focus();
