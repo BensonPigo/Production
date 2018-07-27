@@ -258,7 +258,7 @@ BEGIN
 				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				if @Rowno=1 --兩筆以上的70大項就不填小項
 				Begin	
-					Select top 1 @seq1 = seq1 ,@Seq2 = isnull(SEQ2,'')
+					Select top 1 @seq1 = seq1 ,@Seq2 = SEQ2
 					From #SEQ2tmp 
 					Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid
 				End

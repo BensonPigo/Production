@@ -53,14 +53,14 @@ outer apply
 )s
 outer apply
 (
-	select top 1 seq1,seq2 =iif(counts2.cts>1,'',seq2)--兩筆以上的70大項就不填小項seq2
+	select top 1 seq1,seq2 --=iif(counts2.cts>1,'',seq2)--兩筆以上的70大項就不填小項seq2
 	from PO_Supp_Detail psd with(nolock) 
-	outer apply
-	(
-		select cts = count(1) 
-		from PO_Supp_Detail pin with(nolock) 
-		where id=@POID and pin.Scirefno=ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and pin.seq1 like '7%' and pin.OutputSeq2 != ''
-	)counts2
+	--outer apply
+	--(
+	--	select cts = count(1) 
+	--	from PO_Supp_Detail pin with(nolock) 
+	--	where id=@POID and pin.Scirefno=ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and pin.seq1 like '7%' and pin.OutputSeq2 != ''
+	--)counts2
 	where id = @POID and psd.Scirefno = ob.SCIRefno and Junk = 0 AND Colorid = oec.ColorID and psd.seq1 like '7%' and psd.OutputSeq2 != ''
 )s2
 outer apply(select top 1 A=0 from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=oe.Ukey)hasforArticle--排序用,有ForArticle排前
