@@ -179,8 +179,8 @@ namespace Sci.Production.Quality
 
             cmd = string.Format(@"select A.POID,(A.seq1+'-'+A.seq2)SEQ,x.FactoryID,x.BrandID,x.StyleID,x.SeasonID,t.ExportId,t.InvNo,t.WhseArrival,
 t.StockQty,
-(Select MinSciDelivery from DBO.GetSCI(A.Poid,x.Category))[MinSciDelivery],
-(Select MinBuyerDelivery from DBO.GetSCI(A.Poid,x.Category))[MinBuyerDelivery],
+(Select MinSciDelivery from DBO.GetSCI(A.id,x.Category))[MinSciDelivery],
+(Select MinBuyerDelivery from DBO.GetSCI(A.id,x.Category))[MinBuyerDelivery],
 A.refno,
 iif(C.Name is null,oc.name,c.name ) name,
 PS.SizeSpec,
@@ -198,9 +198,9 @@ PS.SizeSpec,
                  + RWhere + @"
 			                ) t
                 on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
-                inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK) "
+                inner join (select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK) "
                  + OWhere + @"
-			                 ) x on x. poid = A.POID
+			                 ) x on x. id = A.POID
                 inner join dbo.PO_Supp P WITH (NOLOCK) on P.id = A.POID and P.SEQ1 = A.SEQ1 
                 inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
                 left join dbo.Color C WITH (NOLOCK) on C.ID = PS.ColorID and C.BrandId = x.BrandId
