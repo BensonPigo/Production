@@ -90,8 +90,17 @@ namespace Sci.Production.Warehouse
             string factory = txtfactory.Text;
             bool chkbalance = checkBalanceQty.Checked;
             string locationFilte = "";
-            string eta1 = dateETA.TextBox1.Text;
-            string eta2 = dateETA.TextBox2.Text;
+            string eta1 = string.Empty;
+            string eta2 = string.Empty;
+            if (!MyUtility.Check.Empty(dateETA.TextBox1.Value))
+            {
+                eta1 = dateETA.TextBox1.Text;
+            }
+
+            if (!MyUtility.Check.Empty(dateETA.TextBox2.Value))
+            {
+                eta2 = dateETA.TextBox2.Text;
+            }
 
 
             if (locationStart.Empty() == false && locationEnd.Empty() == false)
