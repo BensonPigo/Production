@@ -530,8 +530,8 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             foreach (DataRow dr in gridData.Rows)
             {
                 worksheet.Cells[start_row, 1] = styleNo;
-                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + "_ " + dr["FabricColorName"].ToString();
-                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + dr["ArtworkColorName"].ToString();
+                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + " - " + dr["FabricColorName"].ToString();
+                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + " - " + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + " - " + dr["ArtworkColorName"].ToString();
                 worksheet.Cells[start_row, 4] = dr["Result"].ToString();
                 worksheet.Cells[start_row, 5] = dr["Remark"].ToString();
                 worksheet.Rows[start_row].Font.Bold = false;

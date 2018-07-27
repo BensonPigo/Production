@@ -543,8 +543,8 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             foreach (DataRow dr in gridData.Rows)
             {
                 worksheet.Cells[start_row, 1] = styleNo;
-                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + "_ " + dr["FabricColorName"].ToString();
-                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + dr["ArtworkColorName"].ToString();
+                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + " - " + dr["FabricColorName"].ToString();
+                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + " - " + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + " - " + dr["ArtworkColorName"].ToString();
                 worksheet.Cells[start_row, 4] = MyUtility.Check.Empty(dr["DryScale"]) ? string.Empty : "GRADE" + dr["DryScale"].ToString();
                 worksheet.Cells[start_row, 5] = MyUtility.Check.Empty(dr["WetScale"]) ? string.Empty : "GRADE" + dr["WetScale"].ToString();
                 worksheet.Cells[start_row, 6] = dr["Result"].ToString();
