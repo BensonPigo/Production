@@ -825,6 +825,8 @@ Do you want to continue? ");
 Do you want to continue? ");
                             if (DiaR == DialogResult.No)
                             {
+                                dr["SEQ1"] = oldvalue;
+                                dr.EndEdit();
                                 return;
                             }
                         }
@@ -924,6 +926,8 @@ Do you want to continue? ");
 Do you want to continue? ");
                             if (DiaR == DialogResult.No)
                             {
+                                dr["SEQ2"] = oldvalue;
+                                dr.EndEdit();
                                 return;
                             }
                         }
