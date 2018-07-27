@@ -210,7 +210,7 @@ begin
 				Set @SuppColor = IsNull(production.dbo.GetSuppColorList(@BofSciRefNo, @BofSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID), '');
 
 				--取得 Fabric Price
-				Set @Price = IsNull(dbo.GetPriceFromMtl(@BofSciRefNo, @BofSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
+				--Set @Price = IsNull(dbo.GetPriceFromMtl(@BofSciRefNo, @BofSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
 
 				set @ColorDesc = (select Color.Name from production.dbo.Color where BrandId = @BrandID and Color.ID = @ColorID)
 
@@ -221,7 +221,7 @@ begin
 					)
 				Values
 					( @ID, @BofUkey, @ColorID, @SuppColor, @UsageUnit, @Width, @Remark
-						, @UsageQty, @SysUsageQty, @OrderQty, @Price, @OrderList, @ColorDesc
+						, @UsageQty, @SysUsageQty, @OrderQty, 0, @OrderList, @ColorDesc
 						, @Special
 					);
 
