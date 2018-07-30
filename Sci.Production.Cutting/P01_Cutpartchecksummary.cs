@@ -36,6 +36,11 @@ namespace Sci.Production.Cutting
             and b.id = '{0}' and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
             order by patternpanel", cutid);
             DualResult fabresult = DBProxy.Current.Select("Production", fabcodesql, out fabcodetb);
+            if (!fabresult)
+            {
+                this.ShowErr(fabresult);
+                return;
+            }
             #endregion
 
             #region 建立Grid
@@ -49,9 +54,13 @@ namespace Sci.Production.Cutting
                                                 and c.id=b.poid and c.SizeCode = a.SizeCode
                                                 order by id,article,c.Seq", 
                                                 cutid);
-
             DataTable gridtb;
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out gridtb);
+            if (!gridResult)
+            {
+                this.ShowErr(gridResult);
+                return;
+            }
             #endregion
 
             #region 寫入部位數量
@@ -63,6 +72,12 @@ namespace Sci.Production.Cutting
             DataTable getqtytb;
 
             gridResult = DBProxy.Current.Select(null, getqtysql, out getqtytb);
+            if (!gridResult)
+            {
+                this.ShowErr(gridResult);
+                return;
+            }
+
             foreach (DataRow dr in getqtytb.Rows)
             {
                 DataRow[] gridselect = gridtb.Select(string.Format("id = '{0}' and article = '{1}' and sizecode = '{2}'", dr["orderid"], dr["article"], dr["sizecode"], dr["PatternPanel"], dr["Qty"]));
@@ -82,6 +97,11 @@ namespace Sci.Production.Cutting
             and a.id = b.id and b.cuttingpiece='0' and  a.FabricPanelCode=b.FabricPanelCode
             and a.FabricCode !='' order by Article,PatternPanel", cutid);
             gridResult = DBProxy.Current.Select(null, fabcodesql, out panneltb);
+            if (!gridResult)
+            {
+                this.ShowErr(gridResult);
+                return;
+            }
             foreach (DataRow dr in gridtb.Rows)
             {
                 complete = false;
