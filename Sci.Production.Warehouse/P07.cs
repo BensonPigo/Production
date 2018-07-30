@@ -1396,7 +1396,8 @@ select  a.id
         , a.remark
         , a.ukey
 from dbo.Receiving_Detail a WITH (NOLOCK) 
-Where a.id = '{0}' ", masterID);
+Where a.id = '{0}'
+order by ukey", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
 
