@@ -753,7 +753,7 @@ where WorkOrderUkey={0}", masterID);
                     sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ1"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    if (!MyUtility.Convert.GetString(sele.GetSelecteds()[0]["Colorid"]).EqualString(dr["Colorid"]))
+                    if (!MyUtility.Convert.GetString(sele.GetSelecteds()[0]["Colorid"]).EqualString(dr["Colorid"])&& !MyUtility.Check.Empty(dr["Colorid"].ToString()))
                     {
                        DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {sele.GetSelecteds()[0]["Colorid"]} now , 
 Do you want to continue? ");
@@ -819,7 +819,7 @@ Do you want to continue? ");
                     }
                     else
                     {
-                        if (!MyUtility.Convert.GetString(seledr["Colorid"]).EqualString(dr["Colorid"]))
+                        if (!MyUtility.Convert.GetString(seledr["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
                         {
                             DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {seledr["Colorid"]} now , 
 Do you want to continue? ");
@@ -853,7 +853,7 @@ Do you want to continue? ");
                     sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ2"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    if (!MyUtility.Convert.GetString(sele.GetSelecteds()[0]["Colorid"]).EqualString(dr["Colorid"]))
+                    if (!MyUtility.Convert.GetString(sele.GetSelecteds()[0]["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
                     {
                         DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {sele.GetSelecteds()[0]["Colorid"]} now , 
 Do you want to continue? ");
@@ -920,7 +920,7 @@ Do you want to continue? ");
                     }
                     else
                     {
-                        if (!MyUtility.Convert.GetString(seledr["Colorid"]).EqualString(dr["Colorid"]))
+                        if (!MyUtility.Convert.GetString(seledr["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
                         {
                             DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {seledr["Colorid"]} now , 
 Do you want to continue? ");
