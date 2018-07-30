@@ -68,6 +68,7 @@
             this.numW = new Sci.Win.UI.NumericBox();
             this.numL = new Sci.Win.UI.NumericBox();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.btnThread = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.txtArtTkt = new Sci.Win.UI.TextBox();
             this.numCone = new Sci.Win.UI.NumericBox();
@@ -384,6 +385,7 @@
             this.comboCartonDimension.IsSupportUnselect = true;
             this.comboCartonDimension.Location = new System.Drawing.Point(540, 22);
             this.comboCartonDimension.Name = "comboCartonDimension";
+            this.comboCartonDimension.OldText = "";
             this.comboCartonDimension.Size = new System.Drawing.Size(121, 24);
             this.comboCartonDimension.TabIndex = 3;
             this.comboCartonDimension.SelectedIndexChanged += new System.EventHandler(this.comboCartonDimension_SelectedIndexChanged);
@@ -634,6 +636,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnThread);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtArtTkt);
             this.groupBox2.Controls.Add(this.numCone);
@@ -656,6 +659,17 @@
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Thread Only";
+            // 
+            // btnThread
+            // 
+            this.btnThread.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnThread.Location = new System.Drawing.Point(609, 79);
+            this.btnThread.Name = "btnThread";
+            this.btnThread.Size = new System.Drawing.Size(133, 30);
+            this.btnThread.TabIndex = 23;
+            this.btnThread.Text = "Set Color Price";
+            this.btnThread.UseVisualStyleBackColor = true;
+            this.btnThread.Click += new System.EventHandler(this.btnThread_Click);
             // 
             // label1
             // 
@@ -954,5 +968,6 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtArtTkt;
         private Class.txtunit_local txtunit_ftyUnit;
+        private Win.UI.Button btnThread;
     }
 }

@@ -247,6 +247,15 @@ namespace Sci.Production.Subcon
             {
                 this.btnPaymentHistory.ForeColor = Color.Black;
             }
+
+            if (CurrentMaintain["Category"].ToString().ToUpper()== "SP_THREAD" || CurrentMaintain["Category"].ToString().ToUpper() == "EMB_THREAD")
+            {
+                this.btnThread.Visible = true;
+            }
+            else
+            {
+                this.btnThread.Visible = false;
+            }
         }
 
         private void btnPaymentHistory_Click(object sender, EventArgs e)
@@ -305,8 +314,8 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["CtnUnit"] = DBNull.Value;
                     CurrentMaintain["CBM"] = DBNull.Value;
                     break;
-
             }
+            this.btnThread.Enabled = true;
         }
 
         private void txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
@@ -356,6 +365,12 @@ namespace Sci.Production.Subcon
                 return;
             }
             getCBM();
+        }
+
+        private void btnThread_Click(object sender, EventArgs e)
+        {
+            var callfrm = new B01_ThreadColorPrice(true, CurrentMaintain["Refno"].ToString(),string.Empty,string.Empty);
+            callfrm.ShowDialog();
         }
     }
 }
