@@ -94,9 +94,23 @@ namespace Sci.Production.Quality
                 {
                     dr["LastUpdate"] = MyUtility.GetValue.Lookup("Name", dr["EditName"].ToString(), "Pass1", "ID") + " - " + dr["EditDate"].ToString();
                 }
-                
-                dr["ArtworkColorName"] = MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{dr["ArtworkColor"].ToString()}'  and BrandID =  '{this.masterDr["BrandID"]}'");
-                dr["FabricColorName"] = MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{dr["FabricColor"].ToString()}'  and BrandID =  '{this.masterDr["BrandID"]}'");
+
+                // 跑回圈將ArtworkColor,FabricColor 拆開後在串color 取得colorname塞入表身
+                string colorName = string.Empty;
+                string[] drArry = dr["ArtworkColor"].ToString().Split(';');
+                foreach (var item in drArry)
+                {
+                    colorName += MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}'") + ",";
+                }
+                dr["ArtworkColorName"] = colorName.Substring(0, colorName.Length - 1);
+
+                string FabName = string.Empty;
+                string[] drFab = dr["FabricColor"].ToString().Split(';');
+                foreach (var item in drFab)
+                {
+                    FabName += MyUtility.GetValue.Lookup($"select Name from Color WITH (NOLOCK) where ID = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}'") + ",";
+                }
+                dr["FabricColorName"] = FabName.Substring(0, FabName.Length - 1);
             }
             #endregion
         }
@@ -174,18 +188,29 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     string item_cmd = $"Select BrandID,ID,Name from Color WITH (NOLOCK) where BrandID =  '{this.masterDr["BrandID"]}'";
-                    SelectItem item = new SelectItem(item_cmd, "", "");
+                    SelectItem2 item = new SelectItem2(item_cmd, "", "","",null,"ID");
 
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
                         return;
                     }
-                    dr["ArtworkColor"] = item.GetSelecteds()[0]["ID"].ToString();
-                    dr["ArtworkColorName"] = item.GetSelecteds()[0]["Name"].ToString();
+                    
+                    dr["ArtworkColor"] = item.GetSelectedString().ToString().Replace(",", ";");
+                    string colorName = string.Empty;
+                    if (item.GetSelecteds().Count > 0)
+                    {
+                        foreach (DataRow its in item.GetSelecteds())
+                        {
+                            colorName += its["Name"] + ",";
+                        }
+                        if (colorName.Length > 0)
+                        {
+                            dr["ArtworkColorName"] = colorName.Substring(0, colorName.Length - 1);
+                        }
+                    }                                   
                     dr.EndEdit();
                 }
-
             };
 
             ts_artworkColor.CellValidating += (s, e) =>
@@ -197,19 +222,22 @@ namespace Sci.Production.Quality
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string colorID = MyUtility.GetValue.Lookup($"select ID from Color WITH (NOLOCK) where Name = '{e.FormattedValue}'  and BrandID =  '{this.masterDr["BrandID"]}' ");
 
-                if (MyUtility.Check.Empty(colorID))
+                string[] drArry = e.FormattedValue.ToString().Split(',');
+                string colorID = string.Empty;
+                foreach (var item in drArry)
                 {
-                    MyUtility.Msg.WarningBox("Artwork Color not found!");
-                    e.Cancel = true;
-                    return;
-                }
-                else
-                {
-                    dr["ArtworkColor"] = colorID;
-                }
+                    colorID += MyUtility.GetValue.Lookup($"select ID from Color WITH (NOLOCK) where Name = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}' ") + ";";
 
+                    if (MyUtility.Check.Empty(colorID))
+                    {
+                        MyUtility.Msg.WarningBox("Artwork Color not found!");
+                        e.Cancel = true;
+                        return;
+                    }               
+                }
+                dr["ArtworkColor"] = colorID.Substring(0, colorID.Length - 1);
+                dr.EndEdit();
             };
             #endregion
 
@@ -223,15 +251,27 @@ namespace Sci.Production.Quality
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     string item_cmd = $"Select BrandID,ID,Name from Color WITH (NOLOCK) where BrandID =  '{this.masterDr["BrandID"]}'";
-                    SelectItem item = new SelectItem(item_cmd, "", "");
+                    SelectItem2 item = new SelectItem2(item_cmd, "", "", "", null, "ID");
 
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
                         return;
                     }
-                    dr["FabricColor"] = item.GetSelecteds()[0]["ID"].ToString();
-                    dr["FabricColorName"] = item.GetSelecteds()[0]["Name"].ToString();
+
+                    dr["FabricColor"] = item.GetSelectedString().ToString().Replace(",", ";");
+                    string colorName = string.Empty;
+                    if (item.GetSelecteds().Count > 0)
+                    {
+                        foreach (DataRow its in item.GetSelecteds())
+                        {
+                            colorName += its["Name"] + ",";
+                        }
+                        if (colorName.Length > 0)
+                        {
+                            dr["FabricColorName"] = colorName.Substring(0, colorName.Length - 1);
+                        }
+                    }
                     dr.EndEdit();
                 }
 
@@ -246,29 +286,32 @@ namespace Sci.Production.Quality
                 if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string colorID = MyUtility.GetValue.Lookup($"select ID from Color WITH (NOLOCK) where Name = '{e.FormattedValue}'  and BrandID =  '{this.masterDr["BrandID"]}' ");
-
-                if (MyUtility.Check.Empty(colorID))
+                string[] drArry = e.FormattedValue.ToString().Split(',');
+                string colorID = string.Empty;
+                foreach (var item in drArry)
                 {
-                    MyUtility.Msg.WarningBox("Fabric Color not found!");
-                    e.Cancel = true;
-                    return;
-                }
-                else
-                {
-                    dr["FabricColor"] = colorID;
-                }
+                    colorID += MyUtility.GetValue.Lookup($"select ID from Color WITH (NOLOCK) where Name = '{item}'  and BrandID =  '{this.masterDr["BrandID"]}' ")+";";
 
+                    if (MyUtility.Check.Empty(colorID))
+                    {
+                        MyUtility.Msg.WarningBox("Fabric Color not found!");
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                dr["FabricColor"] = colorID.Substring(0, colorID.Length - 1);
+                dr.EndEdit();
             };
             #endregion
             Helper.Controls.Grid.Generator(this.grid)
             .Text("ArtworkTypeID", "Artwork", width: Widths.AnsiChars(17),settings: ts_artwork)
+            .Text("Design", "Design", width: Widths.AnsiChars(15), iseditingreadonly: false)
             .Text("ArtworkColorName", "Artwork Color", width: Widths.AnsiChars(18),settings: ts_artworkColor)
             .Text("FabricRefNo", "Fabric Ref No.", width: Widths.AnsiChars(17))
             .Text("FabricColorName", "Fabric Color", width: Widths.AnsiChars(18), settings: ts_fabricColor)
             .ComboBox("DryScale", "Dry Scale", width: Widths.AnsiChars(3)).Get(out cbb_DryScale)
             .ComboBox("WetScale", "Wet Scale", width: Widths.AnsiChars(3)).Get(out cbb_WetScale)
-            .Text("Result", "Result", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ResulCell)
+            .Text("Result", "Result", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ResulCell)            
             .EditText("Remark", "Remark", width: Widths.AnsiChars(15))
             .Text("LastUpdate", "Last Update", width: Widths.AnsiChars(28),iseditingreadonly: true);
 
@@ -500,8 +543,8 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             foreach (DataRow dr in gridData.Rows)
             {
                 worksheet.Cells[start_row, 1] = styleNo;
-                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + "_ " + dr["FabricColorName"].ToString(); 
-                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["ArtworkColorName"].ToString() : dr["ArtworkColorName"].ToString() + "_ " + dr["ArtworkTypeID"].ToString(); 
+                worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + " - " + dr["FabricColorName"].ToString();
+                worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + " - " + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + " - " + dr["ArtworkColorName"].ToString();
                 worksheet.Cells[start_row, 4] = MyUtility.Check.Empty(dr["DryScale"]) ? string.Empty : "GRADE" + dr["DryScale"].ToString();
                 worksheet.Cells[start_row, 5] = MyUtility.Check.Empty(dr["WetScale"]) ? string.Empty : "GRADE" + dr["WetScale"].ToString();
                 worksheet.Cells[start_row, 6] = dr["Result"].ToString();
