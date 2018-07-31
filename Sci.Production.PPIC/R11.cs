@@ -131,7 +131,8 @@ namespace Sci.Production.PPIC
             this.sbFtycode = new StringBuilder();
             string sqlFty = $@"
 
-select distinct FactoryID from sewingschedule s
+select distinct s.FactoryID from sewingschedule s
+inner join orders o on s.orderid=o.id
 where 1=1
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}";
             DBProxy.Current.Select(string.Empty, sqlFty, out this.dtFty);
@@ -483,6 +484,7 @@ union
 	and o.Category !='S' 
 	and os.BuyerDelivery between '{this.Ready1}' and '{this.Ready2}'
 ) a 
+where cLogRecDate is not null
 
 select [M],[Factory],[Delivery],[SPNO],[Category],[Cancelled],[Dest],[Style],[OrderType],[PoNo]
 ,[Brand],[Qty],[SewingOutputQty],[InLine],[OffLine],[FirstSewnDate],[LastSewnDate],[%]
