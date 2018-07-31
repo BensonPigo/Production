@@ -94,6 +94,17 @@ namespace Sci.Production.Sewing
             base.OnDetailEntered();
             this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
             this.oldttlqaqty = this.numQAOutput.Value;
+            if (this.EditMode)
+            {
+                if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
+                {
+                    this.txtSubConOutContractNumber.ReadOnly = true;
+                }
+                else
+                {
+                    this.txtSubConOutContractNumber.ReadOnly = false;
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -880,7 +891,7 @@ order by a.OrderId,os.Seq",
                 this.comboTeam.ReadOnly = true;
                 this.numManpower.ReadOnly = true;
                 this.numWHours.ReadOnly = true;
-                this.txtSubconOutFty.SetReadOnly(true);
+                this.txtSubconOutFty.TextBox1.ReadOnly = true;
             }
         }
 
@@ -2026,7 +2037,7 @@ WHERE  sewqty < packqty ",
             return true;
         }
 
-        private void txtdropdownlistShift_SelectedValueChanged(object sender, EventArgs e)
+        private void TxtdropdownlistShift_SelectedValueChanged(object sender, EventArgs e)
         {
             if (this.EditMode)
             {
@@ -2037,12 +2048,12 @@ WHERE  sewqty < packqty ",
 
                 if (this.txtdropdownlistShift.SelectedValue.Equals("O"))
                 {
-                    this.txtSubconOutFty.SetReadOnly(false);
+                    this.txtSubconOutFty.TextBox1.ReadOnly = false;
                     this.txtSubConOutContractNumber.ReadOnly = false;
                 }
                 else
                 {
-                    this.txtSubconOutFty.SetReadOnly(true);
+                    this.txtSubconOutFty.TextBox1.ReadOnly = true;
                     this.txtSubConOutContractNumber.ReadOnly = true;
                     this.CurrentMaintain["Shift"] = this.txtdropdownlistShift.SelectedValue;
                     this.CurrentMaintain["SubconOutFty"] = string.Empty;

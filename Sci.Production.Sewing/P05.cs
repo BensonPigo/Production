@@ -120,7 +120,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.txtSubConOutFty.SetReadOnly(false);
+            this.txtSubConOutFty.TextBox1.ReadOnly = false;
             this.txtContractnumber.ReadOnly = false;
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["factoryid"] = Env.User.Factory;
@@ -130,7 +130,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.txtSubConOutFty.SetReadOnly(true);
+            this.txtSubConOutFty.TextBox1.ReadOnly = true;
             this.txtContractnumber.ReadOnly = true;
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
@@ -141,6 +141,12 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Issuedate"]))
+            {
+                MyUtility.Msg.WarningBox("Issue Date cannot be empty!");
+                return;
+            }
+
             string updConfirm = $"update dbo.SubconOutContract set Status = 'Confirmed', ApvName = '{Env.User.UserID}' ,ApvDate = getdate() where SubConOutFty = '{this.CurrentMaintain["SubConOutFty"]}' and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
             DualResult result = DBProxy.Current.Execute(null, updConfirm);
             if (!result)
@@ -181,7 +187,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.txtuser1.SetReadOnly(true);
+            this.txtuser1.TextBox1.ReadOnly = true;
             this.label10.Text = this.CurrentMaintain["Status"].ToString();
         }
 
@@ -394,14 +400,14 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), settings: orderIdSet)
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), settings: orderIdSet, iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .Text("ComboType", header: "ComboType", width: Widths.AnsiChars(5), settings: comboTypeSet)
-                .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: articleSet)
+                .Text("ComboType", header: "ComboType", width: Widths.AnsiChars(5), settings: comboTypeSet, iseditingreadonly: true)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: articleSet, iseditingreadonly: true)
                 .Numeric("QrderQty", header: "Order Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("OutputQty", header: "Output Qty", width: Widths.AnsiChars(10), settings: outputQtySet)
                 .Numeric("AccuOutputQty", header: "Accu. Output Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4)
+                .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
                 .Numeric("SewingCPU", header: "Sewing CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
                 .Numeric("CuttingCPU", header: "Cutting CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
                 .Numeric("InspectionCPU", header: "Inspection CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
@@ -410,7 +416,6 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Numeric("EMBAmt", header: "EMB Amt", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
                 .Numeric("PrintingAmt", header: "Printing Amt", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4);
 
-            this.detailgrid.AllowUserToDeleteRows = false;
             this.detailgrid.RowSelecting += (s, e) =>
             {
                 DataRow curDr = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
@@ -418,10 +423,8 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 {
                     foreach (DataGridViewColumn item in this.detailgrid.Columns)
                     {
-                        item.ReadOnly = true;
                         item.DefaultCellStyle.ForeColor = Color.Black;
                     }
-
                     if (curDr.RowState == DataRowState.Modified || curDr.RowState == DataRowState.Unchanged)
                     {
                         this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].ReadOnly = false;

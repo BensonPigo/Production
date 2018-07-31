@@ -82,7 +82,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBoxApvDate);
             this.masterpanel.Controls.Add(this.dateIssuedate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 110);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 110);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssuedate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBoxApvDate, 0);
@@ -107,7 +107,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 110);
-            this.detailpanel.Size = new System.Drawing.Size(892, 239);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 239);
             // 
             // gridicon
             // 
@@ -115,7 +115,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 239);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 239);
             // 
             // detail2
             // 
@@ -131,16 +131,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1000, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1000, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             // 
             // browse
             // 
@@ -280,6 +280,7 @@
             // 
             this.numericTtlCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTtlCPU.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TtlCPU", true));
+            this.numericTtlCPU.DecimalPlaces = 4;
             this.numericTtlCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericTtlCPU.IsSupportEditMode = false;
             this.numericTtlCPU.Location = new System.Drawing.Point(647, 10);

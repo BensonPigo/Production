@@ -561,7 +561,7 @@
             this.txtdropdownlistShift.Size = new System.Drawing.Size(115, 24);
             this.txtdropdownlistShift.TabIndex = 2;
             this.txtdropdownlistShift.Type = "SewingOutput_Shift";
-            this.txtdropdownlistShift.SelectedValueChanged += new System.EventHandler(this.txtdropdownlistShift_SelectedValueChanged);
+            this.txtdropdownlistShift.SelectedValueChanged += new System.EventHandler(this.TxtdropdownlistShift_SelectedValueChanged);
             // 
             // txtsewinglineLine
             // 
