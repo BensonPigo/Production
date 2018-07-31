@@ -49,7 +49,7 @@ namespace Sci.Production.Class
             get { return this.displayBox1.Text; }
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        public virtual void textBox1_Validating(object sender, CancelEventArgs e)
         {
            // base.OnValidating(e);
             string textValue = this.textBox1.Text;
@@ -78,7 +78,7 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
-            this.textBox1.ValidateControl();
+            this.ValidateControl();
             this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd();
             
         }

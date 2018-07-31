@@ -132,7 +132,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             base.ClickEditAfter();
             this.txtSubConOutFty.SetReadOnly(true);
             this.txtContractnumber.ReadOnly = true;
-            if (this.CurrentMaintain["Status"].Equals("Confirm"))
+            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
                 this.dateIssuedate.ReadOnly = true;
             }
@@ -141,7 +141,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            string updConfirm = $"update dbo.SubconOutContract set Status = 'Confirm', ApvName = '{Env.User.UserID}' ,ApvDate = getdate() where SubConOutFty = '{this.CurrentMaintain["SubConOutFty"]}' and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
+            string updConfirm = $"update dbo.SubconOutContract set Status = 'Confirmed', ApvName = '{Env.User.UserID}' ,ApvDate = getdate() where SubConOutFty = '{this.CurrentMaintain["SubConOutFty"]}' and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
             DualResult result = DBProxy.Current.Execute(null, updConfirm);
             if (!result)
             {
@@ -170,7 +170,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
 
         protected override bool ClickDeleteBefore()
         {
-            if (this.CurrentMaintain["Status"].Equals("Confirm"))
+            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
                 MyUtility.Msg.WarningBox("This Data already confirm, can't delete");
                 return false;
@@ -329,6 +329,13 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                     return;
                 }
 
+                if (this.CurrentMaintain["Status"].Equals("Confirmed") && output < (int)this.CurrentDetailData["AccuOutputQty"])
+                {
+                    MyUtility.Msg.WarningBox("Output Qty can't small than Accu.Output Qty");
+                    e.Cancel = true;
+                    return;
+                }
+
                 this.CurrentDetailData["OutputQty"] = output;
                 this.CurrentDetailData["OtherAmt"] = (decimal)this.CurrentDetailData["OtherPrice"] * output;
                 this.CurrentDetailData["EMBAmt"] = (decimal)this.CurrentDetailData["EMBPrice"] * output;
@@ -394,20 +401,20 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Numeric("QrderQty", header: "Order Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("OutputQty", header: "Output Qty", width: Widths.AnsiChars(10), settings: outputQtySet)
                 .Numeric("AccuOutputQty", header: "Accu. Output Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10),integer_places: 12, decimal_places: 4)
-                .Numeric("SewingCPU", header: "Sewing CPU", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("CuttingCPU", header: "Cutting CPU", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("InspectionCPU", header: "Inspection CPU", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OtherCPU", header: "Other CPU", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OtherAmt", header: "Other Amt", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("EMBAmt", header: "EMB Amt", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("PrintingAmt", header: "Printing Amt", width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4)
+                .Numeric("SewingCPU", header: "Sewing CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
+                .Numeric("CuttingCPU", header: "Cutting CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
+                .Numeric("InspectionCPU", header: "Inspection CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
+                .Numeric("OtherCPU", header: "Other CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
+                .Numeric("OtherAmt", header: "Other Amt", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
+                .Numeric("EMBAmt", header: "EMB Amt", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
+                .Numeric("PrintingAmt", header: "Printing Amt", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4);
 
             this.detailgrid.AllowUserToDeleteRows = false;
             this.detailgrid.RowSelecting += (s, e) =>
             {
                 DataRow curDr = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
-                if (this.EditMode && this.CurrentMaintain["Status"].Equals("Confirm"))
+                if (this.EditMode && this.CurrentMaintain["Status"].Equals("Confirmed"))
                 {
                     foreach (DataGridViewColumn item in this.detailgrid.Columns)
                     {
@@ -421,11 +428,11 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                         this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
                         if ((int)curDr["AccuOutputQty"] > 0)
                         {
-                            this.detailgrid.AllowUserToDeleteRows = false;
+                            this.gridicon.Remove.Enabled = false;
                         }
                         else
                         {
-                            this.detailgrid.AllowUserToDeleteRows = true;
+                            this.gridicon.Remove.Enabled = true;
                         }
                     }
                     else

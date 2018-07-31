@@ -1002,6 +1002,15 @@ order by a.OrderId,os.Seq",
                 return false;
             }
 
+            if (!MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'") &&
+                this.CurrentMaintain["Shift"].Equals("O") &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["SubconOutFty"]) &&
+                MyUtility.Check.Empty(this.CurrentMaintain["SubConOutContractNumber"]))
+            {
+                this.txtSubConOutContractNumber.Focus();
+                MyUtility.Msg.WarningBox("SubCon-Out Contract Number can't empty!!");
+                return false;
+            }
             #endregion
 
             this.CalculateManHour();
@@ -1284,12 +1293,15 @@ QAQty: <{3}>  less than AutoCreate Items QAQty: <{4}>",
                         string chkContractQty = $@"
 select 
 [SewingOutputQty] = isnull(sum(sod.QAQty), 0) ,
-[SubconOutContractQty] = isnull((select OutputQty from dbo.SubconOutContract_Detail with (nolock) where 
-SubconOutFty = '{this.CurrentMaintain["SubConOutFty"]}'  and
-ContractNumber = '{this.CurrentMaintain["SubConOutContractNumber"]}' and
-OrderID = '{dr["OrderID"]}' and
-Article = '{dr["Article"]}' and
-Combotype = '{dr["ComboType"]}'
+[SubconOutContractQty] = isnull((select sd.OutputQty 
+from dbo.SubconOutContract_Detail sd with (nolock) 
+inner join dbo.SubconOutContract s with (nolock) on s.SubConOutFty = sd.SubConOutFty and s.ContractNumber = sd.ContractNumber and s.status = 'Confirmed'
+where 
+sd.SubconOutFty = '{this.CurrentMaintain["SubConOutFty"]}'  and
+sd.ContractNumber = '{this.CurrentMaintain["SubConOutContractNumber"]}' and
+sd.OrderID = '{dr["OrderID"]}' and
+sd.Article = '{dr["Article"]}' and
+sd.Combotype = '{dr["ComboType"]}'
 ),0)
     from SewingOutput s with(nolock)
     inner join SewingOutput_Detail sod with(nolock) on s.ID = sod.ID
@@ -1322,7 +1334,6 @@ Combotype = '{dr["ComboType"]}'
                             return false;
                         }
                     }
-
                 }
             }
             #endregion
@@ -2054,5 +2065,20 @@ WHERE  sewqty < packqty ",
                 e.Cancel = true;
             }
         }
+
+        private void TxtSubconOutFty_Validating(object sender, CancelEventArgs e)
+        {
+            this.CurrentMaintain["SubconOutFty"] = this.txtSubconOutFty.TextBox1.Text;
+            this.CurrentMaintain["SubConOutContractNumber"] = string.Empty;
+            if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.txtSubconOutFty.TextBox1.Text}'"))
+            {
+                this.txtSubConOutContractNumber.ReadOnly = true;
+            }
+            else
+            {
+                this.txtSubConOutContractNumber.ReadOnly = false;
+            }
+        }
+
     }
 }

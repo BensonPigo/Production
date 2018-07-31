@@ -591,6 +591,7 @@
             this.txtSubconOutFty.Size = new System.Drawing.Size(252, 23);
             this.txtSubconOutFty.TabIndex = 30;
             this.txtSubconOutFty.TextBox1Binding = "";
+            this.txtSubconOutFty.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubconOutFty_Validating);
             // 
             // label1
             // 
