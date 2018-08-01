@@ -159,12 +159,19 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
         {
             base.ClickUnconfirm();
             this.refresh.PerformClick();
+
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                this.UpdateAccuOutputQty(dr);
+            }
+
             var chkCanUnconfirm = this.DetailDatas.Where(s => (int)s["AccuOutputQty"] > 0);
             if (chkCanUnconfirm.Count() > 0)
             {
                 MyUtility.Msg.WarningBox("Detail data Accu. Output Qty more then 0, can't Unconfirm");
                 return;
             }
+
             string updConfirm = $"update dbo.SubconOutContract set Status = 'New', ApvName = '' ,ApvDate = null where SubConOutFty = '{this.CurrentMaintain["SubConOutFty"]}' and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
             DualResult result = DBProxy.Current.Execute(null, updConfirm);
             if (!result)
@@ -172,6 +179,21 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
                 this.ShowErr(result);
             }
 
+        }
+
+        private void UpdateAccuOutputQty(DataRow dr)
+        {
+            string sqlCmd = $@" select isnull(sum(sod.QAQty),0) 
+    from SewingOutput s with (nolock)
+    inner join SewingOutput_Detail sod with (nolock) on s.ID = sod.ID
+    where   s.SubConOutContractNumber = '{this.CurrentMaintain["Contractnumber"]}' and
+            s.SubconOutFty = '{this.CurrentMaintain["SubConOutFty"]}'  and
+            sod.OrderID = '{dr["OrderID"]}' and
+            sod.Article = '{dr["Article"]}' and
+            sod.Combotype  = '{dr["ComboType"]}'";
+
+            int accuOutputQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlCmd));
+            dr["AccuOutputQty"] = accuOutputQty;
         }
 
         protected override bool ClickDeleteBefore()
@@ -335,6 +357,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                     return;
                 }
 
+                this.UpdateAccuOutputQty(this.CurrentDetailData);
                 if (this.CurrentMaintain["Status"].Equals("Confirmed") && output < (int)this.CurrentDetailData["AccuOutputQty"])
                 {
                     MyUtility.Msg.WarningBox("Output Qty can't small than Accu.Output Qty");

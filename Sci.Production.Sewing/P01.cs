@@ -893,6 +893,8 @@ order by a.OrderId,os.Seq",
                 this.numWHours.ReadOnly = true;
                 this.txtSubconOutFty.TextBox1.ReadOnly = true;
             }
+
+            this.txtSubConOutContractNumber.ReadOnly = this.txtSubconOutFty.TextBox1.ReadOnly;
         }
 
         /// <inheritdoc/>
