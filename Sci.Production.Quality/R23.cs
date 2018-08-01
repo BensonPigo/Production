@@ -22,6 +22,7 @@ namespace Sci.Production.Quality
         private string dateRangeReady1;
         private string dateRangeReady2;
         private string dateRangeReadyOrl;
+        private int date1Gap;
         private DataTable dtFty;
         private DataTable[] dtList;
         private List<string> listSQLFilter;
@@ -48,6 +49,47 @@ namespace Sci.Production.Quality
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).AddDays(-MyUtility.Convert.GetInt(this.Gap)).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).AddDays(-MyUtility.Convert.GetInt(this.Gap)).ToString("yyyy/MM/dd");
             this.dateRangeReadyOrl = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
+
+            #region 排除假日及週日
+
+            // 跑回圈,確認不是Holiday or Sunday就跳出去
+            bool isHoilday = true;
+            this.date1Gap = MyUtility.Convert.GetInt(this.Gap);
+
+            // date 1
+            while (isHoilday)
+            {
+                if (this.dateRangeReady1.ToString() != this.checkHoliday(Convert.ToDateTime(this.dateRangeReady1)).ToString("yyyy/MM/dd"))
+                {
+                    isHoilday = true;
+                    this.date1Gap++;
+                }
+                else
+                {
+                    isHoilday = false;
+                }
+
+                this.dateRangeReady1 = this.checkHoliday(Convert.ToDateTime(this.dateRangeReady1)).ToString("yyyy/MM/dd");
+            }
+
+            isHoilday = true;
+
+            // date 2
+            while (isHoilday)
+            {
+                if (this.dateRangeReady2.ToString() != this.checkHoliday(Convert.ToDateTime(this.dateRangeReady2)).ToString("yyyy/MM/dd"))
+                {
+                    isHoilday = true;
+                }
+                else
+                {
+                    isHoilday = false;
+                }
+
+                this.dateRangeReady2 = this.checkHoliday(Convert.ToDateTime(this.dateRangeReady2)).ToString("yyyy/MM/dd");
+            }
+
+            #endregion
 
             this.listSQLFilter = new List<string>();
             #region Sql where Filter
@@ -81,9 +123,9 @@ namespace Sci.Production.Quality
 
             sbFtycode = new StringBuilder();
             string sqlFty = $@"
-select distinct FactoryID from sewingschedule s
+select distinct s.FactoryID from sewingschedule s
 INNER JOIN ORDERS O on s.orderid=o.id
-where 1=1
+where o.VasShas=1 and o.Category!='S' and o.Junk=0
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}";
             DBProxy.Current.Select(string.Empty, sqlFty, out this.dtFty);
             if (this.dtFty != null)
@@ -109,7 +151,7 @@ where 1=1
             #region Sql Command
             string sqlCmd = $@"
 SELECT distinct
-[ReadyDate] = convert(date,s.Offline+2)
+[ReadyDate] = convert(date,s.Offline + {MyUtility.Convert.GetInt(this.date1Gap)})
 ,[M] = o.MDivisionID
 ,[Factory] = o.FactoryID
 ,[Delivery] = o.BuyerDelivery
@@ -210,8 +252,9 @@ where o.VasShas=1 and o.Category!='S' and o.Junk=0
 
 select [M],[Factory],[Delivery],[SPNO],[Category],[Cancelled],[Dest],[Style],[OrderType],[PoNo]
 ,[Brand],[Qty],[SewingOutputQty],[InLine],[OffLine],[FirstSewnDate],[LastSewnDate],[%]
-,[TtlCTN],[FtyCTN],[ClogCTN],[cLogRecDate],[FinalInspDate],Result,[CfaName],[SewingLine],[ShipMode],[Remark]
+,[TtlCTN],[FtyCTN],[ClogCTN],[cLogRecDate],[FinalInspDate],Result,[CfaName],[SewingLine],[ShipMode]
 from #tmp
+where [%]=100
 order by ReadyDate,m,Factory
 
 select ReadyDate,m,Fty,[Failed Ready Date],[Pass Ready date],[Grand Total],[Rating]= convert(varchar,Rating)+'%' 
@@ -227,13 +270,13 @@ FROM #tmp t
 outer apply(
 	select count(*) cnt
 	FROM #tmp
-	where Remark='Failed Ready Date' and Factory=t.Factory and m=t.M and t.ReadyDate=ReadyDate
+	where (Result ='' or Result is null) and Factory=t.Factory and m=t.M and t.ReadyDate=ReadyDate
 	and category='Bulk' and Cancelled=0
 )fail
 outer apply(
 	select count(*) cnt
 	FROM #tmp
-	where Remark='Pass Ready Date' and Factory=t.Factory and m=t.M and t.ReadyDate=ReadyDate
+	where (Result !='' or Result is not null) and Factory=t.Factory and m=t.M and t.ReadyDate=ReadyDate
 	and category='Bulk' and Cancelled=0
 )pass
 where category='Bulk' and Cancelled=0
@@ -252,13 +295,13 @@ FROM #tmp t
 outer apply(
 	select count(*) cnt
 	FROM #tmp
-	where Remark='Failed Ready Date' and m=t.M and t.ReadyDate=ReadyDate
+	where (Result ='' or Result is null) and m=t.M and t.ReadyDate=ReadyDate
 	and category='Bulk' and Cancelled=0
 )fail
 outer apply(
 	select count(*) cnt
 	FROM #tmp
-	where Remark='Pass Ready Date' and m=t.M and t.ReadyDate=ReadyDate
+	where (Result !='' or Result is not null) and m=t.M and t.ReadyDate=ReadyDate
 	and category='Bulk' and Cancelled=0
 )pass
 where category='Bulk' and Cancelled=0
@@ -277,13 +320,13 @@ FROM #tmp t
 outer apply(
 	select count(*) cnt
 	FROM #tmp
-	where Remark='Failed Ready Date' and t.ReadyDate=ReadyDate
+	where (Result ='' or Result is null) and t.ReadyDate=ReadyDate
 	and category='Bulk' and Cancelled=0
 )fail
 outer apply(
 	select count(*) cnt
 	FROM #tmp
-	where Remark='Pass Ready Date' and t.ReadyDate=ReadyDate
+	where (Result !='' or Result is not null) and t.ReadyDate=ReadyDate
 	and category='Bulk' and Cancelled=0
 )pass
 where category='Bulk' and Cancelled=0
@@ -299,13 +342,13 @@ select * from
 	outer apply(
 		select count(*) cnt
 		FROM #tmp
-		where Remark='Failed Ready Date' and t.ReadyDate=ReadyDate
+		where (Result ='' or Result is null) and t.ReadyDate=ReadyDate
 		and category='Bulk' and Cancelled=0 and Factory = t.Factory
 	)fail
 	outer apply(
 		select count(*) cnt
 		FROM #tmp
-		where Remark='Pass Ready Date' and t.ReadyDate=ReadyDate
+		where (Result !='' or Result is not null) and t.ReadyDate=ReadyDate
 		and category='Bulk' and Cancelled=0 and Factory = t.Factory
 	)pass
 	where category='Bulk' and Cancelled=0
@@ -341,7 +384,7 @@ drop table #tmp
             }
             #endregion
             this.SetCount(this.dtList[0].Rows.Count);
-            string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir + "\\PPIC_R11.xltx");
+            string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir + "\\Quality_R23.xltx");
             sxrc sxr = new sxrc(xltPath, keepApp: true);
             sxr.boOpenFile = true;
             sxrc.xltRptTable xrtSummery1 = new sxrc.xltRptTable(this.dtList[1]);
@@ -358,7 +401,7 @@ drop table #tmp
 
             #region Save Excel
             string excelFile = string.Empty;
-            excelFile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R11");
+            excelFile = Sci.Production.Class.MicrosoftFile.GetName("Quality_R23");
             sxr.Save(excelFile);
             #endregion
 
@@ -475,6 +518,26 @@ drop table #tmp
             sxr.FinishSave();
 
             return true;
+        }
+
+        private DateTime checkHoliday(DateTime date)
+        {
+            string sqlcmd = $@"
+select *,[weekday]=DATEPART(WEEKDAY, convert(date, HolidayDate))
+from Holiday 
+where HolidayDate='{date.ToString("yyyy/MM/dd")}'
+or DATEPART(WEEKDAY, convert(date, '{date.ToString("yyyy/MM/dd")}'))=1
+and FactoryID='{Sci.Env.User.Factory}'
+";
+            if (MyUtility.Check.Seek(sqlcmd))
+            {
+                date = date.AddDays(-1);
+                return date;
+            }
+            else
+            {
+                return date;
+            }
         }
     }
 }
