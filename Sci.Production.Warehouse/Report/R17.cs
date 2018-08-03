@@ -130,7 +130,7 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
-        p.eta,
+        p.FinalETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
@@ -182,13 +182,13 @@ where   1=1");
                     if (!MyUtility.Check.Empty(eta1))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.ETA >= '{0}'", eta1));
+        and p.FinalETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.ETA <= '{0}'", eta2));
+        and p.FinalETA <= '{0}'", eta2));
                     }
 
                     switch (selectindex)
@@ -217,7 +217,7 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
-        p.eta,
+        p.FinalETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
@@ -270,13 +270,13 @@ where   1=1
                     if (!MyUtility.Check.Empty(eta1))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.ETA >= '{0}'", eta1));
+        and p.FinalETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.ETA <= '{0}'", eta2));
+        and p.FinalETA <= '{0}'", eta2));
                     }
 
                     switch (selectindex)
@@ -307,7 +307,7 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
-        p.eta,
+        p.FinalETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
@@ -365,13 +365,13 @@ where   1=1"));
                     if (!MyUtility.Check.Empty(eta1))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.ETA >= '{0}'", eta1));
+        and p.FinalETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.ETA <= '{0}'", eta2));
+        and p.FinalETA <= '{0}'", eta2));
                     }
 
                     switch (selectindex)
@@ -399,7 +399,7 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
-        p.eta,
+        p.FinalETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
@@ -456,13 +456,13 @@ where   1=1
                     if (!MyUtility.Check.Empty(eta1))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.ETA >= '{0}'", eta1));
+        and p.FinalETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.ETA <= '{0}'", eta2));
+        and p.FinalETA <= '{0}'", eta2));
                     }
 
                     switch (selectindex)
@@ -492,11 +492,6 @@ where   1=1
                 throw ex;
             }
             return result;
-        }
-
-        private void toexcel_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
