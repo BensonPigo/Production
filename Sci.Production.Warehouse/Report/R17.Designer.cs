@@ -59,7 +59,6 @@
             // 
             this.toexcel.Location = new System.Drawing.Point(440, 48);
             this.toexcel.TabIndex = 8;
-            this.toexcel.Click += new System.EventHandler(this.toexcel_Click);
             // 
             // close
             // 
