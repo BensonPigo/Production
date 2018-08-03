@@ -336,7 +336,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(97, 23);
             this.label3.TabIndex = 138;
-            this.label3.Text = "Buyer Delivery";
+            this.label3.Text = "ETA";
             // 
             // dateRange1
             // 
