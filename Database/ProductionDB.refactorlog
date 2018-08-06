@@ -252,4 +252,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="9e847d74-0660-4862-a710-ebe3ba778e77" ChangeDateTime="07/18/2018 01:26:28">
+    <Property Name="ElementName" Value="[dbo].[SubconOutContract].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SubconOutContract]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SubConOutFty" />
+  </Operation>
 </Operations>

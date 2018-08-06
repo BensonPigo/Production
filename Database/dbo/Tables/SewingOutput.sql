@@ -19,6 +19,7 @@
     [Category]     VARCHAR (1)    CONSTRAINT [DF_SewingOutput_Category] DEFAULT ('') NULL,
     [SFCData]      BIT            CONSTRAINT [DF_SewingOutput_SFCData] DEFAULT ((0)) NULL,
 	[SubconOutFty] varchar(8)     DEFAULT ('') NULL,
+	[SubConOutContractNumber] varchar(50)  CONSTRAINT [DF_SewingOutput_SubConOutContractNumber]  DEFAULT ('') NULL,
     [AddName]      VARCHAR (10)   CONSTRAINT [DF_SewingOutput_AddName] DEFAULT ('') NULL,
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_SewingOutput_EditName] DEFAULT ('') NULL,

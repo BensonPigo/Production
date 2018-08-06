@@ -58,6 +58,8 @@
             this.txtsewinglineLine = new Sci.Production.Class.txtsewingline();
             this.labelSubconOutFty = new Sci.Win.UI.Label();
             this.txtSubconOutFty = new Sci.Production.Class.txtLocalSupp();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSubConOutContractNumber = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -74,6 +76,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtSubConOutContractNumber);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.txtSubconOutFty);
             this.masterpanel.Controls.Add(this.labelSubconOutFty);
             this.masterpanel.Controls.Add(this.labelFactory);
@@ -104,7 +108,7 @@
             this.masterpanel.Controls.Add(this.labelLine);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 115);
+            this.masterpanel.Size = new System.Drawing.Size(1000, 140);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
@@ -136,15 +140,17 @@
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSubconOutFty, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSubconOutFty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSubConOutContractNumber, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 115);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 310);
+            this.detailpanel.Location = new System.Drawing.Point(0, 140);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 285);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(887, 80);
+            this.gridicon.Location = new System.Drawing.Point(887, 105);
             this.gridicon.TabIndex = 8;
             // 
             // refresh
@@ -153,7 +159,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 310);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 285);
             // 
             // detail
             // 
@@ -555,7 +561,7 @@
             this.txtdropdownlistShift.Size = new System.Drawing.Size(115, 24);
             this.txtdropdownlistShift.TabIndex = 2;
             this.txtdropdownlistShift.Type = "SewingOutput_Shift";
-            this.txtdropdownlistShift.SelectedValueChanged += new System.EventHandler(this.txtdropdownlistShift_SelectedValueChanged);
+            this.txtdropdownlistShift.SelectedValueChanged += new System.EventHandler(this.TxtdropdownlistShift_SelectedValueChanged);
             // 
             // txtsewinglineLine
             // 
@@ -585,6 +591,26 @@
             this.txtSubconOutFty.Size = new System.Drawing.Size(252, 23);
             this.txtSubconOutFty.TabIndex = 30;
             this.txtSubconOutFty.TextBox1Binding = "";
+            this.txtSubconOutFty.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubconOutFty_Validating);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(5, 112);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(191, 23);
+            this.label1.TabIndex = 31;
+            this.label1.Text = "SubCon-Out Contract Number";
+            // 
+            // txtSubConOutContractNumber
+            // 
+            this.txtSubConOutContractNumber.BackColor = System.Drawing.Color.White;
+            this.txtSubConOutContractNumber.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SubConOutContractNumber", true));
+            this.txtSubConOutContractNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSubConOutContractNumber.Location = new System.Drawing.Point(198, 112);
+            this.txtSubConOutContractNumber.Name = "txtSubConOutContractNumber";
+            this.txtSubConOutContractNumber.Size = new System.Drawing.Size(248, 23);
+            this.txtSubConOutContractNumber.TabIndex = 33;
+            this.txtSubConOutContractNumber.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubConOutContractNumber_Validating);
             // 
             // P01
             // 
@@ -660,5 +686,7 @@
         private Win.UI.Label labelFactory;
         private Class.txtLocalSupp txtSubconOutFty;
         private Win.UI.Label labelSubconOutFty;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSubConOutContractNumber;
     }
 }
