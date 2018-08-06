@@ -67,8 +67,10 @@ ORDER BY B.ID
 SELECT distinct b.* 
 	   , DataFrom = 'G'
 	   , HCID = '             '
+	   , c.Abb
 INTO  #tmpFtyBooking1
 FROM Pullout_Detail  a, Production.dbo.GMTBooking b 
+left join Production.dbo.LocalSupp c on b.Forwarder = c.id
 WHERE a. INVNo = b.id 
 ORDER BY b.id 
 
@@ -145,6 +147,7 @@ from (
 		   , EditDate
 		   , DataFrom
 		   , HCID
+		   , Abb
 	from #tmpFtyBooking1
 
 	union all
@@ -186,6 +189,7 @@ from (
 		   , EditDate-- = null
 		   , DataFrom
 		   , HCID
+		   , Abbr = null
 	from #tmpFtyBooking2
 ) a 
 
