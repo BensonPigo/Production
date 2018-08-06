@@ -94,6 +94,17 @@ namespace Sci.Production.Sewing
             base.OnDetailEntered();
             this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
             this.oldttlqaqty = this.numQAOutput.Value;
+            if (this.EditMode)
+            {
+                if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
+                {
+                    this.txtSubConOutContractNumber.ReadOnly = true;
+                }
+                else
+                {
+                    this.txtSubConOutContractNumber.ReadOnly = false;
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -880,8 +891,10 @@ order by a.OrderId,os.Seq",
                 this.comboTeam.ReadOnly = true;
                 this.numManpower.ReadOnly = true;
                 this.numWHours.ReadOnly = true;
-                this.txtSubconOutFty.SetReadOnly(true);
+                this.txtSubconOutFty.TextBox1.ReadOnly = true;
             }
+
+            this.txtSubConOutContractNumber.ReadOnly = this.txtSubconOutFty.TextBox1.ReadOnly;
         }
 
         /// <inheritdoc/>
@@ -1002,6 +1015,15 @@ order by a.OrderId,os.Seq",
                 return false;
             }
 
+            if (!MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'") &&
+                this.CurrentMaintain["Shift"].Equals("O") &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["SubconOutFty"]) &&
+                MyUtility.Check.Empty(this.CurrentMaintain["SubConOutContractNumber"]))
+            {
+                this.txtSubConOutContractNumber.Focus();
+                MyUtility.Msg.WarningBox("SubCon-Out Contract Number can't empty!!");
+                return false;
+            }
             #endregion
 
             this.CalculateManHour();
@@ -1268,6 +1290,63 @@ QAQty: <{3}>  less than AutoCreate Items QAQty: <{4}>",
                 {
                     MyUtility.Msg.WarningBox(errMsg.ToString());
                     return false;
+                }
+            }
+            #endregion
+
+            #region 檢查報的SP,Compotype,article在此合約書是否超額
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["SubConOutContractNumber"]) &&
+                !MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
+            {
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        DataRow outputDr;
+                        string chkContractQty = $@"
+select 
+[SewingOutputQty] = isnull(sum(sod.QAQty), 0) ,
+[SubconOutContractQty] = isnull((select sd.OutputQty 
+from dbo.SubconOutContract_Detail sd with (nolock) 
+inner join dbo.SubconOutContract s with (nolock) on s.SubConOutFty = sd.SubConOutFty and s.ContractNumber = sd.ContractNumber and s.status = 'Confirmed'
+where 
+sd.SubconOutFty = '{this.CurrentMaintain["SubConOutFty"]}'  and
+sd.ContractNumber = '{this.CurrentMaintain["SubConOutContractNumber"]}' and
+sd.OrderID = '{dr["OrderID"]}' and
+sd.Article = '{dr["Article"]}' and
+sd.Combotype = '{dr["ComboType"]}'
+),0)
+    from SewingOutput s with(nolock)
+    inner join SewingOutput_Detail sod with(nolock) on s.ID = sod.ID
+    where s.SubConOutContractNumber = '{this.CurrentMaintain["SubConOutContractNumber"]}' and
+            s.SubconOutFty = '{this.CurrentMaintain["SubConOutFty"]}'  and
+            sod.OrderID = '{dr["OrderID"]}' and
+            sod.Article = '{dr["Article"]}' and
+            sod.Combotype = '{dr["ComboType"]}' and
+            s.ID <> '{this.CurrentDetailData["ID"]}'";
+
+                        if (MyUtility.Check.Seek(chkContractQty, out outputDr))
+                        {
+                            int SewingOutputQty = (int)outputDr["SewingOutputQty"] + (int)dr["QAQty"];
+                            int SubconOutContractQty = (int)outputDr["SubconOutContractQty"];
+                            if (SewingOutputQty > SubconOutContractQty)
+                            {
+                                MyUtility.Msg.WarningBox($@"Sewing Output Qty({SewingOutputQty}) can't more than SubconOut Contract Qty({SubconOutContractQty})!!
+<SubConOutContractNumber> '{this.CurrentMaintain["SubConOutContractNumber"]}'
+<SubconOutFty> '{this.CurrentMaintain["SubConOutFty"]}'
+<OrderID> '{dr["OrderID"]}'
+<Article> '{dr["Article"]}'
+<Combotype> '{dr["ComboType"]}'
+");
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("Check Contract Output Qty Failure!!");
+                            return false;
+                        }
+                    }
                 }
             }
             #endregion
@@ -1960,23 +2039,59 @@ WHERE  sewqty < packqty ",
             return true;
         }
 
-        private void txtdropdownlistShift_SelectedValueChanged(object sender, EventArgs e)
+        private void TxtdropdownlistShift_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (this.txtdropdownlistShift.SelectedValue == null)
+            if (this.EditMode)
+            {
+                if (this.txtdropdownlistShift.SelectedValue == null)
+                {
+                    return;
+                }
+
+                if (this.txtdropdownlistShift.SelectedValue.Equals("O"))
+                {
+                    this.txtSubconOutFty.TextBox1.ReadOnly = false;
+                    this.txtSubConOutContractNumber.ReadOnly = false;
+                }
+                else
+                {
+                    this.txtSubconOutFty.TextBox1.ReadOnly = true;
+                    this.txtSubConOutContractNumber.ReadOnly = true;
+                    this.CurrentMaintain["Shift"] = this.txtdropdownlistShift.SelectedValue;
+                    this.CurrentMaintain["SubconOutFty"] = string.Empty;
+                    this.CurrentMaintain["SubConOutContractNumber"] = string.Empty;
+                }
+            }
+        }
+
+        private void TxtSubConOutContractNumber_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtSubConOutContractNumber.Text))
             {
                 return;
             }
 
-            if (this.txtdropdownlistShift.SelectedValue.Equals("O"))
+            string checkCmd = $@"select 1 from dbo.SubconOutContract with (nolock) where SubConOutFty = '{this.CurrentMaintain["SubconOutFty"]}'   and ContractNumber = '{this.txtSubConOutContractNumber.Text}'";
+            if (!MyUtility.Check.Seek(checkCmd))
             {
-                this.txtSubconOutFty.SetReadOnly(false);
+                MyUtility.Msg.WarningBox("Subcon-Out-Fty and SubCon-Out Contract Number not exists!");
+                e.Cancel = true;
+            }
+        }
+
+        private void TxtSubconOutFty_Validating(object sender, CancelEventArgs e)
+        {
+            this.CurrentMaintain["SubconOutFty"] = this.txtSubconOutFty.TextBox1.Text;
+            this.CurrentMaintain["SubConOutContractNumber"] = string.Empty;
+            if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.txtSubconOutFty.TextBox1.Text}'"))
+            {
+                this.txtSubConOutContractNumber.ReadOnly = true;
             }
             else
             {
-                this.txtSubconOutFty.SetReadOnly(true);
-                this.CurrentMaintain["Shift"] = this.txtdropdownlistShift.SelectedValue;
-                this.CurrentMaintain["SubconOutFty"] = string.Empty;
+                this.txtSubConOutContractNumber.ReadOnly = false;
             }
         }
+
     }
 }

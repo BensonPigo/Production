@@ -73,6 +73,7 @@
             this.splitContainer1.Size = new System.Drawing.Size(252, 23);
             this.splitContainer1.SplitterDistance = 80;
             this.splitContainer1.TabIndex = 2;
+            this.splitContainer1.TabStop = false;
             // 
             // txtLocalSupp
             // 

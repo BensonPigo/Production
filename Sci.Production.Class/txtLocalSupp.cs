@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ict;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,7 +27,6 @@ namespace Sci.Production.Class
         public Sci.Win.UI.TextBox TextBox1
         {
             get { return this.textBox1; }
-            set { this.textBox1 = value; }
         }
 
         public Sci.Win.UI.DisplayBox DisplayBox1
@@ -38,7 +38,7 @@ namespace Sci.Production.Class
         [Bindable(true)]
         public string TextBox1Binding
         {
-            set { this.textBox1.Text = value; }
+            set { this.textBox1.Text = value;  }
             get { return textBox1.Text; }
         }
 
@@ -49,7 +49,7 @@ namespace Sci.Production.Class
             get { return this.displayBox1.Text; }
         }
 
-        private void textBox1_Validating(object sender, CancelEventArgs e)
+        public virtual void textBox1_Validating(object sender, CancelEventArgs e)
         {
            // base.OnValidating(e);
             string textValue = this.textBox1.Text;
@@ -64,7 +64,7 @@ namespace Sci.Production.Class
                     return;
                 }
             }
-           
+            this.ValidateControl();
         }
 
       
@@ -78,7 +78,9 @@ namespace Sci.Production.Class
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
+            this.ValidateControl();
             this.displayBox1.Text = item.GetSelecteds()[0]["Name"].ToString().TrimEnd();
+            
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
