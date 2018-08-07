@@ -45,8 +45,8 @@
             this.dateBoxApvDate = new Sci.Win.UI.DateBox();
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.txtuser1 = new Sci.Production.Class.txtuser();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtSubConOutFty = new Sci.Production.Class.txtLocalSupp();
+            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,11 +63,11 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtMdivision1);
             this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.txtuser1);
             this.masterpanel.Controls.Add(this.numericTtlCPU);
             this.masterpanel.Controls.Add(this.numericTtlQty);
-            this.masterpanel.Controls.Add(this.txtfactory);
             this.masterpanel.Controls.Add(this.txtContractnumber);
             this.masterpanel.Controls.Add(this.txtSubConOutFty);
             this.masterpanel.Controls.Add(this.label10);
@@ -98,11 +98,11 @@
             this.masterpanel.Controls.SetChildIndex(this.label10, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSubConOutFty, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtContractnumber, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtfactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericTtlQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericTtlCPU, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtuser1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtMdivision1, 0);
             // 
             // detailpanel
             // 
@@ -172,7 +172,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(55, 23);
             this.label3.TabIndex = 3;
-            this.label3.Text = "Factory";
+            this.label3.Text = "M";
             // 
             // label4
             // 
@@ -329,20 +329,6 @@
             this.txtuser1.TabIndex = 29;
             this.txtuser1.TextBox1Binding = "";
             // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "factoryid", true));
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtfactory.IsSupportEditMode = false;
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(71, 76);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.ReadOnly = true;
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 25;
-            // 
             // txtSubConOutFty
             // 
             this.txtSubConOutFty.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SubConOutFty", true));
@@ -352,6 +338,18 @@
             this.txtSubConOutFty.Size = new System.Drawing.Size(252, 23);
             this.txtSubConOutFty.TabIndex = 23;
             this.txtSubConOutFty.TextBox1Binding = "";
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtMdivision1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionID", true));
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtMdivision1.IsSupportEditMode = false;
+            this.txtMdivision1.Location = new System.Drawing.Point(70, 76);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.ReadOnly = true;
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.TabIndex = 31;
             // 
             // P05
             // 
@@ -399,7 +397,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Win.UI.Label label10;
-        private Class.txtfactory txtfactory;
         private Win.UI.TextBox txtContractnumber;
         private Class.txtLocalSupp txtSubConOutFty;
         private Win.UI.TextBox txtRemark;
@@ -408,5 +405,6 @@
         private Win.UI.NumericBox numericTtlCPU;
         private Win.UI.NumericBox numericTtlQty;
         private Win.UI.DateBox dateIssuedate;
+        private Class.txtMdivision txtMdivision1;
     }
 }
