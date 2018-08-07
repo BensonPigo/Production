@@ -46,17 +46,17 @@ sd.OutputQty,
             sod.Article = sd.Article and
             sod.Combotype  = sd.Combotype
     ),
-sd.UnitPrice,
-tms.SewingCPU,
-tms.CuttingCPU,
-tms.InspectionCPU,
-tms.OtherCPU,
-tms.OtherAmt,
-tms.EMBAmt,
-tms.PrintingAmt,
-tms.OtherPrice,
-tms.EMBPrice,
-tms.PrintingPrice
+UnitPrice = sd.UnitPrice*r.rate,
+SewingCPU = tms.SewingCPU*r.rate,
+CuttingCPU = tms.CuttingCPU*r.rate,
+InspectionCPU = tms.InspectionCPU*r.rate,
+OtherCPU = tms.OtherCPU*r.rate,
+OtherAmt = tms.OtherAmt*r.rate,
+EMBAmt = tms.EMBAmt*r.rate,
+PrintingAmt = tms.PrintingAmt*r.rate,
+OtherPrice = tms.OtherPrice*r.rate,
+EMBPrice = tms.EMBPrice*r.rate,
+PrintingPrice = tms.PrintingPrice*r.rate
 from dbo.SubconOutContract_Detail sd with (nolock)
 left join Orders o with (nolock) on sd.Orderid = o.ID
 OUTER apply (
@@ -73,7 +73,9 @@ OUTER apply (
     [PrintingPrice] = sum(iif(ArtworkTypeID = 'PRINTING',Price,0))
     from Order_TmsCost with (nolock)
     where ID = sd.OrderID
-    ) as tms
+) as tms
+outer apply(select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,sd.ComboType)
+,(select rate = rate/100 from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType))/100)r
 where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumber}'
 ";
             this.DetailSelectCommand = cmd;
@@ -213,6 +215,11 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             this.label10.Text = this.CurrentMaintain["Status"].ToString();
         }
 
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_OrderId;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_ComboType;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Article;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_UnitPrice;
+
         protected override void OnDetailGridSetup()
         {
             DataGridViewGeneratorTextColumnSettings orderIdSet = new DataGridViewGeneratorTextColumnSettings();
@@ -270,14 +277,14 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
                 }
 
                 DualResult result;
-                result = this.GetTmsData(e.FormattedValue.ToString());
+                result = this.GetComboType();
                 if (result == false)
                 {
                     e.Cancel = true;
                     return;
                 }
 
-                result = this.GetComboType();
+                result = this.GetTmsData(e.FormattedValue.ToString(), this.CurrentDetailData["ComboType"].ToString());
                 if (result == false)
                 {
                     e.Cancel = true;
@@ -423,22 +430,22 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
             #endregion
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), settings: orderIdSet, iseditingreadonly: true)
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), settings: orderIdSet).Get(out this.col_OrderId)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(18), iseditingreadonly: true)
-                .Text("ComboType", header: "ComboType", width: Widths.AnsiChars(5), settings: comboTypeSet, iseditingreadonly: true)
-                .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: articleSet, iseditingreadonly: true)
+                .Text("ComboType", header: "ComboType", width: Widths.AnsiChars(5), settings: comboTypeSet).Get(out this.col_ComboType)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(8), settings: articleSet).Get(out this.col_Article)
                 .Numeric("QrderQty", header: "Order Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("OutputQty", header: "Output Qty", width: Widths.AnsiChars(10), settings: outputQtySet)
                 .Numeric("AccuOutputQty", header: "Accu. Output Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
-                .Numeric("SewingCPU", header: "Sewing CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
-                .Numeric("CuttingCPU", header: "Cutting CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
-                .Numeric("InspectionCPU", header: "Inspection CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
-                .Numeric("OtherCPU", header: "Other CPU", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
-                .Numeric("OtherAmt", header: "Other Amt", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
-                .Numeric("EMBAmt", header: "EMB Amt", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4)
-                .Numeric("PrintingAmt", header: "Printing Amt", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 4);
-
+                .Numeric("UnitPrice", header: "Price(Unit)", width: Widths.AnsiChars(10), integer_places: 12, decimal_places: 4).Get(out this.col_UnitPrice)
+                .Numeric("SewingCPU", header: "Sewing CPU", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("CuttingCPU", header: "Cutting CPU", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("InspectionCPU", header: "Inspection CPU", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("OtherCPU", header: "Other CPU", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("OtherAmt", header: "Other Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("EMBAmt", header: "EMB Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("PrintingAmt", header: "Printing Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+                ;
             this.detailgrid.RowSelecting += (s, e) =>
             {
                 DataRow curDr = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
@@ -448,6 +455,7 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                     {
                         item.DefaultCellStyle.ForeColor = Color.Black;
                     }
+
                     if (curDr.RowState == DataRowState.Modified || curDr.RowState == DataRowState.Unchanged)
                     {
                         this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].ReadOnly = false;
@@ -463,34 +471,70 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                     }
                     else
                     {
-                        this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].ReadOnly = false;
                         this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].Style.ForeColor = Color.Red;
-                        this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].ReadOnly = false;
                         this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].Style.ForeColor = Color.Red;
-                        this.detailgrid.Rows[e.RowIndex].Cells["Article"].ReadOnly = false;
                         this.detailgrid.Rows[e.RowIndex].Cells["Article"].Style.ForeColor = Color.Red;
-                        this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].ReadOnly = false;
                         this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
-                        this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].ReadOnly = false;
                         this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].Style.ForeColor = Color.Red;
                     }
                 }
                 else if (this.EditMode)
                 {
-                    this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].ReadOnly = false;
                     this.detailgrid.Rows[e.RowIndex].Cells["OrderId"].Style.ForeColor = Color.Red;
-                    this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].ReadOnly = false;
                     this.detailgrid.Rows[e.RowIndex].Cells["ComboType"].Style.ForeColor = Color.Red;
-                    this.detailgrid.Rows[e.RowIndex].Cells["Article"].ReadOnly = false;
                     this.detailgrid.Rows[e.RowIndex].Cells["Article"].Style.ForeColor = Color.Red;
-                    this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].ReadOnly = false;
                     this.detailgrid.Rows[e.RowIndex].Cells["OutputQty"].Style.ForeColor = Color.Red;
-                    this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].ReadOnly = false;
                     this.detailgrid.Rows[e.RowIndex].Cells["UnitPrice"].Style.ForeColor = Color.Red;
                 }
             };
 
+            // 設定detailGrid Rows 是否可以編輯
+            this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
+
             base.OnDetailGridSetup();
+        }
+
+        private void Detailgrid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || !this.EditMode)
+            {
+                return;
+            }
+
+            DataRow curDr = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
+            if (this.CurrentMaintain["Status"].Equals("Confirmed"))
+            {
+                if (curDr.RowState == DataRowState.Modified || curDr.RowState == DataRowState.Unchanged)
+                {
+                    this.col_OrderId.IsEditingReadOnly = true;
+                    this.col_ComboType.IsEditingReadOnly = true;
+                    this.col_Article.IsEditingReadOnly = true;
+                    this.col_UnitPrice.IsEditingReadOnly = true;
+
+                    if ((int)curDr["AccuOutputQty"] > 0)
+                    {
+                        this.gridicon.Remove.Enabled = false;
+                    }
+                    else
+                    {
+                        this.gridicon.Remove.Enabled = true;
+                    }
+                }
+                else
+                {
+                    this.col_OrderId.IsEditingReadOnly = false;
+                    this.col_ComboType.IsEditingReadOnly = false;
+                    this.col_Article.IsEditingReadOnly = false;
+                    this.col_UnitPrice.IsEditingReadOnly = false;
+                }
+            }
+            else
+            {
+                this.col_OrderId.IsEditingReadOnly = false;
+                this.col_ComboType.IsEditingReadOnly = false;
+                this.col_Article.IsEditingReadOnly = false;
+                this.col_UnitPrice.IsEditingReadOnly = false;
+            }
         }
 
         private DualResult GetComboType()
@@ -569,13 +613,13 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
                 this.CurrentDetailData["PrintingPrice"] = 0;
 
                 DualResult result;
-                result = this.GetTmsData(this.CurrentDetailData["OrderId"].ToString());
+                result = this.GetComboType();
                 if (result == false)
                 {
                     return;
                 }
 
-                result = this.GetComboType();
+                result = this.GetTmsData(this.CurrentDetailData["OrderId"].ToString(), this.CurrentDetailData["ComboType"].ToString());
                 if (result == false)
                 {
                     return;
@@ -585,7 +629,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             }
         }
 
-        private DualResult GetTmsData(string orderID)
+        private DualResult GetTmsData(string orderID, string comboType)
         {
             DualResult result = new DualResult(true);
             DataRow resultDr;
@@ -593,13 +637,13 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
 select
 o.StyleID,
 o.StyleUkey,
-tms.SewingCPU,
-tms.CuttingCPU,
-tms.InspectionCPU,
-tms.OtherCPU,
-tms.OtherPrice,
-tms.EMBPrice,
-tms.PrintingPrice
+SewingCPU = tms.SewingCPU*r.rate,
+CuttingCPU = tms.CuttingCPU*r.rate,
+InspectionCPU = tms.InspectionCPU*r.rate,
+OtherCPU = tms.OtherCPU*r.rate,
+OtherPrice = tms.OtherPrice*r.rate,
+EMBPrice = tms.EMBPrice*r.rate,
+PrintingPrice = tms.PrintingPrice*r.rate
 from  Orders o WITH (NOLOCK) 
 inner join Factory f on o.FactoryID = f.ID
 outer apply (
@@ -613,7 +657,9 @@ outer apply (
     [PrintingPrice] = sum(iif(ArtworkTypeID = 'PRINTING',Price,0))
     from Order_TmsCost with (nolock)
     where ID = o.ID
-    ) as tms
+) as tms
+outer apply(select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,'{comboType}')
+,(select rate = rate/100 from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = '{comboType}'))/100)r
 where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
         and o.ID = '{orderID}'
 		and o.Category != 'G'
