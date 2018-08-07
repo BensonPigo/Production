@@ -19,7 +19,7 @@ namespace Sci.Production.Cutting
     {
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        DataTable gridTable,detailTable;
+        DataTable gridTable, detailTable;
         public P04_Import()
         {
             InitializeComponent();
@@ -68,7 +68,7 @@ namespace Sci.Production.Cutting
             {
                 sqlcmd = sqlcmd + string.Format(" and a.factoryid = '{0}'", factory);
             }
-            DataRow queryRow,ordersRow;
+            DataRow queryRow, ordersRow;
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out detailTable);
             if (dResult)
             {
@@ -116,7 +116,7 @@ namespace Sci.Production.Cutting
             }
             else
             {
-                ShowErr(sqlcmd,dResult);
+                ShowErr(sqlcmd, dResult);
                 return;
             }
         }
@@ -126,89 +126,89 @@ namespace Sci.Production.Cutting
             if (gridTable.Rows.Count == 0) return;
             importedIDs.Clear();
             DataRow[] importay;
-            string insertheader = "";
+
+            string iu = string.Empty;
+            try
+            {
+                string remark;
+                DataTable cutplan_DetailTb;
+                foreach (DataRow dr in gridTable.Rows)
+                {
+                    remark = "";
+                    if (dr["sel"].ToString() == "1")
+                    {
+
+                        string id = MyUtility.GetValue.GetID(keyWord + "CP", "Cutplan");
+
+                        if (!string.IsNullOrWhiteSpace(id))
+                        {
+                            iu += string.Format(@"
+insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');
+", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"]);
+                            importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}'", dr["CuttingID"], dr["cutcellid"]));
+                            importedIDs.Add(id);
+                            if (importay.Length > 0)
+                            {
+                                foreach (DataRow ddr in importay)
+                                {
+                                    DualResult Result = DBProxy.Current.Select(null, string.Format("Select * from WorkOrder_Distribute Where workorderukey = '{0}'", ddr["Ukey"]), out cutplan_DetailTb);
+                                    if (!Result)
+                                    {
+                                        ShowErr(Result);
+                                        return;
+                                    }
+
+                                    if (cutplan_DetailTb != null)
+                                    {
+                                        remark = string.Empty;  //組remark前先清空 
+                                        foreach (DataRow cdr in cutplan_DetailTb.Rows)
+                                        {
+                                            remark = remark + cdr["Orderid"].ToString().Trim() + "\\" + cdr["Article"].ToString().Trim() + "\\" + cdr["SizeCode"].ToString().Trim() + "\\" + cdr["Qty"].ToString() + ",";
+                                        }
+                                    }
+
+                                    iu = iu + string.Format(@"
+insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrderUkey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');
+", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], dr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], dr["POID"], remark);
+                                }
+
+                                //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
+                                iu += string.Format(@"
+update Workorder set CutplanID = '{0}' 
+where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}';
+" , id, dr["CuttingID"], dr["cutcellid"], keyWord, dateEstCutDate.Text);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErr(ex);
+                importedIDs.Clear();
+                return;
+            }
 
             #region transaction
             DualResult upResult;
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
             {
-                try
+                if (!(upResult = DBProxy.Current.Execute(null, iu)))
                 {
-                    string remark;
-                    DataTable cutplan_DetailTb;
-                    foreach (DataRow dr in gridTable.Rows)
-                    {
-                        remark = "";
-                        insertheader = "";
-                        if (dr["sel"].ToString() == "1")
-                        {
-                            
-                            string id = MyUtility.GetValue.GetID(keyWord + "CP", "Cutplan");
-
-                            if (!string.IsNullOrWhiteSpace(id))
-                            {
-                                insertheader = string.Format("insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"]);
-                                importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}'", dr["CuttingID"], dr["cutcellid"]));
-                                importedIDs.Add(id);
-                                if (importay.Length > 0)
-                                {
-                                    foreach (DataRow ddr in importay)
-                                    {
-                                        DBProxy.Current.Select(null, string.Format("Select * from WorkOrder_Distribute Where workorderukey = '{0}'", ddr["Ukey"]), out cutplan_DetailTb);
-                                        if (cutplan_DetailTb != null)
-                                        {
-                                            remark = string.Empty;  //組remark前先清空 
-                                            foreach (DataRow cdr in cutplan_DetailTb.Rows)
-                                            {
-                                                remark = remark + cdr["Orderid"].ToString().Trim() + "\\" + cdr["Article"].ToString().Trim() + "\\" + cdr["SizeCode"].ToString().Trim() + "\\" + cdr["Qty"].ToString() + ",";
-                                            }
-                                        }
-
-                                        insertheader = insertheader + string.Format("insert into Cutplan_Detail(ID,Sewinglineid,cutref,cutno,orderid,styleid,colorid,cons,WorkOrderUkey,POID,Remark) values('{0}','{1}','{2}',{3},'{4}','{5}','{6}',{7},'{8}','{9}','{10}');", id, ddr["Sewinglineid"], ddr["Cutref"], ddr["Cutno"], ddr["OrderID"], dr["styleid"], ddr["Colorid"], ddr["Cons"], ddr["Ukey"], dr["POID"], remark);
-                                    }
-
-                                    //265: CUTTING_P04_Import_Import From Work Order，將id回寫至Workorder.CutplanID
-                                    string UpdateWorkorder = string.Format(@"
-update Workorder set CutplanID = '{0}' 
-where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}'"
-                                        , id , dr["CuttingID"] , dr["cutcellid"],  keyWord, dateEstCutDate.Text);
-
-                                    if (!(upResult = DBProxy.Current.Execute(null, insertheader)))
-                                    {
-                                        importedIDs.Clear();
-                                        _transactionscope.Dispose();
-                                        return;
-                                    }
-                                    if (!(upResult = DBProxy.Current.Execute(null, UpdateWorkorder)))
-                                    {
-                                        importedIDs.Clear();
-                                        _transactionscope.Dispose();
-                                        return;
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                    _transactionscope.Complete();
-                    _transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
-                }
-                catch (Exception ex)
-                {
-                    _transactionscope.Dispose();
-                    ShowErr("Commit transaction error.", ex);
                     importedIDs.Clear();
+                    this.ShowErr(upResult);
                     return;
                 }
+                else
+                {
+                    _transactionscope.Complete();
+                    MyUtility.Msg.WarningBox("Successfully");
+                }
             }
-            _transactionscope.Dispose();
-            _transactionscope = null;
             #endregion
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         }
-
     }
 }
