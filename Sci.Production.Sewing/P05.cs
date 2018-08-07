@@ -19,7 +19,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = $"Factoryid = '{Env.User.Factory}'";
+            this.DefaultFilter = $"MDivisionID = '{Env.User.Keyword}'";
         }
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -256,7 +256,7 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
 select 1
 from  Orders o WITH (NOLOCK) 
 inner join Factory f on o.FactoryID = f.ID
-where   o.FtyGroup = '{this.CurrentMaintain["factoryid"]}'
+where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
         and o.ID = '{e.FormattedValue}'
 		and o.Category != 'G'
         and f.IsProduceFty = 1
@@ -536,7 +536,7 @@ where o.id = '{this.CurrentDetailData["OrderId"]}'";
 select o.ID,o.BrandID,o.StyleID,o.SeasonID
 from  Orders o WITH (NOLOCK) 
 inner join Factory f on o.FactoryID = f.ID
-where   o.FtyGroup = '{this.CurrentMaintain["factoryid"]}'
+where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
 		and o.Category != 'G'
         and f.IsProduceFty = 1 and o.Junk = 0 order by o.AddDate desc
 ";
@@ -614,7 +614,7 @@ outer apply (
     from Order_TmsCost with (nolock)
     where ID = o.ID
     ) as tms
-where   o.FtyGroup = '{this.CurrentMaintain["factoryid"]}'
+where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
         and o.ID = '{orderID}'
 		and o.Category != 'G'
         and f.IsProduceFty = 1
