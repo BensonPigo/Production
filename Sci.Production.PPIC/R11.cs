@@ -51,66 +51,13 @@ namespace Sci.Production.PPIC
             this.Brand = this.txtbrand.Text;
             this.Ready1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.Ready2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
-
-            //this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).AddDays(-MyUtility.Convert.GetInt(this.Gap)).ToString("yyyy/MM/dd");
-            //this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).AddDays(-MyUtility.Convert.GetInt(this.Gap)).ToString("yyyy/MM/dd");
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
 
             this.dateRangeReadyOrl = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
 
-            //#region 排除假日及週日
-
-            //// 跑回圈,確認不是Holiday or Sunday就跳出去
-            //bool isHoilday = true;
-            //this.date1Gap = MyUtility.Convert.GetInt(this.Gap);
-
-            //// date 1
-            //while (isHoilday)
-            //{
-            //    if (this.dateRangeReady1.ToString() != this.checkHoliday(Convert.ToDateTime(this.dateRangeReady1)).ToString("yyyy/MM/dd"))
-            //    {
-            //        isHoilday = true;
-            //        this.date1Gap++;
-            //    }
-            //    else
-            //    {
-            //        isHoilday = false;
-            //    }
-
-            //    this.dateRangeReady1 = this.checkHoliday(Convert.ToDateTime(this.dateRangeReady1)).ToString("yyyy/MM/dd");
-            //}
-
-            //isHoilday = true;
-
-            //// date 2
-            //while (isHoilday)
-            //{
-            //    if (this.dateRangeReady2.ToString() != this.checkHoliday(Convert.ToDateTime(this.dateRangeReady2)).ToString("yyyy/MM/dd"))
-            //    {
-            //        isHoilday = true;
-            //    }
-            //    else
-            //    {
-            //        isHoilday = false;
-            //    }
-
-            //    this.dateRangeReady2 = this.checkHoliday(Convert.ToDateTime(this.dateRangeReady2)).ToString("yyyy/MM/dd");
-            //}
-
-            //#endregion
-
             this.listSQLFilter = new List<string>();
             #region Sql where Filter
-            if (!this.dateRangeReady1.Empty())
-            {
-                this.listSQLFilter.Add($"and CONVERT(date, s.Offline) >='{this.dateRangeReady1}'");
-            }
-
-            if (!this.dateRangeReady2.Empty())
-            {
-                this.listSQLFilter.Add($"and CONVERT(date, s.Offline) <='{this.dateRangeReady2}'");
-            }
 
             if (!this.F.Empty())
             {
@@ -136,6 +83,7 @@ namespace Sci.Production.PPIC
 select distinct s.FactoryID from sewingschedule s
 inner join orders o on s.orderid=o.id
 where 1=1
+and convert(date,s.offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}'
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}";
             DBProxy.Current.Select(string.Empty, sqlFty, out this.dtFty);
             if (this.dtFty != null)
@@ -321,7 +269,6 @@ from
 		) Receive					
 		where 1=1
 		and o.Category !='S' 
-		and CONVERT(date, s.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}'
 		and os.BuyerDelivery >= AllDate.ReadyDate -- BuyerDelivery > ReadyDate = 排除BuyerDelivery 小於 ReadyDate 判斷
 		and DATEDIFF(day,CONVERT(date,s.Offline), os.BuyerDelivery) > {MyUtility.Convert.GetInt(this.Gap)}
 	    {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
@@ -599,8 +546,7 @@ union
 		        and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 	    ) Receive		
 		where 1=1
-		and o.Category !='S' 				
-		and CONVERT(date, s.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- Offline 串Ready Date		
+		and o.Category !='S' 		
 		and os.BuyerDelivery >= DATEADD(DAY,1,s.Offline)  -- BuyerDelivery >= ReadyDate +1
 		and os.BuyerDelivery < notHoliday.Dates -- BuyerDelivery 小於最近的非假日
 
@@ -872,26 +818,6 @@ drop table #tmp
             sxr.FinishSave();
 
             return true;
-        }
-
-        private DateTime checkHoliday(DateTime date)
-        {
-            string sqlcmd = $@"
-select *,[weekday]=DATEPART(WEEKDAY, convert(date, HolidayDate))
-from Holiday 
-where HolidayDate='{date.ToString("yyyy/MM/dd")}'
-or DATEPART(WEEKDAY, convert(date, '{date.ToString("yyyy/MM/dd")}'))=1
-and FactoryID='{Sci.Env.User.Factory}'
-";
-            if (MyUtility.Check.Seek(sqlcmd))
-            {
-                date = date.AddDays(-1);
-                return date;
-            }
-            else
-            {
-                return date;
-            }
         }
     }
 }
