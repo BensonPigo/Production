@@ -24,7 +24,7 @@ namespace Sci.Production.Warehouse
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
     ,[BuyerDelivery]=o.BuyerDelivery
-    ,[ETA] = psd.ETA
+    ,[ETA] = psd.FinalETA
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -60,7 +60,7 @@ namespace Sci.Production.Warehouse
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
     ,[BuyerDelivery]=o.BuyerDelivery
-    ,[ETA] = psd.ETA
+    ,[ETA] = psd.FinalETA
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -287,12 +287,12 @@ where 1=1
 
             if (!MyUtility.Check.Empty(ETA1))
             {
-                sqlcmd.Append($" and psd.ETA >='{((DateTime)ETA1).ToString("yyyy/MM/dd")}'");
+                sqlcmd.Append($" and psd.FinalETA >='{((DateTime)ETA1).ToString("yyyy/MM/dd")}'");
             }
 
             if (!MyUtility.Check.Empty(ETA2))
             {
-                sqlcmd.Append($" and psd.ETA <='{((DateTime)ETA2).ToString("yyyy/MM/dd")}'");
+                sqlcmd.Append($" and psd.FinalETA <='{((DateTime)ETA2).ToString("yyyy/MM/dd")}'");
             }
 
             #endregion
