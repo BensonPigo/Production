@@ -21,8 +21,6 @@ namespace Sci.Production.Quality
         private string Brand;
         private string dateRangeReady1;
         private string dateRangeReady2;
-        private string dateRangeReadyOrl;
-        private int date1Gap;
         private DataTable dtFty;
         private DataTable[] dtList;
         private List<string> listSQLFilter;
@@ -46,63 +44,11 @@ namespace Sci.Production.Quality
             this.M = this.txtMdivision.Text;
             this.Gap = this.numDateGap.Text;
             this.Brand = this.txtbrand.Text;
-            this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).AddDays(-MyUtility.Convert.GetInt(this.Gap)).ToString("yyyy/MM/dd");
-            this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).AddDays(-MyUtility.Convert.GetInt(this.Gap)).ToString("yyyy/MM/dd");
-            this.dateRangeReadyOrl = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
-
-            #region 排除假日及週日
-
-            // 跑回圈,確認不是Holiday or Sunday就跳出去
-            bool isHoilday = true;
-            this.date1Gap = MyUtility.Convert.GetInt(this.Gap);
-
-            // date 1
-            while (isHoilday)
-            {
-                if (this.dateRangeReady1.ToString() != this.checkHoliday(Convert.ToDateTime(this.dateRangeReady1)).ToString("yyyy/MM/dd"))
-                {
-                    isHoilday = true;
-                    this.date1Gap++;
-                }
-                else
-                {
-                    isHoilday = false;
-                }
-
-                this.dateRangeReady1 = this.checkHoliday(Convert.ToDateTime(this.dateRangeReady1)).ToString("yyyy/MM/dd");
-            }
-
-            isHoilday = true;
-
-            // date 2
-            while (isHoilday)
-            {
-                if (this.dateRangeReady2.ToString() != this.checkHoliday(Convert.ToDateTime(this.dateRangeReady2)).ToString("yyyy/MM/dd"))
-                {
-                    isHoilday = true;
-                }
-                else
-                {
-                    isHoilday = false;
-                }
-
-                this.dateRangeReady2 = this.checkHoliday(Convert.ToDateTime(this.dateRangeReady2)).ToString("yyyy/MM/dd");
-            }
-
-            #endregion
+            this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
+            this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
 
             this.listSQLFilter = new List<string>();
             #region Sql where Filter
-            if (!this.dateRangeReady1.Empty())
-            {
-                this.listSQLFilter.Add($"and CONVERT(date, s.Offline) >= '{this.dateRangeReady1}'");
-            }
-
-            if (!this.dateRangeReady2.Empty())
-            {
-                this.listSQLFilter.Add($"and CONVERT(date, s.Offline) <= '{this.dateRangeReady2}'");
-            }
-
             if (!this.F.Empty())
             {
                 this.listSQLFilter.Add($"and s.FactoryID = '{this.F}'");
@@ -126,6 +72,7 @@ namespace Sci.Production.Quality
 select distinct s.FactoryID from sewingschedule s
 INNER JOIN ORDERS O on s.orderid=o.id
 where o.VasShas=1 and o.Category!='S' and o.Junk=0
+and convert(date,s.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}'
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}";
             DBProxy.Current.Select(string.Empty, sqlFty, out this.dtFty);
             if (this.dtFty != null)
@@ -150,8 +97,39 @@ where o.VasShas=1 and o.Category!='S' and o.Junk=0
         {
             #region Sql Command
             string sqlCmd = $@"
+DECLARE  @t TABLE
+(
+    StartDate DATE,
+	EndDate DATE
+);
+
+declare @ReadyDate1 date = '{this.dateRangeReady1}';
+declare @ReadyDate2 date = '{this.dateRangeReady2}';
+
+
+INSERT @t
+        ( StartDate, EndDate )
+VALUES  ( DATEADD(DAY,-20, @ReadyDate1), -- StartDate
+          DATEADD(DAY, +20 ,@ReadyDate2)  -- EndDate
+          );
+
+-- 遞迴取得自製月曆
+;WITH CTE (Dates,EndDate) AS
+(
+	SELECT StartDate AS Dates,EndDate AS EndDate
+	FROM @t
+	UNION ALL --注意這邊使用 UNION ALL
+	SELECT DATEADD(DAY,1,Dates),EndDate
+	FROM CTE 
+	WHERE DATEADD(DAY,1,Dates) < EndDate --判斷是否目前遞迴月份小於結束日期	
+)
+SELECT CTE.Dates
+into #Calendar
+FROM CTE
+
+
 SELECT distinct
-[ReadyDate] = convert(date,s.Offline + {MyUtility.Convert.GetInt(this.date1Gap)})
+[ReadyDate] = AllDate.ReadyDate
 ,[M] = o.MDivisionID
 ,[Factory] = o.FactoryID
 ,[Delivery] = o.BuyerDelivery
@@ -181,7 +159,8 @@ end
 ,[FtyCTN] = pdm.TotalCTN - isnull(Receive.ClogCTN,0)
 ,[ClogCTN] = isnull(Receive.ClogCTN,0)
 ,[cLogRecDate] = Receive.ClogRcvDate
-,[FinalInspDate]=cfa.FinalInsDate,cfa.Result
+,[FinalInspDate]=cfa.FinalInsDate
+,cfa.Result
 ,[CfaName] = cfa.CfaName
 ,[SewingLine] = SewingLine.Line
 ,[ShipMode] = os.ShipmodeID
@@ -190,16 +169,17 @@ FROM sewingschedule S
 left join Orders o on s.OrderID=o.ID
 left join Order_QtyShip os on o.ID=os.Id
 outer apply(
-	select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
-	,case when cfa.Result='P' then 'Pass'
-	when cfa.Result='F' then 'Fail'
-	else '' end as Result
-	,convert(date,cfa.EditDate) FinalInsDate
-	from cfa
-	left join Pass1 on cfa.CFA=pass1.ID
-	where convert(date,cfa.EditDate) <= CONVERT(date, DATEADD(DAY,{MyUtility.Convert.GetInt(this.Gap)}, s.Offline))
-	and cfa.OrderID=s.OrderID
-	order by cfa.EditDate desc
+    select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
+    ,case when cfa.Result='P' then 'Pass'
+    when cfa.Result='F' then 'Fail'
+    else '' end as Result
+    ,cfa.EditDate as FinalInsDate
+    from cfa
+    left join Pass1 on cfa.CFA=pass1.ID
+    where convert(date,cfa.EditDate) <= s.Offline
+    and datepart(HH,cfa.EditDate)<=17 -- 下午5點)
+    and cfa.OrderID=s.OrderID
+    order by cfa.EditDate desc
 )cfa
 outer apply(
 	select sum(so2.QAQty) Qty 
@@ -226,15 +206,42 @@ outer apply(
     where  pd.OrderID = os.ID 
 	and pd.OrderShipmodeSeq = os.Seq
 )  pdm
+cross apply(
+	SELECT 
+		[ReadyDate] = convert(date,ss.Offline)--NormalCalendar.Dates
+		,Calendar.Dates
+		,[ShipMode] = os.ShipmodeID
+		,[SPNO] = ss.OrderID	
+		FROM sewingschedule ss
+		left join Orders o on ss.OrderID=o.ID
+		left join Order_QtyShip os on o.ID=os.Id	
+		cross apply(
+			select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
+			where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日
+			and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FactoryID) -- 排除假日
+			and Dates < CONVERT(date, ss.Offline)			
+		)Calendar	
+		where 1=1
+		and o.Category !='S' 		
+		and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
+		and convert(date,s.offline) = Calendar.Dates -- 取得ReadyDate - GAP 在扣除Holiday的日期去串Offline
+		and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
+		and Dates < CONVERT(date, ss.Offline)			
+
+)AllDate
 outer apply (
-	select Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end) ClogCTN ,
-	Max (ReceiveDate) ClogRcvDate
-	from PackingList_Detail pd WITH (NOLOCK) 
-    LEFT JOIN PackingList p on pd.ID = p.ID 
-    where  pd.OrderID = os.ID 
-	and pd.OrderShipmodeSeq = os.Seq
-    and (ReceiveDate) <= CONVERT(date, DATEADD(DAY,{MyUtility.Convert.GetInt(this.Gap)}, s.Offline))	
-) Receive
+		select [ClogCTN] = Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end)
+		,[ClogRcvDate] = Max (c.AddDate) 
+		from PackingList_Detail pd WITH (NOLOCK) 
+		LEFT JOIN PackingList p on pd.ID = p.ID 
+		left join ClogReceive c on c.PackingListID=pd.ID
+			and c.ReceiveDate=pd.ReceiveDate and c.CTNStartNo=pd.CTNStartNo 
+			and c.OrderID=pd.OrderID
+		where  pd.OrderID = os.ID 
+		and pd.OrderShipmodeSeq = os.Seq
+		and CONVERT(date,pd.ReceiveDate) <= AllDate.ReadyDate
+		and datepart(HH, c.AddDate) <= 17 -- 下午5點)
+) Receive	
 outer apply(
 	select Line = stuff((
 		select concat(',',SewingLineID)
@@ -246,14 +253,11 @@ outer apply(
 		for xml path ('')
 		),1,1,'')
 )SewingLine
-where o.VasShas=1 and o.Category!='S' and o.Junk=0
+where o.VasShas = 1 and o.Category!='S' and o.Junk=0
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 
-select [M],[Factory],[Delivery],[SPNO],[Category],[Cancelled],[Dest],[Style],[OrderType],[PoNo]
-,[Brand],[Qty],[SewingOutputQty],[InLine],[OffLine],[FirstSewnDate],[LastSewnDate],[%]
-,[TtlCTN],[FtyCTN],[ClogCTN],[cLogRecDate],[FinalInspDate],Result,[CfaName],[SewingLine],[ShipMode]
-from #tmp
+select * from #tmp
 where [%]=100
 order by ReadyDate,m,Factory
 
@@ -518,26 +522,6 @@ drop table #tmp
             sxr.FinishSave();
 
             return true;
-        }
-
-        private DateTime checkHoliday(DateTime date)
-        {
-            string sqlcmd = $@"
-select *,[weekday]=DATEPART(WEEKDAY, convert(date, HolidayDate))
-from Holiday 
-where HolidayDate='{date.ToString("yyyy/MM/dd")}'
-or DATEPART(WEEKDAY, convert(date, '{date.ToString("yyyy/MM/dd")}'))=1
-and FactoryID='{Sci.Env.User.Factory}'
-";
-            if (MyUtility.Check.Seek(sqlcmd))
-            {
-                date = date.AddDays(-1);
-                return date;
-            }
-            else
-            {
-                return date;
-            }
         }
     }
 }

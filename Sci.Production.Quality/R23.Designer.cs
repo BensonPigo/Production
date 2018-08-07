@@ -42,15 +42,16 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(405, 12);
+            this.print.Location = new System.Drawing.Point(405, 87);
+            this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(405, 48);
+            this.toexcel.Location = new System.Drawing.Point(405, 15);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(405, 84);
+            this.close.Location = new System.Drawing.Point(405, 51);
             // 
             // txtMdivision
             // 
@@ -168,7 +169,7 @@
             // 
             // R23
             // 
-            this.ClientSize = new System.Drawing.Size(497, 154);
+            this.ClientSize = new System.Drawing.Size(497, 150);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labBrand);
             this.Controls.Add(this.txtMdivision);
