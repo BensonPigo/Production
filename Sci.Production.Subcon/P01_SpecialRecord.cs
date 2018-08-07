@@ -109,7 +109,7 @@ Select  0 as Selected
         , rtrim(ccc.id) as artworkid
         , patterncode = isnull((select distinct PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID),'')
         , patterndesc = isnull((select distinct PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID),'')
-        , Style = aaa.StyleID
+        , aaa.StyleID
         , sewinline = aaa.Sewinline
         , scidelivery = aaa.Scidelivery
 from orders aaa WITH (NOLOCK) 
