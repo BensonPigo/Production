@@ -18,11 +18,13 @@ namespace Sci.Production.Warehouse
     {
         string StartSPNo, EndSPNo, MDivision, Factory, StartRefno, EndRefno, Color, MT, ST;
         DateTime? BuyerDelivery1, BuyerDelivery2;
+        DateTime? ETA1, ETA2;
         string sqlcolumn = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
     ,[BuyerDelivery]=o.BuyerDelivery
+    ,[ETA] = psd.FinalETA
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -58,6 +60,7 @@ namespace Sci.Production.Warehouse
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
     ,[BuyerDelivery]=o.BuyerDelivery
+    ,[ETA] = psd.FinalETA
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -139,6 +142,8 @@ namespace Sci.Production.Warehouse
             boolCheckQty = checkQty.Checked;
             BuyerDelivery1 = dateBuyerDelivery.Value1;
             BuyerDelivery2 = dateBuyerDelivery.Value2;
+            ETA1 = dateRange1.Value1;
+            ETA2 = dateRange1.Value2;
             return true;
         }
         
@@ -278,6 +283,16 @@ where 1=1
             if (!MyUtility.Check.Empty(BuyerDelivery2))
             {
                 sqlcmd.Append($" and o.BuyerDelivery <='{((DateTime)BuyerDelivery2).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(ETA1))
+            {
+                sqlcmd.Append($" and psd.FinalETA >='{((DateTime)ETA1).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(ETA2))
+            {
+                sqlcmd.Append($" and psd.FinalETA <='{((DateTime)ETA2).ToString("yyyy/MM/dd")}'");
             }
 
             #endregion
