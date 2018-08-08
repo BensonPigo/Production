@@ -46,7 +46,7 @@ sd.OutputQty,
             sod.Article = sd.Article and
             sod.Combotype  = sd.Combotype
     ),
-UnitPrice = sd.UnitPrice*r.rate,
+UnitPrice = sd.UnitPrice,
 SewingCPU = tms.SewingCPU*r.rate,
 CuttingCPU = tms.CuttingCPU*r.rate,
 InspectionCPU = tms.InspectionCPU*r.rate,
@@ -75,7 +75,7 @@ OUTER apply (
     where ID = sd.OrderID
 ) as tms
 outer apply(select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,sd.ComboType)
-,(select rate = rate/100 from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType))/100)r
+,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType))/100)r
 where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumber}'
 ";
             this.DetailSelectCommand = cmd;
@@ -659,7 +659,7 @@ outer apply (
     where ID = o.ID
 ) as tms
 outer apply(select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,'{comboType}')
-,(select rate = rate/100 from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = '{comboType}'))/100)r
+,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = '{comboType}'))/100)r
 where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
         and o.ID = '{orderID}'
 		and o.Category != 'G'

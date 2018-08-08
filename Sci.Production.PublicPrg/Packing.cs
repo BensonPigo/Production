@@ -1518,15 +1518,16 @@ where   p.ID = '{0}'
                 {
                     break;
                 }
-                if (excelRow >= 262) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
-                {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    Marshal.ReleaseComObject(rngToInsert);
-                }
+                
                 if (MyUtility.Check.Empty(PrintGroupData.Rows[i]["CTNQty"]))
                 {
                     excelRow++;
+                    if (excelRow >= 262) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
+                    {
+                        Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
+                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                        Marshal.ReleaseComObject(rngToInsert);
+                    }
                     if (article != MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]))
                     {
                         article = MyUtility.Convert.GetString(PrintGroupData.Rows[i]["Article"]);
@@ -1552,6 +1553,12 @@ where   p.ID = '{0}'
                         if (printRec == 1)
                         {
                             excelRow++;
+                            if (excelRow >= 262) //若資料會超過262筆，就先插入一筆Record，最後再把多的資料刪除
+                            {
+                                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow)), Type.Missing).EntireRow;
+                                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                                Marshal.ReleaseComObject(rngToInsert);
+                            }
                             if (article != MyUtility.Convert.GetString(dr["Article"])||size != MyUtility.Convert.GetString(dr["SizeCode"]) || qtyPerCTN != MyUtility.Convert.GetInt(dr["QtyPerCTN"]))
                             {
                                 worksheet.Cells[excelRow, 2] = MyUtility.Convert.GetString(dr["SizeCode"]);
@@ -1589,7 +1596,10 @@ where   p.ID = '{0}'
             //刪除多餘的Row
             if (excelRow >= 263)
             {
-                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[string.Format("A{0}:A{0}", MyUtility.Convert.GetString(excelRow + 1)), Type.Missing];
+                Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
+                rng.Select();
+                rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
+                rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[excelRow + 1, Type.Missing];
                 rng.Select();
                 rng.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlUp);
                 Marshal.ReleaseComObject(rng);
