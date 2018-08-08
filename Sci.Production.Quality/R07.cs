@@ -220,9 +220,9 @@ namespace Sci.Production.Quality
 			            inner join dbo.Receiving_Detail rd WITH (NOLOCK) on rd.Id = r.Id 
 			            where r.type='A'" + RWhere+ @"
 			            group by r.WhseArrival,r.InvNo,r.ExportId,r.Id,rd.PoId,rd.seq1,rd.seq2) t
-            inner join (select distinct poid,Category,KPILETA from dbo.Orders o WITH (NOLOCK) 
+            inner join (select distinct id,Category,KPILETA from dbo.Orders o WITH (NOLOCK) 
 			            where 1=1
-			           " + OWhere+ @" ) x on x.poid = T.POID
+			           " + OWhere+ @" ) x on x.id = T.POID
             inner join dbo.PO_Supp ps WITH (NOLOCK) on ps.id = T.POID and ps.SEQ1 = T.SEQ1
             inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = T.POID and psd.SEQ1 = T.SEQ1 and psd.SEQ2 = T.SEQ2
             outer apply dbo.getsci(t.poid,x.category) as w
