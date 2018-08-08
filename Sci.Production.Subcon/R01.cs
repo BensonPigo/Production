@@ -154,7 +154,7 @@ namespace Sci.Production.Subcon
 
             if (checkOutstanding.Checked)
             {
-                sqlCmd.Append(" and b.Farmin - b.ApQty > 0");
+                sqlCmd.Append(" and b.Farmin - b.ApQty > 0 and a.status!='Closed' ");
             }
 
             if (orderby.ToUpper() == "ISSUE DATE")

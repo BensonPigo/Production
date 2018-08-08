@@ -64,7 +64,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 120);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
@@ -73,7 +72,6 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
             this.labelArtworkType.Location = new System.Drawing.Point(13, 48);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(98, 23);
@@ -82,7 +80,6 @@
             // 
             // label5
             // 
-            this.label5.Lines = 0;
             this.label5.Location = new System.Drawing.Point(13, 157);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(98, 23);
@@ -91,7 +88,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(13, 193);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(98, 23);
@@ -100,7 +96,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(13, 229);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(98, 23);
@@ -109,7 +104,6 @@
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Lines = 0;
             this.labelOrderBy.Location = new System.Drawing.Point(13, 265);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(98, 23);
@@ -124,11 +118,26 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(114, 119);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 3;
             // 
             // dateIssueDate
             // 
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateIssueDate.DateBox1.Name = "";
+            this.dateIssueDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateIssueDate.DateBox2.Name = "";
+            this.dateIssueDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox2.TabIndex = 1;
             this.dateIssueDate.IsRequired = false;
             this.dateIssueDate.Location = new System.Drawing.Point(115, 12);
             this.dateIssueDate.Name = "dateIssueDate";
@@ -146,6 +155,7 @@
             "Supplier"});
             this.comboOrderBy.Location = new System.Drawing.Point(114, 264);
             this.comboOrderBy.Name = "comboOrderBy";
+            this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
             this.comboOrderBy.TabIndex = 7;
             // 
@@ -165,9 +175,9 @@
             this.checkOutstanding.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkOutstanding.Location = new System.Drawing.Point(13, 302);
             this.checkOutstanding.Name = "checkOutstanding";
-            this.checkOutstanding.Size = new System.Drawing.Size(250, 21);
+            this.checkOutstanding.Size = new System.Drawing.Size(407, 21);
             this.checkOutstanding.TabIndex = 8;
-            this.checkOutstanding.Text = "Outstanding (without payment only)";
+            this.checkOutstanding.Text = "Outstanding (Without payment only && Exclude status closed)";
             this.checkOutstanding.UseVisualStyleBackColor = true;
             // 
             // txtsubconSupplier
@@ -200,10 +210,11 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 6;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 84);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
@@ -221,7 +232,6 @@
             // 
             // label9
             // 
-            this.label9.Lines = 0;
             this.label9.Location = new System.Drawing.Point(13, 12);
             this.label9.Name = "label9";
             this.label9.RectStyle.BorderColor = System.Drawing.Color.Black;
