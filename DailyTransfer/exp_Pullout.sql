@@ -189,7 +189,7 @@ from (
 		   , EditDate-- = null
 		   , DataFrom
 		   , HCID
-		   , Abbr = null
+		   , Abb = null
 	from #tmpFtyBooking2
 ) a 
 
