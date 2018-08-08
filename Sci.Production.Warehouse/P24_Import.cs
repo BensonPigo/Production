@@ -33,6 +33,12 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
+            string deadlind1 = string.Empty, deadlind2 = string.Empty;
+            if (!MyUtility.Check.Empty(dateDead.TextBox1.Value))
+            {
+                deadlind1 = dateDead.TextBox1.Text;
+                deadlind2 = dateDead.TextBox2.Text;
+            }
 
             if (string.IsNullOrWhiteSpace(sp))
             {
@@ -76,6 +82,7 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.Poid = orders.id
 inner join Factory on orders.FactoryID = factory.id
+outer apply(select  Deadline = max(i.Deadline) from Inventory  i where i.POID = a.id and i.seq1 = a.seq1 and i.seq2 = a.seq2)i
 Where   c.lock = 0 
         and c.InQty-c.OutQty+c.AdjustQty > 0 
         and c.stocktype = 'I'
@@ -99,6 +106,14 @@ Where   c.lock = 0
         and a.id = @sp1 ");
                     sp1.Value = sp;
                     cmds.Add(sp1);
+                }
+
+                if (!MyUtility.Check.Empty(dateDead.TextBox1.Value))
+                {
+                    strSQLCmd.Append(@" 
+        and i.Deadline between @deadlind1 and @deadlind2");
+                    cmds.Add(new System.Data.SqlClient.SqlParameter("@deadlind1", deadlind1));
+                    cmds.Add(new System.Data.SqlClient.SqlParameter("@deadlind2", deadlind2));
                 }
 
                 seq1.Value = txtSeq.seq1;

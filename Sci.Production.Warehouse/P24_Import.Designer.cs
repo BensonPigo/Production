@@ -43,6 +43,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label1 = new Sci.Win.UI.Label();
+            this.dateDead = new Sci.Win.UI.DateRange();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -78,7 +80,7 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(276, 15);
+            this.btnFindNow.Location = new System.Drawing.Point(647, 15);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
             this.btnFindNow.TabIndex = 2;
@@ -153,6 +155,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.dateDead);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtSeq);
             this.groupBox1.Controls.Add(this.btnFindNow);
             this.groupBox1.Controls.Add(this.txtSPNo);
@@ -203,9 +207,39 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(1008, 419);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(282, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(76, 23);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Dead Line";
+            // 
+            // dateDead
+            // 
+            // 
+            // 
+            // 
+            this.dateDead.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDead.DateBox1.Name = "";
+            this.dateDead.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateDead.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDead.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateDead.DateBox2.Name = "";
+            this.dateDead.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateDead.DateBox2.TabIndex = 1;
+            this.dateDead.Location = new System.Drawing.Point(361, 19);
+            this.dateDead.Name = "dateDead";
+            this.dateDead.Size = new System.Drawing.Size(280, 23);
+            this.dateDead.TabIndex = 4;
             // 
             // P24_Import
             // 
@@ -242,5 +276,7 @@
         private Win.UI.Button btnUpdateAllLocation;
         private Win.UI.TextBox txtLocation;
         private Win.UI.Label labelLocation;
+        private Win.UI.DateRange dateDead;
+        private Win.UI.Label label1;
     }
 }
