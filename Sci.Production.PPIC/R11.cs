@@ -21,8 +21,6 @@ namespace Sci.Production.PPIC
         private string Gap;
         private string dateRangeReady1;
         private string dateRangeReady2;
-        private string Ready1;
-        private string Ready2;
         private string Brand;
         private DataTable dtFty;
         private DataTable[] dtList;
@@ -47,8 +45,6 @@ namespace Sci.Production.PPIC
             this.M = this.txtMdivision.Text;
             this.Gap = this.numDateGap.Text;
             this.Brand = this.txtbrand.Text;
-            this.Ready1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
-            this.Ready2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
 
@@ -110,9 +106,8 @@ DECLARE  @t TABLE
 	EndDate DATE
 );
 
-declare @ReadyDate1 date = '{this.Ready1}';
-declare @ReadyDate2 date = '{this.Ready2}';
-
+declare @ReadyDate1 date = '{this.dateRangeReady1}';
+declare @ReadyDate2 date = '{this.dateRangeReady2}';
 
 INSERT @t
         ( StartDate, EndDate )
@@ -270,6 +265,7 @@ from
 		and os.BuyerDelivery >= AllDate.ReadyDate --排除BuyerDelivery 小於 ReadyDate 判斷
 		and DATEDIFF(day,CONVERT(date,s.Offline), os.BuyerDelivery) >= {MyUtility.Convert.GetInt(this.Gap)}
 	    and CONVERT(date,s.offline) between DATEADD(day,-10-{MyUtility.Convert.GetInt(this.Gap)}, '{this.dateRangeReady1}') and '{this.dateRangeReady2}'
+        {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 union 	
 
 /*搜尋Ready date 等於Order_QtyShip.BuyerDelivery(今天要交貨的資料)，
@@ -401,6 +397,7 @@ SELECT distinct
 		and o.Category !='S' 
 		and AllDate.ReadyDate=os.BuyerDelivery --Ready date =BuyerDelivery今天要交貨的資料
 		and DATEDIFF(day,CONVERT(date,s.Offline), AllDate.ReadyDate) < {MyUtility.Convert.GetInt(this.Gap)} --Ready Date - sewing offline要小於GAP
+        {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 union 	
 
@@ -535,9 +532,8 @@ outer apply(
 where O.Category!='S'
 and oq.BuyerDelivery >= AllDate.HolidayDates  
 and oq.BuyerDelivery < AllDate.WorkDates 
-
+{this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 ) a 
-
 
 select * from #tmp order by ReadyDate,m,Factory
 
