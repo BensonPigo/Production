@@ -68,6 +68,7 @@ SELECT distinct b.*
 	   , DataFrom = 'G'
 	   , HCID = '             '
 	   , c.Abb
+	   , ExpressID = (select ExpressID from Production.dbo.PackingList p where p.id = a.PackingListID)
 INTO  #tmpFtyBooking1
 FROM Pullout_Detail  a, Production.dbo.GMTBooking b 
 left join Production.dbo.LocalSupp c on b.Forwarder = c.id
@@ -91,6 +92,7 @@ select ID = a.PackingListID
 	   , HCID = p1. ExpressID
 	   , p1.AddDate
 	   , p1.EditDate
+	   , p1.ExpressID
 into #tmpFtyBooking2
 from (	
 	select distinct PackingListID 
@@ -148,6 +150,7 @@ from (
 		   , DataFrom
 		   , HCID
 		   , Abb
+		   , ExpressID
 	from #tmpFtyBooking1
 
 	union all
@@ -190,6 +193,7 @@ from (
 		   , DataFrom
 		   , HCID
 		   , Abb = null
+		   , ExpressID
 	from #tmpFtyBooking2
 ) a 
 
