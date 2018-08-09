@@ -179,7 +179,7 @@ update Workorder set CutplanID = '{0}'
 where (cutplanid='' or cutplanid is null) and id='{1}' and cutcellid='{2}' and mDivisionid ='{3}' and estcutdate = '{4}';
 " , id, dr["CuttingID"], dr["cutcellid"], keyWord, dateEstCutDate.Text);
                                 idnum++;
-                                id = id.Substring(0, id.Length - 4) + idnum;
+                                id = id.Substring(0, id.Length - 3) + idnum;
                             }
                         }
                     }
