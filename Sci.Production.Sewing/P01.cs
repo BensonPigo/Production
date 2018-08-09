@@ -892,6 +892,7 @@ order by a.OrderId,os.Seq",
                 this.numManpower.ReadOnly = true;
                 this.numWHours.ReadOnly = true;
                 this.txtSubconOutFty.TextBox1.ReadOnly = true;
+                this.txtSubConOutContractNumber.ReadOnly = true;
             }
 
             this.txtSubConOutContractNumber.ReadOnly = this.txtSubconOutFty.TextBox1.ReadOnly;
@@ -1041,15 +1042,19 @@ order by a.OrderId,os.Seq",
             #endregion
 
             #region 檢查資料是否已存在
-            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and SubconOutFty = '{6}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]))))
+            if (MyUtility.Check.Seek(string.Format(@"select ID from SewingOutput WITH (NOLOCK) where OutputDate = '{0}' and SewingLineID = '{1}' and Shift = '{2}' and Team = '{3}' and FactoryID = '{4}' and ID <> '{5}' and SubconOutFty = '{6}' and SubConOutContractNumber ='{7}' and Category = 'O'", Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString("d"), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]), MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]),MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))))
                 {
                     MyUtility.Msg.WarningBox(string.Format(
-                        "Date:{0}, Line:{1}, Shift:{2}, Team:{3} already exist, can't save!!",
+                        "Date:{0}, Line:{1}, Shift:{2}, Team:{3},SubconOutFty:{4},SubConOutContractNumber:{5} already exist, can't save!!",
                         Convert.ToDateTime(this.CurrentMaintain["OutputDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateStringFormat)),
                         MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]),
                         MyUtility.Convert.GetString(this.CurrentMaintain["Shift"]),
                         MyUtility.Convert.GetString(this.CurrentMaintain["Team"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"])));
+                        MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["SubconOutFty"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["SubConOutContractNumber"]))
+                        );
+                        
                     return false;
                 }
             #endregion

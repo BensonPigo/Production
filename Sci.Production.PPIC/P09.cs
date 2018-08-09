@@ -410,7 +410,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         {
             if (this.EditMode)
             {
-                if (!MyUtility.Check.Empty(this.txtSPNo.Text))
+                if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
                 {
                     // sql參數
                     System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", this.txtSPNo.Text);
@@ -424,7 +424,6 @@ order by rd.Seq1,rd.Seq2", masterID);
                         this.CurrentMaintain["POID"] = string.Empty;
                         this.CurrentMaintain["FactoryID"] = string.Empty;
                         this.CurrentMaintain.EndEdit();
-                        e.Cancel = true;
                         return;
                     }
 
@@ -451,7 +450,6 @@ order by rd.Seq1,rd.Seq2", masterID);
                         this.CurrentMaintain["POID"] = string.Empty;
                         this.CurrentMaintain["FactoryID"] = string.Empty;
                         this.CurrentMaintain.EndEdit();
-                        e.Cancel = true;
                         return;
                     }
                     else
@@ -467,7 +465,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         // SP No.
         private void TxtSPNo_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(this.txtSPNo.Text))
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
             {
                 // 清空表身Grid資料
                 foreach (DataRow dr in this.DetailDatas)
