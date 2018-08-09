@@ -23,9 +23,7 @@ namespace Sci.Production.PPIC
         private string dateRangeReady2;
         private string Ready1;
         private string Ready2;
-        private string dateRangeReadyOrl;
         private string Brand;
-        private int date1Gap;
         private DataTable dtFty;
         private DataTable[] dtList;
         private List<string> listSQLFilter;
@@ -54,14 +52,12 @@ namespace Sci.Production.PPIC
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
 
-            this.dateRangeReadyOrl = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
-
             this.listSQLFilter = new List<string>();
             #region Sql where Filter
 
             if (!this.F.Empty())
             {
-                this.listSQLFilter.Add($"and s.FactoryID = '{this.F}'");
+                this.listSQLFilter.Add($"and o.FtyGroup = '{this.F}'");
             }
 
             if (!this.M.Empty())
@@ -80,7 +76,7 @@ namespace Sci.Production.PPIC
             this.sbFtycode = new StringBuilder();
             string sqlFty = $@"
 
-select distinct s.FactoryID from sewingschedule s
+select distinct o.FtyGroup from sewingschedule s
 inner join orders o on s.orderid=o.id
 where 1=1
 and convert(date,s.offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}'
@@ -90,7 +86,7 @@ and convert(date,s.offline) between '{this.dateRangeReady1}' and '{this.dateRang
             {
                 for (int i = 0; i < this.dtFty.Rows.Count; i++)
                 {
-                    this.sbFtycode.Append($@"[{this.dtFty.Rows[i]["FactoryID"].ToString().TrimEnd()}],");
+                    this.sbFtycode.Append($@"[{this.dtFty.Rows[i]["FtyGroup"].ToString().TrimEnd()}],");
                 }
             }
 
@@ -138,6 +134,27 @@ SELECT CTE.Dates
 into #Calendar
 FROM CTE
 
+
+/* Temple Table 1 */
+SELECT 
+[ReadyDate] = convert(date,ss.Offline)--NormalCalendar.Dates
+,Calendar.Dates		
+into #CalendarData	
+FROM sewingschedule ss
+left join Orders o on ss.OrderID=o.ID
+left join Order_QtyShip os on o.ID=os.Id	
+cross apply(
+	select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
+	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日
+	and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup) -- 排除假日
+	and Dates < CONVERT(date, ss.Offline)			
+)Calendar	
+where 1=1
+and o.Category !='S' 		
+and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
+and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
+and Dates < CONVERT(date, ss.Offline)		
+
 Select * 
 into #tmp
 from 
@@ -145,8 +162,8 @@ from
 	SELECT distinct
 		[ReadyDate] = AllDate.ReadyDate
 		,[M] = o.MDivisionID
-		,[Factory] = o.FactoryID
-		,[Delivery] = o.BuyerDelivery		
+		,[Factory] = o.FtyGroup		
+		,[BuyerDelivery] = os.BuyerDelivery
 		,[SPNO] = s.OrderID
 		,[Category] = 
 		case	when o.Category ='B' then 'Bulk'
@@ -214,12 +231,12 @@ from
 			where OrderID=s.OrderID 
 		)ss
 		outer apply( 
-			select Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN
+			select [TotalCTN] = Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) 
 			from PackingList_Detail pd WITH (NOLOCK) 
 			LEFT JOIN PackingList p on pd.ID = p.ID 
 			where  pd.OrderID = os.ID 
 			and pd.OrderShipmodeSeq = os.Seq
-		)  pdm
+		)  pdm	
 		outer apply(
 			select Line = stuff((
 				select concat(',',SewingLineID)
@@ -232,29 +249,10 @@ from
 				),1,1,'')
 		)SewingLine
 		cross apply(
-				SELECT 
-				[ReadyDate] = convert(date,ss.Offline)--NormalCalendar.Dates
-				,Calendar.Dates
-				,[ShipMode] = os.ShipmodeID
-				,[SPNO] = ss.OrderID	
-				FROM sewingschedule ss
-				left join Orders o on ss.OrderID=o.ID
-				left join Order_QtyShip os on o.ID=os.Id	
-				cross apply(
-					select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
-					where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日
-					and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FactoryID) -- 排除假日
-					and Dates < CONVERT(date, ss.Offline)			
-				)Calendar	
-				where 1=1
-				and o.Category !='S' 		
-				and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
-			    and convert(date,s.offline) = Calendar.Dates -- 取得ReadyDate - GAP 在扣除Holiday的日期去串Offline
-				and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
-				and Dates < CONVERT(date, ss.Offline)			
-
-		)AllDate	
-        outer apply (
+			select * from #CalendarData 
+			where convert(date,s.offline) = Dates
+		)AllDate
+		outer apply (
 			select [ClogCTN] = Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end)
 			,[ClogRcvDate] = Max (c.AddDate) 
 			from PackingList_Detail pd WITH (NOLOCK) 
@@ -266,14 +264,12 @@ from
 			and pd.OrderShipmodeSeq = os.Seq
 			and CONVERT(date,pd.ReceiveDate) <= AllDate.ReadyDate
 			and datepart(HH, c.AddDate) <= 17 -- 下午5點)
-		) Receive					
+		) Receive			
 		where 1=1
 		and o.Category !='S' 
-		and os.BuyerDelivery >= AllDate.ReadyDate -- BuyerDelivery > ReadyDate = 排除BuyerDelivery 小於 ReadyDate 判斷
-		and DATEDIFF(day,CONVERT(date,s.Offline), os.BuyerDelivery) > {MyUtility.Convert.GetInt(this.Gap)}
-	    {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
-
-
+		and os.BuyerDelivery >= AllDate.ReadyDate --排除BuyerDelivery 小於 ReadyDate 判斷
+		and DATEDIFF(day,CONVERT(date,s.Offline), os.BuyerDelivery) >= {MyUtility.Convert.GetInt(this.Gap)}
+	    and CONVERT(date,s.offline) between DATEADD(day,-10-{MyUtility.Convert.GetInt(this.Gap)}, '{this.dateRangeReady1}') and '{this.dateRangeReady2}'
 union 	
 
 /*搜尋Ready date 等於Order_QtyShip.BuyerDelivery(今天要交貨的資料)，
@@ -282,8 +278,8 @@ union
 SELECT distinct
 		[ReadyDate] = CONVERT(date, AllDate.ReadyDate)
 		,[M] = o.MDivisionID
-		,[Factory] = o.FactoryID
-		,[Delivery] = o.BuyerDelivery		
+		,[Factory] = o.FtyGroup
+		,[Delivery] = os.BuyerDelivery		
 		,[SPNO] = s.OrderID
 		,[Category] = 
 		case	when o.Category ='B' then 'Bulk'
@@ -372,23 +368,21 @@ SELECT distinct
 		cross apply(
 				SELECT distinct
 				[ReadyDate] = convert(date,ss.Offline)--NormalCalendar.Dates
-				,Calendar.Dates
-				,[ShipMode] = os.ShipmodeID
-				,[SPNO] = ss.OrderID	
+				,Calendar.Dates			
 				FROM sewingschedule ss
 				left join Orders o on ss.OrderID=o.ID
 				left join Order_QtyShip os on o.ID=os.Id	
 				cross apply(
 					select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
 					where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日
-					and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FactoryID) -- 排除假日
-					and Dates < CONVERT(date, ss.Offline)			
+					and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup) -- 排除假日
+					and Dates <= CONVERT(date, ss.Offline)			
 				)Calendar	
 				where 1=1
 				and o.Category !='S' 		
 				and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 			    and convert(date,s.offline) = Calendar.Dates -- 取得ReadyDate - GAP 在扣除Holiday的日期去串Offline
-				and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
+				and Calendar.rows <= {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 		)AllDate
        outer apply (
 			select [ClogCTN] = Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end)
@@ -406,18 +400,18 @@ SELECT distinct
 		where 1=1
 		and o.Category !='S' 
 		and AllDate.ReadyDate=os.BuyerDelivery --Ready date =BuyerDelivery今天要交貨的資料
-		and DATEDIFF(day,CONVERT(date,s.Offline), AllDate.ReadyDate) <= {MyUtility.Convert.GetInt(this.Gap)} --Ready Date - sewing offline要小於GAP
+		and DATEDIFF(day,CONVERT(date,s.Offline), AllDate.ReadyDate) < {MyUtility.Convert.GetInt(this.Gap)} --Ready Date - sewing offline要小於GAP
 
 union 	
 
 /*月曆>=BuyerDelivery ,並且日期由小大到排序
 如果明天之後都是假日,都要將這些假日資料列入該天計算		 */		 	
-		SELECT distinct
-		[ReadyDate] = isHoliday.ReadyDate
+	
+select distinct [ReadyDate] = AllDate.ReadyDate		
 		,[M] = o.MDivisionID
-		,[Factory] = o.FactoryID
-		,[Delivery] = o.BuyerDelivery		
-		,[SPNO] = s.OrderID
+		,[Factory] = o.FtyGroup
+		,[BuyerDelivery] = oq.BuyerDelivery
+		,[SPNO] = oq.id
 		,[Category] = 
 		case	when o.Category ='B' then 'Bulk'
 				when o.Category ='S' then 'Sample'
@@ -432,9 +426,9 @@ union
 		,[OrderType] = o.OrderTypeID
 		,[PoNo] = o.CustPONo
 		,[Brand] = o.BrandID
-		,[Qty] = os.Qty
+		,[Qty] = oq.Qty
 		,[SewingOutputQty] = isnull(SewingOutput.Qty,0)
-		,[InLine] = ss.inline
+		,[InLine] = s.inline
 		,[OffLine] = convert(date, s.Offline)
 		,[FirstSewnDate] = SewDate.FirstDate
 		,[LastSewnDate] = SewDate.LastDate
@@ -447,108 +441,100 @@ union
 		,cfa.Result
 		,[CfaName] = cfa.CfaName
 		,[SewingLine] = SewingLine.Line
-		,[ShipMode] = os.ShipmodeID
+		,[ShipMode] = oq.ShipmodeID
 		,[Remark]= IIF(iif(pdm.TotalCTN=0,0, (isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)=100,'Pass Ready date','Failed Ready Date')
-		FROM sewingschedule S
-		left join Orders o on s.OrderID=o.ID
-		left join Order_QtyShip os on o.ID=os.Id
-		outer apply(
-			select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
-			,case when cfa.Result='P' then 'Pass'
-			when cfa.Result='F' then 'Fail'
-			else '' end as Result
-			,cfa.EditDate as FinalInsDate
-			from cfa
-			left join Pass1 on cfa.CFA=pass1.ID
-			where convert(date,cfa.EditDate) <= s.Offline
-			and datepart(HH,cfa.EditDate)<=17 -- 下午5點)
-			and cfa.OrderID=s.OrderID
-			order by cfa.EditDate desc
-		)cfa
-		outer apply(
-			select sum(so2.QAQty) Qty 
-			from SewingOutput_Detail so2
-			left join SewingOutput so1 on so2.ID=so1.ID
-			where so2.OrderId=s.OrderID
-			and so1.OutputDate <= CONVERT(date, s.Offline)
-		)SewingOutput
-		outer apply(
-			select MIN(OutputDate) FirstDate,MAX(OutputDate) LastDate
-			from SewingOutput a
-			left join SewingOutput_Detail b on a.id=b.id
-			where b.OrderId =s.OrderID
-		)SewDate
-		outer apply(
-			select convert(date, min(inline)) inline
-			from SewingSchedule 
-			where OrderID=s.OrderID 
-		)ss
-		outer apply( 
-			select Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN
-			from PackingList_Detail pd WITH (NOLOCK) 
-			LEFT JOIN PackingList p on pd.ID = p.ID 
-			where  pd.OrderID = os.ID 
-			and pd.OrderShipmodeSeq = os.Seq
-		)  pdm	
-		outer apply(
-			select Line = stuff((
-				select concat(',',SewingLineID)
-				from (
-					select distinct SewingLineID
-					from SewingSchedule ss
-					where s.OrderID=ss.orderid	
-					) s
-				for xml path ('')
-				),1,1,'')
-		)SewingLine
-		-- 取得最接近ReadyDate的非假日,
-		outer apply(
-			select MIN(Dates) as Dates
-			from #Calendar			
-			where  DATEPART(WEEKDAY, Dates) != 1  --排除星期天
-			and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FactoryID) -- 排除假日)			
-			and Dates > CONVERT(date,s.Offline)
-		)notHoliday	
-		-- ReadyDate的隔天必須為假日(Cross apply),才需要撈出來	
-			cross apply(
-				SELECT distinct
-				[ReadyDate] = convert(date,ss.Offline)--NormalCalendar.Dates
-				,Calendar.Dates
-				,[ShipMode] = os.ShipmodeID
-				,[SPNO] = ss.OrderID	
-				FROM sewingschedule ss
-				left join Orders o on ss.OrderID=o.ID
-				left join Order_QtyShip os on o.ID=os.Id	
-				cross apply(
-					select Dates,[rows] = ROW_NUMBER() over(order by dates asc) from #Calendar			
-					where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
-					or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FactoryID)) -- 只能是假日)	
-					and CONVERT(date, DATEADD(DAY,1,ss.Offline)) =Dates
-				)Calendar
-				where 1=1
-				and o.Category != 'S'
-				and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' 
-                -- 將offline跟ReadyDate綁再一起,方便取得RedayDate			
-				and CONVERT(date,s.Offline)= Calendar.Dates				
-			
-		)isHoliday	
-        outer apply (
-		        select [ClogCTN] = Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end)
-		        ,[ClogRcvDate] = Max (c.AddDate) 
-		        from PackingList_Detail pd WITH (NOLOCK) 
-		        LEFT JOIN PackingList p on pd.ID = p.ID 
-		        left join ClogReceive c on c.PackingListID=pd.ID
-			        and c.ReceiveDate=pd.ReceiveDate and c.CTNStartNo=pd.CTNStartNo 
-			        and c.OrderID=pd.OrderID
-		        where  pd.OrderID = os.ID 
-		        and pd.OrderShipmodeSeq = os.Seq
-		        and CONVERT(date,pd.ReceiveDate) <= isHoliday.ReadyDate
-		        and datepart(HH, c.AddDate) <= 17 -- 下午5點)
-	    ) Receive		
+from Orders o
+inner join Order_QtyShip oq on o.id=oq.Id
+cross apply(
+		select max(Offline) offline,min(Inline) as Inline
+		from sewingschedule
+		where OrderID=oq.Id
+)s
+cross apply(	
+SELECT *
+	FROM #Calendar c
+	cross apply(
+		SELECT [ReadyDate] = Dates	
+		FROM #Calendar					
 		where 1=1
-		and o.Category !='S' 		
-		and os.BuyerDelivery >= DATEADD(DAY,1,s.Offline)  -- BuyerDelivery >= ReadyDate +1
-		and os.BuyerDelivery < notHoliday.Dates -- BuyerDelivery 小於最近的非假日
+		and	Dates between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' 
+	)Ready
+	cross apply(
+		select HolidayDates = Dates,[rows] = ROW_NUMBER() over(order by dates asc) 
+		from #Calendar			
+		where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
+		or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)) -- 只能是假日)	
+		--and Dates = '2018-07-01' 
+		and dates = oq.BuyerDelivery
+		and Dates > Ready.ReadyDate
+	)isHoliday
+	cross apply(
+		select MIN(Dates) as WorkDates
+		from #Calendar			
+		where  DATEPART(WEEKDAY, Dates) != 1  --排除星期天
+		and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup) -- 排除假日)
+		and Dates > Ready.ReadyDate
+	)notHoliday
+	where isHoliday.rows=1 --取得最靠近ReadyDate 的假日
+	)AllDate
+outer apply(
+		select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
+		,case when cfa.Result='P' then 'Pass'
+		when cfa.Result='F' then 'Fail'
+		else '' end as Result
+		,cfa.EditDate as FinalInsDate
+		from cfa
+		left join Pass1 on cfa.CFA=pass1.ID
+		where convert(date,cfa.EditDate) <= s.Offline
+		and datepart(HH,cfa.EditDate)<=17 -- 下午5點)
+		and cfa.OrderID=oq.Id
+	)cfa
+	outer apply(
+		select sum(so2.QAQty) Qty 
+		from SewingOutput_Detail so2
+		left join SewingOutput so1 on so2.ID=so1.ID
+		where so2.OrderId=oq.id
+	)SewingOutput
+	outer apply(
+		select MIN(OutputDate) FirstDate,MAX(OutputDate) LastDate
+		from SewingOutput a
+		left join SewingOutput_Detail b on a.id=b.id
+		where b.OrderId =oq.Id
+	)SewDate		
+	outer apply( 
+		select Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN
+		from PackingList_Detail pd WITH (NOLOCK) 
+		LEFT JOIN PackingList p on pd.ID = p.ID 
+		where  pd.OrderID = oq.ID 
+		and pd.OrderShipmodeSeq = oq.Seq
+	)  pdm		
+	outer apply(
+		select Line = stuff((
+			select concat(',',SewingLineID)
+			from (
+				select distinct SewingLineID
+				from SewingSchedule ss
+				where oq.ID=ss.orderid	
+				) s
+			for xml path ('')
+			),1,1,'')
+	)SewingLine
+	outer apply (
+		select [ClogCTN] = Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end)
+		,[ClogRcvDate] = Max (c.AddDate) 
+		from PackingList_Detail pd WITH (NOLOCK) 
+		LEFT JOIN PackingList p on pd.ID = p.ID 
+		left join ClogReceive c on c.PackingListID=pd.ID
+			and c.ReceiveDate=pd.ReceiveDate and c.CTNStartNo=pd.CTNStartNo 
+			and c.OrderID=pd.OrderID
+		where  pd.OrderID = oq.ID 
+		and pd.OrderShipmodeSeq = oq.Seq
+		and CONVERT(date,pd.ReceiveDate) <= AllDate.ReadyDate
+		and datepart(HH, c.AddDate) <= 17 -- 下午5點)
+	) Receive	
+where O.Category!='S'
+and oq.BuyerDelivery >= AllDate.HolidayDates  
+and oq.BuyerDelivery < AllDate.WorkDates 
 
 ) a 
 
@@ -726,10 +712,10 @@ drop table #tmp
 
             for (int f = 0; f < this.dtFty.Rows.Count; f++)
             {
-                wkcolor.Cells[1, 10 + f].Value = this.dtFty.Rows[f]["FactoryID"];
+                wkcolor.Cells[1, 10 + f].Value = this.dtFty.Rows[f]["FtyGroup"];
                 wkcolor.Cells[1, 10 + f].Interior.Color = this.BackGray;
                 wkcolor.Cells[1, 10 + f].Font.Bold = true;
-                string fty = this.dtFty.Rows[f]["FactoryID"].ToString();
+                string fty = this.dtFty.Rows[f]["FtyGroup"].ToString();
 
                 int cnt = 0;
                 for (int i = 0; i < range; i++)
