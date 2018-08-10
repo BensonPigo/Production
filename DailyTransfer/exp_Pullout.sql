@@ -40,7 +40,7 @@ WHERE (LockDate BETWEEN (select DATEADD(DAY,1,PullLock) from Production.dbo.Syst
 AND Status <> 'New'
 ORDER BY Id
 
-SELECT B.* 
+SELECT B.* ,ExpressID = (select ExpressID from Production.dbo.PackingList where id = b.PackingListID)
 INTO Pullout_Detail
 FROM #CUR_PULLOUT1  A, Production.dbo.Pullout_Detail  B 
 WHERE A.ID = B.ID 

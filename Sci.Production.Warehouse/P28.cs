@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             this.ActiveControl = txtIssueSP;
 
-            comboCategory.SelectedIndex = 0;
+            Category.SelectedIndex = 0;
             comboFabricType.SelectedIndex = 0;
             
             #region -- Grid1 設定 --
@@ -269,7 +269,7 @@ WHERE   StockType='{0}'
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            int selectindex = comboCategory.SelectedIndex;
+            string selectindex = Category.SelectedValue.ToString();
             int selectindex2 = comboFabricType.SelectedIndex;
             string ATA_b, ATA_e, InputDate_b, InputDate_e, SP,factory;
             ATA_b = null;
@@ -329,7 +329,7 @@ WHERE   StockType='{0}'
                 and seq2 = pd.seq2
     ) z ", InputDate_b, InputDate_e));
             }
-            sqlcmd.Append(string.Format(@" 
+            sqlcmd.Append($@" 
     outer apply (
         select count(1) cnt 
         from FtyInventory fi WITH (NOLOCK) 
@@ -362,29 +362,12 @@ WHERE   StockType='{0}'
                 and i.InventorySeq1 = pd.seq1 
                 and i.InventorySeq2 = pd.SEQ2
     ) xz
-    where   f.MDivisionID = '{0}'
-            and checkProduceFty.IsProduceFty = '1'", Env.User.Keyword));
-
+    where   f.MDivisionID = '{Env.User.Keyword}'
+            and checkProduceFty.IsProduceFty = '1'
+            and o.Category in ({selectindex})");
+            
             #region -- 條件 --
-            switch (selectindex)
-            {
-                case 0:
-                    sqlcmd.Append(@" 
-            and (o.Category = 'B')");
-                    break;
-                case 1:
-                    sqlcmd.Append(@" 
-            and o.Category = 'S' ");
-                    break;
-                case 2:
-                    sqlcmd.Append(@" 
-            and (o.Category = 'M')");
-                    break;
-                case 3:
-                    sqlcmd.Append(@" 
-            and (o.Category = 'B' or o.Category = 'S' or o.Category = 'M')");
-                    break;
-            }
+        
             switch (selectindex2)
             {
                 case 0:
@@ -479,7 +462,6 @@ drop table #tmp");
 
             master = dataSet.Tables[0];
             master.TableName = "Master";
-            //master.DefaultView.Sort = "poid,seq1,seq2";
 
             detail = dataSet.Tables[1];
             detail.TableName = "Detail";

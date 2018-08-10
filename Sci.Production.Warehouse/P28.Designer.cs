@@ -32,7 +32,8 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.lbFactory = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.comboFabricType = new Sci.Win.UI.ComboBox();
             this.labelFabricType = new Sci.Win.UI.Label();
@@ -52,8 +53,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
-            this.lbFactory = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.Category = new Sci.Production.Class.comboDropDownList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -68,9 +68,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.Category);
             this.panel1.Controls.Add(this.txtfactory);
             this.panel1.Controls.Add(this.lbFactory);
-            this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.labelCategory);
             this.panel1.Controls.Add(this.comboFabricType);
             this.panel1.Controls.Add(this.labelFabricType);
@@ -88,21 +88,24 @@
             this.panel1.Size = new System.Drawing.Size(1008, 107);
             this.panel1.TabIndex = 1;
             // 
-            // comboCategory
+            // txtfactory
             // 
-            this.comboCategory.BackColor = System.Drawing.Color.White;
-            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboCategory.FormattingEnabled = true;
-            this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Items.AddRange(new object[] {
-            "Bulk",
-            "Sample",
-            "Material",
-            "All"});
-            this.comboCategory.Location = new System.Drawing.Point(729, 42);
-            this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 5;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(87, 42);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(117, 23);
+            this.txtfactory.TabIndex = 118;
+            // 
+            // lbFactory
+            // 
+            this.lbFactory.Location = new System.Drawing.Point(9, 42);
+            this.lbFactory.Name = "lbFactory";
+            this.lbFactory.Size = new System.Drawing.Size(75, 23);
+            this.lbFactory.TabIndex = 117;
+            this.lbFactory.Text = "Factory";
             // 
             // labelCategory
             // 
@@ -124,6 +127,7 @@
             "All"});
             this.comboFabricType.Location = new System.Drawing.Point(729, 9);
             this.comboFabricType.Name = "comboFabricType";
+            this.comboFabricType.OldText = "";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
             this.comboFabricType.TabIndex = 4;
             // 
@@ -137,6 +141,20 @@
             // 
             // dateInputDate
             // 
+            // 
+            // 
+            // 
+            this.dateInputDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateInputDate.DateBox1.Name = "";
+            this.dateInputDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateInputDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateInputDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateInputDate.DateBox2.Name = "";
+            this.dateInputDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateInputDate.DateBox2.TabIndex = 1;
             this.dateInputDate.Location = new System.Drawing.Point(334, 42);
             this.dateInputDate.Name = "dateInputDate";
             this.dateInputDate.Size = new System.Drawing.Size(280, 23);
@@ -144,6 +162,20 @@
             // 
             // dateMaterialATA
             // 
+            // 
+            // 
+            // 
+            this.dateMaterialATA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateMaterialATA.DateBox1.Name = "";
+            this.dateMaterialATA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateMaterialATA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateMaterialATA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateMaterialATA.DateBox2.Name = "";
+            this.dateMaterialATA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateMaterialATA.DateBox2.TabIndex = 1;
             this.dateMaterialATA.Location = new System.Drawing.Point(334, 9);
             this.dateMaterialATA.Name = "dateMaterialATA";
             this.dateMaterialATA.Size = new System.Drawing.Size(280, 23);
@@ -296,6 +328,7 @@
             this.gridComplete.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridComplete.RowTemplate.Height = 24;
             this.gridComplete.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridComplete.ShowCellToolTips = false;
             this.gridComplete.Size = new System.Drawing.Size(571, 441);
             this.gridComplete.TabIndex = 0;
             this.gridComplete.TabStop = false;
@@ -320,28 +353,23 @@
             this.gridRel.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridRel.RowTemplate.Height = 24;
             this.gridRel.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridRel.ShowCellToolTips = false;
             this.gridRel.Size = new System.Drawing.Size(433, 441);
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
             // 
-            // lbFactory
+            // Category
             // 
-            this.lbFactory.Location = new System.Drawing.Point(9, 42);
-            this.lbFactory.Name = "lbFactory";
-            this.lbFactory.Size = new System.Drawing.Size(75, 23);
-            this.lbFactory.TabIndex = 117;
-            this.lbFactory.Text = "Factory";
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(87, 42);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(117, 23);
-            this.txtfactory.TabIndex = 118;
+            this.Category.BackColor = System.Drawing.Color.White;
+            this.Category.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Category.FormattingEnabled = true;
+            this.Category.IsSupportUnselect = true;
+            this.Category.Location = new System.Drawing.Point(729, 43);
+            this.Category.Name = "Category";
+            this.Category.OldText = "";
+            this.Category.Size = new System.Drawing.Size(121, 24);
+            this.Category.TabIndex = 119;
+            this.Category.Type = "Pms_MtlCategory";
             // 
             // P28
             // 
@@ -391,7 +419,6 @@
         private Win.UI.DateRange dateInputDate;
         private Win.UI.DateRange dateMaterialATA;
         private Win.UI.TextBox txtIssueSP;
-        private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
         private Win.UI.ComboBox comboFabricType;
         private Win.UI.Label labelFabricType;
@@ -400,5 +427,6 @@
         private Win.UI.CheckBox checkOnly;
         private Win.UI.Label lbFactory;
         private Class.txtfactory txtfactory;
+        private Class.comboDropDownList Category;
     }
 }
