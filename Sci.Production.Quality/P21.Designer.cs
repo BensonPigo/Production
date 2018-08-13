@@ -85,11 +85,11 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dateBuyerDelivery);
             this.masterpanel.Controls.Add(this.labBuyerDelivery);
             this.masterpanel.Controls.Add(this.numSQR);
             this.masterpanel.Controls.Add(this.labSQR);
             this.masterpanel.Controls.Add(this.txtsewingline);
+            this.masterpanel.Controls.Add(this.dateBuyerDelivery);
             this.masterpanel.Controls.Add(this.labConfirm);
             this.masterpanel.Controls.Add(this.numOrderQty);
             this.masterpanel.Controls.Add(this.numDefectsQty);
@@ -164,11 +164,11 @@
             this.masterpanel.Controls.SetChildIndex(this.numOrderQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labConfirm, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
             this.masterpanel.Controls.SetChildIndex(this.labSQR, 0);
             this.masterpanel.Controls.SetChildIndex(this.numSQR, 0);
             this.masterpanel.Controls.SetChildIndex(this.labBuyerDelivery, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             // 
             // detailpanel
             // 
