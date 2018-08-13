@@ -32,6 +32,7 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             comboStatus.SelectedIndex = 0;
             comboStockType.SelectedIndex = 0;
+            comboDropDownList1.SelectedIndex = 0;
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
@@ -76,9 +77,11 @@ namespace Sci.Production.Warehouse
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                   .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                  .Text("FabricType", header: "Material Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true,settings: ns)
                   .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
+                  .Date("FinalETA", header: "Material ATA ", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12),iseditingreadonly:false,settings: remark)
@@ -126,9 +129,11 @@ select 0 as [selected]
         , fi.POID
         , fi.seq1
         , fi.seq2
+        , FabricType = case when pd.FabricType = 'F' then 'Fabric' when  pd.FabricType = 'A' then 'Accessory' end
         , fi.Roll
         , fi.Dyelot
         , iif(fi.Lock=0,'Unlocked','Locked') [status]
+        , pd.FinalETA
         , fi.InQty
         , fi.OutQty
         , fi.AdjustQty
@@ -223,6 +228,17 @@ txtwkno.Text));
 and exists (select 1 from Receiving_Detail r where r.poid = fi.poid and r.seq1 = fi.seq1 and r.seq2 = fi.seq2 and r.Roll = fi.Roll and r.Dyelot = fi.Dyelot and r.id = '{0}' )",
 txtReceivingid.Text));
             }
+            if (!MyUtility.Check.Empty(dateATA.TextBox1.Value))
+            {
+                strSQLCmd.Append(string.Format(@" 
+and pd.FinalETA between '{0}' and '{1}'", dateATA.TextBox1.Text, dateATA.TextBox2.Text));
+            }
+            if (!MyUtility.Check.Empty(comboDropDownList1.SelectedValue))
+            {
+                strSQLCmd.Append(string.Format(@" 
+and pd.FabricType in ({0})", comboDropDownList1.SelectedValue));
+            }
+
             Ict.DualResult result;
             DataTable dtData;
             this.ShowWaitMessage("Data Loading...");
