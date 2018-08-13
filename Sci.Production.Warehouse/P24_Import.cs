@@ -40,9 +40,9 @@ namespace Sci.Production.Warehouse
                 deadlind2 = dateDead.TextBox2.Text;
             }
 
-            if (string.IsNullOrWhiteSpace(sp))
+            if (string.IsNullOrWhiteSpace(sp) && MyUtility.Check.Empty(deadlind1) && MyUtility.Check.Empty(deadlind2))
             {
-                MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< SP# >&&<deadlind> can't be empty!!");
                 txtSPNo.Focus();
                 return;
             }
