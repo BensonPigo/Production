@@ -118,9 +118,10 @@ namespace Sci.Production.Warehouse
             String sp1 = this.txtSP.Text.TrimEnd() + '%';
 
 
-            if (MyUtility.Check.Empty(txtSP.Text)&& MyUtility.Check.Empty(txtwkno.Text)&& MyUtility.Check.Empty(txtReceivingid.Text))
+            if (MyUtility.Check.Empty(txtSP.Text)&& MyUtility.Check.Empty(txtwkno.Text)&& MyUtility.Check.Empty(txtReceivingid.Text)
+                && this.dateATA.Value1.Empty() && this.dateATA.Value2.Empty())
             {
-                MyUtility.Msg.WarningBox("SP# and WK NO and Receiving ID  can't be empty!!");
+                MyUtility.Msg.WarningBox("SP# and WK NO and Receiving ID and ATA can't be empty!!");
                 return;
             }
 
