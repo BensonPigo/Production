@@ -61,6 +61,7 @@ select 	selected = 0
         , fromFactoryID = orders.FactoryID
 		, fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 		, Description = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
+        , i.Deadline as Deadline
 		, fromRoll = c.Roll
 		, fromDyelot = c.Dyelot 
 		, fromStocktype = c.StockType 
@@ -183,7 +184,6 @@ Where   c.lock = 0
                     dr.EndEdit();
                 }
             };
-
             #region -- Location 右鍵開窗 --
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
@@ -250,6 +250,7 @@ WHERE   StockType='{0}'
                 .Text("fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .Text("fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //5
+                .Text("Deadline", header: "Dead Line", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
                 .Numeric("balance", header: "Inventory" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //7
                 .Numeric("Qty", header: "Scrap" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //8
