@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtReceivingid = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtwkno = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.labelSEQ = new Sci.Win.UI.Label();
             this.txtSeq = new Sci.Production.Class.txtSeq();
             this.comboStockType = new Sci.Win.UI.ComboBox();
@@ -47,10 +51,10 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtwkno = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtReceivingid = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.dateATA = new Sci.Win.UI.DateRange();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).BeginInit();
@@ -60,6 +64,10 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.dateATA);
+            this.panel1.Controls.Add(this.comboDropDownList1);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.txtReceivingid);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtwkno);
@@ -79,9 +87,45 @@
             this.panel1.Size = new System.Drawing.Size(1008, 71);
             this.panel1.TabIndex = 0;
             // 
+            // txtReceivingid
+            // 
+            this.txtReceivingid.BackColor = System.Drawing.Color.White;
+            this.txtReceivingid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReceivingid.Location = new System.Drawing.Point(285, 39);
+            this.txtReceivingid.MaxLength = 13;
+            this.txtReceivingid.Name = "txtReceivingid";
+            this.txtReceivingid.Size = new System.Drawing.Size(122, 23);
+            this.txtReceivingid.TabIndex = 6;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(196, 39);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(86, 23);
+            this.label2.TabIndex = 43;
+            this.label2.Text = "Receiving ID";
+            // 
+            // txtwkno
+            // 
+            this.txtwkno.BackColor = System.Drawing.Color.White;
+            this.txtwkno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtwkno.Location = new System.Drawing.Point(71, 39);
+            this.txtwkno.MaxLength = 13;
+            this.txtwkno.Name = "txtwkno";
+            this.txtwkno.Size = new System.Drawing.Size(122, 23);
+            this.txtwkno.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 39);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(59, 23);
+            this.label1.TabIndex = 41;
+            this.label1.Text = "WK NO";
+            // 
             // labelSEQ
             // 
-            this.labelSEQ.Location = new System.Drawing.Point(234, 10);
+            this.labelSEQ.Location = new System.Drawing.Point(196, 10);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(59, 23);
             this.labelSEQ.TabIndex = 40;
@@ -90,7 +134,7 @@
             // txtSeq
             // 
             this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq.Location = new System.Drawing.Point(296, 10);
+            this.txtSeq.Location = new System.Drawing.Point(258, 10);
             this.txtSeq.Name = "txtSeq";
             this.txtSeq.seq1 = "";
             this.txtSeq.seq2 = "";
@@ -109,6 +153,7 @@
             "Inventory"});
             this.comboStockType.Location = new System.Drawing.Point(766, 10);
             this.comboStockType.Name = "comboStockType";
+            this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(100, 24);
             this.comboStockType.TabIndex = 4;
             // 
@@ -140,7 +185,7 @@
             // 
             // labelStatus
             // 
-            this.labelStatus.Location = new System.Drawing.Point(415, 10);
+            this.labelStatus.Location = new System.Drawing.Point(410, 10);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(74, 23);
             this.labelStatus.TabIndex = 33;
@@ -156,8 +201,9 @@
             "All",
             "Locked",
             "Unlocked"});
-            this.comboStatus.Location = new System.Drawing.Point(492, 10);
+            this.comboStatus.Location = new System.Drawing.Point(487, 10);
             this.comboStatus.Name = "comboStatus";
+            this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(121, 24);
             this.comboStatus.TabIndex = 3;
             // 
@@ -166,7 +212,7 @@
             this.btnQuery.Location = new System.Drawing.Point(916, 6);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 5;
+            this.btnQuery.TabIndex = 9;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -201,6 +247,7 @@
             this.gridMaterialLock.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridMaterialLock.RowTemplate.Height = 24;
             this.gridMaterialLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridMaterialLock.ShowCellToolTips = false;
             this.gridMaterialLock.Size = new System.Drawing.Size(1002, 521);
             this.gridMaterialLock.TabIndex = 0;
             this.gridMaterialLock.TabStop = false;
@@ -261,41 +308,55 @@
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.btnUnlock_Click);
             // 
-            // label1
+            // label3
             // 
-            this.label1.Location = new System.Drawing.Point(9, 39);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 23);
-            this.label1.TabIndex = 41;
-            this.label1.Text = "WK NO";
+            this.label3.Location = new System.Drawing.Point(410, 39);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(86, 23);
+            this.label3.TabIndex = 45;
+            this.label3.Text = "Material ATA ";
             // 
-            // txtwkno
+            // label4
             // 
-            this.txtwkno.BackColor = System.Drawing.Color.White;
-            this.txtwkno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtwkno.Location = new System.Drawing.Point(71, 39);
-            this.txtwkno.MaxLength = 13;
-            this.txtwkno.Name = "txtwkno";
-            this.txtwkno.Size = new System.Drawing.Size(122, 23);
-            this.txtwkno.TabIndex = 42;
+            this.label4.Location = new System.Drawing.Point(781, 39);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(91, 23);
+            this.label4.TabIndex = 46;
+            this.label4.Text = "Material Type";
             // 
-            // label2
+            // comboDropDownList1
             // 
-            this.label2.Location = new System.Drawing.Point(234, 39);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 23);
-            this.label2.TabIndex = 43;
-            this.label2.Text = "Receiving ID";
+            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(875, 38);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
+            this.comboDropDownList1.TabIndex = 8;
+            this.comboDropDownList1.Type = "Pms_FabricType";
             // 
-            // txtReceivingid
+            // dateATA
             // 
-            this.txtReceivingid.BackColor = System.Drawing.Color.White;
-            this.txtReceivingid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceivingid.Location = new System.Drawing.Point(323, 39);
-            this.txtReceivingid.MaxLength = 13;
-            this.txtReceivingid.Name = "txtReceivingid";
-            this.txtReceivingid.Size = new System.Drawing.Size(122, 23);
-            this.txtReceivingid.TabIndex = 44;
+            // 
+            // 
+            // 
+            this.dateATA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateATA.DateBox1.Name = "";
+            this.dateATA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateATA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateATA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateATA.DateBox2.Name = "";
+            this.dateATA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateATA.DateBox2.TabIndex = 1;
+            this.dateATA.Location = new System.Drawing.Point(499, 39);
+            this.dateATA.Name = "dateATA";
+            this.dateATA.Size = new System.Drawing.Size(280, 23);
+            this.dateATA.TabIndex = 7;
             // 
             // P38
             // 
@@ -344,5 +405,9 @@
         private Win.UI.Label label2;
         private Win.UI.TextBox txtwkno;
         private Win.UI.Label label1;
+        private Win.UI.Label label4;
+        private Win.UI.Label label3;
+        private Class.comboDropDownList comboDropDownList1;
+        private Win.UI.DateRange dateATA;
     }
 }

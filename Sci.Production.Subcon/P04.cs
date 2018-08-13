@@ -343,7 +343,17 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
 
             // 提示是否超過Farm out qty 
             ids = "";
-            foreach (var dr in DetailDatas)
+            DataTable sumbyartworkpo_detailukey = ((DataTable)detailgridbs.DataSource).AsEnumerable().GroupBy(r => r.Field<long>("artworkpo_detailukey")).Select(g =>
+            {
+                var row = ((DataTable)detailgridbs.DataSource).NewRow();
+
+                row["artworkpo_detailukey"] = g.Key;
+                row["qty"] = g.Sum(r => r.Field<decimal>("qty"));
+
+                return row;
+            }).CopyToDataTable();
+
+            foreach (DataRow dr in sumbyartworkpo_detailukey.Rows)
             {
                 sqlcmd = string.Format("select * from artworkpo_detail WITH (NOLOCK) where ukey = '{0}'", dr["artworkpo_detailukey"]);
                 if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -487,7 +497,24 @@ and a.mdivisionid = '{2}' order by B.ID", dr["OrderID"].ToString(), CurrentMaint
             }
 
             ids = "";
-            foreach (var dr in DetailDatas)
+
+            DataTable sumbyartworkpo_detailukey = ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                .GroupBy(r => r.Field<long>("artworkpo_detailukey"))
+                .Select(g =>
+                {
+                    var row = ((DataTable)detailgridbs.DataSource).NewRow();
+
+                    row["artworkpo_detailukey"] = g.Key;
+                    row["orderid"] = g.Max(r => r.Field<string>("orderid"));
+                    row["artworkpoid"] = g.Max(r => r.Field<string>("artworkpoid"));
+                    row["artworkid"] = g.Max(r => r.Field<string>("artworkid"));
+                    row["patterncode"] = g.Max(r => r.Field<string>("patterncode"));
+                    row["qty"] = g.Sum(r => r.Field<decimal>("qty"));
+
+                    return row;
+                }).CopyToDataTable();
+
+            foreach (DataRow dr in sumbyartworkpo_detailukey.Rows)
             {
                 if (datacheck.Rows.Count > 0)
                 {
