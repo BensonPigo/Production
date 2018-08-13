@@ -369,7 +369,17 @@ order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"], Sci.Env.User.Ke
             if (CurrentMaintain["status"].ToString().ToUpper() == "NEW")
             {
                 ids = "";
-                foreach (var dr in DetailDatas)
+                DataTable sumbyartworkpo_detailukey = ((DataTable)detailgridbs.DataSource).AsEnumerable().GroupBy(r => r.Field<long>("artworkpo_detailukey")).Select(g=>
+                    {
+                        var row = ((DataTable)detailgridbs.DataSource).NewRow();
+
+                        row["artworkpo_detailukey"] = g.Key;
+                        row["qty"] = g.Sum(r => r.Field<decimal>("qty"));
+
+                        return row;
+                    }).CopyToDataTable();
+
+                foreach (DataRow dr in sumbyartworkpo_detailukey.Rows)
                 {
                     sqlcmd = string.Format("select * from artworkpo_detail WITH (NOLOCK) where ukey = '{0}'", dr["artworkpo_detailukey"]);
                     if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -389,6 +399,7 @@ order by B.ID", dr["OrderID"], CurrentMaintain["artworktypeid"], Sci.Env.User.Ke
                 if (!MyUtility.Check.Empty(ids))
                 {
                     MyUtility.Msg.WarningBox(ids);
+                    return;
                 }
             }
             #endregion
@@ -545,8 +556,22 @@ where   c.bundleno !=''
             }
             if (datacheck.Rows.Count > 0)
             {
+                DataTable sumbyartworkpo_detailukey = ((DataTable)detailgridbs.DataSource).AsEnumerable()
+                    .GroupBy(r => r.Field<long>("artworkpo_detailukey"))
+                    .Select(g =>
+                {
+                    var row = ((DataTable)detailgridbs.DataSource).NewRow();
+
+                    row["artworkpo_detailukey"] = g.Key;
+                    row["orderid"] = g.Max(r => r.Field<string>("orderid"));
+                    row["ukey"] = g.Max(r => r.Field<long>("ukey"));
+                    row["qty"] = g.Sum(r => r.Field<decimal>("qty"));
+
+                    return row;
+                }).CopyToDataTable();
+
                 DataRow[] Srows;
-                foreach (var dr in DetailDatas)
+                foreach (DataRow dr in sumbyartworkpo_detailukey.Rows)
                 {
                     Srows = datacheck.Select(string.Format("OrderID = '{0}' and ukey = '{1}'", dr["orderid"].ToString(), dr["ukey"].ToString()));
                     if ((decimal)Srows[0]["farmout"] - (decimal)dr["qty"] < (decimal)Srows[0]["farmin"])
