@@ -181,7 +181,7 @@
             this.Controls.Add(this.labReadyDate);
             this.Controls.Add(this.dateRangeReadyDate);
             this.Name = "R11";
-            this.Text = "PPIC R11 Ready Report";
+            this.Text = "R11. Sewing Ready Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
