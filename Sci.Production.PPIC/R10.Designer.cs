@@ -195,7 +195,7 @@
             this.Controls.Add(this.labelSewingOutputDate);
             this.Controls.Add(this.labelFactory);
             this.Name = "R10";
-            this.Text = "R10 Potential Delay Report";
+            this.Text = "R10. Potential Delay Report";
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelSewingOutputDate, 0);
             this.Controls.SetChildIndex(this.labelBuyerDeliveryDate, 0);
