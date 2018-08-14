@@ -251,7 +251,7 @@ outer apply (
 			and c.OrderID=pd1.OrderID
 		where  pd1.OrderID = os.ID 
 		and pd1.OrderShipmodeSeq = os.Seq
-		and pd1.ReceiveDate <= AllDate.ReadyDate
+		and pd1.ReceiveDate <= pd.ReceiveDate
 ) Receive	
 outer apply(
 	select Line = stuff((
