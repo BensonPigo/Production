@@ -132,8 +132,9 @@ FROM CTE
 
 /* Temple Table 1 */
 SELECT distinct
-[ReadyDate] = convert(date,pd.ReceiveDate)--NormalCalendar.Dates
-,Calendar.Dates		
+[ReadyDate] = pd.ReceiveDate--NormalCalendar.Dates
+,Calendar.Dates	
+,o.FtyGroup
 into #CalendarData	
 FROM PackingList_Detail pd
 left join Order_QtyShip os on pd.OrderID=os.Id	 and pd.OrderShipmodeSeq=os.Seq
@@ -142,12 +143,17 @@ cross apply(
 	select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
 	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日
 	and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup) -- 排除假日
-	and Dates < CONVERT(date, pd.ReceiveDate)			
+	and Dates < pd.ReceiveDate	
 )Calendar	
 where o.VasShas = 1 and o.Category!='S' and o.Junk=0
 and pd.ReceiveDate between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將ReceiveDate跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 and Dates < pd.ReceiveDate
+and not exists (select dates
+	from #Calendar			
+	where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
+	or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)) -- 只能是假日)		
+	and Dates = pd.ReceiveDate)
 
 
 SELECT distinct
@@ -188,9 +194,10 @@ end
 ,[ShipMode] = os.ShipmodeID
 into #tmp
 FROM PackingList_Detail pd
-left join Order_QtyShip os on pd.OrderID=os.Id	 and pd.OrderShipmodeSeq=os.Seq
+left join Order_QtyShip os on pd.OrderID=os.Id and pd.OrderShipmodeSeq=os.Seq
 left join Orders o on os.ID=o.ID
-inner join #CalendarData AllDate on AllDate.Dates=convert(date,pd.ReceiveDate)
+inner join #CalendarData AllDate on AllDate.Dates = pd.ReceiveDate
+and AllDate.FtyGroup=o.FtyGroup
 outer apply(
 		select max(Offline) offline,min(Inline) as Inline
 		from sewingschedule
@@ -204,8 +211,7 @@ outer apply(
     ,cfa.EditDate as FinalInsDate
     from cfa
     left join Pass1 on cfa.CFA=pass1.ID
-    where convert(date,cfa.EditDate) <= pd.ReceiveDate
-    and datepart(HH,cfa.EditDate) < 17 -- 下午5點)
+    where convert(date,cfa.EditDate) <= AllDate.ReadyDate
     and cfa.OrderID=pd.OrderID
 	and cfa.Status='Confirmed'
     order by cfa.EditDate desc
@@ -247,7 +253,6 @@ outer apply (
 		and pd1.OrderShipmodeSeq = os.Seq
 		and pd1.Ukey=pd.Ukey
 		and pd1.ReceiveDate <= AllDate.ReadyDate
-		and datepart(HH, c.AddDate) < 17 -- 下午5點)		
 ) Receive	
 outer apply(
 	select Line = stuff((
