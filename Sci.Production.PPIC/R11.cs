@@ -145,7 +145,7 @@ cross apply(
 	and Dates < CONVERT(date, ss.Offline)			
 )Calendar	
 where 1=1
-and o.Category !='S' 		
+and o.Category !='S' and o.junk !=1
 and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 and Dates < CONVERT(date, ss.Offline)		
@@ -258,7 +258,7 @@ SELECT distinct
 			and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 		) Receive			
 		where 1=1
-		and o.Category !='S' 
+		and o.Category !='S' and o.junk !=1 
 		and CONVERT(date,s.offline)=AllDate.Dates
         {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
@@ -278,7 +278,7 @@ cross apply(
 	and Dates <= CONVERT(date, ss.Offline)			
 )Calendar	
 where 1=1
-and o.Category !='S' 		
+and o.Category !='S' and o.junk !=1 		
 and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' 
 -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows <= {MyUtility.Convert.GetInt(this.Gap)}	
@@ -389,7 +389,7 @@ SELECT distinct
 			and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 		) Receive			
 		where 1=1
-		and o.Category !='S' 
+		and o.Category !='S' and o.junk !=1 
 		and AllDate.ReadyDate=os.BuyerDelivery --Ready date =BuyerDelivery今天要交貨的資料
         {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 		
@@ -541,7 +541,7 @@ outer apply(
 		and CONVERT(date,pd.ReceiveDate) <= AllDate.ReadyDate
 		and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 	) Receive	
-where O.Category!='S'
+where O.Category !='S' and o.junk !=1
 and oq.BuyerDelivery = AllDate.HolidayDates  
 and oq.BuyerDelivery < AllDate.WorkDates 
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
@@ -657,12 +657,14 @@ drop table #Calendar,#CalendarData,#CalendarData2,#tmp,#tmp1,#tmp2
             #endregion
 
             #region SQL get DataTable
+            DBProxy.Current.DefaultTimeout = 2700;
             DualResult result;
             result = DBProxy.Current.Select(null, sqlCmd, out this.dtList);
             if (!result)
             {
                 return result;
             }
+            DBProxy.Current.DefaultTimeout = 300;
             #endregion
             return new Ict.DualResult(true);
         }
