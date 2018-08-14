@@ -134,6 +134,7 @@ FROM CTE
 SELECT 
 [ReadyDate] = convert(date,ss.Offline)--NormalCalendar.Dates
 ,Calendar.Dates		
+,o.FtyGroup
 into #CalendarData	
 FROM sewingschedule ss
 left join Orders o on ss.OrderID=o.ID
@@ -148,7 +149,12 @@ where 1=1
 and o.Category !='S' and o.junk !=1
 and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
-and Dates < CONVERT(date, ss.Offline)		
+and Dates < CONVERT(date, ss.Offline)	
+and not exists (select dates
+    from #Calendar			
+    where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
+    or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)) -- 只能是假日)		
+    and Dates = CONVERT(date, ss.Offline))	
 
 
 /* 先將資料邏輯1組出temple table 後在使用判斷處理資料*/
@@ -193,7 +199,8 @@ SELECT distinct
 		FROM sewingschedule S
 		left join Orders o on s.OrderID=o.ID
 		left join Order_QtyShip os on o.ID=os.Id
-		inner join #CalendarData AllDate on AllDate.Dates= convert(date,s.offline)		
+		inner join #CalendarData AllDate on AllDate.Dates= convert(date,s.offline)	
+        and AllDate.FtyGroup = o.FtyGroup	
 		outer apply(
 			select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
 			,case when cfa.Result='P' then 'Pass'
@@ -267,6 +274,7 @@ SELECT distinct
 SELECT distinct
 [ReadyDate] = convert(date,ss.Offline) --NormalCalendar.Dates
 ,Calendar.Dates
+,o.FtyGroup
 into #CalendarData2
 FROM sewingschedule ss
 left join Orders o on ss.OrderID=o.ID
@@ -282,7 +290,11 @@ and o.Category !='S' and o.junk !=1
 and CONVERT(date, ss.Offline) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' 
 -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows <= {MyUtility.Convert.GetInt(this.Gap)}	
-
+and not exists (select dates
+	from #Calendar			
+	where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
+	or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)) -- 只能是假日)		
+	and Dates = CONVERT(date, ss.Offline))
 
 SELECT distinct
 		[ReadyDate] = AllDate.ReadyDate
@@ -326,6 +338,7 @@ SELECT distinct
 		left join Orders o on s.OrderID=o.ID
 		left join Order_QtyShip os on o.ID=os.Id
 		inner join #CalendarData2 AllDate on AllDate.Dates= convert(date,s.Offline)
+        and AllDate.FtyGroup= o.FtyGroup
 		outer apply(
 			select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
 			,case when cfa.Result='P' then 'Pass'
