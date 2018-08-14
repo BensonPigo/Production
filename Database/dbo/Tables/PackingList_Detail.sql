@@ -33,9 +33,11 @@
     [CFANeedInsp]        BIT            CONSTRAINT [DF_PackingList_Detail_CFANeedInsp] DEFAULT ((0)) NOT NULL,
     [CFAInspDate]        DATE           NULL,
     [ScanName]           VARCHAR (10)   DEFAULT ('') NULL,
-    [CustCTN]            VARCHAR (30)   NULL,
+    [CustCTN]            VARCHAR (30)   DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -199,4 +201,21 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFAï¿½Ý­nï¿
 GO
 CREATE NONCLUSTERED INDEX [NonClusteredIndex-forOrderID]
     ON [dbo].[PackingList_Detail]([OrderID] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [QA_R23_ReceiveDate]
+    ON [dbo].[PackingList_Detail]([ReceiveDate] ASC)
+    INCLUDE([OrderID], [OrderShipmodeSeq]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [Index_OrderIDOrderShipmodeSeqReceiveDate]
+    ON [dbo].[PackingList_Detail]([OrderID] ASC, [ID] ASC, [ReceiveDate] ASC, [CTNStartNo] ASC)
+    INCLUDE([OrderShipmodeSeq]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IN,CTNStartNo]
+    ON [dbo].[PackingList_Detail]([ID] ASC, [CTNStartNo] ASC);
 
