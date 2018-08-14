@@ -145,7 +145,7 @@ cross apply(
 	and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup) -- 排除假日
 	and Dates < pd.ReceiveDate	
 )Calendar	
-where o.VasShas = 1 and o.Category!='S' and o.Junk=0
+where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
 and pd.ReceiveDate between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將ReceiveDate跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 and Dates < pd.ReceiveDate
@@ -193,8 +193,8 @@ end
 ,[SewingLine] = SewingLine.Line
 ,[ShipMode] = os.ShipmodeID
 into #tmp
-FROM PackingList_Detail pd
-left join Order_QtyShip os on pd.OrderID=os.Id and pd.OrderShipmodeSeq=os.Seq
+FROM Order_QtyShip os
+left join PackingList_Detail pd on pd.OrderID=os.Id and pd.OrderShipmodeSeq=os.Seq
 left join Orders o on os.ID=o.ID
 inner join #CalendarData AllDate on AllDate.Dates = pd.ReceiveDate
 and AllDate.FtyGroup=o.FtyGroup
@@ -251,7 +251,6 @@ outer apply (
 			and c.OrderID=pd1.OrderID
 		where  pd1.OrderID = os.ID 
 		and pd1.OrderShipmodeSeq = os.Seq
-		and pd1.Ukey=pd.Ukey
 		and pd1.ReceiveDate <= AllDate.ReadyDate
 ) Receive	
 outer apply(
@@ -265,7 +264,7 @@ outer apply(
 		for xml path ('')
 		),1,1,'')
 )SewingLine
-where o.VasShas = 1 and o.Category!='S' and o.Junk=0
+where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
 and iif(pdm.TotalCTN=0,0, ( isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)=100
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
