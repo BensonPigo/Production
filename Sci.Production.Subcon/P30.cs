@@ -504,9 +504,9 @@ outer apply(
 	where OrderID=ot.ID
 ) inv
 where ot.id = '{0}'
- and artworktypeid = '{1}' and o.Category in ('B','S')
+ and artworktypeid = '{1}' and o.Category in ('B','S','T')
 and factory.IsProduceFty = 1
-and (o.Qty-pd.ShipQty-inv.DiffQty <> 0)  "
+and (o.Qty-pd.ShipQty-inv.DiffQty <> 0 or o.Category='T')  "
                         , e.FormattedValue, CurrentMaintain["category"]), out dr, null))
                     {
                         if ((decimal)dr["price"] == 0m)
@@ -537,9 +537,9 @@ outer apply(
 	where OrderID=orders.ID
 ) inv
 where orders.id = '{0}' and orders.MDivisionID='{1}' 
-and orders.Category  in ('B','S') and orders.Junk=0 and Finished=0
+and orders.Category  in ('B','S','T') and orders.Junk=0 and Finished=0
 and factory.IsProduceFty = 1 
-and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0)
+and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
  "
                     , e.FormattedValue, Sci.Env.User.Keyword), out dr, null))
                 {
