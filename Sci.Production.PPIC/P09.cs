@@ -423,7 +423,7 @@ order by rd.Seq1,rd.Seq2", masterID);
                         MyUtility.Msg.WarningBox("SP No. not found!!");
                         this.CurrentMaintain["POID"] = string.Empty;
                         this.CurrentMaintain["FactoryID"] = string.Empty;
-                        e.Cancel = true;
+                        this.CurrentMaintain.EndEdit();
                         return;
                     }
 
@@ -449,13 +449,14 @@ order by rd.Seq1,rd.Seq2", masterID);
 
                         this.CurrentMaintain["POID"] = string.Empty;
                         this.CurrentMaintain["FactoryID"] = string.Empty;
-                        e.Cancel = true;
+                        this.CurrentMaintain.EndEdit();
                         return;
                     }
                     else
                     {
                         this.CurrentMaintain["POID"] = this.txtSPNo.Text;
                         this.CurrentMaintain["FactoryID"] = ordersData.Rows[0]["FtyGroup"];
+                        this.CurrentMaintain.EndEdit();
                     }
                 }
             }
@@ -464,7 +465,7 @@ order by rd.Seq1,rd.Seq2", masterID);
         // SP No.
         private void TxtSPNo_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && !MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
+            if (!MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
             {
                 // 清空表身Grid資料
                 foreach (DataRow dr in this.DetailDatas)

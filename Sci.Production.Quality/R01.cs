@@ -199,6 +199,7 @@ namespace Sci.Production.Quality
 	F.Physical,
 	F.PhysicalDate,
 	F.TotalInspYds,
+	ftp.TotalPoint,
 	F.Weight,
 	F.WeightDate,
 	F.ShadeBond,
@@ -262,7 +263,9 @@ Outer apply(
     from orders od 
     inner join pass1 a on a.id=od.LocalMR 
     where od.id=o.POID
-) ps1 " + sqlWhere) + @" 
+) ps1
+outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id=f.id)ftp
+" + sqlWhere) + @" 
 GROUP BY 
 F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
 t.ExportId,t.InvNo,t.WhseArrival,
@@ -271,7 +274,8 @@ F.Refno,P.ColorID,C.WeaveTypeID,O.Category
 F.TotalInspYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
 F.ContinuityDate,L.Result,LC.Crocking,
 LC.CrockingDate,LH.Heat,LH.HeatDate,
-LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR
+LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR,
+ftp.TotalPoint
 ORDER BY POID,SEQ";
             #endregion
             return base.ValidateInput();

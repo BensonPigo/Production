@@ -17,10 +17,14 @@ namespace Sci.Production.Warehouse
     public partial class R21 : Sci.Win.Tems.PrintForm
     {
         string StartSPNo, EndSPNo, MDivision, Factory, StartRefno, EndRefno, Color, MT, ST;
+        DateTime? BuyerDelivery1, BuyerDelivery2;
+        DateTime? ETA1, ETA2;
         string sqlcolumn = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
+    ,[BuyerDelivery]=o.BuyerDelivery
+    ,[ETA] = psd.FinalETA
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -36,6 +40,7 @@ namespace Sci.Production.Warehouse
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty)
+    ,[Order Qty] = o.Qty
 	,[Ship Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.ShipQty)
 	,[Roll] = fi.Roll
 	,[Dyelot] = fi.Dyelot
@@ -47,12 +52,15 @@ namespace Sci.Production.Warehouse
 	,[Out Qty] = round(fi.OutQty,2)
 	,[Adjust Qty] = round(fi.AdjustQty,2)
 	,[Balance Qty] = round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2)
-	,[Location] = f.MtlLocationID";
+	,[Location] = f.MtlLocationID
+    ";
 
         string sqlcolumn_sum = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
+    ,[BuyerDelivery]=o.BuyerDelivery
+    ,[ETA] = psd.FinalETA
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -68,6 +76,7 @@ namespace Sci.Production.Warehouse
 	,[Size] = psd.SizeSpec
 	,[Stock Unit] = psd.StockUnit
 	,[Purchase Qty] = round(ISNULL(r.RateValue,1) * psd.Qty,2)
+    ,[Order Qty] = o.Qty
 	,[Ship Qty] = round(ISNULL(r.RateValue,1) * psd.ShipQty,2)
 	,[In Qty] = round(mpd.InQty,2)
 	,[Out Qty] = round(mpd.OutQty,2)
@@ -77,7 +86,8 @@ namespace Sci.Production.Warehouse
 	,[Inventory Qty] = round(mpd.LInvQty,2)
 	,[Scrap Qty] = round(mpd.LObQty ,2)
 	,[Bulk Location] = mpd.ALocation
-	,[Inventory Location] = mpd.BLocation";
+	,[Inventory Location] = mpd.BLocation
+    ";
 
         string sql_yyyy = @"select distinct left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY";
 
@@ -130,6 +140,10 @@ namespace Sci.Production.Warehouse
             ST = cmbStockType.SelectedValue.ToString();
             ReportType = rdbtnDetail.Checked ? 0 : 1;
             boolCheckQty = checkQty.Checked;
+            BuyerDelivery1 = dateBuyerDelivery.Value1;
+            BuyerDelivery2 = dateBuyerDelivery.Value2;
+            ETA1 = dateRange1.Value1;
+            ETA2 = dateRange1.Value2;
             return true;
         }
         
@@ -260,7 +274,27 @@ where 1=1
                 else
                     sqlcmd.Append(" and round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)>0");
             }
-            
+
+            if (!MyUtility.Check.Empty(BuyerDelivery1))
+            {
+                sqlcmd.Append($" and o.BuyerDelivery >='{((DateTime)BuyerDelivery1).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(BuyerDelivery2))
+            {
+                sqlcmd.Append($" and o.BuyerDelivery <='{((DateTime)BuyerDelivery2).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(ETA1))
+            {
+                sqlcmd.Append($" and psd.FinalETA >='{((DateTime)ETA1).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(ETA2))
+            {
+                sqlcmd.Append($" and psd.FinalETA <='{((DateTime)ETA2).ToString("yyyy/MM/dd")}'");
+            }
+
             #endregion
 
             #region Get Data
@@ -367,8 +401,6 @@ where 1=1
                                     GC.Collect();
                                 }
                             }
-
-
                         }
                         else
                         {
@@ -379,9 +411,6 @@ where 1=1
                             com.WriteTable(printData, 2);
                             sheet_cnt++;
                         }
-
-                     
-
 
                         if (printData != null)
                         {
@@ -397,9 +426,6 @@ where 1=1
                             GC.WaitForPendingFinalizers();
                             GC.Collect();
                         }
-
-
-
                     }
                     //刪除多餘sheet
                     ((Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt + 1]).Delete();
@@ -421,15 +447,11 @@ where 1=1
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                 }
-
-
-                //Marshal.ReleaseComObject(objApp);
+                
                 Marshal.ReleaseComObject(tmpsheep);
                 foreach (string filrstr in exl_name)
                 {
-
                     filrstr.OpenFile();
-
                 }
             }
             else
@@ -468,11 +490,6 @@ where 1=1
             this.HideWaitMessage();
             return true;
         }
-
-
-
-
-
 
     }
 }

@@ -33,10 +33,16 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtSPNo.Text.TrimEnd();
-
-            if (string.IsNullOrWhiteSpace(sp))
+            string deadlind1 = string.Empty, deadlind2 = string.Empty;
+            if (!MyUtility.Check.Empty(dateDead.TextBox1.Value))
             {
-                MyUtility.Msg.WarningBox("< SP# > can't be empty!!");
+                deadlind1 = dateDead.TextBox1.Text;
+                deadlind2 = dateDead.TextBox2.Text;
+            }
+
+            if (string.IsNullOrWhiteSpace(sp) && MyUtility.Check.Empty(deadlind1) && MyUtility.Check.Empty(deadlind2))
+            {
+                MyUtility.Msg.WarningBox("< SP# >&&<deadlind> can't be empty!!");
                 txtSPNo.Focus();
                 return;
             }
@@ -55,6 +61,7 @@ select 	selected = 0
         , fromFactoryID = orders.FactoryID
 		, fromseq = concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2)
 		, Description = dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0)
+        , i.Deadline as Deadline
 		, fromRoll = c.Roll
 		, fromDyelot = c.Dyelot 
 		, fromStocktype = c.StockType 
@@ -76,6 +83,7 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.Poid = orders.id
 inner join Factory on orders.FactoryID = factory.id
+outer apply(select  Deadline = max(i.Deadline) from Inventory  i where i.POID = a.id and i.seq1 = a.seq1 and i.seq2 = a.seq2)i
 Where   c.lock = 0 
         and c.InQty-c.OutQty+c.AdjustQty > 0 
         and c.stocktype = 'I'
@@ -99,6 +107,14 @@ Where   c.lock = 0
         and a.id = @sp1 ");
                     sp1.Value = sp;
                     cmds.Add(sp1);
+                }
+
+                if (!MyUtility.Check.Empty(dateDead.TextBox1.Value))
+                {
+                    strSQLCmd.Append(@" 
+        and i.Deadline between @deadlind1 and @deadlind2");
+                    cmds.Add(new System.Data.SqlClient.SqlParameter("@deadlind1", deadlind1));
+                    cmds.Add(new System.Data.SqlClient.SqlParameter("@deadlind2", deadlind2));
                 }
 
                 seq1.Value = txtSeq.seq1;
@@ -168,7 +184,6 @@ Where   c.lock = 0
                     dr.EndEdit();
                 }
             };
-
             #region -- Location 右鍵開窗 --
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
             ts2.EditingMouseDown += (s, e) =>
@@ -235,6 +250,7 @@ WHERE   StockType='{0}'
                 .Text("fromroll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
                 .Text("fromdyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //5
+                .Text("Deadline", header: "Dead Line", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("stockunit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
                 .Numeric("balance", header: "Inventory" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //7
                 .Numeric("Qty", header: "Scrap" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //8

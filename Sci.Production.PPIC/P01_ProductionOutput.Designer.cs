@@ -43,6 +43,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel7 = new Sci.Win.UI.Panel();
             this.gridSewingOutput = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel6 = new Sci.Win.UI.Panel();
             this.numSewingQty = new Sci.Win.UI.NumericBox();
             this.numSewingOrderQty = new Sci.Win.UI.NumericBox();
@@ -54,6 +55,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel9 = new Sci.Win.UI.Panel();
             this.gridCutting = new Sci.Win.UI.Grid();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel8 = new Sci.Win.UI.Panel();
             this.numCuttingQty = new Sci.Win.UI.NumericBox();
             this.numOrderQty = new Sci.Win.UI.NumericBox();
@@ -68,8 +70,6 @@
             this.lbLoadingQty = new Sci.Win.UI.Label();
             this.lbQrderQty = new Sci.Win.UI.Label();
             this.gridLoading = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource3 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -77,16 +77,16 @@
             this.tabPage1.SuspendLayout();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridSewingOutput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel6.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutting)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel8.SuspendLayout();
             this.LoadingQutput.SuspendLayout();
             this.panel10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLoading)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).BeginInit();
             this.SuspendLayout();
             // 
@@ -217,6 +217,7 @@
             this.gridSewingOutput.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSewingOutput.RowTemplate.Height = 24;
             this.gridSewingOutput.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSewingOutput.ShowCellToolTips = false;
             this.gridSewingOutput.Size = new System.Drawing.Size(595, 290);
             this.gridSewingOutput.TabIndex = 0;
             this.gridSewingOutput.TabStop = false;
@@ -348,10 +349,10 @@
             // 
             this.tabPage2.Controls.Add(this.panel9);
             this.tabPage2.Controls.Add(this.panel8);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(601, 358);
+            this.tabPage2.Size = new System.Drawing.Size(601, 355);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "-(Cutting(Comb";
             // 
@@ -361,7 +362,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(595, 293);
+            this.panel9.Size = new System.Drawing.Size(595, 290);
             this.panel9.TabIndex = 1;
             // 
             // gridCutting
@@ -392,7 +393,8 @@
             this.gridCutting.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridCutting.RowTemplate.Height = 24;
             this.gridCutting.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridCutting.Size = new System.Drawing.Size(595, 293);
+            this.gridCutting.ShowCellToolTips = false;
+            this.gridCutting.Size = new System.Drawing.Size(595, 290);
             this.gridCutting.TabIndex = 0;
             this.gridCutting.TabStop = false;
             // 
@@ -404,7 +406,7 @@
             this.panel8.Controls.Add(this.label7);
             this.panel8.Controls.Add(this.label8);
             this.panel8.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel8.Location = new System.Drawing.Point(3, 296);
+            this.panel8.Location = new System.Drawing.Point(3, 293);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(595, 59);
             this.panel8.TabIndex = 0;
@@ -609,7 +611,7 @@
             this.gridLoading.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridLoading.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridLoading.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridLoading.DataSource = this.listControlBindingSource1;
+            this.gridLoading.DataSource = this.listControlBindingSource3;
             this.gridLoading.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridLoading.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridLoading.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -629,6 +631,7 @@
             this.gridLoading.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridLoading.RowTemplate.Height = 24;
             this.gridLoading.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridLoading.ShowCellToolTips = false;
             this.gridLoading.Size = new System.Drawing.Size(601, 355);
             this.gridLoading.TabIndex = 2;
             this.gridLoading.TabStop = false;
@@ -650,19 +653,19 @@
             this.tabPage1.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridSewingOutput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridCutting)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.panel8.ResumeLayout(false);
             this.panel8.PerformLayout();
             this.LoadingQutput.ResumeLayout(false);
             this.panel10.ResumeLayout(false);
             this.panel10.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLoading)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource3)).EndInit();
             this.ResumeLayout(false);
 

@@ -99,7 +99,7 @@ SELECT
 ,F = o.BRANDID
 ,G = convert(varchar(10),Order_QS.BuyerDelivery,111)
 ,H = convert(varchar(10),Order_QS.FtyKPI,111)
-,I = convert(varchar(10),DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), 111)
+,I = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)
 ,J = Order_QS.ShipmodeID
 ,K = Cast(Order_QS.QTY as int)
 ,L = CASE o.GMTComplete WHEN 'S' THEN Cast(isnull(Order_QS.QTY,0) as int)
@@ -135,8 +135,8 @@ outer apply (
 		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI),'<='),
 		FailQty = Sum(rB.Qty)  - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI),'>')
 	From Pullout_Detail pd
-	Outer apply (Select Qty = IIF(pd.PulloutDate <= DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), pd.shipqty, 0)) rA
-	Outer apply (Select Qty = IIF(pd.PulloutDate >  DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), pd.shipqty, 0)) rB
+    Outer apply (Select Qty = IIF(pd.pulloutdate <= iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), pd.shipqty, 0)) rA --On Time
+	Outer apply (Select Qty = IIF(pd.pulloutdate >  iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), pd.shipqty, 0)) rB --Fail
 	where pd.OrderID = o.ID 
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 ) pd
@@ -152,7 +152,7 @@ outer apply (
     where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
     Order by PulloutDate desc
 ) p
-where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '') ";
+where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0)";
 
                 if (this.radioBulk.Checked)
                 {
@@ -258,7 +258,7 @@ Select Order_QS.ID
 From Order_QtyShip Order_QS, Orders o
 Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 Left Join Factory f On o.FactoryID = f.ID 
-Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+Where Order_QS.ID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) 
 ";
 
                 if (this.radioBulk.Checked)
@@ -307,7 +307,7 @@ Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
 Left Join Factory f ON o.FACTORYID = f.ID 
 Where pd.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
-and pd.ShipQty> 0 
+and pd.ShipQty> 0  and (o.Junk is null or o.Junk = 0) 
 ";
                 if (this.radioBulk.Checked)
                 {
@@ -353,7 +353,7 @@ Left Join OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 Left Join Order_QtyShip Order_QS on o.ID = Order_QS.ID
 Left Join Factory f ON o.FactoryID = f.ID 
 Where p.OrderID = o.ID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
-and p.ShipQty> 0
+and p.ShipQty> 0  and (o.Junk is null or o.Junk = 0)
 ";
                 if (this.radioBulk.Checked)
                 {
@@ -405,7 +405,7 @@ Left Join Factory f ON o.FACTORYID = f.ID
 Where TH_Order.SourceID = o.ID 
 AND TH_Order.HisType = 'Delivery' 
 AND r.ReasonTypeID = TH_Order.ReasonTypeID 
-AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')";
+AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) ";
                 if (this.radioBulk.Checked)
                 {
                     strSQL += " AND o.Category = 'B' AND f.Type = 'B'";
@@ -602,8 +602,8 @@ SELECT A = c.alias
      , C = o.FactoryID
      , D = o.ID
      , E = Order_QS.Seq
-     , F = convert(varchar(10),Order_QS.FtyKPI ,111)
-     , G = convert(varchar(10),DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI), 111)
+     , F = convert(varchar(10),Order_QS.FtyKPI ,111)     
+     , G = convert(varchar(10),iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 111)
      , H = Order_QS.ShipmodeID
      , I = Order_QS.QTY
      , J = CASE o.GMTComplete WHEN 'S' THEN Order_QS.QTY
@@ -618,14 +618,14 @@ LEFT JOIN COUNTRY c ON f.COUNTRYID = c.ID
 INNER JOIN Order_QtyShip Order_QS on o.ID = Order_QS.ID
 LEFT JOIN Brand b on o.BrandID = b.ID
 OUTER APPLY (select sum(ShipQty) as sQty 
-             from Pullout_Detail pd 
-             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.PulloutDate <= DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI) ) opd
+             from Pullout_Detail pd              
+             where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.pulloutdate <= iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI))) opd
 OUTER APPLY (select top 1 PulloutDate 
              from Pullout_Detail pd 
              where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
              and pd.ShipQty> 0
              Order by PulloutDate desc) pd 
-where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')
+where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) 
 {where}
 ";
                     result = DBProxy.Current.Select(null, strSQL, null, out this.gdtPullOut);

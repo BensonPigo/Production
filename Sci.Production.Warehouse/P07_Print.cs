@@ -81,7 +81,7 @@ namespace Sci.Production.Warehouse
             ,IIF((p.ID = lag(p.ID,1,'')over (order by p.ID,p.seq1,p.seq2) 
 			  AND(p.seq1 = lag(p.seq1,1,'')over (order by p.ID,p.seq1,p.seq2))
 			  AND(p.seq2 = lag(p.seq2,1,'')over (order by p.ID,p.seq1,p.seq2))) 
-			  ,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]
+			  ,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]            
 			,R.ShipQty,R.pounit,R.StockQty,R.StockUnit,R.ShipQty - R.StockQty AS QtyVaniance
             ,R.Weight,R.ActualWeight,R.ActualWeight - R.Weight AS Vaniance
 			,[SubQty]=sum(R.ShipQty) OVER (PARTITION BY R.POID ,R.SEQ1,R.SEQ2 )   
@@ -209,7 +209,7 @@ namespace Sci.Production.Warehouse
                 objSheets.Cells[3, 1] = Date2;
                 objSheets.Cells[4, 1] = "ETA:" + ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + Invoice + "   From FTY ID:" + FTYID;
-                objSheets.Cells[5, 6] = "WK#:" + Wk;              
+                objSheets.Cells[5, 7] = "WK#:" + Wk;              
                 foreach (DataRow dr in dt.Rows)
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
@@ -217,10 +217,11 @@ namespace Sci.Production.Warehouse
                     objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
                     objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
                     objSheets.Cells[nRow, 5] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 6] = dr["ShipQty"].ToString() +" "+ dr["pounit"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["QtyVaniance"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["ShipQty"].ToString() +" "+ dr["pounit"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["Remark"].ToString();
                     nRow++;
                 }
 

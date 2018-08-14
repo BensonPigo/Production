@@ -9,7 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Win;
-
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Tools
 {
@@ -109,22 +109,6 @@ namespace Sci.Production.Tools
 
             }
         }
-
-        //protected override bool OnGridSetup()
-        //{
-        //    DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
-        //    ts.UseSystemPasswordChar = true;  // 預設為*
-        //    //ts.PasswordChar = "*";
-
-        //    Helper.Controls.Grid.Generator(this.grid)
-        //        .Text("ID", header: "User ID", width: Widths.AnsiChars(10))
-        //        .Text("NAME", header: "Name", width: Widths.AnsiChars(20))
-        //        .Text("PASSWORD", header: "Password", width: Widths.AnsiChars(10), settings: ts)
-        //        .CheckBox("ISADMIN", header: "Administrator", width: Widths.AnsiChars(1))
-        //        .DateTime("LastLoginTime", header: "Last Login Time", width: Widths.AnsiChars(20));
-        //    return true;
-        //}
-
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -189,7 +173,6 @@ namespace Sci.Production.Tools
                 }
                 CurrentMaintain["ID"] = dtSystem.Rows[0]["AccountKeyword"].ToString() + CurrentMaintain["ID"].ToString().Trim();
             }
-
             return base.ClickSaveBefore();
         }
 

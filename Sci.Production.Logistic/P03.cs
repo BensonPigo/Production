@@ -275,7 +275,7 @@ Select distinct '' as ID, 0 as selected,b.ReceiveDate, b.Id as PackingListID, b.
 TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
 ,0 as rn
 ,0 as rn1
-, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark, b.TransferCFADate ,b.CFAReturnClogDate 
+, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark, b.TransferCFADate ,b.CFAReturnClogDate  ,b.CustCTN
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -304,83 +304,231 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                         else
                         {
                             DataRow dr = this.selectDataTable.NewRow();
-                            dr["ID"] = string.Empty;
-                            dr["selected"] = 0;
-                            dr["PackingListID"] = sl[1].Substring(0, 13);
-                            dr["CTNStartNo"] = sl[1].Substring(13);
-                            string sqlCmd = string.Format(
-                                @"
+                            if (sl.Count > 1 && sl[1].Length > 13)
+                            {
+                                dr["ID"] = string.Empty;
+                                dr["selected"] = 0;
+                                dr["PackingListID"] = sl[1].Substring(0, 13);
+                                dr["CTNStartNo"] = MyUtility.Convert.GetInt(sl[1].Substring(13));
+                                string sqlCmd = string.Format(
+                                    @"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
 ,pd.TransferCFADate ,pd.CFAReturnClogDate 
 from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
-                                dr["PackingListID"].ToString(),
-                                dr["CTNStartNo"].ToString());
-                            if (MyUtility.Check.Seek(sqlCmd, out seekData))
-                            {
-                                if (MyUtility.Check.Empty(seekData["ReturnDate"]))
+                                    dr["PackingListID"].ToString(),
+                                    dr["CTNStartNo"].ToString());
+                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
-                                    if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
+                                    if (MyUtility.Check.Empty(seekData["ReturnDate"]))
                                     {
-                                        dr["Remark"] = "This carton not yet send to Clog.";
+                                        if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
+                                        {
+                                            dr["Remark"] = "This carton not yet send to Clog.";
+                                        }
+                                        else
+                                        {
+                                            dr["selected"] = 1;
+                                        }
                                     }
                                     else
                                     {
-                                        dr["selected"] = 1;
+                                        dr["Remark"] = "This carton has been return.";
                                     }
-                                }
-                                else
-                                {
-                                    dr["Remark"] = "This carton has been return.";
-                                }
 
-                                if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
-                                {
-                                    dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
-                                }
+                                    if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
+                                    {
+                                        dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
+                                    }
 
-                                if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
-                                {
-                                    dr["Remark"] = "The order's M is not equal to login M.";
-                                }
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    {
+                                        dr["Remark"] = "The order's M is not equal to login M.";
+                                    }
 
-                                dr["OrderID"] = seekData["OrderID"];
-                                dr["ClogLocationId"] = seekData["ClogLocationId"];
-                                dr["ReceiveDate"] = seekData["ReceiveDate"];
-                                dr["TransferCFADate"] = seekData["TransferCFADate"];
-                                dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
-                                string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
-                                sqlCmd = string.Format(
-                                    @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
+                                    dr["OrderID"] = seekData["OrderID"];
+                                    dr["ClogLocationId"] = seekData["ClogLocationId"];
+                                    dr["ReceiveDate"] = seekData["ReceiveDate"];
+                                    dr["TransferCFADate"] = seekData["TransferCFADate"];
+                                    dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
+                                    string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
+                                    sqlCmd = string.Format(
+                                        @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
                                                                             from Orders a WITH (NOLOCK) 
                                                                             left join Country b WITH (NOLOCK) on b.ID = a.Dest
                                                                             left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
                                                                             where a.ID = '{0}' and a.MDivisionID = '{1}'",
-                                    MyUtility.Convert.GetString(dr["OrderID"]),
-                                    Env.User.Keyword,
-                                    seq);
-                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
-                                {
-                                    dr["StyleID"] = seekData["StyleID"];
-                                    dr["SeasonID"] = seekData["SeasonID"];
-                                    dr["BrandID"] = seekData["BrandID"];
-                                    dr["Customize1"] = seekData["Customize1"];
-                                    dr["CustPONo"] = seekData["CustPONo"];
-                                    dr["Alias"] = seekData["Alias"];
-                                    dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                        MyUtility.Convert.GetString(dr["OrderID"]),
+                                        Env.User.Keyword,
+                                        seq);
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        dr["StyleID"] = seekData["StyleID"];
+                                        dr["SeasonID"] = seekData["SeasonID"];
+                                        dr["BrandID"] = seekData["BrandID"];
+                                        dr["Customize1"] = seekData["Customize1"];
+                                        dr["CustPONo"] = seekData["CustPONo"];
+                                        dr["Alias"] = seekData["Alias"];
+                                        dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    }
                                 }
+                                else
+                                {
+                                    dr["CustCTN"] = sl[1];
+                                    sqlCmd = $@"
+select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
+,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo
+from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        if (MyUtility.Check.Empty(seekData["ReturnDate"]))
+                                        {
+                                            if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
+                                            {
+                                                dr["Remark"] = "This carton not yet send to Clog.";
+                                            }
+                                            else
+                                            {
+                                                dr["selected"] = 1;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            dr["Remark"] = "This carton has been return.";
+                                        }
+
+                                        if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
+                                        {
+                                            dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
+                                        }
+
+                                        if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                        {
+                                            dr["Remark"] = "The order's M is not equal to login M.";
+                                        }
+
+                                        string packinglistid = seekData["id"].ToString().Trim();
+                                        string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                        dr["OrderID"] = seekData["OrderID"];
+                                        dr["ClogLocationId"] = seekData["ClogLocationId"];
+                                        dr["ReceiveDate"] = seekData["ReceiveDate"];
+                                        dr["TransferCFADate"] = seekData["TransferCFADate"];
+                                        dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
+                                        string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
+                                        sqlCmd = string.Format(
+                                            @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
+                                                                            from Orders a WITH (NOLOCK) 
+                                                                            left join Country b WITH (NOLOCK) on b.ID = a.Dest
+                                                                            left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
+                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'",
+                                            MyUtility.Convert.GetString(dr["OrderID"]),
+                                            Env.User.Keyword,
+                                            seq);
+                                        if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                        {
+                                            dr["packinglistid"] = packinglistid.Trim();
+                                            dr["CTNStartNo"] = CTNStartNo.Trim();
+                                            dr["StyleID"] = seekData["StyleID"];
+                                            dr["SeasonID"] = seekData["SeasonID"];
+                                            dr["BrandID"] = seekData["BrandID"];
+                                            dr["Customize1"] = seekData["Customize1"];
+                                            dr["CustPONo"] = seekData["CustPONo"];
+                                            dr["Alias"] = seekData["Alias"];
+                                            dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        dr["Remark"] = "This carton is not in packing list.";
+                                    }
+                                }
+
+                                if (dr["Remark"].ToString().Trim() != string.Empty)
+                                {
+                                    dr["selected"] = 0;
+                                }
+
+                                this.selectDataTable.Rows.Add(dr);
                             }
                             else
                             {
-                                dr["Remark"] = "This carton is not in packing list.";
-                            }
+                                dr["CustCTN"] = sl[1];
+                                string sqlCmd = $@"
+select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
+,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo
+from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
+                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                {
+                                    if (MyUtility.Check.Empty(seekData["ReturnDate"]))
+                                    {
+                                        if (MyUtility.Check.Empty(seekData["ReceiveDate"]))
+                                        {
+                                            dr["Remark"] = "This carton not yet send to Clog.";
+                                        }
+                                        else
+                                        {
+                                            dr["selected"] = 1;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        dr["Remark"] = "This carton has been return.";
+                                    }
 
-                            if (dr["Remark"].ToString().Trim() != string.Empty)
-                            {
-                                dr["selected"] = 0;
-                            }
+                                    if (!(MyUtility.Check.Empty(seekData["TransferCFADate"]) && !MyUtility.Check.Empty(seekData["ReceiveDate"]) && MyUtility.Check.Empty(seekData["CFAReturnClogDate"])))
+                                    {
+                                        dr["Remark"] = dr["Remark"] + "This carton does not exist Clog!";
+                                    }
 
-                            this.selectDataTable.Rows.Add(dr);
+                                    if (seekData["MDivisionID"].ToString().ToUpper() != Sci.Env.User.Keyword)
+                                    {
+                                        dr["Remark"] = "The order's M is not equal to login M.";
+                                    }
+
+                                    string packinglistid = seekData["id"].ToString().Trim();
+                                    string CTNStartNo = seekData["CTNStartNo"].ToString().Trim();
+                                    dr["OrderID"] = seekData["OrderID"];
+                                    dr["ClogLocationId"] = seekData["ClogLocationId"];
+                                    dr["ReceiveDate"] = seekData["ReceiveDate"];
+                                    dr["TransferCFADate"] = seekData["TransferCFADate"];
+                                    dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
+                                    string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
+                                    sqlCmd = string.Format(
+                                        @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
+                                                                            from Orders a WITH (NOLOCK) 
+                                                                            left join Country b WITH (NOLOCK) on b.ID = a.Dest
+                                                                            left join Order_QtyShip oq WITH (NOLOCK) on oq.ID = a.ID and oq.Seq = '{2}'
+                                                                            where a.ID = '{0}' and a.MDivisionID = '{1}'",
+                                        MyUtility.Convert.GetString(dr["OrderID"]),
+                                        Env.User.Keyword,
+                                        seq);
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        dr["packinglistid"] = packinglistid.Trim();
+                                        dr["CTNStartNo"] = CTNStartNo.Trim();
+                                        dr["StyleID"] = seekData["StyleID"];
+                                        dr["SeasonID"] = seekData["SeasonID"];
+                                        dr["BrandID"] = seekData["BrandID"];
+                                        dr["Customize1"] = seekData["Customize1"];
+                                        dr["CustPONo"] = seekData["CustPONo"];
+                                        dr["Alias"] = seekData["Alias"];
+                                        dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    }
+                                }
+                                else
+                                {
+                                    dr["Remark"] = "This carton is not in packing list.";
+                                }
+
+                                if (dr["Remark"].ToString().Trim() != string.Empty)
+                                {
+                                    dr["selected"] = 0;
+                                }
+
+                                this.selectDataTable.Rows.Add(dr);
+                            }
                         }
                     }
 
@@ -434,12 +582,13 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
             foreach (DataRow dr in selectedData)
             {
                 insertCmds.Add(string.Format(
-                    @"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate)
-values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE());",
+                    @"insert into ClogReturn(ReturnDate,MDivisionID,PackingListID,OrderID,CTNStartNo, AddDate,AddName)
+values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}');",
                     Sci.Env.User.Keyword,
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
-                    MyUtility.Convert.GetString(dr["CTNStartNo"])));
+                    MyUtility.Convert.GetString(dr["CTNStartNo"]),
+                    Sci.Env.User.UserID));
 
                 // 要順便更新PackingList_Detail
                 updateCmds.Add(string.Format(

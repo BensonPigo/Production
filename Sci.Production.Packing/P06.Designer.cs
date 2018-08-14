@@ -59,6 +59,11 @@
             this.labelConfirmed = new Sci.Win.UI.Label();
             this.txtFactory = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.btnCartonSummary = new Sci.Win.UI.Button();
+            this.labelCartonEstArrived = new Sci.Win.UI.Label();
+            this.labelCartonEstBooking = new Sci.Win.UI.Label();
+            this.dateCartonEstArrived = new Sci.Win.UI.DateBox();
+            this.dateCartonEstBooking = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,6 +80,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.labelCartonEstArrived);
+            this.masterpanel.Controls.Add(this.labelCartonEstBooking);
+            this.masterpanel.Controls.Add(this.btnCartonSummary);
             this.masterpanel.Controls.Add(this.txtFactory);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.labelConfirmed);
@@ -105,10 +113,14 @@
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSP);
             this.masterpanel.Controls.Add(this.labelNo);
+            this.masterpanel.Controls.Add(this.dateCartonEstArrived);
+            this.masterpanel.Controls.Add(this.dateCartonEstBooking);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(911, 154);
+            this.masterpanel.Size = new System.Drawing.Size(952, 199);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateCartonEstBooking, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
@@ -139,15 +151,18 @@
             this.masterpanel.Controls.SetChildIndex(this.labelConfirmed, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCartonSummary, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCartonEstBooking, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelCartonEstArrived, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 154);
-            this.detailpanel.Size = new System.Drawing.Size(911, 289);
+            this.detailpanel.Location = new System.Drawing.Point(0, 199);
+            this.detailpanel.Size = new System.Drawing.Size(952, 305);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(760, 119);
+            this.gridicon.Location = new System.Drawing.Point(838, 162);
             this.gridicon.TabIndex = 10;
             // 
             // refresh
@@ -156,7 +171,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(911, 289);
+            this.detailgridcont.Size = new System.Drawing.Size(952, 305);
             // 
             // detail2
             // 
@@ -172,24 +187,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(911, 481);
+            this.detail.Size = new System.Drawing.Size(952, 542);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(911, 443);
+            this.detailcont.Size = new System.Drawing.Size(952, 504);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 443);
-            this.detailbtm.Size = new System.Drawing.Size(911, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 504);
+            this.detailbtm.Size = new System.Drawing.Size(952, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(911, 481);
+            this.browse.Size = new System.Drawing.Size(952, 542);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(919, 510);
+            this.tabs.Size = new System.Drawing.Size(960, 571);
             // 
             // createby
             // 
@@ -283,7 +298,7 @@
             this.editRemark.Location = new System.Drawing.Point(61, 112);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(405, 37);
+            this.editRemark.Size = new System.Drawing.Size(438, 80);
             this.editRemark.TabIndex = 10;
             // 
             // txtSeq
@@ -509,7 +524,7 @@
             // 
             this.labelConfirmed.BackColor = System.Drawing.Color.Transparent;
             this.labelConfirmed.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.labelConfirmed.Location = new System.Drawing.Point(735, 17);
+            this.labelConfirmed.Location = new System.Drawing.Point(816, 4);
             this.labelConfirmed.Name = "labelConfirmed";
             this.labelConfirmed.Size = new System.Drawing.Size(122, 25);
             this.labelConfirmed.TabIndex = 57;
@@ -519,17 +534,17 @@
             this.labelConfirmed.TextStyle.Color = System.Drawing.Color.Red;
             this.labelConfirmed.Visible = false;
             // 
-            // txtfactory
+            // txtFactory
             // 
             this.txtFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtFactory.Location = new System.Drawing.Point(604, 4);
-            this.txtFactory.Name = "txtfactory";
-            this.txtFactory.Size = new System.Drawing.Size(66, 23);
-            this.txtFactory.TabIndex = 1;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtFactory.IsSupportEditMode = false;
+            this.txtFactory.Location = new System.Drawing.Point(604, 4);
+            this.txtFactory.Name = "txtFactory";
             this.txtFactory.ReadOnly = true;
+            this.txtFactory.Size = new System.Drawing.Size(66, 23);
+            this.txtFactory.TabIndex = 1;
             // 
             // label1
             // 
@@ -539,10 +554,53 @@
             this.label1.TabIndex = 67;
             this.label1.Text = "Factory";
             // 
+            // btnCartonSummary
+            // 
+            this.btnCartonSummary.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnCartonSummary.Location = new System.Drawing.Point(760, 31);
+            this.btnCartonSummary.Name = "btnCartonSummary";
+            this.btnCartonSummary.Size = new System.Drawing.Size(178, 30);
+            this.btnCartonSummary.TabIndex = 68;
+            this.btnCartonSummary.Text = "Carton Summary";
+            this.btnCartonSummary.UseVisualStyleBackColor = true;
+            this.btnCartonSummary.Click += new System.EventHandler(this.btnCartonSummary_Click);
+            // 
+            // labelCartonEstArrived
+            // 
+            this.labelCartonEstArrived.Location = new System.Drawing.Point(514, 170);
+            this.labelCartonEstArrived.Name = "labelCartonEstArrived";
+            this.labelCartonEstArrived.Size = new System.Drawing.Size(127, 22);
+            this.labelCartonEstArrived.TabIndex = 72;
+            this.labelCartonEstArrived.Text = "Carton Est. Arrived";
+            // 
+            // labelCartonEstBooking
+            // 
+            this.labelCartonEstBooking.Location = new System.Drawing.Point(514, 141);
+            this.labelCartonEstBooking.Name = "labelCartonEstBooking";
+            this.labelCartonEstBooking.Size = new System.Drawing.Size(127, 22);
+            this.labelCartonEstBooking.TabIndex = 71;
+            this.labelCartonEstBooking.Text = "Carton Est. Booking";
+            // 
+            // dateCartonEstArrived
+            // 
+            this.dateCartonEstArrived.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNArrive", true));
+            this.dateCartonEstArrived.Location = new System.Drawing.Point(645, 170);
+            this.dateCartonEstArrived.Name = "dateCartonEstArrived";
+            this.dateCartonEstArrived.Size = new System.Drawing.Size(130, 23);
+            this.dateCartonEstArrived.TabIndex = 70;
+            // 
+            // dateCartonEstBooking
+            // 
+            this.dateCartonEstBooking.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "EstCTNBooking", true));
+            this.dateCartonEstBooking.Location = new System.Drawing.Point(645, 141);
+            this.dateCartonEstBooking.Name = "dateCartonEstBooking";
+            this.dateCartonEstBooking.Size = new System.Drawing.Size(130, 23);
+            this.dateCartonEstBooking.TabIndex = 69;
+            // 
             // P06
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(919, 543);
+            this.ClientSize = new System.Drawing.Size(960, 604);
             this.DefaultControl = "txtSP";
             this.DefaultControlForEdit = "txtSP";
             this.DefaultDetailOrder = "Seq";
@@ -612,5 +670,10 @@
         private Win.UI.Label labelConfirmed;
         private Win.UI.TextBox txtFactory;
         private Win.UI.Label label1;
+        private Win.UI.Button btnCartonSummary;
+        private Win.UI.Label labelCartonEstArrived;
+        private Win.UI.Label labelCartonEstBooking;
+        private Win.UI.DateBox dateCartonEstArrived;
+        private Win.UI.DateBox dateCartonEstBooking;
     }
 }

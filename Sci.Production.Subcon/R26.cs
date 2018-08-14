@@ -234,6 +234,7 @@ select DISTINCT c.FactoryID
             ,b.qty-b.InQty
 	        ,b.APQty
             ,a.id
+            ,b.RequestID
 	        ,b.Remark
 from localpo a WITH (NOLOCK) 
 inner join LocalPO_Detail b WITH (NOLOCK) on a.id=b.id

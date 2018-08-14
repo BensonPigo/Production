@@ -88,8 +88,7 @@
             this.comboBrand.IsSupportUnselect = true;
             this.comboBrand.Items.AddRange(new object[] {
             "N.FACE",
-            "DOME",
-            "Other"});
+            "DOME"});
             this.comboBrand.Location = new System.Drawing.Point(70, 6);
             this.comboBrand.Name = "comboBrand";
             this.comboBrand.OldText = "";
@@ -282,6 +281,7 @@
             this.button1.TabIndex = 3;
             this.button1.Text = "Download Other Template";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.Btndowload_click);
             // 
             // btnCheckImport

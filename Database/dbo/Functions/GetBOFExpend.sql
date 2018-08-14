@@ -3,21 +3,13 @@ CREATE function [dbo].[GetBOFExpend]
 (
 	  @ID				VarChar(13)				--採購母單
 	 ,@FabricCode		varchar(3) = null
+	 ,@IsExpendArticle	Bit			= 0			--add by Edward 是否展開至Article，For U.A轉單
 )
-RETURNS @Tmp_BofExpend table ( 
-	 ExpendUkey BigInt Identity(1,1) Not Null
-	 , ID Varchar(13), Order_BOFUkey BigInt
-	 , ColorID VarChar(6)
-	 , SuppColor NVarChar(Max)
-	 , OrderQty Numeric(10,4)
-	 , UsageQty Numeric(9,2)
-	 , UsageUnit VarChar(8)
-	 , Width Numeric(4,1)
-	 , SysUsageQty Numeric(9,2)
-	 , QTFabricPanelCode NVarchar(100)
-	 , Remark NVarchar(60)
-	 , OrderList NVarchar(max)
-	 , ColorDesc varchar(90)
+RETURNS @Tmp_BofExpend table ( ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOFUkey BigInt
+	 , ColorID VarChar(6), SuppColor NVarChar(Max)
+	 , OrderQty Numeric(10,4), Price Numeric(9,4), UsageQty Numeric(9,2), UsageUnit VarChar(8)
+	 , Width Numeric(4,1), SysUsageQty Numeric(9,2), QTFabricPanelCode NVarchar(100), Remark NVarchar(60), OrderList NVarchar(max), ColorDesc varchar(90)
+	 , Special VarChar(Max)
 	 , Primary Key (ExpendUKey)
 	 , Index Idx_ID NonClustered (ID, Order_BOFUkey, ColorID) -- table index
 	)
@@ -53,8 +45,10 @@ begin
 	Declare @Order_BOFUkey BigInt;
 	Declare @ColorID Varchar(6);
 	Declare @ColorDesc varchar(90);
+	Declare @Special Varchar(max);
 	Declare @SuppColor NVarchar(Max);
 	Declare @OrderQty Numeric(10,4);
+	Declare @Price Numeric(9,4);
 	Declare @UsageQty Numeric(9,2);
 	Declare @UsageUnit Varchar(8);
 	Declare @Width Numeric(4,1);
@@ -86,6 +80,7 @@ begin
 	Declare @EachCons_ColorCursor Table
 		( RowID BigInt Identity(1,1) Not Null, Ukey BigInt, ColorID Varchar(6)
 			, UsageQty Numeric(9,2), OrderQty Numeric(10,4), OrderList NVarchar(max)
+			, Special Varchar(8)
 		);
 	Declare @EachCons_ColorRowID Int;		--EachCons_Color ID
 	Declare @EachCons_ColorRowCount Int;	--EachCons_Color總資料筆數
@@ -113,7 +108,7 @@ begin
 		Set @Width = 0;
 		Select @UsageUnit = Fabric.UsageUnit
 			, @Width = Fabric.Width
-		From dbo.Fabric
+		From production.dbo.Fabric
 		Where SCIRefno = @BofSciRefNo;
 		
 		Delete From @EachCons_ColorCursor;
@@ -126,13 +121,21 @@ begin
 		)
 		*/
 		Insert Into @EachCons_ColorCursor
-			(Ukey, ColorID, UsageQty, OrderQty/*, OrderList*/)
+			(Ukey, ColorID, UsageQty, OrderQty/*, OrderList*/, Special)
 			Select Order_EachCons_Color.Ukey, Order_EachCons_Color.ColorID
-				, Order_EachCons_Color.Yds, Order_EachCons_Color.OrderQty
+				--, Order_EachCons_Color.Yds
+				--, Order_EachCons_Color.OrderQty
+				, IIF(@IsExpendArticle = 0, sum(Order_EachCons_Color.Yds), sum(Order_EachCons.ConsPC * Order_EachCons_Color_Article.CutQty))
+				, IIF(@IsExpendArticle = 0, sum(Order_EachCons_Color.OrderQty), sum(Order_EachCons_Color_Article.OrderQty))
 				--, ol.OrderList
+				, Special
 			From dbo.Order_EachCons
 			Left Join dbo.Order_EachCons_Color
 				On Order_EachCons_Color.Order_EachConsUkey = Order_EachCons.Ukey
+			Left join dbo.Order_EachCons_Color_Article
+				on Order_EachCons_Color.Ukey = Order_EachCons_Color_Article.Order_EachCons_ColorUkey
+				and @IsExpendArticle = 1
+			Outer apply ( select Special = IIF(@IsExpendArticle = 0, '', Order_EachCons_Color_Article.Article) ) spc
 			/*  -- 2017.09.30 mark by Ben
 			cross apply (select OrderList = (select o.ID + ','
 				from o where exists(select 1 from Order_EachCons_Color_Article oeca 
@@ -143,7 +146,11 @@ begin
 			*/
 			Where Order_EachCons.ID = @ID
 				And Order_EachCons.FabricCode = @BofFabricCode
-			Order by Order_EachCons_Color.ColorID;
+			group by 
+				Order_EachCons_Color.Ukey, 
+				Order_EachCons_Color.ColorID, 
+				Special
+			Order by Order_EachCons_Color.ColorID/*, len(orderlist)*/ desc;
 		
 		Set @EachCons_ColorRowID = 1;
 		--Select @EachCons_ColorRowCount = Count(*) From @EachCons_ColorCursor;
@@ -155,6 +162,7 @@ begin
 				, @UsageQty = UsageQty
 				, @OrderQty = OrderQty
 				, @OrderList = OrderList
+				, @Special = Special
 			From @EachCons_ColorCursor
 			Where RowID = @EachCons_ColorRowID
 
@@ -164,7 +172,7 @@ begin
 			Update @Tmp_BofExpend Set UsageQty += @UsageQty
 				, SysUsageQty += @SysUsageQty
 				, OrderQty += @OrderQty
-			Where Order_BOFUkey = @BofUkey And ColorID = @ColorID;
+			Where Order_BOFUkey = @BofUkey And ColorID = @ColorID And Special = @Special;
 
 			If @@RowCount = 0
 			Begin
@@ -199,17 +207,22 @@ begin
 				------------------------------------------------------------------
 				
 				--取得 Supplier Color
-				Set @SuppColor = IsNull(dbo.GetSuppColorList(@BofSciRefNo, @BofSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID), '');
-								
-				set @ColorDesc = (select Color.Name from dbo.Color where BrandId = @BrandID and Color.ID = @ColorID)
+				Set @SuppColor = IsNull(production.dbo.GetSuppColorList(@BofSciRefNo, @BofSuppID, @ColorID, @BrandID, @SeasonID, @ProgramID, @StyleID), '');
+
+				--取得 Fabric Price
+				--Set @Price = IsNull(dbo.GetPriceFromMtl(@BofSciRefNo, @BofSuppID, @SeasonID, @UsageQty, @Category, @CfmDate, '', @ColorID), 0);
+
+				set @ColorDesc = (select Color.Name from production.dbo.Color where BrandId = @BrandID and Color.ID = @ColorID)
 
 				Insert Into @Tmp_BofExpend
 					( ID, Order_BOFUkey, ColorID, SuppColor, UsageUnit, Width, Remark
-						, UsageQty, SysUsageQty, OrderQty, OrderList, ColorDesc
+						, UsageQty, SysUsageQty, OrderQty, Price, OrderList, ColorDesc
+						, Special
 					)
 				Values
 					( @ID, @BofUkey, @ColorID, @SuppColor, @UsageUnit, @Width, @Remark
-						, @UsageQty, @SysUsageQty, @OrderQty, @OrderList, @ColorDesc
+						, @UsageQty, @SysUsageQty, @OrderQty, 0, @OrderList, @ColorDesc
+						, @Special
 					);
 
 				--Update OrderList 包含整組的sp，改為空白
@@ -229,7 +242,7 @@ begin
 	If @TotalQty > 0
 	Begin
 		Update @Tmp_BofExpend
-			Set OrderQty = UsageQty / @TotalQty
+			set OrderQty = UsageQty / @TotalQty
 		From @Tmp_BofExpend as bf
 		inner Join @BofCursor as Bof
 		on Bof.Ukey = bf.Order_BOFUkey

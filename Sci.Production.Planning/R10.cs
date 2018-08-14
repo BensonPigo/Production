@@ -132,7 +132,7 @@ namespace Sci.Production.Planning
             this.comboDate.SelectedIndex = 0;
 
             #region 取得 Report 資料
-            string sql = @"Select ID,ID as NAME, SEQ From ArtworkType WITH (NOLOCK) where ReportDropdown = 1 union Select 'All', 'ALL', '0000' order by SEQ";
+            string sql = @"Select ID,ID as NAME, SEQ From ArtworkType WITH (NOLOCK) where ReportDropdown = 1 And Junk = 0 union Select 'All', 'ALL', '0000' order by ID";
             DataTable dt_ref = null;
             DualResult result = DBProxy.Current.Select(null, sql, out dt_ref);
 
@@ -211,6 +211,8 @@ namespace Sci.Production.Planning
 
                     foreach (string art in artworkLis)
                     {
+                        string artworkUnit = MyUtility.GetValue.Lookup($"select ArtworkUnit from ArtworkType where Id = '{art}'");
+                        string artworkUnitStr = artworkUnit == "PCS" ? "(PCS)": artworkUnit == "STITCH" ? "(STITCH in thousands)" : "TMS/Min";
                         // CopyHeader
                         if (artworkLis.IndexOf(art) > 0)
                         {
@@ -243,14 +245,14 @@ namespace Sci.Production.Planning
                         // 修改Header
                         if (this.ReportType == 1)
                         {
-                            wks.Cells[artWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  {0}", art == "CPU" ? art : art + " TMS/Min");
+                            wks.Cells[artWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  {0}", art + " " + artworkUnitStr);
                             wks.Cells[artWorkStart + 1, 1].Value = string.Format("Year:{0}", this.intYear);
                             wks.Cells[artWorkStart + 1, 3].Value = string.Format("Print Type:< {0} >", this.SourceStr);
                             wks.Cells[artWorkStart + 1, 8].Value = string.Format("By {0}                             Buyer : {1}", this.isSCIDelivery ? "Sci Delivery" : "Buyer Delivery", this.BrandID);
                         }
                         else
                         {
-                            wks.Cells[artWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  (Half Month)", art == "CPU" ? art : art + " TMS/Min");
+                            wks.Cells[artWorkStart, 1].Value = string.Format("Factory Capacity by Month Report  (Half Month)", art + " " + artworkUnitStr);
                             wks.Cells[artWorkStart + 1, 1].Value = string.Format("Year:{0} Month:{1}", this.intYear, this.intMonth);
                             wks.Cells[artWorkStart + 1, 8].Value = "By " + (this.isSCIDelivery ? "Sci Delivery" : "Buyer Delivery");
                         }
@@ -700,7 +702,7 @@ namespace Sci.Production.Planning
                     this.sheetStart += 1;
 
                     // MDV 1 Loading - CAPA
-                    this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Loading - CAPA", mDivisionID), string.Format("=({{0}}{0} - {{0}}{1})", mDVTotalIdx, mDVIdx));
+                    this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Loading - CAPA", mDivisionID), string.Format("=({{0}}{0} - {{0}}{1})", mDVTotalIdx, mDVIdx), EnuDrawColor.Normal);
                     this.sheetStart += 1;
 
                     // MDV FILL RATE
@@ -757,7 +759,7 @@ namespace Sci.Production.Planning
                 this.sheetStart += 1;
 
                 // CountryID Loading - CAPA
-                this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Loading - CAPA", countryID), string.Format("=({{0}}{0} - {{0}}{1})", this.sheetStart - 2, lisCtyIdx[lisCtyIdx.Count - 1]));
+                this.SetFormulaToRow(wks, this.sheetStart, string.Format("{0} Loading - CAPA", countryID), string.Format("=({{0}}{0} - {{0}}{1})", this.sheetStart - 2, lisCtyIdx[lisCtyIdx.Count - 1]), EnuDrawColor.Normal);
                 this.sheetStart += 1;
 
                 // CountryID FILL Rate
@@ -795,7 +797,7 @@ namespace Sci.Production.Planning
 
             this.sheetStart += 1;
 
-            // Total Loading - CAPA
+            // Total Loading
             lisBold.Add(this.sheetStart.ToString());
             string totalLoadStr = "=";
             foreach (string str in lisMDVTTLIdx)
@@ -823,7 +825,7 @@ namespace Sci.Production.Planning
 
             // Total Loading - CAPA
             lisBold.Add(this.sheetStart.ToString());
-            this.SetFormulaToRow(wks, this.sheetStart, "Loading-CAPA", string.Format("=({0}{1} - {0}{2})", "{0}", this.sheetStart - 2, this.sheetStart - 3));
+            this.SetFormulaToRow(wks, this.sheetStart, "Loading-CAPA", string.Format("=({0}{1} - {0}{2})", "{0}", this.sheetStart - 2, this.sheetStart - 3), EnuDrawColor.Normal);
             this.sheetStart += 1;
 
             // FILL Rate
@@ -1289,13 +1291,26 @@ namespace Sci.Production.Planning
             wks.Cells[sheetStart, 14] = string.Format("=SUM({0}{2}:{1}{2})", MyExcelPrg.GetExcelColumnName(2), MyExcelPrg.GetExcelColumnName(13), sheetStart);
         }
 
-        private void SetFormulaToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, string formula)
+        private void SetFormulaToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, string formula, EnuDrawColor color = EnuDrawColor.None)
         {
             wks.Cells[sheetStart, 1].Value = cell1Str;
             for (int i = 2; i <= 14; i++)
             {
                 string str = string.Format(formula, MyExcelPrg.GetExcelColumnName(i));
                 wks.Cells[sheetStart, i] = str;
+                if (color == EnuDrawColor.Normal)
+                {
+                    decimal value = 0;
+                    decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
+                    if (value >= 0)
+                    {
+                        wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FFCCFF"));
+                    }
+                    else
+                    {
+                        wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#99FF99"));
+                    }
+                }
             }
         }
 
@@ -1403,6 +1418,19 @@ namespace Sci.Production.Planning
             this.checkOrder.Visible = !this.radioProductionStatus.Checked;
             this.checkForecast.Visible = !this.radioProductionStatus.Checked;
             this.checkFty.Visible = !this.radioProductionStatus.Checked;
+        }
+
+        private enum EnuDrawColor
+        {
+            /// <summary>
+            /// 無配色
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// 正數紫色、負數綠色
+            /// </summary>
+            Normal,
         }
     }
 }

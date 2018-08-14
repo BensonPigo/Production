@@ -30,8 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
-            this.comboLocal = new Sci.Win.UI.ComboBox();
-            this.label13 = new Sci.Win.UI.Label();
             this.comboDropDownListCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtstyle1 = new Sci.Production.Class.txtstyle();
             this.txtBrand1 = new Sci.Production.Class.txtbrand();
@@ -71,8 +69,6 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.comboLocal);
-            this.groupBox1.Controls.Add(this.label13);
             this.groupBox1.Controls.Add(this.comboDropDownListCategory);
             this.groupBox1.Controls.Add(this.txtstyle1);
             this.groupBox1.Controls.Add(this.label12);
@@ -96,29 +92,10 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(4, -5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(419, 297);
+            this.groupBox1.Size = new System.Drawing.Size(419, 280);
             this.groupBox1.TabIndex = 94;
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.GroupBox1_Enter);
-            // 
-            // comboLocal
-            // 
-            this.comboLocal.BackColor = System.Drawing.Color.White;
-            this.comboLocal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboLocal.FormattingEnabled = true;
-            this.comboLocal.IsSupportUnselect = true;
-            this.comboLocal.Location = new System.Drawing.Point(132, 253);
-            this.comboLocal.Name = "comboLocal";
-            this.comboLocal.Size = new System.Drawing.Size(80, 24);
-            this.comboLocal.TabIndex = 223;
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(4, 254);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(127, 23);
-            this.label13.TabIndex = 224;
-            this.label13.Text = "Local Order";
             // 
             // comboDropDownListCategory
             // 
@@ -128,6 +105,7 @@
             this.comboDropDownListCategory.IsSupportUnselect = true;
             this.comboDropDownListCategory.Location = new System.Drawing.Point(132, 228);
             this.comboDropDownListCategory.Name = "comboDropDownListCategory";
+            this.comboDropDownListCategory.OldText = "";
             this.comboDropDownListCategory.Size = new System.Drawing.Size(160, 24);
             this.comboDropDownListCategory.TabIndex = 222;
             this.comboDropDownListCategory.Type = "Pms_GMT_Simple";
@@ -141,6 +119,8 @@
             this.txtstyle1.Name = "txtstyle1";
             this.txtstyle1.Size = new System.Drawing.Size(130, 23);
             this.txtstyle1.TabIndex = 221;
+            this.txtstyle1.tarBrand = null;
+            this.txtstyle1.tarSeason = null;
             // 
             // txtBrand1
             // 
@@ -171,11 +151,11 @@
             // label11
             // 
             this.label11.BackColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(4, 277);
+            this.label11.Location = new System.Drawing.Point(4, 254);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(420, 23);
+            this.label11.Size = new System.Drawing.Size(375, 23);
             this.label11.TabIndex = 218;
-            this.label11.Text = "All suncon-out are excluded";
+            this.label11.Text = "All subcon-out、non sister subcon-in excluded.";
             this.label11.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label11.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -197,6 +177,7 @@
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(132, 157);
             this.comboBox1.Name = "comboBox1";
+            this.comboBox1.OldText = "";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 14;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
@@ -360,7 +341,7 @@
             // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(520, 318);
+            this.ClientSize = new System.Drawing.Size(520, 298);
             this.ControlBox = false;
             this.Controls.Add(this.label10);
             this.Controls.Add(this.groupBox1);
@@ -404,7 +385,5 @@
         private Class.txtstyle txtstyle1;
         private Win.UI.Label label12;
         private Class.comboDropDownList comboDropDownListCategory;
-        private Win.UI.ComboBox comboLocal;
-        private Win.UI.Label label13;
     }
 }

@@ -140,6 +140,7 @@ select  0 Selected
 			        when x.Category='O'then 'Other'
 			        when x.Category='S'then 'Sample'
 			        end
+    ,x.OrderTypeID
     ,x.StyleID
     ,x.BrandID
     ,x.BuyerDelivery
@@ -198,6 +199,7 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
                 .Text("factoryid", header: "Factory", iseditingreadonly: true, width: Widths.AnsiChars(8)) //1
                 .Text("category", header: "Category", iseditingreadonly: true, width: Widths.AnsiChars(8)) //4
+                .Text("OrderTypeID", header: "Order Type", iseditingreadonly: true, width: Widths.AnsiChars(15)) //4
                 .Text("styleid", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(20)) //3
                 .Text("brandid", header: "Brand", iseditingreadonly: true)      //5
                 .Date("buyerdelivery", header: "Buyer Delivery", iseditingreadonly: true)      //5
@@ -270,7 +272,7 @@ Drop table #cte_temp;", Sci.Env.User.Keyword, categorySql));
         private void btnToEexcel_Click(object sender, EventArgs e)
         {
             string cmd = @"select [SP#]=poid,[Factory]=FactoryID
-,Category,Style=StyleID,Brand=BrandID,[BuyerDelivery]=BuyerDelivery,[Last Pullout Date]=ActPulloutDate
+,Category,[OrderType]=OrderTypeID,Style=StyleID,Brand=BrandID,[BuyerDelivery]=BuyerDelivery,[Last Pullout Date]=ActPulloutDate
 ,[Last PPIC Close] = ppicClose,[PO Combo] = PoCombo
 
 from #tmp";

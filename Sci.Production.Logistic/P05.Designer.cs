@@ -143,6 +143,20 @@
             // 
             // dateReceiveDate
             // 
+            // 
+            // 
+            // 
+            this.dateReceiveDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateReceiveDate.DateBox1.Name = "";
+            this.dateReceiveDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateReceiveDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateReceiveDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateReceiveDate.DateBox2.Name = "";
+            this.dateReceiveDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateReceiveDate.DateBox2.TabIndex = 1;
             this.dateReceiveDate.IsRequired = false;
             this.dateReceiveDate.Location = new System.Drawing.Point(100, 13);
             this.dateReceiveDate.Name = "dateReceiveDate";
@@ -214,6 +228,7 @@
             this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiveDate.RowTemplate.Height = 24;
             this.gridReceiveDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridReceiveDate.ShowCellToolTips = false;
             this.gridReceiveDate.Size = new System.Drawing.Size(719, 327);
             this.gridReceiveDate.TabIndex = 0;
             this.gridReceiveDate.TabStop = false;

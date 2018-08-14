@@ -337,7 +337,6 @@ from (
 		  and o.MDivisionID = '{0}'
 		  and (o.Junk = 1 or o.PulloutComplete = 1)
 		  and (o.Category = 'B' or o.Category = 'S')
-
 	union all
 	select distinct A.ID
 	from PO_Supp_Detail A WITH (NOLOCK) 
@@ -392,6 +391,12 @@ from (
 	where Orders.Qty > 0 
 		  and Orders.PulloutComplete = 0 
 		  and Orders.Category != 'M'
+    --orders.CFMDate15天(包含)內的資料不能被關單
+    union
+    select distinct WTC.POID
+	from Orders WITH (NOLOCK) 	
+	inner join #wantToClose WTC on Orders.POID = WTC.POID
+    where  Orders.CFMDate >= convert(date,getdate()-15)
 ) #canNotClose
 
 select Selected = 1

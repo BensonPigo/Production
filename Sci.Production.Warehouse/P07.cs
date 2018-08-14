@@ -20,6 +20,9 @@ namespace Sci.Production.Warehouse
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
+        private Ict.Win.UI.DataGridViewNumericBoxColumn Col_ActualW;
+        
+
         string UserID = Sci.Env.User.UserID;
 
         public P07(ToolStripMenuItem menuitem)
@@ -734,6 +737,7 @@ WHERE   StockType='{0}'
                         CurrentDetailData["stockqty"] = MyUtility.Math.Round(decimal.Parse(e.FormattedValue.ToString()) * decimal.Parse(rate), 2);
                     }
                 }
+                Change_Color();
             };
 
             #endregion In Qty Valid
@@ -752,7 +756,7 @@ WHERE   StockType='{0}'
             .ComboBox("fabrictype", header: "Fabric" + Environment.NewLine + "Type", width: Widths.AnsiChars(9), iseditable: false).Get(out cbb_fabrictype)  //2
             .Numeric("shipqty", header: "Ship Qty", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 10, settings: ns)    //3
             .Numeric("weight", header: "G.W(kg)", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 7)    //4
-            .Numeric("actualweight", header: "Act.(kg)", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 7)    //5
+            .Numeric("actualweight", header: "Act.(kg)", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 7).Get(out Col_ActualW)    //5
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7)).Get(out cbb_Roll)    //6
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5)).Get(out cbb_Dyelot)    //7
             .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 10, settings: ns2).Get(out Col_ActualQty)    //8
@@ -775,7 +779,7 @@ WHERE   StockType='{0}'
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
-
+            Change_Color();
 
             detailgrid.RowsAdded += (s, e) =>
             {
@@ -793,10 +797,39 @@ WHERE   StockType='{0}'
             };
         }
 
+        private void Change_Color()
+        {
+            this.Col_ActualW.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (dr == null)
+                {
+                    return;
+                }
+
+                decimal gw = MyUtility.Convert.GetDecimal(dr["weight"]);
+                decimal aw = MyUtility.Convert.GetDecimal(dr["actualweight"]);
+                if (dr["fabrictype"].ToString()=="F" && gw > aw)
+                {
+                    e.CellStyle.ForeColor = Color.Red;
+                    e.CellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Color.Black;
+                    e.CellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular);
+                }
+            };
+        }
         private void ship_qty_valid(decimal ship_qty)
         {
             if (CurrentDetailData == null) return;
-            if (this.EditMode && ship_qty != null)
+            if (EditMode && ship_qty != null)
             {
                 if (!MyUtility.Check.Empty(CurrentDetailData["pounit"]) && !MyUtility.Check.Empty(CurrentDetailData["stockunit"]))
                 {
@@ -811,6 +844,7 @@ where   v.FROM_U ='{0}'
                     CurrentDetailData.EndEdit();
                 }
             }
+            Change_Color();
         }
 
         //Confirm
@@ -843,6 +877,22 @@ where   v.FROM_U ='{0}'
                 return;
             }
             #endregion
+
+            string sq = string.Empty;
+            foreach (DataRow item in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if(MyUtility.Convert.GetDecimal(item["stockqty"]) <0)
+                {
+                    sq += $@"SP#: {item["poid"]} Seq#: {item["seq"]}-{item["seq"]} Roll#: {item["Roll"]}'s Receiving Qty must not be less than 0 ! 
+";                    
+                }
+            }
+
+            if (!MyUtility.Check.Empty(sq))
+            {
+                MyUtility.Msg.WarningBox(sq);
+                return;
+            }
 
             //判斷是否已經收過此種布料SP#,SEQ,Roll不能重複收
             if (!checkRoll())
@@ -1346,7 +1396,8 @@ select  a.id
         , a.remark
         , a.ukey
 from dbo.Receiving_Detail a WITH (NOLOCK) 
-Where a.id = '{0}' ", masterID);
+Where a.id = '{0}'
+order by ukey", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
 

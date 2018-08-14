@@ -25,6 +25,7 @@ namespace Sci.Production.Warehouse
         string userCountry = "";
         string SpNo = "";                   
         bool ButtonOpen = false;
+        private static string _Refno, _MaterialType, _Color;
         public P03(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -76,6 +77,53 @@ namespace Sci.Production.Warehouse
             this.txtSPNo.Text = SpNo.Trim();
             ButtonOpen = true;
             
+        }
+
+        // Form to Form W/H.P05
+        public static void P05Filter(string P01SPNo,string Refno,string MaterialType, string Color, Form MdiParent)
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is Sci.Production.Warehouse.P03)
+                {
+                    form.Activate();
+                    Sci.Production.Warehouse.P03 activateForm = (Sci.Production.Warehouse.P03)form;
+                    activateForm.setTxtSPNo(P01SPNo);
+                    activateForm.Query();
+                    return;
+                }
+            }
+
+            ToolStripMenuItem P03MenuItem = null;
+            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
+            {
+                if (toolMenuItem.Text.EqualString("Warehouse"))
+                {
+                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
+                    {
+                        if (subMenuItem.GetType().Equals(typeof(System.Windows.Forms.ToolStripMenuItem)))
+                        {
+                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P03. Material Status"))
+                            {
+                                P03MenuItem = ((ToolStripMenuItem)subMenuItem);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            P03 call = new P03(P01SPNo, P03MenuItem);
+
+            call.MdiParent = MdiParent;
+            call.Show();
+            //改到P03詢查相關的資料都要去檢查PPIC.P01 & WH / P01的[Material Status]
+            call.P03Data(P01SPNo);
+            call.Activate();
+            _Refno = Refno;
+            _MaterialType = ((MaterialType == "F") ? "Fabric" : (MaterialType == "A") ? "Accessory" : (MaterialType == "O") ? "Orher" : "");
+            _Color = Color;
+            call.grid_Filter();
+            call.ChangeDetailColor();
         }
 
         //PPIC_P01 Called        
@@ -226,6 +274,16 @@ namespace Sci.Production.Warehouse
                 {
                     var frm = new Sci.Production.Warehouse.P03_Transaction(dr);
                     frm.ShowDialog(this);
+                    if (MyUtility.Check.Empty(dr["ukey"]))
+                    {
+                        DataRow drukey ;
+                        if (MyUtility.Check.Seek($@"select ukey from MDivisionPoDetail 
+where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out drukey))
+                        {
+                            dr["ukey"] = drukey["ukey"];
+                            dr.EndEdit();
+                        }
+                    }                   
                 }
                 else if (dr["From_Program"].Equals("P04"))
                 {
@@ -315,7 +373,6 @@ namespace Sci.Production.Warehouse
             .Text("id", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))  //1
             .Text("seq1", header: "Seq1", iseditingreadonly: true, width: Widths.AnsiChars(2))  //2
             .Text("seq2", header: "Seq2", iseditingreadonly: true, width: Widths.AnsiChars(2))  //3
-            //.Text("StyleID", header: "Style", iseditingreadonly: true, width: Widths.AnsiChars(10))  //2
             .Text("Suppid", header: "Supp", iseditingreadonly: true, width: Widths.AnsiChars(4), settings: ts1)  //3
             .Text("eta", header: "Sup. 1st " + Environment.NewLine + "Cfm ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //4
             .Text("RevisedETA", header: "Sup. Delivery" + Environment.NewLine + "Rvsd ETA", width: Widths.AnsiChars(2), iseditingreadonly: true)    //5
@@ -325,23 +382,15 @@ namespace Sci.Production.Warehouse
             .Text("ColorID", header: "Color", iseditingreadonly: true,width:Widths.AnsiChars(6))  //9
             .Text("SizeSpec", header: "Size", iseditingreadonly: true, width: Widths.AnsiChars(2))  //10
             .Text("CurrencyID", header: "Currency", iseditingreadonly: true, width: Widths.AnsiChars(2))  //11
-            //.Numeric("unitqty", header: "@Qty", decimal_places: 4, integer_places: 10, width: Widths.AnsiChars(2), iseditingreadonly: true)    //12
             .Text("unitqty", header: "Qty", iseditingreadonly: true, width: Widths.AnsiChars(2),alignment : DataGridViewContentAlignment.MiddleRight)  //12
-            //.Numeric("Qty", header: "Order\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //13
-            .Text("Qty", header: "Order\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //13            
-            //.Numeric("NETQty", header: "Net\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //14
+            .Text("Qty", header: "Order\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //13     
             .Text("NETQty", header: "Net\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //14
-            //.Numeric("useqty", header: "Use\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //15
             .Text("useqty", header: "Use\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight)  //15
-            //.Numeric("ShipQty", header: "Ship\r\nQty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts3)    //16
             .Text("ShipQty", header: "Ship\r\nQty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts3)  //16
-            //.Numeric("ShipFOC", header: "F.O.C", width: Widths.AnsiChars(3), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //17
             .Text("ShipFOC", header: "F.O.C", iseditingreadonly: true, width: Widths.AnsiChars(3), alignment: DataGridViewContentAlignment.MiddleRight)  //17
-            //.Numeric("InputQty", header: "Taipei"+Environment.NewLine+ "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts4)    //19
             .Text("InputQty", header: "Taipei" + Environment.NewLine + "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts4)  //19
             .Text("POUnit", header: "PO Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))  //20
             .Text("Complete", header: "Cmplt", iseditingreadonly: true,width:Widths.AnsiChars(3))  //21
-            //.Date("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(6), iseditingreadonly: true)    //22
             .Text("FinalETA", header: "Act.ETA", width: Widths.AnsiChars(8), iseditingreadonly: true)    //22
             .Text("OrderIdList", header: "Order List", iseditingreadonly: true, settings: OrderList)  //23
             .Numeric("InQty", header: "Arrived" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true)    //24
@@ -349,9 +398,7 @@ namespace Sci.Production.Warehouse
             .Numeric("OutQty", header: "Released" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts5)    //26
             .Numeric("AdjustQty", header: "Adjust" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true)    //27
             .Numeric("balanceqty", header: "Balance", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(4), iseditingreadonly: true, settings: ts6)    //28
-            //.Numeric("LInvQty", header: "Stock Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts7)    //29
             .Text("LInvQty", header: "Stock Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts7)  //29
-            //.Numeric("LObQty", header: "Scrap Qty", decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6), iseditingreadonly: true, settings: ts8)    //30
             .Text("LObQty", header: "Scrap Qty", iseditingreadonly: true, width: Widths.AnsiChars(6), alignment: DataGridViewContentAlignment.MiddleRight, settings: ts8)  //30
             .EditText("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
@@ -785,6 +832,9 @@ drop table #tmpOrder,#tmpLocalPO_Detail
             {
                 ShowErr(result);
             }
+            _Refno = string.Empty;
+            _Color = string.Empty;
+            _MaterialType = string.Empty;
             this.HideWaitMessage();
         }
 
@@ -890,24 +940,38 @@ drop table #tmpOrder,#tmpLocalPO_Detail
 
         private void grid_Filter()
         {
+            string filter = "";
             if (gridMaterialStatus.RowCount > 0)
             {
-                string filter = "";
                 switch (chk_includeJunk.Checked)
                 {                    
                     case true:
                         if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        filter = "";
+                        if (!MyUtility.Check.Empty(_Refno) && !MyUtility.Check.Empty(_Color) && !MyUtility.Check.Empty(_MaterialType))
+                        {
+                            filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2='{_MaterialType}'";
+                        }
+                        else
+                        {
+                            filter = "";
+                        }
                         ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
 
                     case false:
                         if (MyUtility.Check.Empty(gridMaterialStatus)) break;
-                        filter = " junk=0 ";
+                        if (!MyUtility.Check.Empty(_Refno) && !MyUtility.Check.Empty(_Color) && !MyUtility.Check.Empty(_MaterialType))
+                        {
+                            filter = $@" refno='{_Refno}' and ColorID='{_Color}' and fabrictype2='{_MaterialType}' and junk=0";
+                        }
+                        else
+                        {
+                            filter = " junk=0";
+                        }                        
                         ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
-                }
-            }
+                }               
+            }           
         }
 
         private void grid1_sorting()
@@ -986,7 +1050,6 @@ drop table #tmpOrder,#tmpLocalPO_Detail
         {
             this.txtSPNo.Text = spNo;
         }
-
         private void gridMaterialStatus_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             this.ShowErr(e.Exception);

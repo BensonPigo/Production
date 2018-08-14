@@ -163,6 +163,7 @@ select  SewingLineID
         , PFRemark
         , MTLETA
         , MTLExport
+        ,CutInLine
         , Inline
         , Offline
         , SciDelivery
@@ -232,6 +233,7 @@ from (
                     ),'') as PFRemark
             , o.MTLETA
             , o.MTLExport
+            ,O.CutInLine
             , s.Inline
             , s.Offline
             , o.SciDelivery

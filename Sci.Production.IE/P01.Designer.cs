@@ -59,6 +59,8 @@
             this.displayApplyVersion = new Sci.Win.UI.DisplayBox();
             this.txtseason = new Sci.Production.Class.txtseason();
             this.btnDel = new Sci.Win.UI.Button();
+            this.labVersionWarning = new System.Windows.Forms.Label();
+            this.btnCIPF = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -75,6 +77,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnCIPF);
+            this.masterpanel.Controls.Add(this.labVersionWarning);
             this.masterpanel.Controls.Add(this.btnDel);
             this.masterpanel.Controls.Add(this.displayApplyVersion);
             this.masterpanel.Controls.Add(this.displayApplyNo);
@@ -137,6 +141,8 @@
             this.masterpanel.Controls.SetChildIndex(this.displayApplyNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayApplyVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnDel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labVersionWarning, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnCIPF, 0);
             // 
             // detailpanel
             // 
@@ -145,7 +151,7 @@
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(785, 114);
+            this.gridicon.Location = new System.Drawing.Point(797, 114);
             this.gridicon.TabIndex = 9;
             // 
             // refresh
@@ -252,6 +258,7 @@
             this.comboStyle.IsSupportUnselect = true;
             this.comboStyle.Location = new System.Drawing.Point(234, 3);
             this.comboStyle.Name = "comboStyle";
+            this.comboStyle.OldText = "";
             this.comboStyle.Size = new System.Drawing.Size(40, 24);
             this.comboStyle.TabIndex = 1;
             // 
@@ -292,6 +299,7 @@
             this.comboStatus.IsSupportUnselect = true;
             this.comboStatus.Location = new System.Drawing.Point(393, 3);
             this.comboStatus.Name = "comboStatus";
+            this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(118, 24);
             this.comboStatus.TabIndex = 7;
             // 
@@ -376,7 +384,7 @@
             // btnNewVersion
             // 
             this.btnNewVersion.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnNewVersion.Location = new System.Drawing.Point(782, 4);
+            this.btnNewVersion.Location = new System.Drawing.Point(794, 4);
             this.btnNewVersion.Name = "btnNewVersion";
             this.btnNewVersion.Size = new System.Drawing.Size(103, 30);
             this.btnNewVersion.TabIndex = 16;
@@ -387,7 +395,7 @@
             // btnNewStatus
             // 
             this.btnNewStatus.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnNewStatus.Location = new System.Drawing.Point(782, 38);
+            this.btnNewStatus.Location = new System.Drawing.Point(794, 38);
             this.btnNewStatus.Name = "btnNewStatus";
             this.btnNewStatus.Size = new System.Drawing.Size(103, 30);
             this.btnNewStatus.TabIndex = 17;
@@ -398,7 +406,7 @@
             // btnHistory
             // 
             this.btnHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnHistory.Location = new System.Drawing.Point(782, 72);
+            this.btnHistory.Location = new System.Drawing.Point(794, 72);
             this.btnHistory.Name = "btnHistory";
             this.btnHistory.Size = new System.Drawing.Size(103, 30);
             this.btnHistory.TabIndex = 18;
@@ -409,7 +417,7 @@
             // btnCopy
             // 
             this.btnCopy.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCopy.Location = new System.Drawing.Point(709, 114);
+            this.btnCopy.Location = new System.Drawing.Point(716, 114);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new System.Drawing.Size(58, 30);
             this.btnCopy.TabIndex = 15;
@@ -419,7 +427,7 @@
             // 
             // btnArtSum
             // 
-            this.btnArtSum.Location = new System.Drawing.Point(574, 114);
+            this.btnArtSum.Location = new System.Drawing.Point(579, 114);
             this.btnArtSum.Name = "btnArtSum";
             this.btnArtSum.Size = new System.Drawing.Size(80, 30);
             this.btnArtSum.TabIndex = 14;
@@ -429,7 +437,7 @@
             // 
             // btnSketch
             // 
-            this.btnSketch.Location = new System.Drawing.Point(490, 114);
+            this.btnSketch.Location = new System.Drawing.Point(436, 114);
             this.btnSketch.Name = "btnSketch";
             this.btnSketch.Size = new System.Drawing.Size(80, 30);
             this.btnSketch.TabIndex = 13;
@@ -440,7 +448,7 @@
             // btnCopyFromStyleStdGSD
             // 
             this.btnCopyFromStyleStdGSD.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnCopyFromStyleStdGSD.Location = new System.Drawing.Point(289, 114);
+            this.btnCopyFromStyleStdGSD.Location = new System.Drawing.Point(236, 114);
             this.btnCopyFromStyleStdGSD.Name = "btnCopyFromStyleStdGSD";
             this.btnCopyFromStyleStdGSD.Size = new System.Drawing.Size(197, 30);
             this.btnCopyFromStyleStdGSD.TabIndex = 12;
@@ -533,13 +541,34 @@
             // btnDel
             // 
             this.btnDel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnDel.Location = new System.Drawing.Point(656, 114);
+            this.btnDel.Location = new System.Drawing.Point(662, 114);
             this.btnDel.Name = "btnDel";
             this.btnDel.Size = new System.Drawing.Size(51, 30);
             this.btnDel.TabIndex = 28;
             this.btnDel.Text = "Del";
             this.btnDel.UseVisualStyleBackColor = true;
             this.btnDel.Click += new System.EventHandler(this.BtnDel_Click);
+            // 
+            // labVersionWarning
+            // 
+            this.labVersionWarning.AutoSize = true;
+            this.labVersionWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labVersionWarning.ForeColor = System.Drawing.Color.Red;
+            this.labVersionWarning.Location = new System.Drawing.Point(464, 67);
+            this.labVersionWarning.Name = "labVersionWarning";
+            this.labVersionWarning.Size = new System.Drawing.Size(329, 16);
+            this.labVersionWarning.TabIndex = 4;
+            this.labVersionWarning.Text = "The Apply No. and Apply Version is not latest. ";
+            // 
+            // btnCIPF
+            // 
+            this.btnCIPF.Location = new System.Drawing.Point(519, 114);
+            this.btnCIPF.Name = "btnCIPF";
+            this.btnCIPF.Size = new System.Drawing.Size(57, 30);
+            this.btnCIPF.TabIndex = 29;
+            this.btnCIPF.Text = "CIPF";
+            this.btnCIPF.UseVisualStyleBackColor = true;
+            this.btnCIPF.Click += new System.EventHandler(this.btnCIPF_Click);
             // 
             // P01
             // 
@@ -609,5 +638,7 @@
         private Win.UI.Label labelApplyVersion;
         private Win.UI.Label labelApplyNo;
         private Win.UI.Button btnDel;
+        private System.Windows.Forms.Label labVersionWarning;
+        private Win.UI.Button btnCIPF;
     }
 }

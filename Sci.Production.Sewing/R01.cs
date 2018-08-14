@@ -21,7 +21,6 @@ namespace Sci.Production.Sewing
         private string _factory;
         private string _team;
         private string _factoryName;
-        private int _excludeSubconIn;
         private DataTable _printData;
         private DataTable _ttlData;
         private DataTable _subprocessData;
@@ -37,11 +36,9 @@ namespace Sci.Production.Sewing
             DataTable factory;
             DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            MyUtility.Tool.SetupCombox(this.comboSubconIn, 1, 1, "Included,Excluded");
             this.dateDate.Value = DateTime.Today.AddDays(-1);
             this.comboFactory.Text = Sci.Env.User.Factory;
             this.comboTeam.SelectedIndex = 0;
-            this.comboSubconIn.SelectedIndex = 0;
         }
 
         /// <inheritdoc/>
@@ -62,7 +59,6 @@ namespace Sci.Production.Sewing
             this._date = this.dateDate.Value;
             this._factory = this.comboFactory.Text;
             this._team = this.comboTeam.Text;
-            this._excludeSubconIn = this.comboSubconIn.SelectedIndex;
             return base.ValidateInput();
         }
 
@@ -101,6 +97,7 @@ select  s.OutputDate
 		, System.StdTMS
 		, [InspectQty] = isnull(r.InspectQty,0)
 		, [RejectQty] = isnull(r.RejectQty,0)
+        , [SubconInSisterFty] = isnull(o.SubconInSisterFty,0)
 into #tmpSewingDetail
 from System,SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -139,7 +136,7 @@ select OutputDate
 	   , Team
 	   , OrderId
 	   , ComboType
-	   , WorkHour = sum(Round(WorkHour,2))
+	   , WorkHour = sum(Round(WorkHour,3))
 	   , QAQty = sum(QAQty) 
 	   , InlineQty = sum(InlineQty) 
 	   , OrderCategory
@@ -159,6 +156,7 @@ select OutputDate
 	   , StdTMS
 	   , InspectQty
 	   , RejectQty
+       , SubconInSisterFty
 into #tmpSewingGroup
 from #tmpSewingDetail
 group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
@@ -166,7 +164,7 @@ group by OutputDate, Category, Shift, SewingLineID, Team, OrderId
 		 , MockupCDCodeID, FactoryID, OrderCPU, OrderCPUFactor
 		 , MockupCPU, MockupCPUFactor, OrderStyle, MockupStyle
 		 , OrderSeason, MockupSeason, Rate, StdTMS, InspectQty
-		 , RejectQty
+		 , RejectQty, SubconInSisterFty
 ----↓計算累計天數 function table太慢直接寫在這
 select distinct scOutputDate = s.OutputDate 
 	   , style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
@@ -234,7 +232,9 @@ group by s.style, s.SewingLineID, s.FactoryID, s.Shift, s.Team
 		 , s.OrderId, s.ComboType
 -----↑計算累計天數
 select t.*
-	   , LastShift = IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I', t.Shift) 
+	   , LastShift = CASE WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInSisterFty = 1 then 'I'
+                          WHEN t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1 and t.SubconInSisterFty = 0 then 'IN'
+                     ELSE t.Shift END
 	   , FtyType = f.Type
 	   , FtyCountry = f.CountryID
 	   , CumulateDate = c.cumulate
@@ -249,16 +249,19 @@ left join #cl c on c.style = IIF(t.Category <> 'M', OrderStyle, MockupStyle)
 				   and c.ComboType = t.ComboType
 left join Factory f WITH (NOLOCK) on t.FactoryID = f.ID
 ---↓最後組成
-select Shift = IIF(LastShift='D', 'Day'
-								, IIF(LastShift = 'N', 'Night'
-													 , IIF(LastShift='O', 'Subcon-Out'
-													 					, 'Subcon-In'))) 
+select Shift =    CASE    WHEN LastShift='D' then 'Day'
+                          WHEN LastShift='N' then 'Night'
+                          WHEN LastShift='O' then 'Subcon-Out'
+                          WHEN LastShift='I' then 'Subcon-In(Sister)'
+                          else 'Subcon-In(Non Sister)' end				
 	   , Team
 	   , SewingLineID
 	   , OrderId
 	   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
 	   , CDNo = IIF(Category = 'M', MockupCDCodeID, OrderCdCodeID) + '-' + ComboType
-	   , ActManPower = IIF(QAQty > 0, ActManPower / QAQty, ActManPower)
+	   , ActManPower = IIF(SHIFT = 'O'
+                            ,MAX(IIF(QAQty > 0, ActManPower / QAQty, ActManPower)) OVER (PARTITION BY SHIFT)
+                            ,IIF(QAQty > 0, ActManPower / QAQty, ActManPower))
 	   , WorkHour
 	   , ManHour = ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2)
 	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2) * 3600 / StdTMS, 2) 
@@ -292,10 +295,6 @@ select Shift = IIF(LastShift='D', 'Day'
 	   , ComboType
 from #tmp1stFilter
 where 1 =1");
-            if (this._excludeSubconIn == 1)
-            {
-                sqlCmd.Append(" and LastShift <> 'I'");
-            }
 
             sqlCmd.Append(@" order by LastShift,Team,SewingLineID,OrderId");
             #endregion
@@ -418,7 +417,7 @@ GrandExcludeInOutMaxActManpower as (
 		   , ActManPower = max(ActManPower)
 	from #tmp
 	where LastShift <> 'O' 
-	and LastShift <> 'I' 
+	and LastShift <> 'IN' 
 	group by Shift, Team, SewingLineID
 ),
 GrandExcludeInOutSummaryData as (
@@ -427,7 +426,7 @@ GrandExcludeInOutSummaryData as (
 		   , RFT = AVG(RFT)
 	from #tmp
 	where LastShift <> 'O'
-	and LastShift <> 'I' 
+	and LastShift <> 'IN' 
 ),
 GenTotal3 as (
 	select TMS = case 
@@ -516,6 +515,7 @@ tmpAllSubprocess as (
 --	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
+          and o.LocalOrder <> 1
 		  and ot.Price > 0         
     group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType)
 )
@@ -568,7 +568,7 @@ order by ArtworkTypeID"),
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             worksheet.Cells[1, 1] = this._factoryName;
-            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this._factory, Convert.ToDateTime(this._date).ToString("MM/dd"), this._excludeSubconIn == 1 ? string.Empty : "(Included Subcon-IN)");
+            worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", this._factory, Convert.ToDateTime(this._date).ToString("MM/dd"),  "(Included Subcon-IN)");
 
             object[,] objArray = new object[1, 19];
             string[] subTtlRowInOut = new string[8];
@@ -621,7 +621,7 @@ order by ArtworkTypeID"),
                         subTtlRowExOut[subRows] = MyUtility.Convert.GetString(insertRow);
                     }
 
-                    if (shift != "Subcon-Out" && shift != "Subcon-In")
+                    if (shift != "Subcon-Out" && shift != "Subcon-In(Non Sister)")
                     {
                         subTtlRowExInOut[subRows] = MyUtility.Convert.GetString(insertRow);
                     }
@@ -701,7 +701,7 @@ order by ArtworkTypeID"),
                 subTtlRowExOut[subRows] = MyUtility.Convert.GetString(insertRow);
             }
 
-            if (shift != "Subcon-Out" && shift != "Subcon-In")
+            if (shift != "Subcon-Out" && shift != "Subcon-In(Non Sister)")
             {
                 subTtlRowExInOut[subRows] = MyUtility.Convert.GetString(insertRow);
             }

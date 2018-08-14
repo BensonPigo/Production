@@ -326,7 +326,6 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         {
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["Shipper"] = Sci.Env.User.Factory;
             this.CurrentMaintain["InvDate"] = DateTime.Today;
             this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["ShipModeID"] = "SEA";
@@ -484,13 +483,6 @@ where   pl.INVNo = '{0}'
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
-            {
-                this.txtfactoryShipper.Focus();
-                MyUtility.Msg.WarningBox("Shipper can't empty!!");
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 this.txtbrand.Focus();
@@ -579,10 +571,62 @@ order by fwd.WhseNo",
 
             #endregion
 
+            // 帶資料到Shipper
+            string SP = string.Empty;
+            DataTable dtShipper;
+            if (this.DetailDatas.Count > 0)
+            {
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
+                }
+
+                string sqlcmd = $@"
+select distinct f.ShipperID from Orders o
+left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
+where ID in ({SP.Substring(0, SP.Length - 1)})
+and f.BrandID='{this.txtbrand.Text}'
+and GETDATE() between f.BeginDate and f.EndDate";
+
+                if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
+                {
+                    if (dtShipper.Rows.Count > 1)
+                    {
+                        MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
+                        return false;
+                    }
+                    else if (dtShipper.Rows.Count == 1)
+                    {
+                        this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Shipper not found! ");
+                        return false;
+                    }
+                }
+                else
+                {
+                    this.ShowErr(sqlcmd, result);
+                    return false;
+                }
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
+            {
+                this.txtfactoryShipper.Focus();
+                MyUtility.Msg.WarningBox("Shipper can't empty!!");
+                return false;
+            }
+
             // 新增單狀態下，取ID且檢查此ID是否存在
             if (this.IsDetailInserting)
             {
-                string newID = MyUtility.GetValue.Lookup("NegoRegion", MyUtility.Convert.GetString(this.CurrentMaintain["Shipper"]), "Factory", "ID").Trim() + Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("yyMM") + "-" + MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]).Trim() + "-" + MyUtility.GetValue.Lookup("ShipCode", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), "Brand", "ID").Trim();
+                string fac = MyUtility.GetValue.Lookup($@"
+select top 1 Factoryid from PackingList_Detail pd WITH (NOLOCK) 
+left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.DetailDatas[0]["ID"].ToString().Split(',')[0]}'
+");
+                string newID = MyUtility.GetValue.Lookup("NegoRegion", fac, "Factory", "ID").Trim() + Convert.ToDateTime(this.CurrentMaintain["InvDate"]).ToString("yyMM") + "-" + MyUtility.Convert.GetString(this.CurrentMaintain["InvSerial"]).Trim() + "-" + MyUtility.GetValue.Lookup("ShipCode", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]), "Brand", "ID").Trim();
                 if (MyUtility.Check.Seek(newID, "GMTBooking", "ID"))
                 {
                     this.txtInvSerial.Focus();
@@ -1349,21 +1393,78 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
                 return;
             }
 
+            // 帶資料到Shipper
+            string SP = string.Empty;
+            DualResult result;
+            DataTable dtShipper;
+            if (this.DetailDatas.Count > 0)
+            {
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    SP += "'" + dr["Orderid"].ToString().Replace(",", "','") + "',";
+                }
+
+                string sqlcmd = $@"
+select distinct f.ShipperID from Orders o
+left join FtyShipper_Detail f on o.FactoryID=f.FactoryID
+where ID in ({SP.Substring(0, SP.Length - 1)})
+and f.BrandID='{this.txtbrand.Text}'
+and GETDATE() between f.BeginDate and f.EndDate";
+
+                if (result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtShipper))
+                {
+                    if (dtShipper.Rows.Count > 1)
+                    {
+                        MyUtility.Msg.WarningBox("The shipper for those SP are not the same, please check Packing # and SP No. again! ");
+                        return;
+                    }
+                    else if (dtShipper.Rows.Count == 1)
+                    {
+                        this.CurrentMaintain["Shipper"] = dtShipper.Rows[0]["ShipperID"].ToString();
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Shipper not found! ");
+                        return;
+                    }
+                }
+                else
+                {
+                    this.ShowErr(sqlcmd, result);
+                    return;
+                }
+            }
+
+            // shipper 不可為空
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Shipper"]))
+            {
+                this.txtfactoryShipper.Focus();
+                MyUtility.Msg.WarningBox("Shipper can't empty!!");
+                return;
+            }
+
             // 當ShipMode為A/P,A/P-C,E/P,S-A/P時，要檢查是否都有AirPP單號
             if (MyUtility.Check.Seek(string.Format("select ID from ShipMode WITH (NOLOCK) where UseFunction like '%AirPP%' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ShipModeID"]))))
             {
                 string sqlCmd = string.Format(
                     @";with AirPPChk as (
-select p.ID, isnull(a.ID,'') as AirPPID,o.Category,isnull(a.status,'') as status
+select p.OrderID,p.OrderShipmodeSeq,p.ID, isnull(a.ID,'') as AirPPID,o.Category,isnull(a.status,'') as status
 from (Select distinct a.ID,b.OrderID,b.OrderShipmodeSeq 
       from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) 
       where a.INVNo = '{0}' and a.ID = b.ID) p
 left join orders o WITH (NOLOCK) on o.ID = p.OrderID
-left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq)
+left join AirPP a WITH (NOLOCK) on p.OrderID = a.OrderID and p.OrderShipmodeSeq = a.OrderShipmodeSeq),
+AirPPChk_JunkChk as (
+select *,
+--相同SP + seq 有一筆以上，若其中一筆是Junked，這筆就不做判斷
+[ShowFlag] = (select iif((count(*) - sum(iif(status = 'Junked',1,0))) > 0 and apc.status = 'Junked',0,1) from AirPPChk where orderid = apc.OrderID and OrderShipmodeSeq = apc.OrderShipmodeSeq )
+ from AirPPChk apc
+)
 select apc.ID as PackingID, apc.AirPPID,apc.Category,apc.status as AirPPStatus,aps.status as StatusDesc,aps.Followup
-from AirPPChk apc
-left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
-                DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.selectData);
+from AirPPChk_JunkChk apc
+left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'')
+where apc.status <> 'Locked' and ShowFlag = 1 ", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                result = DBProxy.Current.Select(null, sqlCmd, out this.selectData);
                 if (result)
                 {
                     // 如果此SP的 Category='S' 且 shipmode='E/P'時, 沒有AirPP# , 也可以Confirm，這邊不check category = 'S'
@@ -1371,11 +1472,11 @@ left join AirPPStatus aps WITH (NOLOCK) on apc.status = isnull(aps.AirPPStatus,'
                     DataRow[] row;
                     if (this.CurrentMaintain["ShipModeID"].Equals("E/P"))
                     {
-                        row = this.selectData.Select(" Category <> 'S' and AirPPStatus <> 'Locked'");
+                        row = this.selectData.Select(" Category <> 'S' ");
                     }
                     else
                     {
-                       row = this.selectData.Select(" AirPPStatus <> 'Locked'");
+                        row = this.selectData.Select();
                     }
 
                     if (row.Length > 0)
@@ -1537,52 +1638,6 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
         private void MaskedTextBox1_Validated(object sender, EventArgs e)
         {
             MyUtility.Msg.InfoBox("validated");
-        }
-
-        private void TxtfactoryShipper_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            #region SQL CMD
-            string sqlcmd = string.Format(@"
-Select DISTINCT Factory = ID
-from Factory WITH (NOLOCK) 
-where Junk = 0
-order by ID");
-            #endregion
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlcmd, "8", this.txtfactoryShipper.Text, false, ",");
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            this.txtfactoryShipper.Text = item.GetSelectedString();
-        }
-
-        private void TxtfactoryShipper_Validating(object sender, CancelEventArgs e)
-        {
-            #region SQL Parameter
-            List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@str", this.txtfactoryShipper.Text));
-            #endregion
-            string str = this.txtfactoryShipper.Text;
-            #region SQL CMD
-            string sqlcmd = string.Format(@"
-Select DISTINCT Factory = ID
-from Factory WITH (NOLOCK) 
-where Junk = 0
-      and ID = @str
-order by ID");
-            #endregion
-            if (!string.IsNullOrWhiteSpace(str) && str != this.txtfactoryShipper.OldValue)
-            {
-                if (MyUtility.Check.Seek(sqlcmd, listSqlPar) == false)
-                {
-                    this.txtfactoryShipper.Text = string.Empty;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Factory : {0} > not found!!!", str));
-                    return;
-                }
-            }
         }
 
     }

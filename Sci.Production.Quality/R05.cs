@@ -278,6 +278,7 @@ if @summary  = 1
 		   , [DefectPercentage]
 		   , [Total % of Inspection]
 		   , [QualityRating]
+           , [Level]
 	from (
 		select [Supplier] = (Suppid+'-'+AbbEN)
 			   , ItemRef = max(s.counts)
@@ -295,6 +296,8 @@ if @summary  = 1
 			   														, 0)
 			   , [QualityRating] = 100 - IIF(yds.TotalInspYds != 0, ROUND((Defect.TotalDefectPoint) * 5 / yds.TotalInspYds * 100, 2)
 			   													  , 0)		
+               , [Level] = (select ID from SuppLevel where IIF(yds.TotalInspYds != 0, ROUND((Defect.TotalDefectPoint) * 5 / yds.TotalInspYds * 100, 2)
+			   												   , 0) between Range1 and Range2)
 		from #tmp tmp
 		outer apply( 
 			select counts = count(distinct Refno) 

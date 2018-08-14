@@ -12,6 +12,7 @@ using Sci.Data;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Sci.Win.Tools;
+using System.Transactions;
 
 namespace Sci.Production.Warehouse
 {
@@ -31,8 +32,10 @@ namespace Sci.Production.Warehouse
             base.OnFormLoaded();
             comboStatus.SelectedIndex = 0;
             comboStockType.SelectedIndex = 0;
+            comboDropDownList1.SelectedIndex = 0;
             Ict.Win.UI.DataGridViewTextBoxColumn columnStatus = new Ict.Win.UI.DataGridViewTextBoxColumn();
             Ict.Win.DataGridViewGeneratorTextColumnSettings ns = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings remark = new DataGridViewGeneratorTextColumnSettings();
             
             ns.CellMouseDoubleClick += (s, e) =>
                 {
@@ -46,12 +49,26 @@ namespace Sci.Production.Warehouse
                         {
                             if (tempstatus == "0") dr["selected"] = true;
                             else dr["selected"] = false;
-
-                        }
-                                             
+                        }                    
                     }
                 };
-            
+            remark.CellValidating += (s, e) =>
+             {                 
+                 if (e.RowIndex != -1)
+                 {
+                     DataRow dr = this.gridMaterialLock.GetDataRow(e.RowIndex);
+                     if (!MyUtility.Check.Empty(dr["Remark"]))
+                     {
+                         if (dr["Remark"].ToString().Length > 500)
+                         {
+                             MyUtility.Msg.WarningBox("<Remark> length cannot exceed 500");
+                             e.Cancel = true;
+                             return;
+                         }
+                     }
+                 }
+             };
+
             #region -- 設定Grid1的顯示欄位 --
             this.gridMaterialLock.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridMaterialLock.DataSource = listControlBindingSource1;
@@ -60,11 +77,14 @@ namespace Sci.Production.Warehouse
                  .Text("POID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
                   .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                  .Text("FabricType", header: "Material Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true,settings: ns)
                   .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
+                  .Date("FinalETA", header: "Material ATA ", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                  .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12),iseditingreadonly:false,settings: remark)
                   .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
@@ -81,7 +101,9 @@ namespace Sci.Production.Warehouse
                   ;
             columnStatus.DefaultCellStyle.ForeColor = Color.Blue;
             gridMaterialLock.Columns["dyelot"].HeaderCell.Style.BackColor = Color.Orange;
-            
+            gridMaterialLock.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            gridMaterialLock.Columns["Remark"].DefaultCellStyle.ForeColor = Color.Red;
+
             #endregion
         }
 
@@ -96,9 +118,10 @@ namespace Sci.Production.Warehouse
             String sp1 = this.txtSP.Text.TrimEnd() + '%';
 
 
-            if (MyUtility.Check.Empty(txtSP.Text)&& MyUtility.Check.Empty(txtwkno.Text)&& MyUtility.Check.Empty(txtReceivingid.Text))
+            if (MyUtility.Check.Empty(txtSP.Text)&& MyUtility.Check.Empty(txtwkno.Text)&& MyUtility.Check.Empty(txtReceivingid.Text)
+                && this.dateATA.Value1.Empty() && this.dateATA.Value2.Empty())
             {
-                MyUtility.Msg.WarningBox("SP# and WK NO and Receiving ID  can't be empty!!");
+                MyUtility.Msg.WarningBox("SP# and WK NO and Receiving ID and ATA can't be empty!!");
                 return;
             }
 
@@ -107,9 +130,11 @@ select 0 as [selected]
         , fi.POID
         , fi.seq1
         , fi.seq2
+        , FabricType = case when pd.FabricType = 'F' then 'Fabric' when  pd.FabricType = 'A' then 'Accessory' end
         , fi.Roll
         , fi.Dyelot
         , iif(fi.Lock=0,'Unlocked','Locked') [status]
+        , pd.FinalETA
         , fi.InQty
         , fi.OutQty
         , fi.AdjustQty
@@ -129,6 +154,7 @@ select 0 as [selected]
         , o.BrandID
         , o.FactoryID
         , x.*
+        , fi.Remark,fi.ukey
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
@@ -203,6 +229,17 @@ txtwkno.Text));
 and exists (select 1 from Receiving_Detail r where r.poid = fi.poid and r.seq1 = fi.seq1 and r.seq2 = fi.seq2 and r.Roll = fi.Roll and r.Dyelot = fi.Dyelot and r.id = '{0}' )",
 txtReceivingid.Text));
             }
+            if (!MyUtility.Check.Empty(dateATA.TextBox1.Value))
+            {
+                strSQLCmd.Append(string.Format(@" 
+and pd.FinalETA between '{0}' and '{1}'", dateATA.TextBox1.Text, dateATA.TextBox2.Text));
+            }
+            if (!MyUtility.Check.Empty(comboDropDownList1.SelectedValue))
+            {
+                strSQLCmd.Append(string.Format(@" 
+and pd.FabricType in ({0})", comboDropDownList1.SelectedValue));
+            }
+
             Ict.DualResult result;
             DataTable dtData;
             this.ShowWaitMessage("Data Loading...");
@@ -304,7 +341,7 @@ txtReceivingid.Text));
             StringBuilder sqlcmd = new StringBuilder();
             foreach (DataRow item in find)
             {
-                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE() where ukey ={0};", item["ukey"],flag,Sci.Env.User.UserID));
+                sqlcmd.Append(string.Format(@"update dbo.ftyinventory set lock={1},lockname='{2}',lockdate=GETDATE(),Remark='{3}' where ukey ={0};", item["ukey"],flag,Sci.Env.User.UserID,item["Remark"]));
             }
 
             if (!(result = Sci.Data.DBProxy.Current.Execute(null, sqlcmd.ToString())))
@@ -392,6 +429,7 @@ select t.POID
 	   , t.earliest_SciDelivery
 	   , t.BrandID
 	   , t.FactoryID
+       , t.Remark
 	   , LockDate = f.LockDate
 	   , LockName = f.LockName
 from #tmp t
@@ -426,5 +464,6 @@ inner join ftyinventory f with (NoLock) on t.ukey = f.ukey";
 
             return true;
         }
+        
     }
 }

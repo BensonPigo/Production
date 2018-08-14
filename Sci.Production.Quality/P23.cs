@@ -287,15 +287,124 @@ order by p2.ID,p2.CTNStartNo
                                 }
                                 else
                                 {
-                                    DataRow drError = notFoundErr.NewRow();
-                                    drError["ID"] = sl[1].Substring(0, 13).ToString();
-                                    drError["CTNStartNo"] = sl[1].Substring(13, sl[1].Length - 13).ToString();
-                                    notFoundErr.Rows.Add(drError);
+                                    sqlCmd = $@"
+select distinct
+[selected] = 1
+,p2.ID
+,p2.CTNStartNo
+,o1.OrderID 
+,o.CustPONo
+,o.StyleID
+,o.SeasonID
+,o.BrandID
+,c.Alias
+,o.BuyerDelivery
+,p2.remark
+from PackingList_Detail p2 WITH (NOLOCK)
+inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
+left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
+inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
+left join Country c WITH (NOLOCK) on c.id=o.dest
+outer apply(
+	select OrderID = stuff((
+		select concat('/',OrderID)
+		from (
+			select distinct OrderID from PackingList_Detail pd WITH (NOLOCK)
+			where p2.orderid=pd.orderid
+		) o1
+		for xml path('')
+	),1,1,'')
+) o1
+where p2.CTNStartNo<>''
+and p1.Mdivisionid='{Sci.Env.User.Keyword}'
+and p1.Type in ('B','L')
+and p2.CFAReceiveDate  is null
+and p2.TransferCFADate is not null
+and (po.Status ='New' or po.Status is null)
+and p2.CustCTN='{sl[1]}'
+order by p2.ID,p2.CTNStartNo
+";
+                                    if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                    {
+                                        dr["selected"] = 1;
+                                        dr["ID"] = seekData["ID"].ToString().Trim();
+                                        dr["CTNStartNo"] = seekData["CTNStartNo"];
+                                        dr["OrderID"] = seekData["OrderID"];
+                                        dr["CustPONo"] = seekData["CustPONo"];
+                                        dr["StyleID"] = seekData["StyleID"];
+                                        dr["SeasonID"] = seekData["SeasonID"];
+                                        dr["BrandID"] = seekData["BrandID"];
+                                        dr["Alias"] = seekData["Alias"];
+                                        dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                        dr["remark"] = seekData["remark"];
+                                        selectDataTable.Rows.Add(dr);
+                                        insertCount++;
+                                    }
+                                    else
+                                    {
+                                        notFoundErr.Rows.Add(dr.ItemArray);
+                                    }
                                 }
                             }
                             else
                             {
-                                notFoundErr.Rows.Add(dr.ItemArray);
+                               string  sqlCmd = $@"
+select distinct
+[selected] = 1
+,p2.ID
+,p2.CTNStartNo
+,o1.OrderID 
+,o.CustPONo
+,o.StyleID
+,o.SeasonID
+,o.BrandID
+,c.Alias
+,o.BuyerDelivery
+,p2.remark
+from PackingList_Detail p2 WITH (NOLOCK)
+inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
+left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
+inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
+left join Country c WITH (NOLOCK) on c.id=o.dest
+outer apply(
+	select OrderID = stuff((
+		select concat('/',OrderID)
+		from (
+			select distinct OrderID from PackingList_Detail pd WITH (NOLOCK)
+			where p2.orderid=pd.orderid
+		) o1
+		for xml path('')
+	),1,1,'')
+) o1
+where p2.CTNStartNo<>''
+and p1.Mdivisionid='{Sci.Env.User.Keyword}'
+and p1.Type in ('B','L')
+and p2.CFAReceiveDate  is null
+and p2.TransferCFADate is not null
+and (po.Status ='New' or po.Status is null)
+and p2.CustCTN='{sl[1]}'
+order by p2.ID,p2.CTNStartNo
+";
+                                if (MyUtility.Check.Seek(sqlCmd, out seekData))
+                                {
+                                    dr["selected"] = 1;
+                                    dr["ID"] = seekData["ID"].ToString().Trim();
+                                    dr["CTNStartNo"] = seekData["CTNStartNo"];
+                                    dr["OrderID"] = seekData["OrderID"];
+                                    dr["CustPONo"] = seekData["CustPONo"];
+                                    dr["StyleID"] = seekData["StyleID"];
+                                    dr["SeasonID"] = seekData["SeasonID"];
+                                    dr["BrandID"] = seekData["BrandID"];
+                                    dr["Alias"] = seekData["Alias"];
+                                    dr["BuyerDelivery"] = seekData["BuyerDelivery"];
+                                    dr["remark"] = seekData["remark"];
+                                    selectDataTable.Rows.Add(dr);
+                                    insertCount++;
+                                }
+                                else
+                                {
+                                    notFoundErr.Rows.Add(dr.ItemArray);
+                                }
                             }
                         }
                     }

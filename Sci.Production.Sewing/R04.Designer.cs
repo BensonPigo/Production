@@ -41,6 +41,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtCDCode = new Sci.Production.Class.txtcdcode();
             this.chk_Accumulate_output = new Sci.Win.UI.CheckBox();
+            this.chk_Include_Artwork = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -136,6 +137,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(115, 48);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(170, 24);
             this.comboCategory.TabIndex = 1;
             // 
@@ -147,6 +149,7 @@
             this.comboM.IsSupportUnselect = true;
             this.comboM.Location = new System.Drawing.Point(115, 84);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(73, 24);
             this.comboM.TabIndex = 2;
             // 
@@ -158,6 +161,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(115, 120);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(73, 24);
             this.comboFactory.TabIndex = 3;
             // 
@@ -190,9 +194,23 @@
             this.chk_Accumulate_output.Text = "Include Accumulate output";
             this.chk_Accumulate_output.UseVisualStyleBackColor = true;
             // 
+            // chk_Include_Artwork
+            // 
+            this.chk_Include_Artwork.AutoSize = true;
+            this.chk_Include_Artwork.Checked = true;
+            this.chk_Include_Artwork.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chk_Include_Artwork.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chk_Include_Artwork.Location = new System.Drawing.Point(320, 169);
+            this.chk_Include_Artwork.Name = "chk_Include_Artwork";
+            this.chk_Include_Artwork.Size = new System.Drawing.Size(155, 21);
+            this.chk_Include_Artwork.TabIndex = 101;
+            this.chk_Include_Artwork.Text = "Include Artwork data";
+            this.chk_Include_Artwork.UseVisualStyleBackColor = true;
+            // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(525, 255);
+            this.Controls.Add(this.chk_Include_Artwork);
             this.Controls.Add(this.chk_Accumulate_output);
             this.Controls.Add(this.txtCDCode);
             this.Controls.Add(this.txtbrand);
@@ -227,6 +245,7 @@
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.txtCDCode, 0);
             this.Controls.SetChildIndex(this.chk_Accumulate_output, 0);
+            this.Controls.SetChildIndex(this.chk_Include_Artwork, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -247,5 +266,6 @@
         private Class.txtbrand txtbrand;
         private Class.txtcdcode txtCDCode;
         private Win.UI.CheckBox chk_Accumulate_output;
+        private Win.UI.CheckBox chk_Include_Artwork;
     }
 }

@@ -264,7 +264,7 @@ order by PackingListID, OrderID, rn");
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             int r = printDT.Rows.Count;
-            objSheets.get_Range(string.Format("A5:U{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
+            objSheets.get_Range(string.Format("A5:V{0}", r + 4)).Borders.LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             objSheets.Cells[2, 2] = Sci.Env.User.Keyword;
             DataRow dr;

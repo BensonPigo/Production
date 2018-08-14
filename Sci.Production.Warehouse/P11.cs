@@ -97,6 +97,10 @@ namespace Sci.Production.Warehouse
                     {
                         DataTable subDt;
                         GetSubDetailDatas(dr, out subDt);
+                        //if (subDt == null)
+                        //{
+                        //    return;
+                        //}
                         DataTable keepDt = subDt.Clone();
 
                         foreach (DataRow subDr in subDt.Rows)
@@ -393,7 +397,7 @@ select  a.Id
                               from (
                                 select (rtrim(Issue_Size.SizeCode) +'*'+convert(varchar,Issue_Size.Qty)) as sizeqty 
                                 from dbo.Issue_Size WITH (NOLOCK) 
-                                where   Issue_Size.Issue_DetailUkey = a.ukey 
+                                where   Issue_Size.Issue_DetailUkey = a.ukey and qty <>0
                              ) v for xml path(''))
                             ,'') 
         , a.Ukey
@@ -552,29 +556,12 @@ SET QTY = S.QTY
 WHEN NOT MATCHED THEN
 INSERT (ID,ORDERID,ARTICLE,SIZECODE,QTY)
 VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
-;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));//.Replace("[", "[_")
+;delete from dbo.issue_breakdown where id='{0}' and qty = 0; ", CurrentMaintain["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1));
 
-                string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");//.Replace("[", "").Replace("]", "")
-
-
-
-                //            sqlcmd = string.Format(string.Format(@";WITH UNPIVOT_1
-                //AS
-                //(
-                //SELECT * FROM #tmp
-                //UNPIVOT
-                //(
-                //QTY
-                //FOR SIZECODE IN ({1})
-                //)
-                //AS PVT
-                //)SELECT * FROM UNPIVOT_1;", Master["id"], sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1)));
-
-
+                string aaa = sbSizecode.ToString().Substring(0, sbSizecode.ToString().Length - 1).Replace("[", "").Replace("]", "");
 
                 ProcessWithDatatable2(dtIssueBreakDown, "OrderID,Article," + aaa
                     , sqlcmd, out result, "#tmp");
-                //MyUtility.Msg.InfoBox("Save completed!!");
             }
 
 
@@ -586,45 +573,25 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                 GetSubDetailDatas(dr, out subDT);
                 foreach (DataRow temp in subDT.Rows)
                 {
-                    if (temp["isvirtual"].ToString() == "1" && Convert.ToDecimal(temp["QTY"].ToString()) > 0)
+                    if (temp["isvirtual"].ToString() == "1")// && Convert.ToDecimal(temp["QTY"].ToString()) > 0)
                     {
                         temp.AcceptChanges();
                         temp.SetAdded();
                     }
                 }
             }
-
-            //刪除第三層qty為0的資料
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (GetSubDetailDatas(dr, out subDT))
-                {
-                    foreach (DataRow dr2 in subDT.ToList())
-                    {
-                        if (dr2.RowState != DataRowState.Deleted && Convert.ToDecimal(dr2["QTY"].ToString()) == 0 && dr2.RowState != DataRowState.Modified)
-                        {
-                            subDT.Rows.Remove(dr2);
-                        }
-                    }
-                }
-            }
-
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (GetSubDetailDatas(dr, out subDT))
-                {
-                    foreach (DataRow dr2 in subDT.Rows)
-                    {
-                        if (Convert.ToDecimal(dr2["QTY"].ToString()) == 0 && dr2.RowState == DataRowState.Modified)
-                        {
-                            dr2.Delete();
-                        }
-                    }
-                }
-            }
-       
-
             return base.ClickSaveBefore();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            string deleteSql = $@"delete Issue_Size where id = '{this.CurrentMaintain["id"]}' and Qty = 0";
+            DualResult result = DBProxy.Current.Execute(null, deleteSql);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
 
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
@@ -756,6 +723,7 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            getpoid();
             DataTable dt;
             if (!(CurrentMaintain == null))
             {
@@ -910,20 +878,48 @@ where a.id='{0}' order by Seq", this.poid, CurrentMaintain["id"]), out sizeRange
             string masterID = (e.Detail == null) ? "" : e.Detail["ID"].ToString();
             string ukey = (e.Detail == null || MyUtility.Check.Empty(e.Detail["ukey"])) ? "0" : e.Detail["ukey"].ToString();
             this.SubDetailSelectCommand = string.Format(@"
-select  a.SizeCode
+;with aaa as(
+    select  
+         a.SizeCode
         , b.Id
-        , '{2}' AS Issue_DetailUkey
-        , isnull(b.Qty,0) QTY
-        , IIF(b.Qty IS NULL , 1 ,0) isvirtual
-
-from  dbo.Issue_Size b WITH (NOLOCK) 
-inner join dbo.Order_SizeCode a WITH (NOLOCK) on b.SizeCode = a.SizeCode
-outer apply(select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{3}')poid1
-outer apply(select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{4}' and Factory.mdivisionid = '{3}')poid2
-where a.id= iif(isnull(poid1.POID,'')='',poid2.POID,poid1.poid)
-and b.id = '{1}' and b.Issue_DetailUkey = {2}
-order by Seq"
+        , Issue_DetailUkey =  '{2}'
+        , QTY = isnull(b.Qty,0)
+        , isvirtual = IIF(b.Qty IS NULL , 1 ,0)
+        , seq
+    --into #tmp
+    from  dbo.Issue_Size b WITH (NOLOCK) 
+    inner join dbo.Order_SizeCode a WITH (NOLOCK) on b.SizeCode = a.SizeCode
+    outer apply(select poid from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{3}')poid1
+    outer apply(select orders.poid from dbo.orders WITH (NOLOCK) left join dbo.Factory on orders.FtyGroup=Factory.ID where orders.id='{4}' and Factory.mdivisionid = '{3}')poid2
+    where a.id= iif(isnull(poid1.POID,'')='',poid2.POID,poid1.poid)
+    and b.id = '{1}' and b.Issue_DetailUkey = {2}
+)"
             , CurrentMaintain["cutplanid"].ToString(), masterID, ukey, Sci.Env.User.Keyword, CurrentMaintain["orderid"].ToString());
+            //if (!MyUtility.Check.Empty(CurrentMaintain["cutplanid"]))
+            //{
+                SubDetailSelectCommand += $@"
+,bbb as(
+	select distinct os.sizecode,ID = '{CurrentMaintain["orderid"]}',Issue_DetailUkey = '{ukey}',QTY=0,isvirtual = 1,seq
+	from dbo.Order_SizeCode os WITH(NOLOCK)
+	inner join orders o WITH(NOLOCK) on o.POID = os.Id
+	inner join dbo.Order_Qty oq WITH(NOLOCK) on o.id = oq.ID and os.SizeCode = oq.SizeCode
+	where o.POID = '{this.poid}' 
+	and not exists(select SizeCode from aaa where aaa.SizeCode = os.sizecode)
+)
+select SizeCode,Id,Issue_DetailUkey,QTY,isvirtual
+from(
+	select * from aaa
+	union all
+	select * from bbb
+)ccc
+order by seq
+";
+            //}
+            //else
+            //{
+            //    SubDetailSelectCommand += " select SizeCode, Id, Issue_DetailUkey, QTY, isvirtual from aaa order by seq ";
+            //}
+
             return base.OnSubDetailSelectCommandPrepare(e);
         }
 
@@ -1339,7 +1335,7 @@ where id = @MDivision", pars, out dt);
             string sqlcmd1 = string.Format(@"select  sizecode
 	                    from dbo.Order_SizeCode WITH (NOLOCK) 
 	                    where id in (select  poid from orders where id =   @OrderID ) and 
-                        sizecode in ( select distinct  sizecode from dbo.Issue_Size WITH (NOLOCK)  where id = @ID) order by seq");
+                        sizecode in ( select distinct  sizecode from dbo.Issue_Size WITH (NOLOCK)  where id = @ID and qty <>0) order by seq");
 
             string sizecodes = "";
             result = DBProxy.Current.Select("", sqlcmd1, pars, out dtSizecode);
@@ -1378,6 +1374,7 @@ from(
                 , qty
         from dbo.Issue_Size WITH (NOLOCK) 
         where id = @ID
+        and qty <>0
     ) as s
     PIVOT
     (
@@ -1814,7 +1811,7 @@ select  a.SizeCode
         , isnull(b.Qty,0) QTY 
 from dbo.Order_SizeCode a WITH (NOLOCK) 
 left join dbo.Issue_Size b WITH (NOLOCK) on b.SizeCode = a.SizeCode 
-                                            and b.id = '{1}' 
+                                            and b.id = '{1}'
                                             --and b.Issue_DetailUkey = {2}
 where   a.id = '{0}' 
 order by Seq ", this.poid, CurrentMaintain["id"], ndr["ukey"]), out sizeRange);
@@ -1843,7 +1840,63 @@ order by Seq ", this.poid, CurrentMaintain["id"], ndr["ukey"]), out sizeRange);
             {
                 dtIssueBreakDown.DefaultView.RowFilter = string.Format("OrderID='{0}'", txtOrderID.Text);
             }
+            string sql = string.Empty;
 
+            if (CurrentMaintain == null)
+            {
+                return;
+            }
+            if (EditMode)
+            {
+            if (checkByCombo.Checked)
+            {
+                sql = $@"
+select distinct seq,os.sizecode
+from dbo.Order_SizeCode os WITH(NOLOCK)
+inner join orders o WITH(NOLOCK) on o.POID = os.Id
+inner join dbo.Order_Qty oq WITH(NOLOCK) on o.id = oq.ID and os.SizeCode = oq.SizeCode
+where o.POID = '{this.poid}'
+";
+            }
+            else
+            {
+                sql = $@"
+select distinct seq,os.sizecode
+from dbo.Order_SizeCode os WITH (NOLOCK) 
+inner join orders o WITH (NOLOCK) on o.POID = os.Id
+inner join dbo.Order_Qty oq WITH (NOLOCK) on o.id=oq.ID and os.SizeCode = oq.SizeCode
+where  o.id ='{CurrentMaintain["orderid"]}'
+";
+            }
+            DataTable sizecodeDt;
+            DBProxy.Current.Select(null, sql, out sizecodeDt);
+
+                foreach (DataRow dr in DetailDatas)
+                {
+                    if (dr.RowState != DataRowState.Deleted)
+                    {
+                        DataTable subDt;
+                        GetSubDetailDatas(dr, out subDt);
+                        foreach (DataRow subdr in subDt.Rows)
+                        {
+                            if (!sizecodeDt.AsEnumerable().Any(r => r["Sizecode"].ToString() == MyUtility.Convert.GetString(subdr["sizecode"])))
+                            {
+                                subdr["Qty"] = 0;
+                            }
+                        }
+                        dr["output"] = string.Join(", ",
+                                subDt.AsEnumerable()
+                                     .Where(row => !MyUtility.Check.Empty(row["Qty"]))
+                                     .Select(row => row["SizeCode"].ToString() + "*" + Convert.ToDecimal(row["qty"]).ToString("0.00"))
+                            );
+                        dr["qty"] = Math.Round(subDt.AsEnumerable()
+                                                    .Where(row => !MyUtility.Check.Empty(row["Qty"]))
+                                                    .Sum(row => Convert.ToDouble(row["Qty"].ToString()))
+                                                    , 2);
+
+                    }
+                }
+            }
         }
 
         protected override void OnDetailGridRowChanged()

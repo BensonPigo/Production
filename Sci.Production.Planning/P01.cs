@@ -26,7 +26,21 @@ namespace Sci.Production.Planning
         {
             this.InitializeComponent();
             this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(this.ComboxChange);
-            this.DefaultFilter = @"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 ";
+            DataTable dtFty;
+            DualResult result;
+            string ftyFilter = string.Empty;
+            if (result = DBProxy.Current.Select(string.Empty, $@"select id from Factory where IsProduceFty = 1", out dtFty))
+            {
+                if (dtFty != null || dtFty.Rows.Count > 0)
+                {
+                    for (int i = 0; i < dtFty.Rows.Count; i++)
+                    {
+                        ftyFilter += $"'{dtFty.Rows[i]["id"]}',";
+                    }
+                }
+            }
+
+            this.DefaultFilter = $@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and FactoryID in ({ftyFilter.Substring(0, ftyFilter.Length - 1)})";
             this.firstTime = false;
         }
 
@@ -40,9 +54,23 @@ namespace Sci.Production.Planning
         {
             this.InitializeComponent();
             this.detailgrid.CellValueChanged += new DataGridViewCellEventHandler(this.ComboxChange);
+            DataTable dtFty;
+            DualResult result;
+            string ftyFilter = string.Empty;
+            if (result = DBProxy.Current.Select(string.Empty, $@"select id from Factory where IsProduceFty = 1", out dtFty))
+            {
+                if (dtFty != null || dtFty.Rows.Count > 0)
+                {
+                    for (int i = 0; i < dtFty.Rows.Count; i++)
+                    {
+                        ftyFilter += $"'{dtFty.Rows[i]["id"]}',";
+                    }
+                }
+            }
+
             if (history.ToUpper() == "Y")
             {
-                this.DefaultFilter = @"qty > 0 and (category ='B' or category='S') and Finished = 1 and IsForecast = 0 ";
+                this.DefaultFilter = $@"qty > 0 and (category ='B' or category='S') and Finished = 1 and IsForecast = 0 and FactoryID in ({ftyFilter.Substring(0, ftyFilter.Length - 1)}) ";
 
                 // 因為在x86 run 有記憶體限制，如果筆數超過12萬筆就加入時間條件add_date兩年內的
                 DataRow dr;
@@ -57,7 +85,7 @@ namespace Sci.Production.Planning
             }
             else
             {
-                this.DefaultFilter = @"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 ";
+                this.DefaultFilter = $@"qty > 0 and (category ='B' or category='S') and Finished = 0 and IsForecast = 0 and FactoryID in ({ftyFilter.Substring(0, ftyFilter.Length - 1)}) ";
             }
 
             this.Text = "P01 Sub-process master list (History)";

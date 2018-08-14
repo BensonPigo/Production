@@ -20,6 +20,7 @@ namespace Sci.Production.Packing
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ctnno;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_article;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_size;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_ctnqty;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_shipqty;
         private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
@@ -79,6 +80,25 @@ namespace Sci.Production.Packing
                 this.displayStyle.Value = dr["StyleID"].ToString();
                 this.displaySeason.Value = dr["SeasonID"].ToString();
                 this.displayPONo.Value = dr["CustPONo"].ToString();
+            }
+
+            // Carton Summary按鈕變色
+            string chksql = $@"
+select 1
+from PackingList pl WITH (NOLOCK) , PackingList_Detail pd WITH (NOLOCK)
+left join LocalItem li WITH (NOLOCK) on li.RefNo = pd.RefNo
+left join LocalSupp ls WITH (NOLOCK) on ls.ID = li.LocalSuppid
+where pl.Type = 'L'
+and pd.ID = pl.ID
+and pd.ID = '{this.CurrentMaintain["ID"]}'
+";
+            if (MyUtility.Check.Seek(chksql))
+            {
+                this.btnCartonSummary.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnCartonSummary.ForeColor = Color.Black;
             }
         }
 
@@ -264,9 +284,40 @@ order by os.Seq",
             };
             #endregion
 
+            this.detailgrid.CellValueChanged += (s, e) =>
+            {
+                #region 選完RefNo後，要自動帶出Description
+                if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == this.col_refno.DataPropertyName)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                    if (MyUtility.Check.Empty(dr["RefNo"]))
+                    {
+                        dr["Description"] = string.Empty;
+                    }
+                    else
+                    {
+                        string seekSql = string.Format("select Description,CtnWeight from LocalItem WITH (NOLOCK) where RefNo = '{0}'", dr["RefNo"].ToString());
+                        DataRow localItem;
+                        if (MyUtility.Check.Seek(seekSql, out localItem))
+                        {
+                            dr["Description"] = localItem["Description"].ToString();
+                        }
+                        else
+                        {
+                            dr["Description"] = string.Empty;
+                        }
+                    }
+
+                    dr.EndEdit();
+                }
+                #endregion
+            };
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6)).Get(out this.col_ctnno)
                 .Numeric("CTNQty", header: "# of CTN").Get(out this.col_ctnqty)
+                .CellCartonItem("RefNo", header: "Ref No.", width: Widths.AnsiChars(13)).Get(out this.col_refno)
+                .Text("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Article", header: "ColorWay", width: Widths.AnsiChars(8), settings: this.article).Get(out this.col_article)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), settings: this.size).Get(out this.col_size)
                 .Numeric("ShipQty", header: "Qty").Get(out this.col_shipqty)
@@ -939,6 +990,12 @@ and p.ID = pl.PulloutID",
             {
                 MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
             }
+        }
+
+        private void btnCartonSummary_Click(object sender, EventArgs e)
+        {
+            Sci.Production.Packing.P03_CartonSummary callNextForm = new Sci.Production.Packing.P03_CartonSummary(this.CurrentMaintain["ID"].ToString());
+            callNextForm.ShowDialog(this);
         }
     }
 }

@@ -109,12 +109,12 @@ Select  0 as Selected
         , rtrim(ccc.id) as artworkid
         , patterncode = isnull((select distinct PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID),'')
         , patterndesc = isnull((select distinct PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID),'')
-        , Style = aaa.StyleID
+        , aaa.StyleID
         , sewinline = aaa.Sewinline
         , scidelivery = aaa.Scidelivery
 from orders aaa WITH (NOLOCK) 
 inner join order_qty bbb WITH (NOLOCK) on aaa.id = bbb.id
-left join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = bbb.Article AND OA.SizeCode=bbb.SizeCode
+left join dbo.View_Order_Artworks oa on oa.ID = aaa.ID AND OA.Article = bbb.Article AND OA.SizeCode=bbb.SizeCode and oa.ArtworkTypeID='{0}' 
 left join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = oa.ID and ot.ArtworkTypeID = oa.ArtworkTypeID
 inner join (
 	Select   a.id orderid

@@ -719,7 +719,27 @@ order by ld.No, ld.GroupKey", masterID);
                 this.txtStyleComboType.Focus();
                 return false;
             }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
+            {
+                MyUtility.Msg.WarningBox("Factory can't empty");
+                this.txtFactory.Focus();
+                return false;
+            }
             #endregion
+
+            string chkfactory = $@"select 1 from factory where FTYGroup = '{this.txtFactory.Text}'";
+            if (!MyUtility.Check.Seek(chkfactory))
+            {
+                MyUtility.Msg.WarningBox($"Factory:{this.txtFactory.Text} not found");
+                return false;
+            }
+
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Detail can not empty!");
+                return false;
+            }
 
             this.ComputeTaktTime();
 
@@ -882,6 +902,7 @@ order by ld.No, ld.GroupKey", masterID);
 
             // object countopts = ((DataTable)detailgridbs.DataSource).Compute("count(No)", "");
             int countopts = 0;
+
             var temptable = this.DetailDatas.CopyToDataTable();
             temptable.DefaultView.Sort = "No";
             string no = string.Empty;
@@ -943,19 +964,6 @@ order by ld.No, ld.GroupKey", masterID);
         private void NumOprtsIdeal_Validated(object sender, EventArgs e)
         {
             this.CalculateValue(0);
-        }
-
-        // Factory
-        private void TxtFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID", "8", this.txtFactory.Text);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            this.txtFactory.Text = item.GetSelectedString();
         }
 
         // Style#
@@ -1235,8 +1243,46 @@ where t.StyleID = s.ID
                 return;
             }
 
-            sqlCmd = string.Format(
-                @"
+            P03CIPFinfo.cutting = false;
+            P03CIPFinfo.inspection = false;
+            P03CIPFinfo.pressing = false;
+            P03CIPFinfo.packing = false;
+            Sci.Production.IE.P03_CopyFromGSD_CIPF callNextForm = new Sci.Production.IE.P03_CopyFromGSD_CIPF();
+            callNextForm.ShowDialog(this);
+
+            string ietmsUKEY = MyUtility.GetValue.Lookup($@" select i.Ukey from TimeStudy t WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on i.id = t.IETMSID and i.Version = t.IETMSVersion where t.id = '{ timeStudy["ID"]}' ");
+            sqlCmd = string.Empty;
+            if (P03CIPFinfo.cutting)
+            {
+                sqlCmd = $@"
+select 
+	ID = null
+	,No = ''
+	,OriNo = '0'
+	,Annotation = '**Cutting'
+	,GSD = round(ProTMS, 4)
+	,TotalGSD = round(ProTMS, 4)
+	,Cycle = round(ProTMS, 4)
+	,TotalCycle = round(ProTMS, 4)
+	,MachineTypeID = ''
+    ,Attachment = null
+    ,Template = null
+	,OperationID = 'SIOCIPF00001'
+	,MoldID = null
+	,GroupKey = 0
+	,New = 0
+	,EmployeeID = ''
+	,Description = '**Cutting'
+	,EmployeeName = ''
+	,EmployeeSkill = ''
+	,Efficiency = 100
+	,IsPPA = 0
+from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Cutting'
+union all
+";
+            }
+
+            sqlCmd += $@"
 select ID = null
 	   , No = ''
 	   , OriNo = td.Seq
@@ -1260,13 +1306,144 @@ select ID = null
        , IsPPA  = iif(td.SMV > 0,0,1)
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-where td.ID = {0} 
-	  --and td.SMV > 0
-order by td.Seq", timeStudy["ID"].ToString());
+where td.ID = {timeStudy["ID"]} ";
+
+            if (P03CIPFinfo.inspection)
+            {
+                sqlCmd += $@"
+union all
+select 
+	ID = null
+	,No = ''
+	,OriNo = '9970'
+	,Annotation = '**Inspection'
+	,GSD = round(ProTMS, 4)
+	,TotalGSD = round(ProTMS, 4)
+	,Cycle = round(ProTMS, 4)
+	,TotalCycle = round(ProTMS, 4)
+	,MachineTypeID = 'M'
+    ,Attachment = null
+    ,Template = null
+	,OperationID = 'SIOCIPF00002'
+	,MoldID = null
+	,GroupKey = 0
+	,New = 0
+	,EmployeeID = ''
+	,Description = '**Inspection'
+	,EmployeeName = ''
+	,EmployeeSkill = ''
+	,Efficiency = 100
+	,IsPPA = 0
+from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Inspection'
+";
+            }
+
+            if (P03CIPFinfo.pressing)
+            {
+                sqlCmd += $@"
+union all
+select 
+	ID = null
+	,No = ''
+	,OriNo = '9980'
+	,Annotation = '**Pressing'
+	,GSD = round(ProTMS, 4)
+	,TotalGSD = round(ProTMS, 4)
+	,Cycle = round(ProTMS, 4)
+	,TotalCycle = round(ProTMS, 4)
+	,MachineTypeID = 'MM2'
+    ,Attachment = null
+    ,Template = null
+	,OperationID = 'SIOCIPF00004'
+	,MoldID = null
+	,GroupKey = 0
+	,New = 0
+	,EmployeeID = ''
+	,Description = '**Pressing'
+	,EmployeeName = ''
+	,EmployeeSkill = ''
+	,Efficiency = 100
+	,IsPPA = 0
+from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Pressing'
+";
+            }
+
+            if (P03CIPFinfo.packing)
+            {
+                sqlCmd += $@"
+union all
+select 
+	ID = null
+	,No = ''
+	,OriNo = '9990'
+	,Annotation =  '**Packing'
+	,GSD = round(ProTMS, 4)
+	,TotalGSD = round(ProTMS, 4)
+	,Cycle = round(ProTMS, 4)
+	,TotalCycle = round(ProTMS, 4)
+	,MachineTypeID = 'MM2'
+    ,Attachment = null
+    ,Template = null
+	,OperationID = 'SIOCIPF00003'
+	,MoldID = null
+	,GroupKey = 0
+	,New = 0
+	,EmployeeID = ''
+	,Description = '**Packing'
+	,EmployeeName = ''
+	,EmployeeSkill = ''
+	,Efficiency = 100
+	,IsPPA = 0
+from[IETMS_Summary] where location = '' and[IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
+";
+            }
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out timeStudy_Detail);
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query Fty GSD detail fail!!");
+                return;
+            }
+
+            string chkdata = string.Empty;
+            if (P03CIPFinfo.cutting||P03CIPFinfo.inspection || P03CIPFinfo.pressing || P03CIPFinfo.packing)
+            {
+                if (P03CIPFinfo.cutting)
+                {
+                    if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00001'").Length == 0)
+                    {
+                        chkdata += "Cutting,";
+                    }
+                }
+
+                if (P03CIPFinfo.inspection)
+                {
+                    if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00002'").Length == 0)
+                    {
+                        chkdata += "Inspection,";
+                    }
+                }
+
+                if (P03CIPFinfo.packing)
+                {
+                    if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00003'").Length == 0)
+                    {
+                        chkdata += "Packing,";
+                    }
+                }
+
+                if (P03CIPFinfo.pressing)
+                {
+                    if (timeStudy_Detail.Select("OperationID = 'SIOCIPF00004'").Length == 0)
+                    {
+                        chkdata += "Pressing,";
+                    }
+                }
+            }
+
+            if (chkdata.Length > 0)
+            {
+                MyUtility.Msg.WarningBox($"CIPF no have {chkdata} data");
                 return;
             }
 
@@ -1323,5 +1500,13 @@ order by td.Seq", timeStudy["ID"].ToString());
             this.listControlBindingSource1.DataSource = this.distdt;
             this.grid1.DataSource = this.listControlBindingSource1;
         }
+    }
+
+    static class P03CIPFinfo
+    {
+        public static bool cutting = false;
+        public static bool inspection = false;
+        public static bool pressing = false;
+        public static bool packing = false;
     }
 }

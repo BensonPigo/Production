@@ -403,6 +403,12 @@
     <Compile Include="P05.Designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
     </Compile>
+    <Compile Include="P16.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P16.Designer.cs">
+      <DependentUpon>P16.cs</DependentUpon>
+    </Compile>
     <Compile Include="P05_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -589,6 +595,12 @@
     <Compile Include="R10.Designer.cs">
       <DependentUpon>R10.cs</DependentUpon>
     </Compile>
+    <Compile Include="R11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R11.designer.cs">
+      <DependentUpon>R11.cs</DependentUpon>
+    </Compile>
     <Compile Include="SCIControl.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -728,6 +740,9 @@
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P16.resx">
+      <DependentUpon>P16.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P05_Print.resx">
       <DependentUpon>P05_Print.cs</DependentUpon>
     </EmbeddedResource>
@@ -824,6 +839,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_ProductionOutput_LoadingoutputDetail.resx">
       <DependentUpon>P01_ProductionOutput_LoadingoutputDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R11.resx">
+      <DependentUpon>R11.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

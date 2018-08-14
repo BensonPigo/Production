@@ -135,7 +135,7 @@ And Status = 'Approved'
 AND PurchaseFrom = 'T'
 ------------------------------------------------
 
-SELECT pod.ID,pod.seq1,pod.SEQ2,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid ,pod.PartReqID
+SELECT pod.ID,pod.seq1,pod.SEQ2,pod.PartID, pod.UnitID, pod.PRICE, pod.QTY, pod.PartBrandID, pod.suppid ,pod.PartReqID,pod.InQty
 INTO  PartPO_Detail
 FROM Pms_To_Trade.dbo.PartPO, Machine.dbo.PartPO_Detail  pod
 WHERE PartPO.id= pod.id  
@@ -156,10 +156,10 @@ WHERE MachinePO.id= pod.id
 ORDER BY MachinePO.id 
 
 SELECT pod.ID,pod.SEQ1, pod.SEQ2, pod.MiscID, pod.UnitID, pod.PRICE, pod.QTY,pod.MiscBrandID, pod.suppid,pod.MiscReqID,pod.DepartmentID
-	,MiscReqApv =m.Approve
+	,MiscReqApv =m.Approve,pod.InQty,md.Reason
 INTO  MiscPO_Detail
-FROM Pms_To_Trade.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod,Machine.dbo.MiscReq m
-WHERE MiscPO.id= pod.id  and pod.MiscReqID = m.ID 
+FROM Pms_To_Trade.dbo.MiscPO, Machine.dbo.MiscPO_Detail  pod,Machine.dbo.MiscReq m,Machine.dbo.MiscReq_Detail md
+WHERE MiscPO.id= pod.id  and pod.MiscReqID = m.ID and m.id = md.id and md.MiscID = pod.MiscID
 ORDER BY MiscPO.id 
 --------------------------------------------------------------
 UPDATE Machine.dbo.PartPO

@@ -3,6 +3,7 @@
     [Seq]         SMALLINT     CONSTRAINT [DF_Order_Article_Seq] DEFAULT ((0)) NULL,
     [Article]     VARCHAR (8)  CONSTRAINT [DF_Order_Article_Article] DEFAULT ('') NOT NULL,
     [TissuePaper] BIT          CONSTRAINT [DF_Order_Article_TissuePaper] DEFAULT ((0)) NULL,
+    [PadPrintColorID] VARCHAR(6) NULL, 
     CONSTRAINT [PK_Order_Article] PRIMARY KEY CLUSTERED ([id] ASC, [Article] ASC)
 );
 

@@ -9,6 +9,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Win;
 using System.Reflection;
+using System.IO;
 
 namespace Sci.Production.Logistic
 {
@@ -93,6 +94,14 @@ namespace Sci.Production.Logistic
                 }
             };
 
+            this.gridPackID.CellValueChanged += (s, e) =>
+            {
+                if (this.gridPackID.Columns[e.ColumnIndex].Name == this.col_chk.Name)
+                {
+                    this.calcCTNQty();
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.gridPackID)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
 
@@ -153,156 +162,15 @@ namespace Sci.Production.Logistic
                 MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
                 return;
             }
+            this.numSelectQty.Value = 0;
+            this.numTTLCTNQty.Value = 0;
+            this.gridData = null;
+            this.listControlBindingSource1.DataSource = null;
 
-            StringBuilder sqlCmd = new StringBuilder();
-
-            sqlCmd.Append(string.Format(
-                @"
-select *
-       , rn = ROW_NUMBER() over(order by ID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
-       , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
-from (
-    select 0 as selected
-           , d.*
-           , TransferPerCent = iif(d.TotalCTN > 0, ROUND((CONVERT(decimal, d.ClogCTN) / d.TotalCTN), 4), 0)
-           , QtyPerCTN = (select sum(QtyPerCTN) 
-                          from PackingList_Detail WITH (NOLOCK) 
-                          where ID = d.ID 
-                                and CTNStartNo = d.CTNStartNo)
-           , ShipQty = (select sum(ShipQty) 
-                        from PackingList_Detail WITH (NOLOCK) 
-                        where ID = d.ID 
-                              and CTNStartNo = d.CTNStartNo)
-           , Article = stuff((select ',' + cast(Article as nvarchar) 
-                                  from PackingList_Detail WITH (NOLOCK) 
-                                  where ID = d.ID 
-                                        and CTNStartNo = d.CTNStartNo for xml path(''))
-                             , 1, 1, '')
-           , Color = stuff((select ',' + cast(Color as nvarchar)
-                            from PackingList_Detail WITH (NOLOCK) 
-                            where ID = d.ID 
-                                  and CTNStartNo = d.CTNStartNo for xml path(''))
-                           , 1, 1, '')
-           , SizeCode =  stuff((select ',' + cast(SizeCode as nvarchar) 
-                                from PackingList_Detail WITH (NOLOCK) 
-                                where ID = d.ID 
-                                      and CTNStartNo = d.CTNStartNo for xml path(''))
-                               , 1, 1, '')
-    from (
-          select distinct  PLD.ID
-                 , PLD.OrderID
-                 , orders.CustPONo
-                 , PLD.CTNStartNo
-                 , TransferSlipNo = TtClog.TransferSlipNo
-                 , PLD.ClogLocationId
-                 , PLD.Remark
-                 , orders.BrandID
-                 , orders.BuyerDelivery
-                 , orders.StyleID
-                 , orders.FtyGroup
-                 , Dest = '(' + orders.Dest + ')' + isnull((select Alias 
-                                                            from Country 
-                                                            where ID = orders.Dest),'')
-                 , orders.TotalCTN
-                 , orders.ClogCTN
-          from PackingList PL WITH (NOLOCK)
-          inner join PackingList_Detail PLD WITH (NOLOCK) on PL.ID = PLD.ID
-          inner join Orders orders WITH (NOLOCK) on PLD.OrderID = orders.ID
-          left join  TransferToClog TtClog WITH (NOLOCK) on PL.ID = TtClog.PackingListID
-                                                           and PLD.CTNStartNo = TtClog.CTNStartNo
-                                                           and PLD.OrderID = TtClog.OrderID
-          where (PL.Type = 'B' or PL.Type = 'L')
-                and PLD.ReceiveDate is not null
-                and PLD.CTNQty = 1
-                and orders.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
-            #region 組條件
-            if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
+            if (this.Query(false))
             {
-                sqlCmd.Append(string.Format(" and orders.ID >= '{0}'", this.txtSPNoStart.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
-            {
-                sqlCmd.Append(string.Format(" and orders.ID <= '{0}'", this.txtSPNoEnd.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtPackIDStart.Text))
-            {
-                sqlCmd.Append(string.Format(" and PL.ID >= '{0}'", this.txtPackIDStart.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtPackIDEnd.Text))
-            {
-                sqlCmd.Append(string.Format(" and PL.ID <= '{0}'", this.txtPackIDEnd.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtPONoStart.Text))
-            {
-                sqlCmd.Append(string.Format(" and orders.CustPONo >= '{0}'", this.txtPONoStart.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.txtPONoEnd.Text))
-            {
-                sqlCmd.Append(string.Format(" and orders.CustPONo <= '{0}'", this.txtPONoEnd.Text));
-            }
-
-            if (!MyUtility.Check.Empty(this.textTransferSlipNo.Text))
-            {
-                sqlCmd.Append(string.Format(" and TtClog.TransferSlipNo = '{0}'", this.textTransferSlipNo.Text));
-            }
-            #endregion
-            sqlCmd.Append(@"
-    ) d
-)X 
-order by rn");
-            DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData))
-            {
-                if (this.gridData.Rows.Count == 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                }
-            }
-            else
-            {
-                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
                 return;
             }
-
-            this.listControlBindingSource1.DataSource = this.gridData;
-
-            // 組Filter內容
-            foreach (DataRow dr in this.gridData.Rows)
-            {
-                // Ctn#
-                if (this.comboBox2_RowSource2.Contains(dr["CTNStartNo"].ToString()) == false)
-                {
-                    this.comboBox2_RowSource2.Add(dr["CTNStartNo"].ToString());
-                }
-
-                // Color Way
-                if (this.comboBox2_RowSource3.Contains(dr["Article"].ToString()) == false)
-                {
-                    this.comboBox2_RowSource3.Add(dr["Article"].ToString());
-                }
-
-                // Color
-                if (this.comboBox2_RowSource4.Contains(dr["Color"].ToString()) == false)
-                {
-                    this.comboBox2_RowSource4.Add(dr["Color"].ToString());
-                }
-
-                // Size
-                if (this.comboBox2_RowSource5.Contains(dr["SizeCode"].ToString()) == false)
-                {
-                    this.comboBox2_RowSource5.Add(dr["SizeCode"].ToString());
-                }
-            }
-
-            ((List<string>)this.comboBox2_RowSource2).Sort();
-            ((List<string>)this.comboBox2_RowSource3).Sort();
-            ((List<string>)this.comboBox2_RowSource4).Sort();
-            ((List<string>)this.comboBox2_RowSource5).Sort();
         }
 
         // Update All Location
@@ -589,6 +457,228 @@ order by rn");
                 {
                     frm.ShowDialog(this);
                 }
+            }
+        }
+        
+        private string whereS;
+
+        private void BtnImportFromBarcode_Click(object sender, EventArgs e)
+        {
+            // 設定只能選txt檔
+            this.openFileDialog1.Filter = "txt files (*.txt)|*.txt";
+
+            // 開窗且有選擇檔案
+            if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                this.numSelectQty.Value = 0;
+                this.numTTLCTNQty.Value = 0;
+                // 讀檔案
+                string wheresql = string.Empty;
+                this.whereS = string.Empty;
+                using (StreamReader reader = new StreamReader(this.openFileDialog1.FileName, System.Text.Encoding.UTF8))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine(line);
+                        IList<string> sl = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (string item in sl)
+                        {
+                            if (item.Length >= 13)
+                            {
+                                wheresql += $" or (PL.ID = '{item.Substring(0, 13)}' and PLD.CTNStartNo = '{item.Substring(13, item.Length-13)}') ";
+                            }
+                        }
+                    }
+
+                    if (MyUtility.Check.Empty(wheresql))
+                    {
+                        MyUtility.Msg.WarningBox("Connection faile.!");
+                        return;
+                    }
+
+                    this.whereS = $" and(1=0 {wheresql} )";
+
+                    this.gridData = null;
+                    this.listControlBindingSource1.DataSource = null;
+                    this.Query(true);
+                }
+            }
+        }
+
+        private bool Query(bool isimport)
+        {
+            StringBuilder sqlCmd = new StringBuilder();
+
+            sqlCmd.Append(string.Format(
+                @"
+select *
+       , rn = ROW_NUMBER() over(order by ID,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
+       , rn1 = ROW_NUMBER() over (order by TRY_CONVERT (int, CTNStartNo), (RIGHT (REPLICATE ('0', 6) + rtrim (ltrim (CTNStartNo)), 6)))
+from (
+    select 0 as selected
+           , d.*
+           , TransferPerCent = iif(d.TotalCTN > 0, ROUND((CONVERT(decimal, d.ClogCTN) / d.TotalCTN), 4), 0)
+           , QtyPerCTN = (select sum(QtyPerCTN) 
+                          from PackingList_Detail WITH (NOLOCK) 
+                          where ID = d.ID 
+                                and CTNStartNo = d.CTNStartNo)
+           , ShipQty = (select sum(ShipQty) 
+                        from PackingList_Detail WITH (NOLOCK) 
+                        where ID = d.ID 
+                              and CTNStartNo = d.CTNStartNo)
+           , Article = stuff((select ',' + cast(Article as nvarchar) 
+                                  from PackingList_Detail WITH (NOLOCK) 
+                                  where ID = d.ID 
+                                        and CTNStartNo = d.CTNStartNo for xml path(''))
+                             , 1, 1, '')
+           , Color = stuff((select ',' + cast(Color as nvarchar)
+                            from PackingList_Detail WITH (NOLOCK) 
+                            where ID = d.ID 
+                                  and CTNStartNo = d.CTNStartNo for xml path(''))
+                           , 1, 1, '')
+           , SizeCode =  stuff((select ',' + cast(SizeCode as nvarchar) 
+                                from PackingList_Detail WITH (NOLOCK) 
+                                where ID = d.ID 
+                                      and CTNStartNo = d.CTNStartNo for xml path(''))
+                               , 1, 1, '')
+    from (
+          select distinct  PLD.ID
+                 , PLD.OrderID
+                 , orders.CustPONo
+                 , PLD.CTNStartNo
+                 , TransferSlipNo = TtClog.TransferSlipNo
+                 , PLD.ClogLocationId
+                 , PLD.Remark
+                 , orders.BrandID
+                 , orders.BuyerDelivery
+                 , orders.StyleID
+                 , orders.FtyGroup
+                 , Dest = '(' + orders.Dest + ')' + isnull((select Alias 
+                                                            from Country 
+                                                            where ID = orders.Dest),'')
+                 , orders.TotalCTN
+                 , orders.ClogCTN
+          from PackingList PL WITH (NOLOCK)
+          inner join PackingList_Detail PLD WITH (NOLOCK) on PL.ID = PLD.ID
+          inner join Orders orders WITH (NOLOCK) on PLD.OrderID = orders.ID
+          left join  TransferToClog TtClog WITH (NOLOCK) on PL.ID = TtClog.PackingListID
+                                                           and PLD.CTNStartNo = TtClog.CTNStartNo
+                                                           and PLD.OrderID = TtClog.OrderID
+          where (PL.Type = 'B' or PL.Type = 'L')
+                and PLD.ReceiveDate is not null
+                and PLD.CTNQty = 1
+                and orders.MDivisionID =  '{0}'", Sci.Env.User.Keyword));
+            #region 組條件
+            if (!isimport)
+            {
+                if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
+                {
+                    sqlCmd.Append(string.Format(" and orders.ID >= '{0}'", this.txtSPNoStart.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtSPNoEnd.Text))
+                {
+                    sqlCmd.Append(string.Format(" and orders.ID <= '{0}'", this.txtSPNoEnd.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtPackIDStart.Text))
+                {
+                    sqlCmd.Append(string.Format(" and PL.ID >= '{0}'", this.txtPackIDStart.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtPackIDEnd.Text))
+                {
+                    sqlCmd.Append(string.Format(" and PL.ID <= '{0}'", this.txtPackIDEnd.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtPONoStart.Text))
+                {
+                    sqlCmd.Append(string.Format(" and orders.CustPONo >= '{0}'", this.txtPONoStart.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.txtPONoEnd.Text))
+                {
+                    sqlCmd.Append(string.Format(" and orders.CustPONo <= '{0}'", this.txtPONoEnd.Text));
+                }
+
+                if (!MyUtility.Check.Empty(this.textTransferSlipNo.Text))
+                {
+                    sqlCmd.Append(string.Format(" and TtClog.TransferSlipNo = '{0}'", this.textTransferSlipNo.Text));
+                }
+            }
+            else
+            {
+                sqlCmd.Append(this.whereS);
+            }
+            #endregion
+            sqlCmd.Append(@"
+    ) d
+)X 
+order by rn");
+
+            DualResult result;
+            if (result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData))
+            {
+                if (this.gridData.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return false;
+                }
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
+                return false;
+            }
+
+            this.listControlBindingSource1.DataSource = this.gridData;
+
+            // 組Filter內容
+            foreach (DataRow dr in this.gridData.Rows)
+            {
+                // Ctn#
+                if (this.comboBox2_RowSource2.Contains(dr["CTNStartNo"].ToString()) == false)
+                {
+                    this.comboBox2_RowSource2.Add(dr["CTNStartNo"].ToString());
+                }
+
+                // Color Way
+                if (this.comboBox2_RowSource3.Contains(dr["Article"].ToString()) == false)
+                {
+                    this.comboBox2_RowSource3.Add(dr["Article"].ToString());
+                }
+
+                // Color
+                if (this.comboBox2_RowSource4.Contains(dr["Color"].ToString()) == false)
+                {
+                    this.comboBox2_RowSource4.Add(dr["Color"].ToString());
+                }
+
+                // Size
+                if (this.comboBox2_RowSource5.Contains(dr["SizeCode"].ToString()) == false)
+                {
+                    this.comboBox2_RowSource5.Add(dr["SizeCode"].ToString());
+                }
+            }
+
+            ((List<string>)this.comboBox2_RowSource2).Sort();
+            ((List<string>)this.comboBox2_RowSource3).Sort();
+            ((List<string>)this.comboBox2_RowSource4).Sort();
+            ((List<string>)this.comboBox2_RowSource5).Sort();
+
+            this.calcCTNQty();
+            return true;
+        }
+
+        private void calcCTNQty()
+        {
+            if (this.listControlBindingSource1.DataSource != null)
+            {
+                this.gridPackID.ValidateControl();
+                this.numTTLCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
+                this.numSelectQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
             }
         }
     }
