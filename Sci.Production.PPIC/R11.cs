@@ -407,9 +407,9 @@ union
 /*搜尋Ready date 等於Order_QtyShip.BuyerDelivery(今天要交貨的資料)，
 且Ready Date - sewing offline要小於GAP。*/
 
-select * from #tmp2
-where DATEDIFF(day,CONVERT(date,Offline), ReadyDate) < {MyUtility.Convert.GetInt(this.Gap)}		 
---Ready Date - sewing offline要小於GAP
+    select * from #tmp2
+    where DATEDIFF(day,CONVERT(date,Offline), ReadyDate) < {MyUtility.Convert.GetInt(this.Gap)}		 
+    --Ready Date - sewing offline要小於GAP
 
 union 
 
@@ -465,9 +465,16 @@ SELECT  distinct Ready.ReadyDate,isHoliday.HolidayDates,notHoliday.WorkDates
 	FROM #Calendar c
 	cross apply(
 		SELECT [ReadyDate] = Dates	
-		FROM #Calendar					
+		FROM #Calendar	a				
 		where 1=1
-		and	Dates between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' 
+		and	a.Dates between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' 
+        -- 排除假日
+		and not exists(select dates
+			from #Calendar			
+			where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
+			or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)) -- 只能是假日)		
+			and Dates = a.Dates
+		)
 	)Ready
 	cross apply(
 		select HolidayDates = Dates,[rows] = ROW_NUMBER() over(order by dates asc) 
