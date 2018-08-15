@@ -5,12 +5,14 @@
     [PackingListID]  VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_PackingListId] DEFAULT ('') NOT NULL,
     [OrderID]        VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OrderId] DEFAULT ('') NOT NULL,
     [CTNStartNo]     VARCHAR (6)  CONSTRAINT [DF_ClogReceive_Detail_CTNStartNo] DEFAULT ('') NOT NULL,
-    [ClogLocationID] VARCHAR (10) CONSTRAINT [DF_ClogReceive_Detail_ClogLocationId] DEFAULT ('') NOT NULL,
+    [ClogLocationID] VARCHAR (10) CONSTRAINT [DF_ClogReceive_Detail_ClogLocationId] DEFAULT ('') NULL,
     [AddDate]        DATETIME     NULL,
-    [OldID]          VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OldID] DEFAULT ('') NOT NULL,
-    [AddName]        VARCHAR (10) NOT NULL DEFAULT (''),
+    [OldID]          VARCHAR (13) CONSTRAINT [DF_ClogReceive_Detail_OldID] DEFAULT ('') NULL,
+    [AddName]        VARCHAR (10) CONSTRAINT [DF_ClogReceive_AddName] DEFAULT ('') NULL,
     CONSTRAINT [PK_ClogReceive_Detail_1] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -73,4 +75,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'箱號', @l
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'儲位編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ClogReceive', @level2type = N'COLUMN', @level2name = N'ClogLocationID';
+
+
+GO
+CREATE NONCLUSTERED INDEX [Index_ReadyDateIndex]
+    ON [dbo].[ClogReceive]([ReceiveDate] ASC, [PackingListID] ASC, [OrderID] ASC, [CTNStartNo] ASC)
+    INCLUDE([AddDate]);
 
