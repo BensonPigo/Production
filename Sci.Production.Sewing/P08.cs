@@ -94,6 +94,11 @@ where 1=1
                 return;
             }
 
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Datas not found!");
+            }
+
             this.listControlBindingSource1.DataSource = dt;
         }
     }
