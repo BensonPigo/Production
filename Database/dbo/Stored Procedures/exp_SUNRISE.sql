@@ -8,7 +8,9 @@ Set NoCount On;
 select distinct OrderID
 into #SrcOrderID
 from dbo.SewingSchedule with (nolock) 
-where inline between @StartDate and @EndDate or Offline between @StartDate and @EndDate
+where inline between @StartDate and @EndDate or 
+	  Offline between @StartDate and @EndDate or
+	  (inline <= @StartDate and Offline >= @EndDate)
 
 
 --tMODCS（制单颜色尺码表）
@@ -33,6 +35,7 @@ select
 [SeqNo] = tsd.Seq,
 [SeqCode] = tsd.OperationID,
 [SeqName] = op.DescEN,
+[MachineTypeID] = tsd.MachineTypeID,
 [SAM] = Round(tsd.SMV/60,7)
 into #tMOSeqD
 from #SrcOrderID so with (nolock)
@@ -40,9 +43,9 @@ inner join orders o with (nolock) on so.OrderID = o.id
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID = ts.SeasonID and o.BrandID = ts.BrandID and ts.ComboType = sl.Location
 inner join TimeStudy_Detail tsd with (nolock) on tsd.ID = ts.ID and ISNUMERIC(tsd.Seq) = 1
-inner join Operation op  with (nolock) on tsd.OperationID = op.ID 
+left join Operation op  with (nolock) on tsd.OperationID = op.ID 
 
---tMOSeqM（制单工序主表） group by tMOSeqD **
+--tMOSeqM（制单工序主表） 
 select 
 [MONo] = so.OrderID + '-' + sl.Location,
 [OrderID] = so.OrderID,
@@ -75,7 +78,21 @@ inner join orders o with (nolock) on so.OrderID = o.id
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 left join #tMOSeqM tMM on tMM.OrderID = so.OrderID and tMM.Location = sl.Location
 
-
+--tMachineInfo（衣车信息表）
+select 
+[MachineCode] = m.ID,
+[TypeCode] = m.MachineGroupID,
+[TypeName] =mg.Description,
+[Model] = m.Model,
+[Brand] = m.MachineBrandID,
+[Insertor] = m.AddName,
+[IsUsing] = iif(m.Junk = 0,1,0)
+into #tMachineInfo
+from Machine.dbo.Machine m with (nolock)
+inner join Machine.dbo.MachineGroup mg with (nolock) on m.MachineGroupID = mg.id
+where exists (select distinct MachineGroupID from Production.dbo.MachineType
+				inner join #tMOSeqD tM on tm.MachineTypeID = MachineType.ID
+				where ArtworkTypeID = 'SEWING' and MachineType.MachineGroupID = m.MachineGroupID)
 
 --tSeqBase（基本工序表）
 select 
@@ -84,6 +101,7 @@ select
 [SAM] = SMV
 into #tSeqBase
 from Operation with (nolock)
+where exists (select 1 from #tMOSeqD where SeqCode = Operation.ID)
 
 
 
@@ -198,8 +216,25 @@ insert into [SUNRISE].SUNRISEEXCH.dbo.tSeqBase(SeqCode,SeqName,SAM,Price,CmdType
 select S.SeqCode,S.SeqName,S.SAM,0,'insert',GetDate(),0 from #tSeqBase S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tSeqBase T where T.SeqCode = S.SeqCode )
 
+--tMachineInfo（衣车信息表）
+--update
+update T set	TypeCode = S.TypeCode,
+				TypeName = S.TypeName,
+				Model = S.Model,
+				Brand = S.Brand,
+				Insertor = S.Insertor,
+				CmdType = 'update',
+				CmdTime = GetDate(),
+				SunriseUpdated = 0
+from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T
+inner join #tMachineInfo S on T.MachineCode = S.MachineCode 
+
+--insert 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo(MachineCode,TypeCode,TypeName,Model,Brand,Insertor,IsUsing,CardNo,CmdType,CmdTime,SunriseUpdated)
+select S.MachineCode,S.TypeCode,S.TypeName,S.Model,S.Brand,S.Insertor,S.IsUsing,0,'insert',GetDate(),0 from #tMachineInfo S 
+where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T where T.MachineCode = S.MachineCode )
 
 
-drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase
+drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo
 
 end
