@@ -379,8 +379,10 @@ drop table  #tmp,#CalendarData,#Calendar
             #endregion
 
             #region SQL get DataTable
+            DBProxy.Current.DefaultTimeout = 2700;
             DualResult result;
             result = DBProxy.Current.Select(null, sqlCmd, out this.dtList);
+            DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 return result;
