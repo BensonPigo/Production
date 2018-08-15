@@ -1407,13 +1407,12 @@ BEGIN
 		when matched then 
 			update set 
 				t.Seq			= s.Seq,
-				t.TissuePaper	= s.TissuePaper,
-				t.PadPrintColorID = s.PadPrintColorID
+				t.TissuePaper	= s.TissuePaper
 		when not matched by target then
 			insert (
-				id		, Seq	, Article	, TissuePaper,PadPrintColorID
+				id		, Seq	, Article	, TissuePaper
 			) values (
-				s.id	, s.Seq	, s.Article	, s.TissuePaper,s.PadPrintColorID
+				s.id	, s.Seq	, s.Article	, s.TissuePaper
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;

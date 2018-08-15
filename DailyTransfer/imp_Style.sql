@@ -540,7 +540,6 @@ a.Seq	= b.Seq
 ,a.TissuePaper	= b.TissuePaper
 ,a.ArticleName	= b.ArticleName
 ,a.Contents	= b.Contents
-,a.PadPrintColorID = b.PadPrintColorID
 from Production.dbo.Style_Article as a 
 inner join Trade_To_Pms.dbo.Style_Article as b ON a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article
 -------------------------- INSERT INTO 抓
@@ -552,7 +551,6 @@ StyleUkey
 ,TissuePaper
 ,ArticleName
 ,Contents
-,PadPrintColorID
 )
 select 
 StyleUkey
@@ -561,7 +559,6 @@ StyleUkey
 ,TissuePaper
 ,ArticleName
 ,Contents
-,PadPrintColorID
 from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
 --STYLEA
