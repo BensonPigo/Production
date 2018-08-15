@@ -161,7 +161,9 @@ from dbo.Issue_Detail t WITH (NOLOCK)
 left join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id= t.poid and p.SEQ1 = t.Seq1 and p.seq2 = t.Seq2
 left join FtyInventory FI on t.poid = fi.poid and t.seq1 = fi.seq1 and t.seq2 = fi.seq2 
     and t.roll = fi.roll and t.stocktype = fi.stocktype
-where t.id= @ID";
+where t.id= @ID
+order by t.POID,SEQ, t.Dyelot,t.Roll
+";
             result = DBProxy.Current.Select("", sqlcmd, pars, out dtDetail);
             if (!result) { this.ShowErr(sqlcmd, result); }
 
