@@ -13,7 +13,7 @@ namespace Sci.Production.PublicForm
     /// <summary>
     /// CIPF
     /// </summary>
-    public partial class CIPF : Sci.Win.Tems.QueryForm
+    public partial class CIPF : Sci.Win.Subs.Input4
     {
         private DataTable Detaildt;
 
@@ -30,25 +30,20 @@ namespace Sci.Production.PublicForm
             this.Ukey = ukey;
         }
 
+        protected override bool OnGridSetup()
+        {
+            this.Helper.Controls.Grid.Generator(this.grid1)
+               .Text("ArtworkTypeID", header: "ArtWork Type", width: Widths.AnsiChars(24), iseditingreadonly: true)
+               .Numeric("ProSMV", header: "ProductionSMV", decimal_places: 2, iseditingreadonly: true)
+               .Numeric("ProTMS", header: "ProductionTMS", decimal_places: 0, iseditingreadonly: true)
+               ;
+            return true;
+        }
+
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            base.OnFormLoaded();
-            this.Helper.Controls.Grid.Generator(this.grid1)
-                .Text("ArtworkTypeID", header: "ArtWork Type", width: Widths.AnsiChars(24), iseditingreadonly: true)
-                //.Numeric("SMV", header: "SMV", decimal_places: 2, iseditingreadonly: true)
-                //.Numeric("TMS", header: "TMS", decimal_places: 0, iseditingreadonly: true)
-                .Numeric("ProSMV", header: "ProductionSMV", decimal_places: 2, iseditingreadonly: true)
-                .Numeric("ProTMS", header: "ProductionTMS", decimal_places: 0, iseditingreadonly: true)
-                ;
-
-            // this.Helper.Controls.Grid.Generator(this.grid2)
-            //    .Text("ArtworkTypeID", header: "ArtWork Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            //    .Numeric("SMV", header: "SMV", decimal_places: 4, iseditingreadonly: true)
-            //    .Numeric("TMS", header: "TMS", decimal_places: 0, iseditingreadonly: true)
-            //    .Numeric("ProductionSMV", header: "ProductionSMV", decimal_places: 4, iseditingreadonly: true)
-            //    .Numeric("ProductionTMS", header: "ProductionTMS", decimal_places: 0, iseditingreadonly: true)
-            //    ;
+            base.OnFormLoaded();           
             string sqlcmd = $@"
 select ArtworkTypeID = ArtworkTypeID +' - '+ 
 	case when CIPF = 'C' then 'Cutting'

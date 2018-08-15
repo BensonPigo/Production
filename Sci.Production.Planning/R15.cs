@@ -1520,7 +1520,7 @@ outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NO
 
             DBProxy.Current.DefaultTimeout = 2700;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
-            DBProxy.Current.DefaultTimeout = 0;
+            DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
