@@ -34,6 +34,7 @@
     [CFAInspDate]        DATE           NULL,
     [ScanName]           VARCHAR (10)   DEFAULT ('') NULL,
     [CustCTN]            VARCHAR (30)   DEFAULT ('') NOT NULL,
+    [DRYReceiveDate] DATE NULL, 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -196,6 +197,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Clog���
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA�ݭn���窺�c�l', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CFANeedInsp';
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室收箱日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'DRYReceiveDate';
 
 
 GO

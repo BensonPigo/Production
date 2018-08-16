@@ -1,0 +1,375 @@
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.PublicPrg;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Sci.Production.Sewing
+{
+    public partial class P06 : Sci.Win.Tems.QueryForm
+    {
+        public P06(ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            this.InitializeComponent();
+            this.EditMode = true;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.Helper.Controls.Grid.Generator(this.gridReceive)
+                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(15))
+                .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15))
+                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(15))
+                .Text("OrderIdlist", header: "SP#", width: Widths.AnsiChars(15))
+                .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(15))
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15))
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(15))
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(15))
+                .Text("Alias", header: "Destination", width: Widths.AnsiChars(15))
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10))
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25));
+
+            foreach (DataGridViewColumn col in this.gridReceive.Columns)
+            {
+                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
+            string sqlCmd = $@"
+select 
+[selected] = 0,
+pd.ID,
+pd.CTNStartNo,
+[OrderIdlist] = '',
+pd.OrderID,
+o.CustPONo,
+o.StyleID,
+o.SeasonID,
+c.Alias,
+o.BuyerDelivery,
+pd.Remark,
+pd.TransferDate,
+pd.DRYReceiveDate,
+pu.Status
+from  Orders o with (nolock)
+left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID
+left join PackingList p with (nolock) on p.id = pd.ID
+left join Pullout pu with (nolock) on p.PulloutID = pu.ID
+left join Country c with (nolock) on o.Dest = c.ID 
+where	1 = 0";
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.dtReceive);
+            this.gridReceive.DataSource = this.dtReceive;
+        }
+
+        DataTable dtReceive = new DataTable();
+
+        private void BtnFind_Click(object sender, EventArgs e)
+        {
+            List<SqlParameter> sqlPar = new List<SqlParameter>();
+            sqlPar.Add(new SqlParameter("@M", Env.User.Keyword));
+
+            string addWhere = string.Empty;
+
+            if (!MyUtility.Check.Empty(this.txtPackID.Text))
+            {
+                addWhere += " and pd.ID = @PackID ";
+                sqlPar.Add(new SqlParameter("@PackID", this.txtPackID.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSP.Text))
+            {
+                addWhere += " and pd.OrderID = @OrderID ";
+                sqlPar.Add(new SqlParameter("@OrderID", this.txtSP.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtPO.Text))
+            {
+                addWhere += " and o.CustPONo = @CustPoNo ";
+                sqlPar.Add(new SqlParameter("@CustPoNo", this.txtPO.Text));
+            }
+
+            string sqlCmd = $@"
+select 
+[selected] = 0,
+pd.ID,
+pd.CTNStartNo,
+[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail where ID = pd.ID and CTNStartNo = pd.CTNStartNo  FOR XML PATH('')),1,1,'') ,
+pd.OrderID,
+o.CustPONo,
+o.StyleID,
+o.SeasonID,
+c.Alias,
+o.BuyerDelivery,
+pd.Remark,
+pd.TransferDate,
+pd.DRYReceiveDate,
+pu.Status
+from  Orders o with (nolock)
+left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID
+left join PackingList p with (nolock) on p.id = pd.ID
+left join Pullout pu with (nolock) on p.PulloutID = pu.ID
+left join Country c with (nolock) on o.Dest = c.ID 
+where	pd.CTNStartNo != '' and 
+		p.MDivisionID =@M and
+        pd.CTNQty = 1 and
+		p.Type in ('M','L') and
+		pd.TransferDate  is null and
+		pd.DRYReceiveDate  is null and 
+		(pu.Status = 'New' or pu.Status is null)
+" + addWhere;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, sqlPar, out this.dtReceive);
+
+            if (result == false)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (this.dtReceive.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No data Found!");
+                return;
+            }
+
+            this.gridReceive.DataSource = this.dtReceive;
+        }
+
+        private void TxtScanBarcode_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtScanBarcode.Text))
+            {
+                return;
+            }
+
+            PackDataResult packDataResult = new PackDataResult();
+            packDataResult = this.GetPackData(this.txtScanBarcode.Text);
+            if (packDataResult.result == true)
+            {
+                if (this.dtReceive.AsEnumerable().Any(s => s["ID"].Equals(packDataResult.Dr["ID"]) && s["CTNStartNo"].Equals(packDataResult.Dr["CTNStartNo"])))
+                {
+                    this.txtScanBarcode.Text = string.Empty;
+                    e.Cancel = true;
+                    return;
+                }
+
+                this.dtReceive.Rows.Add(packDataResult.Dr.ItemArray);
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox(packDataResult.errMsg);
+            }
+
+            this.txtScanBarcode.Text = string.Empty;
+            e.Cancel = true;
+        }
+
+        private class PackDataResult
+        {
+            public DataRow Dr;
+            public bool result;
+            public string errMsg;
+        }
+
+        private PackDataResult GetPackData(string PackNo, bool fromCustCTN = false)
+        {
+            string keyWhere = string.Empty;
+            if (fromCustCTN == true)
+            {
+                keyWhere = $"CustCTN = '{PackNo}'";
+            }
+            else
+            {
+                keyWhere = $"(ID+CTNStartNo) = '{PackNo}'";
+            }
+
+            PackDataResult packDataResult = new PackDataResult();
+            string chkSql = $@"
+select 
+[selected] = 1,
+pd.ID,
+pd.CTNStartNo,
+[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail where {keyWhere} FOR XML PATH('')),1,1,'') ,
+pd.OrderID,
+o.CustPONo,
+o.StyleID,
+o.SeasonID,
+c.Alias,
+o.BuyerDelivery,
+pd.Remark,
+pd.TransferDate,
+pd.DRYReceiveDate,
+pu.Status
+from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1) pd
+inner join Orders o with (nolock) on pd.OrderID = o.ID
+left join PackingList p with (nolock) on p.id = pd.ID
+left join Pullout pu with (nolock) on p.PulloutID = pu.ID
+left join Country c with (nolock) on o.Dest = c.ID 
+where	pd.CTNStartNo != '' and 
+		p.MDivisionID = '{Env.User.Keyword}' and
+		p.Type in ('M','L') ";
+
+            bool checkBarcode = MyUtility.Check.Seek(chkSql, out packDataResult.Dr);
+            packDataResult.result = false;
+            if (checkBarcode == false)
+            {
+                packDataResult.errMsg = $"<CNT#:{PackNo}> does not exist!";
+                return packDataResult;
+            }
+
+            if (!MyUtility.Check.Empty(packDataResult.Dr["TransferDate"]))
+            {
+                packDataResult.errMsg = $"<CNT#:{PackNo}> has been transferred to Clog!";
+                return packDataResult;
+            }
+
+            if (!MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
+            {
+                packDataResult.errMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room has been received.";
+                return packDataResult;
+            }
+
+            if (packDataResult.Dr["Status"].Equals("Confirmed") || packDataResult.Dr["Status"].Equals("Locked"))
+            {
+                packDataResult.errMsg = $"<CNT#:{PackNo}> Already pullout!";
+                return packDataResult;
+            }
+
+            packDataResult.result = true;
+            return packDataResult;
+        }
+
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        
+        private void BtnImportFromBarcode_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "txt files (*.txt)|*.txt";
+
+            // 開窗且有選擇檔案
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string file = openFileDialog1.FileName;
+                using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
+                {
+                    string line;
+                    try
+                    {
+                        string[] splitResult;
+
+                        // 檢查第1碼是否都為2
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            splitResult = line.Split('\t');
+                            if (splitResult[0].Equals("2"))
+                            {
+                                MyUtility.Msg.WarningBox("Format is not correct!");
+                                return;
+                            }
+                        }
+
+                        // 讀取資料
+                        DataTable tmpDetail = this.dtReceive.Clone();
+                        PackDataResult packDataResult = new PackDataResult();
+                        string packNo = string.Empty;
+                        reader.DiscardBufferedData();
+                        reader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            packNo = line.Split('\t')[2];
+
+                            // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
+                            packDataResult = this.GetPackData(packNo, false);
+                            if (packDataResult.result == true)
+                            {
+                                tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
+                                continue;
+                            }
+
+                            // 檢查PackingList_Detail.CustCTN
+                            packDataResult = this.GetPackData(packNo, true);
+                            if (packDataResult.result == true)
+                            {
+                                tmpDetail.Rows.Add(packDataResult.Dr.ItemArray);
+                                continue;
+                            }
+                        }
+
+                        // 將tmpDetail 匯入 dtReceive
+                        foreach (DataRow dr in tmpDetail.Rows)
+                        {
+                            if (this.dtReceive.AsEnumerable().Any(s => s["ID"].Equals(dr["ID"]) && s["CTNStartNo"].Equals(dr["CTNStartNo"])))
+                            {
+                                continue;
+                            }
+
+                            this.dtReceive.Rows.Add(dr.ItemArray);
+                        }
+                    }
+                    catch (Exception err)
+                    {
+                        this.ShowErr(err);
+                    }
+                }
+
+            }
+        }
+
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            if (!this.dtReceive.AsEnumerable().Any(s => (int)s["selected"] == 1))
+            {
+                MyUtility.Msg.WarningBox("Please select detail data first");
+                return;
+            }
+
+            // 檢查資料
+            PackDataResult packDataResult = new PackDataResult();
+            string updSql = string.Empty;
+            var checkData = this.dtReceive.AsEnumerable().Where(s => (int)s["selected"] == 1);
+            foreach (var item in checkData)
+            {
+                packDataResult = this.GetPackData(item["ID"].ToString() + item["CTNStartNo"].ToString());
+                if (packDataResult.result == false)
+                {
+                    MyUtility.Msg.WarningBox(packDataResult.errMsg);
+                    return;
+                }
+            }
+
+            // save data
+            DualResult result;
+            foreach (var item in checkData)
+            {
+                updSql = $@"
+update PackingList_Detail set DRYReceiveDate = GETDATE() where ID = '{item["ID"]}' and CTNStartNo = '{item["CTNStartNo"]}';
+insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStartNo, AddName, AddDate)
+            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}','{Env.User.UserID}',GETDATE());
+";
+                result = DBProxy.Current.Execute(null, updSql);
+                if (result == false)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                Prgs.UpdateOrdersCTN(item["OrderID"].ToString());
+            }
+
+            MyUtility.Msg.InfoBox("Save successfully");
+        }
+    }
+}

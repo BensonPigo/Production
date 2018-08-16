@@ -259,4 +259,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="SubConOutFty" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="d0bc46a1-d382-4685-9f6c-f49a7af1d753" ChangeDateTime="08/15/2018 07:25:22">
+    <Property Name="ElementName" Value="[dbo].[DRYReceive].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DRYReceive]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
 </Operations>
