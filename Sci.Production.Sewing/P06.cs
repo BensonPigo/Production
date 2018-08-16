@@ -163,7 +163,11 @@ where	pd.CTNStartNo != '' and
                     return;
                 }
 
-                this.dtReceive.Rows.Add(packDataResult.Dr.ItemArray);
+                packDataResult.Dr.Table.Merge(this.dtReceive);
+                this.dtReceive = packDataResult.Dr.Table;
+                this.gridReceive.DataSource = this.dtReceive;
+                //this.dtReceive.Rows.Add(packDataResult.Dr.ItemArray);
+
             }
             else
             {
@@ -310,15 +314,20 @@ where	pd.CTNStartNo != '' and
                         }
 
                         // 將tmpDetail 匯入 dtReceive
-                        foreach (DataRow dr in tmpDetail.Rows)
-                        {
-                            if (this.dtReceive.AsEnumerable().Any(s => s["ID"].Equals(dr["ID"]) && s["CTNStartNo"].Equals(dr["CTNStartNo"])))
-                            {
-                                continue;
-                            }
+                        tmpDetail.Merge(this.dtReceive);
+                        this.dtReceive = tmpDetail;
+                        this.gridReceive.DataSource = this.dtReceive;
 
-                            this.dtReceive.Rows.Add(dr.ItemArray);
-                        }
+                        //foreach (DataRow dr in tmpDetail.Rows)
+                        //{
+                        //    if (this.dtReceive.AsEnumerable().Any(s => s["ID"].Equals(dr["ID"]) && s["CTNStartNo"].Equals(dr["CTNStartNo"])))
+                        //    {
+                        //        continue;
+                        //    }
+
+                        //    this.dtReceive.Rows.Add(dr.ItemArray);
+                        //}
+
                     }
                     catch (Exception err)
                     {
@@ -338,6 +347,8 @@ where	pd.CTNStartNo != '' and
                 return;
             }
 
+            this.ShowWaitMessage("Save Processing....");
+
             // 檢查資料
             PackDataResult packDataResult = new PackDataResult();
             string updSql = string.Empty;
@@ -348,6 +359,7 @@ where	pd.CTNStartNo != '' and
                 if (packDataResult.result == false)
                 {
                     MyUtility.Msg.WarningBox(packDataResult.errMsg);
+                    this.HideWaitMessage();
                     return;
                 }
             }
@@ -365,13 +377,20 @@ insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStar
                 if (result == false)
                 {
                     this.ShowErr(result);
+                    this.HideWaitMessage();
                     return;
                 }
 
                 Prgs.UpdateOrdersCTN(item["OrderID"].ToString());
             }
 
+            foreach (DataRow item in this.dtReceive.Select("selected = 1"))
+            {
+                this.dtReceive.Rows.Remove(item);
+            }
+
             MyUtility.Msg.InfoBox("Save successfully");
+            this.HideWaitMessage();
         }
     }
 }
