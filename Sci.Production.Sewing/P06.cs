@@ -253,7 +253,7 @@ where	pd.CTNStartNo != '' and
         {
             this.Close();
         }
-        
+
         private void BtnImportFromBarcode_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -265,6 +265,7 @@ where	pd.CTNStartNo != '' and
                 string file = openFileDialog1.FileName;
                 using (StreamReader reader = new StreamReader(MyUtility.Convert.GetString(file), System.Text.Encoding.UTF8))
                 {
+                    this.ShowWaitMessage("Processing....");
                     string line;
                     try
                     {
@@ -323,8 +324,9 @@ where	pd.CTNStartNo != '' and
                     {
                         this.ShowErr(err);
                     }
-                }
 
+                    this.HideWaitMessage();
+                }
             }
         }
 
