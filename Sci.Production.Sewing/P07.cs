@@ -16,9 +16,9 @@ using System.Windows.Forms;
 
 namespace Sci.Production.Sewing
 {
-    public partial class P06 : Sci.Win.Tems.QueryForm
+    public partial class P07 : Sci.Win.Tems.QueryForm
     {
-        public P06(ToolStripMenuItem menuitem)
+        public P07(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             this.InitializeComponent();
@@ -28,7 +28,8 @@ namespace Sci.Production.Sewing
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.Helper.Controls.Grid.Generator(this.gridReceive)
+            Ict.Win.UI.DataGridViewComboBoxColumn cbb_TransferTo;
+            this.Helper.Controls.Grid.Generator(this.gridTransfer)
                 .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(15))
                 .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15))
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(15))
@@ -39,9 +40,18 @@ namespace Sci.Production.Sewing
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(15))
                 .Text("Alias", header: "Destination", width: Widths.AnsiChars(15))
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10))
+                .ComboBox("TransferTo", header: "Transfer to", width: Widths.AnsiChars(11)).Get(out cbb_TransferTo)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(25));
 
-            foreach (DataGridViewColumn col in this.gridReceive.Columns)
+            DataTable cbSrc;
+            DBProxy.Current.Select(null, "select ID,Name from DropDownList where type = 'Pms_DRYTransferTo'", out cbSrc);
+            cbb_TransferTo.DataSource = cbSrc;
+            cbb_TransferTo.ValueMember = "ID";
+            cbb_TransferTo.DisplayMember = "Name";
+
+            this.gridTransfer.Columns["TransferTo"].DefaultCellStyle.BackColor = Color.Pink;
+
+            foreach (DataGridViewColumn col in this.gridTransfer.Columns)
             {
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
@@ -59,6 +69,7 @@ o.BrandID,
 o.SeasonID,
 c.Alias,
 o.BuyerDelivery,
+[TransferTo] = '',
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
@@ -69,11 +80,11 @@ left join PackingList p with (nolock) on p.id = pd.ID
 left join Pullout pu with (nolock) on p.PulloutID = pu.ID
 left join Country c with (nolock) on o.Dest = c.ID 
 where	1 = 0";
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.dtReceive);
-            this.gridReceive.DataSource = this.dtReceive;
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.dtTransfer);
+            this.gridTransfer.DataSource = this.dtTransfer;
         }
 
-        DataTable dtReceive = new DataTable();
+        DataTable dtTransfer = new DataTable();
 
         private void BtnFind_Click(object sender, EventArgs e)
         {
@@ -100,6 +111,13 @@ where	1 = 0";
                 sqlPar.Add(new SqlParameter("@CustPoNo", this.txtPO.Text));
             }
 
+            if (this.dateRangeReceive.HasValue)
+            {
+                addWhere += " and pd.DRYReceiveDate  between @fromDt and @toDt ";
+                sqlPar.Add(new SqlParameter("@fromDt", this.dateRangeReceive.DateBox1.Value));
+                sqlPar.Add(new SqlParameter("@toDt", this.dateRangeReceive.DateBox2.Value));
+            }
+
             string sqlCmd = $@"
 select 
 [selected] = 0,
@@ -113,6 +131,7 @@ o.BrandID,
 o.SeasonID,
 c.Alias,
 o.BuyerDelivery,
+[TransferTo] = '',
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
@@ -127,10 +146,10 @@ where	pd.CTNStartNo != '' and
         pd.CTNQty = 1 and
 		p.Type in ('B','L') and
 		pd.TransferDate  is null and
-		pd.DRYReceiveDate  is null and 
+		pd.DRYReceiveDate  is not null and 
 		(pu.Status = 'New' or pu.Status is null)
 " + addWhere;
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, sqlPar, out this.dtReceive);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, sqlPar, out this.dtTransfer);
 
             if (result == false)
             {
@@ -138,13 +157,13 @@ where	pd.CTNStartNo != '' and
                 return;
             }
 
-            if (this.dtReceive.Rows.Count == 0)
+            if (this.dtTransfer.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No data Found!");
                 return;
             }
 
-            this.gridReceive.DataSource = this.dtReceive;
+            this.gridTransfer.DataSource = this.dtTransfer;
         }
 
         private void TxtScanBarcode_Validating(object sender, CancelEventArgs e)
@@ -158,17 +177,17 @@ where	pd.CTNStartNo != '' and
             packDataResult = this.GetPackData(this.txtScanBarcode.Text);
             if (packDataResult.result == true)
             {
-                if (this.dtReceive.AsEnumerable().Any(s => s["ID"].Equals(packDataResult.Dr["ID"]) && s["CTNStartNo"].Equals(packDataResult.Dr["CTNStartNo"])))
+                if (this.dtTransfer.AsEnumerable().Any(s => s["ID"].Equals(packDataResult.Dr["ID"]) && s["CTNStartNo"].Equals(packDataResult.Dr["CTNStartNo"])))
                 {
                     this.txtScanBarcode.Text = string.Empty;
                     e.Cancel = true;
                     return;
                 }
 
-                packDataResult.Dr.Table.Merge(this.dtReceive);
-                this.dtReceive = packDataResult.Dr.Table;
-                this.gridReceive.DataSource = this.dtReceive;
-                //this.dtReceive.Rows.Add(packDataResult.Dr.ItemArray);
+                packDataResult.Dr.Table.Merge(this.dtTransfer);
+                this.dtTransfer = packDataResult.Dr.Table;
+                this.gridTransfer.DataSource = this.dtTransfer;
+                //this.dtTransfer.Rows.Add(packDataResult.Dr.ItemArray);
 
             }
             else
@@ -213,6 +232,7 @@ o.BrandID,
 o.SeasonID,
 c.Alias,
 o.BuyerDelivery,
+[TransferTo] = '',
 pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
@@ -234,15 +254,9 @@ where	pd.CTNStartNo != '' and
                 return packDataResult;
             }
 
-            if (!MyUtility.Check.Empty(packDataResult.Dr["TransferDate"]))
+            if (MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
             {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> has been transferred to Clog!";
-                return packDataResult;
-            }
-
-            if (!MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
-            {
-                packDataResult.errMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room has been received.";
+                packDataResult.errMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room not yet received.";
                 return packDataResult;
             }
 
@@ -282,7 +296,7 @@ where	pd.CTNStartNo != '' and
                         while ((line = reader.ReadLine()) != null)
                         {
                             splitResult = line.Split('\t');
-                            if (!splitResult[0].Trim().Equals("2"))
+                            if (!splitResult[0].Trim().Equals("1"))
                             {
                                 MyUtility.Msg.WarningBox("Format is not correct!");
                                 return;
@@ -290,14 +304,14 @@ where	pd.CTNStartNo != '' and
                         }
 
                         // 讀取資料
-                        DataTable tmpDetail = this.dtReceive.Clone();
+                        DataTable tmpDetail = this.dtTransfer.Clone();
                         PackDataResult packDataResult = new PackDataResult();
                         string packNo = string.Empty;
                         reader.DiscardBufferedData();
                         reader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
                         while ((line = reader.ReadLine()) != null)
                         {
-                            packNo = line.Split('\t')[2].Trim();
+                            packNo = line.Split('\t')[1].Trim();
 
                             // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
                             packDataResult = this.GetPackData(packNo, false);
@@ -316,19 +330,19 @@ where	pd.CTNStartNo != '' and
                             }
                         }
 
-                        // 將tmpDetail 匯入 dtReceive
-                        tmpDetail.Merge(this.dtReceive);
-                        this.dtReceive = tmpDetail;
-                        this.gridReceive.DataSource = this.dtReceive;
+                        // 將tmpDetail 匯入 dtTransfer
+                        tmpDetail.Merge(this.dtTransfer);
+                        this.dtTransfer = tmpDetail;
+                        this.gridTransfer.DataSource = this.dtTransfer;
 
                         //foreach (DataRow dr in tmpDetail.Rows)
                         //{
-                        //    if (this.dtReceive.AsEnumerable().Any(s => s["ID"].Equals(dr["ID"]) && s["CTNStartNo"].Equals(dr["CTNStartNo"])))
+                        //    if (this.dtTransfer.AsEnumerable().Any(s => s["ID"].Equals(dr["ID"]) && s["CTNStartNo"].Equals(dr["CTNStartNo"])))
                         //    {
                         //        continue;
                         //    }
 
-                        //    this.dtReceive.Rows.Add(dr.ItemArray);
+                        //    this.dtTransfer.Rows.Add(dr.ItemArray);
                         //}
 
                     }
@@ -344,7 +358,7 @@ where	pd.CTNStartNo != '' and
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            if (!this.dtReceive.AsEnumerable().Any(s => (int)s["selected"] == 1))
+            if (!this.dtTransfer.AsEnumerable().Any(s => (int)s["selected"] == 1))
             {
                 MyUtility.Msg.WarningBox("Please select detail data first");
                 return;
@@ -355,13 +369,20 @@ where	pd.CTNStartNo != '' and
             // 檢查資料
             PackDataResult packDataResult = new PackDataResult();
             string updSql = string.Empty;
-            var checkData = this.dtReceive.AsEnumerable().Where(s => (int)s["selected"] == 1);
+            var checkData = this.dtTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1);
             foreach (var item in checkData)
             {
                 packDataResult = this.GetPackData(item["ID"].ToString() + item["CTNStartNo"].ToString());
                 if (packDataResult.result == false)
                 {
                     MyUtility.Msg.WarningBox(packDataResult.errMsg);
+                    this.HideWaitMessage();
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(item["TransferTo"]))
+                {
+                    MyUtility.Msg.WarningBox($"Msg: <{item["ID"].ToString() + item["CTNStartNo"].ToString()}> Must Key-in Transfer to!!");
                     this.HideWaitMessage();
                     return;
                 }
@@ -372,9 +393,9 @@ where	pd.CTNStartNo != '' and
             foreach (var item in checkData)
             {
                 updSql = $@"
-update PackingList_Detail set DRYReceiveDate = GETDATE() where ID = '{item["ID"]}' and CTNStartNo = '{item["CTNStartNo"]}';
-insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStartNo, AddName, AddDate)
-            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}','{Env.User.UserID}',GETDATE());
+update PackingList_Detail set DRYReceiveDate = null where ID = '{item["ID"]}' and CTNStartNo = '{item["CTNStartNo"]}';
+insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNStartNo, TransferTo, AddName, AddDate)
+            values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}', '{item["TransferTo"]}','{Env.User.UserID}',GETDATE());
 ";
                 result = DBProxy.Current.Execute(null, updSql);
                 if (result == false)
@@ -387,13 +408,23 @@ insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStar
                 Prgs.UpdateOrdersCTN(item["OrderID"].ToString());
             }
 
-            foreach (DataRow item in this.dtReceive.Select("selected = 1"))
+            foreach (DataRow item in this.dtTransfer.Select("selected = 1"))
             {
-                this.dtReceive.Rows.Remove(item);
+                this.dtTransfer.Rows.Remove(item);
             }
 
             MyUtility.Msg.InfoBox("Save successfully");
             this.HideWaitMessage();
+        }
+
+        private void BtnUpdateAll_Click(object sender, EventArgs e)
+        {
+            DataRow[] selectDr = this.dtTransfer.Select(" selected = 1");
+            foreach (DataRow item in selectDr)
+            {
+                item["TransferTo"] = this.comboTransferTo.SelectedValue;
+            }
+
         }
     }
 }
