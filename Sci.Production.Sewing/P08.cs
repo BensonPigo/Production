@@ -31,10 +31,10 @@ namespace Sci.Production.Sewing
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditable: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditable: false)
             .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditable: false)
-            .Text("Dest", header: "Destination", width: Widths.Auto(), iseditable: false)
+            .Text("Alias", header: "Destination", width: Widths.Auto(), iseditable: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditable: false)
-            .Text("AddName", header: "Received By", width: Widths.Auto(), iseditable: false);
+            .Text("ReceivedBy", header: "Received By", width: Widths.Auto(), iseditable: false);
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
