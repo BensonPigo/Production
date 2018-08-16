@@ -137,6 +137,7 @@ left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and o.PulloutComplete = 1
+and p.PulloutID = ''
 ");
             sqlcmd.Append(sqlWHERE);
             sqlcmd.Append(@"
