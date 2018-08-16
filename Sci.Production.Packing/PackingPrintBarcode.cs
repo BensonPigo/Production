@@ -17,7 +17,7 @@ namespace Sci.Production.Packing
 {
     internal class PackingPrintBarcode
     {
-        public DualResult PrintBarcode(string packingID, string ctn1, string ctn2, string print_type = "")
+        public DualResult PrintBarcode(string packingID, string ctn1, string ctn2, string print_type = "", string country = "")
         {
             DataTable printData;
             DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
@@ -164,19 +164,23 @@ namespace Sci.Production.Packing
                                 string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                                 string poNo = printData.Rows[i]["PONo"].ToString();
                                 string sizeQty = "Size/Qty: " + printData.Rows[i]["SizeCode"] + "/" + printData.Rows[i]["ShipQty"];
+                                string madein = "Made in " + country;
+                                string deldate = "del date: " + (MyUtility.Check.Empty(printData.Rows[i]["BuyerDelivery"]) ? string.Empty : ((DateTime)printData.Rows[i]["BuyerDelivery"]).ToString("yyyy/MM/dd"));
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode);
                                 Clipboard.SetImage(oriBitmap);
-                                tables.Cell(4, 1).Range.Paste();
-                                tables.Cell(4, 1).Range.InlineShapes[1].ScaleHeight = 40f;
-                                tables.Cell(4, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
+                                tables.Cell(5, 1).Range.Paste();
+                                tables.Cell(5, 1).Range.InlineShapes[1].ScaleHeight = 40f;
+                                tables.Cell(5, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapTight;
 
                                 tables.Cell(1, 1).Range.Text = packingNo;
                                 tables.Cell(2, 1).Range.Text = spNo;
                                 tables.Cell(2, 2).Range.Text = cartonNo;
                                 tables.Cell(1, 2).Range.Text = sizeQty;
-                                tables.Cell(3, 2).Range.Text = poNo;
+                                tables.Cell(3, 1).Range.Text = madein;
+                                tables.Cell(3, 2).Range.Text = deldate;
+                                tables.Cell(4, 2).Range.Text = poNo;
                                 #endregion
                             }
                             else

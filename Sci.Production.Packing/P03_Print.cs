@@ -27,6 +27,7 @@ namespace Sci.Production.Packing
         private string ctn1;
         private string ctn2;
         private string specialInstruction;
+        private string country;
         private DataTable printData;
         private DataTable ctnDim;
         private DataTable qtyCtn;
@@ -76,6 +77,8 @@ namespace Sci.Production.Packing
         private void RadioBarcodePrint_CheckedChanged(object sender, EventArgs e)
         {
             this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
+            this.txtcountry1.Enabled = this.radioNewBarcodePrint.Checked;
+            this.txtcountry1.TextBox1.Text = string.Empty;
         }
 
         // 控制元件是否可使用
@@ -103,7 +106,7 @@ namespace Sci.Production.Packing
             this.ctn1 = this.txtCTNStart.Text;
             this.ctn2 = this.txtCTNEnd.Text;
             this.ReportResourceName = "P03_BarcodePrint.rdlc";
-
+            this.country = this.txtcountry1.DisplayBox1.Text;
             return base.ValidateInput();
         }
 
@@ -140,7 +143,7 @@ namespace Sci.Production.Packing
             DualResult result;
             if (this.radioNewBarcodePrint.Checked)
             {
-                result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, "New");
+                result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, "New", this.country);
             }
             else
             {
