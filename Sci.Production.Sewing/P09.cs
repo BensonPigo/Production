@@ -35,20 +35,26 @@ namespace Sci.Production.Sewing
             .Text("Alias", header: "Destination", width: Widths.Auto(), iseditable: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditable: false)
-            .Text("AddName", header: "Received By", width: Widths.Auto(), iseditable: false);
+            .Text("TransferBy", header: "Transfer By", width: Widths.Auto(), iseditable: false);
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
             this.listControlBindingSource1.DataSource = null;
 
-            string datereceive1 = string.Empty, datereceive2 = string.Empty, packid = string.Empty, sp = string.Empty;
+            string dateTransfer1 = string.Empty, dateTransfer2 = string.Empty, packid = string.Empty, sp = string.Empty, transferTo = string.Empty;
             string sqlwhere = string.Empty;
             if (!MyUtility.Check.Empty(this.dateTransfer.TextBox1.Value))
             {
-                datereceive1 = this.dateTransfer.TextBox1.Text;
-                datereceive2 = this.dateTransfer.TextBox2.Text;
+                dateTransfer1 = this.dateTransfer.TextBox1.Text;
+                dateTransfer2 = this.dateTransfer.TextBox2.Text;
                 sqlwhere += $@" and dr.ReceiveDate between @datereceive1 and @datereceive2 ";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtTransferTo.Text))
+            {
+                transferTo = this.txtTransferTo.Text;
+                sqlwhere += $@" and dr.TransferTo = @TransferTo ";
             }
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))
@@ -63,15 +69,16 @@ namespace Sci.Production.Sewing
                 sqlwhere += $@" and dr.OrderID  = @sp ";
             }
 
-            //txtTransferTo
             string sqlcmd = $@"
-declare @datereceive1 date = '{datereceive1}'
-declare @datereceive2 date = '{datereceive2}'
+declare @TransferDate  date = '{dateTransfer1}'
+declare @TransferDate  date = '{dateTransfer2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
+declare @TransferTo nvarchar(20) = '{transferTo}'
 
 select 
-	dr.ReceiveDate
+	dr.TransferTo
+	,dr.TransferDate
 	,dr.PackingListID
 	,dr.CTNStartNo
 	,dr.OrderID
@@ -81,8 +88,8 @@ select
 	,Country.Alias
 	,o.BuyerDelivery
 	,o.SciDelivery
-	,ReceivedBy = dbo.getPass1(dr.AddName)
-from DRYReceive dr with(nolock)
+	,TransferBy = dbo.getPass1(dr.AddName)
+from DRYTransfer dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
 where 1=1
