@@ -67,8 +67,58 @@ namespace Sci.Production.Logistic
         /// <returns>Result</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
+
+            StringBuilder sqlWHERE = new StringBuilder();
+            StringBuilder sqlcmd = new StringBuilder();
+
+            if (!MyUtility.Check.Empty(this.po1))
+            {
+                sqlWHERE.Append(string.Format(" and o.CustPONo >= '{0}'", this.po1));
+            }
+
+            if (!MyUtility.Check.Empty(this.po2))
+            {
+                sqlWHERE.Append(string.Format(" and o.CustPONo <= '{0}'", this.po2));
+            }
+
+            if (!MyUtility.Check.Empty(this.sp1))
+            {
+                sqlWHERE.Append(string.Format(" and pd.OrderID >= '{0}'", this.sp1));
+            }
+
+            if (!MyUtility.Check.Empty(this.bdate1))
+            {
+                sqlWHERE.Append(string.Format(" and o.BuyerDelivery between '{0}' and '{1}'", Convert.ToDateTime(this.bdate1).ToString("d"), Convert.ToDateTime(this.bdate2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sp2))
+            {
+                sqlWHERE.Append(string.Format(" and pd.OrderID <= '{0}'", this.sp2));
+            }
+
+            if (!MyUtility.Check.Empty(this.brand))
+            {
+                sqlWHERE.Append(string.Format(" and p.BrandID = '{0}'", this.brand));
+            }
+
+            if (!MyUtility.Check.Empty(this.mDivision))
+            {
+                sqlWHERE.Append(string.Format(" and p.MDivisionID = '{0}'", this.mDivision));
+            }
+
+            if (!MyUtility.Check.Empty(this.location1))
+            {
+                sqlWHERE.Append(string.Format(" and pd.ClogLocationId >= '{0}'", this.location1));
+            }
+
+            if (!MyUtility.Check.Empty(this.location2))
+            {
+                sqlWHERE.Append(string.Format(" and pd.ClogLocationId <= '{0}'", this.location2));
+            }
+
+            sqlcmd.Append(@"
+select a.MDivisionID,a.FactoryID,a.OrderID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled
+from(
 select 
 p.MDivisionID
 ,o.FactoryID
@@ -79,6 +129,29 @@ p.MDivisionID
 ,pd.ClogLocationId
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
+,pd.id,pd.Seq,o.PulloutComplete 
+from PackingList p WITH (NOLOCK) 
+inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
+inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
+where pd.CTNQty > 0
+and pd.ReceiveDate is not null
+and o.PulloutComplete = 1
+");
+            sqlcmd.Append(sqlWHERE);
+            sqlcmd.Append(@"
+union all
+select 
+p.MDivisionID
+,o.FactoryID
+,pd.OrderID
+,pd.CTNStartNo
+,pd.ReceiveDate
+,o.CustPONo
+,pd.ClogLocationId
+,p.BrandID
+,Cancelled = iif(o.junk=1,'Y','N')
+,pd.id,pd.Seq,o.PulloutComplete 
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -88,55 +161,11 @@ and pd.ReceiveDate is not null
 and (p.PulloutID = '' or po.Status = 'New')
 and o.PulloutComplete = 0
 ");
+            sqlcmd.Append(sqlWHERE);
+            sqlcmd.Append(@" )a
+order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, ID, Seq");
 
-            if (!MyUtility.Check.Empty(this.po1))
-            {
-                sqlCmd.Append(string.Format(" and o.CustPONo >= '{0}'", this.po1));
-            }
-
-            if (!MyUtility.Check.Empty(this.po2))
-            {
-                sqlCmd.Append(string.Format(" and o.CustPONo <= '{0}'", this.po2));
-            }
-
-            if (!MyUtility.Check.Empty(this.sp1))
-            {
-                sqlCmd.Append(string.Format(" and pd.OrderID >= '{0}'", this.sp1));
-            }
-
-            if (!MyUtility.Check.Empty(this.bdate1))
-            {
-                sqlCmd.Append(string.Format(" and o.BuyerDelivery between '{0}' and '{1}'", Convert.ToDateTime(this.bdate1).ToString("d"), Convert.ToDateTime(this.bdate2).ToString("d")));
-            }
-
-            if (!MyUtility.Check.Empty(this.sp2))
-            {
-                sqlCmd.Append(string.Format(" and pd.OrderID <= '{0}'", this.sp2));
-            }
-
-            if (!MyUtility.Check.Empty(this.brand))
-            {
-                sqlCmd.Append(string.Format(" and p.BrandID = '{0}'", this.brand));
-            }
-
-            if (!MyUtility.Check.Empty(this.mDivision))
-            {
-                sqlCmd.Append(string.Format(" and p.MDivisionID = '{0}'", this.mDivision));
-            }
-
-            if (!MyUtility.Check.Empty(this.location1))
-            {
-                sqlCmd.Append(string.Format(" and pd.ClogLocationId >= '{0}'", this.location1));
-            }
-
-            if (!MyUtility.Check.Empty(this.location2))
-            {
-                sqlCmd.Append(string.Format(" and pd.ClogLocationId <= '{0}'", this.location2));
-            }
-
-            sqlCmd.Append(" order by pd.ClogLocationId,p.MDivisionID,o.FactoryID,pd.OrderID,pd.ID,pd.Seq");
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            DualResult result = DBProxy.Current.Select(null, sqlcmd.ToString(), out this.printData);
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
