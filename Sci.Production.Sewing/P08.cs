@@ -24,17 +24,17 @@ namespace Sci.Production.Sewing
             base.OnFormLoaded();
 
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Date("ReceiveDate", header: "Receive Date", iseditable: false)
-            .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditable: false)
-            .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
-            .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditable: false)
-            .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditable: false)
-            .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditable: false)
-            .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditable: false)
-            .Text("Alias", header: "Destination", width: Widths.Auto(), iseditable: false)
-            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
-            .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditable: false)
-            .Text("ReceivedBy", header: "Received By", width: Widths.Auto(), iseditable: false);
+            .Date("ReceiveDate", header: "Receive Date", iseditingreadonly: true)
+            .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: false)
+            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
+            .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
+            .Text("ReceivedBy", header: "Received By", width: Widths.Auto(), iseditingreadonly: false);
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
