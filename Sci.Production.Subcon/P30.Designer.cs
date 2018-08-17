@@ -607,8 +607,9 @@
             // 
             // numttlqty
             // 
-            this.numttlqty.BackColor = System.Drawing.Color.White;
-            this.numttlqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numttlqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numttlqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numttlqty.IsSupportEditMode = false;
             this.numttlqty.Location = new System.Drawing.Point(777, 145);
             this.numttlqty.Name = "numttlqty";
             this.numttlqty.NullValue = new decimal(new int[] {
@@ -616,6 +617,7 @@
             0,
             0,
             0});
+            this.numttlqty.ReadOnly = true;
             this.numttlqty.Size = new System.Drawing.Size(100, 23);
             this.numttlqty.TabIndex = 48;
             this.numttlqty.Value = new decimal(new int[] {
