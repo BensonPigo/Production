@@ -19,6 +19,23 @@ namespace Sci.Production.Warehouse
     public partial class R22 : Sci.Win.Tems.PrintForm
     {
         string strSP1, strM, strFactory, strSP2, strRefno1, strRefno2, strColor1, strColor2, strSupp;
+
+        private void chkQtyless0_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkQtyOver0.Checked)
+            {
+                chkQtyless0.Checked = false;
+            }           
+        }
+
+        private void chkQtyOver0_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkQtyless0.Checked)
+            {
+                chkQtyOver0.Checked = false;
+            }
+        }
+
         DataTable dataTable;
 
         public R22(ToolStripMenuItem menuitem) 
@@ -150,9 +167,14 @@ left join Orders O ON Linv.OrderID = O.ID
                 listWhere.Add(" o.MDivisionID = @strM ");
             }
 
-            if (checkBox1.Checked)
+            if (chkQtyOver0.Checked)
             {
-                listWhere.Add(" ((Linv.InQty - Linv.OutQty + Linv.AdjustQty)>0 or LObQty >0)");
+                listWhere.Add(" ((Linv.InQty - Linv.OutQty + Linv.AdjustQty) > 0 or LObQty > 0)");
+            }
+
+            if (chkQtyless0.Checked)
+            {
+                listWhere.Add(" ((Linv.InQty - Linv.OutQty + Linv.AdjustQty) < 0)");
             }
 
             if (listWhere.Count > 0)
