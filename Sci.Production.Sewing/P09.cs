@@ -24,18 +24,18 @@ namespace Sci.Production.Sewing
             base.OnFormLoaded();
 
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Text("TransferTo", header: "Transfer To", width: Widths.Auto(), iseditable: false)
-            .Date("TransferDate", header: "Transfer Date", iseditable: false)
-            .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditable: false)
-            .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditable: false)
-            .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditable: false)
-            .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditable: false)
-            .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditable: false)
-            .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditable: false)
-            .Text("Alias", header: "Destination", width: Widths.Auto(), iseditable: false)
-            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
-            .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditable: false)
-            .Text("TransferBy", header: "Transfer By", width: Widths.Auto(), iseditable: false);
+            .Text("TransferTo", header: "Transfer To", width: Widths.Auto(), iseditingreadonly: true)
+            .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
+            .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: true)
+            .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: true)
+            .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("TransferBy", header: "Transfer By", width: Widths.Auto(), iseditingreadonly: true);
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -48,7 +48,7 @@ namespace Sci.Production.Sewing
             {
                 dateTransfer1 = this.dateTransfer.TextBox1.Text;
                 dateTransfer2 = this.dateTransfer.TextBox2.Text;
-                sqlwhere += $@" and dr.ReceiveDate between @datereceive1 and @datereceive2 ";
+                sqlwhere += $@" and dr.TransferDate between @TransferDate1 and @TransferDate2 ";
             }
 
             if (!MyUtility.Check.Empty(this.txtTransferTo.Text))
@@ -70,8 +70,8 @@ namespace Sci.Production.Sewing
             }
 
             string sqlcmd = $@"
-declare @TransferDate  date = '{dateTransfer1}'
-declare @TransferDate  date = '{dateTransfer2}'
+declare @TransferDate1  date = '{dateTransfer1}'
+declare @TransferDate2  date = '{dateTransfer2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 declare @TransferTo nvarchar(20) = '{transferTo}'
@@ -109,6 +109,7 @@ where 1=1
             }
 
             this.listControlBindingSource1.DataSource = dt;
+            this.grid1.AutoResizeColumns();
         }
     }
 }
