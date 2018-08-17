@@ -1,0 +1,12 @@
+﻿CREATE TABLE [dbo].[DRYReceive]
+(
+	[ID] BIGINT NOT NULL  IDENTITY, 
+    [ReceiveDate] DATE NOT NULL, 
+    [MDivisionID] VARCHAR(8) CONSTRAINT [DRYReceive_MDivisionID] NOT NULL DEFAULT (''), 
+    [OrderID] VARCHAR(13) CONSTRAINT [DRYReceive_OrderID] NOT NULL DEFAULT (''), 
+    [PackingListID] VARCHAR(13) CONSTRAINT [DRYReceive_PackingListID] NOT NULL DEFAULT (''), 
+    [CTNStartNo] VARCHAR(6) CONSTRAINT [DRYReceive_CTNStartNo] NOT NULL DEFAULT (''), 
+    [AddName] VARCHAR(10)  CONSTRAINT [DRYReceive_AddName] NOT NULL DEFAULT (''), 
+    [AddDate] DATETIME NOT NULL,
+	CONSTRAINT [PK_DRYReceive] PRIMARY KEY CLUSTERED ([ID] ASC)
+)

@@ -147,6 +147,7 @@
     [GMTComplete]          VARCHAR (1)    CONSTRAINT [DF__Orders__GMTCompl__6C39D5A3] DEFAULT ('') NULL,
     [GFR]                  BIT            CONSTRAINT [DF__Orders__GFR__6D2DF9DC] DEFAULT ((0)) NULL,
     [CfaCTN] INT NOT NULL DEFAULT ((0)), 
+    [DRCTN] INT CONSTRAINT [DF_Orders_DRCTN] DEFAULT ((0))  NOT NULL, 
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -780,6 +781,15 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Orders',
     @level2type = N'COLUMN',
     @level2name = N'GFR'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'除溼室箱數',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Orders',
+    @level2type = N'COLUMN',
+    @level2name = N'DRCTN'
 GO
 CREATE NONCLUSTERED INDEX [IX_SciDelivery]
     ON [dbo].[Orders]([SciDelivery] ASC, [MDivisionID] ASC, [ID] ASC);
