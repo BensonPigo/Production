@@ -37,6 +37,19 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.txtMdivision.Text = Sci.Env.User.Keyword;
             this.txtfactory.Text = Sci.Env.User.Factory;
+
+            string selectCommand = @"
+select ID = '''B''',Name = 'Bulk' union all select ID = '''S''',Name = 'Sample' union all select ID = '''B'',''S''',Name = 'Bulk+Sample'
+union all select ID = '''B'','' ''',Name = 'Bulk+Forecast'
+";
+            Ict.DualResult returnResult;
+            DataTable dropDownListTable = new DataTable();
+            if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
+            {
+                this.comboCategory.DataSource = dropDownListTable;
+                this.comboCategory.DisplayMember = "Name";
+                this.comboCategory.ValueMember = "ID";
+            }
         }
 
         /// <summary>
