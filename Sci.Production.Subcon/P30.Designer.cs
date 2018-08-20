@@ -62,6 +62,8 @@
             this.label1 = new Sci.Win.UI.Label();
             this.btnBatchUpdateDellivery = new Sci.Win.UI.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.numttlqty = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -79,6 +81,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numttlqty);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.groupBox1);
             this.masterpanel.Controls.Add(this.txtmfactory);
             this.masterpanel.Controls.Add(this.numTotal);
@@ -143,6 +147,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numTotal, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.groupBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numttlqty, 0);
             // 
             // detailpanel
             // 
@@ -390,7 +396,7 @@
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(71, 145);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(818, 23);
+            this.txtRemark.Size = new System.Drawing.Size(632, 23);
             this.txtRemark.TabIndex = 2;
             // 
             // numVatRate
@@ -432,7 +438,7 @@
             this.txtInternalRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInternalRemark.Location = new System.Drawing.Point(116, 179);
             this.txtInternalRemark.Name = "txtInternalRemark";
-            this.txtInternalRemark.Size = new System.Drawing.Size(773, 23);
+            this.txtInternalRemark.Size = new System.Drawing.Size(587, 23);
             this.txtInternalRemark.TabIndex = 3;
             // 
             // numVat
@@ -591,6 +597,35 @@
             this.groupBox1.TabIndex = 46;
             this.groupBox1.TabStop = false;
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(706, 145);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(68, 23);
+            this.label2.TabIndex = 47;
+            this.label2.Text = "Total Qty";
+            // 
+            // numttlqty
+            // 
+            this.numttlqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numttlqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numttlqty.IsSupportEditMode = false;
+            this.numttlqty.Location = new System.Drawing.Point(777, 145);
+            this.numttlqty.Name = "numttlqty";
+            this.numttlqty.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numttlqty.ReadOnly = true;
+            this.numttlqty.Size = new System.Drawing.Size(100, 23);
+            this.numttlqty.TabIndex = 48;
+            this.numttlqty.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P30
             // 
             this.ApvChkValue = "New";
@@ -671,5 +706,7 @@
         private Win.UI.Label label1;
         private Win.UI.DateBox dateDeliveryDate;
         private System.Windows.Forms.GroupBox groupBox1;
+        private Win.UI.NumericBox numttlqty;
+        private Win.UI.Label label2;
     }
 }
