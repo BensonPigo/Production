@@ -18,7 +18,7 @@ namespace Sci.Production.Sewing
         {
             this.InitializeComponent();
 
-            string selectCommand = string.Format("select ID = '',IDName = '' union all select ID, Name as IDName from DropDownList WITH (NOLOCK) where Type = '{0}' order by Seq", "Pms_DRYTransferTo");
+            string selectCommand = string.Format("select ID = '',IDName = '' union all select ID,  rtrim(ID)+'- '+rtrim(Name)  as IDName from DropDownList WITH (NOLOCK) where Type = '{0}' ", "Pms_DRYTransferTo");
             Ict.DualResult returnResult;
             DataTable dropDownListTable = new DataTable();
             if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
