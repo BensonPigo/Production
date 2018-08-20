@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -39,7 +38,7 @@
             this.numNewStyleBaseOn = new Sci.Win.UI.NumericUpDown();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.comboCategory = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).BeginInit();
             this.SuspendLayout();
             // 
@@ -174,11 +173,11 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(115, 120);
+            this.comboCategory.Location = new System.Drawing.Point(114, 121);
             this.comboCategory.Name = "comboCategory";
-            this.comboCategory.Size = new System.Drawing.Size(280, 24);
-            this.comboCategory.TabIndex = 140;
-            this.comboCategory.Type = "Pms_ReportForProduct";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(121, 24);
+            this.comboCategory.TabIndex = 141;
             // 
             // R11
             // 
@@ -201,9 +200,6 @@
             this.Text = "R11. Prod. Efficiency record by  Style";
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.txtMdivision, 0);
@@ -212,6 +208,9 @@
             this.Controls.SetChildIndex(this.labelNewStyleBaseOn, 0);
             this.Controls.SetChildIndex(this.labelmonth, 0);
             this.Controls.SetChildIndex(this.numNewStyleBaseOn, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).EndInit();
             this.ResumeLayout(false);
@@ -231,6 +230,6 @@
         private Win.UI.Label labelNewStyleBaseOn;
         private Win.UI.Label labelmonth;
         private Win.UI.NumericUpDown numNewStyleBaseOn;
-        private Class.comboDropDownList comboCategory;
+        private Win.UI.ComboBox comboCategory;
     }
 }
