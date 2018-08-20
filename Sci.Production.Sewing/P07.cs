@@ -29,19 +29,20 @@ namespace Sci.Production.Sewing
         {
             base.OnFormLoaded();
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_TransferTo;
+            this.gridTransfer.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridTransfer)
-                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(15))
-                .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15))
-                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(15))
-                .Text("OrderIdlist", header: "SP#", width: Widths.AnsiChars(15))
-                .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(15))
-                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15))
-                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(15))
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(15))
-                .Text("Alias", header: "Destination", width: Widths.AnsiChars(15))
-                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10))
+                .CheckBox("selected", header: string.Empty, width: Widths.AnsiChars(15), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("ID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("OrderIdlist", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("SeasonID", header: "Season", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Alias", header: "Destination", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .ComboBox("TransferTo", header: "Transfer to", width: Widths.AnsiChars(11)).Get(out cbb_TransferTo)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25));
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true);
 
             DataTable cbSrc;
             DBProxy.Current.Select(null, "select ID,Name from DropDownList where type = 'Pms_DRYTransferTo'", out cbSrc);
@@ -257,6 +258,7 @@ where	pd.CTNStartNo != '' and
             if (MyUtility.Check.Empty(packDataResult.Dr["DRYReceiveDate"]))
             {
                 packDataResult.errMsg = $"<CNT#:{PackNo}> This CTN# Dehumidifying Room not yet received.";
+                this.txtScanBarcode.Focus();
                 return packDataResult;
             }
 
