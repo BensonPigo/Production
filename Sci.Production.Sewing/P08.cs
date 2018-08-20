@@ -100,6 +100,7 @@ where 1=1
             }
 
             this.listControlBindingSource1.DataSource = dt;
+            this.grid1.AutoResizeColumns();
         }
     }
 }
