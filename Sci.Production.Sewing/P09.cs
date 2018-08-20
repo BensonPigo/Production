@@ -17,6 +17,16 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
+
+            string selectCommand = string.Format("select ID = '',IDName = '' union all select ID, Name as IDName from DropDownList WITH (NOLOCK) where Type = '{0}' order by Seq", "Pms_DRYTransferTo");
+            Ict.DualResult returnResult;
+            DataTable dropDownListTable = new DataTable();
+            if (returnResult = DBProxy.Current.Select(null, selectCommand, out dropDownListTable))
+            {
+                this.txtdropdownlist1.DataSource = dropDownListTable;
+                this.txtdropdownlist1.DisplayMember = "IDName";
+                this.txtdropdownlist1.ValueMember = "ID";
+            }
         }
 
         protected override void OnFormLoaded()
@@ -51,10 +61,10 @@ namespace Sci.Production.Sewing
                 sqlwhere += $@" and dr.TransferDate between @TransferDate1 and @TransferDate2 ";
             }
 
-            if (!MyUtility.Check.Empty(this.txtTransferTo.Text))
+            if (!MyUtility.Check.Empty(this.txtdropdownlist1.Text))
             {
-                transferTo = this.txtTransferTo.Text;
-                sqlwhere += $@" and dr.TransferTo = @TransferTo ";
+                transferTo = MyUtility.Convert.GetString(this.txtdropdownlist1.SelectedValue);
+                sqlwhere += $@" and dr.TransferTo = @TransferTo";
             }
 
             if (!MyUtility.Check.Empty(this.txtPackID.Text))

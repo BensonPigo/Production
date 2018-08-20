@@ -38,9 +38,9 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtTransferTo = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
             this.dateTransfer = new Sci.Win.UI.DateRange();
+            this.txtdropdownlist1 = new Sci.Production.Class.txtdropdownlist();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -91,7 +91,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(621, 9);
+            this.btnQuery.Location = new System.Drawing.Point(684, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 5;
@@ -130,18 +130,8 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(685, 296);
+            this.grid1.Size = new System.Drawing.Size(748, 296);
             this.grid1.TabIndex = 8;
-            // 
-            // txtTransferTo
-            // 
-            this.txtTransferTo.BackColor = System.Drawing.Color.White;
-            this.txtTransferTo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTransferTo.IsSupportEditMode = false;
-            this.txtTransferTo.Location = new System.Drawing.Point(468, 9);
-            this.txtTransferTo.Name = "txtTransferTo";
-            this.txtTransferTo.Size = new System.Drawing.Size(147, 23);
-            this.txtTransferTo.TabIndex = 2;
             // 
             // label4
             // 
@@ -173,11 +163,25 @@
             this.dateTransfer.Size = new System.Drawing.Size(280, 23);
             this.dateTransfer.TabIndex = 10;
             // 
+            // txtdropdownlist1
+            // 
+            this.txtdropdownlist1.BackColor = System.Drawing.Color.White;
+            this.txtdropdownlist1.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.txtdropdownlist1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdropdownlist1.FormattingEnabled = true;
+            this.txtdropdownlist1.IsSupportUnselect = true;
+            this.txtdropdownlist1.Location = new System.Drawing.Point(468, 9);
+            this.txtdropdownlist1.Name = "txtdropdownlist1";
+            this.txtdropdownlist1.OldText = "";
+            this.txtdropdownlist1.Size = new System.Drawing.Size(210, 24);
+            this.txtdropdownlist1.TabIndex = 2;
+            this.txtdropdownlist1.Type = "Pms_DRYTransferTo";
+            // 
             // P09
             // 
-            this.ClientSize = new System.Drawing.Size(709, 383);
+            this.ClientSize = new System.Drawing.Size(772, 383);
+            this.Controls.Add(this.txtdropdownlist1);
             this.Controls.Add(this.dateTransfer);
-            this.Controls.Add(this.txtTransferTo);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.btnQuery);
@@ -196,8 +200,8 @@
             this.Controls.SetChildIndex(this.btnQuery, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
             this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.txtTransferTo, 0);
             this.Controls.SetChildIndex(this.dateTransfer, 0);
+            this.Controls.SetChildIndex(this.txtdropdownlist1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
@@ -215,8 +219,8 @@
         private Win.UI.Button btnQuery;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.TextBox txtTransferTo;
         private Win.UI.Label label4;
         private Win.UI.DateRange dateTransfer;
+        private Class.txtdropdownlist txtdropdownlist1;
     }
 }
