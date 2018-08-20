@@ -45,8 +45,9 @@
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtSupplier = new Sci.Production.Class.txtsubcon();
             this.label2 = new Sci.Win.UI.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.chkQtyOver0 = new System.Windows.Forms.CheckBox();
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.chkQtyless0 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -215,18 +216,19 @@
             this.label2.TabIndex = 135;
             this.label2.Text = "M";
             // 
-            // checkBox1
+            // chkQtyOver0
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.ForeColor = System.Drawing.Color.Red;
-            this.checkBox1.Location = new System.Drawing.Point(9, 196);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(73, 21);
-            this.checkBox1.TabIndex = 136;
-            this.checkBox1.Text = "Qty > 0";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.chkQtyOver0.AutoSize = true;
+            this.chkQtyOver0.Checked = true;
+            this.chkQtyOver0.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkQtyOver0.ForeColor = System.Drawing.Color.Red;
+            this.chkQtyOver0.Location = new System.Drawing.Point(9, 194);
+            this.chkQtyOver0.Name = "chkQtyOver0";
+            this.chkQtyOver0.Size = new System.Drawing.Size(73, 21);
+            this.chkQtyOver0.TabIndex = 136;
+            this.chkQtyOver0.Text = "Qty > 0";
+            this.chkQtyOver0.UseVisualStyleBackColor = true;
+            this.chkQtyOver0.CheckedChanged += new System.EventHandler(this.chkQtyOver0_CheckedChanged);
             // 
             // txtMdivision1
             // 
@@ -237,13 +239,26 @@
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision1.TabIndex = 137;
             // 
+            // chkQtyless0
+            // 
+            this.chkQtyless0.AutoSize = true;
+            this.chkQtyless0.ForeColor = System.Drawing.Color.Red;
+            this.chkQtyless0.Location = new System.Drawing.Point(106, 194);
+            this.chkQtyless0.Name = "chkQtyless0";
+            this.chkQtyless0.Size = new System.Drawing.Size(73, 21);
+            this.chkQtyless0.TabIndex = 138;
+            this.chkQtyless0.Text = "Qty < 0";
+            this.chkQtyless0.UseVisualStyleBackColor = true;
+            this.chkQtyless0.CheckedChanged += new System.EventHandler(this.chkQtyless0_CheckedChanged);
+            // 
             // R22
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(586, 248);
+            this.Controls.Add(this.chkQtyOver0);
+            this.Controls.Add(this.chkQtyless0);
             this.Controls.Add(this.txtMdivision1);
-            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtSupplier);
             this.Controls.Add(this.txtfactory);
@@ -283,8 +298,9 @@
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.txtSupplier, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.checkBox1, 0);
             this.Controls.SetChildIndex(this.txtMdivision1, 0);
+            this.Controls.SetChildIndex(this.chkQtyless0, 0);
+            this.Controls.SetChildIndex(this.chkQtyOver0, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -309,7 +325,8 @@
         private Class.txtfactory txtfactory;
         private Class.txtsubcon txtSupplier;
         private Win.UI.Label label2;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox chkQtyOver0;
         private Class.txtMdivision txtMdivision1;
+        private System.Windows.Forms.CheckBox chkQtyless0;
     }
 }

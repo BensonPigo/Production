@@ -455,7 +455,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             btnBatchUpdateDellivery.Enabled = this.EditMode;
             #endregion
 
-            detailDt.AcceptChanges();           
+            detailDt.AcceptChanges();
+            calttlqty();
         }
 
         // detail 新增時設定預設值
@@ -847,6 +848,8 @@ and localsuppid = '{CurrentMaintain["localsuppid"]}'", out dr, null))
             var frm = new Sci.Production.Subcon.P30_Import(dr, (DataTable)detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
+
+            calttlqty();
         }
 
         private void txtartworktype_ftyCategory_Validated(object sender, EventArgs e)
@@ -1094,6 +1097,14 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             base.OnDetailGridAppendClick();
             this.CurrentDetailData["RequestID"] = this.CurrentDetailData["RequestID"].Equals(DBNull.Value) ? "" : this.CurrentDetailData["RequestID"];
 
+        }
+
+        void calttlqty()
+        {
+            if (DetailDatas.Count >0)
+            {
+                numttlqty.Value = MyUtility.Convert.GetDecimal(((DataTable)detailgridbs.DataSource).Compute("sum(qty)", "")); 
+            }
         }
     }
 }
