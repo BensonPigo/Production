@@ -188,7 +188,6 @@ where	pd.CTNStartNo != '' and
                 packDataResult.Dr.Table.Merge(this.dtTransfer);
                 this.dtTransfer = packDataResult.Dr.Table;
                 this.gridTransfer.DataSource = this.dtTransfer;
-                //this.dtTransfer.Rows.Add(packDataResult.Dr.ItemArray);
 
             }
             else
@@ -336,17 +335,6 @@ where	pd.CTNStartNo != '' and
                         tmpDetail.Merge(this.dtTransfer);
                         this.dtTransfer = tmpDetail;
                         this.gridTransfer.DataSource = this.dtTransfer;
-
-                        //foreach (DataRow dr in tmpDetail.Rows)
-                        //{
-                        //    if (this.dtTransfer.AsEnumerable().Any(s => s["ID"].Equals(dr["ID"]) && s["CTNStartNo"].Equals(dr["CTNStartNo"])))
-                        //    {
-                        //        continue;
-                        //    }
-
-                        //    this.dtTransfer.Rows.Add(dr.ItemArray);
-                        //}
-
                     }
                     catch (Exception err)
                     {
