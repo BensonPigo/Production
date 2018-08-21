@@ -1,19 +1,26 @@
 ﻿CREATE TABLE [dbo].[ColorFastness] (
-    [ID]        VARCHAR (13)   CONSTRAINT [DF_ColorFastness_ID] DEFAULT ('') NOT NULL,
-    [POID]      VARCHAR (13)   CONSTRAINT [DF_ColorFastness_POID] DEFAULT ('') NOT NULL,
-    [TestNo]    NUMERIC (2)    CONSTRAINT [DF_ColorFastness_TestNo] DEFAULT ((0)) NOT NULL,
-    [InspDate]  DATE           NOT NULL,
-    [Article]   VARCHAR (8)    CONSTRAINT [DF_ColorFastness_Article] DEFAULT ('') NOT NULL,
-    [Result]    VARCHAR (15)   CONSTRAINT [DF_ColorFastness_Result] DEFAULT ('') NOT NULL,
-    [Status]    VARCHAR (15)   CONSTRAINT [DF_ColorFastness_Status] DEFAULT ('') NULL,
-    [Inspector] VARCHAR (10)   CONSTRAINT [DF_ColorFastness_Inspector] DEFAULT ('') NOT NULL,
-    [Remark]    NVARCHAR (120) CONSTRAINT [DF_ColorFastness_Remark] DEFAULT ('') NULL,
-    [addName]   VARCHAR (10)   CONSTRAINT [DF_ColorFastness_addName] DEFAULT ('') NULL,
-    [addDate]   DATETIME       NULL,
-    [EditName]  VARCHAR (10)   CONSTRAINT [DF_ColorFastness_EditName] DEFAULT ('') NULL,
-    [EditDate]  DATETIME       NULL,
+    [ID]          VARCHAR (13)   CONSTRAINT [DF_ColorFastness_ID] DEFAULT ('') NOT NULL,
+    [POID]        VARCHAR (13)   CONSTRAINT [DF_ColorFastness_POID] DEFAULT ('') NOT NULL,
+    [TestNo]      NUMERIC (2)    CONSTRAINT [DF_ColorFastness_TestNo] DEFAULT ((0)) NOT NULL,
+    [InspDate]    DATE           NOT NULL,
+    [Article]     VARCHAR (8)    CONSTRAINT [DF_ColorFastness_Article] DEFAULT ('') NOT NULL,
+    [Result]      VARCHAR (15)   CONSTRAINT [DF_ColorFastness_Result] DEFAULT ('') NOT NULL,
+    [Status]      VARCHAR (15)   CONSTRAINT [DF_ColorFastness_Status] DEFAULT ('') NULL,
+    [Inspector]   VARCHAR (10)   CONSTRAINT [DF_ColorFastness_Inspector] DEFAULT ('') NOT NULL,
+    [Remark]      NVARCHAR (120) CONSTRAINT [DF_ColorFastness_Remark] DEFAULT ('') NULL,
+    [addName]     VARCHAR (10)   CONSTRAINT [DF_ColorFastness_addName] DEFAULT ('') NULL,
+    [addDate]     DATETIME       NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_ColorFastness_EditName] DEFAULT ('') NULL,
+    [EditDate]    DATETIME       NULL,
+    [Temperature] INT            DEFAULT ((0)) NOT NULL,
+    [Cycle]       INT            DEFAULT ((0)) NOT NULL,
+    [Detergent]   VARCHAR (15)   NULL,
+    [Machine]     VARCHAR (15)   NULL,
+    [Drying]      VARCHAR (20)   NULL,
     CONSTRAINT [PK_ColorFastness] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -72,4 +79,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ColorFastness', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [Index_GetFirQaRecord_ColorFasTness]
+    ON [dbo].[ColorFastness]([POID] ASC);
 
