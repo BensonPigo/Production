@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioNewBarcodePrint = new Sci.Win.UI.RadioButton();
             this.radioBarcodePrint = new Sci.Win.UI.RadioButton();
             this.radioPackingGuideReport = new Sci.Win.UI.RadioButton();
             this.radioPackingListReportFormB = new Sci.Win.UI.RadioButton();
@@ -37,21 +38,22 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtCTNStart = new Sci.Win.UI.TextBox();
             this.labelCTN = new Sci.Win.UI.Label();
-            this.radioNewBarcodePrint = new Sci.Win.UI.RadioButton();
+            this.label1 = new Sci.Win.UI.Label();
+            this.checkBoxCountry = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(429, 12);
+            this.print.Location = new System.Drawing.Point(476, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(429, 48);
+            this.toexcel.Location = new System.Drawing.Point(476, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(429, 84);
+            this.close.Location = new System.Drawing.Point(476, 84);
             // 
             // radioPanel1
             // 
@@ -62,8 +64,21 @@
             this.radioPanel1.Controls.Add(this.radioPackingListReportFormA);
             this.radioPanel1.Location = new System.Drawing.Point(13, 12);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(401, 125);
+            this.radioPanel1.Size = new System.Drawing.Size(427, 125);
             this.radioPanel1.TabIndex = 94;
+            // 
+            // radioNewBarcodePrint
+            // 
+            this.radioNewBarcodePrint.AutoSize = true;
+            this.radioNewBarcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioNewBarcodePrint.Location = new System.Drawing.Point(3, 100);
+            this.radioNewBarcodePrint.Name = "radioNewBarcodePrint";
+            this.radioNewBarcodePrint.Size = new System.Drawing.Size(191, 21);
+            this.radioNewBarcodePrint.TabIndex = 4;
+            this.radioNewBarcodePrint.TabStop = true;
+            this.radioNewBarcodePrint.Text = "New Barcode Format Print";
+            this.radioNewBarcodePrint.UseVisualStyleBackColor = true;
+            this.radioNewBarcodePrint.CheckedChanged += new System.EventHandler(this.RadioBarcodePrint_CheckedChanged);
             // 
             // radioBarcodePrint
             // 
@@ -153,22 +168,30 @@
             this.labelCTN.TabIndex = 95;
             this.labelCTN.Text = "CTN#";
             // 
-            // radioNewBarcodePrint
+            // label1
             // 
-            this.radioNewBarcodePrint.AutoSize = true;
-            this.radioNewBarcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioNewBarcodePrint.Location = new System.Drawing.Point(3, 100);
-            this.radioNewBarcodePrint.Name = "radioNewBarcodePrint";
-            this.radioNewBarcodePrint.Size = new System.Drawing.Size(191, 21);
-            this.radioNewBarcodePrint.TabIndex = 4;
-            this.radioNewBarcodePrint.TabStop = true;
-            this.radioNewBarcodePrint.Text = "New Barcode Format Print";
-            this.radioNewBarcodePrint.UseVisualStyleBackColor = true;
-            this.radioNewBarcodePrint.CheckedChanged += new System.EventHandler(this.RadioBarcodePrint_CheckedChanged);
+            this.label1.Location = new System.Drawing.Point(225, 140);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(105, 23);
+            this.label1.TabIndex = 99;
+            this.label1.Text = "country of origin";
+            // 
+            // checkBoxCountry
+            // 
+            this.checkBoxCountry.AutoSize = true;
+            this.checkBoxCountry.Enabled = false;
+            this.checkBoxCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxCountry.Location = new System.Drawing.Point(344, 145);
+            this.checkBoxCountry.Name = "checkBoxCountry";
+            this.checkBoxCountry.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxCountry.TabIndex = 100;
+            this.checkBoxCountry.UseVisualStyleBackColor = true;
             // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(521, 188);
+            this.ClientSize = new System.Drawing.Size(568, 192);
+            this.Controls.Add(this.checkBoxCountry);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtCTNEnd);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtCTNStart);
@@ -176,14 +199,16 @@
             this.Controls.Add(this.radioPanel1);
             this.Name = "P03_Print";
             this.Text = "Print";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
             this.Controls.SetChildIndex(this.labelCTN, 0);
             this.Controls.SetChildIndex(this.txtCTNStart, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.txtCTNEnd, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.checkBoxCountry, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -203,5 +228,7 @@
         private Win.UI.TextBox txtCTNStart;
         private Win.UI.Label labelCTN;
         private Win.UI.RadioButton radioNewBarcodePrint;
+        private Win.UI.Label label1;
+        private Win.UI.CheckBox checkBoxCountry;
     }
 }
