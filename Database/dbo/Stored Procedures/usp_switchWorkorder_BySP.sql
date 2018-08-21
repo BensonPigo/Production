@@ -1,6 +1,5 @@
 ﻿
-
-CREATE PROCEDURE [dbo].[usp_switchWorkorder_BySP]
+Alter PROCEDURE [dbo].[usp_switchWorkorder_BySP]
 	(
 	 @WorkType  varChar(1)=2,--By SP = 2
 	 @Cuttingid  varChar(13),
@@ -24,6 +23,7 @@ alter table #tmp_WorkOrder_Distribute add newKey int
 select *,newKey=0 into #tmp_Workorder from WorkOrder where 1=0
 select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrder_SizeRatio where 1=0
 select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrder_PatternPanel where 1=0
+Select *,newKey=0 InTo #tmp_WorkOrder_PatternPaneltmp From WorkOrder_PatternPanel WITH (NOLOCK) Where 1 = 0
 --主要資料
 Select MixedSizeMarker,	oe.id,	[FactoryID] = @FactoryID,	[MDivisionid] = @MDivisionid,
 	[Seq1] = isnull(iif(isnull(s.SEQ2,'')='',s2.seq1,s.SEQ1),''),--若SEQ2 為空就找70大項
@@ -330,7 +330,23 @@ Begin
 		CLOSE Size
 		DEALLOCATE Size
 		--WorkOrder_PatternPanel
-		INSERT INTO #tmp_WorkOrder_PatternPanel values(@id,0,@FabricCombo,@FabricPanelCode,@tmpUkey2)
+		--INSERT INTO #tmp_WorkOrder_PatternPanel values(@id,0,@FabricCombo,@FabricPanelCode,@tmpUkey2)
+		Begin
+			Declare @WorkOrder_PatternPanel nvarchar(2),@WorkOrder_FabricPanelCode nvarchar(2)
+			DECLARE  cur_Order_EachCons_PatternPanel CURSOR FOR
+			Select PatternPanel,FabricPanelCode	From Order_EachCons_PatternPanel WITH (NOLOCK) Where Order_EachConsUkey = @Order_EachConsUkey
+
+			OPEN cur_Order_EachCons_PatternPanel
+			FETCH NEXT FROM cur_Order_EachCons_PatternPanel INTO @WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode
+			While @@FETCH_STATUS = 0
+			Begin
+				Insert into #tmp_WorkOrder_PatternPaneltmp values(@id,0,@WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode,@tmpUkey2)
+			FETCH NEXT FROM cur_Order_EachCons_PatternPanel INTO @WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode	
+			End;
+			CLOSE cur_Order_EachCons_PatternPanel
+			DEALLOCATE cur_Order_EachCons_PatternPanel 	
+		End
+
 	FETCH NEXT FROM insertWorkorder INTO @tmpUkey2,@FLayer
 	End
 	CLOSE insertWorkorder
@@ -341,6 +357,10 @@ FETCH NEXT FROM CURSOR_WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivision
 End
 CLOSE CURSOR_WorkOrder
 DEALLOCATE CURSOR_WorkOrder
+
+Insert into #tmp_WorkOrder_PatternPanel(ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey)							
+select distinct ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey
+from #tmp_WorkOrder_PatternPaneltmp
 --select * from #tmp_Workorder order by newkey
 --select newkey,orderid,Article,sizecode from #tmp_WorkOrder_Distribute group by newkey,orderid,Article,sizecode having count(1)>1
 --select * from #tmp_WorkOrder_Distribute order by newkey
