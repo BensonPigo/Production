@@ -38,8 +38,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtCTNStart = new Sci.Win.UI.TextBox();
             this.labelCTN = new Sci.Win.UI.Label();
-            this.txtcountry1 = new Sci.Production.Class.txtcountry();
             this.label1 = new Sci.Win.UI.Label();
+            this.checkBoxCountry = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -168,16 +168,6 @@
             this.labelCTN.TabIndex = 95;
             this.labelCTN.Text = "CTN#";
             // 
-            // txtcountry1
-            // 
-            this.txtcountry1.DisplayBox1Binding = "";
-            this.txtcountry1.Enabled = false;
-            this.txtcountry1.Location = new System.Drawing.Point(333, 140);
-            this.txtcountry1.Name = "txtcountry1";
-            this.txtcountry1.Size = new System.Drawing.Size(232, 22);
-            this.txtcountry1.TabIndex = 5;
-            this.txtcountry1.TextBox1Binding = "";
-            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(225, 140);
@@ -186,11 +176,22 @@
             this.label1.TabIndex = 99;
             this.label1.Text = "country of origin";
             // 
+            // checkBoxCountry
+            // 
+            this.checkBoxCountry.AutoSize = true;
+            this.checkBoxCountry.Enabled = false;
+            this.checkBoxCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxCountry.Location = new System.Drawing.Point(344, 145);
+            this.checkBoxCountry.Name = "checkBoxCountry";
+            this.checkBoxCountry.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxCountry.TabIndex = 100;
+            this.checkBoxCountry.UseVisualStyleBackColor = true;
+            // 
             // P03_Print
             // 
             this.ClientSize = new System.Drawing.Size(568, 192);
+            this.Controls.Add(this.checkBoxCountry);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtcountry1);
             this.Controls.Add(this.txtCTNEnd);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtCTNStart);
@@ -206,8 +207,8 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.txtcountry1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.checkBoxCountry, 0);
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -227,7 +228,7 @@
         private Win.UI.TextBox txtCTNStart;
         private Win.UI.Label labelCTN;
         private Win.UI.RadioButton radioNewBarcodePrint;
-        private Class.txtcountry txtcountry1;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox checkBoxCountry;
     }
 }
