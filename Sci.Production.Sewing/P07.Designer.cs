@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -164,8 +164,8 @@
             this.txtScanBarcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtScanBarcode.Location = new System.Drawing.Point(159, 9);
             this.txtScanBarcode.Name = "txtScanBarcode";
-            this.txtScanBarcode.Size = new System.Drawing.Size(392, 23);
-            this.txtScanBarcode.TabIndex = 0;
+            this.txtScanBarcode.Size = new System.Drawing.Size(221, 23);
+            this.txtScanBarcode.TabIndex = 4;
             this.txtScanBarcode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtScanBarcode_Validating);
             // 
             // dateRangeReceive
@@ -214,14 +214,14 @@
             this.gridTransfer.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridTransfer.Location = new System.Drawing.Point(0, 172);
             this.gridTransfer.Name = "gridTransfer";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridTransfer.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridTransfer.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridTransfer.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridTransfer.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridTransfer.RowTemplate.Height = 24;
@@ -250,14 +250,14 @@
             this.comboTransferTo.Name = "comboTransferTo";
             this.comboTransferTo.OldText = "";
             this.comboTransferTo.Size = new System.Drawing.Size(121, 24);
-            this.comboTransferTo.TabIndex = 15;
+            this.comboTransferTo.TabIndex = 5;
             this.comboTransferTo.Type = "Pms_DRYTransferTo";
             // 
             // btnUpdateAll
             // 
             this.btnUpdateAll.Location = new System.Drawing.Point(232, 136);
             this.btnUpdateAll.Name = "btnUpdateAll";
-            this.btnUpdateAll.Size = new System.Drawing.Size(324, 30);
+            this.btnUpdateAll.Size = new System.Drawing.Size(176, 30);
             this.btnUpdateAll.TabIndex = 7;
             this.btnUpdateAll.TabStop = false;
             this.btnUpdateAll.Text = "Update All Transfer To";
@@ -308,7 +308,7 @@
             this.DefaultControl = "txtScanBarcode";
             this.DefaultControlForEdit = "txtScanBarcode";
             this.Name = "P07";
-            this.Text = "P07. Dehumidifying Room Transfer Carton Input";
+            this.Text = "P07. Dry Room Transfer Carton Input";
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.gridTransfer, 0);
