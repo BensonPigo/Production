@@ -1787,7 +1787,9 @@ select  pd.ID
 						else pd.ShipQty
 					 end
 		, checkMixSize.value
+        , o.BuyerDelivery
 from PackingList_Detail pd WITH (NOLOCK) 
+left join orders o with(nolock) on o.id = pd.OrderID
 outer apply (
 	select value = count (1)
 	from (

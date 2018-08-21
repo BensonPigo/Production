@@ -278,8 +278,9 @@ from (
 			, LPD.OrderId
 	from dbo.LocalPO LP
 	inner join dbo.LocalPO_Detail LPD on LP.Id = LPD.Id
-    left join Orders O on lpd.OrderId=o.id
-	where 1 = 1 {1}
+    left join Orders O on lpd.OrderId = o.id
+	where 1 = 1
+          {1}
 ) s
 left join Orders O on s.OrderId = O.ID
 left join Order_TmsCost OTC on o.ID = OTC.ID and s.Category = OTC.ArtworkTypeID
@@ -290,8 +291,9 @@ outer apply(
 			, Rate = sum(dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
 	from LocalPO LP
 	inner join LocalPO_Detail LPD on LP.Id = LPD.Id
-	where LP.Category = s.Category and LPD.OrderId = O.POID
-        {1}
+	where LP.Category = s.Category 
+          and LPD.OrderId = O.ID
+          {1}
 ) x
 outer apply(
 	select	Orders.POID
@@ -299,7 +301,8 @@ outer apply(
 			, Order_amt = sum(Orders.Qty * Price)
 	from Orders
 	inner join Order_TmsCost OTC on OTC.ID = Orders.ID
-	where O.POID = POID and ArtworkTypeID = s.Category
+	where O.POID = POID
+          and ArtworkTypeID = s.Category
 	group by Orders.POID, ArtworkTypeID
 ) y
 where Po_qty > 0 {2}
