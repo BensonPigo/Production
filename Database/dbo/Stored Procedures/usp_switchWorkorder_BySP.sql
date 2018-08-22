@@ -1,5 +1,5 @@
 ﻿
-Alter PROCEDURE [dbo].[usp_switchWorkorder_BySP]
+Create PROCEDURE [dbo].[usp_switchWorkorder_BySP]
 	(
 	 @WorkType  varChar(1)=2,--By SP = 2
 	 @Cuttingid  varChar(13),
