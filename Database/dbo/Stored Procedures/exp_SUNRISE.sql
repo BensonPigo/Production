@@ -34,7 +34,7 @@ select
 [Version] = ts.Version,
 [SeqNo] = tsd.Seq,
 [SeqCode] = tsd.OperationID,
-[SeqName] = op.DescEN,
+[SeqName] = iif(isnull(op.Annotation,'')='',op.DescEN,op.Annotation),
 [MachineTypeID] = tsd.MachineTypeID,
 [SAM] = Round(tsd.SMV/60,7)
 into #tMOSeqD
@@ -43,7 +43,7 @@ inner join orders o with (nolock) on so.OrderID = o.id
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID = ts.SeasonID and o.BrandID = ts.BrandID and ts.ComboType = sl.Location
 inner join TimeStudy_Detail tsd with (nolock) on tsd.ID = ts.ID and ISNUMERIC(tsd.Seq) = 1
-left join Operation op  with (nolock) on tsd.OperationID = op.ID 
+left join Operation op  with (nolock) on tsd.OperationID = op.ID and tsd.SMV<>0
 
 --tMOSeqM（制单工序主表） 
 select 
@@ -111,7 +111,7 @@ where exists (select 1 from #tMOSeqD where SeqCode = Operation.ID)
 --update
 update T set	ColorName = S.ColorName,
 				Qty = S.qty,
-				CmdType = 'update',
+				CmdType = iif(SunriseUpdated = 1,'update',CmdType),
 				CmdTime = GetDate(),
 				SunriseUpdated = 0
 from [SUNRISE].SUNRISEEXCH.dbo.tMODCS T
@@ -125,7 +125,7 @@ T.ColorNo = S.ColorNo collate SQL_Latin1_General_CP1_CI_AS and
 T.SizeName = S.SizeName collate SQL_Latin1_General_CP1_CI_AS)
 
 -- delete 
-update T set CmdType = 'delete',
+update T set CmdType ='delete',
 			 CmdTime = GetDate(),
 			 SunriseUpdated = 0
 from [SUNRISE].SUNRISEEXCH.dbo.tMODCS T
@@ -139,7 +139,7 @@ T.ColorNo = S.ColorNo collate SQL_Latin1_General_CP1_CI_AS and
 update T set	SeqCode = S.SeqCode,
 				SeqName = S.SeqName,
 				SAM = S.SAM,
-				CmdType = 'update',
+				CmdType = iif(SunriseUpdated = 1,'update',CmdType),
 				CmdTime = GetDate(),
 				SunriseUpdated = 0
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T
@@ -172,7 +172,7 @@ update T set	CMSAMTotal = S.CMSAMTotal,
 				SAMTotal = S.SAMTotal,
 				EffDate = S.EffDate,
 				insertor = S.insertor,
-				CmdType = 'update',
+				CmdType = iif(SunriseUpdated = 1,'update',CmdType),
 				CmdTime = GetDate(),
 				SunriseUpdated = 0
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqM T
@@ -202,7 +202,7 @@ update T set	ProNoticeNo = S.ProNoticeNo,
 				SAMTotal = S.SAMTotal,
 				Insertor = S.Insertor,
 				DeliveryDate = S.DeliveryDate,
-				CmdType = 'update',
+				CmdType = iif(SunriseUpdated = 1,'update',CmdType),
 				CmdTime = GetDate(),
 				SunriseUpdated = 0
 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T
@@ -217,7 +217,7 @@ where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T where T.MONo = S
 --update
 update T set	SeqName = S.SeqName,
 				SAM = S.SAM,
-				CmdType = 'update',
+				CmdType = iif(SunriseUpdated = 1,'update',CmdType),
 				CmdTime = GetDate(),
 				SunriseUpdated = 0
 from [SUNRISE].SUNRISEEXCH.dbo.tSeqBase T
@@ -235,7 +235,7 @@ update T set	TypeCode = S.TypeCode,
 				Model = S.Model,
 				Brand = S.Brand,
 				Insertor = S.Insertor,
-				CmdType = 'update',
+				CmdType = iif(SunriseUpdated = 1,'update',CmdType),
 				CmdTime = GetDate(),
 				SunriseUpdated = 0
 from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T
