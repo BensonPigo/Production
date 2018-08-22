@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.dateATA = new Sci.Win.UI.DateRange();
+            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
+            this.label4 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
             this.txtReceivingid = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.txtwkno = new Sci.Win.UI.TextBox();
@@ -51,10 +55,6 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnUnlock = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
-            this.dateATA = new Sci.Win.UI.DateRange();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridMaterialLock)).BeginInit();
@@ -86,6 +86,56 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 71);
             this.panel1.TabIndex = 0;
+            // 
+            // dateATA
+            // 
+            // 
+            // 
+            // 
+            this.dateATA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateATA.DateBox1.Name = "";
+            this.dateATA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateATA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateATA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateATA.DateBox2.Name = "";
+            this.dateATA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateATA.DateBox2.TabIndex = 1;
+            this.dateATA.Location = new System.Drawing.Point(499, 39);
+            this.dateATA.Name = "dateATA";
+            this.dateATA.Size = new System.Drawing.Size(280, 23);
+            this.dateATA.TabIndex = 7;
+            // 
+            // comboDropDownList1
+            // 
+            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
+            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboDropDownList1.FormattingEnabled = true;
+            this.comboDropDownList1.IsSupportUnselect = true;
+            this.comboDropDownList1.Location = new System.Drawing.Point(875, 38);
+            this.comboDropDownList1.Name = "comboDropDownList1";
+            this.comboDropDownList1.OldText = "";
+            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
+            this.comboDropDownList1.TabIndex = 8;
+            this.comboDropDownList1.Type = "Pms_FabricType";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(781, 39);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(91, 23);
+            this.label4.TabIndex = 46;
+            this.label4.Text = "Material Type";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(410, 39);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(86, 23);
+            this.label3.TabIndex = 45;
+            this.label3.Text = "Material ATA ";
             // 
             // txtReceivingid
             // 
@@ -307,56 +357,6 @@
             this.btnUnlock.Text = "Unlock";
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.btnUnlock_Click);
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(410, 39);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 23);
-            this.label3.TabIndex = 45;
-            this.label3.Text = "Material ATA ";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(781, 39);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(91, 23);
-            this.label4.TabIndex = 46;
-            this.label4.Text = "Material Type";
-            // 
-            // comboDropDownList1
-            // 
-            this.comboDropDownList1.BackColor = System.Drawing.Color.White;
-            this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboDropDownList1.FormattingEnabled = true;
-            this.comboDropDownList1.IsSupportUnselect = true;
-            this.comboDropDownList1.Location = new System.Drawing.Point(875, 38);
-            this.comboDropDownList1.Name = "comboDropDownList1";
-            this.comboDropDownList1.OldText = "";
-            this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
-            this.comboDropDownList1.TabIndex = 8;
-            this.comboDropDownList1.Type = "Pms_FabricType";
-            // 
-            // dateATA
-            // 
-            // 
-            // 
-            // 
-            this.dateATA.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateATA.DateBox1.Name = "";
-            this.dateATA.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateATA.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateATA.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateATA.DateBox2.Name = "";
-            this.dateATA.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateATA.DateBox2.TabIndex = 1;
-            this.dateATA.Location = new System.Drawing.Point(499, 39);
-            this.dateATA.Name = "dateATA";
-            this.dateATA.Size = new System.Drawing.Size(280, 23);
-            this.dateATA.TabIndex = 7;
             // 
             // P38
             // 
