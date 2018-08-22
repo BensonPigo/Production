@@ -81,7 +81,7 @@ namespace Sci.Production.Warehouse
                   .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true,settings: ns)
                   .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
-                  .Date("FinalETA", header: "Material ATA ", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                  .Date("WhseArrival", header: "Material ATA ", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12),iseditingreadonly:false,settings: remark)
@@ -134,7 +134,7 @@ select 0 as [selected]
         , fi.Roll
         , fi.Dyelot
         , iif(fi.Lock=0,'Unlocked','Locked') [status]
-        , pd.FinalETA
+        , r.WhseArrival
         , fi.InQty
         , fi.OutQty
         , fi.AdjustQty
@@ -159,6 +159,8 @@ from dbo.FtyInventory fi WITH (NOLOCK)
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
 left join dbo.factory f WITH (NOLOCK) on o.FtyGroup=f.id
+left join Receiving_Detail rd WITH (NOLOCK) on rd.PoId = fi.POID and rd.Seq1 = fi.seq1 and rd.seq2 = fi.seq2 and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
+left join Receiving r WITH (NOLOCK) on r.id = rd.id
 cross apply
 (
 	select  earliest_BuyerDelivery = min(o1.BuyerDelivery)  
@@ -195,15 +197,15 @@ where   f.MDivisionID = '{0}'
             {
                 case 0:
                     strSQLCmd.Append(@" 
-        and (stocktype='B' or stocktype ='I')");
+        and (fi.stocktype='B' or fi.stocktype ='I')");
                     break;
                 case 1:
                     strSQLCmd.Append(@" 
-        and stocktype='B'");
+        and fi.stocktype='B'");
                     break;
                 case 2:
                     strSQLCmd.Append(@" 
-        and stocktype='I'");
+        and fi.stocktype='I'");
                     break;
             }
 
@@ -232,7 +234,7 @@ txtReceivingid.Text));
             if (!MyUtility.Check.Empty(dateATA.TextBox1.Value))
             {
                 strSQLCmd.Append(string.Format(@" 
-and pd.FinalETA between '{0}' and '{1}'", dateATA.TextBox1.Text, dateATA.TextBox2.Text));
+and r.WhseArrival between '{0}' and '{1}'", dateATA.TextBox1.Text, dateATA.TextBox2.Text));
             }
             if (!MyUtility.Check.Empty(comboDropDownList1.SelectedValue))
             {
