@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.checkBoxNoClosed = new Sci.Win.UI.CheckBox();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.txtLocalPoidEnd = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
@@ -50,27 +51,32 @@
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.checkShippingMark = new Sci.Win.UI.CheckBox();
-            this.checkBoxNoClosed = new Sci.Win.UI.CheckBox();
+            this.rdbtn_payment = new Sci.Win.UI.RadioButton();
+            this.rdbtn_incoming = new Sci.Win.UI.RadioButton();
+            this.rdbtn_PandI = new Sci.Win.UI.RadioButton();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(439, 24);
+            this.print.Location = new System.Drawing.Point(474, 24);
             this.print.TabIndex = 2;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(439, 60);
+            this.toexcel.Location = new System.Drawing.Point(474, 60);
             this.toexcel.TabIndex = 3;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(439, 96);
+            this.close.Location = new System.Drawing.Point(474, 96);
             this.close.TabIndex = 4;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.rdbtn_PandI);
+            this.panel1.Controls.Add(this.rdbtn_incoming);
+            this.panel1.Controls.Add(this.rdbtn_payment);
             this.panel1.Controls.Add(this.checkBoxNoClosed);
             this.panel1.Controls.Add(this.comboFactory);
             this.panel1.Controls.Add(this.txtLocalPoidEnd);
@@ -94,8 +100,20 @@
             this.panel1.Controls.Add(this.labelSCIDelivery);
             this.panel1.Location = new System.Drawing.Point(8, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(409, 293);
+            this.panel1.Size = new System.Drawing.Size(443, 347);
             this.panel1.TabIndex = 1;
+            // 
+            // checkBoxNoClosed
+            // 
+            this.checkBoxNoClosed.AutoSize = true;
+            this.checkBoxNoClosed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBoxNoClosed.Location = new System.Drawing.Point(15, 265);
+            this.checkBoxNoClosed.Name = "checkBoxNoClosed";
+            this.checkBoxNoClosed.Size = new System.Drawing.Size(104, 21);
+            this.checkBoxNoClosed.TabIndex = 94;
+            this.checkBoxNoClosed.Text = "Outstanding";
+            this.checkBoxNoClosed.UseVisualStyleBackColor = true;
+            this.checkBoxNoClosed.CheckedChanged += new System.EventHandler(this.checkBoxNoClosed_CheckedChanged);
             // 
             // comboFactory
             // 
@@ -105,6 +123,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(114, 135);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 6;
             // 
@@ -176,6 +195,7 @@
             "PO Order"});
             this.comboReportType.Location = new System.Drawing.Point(114, 235);
             this.comboReportType.Name = "comboReportType";
+            this.comboReportType.OldText = "";
             this.comboReportType.Size = new System.Drawing.Size(121, 24);
             this.comboReportType.TabIndex = 9;
             this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.comboReportType_SelectedIndexChanged);
@@ -314,7 +334,7 @@
             // 
             this.checkShippingMark.AutoSize = true;
             this.checkShippingMark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkShippingMark.Location = new System.Drawing.Point(427, 151);
+            this.checkShippingMark.Location = new System.Drawing.Point(461, 147);
             this.checkShippingMark.Name = "checkShippingMark";
             this.checkShippingMark.Size = new System.Drawing.Size(117, 21);
             this.checkShippingMark.TabIndex = 0;
@@ -322,20 +342,48 @@
             this.checkShippingMark.UseVisualStyleBackColor = true;
             this.checkShippingMark.CheckedChanged += new System.EventHandler(this.checkShippingMark_CheckedChanged);
             // 
-            // checkBoxNoClosed
+            // rdbtn_payment
             // 
-            this.checkBoxNoClosed.AutoSize = true;
-            this.checkBoxNoClosed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxNoClosed.Location = new System.Drawing.Point(15, 265);
-            this.checkBoxNoClosed.Name = "checkBoxNoClosed";
-            this.checkBoxNoClosed.Size = new System.Drawing.Size(250, 21);
-            this.checkBoxNoClosed.TabIndex = 94;
-            this.checkBoxNoClosed.Text = "Outstanding (without payment only)";
-            this.checkBoxNoClosed.UseVisualStyleBackColor = true;
+            this.rdbtn_payment.AutoSize = true;
+            this.rdbtn_payment.Enabled = false;
+            this.rdbtn_payment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtn_payment.Location = new System.Drawing.Point(119, 265);
+            this.rdbtn_payment.Name = "rdbtn_payment";
+            this.rdbtn_payment.Size = new System.Drawing.Size(158, 21);
+            this.rdbtn_payment.TabIndex = 95;
+            this.rdbtn_payment.TabStop = true;
+            this.rdbtn_payment.Text = "without payment only";
+            this.rdbtn_payment.UseVisualStyleBackColor = true;
+            // 
+            // rdbtn_incoming
+            // 
+            this.rdbtn_incoming.AutoSize = true;
+            this.rdbtn_incoming.Enabled = false;
+            this.rdbtn_incoming.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtn_incoming.Location = new System.Drawing.Point(119, 292);
+            this.rdbtn_incoming.Name = "rdbtn_incoming";
+            this.rdbtn_incoming.Size = new System.Drawing.Size(168, 21);
+            this.rdbtn_incoming.TabIndex = 96;
+            this.rdbtn_incoming.TabStop = true;
+            this.rdbtn_incoming.Text = "With out incoming only";
+            this.rdbtn_incoming.UseVisualStyleBackColor = true;
+            // 
+            // rdbtn_PandI
+            // 
+            this.rdbtn_PandI.AutoSize = true;
+            this.rdbtn_PandI.Enabled = false;
+            this.rdbtn_PandI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdbtn_PandI.Location = new System.Drawing.Point(119, 319);
+            this.rdbtn_PandI.Name = "rdbtn_PandI";
+            this.rdbtn_PandI.Size = new System.Drawing.Size(317, 21);
+            this.rdbtn_PandI.TabIndex = 97;
+            this.rdbtn_PandI.TabStop = true;
+            this.rdbtn_PandI.Text = "Without payment only or without incoming only";
+            this.rdbtn_PandI.UseVisualStyleBackColor = true;
             // 
             // R26
             // 
-            this.ClientSize = new System.Drawing.Size(547, 331);
+            this.ClientSize = new System.Drawing.Size(582, 384);
             this.Controls.Add(this.checkShippingMark);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "dateSCIDelivery";
@@ -379,5 +427,8 @@
         private Win.UI.CheckBox checkShippingMark;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.CheckBox checkBoxNoClosed;
+        private Win.UI.RadioButton rdbtn_PandI;
+        private Win.UI.RadioButton rdbtn_incoming;
+        private Win.UI.RadioButton rdbtn_payment;
     }
 }
