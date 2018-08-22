@@ -34,7 +34,7 @@ select
 [Version] = ts.Version,
 [SeqNo] = tsd.Seq,
 [SeqCode] = tsd.OperationID,
-[SeqName] = op.DescEN,
+[SeqName] = iif(isnull(op.Annotation,'')='',op.DescEN,op.Annotation),
 [MachineTypeID] = tsd.MachineTypeID,
 [SAM] = Round(tsd.SMV/60,7)
 into #tMOSeqD
@@ -42,7 +42,7 @@ from #SrcOrderID so with (nolock)
 inner join orders o with (nolock) on so.OrderID = o.id
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID = ts.SeasonID and o.BrandID = ts.BrandID and ts.ComboType = sl.Location
-inner join TimeStudy_Detail tsd with (nolock) on tsd.ID = ts.ID and ISNUMERIC(tsd.Seq) = 1
+inner join TimeStudy_Detail tsd with (nolock) on tsd.ID = ts.ID and ISNUMERIC(tsd.Seq) = 1 and tsd.SMV<>0
 left join Operation op  with (nolock) on tsd.OperationID = op.ID 
 
 --tMOSeqM（制单工序主表） 
@@ -111,23 +111,23 @@ where exists (select 1 from #tMOSeqD where SeqCode = Operation.ID)
 --update
 update T set	ColorName = S.ColorName,
 				Qty = S.qty,
-				CmdType = 'update',
+				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				SunriseUpdated = 0
+				InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMODCS T
 inner join #tMODCS S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS  and T.ColorNo = S.ColorNo collate SQL_Latin1_General_CP1_CI_AS and T.SizeName = S.SizeName collate SQL_Latin1_General_CP1_CI_AS
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMODCS(MONo,ColorNo,ColorName,SizeName ,Qty,CmdType,CmdTime,SunriseUpdated)
-select S.MONo,S.ColorNo,S.ColorName,S.SizeName ,S.qty,'insert',GetDate(),0 from #tMODCS S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMODCS(MONo,ColorNo,ColorName,SizeName ,Qty,CmdType,CmdTime,InterfaceTime)
+select S.MONo,S.ColorNo,S.ColorName,S.SizeName ,S.qty,'insert',GetDate(),null from #tMODCS S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMODCS T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and 
 T.ColorNo = S.ColorNo collate SQL_Latin1_General_CP1_CI_AS and 
 T.SizeName = S.SizeName collate SQL_Latin1_General_CP1_CI_AS)
 
 -- delete 
-update T set CmdType = 'delete',
+update T set CmdType ='delete',
 			 CmdTime = GetDate(),
-			 SunriseUpdated = 0
+			 InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMODCS T
 where exists (select 1 from #tMODCS S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS  ) and  
 not exists (select 1 from #tMODCS S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and 
@@ -139,17 +139,17 @@ T.ColorNo = S.ColorNo collate SQL_Latin1_General_CP1_CI_AS and
 update T set	SeqCode = S.SeqCode,
 				SeqName = S.SeqName,
 				SAM = S.SAM,
-				CmdType = 'update',
+				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				SunriseUpdated = 0
+				InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T
 inner join #tMOSeqD S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and 
 T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
 T.SeqNo = S.SeqNo collate SQL_Latin1_General_CP1_CI_AS
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD(MONo,Version,SeqNo,SeqCode ,SeqName,SAM,CmdType,CmdTime,SunriseUpdated)
-select S.MONo,S.Version,S.SeqNo,S.SeqCode ,S.SeqName,S.SAM,'insert',GetDate(),0 from #tMOSeqD S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD(MONo,Version,SeqNo,SeqCode ,SeqName,SAM,CmdType,CmdTime,InterfaceTime)
+select S.MONo,S.Version,S.SeqNo,S.SeqCode ,S.SeqName,S.SAM,'insert',GetDate(),null from #tMOSeqD S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS  and 
 T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
 T.SeqNo = S.SeqNo collate SQL_Latin1_General_CP1_CI_AS)
@@ -157,7 +157,7 @@ T.SeqNo = S.SeqNo collate SQL_Latin1_General_CP1_CI_AS)
 -- delete 
 update T set CmdType = 'delete',
 			 CmdTime = GetDate(),
-			 SunriseUpdated = 0
+			 InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T
 where exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS ) and  
 not exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and
@@ -172,22 +172,22 @@ update T set	CMSAMTotal = S.CMSAMTotal,
 				SAMTotal = S.SAMTotal,
 				EffDate = S.EffDate,
 				insertor = S.insertor,
-				CmdType = 'update',
+				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				SunriseUpdated = 0
+				InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqM T
 inner join #tMOSeqM S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMOSeqM(MONo,Version,CMSAMTotal,SAMTotal ,EffDate,insertor,CmdType,CmdTime,SunriseUpdated)
-select S.MONo,S.Version,S.CMSAMTotal,S.SAMTotal ,S.EffDate,S.insertor,'insert',GetDate(),0 from #tMOSeqM S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMOSeqM(MONo,Version,CMSAMTotal,SAMTotal ,EffDate,insertor,CmdType,CmdTime,InterfaceTime)
+select S.MONo,S.Version,S.CMSAMTotal,S.SAMTotal ,S.EffDate,S.insertor,'insert',GetDate(),null from #tMOSeqM S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqM T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS  and 
 T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS)
 
 -- delete 
 update T set CmdType = 'delete',
 			 CmdTime = GetDate(),
-			 SunriseUpdated = 0
+			 InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqM T
 where exists (select 1 from #tMOSeqM S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS ) and  
 not exists (select 1 from #tMOSeqM S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and 
@@ -202,30 +202,30 @@ update T set	ProNoticeNo = S.ProNoticeNo,
 				SAMTotal = S.SAMTotal,
 				Insertor = S.Insertor,
 				DeliveryDate = S.DeliveryDate,
-				CmdType = 'update',
+				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				SunriseUpdated = 0
+				InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T
 inner join #tMOM S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM(MONo,ProNoticeNo,Styleno,Qty ,CustName,SAMTotal,Insertor,DeliveryDate,CmdType,CmdTime,SunriseUpdated)
-select S.MONo,S.ProNoticeNo,S.Styleno,S.Qty ,S.CustName,S.SAMTotal,S.Insertor,S.DeliveryDate,'insert',GetDate(),0 from #tMOM S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM(MONo,ProNoticeNo,Styleno,Qty ,CustName,SAMTotal,Insertor,DeliveryDate,CmdType,CmdTime,InterfaceTime)
+select S.MONo,S.ProNoticeNo,S.Styleno,S.Qty ,S.CustName,S.SAMTotal,S.Insertor,S.DeliveryDate,'insert',GetDate(),null from #tMOM S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS)
 
 --tSeqBase¡]°ò¥»¤u§Çªí¡^
 --update
 update T set	SeqName = S.SeqName,
 				SAM = S.SAM,
-				CmdType = 'update',
+				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				SunriseUpdated = 0
+				InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tSeqBase T
 inner join #tSeqBase S on T.SeqCode = S.SeqCode collate SQL_Latin1_General_CP1_CI_AS 
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tSeqBase(SeqCode,SeqName,SAM,Price,CmdType,CmdTime,SunriseUpdated)
-select S.SeqCode,S.SeqName,S.SAM,0,'insert',GetDate(),0 from #tSeqBase S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tSeqBase(SeqCode,SeqName,SAM,Price,CmdType,CmdTime,InterfaceTime)
+select S.SeqCode,S.SeqName,S.SAM,0,'insert',GetDate(),null from #tSeqBase S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tSeqBase T where T.SeqCode = S.SeqCode collate SQL_Latin1_General_CP1_CI_AS)
 
 --tMachineInfo¡]¦ç?«H®§ªí¡^
@@ -235,15 +235,15 @@ update T set	TypeCode = S.TypeCode,
 				Model = S.Model,
 				Brand = S.Brand,
 				Insertor = S.Insertor,
-				CmdType = 'update',
+				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				SunriseUpdated = 0
+				InterfaceTime = null
 from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T
 inner join #tMachineInfo S on T.MachineCode = S.MachineCode collate SQL_Latin1_General_CP1_CI_AS
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo(MachineCode,TypeCode,TypeName,Model,Brand,Insertor,IsUsing,CardNo,CmdType,CmdTime,SunriseUpdated)
-select S.MachineCode,S.TypeCode,S.TypeName,S.Model,S.Brand,S.Insertor,S.IsUsing,0,'insert',GetDate(),0 from #tMachineInfo S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo(MachineCode,TypeCode,TypeName,Model,Brand,Insertor,IsUsing,CardNo,CmdType,CmdTime,InterfaceTime)
+select S.MachineCode,S.TypeCode,S.TypeName,S.Model,S.Brand,S.Insertor,S.IsUsing,0,'insert',GetDate(),null from #tMachineInfo S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T where T.MachineCode = S.MachineCode collate SQL_Latin1_General_CP1_CI_AS)
 
 drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo
