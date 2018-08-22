@@ -1,19 +1,23 @@
 ﻿CREATE TABLE [dbo].[Oven] (
-    [ID]        BIGINT         IDENTITY (1, 1) NOT NULL,
-    [POID]      VARCHAR (13)   CONSTRAINT [DF_Oven_POID] DEFAULT ('') NOT NULL,
-    [TestNo]    NUMERIC (2)    CONSTRAINT [DF_Oven_TestNo] DEFAULT ((0)) NOT NULL,
-    [InspDate]  DATE           NOT NULL,
-    [Article]   VARCHAR (8)    CONSTRAINT [DF_Oven_Article] DEFAULT ('') NOT NULL,
-    [Result]    VARCHAR (15)   CONSTRAINT [DF_Oven_Result] DEFAULT ('') NOT NULL,
-    [Status]    VARCHAR (15)   CONSTRAINT [DF_Oven_Status] DEFAULT ('') NULL,
-    [Inspector] VARCHAR (10)   CONSTRAINT [DF_Oven_Inspector] DEFAULT ('') NOT NULL,
-    [Remark]    NVARCHAR (120) CONSTRAINT [DF_Oven_Remark] DEFAULT ('') NULL,
-    [addName]   VARCHAR (10)   CONSTRAINT [DF_Oven_addName] DEFAULT ('') NULL,
-    [addDate]   DATETIME       NULL,
-    [EditName]  VARCHAR (10)   CONSTRAINT [DF_Oven_EditName] DEFAULT ('') NULL,
-    [EditDate]  DATETIME       NULL,
+    [ID]          BIGINT         IDENTITY (1, 1) NOT NULL,
+    [POID]        VARCHAR (13)   CONSTRAINT [DF_Oven_POID] DEFAULT ('') NOT NULL,
+    [TestNo]      NUMERIC (2)    CONSTRAINT [DF_Oven_TestNo] DEFAULT ((0)) NOT NULL,
+    [InspDate]    DATE           NOT NULL,
+    [Article]     VARCHAR (8)    CONSTRAINT [DF_Oven_Article] DEFAULT ('') NOT NULL,
+    [Result]      VARCHAR (15)   CONSTRAINT [DF_Oven_Result] DEFAULT ('') NOT NULL,
+    [Status]      VARCHAR (15)   CONSTRAINT [DF_Oven_Status] DEFAULT ('') NULL,
+    [Inspector]   VARCHAR (10)   CONSTRAINT [DF_Oven_Inspector] DEFAULT ('') NOT NULL,
+    [Remark]      NVARCHAR (120) CONSTRAINT [DF_Oven_Remark] DEFAULT ('') NULL,
+    [addName]     VARCHAR (10)   CONSTRAINT [DF_Oven_addName] DEFAULT ('') NULL,
+    [addDate]     DATETIME       NULL,
+    [EditName]    VARCHAR (10)   CONSTRAINT [DF_Oven_EditName] DEFAULT ('') NULL,
+    [EditDate]    DATETIME       NULL,
+    [Temperature] INT            DEFAULT ((0)) NOT NULL,
+    [Time]        INT            DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Oven] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -72,4 +76,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Oven', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [Index_Oven_GetFirQaRecord]
+    ON [dbo].[Oven]([POID] ASC);
 
