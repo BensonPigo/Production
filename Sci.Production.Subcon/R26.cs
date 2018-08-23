@@ -152,12 +152,44 @@ namespace Sci.Production.Subcon
             {
                 if (this.Report_Type != "PO Order")
                 {
-                    sqlWhere = checkBoxNoClosed.Checked ? @" where a.Status != 'Closed' AND b.qty > b.APQty and " + sqlWhere : " where " + sqlWhere;
+                    if (rdbtn_payment.Checked)
+                    {
+                        sqlWhere = @" where a.Status != 'Closed' AND b.qty > b.APQty and " + sqlWhere;
+                    }
+                    else if (rdbtn_incoming.Checked)
+                    {
+                        sqlWhere = @" where a.Status != 'Closed' AND b.qty > b.InQty and " + sqlWhere;
+                    }
+                    else if (rdbtn_PandI.Checked)
+                    {
+                        sqlWhere = @" where a.Status != 'Closed' AND (b.qty > b.APQty or b.qty > b.InQty)and " + sqlWhere;
+                    }
+                    else
+                    {
+                        sqlWhere =  " where " + sqlWhere;
+                    }
                 }
                 else
                 {
-                    sqlWhere = checkBoxNoClosed.Checked ? @" where a.Status != 'Closed' and " + sqlWhere : " where " + sqlWhere;
-                    sqlByPoOrder = checkBoxNoClosed.Checked ? "having  sum(b.Qty) >  sum(b.APQty)" : "";
+                    if (rdbtn_payment.Checked)
+                    {
+                        sqlWhere = @" where a.Status != 'Closed' and " + sqlWhere;
+                        sqlByPoOrder = "having  sum(b.Qty) >  sum(b.APQty)";
+                    }
+                    else if (rdbtn_incoming.Checked)
+                    {
+                        sqlWhere = @" where a.Status != 'Closed' and " + sqlWhere;
+                        sqlByPoOrder = "having  sum(b.Qty) >  sum(b.InQty)";
+                    }
+                    else if (rdbtn_PandI.Checked)
+                    {
+                        sqlWhere = @" where a.Status != 'Closed' and " + sqlWhere;
+                        sqlByPoOrder = "having  sum(b.Qty) >  sum(b.APQty) or sum(b.Qty) >  sum(b.InQty) ";
+                    }
+                    else
+                    {
+                        sqlWhere = " where " + sqlWhere; ;
+                    }
                 }
               
             }
@@ -606,6 +638,17 @@ left join Factory  e WITH (NOLOCK) on e.id = a.factoryid
                 print.Enabled = false;
                 toexcel.Enabled = true;
 
+            }
+        }
+
+        private void checkBoxNoClosed_CheckedChanged(object sender, EventArgs e)
+        {
+            rdbtn_payment.Enabled = rdbtn_incoming.Enabled = rdbtn_PandI.Enabled = checkBoxNoClosed.Checked;
+            if (!checkBoxNoClosed.Checked)
+            {
+                rdbtn_payment.Checked = false;
+                rdbtn_incoming.Checked = false;
+                rdbtn_PandI.Checked = false;
             }
         }
     }
