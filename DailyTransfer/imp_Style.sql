@@ -561,6 +561,22 @@ StyleUkey
 ,Contents
 from Trade_To_Pms.dbo.Style_Article as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_Article as a WITH (NOLOCK) where a.StyleUkey	= b.StyleUkey AND a.Article	= b.Article)
+
+------------Style_Article_PadPrint----------------------Art
+Merge Production.dbo.Style_Article_PadPrint as t
+Using (select a.* from Trade_To_Pms.dbo.Style_Article_PadPrint a ) as s
+on t.Styleukey=s.Styleukey and t.article=s.article and t.colorid = s.colorid
+when matched then 
+	update set 
+		t.qty			= s.qty
+when not matched by target then
+	insert (
+		Styleukey	, Article	, colorid,  qty
+	) values (
+		s.Styleukey , s.Article , s.colorid, s.qty
+	)
+when not matched by source AND T.Styleukey IN (SELECT Styleukey FROM Trade_To_Pms.dbo.Style) then  
+	delete;
 --STYLEA
 --Style_MarkerList
 ----------------------刪除主TABLE多的資料
