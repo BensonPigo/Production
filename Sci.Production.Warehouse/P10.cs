@@ -980,6 +980,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string cutplanID = row["cutplanID"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string cutno = this.editCutNo.Text;
+            string FactoryID = row["FactoryID"].ToString();
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -998,6 +999,7 @@ where id = @MDivision", pars, out dt);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanID", cutplanID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutno", cutno));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + FactoryID));
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable aa;
