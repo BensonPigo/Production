@@ -10,7 +10,7 @@ declare @RgCode nvarchar(255)
 select @ToAddress = ToAddress ,@CcAddress = CcAddress from MailTo where id = '016';
 select @RgCode = RgCode from system;
 begin try
---§ì¥X®É¶¡°Ï¶¡¤ºSewingScheduleªºorderID
+--抓出時間區間內SewingSchedule的orderID
 select distinct OrderID
 into #SrcOrderID
 from dbo.SewingSchedule with (nolock) 
@@ -19,7 +19,7 @@ where inline between @StartDate and @EndDate or
 	  (inline <= @StartDate and Offline >= @EndDate)
 
 
---tMODCS¡]¨î??¦â¤Ø?ªí¡^
+--tMODCS(制單顏色尺碼錶)
 select 
 [MONo] = so.OrderID + '-' + sl.Location,
 [ColorNo] = oq.Article,
@@ -32,7 +32,7 @@ inner join orders o with (nolock) on so.OrderID = o.id
 inner join Order_Qty oq with (nolock) on o.id = oq.ID
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 
---tMOSeqD(¨î?¤u§Ç©ú?ªí)
+--tMOSeqD(制單工序明細表)
 select
 [MONo] = so.OrderID + '-' + sl.Location,
 [OrderID] = so.OrderID,
@@ -51,7 +51,7 @@ inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID =
 inner join TimeStudy_Detail tsd with (nolock) on tsd.ID = ts.ID and ISNUMERIC(tsd.Seq) = 1 and tsd.SMV<>0
 left join Operation op  with (nolock) on tsd.OperationID = op.ID 
 
---tMOSeqM¡]¨î?¤u§Ç¥Dªí¡^ 
+--tMOSeqM(制單工序主表) 
 select 
 [MONo] = so.OrderID + '-' + sl.Location,
 [OrderID] = so.OrderID,
@@ -68,7 +68,7 @@ inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID = ts.SeasonID and o.BrandID = ts.BrandID and ts.ComboType = sl.Location
 outer apply (select sum(SAM) as [Value] from #tMOSeqD where OrderID = so.OrderID and Location = sl.Location) as SAMTotal
 
---tMOM¡]¨î?¥Dªí¡^
+--tMOM(制單主表)
 select 
 [MONo] = so.OrderID + '-' + sl.Location,
 [ProNoticeNo] = so.OrderID,
@@ -84,7 +84,7 @@ inner join orders o with (nolock) on so.OrderID = o.id
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 left join #tMOSeqM tMM on tMM.OrderID = so.OrderID and tMM.Location = sl.Location
 
---tMachineInfo¡]¦ç?«H®§ªí¡^
+--tMachineInfo(衣車信息表)
 select 
 [MachineCode] = m.ID,
 [TypeCode] = m.MachineGroupID,
@@ -100,7 +100,7 @@ where exists (select distinct MachineGroupID from Production.dbo.MachineType
 				inner join #tMOSeqD tM on tm.MachineTypeID = MachineType.ID
 				where ArtworkTypeID = 'SEWING' and MachineType.MachineGroupID = m.MachineGroupID)
 
---tSeqBase¡]°ò¥»¤u§Çªí¡^
+--tSeqBase(基本工序表)
 select 
 [SeqCode] = ID,
 [SeqName] = DescEN,
@@ -111,9 +111,9 @@ where exists (select 1 from #tMOSeqD where SeqCode = Operation.ID)
 
 
 
---|P¡LB¡MeRA|USUNRISE db
+--同步資料至SUNRISE db
 
---tMODCS!]¡Li??|a?O?ai!^
+--tMODCS(制單顏色尺碼錶)
 --update
 update T set	ColorName = S.ColorName,
 				Qty = S.qty,
@@ -140,7 +140,7 @@ not exists (select 1 from #tMODCS S where T.MONo = S.MONo collate SQL_Latin1_Gen
 T.ColorNo = S.ColorNo collate SQL_Latin1_General_CP1_CI_AS and
  T.SizeName = S.SizeName collate SQL_Latin1_General_CP1_CI_AS)
 
---tMOSeqD(¡Li??u¡±Ccu?ai) SeqNo ¡LaAa??¡±O?¢G|P
+--tMOSeqD(制單工序明細表) SeqNo 兩邊型別不同
 --update
 update T set	SeqCode = S.SeqCode,
 				SeqName = S.SeqName,
@@ -172,7 +172,7 @@ T.SeqNo = S.SeqNo collate SQL_Latin1_General_CP1_CI_AS)
 
 --select * from #tMOSeqD where mono = '18052464GGS-B' and Version = '01' and SeqNo = '0620'
 
---tMOSeqM!]¡Li??u¡±C¢DDai!^
+--tMOSeqM(制單工序主表) 
 --update
 update T set	CMSAMTotal = S.CMSAMTotal,
 				SAMTotal = S.SAMTotal,
@@ -199,7 +199,7 @@ where exists (select 1 from #tMOSeqM S where T.MONo = S.MONo collate SQL_Latin1_
 not exists (select 1 from #tMOSeqM S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and 
 T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS)
 
---tMOM!]¡Li?¢DDai!^
+--tMOM(制單主表)
 --update
 update T set	ProNoticeNo = S.ProNoticeNo,
 				Styleno = S.Styleno,
@@ -219,7 +219,7 @@ insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM(MONo,ProNoticeNo,Styleno,Qty ,CustNam
 select S.MONo,S.ProNoticeNo,S.Styleno,S.Qty ,S.CustName,S.SAMTotal,S.Insertor,S.DeliveryDate,'insert',GetDate(),null from #tMOM S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS)
 
---tSeqBase!]¢Xo¢D??u¡±Cai!^
+--tSeqBase(基本工序表)
 --update
 update T set	SeqName = S.SeqName,
 				SAM = S.SAM,
@@ -234,7 +234,7 @@ insert into [SUNRISE].SUNRISEEXCH.dbo.tSeqBase(SeqCode,SeqName,SAM,Price,CmdType
 select S.SeqCode,S.SeqName,S.SAM,0,'insert',GetDate(),null from #tSeqBase S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tSeqBase T where T.SeqCode = S.SeqCode collate SQL_Latin1_General_CP1_CI_AS)
 
---tMachineInfo!]|c??HR¡±ai!^
+--tMachineInfo(衣車信息表)
 --update
 update T set	TypeCode = S.TypeCode,
 				TypeName = S.TypeName,
