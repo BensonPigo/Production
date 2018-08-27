@@ -4,7 +4,13 @@
 AS
 begin
 Set NoCount On;
---抓出時間區間內SewingSchedule的orderID
+declare @ToAddress nvarchar(max)
+declare @CcAddress nvarchar(max)
+declare @RgCode nvarchar(255)
+select @ToAddress = ToAddress ,@CcAddress = CcAddress from MailTo where id = '016';
+select @RgCode = RgCode from system;
+begin try
+--§ì¥X®É¶¡°Ï¶¡¤ºSewingScheduleªºorderID
 select distinct OrderID
 into #SrcOrderID
 from dbo.SewingSchedule with (nolock) 
@@ -13,7 +19,7 @@ where inline between @StartDate and @EndDate or
 	  (inline <= @StartDate and Offline >= @EndDate)
 
 
---tMODCS（制单颜色尺码表）
+--tMODCS¡]¨î??¦â¤Ø?ªí¡^
 select 
 [MONo] = so.OrderID + '-' + sl.Location,
 [ColorNo] = oq.Article,
@@ -26,7 +32,7 @@ inner join orders o with (nolock) on so.OrderID = o.id
 inner join Order_Qty oq with (nolock) on o.id = oq.ID
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 
---tMOSeqD(制单工序明细表)
+--tMOSeqD(¨î?¤u§Ç©ú?ªí)
 select
 [MONo] = so.OrderID + '-' + sl.Location,
 [OrderID] = so.OrderID,
@@ -45,7 +51,7 @@ inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID =
 inner join TimeStudy_Detail tsd with (nolock) on tsd.ID = ts.ID and ISNUMERIC(tsd.Seq) = 1 and tsd.SMV<>0
 left join Operation op  with (nolock) on tsd.OperationID = op.ID 
 
---tMOSeqM（制单工序主表） 
+--tMOSeqM¡]¨î?¤u§Ç¥Dªí¡^ 
 select 
 [MONo] = so.OrderID + '-' + sl.Location,
 [OrderID] = so.OrderID,
@@ -62,7 +68,7 @@ inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID = ts.SeasonID and o.BrandID = ts.BrandID and ts.ComboType = sl.Location
 outer apply (select sum(SAM) as [Value] from #tMOSeqD where OrderID = so.OrderID and Location = sl.Location) as SAMTotal
 
---tMOM（制单主表）
+--tMOM¡]¨î?¥Dªí¡^
 select 
 [MONo] = so.OrderID + '-' + sl.Location,
 [ProNoticeNo] = so.OrderID,
@@ -78,7 +84,7 @@ inner join orders o with (nolock) on so.OrderID = o.id
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 left join #tMOSeqM tMM on tMM.OrderID = so.OrderID and tMM.Location = sl.Location
 
---tMachineInfo（衣车信息表）
+--tMachineInfo¡]¦ç?«H®§ªí¡^
 select 
 [MachineCode] = m.ID,
 [TypeCode] = m.MachineGroupID,
@@ -94,7 +100,7 @@ where exists (select distinct MachineGroupID from Production.dbo.MachineType
 				inner join #tMOSeqD tM on tm.MachineTypeID = MachineType.ID
 				where ArtworkTypeID = 'SEWING' and MachineType.MachineGroupID = m.MachineGroupID)
 
---tSeqBase（基本工序表）
+--tSeqBase¡]°ò¥»¤u§Çªí¡^
 select 
 [SeqCode] = ID,
 [SeqName] = DescEN,
@@ -105,9 +111,9 @@ where exists (select 1 from #tMOSeqD where SeqCode = Operation.ID)
 
 
 
---¦P¨B¸ê®Æ¦ÜSUNRISE db
+--|P¡LB¡MeRA|USUNRISE db
 
---tMODCS¡]¨î??¦â¤Ø?ªí¡^
+--tMODCS!]¡Li??|a?O?ai!^
 --update
 update T set	ColorName = S.ColorName,
 				Qty = S.qty,
@@ -134,7 +140,7 @@ not exists (select 1 from #tMODCS S where T.MONo = S.MONo collate SQL_Latin1_Gen
 T.ColorNo = S.ColorNo collate SQL_Latin1_General_CP1_CI_AS and
  T.SizeName = S.SizeName collate SQL_Latin1_General_CP1_CI_AS)
 
---tMOSeqD(¨î?¤u§Ç©ú?ªí) SeqNo ¨âÃä«¬§O¤£¦P
+--tMOSeqD(¡Li??u¡±Ccu?ai) SeqNo ¡LaAa??¡±O?¢G|P
 --update
 update T set	SeqCode = S.SeqCode,
 				SeqName = S.SeqName,
@@ -166,7 +172,7 @@ T.SeqNo = S.SeqNo collate SQL_Latin1_General_CP1_CI_AS)
 
 --select * from #tMOSeqD where mono = '18052464GGS-B' and Version = '01' and SeqNo = '0620'
 
---tMOSeqM¡]¨î?¤u§Ç¥Dªí¡^
+--tMOSeqM!]¡Li??u¡±C¢DDai!^
 --update
 update T set	CMSAMTotal = S.CMSAMTotal,
 				SAMTotal = S.SAMTotal,
@@ -193,7 +199,7 @@ where exists (select 1 from #tMOSeqM S where T.MONo = S.MONo collate SQL_Latin1_
 not exists (select 1 from #tMOSeqM S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and 
 T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS)
 
---tMOM¡]¨î?¥Dªí¡^
+--tMOM!]¡Li?¢DDai!^
 --update
 update T set	ProNoticeNo = S.ProNoticeNo,
 				Styleno = S.Styleno,
@@ -213,7 +219,7 @@ insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM(MONo,ProNoticeNo,Styleno,Qty ,CustNam
 select S.MONo,S.ProNoticeNo,S.Styleno,S.Qty ,S.CustName,S.SAMTotal,S.Insertor,S.DeliveryDate,'insert',GetDate(),null from #tMOM S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS)
 
---tSeqBase¡]°ò¥»¤u§Çªí¡^
+--tSeqBase!]¢Xo¢D??u¡±Cai!^
 --update
 update T set	SeqName = S.SeqName,
 				SAM = S.SAM,
@@ -228,7 +234,7 @@ insert into [SUNRISE].SUNRISEEXCH.dbo.tSeqBase(SeqCode,SeqName,SAM,Price,CmdType
 select S.SeqCode,S.SeqName,S.SAM,0,'insert',GetDate(),null from #tSeqBase S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tSeqBase T where T.SeqCode = S.SeqCode collate SQL_Latin1_General_CP1_CI_AS)
 
---tMachineInfo¡]¦ç?«H®§ªí¡^
+--tMachineInfo!]|c??HR¡±ai!^
 --update
 update T set	TypeCode = S.TypeCode,
 				TypeName = S.TypeName,
@@ -247,5 +253,33 @@ select S.MachineCode,S.TypeCode,S.TypeName,S.Model,S.Brand,S.Insertor,S.IsUsing,
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T where T.MachineCode = S.MachineCode collate SQL_Latin1_General_CP1_CI_AS)
 
 drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo
+
+-- mail 通知信
+declare @subject nvarchar(255) = concat('SUNRISE Daily transfer-',Format(getdate(),'yyyy/MM/dd'),'-',@RgCode)
+EXEC msdb.dbo.sp_send_dbmail  
+    @profile_name = 'SUNRISEmailnotice',  
+    @recipients = @ToAddress,
+	@copy_recipients= @CcAddress,  
+    @body = 'SUNRISE Daily transfer successfully',  
+    @subject = @subject; 
+	
+end try
+begin catch
+	DECLARE @ErrorMessage NVARCHAR(4000);
+	DECLARE @ErrorLine int;
+	DECLARE @ErrorBody NVARCHAR(4000);
+    SELECT @ErrorMessage = ERROR_MESSAGE(),@ErrorLine = Error_Line();
+
+	set @ErrorBody = N'Error Line: ' + CAST(@ErrorLine AS nvarchar(100)) + CHAR(13)+CHAR(10) + N'Error Message: ' + @ErrorMessage;
+
+	declare @err_subject nvarchar(255) = concat('SUNRISE Daily transfer failure-',Format(getdate(),'yyyy/MM/dd'),'-',@RgCode)
+	EXEC msdb.dbo.sp_send_dbmail  
+    @profile_name = 'SUNRISEmailnotice',  
+    @recipients = @ToAddress,
+	@copy_recipients= @CcAddress,  
+    @body = @ErrorBody,  
+    @subject = @err_subject; 
+
+end catch
 
 end
