@@ -135,6 +135,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.numCtnCFA = new Sci.Win.UI.NumericBox();
             this.numCtnTransit = new Sci.Win.UI.NumericBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.numDryCTN = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -993,15 +995,15 @@
             // 
             // labelTtlCtnQty
             // 
-            this.labelTtlCtnQty.Location = new System.Drawing.Point(21, 9);
+            this.labelTtlCtnQty.Location = new System.Drawing.Point(8, 9);
             this.labelTtlCtnQty.Name = "labelTtlCtnQty";
-            this.labelTtlCtnQty.Size = new System.Drawing.Size(110, 23);
+            this.labelTtlCtnQty.Size = new System.Drawing.Size(67, 23);
             this.labelTtlCtnQty.TabIndex = 72;
             this.labelTtlCtnQty.Text = "Ttl ctn qty";
             // 
             // labelCtnQtyInClog
             // 
-            this.labelCtnQtyInClog.Location = new System.Drawing.Point(226, 9);
+            this.labelCtnQtyInClog.Location = new System.Drawing.Point(325, 9);
             this.labelCtnQtyInClog.Name = "labelCtnQtyInClog";
             this.labelCtnQtyInClog.Size = new System.Drawing.Size(110, 23);
             this.labelCtnQtyInClog.TabIndex = 73;
@@ -1012,7 +1014,7 @@
             this.numTtlCtnQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTtlCtnQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTtlCtnQty.IsSupportEditMode = false;
-            this.numTtlCtnQty.Location = new System.Drawing.Point(135, 9);
+            this.numTtlCtnQty.Location = new System.Drawing.Point(80, 9);
             this.numTtlCtnQty.Name = "numTtlCtnQty";
             this.numTtlCtnQty.NullValue = new decimal(new int[] {
             0,
@@ -1033,7 +1035,7 @@
             this.numCtnQtyInClog.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnQtyInClog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnQtyInClog.IsSupportEditMode = false;
-            this.numCtnQtyInClog.Location = new System.Drawing.Point(339, 9);
+            this.numCtnQtyInClog.Location = new System.Drawing.Point(438, 9);
             this.numCtnQtyInClog.Name = "numCtnQtyInClog";
             this.numCtnQtyInClog.NullValue = new decimal(new int[] {
             0,
@@ -1051,15 +1053,15 @@
             // 
             // labelCtnQtyInFactory
             // 
-            this.labelCtnQtyInFactory.Location = new System.Drawing.Point(21, 36);
+            this.labelCtnQtyInFactory.Location = new System.Drawing.Point(143, 9);
             this.labelCtnQtyInFactory.Name = "labelCtnQtyInFactory";
-            this.labelCtnQtyInFactory.Size = new System.Drawing.Size(110, 23);
+            this.labelCtnQtyInFactory.Size = new System.Drawing.Size(116, 23);
             this.labelCtnQtyInFactory.TabIndex = 76;
             this.labelCtnQtyInFactory.Text = "Ctn qty in factory";
             // 
             // labelCtnQtyOnTransit
             // 
-            this.labelCtnQtyOnTransit.Location = new System.Drawing.Point(226, 36);
+            this.labelCtnQtyOnTransit.Location = new System.Drawing.Point(325, 36);
             this.labelCtnQtyOnTransit.Name = "labelCtnQtyOnTransit";
             this.labelCtnQtyOnTransit.Size = new System.Drawing.Size(110, 23);
             this.labelCtnQtyOnTransit.TabIndex = 77;
@@ -1070,7 +1072,7 @@
             this.numCtnQtyOnTransit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnQtyOnTransit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnQtyOnTransit.IsSupportEditMode = false;
-            this.numCtnQtyOnTransit.Location = new System.Drawing.Point(340, 36);
+            this.numCtnQtyOnTransit.Location = new System.Drawing.Point(439, 36);
             this.numCtnQtyOnTransit.Name = "numCtnQtyOnTransit";
             this.numCtnQtyOnTransit.NullValue = new decimal(new int[] {
             0,
@@ -1091,7 +1093,7 @@
             this.numCtnQtyInFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnQtyInFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnQtyInFactory.IsSupportEditMode = false;
-            this.numCtnQtyInFactory.Location = new System.Drawing.Point(135, 36);
+            this.numCtnQtyInFactory.Location = new System.Drawing.Point(262, 9);
             this.numCtnQtyInFactory.Name = "numCtnQtyInFactory";
             this.numCtnQtyInFactory.NullValue = new decimal(new int[] {
             0,
@@ -1109,7 +1111,7 @@
             // 
             // labelttlCtnTransferred
             // 
-            this.labelttlCtnTransferred.Location = new System.Drawing.Point(664, 9);
+            this.labelttlCtnTransferred.Location = new System.Drawing.Point(701, 9);
             this.labelttlCtnTransferred.Name = "labelttlCtnTransferred";
             this.labelttlCtnTransferred.Size = new System.Drawing.Size(142, 23);
             this.labelttlCtnTransferred.TabIndex = 80;
@@ -1117,7 +1119,7 @@
             // 
             // labelPulloutCtn
             // 
-            this.labelPulloutCtn.Location = new System.Drawing.Point(664, 36);
+            this.labelPulloutCtn.Location = new System.Drawing.Point(701, 36);
             this.labelPulloutCtn.Name = "labelPulloutCtn";
             this.labelPulloutCtn.Size = new System.Drawing.Size(142, 23);
             this.labelPulloutCtn.TabIndex = 81;
@@ -1128,7 +1130,7 @@
             this.numttlCtnTransferred.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numttlCtnTransferred.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numttlCtnTransferred.IsSupportEditMode = false;
-            this.numttlCtnTransferred.Location = new System.Drawing.Point(810, 9);
+            this.numttlCtnTransferred.Location = new System.Drawing.Point(847, 9);
             this.numttlCtnTransferred.Name = "numttlCtnTransferred";
             this.numttlCtnTransferred.NullValue = new decimal(new int[] {
             0,
@@ -1150,7 +1152,7 @@
             this.numPulloutCtn.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PulloutCTNQty", true));
             this.numPulloutCtn.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numPulloutCtn.IsSupportEditMode = false;
-            this.numPulloutCtn.Location = new System.Drawing.Point(810, 36);
+            this.numPulloutCtn.Location = new System.Drawing.Point(847, 36);
             this.numPulloutCtn.Name = "numPulloutCtn";
             this.numPulloutCtn.NullValue = new decimal(new int[] {
             0,
@@ -1169,7 +1171,7 @@
             // label38
             // 
             this.label38.BackColor = System.Drawing.Color.Transparent;
-            this.label38.Location = new System.Drawing.Point(872, 9);
+            this.label38.Location = new System.Drawing.Point(909, 9);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(17, 23);
             this.label38.TabIndex = 84;
@@ -1364,6 +1366,8 @@
             // panel7
             // 
             this.panel7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel7.Controls.Add(this.numDryCTN);
+            this.panel7.Controls.Add(this.label3);
             this.panel7.Controls.Add(this.label1);
             this.panel7.Controls.Add(this.label2);
             this.panel7.Controls.Add(this.numCtnCFA);
@@ -1388,7 +1392,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(432, 36);
+            this.label1.Location = new System.Drawing.Point(502, 36);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(110, 23);
             this.label1.TabIndex = 81;
@@ -1396,7 +1400,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(432, 9);
+            this.label2.Location = new System.Drawing.Point(502, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(110, 23);
             this.label2.TabIndex = 80;
@@ -1407,7 +1411,7 @@
             this.numCtnCFA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnCFA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnCFA.IsSupportEditMode = false;
-            this.numCtnCFA.Location = new System.Drawing.Point(546, 9);
+            this.numCtnCFA.Location = new System.Drawing.Point(616, 9);
             this.numCtnCFA.Name = "numCtnCFA";
             this.numCtnCFA.NullValue = new decimal(new int[] {
             0,
@@ -1428,7 +1432,7 @@
             this.numCtnTransit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCtnTransit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCtnTransit.IsSupportEditMode = false;
-            this.numCtnTransit.Location = new System.Drawing.Point(546, 36);
+            this.numCtnTransit.Location = new System.Drawing.Point(616, 36);
             this.numCtnTransit.Name = "numCtnTransit";
             this.numCtnTransit.NullValue = new decimal(new int[] {
             0,
@@ -1439,6 +1443,36 @@
             this.numCtnTransit.Size = new System.Drawing.Size(82, 23);
             this.numCtnTransit.TabIndex = 83;
             this.numCtnTransit.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(143, 36);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(116, 23);
+            this.label3.TabIndex = 85;
+            this.label3.Text = "CTN in Dry Room";
+            // 
+            // numDryCTN
+            // 
+            this.numDryCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numDryCTN.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DryCTN", true));
+            this.numDryCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numDryCTN.IsSupportEditMode = false;
+            this.numDryCTN.Location = new System.Drawing.Point(262, 36);
+            this.numDryCTN.Name = "numDryCTN";
+            this.numDryCTN.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numDryCTN.ReadOnly = true;
+            this.numDryCTN.Size = new System.Drawing.Size(60, 23);
+            this.numDryCTN.TabIndex = 86;
+            this.numDryCTN.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -1581,5 +1615,7 @@
         private Win.UI.Label label2;
         private Win.UI.NumericBox numCtnCFA;
         private Win.UI.NumericBox numCtnTransit;
+        private Win.UI.NumericBox numDryCTN;
+        private Win.UI.Label label3;
     }
 }
