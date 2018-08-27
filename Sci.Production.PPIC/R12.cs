@@ -162,7 +162,7 @@ select
 into #tmp
 from orders o with(nolock)
 inner join Order_TmsCost ot with(nolock) on o.id = ot.id and ot.ArtworkTypeID = 'PAD PRINTING' and ot.Price > 0 
-outer apply(select oq.id,oq.Article,Qty=sum(oq.Qty) from Order_Qty oq with(nolock) where oq.id = o.id group by oq.id,oq.Article)oq
+cross apply(select oq.id,oq.Article,Qty=sum(oq.Qty) from Order_Qty oq with(nolock) where oq.id = o.id group by oq.id,oq.Article)oq
 left join Order_Article_PadPrint oap with(nolock) on oap.ID = o.id and oap.Article = oq.Article
 left join Country c with(nolock) on c.id = o.Dest
 where o.Junk =0
