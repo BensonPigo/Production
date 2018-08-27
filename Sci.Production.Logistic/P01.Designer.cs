@@ -131,12 +131,12 @@
             this.txtdropdownlistCategory = new Sci.Production.Class.txtdropdownlist();
             this.btnAccessoryInspectionList = new Sci.Win.UI.Button();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.numDryCTN = new Sci.Win.UI.NumericBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.numCtnCFA = new Sci.Win.UI.NumericBox();
             this.numCtnTransit = new Sci.Win.UI.NumericBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.numDryCTN = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -1390,6 +1390,36 @@
             this.panel7.Size = new System.Drawing.Size(941, 72);
             this.panel7.TabIndex = 99;
             // 
+            // numDryCTN
+            // 
+            this.numDryCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numDryCTN.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DryCTN", true));
+            this.numDryCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numDryCTN.IsSupportEditMode = false;
+            this.numDryCTN.Location = new System.Drawing.Point(262, 36);
+            this.numDryCTN.Name = "numDryCTN";
+            this.numDryCTN.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numDryCTN.ReadOnly = true;
+            this.numDryCTN.Size = new System.Drawing.Size(60, 23);
+            this.numDryCTN.TabIndex = 86;
+            this.numDryCTN.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(143, 36);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(116, 23);
+            this.label3.TabIndex = 85;
+            this.label3.Text = "Ctn in Dry Room";
+            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(502, 36);
@@ -1443,36 +1473,6 @@
             this.numCtnTransit.Size = new System.Drawing.Size(82, 23);
             this.numCtnTransit.TabIndex = 83;
             this.numCtnTransit.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(143, 36);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(116, 23);
-            this.label3.TabIndex = 85;
-            this.label3.Text = "CTN in Dry Room";
-            // 
-            // numDryCTN
-            // 
-            this.numDryCTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numDryCTN.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DryCTN", true));
-            this.numDryCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numDryCTN.IsSupportEditMode = false;
-            this.numDryCTN.Location = new System.Drawing.Point(262, 36);
-            this.numDryCTN.Name = "numDryCTN";
-            this.numDryCTN.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numDryCTN.ReadOnly = true;
-            this.numDryCTN.Size = new System.Drawing.Size(60, 23);
-            this.numDryCTN.TabIndex = 86;
-            this.numDryCTN.Value = new decimal(new int[] {
             0,
             0,
             0,
