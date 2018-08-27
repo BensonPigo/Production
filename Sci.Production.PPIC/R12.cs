@@ -170,10 +170,11 @@ where o.Junk =0
 
 select * from #tmp
 
-select s.ID,s.SeasonID,sap.Article,sap.ColorID
+select distinct s.ID,s.SeasonID,s.BrandID,sa.Article,sap.ColorID
 from #tmp t
 inner join style s with(nolock) on s.ukey = t.StyleUkey
 inner join Style_TmsCost st with(nolock) on st.StyleUkey = s.Ukey and st.ArtworkTypeID = 'PAD PRINTING' and st.Price > 0 
+left join Style_Article sa with(nolock) on sa.StyleUkey = s.Ukey and sa.Article = t.Article
 left join Style_Article_PadPrint sap with(nolock) on sap.StyleUkey = s.ukey
 
 select ColorID,ym = format(SciDelivery,'yyyy/MM'),qty=sum(qty) into #tmp2 from #tmp group by ColorID,format(SciDelivery,'yyyy/MM')
@@ -342,7 +343,7 @@ drop table #tmp,#tmp2,#tmp3,#mondt
             worksheet.Columns[1].AutoFit();
             worksheet.Range[worksheet.Cells[6, 3], worksheet.Cells[6, this.printData[2].Columns.Count]].AutoFilter();
             worksheet = excel.ActiveWorkbook.Worksheets[2];
-            worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[this.printData[1].Rows.Count + 1, 4]].Borders.Weight = 2;
+            worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[this.printData[1].Rows.Count + 1, 5]].Borders.Weight = 2;
             worksheet.Columns.AutoFit();
             worksheet = excel.ActiveWorkbook.Worksheets[3];
             worksheet.Columns.AutoFit();
