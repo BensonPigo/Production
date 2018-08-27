@@ -111,13 +111,13 @@
             this.comboSortby.IsSupportUnselect = true;
             this.comboSortby.Location = new System.Drawing.Point(495, 13);
             this.comboSortby.Name = "comboSortby";
+            this.comboSortby.OldText = "";
             this.comboSortby.Size = new System.Drawing.Size(118, 24);
             this.comboSortby.TabIndex = 2;
             this.comboSortby.SelectedIndexChanged += new System.EventHandler(this.ComboSortby_SelectedIndexChanged);
             // 
             // labelSortby
             // 
-            this.labelSortby.Lines = 0;
             this.labelSortby.Location = new System.Drawing.Point(441, 13);
             this.labelSortby.Name = "labelSortby";
             this.labelSortby.Size = new System.Drawing.Size(50, 23);
@@ -132,13 +132,13 @@
             this.comboCTN.IsSupportUnselect = true;
             this.comboCTN.Location = new System.Drawing.Point(327, 13);
             this.comboCTN.Name = "comboCTN";
+            this.comboCTN.OldText = "";
             this.comboCTN.Size = new System.Drawing.Size(69, 24);
             this.comboCTN.TabIndex = 1;
             this.comboCTN.SelectedIndexChanged += new System.EventHandler(this.ComboCTN_SelectedIndexChanged);
             // 
             // labelCTN
             // 
-            this.labelCTN.Lines = 0;
             this.labelCTN.Location = new System.Drawing.Point(281, 13);
             this.labelCTN.Name = "labelCTN";
             this.labelCTN.Size = new System.Drawing.Size(42, 23);
@@ -153,13 +153,13 @@
             this.comboPackingListID.IsSupportUnselect = true;
             this.comboPackingListID.Location = new System.Drawing.Point(108, 13);
             this.comboPackingListID.Name = "comboPackingListID";
+            this.comboPackingListID.OldText = "";
             this.comboPackingListID.Size = new System.Drawing.Size(139, 24);
             this.comboPackingListID.TabIndex = 0;
             this.comboPackingListID.SelectedIndexChanged += new System.EventHandler(this.ComboPackingListID_SelectedIndexChanged);
             // 
             // labelPackingListID
             // 
-            this.labelPackingListID.Lines = 0;
             this.labelPackingListID.Location = new System.Drawing.Point(7, 13);
             this.labelPackingListID.Name = "labelPackingListID";
             this.labelPackingListID.Size = new System.Drawing.Size(97, 23);
@@ -233,6 +233,7 @@
             this.gridTransactionDetali.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridTransactionDetali.RowTemplate.Height = 24;
             this.gridTransactionDetali.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridTransactionDetali.ShowCellToolTips = false;
             this.gridTransactionDetali.Size = new System.Drawing.Size(766, 366);
             this.gridTransactionDetali.TabIndex = 0;
             this.gridTransactionDetali.TabStop = false;
@@ -275,6 +276,7 @@
             this.gridLastStatus.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridLastStatus.RowTemplate.Height = 24;
             this.gridLastStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridLastStatus.ShowCellToolTips = false;
             this.gridLastStatus.Size = new System.Drawing.Size(766, 366);
             this.gridLastStatus.TabIndex = 0;
             this.gridLastStatus.TabStop = false;
@@ -288,7 +290,6 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "comboPackingListID";
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P01_CTNStatus";
             this.Text = "Carton Status";
             this.panel3.ResumeLayout(false);
