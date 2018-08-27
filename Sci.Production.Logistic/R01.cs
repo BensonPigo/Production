@@ -205,7 +205,7 @@ group by t.ID
 
 select 
 	t.FactoryID,t.MCHandle,t.SewLine,t.ID,t.BrandID,t.StyleID,t.StyleName,t.CustPONo,t.Customize1,t.SciDelivery,t.BuyerDelivery,t.ShipmodeID,t.Location
-	,t.TotalCTN,DRYCTN=isnull(t.DRYCTN,0),t.ClogCTN,CfaCTN=isnull(t.CfaCTN,0),t2.RetCtnBySP
+	,t.TotalCTN,DRYCTN=isnull(t.DRYCTN,0),ClogCTN=isnull(t.ClogCTN,0),CfaCTN=isnull(t.CfaCTN,0),t2.RetCtnBySP
 	,[Bal Ctn by SP#]=isnull(t.TotalCTN,0)-isnull(t.ClogCTN,0) -isnull(t.DRYCTN,0) -isnull(t.CfaCTN,0)
 	,[% by SP#]=iif(isnull(t.TtlGMTQty,0)=0,0,Round(1-((t.TtlGMTQty-isnull(t.TtlClogGMTQty,0))/t.TtlGMTQty),2)*100)
 	,[Ctn SDP by SP#]=iif(isnull(t.TotalCTN,0)=0, 0,ROUND(isnull(t.ClogCTN,0)/t.TotalCTN,2)*100)
