@@ -1416,6 +1416,22 @@ BEGIN
 			)
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
+		------------Order_Article_PadPrint----------------------Art
+		Merge Production.dbo.Order_Article_PadPrint as t
+		Using (select a.* from Trade_To_Pms.dbo.Order_Article_PadPrint a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
+		on t.id=s.id and t.article=s.article and t.colorid = s.colorid
+		when matched then 
+			update set 
+				t.qty			= s.qty
+		when not matched by target then
+			insert (
+				id	, Article	, colorid,  qty
+			) values (
+				s.id , s.Article , s.colorid, s.qty
+			)
+		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
+			delete;
+
 
 		-----------Order_BOA_KeyWord---------------------Bill of Other - Key word
 

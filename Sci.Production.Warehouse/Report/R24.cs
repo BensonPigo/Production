@@ -68,6 +68,7 @@ select 	Orders.MDivisionID
 		,po3.StockUnit
 		,c.Name
 		,qty = sum(b.qty) 	
+        ,[Created by] = (select dbo.getPass1_ExtNo(a.AddName) )
 		,[FromLocation] = dbo.Getlocation(ft.Ukey)
 		,[ToLocation] = b.ToLocation
 from dbo.SubTransfer a WITH (NOLOCK) 
@@ -81,7 +82,7 @@ left join FtyInventory ft WITH(NOLOCK) on b.FromPOID=ft.POID
 left join Color c  WITH(NOLOCK) on c.ID=po3.ColorID and c.BrandId=orders.BrandID
 where a.Status = 'Confirmed' and a.type='A' 
 {0}
-group by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2,b.FromRoll,b.FromDyelot,po3.StockUnit,c.Name,ft.Ukey,b.ToLocation
+group by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2,b.FromRoll,b.FromDyelot,po3.StockUnit,c.Name,ft.Ukey,b.ToLocation ,a.AddName
 order by Orders.MDivisionID, Orders.FtyGroup, a.issuedate, b.FromPOID, b.FromSeq1, b.FromSeq2
 ", sqlFilter);
                 result = DBProxy.Current.Select(null, sqlcmd, out dt);
