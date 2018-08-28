@@ -540,8 +540,8 @@ select  a.*
         , o.StyleID
         , o.CustPONo
         , o.SeasonID
-        , Factory = STUFF(( select CONCAT(',', FtyGroup) 
-                            from ( select distinct FtyGroup 
+        , Factory = STUFF(( select CONCAT(',', FactoryID) 
+                            from ( select distinct FactoryID 
                                    from orders o 
                                    where o.id in (a.OrderID)) s 
                             for xml path('')

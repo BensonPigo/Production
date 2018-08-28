@@ -18,10 +18,16 @@ namespace Sci.Production.Class
             this.ReadOnly = true;
         }
 
+        public bool checkProduceFty = false;
+
         protected override void OnPopUp(Win.UI.TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
             string sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 order by ID";
+            if (checkProduceFty)
+            {
+                sqlWhere = "select ID from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 order by ID";
+            }
             Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, "Factory", "10", this.Text, null, null, null);
 
             DialogResult result = item.ShowDialog();
