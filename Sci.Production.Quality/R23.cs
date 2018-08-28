@@ -24,6 +24,7 @@ namespace Sci.Production.Quality
         private DataTable dtFty;
         private DataTable[] dtList;
         private List<string> listSQLFilter;
+        private string boolHoliday;
         private StringBuilder sbFtycode;
         private Color BackRed = Color.FromArgb(255, 155, 155);
         private Color FontRed = Color.FromArgb(255, 0, 0);
@@ -62,6 +63,16 @@ namespace Sci.Production.Quality
             if (!this.Brand.Empty())
             {
                 this.listSQLFilter.Add($"and o.Brandid = '{this.Brand}'");
+            }
+
+            switch (this.chkHoliday.Checked)
+            {
+                case true:
+                    this.boolHoliday = @"or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)";
+                    break;
+                case false:
+                    this.boolHoliday = string.Empty;
+                    break;
             }
             #endregion
 
@@ -141,8 +152,7 @@ left join Order_QtyShip os on pd.OrderID=os.Id	 and pd.OrderShipmodeSeq=os.Seq
 left join Orders o on os.ID=o.ID
 cross apply(
 	select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
-	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日
-	and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup) -- 排除假日
+	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
 	and Dates < pd.ReceiveDate	
 )Calendar	
 where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
@@ -152,9 +162,21 @@ and Dates < pd.ReceiveDate
 and not exists (select dates
 	from #Calendar			
 	where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
-	or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)) -- 只能是假日)		
+	 {this.boolHoliday}
+) -- 只能是假日)		
 	and Dates = pd.ReceiveDate)
 
+
+ --抓SP#
+select distinct os.Id 
+into #tmpSP
+from Order_QtyShip os
+left join Orders o on os.ID=o.ID
+left join PackingList_Detail pd on pd.OrderID=os.Id and pd.OrderShipmodeSeq=os.Seq
+inner join #CalendarData AllDate on AllDate.Dates = pd.ReceiveDate
+and AllDate.FtyGroup=o.FtyGroup
+where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
+{this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 SELECT distinct
 		[ReadyDate] = AllDate.ReadyDate
@@ -178,8 +200,8 @@ end
 ,[Brand] = o.BrandID
 ,[Qty] = os.Qty
 ,[SewingOutputQty] = isnull(SewingOutput.Qty,0)
-,[InLine] = ss.inline
-,[OffLine] = convert(date, s.Offline)
+,[InLine] = o.SewInLine
+,[OffLine] = o.SewOffLine
 ,[FirstSewnDate] = SewDate.FirstDate
 ,[LastSewnDate] = SewDate.LastDate
 ,[%]= iif(pdm.TotalCTN=0,0, ( isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)
@@ -199,11 +221,6 @@ left join Orders o on os.ID=o.ID
 inner join #CalendarData AllDate on AllDate.Dates = pd.ReceiveDate
 and AllDate.FtyGroup=o.FtyGroup
 outer apply(
-		select max(Offline) offline,min(Inline) as Inline
-		from sewingschedule
-		where OrderID=os.Id
-)s
-outer apply(
      select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
     ,case when cfa.Result='P' then 'Pass'
     when cfa.Result='F' then 'Fail'
@@ -212,7 +229,7 @@ outer apply(
     from cfa
     left join Pass1 on cfa.CFA=pass1.ID
     where convert(date,cfa.EditDate) <= AllDate.ReadyDate
-    and cfa.OrderID=pd.OrderID
+    and cfa.OrderID=os.Id
 	and cfa.Status='Confirmed'
     order by cfa.EditDate desc
 )cfa
@@ -220,20 +237,15 @@ outer apply(
 	select sum(so2.QAQty) Qty 
 	from SewingOutput_Detail so2
 	left join SewingOutput so1 on so2.ID=so1.ID
-	where so2.OrderId=pd.OrderID
-	and so1.OutputDate <= CONVERT(date, s.Offline)
+	where so2.OrderId=os.Id
+	and so1.OutputDate <= o.SewOffLine
 )SewingOutput
 outer apply(
 	select MIN(OutputDate) FirstDate,MAX(OutputDate) LastDate
 	from SewingOutput a
 	left join SewingOutput_Detail b on a.id=b.id
-	where b.OrderId =pd.OrderID
+	where b.OrderId =os.Id
 )SewDate
-outer apply(
-	select convert(date, min(inline)) inline
-	from SewingSchedule 
-	where OrderID=pd.OrderID 
-)ss
 outer apply( 
 select [TotalCTN] = Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) 
 			from PackingList_Detail pd WITH (NOLOCK) 
@@ -255,17 +267,18 @@ outer apply (
 ) Receive	
 outer apply(
 	select Line = stuff((
-		select concat(',',SewingLineID)
+		select concat(',',SewLine)
 		from (
-			select distinct SewingLineID
-			from SewingSchedule ss
-			where pd.OrderID=ss.orderid	
+			select distinct oo.SewLine
+			from orders oo
+			where os.Id=oo.ID
 			) s
 		for xml path ('')
 		),1,1,'')
 )SewingLine
 where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
 and iif(pdm.TotalCTN=0,0, ( isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)=100
+and exists (select 1 from #tmpSP where Id=os.Id)
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 

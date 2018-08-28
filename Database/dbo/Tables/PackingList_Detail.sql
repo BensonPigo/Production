@@ -222,4 +222,26 @@ CREATE NONCLUSTERED INDEX [Index_OrderIDOrderShipmodeSeqReceiveDate]
 GO
 CREATE NONCLUSTERED INDEX [IN,CTNStartNo]
     ON [dbo].[PackingList_Detail]([ID] ASC, [CTNStartNo] ASC);
+Go
 
+CREATE NONCLUSTERED INDEX [PackingList_Index_of_ReadyDate] ON [dbo].[PackingList_Detail]
+(
+	[OrderID] ASC,
+	[OrderShipmodeSeq] ASC,
+	[ReceiveDate] ASC
+)
+INCLUDE ( 	[ID],
+	[CTNStartNo],
+	[CTNQty]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+	Go
+
+	CREATE NONCLUSTERED INDEX [PackingList_Index_of_ReadyDate2] ON [dbo].[PackingList_Detail]
+(
+	[OrderID] ASC,
+	[OrderShipmodeSeq] ASC,
+	[ReceiveDate] ASC
+)
+INCLUDE ( 	[ID],
+	[CTNStartNo],
+	[CTNQty]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+Go
