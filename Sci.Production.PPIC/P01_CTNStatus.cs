@@ -142,7 +142,7 @@ where c.OrderId = '{0}' and pd.CTNQty > 0
 ),
 DryRoomTransfer 
 as (
-select c.PackingListId,c.CTNStartNo,'Dry Room Transfer to' as Type,c.ID, c.TransferTo as TypeDate , '' as Location, 
+select c.PackingListId,c.CTNStartNo,'Dry Room Transfer to' as Type,c.ID, c.TransferDate as TypeDate , '' as Location, 
 c.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
 from DryTransfer c WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
