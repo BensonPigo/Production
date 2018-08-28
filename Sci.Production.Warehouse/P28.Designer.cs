@@ -32,6 +32,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
+            this.Category = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.lbFactory = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
@@ -53,7 +54,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
-            this.Category = new Sci.Production.Class.comboDropDownList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -87,6 +87,19 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1008, 107);
             this.panel1.TabIndex = 1;
+            // 
+            // Category
+            // 
+            this.Category.BackColor = System.Drawing.Color.White;
+            this.Category.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.Category.FormattingEnabled = true;
+            this.Category.IsSupportUnselect = true;
+            this.Category.Location = new System.Drawing.Point(729, 43);
+            this.Category.Name = "Category";
+            this.Category.OldText = "";
+            this.Category.Size = new System.Drawing.Size(121, 24);
+            this.Category.TabIndex = 119;
+            this.Category.Type = "Pms_MtlCategory";
             // 
             // txtfactory
             // 
@@ -273,18 +286,18 @@
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.Location = new System.Drawing.Point(830, 11);
+            this.btnCreate.Location = new System.Drawing.Point(764, 11);
             this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(80, 30);
+            this.btnCreate.Size = new System.Drawing.Size(146, 30);
             this.btnCreate.TabIndex = 1;
-            this.btnCreate.Text = "Create";
+            this.btnCreate.Text = "Create and Confirm";
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
             // btnExcel
             // 
             this.btnExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExcel.Location = new System.Drawing.Point(744, 11);
+            this.btnExcel.Location = new System.Drawing.Point(678, 11);
             this.btnExcel.Name = "btnExcel";
             this.btnExcel.Size = new System.Drawing.Size(80, 30);
             this.btnExcel.TabIndex = 0;
@@ -357,19 +370,6 @@
             this.gridRel.Size = new System.Drawing.Size(433, 441);
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
-            // 
-            // Category
-            // 
-            this.Category.BackColor = System.Drawing.Color.White;
-            this.Category.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.Category.FormattingEnabled = true;
-            this.Category.IsSupportUnselect = true;
-            this.Category.Location = new System.Drawing.Point(729, 43);
-            this.Category.Name = "Category";
-            this.Category.OldText = "";
-            this.Category.Size = new System.Drawing.Size(121, 24);
-            this.Category.TabIndex = 119;
-            this.Category.Type = "Pms_MtlCategory";
             // 
             // P28
             // 

@@ -14,6 +14,7 @@ using Sci.Production.PublicPrg;
 using System.Transactions;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.Warehouse
 {
@@ -684,7 +685,7 @@ from #tmp";
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!", "Complete!");
+                    // MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!", "Complete!");
                 }
                 catch(Exception ex)
                 {
@@ -705,10 +706,26 @@ from #tmp";
                 }
             }
             //Create後Btn失效，需重新Qurey才能再使用。
+
+            foreach (DataRow item in dtMaster.Rows)
+            {
+                DataTable dtd = dtDetail.Select($" id ='{item["id"]}'").CopyToDataTable();
+                if (!Prgs.P22confirm(item, dtd))
+                {
+                    MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " , Confirm fail, please go to P22 manual Confirm ", "Complete!");
+                    return;
+                }
+            }
+            // MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!"+ " and Confirm Success!! ", "Complete!");
+
+            this.p13_msg.Show("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!" + " and Confirm Success!! ");
+
             btnCreate.Enabled = false;
             this.gridRel.ValidateControl();
             this.gridComplete.ValidateControl();
         }
+
+        private msg p13_msg = new msg();
 
         private void checkOnly_CheckedChanged(object sender, EventArgs e)
         {
