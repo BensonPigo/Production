@@ -33,6 +33,8 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.txtDefectType = new Sci.Win.UI.TextBox();
             this.editDescription = new Sci.Win.UI.EditBox();
+            this.editLocalDesc = new Sci.Win.UI.EditBox();
+            this.labLocalDesc = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,6 +49,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editLocalDesc);
+            this.detailcont.Controls.Add(this.labLocalDesc);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.txtDefectType);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -81,7 +85,6 @@
             // 
             // labelDefectType
             // 
-            this.labelDefectType.Lines = 0;
             this.labelDefectType.Location = new System.Drawing.Point(70, 51);
             this.labelDefectType.Name = "labelDefectType";
             this.labelDefectType.Size = new System.Drawing.Size(85, 23);
@@ -90,7 +93,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(70, 86);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(85, 23);
@@ -130,6 +132,25 @@
             this.editDescription.Size = new System.Drawing.Size(250, 64);
             this.editDescription.TabIndex = 1;
             // 
+            // editLocalDesc
+            // 
+            this.editLocalDesc.BackColor = System.Drawing.Color.White;
+            this.editLocalDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDescription", true));
+            this.editLocalDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editLocalDesc.Location = new System.Drawing.Point(158, 156);
+            this.editLocalDesc.Multiline = true;
+            this.editLocalDesc.Name = "editLocalDesc";
+            this.editLocalDesc.Size = new System.Drawing.Size(250, 64);
+            this.editLocalDesc.TabIndex = 6;
+            // 
+            // labLocalDesc
+            // 
+            this.labLocalDesc.Location = new System.Drawing.Point(70, 156);
+            this.labLocalDesc.Name = "labLocalDesc";
+            this.labLocalDesc.Size = new System.Drawing.Size(85, 23);
+            this.labLocalDesc.TabIndex = 7;
+            this.labLocalDesc.Text = "Local Desc.";
+            // 
             // B20
             // 
             this.ClientSize = new System.Drawing.Size(834, 457);
@@ -163,6 +184,7 @@
         private Win.UI.Label labelDefectType;
         private Win.UI.Label labelDescription;
         private Win.UI.EditBox editDescription;
-
+        private Win.UI.EditBox editLocalDesc;
+        private Win.UI.Label labLocalDesc;
     }
 }
