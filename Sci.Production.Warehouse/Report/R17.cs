@@ -133,6 +133,7 @@ select distinct
         p.FinalETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
+        Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
         color		= p.ColorID,
@@ -155,6 +156,10 @@ from dbo.FtyInventory a WITH (NOLOCK)
 inner join Orders on orders.id = a.poid
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+outer apply(
+	select distinct name from DropDownList where Type='Pms_MtlCategory'
+	and SUBSTRING(ID,2,1)= orders.Category
+)DropDownList
 where   1=1");
                     if (!MyUtility.Check.Empty(spno)) 
                         sqlcmd.Append(string.Format(@"
@@ -220,6 +225,7 @@ select distinct
         p.FinalETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
+        Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
         color		= p.ColorID,
@@ -242,6 +248,10 @@ from dbo.FtyInventory a WITH (NOLOCK)
 inner join Orders on orders.id = a.poid
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
+outer apply(
+	select distinct name from DropDownList where Type='Pms_MtlCategory'
+	and SUBSTRING(ID,2,1)= orders.Category
+)DropDownList
 where   1=1 
         And {0} ", locationFilte));
                     if (!MyUtility.Check.Empty(spno)) 
@@ -310,6 +320,7 @@ select distinct
         p.FinalETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
+        Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
         color		= p.ColorID,
@@ -332,6 +343,10 @@ from dbo.FtyInventory a WITH (NOLOCK)
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders WITH (NOLOCK) on orders.id = p.id
+outer apply(
+	select distinct name from DropDownList where Type='Pms_MtlCategory'
+	and SUBSTRING(ID,2,1)= orders.Category
+)DropDownList
 where   1=1"));
 
                     if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
@@ -402,6 +417,7 @@ select distinct
         p.FinalETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
+        Category = DropDownList.Name,
         location	= stuff((select ',' + cast(MtlLocationID as varchar) from (select MtlLocationID from FtyInventory_Detail WITH (NOLOCK) where ukey = a.ukey) t for xml path('')), 1, 1, ''),
         width		= p.Width,
         color		= p.ColorID,
@@ -424,6 +440,10 @@ from dbo.FtyInventory a WITH (NOLOCK)
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 = a.seq2
 inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
+outer apply(
+	select distinct name from DropDownList where Type='Pms_MtlCategory'
+	and SUBSTRING(ID,2,1)= orders.Category
+)DropDownList
 where   1=1
         And {0} ", locationFilte));
 
