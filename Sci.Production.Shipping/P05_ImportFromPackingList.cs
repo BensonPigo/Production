@@ -31,7 +31,9 @@ namespace Sci.Production.Shipping
         public P05_ImportFromPackingList(DataRow masterData, DataTable detailData)
         {
             this.InitializeComponent();
-            this.txtmultifactoryFactory.Text = Sci.Env.User.FactoryList;
+
+            // this.txtmultifactoryFactory.Text = Sci.Env.User.FactoryList;
+            this.txtmultifactoryFactory.Text = MyUtility.GetValue.Lookup("select stuff((select distinct concat(',',ID)  from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 for xml path('')),1,1,'')");
             this.masterData = masterData;
             this.detailData = detailData;
             this.txtmultifactoryFactory.checkProduceFty = true;
