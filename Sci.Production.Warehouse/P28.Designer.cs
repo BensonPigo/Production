@@ -290,7 +290,7 @@
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(146, 30);
             this.btnCreate.TabIndex = 1;
-            this.btnCreate.Text = "Create and Confirm";
+            this.btnCreate.Text = "Create && Confirm";
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
