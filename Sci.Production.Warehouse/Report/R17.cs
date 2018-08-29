@@ -159,6 +159,7 @@ inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = a.Poid and p.seq1 = a.se
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
 	and SUBSTRING(ID,2,1)= orders.Category
+    and name !='ALL'
 )DropDownList
 where   1=1");
                     if (!MyUtility.Check.Empty(spno)) 
@@ -251,6 +252,7 @@ inner join dbo.PO_Supp_Detail p on p.id = a.Poid and p.seq1 = a.seq1 and p.seq2 
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
 	and SUBSTRING(ID,2,1)= orders.Category
+    and name !='ALL'
 )DropDownList
 where   1=1 
         And {0} ", locationFilte));
@@ -346,6 +348,7 @@ inner join dbo.orders WITH (NOLOCK) on orders.id = p.id
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
 	and SUBSTRING(ID,2,1)= orders.Category
+    and name !='ALL'
 )DropDownList
 where   1=1"));
 
@@ -443,6 +446,7 @@ inner join dbo.orders WITH (NOLOCK) on orders.ID = p.ID
 outer apply(
 	select distinct name from DropDownList where Type='Pms_MtlCategory'
 	and SUBSTRING(ID,2,1)= orders.Category
+    and name !='ALL'
 )DropDownList
 where   1=1
         And {0} ", locationFilte));
