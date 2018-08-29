@@ -681,7 +681,7 @@ where bof.id='{maindr["POID"].ToString()}' and p.seq1='{maindr["Seq1"].ToString(
                         foreach (DataRow dr in dr_detail)
                         {
                             newSheet.Cells[detail_start, 1].Value = "'" + dr["Dyelot"];
-                            newSheet.Cells[detail_start, 2].Value =dr["Roll"];
+                            newSheet.Cells[detail_start, 2].Value = "'" + dr["Roll"];
                             newSheet.Cells[detail_start, 3].Value = dr["WeightM2"];
                             newSheet.Cells[detail_start, 4].Value = dr["AverageWeightM2"];
                             newSheet.Cells[detail_start, 5].Value = dr["Difference"];
