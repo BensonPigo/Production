@@ -19,6 +19,7 @@ namespace Sci.Production.Warehouse
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtArtwork;
+        string locationStockType = "B";
 
         public P26_Import(DataRow master, DataTable detail)
         {
@@ -495,7 +496,7 @@ stocktype = '{e.FormattedValue}'
 
         private void txtLocation2_MouseDown(object sender, MouseEventArgs e)
         {
-            Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("B", "");
+            Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(locationStockType, "");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             txtLocation2.Text = item.GetSelectedString();
@@ -542,6 +543,7 @@ stocktype = '{e.FormattedValue}'
             foreach (var item in drfound)
             {
                 item["tolocation"] = this.txtLocation2.Text;
+                item["stocktype"] = locationStockType;
             }
         }
 
