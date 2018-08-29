@@ -180,6 +180,12 @@
     <Compile Include="EachConsumption_SwitchWorkOrder.Designer.cs">
       <DependentUpon>EachConsumption_SwitchWorkOrder.cs</DependentUpon>
     </Compile>
+    <Compile Include="msg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="msg.Designer.cs">
+      <DependentUpon>msg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Print_OrderList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -221,6 +227,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EachConsumption_SwitchWorkOrder.resx">
       <DependentUpon>EachConsumption_SwitchWorkOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="msg.resx">
+      <DependentUpon>msg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Print_OrderList.resx">
       <DependentUpon>Print_OrderList.cs</DependentUpon>
