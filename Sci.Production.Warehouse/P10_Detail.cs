@@ -60,8 +60,17 @@ select t.poid
 	   , FTY.InQty - FTY.OutQty + FTY.AdjustQty as balanceqty
 	   , [location] = dbo.Getlocation(FTY.Ukey)
 	   , GroupQty = Sum(FTY.InQty-FTY.OutQty+FTY.AdjustQty) over (partition by t.dyelot)
+       , [FIR] = (SELECT Stuff((select concat( '/',Result)   
+                                from dbo.FIR with (nolock) 
+                                where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
+                                FOR XML PATH('')),1,1,'') )
+       , [DetailFIR] = (SELECT Stuff((select concat( '/',concat(Physical,'/',Weight,'/',ShadeBond,'/',Continuity))   
+                                from dbo.FIR with (nolock) 
+                                where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
+                                FOR XML PATH('')),1,1,'') )
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
+left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey
 order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
@@ -115,11 +124,13 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             .Text("roll", header: "roll", width: Widths.AnsiChars(10), iseditingreadonly: true)  //4
             .Text("dyelot", header: "dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: ns)    //6
-            .Text("location", header: "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)  //5
-            .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
-            .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
-            .Numeric("adjustqty", header: "Adjust" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
-            .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
+            .Text("location", header: "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)  //7
+            .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //8
+            .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //9
+            .Numeric("adjustqty", header: "Adjust" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //10
+            .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //11
+            .Text("FIR", header: "FIR", width: Widths.AnsiChars(6), iseditingreadonly: true)  //12
+            .Text("DetailFIR", header: "Phy/Wei/Shade/Cont", width: Widths.AnsiChars(18), iseditingreadonly: true)  //13
             ;     //
 
             this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
