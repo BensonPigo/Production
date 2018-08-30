@@ -83,6 +83,7 @@
             this.datekpileta = new Sci.Win.UI.DateBox();
             this.btnUPCSticker = new Sci.Win.UI.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.checkCancelledOrder = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -99,6 +100,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.checkCancelledOrder);
             this.masterpanel.Controls.Add(this.btnUPCSticker);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
@@ -209,6 +211,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUPCSticker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkCancelledOrder, 0);
             // 
             // detailpanel
             // 
@@ -587,7 +590,7 @@
             // 
             // labelLocateforTransferClog
             // 
-            this.labelLocateforTransferClog.Location = new System.Drawing.Point(289, 261);
+            this.labelLocateforTransferClog.Location = new System.Drawing.Point(370, 261);
             this.labelLocateforTransferClog.Name = "labelLocateforTransferClog";
             this.labelLocateforTransferClog.Size = new System.Drawing.Size(156, 23);
             this.labelLocateforTransferClog.TabIndex = 51;
@@ -596,7 +599,7 @@
             // dateLocateforTransferClog
             // 
             this.dateLocateforTransferClog.IsSupportEditMode = false;
-            this.dateLocateforTransferClog.Location = new System.Drawing.Point(450, 261);
+            this.dateLocateforTransferClog.Location = new System.Drawing.Point(531, 261);
             this.dateLocateforTransferClog.Name = "dateLocateforTransferClog";
             this.dateLocateforTransferClog.Size = new System.Drawing.Size(130, 23);
             this.dateLocateforTransferClog.TabIndex = 52;
@@ -606,14 +609,14 @@
             this.txtLocateforTransferClog.BackColor = System.Drawing.Color.White;
             this.txtLocateforTransferClog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateforTransferClog.IsSupportEditMode = false;
-            this.txtLocateforTransferClog.Location = new System.Drawing.Point(450, 261);
+            this.txtLocateforTransferClog.Location = new System.Drawing.Point(531, 261);
             this.txtLocateforTransferClog.Name = "txtLocateforTransferClog";
             this.txtLocateforTransferClog.Size = new System.Drawing.Size(80, 23);
             this.txtLocateforTransferClog.TabIndex = 53;
             // 
             // btnFindNow
             // 
-            this.btnFindNow.Location = new System.Drawing.Point(592, 256);
+            this.btnFindNow.Location = new System.Drawing.Point(673, 256);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(80, 30);
             this.btnFindNow.TabIndex = 54;
@@ -838,6 +841,18 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // checkCancelledOrder
+            // 
+            this.checkCancelledOrder.AutoSize = true;
+            this.checkCancelledOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkCancelledOrder.Location = new System.Drawing.Point(204, 262);
+            this.checkCancelledOrder.Name = "checkCancelledOrder";
+            this.checkCancelledOrder.ReadOnly = true;
+            this.checkCancelledOrder.Size = new System.Drawing.Size(160, 21);
+            this.checkCancelledOrder.TabIndex = 68;
+            this.checkCancelledOrder.Text = "Include Cancel Order";
+            this.checkCancelledOrder.UseVisualStyleBackColor = true;
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -937,5 +952,6 @@
         private Win.UI.Label label1;
         private Win.UI.Button btnUPCSticker;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private Win.UI.CheckBox checkCancelledOrder;
     }
 }
