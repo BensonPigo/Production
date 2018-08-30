@@ -19,7 +19,7 @@ namespace Sci.Production.Warehouse
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         protected DataTable dtArtwork;
-        string locationStockType = "B";
+        Dictionary<string, string> selectedLocation = new Dictionary<string, string>();
 
         public P26_Import(DataRow master, DataTable detail)
         {
@@ -496,10 +496,24 @@ stocktype = '{e.FormattedValue}'
 
         private void txtLocation2_MouseDown(object sender, MouseEventArgs e)
         {
-            Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(locationStockType, "");
+            Sci.Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation("", "");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
-            txtLocation2.Text = item.GetSelectedString();
+            var select_result = item.GetSelecteds()
+                .GroupBy(s => new { StockType = s["StockType"].ToString(), StockTypeCode = s["StockTypeCode"].ToString() })
+                .Select(g => new { g.Key.StockType, g.Key.StockTypeCode, ToLocation = string.Join(",", g.Select(i => i["id"])) });
+
+            if (select_result.Count() > 0)
+            {
+                this.selectedLocation.Clear();
+                txtLocation2.Text = string.Empty;
+            }
+            foreach (var result_item in select_result)
+            {
+                this.selectedLocation.Add(result_item.StockTypeCode, result_item.ToLocation);
+                txtLocation2.Text += $"({result_item.StockType}:{result_item.ToLocation})";
+            }
+
         }
 
         private void radioPanel1_ValueChanged(object sender, EventArgs e)
@@ -542,8 +556,10 @@ stocktype = '{e.FormattedValue}'
 
             foreach (var item in drfound)
             {
-                item["tolocation"] = this.txtLocation2.Text;
-                item["stocktype"] = locationStockType;
+                if (this.selectedLocation.ContainsKey(item["stocktype"].ToString()))
+                {
+                    item["tolocation"] = this.selectedLocation[item["stocktype"].ToString()];
+                }
             }
         }
 
