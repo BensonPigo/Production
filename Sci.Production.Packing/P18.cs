@@ -22,6 +22,7 @@ namespace Sci.Production.Packing
     {
         private DataTable dt_scanDetail;
         private SelectCartonDetail selecedPK;
+        private P09_IDX_CTRL IDX;
 
         /// <summary>
         /// P18
@@ -32,6 +33,11 @@ namespace Sci.Production.Packing
         {
             this.InitializeComponent();
             this.EditMode = true;
+            P09_IDX_CTRL iDX = new P09_IDX_CTRL();
+            if (iDX.IdxCall(1, "8:?", 4))
+            {
+                this.IDX = iDX;
+            }
         }
 
         /// <summary>
@@ -431,11 +437,10 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                 int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
                 if (no_barcode_cnt == 0)
                 {
-                    // AutoClosingMessageBox.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!", "Warning", 3000);
-                    //MyUtility.Msg.WarningBox($"<{this.txtScanEAN.Text}> Invalid barcode !!");
-                    //MyUtility.Msg.WaitWindows($"<{this.txtScanEAN.Text}> Invalid barcode !!");
-                    //MessageBox.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!");
                     P18_Message msg = new P18_Message();
+
+                    // 送回 沒有的barcode
+                    this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
                     msg.Show($"<{this.txtScanEAN.Text}> Invalid barcode !!");
                     this.txtScanEAN.Text = string.Empty;
                     e.Cancel = true;
@@ -452,6 +457,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                     {
                         this.txtScanEAN.Text = string.Empty;
                         e.Cancel = true;
+                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
                         return;
                     }
 
@@ -477,6 +483,8 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                                 break;
                             }
                         }
+
+                        this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim()).Length);
                     }
                     else
                     {
@@ -491,8 +499,10 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 DataRowView cur_dr = (DataRowView)this.scanDetailBS.Current;
                 int scanQty = (short)cur_dr["ScanQty"];
                 int qtyPerCTN = (int)cur_dr["QtyPerCTN"];
-                if (scanQty == qtyPerCTN)
+                if (scanQty >= qtyPerCTN)
                 {
+                    // 此barcode已足夠,或超過 送回
+                    this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
                     AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
                     this.txtScanEAN.Text = string.Empty;
                     e.Cancel = true;
