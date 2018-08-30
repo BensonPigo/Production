@@ -60,7 +60,7 @@ select t.poid
 	   , FTY.InQty - FTY.OutQty + FTY.AdjustQty as balanceqty
 	   , [location] = dbo.Getlocation(FTY.Ukey)
 	   , GroupQty = Sum(FTY.InQty-FTY.OutQty+FTY.AdjustQty) over (partition by t.dyelot)
-       , [DetailFIR] = concat(Physical.Result,'/',Weight.Result,'/',Shadebone.Result,'/',Continuity.Result)
+       , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '))
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
 left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey

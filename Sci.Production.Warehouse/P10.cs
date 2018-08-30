@@ -202,7 +202,7 @@ namespace Sci.Production.Warehouse
                       where psd.Id = a.Poid
                             and psd.SciRefno = a.SciRefno)
             , NetQty = isnull(NetQty.value, 0)
-            , [FinalFIR] = (SELECT Stuff((select concat( '/',Result)   
+            , [FinalFIR] = (SELECT Stuff((select concat( '/',isnull(Result,' '))   
                                 from dbo.FIR f with (nolock) 
                                 where f.poid = a.poid and f.SCIRefno = a.SCIRefno and
                                       exists(select 1 from Issue_Detail with (nolock) where Issue_SummaryUkey = a.Ukey and f.seq1 = seq1 and f.seq2 = seq2)
