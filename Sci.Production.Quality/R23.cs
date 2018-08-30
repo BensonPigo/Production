@@ -167,23 +167,20 @@ and not exists (select dates
 	and Dates = pd.ReceiveDate)
 
 
- --抓SP#
-select distinct os.Id 
-into #tmpSP
-from Order_QtyShip os
-left join Orders o on os.ID=o.ID
-left join PackingList_Detail pd on pd.OrderID=os.Id and pd.OrderShipmodeSeq=os.Seq
-inner join #CalendarData AllDate on AllDate.Dates = pd.ReceiveDate
-and AllDate.FtyGroup=o.FtyGroup
-where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
-{this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
+ --抓PackingListDetail Orderid,Seq,ReceiveDate
+select distinct OrderID,OrderShipmodeSeq,max(ReceiveDate) ReceiveDate
+into #tmpPacking
+from  PackingList_Detail 
+inner join #CalendarData AllDate on AllDate.Dates = ReceiveDate
+group by OrderID,OrderShipmodeSeq
+
 
 SELECT distinct
 		[ReadyDate] = AllDate.ReadyDate
 		,[M] = o.MDivisionID
 		,[Factory] = o.FtyGroup		
 		,[BuyerDelivery] = os.BuyerDelivery
-		,[SPNO] = pd.OrderID
+		,[SPNO] = p.OrderID
 		,[Category] = 
 case	when o.Category ='B' then 'Bulk'
 		when o.Category ='S' then 'Sample'
@@ -216,9 +213,9 @@ end
 ,[ShipMode] = os.ShipmodeID
 into #tmp
 FROM Order_QtyShip os
-left join PackingList_Detail pd on pd.OrderID=os.Id and pd.OrderShipmodeSeq=os.Seq
-left join Orders o on os.ID=o.ID
-inner join #CalendarData AllDate on AllDate.Dates = pd.ReceiveDate
+inner join Orders o on os.ID=o.ID
+inner join #tmpPacking p on p.OrderID=os.Id and p.OrderShipmodeSeq=os.Seq
+inner join #CalendarData AllDate on AllDate.Dates = p.ReceiveDate
 and AllDate.FtyGroup=o.FtyGroup
 outer apply(
      select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
@@ -254,16 +251,16 @@ select [TotalCTN] = Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 en
 			and pd.OrderShipmodeSeq = os.Seq
 )  pdm
 outer apply (
-		select [ClogCTN] = Sum(case when p.Type in ('B', 'L') and pd1.ReceiveDate is not null then pd1.CTNQty else 0 end)
+		select [ClogCTN] = Sum(case when p1.Type in ('B', 'L') and pd1.ReceiveDate is not null then pd1.CTNQty else 0 end)
 		,[ClogRcvDate] = Max (c.AddDate) 
 		from PackingList_Detail pd1 WITH (NOLOCK) 
-		LEFT JOIN PackingList p on pd1.ID = p.ID 
+		LEFT JOIN PackingList p1 on pd1.ID = p1.ID 
 		left join ClogReceive c on c.PackingListID=pd1.ID
 			and c.ReceiveDate=pd1.ReceiveDate and c.CTNStartNo=pd1.CTNStartNo 
 			and c.OrderID=pd1.OrderID
 		where  pd1.OrderID = os.ID 
 		and pd1.OrderShipmodeSeq = os.Seq
-		and pd1.ReceiveDate <= pd.ReceiveDate
+		and pd1.ReceiveDate <= p.ReceiveDate
 ) Receive	
 outer apply(
 	select Line = stuff((
@@ -278,7 +275,6 @@ outer apply(
 )SewingLine
 where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
 and iif(pdm.TotalCTN=0,0, ( isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)=100
-and exists (select 1 from #tmpSP where Id=os.Id)
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 
@@ -387,7 +383,7 @@ pivot
 	sum(rating) for factory in ({sbFtycode.ToString().Substring(0, sbFtycode.ToString().Length - 1)})
 ) AS PT
 
-drop table  #tmp,#CalendarData,#Calendar
+drop table  #tmp,#CalendarData,#Calendar,#tmpPacking
 ";
             #endregion
 
