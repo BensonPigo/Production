@@ -39,7 +39,7 @@ select
 [Location] = sl.Location,
 [Version] = ts.Version,
 [SeqNo] = tsd.Seq,
-[SeqCode] = tsd.OperationID,
+[SeqCode] = tsd.Seq+'-'+tsd.OperationID,
 [SeqName] = iif(isnull(op.Annotation,'')='',op.DescEN,op.Annotation),
 [MachineTypeID] = tsd.MachineTypeID,
 [SAM] = Round(tsd.SMV/60,7)
