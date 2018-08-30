@@ -549,6 +549,9 @@ select  a.*
         , sortCTNNo = TRY_Convert(int , a.CTNStartNo)
         , sciDelivery = min(o.sciDelivery) over()
         , kpileta = min(o.kpileta) over()
+        ,[Cancel] = (SELECT [Cancel] = CASE WHEN count(*) > 0 THEN 'Y' ELSE 'N' END
+                        FROM  orders o 						
+                        WHERE o.Junk = 1 AND a.OrderID=o.ID)
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID 

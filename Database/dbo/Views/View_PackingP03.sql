@@ -1,44 +1,37 @@
 ﻿CREATE VIEW dbo.View_PackingP03
 AS
-select BuyerDelivery = (select min(Orders.BuyerDelivery ) 
-						from PackingList_Detail 
-						inner join Orders on PackingList_Detail.OrderID = Orders.ID 
-						where PackingList_Detail.id = PackingList.id)
-	   , SP = STUFF((select CONCAT(',', OrderID) 
-	   				 from (
-   				 		select distinct PackingList_Detail.OrderID 
-   				 		from PackingList_Detail 
-   				 		where PackingList_Detail.id = PackingList.id 
-			 		 ) s 
-			 		 for xml path('')
-			 		),1,1,'')
-	   , factory = (select STUFF((select CONCAT(',', FtyGroup) 
-	   							  from (
-   							  		select distinct FtyGroup 
-   							  		from orders o 
-   							  		where o.id in (select distinct PackingList_Detail.OrderID 
-   							  					   from PackingList_Detail 
-   							  					   where PackingList_Detail.id = PackingList.id)
-						  		  ) s 
-						  		  for xml path('')
-					  		     ),1,1,''))
-	   , PONO = STUFF((select CONCAT(',', CustPONo) 
-	   				   from (
-	   				   	   select distinct Orders.CustPONo 
-	   				   	   from PackingList_Detail 
-	   				   	   inner join Orders on PackingList_Detail.OrderID = Orders.ID 
-	   				   	   where PackingList_Detail.id = PackingList.id 
-	   				   	   		 and Orders.CustPONo is not null 
-	   				   	   		 and Orders.CustPONo != ''
-		   	   		   ) s 
-		   	   		   for xml path('')
-	   	   		      ),1,1,'')
-	   , Concat(PackingList.NW, '') as NW2
-	   , Concat(PackingList.GW, '') as GW2
-	   , Concat(PackingList.CBM, '') as CBM2
-	   , PurchaseCTN = IIF(PackingList.LocalPoid = '' or PackingList.LocalPoid is null,  '', 'Y')
-	   , *
-from PackingList
+SELECT          BuyerDelivery =
+                                (SELECT          min(Orders.BuyerDelivery)
+                                  FROM               PackingList_Detail INNER JOIN
+                                                              Orders ON PackingList_Detail.OrderID = Orders.ID
+                                  WHERE           PackingList_Detail.id = PackingList.id), SP = STUFF
+                                ((SELECT          CONCAT(',', OrderID)
+                                    FROM              (SELECT DISTINCT PackingList_Detail.OrderID
+                                                                FROM               PackingList_Detail
+                                                                WHERE           PackingList_Detail.id = PackingList.id) s FOR xml path('')), 1, 1, ''), [Cancel] =
+                                (SELECT          [Cancel] = CASE WHEN count(*) > 0 THEN 'Y' ELSE 'N' END
+                                  FROM               orders o INNER JOIN
+                                                              PackingList_Detail p2 ON o.ID = p2.OrderID
+                                  WHERE           o.Junk = 1 AND p2.ID = PackingList.ID), factory =
+                                (SELECT          STUFF
+                                                                  ((SELECT          CONCAT(',', FtyGroup)
+                                                                      FROM              (SELECT DISTINCT FtyGroup
+                                                                                                  FROM               orders o
+                                                                                                  WHERE           o.id IN
+                                                                                                                                  (SELECT DISTINCT PackingList_Detail.OrderID
+                                                                                                                                    FROM               PackingList_Detail
+                                                                                                                                    WHERE           PackingList_Detail.id = PackingList.id)) s FOR 
+                                                                                                  xml path('')), 1, 1, '')), PONO = STUFF
+                                ((SELECT          CONCAT(',', CustPONo)
+                                    FROM              (SELECT DISTINCT Orders.CustPONo
+                                                                FROM               PackingList_Detail INNER JOIN
+                                                                                            Orders ON PackingList_Detail.OrderID = Orders.ID
+                                                                WHERE           PackingList_Detail.id = PackingList.id AND Orders.CustPONo IS NOT NULL AND 
+                                                                                            Orders.CustPONo != '') s FOR xml path('')), 1, 1, ''), Concat(PackingList.NW, '') AS NW2, 
+                            Concat(PackingList.GW, '') AS GW2, Concat(PackingList.CBM, '') AS CBM2, 
+                            PurchaseCTN = IIF(PackingList.LocalPoid = '' OR
+                            PackingList.LocalPoid IS NULL, '', 'Y'), *
+FROM              PackingList
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_DiagramPaneCount', @value = 1, @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'VIEW', @level1name = N'View_PackingP03';
 
@@ -49,7 +42,7 @@ Begin DesignProperties =
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[33] 4[3] 2[45] 3) )"
+         Configuration = "(H (1[34] 4[3] 2[38] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -122,6 +115,18 @@ Begin DesignProperties =
    Begin DataPane = 
       Begin ParameterDefaults = ""
       End
+      Begin ColumnWidths = 10
+         Width = 284
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+      End
    End
    Begin CriteriaPane = 
       Begin ColumnWidths = 11
@@ -142,6 +147,8 @@ Begin DesignProperties =
    End
 End
 ', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'VIEW', @level1name = N'View_PackingP03';
+
+
 
 
 
