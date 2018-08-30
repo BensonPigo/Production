@@ -3,7 +3,6 @@
     [MDivisionID] VARCHAR (8)   CONSTRAINT [DF_LocationTrans_MDivisionID] DEFAULT ('') NOT NULL,
 	[FactoryID]   VARCHAR (8)   CONSTRAINT [DF_LocationTrans_FactoryID] DEFAULT ('') NOT NULL,
     [IssueDate]   DATE          NOT NULL,
-    [StockType]   VARCHAR (1)   CONSTRAINT [DF_LocationTrans_StockType] DEFAULT ('') NOT NULL,
     [Status]      VARCHAR (15)  CONSTRAINT [DF_LocationTrans_Encode] DEFAULT ((0)) NOT NULL,
     [Remark]      NVARCHAR (60) CONSTRAINT [DF_LocationTrans_Remark] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_LocationTrans_AddName] DEFAULT ('') NULL,
