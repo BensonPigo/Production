@@ -38,6 +38,7 @@
             this.dateRangeReadyDate = new Sci.Win.UI.DateRange();
             this.labBrand = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.chkHoliday = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -167,9 +168,23 @@
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 111;
             // 
+            // chkHoliday
+            // 
+            this.chkHoliday.AutoSize = true;
+            this.chkHoliday.Checked = true;
+            this.chkHoliday.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkHoliday.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkHoliday.Location = new System.Drawing.Point(20, 122);
+            this.chkHoliday.Name = "chkHoliday";
+            this.chkHoliday.Size = new System.Drawing.Size(127, 21);
+            this.chkHoliday.TabIndex = 112;
+            this.chkHoliday.Text = "Exclude Holiday";
+            this.chkHoliday.UseVisualStyleBackColor = true;
+            // 
             // R23
             // 
-            this.ClientSize = new System.Drawing.Size(497, 150);
+            this.ClientSize = new System.Drawing.Size(497, 174);
+            this.Controls.Add(this.chkHoliday);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labBrand);
             this.Controls.Add(this.txtMdivision);
@@ -195,6 +210,7 @@
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.labBrand, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.chkHoliday, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -212,5 +228,6 @@
         private Win.UI.DateRange dateRangeReadyDate;
         private Win.UI.Label labBrand;
         private Class.txtbrand txtbrand;
+        private Win.UI.CheckBox chkHoliday;
     }
 }
