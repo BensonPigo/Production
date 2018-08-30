@@ -590,7 +590,7 @@
             // 
             // labelLocateforTransferClog
             // 
-            this.labelLocateforTransferClog.Location = new System.Drawing.Point(345, 261);
+            this.labelLocateforTransferClog.Location = new System.Drawing.Point(370, 261);
             this.labelLocateforTransferClog.Name = "labelLocateforTransferClog";
             this.labelLocateforTransferClog.Size = new System.Drawing.Size(156, 23);
             this.labelLocateforTransferClog.TabIndex = 51;
@@ -599,7 +599,7 @@
             // dateLocateforTransferClog
             // 
             this.dateLocateforTransferClog.IsSupportEditMode = false;
-            this.dateLocateforTransferClog.Location = new System.Drawing.Point(506, 261);
+            this.dateLocateforTransferClog.Location = new System.Drawing.Point(531, 261);
             this.dateLocateforTransferClog.Name = "dateLocateforTransferClog";
             this.dateLocateforTransferClog.Size = new System.Drawing.Size(130, 23);
             this.dateLocateforTransferClog.TabIndex = 52;
@@ -609,14 +609,14 @@
             this.txtLocateforTransferClog.BackColor = System.Drawing.Color.White;
             this.txtLocateforTransferClog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateforTransferClog.IsSupportEditMode = false;
-            this.txtLocateforTransferClog.Location = new System.Drawing.Point(506, 261);
+            this.txtLocateforTransferClog.Location = new System.Drawing.Point(531, 261);
             this.txtLocateforTransferClog.Name = "txtLocateforTransferClog";
             this.txtLocateforTransferClog.Size = new System.Drawing.Size(80, 23);
             this.txtLocateforTransferClog.TabIndex = 53;
             // 
             // btnFindNow
             // 
-            this.btnFindNow.Location = new System.Drawing.Point(648, 256);
+            this.btnFindNow.Location = new System.Drawing.Point(673, 256);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(80, 30);
             this.btnFindNow.TabIndex = 54;
@@ -845,12 +845,12 @@
             // 
             this.checkCancelledOrder.AutoSize = true;
             this.checkCancelledOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkCancelledOrder.Location = new System.Drawing.Point(209, 262);
+            this.checkCancelledOrder.Location = new System.Drawing.Point(204, 262);
             this.checkCancelledOrder.Name = "checkCancelledOrder";
             this.checkCancelledOrder.ReadOnly = true;
-            this.checkCancelledOrder.Size = new System.Drawing.Size(127, 21);
+            this.checkCancelledOrder.Size = new System.Drawing.Size(160, 21);
             this.checkCancelledOrder.TabIndex = 68;
-            this.checkCancelledOrder.Text = "Cancelled order";
+            this.checkCancelledOrder.Text = "Include Cancel Order";
             this.checkCancelledOrder.UseVisualStyleBackColor = true;
             // 
             // P03

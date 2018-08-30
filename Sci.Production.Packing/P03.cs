@@ -698,7 +698,7 @@ order by os.Seq",
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Factory", header: "Factory", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), settings: this.orderid).Get(out this.col_orderid)
-                .Text("Cancel", header: "Include Cancel Order", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Cancel", header: "Cancel Order", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(2), iseditingreadonly: false, settings: this.seq).Get(out this.col_seq)
                 .Text("StyleID", header: "Style No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -1603,48 +1603,48 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     this.labelLocateforTransferClog.Text = "Locate for Transfer Clog:";
                     this.labelLocateforTransferClog.Width = 156;
                     this.dateLocateforTransferClog.Visible = true;
-                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(513, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(650, 256);
+                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(538, 261);
+                    this.btnFindNow.Location = new System.Drawing.Point(675, 256);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "TransferDate,Seq";
                     break;
                 case "Clog Cfm":
                     this.labelLocateforTransferClog.Text = "Locate for Clog Cfm:";
                     this.labelLocateforTransferClog.Width = 129;
                     this.dateLocateforTransferClog.Visible = true;
-                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(486, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(625, 256);
+                    this.dateLocateforTransferClog.Location = new System.Drawing.Point(511, 261);
+                    this.btnFindNow.Location = new System.Drawing.Point(650, 256);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "ReceiveDate,Seq";
                     break;
                 case "Location No":
                     this.labelLocateforTransferClog.Text = "Locate for Location No:";
                     this.labelLocateforTransferClog.Width = 147;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(500, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(590, 256);
+                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(525, 261);
+                    this.btnFindNow.Location = new System.Drawing.Point(615, 256);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "ClogLocationId,Seq";
                     break;
                 case "ColorWay":
                     this.labelLocateforTransferClog.Text = "Locate for ColorWay:";
                     this.labelLocateforTransferClog.Width = 135;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(488, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(578, 256);
+                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(513, 261);
+                    this.btnFindNow.Location = new System.Drawing.Point(603, 256);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "Article,Seq";
                     break;
                 case "Color":
                     this.labelLocateforTransferClog.Text = "Locate for Color:";
                     this.labelLocateforTransferClog.Width = 106;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(458, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(548, 256);
+                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(483, 261);
+                    this.btnFindNow.Location = new System.Drawing.Point(573, 256);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "Color,Seq";
                     break;
                 case "Size":
                     this.labelLocateforTransferClog.Text = "Locate for Size:";
                     this.labelLocateforTransferClog.Width = 100;
                     this.txtLocateforTransferClog.Visible = true;
-                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(452, 261);
-                    this.btnFindNow.Location = new System.Drawing.Point(542, 256);
+                    this.txtLocateforTransferClog.Location = new System.Drawing.Point(477, 261);
+                    this.btnFindNow.Location = new System.Drawing.Point(567, 256);
                     ((DataTable)this.detailgridbs.DataSource).DefaultView.Sort = "SizeCode,Seq";
                     break;
                 default:
