@@ -181,33 +181,6 @@ CREATE NONCLUSTERED INDEX [Index_Orders_StyleID] ON [dbo].[Orders]
 )
 GO
 
-CREATE NONCLUSTERED INDEX [Orders_Index_of_ReadyDate1]
-    ON [dbo].[Orders]([Category] ASC, [VasShas] ASC, [Junk] ASC)
-    INCLUDE([ID], [FtyGroup]);
-GO
-
-CREATE NONCLUSTERED INDEX [Orders_Index_of_ReadyDate2]
-    ON [dbo].[Orders]([Category] ASC, [VasShas] ASC, [Junk] ASC)
-    INCLUDE([ID], [FtyGroup]);
-GO
-
-CREATE NONCLUSTERED INDEX [Orders_Index_of_ReadyDate11] ON [dbo].[Orders]
-(
-	[Category] ASC,
-	[Junk] ASC,
-	[MDivisionID] ASC
-)
-INCLUDE ( 	[ID],
-	[BrandID],
-	[StyleID],
-	[OrderTypeID],
-	[Dest],
-	[CustPONo],
-	[SewInLine],
-	[SewOffLine],
-	[FtyGroup]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
-	GO
-
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Order', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders';
 
 
