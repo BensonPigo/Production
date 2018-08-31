@@ -3,13 +3,17 @@ CREATE Function [dbo].[GetLossAccessory]
 (
 	  @PoID			VarChar(13)		--採購母單
 	 ,@SCIRefNo		VarChar(30)		--SCI Ref No.(空值表示為全部計算)
+	 ,@PreExpend	bit =0
+ 	 ,@IsExpendArticle	Bit			= 0			--add by Edward 是否展開至Article，For U.A轉單
+	 ,@IncludeQtyZero	Bit			= 0			--add by Edward 是否包含數量為0
 )
 Returns @AccessoryColorQty Table
 	(  RowID			BigInt Identity(1,1) Not Null
+	 , Seq1				VarChar(3)
 	 , SciRefNo			VarChar(30)
 	 , LossType			Numeric(1,0)
 	 , MtltypeID		VarChar(20)
-	 , ColorID			VarChar(100)
+	 , ColorID			VarChar(6)
 	 --, Article			VarChar(8)
 	 --, SizeCode			VarChar(8)
 	 , SizeSpec			VarChar(15)
@@ -21,15 +25,17 @@ Returns @AccessoryColorQty Table
 	 , BomZipperInsert	VarChar(5)
 	 --, BomBuymonth		VarChar(10)
 	 , BomCustPONo		VarChar(30)
+	 , Remark			NVarChar(Max)
 	 , Keyword			NVarChar(Max)
-	 , LossYds			Numeric(9,2)
-	 , LossYds_FOC		Numeric(9,2)
-	 , PlusName			VarChar(30)
+	 , LossYds			Numeric(12,2)
+	 , LossYds_FOC		Numeric(12,2)
+	 , PlusName			VarChar(100)
 	)
 As
 Begin
 	Set @SCIRefNo = IsNull(@SCIRefNo, '');
-
+	
+	Declare @Seq1 VarChar(3);
 	Declare @Category VarChar(1);
 	Declare @BrandID VarChar(8);
 	Declare @StyleID VarChar(15);
@@ -46,19 +52,22 @@ Begin
 	Declare @PlusQty Numeric(3,0);
 	Declare @FOC Numeric(2,0);
 
-	Declare @LossYDS Numeric(9,2);
-	Declare @LossYDS_FOC Numeric(9,2);
-	Declare @PlusName VarChar(30);
+	Declare @LossYDS Numeric(12,2);
+	Declare @LossYDS_FOC Numeric(12,2);
+	Declare @PlusName VarChar(100);
+
+	Declare @Tmp_Order_Qty dbo.QtyBreakdown
+
 	---------------------------------------------------------------------------
 	Select @Category = Category
 		 , @BrandID = BrandID
 		 , @StyleID = StyleID
 		 , @SeasonID = SeasonID
-	  From dbo.Orders WITH (NOLOCK)
+	  From dbo.Orders
 	 Where ID = @PoID;
 	
 	Select @LossSampleAccessory = LossSampleAccessory
-	  From Production.dbo.Brand WITH (NOLOCK)
+	  From Production.dbo.Brand
 	 Where ID = @BrandID;
 	---------------------------------------------------------------------------
 	Declare @BoaUkey BigInt;
@@ -69,14 +78,14 @@ Begin
 	Declare @LossQty Numeric(3,0);
 	Declare @LossStep Numeric(6,0);
 	Declare @tmpBOA Table
-		(  RowID BigInt Identity(1,1) Not Null, BoaUkey BigInt, SCIRefNo VarChar(30)
+		(  RowID BigInt Identity(1,1) Not Null, BoaUkey BigInt, Seq1 VarChar(3), SCIRefNo VarChar(30)
 		 , SuppID VarChar(6), LossType Numeric(1,0), LossPercent Numeric(3,1)
 		 , LossQty Numeric(3,0), LossStep Numeric(6,0)
 		);
 	Declare @tmpBOARowID Int;		--Row ID
 	Declare @tmpBOARowCount Int;	--總資料筆數
 	
-	Declare @ColorID VarChar(100);
+	Declare @ColorID VarChar(6);
 	--Declare @Article VarChar(8);
 	--Declare @SizeCode VarChar(8);
 	Declare @SizeSpec VarChar(15);
@@ -88,21 +97,23 @@ Begin
 	Declare @BomZipperInsert VarChar(5);
 	--Declare @BomBuymonth VarChar(10);
 	Declare @BomCustPONo VarChar(30);
+	Declare @Remark NVarChar(Max);
 	Declare @Keyword NVarChar(Max);
-	Declare @UsageQty Numeric(9,2);
+	Declare @UsageQty Numeric(11,2);
 	Declare @tmpBOA_Expend Table
-		(  RowID BigInt Identity(1,1) Not Null, ColorID VarChar(100)--, Article VarChar(8)
+		(  RowID BigInt Identity(1,1) Not Null, ColorID VarChar(6)--, Article VarChar(8)
 		 --, SizeCode VarChar(8), BomFactory VarChar(8), BomZipperInsert VarChar(5)
 		 , SizeSpec  VarChar(15), BomFactory VarChar(8), BomZipperInsert VarChar(5)
-		 , BomCustPONo VarChar(30), Keyword NVarChar(Max), UsageQty Numeric(9,2)
+		 , BomCustPONo VarChar(30), Remark NVarChar(Max), Keyword NVarChar(Max)
+		 , UsageQty Numeric(11,2)
 		);
 	Declare @tmpBOA_ExpendRowID Int;		--Row ID
 	Declare @tmpBOA_ExpendRowCount Int;		--總資料筆數
 
 	Insert Into @tmpBOA
-		(BoaUkey, SCIRefNo, SuppID, LossType, LossPercent, LossQty, LossStep)
-		Select Ukey, SCIRefNo, SuppID, LossType, LossPercent, LossQty, LossStep
-		  From dbo.Order_BOA WITH (NOLOCK)
+		(BoaUkey, Seq1, SCIRefNo, SuppID, LossType, LossPercent, LossQty, LossStep)
+		Select Ukey, Seq1, SCIRefNo, SuppID, LossType, LossPercent, LossQty, LossStep
+		  From dbo.Order_BOA
 		 Where ID = @PoID
 		   And (   (@SCIRefNo = '')
 				Or (	@SCIRefNo != ''
@@ -116,6 +127,7 @@ Begin
 	While @tmpBOARowID <= @tmpBOARowCount
 	Begin
 		Select @BoaUkey = BoaUkey
+			 , @Seq1 = Seq1
 			 , @SCIRefNo = SCIRefNo
 			 , @SuppID = SuppID
 			 , @LossType = LossType
@@ -127,14 +139,14 @@ Begin
 		
 		Set @Supp_Country = '';
 		Select @Supp_Country = CountryID
-		  From Production.dbo.Supp WITH (NOLOCK)
+		  From Production.dbo.Supp
 		 Where ID = @SuppID;
 		
 		Set @MtltypeID = '';
 		Set @UsageUnit = '';
 		Select @MtltypeID = MtltypeID
 			 , @UsageUnit = UsageUnit
-		  From Production.dbo.Fabric WITH (NOLOCK)
+		  From Production.dbo.Fabric
 		 Where SciRefNo = @SciRefNo;
 		
 		Delete @tmpBOA_Expend;
@@ -147,13 +159,51 @@ Begin
 			Where Order_BOAUkey = @BoaUkey
 			Order by ColorID, Article, SizeCode, Remark, BomZipperInsert, BomCustPONo, UsageQty;
 		*/
-		Insert Into @tmpBOA_Expend
-			(  ColorID, SizeSpec, BomZipperInsert, BomCustPONo, KeyWord, UsageQty)
-			Select ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Keyword, Sum(UsageQty) as UsageQty
-			  From dbo.Order_BOA_Expend WITH (NOLOCK)
-			 Where Order_BOAUkey = @BoaUkey
-			 Group by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Keyword
-			 Order by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Keyword, UsageQty;
+		if(@PreExpend = 0)
+		begin		
+			Insert Into @tmpBOA_Expend
+				(  ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, KeyWord, UsageQty)
+				Select ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Sum(UsageQty) as UsageQty
+				  From dbo.Order_BOA_Expend
+				 Where Order_BOAUkey = @BoaUkey
+				 Group by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword
+				 Order by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, UsageQty;
+		
+			if not exists(select 1 from @tmpBOA_Expend)
+				Begin
+
+					delete from @Tmp_Order_Qty
+
+					insert into @Tmp_Order_Qty 
+						Select Orders.ID ,Article ,SizeCode ,Order_Qty.Qty ,OriQty
+						From dbo.Order_Qty
+							Inner Join dbo.Orders On Orders.ID = Order_Qty.ID
+						Where Orders.PoID = @PoID;
+							
+						Insert Into @tmpBOA_Expend
+						( ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, KeyWord, UsageQty )
+							Select ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Sum(UsageQty) as UsageQty
+							from dbo.GetBOAExpend(@PoID,@BoaUkey,1,0,@Tmp_Order_Qty,@IsExpendArticle,@IncludeQtyZero)
+							group by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword
+				End;
+		end
+		else
+		begin
+			delete from @Tmp_Order_Qty
+
+			insert into @Tmp_Order_Qty 
+				Select Orders.ID ,Article ,SizeCode ,Order_Qty.Qty ,OriQty
+				From dbo.Order_Qty
+					Inner Join dbo.Orders On Orders.ID = Order_Qty.ID
+				Where Orders.PoID = @PoID;
+					
+				Insert Into @tmpBOA_Expend
+				( ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, KeyWord, UsageQty )
+					Select ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword, Sum(UsageQty) as UsageQty
+					from dbo.GetBOAExpend(@PoID,@BoaUkey,1,0,@Tmp_Order_Qty,@IsExpendArticle,@IncludeQtyZero)
+					group by ColorID, SizeSpec, BomZipperInsert, BomCustPONo, Remark, Keyword
+		end
+
 		--------------------Loop Start @tmpBOA_Expend--------------------
 		Set @tmpBOA_ExpendRowID = 1;
 		Select @tmpBOA_ExpendRowID = Min(RowID), @tmpBOA_ExpendRowCount = Max(RowID) From @tmpBOA_Expend;
@@ -171,6 +221,7 @@ Begin
 				 , @BomZipperInsert = IsNull(BomZipperInsert, '')
 				 --, @BomBuymonth = BomBuymonth
 				 , @BomCustPONo = IsNull(BomCustPONo, '')
+				 , @Remark = IsNull(Remark, '')
 				 , @Keyword = IsNull(Keyword, '')
 				 , @UsageQty = UsageQty
 			  From @tmpBOA_Expend
@@ -179,7 +230,7 @@ Begin
 			Set @LossYDS = 0;
 			Set @LossYDS_FOC = 0;
 			Set @PlusName = '';
-			If @LossType = 1 And @Category = 'S'
+			If @LossType = 1 And @Category In ('S','T')--2018/03/01 [IST20180148] modify by Anderson 加上Category=T判斷
 			Begin
 				Set @LossYDS = @UsageQty * (@LossSampleAccessory / 100);
 				Set @PlusName = 'Sample Loss:' + LTrim(Convert(VarChar(4), @LossSampleAccessory)) + '%';
@@ -195,7 +246,7 @@ Begin
 				Begin
 					If @LossType = 3	--Loss by Qty
 					Begin
-						Set @LossYDS = @LossQty * Ceiling(@UsageQty / @LossStep);
+						Set @LossYDS = iif(@LossStep = 0, 0, @LossQty * Ceiling(@UsageQty / @LossStep));
 						Set @PlusName = 'By Qty:' + LTrim(Convert(VarChar(3), @LossQty)) + ' Step:' + LTrim(Convert(VarChar(6), @LossStep));
 					End;	--End If (@LossType = 3)
 					Else
@@ -210,7 +261,7 @@ Begin
 							 , @PerQty = IIF(@Supp_Country = 'TW', PerQtyTW, PerQtyNonTW)
 							 , @PlusQty = IIF(@Supp_Country = 'TW', PlsQtyTW, PlsQtyNonTW)
 							 , @FOC = IIF(@Supp_Country = 'TW', FOCTW, FOCNonTW)
-						  From Production.dbo.LossRateAccessory WITH (NOLOCK)
+						  From Production.dbo.LossRateAccessory
 						 Where MtlTypeID = @MtltypeID
 						
 						If @@RowCount > 0
@@ -218,7 +269,7 @@ Begin
 							--損耗的上限依照TYPE ID和使用單位check是否有做設定
 							Set @LimitUp = 0;
 							Select @LimitUp = LimitUp
-							  From Production.dbo.LossRateAccessory_Limit WITH (NOLOCK)
+							  From Production.dbo.LossRateAccessory_Limit
 							 Where MtltypeID = @MtltypeID
 							   And UsageUnit = @UsageUnit;
 
@@ -229,7 +280,7 @@ Begin
 							End;
 							Else				-- 2.(Qty)
 							Begin
-								Set @LossYDS = @PlusQty * Ceiling(@UsageQty / @PerQty);
+								Set @LossYDS = IIF(@PerQty = 0, 0, @PlusQty * Ceiling(@UsageQty / @PerQty));								
 								Set @PlusName = 'By Qty:' + LTrim(Convert(VarChar(3), @PlusQty)) + ' Step:' + LTrim(Convert(VarChar(5), @PerQty));
 							End;
 						
@@ -248,16 +299,32 @@ Begin
 				End;	--End If @(@LossType = 2)
 			End;	--End If !(@LossType = 1 And @Category = 'S')
 
-			Insert Into @AccessoryColorQty
-				--(  SciRefNo, LossType, MtltypeID, ColorID, Article, SizeCode
-				(  SciRefNo, LossType, MtltypeID, ColorID, Keyword, SizeSpec
-				 , BomZipperInsert, BomCustPONo, LossYds, LossYds_FOC, PlusName
-				)
-			Values
-				--(  @SciRefNo, @LossType, @MtltypeID, @ColorID, @Article, @SizeCode
-				(  @SciRefNo, @LossType, @MtltypeID, @ColorID, @Keyword, @SizeSpec
-				 , @BomZipperInsert, @BomCustPONo, @LossYds, @LossYds_FOC, @PlusName
-				);
+			If NOT EXISTS (SELECT * 
+                 From @AccessoryColorQty
+                 Where Seq1 = @Seq1
+				 And SciRefNo = @SCIRefNo
+				 And LossType = @LossType
+                 And  MtltypeID = @MtltypeID
+                 And  ColorID = @ColorID
+				 And  Remark = @Remark
+                 And  Keyword = @Keyword
+                 And  SizeSpec = @SizeSpec
+                 And  BomZipperInsert = @BomZipperInsert
+                 And  BomCustPONo = @BomCustPONo
+                 And  LossYds = @LossYds
+                 And  LossYds_FOC = @LossYds_FOC
+                 And  PlusName = @PlusName)
+			Begin				
+				Insert Into @AccessoryColorQty
+					(  Seq1, SciRefNo, LossType, MtltypeID, ColorID, Remark, Keyword, SizeSpec
+					 , BomZipperInsert, BomCustPONo, LossYds, LossYds_FOC, PlusName
+					)
+				Values
+					(  @Seq1, @SciRefNo, @LossType, @MtltypeID, @ColorID, @Remark, @Keyword, @SizeSpec
+					 , @BomZipperInsert, @BomCustPONo, @LossYds, @LossYds_FOC, @PlusName
+					);
+			End;
+			
 			Set @tmpBOA_ExpendRowID += 1;
 		End;
 		--------------------Loop End @tmpBOA_Expend--------------------

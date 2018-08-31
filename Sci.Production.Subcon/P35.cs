@@ -757,6 +757,7 @@ where a.id = @ID"
             List<P35_PrintData> data = DetailDatas.AsEnumerable()
                 .Select(row1 => new P35_PrintData()
                 {
+                    LocalPO = row1["Localpoid"].ToString(),
                     SP = row1["orderid"].ToString(),
                     Description = row1["Description"].ToString(),
                     ThreadColorID = row1["ThreadColorID"].ToString(),

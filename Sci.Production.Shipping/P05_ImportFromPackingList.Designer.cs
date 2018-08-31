@@ -95,6 +95,20 @@
             // 
             // dateDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDelivery.DateBox1.Name = "";
+            this.dateDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateDelivery.DateBox2.Name = "";
+            this.dateDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateDelivery.DateBox2.TabIndex = 1;
             this.dateDelivery.IsRequired = false;
             this.dateDelivery.Location = new System.Drawing.Point(444, 44);
             this.dateDelivery.Name = "dateDelivery";
@@ -103,7 +117,6 @@
             // 
             // labelDelivery
             // 
-            this.labelDelivery.Lines = 0;
             this.labelDelivery.Location = new System.Drawing.Point(383, 44);
             this.labelDelivery.Name = "labelDelivery";
             this.labelDelivery.Size = new System.Drawing.Size(57, 23);
@@ -112,6 +125,20 @@
             // 
             // dateSDPDate
             // 
+            // 
+            // 
+            // 
+            this.dateSDPDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSDPDate.DateBox1.Name = "";
+            this.dateSDPDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSDPDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSDPDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSDPDate.DateBox2.Name = "";
+            this.dateSDPDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSDPDate.DateBox2.TabIndex = 1;
             this.dateSDPDate.IsRequired = false;
             this.dateSDPDate.Location = new System.Drawing.Point(75, 44);
             this.dateSDPDate.Name = "dateSDPDate";
@@ -132,7 +159,6 @@
             // 
             // labelSDPDate
             // 
-            this.labelSDPDate.Lines = 0;
             this.labelSDPDate.Location = new System.Drawing.Point(4, 44);
             this.labelSDPDate.Name = "labelSDPDate";
             this.labelSDPDate.Size = new System.Drawing.Size(67, 23);
@@ -141,7 +167,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(4, 13);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(67, 23);
@@ -208,6 +233,7 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(859, 340);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;

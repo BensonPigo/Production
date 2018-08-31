@@ -149,7 +149,7 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , O.KPIChangeReason , O.StyleUkey  , O.POID            , OrdersBuyerDelivery = o.BuyerDelivery
        , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
        , InspHandle = o.InspHandle +'-'+ Pass1.Name
-       ,O.Junk
+       , O.Junk,DryCTN=isnull(o.DryCTN,0),CFACTN=isnull(o.CFACTN,0)
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
 left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle
@@ -558,9 +558,11 @@ select t.MDivisionID
                                  , #cte2.firstSewingDate) 
        , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0
                                                     , round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
-       , t.TotalCTN                
+       , t.TotalCTN
+       , t.DryCTN
        , FtyCtn = t.TotalCTN - t.FtyCTN
        , t.ClogCTN
+       , t.CFACTN
        , t.InspDate
        , InspResult
        , [CFA Name] = InspHandle
@@ -826,7 +828,7 @@ select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate       
        , O.KPIChangeReason , O.StyleUkey  , O.POID            , OrdersBuyerDelivery = o.BuyerDelivery
        , InspResult = case when o.InspResult = 'P' then 'Pass' when o.InspResult = 'F' then 'Fail' end
        , InspHandle = o.InspHandle +'-'+ Pass1.Name
-       , O.Junk
+       , O.Junk,DryCTN=isnull(o.DryCTN,0),CFACTN=isnull(o.CFACTN,0)
 	   , oq.Article,oq.SizeCode
 into #cte 
 from dbo.Orders o WITH (NOLOCK) 
@@ -1237,9 +1239,11 @@ select t.MDivisionID
                                  , #cte2.firstSewingDate) 
        , [pack_rate] = IIF(isnull(t.TotalCTN, 0) = 0, 0
                                                     , round(t.ClogCTN / (t.TotalCTN * 1.0), 4) * 100 ) 
-       , t.TotalCTN                
+       , t.TotalCTN               
+       , t.DryCTN
        , FtyCtn = t.TotalCTN - t.FtyCTN
        , t.ClogCTN
+       , t.CFACTN
 -----------------------------------------------------------------------------------------------------------------------------------------
        , t.InspDate
        , InspResult
@@ -1520,7 +1524,7 @@ outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NO
 
             DBProxy.Current.DefaultTimeout = 2700;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.printData);
-            DBProxy.Current.DefaultTimeout = 0;
+            DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());

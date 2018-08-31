@@ -121,6 +121,7 @@ namespace Sci.Production.Warehouse
             .Numeric("accu_issue", name: "accu_issue", header: "Accu. Issued", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .Numeric("", name: "bal_qty", header: "Bal. Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
             .Numeric("qty", name: "qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, settings: ns, iseditingreadonly: true)    //8
+            .Text("FinalFIR", header: "Final FIR", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
             .Numeric("", name: "var_qty", header: "Var Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //9
             .Numeric("arqty", name: "arqty", header: "Accu Req. Qty by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //9
             .Numeric("aiqqty", name: "aiqqty", header: "Accu Issue Qty by Material", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //9
@@ -201,6 +202,11 @@ namespace Sci.Production.Warehouse
                       where psd.Id = a.Poid
                             and psd.SciRefno = a.SciRefno)
             , NetQty = isnull(NetQty.value, 0)
+            , [FinalFIR] = (SELECT Stuff((select concat( '/',isnull(Result,' '))   
+                                from dbo.FIR f with (nolock) 
+                                where f.poid = a.poid and f.SCIRefno = a.SCIRefno and
+                                      exists(select 1 from Issue_Detail with (nolock) where Issue_SummaryUkey = a.Ukey and f.seq1 = seq1 and f.seq2 = seq2)
+                                FOR XML PATH('')),1,1,'') )
 	from dbo.Issue_Summary a WITH (NOLOCK) 
     left join Fabric f on a.SciRefno = f.SciRefno
     outer apply (
@@ -980,6 +986,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             string cutplanID = row["cutplanID"].ToString();
             string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
             string cutno = this.editCutNo.Text;
+            string FactoryID = row["FactoryID"].ToString();
 
             #region  抓表頭資料
             List<SqlParameter> pars = new List<SqlParameter>();
@@ -998,6 +1005,7 @@ where id = @MDivision", pars, out dt);
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanID", cutplanID));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
             report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutno", cutno));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + FactoryID));
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable aa;

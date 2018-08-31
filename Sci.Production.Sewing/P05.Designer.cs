@@ -359,6 +359,7 @@
             this.GridUniqueKey = "OrderID,ComboType,Article";
             this.IsSupportConfirm = true;
             this.IsSupportUnconfirm = true;
+            this.IsSupportCopy = false;
             this.KeyField1 = "SubConOutFty,ContractNumber";
             this.Name = "P05";
             this.Text = "P05.SubconOutContract";

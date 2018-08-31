@@ -74,23 +74,30 @@ BEGIN
 	Where Cuttingsp = @Cuttingid and junk=0
 
 	---------組每個SP#的Article,Size,Qty,PatternPanel,inline
-	Select distinct e.id,a.article,a.colorid,e.sizecode,a.PatternPanel,e.qty as orderqty, 0 as disqty,f.Inline
+	Select distinct e.id,a.article,a.colorid,e.sizecode,a.PatternPanel,e.qty as orderqty, 0 as disqty,f.Inline,sr.SCIRefno
 	Into #_tmpdisQty
-	from Order_ColorCombo a  WITH (NOLOCK) ,Order_EachCons b  WITH (NOLOCK) ,
-	(Select d.*,cuttingsp from Order_Qty d  WITH (NOLOCK) ,(Select id,cuttingsp from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and junk=0) c Where c.id = d.id) e
+	from Order_ColorCombo a  WITH (NOLOCK) 
+	inner join Order_EachCons b  WITH (NOLOCK) on a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
+	inner join (Select d.*,cuttingsp from Order_Qty d  WITH (NOLOCK) ,(Select id,cuttingsp from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and junk=0) c Where c.id = d.id) e
+	on e.cuttingsp = a.id and e.Article = a.Article
 	left join 
 	(Select a.inline,b.Article,b.SizeCode,a.OrderID 
 	from SewingSchedule a  WITH (NOLOCK) ,SewingSchedule_Detail b  WITH (NOLOCK) ,
 		(Select id from Orders  WITH (NOLOCK)  where cuttingsp = @Cuttingid and junk=0) c 
 		where c.id = a.orderid and a.id = b.id and mDivisionid = @mDivisionid) f 
 	on f.OrderID = e.id and f.Article = e.Article and f.SizeCode = e.SizeCode 
+	outer apply(
+		select ob.scirefno
+		from Order_BoF ob WITH (NOLOCK) 
+		where ob.Id = b.id and ob.FabricCode = a.FabricCode
+	)sr
 	where a.id = @POID and a.FabricCode is not null and a.FabricCode !='' 
-	and b.id = @POID and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel and e.cuttingsp = a.id and e.Article = a.Article
+	and b.id = @POID    
 	Order by inline,e.ID
 
-	Select id,article,sizecode,colorid,PatternPanel,orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid
+	Select id,article,sizecode,colorid,PatternPanel,orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid,SCIRefno
 	into #disQty
-	From #_tmpdisQty group by id,article,sizecode,PatternPanel,orderqty, disqty,colorid order by inline
+	From #_tmpdisQty group by id,article,sizecode,PatternPanel,orderqty, disqty,colorid,SCIRefno order by inline
 	----------------------------------------------------------------------------------
 	--New WorkOrder
 	Select a.*,0 as newKey InTo #NewWorkorder From Workorder a  WITH (NOLOCK)  Where 1 =0
@@ -251,213 +258,185 @@ BEGIN
 				From PO_Supp_Detail b  WITH (NOLOCK) 
 				Where id = @POID AND Scirefno = @SCIRefno and OutputSeq2 != '' AND Colorid = @colorid and SEQ1 like '7%' and Junk = 0
 			End
-			-----------------------------------------------------------------------
-			if @WorkType=1 --WorkType by Combination
-			Begin			
-				--新法-------------------------------------------------------------
-				--先組依Article和Maxlayer的分配表#dis_tmpAL
-				Begin
-					
-
-					--新寫法 不依article拆layer
-					create table #dis_tmpAL (Article varchar(8),Layer int,byWorkorder int)
-					declare @t_layer int = 0
-					Declare @byWorkorder int = 1
-					--依max layer,total 計算要cut幾次
-					while @t_layer <	@TotalLayer
+			--先組依Article和Maxlayer的分配表#dis_tmpAL
+			Begin
+				--新寫法 不依article拆layer
+				create table #dis_tmpAL (Article varchar(8),Layer int,byWorkorder int)
+				declare @t_layer int = 0
+				Declare @byWorkorder int = 1
+				--依max layer,total 計算要cut幾次
+				while @t_layer <	@TotalLayer
+				begin
+					set @t_layer	=	@t_layer + @maxLayer
+					--最後需cut零頭層數
+					if @t_layer > @TotalLayer
 					begin
-						set @t_layer	=	@t_layer + @maxLayer
-						--最後需cut零頭層數
-						if @t_layer > @TotalLayer
-						begin
-							insert into #dis_tmpAL(Article,Layer,byWorkorder) 
-											values('*',@TotalLayer % @maxLayer,@byWorkorder)
-						end
-						else
-						begin
-
-							insert into #dis_tmpAL(Article,Layer,byWorkorder) 
-											values('*',@maxLayer,@byWorkorder)
-						end
-						set @byWorkorder = @byWorkorder +1
+						insert into #dis_tmpAL(Article,Layer,byWorkorder) 
+										values('*',@TotalLayer % @maxLayer,@byWorkorder)
 					end
+					else
+					begin
+						insert into #dis_tmpAL(Article,Layer,byWorkorder) 
+										values('*',@maxLayer,@byWorkorder)
+					end
+					set @byWorkorder = @byWorkorder +1
+				end
+			End--End--組依Article和Maxlayer的分配表#dis_tmpAL
+			Begin
+				declare @oldWorkerordernum int
+				declare @newWorkerordernum int
+				set @oldWorkerordernum = 0
+				set @newWorkerordernum = 0
+
+				--準備Cons
+				SET @SizeRatioQty = 0
+				Select @SizeRatioQty = sum(Qty)
+				From Order_EachCons_SizeQty  WITH (NOLOCK) 
+				Where Order_EachConsUkey = @ukey
 					
-				
-				End--End--組依Article和Maxlayer的分配表#dis_tmpAL
+				DECLARE cur_dis_tmpAL CURSOR FOR 
+					Select byWorkorder,Layer from #dis_tmpAL;
+				OPEN cur_dis_tmpAL
+				FETCH NEXT FROM cur_dis_tmpAL INTO @newWorkerordernum,@Layer
+				while @@FETCH_STATUS = 0
 				Begin
-					declare @oldWorkerordernum int
-					declare @newWorkerordernum int
-					set @oldWorkerordernum = 0
-					set @newWorkerordernum = 0
+					SET @Cons = @Layer * @SizeRatioQty * @ConsPC
+					if(@oldWorkerordernum != @newWorkerordernum)
+					Begin--byworkorder的Group與前一筆不一樣,則新增一筆
+						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
+						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey)
+						SET @NewKey += 1--這邊就先加了,下面同筆insert的要減1才會對應到
+						set @oldWorkerordernum = @newWorkerordernum
+					End						
+					Else					
+					Begin--與前一筆一樣則把Layer加上update
+						update #NewWorkorder 
+						set Layer = Layer + @Layer 
+							,Cons = cons + @Cons
+						where newKey = (@NewKey-1)
+					End
 
-					--準備Cons
-					SET @SizeRatioQty = 0
-					Select @SizeRatioQty = sum(Qty)
-					From Order_EachCons_SizeQty  WITH (NOLOCK) 
-					Where Order_EachConsUkey = @ukey
-					
-					DECLARE cur_dis_tmpAL CURSOR FOR 
-						Select byWorkorder,Layer from #dis_tmpAL;
-					OPEN cur_dis_tmpAL
-					FETCH NEXT FROM cur_dis_tmpAL INTO @newWorkerordernum,@Layer
-					while @@FETCH_STATUS = 0
+					--準備SizeQty,要用來乘上Layer
+					DECLARE cur_distriqty_modlayer CURSOR FOR 
+					Select A.sizecode,A.Qty * @Layer
+					From Order_EachCons_SizeQty a  WITH (NOLOCK) ,Order_SizeCode b  WITH (NOLOCK)   
+					Where a.Order_EachConsUkey = @ukey  and a.id = b.id and a.SizeCode = b.SizeCode 
+					order by seq
+
+					OPEN cur_distriqty_modlayer
+					FETCH NEXT FROM cur_distriqty_modlayer INTO @Sizecode,@CutQty
+					While @@FETCH_STATUS = 0
 					Begin
-						SET @Cons = @Layer * @SizeRatioQty * @ConsPC
-						if(@oldWorkerordernum != @newWorkerordernum)
-						Begin--byworkorder的Group與前一筆不一樣,則新增一筆
-							Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
-							Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey)
-							SET @NewKey += 1--這邊就先加了,下面同筆insert的要減1才會對應到
-							set @oldWorkerordernum = @newWorkerordernum
-						End						
-						Else					
-						Begin--與前一筆一樣則把Layer加上update
-							update #NewWorkorder 
-							set Layer = Layer + @Layer 
-								,Cons = cons + @Cons
-							where newKey = (@NewKey-1)
-						End
-
-						
-
-						--準備SizeQty,要用來乘上Layer
-						DECLARE cur_distriqty_modlayer CURSOR FOR 
-							Select A.sizecode,A.Qty * @Layer
-									From Order_EachCons_SizeQty a  WITH (NOLOCK) ,Order_SizeCode b  WITH (NOLOCK)   
-									Where a.Order_EachConsUkey = @ukey  and a.id = b.id and a.SizeCode = b.SizeCode 
-									order by seq
-
-						OPEN cur_distriqty_modlayer
-						FETCH NEXT FROM cur_distriqty_modlayer INTO @Sizecode,@CutQty
+						DECLARE cur_disQty  CURSOR FOR 
+						Select disqty,orderqty,Article,identRowid,ID
+						from #disQty 
+						Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and SCIRefno = @SCIRefno--因為不同article要一起計算，拿掉 and Article = @Article
+						order by Article
+							
+						OPEN cur_disQty
+						FETCH NEXT FROM cur_disQty INTO @distributeQty,@OrderQty,@Article,@WorkOrder_DisidenRow,@WorkOrder_DisOrderID
 						While @@FETCH_STATUS = 0
 						Begin
-							
-							
-							DECLARE cur_disQty  CURSOR FOR 
-								Select disqty,orderqty,Article,identRowid,ID
-								from #disQty 
-								Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo--因為不同article要一起計算，所以這邊拿掉 and Article = @Article
-								order by Article
-							
-							OPEN cur_disQty
-							FETCH NEXT FROM cur_disQty INTO @distributeQty,@OrderQty,@Article,@WorkOrder_DisidenRow,@WorkOrder_DisOrderID
-							While @@FETCH_STATUS = 0
-							Begin
-								if(@OrderQty > @distributeQty) --若Distribute沒超過OrderQty才可繼續分配
-								Begin							
-									if(@CutQty >= @OrderQty - @distributeQty) 
-									Begin
-										SET @WorkOrder_DisQty = @OrderQty - @distributeQty
-									End;
-									else
-									Begin
-										SET @WorkOrder_DisQty = @CutQty
-									End;
-									update #disQty set disqty = disqty + IsNull(@WorkOrder_DisQty,0)
-									Where identRowid = @WorkOrder_DisidenRow
-
-									set @CutQty = @CutQty - @WorkOrder_DisQty --剩餘數
-									-------------Insert into WorkOrder_Distribute------------------
-									if(@WorkOrder_DisQty>0)
-									Begin
-										insert into #NewWorkOrder_Distributetmp(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
-										Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey-1,0)
-									End
+							if(@OrderQty > @distributeQty) --若Distribute沒超過OrderQty才可繼續分配
+							Begin							
+								if(@CutQty >= @OrderQty - @distributeQty) 
+								Begin
+									SET @WorkOrder_DisQty = @OrderQty - @distributeQty
 								End;
+								else
+								Begin
+									SET @WorkOrder_DisQty = @CutQty
+								End;
+								update #disQty set disqty = disqty + IsNull(@WorkOrder_DisQty,0)
+								Where identRowid = @WorkOrder_DisidenRow
 
-								set @disQtyRowID +=1
-							FETCH NEXT FROM cur_disQty INTO @distributeQty,@OrderQty,@Article,@WorkOrder_DisidenRow,@WorkOrder_DisOrderID
-							End
-							CLOSE cur_disQty
-							DEALLOCATE cur_disQty 
-
-							if(@CutQty>0) ---若全分配完還有剩就要給EXCESS
-							Begin
-								insert into #NewWorkOrder_Distributetmp(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
-								Values(@Cuttingid, 'EXCESS','',@SizeCode,@CutQty,@NewKey-1,0)		
-							End
-						FETCH NEXT FROM cur_distriqty_modlayer INTO @Sizecode,@CutQty
-						END
-						CLOSE cur_distriqty_modlayer
-						DEALLOCATE cur_distriqty_modlayer 
-						----------------新增WorkOrder_SizeRatio-------------------------
-						Begin						
-							
-							DECLARE cur_Order_EachCons_SizeQty CURSOR FOR 
-								Select sizecode,Qty
-									From Order_EachCons_SizeQty  WITH (NOLOCK) 
-									Where Order_EachConsUkey = @ukey
-
-							OPEN cur_Order_EachCons_SizeQty
-							FETCH NEXT FROM cur_Order_EachCons_SizeQty INTO @SizeCode,@WorkOrder_SizeRatio_Qty
-							While @@FETCH_STATUS = 0
-							Begin
-								Insert into #NewWorkOrder_SizeRatiotmp(ID,SizeCode,Qty,newKey,WorkOrderUkey)
-								Values(@Cuttingid,@SizeCode,@WorkOrder_SizeRatio_Qty,@NewKey-1,0)
-							FETCH NEXT FROM cur_Order_EachCons_SizeQty INTO @SizeCode,@WorkOrder_SizeRatio_Qty
+								set @CutQty = @CutQty - @WorkOrder_DisQty --剩餘數
+								-------------Insert into WorkOrder_Distribute------------------
+								if(@WorkOrder_DisQty>0)
+								Begin
+									insert into #NewWorkOrder_Distributetmp(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
+									Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey-1,0)
+								End
 							End;
-							CLOSE cur_Order_EachCons_SizeQty
-							DEALLOCATE cur_Order_EachCons_SizeQty 
+
+							set @disQtyRowID +=1
+						FETCH NEXT FROM cur_disQty INTO @distributeQty,@OrderQty,@Article,@WorkOrder_DisidenRow,@WorkOrder_DisOrderID
 						End
-						----------------新增WorkOrder_PatternPanel----------------------
-						Begin	
+						CLOSE cur_disQty
+						DEALLOCATE cur_disQty 
 
-							DECLARE  cur_Order_EachCons_PatternPanel CURSOR FOR
-								Select PatternPanel,FabricPanelCode
-								From Order_EachCons_PatternPanel  WITH (NOLOCK) 
-								Where Order_EachConsUkey = @ukey
-
-							OPEN cur_Order_EachCons_PatternPanel
-							FETCH NEXT FROM cur_Order_EachCons_PatternPanel INTO @WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode
-							While @@FETCH_STATUS = 0
-							Begin
-								-- insert WorkOrder_PatternPanel
-								Insert into #NewWorkOrder_PatternPaneltmp(ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey)
-								Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode,@NewKey-1,0)
-
-							FETCH NEXT FROM cur_Order_EachCons_PatternPanel INTO @WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode	
-							End;
-							CLOSE cur_Order_EachCons_PatternPanel
-							DEALLOCATE cur_Order_EachCons_PatternPanel 	
+						if(@CutQty>0) ---若全分配完還有剩就要給EXCESS
+						Begin
+							insert into #NewWorkOrder_Distributetmp(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
+							Values(@Cuttingid, 'EXCESS','',@SizeCode,@CutQty,@NewKey-1,0)		
+						End
+					FETCH NEXT FROM cur_distriqty_modlayer INTO @Sizecode,@CutQty
+					END
+					CLOSE cur_distriqty_modlayer
+					DEALLOCATE cur_distriqty_modlayer 
+					----------------新增WorkOrder_SizeRatio-------------------------
+					Begin						
 							
-						End
-						----------------此筆的3個子Table準備結束------------------------
+						DECLARE cur_Order_EachCons_SizeQty CURSOR FOR 
+						Select sizecode,Qty
+						From Order_EachCons_SizeQty  WITH (NOLOCK) 
+						Where Order_EachConsUkey = @ukey
 
-					FETCH NEXT FROM cur_dis_tmpAL INTO @newWorkerordernum,@Layer
+						OPEN cur_Order_EachCons_SizeQty
+						FETCH NEXT FROM cur_Order_EachCons_SizeQty INTO @SizeCode,@WorkOrder_SizeRatio_Qty
+						While @@FETCH_STATUS = 0
+						Begin
+							Insert into #NewWorkOrder_SizeRatiotmp(ID,SizeCode,Qty,newKey,WorkOrderUkey)
+							Values(@Cuttingid,@SizeCode,@WorkOrder_SizeRatio_Qty,@NewKey-1,0)
+						FETCH NEXT FROM cur_Order_EachCons_SizeQty INTO @SizeCode,@WorkOrder_SizeRatio_Qty
+						End;
+						CLOSE cur_Order_EachCons_SizeQty
+						DEALLOCATE cur_Order_EachCons_SizeQty 
 					End
-					CLOSE cur_dis_tmpAL
-					DEALLOCATE cur_dis_tmpAL 
+					----------------新增WorkOrder_PatternPanel----------------------
+					Begin
+						DECLARE  cur_Order_EachCons_PatternPanel CURSOR FOR
+						Select PatternPanel,FabricPanelCode
+						From Order_EachCons_PatternPanel  WITH (NOLOCK) 
+						Where Order_EachConsUkey = @ukey
+
+						OPEN cur_Order_EachCons_PatternPanel
+						FETCH NEXT FROM cur_Order_EachCons_PatternPanel INTO @WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode
+						While @@FETCH_STATUS = 0
+						Begin
+							-- insert WorkOrder_PatternPanel
+							Insert into #NewWorkOrder_PatternPaneltmp(ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey)
+							Values(@Cuttingid,@WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode,@NewKey-1,0)
+						FETCH NEXT FROM cur_Order_EachCons_PatternPanel INTO @WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode	
+						End;
+						CLOSE cur_Order_EachCons_PatternPanel
+						DEALLOCATE cur_Order_EachCons_PatternPanel 	
+					End
+					----------------此筆的3個子Table準備結束------------------------
+				FETCH NEXT FROM cur_dis_tmpAL INTO @newWorkerordernum,@Layer
 				End
-
-				drop table #dis_tmpAL
-				--新法結尾---------------------------------------------------------
-			End	
-------------------------------------------------------------------------------------------------------------------------------------
-----------------------------------BY SP使用dbo.usp_switchWorkorder_BySP---------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------------------
+				CLOSE cur_dis_tmpAL
+				DEALLOCATE cur_dis_tmpAL 
+			End
+			drop table #dis_tmpAL
 		Set @WorkOrderMixRowID += 1
-
 		Drop table #LongArticle
-
 		ENd --End WorkOrder Loop
 		drop table #WorkOrderMix
 	End;
 
-	if(@WorkType=1)
-	Begin
-		Insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)							
-		select ID,OrderID,Article,SizeCode,sum(Qty),NewKey,WorkOrderUkey
-		from #NewWorkOrder_Distributetmp
-		group by ID,OrderID,Article,SizeCode,NewKey,WorkOrderUkey
+	Insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)							
+	select ID,OrderID,Article,SizeCode,sum(Qty),NewKey,WorkOrderUkey
+	from #NewWorkOrder_Distributetmp
+	group by ID,OrderID,Article,SizeCode,NewKey,WorkOrderUkey
 
-		Insert into #NewWorkOrder_SizeRatio(ID,SizeCode,Qty,newKey,WorkOrderUkey)
-		select distinct ID,SizeCode,Qty,newKey,WorkOrderUkey
-		from #NewWorkOrder_SizeRatiotmp
+	Insert into #NewWorkOrder_SizeRatio(ID,SizeCode,Qty,newKey,WorkOrderUkey)
+	select distinct ID,SizeCode,Qty,newKey,WorkOrderUkey
+	from #NewWorkOrder_SizeRatiotmp
 
-		Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey)							
-		select distinct ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey
-		from #NewWorkOrder_PatternPaneltmp
-	End
+	Insert into #NewWorkOrder_PatternPanel(ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey)							
+	select distinct ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey
+	from #NewWorkOrder_PatternPaneltmp
 
 	Declare @insertRow int
 	Declare @insertcount int
@@ -493,3 +472,4 @@ BEGIN
 			Set @insertRow+=1
 	End
 End
+

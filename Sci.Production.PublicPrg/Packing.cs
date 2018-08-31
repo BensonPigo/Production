@@ -540,8 +540,8 @@ select  a.*
         , o.StyleID
         , o.CustPONo
         , o.SeasonID
-        , Factory = STUFF(( select CONCAT(',', FtyGroup) 
-                            from ( select distinct FtyGroup 
+        , Factory = STUFF(( select CONCAT(',', FactoryID) 
+                            from ( select distinct FactoryID 
                                    from orders o 
                                    where o.id in (a.OrderID)) s 
                             for xml path('')
@@ -549,6 +549,9 @@ select  a.*
         , sortCTNNo = TRY_Convert(int , a.CTNStartNo)
         , sciDelivery = min(o.sciDelivery) over()
         , kpileta = min(o.kpileta) over()
+        ,[Cancel] = (SELECT [Cancel] = CASE WHEN count(*) > 0 THEN 'Y' ELSE 'N' END
+                        FROM  orders o 						
+                        WHERE o.Junk = 1 AND a.OrderID=o.ID)
 from PackingList_Detail a WITH (NOLOCK) 
 left join LocalItem b WITH (NOLOCK) on b.RefNo = a.RefNo
 left join AccuPKQty pd on a.OrderID = pd.OrderID 
@@ -1787,7 +1790,9 @@ select  pd.ID
 						else pd.ShipQty
 					 end
 		, checkMixSize.value
+        , o.BuyerDelivery
 from PackingList_Detail pd WITH (NOLOCK) 
+left join orders o with(nolock) on o.id = pd.OrderID
 outer apply (
 	select value = count (1)
 	from (

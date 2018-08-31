@@ -133,7 +133,7 @@
             this.Controls.Add(this.labelSP);
             this.Controls.Add(this.labelUpdatedDate);
             this.Name = "R09";
-            this.Text = "R09 Comparison List Report";
+            this.Text = "R09. Comparison List Report";
             this.Controls.SetChildIndex(this.labelUpdatedDate, 0);
             this.Controls.SetChildIndex(this.labelSP, 0);
             this.Controls.SetChildIndex(this.labelM, 0);

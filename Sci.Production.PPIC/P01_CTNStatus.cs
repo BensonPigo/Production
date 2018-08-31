@@ -131,6 +131,22 @@ c.AddDate as UpdateDate ,isnull(pd.Seq,0) as Seq
 from ClogReceiveCFA c WITH (NOLOCK) 
 left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
 where c.OrderId = '{0}' and pd.CTNQty > 0  
+),
+DryRoomReceive 
+as (
+select c.PackingListId,c.CTNStartNo,'Dry Room Receive from Fty' as Type,c.id,c.ReceiveDate as TypeDate, '' as Location, 
+c.AddDate as UpdateDate , isnull(pd.Seq,0) as Seq
+from DryReceive c WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+where c.OrderId = '{0}' and pd.CTNQty > 0
+),
+DryRoomTransfer 
+as (
+select c.PackingListId,c.CTNStartNo,'Dry Room Transfer to '+ c.TransferTo as Type,c.ID, c.TransferDate as TypeDate , '' as Location, 
+c.AddDate as UpdateDate, isnull(pd.Seq,0) as Seq
+from DryTransfer c WITH (NOLOCK) 
+left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = c.PackingListID and pd.OrderID = c.OrderID and pd.CTNStartNo = c.CTNStartNo
+where c.OrderId = '{0}' and pd.CTNQty > 0
 )
 
 select * from Transferclog
@@ -146,6 +162,10 @@ union all
 select * from ReturnCFA
 union all
 select * from CReceiveCFA 
+union all
+select * from DryRoomReceive 
+union all
+select * from DryRoomTransfer 
 order by PackingListID,Seq,UpdateDate", this.orderID);
             #endregion
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out transferDetail);
@@ -164,6 +184,7 @@ select [PackingListID] =  p.ID
 ,pd.TransferDate
 ,pd.ReceiveDate
 ,pd.ReturnDate
+,pd.DryReceiveDate
 ,pd.TransferCFADate
 ,pd.CFAReceiveDate
 ,pd.CFAReturnClogDate
@@ -210,6 +231,7 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("TransferDate", header: "Trans. Date", width: Widths.AnsiChars(10))
                 .Date("ReceiveDate", header: "Rec. Date", width: Widths.AnsiChars(10))
                 .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(10))
+                .Date("DryReceiveDate", header: "Dry Room Rec. Date", width: Widths.AnsiChars(10))
                 .Date("TransferCFADate", header: "Trans. CFA Date", width: Widths.AnsiChars(10))
                 .Date("CFAReceiveDate", header: "CFA Rec. Clog Date", width: Widths.AnsiChars(10))
                 .Date("CFAReturnClogDate", header: "CFA Return Clog Date", width: Widths.AnsiChars(10))

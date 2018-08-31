@@ -1086,45 +1086,54 @@ select distinct sizecode,Seq
                 extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(dts[1]);
 
                 string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc.xltx");
-                sxrc sxr = new sxrc(xltPath);
+                SaveXltReportCls sxr = new SaveXltReportCls(xltPath, true);
+                sxr.AllowRangeTransferToString = false;
                 string Cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", _id, "Cutting", "ID");
                 sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", Cuttingfactory, "Factory", "ID"));
                 sxr.DicDatas.Add(sxr.VPrefix + "ORDERNO", dr["ORDERNO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "STYLENO", dr["STYLENO"]);
                 sxr.DicDatas.Add(sxr.VPrefix + "QTY", MyUtility.Convert.GetString(dr["QTY"]));
                 sxr.DicDatas.Add(sxr.VPrefix + "FTY", dr["FACTORY"]);
-                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[1]);
+                SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(dts[1]);
                 dt.ShowHeader = false;
 
                 //欄位水平對齊
                 for (int i = 1; i <= dt.Columns.Count; i++)
                 {
                     Microsoft.Office.Interop.Excel.XlHAlign xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight;
-                    if (i <= 2)
-                        xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
-
-
-                    sxrc.XlsColumnInfo citbl = new sxrc.XlsColumnInfo(i, true, 0, xha);
-                    if (i == 5 | i == 8 | i == 10 | i == 12)
+                    if (i <= 3) // <= 2
                     {
-                        citbl.PointCnt = 2; //小數點兩位
+                        xha = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+                    }
+
+                    SaveXltReportCls.XlsColumnInfo citbl = new SaveXltReportCls.XlsColumnInfo(i, true, 0, xha);
+                    if (i == 6 | i == 9 | i == 11 | i == 13)
+                    {
+                        citbl.PointCnt = 2; // 小數點兩位
+                        citbl.NumberFormate = "##,##0.0#";
+                    }
+                    else if (i == 5)
+                    {
+                        citbl.NumberFormate = "##,##0.0000";
                     }
                     else if (i == 4)
                     {
-                        citbl.PointCnt = 4;
+                        citbl.NumberFormate = "@";
                     }
+
                     dt.LisColumnInfo.Add(citbl);
                 }
 
                 dt.Borders.DependOnColumn.Add(1, 2);
 
                 //合併儲存格
-                dt.LisTitleMerge.Add(new Dictionary<string, string> { { "Usage", "7,8" }, { "Purchase", "9,10" } });
+                // dt.LisTitleMerge.Add(new Dictionary<string, string> { { "Usage", "7,8" }, { "Purchase", "9,10" } });
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
                 sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
+                sxr.ActionAfterFillData = this.SetPageAutoFit;
 
                 sxr.BoOpenFile = true;
-                sxr.Save(Sci.Production.Class.MicrosoftFile.GetName("Cutting_P01_ConsumptionCalculatebyMarkerListConsPerpc"));
+                sxr.Save();
                 #endregion
             }
             
@@ -1443,12 +1452,12 @@ select distinct sizecode,Seq
         void extra_P01_ConsumptionCalculatebyMarkerListConsPerpc(DataTable dt)
         {
             //removeRepeat(dt, new int[] {0,1} );
-            ChangeColumnDataType(dt, "Q'ty/PCS", typeof(string));
-            ChangeColumnDataType(dt, "CONSUMPTION.", typeof(string));
-            ChangeColumnDataType(dt, "CONSUMPTION", typeof(string));
+            this.ChangeColumnDataType(dt, "Q'ty/PCS", typeof(string));
+            this.ChangeColumnDataType(dt, "CONSUMPTION.", typeof(string));
+            this.ChangeColumnDataType(dt, "CONSUMPTION", typeof(string));
 
-            addTotal(dt, new int[] { 0, 1 });
-            removeRepeat(dt, new int[] { 0, 1 });
+            AddTotal(dt, new int[] { 0, 1 });
+            this.RemoveRepeat(dt, new int[] { 0, 1, 2 });
         }
 
         private bool ChangeColumnDataType(System.Data.DataTable table, string columnname, Type newtype)
@@ -1485,7 +1494,7 @@ select distinct sizecode,Seq
             return true;
         }
 
-        void addTotal(DataTable dt, int[] cidx)
+        void AddTotal(DataTable dt, int[] cidx)
         {
             string col2tmp = "";
 
@@ -1554,25 +1563,28 @@ select distinct sizecode,Seq
             addSubTotalRow_06_2(PUnit, PLUSName, dt, PCon, Total, dt.Rows.Count);
         }
 
-        void removeRepeat(DataTable dt, int[] cidx)
+        private void RemoveRepeat(DataTable dt, int[] cidx)
         {
-            string col2tmp = "";
+            string col2tmp = string.Empty;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-
-                string col2 = "";// dt.Rows[i][cidx].ToString();
+                string col2 = string.Empty; // dt.Rows[i][cidx].ToString();
                 for (int k = 0; k < cidx.Length; k++)
                 {
                     col2 += dt.Rows[i][cidx[k]].ToString();
                 }
-                if (col2 == "") continue;
+
+                if (col2 == string.Empty)
+                {
+                    continue;
+                }
+
                 if (col2tmp != col2)
                 {
-                    if (col2tmp == "")
+                    if (col2tmp == string.Empty)
                     {
                         col2tmp = col2;
                         continue;
-
                     }
                     else
                     {
@@ -1582,13 +1594,13 @@ select distinct sizecode,Seq
                 }
                 else
                 {
-
+                    ////
                 }
+
                 for (int k = 0; k < cidx.Length; k++)
                 {
-                    dt.Rows[i][cidx[k]] = "";
+                    dt.Rows[i][cidx[k]] = string.Empty;
                 }
-
             }
         }
 

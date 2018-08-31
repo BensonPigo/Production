@@ -276,10 +276,30 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
 ,a.HeatDate
 ,a.[Wash]
 ,a.WashDate
+,[Oven] = Oven.Result
+,[OvenDate] = Oven.InspDate
+,[ColorFastness] = ColorFastness.Result
+,[ColorFastnessDate] = ColorFastness.InspDate
 ,a.id
 from dbo.FIR_Laboratory a WITH (NOLOCK) 
 inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
 inner join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
+outer apply(select (case when  sum(iif(od.Result = 'Fail' ,1,0)) > 0 then 'Fail'
+						 when  sum(iif(od.Result = 'Pass' ,1,0)) > 0 then 'Pass'
+				         else '' end) as Result,
+					MIN( ov.InspDate) as InspDate 
+				from Oven ov
+				inner join dbo.Oven_Detail od on od.ID = ov.ID
+				where ov.POID=a.POID and od.SEQ1=a.Seq1 
+				and seq2=a.Seq2 and ov.Status='Confirmed') as Oven
+outer apply(select (case when  sum(iif(cd.Result = 'Fail' ,1,0)) > 0 then 'Fail'
+						 when  sum(iif(cd.Result = 'Pass' ,1,0)) > 0 then 'Pass'
+				         else '' end) as Result,
+					MIN( CF.InspDate) as InspDate 
+				from dbo.ColorFastness CF WITH (NOLOCK) 
+				inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+				where CF.Status = 'Confirmed' and CF.POID=a.POID 
+				and cd.SEQ1=a.Seq1 and cd.seq2=a.Seq2) as ColorFastness
 where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
                 DataTable dtFIR_Laboratory;
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_Laboratory);
@@ -346,6 +366,10 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr[
                      .Date("HeatDate", header: "Heat Date", width: Widths.AnsiChars(13))
                      .Text("Wash", header: "Wash" + Environment.NewLine + "Shrinkage", width: Widths.AnsiChars(8),settings : wash)
                      .Date("WashDate", header: "Wash Date", width: Widths.AnsiChars(13))
+                     .Text("Oven", header: "Oven" + Environment.NewLine + "Test", width: Widths.AnsiChars(8), settings: wash)
+                     .Date("OvenDate", header: "Oven Test Date", width: Widths.AnsiChars(13))
+                     .Text("ColorFastness", header: "Color" + Environment.NewLine + "Fastness", width: Widths.AnsiChars(8), settings: wash)
+                     .Date("ColorFastnessDate", header: "Color Fastness Date", width: Widths.AnsiChars(13))
                      ;
                      //.Date("ReceiveSampleDate", header: "Date", width: Widths.AnsiChars(13),settings:ds2)
                      //.Text("Crocking", header: "Crocking" + Environment.NewLine + "Test", width: Widths.AnsiChars(8), settings: ts2)

@@ -1,6 +1,5 @@
 ﻿
-
-CREATE PROCEDURE [dbo].[usp_switchWorkorder_BySP]
+Create PROCEDURE [dbo].[usp_switchWorkorder_BySP]
 	(
 	 @WorkType  varChar(1)=2,--By SP = 2
 	 @Cuttingid  varChar(13),
@@ -24,6 +23,7 @@ alter table #tmp_WorkOrder_Distribute add newKey int
 select *,newKey=0 into #tmp_Workorder from WorkOrder where 1=0
 select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrder_SizeRatio where 1=0
 select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrder_PatternPanel where 1=0
+Select *,newKey=0 InTo #tmp_WorkOrder_PatternPaneltmp From WorkOrder_PatternPanel WITH (NOLOCK) Where 1 = 0
 --主要資料
 Select MixedSizeMarker,	oe.id,	[FactoryID] = @FactoryID,	[MDivisionid] = @MDivisionid,
 	[Seq1] = isnull(iif(isnull(s.SEQ2,'')='',s2.seq1,s.SEQ1),''),--若SEQ2 為空就找70大項
@@ -63,6 +63,7 @@ order by isnull(hasforArticle.A,1),MixedSizeMarker desc,MarkerName
 --準備inline和qty分配資料
 select Inline = Min(s.Inline),[orderid] = o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,[Size_orderqty] = oq.qty,IDENTITY(int,1,1) as identRowid
 ,InlineForOrderby = isnull(Min(s.Inline),'9999/12/31')
+,sr.SCIRefno
 into #_tmpdisQty
 from Orders o WITH (NOLOCK)
 inner join Order_Qty oq WITH (NOLOCK) on oq.id = o.id
@@ -75,8 +76,13 @@ outer apply
 	inner join SewingSchedule_Detail ssd WITH (NOLOCK) on ss.ID = ssd.ID 
 	where ss.OrderID = o.id and ss.MDivisionID = o.MDivisionID and ssd.Article = oq.Article and oq.SizeCode = ssd.SizeCode and occ.Article = ssd.Article
 )s
+outer apply(
+	select ob.scirefno
+	from Order_BoF ob WITH (NOLOCK) 
+	where ob.Id = oe.id and ob.FabricCode = occ.FabricCode
+)sr
 where o.CuttingSP = @Cuttingid and o.MDivisionID = @MDivisionID and o.junk = 0
-group by s.Inline,o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,oq.qty 
+group by s.Inline,o.id,oq.Article,occ.ColorID,oq.SizeCode,occ.PatternPanel,oq.qty ,sr.SCIRefno
 order by InlineForOrderby,o.id
 --主要資料參數
 Declare @MixedSizeMarker varchar(2),@id varchar(13),@SizeCode varchar(8),@FirstSizeCode varchar(8),@colorid varchar(6),
@@ -111,12 +117,12 @@ Begin
 		select [SizeRatio]=oes.Qty,	b.identRowid,a.id,b.orderid,b.Article,b.SizeCode,b.Size_orderqty,a.ThisMarkerColor_MaxLayer,Rowid = IDENTITY(int,1,1) 
 		into #DistributeSource
 		from #WorkOrderMix a
-		inner join #_tmpdisQty b on a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel
+		inner join #_tmpdisQty b on a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel and a.SCIRefno = b.SCIRefno
 		inner join Order_EachCons_SizeQty oes on  oes.id = a.id and oes.Order_EachConsUkey = a.Order_EachConsUkey and b.SizeCode = oes.SizeCode
 		outer apply(select top 1 A=0 from Order_EachCons_Article WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)hasforArticle
 		outer apply(select Article from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)forArticle
 		where (b.Article in (forArticle.Article) or hasforArticle.A is null)--有forArticle已forArticle為主
-		and a.MarkerName = @MarkerName and a.ColorID = @colorid and a.FabricCombo = @FabricCombo and b.SizeCode = @sizecode
+		and a.MarkerName = @MarkerName and a.ColorID = @colorid and a.FabricCombo = @FabricCombo and b.SizeCode = @sizecode  and a.SCIRefno = @SCIRefno
 		order by identRowid
 		if (select sum(Size_orderqty) from #DistributeSource) < @ThisTotalCutQty
 		begin
@@ -324,7 +330,23 @@ Begin
 		CLOSE Size
 		DEALLOCATE Size
 		--WorkOrder_PatternPanel
-		INSERT INTO #tmp_WorkOrder_PatternPanel values(@id,0,@FabricCombo,@FabricPanelCode,@tmpUkey2)
+		--INSERT INTO #tmp_WorkOrder_PatternPanel values(@id,0,@FabricCombo,@FabricPanelCode,@tmpUkey2)
+		Begin
+			Declare @WorkOrder_PatternPanel nvarchar(2),@WorkOrder_FabricPanelCode nvarchar(2)
+			DECLARE  cur_Order_EachCons_PatternPanel CURSOR FOR
+			Select PatternPanel,FabricPanelCode	From Order_EachCons_PatternPanel WITH (NOLOCK) Where Order_EachConsUkey = @Order_EachConsUkey
+
+			OPEN cur_Order_EachCons_PatternPanel
+			FETCH NEXT FROM cur_Order_EachCons_PatternPanel INTO @WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode
+			While @@FETCH_STATUS = 0
+			Begin
+				Insert into #tmp_WorkOrder_PatternPaneltmp values(@id,0,@WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode,@tmpUkey2)
+			FETCH NEXT FROM cur_Order_EachCons_PatternPanel INTO @WorkOrder_PatternPanel,@WorkOrder_FabricPanelCode	
+			End;
+			CLOSE cur_Order_EachCons_PatternPanel
+			DEALLOCATE cur_Order_EachCons_PatternPanel 	
+		End
+
 	FETCH NEXT FROM insertWorkorder INTO @tmpUkey2,@FLayer
 	End
 	CLOSE insertWorkorder
@@ -335,6 +357,10 @@ FETCH NEXT FROM CURSOR_WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivision
 End
 CLOSE CURSOR_WorkOrder
 DEALLOCATE CURSOR_WorkOrder
+
+Insert into #tmp_WorkOrder_PatternPanel(ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey)							
+select distinct ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey
+from #tmp_WorkOrder_PatternPaneltmp
 --select * from #tmp_Workorder order by newkey
 --select newkey,orderid,Article,sizecode from #tmp_WorkOrder_Distribute group by newkey,orderid,Article,sizecode having count(1)>1
 --select * from #tmp_WorkOrder_Distribute order by newkey

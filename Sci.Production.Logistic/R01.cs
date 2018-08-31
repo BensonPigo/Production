@@ -103,7 +103,9 @@ and ClogLocationId !='' and ClogLocationId is not null
         , oq.Seq
         , o.SciDelivery
         , o.TotalCTN
+		, o.DRYCTN
         , o.ClogCTN
+		, o.CfaCTN
         , o.PulloutCTNQty
         , CTNQty = isnull ((select sum (CTNQty) 
                             from PackingList_Detail WITH (NOLOCK) 
@@ -201,7 +203,24 @@ into #tmp2
 from #tmp t left join ClogReturn cr on cr.OrderID = t.ID
 group by t.ID
 
-select t.*,t2.RetCtnBySP
+select 
+	t.FactoryID,t.MCHandle,t.SewLine,t.ID,t.BrandID,t.StyleID,t.StyleName,t.CustPONo,t.Customize1,t.SciDelivery,t.BuyerDelivery,t.ShipmodeID,t.Location
+	,t.TotalCTN,DRYCTN=isnull(t.DRYCTN,0),ClogCTN=isnull(t.ClogCTN,0),CfaCTN=isnull(t.CfaCTN,0),t2.RetCtnBySP
+	,[Bal Ctn by SP#]=isnull(t.TotalCTN,0)-isnull(t.ClogCTN,0) -isnull(t.DRYCTN,0) -isnull(t.CfaCTN,0)
+	,[% by SP#]=iif(isnull(t.TtlGMTQty,0)=0,0,Round(1-((t.TtlGMTQty-isnull(t.TtlClogGMTQty,0))/t.TtlGMTQty),2)*100)
+	,[Ctn SDP by SP#]=iif(isnull(t.TotalCTN,0)=0, 0,ROUND(isnull(t.ClogCTN,0)/t.TotalCTN,2)*100)
+	,t.PulloutCTNQty,t.TtlGMTQty,t.TtlClogGMTQty
+	,[Bal Qty by SP#] = isnull(t.TtlGMTQty,0)-isnull(t.TtlClogGMTQty,0)
+	,[Qty SDP by SP#]=iiF(isnull(t.TtlGMTQty,0)=0,0,ROUND(isnull(t.TtlClogGMTQty,0)/t.TtlGMTQty,2)*100)
+	,t.TtlPullGMTQty,t.CTNQty,t.ClogQty
+	,[Bal Ctn by Shipmode]=isnull(t.CTNQty,0)-isnull(t.ClogQty,0)
+	,[Ctn SDP by Shipmode]=iiF(isnull(t.CTNQty,0)=0,0,ROUND(isnull(t.ClogQty,0)/t.CTNQty,2)*100)
+	,t.PullQty
+	,[CTN in CLOG]=isnull(t.ClogQty,0)-isnull(t.PullQty,0)
+	,t.GMTQty,t.ClogGMTQty
+	,[Bal Qty by Shipmode]=isnull(t.GMTQty,0)-isnull(t.PullGMTQty,0)
+	,[Qty SDP by Shipmode]=iif(isnull(t.GMTQty,0)=0,0,ROUND(isnull(t.ClogGMTQty,0)/t.GMTQty,2)*100)
+	,t.PullGMTQty
 from #tmp t,#tmp2 t2
 where t.id = t2.ID
 order by t.FactoryID,t.ID,t.BuyerDelivery
@@ -255,51 +274,7 @@ drop table #tmp,#tmp2
                 this.mDivision,
                 this.brand);
 
-            // 填內容值
-            int intRowsStart = 4;
-            object[,] objArray = new object[1, 36];
-            foreach (DataRow dr in this.printData.Rows)
-            {
-                objArray[0, 0] = dr["FactoryID"];
-                objArray[0, 1] = dr["MCHandle"];
-                objArray[0, 2] = dr["SewLine"];
-                objArray[0, 3] = dr["ID"];
-                objArray[0, 4] = dr["BrandId"];
-                objArray[0, 5] = dr["StyleID"];
-                objArray[0, 6] = dr["StyleName"];
-                objArray[0, 7] = dr["CustPONo"];
-                objArray[0, 8] = dr["Customize1"];
-                objArray[0, 9] = dr["SciDelivery"];
-                objArray[0, 10] = dr["BuyerDelivery"];
-                objArray[0, 11] = dr["ShipmodeID"];
-                objArray[0, 12] = dr["Location"];
-                objArray[0, 13] = dr["TotalCTN"];
-                objArray[0, 14] = dr["ClogCTN"];
-                objArray[0, 15] = dr["RetCtnBySP"];
-                objArray[0, 16] = string.Format("= N{0} - O{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 17] = string.Format("=IF(U{0}=0,0,Round(1-(W{0}/U{0}),2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 18] = string.Format("=IF(N{0}=0, 0,ROUND(O{0}/N{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 19] = dr["PulloutCTNQty"];
-                objArray[0, 20] = dr["TtlGMTQty"];
-                objArray[0, 21] = dr["TtlClogGMTQty"];
-                objArray[0, 22] = string.Format("=U{0}-V{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 23] = string.Format("=IF(U{0}=0,0,ROUND(V{0}/U{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 24] = dr["TtlPullGMTQty"];
-                objArray[0, 25] = dr["CTNQty"];
-                objArray[0, 26] = dr["ClogQty"];
-                objArray[0, 27] = string.Format("=Z{0}-AA{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 28] = string.Format("=IF(Z{0}=0,0,ROUND(AA{0}/Z{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 29] = dr["PullQty"];
-                objArray[0, 30] = string.Format("=AA{0}-AD{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 31] = dr["GMTQty"];
-                objArray[0, 32] = dr["ClogGMTQty"];
-                objArray[0, 33] = string.Format("=AF{0}-AJ{0}", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 34] = string.Format("=IF(AF{0}=0,0,ROUND(AG{0}/AF{0},2)*100)", MyUtility.Convert.GetString(intRowsStart));
-                objArray[0, 35] = dr["PullGMTQty"];
-                worksheet.Range[string.Format("A{0}:AJ{0}", intRowsStart)].Value2 = objArray;
-                intRowsStart++;
-            }
-
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Logistic_R01_CartonStatusReport.xltx", 3, false, null, excel);// 將datatable copy to excel
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
 

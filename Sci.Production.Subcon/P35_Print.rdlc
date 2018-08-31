@@ -1234,13 +1234,16 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
+              <Width>2.84395cm</Width>
+            </TablixColumn>
+            <TablixColumn>
               <Width>3.24638cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>7.08647cm</Width>
+              <Width>5.00301cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.3265cm</Width>
+              <Width>1.36361cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.9604cm</Width>
@@ -1252,13 +1255,52 @@
               <Width>1.45432cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.76419cm</Width>
+              <Width>2.43436cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
               <Height>1.02333cm</Height>
               <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox25">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Local PO</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox24</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <TopBorder>
+                          <Color>Black</Color>
+                          <Style>Double</Style>
+                          <Width>1pt</Width>
+                        </TopBorder>
+                        <BottomBorder>
+                          <Color>Black</Color>
+                          <Style>Solid</Style>
+                          <Width>1pt</Width>
+                        </BottomBorder>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="Textbox24">
@@ -1558,6 +1600,35 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="LocalPO">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!LocalPO.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>LocalPO</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>1pt</PaddingLeft>
+                        <PaddingRight>1pt</PaddingRight>
+                        <PaddingTop>1pt</PaddingTop>
+                        <PaddingBottom>1pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="SP">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -1780,6 +1851,7 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -1798,7 +1870,7 @@
         <DataSetName>DataSet1</DataSetName>
         <Left>0.56879cm</Left>
         <Height>1.67625cm</Height>
-        <Width>19.66701cm</Width>
+        <Width>20.13479cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -2481,6 +2553,10 @@
         </Field>
         <Field Name="Description">
           <DataField>Description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LocalPO">
+          <DataField>LocalPO</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Price">

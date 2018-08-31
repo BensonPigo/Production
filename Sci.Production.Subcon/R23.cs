@@ -202,14 +202,14 @@ namespace Sci.Production.Subcon
                         
             if (!MyUtility.Check.Empty(spno1))
             {
-                sqlFilter1.Add("LPD.OrderID >= @spno1");
+                sqlFilter1.Add("LPD.POID >= @spno1");
                 sp_spno1.Value = spno1;
                 cmds.Add(sp_spno1);
             }
 
             if (!MyUtility.Check.Empty(spno2))
             {
-                sqlFilter1.Add("LPD.OrderID <= @spno2");
+                sqlFilter1.Add("LPD.POID <= @spno2");
                 sp_spno2.Value = spno2;
                 cmds.Add(sp_spno2);
             }
@@ -261,25 +261,30 @@ namespace Sci.Production.Subcon
             #endregion
 
             sqlCmd.Append(string.Format(@"
-select DISTINCT	O.FactoryID
+select  O.FactoryID
 		, s.Category
 		, O.POID
         , O.StyleID
 		, O.BrandID
 		, SMR = dbo.getTPEPass1(O.SMR)
 		, y.Order_Qty
-		, x.Po_Qty
-		, ROUND(x.Po_amt, 3)
-		, Po_price = round(x.Po_amt / iif(y.order_qty = 0, 1, y.order_qty), 3) 
-		, std_price = round(y.order_amt/iif(y.order_qty = 0, 1, y.order_qty), 3) 
-		, percentage = round(x.Po_amt / iif(y.order_qty = 0, 1, y.order_qty) / iif(y.order_amt = 0 or y.order_qty = 0, 1, (y.order_amt / y.order_qty)), 2)  
+		, [Po_Qty] = sum (x.Po_Qty)
+		, [Po_amt] = ROUND(sum (x.Po_amt), 3)
+		, Po_price = round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
+		, std_price = round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3) 
+		, percentage = case isnull (y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 0)
+                          when 0 then null
+                          else round(round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
+                                           / round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3), 2) 
+                       end
 from (
 	select	distinct LP.Category
 			, LPD.OrderId
 	from dbo.LocalPO LP
 	inner join dbo.LocalPO_Detail LPD on LP.Id = LPD.Id
-    left join Orders O on lpd.OrderId=o.id
-	where 1 = 1 {1}
+    left join Orders O on lpd.OrderId = o.id
+	where 1 = 1
+          {1}
 ) s
 left join Orders O on s.OrderId = O.ID
 left join Order_TmsCost OTC on o.ID = OTC.ID and s.Category = OTC.ArtworkTypeID
@@ -290,8 +295,9 @@ outer apply(
 			, Rate = sum(dbo.getRate('{0}', LP.CurrencyID, 'USD', LP.IssueDate))
 	from LocalPO LP
 	inner join LocalPO_Detail LPD on LP.Id = LPD.Id
-	where LP.Category = s.Category and LPD.OrderId = O.POID
-        {1}
+	where LP.Category = s.Category 
+          and LPD.OrderId = O.ID
+          {1}
 ) x
 outer apply(
 	select	Orders.POID
@@ -299,10 +305,19 @@ outer apply(
 			, Order_amt = sum(Orders.Qty * Price)
 	from Orders
 	inner join Order_TmsCost OTC on OTC.ID = Orders.ID
-	where O.POID = POID and ArtworkTypeID = s.Category
+	where O.POID = POID
+          and ArtworkTypeID = s.Category
 	group by Orders.POID, ArtworkTypeID
 ) y
 where Po_qty > 0 {2}
+group by O.FactoryID
+		, s.Category
+		, O.POID
+        , O.StyleID
+		, O.BrandID
+        , O.SMR
+		, y.Order_Qty
+        , y.order_amt
 ", ratetype
  , ("and " + sqlFilter1.JoinToString(" and "))
  , ("and " + sqlFilter2.JoinToString(" and "))));
