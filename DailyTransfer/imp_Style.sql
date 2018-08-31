@@ -1356,6 +1356,28 @@ MasterBrandID
 from Trade_To_Pms.dbo.Style_SimilarStyle as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SimilarStyle as a WITH (NOLOCK) where a.MasterStyleUkey	= b.MasterStyleUkey AND a.ChildrenStyleUkey	= b.ChildrenStyleUkey)
 
+-----------------Style_SizeItem-------------------
+RAISERROR('imp_Style - Starts',0,0)
+
+Merge Production.dbo.Style_SizeItem as t
+Using (select a.* from Trade_To_Pms.dbo.Style_SizeItem a ) as s
+on t.Ukey=s.Ukey 
+when matched then 
+	update set 
+		t.StyleUkey= s.StyleUkey,
+		t.StyleUkey_Old= s.StyleUkey_Old,
+		t.SizeItem= s.SizeItem,
+		t.SizeUnit= s.SizeUnit,
+		t.Description= s.Description,
+		t.TolMinus= s.TolMinus,
+		t.TolPlus= s.TolPlus
+when not matched by target then
+	insert (
+		StyleUkey,StyleUkey_Old,SizeItem,SizeUnit,Description,Ukey,TolMinus,TolPlus	) 
+		values (
+		s.StyleUkey,s.StyleUkey_Old,s.SizeItem,s.SizeUnit,s.Description,s.Ukey,s.TolMinus,s.TolPlus	)
+when not matched by source  AND T.Styleukey IN (SELECT Ukey FROM Trade_To_Pms.dbo.Style) then 
+	delete;
 
 END
 
