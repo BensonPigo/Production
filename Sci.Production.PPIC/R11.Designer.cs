@@ -38,6 +38,7 @@
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.labBrand = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.chkHoliday = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -167,9 +168,23 @@
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 103;
             // 
+            // chkHoliday
+            // 
+            this.chkHoliday.AutoSize = true;
+            this.chkHoliday.Checked = true;
+            this.chkHoliday.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkHoliday.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkHoliday.Location = new System.Drawing.Point(24, 125);
+            this.chkHoliday.Name = "chkHoliday";
+            this.chkHoliday.Size = new System.Drawing.Size(127, 21);
+            this.chkHoliday.TabIndex = 104;
+            this.chkHoliday.Text = "Exclude Holiday";
+            this.chkHoliday.UseVisualStyleBackColor = true;
+            // 
             // R11
             // 
-            this.ClientSize = new System.Drawing.Size(542, 154);
+            this.ClientSize = new System.Drawing.Size(542, 177);
+            this.Controls.Add(this.chkHoliday);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labBrand);
             this.Controls.Add(this.txtMdivision);
@@ -182,9 +197,6 @@
             this.Controls.Add(this.dateRangeReadyDate);
             this.Name = "R11";
             this.Text = "R11. Sewing Ready Report";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.dateRangeReadyDate, 0);
             this.Controls.SetChildIndex(this.labReadyDate, 0);
             this.Controls.SetChildIndex(this.labM, 0);
@@ -195,6 +207,10 @@
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.labBrand, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
+            this.Controls.SetChildIndex(this.chkHoliday, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -212,5 +228,6 @@
         private Class.txtMdivision txtMdivision;
         private Win.UI.Label labBrand;
         private Class.txtbrand txtbrand;
+        private Win.UI.CheckBox chkHoliday;
     }
 }

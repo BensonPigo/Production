@@ -36,8 +36,6 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.editRemark = new Sci.Win.UI.EditBox();
             this.labelRemark = new Sci.Win.UI.Label();
-            this.comboStockType = new Sci.Win.UI.ComboBox();
-            this.labelStockType = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -54,8 +52,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.labelStockType);
-            this.masterpanel.Controls.Add(this.comboStockType);
             this.masterpanel.Controls.Add(this.editRemark);
             this.masterpanel.Controls.Add(this.labelRemark);
             this.masterpanel.Controls.Add(this.btnImport);
@@ -74,8 +70,6 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.comboStockType, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelStockType, 0);
             // 
             // detailpanel
             // 
@@ -219,27 +213,6 @@
             this.labelRemark.TabIndex = 61;
             this.labelRemark.Text = "Remark";
             // 
-            // comboStockType
-            // 
-            this.comboStockType.BackColor = System.Drawing.Color.White;
-            this.comboStockType.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "stocktype", true));
-            this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboStockType.FormattingEnabled = true;
-            this.comboStockType.IsSupportUnselect = true;
-            this.comboStockType.Location = new System.Drawing.Point(584, 12);
-            this.comboStockType.Name = "comboStockType";
-            this.comboStockType.Size = new System.Drawing.Size(121, 24);
-            this.comboStockType.TabIndex = 1;
-            this.comboStockType.Validating += new System.ComponentModel.CancelEventHandler(this.comboStockType_Validating);
-            // 
-            // labelStockType
-            // 
-            this.labelStockType.Location = new System.Drawing.Point(498, 13);
-            this.labelStockType.Name = "labelStockType";
-            this.labelStockType.Size = new System.Drawing.Size(82, 23);
-            this.labelStockType.TabIndex = 63;
-            this.labelStockType.Text = "Stock Type";
-            // 
             // P26
             // 
             this.ApvChkValue = "New";
@@ -290,7 +263,5 @@
         private Win.UI.Button btnImport;
         private Win.UI.EditBox editRemark;
         private Win.UI.Label labelRemark;
-        private Win.UI.Label labelStockType;
-        private Win.UI.ComboBox comboStockType;
     }
 }

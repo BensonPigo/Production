@@ -38,6 +38,8 @@
             this.txtLocation2 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.cmbMaterialType = new Sci.Win.UI.ComboBox();
+            this.labelMaterialType = new Sci.Win.UI.Label();
             this.txtSeq = new Sci.Production.Class.txtSeq();
             this.txtDyelot = new Sci.Win.UI.TextBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
@@ -52,8 +54,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labelMaterialType = new Sci.Win.UI.Label();
-            this.cmbMaterialType = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboStockType = new Sci.Production.Class.comboDropDownList(this.components);
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
@@ -156,6 +158,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboStockType);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.cmbMaterialType);
             this.groupBox1.Controls.Add(this.labelMaterialType);
             this.groupBox1.Controls.Add(this.txtSeq);
@@ -175,6 +179,26 @@
             this.groupBox1.Size = new System.Drawing.Size(1008, 107);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
+            // 
+            // cmbMaterialType
+            // 
+            this.cmbMaterialType.BackColor = System.Drawing.Color.White;
+            this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbMaterialType.FormattingEnabled = true;
+            this.cmbMaterialType.IsSupportUnselect = true;
+            this.cmbMaterialType.Location = new System.Drawing.Point(821, 28);
+            this.cmbMaterialType.Name = "cmbMaterialType";
+            this.cmbMaterialType.OldText = "";
+            this.cmbMaterialType.Size = new System.Drawing.Size(91, 24);
+            this.cmbMaterialType.TabIndex = 11;
+            // 
+            // labelMaterialType
+            // 
+            this.labelMaterialType.Location = new System.Drawing.Point(730, 29);
+            this.labelMaterialType.Name = "labelMaterialType";
+            this.labelMaterialType.Size = new System.Drawing.Size(88, 23);
+            this.labelMaterialType.TabIndex = 10;
+            this.labelMaterialType.Text = "Material Type";
             // 
             // txtSeq
             // 
@@ -317,28 +341,31 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(1008, 370);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
-            // labelMaterialType
+            // label1
             // 
-            this.labelMaterialType.Location = new System.Drawing.Point(730, 29);
-            this.labelMaterialType.Name = "labelMaterialType";
-            this.labelMaterialType.Size = new System.Drawing.Size(88, 23);
-            this.labelMaterialType.TabIndex = 10;
-            this.labelMaterialType.Text = "Material Type";
+            this.label1.Location = new System.Drawing.Point(730, 68);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(88, 23);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Stock Type";
             // 
-            // cmbMaterialType
+            // comboStockType
             // 
-            this.cmbMaterialType.BackColor = System.Drawing.Color.White;
-            this.cmbMaterialType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbMaterialType.FormattingEnabled = true;
-            this.cmbMaterialType.IsSupportUnselect = true;
-            this.cmbMaterialType.Location = new System.Drawing.Point(821, 28);
-            this.cmbMaterialType.Name = "cmbMaterialType";
-            this.cmbMaterialType.Size = new System.Drawing.Size(91, 24);
-            this.cmbMaterialType.TabIndex = 11;
+            this.comboStockType.BackColor = System.Drawing.Color.White;
+            this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStockType.FormattingEnabled = true;
+            this.comboStockType.IsSupportUnselect = true;
+            this.comboStockType.Location = new System.Drawing.Point(821, 69);
+            this.comboStockType.Name = "comboStockType";
+            this.comboStockType.OldText = "";
+            this.comboStockType.Size = new System.Drawing.Size(91, 24);
+            this.comboStockType.TabIndex = 13;
+            this.comboStockType.Type = "Pms_StockType";
             // 
             // P26_Import
             // 
@@ -389,5 +416,7 @@
         private Class.txtSeq txtSeq;
         private Win.UI.Label labelMaterialType;
         private Win.UI.ComboBox cmbMaterialType;
+        private Class.comboDropDownList comboStockType;
+        private Win.UI.Label label1;
     }
 }

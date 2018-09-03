@@ -60,8 +60,26 @@ select t.poid
 	   , FTY.InQty - FTY.OutQty + FTY.AdjustQty as balanceqty
 	   , [location] = dbo.Getlocation(FTY.Ukey)
 	   , GroupQty = Sum(FTY.InQty-FTY.OutQty+FTY.AdjustQty) over (partition by t.dyelot)
+       , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '))
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
+left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey
+outer apply (select fp.Result
+            from dbo.FIR f with (nolock) 
+	        inner join dbo.FIR_Physical fp with (nolock) on f.ID = fp.ID and fp.Roll = t.Roll and fp.Dyelot = t.Dyelot
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Physical
+outer apply (select fw.Result
+            from dbo.FIR f with (nolock) 
+	        inner join dbo.FIR_Weight fw with (nolock) on f.ID = fw.ID and fw.Roll = t.Roll and fw.Dyelot = t.Dyelot
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Weight
+outer apply (select fs.Result
+            from dbo.FIR f with (nolock) 
+	        inner join dbo.FIR_Shadebone fs with (nolock) on f.ID = fs.ID and fs.Roll = t.Roll and fs.Dyelot = t.Dyelot
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Shadebone
+outer apply (select fc.Result
+            from dbo.FIR f with (nolock) 
+	        inner join dbo.FIR_Continuity fc with (nolock) on f.ID = fc.ID and fc.Roll = t.Roll and fc.Dyelot = t.Dyelot
+	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno) Continuity
 order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
@@ -115,11 +133,12 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             .Text("roll", header: "roll", width: Widths.AnsiChars(10), iseditingreadonly: true)  //4
             .Text("dyelot", header: "dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: ns)    //6
-            .Text("location", header: "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)  //5
-            .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
-            .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
-            .Numeric("adjustqty", header: "Adjust" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
-            .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //6
+            .Text("location", header: "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)  //7
+            .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //8
+            .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //9
+            .Numeric("adjustqty", header: "Adjust" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //10
+            .Numeric("balanceqty", header: "Balance" + Environment.NewLine + "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //11
+            .Text("DetailFIR", header: "Phy/Wei/Shade/Cont", width: Widths.AnsiChars(18), iseditingreadonly: true)  //13
             ;     //
 
             this.grid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;

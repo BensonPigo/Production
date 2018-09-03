@@ -114,6 +114,7 @@
     <Folder Include="dbo\Functions\" />
     <Folder Include="Storage\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\User Defined Types\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\MyGridStd1.sql">
@@ -2024,14 +2025,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\GetKeyWordValue.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\GetKeyword.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Functions\GetUnitQty.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2291,6 +2284,13 @@
     <Build Include="dbo\Stored Procedures\exp_SUNRISE.sql" />
     <Build Include="dbo\Tables\DRYReceive.sql" />
     <Build Include="dbo\Tables\DRYTransfer.sql" />
+    <Build Include="dbo\Functions\GetKeywordValue.sql" />
+    <Build Include="dbo\Functions\GetKeyword.sql" />
+    <Build Include="dbo\Functions\GetBOAExpend.sql" />
+    <Build Include="dbo\User Defined Types\QtyBreakdown.sql" />
+    <Build Include="dbo\Tables\Order_Article_PadPrint.sql" />
+    <Build Include="dbo\Tables\Style_Article_PadPrint.sql" />
+    <Build Include="dbo\Tables\Style_SizeItem.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

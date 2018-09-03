@@ -542,7 +542,27 @@ and p.Junk=0
         /// <returns>Sci.Win.Tools.SelectItem2</returns>
         public static Sci.Win.Tools.SelectItem2 SelectLocation(string stocktype, string defaultseq = "")
         {
-            string sqlcmd = string.Format(@"
+            string sqlcmd = string.Empty;
+            if (MyUtility.Check.Empty(stocktype))
+            {
+                sqlcmd = @"
+SELECT  id
+        , Description
+        , StockType = Case StockType
+                        when 'i' then 
+                            'Inventory' 
+                        when 'b' then 
+                            'Bulk' 
+                        when 'o' then 
+                            'Scrap' 
+                       End
+        , StockTypeCode = StockType
+FROM DBO.MtlLocation WITH (NOLOCK) 
+WHERE   junk != '1'";
+            }
+            else
+            {
+                sqlcmd = string.Format(@"
 SELECT  id
         , Description
         , StockType = Case StockType
@@ -556,6 +576,8 @@ SELECT  id
 FROM DBO.MtlLocation WITH (NOLOCK) 
 WHERE   StockType='{0}'
         and junk != '1'", stocktype);
+            }
+            
 
             Sci.Win.Tools.SelectItem2 selectlocation = new Win.Tools.SelectItem2(sqlcmd,
                             "Location ID,Description,Stock Type", "13,60,10", defaultseq, null, null, null);
