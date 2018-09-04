@@ -40,7 +40,7 @@ select
 [Version] = ts.Version,
 [SeqNo] = tsd.Seq,
 [SeqCode] = tsd.Seq+'-'+tsd.OperationID,
-[SeqName] = iif(isnull(op.Annotation,'')='',op.DescEN,op.Annotation),
+[SeqName] = tsd.Annotation,
 [MachineTypeID] = tsd.MachineTypeID,
 [SAM] = Round(tsd.SMV/60,7)
 into #tMOSeqD
@@ -49,7 +49,6 @@ inner join orders o with (nolock) on so.OrderID = o.id
 inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
 inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID = ts.SeasonID and o.BrandID = ts.BrandID and ts.ComboType = sl.Location
 inner join TimeStudy_Detail tsd with (nolock) on tsd.ID = ts.ID and ISNUMERIC(tsd.Seq) = 1 and tsd.SMV<>0
-left join Operation op  with (nolock) on tsd.OperationID = op.ID 
 
 --tMOSeqM(制單工序主表) 
 select 
