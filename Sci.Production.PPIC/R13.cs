@@ -253,6 +253,37 @@ into #tmpout
 from #tmpout4
 group by [M],[Factory],[SP],[Subprocessid]
 
+-----------cutting完成成衣件數-------------------------------------------------------------------------------------------------------------------------
+--先找所有部位
+Select distinct sp = o.ID,wd.SizeCode,wd.article,occ.PatternPanel,o.MDivisionID
+into #pOffline 
+from  #orders_tmp a--------從orderid出發
+inner join Orders o WITH (NOLOCK) on o.id = a.ID
+inner join WorkOrder_Distribute wd WITH (NOLOCK) on o.id = wd.OrderID
+inner join Order_ColorCombo occ on o.poid = occ.id and occ.Article = wd.Article
+inner join order_Eachcons cons on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
+where occ.FabricCode !='' and occ.FabricCode is not null 
+--以及這趟撈的資料sum(Qty) by SizeCode,Article,PatternPanel,sp
+select Qty= sum(wd.Qty),wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,sp = a.id
+into #tmpc
+from #orders_tmp a
+inner join WorkOrder_Distribute wd on wd.orderid = a.ID 
+inner join workorder w on w.Ukey = wd.WorkOrderUkey
+left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
+inner join CuttingOutput_Detail cod on cod.CutRef = w.CutRef
+inner join CuttingOutput co on co.id = cod.id and co.MDivisionid = w.MDivisionId and co.Status <> 'New'
+where co.EditDate <= WorkTime---CuttingOutput最後編輯時間小於readtday+CutGay
+group by wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,a.id,Readydate
+
+--缺的部位null為0
+select a.sp,a.SizeCode,a.Article,a.PatternPanel,a.MDivisionID,Qty=isnull(b.Qty,0)
+into #tmpP
+from #pOffline a 
+left join #tmpc b on a.sp = b.sp and a.Article = b.Article and a.SizeCode = b.SizeCode and a.PatternPanel = b.PatternPanel and a.MDivisionID = b.MDivisionid
+
+select cutqty = min(qty),sp,Article,SizeCode,MDivisionid into #tmpc2 from #tmpP group by sp,Article,SizeCode,MDivisionid--取最小 by size
+select cutqty = sum(cutqty),sp into #tmpc3 from #tmpc2 group by sp--總和為此orderid完成數
+-----end cutting完成成衣件數
 
 --sheet1 SUBPROCESS READY DATE
 select	o.MDivisionID,
@@ -277,7 +308,7 @@ select	o.MDivisionID,
                           ) tt on tt.ComboType = sl.Location
                           where sl.StyleUkey = o.StyleUkey) ,
 		[BalanceQty] = '=INDIRECT({"\""}I{"\""} & ROW()) - INDIRECT({"\""}J{"\""} & ROW())',
-        [CuttingStatus] = '',
+        [CuttingStatus] = iif(cuttingQty.value  >= o.Qty,'Y',''),
 		o.SewInLine,
 		o.SewOffLine,
 		o.FtyCTN,
@@ -298,12 +329,9 @@ left join Country c with (Nolock) on c.id= o.Dest
 left join Order_TmsCost otc with (nolock) on o.id = otc.id and ArtworkTypeID = 'Printing'
 left join #tmpin2 SubProcess with (Nolock) on SubProcess.SP = o.ID
 outer apply(
-
     select SewingLineID = stuff((
           select distinct concat('/', ss.SewingLineID)
-
           from[SewingSchedule] ss with(nolock)
-
           where ss.orderid = o.ID 
 		  for xml path('')
       ),1,1,'')
@@ -313,7 +341,6 @@ outer apply(
 ) LoadingQty
 outer apply(
     select ct = count(1) * 2
-
     from #tmpin
 	where #tmpin.SP = o.ID 
 	and #tmpin.Factory = o.FtyGroup
@@ -321,9 +348,7 @@ outer apply(
 )inoutcount
 outer apply(
     select chksubprocesqty = sum(xxx.Accusubprocesqty)
-
     from(
-
         select[Accusubprocesqty] = iif(iif(#tmpin.AccuQty > o.Qty, o.Qty, #tmpin.AccuQty)>=o.Qty,1,0)+
 									iif(iif(#tmpout.AccuQty > o.Qty, o.Qty, #tmpout.AccuQty)>=o.Qty,1,0)
 		from #tmpin,#tmpout
@@ -335,6 +360,10 @@ outer apply(
 		and #tmpout.SubProcessId = #tmpin.SubProcessId
 	)xxx
 )subprocessqty
+outer apply(
+	select value = cutqty
+	from #tmpc3 where sp = o.ID
+) cuttingQty
 
 select	FtyGroup,
 		BuyerDelivery,
