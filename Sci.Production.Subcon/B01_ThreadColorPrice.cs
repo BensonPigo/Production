@@ -16,7 +16,7 @@ namespace Sci.Production.Subcon
         public B01_ThreadColorPrice(bool canedit, string Refno, string keyvalue2, string keyvalue3) : base(canedit, Refno, keyvalue2, keyvalue3)
         {
             InitializeComponent();
-            this.WorkAlias = "LocalItem_ThreadColorPrice";
+            this.WorkAlias = "LocalItem_ThreadBuyerColorGroupPrice";
             this.KeyField1 = "Refno";
             _refno = Refno;
         }
@@ -30,6 +30,8 @@ namespace Sci.Production.Subcon
         {
             #region Grid事件
             Ict.Win.DataGridViewGeneratorTextColumnSettings col_threadColor = new DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings col_Buyer = new DataGridViewGeneratorTextColumnSettings();
+
             col_threadColor.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -38,11 +40,11 @@ namespace Sci.Production.Subcon
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);                   
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                        (@"Select ID,description  from threadcolor WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
+                        (@"Select ID,description  from ThreadColorGroup WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
                     item.Size = new System.Drawing.Size(630, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    dr["ThreadColorID"] = item.GetSelectedString();
+                    dr["ThreadColorGroupID"] = item.GetSelectedString();
                     dr.EndEdit();
                 }
             };
@@ -54,17 +56,57 @@ namespace Sci.Production.Subcon
                 DataRow dr = grid.GetDataRow(e.RowIndex);
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    dr["ThreadColorID"] = string.Empty;
+                    dr["ThreadColorGroupID"] = string.Empty;
                     return;
                 }
-                if (MyUtility.Check.Seek($@"select 1 from threadcolor WITH (NOLOCK) where junk=0 and id='{e.FormattedValue}'"))
+                if (MyUtility.Check.Seek($@"select 1 from ThreadColorGroup WITH (NOLOCK) where junk=0 and id='{e.FormattedValue}'"))
                 {                    
-                    dr["ThreadColorID"] = e.FormattedValue;
+                    dr["ThreadColorGroupID"] = e.FormattedValue;
                 }
                 else
                 {
                     MyUtility.Msg.WarningBox("data not found!");
-                    dr["ThreadColorID"] = string.Empty;
+                    dr["ThreadColorGroupID"] = string.Empty;
+                    e.Cancel = true;
+                }
+                dr.EndEdit();
+            };
+
+            col_Buyer.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
+                        (@"Select ID,NameEN  from Buyer WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
+                    item.Size = new System.Drawing.Size(630, 535);
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    dr["BuyerID"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+
+            col_Buyer.CellValidating += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["BuyerID"] = string.Empty;
+                    return;
+                }
+                if (MyUtility.Check.Seek($@"select 1 from Buyer WITH (NOLOCK) where junk=0 and id='{e.FormattedValue}'"))
+                {
+                    dr["BuyerID"] = e.FormattedValue;
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("data not found!");
+                    dr["BuyerID"] = string.Empty;
                     e.Cancel = true;
                 }
                 dr.EndEdit();
@@ -74,13 +116,15 @@ namespace Sci.Production.Subcon
             this.grid.IsEditingReadOnly = true;
             Helper.Controls.Grid.Generator(this.grid)
              .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Text("ThreadColorID", header: "Thread Color", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_threadColor)
+             .Text("ThreadColorGroupID", header: "Thread Color Group ID", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_threadColor)
+             .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(10), settings: col_Buyer, iseditingreadonly: false)
              .Numeric("Price", header: "Price", integer_places: 12, decimal_places: 4, width: Widths.AnsiChars(12))
              .DateTime("addDate", header: "Create Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
              .Text("addName", header: "Create Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .DateTime("editDate", header: "Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
              .Text("editName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true);             
-            this.grid.Columns["ThreadColorID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["ThreadColorGroupID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["BuyerID"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid.Columns["Price"].DefaultCellStyle.BackColor = Color.Pink;
             return true;
         }
@@ -100,25 +144,25 @@ namespace Sci.Production.Subcon
         {
             foreach (DataRow dr in Datas)
             {
-                if (MyUtility.Check.Empty(dr["ThreadColorID"]))
+                if (MyUtility.Check.Empty(dr["ThreadColorGroupID"]))
                 {
-                    MyUtility.Msg.WarningBox("<ThreadColorID> cannot be empty!");
+                    MyUtility.Msg.WarningBox("<Thread Color Group ID> cannot be empty!");
                     return false;
                 }
 
                 if (MyUtility.Check.Empty(dr["Price"]))
                 {
-                    MyUtility.Msg.WarningBox("<Price> cannot be empty!");
+                    MyUtility.Msg.WarningBox("<Price> cannot be empty or 0!");
                     return false;
                 }
             }
 
             #region 判斷Color是否有重複
             DataTable dtfilter = (DataTable)gridbs.DataSource;
-            if (dtfilter.DefaultView.ToTable(true, new string[] { "Refno", "ThreadColorID" }).Rows.Count !=
-                dtfilter.DefaultView.ToTable(false, new string[] { "Refno", "ThreadColorID" }).Rows.Count)
+            if (dtfilter.DefaultView.ToTable(true, new string[] { "Refno", "ThreadColorGroupID", "BuyerID" }).Rows.Count !=
+                dtfilter.DefaultView.ToTable(false, new string[] { "Refno", "ThreadColorGroupID", "BuyerID" }).Rows.Count)
             {
-                MyUtility.Msg.WarningBox("<Refno><Thread Color> has been repeating, cannot save!");
+                MyUtility.Msg.WarningBox("<Refno><Thread Color><Buyer> has been repeating, cannot save!");
                 return false;
             }
             #endregion

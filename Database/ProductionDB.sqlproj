@@ -2291,6 +2291,8 @@
     <Build Include="dbo\Tables\Order_Article_PadPrint.sql" />
     <Build Include="dbo\Tables\Style_Article_PadPrint.sql" />
     <Build Include="dbo\Tables\Style_SizeItem.sql" />
+    <Build Include="dbo\Tables\ThreadColorGroup.sql" />
+    <Build Include="dbo\Tables\LocalItem_ThreadBuyerColorGroupPrice.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

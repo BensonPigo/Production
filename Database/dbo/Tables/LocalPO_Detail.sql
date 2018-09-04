@@ -15,6 +15,7 @@
     [OldSeq2]       VARCHAR (2)     CONSTRAINT [DF_LocalPO_Detail_OldSeq2] DEFAULT ('') NULL,
     [Remark]        VARCHAR (MAX)   NULL,
     [POID] VARCHAR(13) NULL, 
+    [BuyerID] VARCHAR(8) CONSTRAINT [DF_LocalPO_Detail_BuyerID] DEFAULT ('') NULL,
     CONSTRAINT [PK_LocalPO_Detail] PRIMARY KEY CLUSTERED ([Id] ASC, [Ukey] ASC)
 );
 
