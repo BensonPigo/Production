@@ -151,6 +151,8 @@ with cte as (
 			,o.OrderTypeID
 			,o.Category 
 			,ps.SuppID
+			,CAST(Fi.InQty AS INT ) AS InQty
+			,CAST(Sum(Fi.InQty) AS INT ) AS SumInQty
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
 inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
@@ -265,7 +267,7 @@ where s.Status = 'Confirmed'
             }
             #endregion
 
-            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID, o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey,p.ColorID, p.SizeSpec,o.StyleID,o.OrderTypeID, o.Category,ps.SuppID)");
+            sqlCmd.Append(@" group by sd.FromPOID, sd.FromSeq1, sd.fromseq2,sd.FromRoll,sd.FromDyelot, p.Refno, p.SCIRefno, p.FabricType,s.MDivisionID, o.FactoryID, o.BrandID, o.SeasonID, p.POUnit, p.StockUnit,p.Price ,p.Qty + p.FOC, p.NETQty, p.LossQty, s.IssueDate,fi.ukey,p.ColorID, p.SizeSpec,o.StyleID,o.OrderTypeID, o.Category,ps.SuppID,Fi.InQty)");
 
             // List & Summary 各撈自己需要的欄位
             if (this.radioSummary.Checked)
@@ -297,17 +299,18 @@ select  t.orderid
         ,t.BrandID
         ,t.SeasonID
         ,t.POUnit
-		,CurrencyID         
+		,CurrencyID    
         ,unitprice
         ,t.Qty
         ,t.unitprice*t.Qty
         ,t.NETQty
-        ,t.LossQty
+        ,t.LossQty   
+		,t.SumInQty
         ,sum(t.scrapqty)
         ,t.unitprice*sum(t.scrapqty)
         ,t.IssueDate
 from cte t
-group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate,t.ColorID,t.SizeSpec,t.StyleID,t.OrderTypeID, t.Category,t.SuppID,CurrencyID"));
+group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate,t.ColorID,t.SizeSpec,t.StyleID,t.OrderTypeID, t.Category,t.SuppID,CurrencyID,t.SumInQty"));
                 #endregion
             }
             else
@@ -341,6 +344,7 @@ select  t.orderid
         ,t.SeasonID
         ,t.pounit
 		,CurrencyID 
+		,t.InQty
         ,unitprice
         ,t.scrapqty
         ,t.unitprice*t.scrapqty
