@@ -116,20 +116,20 @@ select
 ,[Style] = o.StyleID
 ,[SP] = o.ID
 ,[Qty] = Order_Qty.Qty
-,[Sewing_CPU] = tms.SewingCPU * r.rate
-,[SubConPrice/CPU] = sd.UnitPrice
-,[Cut] = tms.CuttingCPU * r.rate
-,[H.T] = tms.HeatTransfer
-,[Inspection] = tms.InspectionCPU * r.rate 
-,[OtherCpu] = tms.OtherCPU * r.rate
-,[EMB] = tms.EMBPrice
-,[Print] = tms.PrintingPrice
-,[OtherAmt] = tms.OtherAmt
-,[Price/CPU] = iif((tms.CuttingCPU * r.rate +tms.HeatTransfer+tms.InspectionCPU * r.rate +tms.OtherCPU * r.rate )=0,0, (sd.UnitPrice-tms.EMBPrice-tms.PrintingPrice-tms.OtherAmt) / (tms.CuttingCPU * r.rate +tms.HeatTransfer+tms.InspectionCPU * r.rate +tms.OtherCPU * r.rate ))
+,[Sewing_CPU] = ROUND(tms.SewingCPU * r.rate,4,4)
+,[SubConPrice/CPU] = ROUND(sd.UnitPrice,4,4)
+,[Cut] = ROUND(tms.CuttingCPU * r.rate,4,4)
+,[H.T] = ROUND(tms.HeatTransfer,4,4)
+,[Inspection] = ROUND(tms.InspectionCPU * r.rate ,4,4)
+,[OtherCpu] = ROUND(tms.OtherCPU * r.rate,4,4)
+,[EMB] = ROUND(tms.EMBPrice,4,4)
+,[Print] = ROUND(tms.PrintingPrice,4,4)
+,[OtherAmt] = ROUND(tms.OtherAmt,4,4)
+,[Price/CPU] = ROUND(iif((tms.CuttingCPU * r.rate +tms.HeatTransfer+tms.InspectionCPU * r.rate +tms.OtherCPU * r.rate )=0,0, (sd.UnitPrice-tms.EMBPrice-tms.PrintingPrice-tms.OtherAmt) / (tms.CuttingCPU * r.rate +tms.HeatTransfer+tms.InspectionCPU * r.rate +tms.OtherCPU * r.rate )),4,4)
 ,[Or] = ''
 ,[Min Rate Cpu] = ''
-,[TTLCPU] = Order_Qty.Qty * tms.SewingCPU * r.rate 
-,[Contract Amt]=Order_Qty.Qty * sd.UnitPrice
+,[TTLCPU] = ROUND(Order_Qty.Qty * tms.SewingCPU * r.rate ,4,4)
+,[Contract Amt] = ROUND(Order_Qty.Qty * sd.UnitPrice,4,4)
 ,[ExchangeRate]=''
 ,[Contract Amt_usd]=''
 ,[SR]=''
