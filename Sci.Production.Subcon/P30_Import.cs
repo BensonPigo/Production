@@ -152,7 +152,7 @@ where a.ApvToPurchase = 1
                     if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate >= '{0}' ", approved_b); }
                     if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
 
-                    strSQLCmd += string.Format(@" group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID
+                    strSQLCmd += string.Format(@" group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID
 select * from #tmp a
 where  not exists (select orderID 
                       from LocalPo_Detail 
