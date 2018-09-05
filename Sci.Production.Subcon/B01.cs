@@ -256,6 +256,15 @@ namespace Sci.Production.Subcon
             {
                 this.btnThread.Visible = false;
             }
+
+            if (this.EditMode)
+            {
+                this.btnThread.Enabled = false;
+            }
+            else
+            {
+                this.btnThread.Enabled = true;
+            }
         }
 
         private void btnPaymentHistory_Click(object sender, EventArgs e)

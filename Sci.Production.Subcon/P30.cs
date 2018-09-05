@@ -601,7 +601,6 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     IList<DataRow> x = item.GetSelecteds();
                     CurrentDetailData["refno"] = x[0][0];
                     CurrentDetailData["unitid"] = x[0][3];
-                    CurrentDetailData["price"] = decimal.Parse(x[0][4].ToString());
                     CurrentDetailData.EndEdit();
                 }
             };
@@ -619,6 +618,8 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                 }
                 else
                 {
+                    CurrentDetailData["refno"] = dr[0];
+                    CurrentDetailData["unitid"] = dr[1];
                     if (!MyUtility.Check.Empty(CurrentDetailData["Threadcolorid"]) &&
                          !MyUtility.Check.Empty(CurrentDetailData["BuyerID"]) &&
                          !MyUtility.Check.Empty(CurrentDetailData["RefNo"]))
@@ -630,8 +631,6 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     {
                         CurrentDetailData["amount"] = MyUtility.Convert.GetDecimal(CurrentDetailData["price"]) * MyUtility.Convert.GetDecimal(CurrentDetailData["Qty"]);
                     }
-                    CurrentDetailData["refno"] = dr[0];
-                    CurrentDetailData["unitid"] = dr[1];
                 }
                 CurrentDetailData.EndEdit();
             };

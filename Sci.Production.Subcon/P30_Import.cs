@@ -220,7 +220,7 @@ left join ThreadColor t WITH (NOLOCK) on t.ID = b.ThreadColorID
 left join LocalItem_ThreadBuyerColorGroupPrice tc with (nolock) 
     on tc.refno=b.Refno and tc.ThreadColorGroupID=t.ThreadColorGroupID and tc.BuyerID = br.BuyerID
 left join LocalItem_ThreadBuyerColorGroupPrice tc2 with (nolock) 
-    on tc.refno=b.Refno and tc.ThreadColorGroupID=t.ThreadColorGroupID and tc.BuyerID = ''
+    on tc2.refno=b.Refno and tc2.ThreadColorGroupID=t.ThreadColorGroupID and tc2.BuyerID = ''
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
 outer apply(
     select o1.POID

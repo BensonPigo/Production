@@ -582,7 +582,7 @@
             this.btnBatchUpdateDellivery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnBatchUpdateDellivery.Location = new System.Drawing.Point(338, 8);
             this.btnBatchUpdateDellivery.Name = "btnBatchUpdateDellivery";
-            this.btnBatchUpdateDellivery.Size = new System.Drawing.Size(210, 29);
+            this.btnBatchUpdateDellivery.Size = new System.Drawing.Size(215, 29);
             this.btnBatchUpdateDellivery.TabIndex = 45;
             this.btnBatchUpdateDellivery.Text = "Batch update Delivery,Buyer";
             this.btnBatchUpdateDellivery.UseVisualStyleBackColor = true;
@@ -597,7 +597,7 @@
             this.groupBox1.Controls.Add(this.dateDeliveryDate);
             this.groupBox1.Location = new System.Drawing.Point(440, 103);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(552, 39);
+            this.groupBox1.Size = new System.Drawing.Size(557, 39);
             this.groupBox1.TabIndex = 46;
             this.groupBox1.TabStop = false;
             // 

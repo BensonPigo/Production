@@ -2278,7 +2278,6 @@
     <Build Include="dbo\Tables\Export_Detail_Carton.sql" />
     <Build Include="dbo\Tables\IETMS_Summary_detail.sql" />
     <Build Include="dbo\Tables\IETMS_Summary.sql" />
-    <Build Include="dbo\Tables\LocalItem_ThreadColorPrice.sql" />
     <Build Include="dbo\Tables\SubconOutContract.sql" />
     <Build Include="dbo\Tables\SubconOutContract_Detail.sql" />
     <Build Include="dbo\Stored Procedures\exp_SUNRISE.sql" />

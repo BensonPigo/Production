@@ -41,10 +41,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(684, 257);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.checkBoxJunk);
@@ -52,12 +48,10 @@
             this.detailcont.Controls.Add(this.txtID);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(684, 219);
             // 
-            // detailbtm
+            // browse
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 219);
-            this.detailbtm.Size = new System.Drawing.Size(684, 38);
+            this.browse.Size = new System.Drawing.Size(684, 257);
             // 
             // tabs
             // 
@@ -118,6 +112,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(692, 319);
+            this.IsSupportClip = false;
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportMove = false;
+            this.IsSupportPrint = false;
             this.Name = "B07";
             this.Text = "B07. Thread Color Group";
             this.WorkAlias = "ThreadColorGroup";

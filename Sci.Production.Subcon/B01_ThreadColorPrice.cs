@@ -115,9 +115,9 @@ namespace Sci.Production.Subcon
 
             this.grid.IsEditingReadOnly = true;
             Helper.Controls.Grid.Generator(this.grid)
+             .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(10), settings: col_Buyer, iseditingreadonly: false)
              .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("ThreadColorGroupID", header: "Thread Color Group ID", width: Widths.AnsiChars(15), iseditingreadonly: false, settings: col_threadColor)
-             .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(10), settings: col_Buyer, iseditingreadonly: false)
              .Numeric("Price", header: "Price", integer_places: 12, decimal_places: 4, width: Widths.AnsiChars(12))
              .DateTime("addDate", header: "Create Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
              .Text("addName", header: "Create Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
