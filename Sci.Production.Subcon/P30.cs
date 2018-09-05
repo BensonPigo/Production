@@ -553,12 +553,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     CurrentDetailData["SciDelivery"] = dr["SciDelivery"];
                     CurrentDetailData["sewinline"] = dr["sewinline"];
                     CurrentDetailData["BuyerID"] = dr["BuyerID"];
-                    if (!MyUtility.Check.Empty(CurrentDetailData["Threadcolorid"]) &&
-                         !MyUtility.Check.Empty(CurrentDetailData["BuyerID"]) &&
-                         !MyUtility.Check.Empty(CurrentDetailData["RefNo"]))
-                    {
-                        this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
-                    }
+                    this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
 
                     if (!MyUtility.Check.Empty(CurrentDetailData["price"]) && !MyUtility.Check.Empty(CurrentDetailData["Qty"]))
                     {
@@ -620,12 +615,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                 {
                     CurrentDetailData["refno"] = dr[0];
                     CurrentDetailData["unitid"] = dr[1];
-                    if (!MyUtility.Check.Empty(CurrentDetailData["Threadcolorid"]) &&
-                         !MyUtility.Check.Empty(CurrentDetailData["BuyerID"]) &&
-                         !MyUtility.Check.Empty(CurrentDetailData["RefNo"]))
-                    {
-                        this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
-                    }
+                    this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
 
                     if (!MyUtility.Check.Empty(CurrentDetailData["price"]) && !MyUtility.Check.Empty(CurrentDetailData["Qty"]))
                     {
@@ -673,12 +663,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                 }
 
                 CurrentDetailData["threadColorid"] = e.FormattedValue;
-                if (!MyUtility.Check.Empty(CurrentDetailData["Threadcolorid"]) &&
-                         !MyUtility.Check.Empty(CurrentDetailData["BuyerID"]) &&
-                         !MyUtility.Check.Empty(CurrentDetailData["RefNo"]))
-                {
-                    this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
-                }
+                this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
 
                 if (!MyUtility.Check.Empty(CurrentDetailData["price"]) && !MyUtility.Check.Empty(CurrentDetailData["Qty"]))
                 {
@@ -1148,12 +1133,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                         if (!this.txtBuyer.Text.Equals(row["BuyerID"]))
                         {
                             row["BuyerID"] = this.txtBuyer.Text;
-                            if (!MyUtility.Check.Empty(row["Threadcolorid"]) &&
-                        !MyUtility.Check.Empty(row["BuyerID"]) &&
-                        !MyUtility.Check.Empty(row["RefNo"]))
-                            {
-                                row["price"] = this.GetPrice(row["RefNo"].ToString(), row["BuyerID"].ToString(), row["Threadcolorid"].ToString());
-                            }
+                            row["price"] = this.GetPrice(row["RefNo"].ToString(), row["BuyerID"].ToString(), row["Threadcolorid"].ToString());
 
                             if (!MyUtility.Check.Empty(row["price"]) && !MyUtility.Check.Empty(row["Qty"]))
                             {
