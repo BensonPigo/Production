@@ -152,7 +152,6 @@ with cte as (
 			,o.Category 
 			,ps.SuppID
 			,CAST(Fi.InQty AS INT ) AS InQty
-			,CAST(Sum(Fi.InQty) AS INT ) AS SumInQty
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
 inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
@@ -305,12 +304,12 @@ select  t.orderid
         ,t.unitprice*t.Qty
         ,t.NETQty
         ,t.LossQty   
-		,t.SumInQty
+		,t.InQty
         ,sum(t.scrapqty)
         ,t.unitprice*sum(t.scrapqty)
         ,t.IssueDate
 from cte t
-group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate,t.ColorID,t.SizeSpec,t.StyleID,t.OrderTypeID, t.Category,t.SuppID,CurrencyID,t.SumInQty"));
+group by t.orderid,t.seq1,t.seq2,t.description,t.Refno,t.fabrictype,t.weaventype,t.MDivisionID,t.FactoryID,t.BrandID,t.SeasonID,t.POUnit,unitprice,t.Qty,t.unitprice*t.Qty,t.NETQty,t.LossQty,t.IssueDate,t.ColorID,t.SizeSpec,t.StyleID,t.OrderTypeID, t.Category,t.SuppID,CurrencyID,t.InQty"));
                 #endregion
             }
             else
