@@ -324,7 +324,6 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["CBM"] = DBNull.Value;
                     break;
             }
-            this.btnThread.Enabled = true;
         }
 
         private void txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
