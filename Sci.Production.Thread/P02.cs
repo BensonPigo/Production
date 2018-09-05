@@ -29,7 +29,6 @@ namespace Sci.Production.Thread
         private DataGridViewNumericBoxColumn col_Allowance;
         private DataGridViewNumericBoxColumn col_NewCone;
         private DataGridViewNumericBoxColumn col_UsedCone;
-
         /// <summary>
         /// P02
         /// </summary>
@@ -41,6 +40,18 @@ namespace Sci.Production.Thread
             this.DefaultFilter = defaultfilter;
             this.InitializeComponent();
             this.DoSubForm = new P02_Detail();
+
+            int lApprove = 0; // 有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
+            string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Thread.P01", "MenuDetail", "FormName");
+            string pass0pk = MyUtility.GetValue.Lookup("FKPass0", this.loginID, "Pass1", "ID");
+            string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
+            DataRow pass2_dr;
+            if (MyUtility.Check.Seek(pass2_cmd, out pass2_dr))
+            {
+                lApprove = pass2_dr["CanConfirm"].ToString() == "True" ? 1 : 0;
+            }
+
+            this.btnBatchapprove.Visible = lApprove == 1;
         }
 
         /// <inheritdoc/>
@@ -1305,6 +1316,13 @@ and {0} <= tas.UpperBound",
         private void ButtonQtyBreakdown_Click(object sender, EventArgs e)
         {
             new P02_QtyBreakdownByColorway(this.CurrentMaintain).ShowDialog();
+        }
+
+        private void BtnBatchapprove_Click(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.Thread.P02_BatchApprove();
+            frm.ShowDialog(this);
+            this.RenewData();
         }
     }
 }
