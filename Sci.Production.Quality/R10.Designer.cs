@@ -133,7 +133,7 @@
             this.txtCombineStyle.Location = new System.Drawing.Point(143, 46);
             this.txtCombineStyle.MaxLength = 120;
             this.txtCombineStyle.Name = "txtCombineStyle";
-            this.txtCombineStyle.Size = new System.Drawing.Size(121, 23);
+            this.txtCombineStyle.Size = new System.Drawing.Size(252, 23);
             this.txtCombineStyle.TabIndex = 103;
             this.txtCombineStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCombineStyle_PopUp);
             this.txtCombineStyle.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCombineStyle_KeyPress);
