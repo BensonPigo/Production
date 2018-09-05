@@ -27,32 +27,28 @@ namespace Sci.Production.Sewing
         private string Status;
         private DataTable printData;
 
-        public R07(ToolStripMenuItem menuitem) : base(menuitem)
+        public R07(ToolStripMenuItem menuitem)
+            : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboStatus, 2, 1, "New,New,Confirmed,Confirmed");
+            MyUtility.Tool.SetupCombox(this.comboStatus, 2, 1, ",,New,New,Confirmed,Confirmed");
             this.comboStatus.SelectedIndex = 0;
+            this.txtMdivisionM.Text = Sci.Env.User.Keyword;
         }
 
         protected override bool ValidateInput()
         {
-            /*  string strBuyerDateStart = this.dateRangeBuyerDelivery.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeBuyerDelivery.Value1).ToString("yyyy/MM/dd");*/
             this.Factory = this.txtfactory.Text;
             this.M = this.txtMdivisionM.Text;
             this.strIssueDate1 = this.dateIssueDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateIssueDate.Value1).ToString("yyyy/MM/dd");
             this.strIssueDate2 = this.dateIssueDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateIssueDate.Value2).ToString("yyyy/MM/dd");
-            this.strApvDate1 = this.dateRangeApvDate.Value1.Empty()? string.Empty : ((DateTime)this.dateRangeApvDate.Value1).ToString("yyyy/MM/dd");
+            this.strApvDate1 = this.dateRangeApvDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeApvDate.Value1).ToString("yyyy/MM/dd");
             this.strApvDate2 = this.dateRangeApvDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeApvDate.Value2).ToString("yyyy/MM/dd");
             this.SubCon = this.txtSubCon.Text;
             this.ContractNumb = this.txtContract.Text;
             this.SP = this.txtSPNO.Text;
             this.Status = this.comboStatus.SelectedValue.ToString();
 
-            // 必輸條件
-            if (true)
-            {
-
-            }
             return base.ValidateInput();
         }
 
@@ -114,24 +110,25 @@ namespace Sci.Production.Sewing
 
             string sqlcmd = $@"
 select 
-[Subcon Name]  = sd.SubConOutFty
+[Factory] = s.Factoryid
+,[Subcon Name]  = sd.SubConOutFty
 ,[Contract No] = sd.ContractNumber
 ,[Style] = o.StyleID
 ,[SP] = o.ID
 ,[Qty] = Order_Qty.Qty
-,[Sewing_CPU] = tms.SewingCPU
+,[Sewing_CPU] = tms.SewingCPU * r.rate
 ,[SubConPrice/CPU] = sd.UnitPrice
-,[Cut] = tms.CuttingCPU
+,[Cut] = tms.CuttingCPU * r.rate
 ,[H.T] = tms.HeatTransfer
-,[Inspection] = tms.InspectionCPU
-,[OtherCpu] = tms.OtherCPU
+,[Inspection] = tms.InspectionCPU * r.rate 
+,[OtherCpu] = tms.OtherCPU * r.rate
 ,[EMB] = tms.EMBPrice
 ,[Print] = tms.PrintingPrice
 ,[OtherAmt] = tms.OtherAmt
-,[Price/CPU] = iif((tms.CuttingCPU+tms.HeatTransfer+tms.InspectionCPU+tms.OtherCPU)=0,0, (sd.UnitPrice-tms.EMBPrice-tms.PrintingPrice-tms.OtherAmt) / (tms.CuttingCPU+tms.HeatTransfer+tms.InspectionCPU+tms.OtherCPU))
+,[Price/CPU] = iif((tms.CuttingCPU * r.rate +tms.HeatTransfer+tms.InspectionCPU * r.rate +tms.OtherCPU * r.rate )=0,0, (sd.UnitPrice-tms.EMBPrice-tms.PrintingPrice-tms.OtherAmt) / (tms.CuttingCPU * r.rate +tms.HeatTransfer+tms.InspectionCPU * r.rate +tms.OtherCPU * r.rate ))
 ,[Or] = ''
 ,[Min Rate Cpu] = ''
-,[TTLCPU] = Order_Qty.Qty * tms.SewingCPU
+,[TTLCPU] = Order_Qty.Qty * tms.SewingCPU * r.rate 
 ,[Contract Amt]=Order_Qty.Qty * sd.UnitPrice
 ,[ExchangeRate]=''
 ,[Contract Amt_usd]=''
@@ -162,6 +159,9 @@ outer apply (
     from Order_TmsCost with (nolock)
     where ID = sd.OrderID
 ) as tms
+outer apply(
+	select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,sd.ComboType)
+	,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType))/100)r
 where 1=1
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 ";
@@ -187,23 +187,23 @@ where 1=1
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R07.xltx"); 
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Sewing_R07.xltx");
             objApp.Visible = false;
-            MyUtility.Excel.CopyToXls(this.printData, "", "Sewing_R07.xltx", 3, false, null, objApp);
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Sewing_R07.xltx", 3, false, null, objApp);
             Microsoft.Office.Interop.Excel.Worksheet wks = objApp.ActiveWorkbook.Worksheets[1];
             for (int c = 1; c <= this.printData.Rows.Count; c++)
             {
-                wks.Cells[c + 3, 16] = $"=IF(O{c + 3}<Q{c + 3},\"<\",\">\")";
-                wks.Cells[c + 3, 21] = $"=S{c + 3}/T{c + 3}";
+                wks.Cells[c + 3, 17] = $"=IF(P{c + 3}<R{c + 3},\"<\",\">\")";
+                wks.Cells[c + 3, 22] = $"=T{c + 3}/U{c + 3}";
             }
 
-            objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
-            objApp.Cells.EntireRow.AutoFit();       ////自動欄高
+            objApp.Cells.EntireColumn.AutoFit();    // 自動欄寬
+            objApp.Cells.EntireRow.AutoFit();       // 自動欄高
 
             // 畫框線
             int rowcnt = this.printData.Rows.Count + 3;
             Microsoft.Office.Interop.Excel.Range rg1;
-            rg1 = wks.get_Range("A4", $"W{this.printData.Rows.Count + 3}");
+            rg1 = wks.get_Range("A4", $"X{this.printData.Rows.Count + 3}");
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
