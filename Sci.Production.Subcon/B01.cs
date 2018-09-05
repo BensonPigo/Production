@@ -263,6 +263,8 @@ namespace Sci.Production.Subcon
             }
             else
             {
+                this.groupBox1.Enabled = true;
+                this.groupBox2.Enabled = true;
                 this.btnThread.Enabled = true;
             }
         }
@@ -380,5 +382,6 @@ namespace Sci.Production.Subcon
             var callfrm = new B01_ThreadColorPrice(true, CurrentMaintain["Refno"].ToString(),string.Empty,string.Empty);
             callfrm.ShowDialog();
         }
+        
     }
 }
