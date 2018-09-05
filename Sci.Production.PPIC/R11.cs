@@ -421,7 +421,7 @@ union all
 且Ready Date - sewing offline要小於GAP。*/
 
     select * from #tmp2
-    where DATEDIFF(day,CONVERT(date,Offline), ReadyDate) < {MyUtility.Convert.GetInt(this.Gap)}		 
+    where DATEDIFF(day,CONVERT(date,Offline), ReadyDate) <= {MyUtility.Convert.GetInt(this.Gap)}		 
     --Ready Date - sewing offline要小於GAP
 
 union all
