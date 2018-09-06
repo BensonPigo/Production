@@ -38,6 +38,8 @@
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.lbSPNo = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboStatus = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -105,6 +107,7 @@
             this.comboStockType.IsSupportUnselect = true;
             this.comboStockType.Location = new System.Drawing.Point(106, 101);
             this.comboStockType.Name = "comboStockType";
+            this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 147;
             // 
@@ -144,9 +147,31 @@
             this.lbSPNo.TabIndex = 151;
             this.lbSPNo.Text = "SP#";
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 134);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(90, 23);
+            this.label1.TabIndex = 152;
+            this.label1.Text = "Status";
+            // 
+            // comboStatus
+            // 
+            this.comboStatus.BackColor = System.Drawing.Color.White;
+            this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboStatus.FormattingEnabled = true;
+            this.comboStatus.IsSupportUnselect = true;
+            this.comboStatus.Location = new System.Drawing.Point(106, 134);
+            this.comboStatus.Name = "comboStatus";
+            this.comboStatus.OldText = "";
+            this.comboStatus.Size = new System.Drawing.Size(121, 24);
+            this.comboStatus.TabIndex = 153;
+            // 
             // R38
             // 
-            this.ClientSize = new System.Drawing.Size(509, 166);
+            this.ClientSize = new System.Drawing.Size(509, 219);
+            this.Controls.Add(this.comboStatus);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lbSPNo);
             this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.txtfactory);
@@ -158,7 +183,7 @@
             this.Controls.Add(this.txtSPNoEnd);
             this.Controls.Add(this.txtSPNoStart);
             this.Name = "R38";
-            this.Text = "R38. Material Locked Report";
+            this.Text = "R38. Material Lock/Unlock Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -172,6 +197,8 @@
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.lbSPNo, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.comboStatus, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -188,5 +215,7 @@
         private Class.txtfactory txtfactory;
         private Class.txtMdivision txtMdivision;
         private Win.UI.Label lbSPNo;
+        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboStatus;
     }
 }
