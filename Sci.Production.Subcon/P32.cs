@@ -18,7 +18,7 @@ namespace Sci.Production.Subcon
 {
     public partial class P32 : Sci.Win.Tems.QueryForm
     {
-        protected DataTable dtGrid1, dtGrid2; DataSet dataSet;
+        protected DataTable dtGrid1, dtGrid2, dtGrid_NoCarton; DataSet dataSet;
         string SP1, SP2,M; string POID; string sqlWhere = "";
         DateTime? sewingdate1, sewingdate2, scidate1, scidate2;
         List<string> sqlWheres = new List<string>();
@@ -211,8 +211,7 @@ select  #tmp.Poid
 			            ELSE 'N'
 		              END
 from #tmp order by #tmp.OrderId
-DROP TABLE  #tmp1
-drop table  #tmp", M));
+DROP TABLE  #tmp1", M));
 
             sqlcmd.Append(Environment.NewLine); // 換行
             //Grid2
@@ -246,7 +245,31 @@ cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
 where 1=1 
       " + sqlWhere + @"
       and  L.MdivisionID= '{0}' 
-order by LD.OrderId, L.Category, L.LocalSuppID", M));
+order by LD.OrderId, L.Category, L.LocalSuppID
+
+-- 匯出 Carton = N 資料
+select distinct [Factory] = o.FactoryID
+,[SP] = o.ID
+,[Style] = o.StyleID
+,[BuyerDlv] = o.BuyerDelivery
+,[SciDlv] = o.SciDelivery
+,[SewinLine] = o.SewInLine
+,[Carton] = 'N'
+,[SP_Thread] = iif (lo.Category = 'SP_Thread','Y','N')
+,[EMB_Thread] = iif (lo.Category = 'EMB_Thread','Y','N')
+from orders o
+inner join #tmp tmp on tmp.poid = o.POID
+left join LocalPO_Detail lo2 on lo2.OrderId=o.ID
+left join LocalPO lo on lo.Id=lo2.Id
+where not exists(
+	select 1 from LocalPO a 
+	inner join LocalPO_Detail b on a.Id=b.Id
+	where a.Category='Carton'
+	and b.OrderId=o.ID )
+order by o.ID
+
+drop table  #tmp
+", M));
             #endregion
            
             DBProxy.Current.DefaultTimeout = 1200;
@@ -269,6 +292,7 @@ order by LD.OrderId, L.Category, L.LocalSuppID", M));
             this.HideWaitMessage();
             dtGrid1 = dataSet.Tables[0];
             dtGrid2 = dataSet.Tables[1];
+            dtGrid_NoCarton = dataSet.Tables[2];
             if (dtGrid1.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!!");
@@ -304,20 +328,39 @@ order by LD.OrderId, L.Category, L.LocalSuppID", M));
             if (dataSet == null) return;
             if (dtGrid1.Rows.Count == 0) return;
             if (dtGrid2.Rows.Count == 0) return;
-            DataTable dtMaster = dtGrid1.AsEnumerable().Where(row => true).CopyToDataTable();
-            DataTable dtChild = dtGrid2.AsEnumerable().Where(row => true).CopyToDataTable();
-            dtMaster.Columns.Remove("Poid");
-            dtChild.Columns.Remove("Poid");
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
-            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtMaster);
-            //DataView dataView = dtGrid2.DefaultView;
+            if (this.chkCarton.Checked)
+            {
+                if (dtGrid_NoCarton.Rows.Count == 0) return;
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt = new SaveXltReportCls.XltRptTable(dtGrid_NoCarton);
+                x1.DicDatas.Add("##dt1", dt);
+                dt.ShowHeader = false;
+                Microsoft.Office.Interop.Excel.Worksheet ws = x1.ExcelApp.ActiveWorkbook.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Worksheet ws2 = x1.ExcelApp.ActiveWorkbook.Worksheets[2];                
+                ws.Cells[1, 2] = "SP#";
+                ws.Cells[1, 4] = "BuyerDlv";
+                ws.Cells[1, 5] = "SciDlv";
+                ws.Cells[1, 6] = "SewInline";
+                ws.Name = "Carton = N";
+                ws2.Delete();
+            }
+            else
+            {
+                DataTable dtMaster = dtGrid1.AsEnumerable().Where(row => true).CopyToDataTable();
+                DataTable dtChild = dtGrid2.AsEnumerable().Where(row => true).CopyToDataTable();
+                dtMaster.Columns.Remove("Poid");
+                dtChild.Columns.Remove("Poid");              
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt1 = new SaveXltReportCls.XltRptTable(dtMaster);
+                //DataView dataView = dtGrid2.DefaultView;
 
-            if (dtChild.Columns.Contains("Ukey")) dtChild.Columns.Remove("Ukey");
-            Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dtChild);
-            x1.DicDatas.Add("##dt1", dt1);
-            x1.DicDatas.Add("##dt2", dt2);
-            dt1.ShowHeader = false;
-            dt2.ShowHeader = false;
+                if (dtChild.Columns.Contains("Ukey")) dtChild.Columns.Remove("Ukey");
+                Sci.Utility.Excel.SaveXltReportCls.XltRptTable dt2 = new SaveXltReportCls.XltRptTable(dtChild);
+                x1.DicDatas.Add("##dt1", dt1);
+                x1.DicDatas.Add("##dt2", dt2);
+                dt1.ShowHeader = false;
+                dt2.ShowHeader = false;
+            }
+           
             x1.Save(Sci.Production.Class.MicrosoftFile.GetName("Subcon_P32"));
             return ;
 
