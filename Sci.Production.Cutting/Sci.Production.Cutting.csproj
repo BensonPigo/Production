@@ -82,6 +82,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.Smo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -351,6 +353,12 @@
     <Compile Include="R05.Designer.cs">
       <DependentUpon>R05.cs</DependentUpon>
     </Compile>
+    <Compile Include="R06.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R06.Designer.cs">
+      <DependentUpon>R06.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -466,6 +474,9 @@
     <EmbeddedResource Include="R05.resx">
       <DependentUpon>R05.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R06.resx">
+      <DependentUpon>R06.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -483,6 +494,10 @@
     <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
       <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
       <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Tools\Sci.Production.Tools.csproj">
+      <Project>{F1A7F278-EFA9-4DDA-B68A-202093B2444C}</Project>
+      <Name>Sci.Production.Tools</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
