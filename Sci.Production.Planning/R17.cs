@@ -152,7 +152,7 @@ outer apply (
     where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
     Order by PulloutDate desc
 ) p
-where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0)";
+where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) and f.IsProduceFty=1";
 
                 if (this.radioBulk.Checked)
                 {
