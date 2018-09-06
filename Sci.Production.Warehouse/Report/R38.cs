@@ -18,6 +18,7 @@ namespace Sci.Production.Warehouse
         string strSp1, strSp2, strM, strFty, strStockType, strLockStatus;
         DataTable dataTable;
 
+
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -67,6 +68,11 @@ namespace Sci.Production.Warehouse
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            if (MyUtility.Check.Empty(txtSPNoStart.Text.Trim()) || MyUtility.Check.Empty(txtSPNoEnd.Text.Trim()))
+            {
+                return  new DualResult(false, "<SP#> can't be empty!!");
+            }
+
             #region Set SQL Command & SQLParameter
             string strSql = @"
 select	fi.POID
