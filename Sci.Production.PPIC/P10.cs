@@ -9,6 +9,7 @@ using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Runtime.InteropServices;
+using System.Transactions;
 
 namespace Sci.Production.PPIC
 {
@@ -789,6 +790,15 @@ where a.RequestQty > a.StockQty",
             {
                 this.txtSubconName.ReadOnly = true;
             }
+
+            if (this.CurrentMaintain["Status"].EqualString("Confirmed") && !this.EditMode)
+            {
+                this.btnAutoOutputQuery.Enabled = true;
+            }
+            else
+            {
+                this.btnAutoOutputQuery.Enabled = false;
+            }
         }
 
         #region -- SelePoItem --
@@ -914,5 +924,227 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             }
         }
 
+        private void BtnAutoOutputQuery_Click(object sender, EventArgs e)
+        {
+            if (!MyUtility.GetValue.Lookup($"select status from Lack where id = '{this.CurrentMaintain["ID"]}'").EqualString("Confirmed"))
+            {
+                MyUtility.Msg.WarningBox("Must confirm!");
+                this.Refresh();
+                this.OnDetailEntered();
+                return;
+            }
+
+            DataRow dr;
+            if (!MyUtility.Check.Seek($@"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) where id='{this.CurrentMaintain["ID"]}' and fabrictype='F' and mdivisionid='{Sci.Env.User.Keyword}'", out dr, null))
+            {
+                MyUtility.Msg.WarningBox("Please check requestid is Fabric.", "Data not found!!");
+                return;
+            }
+            else
+            {
+                if (MyUtility.Check.Empty(dr["apvdate"]))
+                {
+                    MyUtility.Msg.WarningBox("Request is not approved!!");
+                    return;
+                }
+
+                if (!MyUtility.Check.Empty(dr["issuelackid"]))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", this.CurrentMaintain["ID"], dr["issuelackid"]));
+                    return;
+                }
+            }
+
+            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IL", "IssueLack", DateTime.Now);
+            if (MyUtility.Check.Empty(tmpId))
+            {
+                MyUtility.Msg.WarningBox("Get document ID fail!!");
+                return;
+            }
+
+            string requestid = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            string type = dr["type"].ToString();
+
+            #region 檢查WH P16是否已經建立過
+            string chkex = $@"select id from issuelack where RequestID = '{this.CurrentMaintain["ID"]}'";
+            DataRow drow;
+            if (MyUtility.Check.Seek(chkex, out drow))
+            {
+                MyUtility.Msg.WarningBox($"Already exists {dr["id"]}");
+                return;
+            }
+            #endregion
+
+            #region 檢查庫存是否足夠
+            string sqlchk = $@"
+select s = concat(a.POID,' ', b.seq1,'-', b.seq2)
+from dbo.lack a WITH (NOLOCK) 
+inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
+											   and c.seq1 = b.seq1 
+											   and c.seq2  = b.seq2 
+											   and c.stocktype = 'B'
+
+where a.id = '{this.CurrentMaintain["ID"]}'
+and c.lock = 0  and (c.inqty-c.outqty + c.adjustqty) > 0
+";
+            if (type != "Lacking")
+            {
+                sqlchk += " and (c.inqty-c.outqty + c.adjustqty) > 0";
+            }
+
+            sqlchk += @"
+group by a.POID, b.seq1, b.seq2, b.RequestQty
+having sum(c.inqty - c.outqty + c.adjustqty) < b.RequestQty
+";
+
+            DataTable chkdt;
+            DBProxy.Current.Select(null, sqlchk, out chkdt);
+            string msg = string.Empty;
+            if (chkdt.Rows.Count > 0)
+            {
+                foreach (DataRow item in chkdt.Rows)
+                {
+                    msg += MyUtility.Convert.GetString(item[0]) + Environment.NewLine;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(msg))
+            {
+                MyUtility.Msg.WarningBox("These items are understocked" + Environment.NewLine + msg);
+            }
+            #endregion
+
+            string t1 = $@"
+select poid = rtrim(a.POID) 
+	   , b.seq1
+	   , b.seq2
+	   , b.RequestQty
+from dbo.lack a WITH (NOLOCK) 
+inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+where a.id = '{this.CurrentMaintain["ID"]}';
+";
+            DualResult result;
+            DataTable dt1;
+            result = DBProxy.Current.Select(null, t1, out dt1);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            DataTable ldt;
+            string sch = $@"select  ID = '{tmpId}', FtyInventoryukey = c.ukey, Qty = b.RequestQty, MDivisionID = '', POID = rtrim(a.POID) , b.Seq1, b.Seq2, Roll, Dyelot, StockType = 'B' 
+from dbo.lack a WITH (NOLOCK) 
+inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID and c.seq1 = b.seq1 and c.seq2  = b.seq2 and c.stocktype = 'B'
+Where 1=0";
+            result = DBProxy.Current.Select(null, sch, out ldt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            #region 分配qty , 準備表身
+            foreach (DataRow dt1row in dt1.Rows)
+            {
+                string t2 = $@"
+select  
+        ID = '{tmpId}'
+        , FtyInventoryukey = c.ukey
+	    , Qty = b.RequestQty
+		, MDivisionID = ''
+        , POID = rtrim(a.POID) 
+	    , b.Seq1
+	    , b.Seq2
+		, Roll
+		, Dyelot
+        , StockType = 'B' 
+        , Stock = c.inqty - c.outqty + c.adjustqty
+from dbo.lack a WITH (NOLOCK) 
+inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
+											   and c.seq1 = b.seq1 
+											   and c.seq2  = b.seq2 
+											   and c.stocktype = 'B'
+Where c.lock = 0  and a.id = '{this.CurrentMaintain["ID"]}' and c.poid = '{dt1row["poid"]}' and c.seq1 = '{dt1row["seq1"]}' and c.seq2 = '{dt1row["seq2"]}'
+";
+
+                if (type != "Lacking")
+                {
+                    t2 += " and (c.inqty-c.outqty + c.adjustqty) > 0";
+                }
+
+                DataTable dt2;
+                result = DBProxy.Current.Select(null, t2, out dt2);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                decimal requestQty = MyUtility.Convert.GetDecimal(dt1row["RequestQty"]);
+                for (int i = 0; i < dt2.Rows.Count; i++)
+                {
+                    if (requestQty > 0)
+                    {
+                        DataRow lrow = ldt.NewRow();
+                        decimal sq = MyUtility.Convert.GetDecimal(dt2.Rows[i]["Stock"]);
+                        if (sq < requestQty)
+                        {
+                            if (i + 1 == dt2.Rows.Count)
+                            {
+                                lrow["Qty"] = requestQty;
+                            }
+                            else
+                            {
+                                lrow["Qty"] = sq;
+                                requestQty = requestQty - sq;
+                            }
+                        }
+                        else
+                        {
+                            lrow["Qty"] = requestQty;
+                            requestQty = 0;
+                        }
+
+                        lrow["id"] = tmpId;
+                        lrow["FtyInventoryukey"] = dt2.Rows[i]["FtyInventoryukey"];
+                        lrow["MDivisionID"] = dt2.Rows[i]["MDivisionID"];
+                        lrow["POID"] = dt2.Rows[i]["POID"];
+                        lrow["Seq1"] = dt2.Rows[i]["Seq1"];
+                        lrow["Seq2"] = dt2.Rows[i]["Seq2"];
+                        lrow["Roll"] = dt2.Rows[i]["Roll"];
+                        lrow["Dyelot"] = dt2.Rows[i]["Dyelot"];
+                        lrow["StockType"] = dt2.Rows[i]["StockType"];
+
+                        ldt.Rows.Add(lrow);
+                    }
+                }
+            }
+            #endregion
+            string sqlinsert = $@"
+INSERT INTO [dbo].[IssueLack]([Id],[Type],[MDivisionID],[FactoryID],[IssueDate],[Status],[RequestID],[Remark],[ApvName],[ApvDate],[FabricType],[AddName],[AddDate])
+VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','','',null,'F','{Sci.Env.User.UserID}',GETDATE())
+";
+            sqlinsert += $@"insert IssueLack_Detail select * from #tmp";
+            DataTable a;
+            using (TransactionScope scope = new TransactionScope())
+            {
+                DualResult upResult;
+                if (!MyUtility.Check.Empty(sqlinsert))
+                {
+                    if (!(upResult = MyUtility.Tool.ProcessWithDatatable(ldt,string.Empty, sqlinsert, out a)))
+                    {
+                        this.ShowErr(upResult);
+                        return;
+                    }
+                }
+
+                scope.Complete();
+            }
+
+            MyUtility.Msg.InfoBox("Complete!");
+        }
     }
 }
