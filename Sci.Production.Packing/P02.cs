@@ -2422,7 +2422,7 @@ ELSE
             string sqlchk = $@"select ShipQty=sum(ShipQty) from PackingList_Detail where OrderID = '{this.CurrentMaintain["OrderID"]}' ";
 
             int shipQty = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlchk));
-            if (shipQty > this.numOrderQty.Value)
+            if (shipQty >= this.numOrderQty.Value)
             {
                 string pdids = MyUtility.GetValue.Lookup($"select id = stuff((select concat(',',id)from (select distinct id from PackingList_Detail where OrderID = '{this.CurrentMaintain["OrderID"]}') a for xml path('')),1,1,'')");
                 MyUtility.Msg.WarningBox($"SP# {this.CurrentMaintain["OrderID"]} ship QTY can not more than total Qrder QTY! PackingList ID {pdids}");
