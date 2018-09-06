@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel4 = new Sci.Win.UI.Panel();
+            this.btnEdit = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
@@ -45,18 +46,30 @@
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.btnEdit);
             this.panel4.Controls.Add(this.btnClose);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 342);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(562, 39);
+            this.panel4.Size = new System.Drawing.Size(692, 39);
             this.panel4.TabIndex = 8;
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.Location = new System.Drawing.Point(513, 4);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(80, 30);
+            this.btnEdit.TabIndex = 1;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(469, 4);
+            this.btnClose.Location = new System.Drawing.Point(599, 4);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 0;
@@ -69,13 +82,13 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(562, 5);
+            this.panel3.Size = new System.Drawing.Size(692, 5);
             this.panel3.TabIndex = 7;
             // 
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(567, 0);
+            this.panel2.Location = new System.Drawing.Point(697, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(5, 381);
             this.panel2.TabIndex = 6;
@@ -94,7 +107,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(5, 5);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(562, 337);
+            this.panel5.Size = new System.Drawing.Size(692, 337);
             this.panel5.TabIndex = 9;
             // 
             // gridExpenseData
@@ -118,20 +131,20 @@
             this.gridExpenseData.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridExpenseData.RowTemplate.Height = 24;
             this.gridExpenseData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridExpenseData.Size = new System.Drawing.Size(562, 337);
+            this.gridExpenseData.ShowCellToolTips = false;
+            this.gridExpenseData.Size = new System.Drawing.Size(692, 337);
             this.gridExpenseData.TabIndex = 0;
             this.gridExpenseData.TabStop = false;
             // 
             // P05_ExpenseData
             // 
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(572, 381);
+            this.ClientSize = new System.Drawing.Size(702, 381);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P05_ExpenseData";
             this.Text = "Expense Data";
             this.panel4.ResumeLayout(false);
@@ -152,5 +165,6 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid gridExpenseData;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Button btnEdit;
     }
 }
