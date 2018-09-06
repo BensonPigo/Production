@@ -410,19 +410,19 @@ SELECT
 Select * 
 into #tmp
 from 
-(	
+(
+/*搜尋SewingOffline + GAP = ReadyDate
+並且BuyerDelivery > ReadyDate。*/
+
 	select * from #tmp1
-	where BuyerDelivery >= ReadyDate
-	and DATEDIFF(day,CONVERT(date,Offline), BuyerDelivery) >= {MyUtility.Convert.GetInt(this.Gap)}		
+	where BuyerDelivery > ReadyDate	
 
 union all
 
 /*搜尋Ready date 等於Order_QtyShip.BuyerDelivery(今天要交貨的資料)，
-且Ready Date - sewing offline要小於GAP。*/
+且並且BuyerDelivery - sewing offline要小於GAP並包含自己 。*/
 
     select * from #tmp2
-    where DATEDIFF(day,CONVERT(date,Offline), ReadyDate) < {MyUtility.Convert.GetInt(this.Gap)}		 
-    --Ready Date - sewing offline要小於GAP
 
 union all
 

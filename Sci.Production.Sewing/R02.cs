@@ -947,7 +947,14 @@ order by Type,iif(Company = 'Other','Z','A'),Company"),
                 }
             }
             #endregion
-            this.factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", Sci.Env.User.Factory));
+            if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
+            {
+                this.factoryName = MyUtility.GetValue.Lookup(string.Format("select Name from Mdivision WITH (NOLOCK) where ID = '{0}'", this.mDivision));
+            }
+            else
+            {
+                this.factoryName = MyUtility.GetValue.Lookup(string.Format("select NameEN from Factory WITH (NOLOCK) where ID = '{0}'", this.factory));
+            }
 
             sqlCmd.Clear();
             sqlCmd.Append(string.Format(
