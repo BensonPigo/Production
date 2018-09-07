@@ -9,6 +9,7 @@ using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Runtime.InteropServices;
+using System.Transactions;
 
 namespace Sci.Production.PPIC
 {
@@ -805,6 +806,15 @@ where a.RequestQty > a.StockQty",
             {
                 this.txtSubconName.ReadOnly = true;
             }
+
+            if (this.CurrentMaintain["Status"].EqualString("Confirmed") && !this.EditMode)
+            {
+                this.btnAutoOutputQuery.Enabled = true;
+            }
+            else
+            {
+                this.btnAutoOutputQuery.Enabled = false;
+            }
         }
 
         #region -- SelePoItem --
@@ -928,6 +938,141 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                     this.CurrentMaintain["SubconName"] = string.Empty;
                 }
             }
+        }
+
+        private void BtnAutoOutputQuery_Click(object sender, EventArgs e)
+        {
+            if (!MyUtility.GetValue.Lookup($"select status from Lack where id = '{this.CurrentMaintain["ID"]}'").EqualString("Confirmed"))
+            {
+                MyUtility.Msg.WarningBox("Must confirm!");
+                this.Refresh();
+                this.OnDetailEntered();
+                return;
+            }
+
+            DataRow dr;
+            if (!MyUtility.Check.Seek($@"select [type],[apvdate],[issuelackid],[Shift],[SubconName] from dbo.lack WITH (NOLOCK) where id='{this.CurrentMaintain["ID"]}' and fabrictype='A' and mdivisionid='{Sci.Env.User.Keyword}'", out dr, null))
+            {
+                MyUtility.Msg.WarningBox("Please check requestid is Accessory.", "Data not found!!");
+                return;
+            }
+            else
+            {
+                if (MyUtility.Check.Empty(dr["apvdate"]))
+                {
+                    MyUtility.Msg.WarningBox("Request is not approved!!");
+                    return;
+                }
+
+                if (!MyUtility.Check.Empty(dr["issuelackid"]))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("This request# ({0}) already issued by {1}.", this.CurrentMaintain["ID"], dr["issuelackid"]));
+                    return;
+                }
+            }
+
+            string tmpId = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "IL", "IssueLack", DateTime.Now);
+            if (MyUtility.Check.Empty(tmpId))
+            {
+                MyUtility.Msg.WarningBox("Get document ID fail!!");
+                return;
+            }
+
+            string requestid = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            string type = dr["type"].ToString();
+            #region 檢查WH P15是否已經建立過
+            string chkex = $@"select id from issuelack where RequestID = '{this.CurrentMaintain["ID"]}'";
+            DataRow drow;
+            if (MyUtility.Check.Seek(chkex, out drow))
+            {
+                MyUtility.Msg.WarningBox($"Already exists {drow["id"]}");
+                return;
+            }
+            #endregion
+            #region 檢查庫存是否足夠
+            string sqlchk = $@"
+select s= concat(a.POID,' ', b.Seq1,'-',b.Seq2)
+from dbo.lack a WITH (NOLOCK) 
+inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
+											   and c.seq1 = b.seq1 
+											   and c.seq2  = b.seq2 
+											   and c.stocktype = 'B'
+where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0 and  c.inqty - c.outqty + c.adjustqty < b.RequestQty
+";
+            if (type != "Lacking")
+            {
+                sqlchk += " and (c.inqty-c.outqty + c.adjustqty) > 0";
+            }
+
+            DataTable chkdt;
+            DBProxy.Current.Select(null, sqlchk, out chkdt);
+            string msg = string.Empty;
+            if (chkdt.Rows.Count > 0)
+            {
+                foreach (DataRow item in chkdt.Rows)
+                {
+                    msg += MyUtility.Convert.GetString(item[0]) + Environment.NewLine;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(msg))
+            {
+                MyUtility.Msg.WarningBox("These items are understocked" + Environment.NewLine + msg);
+
+            }
+            #endregion
+
+            #region
+            StringBuilder strSQLCmd = new StringBuilder();
+            strSQLCmd.Append($@"
+INSERT INTO [dbo].[IssueLack]([Id],[Type],[MDivisionID],[FactoryID],[IssueDate],[Status],[RequestID],[Remark],[ApvName],[ApvDate],[FabricType],[AddName],[AddDate])
+VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','{this.CurrentMaintain["Remark"]}','',null,'A','{Sci.Env.User.UserID}',GETDATE())
+");
+
+            strSQLCmd.Append($@"
+insert IssueLack_Detail
+select  
+        ID = '{tmpId}'
+        , FtyInventoryukey = c.ukey
+	    , Qty = b.RequestQty
+		, MDivisionID = ''
+        , POID = rtrim(a.POID) 
+	    , b.Seq1
+	    , b.Seq2
+		, Roll
+		, Dyelot
+        , StockType = 'B' 
+from dbo.lack a WITH (NOLOCK) 
+inner join dbo.Lack_Detail b WITH (NOLOCK) on a.ID = b.ID
+inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.POID 
+											   and c.seq1 = b.seq1 
+											   and c.seq2  = b.seq2 
+											   and c.stocktype = 'B' 
+where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0
+");
+
+            // 判斷LACKING
+            if (type != "Lacking")
+            { strSQLCmd.Append(" and (c.inqty-c.outqty + c.adjustqty) > 0"); }
+            #endregion
+
+            using (TransactionScope scope = new TransactionScope())
+            {
+                DualResult upResult;
+                if (!MyUtility.Check.Empty(strSQLCmd.ToString()))
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, strSQLCmd.ToString())))
+                    {
+                        this.ShowErr(upResult);
+                        return;
+                    }
+                }
+
+                scope.Complete();
+            }
+
+            MyUtility.Msg.InfoBox("Complete!");
         }
     }
 }

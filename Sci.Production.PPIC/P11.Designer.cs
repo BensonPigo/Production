@@ -60,6 +60,7 @@
             this.btnImport = new Sci.Win.UI.Button();
             this.txtSubconName = new Sci.Production.Class.txtscifactory();
             this.labelSubconName = new Sci.Win.UI.Label();
+            this.btnAutoOutputQuery = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -108,7 +109,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(919, 168);
+            this.masterpanel.Size = new System.Drawing.Size(1066, 168);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
@@ -146,7 +147,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 168);
-            this.detailpanel.Size = new System.Drawing.Size(919, 281);
+            this.detailpanel.Size = new System.Drawing.Size(1066, 281);
             // 
             // gridicon
             // 
@@ -159,7 +160,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(919, 281);
+            this.detailgridcont.Size = new System.Drawing.Size(1066, 281);
             // 
             // detail2
             // 
@@ -175,25 +176,32 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(919, 487);
+            this.detail.Size = new System.Drawing.Size(1066, 487);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(919, 449);
+            this.detailcont.Size = new System.Drawing.Size(1066, 449);
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnAutoOutputQuery);
             this.detailbtm.Location = new System.Drawing.Point(0, 449);
-            this.detailbtm.Size = new System.Drawing.Size(919, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1066, 38);
             this.detailbtm.TabIndex = 0;
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnAutoOutputQuery, 0);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(919, 487);
+            this.browse.Size = new System.Drawing.Size(1066, 487);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(927, 516);
+            this.tabs.Size = new System.Drawing.Size(1074, 516);
             // 
             // createby
             // 
@@ -517,10 +525,20 @@
             this.labelSubconName.TabIndex = 42;
             this.labelSubconName.Text = "SubconName";
             // 
+            // btnAutoOutputQuery
+            // 
+            this.btnAutoOutputQuery.Location = new System.Drawing.Point(913, 3);
+            this.btnAutoOutputQuery.Name = "btnAutoOutputQuery";
+            this.btnAutoOutputQuery.Size = new System.Drawing.Size(145, 30);
+            this.btnAutoOutputQuery.TabIndex = 3;
+            this.btnAutoOutputQuery.Text = "Auto Output Query";
+            this.btnAutoOutputQuery.UseVisualStyleBackColor = true;
+            this.btnAutoOutputQuery.Click += new System.EventHandler(this.BtnAutoOutputQuery_Click);
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(927, 549);
+            this.ClientSize = new System.Drawing.Size(1074, 549);
             this.DefaultControl = "txtSPNo";
             this.DefaultControlForEdit = "txtSPNo";
             this.DefaultDetailOrder = "Seq";
@@ -594,5 +612,6 @@
         private Win.UI.Button btnImport;
         private Class.txtscifactory txtSubconName;
         private Win.UI.Label labelSubconName;
+        private Win.UI.Button btnAutoOutputQuery;
     }
 }
