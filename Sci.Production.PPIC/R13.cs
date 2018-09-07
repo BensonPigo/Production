@@ -186,9 +186,6 @@ left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno
 inner join #orders_tmp o WITH (NOLOCK) on o.Id = b.OrderId
 inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
-inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
-where bof.kind != 0
 
 ------
 select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
@@ -317,7 +314,7 @@ select	o.MDivisionID,
                                        , qaqty = sum(b.QAQty)  
                                 FROM DBO.SewingOutput a WITH (NOLOCK) 
                                 inner join dbo.SewingOutput_Detail b WITH (NOLOCK) on b.ID = a.ID
-                                where b.OrderId = o.ID
+                                where b.OrderId = o.ID and a.OutputDate <= o.WorkDate
                                 group by ComboType 
                           ) tt on tt.ComboType = sl.Location
                           where sl.StyleUkey = o.StyleUkey) ,
@@ -327,12 +324,12 @@ select	o.MDivisionID,
 		o.SewOffLine,
 		o.FtyCTN,
         [SewingLineID] = SewingSchedule.SewingLineID,
-		[AT] = isnull(SubProcess.AT,iif(SubProcessOut.AT > 0,0,null)),
-		[BONDING] = isnull(SubProcess.BO,iif(SubProcessOut.BO > 0,0,null)),
-		[EMBRO] = isnull(SubProcess.Emb,iif(SubProcessOut.Emb > 0,0,null)),
-		[HT] = isnull(SubProcess.HT,iif(SubProcessOut.HT > 0,0,null)),
-		[PAD-PRT] = isnull(SubProcess.[PAD-PRT],iif(SubProcessOut.[PAD-PRT] > 0,0,null)),
-		[PRINTING] = isnull(SubProcess.PRT,iif(SubProcessOut.PRT > 0,0,null)),
+		[AT] = isnull(SubProcess.AT,iif(SubProcessOut.AT is not null,0,null)),
+		[BONDING] = isnull(SubProcess.BO,iif(SubProcessOut.BO is not null,0,null)),
+		[EMBRO] = isnull(SubProcess.Emb,iif(SubProcessOut.Emb is not null,0,null)),
+		[HT] = isnull(SubProcess.HT,iif(SubProcessOut.HT is not null,0,null)),
+		[PAD-PRT] = isnull(SubProcess.[PAD-PRT],iif(SubProcessOut.[PAD-PRT] is not null,0,null)),
+		[PRINTING] = isnull(SubProcess.PRT,iif(SubProcessOut.PRT is not null,0,null)),
 		[SubCon] = otc.LocalSuppID,
 		[ReadyDate] = o.OriReadyDate,
 		[LoadingStatus] = iif(LoadingQty.value >= o.Qty,'Y',''),
