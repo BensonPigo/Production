@@ -234,7 +234,8 @@ select distinct o.Poid
 	   , LD.InQty
 	   , LD.APQty
 	   , LD.Remark
-       , LD.Ukey                          
+       , LD.Ukey 
+into #tmp2                           
 from LocalPO_Detail LD WITH (NOLOCK)
 left join LocalPO L WITH (NOLOCK) on LD.Id=L.Id
 left join LocalSupp S WITH (NOLOCK) on L.LocalSuppID = S.ID
@@ -245,30 +246,43 @@ cross apply dbo.GetSCI(O.ID , O.Category) as GetSCI
 where 1=1 
       " + sqlWhere + @"
       and  L.MdivisionID= '{0}' 
-order by LD.OrderId, L.Category, L.LocalSuppID
+
+select * from #tmp2
+order by OrderId, Category, LocalSuppID
 
 -- 匯出 Carton = N 資料
-select distinct [Factory] = o.FactoryID
+
+
+select [Factory] = o.FactoryID
 ,[SP] = o.ID
 ,[Style] = o.StyleID
 ,[BuyerDlv] = o.BuyerDelivery
 ,[SciDlv] = o.SciDelivery
 ,[SewinLine] = o.SewInLine
 ,[Carton] = 'N'
-,[SP_Thread] = iif (lo.Category = 'SP_Thread','Y','N')
-,[EMB_Thread] = iif (lo.Category = 'EMB_Thread','Y','N')
+,[SP_Thread] = isnull((	
+		select 'Y' 
+		where exists(
+		select 1
+		from #tmp2 
+		where Category='SP_Thread' and OrderId=o.ID)
+	),'N')
+,[EMB_Thread] = isnull((
+		select 'Y' 
+		where exists( select 1
+		from #tmp2 
+		where Category='EMB_Thread' and OrderId=o.ID)
+	),'N')
 from orders o
 inner join #tmp tmp on tmp.poid = o.POID
-left join LocalPO_Detail lo2 on lo2.OrderId=o.ID
-left join LocalPO lo on lo.Id=lo2.Id
 where not exists(
-	select 1 from LocalPO a 
-	inner join LocalPO_Detail b on a.Id=b.Id
-	where a.Category='Carton'
-	and b.OrderId=o.ID )
+	select 1 
+	from #tmp2 
+	where Category='Carton'
+	and OrderId=o.ID )
 order by o.ID
 
-drop table  #tmp
+drop table  #tmp,#tmp2
 ", M));
             #endregion
            
