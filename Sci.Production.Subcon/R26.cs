@@ -68,7 +68,7 @@ namespace Sci.Production.Subcon
         {
             if (!this.dateSCIDelivery.HasValue && !this.dateIssueDate.HasValue && !this.dateDeliveryDate.HasValue)
             {
-                MyUtility.Msg.ErrorBox("[SCI Delivery] or [Issue_Date] od [Delivery] one of the inputs must be selected");
+                MyUtility.Msg.ErrorBox("[SCI Delivery] or [Issue_Date] or [Delivery] one of the inputs must be selected");
                 dateSCIDelivery.Focus();
 
                 return false;
