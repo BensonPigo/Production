@@ -45,16 +45,16 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(535, 201);
+            this.print.Location = new System.Drawing.Point(529, 160);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(535, 12);
+            this.toexcel.Location = new System.Drawing.Point(529, 12);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(535, 48);
+            this.close.Location = new System.Drawing.Point(529, 48);
             // 
             // dateRangeReadyDate
             // 
@@ -83,7 +83,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(84, 23);
             this.label1.TabIndex = 95;
-            this.label1.Text = "Ready Date :";
+            this.label1.Text = "Ready Date";
             this.label1.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label2
@@ -92,7 +92,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(84, 23);
             this.label2.TabIndex = 96;
-            this.label2.Text = "M :";
+            this.label2.Text = "M ";
             this.label2.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label3
@@ -101,7 +101,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(84, 23);
             this.label3.TabIndex = 97;
-            this.label3.Text = "Factory :";
+            this.label3.Text = "Factory ";
             this.label3.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label4
@@ -110,7 +110,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(84, 23);
             this.label4.TabIndex = 98;
-            this.label4.Text = "Brand :";
+            this.label4.Text = "Brand ";
             this.label4.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label5
@@ -137,11 +137,11 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(24, 201);
+            this.label6.Location = new System.Drawing.Point(364, 164);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(84, 23);
+            this.label6.Size = new System.Drawing.Size(45, 23);
             this.label6.TabIndex = 101;
-            this.label6.Text = "Time :";
+            this.label6.Text = "Time ";
             this.label6.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtFactory
@@ -177,11 +177,12 @@
             // 
             this.txtTime.BackColor = System.Drawing.Color.White;
             this.txtTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTime.Location = new System.Drawing.Point(111, 201);
+            this.txtTime.Location = new System.Drawing.Point(412, 164);
             this.txtTime.Mask = "90:00";
             this.txtTime.Name = "txtTime";
             this.txtTime.Size = new System.Drawing.Size(48, 23);
             this.txtTime.TabIndex = 105;
+            this.txtTime.Text = "1000";
             this.txtTime.ValidatingType = typeof(System.DateTime);
             // 
             // numericBoxDateGap
@@ -208,7 +209,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(627, 259);
+            this.ClientSize = new System.Drawing.Size(638, 222);
             this.Controls.Add(this.numericBoxDateGap);
             this.Controls.Add(this.txtTime);
             this.Controls.Add(this.txtMdivision);
