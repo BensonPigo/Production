@@ -183,7 +183,7 @@
             this.Controls.Add(this.txtSPNoEnd);
             this.Controls.Add(this.txtSPNoStart);
             this.Name = "R38";
-            this.Text = "`";
+            this.Text = "R38. Material Lock/Unlock Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
