@@ -326,8 +326,7 @@ drop table  #tmp
         private void btnToExcel_Click(object sender, EventArgs e)
         {
             if (dataSet == null) return;
-            if (dtGrid1.Rows.Count == 0) return;
-            if (dtGrid2.Rows.Count == 0) return;
+            if (dtGrid1.Rows.Count == 0) return;            
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Subcon_P32.xltx");
             if (this.chkCarton.Checked)
             {
@@ -346,6 +345,7 @@ drop table  #tmp
             }
             else
             {
+                if (dtGrid2.Rows.Count == 0) return;
                 DataTable dtMaster = dtGrid1.AsEnumerable().Where(row => true).CopyToDataTable();
                 DataTable dtChild = dtGrid2.AsEnumerable().Where(row => true).CopyToDataTable();
                 dtMaster.Columns.Remove("Poid");
