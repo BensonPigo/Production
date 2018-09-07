@@ -44,6 +44,8 @@ namespace Sci.Production.Subcon
         DateTime? SCI_Delivery2;
         DateTime? Issue_Date1;
         DateTime? Issue_Date2;
+        DateTime? Delivery_Date_start;
+        DateTime? Delivery_Date_end;
         string SP;
         string SP2;
         string Location_Poid;
@@ -64,9 +66,9 @@ namespace Sci.Production.Subcon
         
         protected override bool ValidateInput()
         {
-            if (!this.dateSCIDelivery.HasValue && !this.dateIssueDate.HasValue)
+            if (!this.dateSCIDelivery.HasValue && !this.dateIssueDate.HasValue && !this.dateDeliveryDate.HasValue)
             {
-                MyUtility.Msg.ErrorBox("[SCI Delivery] or [Issue_Date] one of the inputs must be selected");
+                MyUtility.Msg.ErrorBox("[SCI Delivery] or [Issue_Date] od [Delivery] one of the inputs must be selected");
                 dateSCIDelivery.Focus();
 
                 return false;
@@ -84,6 +86,9 @@ namespace Sci.Production.Subcon
             SCI_Delivery2 = dateSCIDelivery.Value2;
             Issue_Date1 = dateIssueDate.Value1;
             Issue_Date2 = dateIssueDate.Value2;
+            Delivery_Date_start = dateDeliveryDate.Value1;
+            Delivery_Date_end = dateDeliveryDate.Value2;
+
             SP = txtSPNoStart.Text.ToString();
             SP2 = txtSPNoEnd.Text.ToString();
             Location_Poid = txtLocalPoidStart.Text.ToString();
@@ -124,6 +129,18 @@ namespace Sci.Production.Subcon
             {
                 sqlWheres.Add("a.issuedate <= @Issue_Date2");
                 lis.Add(new SqlParameter("@Issue_Date2", Issue_Date2));
+            }
+
+            if (!this.Delivery_Date_start.Empty())
+            {
+                sqlWheres.Add("b.Delivery >= @Delivery_Date_start");
+                lis.Add(new SqlParameter("@Delivery_Date_start", Delivery_Date_start));
+            }
+
+            if (!this.Delivery_Date_end.Empty())
+            {
+                sqlWheres.Add("b.Delivery <= @Delivery_Date_end");
+                lis.Add(new SqlParameter("@Delivery_Date_end", Delivery_Date_end));
             }
             if (!this.Location_Poid.Empty() && !this.Location_Poid2.Empty())
             {
