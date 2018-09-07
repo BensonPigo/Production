@@ -970,7 +970,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DataRow drow;
             if (MyUtility.Check.Seek(chkex, out drow))
             {
-                MyUtility.Msg.WarningBox($"Already exists {dr["id"]}");
+                MyUtility.Msg.WarningBox($"Already exists {drow["id"]}");
                 return;
             }
             #endregion
