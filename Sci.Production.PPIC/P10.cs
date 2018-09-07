@@ -1125,7 +1125,7 @@ Where c.lock = 0  and a.id = '{this.CurrentMaintain["ID"]}' and c.poid = '{dt1ro
             #endregion
             string sqlinsert = $@"
 INSERT INTO [dbo].[IssueLack]([Id],[Type],[MDivisionID],[FactoryID],[IssueDate],[Status],[RequestID],[Remark],[ApvName],[ApvDate],[FabricType],[AddName],[AddDate])
-VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','','',null,'F','{Sci.Env.User.UserID}',GETDATE())
+VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','{this.CurrentMaintain["Remark"]}','',null,'F','{Sci.Env.User.UserID}',GETDATE())
 ";
             sqlinsert += $@"insert IssueLack_Detail select * from #tmp";
             DataTable a;

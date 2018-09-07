@@ -1027,7 +1027,7 @@ where a.id = '{this.CurrentMaintain["ID"]}' and c.lock = 0 and  c.inqty - c.outq
             StringBuilder strSQLCmd = new StringBuilder();
             strSQLCmd.Append($@"
 INSERT INTO [dbo].[IssueLack]([Id],[Type],[MDivisionID],[FactoryID],[IssueDate],[Status],[RequestID],[Remark],[ApvName],[ApvDate],[FabricType],[AddName],[AddDate])
-VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','','',null,'A','{Sci.Env.User.UserID}',GETDATE())
+VALUES('{tmpId}','{type}','{Sci.Env.User.Keyword}','{Sci.Env.User.Factory}',GETDATE(),'NEW','{requestid}','{this.CurrentMaintain["Remark"]}','',null,'A','{Sci.Env.User.UserID}',GETDATE())
 ");
 
             strSQLCmd.Append($@"
