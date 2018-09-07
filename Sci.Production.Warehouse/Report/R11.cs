@@ -151,7 +151,7 @@ with cte as (
 			,o.OrderTypeID
 			,o.Category 
 			,ps.SuppID
-			,CAST(Fi.InQty AS INT ) AS InQty
+			,Fi.InQty
 from dbo.orders o WITH (NOLOCK) 
 inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
 inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
