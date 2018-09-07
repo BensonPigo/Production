@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.dateDeliveryDate = new Sci.Win.UI.DateRange();
+            this.label1 = new Sci.Win.UI.Label();
             this.rdbtn_PandI = new Sci.Win.UI.RadioButton();
             this.rdbtn_incoming = new Sci.Win.UI.RadioButton();
             this.rdbtn_payment = new Sci.Win.UI.RadioButton();
@@ -54,8 +56,6 @@
             this.labelIssueDate = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.checkShippingMark = new Sci.Win.UI.CheckBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateDeliveryDate = new Sci.Win.UI.DateRange();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -106,6 +106,36 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(443, 381);
             this.panel1.TabIndex = 1;
+            // 
+            // dateDeliveryDate
+            // 
+            // 
+            // 
+            // 
+            this.dateDeliveryDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDeliveryDate.DateBox1.Name = "";
+            this.dateDeliveryDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateDeliveryDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDeliveryDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateDeliveryDate.DateBox2.Name = "";
+            this.dateDeliveryDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateDeliveryDate.DateBox2.TabIndex = 1;
+            this.dateDeliveryDate.IsRequired = false;
+            this.dateDeliveryDate.Location = new System.Drawing.Point(114, 71);
+            this.dateDeliveryDate.Name = "dateDeliveryDate";
+            this.dateDeliveryDate.Size = new System.Drawing.Size(280, 23);
+            this.dateDeliveryDate.TabIndex = 99;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(15, 71);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 23);
+            this.label1.TabIndex = 98;
+            this.label1.Text = "Delivery";
             // 
             // rdbtn_PandI
             // 
@@ -384,35 +414,6 @@
             this.checkShippingMark.Text = "Shipping Mark";
             this.checkShippingMark.UseVisualStyleBackColor = true;
             this.checkShippingMark.CheckedChanged += new System.EventHandler(this.checkShippingMark_CheckedChanged);
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(15, 71);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 23);
-            this.label1.TabIndex = 98;
-            this.label1.Text = "Delivery";
-            // 
-            // dateDeliveryDate
-            // 
-            // 
-            // 
-            // 
-            this.dateDeliveryDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateDeliveryDate.DateBox1.Name = "";
-            this.dateDeliveryDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateDeliveryDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateDeliveryDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateDeliveryDate.DateBox2.Name = "";
-            this.dateDeliveryDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateDeliveryDate.DateBox2.TabIndex = 1;
-            this.dateDeliveryDate.Location = new System.Drawing.Point(114, 71);
-            this.dateDeliveryDate.Name = "dateDeliveryDate";
-            this.dateDeliveryDate.Size = new System.Drawing.Size(280, 23);
-            this.dateDeliveryDate.TabIndex = 99;
             // 
             // R26
             // 
