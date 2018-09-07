@@ -1,80 +1,60 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
 
 namespace Sci.Production.PPIC
 {
-    /// <summary>
-    /// P01_Artwork
-    /// </summary>
-    public partial class P01_Artwork : Sci.Win.Subs.Input4
+    public partial class P01_Artwork : Sci.Win.Subs.Base
     {
-        /// <summary>
-        /// P01_Artwork
-        /// </summary>
-        /// <param name="canedit">bool canedit</param>
-        /// <param name="keyvalue1">string keyvalue1</param>
-        /// <param name="keyvalue2">string keyvalue2</param>
-        /// <param name="keyvalue3">string keyvalue3</param>
-        /// <param name="styleid">string styleid</param>
-        /// <param name="seasonid">string seasoni</param>
-        public P01_Artwork(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, string styleid, string seasonid)
-            : base(canedit, keyvalue1, keyvalue2, keyvalue3)
+        private string Order_ArtworkId;
+        public P01_Artwork(string ID)
         {
             this.InitializeComponent();
-            this.Text = "Artwork <" + styleid + "-" + seasonid + ">";
+            this.Order_ArtworkId = ID;
         }
 
-        /// <inheritdoc/>
-        protected override bool OnGridSetup()
+        protected override void OnFormLoaded()
         {
-            this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(20))
-                .Text("Article", header: "Article", width: Widths.AnsiChars(8))
-                .Text("PatternCode", header: "Cut Part", width: Widths.AnsiChars(10))
-                .Text("PatternDesc", header: "Description", width: Widths.AnsiChars(20))
-                .Text("ArtworkID", header: "Pattern#", width: Widths.AnsiChars(15))
-                .Text("ArtworkName", header: "Pattern Description", width: Widths.AnsiChars(30))
-                .Numeric("Qty", header: string.Empty, width: Widths.AnsiChars(5))
-                .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8))
-                .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5))
-                .Numeric("Price", header: "Price", width: Widths.AnsiChars(8), decimal_places: 4)
-                .Numeric("Cost", header: "Cost", width: Widths.AnsiChars(8), decimal_places: 4)
-                .EditText("Remark", header: "Remark", width: Widths.AnsiChars(30))
-                .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(30))
-                .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(30));
+            base.OnFormLoaded();
 
-            return true;
-        }
 
-        /// <inheritdoc/>
-        protected override void OnRequeryPost(DataTable datas)
-        {
-            base.OnRequeryPost(datas);
+            #region Artwork Tab
+
             string sqlCmd = string.Format(
-                @"select oa.ArtworkTypeID,a.ArtworkUnit 
-from Order_Artwork oa WITH (NOLOCK) 
-left join ArtworkType a WITH (NOLOCK) on oa.ArtworkTypeID = a.ID
-where oa.ID = '{0}'", this.KeyValue1);
+                            @"  SELECT oa.* ,''AS CreateBy,''AS EditBy,''AS UnitID, a.ArtworkUnit 
+                                FROM Order_Artwork oa 
+                                LEFT JOIN ArtworkType a WITH (NOLOCK) on oa.ArtworkTypeID = a.ID
+                                WHERE oa.ID = '{0}'
+                                ORDER BY ArtworkTypeID,Article", this.Order_ArtworkId);
             DataTable artworkUnit;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkUnit);
 
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox("Query unit fail!!\r\n" + result.ToString());
-            }
+            this.Helper.Controls.Grid.Generator(this.ArtworkGrid)
+               .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(20))
+               .Text("Article", header: "Article", width: Widths.AnsiChars(8))
+               .Text("PatternCode", header: "Cut Part", width: Widths.AnsiChars(10))
+               .Text("PatternDesc", header: "Description", width: Widths.AnsiChars(20))
+               .Text("ArtworkID", header: "Pattern#", width: Widths.AnsiChars(15))
+               .Text("ArtworkName", header: "Pattern Description", width: Widths.AnsiChars(30))
+               .Numeric("Qty", header: string.Empty, width: Widths.AnsiChars(5))
+               .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8))
+               .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5))
+               .Numeric("Price", header: "Price", width: Widths.AnsiChars(8), decimal_places: 4)
+               .Numeric("Cost", header: "Cost", width: Widths.AnsiChars(8), decimal_places: 4)
+               .EditText("Remark", header: "Remark", width: Widths.AnsiChars(30))
+               .Text("CreateBy", header: "Create By", width: Widths.AnsiChars(30))
+               .Text("EditBy", header: "Edit By", width: Widths.AnsiChars(30));
 
-            datas.Columns.Add("UnitID");
-            datas.Columns.Add("CreateBy");
-            datas.Columns.Add("EditBy");
-            foreach (DataRow gridData in datas.Rows)
+            foreach (DataRow gridData in artworkUnit.Rows)
             {
                 gridData["CreateBy"] = gridData["AddName"].ToString() + "   " + ((DateTime)gridData["AddDate"]).ToString(string.Format("{0}", Sci.Env.Cfg.DateTimeStringFormat));
                 if (gridData["EditDate"] != System.DBNull.Value)
@@ -90,6 +70,151 @@ where oa.ID = '{0}'", this.KeyValue1);
 
                 gridData.AcceptChanges();
             }
+
+            this.ArtworkSource.DataSource = artworkUnit;
+            this.ArtworkGrid.IsEditingReadOnly = true;
+            this.ArtworkGrid.DataSource = this.ArtworkSource;
+            #endregion
+
+            #region Comb by SP#
+
+            //表格的head是動態的，ArtworkTypeID + ArtworkID = 一組key
+            sqlCmd = string.Format(
+                            @"  select  DISTINCT
+                                oa.ArtworkTypeID
+                                ,oa.ArtworkID
+
+                                from Orders o
+                                inner join Order_Artwork oa on o.ID = oa.ID
+                                left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
+                                where o.ID in (select  id from Orders o1 where  o1.poID = '{0}' )
+                                group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID
+                                order by oa.ArtworkTypeID", this.Order_ArtworkId);
+            DataTable head;
+            result = DBProxy.Current.Select(null, sqlCmd, out head);
+
+            //左半邊的單號
+            sqlCmd = string.Format(
+                            @"  select DISTINCT
+                                oa.ID
+                                ,oa.Article
+                                ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+                                from Orders o
+                                inner join Order_Artwork oa on o.ID = oa.ID
+                                left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
+                                where o.ID in (select  id from Orders o1 where  o1.poID = '{0}' )
+                                group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
+                                order by oa.ID", this.Order_ArtworkId);
+            DataTable Left;
+            result = DBProxy.Current.Select(null, sqlCmd, out Left);
+
+            //一組key對應的只會有一組 PatternCode
+            sqlCmd = string.Format(
+                            @"  select DISTINCT
+                                oa.ArtworkTypeID
+                                ,oa.ArtworkID
+                                ,oa.PatternCode
+                                from Orders o
+                                inner join Order_Artwork oa on o.ID = oa.ID
+                                left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
+                                where o.ID in (select  id from Orders o1 where  o1.poID = '{0}' )
+                                group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID
+                                order by oa.ArtworkTypeID", this.Order_ArtworkId);
+            DataTable value;
+            result = DBProxy.Current.Select(null, sqlCmd, out value);
+
+            //開始畫表格
+
+            //前三欄是固定的
+            DataTable dt = new DataTable();
+            dt.Columns.Add("SP#", typeof(string));
+            dt.Columns.Add("Article", typeof(string));
+            dt.Columns.Add("Order Qty", typeof(string));
+
+
+            this.Helper.Controls.Grid.Generator(this.CombBySPgrid)
+               .Text("SP#", header: "SP#", width: Widths.AnsiChars(10))
+               .Text("Article", header: "Article", width: Widths.AnsiChars(10))
+               .Text("Order Qty", header: "Order Qty", width: Widths.AnsiChars(10));
+
+            //設定"有幾個"head
+            if (head.Rows.Count>0)
+            {
+
+                foreach (DataRow item in head.Rows)
+                {
+                    //標投的文字內容，拿Key值來填
+                    dt.Columns.Add(item["ArtworkTypeID"].ToString() + item["ArtworkID"].ToString(), typeof(string));
+                    this.Helper.Controls.Grid.Generator(this.CombBySPgrid)
+                       .Text(item["ArtworkTypeID"].ToString() + item["ArtworkID"].ToString(), header: item["ArtworkTypeID"].ToString() + Environment.NewLine + item["ArtworkID"].ToString(), width: Widths.AnsiChars(10));
+                }
+            }
+
+            //依據id開始填row
+            foreach (DataRow leftitem in Left.Rows)
+            {
+                DataRow row;
+                row = dt.NewRow();
+
+                //前面是固定的
+                row["SP#"] = leftitem["ID"].ToString();
+                row["Article"] = leftitem["Article"].ToString();
+                row["Order Qty"] = leftitem["OrderQty"].ToString();
+
+                if (head.Rows.Count > 0)
+                {
+                    foreach (DataRow valueitem in value.Rows)
+                    {
+                        //開始填入PatternCode
+                        row[valueitem["ArtworkTypeID"].ToString() + valueitem["ArtworkID"].ToString()] = valueitem["PatternCode"].ToString();
+                    }
+                }
+                dt.Rows.Add(row);
+            }
+
+            this.CombBySPSource.DataSource = dt;
+            this.CombBySPgrid.IsEditingReadOnly = true;
+            this.CombBySPgrid.DataSource = this.CombBySPSource;
+            //凍結前三欄
+            this.CombBySPgrid.Columns[0].Frozen = true;
+            this.CombBySPgrid.Columns[1].Frozen = true;
+            this.CombBySPgrid.Columns[2].Frozen = true;
+            #endregion
+
+            #region Comb By Artwork
+            sqlCmd = string.Format(
+                            @"  
+                                SELECT 
+                                        oa.ID
+                                        ,oa.ArtworkTypeID 
+                                        ,oa.ArtworkID
+                                        ,oa.Article
+                                        ,oa.PatternCode
+                                        ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty 
+                                FROM Orders o
+                                INNER JOIN Order_Artwork oa ON o.ID = oa.ID
+                                LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
+                                WHERE Exists (select 1 FROM Orders o1 WHERE o1.POID = o.POID AND o1.ID = '{0}')
+                                GROUP BY oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
+
+                                ", this.Order_ArtworkId);
+            DataTable OrderArtworks;
+             result = DBProxy.Current.Select(null, sqlCmd, out OrderArtworks);
+
+
+            this.Helper.Controls.Grid.Generator(this.CombByArtworkGrid)
+               .Text("ArtworkTypeID", header: "Artwork", width: Widths.AnsiChars(20))
+               .Text("ArtworkID", header: "Pattern#", width: Widths.AnsiChars(20))
+               .Text("PatternCode", header: "Cut Part", width: Widths.AnsiChars(20))
+               .Text("Article", header: "Article", width: Widths.AnsiChars(20))
+               .Text("OrderQty", header: "Order Qty", width: Widths.AnsiChars(20));
+
+
+            this.CombByArtworkTypeSource.DataSource = OrderArtworks;
+            this.CombByArtworkGrid.IsEditingReadOnly = true;
+            this.CombByArtworkGrid.DataSource = this.CombByArtworkTypeSource;
+            #endregion
+
         }
     }
 }

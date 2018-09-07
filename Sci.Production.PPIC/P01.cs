@@ -976,7 +976,8 @@ where o.Junk = 0 and o.POID= @POID order by o.ID";
         // Artwork
         private void BtnArtwork_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(false, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]));
+
+            Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
