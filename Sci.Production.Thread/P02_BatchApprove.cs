@@ -47,6 +47,7 @@ namespace Sci.Production.Thread
             .Text("AddName", header: "AddName", iseditingreadonly: true)
             .Text("EditName", header: "EditName", iseditingreadonly: true)
             ;
+            QueryData();
         }
 
         private void BtntoExcel_Click(object sender, EventArgs e)

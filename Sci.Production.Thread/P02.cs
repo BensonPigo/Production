@@ -42,7 +42,7 @@ namespace Sci.Production.Thread
             this.DoSubForm = new P02_Detail();
 
             int lApprove = 0; // 有Confirm權限皆可按Pass的Approve, 有Check權限才可按Fail的Approve(TeamLeader 有Approve權限,Supervisor有Check)
-            string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Thread.P01", "MenuDetail", "FormName");
+            string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Thread.P02", "MenuDetail", "FormName");
             string pass0pk = MyUtility.GetValue.Lookup("FKPass0", this.loginID, "Pass1", "ID");
             string pass2_cmd = string.Format("Select * from Pass2 WITH (NOLOCK) Where FKPass0 ='{0}' and FKMenu='{1}'", pass0pk, menupk);
             DataRow pass2_dr;
