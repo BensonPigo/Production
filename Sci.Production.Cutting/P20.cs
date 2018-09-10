@@ -62,23 +62,28 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmdsql = string.Format(
             @"
-            Select a.* , e.FabricCombo, e.FabricPanelCode, 
-            (
-                Select DISTINCT Orderid+'/' 
-                From WorkOrder_Distribute d WITH (NOLOCK) 
-                Where d.WorkOrderUkey =a.WorkOrderUkey and Orderid!='EXCESS'
-                For XML path('')
-            ) as OrderID,
-            (
-                --Select SizeCode+'/'+convert(varchar,Qty )
-                Select SizeCode+'*'+convert(varchar,Qty ) + '/ '
-                From CuttingOutput_Detail_Detail c WITH (NOLOCK) 
-                Where c.CuttingOutput_DetailUkey =a.Ukey 
-                For XML path('')
-            ) as SizeRatio      
-            From cuttingoutput_Detail a WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
-            where a.id = '{0}' and a.WorkOrderUkey = e.Ukey
-            ORDER BY CutRef
+Select a.* , e.FabricCombo, e.FabricPanelCode, 
+    (
+        Select DISTINCT Orderid+'/' 
+        From WorkOrder_Distribute d WITH (NOLOCK) 
+        Where d.WorkOrderUkey =a.WorkOrderUkey and Orderid!='EXCESS'
+        For XML path('')
+    ) as OrderID,
+    (
+        --Select SizeCode+'/'+convert(varchar,Qty )
+        Select SizeCode+'*'+convert(varchar,Qty ) + '/ '
+        From CuttingOutput_Detail_Detail c WITH (NOLOCK) 
+        Where c.CuttingOutput_DetailUkey =a.Ukey 
+        For XML path('')
+    ) as SizeRatio      
+	, WorkOderLayer = e.Layer
+	, AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
+	, LackingLayer = e.Layer-isnull(acc.AccuCuttingLayer,0)
+From cuttingoutput_Detail a WITH (NOLOCK)
+inner join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
+outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = e.Ukey and aa.id <> '{0}')acc
+where a.id = '{0}' 
+ORDER BY CutRef
             ", masterID);
             this.DetailSelectCommand = cmdsql;
             return base.OnDetailSelectCommandPrepare(e);
@@ -221,8 +226,28 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             };
             #endregion
 
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
+            Layer.CellValidating += (s, e) =>
+            {
+                if (!EditMode)
+                {
+                    return;
+                }
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+                var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                if (MyUtility.Convert.GetInt(dr["Layer"])> MyUtility.Convert.GetInt(dr["LackingLayer"]))
+                {
+                    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayer");
+                    return;
+                }
+            };
+
             Helper.Controls.Grid.Generator(this.detailgrid)
-             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), settings: cutref)
+            .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), settings: cutref)
             .Text("Cuttingid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("FabricCombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -230,7 +255,10 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("WorkOderLayer", header: "WorkOder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8,settings: Layer)
+            .Numeric("LackingLayer", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: sizeratio);
