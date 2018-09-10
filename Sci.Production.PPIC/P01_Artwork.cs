@@ -111,7 +111,8 @@ namespace Sci.Production.PPIC
             //一組key對應的只會有一組 PatternCode
             sqlCmd = string.Format(
                             @"  select DISTINCT
-                                oa.ArtworkTypeID
+                                 oa.ID                               
+                                ,oa.ArtworkTypeID
                                 ,oa.ArtworkID
                                 ,oa.PatternCode
                                 from Orders o
@@ -133,7 +134,7 @@ namespace Sci.Production.PPIC
 
 
             this.Helper.Controls.Grid.Generator(this.CombBySPgrid)
-               .Text("SP#", header: "SP#", width: Widths.AnsiChars(10))
+               .Text("SP#", header: "SP#", width: Widths.AnsiChars(18))
                .Text("Article", header: "Article", width: Widths.AnsiChars(10))
                .Text("Order Qty", header: "Order Qty", width: Widths.AnsiChars(10));
 
@@ -166,7 +167,11 @@ namespace Sci.Production.PPIC
                     foreach (DataRow valueitem in value.Rows)
                     {
                         //開始填入PatternCode
-                        row[valueitem["ArtworkTypeID"].ToString() + valueitem["ArtworkID"].ToString()] = valueitem["PatternCode"].ToString();
+                        //必須對應SP#
+                        if (valueitem["ID"].ToString()== leftitem["ID"].ToString())
+                        {
+                            row[valueitem["ArtworkTypeID"].ToString() + valueitem["ArtworkID"].ToString()] = valueitem["PatternCode"].ToString();
+                        }
                     }
                 }
                 dt.Rows.Add(row);
