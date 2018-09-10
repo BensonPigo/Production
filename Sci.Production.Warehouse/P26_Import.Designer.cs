@@ -34,6 +34,7 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.BalanceQty = new Sci.Win.UI.CheckBox();
             this.btnUpdateAllLocation = new Sci.Win.UI.Button();
             this.txtLocation2 = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
@@ -56,7 +57,6 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.BalanceQty = new Sci.Win.UI.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.radioPanel1.SuspendLayout();
@@ -125,6 +125,18 @@
             this.groupBox2.Size = new System.Drawing.Size(1008, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
+            // 
+            // BalanceQty
+            // 
+            this.BalanceQty.AutoSize = true;
+            this.BalanceQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.BalanceQty.Location = new System.Drawing.Point(12, 21);
+            this.BalanceQty.Name = "BalanceQty";
+            this.BalanceQty.Size = new System.Drawing.Size(128, 21);
+            this.BalanceQty.TabIndex = 6;
+            this.BalanceQty.Text = "Balance Qty > 0";
+            this.BalanceQty.UseVisualStyleBackColor = true;
+            this.BalanceQty.CheckedChanged += new System.EventHandler(this.BalanceQty_CheckedChanged);
             // 
             // btnUpdateAllLocation
             // 
@@ -368,20 +380,6 @@
             this.gridImport.Size = new System.Drawing.Size(1008, 370);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
-            // 
-            // BalanceQty
-            // 
-            this.BalanceQty.AutoSize = true;
-            this.BalanceQty.Checked = true;
-            this.BalanceQty.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.BalanceQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.BalanceQty.Location = new System.Drawing.Point(12, 21);
-            this.BalanceQty.Name = "BalanceQty";
-            this.BalanceQty.Size = new System.Drawing.Size(128, 21);
-            this.BalanceQty.TabIndex = 6;
-            this.BalanceQty.Text = "Balance Qty > 0";
-            this.BalanceQty.UseVisualStyleBackColor = true;
-            this.BalanceQty.CheckedChanged += new System.EventHandler(this.BalanceQty_CheckedChanged);
             // 
             // P26_Import
             // 

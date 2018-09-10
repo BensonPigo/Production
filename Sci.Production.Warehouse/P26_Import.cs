@@ -90,10 +90,10 @@ inner join dbo.Factory f on f.ID=p1.factoryID
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
 where    f.MDivisionID='{0}' ", Sci.Env.User.Keyword)); // 
                         
-                        if (BalanceQty.Checked)
-                        {
-                            strSQLCmd.Append("AND a.InQty - a.OutQty + a.AdjustQty > 0 ");
-                        }
+                        //if (BalanceQty.Checked)
+                        //{
+                        //    strSQLCmd.Append("AND a.InQty - a.OutQty + a.AdjustQty > 0 ");
+                        //}
 
                         if (!MyUtility.Check.Empty(sp))
                         {
@@ -282,15 +282,14 @@ from dbo.TransferIn r1 WITH (NOLOCK)
 inner join dbo.TransferIn_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where   {3}
+where  
         r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
         and r1.id = '{0}' 
         {1} ", 
         transid,
         MyUtility.Check.Empty(StockType) ? string.Empty : $"and a.StockType = {StockType}",
-        Sci.Env.User.Keyword,
-         BalanceQty.Checked ? "a.InQty - a.OutQty + a.AdjustQty  > 0 AND" : " "
+        Sci.Env.User.Keyword
         )); // 
                     break;
             }
@@ -314,7 +313,8 @@ where   {3}
                 //dtArtwork.DefaultView.Sort = "seq1,seq2,location,dyelot,balance desc";
             }
             this.HideWaitMessage();
-
+            //全部撈完之後再勾選，觸發filter事件
+            BalanceQty.Checked = true;
         }
 
         protected override void OnFormLoaded()
