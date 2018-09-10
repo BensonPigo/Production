@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[ThreadColor] (
     [id]          VARCHAR (15)  CONSTRAINT [DF_ThreadColor_id] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (60) CONSTRAINT [DF_ThreadColor_Description] DEFAULT ('') NULL,
+	[ThreadColorGroupID] NVARCHAR (50) CONSTRAINT [DF_ThreadColor_ThreadColorGroupID] DEFAULT ('') NULL,
     [Junk]        BIT           CONSTRAINT [DF_ThreadColor_Junk] DEFAULT ((0)) NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_ThreadColor_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME      NULL,

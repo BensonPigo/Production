@@ -88,8 +88,13 @@ left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 inner join dbo.Factory f on f.ID=p1.factoryID 
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where    a.InQty - a.OutQty + a.AdjustQty > 0 
-        AND f.MDivisionID='{0}' ", Sci.Env.User.Keyword)); // 
+where    f.MDivisionID='{0}' ", Sci.Env.User.Keyword)); // 
+                        
+                        //if (BalanceQty.Checked)
+                        //{
+                        //    strSQLCmd.Append("AND a.InQty - a.OutQty + a.AdjustQty > 0 ");
+                        //}
+
                         if (!MyUtility.Check.Empty(sp))
                         {
                             strSQLCmd.Append(string.Format(@" 
@@ -161,7 +166,8 @@ select  0 as selected
 from dbo.Receiving r1 WITH (NOLOCK) 
 inner join dbo.Receiving_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype and r2.Roll = a.Roll and r2.Dyelot = a.Dyelot
-where   a.InQty - a.OutQty + a.AdjustQty > 0 
+where   {3}
+        r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
         and r1.id = '{0}'
@@ -189,7 +195,8 @@ from dbo.SubTransfer r1 WITH (NOLOCK)
 inner join dbo.SubTransfer_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.fromftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where   a.InQty - a.OutQty + a.AdjustQty > 0 
+where   {3}
+        r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed'
         and r1.mdivisionid='{2}'
         and r1.id = '{0}'
@@ -217,7 +224,8 @@ from dbo.Issue r1 WITH (NOLOCK)
 inner join dbo.Issue_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where   a.InQty - a.OutQty + a.AdjustQty > 0 
+where   {3}
+        r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
         and r1.id = '{0}'
@@ -245,7 +253,8 @@ from dbo.ReturnReceipt r1 WITH (NOLOCK)
 inner join dbo.ReturnReceipt_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where   a.InQty - a.OutQty + a.AdjustQty > 0 
+where   {3}
+        r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
         and r1.id = '{0}'
@@ -273,14 +282,15 @@ from dbo.TransferIn r1 WITH (NOLOCK)
 inner join dbo.TransferIn_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where   a.InQty - a.OutQty + a.AdjustQty > 0 
-        and r1.Status = 'Confirmed' 
+where  
+        r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
         and r1.id = '{0}' 
         {1} ", 
         transid,
         MyUtility.Check.Empty(StockType) ? string.Empty : $"and a.StockType = {StockType}",
-        Sci.Env.User.Keyword)); // 
+        Sci.Env.User.Keyword
+        )); // 
                     break;
             }
 
@@ -304,6 +314,20 @@ where   a.InQty - a.OutQty + a.AdjustQty > 0
             }
             this.HideWaitMessage();
 
+            //全部撈完，再利用Checked change事件，觸發filter過濾資料
+            switch (BalanceQty.Checked)
+            {
+                case true:
+                    BalanceQty.Checked = false;
+                    BalanceQty.Checked = true;
+                    break;
+                case false:
+                    BalanceQty.Checked = true;
+                    BalanceQty.Checked = false;
+                    break;
+                default:
+                    break;
+            }
         }
 
         protected override void OnFormLoaded()
@@ -458,7 +482,12 @@ stocktype = '{e.FormattedValue}'
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 
-            DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
+            //若無勾選，表示Qty <=0 的資料都被隱藏了，在這邊過濾掉
+            //Qty > 0 一定都會在
+            bool Check_BalanceQty = BalanceQty.Checked;
+           
+            DataRow[] dr2 = Check_BalanceQty ? dtGridBS1.Select("Selected = 1 AND Qty>0") : dtGridBS1.Select("Selected = 1");
+
             if (dr2.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
@@ -585,6 +614,36 @@ stocktype = '{e.FormattedValue}'
                 }
             }
             return re;
+        }
+
+        //動態顯示列表資料
+        private void BalanceQty_CheckedChanged(object sender, EventArgs e)
+        {
+            grid_Filter();
+        }
+
+        private void grid_Filter()
+        {
+            string filter = "";
+            if (gridImport.RowCount > 0)
+            {
+                switch (BalanceQty.Checked)
+                {
+                    case true:
+                        if (MyUtility.Check.Empty(gridImport)) break;
+                        //這裡過濾的欄位，必須是剛剛SQL查出來的欄位，不是WHERE裡面的條件
+                        filter = $@"qty > 0";
+  
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case false:
+                        if (MyUtility.Check.Empty(gridImport)) break;
+                        filter = "";
+                         ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+                }
+            }
         }
     }
 }

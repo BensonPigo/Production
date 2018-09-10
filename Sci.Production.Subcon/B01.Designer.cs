@@ -663,11 +663,11 @@
             // btnThread
             // 
             this.btnThread.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnThread.Location = new System.Drawing.Point(609, 79);
+            this.btnThread.Location = new System.Drawing.Point(566, 79);
             this.btnThread.Name = "btnThread";
-            this.btnThread.Size = new System.Drawing.Size(133, 30);
+            this.btnThread.Size = new System.Drawing.Size(198, 30);
             this.btnThread.TabIndex = 23;
-            this.btnThread.Text = "Set Color Price";
+            this.btnThread.Text = "Set Buyer/Color Price";
             this.btnThread.UseVisualStyleBackColor = true;
             this.btnThread.Click += new System.EventHandler(this.btnThread_Click);
             // 

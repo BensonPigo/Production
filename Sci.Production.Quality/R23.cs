@@ -155,7 +155,7 @@ cross apply(
 	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
 	and Dates < pd.ReceiveDate	
 )Calendar	
-where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
+where o.Category!='S' and o.Junk = 0
 and pd.ReceiveDate between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將ReceiveDate跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 and Dates < pd.ReceiveDate
@@ -273,7 +273,7 @@ outer apply(
 		for xml path ('')
 		),1,1,'')
 )SewingLine
-where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
+where o.Category!='S' and o.Junk = 0
 and iif(pdm.TotalCTN=0,0, ( isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)=100
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 

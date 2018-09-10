@@ -105,10 +105,12 @@ select distinct 1 as Selected
        , c.FactoryID 
        , c.SewInLine
        , delivery = a.EstCTNArrive
+       , br.BuyerID
 into #tmp
 from dbo.PackingList a WITH (NOLOCK) 
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID    
+inner join Brand br WITH (NOLOCK) on c.BrandID = br.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
@@ -150,7 +152,7 @@ where a.ApvToPurchase = 1
                     if (!MyUtility.Check.Empty(approved_b)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate >= '{0}' ", approved_b); }
                     if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
 
-                    strSQLCmd += string.Format(@" group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID
+                    strSQLCmd += string.Format(@" group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID
 select * from #tmp a
 where  not exists (select orderID 
                       from LocalPo_Detail 
@@ -197,8 +199,8 @@ select distinct 1 as Selected
        , b.threadcolorid
        , b.PurchaseQty as qty
        , d.UnitID
-       , [Price] = iif(tc.price is null , d.Price,tc.price)
-       , b.PurchaseQty * iif(tc.price is null , d.Price,tc.price) as amount 
+       , [Price] = iif(tc.price is null , iif(tc2.price is null , d.Price,tc2.price) ,tc.price)
+       , b.PurchaseQty * iif(tc.price is null , iif(tc2.price is null , d.Price,tc2.price) ,tc.price) as amount 
        , [std_price] = round(y.order_amt /iif(y.order_qty=0,1,y.order_qty),3)
        , '' as remark 
        , a.EstArriveDate etd 
@@ -207,13 +209,18 @@ select distinct 1 as Selected
        , c.FactoryID 
        , c.SewInLine
        , delivery = a.EstArriveDate
+       , br.BuyerID
 from dbo.ThreadRequisition a WITH (NOLOCK) 
 inner join ThreadRequisition_Detail b WITH (NOLOCK) on a.OrderID = b.OrderID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
+inner join Brand br WITH (NOLOCK) on c.BrandID = br.ID
 inner join LocalItem d WITH (NOLOCK) on b.RefNo = d.RefNo
 inner join factory WITH (NOLOCK) on c.FactoryID = factory.id
-left join LocalItem_ThreadColorPrice tc with (nolock) 
-    on tc.refno=b.Refno and tc.ThreadColorID=b.ThreadColorID
+left join ThreadColor t WITH (NOLOCK) on t.ID = b.ThreadColorID
+left join LocalItem_ThreadBuyerColorGroupPrice tc with (nolock) 
+    on tc.refno=b.Refno and tc.ThreadColorGroupID=t.ThreadColorGroupID and tc.BuyerID = br.BuyerID
+left join LocalItem_ThreadBuyerColorGroupPrice tc2 with (nolock) 
+    on tc2.refno=b.Refno and tc2.ThreadColorGroupID=t.ThreadColorGroupID and tc2.BuyerID = ''
 --inner join LocalPO_Detail e WITH (NOLOCK) on c.id=e.OrderId
 outer apply(
     select o1.POID
@@ -424,6 +431,7 @@ where Qty - ShipQty - DiffQty = 0";
                 .Text("remark", header: "Remark", iseditingreadonly: true)//11
                 .Date("etd", header: "ETD", iseditingreadonly: true)//12
                  .Text("requestid", header: "Request ID", iseditingreadonly: true)//13
+                 .Text("BuyerID", header: "Buyer", iseditingreadonly: true)//14
                 ;
             //this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty   
 

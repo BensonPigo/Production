@@ -244,7 +244,7 @@ inner join #tmp2 t on t.SewOffLine = o.SewOffLine and t.Factory = o.FtyGroup
 inner join #tmp2B tb on tb.Factory = t.Factory and tb.Readydate = t.Readydate
 left join Country c with(nolock) on c.id = o.Dest
 outer apply(select Article = stuff((select concat(',',Article) from Order_Article oa where oa.id = o.id for xml path('')),1,1,''))a
-where o.Junk = 0 and o.Category = 'B' and o.BuyerDelivery > tb.BuyerDelivery
+where o.Junk = 0 and o.Category = 'B' and o.BuyerDelivery >= tb.BuyerDelivery
 {sqlwhere}
 --and o.MDivisionID = '' and o.FtyGroup = '' and o. BrandID = ''
 
@@ -256,7 +256,7 @@ inner join #tmp2B t on t.BuyerDelivery = o.BuyerDelivery and t.Factory = o.FtyGr
 left join Country c with(nolock) on c.id = o.Dest
 outer apply(select Article = stuff((select concat(',',Article) from Order_Article oa where oa.id = o.id for xml path('')),1,1,''))a
 where o.Junk = 0 and o.Category = 'B' 
-and DATEDIFF(day,o.SewOffLine,o.BuyerDelivery) - 
+and DATEDIFF(day,t.Readydate,o.SewOffLine) - 
 (select count(1) from #tmp1B z where holiday = 1 and z.ID = t.Factory and ReadyDate between o.SewOffLine and o.BuyerDelivery )--減去中間的假日天數
 > @offlinegap
 {sqlwhere}

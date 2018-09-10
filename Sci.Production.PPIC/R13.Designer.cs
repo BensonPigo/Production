@@ -224,7 +224,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dateRangeReadyDate);
             this.Name = "R13";
-            this.Text = "R13";
+            this.Text = "R13. SubProcess Ready Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

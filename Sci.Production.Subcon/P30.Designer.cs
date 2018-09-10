@@ -62,6 +62,8 @@
             this.label1 = new Sci.Win.UI.Label();
             this.btnBatchUpdateDellivery = new Sci.Win.UI.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtBuyer = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.numttlqty = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
@@ -578,24 +580,45 @@
             // btnBatchUpdateDellivery
             // 
             this.btnBatchUpdateDellivery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchUpdateDellivery.Location = new System.Drawing.Point(205, 8);
+            this.btnBatchUpdateDellivery.Location = new System.Drawing.Point(338, 8);
             this.btnBatchUpdateDellivery.Name = "btnBatchUpdateDellivery";
-            this.btnBatchUpdateDellivery.Size = new System.Drawing.Size(210, 29);
+            this.btnBatchUpdateDellivery.Size = new System.Drawing.Size(215, 29);
             this.btnBatchUpdateDellivery.TabIndex = 45;
-            this.btnBatchUpdateDellivery.Text = "Batch update Delivery";
+            this.btnBatchUpdateDellivery.Text = "Batch update Delivery,Buyer";
             this.btnBatchUpdateDellivery.UseVisualStyleBackColor = true;
             this.btnBatchUpdateDellivery.Click += new System.EventHandler(this.btnBatchUpdateDellivery_Click);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtBuyer);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.btnBatchUpdateDellivery);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dateDeliveryDate);
-            this.groupBox1.Location = new System.Drawing.Point(503, 103);
+            this.groupBox1.Location = new System.Drawing.Point(440, 103);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(425, 39);
+            this.groupBox1.Size = new System.Drawing.Size(557, 39);
             this.groupBox1.TabIndex = 46;
             this.groupBox1.TabStop = false;
+            // 
+            // txtBuyer
+            // 
+            this.txtBuyer.BackColor = System.Drawing.Color.White;
+            this.txtBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBuyer.Location = new System.Drawing.Point(254, 12);
+            this.txtBuyer.Name = "txtBuyer";
+            this.txtBuyer.Size = new System.Drawing.Size(78, 23);
+            this.txtBuyer.TabIndex = 47;
+            this.txtBuyer.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBuyer_PopUp);
+            this.txtBuyer.Validating += new System.ComponentModel.CancelEventHandler(this.txtBuyer_Validating);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(208, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(43, 23);
+            this.label3.TabIndex = 46;
+            this.label3.Text = "Buyer";
             // 
             // label2
             // 
@@ -665,6 +688,7 @@
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -708,5 +732,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private Win.UI.NumericBox numttlqty;
         private Win.UI.Label label2;
+        private Win.UI.TextBox txtBuyer;
+        private Win.UI.Label label3;
     }
 }
