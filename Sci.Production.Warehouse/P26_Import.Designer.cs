@@ -129,6 +129,8 @@
             // BalanceQty
             // 
             this.BalanceQty.AutoSize = true;
+            this.BalanceQty.Checked = true;
+            this.BalanceQty.CheckState = System.Windows.Forms.CheckState.Checked;
             this.BalanceQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.BalanceQty.Location = new System.Drawing.Point(12, 21);
             this.BalanceQty.Name = "BalanceQty";

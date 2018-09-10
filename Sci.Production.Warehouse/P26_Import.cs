@@ -313,8 +313,21 @@ where
                 //dtArtwork.DefaultView.Sort = "seq1,seq2,location,dyelot,balance desc";
             }
             this.HideWaitMessage();
-            //全部撈完之後再勾選，觸發filter事件
-            BalanceQty.Checked = true;
+
+            //全部撈完，再利用Checked change事件，觸發filter過濾資料
+            switch (BalanceQty.Checked)
+            {
+                case true:
+                    BalanceQty.Checked = false;
+                    BalanceQty.Checked = true;
+                    break;
+                case false:
+                    BalanceQty.Checked = true;
+                    BalanceQty.Checked = false;
+                    break;
+                default:
+                    break;
+            }
         }
 
         protected override void OnFormLoaded()
