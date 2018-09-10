@@ -482,7 +482,12 @@ stocktype = '{e.FormattedValue}'
             DataTable dtGridBS1 = (DataTable)listControlBindingSource1.DataSource;
             if (MyUtility.Check.Empty(dtGridBS1) || dtGridBS1.Rows.Count == 0) return;
 
-            DataRow[] dr2 = dtGridBS1.Select("Selected = 1");
+            //若無勾選，表示Qty <=0 的資料都被隱藏了，在這邊過濾掉
+            //Qty > 0 一定都會在
+            bool Check_BalanceQty = BalanceQty.Checked;
+           
+            DataRow[] dr2 = Check_BalanceQty ? dtGridBS1.Select("Selected = 1 AND Qty>0") : dtGridBS1.Select("Selected = 1");
+
             if (dr2.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select rows first!", "Warnning");
