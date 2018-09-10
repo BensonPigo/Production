@@ -601,7 +601,31 @@ stocktype = '{e.FormattedValue}'
         //動態顯示列表資料
         private void BalanceQty_CheckedChanged(object sender, EventArgs e)
         {
-            this.btnQuery_Click(sender,e);
+            grid_Filter();
+        }
+
+        private void grid_Filter()
+        {
+            string filter = "";
+            if (gridImport.RowCount > 0)
+            {
+                switch (BalanceQty.Checked)
+                {
+                    case true:
+                        if (MyUtility.Check.Empty(gridImport)) break;
+                        //這裡過濾的欄位，必須是剛剛SQL查出來的欄位，不是WHERE裡面的條件
+                        filter = $@"qty > 0";
+  
+                        ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case false:
+                        if (MyUtility.Check.Empty(gridImport)) break;
+                        filter = "";
+                         ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+                }
+            }
         }
     }
 }
