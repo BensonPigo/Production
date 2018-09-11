@@ -337,10 +337,10 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.2F);
+            this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.labelRemark.Location = new System.Drawing.Point(4, 195);
             this.labelRemark.Name = "labelRemark";
-            this.labelRemark.Size = new System.Drawing.Size(104, 23);
+            this.labelRemark.Size = new System.Drawing.Size(115, 23);
             this.labelRemark.TabIndex = 8;
             this.labelRemark.Text = "Remark from Taipei";
             // 
@@ -432,7 +432,7 @@
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editRemark.IsSupportEditMode = false;
-            this.editRemark.Location = new System.Drawing.Point(111, 195);
+            this.editRemark.Location = new System.Drawing.Point(122, 195);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.ReadOnly = true;
@@ -822,19 +822,19 @@
             // 
             // label3
             // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.2F);
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.label3.Location = new System.Drawing.Point(5, 248);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(104, 23);
+            this.label3.Size = new System.Drawing.Size(114, 23);
             this.label3.TabIndex = 53;
             this.label3.Text = "Remark to Taipei";
             // 
             // RemarkToTaipei
             // 
             this.RemarkToTaipei.BackColor = System.Drawing.Color.White;
-            this.RemarkToTaipei.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.RemarkToTaipei.Location = new System.Drawing.Point(111, 248);
             this.RemarkToTaipei.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark_Factory", true));
+            this.RemarkToTaipei.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.RemarkToTaipei.Location = new System.Drawing.Point(122, 248);
             this.RemarkToTaipei.Multiline = true;
             this.RemarkToTaipei.Name = "RemarkToTaipei";
             this.RemarkToTaipei.Size = new System.Drawing.Size(431, 50);
