@@ -78,10 +78,10 @@ Select a.* , e.FabricCombo, e.FabricPanelCode,
     ) as SizeRatio      
 	, WorkOderLayer = e.Layer
 	, AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
-	, LackingLayer = e.Layer-isnull(acc.AccuCuttingLayer,0)
+    , LackingLayers = e.Layer - a.layer
 From cuttingoutput_Detail a WITH (NOLOCK)
 inner join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
-outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = e.Ukey and aa.id <> '{0}')acc
+outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = e.Ukey and id <> '{0}')acc
 where a.id = '{0}' 
 ORDER BY CutRef
             ", masterID);
@@ -121,8 +121,41 @@ ORDER BY CutRef
                 string oldvalue =  dr["Cutref"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (newvalue == oldvalue || newvalue.Trim()=="") return;
+                if (((DataTable)this.detailgridbs.DataSource).Select($"cutref = '{newvalue}'").Length>0)
+                {
+                    MyUtility.Msg.WarningBox($"Already have cutref {newvalue}");
+                    dr["cutref"] = DBNull.Value;
+                    return;
+                }
                 DataTable dt;
-                if (DBProxy.Current.Select(null, string.Format(@"Select * from WorkOrder a WITH (NOLOCK) where a.cutref = '{0}'", e.FormattedValue.ToString()), out dt))
+                string cutrefsql = $@"
+Select
+	a.ID,a.CutRef,a.FabricCombo,a.MarkerName,a.Cons,a.FabricPanelCode,a.cutno,a.MarkerLength,a.colorID,a.Ukey,
+	Cuttingid = a.id,  
+    OrderID = stuff((
+		Select orderid+'/' 
+		From WorkOrder_Distribute c WITH (NOLOCK) 
+		Where c.WorkOrderUkey =a.Ukey and orderid!='EXCESS'
+		For XML path('')
+    ),1,1,''),
+    SizeRatio = stuff((
+		Select SizeCode+'/'+convert(varchar,Qty ) 
+		From WorkOrder_SizeRatio c WITH (NOLOCK) 
+		Where c.WorkOrderUkey =a.Ukey 
+		For XML path('')
+    ),1,1,''),
+	WorkOderLayer = a.Layer,
+	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
+	CuttingLayer = a.Layer-isnull(acc.AccuCuttingLayer,0),
+	LackingLayers = 0
+from WorkOrder a WITH (NOLOCK)
+outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey)acc
+where CutRef = '{e.FormattedValue}'
+and CutRef != ''
+and a.Layer > isnull(acc.AccuCuttingLayer,0)
+and a.MDivisionId = '{Sci.Env.User.Keyword}'
+";
+                if (DBProxy.Current.Select(null, cutrefsql, out dt))
                 {
                     if (dt.Rows.Count==0)
                     {
@@ -131,7 +164,10 @@ ORDER BY CutRef
                         dr["Cutref"] = "";
                         dr["FabricCombo"] = "";
                         dr["MarkerName"] = "";
-                        dr["Layer"] =0;
+                        dr["WorkOderLayer"] = 0;
+                        dr["AccuCuttingLayer"] = 0;
+                        dr["Layer"] = 0;
+                        dr["LackingLayers"] =0;
                         dr["Cons"] = 0;
                         dr["FabricPanelCode"] = "";
                         dr["Workorderukey"] = 0;
@@ -147,7 +183,7 @@ ORDER BY CutRef
                 {
                     SelectItem sele;
 
-                    sele = new SelectItem(dt, "cutref,Colorid,fabriccombo,Cutno,MarkerName,Layer,ukey", "8,2,2,5,5,10", dr["cutref"].ToString(), false, ",");
+                    sele = new SelectItem(dt, string.Empty, string.Empty, dr["cutref"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.FormattedValue = sele.GetSelectedString();
@@ -157,61 +193,22 @@ ORDER BY CutRef
                 {
                     seldr = dt.Rows[0];
                 }
-                dr["Orderid"] = "";
+                dr["Orderid"] = seldr["Orderid"];
                 dr["Cuttingid"] = seldr["ID"];
                 dr["Cutref"] = seldr["cutref"];
                 dr["FabricCombo"] = seldr["FabricCombo"];
                 dr["MarkerName"] = seldr["MarkerName"];
-                dr["Layer"] = seldr["Layer"];
+                dr["WorkOderLayer"] = seldr["WorkOderLayer"];
+                dr["AccuCuttingLayer"] = seldr["AccuCuttingLayer"];
+                dr["Layer"] = seldr["CuttingLayer"];
+                dr["LackingLayers"] = seldr["LackingLayers"];
                 dr["Cons"] = seldr["Cons"];
                 dr["FabricPanelCode"] = seldr["FabricPanelCode"];
                 dr["cutno"] = seldr["cutno"];
                 dr["MarkerLength"] = seldr["MarkerLength"];
                 dr["colorID"] = seldr["colorID"];
                 dr["Workorderukey"] = seldr["Ukey"];
-                dr["SizeRatio"] = "";
-                DataTable workorderTb;
-                string str = "";
-                if (DBProxy.Current.Select(null, string.Format("Select * from Workorder_SizeRatio a WITH (NOLOCK) where a.workorderukey = '{0}'", dr["Workorderukey"]), out workorderTb))
-                {
-                    if (workorderTb.Rows.Count != 0)
-                    {
-                        foreach (DataRow ddr in workorderTb.Rows)
-                        {
-                            if (str != "")
-                            {
-                                str = str + "/ " + ddr["SizeCode"].ToString() + "*" + ddr["Qty"].ToString();
-                            }
-                            else
-                            {
-                                str = ddr["SizeCode"].ToString() + "*" + ddr["Qty"].ToString();
-                            }
-                        }
-                    }
-                    dr["sizeRatio"] = str;
-                }
-                str = "";
-                if (DBProxy.Current.Select(null, string.Format("Select * from Workorder_distribute a WITH (NOLOCK) where a.workorderukey = '{0}'", dr["Workorderukey"]), out workorderTb))
-                {
-                    if (workorderTb.Rows.Count!=0)
-                    {
-                        foreach (DataRow ddr in workorderTb.Rows)
-                        {
-                            if (ddr["Orderid"].ToString()!="EXCESS")
-                            {
-                                if (str != "")
-                                {
-                                    str = str + "/" + ddr["Orderid"].ToString();
-                                }
-                                else
-                                {
-                                    str = ddr["Orderid"].ToString();
-                                }
-                            }
-                        }
-                    }
-                    dr["Orderid"] = str;
-                }
+                dr["SizeRatio"] = seldr["SizeRatio"];
                 dr.EndEdit();     
             };
             #endregion
@@ -239,11 +236,18 @@ ORDER BY CutRef
                 }
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                if (MyUtility.Convert.GetInt(dr["Layer"])> MyUtility.Convert.GetInt(dr["LackingLayer"]))
+                if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
                 {
-                    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayer");
+                    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
+                    dr["Layer"] = 0;
+                    dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["Layer"]);
+                    dr.EndEdit();
                     return;
                 }
+                dr["Layer"] = e.FormattedValue;
+                dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["Layer"]);
+
+                dr.EndEdit();
             };
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -258,7 +262,7 @@ ORDER BY CutRef
             .Numeric("WorkOderLayer", header: "WorkOder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("Layer", header: "Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8,settings: Layer)
-            .Numeric("LackingLayer", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2, iseditingreadonly: true)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: sizeratio);

@@ -58,11 +58,18 @@ namespace Sci.Production.Cutting
                 }
                 var dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
 
-                if (MyUtility.Convert.GetInt(dr["Layer"]) > MyUtility.Convert.GetInt(dr["LackingLayer"]))
+                if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
                 {
-                    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayer");
+                    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
+                    dr["CuttingLayer"] = 0;
+                    dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["CuttingLayer"]);
+                    dr.EndEdit();
                     return;
                 }
+                dr["CuttingLayer"] = e.FormattedValue;
+                dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"])- MyUtility.Convert.GetInt(dr["AccuCuttingLayer"])- MyUtility.Convert.GetInt(dr["CuttingLayer"]);
+
+                dr.EndEdit();
             };
             this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.gridImport)
@@ -79,7 +86,7 @@ namespace Sci.Production.Cutting
             .Numeric("WorkOderLayer", header: "WorkOder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Numeric("CuttingLayer", header: "Cutting Layer", width: Widths.AnsiChars(5), integer_places: 8, settings: Layer)
-            .Numeric("LackingLayer", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true);
@@ -126,11 +133,11 @@ Select sel = 0,
 	WorkOderLayer = a.Layer,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
 	CuttingLayer = a.Layer-isnull(acc.AccuCuttingLayer,0),
-	LackingLayer = a.Layer-isnull(acc.AccuCuttingLayer,0)
+	LackingLayers = 0
 from WorkOrder a WITH (NOLOCK)
 outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey)acc
 where mDivisionid = '{0}' and a.estcutdate = '{1}'
-and a.Layer > acc.AccuCuttingLayer
+and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and CutRef != ''
 and CutRef not in ( {2} ) ", keyWord, estcutdate, condition));
             if (!MyUtility.Check.Empty(cutRef))
@@ -185,7 +192,10 @@ and CutRef not in ( {2} ) ", keyWord, estcutdate, condition));
                         ndr["Cutno"] = dr["cutno"];
                         ndr["MarkerName"] = dr["MarkerName"];
                         ndr["MarkerLength"] = dr["MarkerLength"];
+                        ndr["WorkOderLayer"] = dr["WorkOderLayer"];
+                        ndr["AccuCuttingLayer"] = dr["AccuCuttingLayer"];
                         ndr["Layer"] = dr["CuttingLayer"];
+                        ndr["LackingLayers"] = dr["LackingLayers"];
                         ndr["Colorid"] = dr["Colorid"];
                         ndr["cons"] = dr["cons"];
                         ndr["sizeRatio"] = dr["sizeRatio"];
@@ -203,7 +213,10 @@ and CutRef not in ( {2} ) ", keyWord, estcutdate, condition));
                         exist[0]["Cutno"] = dr["cutno"];
                         exist[0]["MarkerName"] = dr["MarkerName"];
                         exist[0]["MarkerLength"] = dr["MarkerLength"];
+                        exist[0]["WorkOderLayer"] = dr["WorkOderLayer"];
+                        exist[0]["AccuCuttingLayer"] = dr["AccuCuttingLayer"];
                         exist[0]["Layer"] = dr["CuttingLayer"];
+                        exist[0]["LackingLayers"] = dr["LackingLayers"];
                         exist[0]["Colorid"] = dr["Colorid"];
                         exist[0]["cons"] = dr["cons"];
                         exist[0]["sizeRatio"] = dr["sizeRatio"];

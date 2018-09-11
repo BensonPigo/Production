@@ -132,12 +132,23 @@ end"
             if (radioByM.Checked)
             {               
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished
+select wo.id,
+	Status = iif(wo.Layer>sl.layer,null,max(co.Status)),
+	EstCutDate = iif(wo.Layer>sl.layer,null,max(wo.EstCutDate)),
+	wo.mdivisionid,
+	CDate = iif(wo.Layer<>sl.layer,null,max(CO.CDate)),
+	c.Finished,wo.UKey ,wo.cutref
 into #tmpWO
 from WorkOrder WO
-left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
-INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
+left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
+left Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
+outer apply(
+	Select layer = sum(layer) 
+	from CuttingOutput_Detail codi WITH (NOLOCK)
+	left Join CuttingOutput COi WITH (NOLOCK) on COi.ID = codi.ID
+	where WorkOrderUkey = WO.Ukey and COi.Status != 'New'
+)sl
 where 1 = 1 AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(MDivision))
@@ -146,6 +157,8 @@ where 1 = 1 AND wo.EstCutDate is not null
                 }
 
                 sqlCmd.Append(@"
+group by wo.id,wo.mdivisionid,c.Finished,wo.UKey,wo.Layer,sl.layer,wo.cutref
+
 select distinct
 	[Date] = dr.EstCutDate,
 	[M] = m.MDivisionId,
@@ -208,12 +221,23 @@ drop table #tmpWO
             if (radioByFactory.Checked)
             {
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished,wo.FactoryID
+select wo.id,
+	Status = iif(wo.Layer<>sl.layer,null,max(co.Status)),
+	EstCutDate = iif(wo.Layer<>sl.layer,null,max(wo.EstCutDate)),
+	wo.mdivisionid,
+	CDate = iif(wo.Layer<>sl.layer,null,max(CO.CDate)),
+	c.Finished,wo.UKey,wo.FactoryID,wo.cutref
 into #tmpWO
 from WorkOrder WO
-left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
-INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
+left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
+left Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
+outer apply(
+	Select layer = sum(layer) 
+	from CuttingOutput_Detail codi WITH (NOLOCK)
+	left Join CuttingOutput COi WITH (NOLOCK) on COi.ID = codi.ID
+	where WorkOrderUkey = WO.Ukey and COi.Status != 'New'
+)sl
 where 1 = 1 AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(MDivision))
@@ -227,6 +251,8 @@ where 1 = 1 AND wo.EstCutDate is not null
                 }
 
                 sqlCmd.Append(@"
+group by wo.id,wo.mdivisionid,c.Finished,wo.UKey,wo.FactoryID,wo.Layer,sl.layer,wo.cutref
+
 select 
 	[Date] = dr.EstCutDate,
 	[M] = m.MDivisionId,
@@ -299,14 +325,25 @@ drop table #tmpWO
             if (radioByCutCell.Checked)
             {
                 sqlCmd.Append(@"
-select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished,cc.id ccid,wo.cutcellid
+select wo.id,
+	Status = iif(wo.Layer<>sl.layer,null,max(co.Status)),
+	EstCutDate = iif(wo.Layer<>sl.layer,null,max(wo.EstCutDate)),
+	wo.mdivisionid,
+	CDate = iif(wo.Layer<>sl.layer,null,max(CO.CDate)),
+	c.Finished,wo.UKey,ccid = cc.id,wo.cutcellid,wo.cutref
 into #tmpWO
-from  WorkOrder as wo  
-inner join Cutting as c WITH (NOLOCK) on c.ID = wo.ID 
+from  WorkOrder as wo
+Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
 inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and WO.MDivisionID = cc.MDivisionID
-left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
-left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'New'
-where 1 = 1  AND wo.EstCutDate is not null
+left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
+left Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
+outer apply(
+	Select layer = sum(layer) 
+	from CuttingOutput_Detail codi WITH (NOLOCK)
+	left Join CuttingOutput COi WITH (NOLOCK) on COi.ID = codi.ID
+	where WorkOrderUkey = WO.Ukey and COi.Status != 'New'
+)sl
+where 1 = 1 AND wo.EstCutDate is not null
 ");
                 if (!MyUtility.Check.Empty(MDivision))
                 {
@@ -324,6 +361,8 @@ where 1 = 1  AND wo.EstCutDate is not null
                 }
 
                 sqlCmd.Append(@"
+group by wo.id,wo.mdivisionid,c.Finished,wo.UKey,cc.id,wo.cutcellid,wo.Layer,sl.layer,wo.cutref
+
 select DISTINCT
 	[Date] = dr.EstCutDate,
 	[M] = M.MDivisionId,
@@ -395,7 +434,7 @@ drop table #tmpWO
 select
 	[M]=wo.MDivisionID,
 	[Est. Cutting Date]=wo.EstCutDate,
-	[Act. Cutting Date]=CO.CDate,
+	[Act. Cutting Date]= iif(wo.Layer>sl.layer,null,max(CO.CDate) over(partition by wo.UKey)),
 	[Master SP#]=wo.ID,
 	[SP#]=wo.OrderID,
 	[Ref#]=wo.CutRef,
@@ -411,9 +450,10 @@ select
 	[Marker Length]=wo.MarkerLength
 
 from WorkOrder wo WITH (NOLOCK) 
-	 left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
-	 left Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
-	 Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
+    left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
+    left Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
+    Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
+    outer apply(Select layer = sum(layer) from CuttingOutput_Detail codi WITH (NOLOCK),CuttingOutput coi WITH (NOLOCK) where WorkOrderUkey = WO.Ukey and coi.id = codi.id and coi.status != 'New')sl
 outer apply(
 	select AC= (
 		Select distinct concat('/', WOD.Article)
