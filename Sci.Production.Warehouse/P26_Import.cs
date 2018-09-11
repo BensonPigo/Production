@@ -166,7 +166,7 @@ select  0 as selected
 from dbo.Receiving r1 WITH (NOLOCK) 
 inner join dbo.Receiving_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.Poid = r2.PoId and a.Seq1 = r2.seq1 and a.seq2  = r2.seq2 and a.Roll = r2.Roll and a.stocktype = r2.stocktype and r2.Roll = a.Roll and r2.Dyelot = a.Dyelot
-where   {3}
+where   
         r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
@@ -195,7 +195,7 @@ from dbo.SubTransfer r1 WITH (NOLOCK)
 inner join dbo.SubTransfer_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.fromftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where   {3}
+where  
         r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed'
         and r1.mdivisionid='{2}'
@@ -224,7 +224,7 @@ from dbo.Issue r1 WITH (NOLOCK)
 inner join dbo.Issue_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where   {3}
+where   
         r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
@@ -253,7 +253,7 @@ from dbo.ReturnReceipt r1 WITH (NOLOCK)
 inner join dbo.ReturnReceipt_Detail r2 WITH (NOLOCK) on r2.id = r1.Id
 inner join dbo.FtyInventory a WITH (NOLOCK) on a.ukey = r2.ftyinventoryukey
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where   {3}
+where   
         r1.Status = 'Confirmed' 
         and r1.Status = 'Confirmed' 
         and r1.mdivisionid='{2}'
