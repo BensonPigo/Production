@@ -90,7 +90,7 @@ SELECT [Inspected Date] = FP.InspDate,
 	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)),
 	   [Total Defect Points]=FP.TotalPoint,
        [Grade] = FP.Grade,
-       o.MCHandle
+       [MCHandle]= dbo.getPass1_ExtNo(o.MCHandle)
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
 LEFT JOIN Receiving_Detail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
