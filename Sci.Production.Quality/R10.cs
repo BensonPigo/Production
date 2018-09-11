@@ -16,11 +16,6 @@ namespace Sci.Production.Quality
     {
         private string Type, Style, Season, Brand, FabricRefNo, T1SubconName, T2SubconName;
 
-        private void txtCombineStyle_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
-        }
-
         private void txtCombineStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string item_cmd = "select ID,SeasonID,Description,BrandID from Style WITH (NOLOCK) where Junk = 0 order by ID";
@@ -34,6 +29,18 @@ namespace Sci.Production.Quality
             txtCombineStyle.Text = item.GetSelectedString();
             txtbrand.Text = item.GetSelecteds()[0]["BrandID"].ToString();
             txtseason.Text = item.GetSelecteds()[0]["SeasonID"].ToString();
+        }
+
+        private void txtCombineStyle_Validating(object sender, CancelEventArgs e)
+        {
+            string sqlcmd = $@"select 1 from Style WITH (NOLOCK) where Junk = 0 and id ='{this.txtCombineStyle.Text}'";
+            if (!MyUtility.Check.Seek(sqlcmd))
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                txtCombineStyle.Focus();
+                this.txtCombineStyle.Text = string.Empty;
+                return;
+            }
         }
 
         private DataTable printData;
@@ -122,7 +129,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(T2SubconName) && Type != "Mockup Crocking")
             {
-                Filter.Add($"and T2SubconName = '{T2SubconName}'");
+                Filter.Add($"and (T2SubconName = '{T2SubconName}' or TypeOfPrint='Mockup Crocking')");
             }
             #endregion
 
