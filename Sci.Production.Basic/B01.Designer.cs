@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelCode = new Sci.Win.UI.Label();
             this.labelName = new Sci.Win.UI.Label();
             this.labelAddress = new Sci.Win.UI.Label();
@@ -57,20 +58,28 @@
             this.labelM = new Sci.Win.UI.Label();
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.txtUserManager = new Sci.Production.Class.txtuser();
+            this.reSize = new Sci.Win.UI.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.pictureBox1 = new Sci.Win.UI.PictureBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
-            //
+            // 
             // detail
             // 
             this.detail.Size = new System.Drawing.Size(830, 395);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Controls.Add(this.pictureBox1);
+            this.detailcont.Controls.Add(this.reSize);
             this.detailcont.Controls.Add(this.displayM);
             this.detailcont.Controls.Add(this.labelM);
             this.detailcont.Controls.Add(this.checkUseSBTS);
@@ -131,7 +140,6 @@
             // 
             // labelCode
             // 
-            this.labelCode.Lines = 0;
             this.labelCode.Location = new System.Drawing.Point(35, 14);
             this.labelCode.Name = "labelCode";
             this.labelCode.Size = new System.Drawing.Size(85, 23);
@@ -140,7 +148,6 @@
             // 
             // labelName
             // 
-            this.labelName.Lines = 0;
             this.labelName.Location = new System.Drawing.Point(35, 41);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(85, 23);
@@ -149,7 +156,6 @@
             // 
             // labelAddress
             // 
-            this.labelAddress.Lines = 0;
             this.labelAddress.Location = new System.Drawing.Point(35, 68);
             this.labelAddress.Name = "labelAddress";
             this.labelAddress.Size = new System.Drawing.Size(85, 23);
@@ -158,7 +164,6 @@
             // 
             // labelTel
             // 
-            this.labelTel.Lines = 0;
             this.labelTel.Location = new System.Drawing.Point(35, 142);
             this.labelTel.Name = "labelTel";
             this.labelTel.Size = new System.Drawing.Size(85, 23);
@@ -167,7 +172,6 @@
             // 
             // labelTINNo
             // 
-            this.labelTINNo.Lines = 0;
             this.labelTINNo.Location = new System.Drawing.Point(35, 169);
             this.labelTINNo.Name = "labelTINNo";
             this.labelTINNo.Size = new System.Drawing.Size(85, 23);
@@ -176,7 +180,6 @@
             // 
             // labelManager
             // 
-            this.labelManager.Lines = 0;
             this.labelManager.Location = new System.Drawing.Point(35, 196);
             this.labelManager.Name = "labelManager";
             this.labelManager.Size = new System.Drawing.Size(85, 23);
@@ -185,7 +188,6 @@
             // 
             // labelFtyGroup
             // 
-            this.labelFtyGroup.Lines = 0;
             this.labelFtyGroup.Location = new System.Drawing.Point(35, 223);
             this.labelFtyGroup.Name = "labelFtyGroup";
             this.labelFtyGroup.Size = new System.Drawing.Size(85, 23);
@@ -194,7 +196,6 @@
             // 
             // labelRegionCode
             // 
-            this.labelRegionCode.Lines = 0;
             this.labelRegionCode.Location = new System.Drawing.Point(35, 250);
             this.labelRegionCode.Name = "labelRegionCode";
             this.labelRegionCode.Size = new System.Drawing.Size(85, 23);
@@ -203,7 +204,6 @@
             // 
             // labelForPAPACCNo
             // 
-            this.labelForPAPACCNo.Lines = 0;
             this.labelForPAPACCNo.Location = new System.Drawing.Point(35, 277);
             this.labelForPAPACCNo.Name = "labelForPAPACCNo";
             this.labelForPAPACCNo.Size = new System.Drawing.Size(115, 23);
@@ -212,7 +212,6 @@
             // 
             // labelVAT
             // 
-            this.labelVAT.Lines = 0;
             this.labelVAT.Location = new System.Drawing.Point(70, 304);
             this.labelVAT.Name = "labelVAT";
             this.labelVAT.Size = new System.Drawing.Size(33, 23);
@@ -221,7 +220,6 @@
             // 
             // labelWHolding
             // 
-            this.labelWHolding.Lines = 0;
             this.labelWHolding.Location = new System.Drawing.Point(221, 304);
             this.labelWHolding.Name = "labelWHolding";
             this.labelWHolding.Size = new System.Drawing.Size(70, 23);
@@ -230,7 +228,6 @@
             // 
             // labelCreditbank
             // 
-            this.labelCreditbank.Lines = 0;
             this.labelCreditbank.Location = new System.Drawing.Point(408, 304);
             this.labelCreditbank.Name = "labelCreditbank";
             this.labelCreditbank.Size = new System.Drawing.Size(75, 23);
@@ -347,7 +344,6 @@
             // 
             // labelKeyWord
             // 
-            this.labelKeyWord.Lines = 0;
             this.labelKeyWord.Location = new System.Drawing.Point(227, 14);
             this.labelKeyWord.Name = "labelKeyWord";
             this.labelKeyWord.Size = new System.Drawing.Size(70, 23);
@@ -390,7 +386,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(376, 14);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(19, 23);
@@ -417,6 +412,40 @@
             this.txtUserManager.TabIndex = 7;
             this.txtUserManager.TextBox1Binding = "";
             // 
+            // reSize
+            // 
+            this.reSize.Location = new System.Drawing.Point(605, 277);
+            this.reSize.Name = "reSize";
+            this.reSize.Size = new System.Drawing.Size(80, 30);
+            this.reSize.TabIndex = 28;
+            this.reSize.Text = "reSize";
+            this.reSize.UseVisualStyleBackColor = true;
+            this.reSize.Click += new System.EventHandler(this.reSize_Click);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = null;
+            this.pictureBox1.Location = new System.Drawing.Point(605, 222);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(93, 24);
+            this.pictureBox1.TabIndex = 29;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.WaitOnLoad = true;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(458, 222);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(134, 23);
+            this.label1.TabIndex = 30;
+            this.label1.Text = "SubCon_P30 ByRef";
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(838, 457);
@@ -436,6 +465,7 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -472,5 +502,9 @@
         private Win.UI.Button btnCapacityWorkday;
         private Win.UI.DisplayBox displayM;
         private Win.UI.Label labelM;
+        private Win.UI.PictureBox pictureBox1;
+        private Win.UI.Button reSize;
+        private System.Windows.Forms.ImageList imageList1;
+        private Win.UI.Label label1;
     }
 }

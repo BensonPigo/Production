@@ -79,5 +79,12 @@ namespace Sci.Production.Basic
             Sci.Production.Basic.B01_CapacityWorkDay callNextForm = new Sci.Production.Basic.B01_CapacityWorkDay(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
         }
+
+        private void reSize_Click(object sender, EventArgs e)
+        {
+            Image img = Sci.Production.Class.UserESignature.getRDLCUserESignature("MIS");
+            pictureBox1.Image = img;
+
+        }
     }
 }

@@ -81,6 +81,12 @@
     <Compile Include="Holiday.Designer.cs">
       <DependentUpon>Holiday.cs</DependentUpon>
     </Compile>
+    <Compile Include="PictureSubPage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PictureSubPage.Designer.cs">
+      <DependentUpon>PictureSubPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProductionGridExts.cs" />
     <Compile Include="ProductionEnv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -396,6 +402,7 @@
     <Compile Include="userData.Designer.cs">
       <DependentUpon>userData.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserESignature.cs" />
     <Compile Include="VFPColors.cs" />
     <Compile Include="txtFromMdivision.cs">
       <SubType>Component</SubType>
@@ -435,6 +442,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
@@ -450,6 +458,7 @@
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Sci, Version=1.0.1503.2400, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Sci.dll</HintPath>
@@ -471,12 +480,14 @@
     <Reference Include="System.Drawing">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms">
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="comboFactory.resx">
@@ -484,6 +495,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PictureSubPage.resx">
+      <DependentUpon>PictureSubPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtcountry.resx">
       <DependentUpon>txtcountry.cs</DependentUpon>
