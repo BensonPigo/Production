@@ -262,6 +262,10 @@ namespace Sci.Production.Packing
             {
                 this.ShowErr(result);
             }
+
+            // DataRow dr = this.gridSelectCartonDetail.GetDataRow<DataRow>(e.RowIndex);
+
+           this.IDX.IdxCall(254, "A:0=0" , "A:0=0".Length);
         }
 
         /// <summary>
@@ -430,7 +434,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
 
             DualResult sql_result;
             int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
-
+            string upd_sql_barcode = string.Empty;
             // 有資料
             if (barcode_pos == -1)
             {
@@ -462,7 +466,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                     }
 
                     var sellist = sele.GetSelecteds();
-                    string upd_sql = $@"update PackingList_Detail
+                    upd_sql_barcode = $@"update PackingList_Detail
 set BarCode = '{this.txtScanEAN.Text}'
 where PackingList_Detail.Article 
 =  '{sellist[0]["Article"]}'
@@ -471,26 +475,18 @@ and PackingList_Detail.SizeCode
 and PackingList_Detail.ID = '{this.selecedPK.ID}'
 and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
 ";
-                    if (sql_result = DBProxy.Current.Execute(null, upd_sql))
+                    foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
                     {
-                        foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
+                        if (dr["Article"].Equals(sellist[0]["Article"]) && dr["SizeCode"].Equals(sellist[0]["SizeCode"]))
                         {
-                            if (dr["Article"].Equals(sellist[0]["Article"]) && dr["SizeCode"].Equals(sellist[0]["SizeCode"]))
-                            {
-                                dr["Barcode"] = this.txtScanEAN.Text;
-                                dr["ScanQty"] = (short)dr["ScanQty"] + 1;
-                                this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
-                                break;
-                            }
+                            dr["Barcode"] = this.txtScanEAN.Text;
+                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+                            this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
+                            break;
                         }
+                    }
 
-                        this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim()).Length);
-                    }
-                    else
-                    {
-                        this.ShowErr(sql_result);
-                        return;
-                    }
+                    this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim()).Length);
                 }
             }
             else
@@ -526,6 +522,12 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             // 如果都掃完 update PackingList_Detail
             if (this.numBoxScanQty.Value == this.numBoxScanTtlQty.Value)
             {
+                if (!(sql_result = DBProxy.Current.Execute(null, upd_sql_barcode)))
+                {
+                    this.ShowErr(sql_result);
+                    return;
+                }
+
                 string upd_sql = $@"update PackingList_Detail set ScanQty = QtyPerCTN , ScanEditDate = GETDATE(), ScanName = '{Env.User.UserID}' 
                                     where id = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'";
                 if (sql_result = DBProxy.Current.Execute(null, upd_sql))
