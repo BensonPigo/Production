@@ -63,11 +63,23 @@
     <Compile Include="B06.Designer.cs">
       <DependentUpon>B06.cs</DependentUpon>
     </Compile>
+    <Compile Include="B07.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B07.Designer.cs">
+      <DependentUpon>B07.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P01.Designer.cs">
       <DependentUpon>P01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_BatchApprove.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_BatchApprove.Designer.cs">
+      <DependentUpon>P02_BatchApprove.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_CopyTo.cs">
       <SubType>Form</SubType>
@@ -230,8 +242,14 @@
     <EmbeddedResource Include="B06.resx">
       <DependentUpon>B06.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="B07.resx">
+      <DependentUpon>B07.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_BatchApprove.resx">
+      <DependentUpon>P02_BatchApprove.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_CopyTo.resx">
       <DependentUpon>P01_CopyTo.cs</DependentUpon>

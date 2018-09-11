@@ -12,27 +12,19 @@ using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using static Ict.Win.DataGridViewGenerator;
 
 namespace Sci.Production.Warehouse
 {
     public partial class P26 : Sci.Win.Tems.Input6
     {
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
-        private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
         public P26(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            Dictionary<string, string> di_Stocktype = new Dictionary<string, string>();
-            di_Stocktype.Add("B", "Bulk");
-            di_Stocktype.Add("I", "Inventory");
-            di_Stocktype.Add("O", "Scrap");
-
-            comboStockType.DataSource = new BindingSource(di_Stocktype, null);
-            comboStockType.ValueMember = "Key";
-            comboStockType.DisplayMember = "Value";
 
             gridicon.Append.Enabled = false;
             gridicon.Append.Visible = false;
@@ -66,7 +58,6 @@ namespace Sci.Production.Warehouse
             CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             CurrentMaintain["IssueDate"] = DateTime.Now;
             CurrentMaintain["Status"] = "New";
-            comboStockType.SelectedIndex = 0;
         }
 
         // delete前檢查
@@ -154,6 +145,48 @@ namespace Sci.Production.Warehouse
         // Detail Grid 設定
         protected override void OnDetailGridSetup()
         {
+            #region stocktype validating
+            Ict.Win.DataGridViewGeneratorComboBoxColumnSettings stocktypeSet = new DataGridViewGeneratorComboBoxColumnSettings();
+            stocktypeSet.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    if (e.FormattedValue.Equals(this.CurrentDetailData["stocktype"]))
+                    {
+                        return;
+                    }
+                    
+                    string getFtyInventorySql = $@"
+select 
+[Qty] = InQty - OutQty + AdjustQty ,
+[fromlocation] = dbo.Getlocation(ukey) 
+from FtyInventory
+where
+Poid = '{this.CurrentDetailData["poid"]}' and 
+Seq1 = '{this.CurrentDetailData["Seq1"]}' and 
+seq2  = '{this.CurrentDetailData["seq2"]}' and 
+Roll = '{this.CurrentDetailData["Roll"]}' and 
+stocktype = '{e.FormattedValue}'
+";
+                    DataRow dr;
+                    if (MyUtility.Check.Seek(getFtyInventorySql, out dr))
+                    {
+                        this.CurrentDetailData["qty"] = dr["Qty"];
+                        this.CurrentDetailData["FromLocation"] = dr["fromlocation"];
+                        this.CurrentDetailData["stocktype"] = e.FormattedValue;
+                        this.CurrentDetailData["ToLocation"] = string.Empty;
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox($"<Stock Type> data not found");
+                        return;
+                    }
+                }
+            };
+
+            #endregion
+
             #region Location 右鍵開窗
 
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = new DataGridViewGeneratorTextColumnSettings();
@@ -161,7 +194,7 @@ namespace Sci.Production.Warehouse
             {
                 if (this.EditMode && e.Button == MouseButtons.Right)
                 {
-                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(CurrentMaintain["stocktype"].ToString(), CurrentDetailData["tolocation"].ToString());
+                    Sci.Win.Tools.SelectItem2 item = Prgs.SelectLocation(this.CurrentDetailData["stocktype"].ToString(), CurrentDetailData["tolocation"].ToString());
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     CurrentDetailData["tolocation"] = item.GetSelectedString();
@@ -179,7 +212,7 @@ SELECT  id
         , StockType 
 FROM    DBO.MtlLocation WITH (NOLOCK) 
 WHERE   StockType='{0}'
-        and junk != '1'", CurrentMaintain["stocktype"].ToString());
+        and junk != '1'", this.CurrentDetailData["stocktype"].ToString());
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
                     string[] getLocation = CurrentDetailData["tolocation"].ToString().Split(',').Distinct().ToArray();
@@ -212,6 +245,8 @@ WHERE   StockType='{0}'
             };
             #endregion Location 右鍵開窗
 
+            Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
+
             #region 欄位設定
 
             Helper.Controls.Grid.Generator(this.detailgrid)
@@ -223,12 +258,21 @@ WHERE   StockType='{0}'
             .Text("colorid", header: "Color", width: Widths.AnsiChars(5), iseditingreadonly: true)    //5
             .Text("SizeSpec", header: "SizeSpec", width: Widths.AnsiChars(5), iseditingreadonly: true)    //6
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
-            .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //8
-            .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(14))    //9
+            .ComboBox("stocktype", header: "Stock" + Environment.NewLine + "Type", width: Widths.AnsiChars(8), iseditable: true, settings: stocktypeSet).Get(out cbb_stocktype) //8
+            .Text("FromLocation", header: "FromLocation", iseditingreadonly: true)    //9
+            .Text("ToLocation", header: "ToLocation", settings: ts2, iseditingreadonly: false, width: Widths.AnsiChars(14))    //10
             ;     //
 
             #endregion 欄位設定
+            DataTable stocktypeSrc;
+            string stocktypeGetSql = "select ID = replace(ID,'''',''), Name = rtrim(Name) from DropDownList WITH (NOLOCK) where Type = 'Pms_StockType' order by Seq";
+            DBProxy.Current.Select(null, stocktypeGetSql, out stocktypeSrc);
+            cbb_stocktype.DataSource = stocktypeSrc;
+            cbb_stocktype.ValueMember = "ID";
+            cbb_stocktype.DisplayMember = "Name";
+
             this.detailgrid.Columns["ToLocation"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["stocktype"].DefaultCellStyle.BackColor = Color.Pink;
 
         }
 
@@ -284,7 +328,7 @@ WHERE   StockType='{0}'
                              poid = b.Field<string>("poid"),
                              seq1 = b.Field<string>("seq1"),
                              seq2 = b.Field<string>("seq2"),
-                             stocktype = CurrentMaintain["stocktype"].ToString(),
+                             stocktype = b.Field<string>("stocktype"),
                              qty = b.Field<decimal>("qty"),
                              toLocation = b.Field<string>("ToLocation"),
                              roll = b.Field<string>("roll"),
@@ -300,7 +344,8 @@ WHERE   StockType='{0}'
                        {
                            poid = b.Field<string>("poid"),
                            seq1 = b.Field<string>("seq1"),
-                           seq2 = b.Field<string>("seq2")
+                           seq2 = b.Field<string>("seq2"),
+                           stocktype = b.Field<string>("stocktype")
                        } into m
                        select new Prgs_POSuppDetailData
                        {
@@ -309,7 +354,7 @@ WHERE   StockType='{0}'
                            seq2 = m.First().Field<string>("seq2"),
                            location = string.Join(",", m.Select(r => r.Field<string>("ToLocation")).Distinct()),
                            qty = 0,
-                           stocktype = CurrentMaintain["stocktype"].ToString()
+                           stocktype = m.First().Field<string>("stocktype")
                        }).ToList();
             #endregion            
 
@@ -380,6 +425,7 @@ WHERE   StockType='{0}'
 ,a.Roll
 ,a.Dyelot
 ,a.Qty
+,a.stocktype
 ,a.FromLocation
 ,a.ToLocation
 ,a.ftyinventoryukey
@@ -398,20 +444,6 @@ Where a.id = '{0}' ", masterID);
             frm.ShowDialog(this);
             this.RenewData();
         }
-
-        //217: WAREHOUSE_P26_Mtl Location update，2.當表身已經有值時，編輯時若換了stock type則表身要一併清空。
-        private void comboStockType_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.EditMode && !MyUtility.Check.Empty(comboStockType.SelectedValue) && comboStockType.SelectedValue != comboStockType.OldValue)
-            {
-                if (detailgridbs.DataSource != null && ((DataTable)detailgridbs.DataSource).Rows.Count > 0)
-                {
-                    for (int i = 0; i < ((DataTable)detailgridbs.DataSource).Rows.Count; i++)
-                    {
-                        ((DataTable)detailgridbs.DataSource).Rows[i].Delete();
-                    }
-                }
-            }
-        }
+        
     }
 }

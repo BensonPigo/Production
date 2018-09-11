@@ -256,6 +256,17 @@ namespace Sci.Production.Subcon
             {
                 this.btnThread.Visible = false;
             }
+
+            if (this.EditMode)
+            {
+                this.btnThread.Enabled = false;
+            }
+            else
+            {
+                this.groupBox1.Enabled = true;
+                this.groupBox2.Enabled = true;
+                this.btnThread.Enabled = true;
+            }
         }
 
         private void btnPaymentHistory_Click(object sender, EventArgs e)
@@ -315,7 +326,6 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["CBM"] = DBNull.Value;
                     break;
             }
-            this.btnThread.Enabled = true;
         }
 
         private void txtartworktype_ftyCategory_Validating(object sender, CancelEventArgs e)
@@ -372,5 +382,6 @@ namespace Sci.Production.Subcon
             var callfrm = new B01_ThreadColorPrice(true, CurrentMaintain["Refno"].ToString(),string.Empty,string.Empty);
             callfrm.ShowDialog();
         }
+        
     }
 }

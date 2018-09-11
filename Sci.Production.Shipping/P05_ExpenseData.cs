@@ -28,29 +28,48 @@ namespace Sci.Production.Shipping
         /// </summary>
         /// <param name="iD">iD</param>
         /// <param name="columnName">columnName</param>
-        public P05_ExpenseData(string iD, string columnName)
+        /// <param name="ed">ed</param>
+        public P05_ExpenseData(string iD, string columnName,bool ed)
         {
             this.InitializeComponent();
             this.id = iD;
             this.columnName = columnName;
+            this.btnEdit.Visible = ed;
+            this.EditMode = false;
+            this.gridExpenseData.IsEditingReadOnly = true;
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            // Grid設定
+            this.gridExpenseData.DataSource = this.listControlBindingSource1;
+            this.Helper.Controls.Grid.Generator(this.gridExpenseData)
+            .Text("Type", header: "Type", width: Widths.AnsiChars(33), iseditingreadonly: true)
+            .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
+            .Numeric("Amount", header: "Expense", decimal_places: 2, iseditingreadonly: true)
+            .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("DebitID", header: "Debit Note", width: Widths.AnsiChars(15))
+            ;
+            this.Query();
+        }
+
+        private void Query()
+        {
             switch (this.columnName)
             {
                 case "InvNo":
                     this.sqlCmd = string.Format(
-                        @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
+                        @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.DebitID,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
 from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
 where se.InvNo = '{0}' and se.junk=0", this.id);
                     break;
                 case "WKNo":
                     this.sqlCmd = string.Format(
-                        @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.ShippingAPID
+                        @"select isnull(a.Name,'') as Type,se.CurrencyID,se.Amount,se.DebitID,se.ShippingAPID,se.BLNo,se.WKNo,se.InvNo,se.AccountID
 from ShareExpense se WITH (NOLOCK) 
 LEFT JOIN FinanceEN.DBO.AccountNo a on se.AccountID = a.ID
 where se.WKNo = '{0}' and se.junk=0", this.id);
@@ -67,22 +86,51 @@ where se.WKNo = '{0}' and se.junk=0", this.id);
             else
             {
                 MyUtility.Msg.ErrorBox("Query data fail!!");
+                this.btnEdit.Enabled = false;
             }
 
-            // Grid設定
-            this.gridExpenseData.IsEditingReadOnly = true;
-            this.gridExpenseData.DataSource = this.listControlBindingSource1;
-            this.Helper.Controls.Grid.Generator(this.gridExpenseData)
-                .Text("Type", header: "Type", width: Widths.AnsiChars(33))
-                .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3))
-                .Numeric("Amount", header: "Expense", decimal_places: 2)
-                .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(15));
+            if (this.gridData.Rows.Count == 0)
+            {
+                this.btnEdit.Enabled = false;
+            }
+        }
+
+        private void BtnEdit_Click(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                if (this.gridExpenseData.DataSource == null)
+                {
+                    return;
+                }
+
+                string sqlMerge = $@"
+merge ShareExpense t
+using(select * from #tmp)s
+on s.ShippingAPID = t.ShippingAPID and s.BLNo =t.BLNo and s.WKNo =t.WKNo and s.InvNo = t.InvNo and s.AccountID = t.AccountID
+when matched then update set
+	t.DebitID = s.DebitID;
+";
+                DataTable dt;
+                DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, string.Empty, sqlMerge, out dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                this.Query();
+            }
+
+            this.EditMode = !this.EditMode;
+            this.btnEdit.Text = this.EditMode ? "Save" : "Edit";
+            this.gridExpenseData.IsEditingReadOnly = !this.EditMode;
         }
 
         // Close
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            //this.Close();
         }
     }
 }

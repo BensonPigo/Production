@@ -48,6 +48,7 @@
             this.labelSP = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.buttonQtyBreakdown = new Sci.Win.UI.Button();
+            this.btnBatchapprove = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -59,6 +60,7 @@
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
+            this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,7 +86,7 @@
             this.masterpanel.Controls.Add(this.dateSCIDelivery);
             this.masterpanel.Controls.Add(this.dateEstArrived);
             this.masterpanel.Controls.Add(this.dateEstBooking);
-            this.masterpanel.Size = new System.Drawing.Size(912, 157);
+            this.masterpanel.Size = new System.Drawing.Size(1015, 157);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEstArrived, 0);
@@ -110,7 +112,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 157);
-            this.detailpanel.Size = new System.Drawing.Size(912, 192);
+            this.detailpanel.Size = new System.Drawing.Size(1015, 192);
             // 
             // gridicon
             // 
@@ -124,27 +126,29 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(912, 192);
+            this.detailgridcont.Size = new System.Drawing.Size(1015, 192);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(912, 387);
+            this.detail.Size = new System.Drawing.Size(1015, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(912, 349);
+            this.detailcont.Size = new System.Drawing.Size(1015, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(912, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1015, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(912, 387);
+            this.browse.Controls.Add(this.btnBatchapprove);
+            this.browse.Size = new System.Drawing.Size(1015, 387);
+            this.browse.Controls.SetChildIndex(this.btnBatchapprove, 0);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(920, 416);
+            this.tabs.Size = new System.Drawing.Size(1023, 416);
             // 
             // createby
             // 
@@ -336,10 +340,20 @@
             this.buttonQtyBreakdown.UseVisualStyleBackColor = true;
             this.buttonQtyBreakdown.Click += new System.EventHandler(this.ButtonQtyBreakdown_Click);
             // 
+            // btnBatchapprove
+            // 
+            this.btnBatchapprove.Location = new System.Drawing.Point(880, 5);
+            this.btnBatchapprove.Name = "btnBatchapprove";
+            this.btnBatchapprove.Size = new System.Drawing.Size(119, 30);
+            this.btnBatchapprove.TabIndex = 4;
+            this.btnBatchapprove.Text = "Batch approve";
+            this.btnBatchapprove.UseVisualStyleBackColor = true;
+            this.btnBatchapprove.Click += new System.EventHandler(this.BtnBatchapprove_Click);
+            // 
             // P02
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(920, 449);
+            this.ClientSize = new System.Drawing.Size(1023, 449);
             this.DefaultControl = "txtSP";
             this.DefaultControlForEdit = "txtSP";
             this.DefaultDetailOrder = "Refno,ThreadColorid";
@@ -374,6 +388,7 @@
             this.detailcont.ResumeLayout(false);
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
+            this.browse.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -402,5 +417,6 @@
         private Win.UI.Label labelSP;
         private Win.UI.Label label7;
         private Win.UI.Button buttonQtyBreakdown;
+        private Win.UI.Button btnBatchapprove;
     }
 }

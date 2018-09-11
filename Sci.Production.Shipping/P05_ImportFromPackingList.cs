@@ -31,9 +31,12 @@ namespace Sci.Production.Shipping
         public P05_ImportFromPackingList(DataRow masterData, DataTable detailData)
         {
             this.InitializeComponent();
-            this.txtmultifactoryFactory.Text = Sci.Env.User.FactoryList;
+
+            // this.txtmultifactoryFactory.Text = Sci.Env.User.FactoryList;
+            this.txtmultifactoryFactory.Text = MyUtility.GetValue.Lookup("select stuff((select distinct concat(',',ID)  from Factory WITH (NOLOCK) where Junk = 0 and IsProduceFty = 1 for xml path('')),1,1,'')");
             this.masterData = masterData;
             this.detailData = detailData;
+            this.txtmultifactoryFactory.checkProduceFty = true;
         }
 
         /// <inheritdoc/>
@@ -89,8 +92,9 @@ with IniBulkPack as (
     left Join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
     Left Join Order_QtyShip oq WITH (NOLOCK) on  pd.OrderID = oq.Id 
                                                  and pd.OrderShipmodeSeq = oq.Seq
+    left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
     where   p.Type = 'B'
-            and '{0}' like '%'+rtrim(p.FactoryID)+'%'
+            and '{0}' like '%'+rtrim(o.FactoryID)+'%'
             and p.INVNo = ''
             and p.ShipModeID = '{1}'
             and p.BrandID = '{2}'
@@ -120,9 +124,10 @@ with IniBulkPack as (
     left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                  and oq.Seq = pd.OrderShipmodeSeq
+    left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
     where   p.INVNo = '' 
             and p.Type = 'S' 
-            and '{0}' like '%'+rtrim(p.FactoryID)+'%' 
+            and '{0}' like '%'+rtrim(o.FactoryID)+'%' 
             and p.Dest = '{3}' 
             and p.ShipModeID = '{1}'
 ), AllPackData as (

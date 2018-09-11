@@ -77,6 +77,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,BuyerDelivery = format(o.BuyerDelivery,'yyyy/MM/dd')
     ,OrderQty = o.Qty
     ,s.SubconOutFty
+    ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
@@ -128,6 +129,7 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
     ,BuyerDelivery
     ,OrderQty
     ,SubconOutFty
+    ,SubConOutContractNumber
     ,SubconInSisterFty
 into #tmpSewingGroup
 from #tmpSewingDetail
@@ -283,6 +285,7 @@ select * from(
                             WHEN t.LastShift=''I'' and SubconInSisterFty = 1 then ''Subcon-In(Sister)''
                             else ''Subcon-In(Non Sister)'' end
 		,t.SubconOutFty
+        ,t.SubConOutContractNumber
         ,t.Team
         ,t.OrderId
         ,CustPONo

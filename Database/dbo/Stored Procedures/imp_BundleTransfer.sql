@@ -47,15 +47,16 @@ BEGIN
 			INSERT INTO BundleTransfer
 			SELECT RB.sid, RB.readerid, RR.type, RR.ProcessId, RB.tagid, RB.epcid, RB.transdate, GETDATE()
 			FROM  #tmp  RB
-			left join RFIDReader RR on RB.readerid=RR.Id
+			left join RFIDReader RR on RB.readerid  collate Chinese_Taiwan_Stroke_CI_AS  =RR.Id
 						
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
 			Merge Production.dbo.BundleInOut as t
 			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type
-			FROM #tmp a inner join  RFIDReader b on a.ReaderId = b.Id
+			FROM #tmp a inner join  RFIDReader b on a.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = b.Id
 			group by a.EpcId,b.processId, b.Type) as s
-			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId and s.type=1
+			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
+				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS and s.type=1
 			when matched then 
 				update set
 				t.incoming = s.TransDate,	t.EditDate = s.AddDate
@@ -66,9 +67,10 @@ BEGIN
 			-- RFIDReader.Type=2
 			Merge Production.dbo.BundleInOut as t
 			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type
-			FROM #tmp a inner join  RFIDReader b on a.ReaderId = b.Id
+			FROM #tmp a inner join  RFIDReader b on a.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = b.Id
 			group by a.EpcId,b.processId, b.Type) as s
-			on t.BundleNo = s.BundleNo and t.SubprocessId = s.SubProcessId and s.type=2 
+			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
+				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS and s.type=2 
 			when matched then 
 				update set
 				t.OutGoing = s.TransDate,	t.EditDate = s.AddDate
@@ -80,12 +82,12 @@ BEGIN
 
 			IF exists(select 1 from System where RFIDMiddlewareInRFIDServer=0)
 				Begin
-					DELETE '+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'	where sid<=@MaxSid
+					DELETE '+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'					
 				End
 			Else
 				Begin	
 					DELETE ['+@RFIDServerName+'].'+@RFIDDatabaseName+'.dbo.'+@RFIDTable+'	
-					where sid<=@MaxSid
+					where sid <=@MaxSid
 				End
 
 	End Try

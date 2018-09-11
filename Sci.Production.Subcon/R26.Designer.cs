@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.dateDeliveryDate = new Sci.Win.UI.DateRange();
+            this.label1 = new Sci.Win.UI.Label();
             this.rdbtn_PandI = new Sci.Win.UI.RadioButton();
             this.rdbtn_incoming = new Sci.Win.UI.RadioButton();
             this.rdbtn_payment = new Sci.Win.UI.RadioButton();
@@ -74,6 +76,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.dateDeliveryDate);
+            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.rdbtn_PandI);
             this.panel1.Controls.Add(this.rdbtn_incoming);
             this.panel1.Controls.Add(this.rdbtn_payment);
@@ -100,15 +104,45 @@
             this.panel1.Controls.Add(this.labelSCIDelivery);
             this.panel1.Location = new System.Drawing.Point(8, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(443, 347);
+            this.panel1.Size = new System.Drawing.Size(443, 381);
             this.panel1.TabIndex = 1;
+            // 
+            // dateDeliveryDate
+            // 
+            // 
+            // 
+            // 
+            this.dateDeliveryDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateDeliveryDate.DateBox1.Name = "";
+            this.dateDeliveryDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateDeliveryDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateDeliveryDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateDeliveryDate.DateBox2.Name = "";
+            this.dateDeliveryDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateDeliveryDate.DateBox2.TabIndex = 1;
+            this.dateDeliveryDate.IsRequired = false;
+            this.dateDeliveryDate.Location = new System.Drawing.Point(114, 71);
+            this.dateDeliveryDate.Name = "dateDeliveryDate";
+            this.dateDeliveryDate.Size = new System.Drawing.Size(280, 23);
+            this.dateDeliveryDate.TabIndex = 99;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(15, 71);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 23);
+            this.label1.TabIndex = 98;
+            this.label1.Text = "Delivery";
             // 
             // rdbtn_PandI
             // 
             this.rdbtn_PandI.AutoSize = true;
             this.rdbtn_PandI.Enabled = false;
             this.rdbtn_PandI.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtn_PandI.Location = new System.Drawing.Point(119, 319);
+            this.rdbtn_PandI.Location = new System.Drawing.Point(119, 346);
             this.rdbtn_PandI.Name = "rdbtn_PandI";
             this.rdbtn_PandI.Size = new System.Drawing.Size(158, 21);
             this.rdbtn_PandI.TabIndex = 97;
@@ -121,7 +155,7 @@
             this.rdbtn_incoming.AutoSize = true;
             this.rdbtn_incoming.Enabled = false;
             this.rdbtn_incoming.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtn_incoming.Location = new System.Drawing.Point(119, 292);
+            this.rdbtn_incoming.Location = new System.Drawing.Point(119, 319);
             this.rdbtn_incoming.Name = "rdbtn_incoming";
             this.rdbtn_incoming.Size = new System.Drawing.Size(82, 21);
             this.rdbtn_incoming.TabIndex = 96;
@@ -134,7 +168,7 @@
             this.rdbtn_payment.AutoSize = true;
             this.rdbtn_payment.Enabled = false;
             this.rdbtn_payment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtn_payment.Location = new System.Drawing.Point(119, 265);
+            this.rdbtn_payment.Location = new System.Drawing.Point(119, 292);
             this.rdbtn_payment.Name = "rdbtn_payment";
             this.rdbtn_payment.Size = new System.Drawing.Size(81, 21);
             this.rdbtn_payment.TabIndex = 95;
@@ -146,7 +180,7 @@
             // 
             this.checkBoxNoClosed.AutoSize = true;
             this.checkBoxNoClosed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxNoClosed.Location = new System.Drawing.Point(15, 265);
+            this.checkBoxNoClosed.Location = new System.Drawing.Point(15, 292);
             this.checkBoxNoClosed.Name = "checkBoxNoClosed";
             this.checkBoxNoClosed.Size = new System.Drawing.Size(104, 21);
             this.checkBoxNoClosed.TabIndex = 94;
@@ -160,7 +194,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(114, 135);
+            this.comboFactory.Location = new System.Drawing.Point(114, 162);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
@@ -170,7 +204,7 @@
             // 
             this.txtLocalPoidEnd.BackColor = System.Drawing.Color.White;
             this.txtLocalPoidEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocalPoidEnd.Location = new System.Drawing.Point(272, 106);
+            this.txtLocalPoidEnd.Location = new System.Drawing.Point(272, 133);
             this.txtLocalPoidEnd.Name = "txtLocalPoidEnd";
             this.txtLocalPoidEnd.Size = new System.Drawing.Size(122, 23);
             this.txtLocalPoidEnd.TabIndex = 5;
@@ -178,7 +212,7 @@
             // label10
             // 
             this.label10.BackColor = System.Drawing.SystemColors.Control;
-            this.label10.Location = new System.Drawing.Point(245, 106);
+            this.label10.Location = new System.Drawing.Point(245, 133);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(20, 23);
             this.label10.TabIndex = 19;
@@ -189,7 +223,7 @@
             // 
             this.txtLocalPoidStart.BackColor = System.Drawing.Color.White;
             this.txtLocalPoidStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLocalPoidStart.Location = new System.Drawing.Point(114, 106);
+            this.txtLocalPoidStart.Location = new System.Drawing.Point(114, 133);
             this.txtLocalPoidStart.Name = "txtLocalPoidStart";
             this.txtLocalPoidStart.Size = new System.Drawing.Size(121, 23);
             this.txtLocalPoidStart.TabIndex = 4;
@@ -198,7 +232,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(272, 75);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(272, 102);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(122, 23);
             this.txtSPNoEnd.TabIndex = 3;
@@ -206,7 +240,7 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.SystemColors.Control;
-            this.label9.Location = new System.Drawing.Point(245, 76);
+            this.label9.Location = new System.Drawing.Point(245, 103);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(22, 23);
             this.label9.TabIndex = 18;
@@ -217,7 +251,7 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(114, 76);
+            this.txtSPNoStart.Location = new System.Drawing.Point(114, 103);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(121, 23);
             this.txtSPNoStart.TabIndex = 2;
@@ -232,7 +266,7 @@
             "PO List",
             "PO Form",
             "PO Order"});
-            this.comboReportType.Location = new System.Drawing.Point(114, 235);
+            this.comboReportType.Location = new System.Drawing.Point(114, 262);
             this.comboReportType.Name = "comboReportType";
             this.comboReportType.OldText = "";
             this.comboReportType.Size = new System.Drawing.Size(121, 24);
@@ -243,7 +277,7 @@
             // 
             this.txtsubconSupplier.DisplayBox1Binding = "";
             this.txtsubconSupplier.IsIncludeJunk = true;
-            this.txtsubconSupplier.Location = new System.Drawing.Point(114, 205);
+            this.txtsubconSupplier.Location = new System.Drawing.Point(114, 232);
             this.txtsubconSupplier.Name = "txtsubconSupplier";
             this.txtsubconSupplier.Size = new System.Drawing.Size(214, 23);
             this.txtsubconSupplier.TabIndex = 8;
@@ -255,7 +289,7 @@
             this.txtartworktype_ftyCategory.cClassify = "\'P\'";
             this.txtartworktype_ftyCategory.cSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(114, 168);
+            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(114, 195);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(153, 23);
             this.txtartworktype_ftyCategory.TabIndex = 7;
@@ -307,7 +341,7 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(15, 236);
+            this.labelReportType.Location = new System.Drawing.Point(15, 263);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(94, 23);
             this.labelReportType.TabIndex = 17;
@@ -315,7 +349,7 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Location = new System.Drawing.Point(15, 205);
+            this.labelSupplier.Location = new System.Drawing.Point(15, 232);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(94, 23);
             this.labelSupplier.TabIndex = 16;
@@ -323,7 +357,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(15, 168);
+            this.labelCategory.Location = new System.Drawing.Point(15, 195);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(94, 23);
             this.labelCategory.TabIndex = 15;
@@ -331,7 +365,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(15, 136);
+            this.labelFactory.Location = new System.Drawing.Point(15, 163);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(94, 23);
             this.labelFactory.TabIndex = 14;
@@ -339,7 +373,7 @@
             // 
             // labelLocalPoid
             // 
-            this.labelLocalPoid.Location = new System.Drawing.Point(15, 106);
+            this.labelLocalPoid.Location = new System.Drawing.Point(15, 133);
             this.labelLocalPoid.Name = "labelLocalPoid";
             this.labelLocalPoid.Size = new System.Drawing.Size(94, 23);
             this.labelLocalPoid.TabIndex = 13;
@@ -347,7 +381,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(15, 75);
+            this.labelSPNo.Location = new System.Drawing.Point(15, 102);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(94, 23);
             this.labelSPNo.TabIndex = 12;
@@ -383,7 +417,7 @@
             // 
             // R26
             // 
-            this.ClientSize = new System.Drawing.Size(582, 384);
+            this.ClientSize = new System.Drawing.Size(582, 432);
             this.Controls.Add(this.checkShippingMark);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "dateSCIDelivery";
@@ -430,5 +464,7 @@
         private Win.UI.RadioButton rdbtn_PandI;
         private Win.UI.RadioButton rdbtn_incoming;
         private Win.UI.RadioButton rdbtn_payment;
+        private Win.UI.DateRange dateDeliveryDate;
+        private Win.UI.Label label1;
     }
 }

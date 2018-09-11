@@ -33,6 +33,8 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.txtThreadColor = new Sci.Win.UI.TextBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
+            this.txtThreadColorGroupID = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -43,6 +45,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtThreadColorGroupID);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.txtThreadColor);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -64,19 +68,17 @@
             // 
             // labelThreadColor
             // 
-            this.labelThreadColor.Lines = 0;
             this.labelThreadColor.Location = new System.Drawing.Point(50, 46);
             this.labelThreadColor.Name = "labelThreadColor";
-            this.labelThreadColor.Size = new System.Drawing.Size(95, 23);
+            this.labelThreadColor.Size = new System.Drawing.Size(131, 23);
             this.labelThreadColor.TabIndex = 3;
             this.labelThreadColor.Text = "Thread Color";
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
-            this.labelDescription.Location = new System.Drawing.Point(50, 103);
+            this.labelDescription.Location = new System.Drawing.Point(50, 119);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(95, 23);
+            this.labelDescription.Size = new System.Drawing.Size(131, 23);
             this.labelDescription.TabIndex = 4;
             this.labelDescription.Text = "Description";
             // 
@@ -97,7 +99,7 @@
             this.txtThreadColor.BackColor = System.Drawing.Color.White;
             this.txtThreadColor.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
             this.txtThreadColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtThreadColor.Location = new System.Drawing.Point(148, 46);
+            this.txtThreadColor.Location = new System.Drawing.Point(184, 46);
             this.txtThreadColor.Name = "txtThreadColor";
             this.txtThreadColor.Size = new System.Drawing.Size(100, 23);
             this.txtThreadColor.TabIndex = 0;
@@ -107,10 +109,30 @@
             this.txtDescription.BackColor = System.Drawing.Color.White;
             this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "description", true));
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(148, 103);
+            this.txtDescription.Location = new System.Drawing.Point(184, 119);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(249, 23);
             this.txtDescription.TabIndex = 1;
+            // 
+            // txtThreadColorGroupID
+            // 
+            this.txtThreadColorGroupID.BackColor = System.Drawing.Color.White;
+            this.txtThreadColorGroupID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ThreadColorGroupID", true));
+            this.txtThreadColorGroupID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtThreadColorGroupID.Location = new System.Drawing.Point(184, 82);
+            this.txtThreadColorGroupID.Name = "txtThreadColorGroupID";
+            this.txtThreadColorGroupID.Size = new System.Drawing.Size(219, 23);
+            this.txtThreadColorGroupID.TabIndex = 5;
+            this.txtThreadColorGroupID.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtThreadColorGroupID_PopUp);
+            this.txtThreadColorGroupID.Validating += new System.ComponentModel.CancelEventHandler(this.TxtThreadColorGroupID_Validating);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(50, 82);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(131, 23);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Thread Color Group";
             // 
             // B02
             // 
@@ -142,5 +164,7 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.TextBox txtDescription;
         private Win.UI.TextBox txtThreadColor;
+        private Win.UI.TextBox txtThreadColorGroupID;
+        private Win.UI.Label label1;
     }
 }

@@ -266,4 +266,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c4026f49-536c-40b6-a4c7-b0367cac9418" ChangeDateTime="09/03/2018 03:09:21">
+    <Property Name="ElementName" Value="[dbo].[LocalItem_ThreadBuyerColorGroupPrice].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[LocalItem_ThreadBuyerColorGroupPrice]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Refno" />
+  </Operation>
 </Operations>

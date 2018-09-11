@@ -216,8 +216,10 @@ with tmpOrders as (
             , o.OrigBuyerDelivery
             , o.DoxType
             , o.TotalCTN
+            , DryCTN=isnull(o.DryCTN,0)
             , o.FtyCTN
             , o.ClogCTN
+            , CFACTN=isnull(o.CFACTN,0)
             , o.VasShas
             , o.TissuePaper
             , o.MTLExport
@@ -489,8 +491,10 @@ tmpFilterZone as (
             , o.OrigBuyerDelivery
             , o.DoxType
             , o.TotalCTN
+            , DryCTN=isnull(o.DryCTN,0)
             , o.FtyCTN
             , o.ClogCTN
+            , CFACTN=isnull(o.CFACTN,0)
             , o.VasShas
             , o.TissuePaper
             , o.MTLExport
@@ -628,6 +632,8 @@ tmpFilterZone as (
 			, pdm.FtyCtn as  FtyCtn1
 			, pdm.ClogCTN as  ClogCTN1
 			, pdm.ClogRcvDate
+            , t.DryCTN
+            , t.CFACTN
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
@@ -1075,7 +1081,7 @@ from (
 ) a",
                         classify,
                         !this.artwork ? string.Empty : strUnion,
-                        "117"));
+                        this.lastColA));
                     #endregion
                     result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.subprocessColumnName);
                     if (!result)
@@ -1279,6 +1285,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             return Result.True;
         }
 
+        private int lastColA = 119; // 最後一欄 , 有新增欄位要改這
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -1296,12 +1303,13 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 return false;
             }
 
+            int lastCol = lastColA;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Name = "PPIC_Master_List";
-
+            excel.Visible = true;
             // 填Subprocess欄位名稱
-            int lastCol = 117;
-            int subConCol = 9999, ttlTMS = 116; // 紀錄SubCon與TTL_TMS的欄位
+            int subConCol = 9999, ttlTMS = lastCol + 1; // 紀錄SubCon與TTL_TMS的欄位
+            string excelColEng = string.Empty;
             if (this.artwork || this.pap)
             {
                 foreach (DataRow dr in this.subprocessColumnName.Rows)
@@ -1319,18 +1327,19 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                         ttlTMS = MyUtility.Convert.GetInt(dr["rno"]);
                     }
                 }
+                // 算出Excel的Column的英文位置
+                excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol);
             }
             else
             {
-                worksheet.Cells[1, 115] = "TTL_TMS";
+                worksheet.Cells[1, ttlTMS] = "TTL_TMS";
+                // 算出Excel的Column的英文位置
+                excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol + 1);
             }
-
-            // 算出Excel的Column的英文位置
-            string excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol);
 
             // 填內容值
             int intRowsStart = 0;
-            object[,] objArray = new object[this.printData.Rows.Count, lastCol];
+            object[,] objArray = new object[this.printData.Rows.Count, lastCol + 1];
 
             string kPIChangeReasonName;  // CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
                                          // Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
@@ -1464,45 +1473,29 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 objArray[intRowsStart, 98] = dr["DoxType"];
                 objArray[intRowsStart, 99] = dr["PackingCTN"];
                 objArray[intRowsStart, 100] = dr["TotalCTN1"];
-                objArray[intRowsStart, 101] = dr["FtyCtn1"];
-                objArray[intRowsStart, 102] = dr["ClogCTN1"];
-                objArray[intRowsStart, 103] = dr["ClogRcvDate"];
-                objArray[intRowsStart, 104] = dr["InspDate"];
-                objArray[intRowsStart, 105] = dr["InspResult"];
-                objArray[intRowsStart, 106] = dr["InspHandle"];
-                objArray[intRowsStart, 107] = dr["SewLine"];
-                objArray[intRowsStart, 108] = dr["ShipModeList"];
-                objArray[intRowsStart, 109] = dr["Article"];
-                objArray[intRowsStart, 110] = dr["SpecialMarkName"];
-                objArray[intRowsStart, 111] = dr["FTYRemark"];
-                objArray[intRowsStart, 112] = dr["SampleReasonName"];
-                objArray[intRowsStart, 113] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 114] = dr["CuttingSP"];
-                objArray[intRowsStart, 115] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 116] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 101] = dr["DryCTN"];
+                objArray[intRowsStart, 102] = dr["FtyCtn1"];
+                objArray[intRowsStart, 103] = dr["ClogCTN1"];
+                objArray[intRowsStart, 104] = dr["CFACTN"];
+                objArray[intRowsStart, 105] = dr["ClogRcvDate"];
+                objArray[intRowsStart, 106] = dr["InspDate"];
+                objArray[intRowsStart, 107] = dr["InspResult"];
+                objArray[intRowsStart, 108] = dr["InspHandle"];
+                objArray[intRowsStart, 109] = dr["SewLine"];
+                objArray[intRowsStart, 110] = dr["ShipModeList"];
+                objArray[intRowsStart, 111] = dr["Article"];
+                objArray[intRowsStart, 112] = dr["SpecialMarkName"];
+                objArray[intRowsStart, 113] = dr["FTYRemark"];
+                objArray[intRowsStart, 114] = dr["SampleReasonName"];
+                objArray[intRowsStart, 115] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 116] = dr["CuttingSP"];
+                objArray[intRowsStart, 117] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 118] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 #endregion
 
-                // 先清空Subprocess值
-                // for (int i = 115; i < lastCol; i++)
-                // {
-                //    objArray[intRowsStart, i] = 0;
-                //    if (subtrue == 1)
-                //    {
-                //       objArray[intRowsStart, subConCol - 1] = "";
-
-                // }
-
-                // }
                 if (this.artwork || this.pap)
                 {
-                    // DataRow[] finRow = orderArtworkData.Select(string.Format("ID = '{0}'", MyUtility.Convert.GetString(dr["ID"])));
                     var finRow = lookupID[dr["ID"].ToString()];
-
-                    // var finRow = from record in orderArtworkData.AsEnumerable()
-                    //             where record.Field<string>("ID") == MyUtility.Convert.GetString(dr["ID"])
-                    //             select record;
-
-                    // if (finRow.Length > 0)
                     if (finRow.Count() > 0)
                     {
                         foreach (DataRow sdr in finRow)
@@ -1566,7 +1559,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 }
                 else
                 {
-                    objArray[intRowsStart, 115] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                    objArray[intRowsStart, ttlTMS - 1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 }
 
                 intRowsStart++;
@@ -1590,7 +1583,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             {
                 for (int j = 0; j < intRowsStart; j++)
                 {
-                    for (int i = 116; i < lastCol; i++)
+                    for (int i = this.lastColA; i < lastCol; i++)
                     {
                         if (objArray[j, i] == null)
                         {
