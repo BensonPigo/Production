@@ -111,15 +111,17 @@ namespace Sci.Production.PPIC
             //一組key對應的只會有一組 PatternCode
             sqlCmd = string.Format(
                             @"  select DISTINCT
-                                 oa.ID                               
+                                oa.ID                               
                                 ,oa.ArtworkTypeID
                                 ,oa.ArtworkID
+                                ,oa.Article
+                                ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
                                 ,oa.PatternCode
                                 from Orders o
                                 inner join Order_Artwork oa on o.ID = oa.ID
                                 left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
                                 where o.ID in (select  id from Orders o1 where  o1.poID = '{0}' )
-                                group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID
+                                group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
                                 order by oa.ArtworkTypeID", this.Order_ArtworkId);
             DataTable value;
             result = DBProxy.Current.Select(null, sqlCmd, out value);
@@ -167,8 +169,11 @@ namespace Sci.Production.PPIC
                     foreach (DataRow valueitem in value.Rows)
                     {
                         //開始填入PatternCode
-                        //必須對應SP#
-                        if (valueitem["ID"].ToString()== leftitem["ID"].ToString())
+                        //必須對應ID、Article、OrderQty
+                        if (valueitem["ID"].ToString()== leftitem["ID"].ToString() && 
+                            valueitem["Article"].ToString() == leftitem["Article"].ToString() &&
+                            valueitem["OrderQty"].ToString() == leftitem["OrderQty"].ToString()
+                            )
                         {
                             row[valueitem["ArtworkTypeID"].ToString() + valueitem["ArtworkID"].ToString()] = valueitem["PatternCode"].ToString();
                         }
@@ -186,26 +191,61 @@ namespace Sci.Production.PPIC
             this.CombBySPgrid.Columns[2].Frozen = true;
             #endregion
 
+
             #region Comb By Artwork
+            //左邊
             sqlCmd = string.Format(
                             @"  
-                                SELECT 
-                                        oa.ID
-                                        ,oa.ArtworkTypeID 
-                                        ,oa.ArtworkID
-                                        ,oa.Article
-                                        ,oa.PatternCode
-                                        ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty 
+                                SELECT DISTINCT 
+                                oa.ArtworkTypeID ,oa.ArtworkID,oa.PatternCode
                                 FROM Orders o
                                 INNER JOIN Order_Artwork oa ON o.ID = oa.ID
                                 LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
-                                WHERE Exists (select 1 FROM Orders o1 WHERE o1.POID = o.POID AND o1.ID = '{0}')
-                                GROUP BY oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
+                                WHERE Exists (select 1 FROM Orders o1 WHERE o1.POID = o.POID AND (o.ID = '{0}' or o1.POID='{0}') )
+                                GROUP BY o.POID ,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
+                                ORDER BY  oa.ArtworkTypeID, oa.ArtworkID, oa.PatternCode
 
                                 ", this.Order_ArtworkId);
-            DataTable OrderArtworks;
-             result = DBProxy.Current.Select(null, sqlCmd, out OrderArtworks);
 
+            DataTable Left_2;
+            result = DBProxy.Current.Select(null, sqlCmd, out Left_2);
+
+
+            sqlCmd = string.Format(
+                            @"  
+
+                                    with LeftCol as (
+                                    SELECT DISTINCT 
+                                    oa.ArtworkTypeID ,oa.ArtworkID,oa.PatternCode
+                                    FROM Orders o
+                                    INNER JOIN Order_Artwork oa ON o.ID = oa.ID
+                                    LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
+                                    WHERE Exists (select 1 FROM Orders o1 WHERE o1.POID = o.POID AND (o.ID = '{0}' or o1.POID='{0}') )
+                                    GROUP BY o.POID ,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
+                                    )
+                                    SELECT 
+                                    DISTINCT 
+                                    lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode ,oa.Article,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+                                    FROM Orders o
+                                    INNER JOIN Order_Artwork oa ON o.ID = oa.ID
+                                    LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
+                                    LEFT JOIN LeftCol lc ON  lc.ArtworkTypeID=oa.ArtworkTypeID AND lc.ArtworkID=oa.ArtworkID AND lc.PatternCode=oa.PatternCode
+                                    WHERE Exists (select 1 FROM Orders o1 WHERE o1.POID = o.POID AND (o.ID = '{0}' or o1.POID='{0}') )
+                                    GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,oa.Article,o.Junk
+                                    ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,oa.Article
+
+                                ", this.Order_ArtworkId);
+
+            DataTable Content;
+            result = DBProxy.Current.Select(null, sqlCmd, out Content);
+
+            DataTable OrderArtworks = new DataTable();
+
+            OrderArtworks.Columns.Add("ArtworkTypeID", typeof(string));
+            OrderArtworks.Columns.Add("ArtworkID", typeof(string));
+            OrderArtworks.Columns.Add("PatternCode", typeof(string));
+            OrderArtworks.Columns.Add("Article", typeof(string));
+            OrderArtworks.Columns.Add("OrderQty", typeof(int));
 
             this.Helper.Controls.Grid.Generator(this.CombByArtworkGrid)
                .Text("ArtworkTypeID", header: "Artwork", width: Widths.AnsiChars(20))
@@ -214,6 +254,40 @@ namespace Sci.Production.PPIC
                .Text("Article", header: "Article", width: Widths.AnsiChars(20))
                .Text("OrderQty", header: "Order Qty", width: Widths.AnsiChars(20));
 
+            if (Left_2.Rows.Count>0)
+            {
+                foreach (DataRow Left_item in Left_2.Rows)
+                {
+                    DataRow row;
+                    row = OrderArtworks.NewRow();
+
+                    //前面是固定的
+                    row["ArtworkTypeID"] = Left_item["ArtworkTypeID"].ToString();
+                    row["ArtworkID"] = Left_item["ArtworkID"].ToString();
+                    row["PatternCode"] = Left_item["PatternCode"].ToString();
+
+                    List<string> Article = new List<string>();
+                    int sum = 0;
+                    //Article
+                    foreach (DataRow Content_item in Content.Rows)
+                    {
+                        if (Left_item["ArtworkTypeID"].ToString() == Content_item["ArtworkTypeID"].ToString() &&
+                            Left_item["ArtworkID"].ToString() == Content_item["ArtworkID"].ToString() &&
+                            Left_item["PatternCode"].ToString() == Content_item["PatternCode"].ToString() 
+                            )
+                        {
+                            Article.Add(Content_item["Article"].ToString());
+                            sum += Convert.ToInt32(Content_item["OrderQty"]);
+                        }
+                    }
+                    
+                    row["Article"] = Article.JoinToString(",");
+                    row["OrderQty"] = sum;
+
+                    OrderArtworks.Rows.Add(row);
+                }
+
+            }
 
             this.CombByArtworkTypeSource.DataSource = OrderArtworks;
             this.CombByArtworkGrid.IsEditingReadOnly = true;
