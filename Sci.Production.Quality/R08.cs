@@ -72,6 +72,7 @@ namespace Sci.Production.Quality
 SELECT [Inspected Date] = FP.InspDate,
        [Inspector] = FP.Inspector,
        o.brandID,
+       o.StyleID,
        [SP#] = F.POID,
        [SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2),
 	   [Supplier]=f.SuppID,
@@ -88,7 +89,8 @@ SELECT [Inspected Date] = FP.InspDate,
        [Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
 	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)),
 	   [Total Defect Points]=FP.TotalPoint,
-       [Grade] = FP.Grade
+       [Grade] = FP.Grade,
+       [MCHandle]= dbo.getPass1_ExtNo(o.MCHandle)
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
 LEFT JOIN Receiving_Detail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
