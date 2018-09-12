@@ -206,6 +206,7 @@ namespace Sci.Production.Tools
                 string pathFileName = destination_path + "\\" + tempFileName;
                 File.Copy(file, pathFileName, true);
             }
+
             return base.ClickSaveBefore();
         }
 
@@ -301,6 +302,7 @@ namespace Sci.Production.Tools
             {
                 return;
             }
+
             switch (EditMode)
             {
                 case true:
@@ -310,12 +312,8 @@ namespace Sci.Production.Tools
                     this.btnShowImg.Text = "Show";
                     break;
             }
+
             base.OnEditModeChanged();
-        }
-
-        private void btnImage_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

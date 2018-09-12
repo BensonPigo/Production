@@ -36,6 +36,9 @@
             this.labESignature = new Sci.Win.UI.Label();
             this.checkAdmin = new Sci.Win.UI.CheckBox();
             this.txtPosition = new Sci.Win.UI.TextBox();
+            this.txtUserDeputy = new Sci.Production.Class.txtuser();
+            this.txtUserSupervisor = new Sci.Production.Class.txtuser();
+            this.txtUserManager = new Sci.Production.Class.txtuser();
             this.txtIDStart = new Sci.Win.UI.TextBox();
             this.dateResign = new Sci.Win.UI.DateBox();
             this.dateDateHired = new Sci.Win.UI.DateBox();
@@ -61,9 +64,6 @@
             this.labelID = new Sci.Win.UI.Label();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.txtUserDeputy = new Sci.Production.Class.txtuser();
-            this.txtUserSupervisor = new Sci.Production.Class.txtuser();
-            this.txtUserManager = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -216,6 +216,36 @@
             this.txtPosition.ReadOnly = true;
             this.txtPosition.Size = new System.Drawing.Size(133, 23);
             this.txtPosition.TabIndex = 10;
+            // 
+            // txtUserDeputy
+            // 
+            this.txtUserDeputy.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Deputy", true));
+            this.txtUserDeputy.DisplayBox1Binding = "";
+            this.txtUserDeputy.Location = new System.Drawing.Point(96, 229);
+            this.txtUserDeputy.Name = "txtUserDeputy";
+            this.txtUserDeputy.Size = new System.Drawing.Size(302, 23);
+            this.txtUserDeputy.TabIndex = 8;
+            this.txtUserDeputy.TextBox1Binding = "";
+            // 
+            // txtUserSupervisor
+            // 
+            this.txtUserSupervisor.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Supervisor", true));
+            this.txtUserSupervisor.DisplayBox1Binding = "";
+            this.txtUserSupervisor.Location = new System.Drawing.Point(96, 197);
+            this.txtUserSupervisor.Name = "txtUserSupervisor";
+            this.txtUserSupervisor.Size = new System.Drawing.Size(302, 23);
+            this.txtUserSupervisor.TabIndex = 7;
+            this.txtUserSupervisor.TextBox1Binding = "";
+            // 
+            // txtUserManager
+            // 
+            this.txtUserManager.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
+            this.txtUserManager.DisplayBox1Binding = "";
+            this.txtUserManager.Location = new System.Drawing.Point(96, 164);
+            this.txtUserManager.Name = "txtUserManager";
+            this.txtUserManager.Size = new System.Drawing.Size(302, 23);
+            this.txtUserManager.TabIndex = 6;
+            this.txtUserManager.TextBox1Binding = "";
             // 
             // txtIDStart
             // 
@@ -454,36 +484,6 @@
             this.grid1.Size = new System.Drawing.Size(514, 526);
             this.grid1.TabIndex = 15;
             this.grid1.TabStop = false;
-            // 
-            // txtUserDeputy
-            // 
-            this.txtUserDeputy.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Deputy", true));
-            this.txtUserDeputy.DisplayBox1Binding = "";
-            this.txtUserDeputy.Location = new System.Drawing.Point(96, 229);
-            this.txtUserDeputy.Name = "txtUserDeputy";
-            this.txtUserDeputy.Size = new System.Drawing.Size(302, 23);
-            this.txtUserDeputy.TabIndex = 8;
-            this.txtUserDeputy.TextBox1Binding = "";
-            // 
-            // txtUserSupervisor
-            // 
-            this.txtUserSupervisor.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Supervisor", true));
-            this.txtUserSupervisor.DisplayBox1Binding = "";
-            this.txtUserSupervisor.Location = new System.Drawing.Point(96, 197);
-            this.txtUserSupervisor.Name = "txtUserSupervisor";
-            this.txtUserSupervisor.Size = new System.Drawing.Size(302, 23);
-            this.txtUserSupervisor.TabIndex = 7;
-            this.txtUserSupervisor.TextBox1Binding = "";
-            // 
-            // txtUserManager
-            // 
-            this.txtUserManager.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
-            this.txtUserManager.DisplayBox1Binding = "";
-            this.txtUserManager.Location = new System.Drawing.Point(96, 164);
-            this.txtUserManager.Name = "txtUserManager";
-            this.txtUserManager.Size = new System.Drawing.Size(302, 23);
-            this.txtUserManager.TabIndex = 6;
-            this.txtUserManager.TextBox1Binding = "";
             // 
             // PasswordByUser
             // 

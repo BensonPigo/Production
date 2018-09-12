@@ -58,17 +58,13 @@
             this.labelM = new Sci.Win.UI.Label();
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.txtUserManager = new Sci.Production.Class.txtuser();
-            this.reSize = new Sci.Win.UI.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.pictureBox1 = new Sci.Win.UI.PictureBox();
-            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // detail
@@ -77,9 +73,6 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Controls.Add(this.pictureBox1);
-            this.detailcont.Controls.Add(this.reSize);
             this.detailcont.Controls.Add(this.displayM);
             this.detailcont.Controls.Add(this.labelM);
             this.detailcont.Controls.Add(this.checkUseSBTS);
@@ -412,39 +405,11 @@
             this.txtUserManager.TabIndex = 7;
             this.txtUserManager.TextBox1Binding = "";
             // 
-            // reSize
-            // 
-            this.reSize.Location = new System.Drawing.Point(605, 277);
-            this.reSize.Name = "reSize";
-            this.reSize.Size = new System.Drawing.Size(80, 30);
-            this.reSize.TabIndex = 28;
-            this.reSize.Text = "reSize";
-            this.reSize.UseVisualStyleBackColor = true;
-            this.reSize.Click += new System.EventHandler(this.reSize_Click);
-            // 
             // imageList1
             // 
             this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = null;
-            this.pictureBox1.Location = new System.Drawing.Point(605, 222);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(93, 24);
-            this.pictureBox1.TabIndex = 29;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.WaitOnLoad = true;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(458, 222);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(134, 23);
-            this.label1.TabIndex = 30;
-            this.label1.Text = "SubCon_P30 ByRef";
             // 
             // B01
             // 
@@ -465,7 +430,6 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -502,9 +466,6 @@
         private Win.UI.Button btnCapacityWorkday;
         private Win.UI.DisplayBox displayM;
         private Win.UI.Label labelM;
-        private Win.UI.PictureBox pictureBox1;
-        private Win.UI.Button reSize;
         private System.Windows.Forms.ImageList imageList1;
-        private Win.UI.Label label1;
     }
 }

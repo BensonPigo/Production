@@ -1039,8 +1039,9 @@
             </Style>
           </Textbox>
           <Image Name="Image1">
-            <Source>Embedded</Source>
-            <Value>Willy_Signature</Value>
+            <Source>Database</Source>
+            <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
+            <MIMEType>image/jpeg</MIMEType>
             <Sizing>FitProportional</Sizing>
             <Top>2.69631cm</Top>
             <Left>0.09546cm</Left>
@@ -2205,6 +2206,10 @@
         <Field Name="Amount">
           <DataField>Amount</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ApvName">
+          <DataField>ApvName</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
         </Field>
         <Field Name="ArtworkID">
           <DataField>ArtworkID</DataField>

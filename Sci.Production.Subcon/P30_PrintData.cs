@@ -19,5 +19,6 @@ namespace Sci.Production.Subcon
         public decimal Order_Qty { get; set; }
         public string Unit { get; set; }
         public decimal Amount { get; set; }
+        public byte[] ApvName { get; set; }
     }
 }
