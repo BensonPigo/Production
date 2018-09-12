@@ -86,6 +86,7 @@ namespace Sci.Production.Packing
                 }
             }
 
+            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
             this.ClearAll("SCAN");
             #region 檢查是否有資料，三個角度
 
@@ -263,9 +264,9 @@ namespace Sci.Production.Packing
                 this.ShowErr(result);
             }
 
-            // DataRow dr = this.gridSelectCartonDetail.GetDataRow<DataRow>(e.RowIndex);
+            this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
 
-           this.IDX.IdxCall(254, "A:0=0" , "A:0=0".Length);
+            this.IDX.IdxCall(254, "A:0=0" , "A:0=0".Length);
         }
 
         /// <summary>
@@ -420,6 +421,8 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
             }
         }
 
+        private string upd_sql_barcode = string.Empty;
+
         private void TxtScanEAN_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtScanEAN.Text))
@@ -434,7 +437,6 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
 
             DualResult sql_result;
             int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
-            string upd_sql_barcode = string.Empty;
             // 有資料
             if (barcode_pos == -1)
             {
@@ -466,7 +468,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                     }
 
                     var sellist = sele.GetSelecteds();
-                    upd_sql_barcode = $@"update PackingList_Detail
+                    this.upd_sql_barcode += $@"update PackingList_Detail
 set BarCode = '{this.txtScanEAN.Text}'
 where PackingList_Detail.Article 
 =  '{sellist[0]["Article"]}'
