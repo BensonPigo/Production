@@ -82,17 +82,31 @@ namespace Sci.Production.Cutting
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
-            this.ShowWaitMessage("Data processing, please wait...");
-            if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() && this.txtPOID.Text.Empty() && this.txtBundleStart.Text.Empty()
-                && this.txtBundleEnd.Text.Empty() && this.dateBox1.Value.Empty() && this.dateBundlecreatedDate.Value.Empty())
+
+            if (this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty() 
+                && this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty() 
+                && this.txtPOID.Text.Empty() 
+                && this.txtBundleStart.Text.Empty() && this.txtBundleEnd.Text.Empty()
+                && this.dateBox1.Value.Empty() && this.dateBundlecreatedDate.Value.Empty())
             {
                 txtCutRefStart.Focus();
                 if (dtt != null) dtt.Clear();
-                this.HideWaitMessage();
-                MyUtility.Msg.ErrorBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date and Bundle created Date ] can not be all null !!");
+                MyUtility.Msg.WarningBox("[Cut_Ref# and SP# and POID and Bundle# and Est.Cut Date and Bundle created Date ] can not be all null !!");
                 return;
             }
 
+            if ((!this.txtCutRefStart.Text.Empty() && this.txtCutRefEnd.Text.Empty()) || (this.txtCutRefStart.Text.Empty() && !this.txtCutRefEnd.Text.Empty())
+                || (!this.txtSPNoStart.Text.Empty() && this.txtSPNoEnd.Text.Empty()) || (this.txtSPNoStart.Text.Empty() && !this.txtSPNoEnd.Text.Empty())
+                || (!this.txtBundleStart.Text.Empty() && this.txtBundleEnd.Text.Empty()) || (this.txtBundleStart.Text.Empty() && !this.txtBundleEnd.Text.Empty())
+                )
+            {
+                txtCutRefStart.Focus();
+                if (dtt != null) dtt.Clear();
+                MyUtility.Msg.WarningBox("[Cut_Ref# and SP# and Bundle#] must enter start and end !!");
+                return;
+            }
+
+            this.ShowWaitMessage("Data processing, please wait...");
 
             Cut_Ref = txtCutRefStart.Text.ToString();
             Cut_Ref1 = txtCutRefEnd.Text.ToString();
@@ -213,107 +227,107 @@ namespace Sci.Production.Cutting
 
                 DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
                 sqlcmd = string.Format(@"
-select distinct *
-from(
-    select 
-        Convert(bit,0) as selected
-        , a.PrintDate
-        , CreateDate = b.AddDate
-        , a.BundleNo [Bundle]
-        , b.CutRef [CutRef]
-        , b.POID [POID]
-        , b.Orderid [SP]
-        , a.BundleGroup [Group]
-        , b.Sewinglineid [Line]
-        , b.SewingCell [Cell]
-        , c.StyleID [Style]
-        , b.Item [Item]
-        , b.PatternPanel [Comb]
-        , b.cutno [Cut]
-        , b.Article [Article]
-        , b.Colorid [Color]
-        , b.Article + '\' + b.Colorid [Color2]
-        , a.SizeCode [Size]
-        , a.PatternCode [Cutpart]
-        , '('+a.Patterncode+')' [Patterncode]
-        , a.PatternDesc [Description]
-        --,SubProcess.SubProcess [SubProcess]
-        , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-        , a.Parts [Parts]
-        , a.Qty [Qty]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-        , c.FactoryID  [left]
-        , e.MarkerNo
-        , SeasonID = concat(c.SeasonID,' ', c.dest)
-        , brand=c.brandid
-    from dbo.Bundle_Detail a WITH (NOLOCK)
-    left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-    left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-    left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
-    outer apply
+select 
+    Convert(bit,0) as selected
+    , a.PrintDate
+    , CreateDate = b.AddDate
+    , a.BundleNo [Bundle]
+    , b.CutRef [CutRef]
+    , b.POID [POID]
+    , b.Orderid [SP]
+    , a.BundleGroup [Group]
+    , b.Sewinglineid [Line]
+    , b.SewingCell [Cell]
+    , c.StyleID [Style]
+    , b.Item [Item]
+    , b.PatternPanel [Comb]
+    , b.cutno [Cut]
+    , b.Article [Article]
+    , b.Colorid [Color]
+    , b.Article + '\' + b.Colorid [Color2]
+    , a.SizeCode [Size]
+    , a.PatternCode [Cutpart]
+    , '('+a.Patterncode+')' [Patterncode]
+    , a.PatternDesc [Description]
+    --,SubProcess.SubProcess [SubProcess]
+    , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
+    , a.Parts [Parts]
+    , a.Qty [Qty]
+    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , c.FactoryID  [left]
+    , e.MarkerNo
+    , SeasonID = concat(c.SeasonID,' ', c.dest)
+    , brand=c.brandid
+into #tmp
+from dbo.Bundle_Detail a WITH (NOLOCK)
+left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+outer apply
+(
+    select SubProcess = 
     (
-        select SubProcess = 
-        (
-            select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-            from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-            where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-            for xml path('')
-        )
-    )as SubProcess
-    " + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
+        for xml path('')
+    )
+)as SubProcess
+" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
                                         
-    union all
+union all
 
-    select DISTINCT 
-        Convert(bit,0) as selected
-        , a.PrintDate
-        , CreateDate = b.AddDate
-        , a.BundleNo [Bundle]
-        , b.CutRef [CutRef]
-        , b.POID [POID]
-        , b.Orderid [SP]
-        , a.BundleGroup [Group]
-        , b.Sewinglineid [Line]
-        , b.SewingCell [Cell]
-        , c.StyleID [Style]
-        , b.Item [Item]
-        , b.PatternPanel [Comb]
-        , b.cutno [Cut]
-        , b.Article [Article]
-        , b.Colorid [Color]
-        , b.Article + '\' + b.Colorid [Color2]
-        , a.SizeCode [Size]
-        , qq.Cutpart [Cutpart]
-        , '('+d.Patterncode+')' [Patterncode]
-        , d.PatternDesc [Description]
-        --,SubProcess.SubProcess [SubProcess]
-        , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-        , d.Parts [Parts]
-        , a.Qty [Qty]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-        , c.FactoryID  [left]
-        , e.MarkerNo
-        , SeasonID = concat(c.SeasonID,' ', c.dest)
-        , brand=c.brandid
-    from dbo.Bundle_Detail a WITH (NOLOCK)
-    left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-    left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-    left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
-    left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
-    outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
-    outer apply
+select DISTINCT 
+    Convert(bit,0) as selected
+    , a.PrintDate
+    , CreateDate = b.AddDate
+    , a.BundleNo [Bundle]
+    , b.CutRef [CutRef]
+    , b.POID [POID]
+    , b.Orderid [SP]
+    , a.BundleGroup [Group]
+    , b.Sewinglineid [Line]
+    , b.SewingCell [Cell]
+    , c.StyleID [Style]
+    , b.Item [Item]
+    , b.PatternPanel [Comb]
+    , b.cutno [Cut]
+    , b.Article [Article]
+    , b.Colorid [Color]
+    , b.Article + '\' + b.Colorid [Color2]
+    , a.SizeCode [Size]
+    , qq.Cutpart [Cutpart]
+    , '('+d.Patterncode+')' [Patterncode]
+    , d.PatternDesc [Description]
+    --,SubProcess.SubProcess [SubProcess]
+    , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
+    , d.Parts [Parts]
+    , a.Qty [Qty]
+    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , c.FactoryID  [left]
+    , e.MarkerNo
+    , SeasonID = concat(c.SeasonID,' ', c.dest)
+    , brand=c.brandid
+from dbo.Bundle_Detail a WITH (NOLOCK)
+left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
+outer apply
+(
+    select SubProcess = 
     (
-        select SubProcess = 
-        (
-            select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-            from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-            where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
-            for xml path('')
-        )
-    )as SubProcess
-    " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' "
-+ @"
-)x
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
+        for xml path('')
+    )
+)as SubProcess
+" + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
+
+select distinct *
+from #tmp x
 outer apply
 (
 	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
@@ -332,105 +346,106 @@ outer apply
             {
                 #region SQL
                 sqlcmd = string.Format(@"
-select distinct *
-from(
-    select 
-        Convert(bit,0) as selected
-        , a.PrintDate
-        , CreateDate = b.AddDate
-        , a.BundleNo [Bundle]
-        , b.CutRef [CutRef]
-        , b.POID [POID]
-        , b.Orderid [SP]
-        , a.BundleGroup [Group]
-        , b.Sewinglineid [Line]
-        , b.SewingCell [Cell]
-        , c.StyleID [Style]
-        , b.Item [Item]
-        , b.PatternPanel [Comb]
-        , b.cutno [Cut]
-        , b.Article [Article]
-        , b.Colorid [Color]
-        , b.Article + '\' + b.Colorid [Color2]
-        , a.SizeCode [Size]
-        , a.PatternCode [Cutpart]
-        , '('+a.Patterncode+')' [Patterncode]
-        , a.PatternDesc [Description]
-        --,SubProcess.SubProcess [SubProcess]
-        , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-        , a.Parts [Parts]
-        , a.Qty [Qty]
-        ,  [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-        , c.FactoryID  [left]
-        , e.MarkerNo
-        , SeasonID = concat(c.SeasonID,' ', c.dest)
-        , brand=c.brandid
-    from dbo.Bundle_Detail a WITH (NOLOCK)
-    left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-    left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-    left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
-    outer apply
+select 
+    Convert(bit,0) as selected
+    , a.PrintDate
+    , CreateDate = b.AddDate
+    , a.BundleNo [Bundle]
+    , b.CutRef [CutRef]
+    , b.POID [POID]
+    , b.Orderid [SP]
+    , a.BundleGroup [Group]
+    , b.Sewinglineid [Line]
+    , b.SewingCell [Cell]
+    , c.StyleID [Style]
+    , b.Item [Item]
+    , b.PatternPanel [Comb]
+    , b.cutno [Cut]
+    , b.Article [Article]
+    , b.Colorid [Color]
+    , b.Article + '\' + b.Colorid [Color2]
+    , a.SizeCode [Size]
+    , a.PatternCode [Cutpart]
+    , '('+a.Patterncode+')' [Patterncode]
+    , a.PatternDesc [Description]
+    --,SubProcess.SubProcess [SubProcess]
+    , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
+    , a.Parts [Parts]
+    , a.Qty [Qty]
+    ,  [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , c.FactoryID  [left]
+    , e.MarkerNo
+    , SeasonID = concat(c.SeasonID,' ', c.dest)
+    , brand=c.brandid
+into #tmp
+from dbo.Bundle_Detail a WITH (NOLOCK)
+left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+outer apply
+(
+    select SubProcess = 
     (
-        select SubProcess = 
-        (
-            select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-            from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-            where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-            for xml path('')
-        )
-    )as SubProcess 
-    " + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
+        for xml path('')
+    )
+)as SubProcess 
+" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
                                         
-    union all
+union all
 
-    select DISTINCT 
-        Convert(bit,0) as selected
-        , a.PrintDate
-        , CreateDate = b.AddDate
-        , a.BundleNo [Bundle]
-        , b.CutRef [CutRef]
-        , b.POID [POID]
-        , b.Orderid [SP]
-        , a.BundleGroup [Group]
-        , b.Sewinglineid [Line]
-        , b.SewingCell [Cell]
-        , c.StyleID [Style]
-        , b.Item [Item]
-        , b.PatternPanel [Comb]
-        , b.cutno [Cut]
-        , b.Article [Article]
-        , b.Colorid [Color]
-        , b.Article + '\' + b.Colorid [Color2]
-        , a.SizeCode [Size]
-        , a.PatternCode [Cutpart]
-        , '('+a.Patterncode+')' [Patterncode]
-        , a.PatternDesc [Description]
-        --,SubProcess.SubProcess [SubProcess]
-        , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-        , a.Parts [Parts]
-        , a.Qty [Qty]
-        , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
-        , c.FactoryID  [left]
-        , e.MarkerNo
-        , SeasonID = concat(c.SeasonID,' ', c.dest)
-        , brand=c.brandid
-    from dbo.Bundle_Detail a WITH (NOLOCK)
-    left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
-    left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-    left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
-    outer apply
+select DISTINCT 
+    Convert(bit,0) as selected
+    , a.PrintDate
+    , CreateDate = b.AddDate
+    , a.BundleNo [Bundle]
+    , b.CutRef [CutRef]
+    , b.POID [POID]
+    , b.Orderid [SP]
+    , a.BundleGroup [Group]
+    , b.Sewinglineid [Line]
+    , b.SewingCell [Cell]
+    , c.StyleID [Style]
+    , b.Item [Item]
+    , b.PatternPanel [Comb]
+    , b.cutno [Cut]
+    , b.Article [Article]
+    , b.Colorid [Color]
+    , b.Article + '\' + b.Colorid [Color2]
+    , a.SizeCode [Size]
+    , a.PatternCode [Cutpart]
+    , '('+a.Patterncode+')' [Patterncode]
+    , a.PatternDesc [Description]
+    --,SubProcess.SubProcess [SubProcess]
+    , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
+    , a.Parts [Parts]
+    , a.Qty [Qty]
+    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , c.FactoryID  [left]
+    , e.MarkerNo
+    , SeasonID = concat(c.SeasonID,' ', c.dest)
+    , brand=c.brandid
+from dbo.Bundle_Detail a WITH (NOLOCK)
+left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
+left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
+outer apply
+(
+    select SubProcess = 
     (
-        select SubProcess = 
-        (
-            select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-            from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-            where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-            for xml path('')
-        )
-    )as SubProcess 
-    " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' " 
-+ @"
-)x
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
+        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
+        for xml path('')
+    )
+)as SubProcess 
+" + sqlWhere + @" 
+and a.Patterncode = 'ALLPARTS' 
+
+select distinct *
+from #tmp x
 outer apply
 (
 	select iif(msso.SizeSpec is not null, msso.SizeSpec, mss.SizeSpec) as SizeSpec
