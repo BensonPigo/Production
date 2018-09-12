@@ -87,7 +87,9 @@ namespace Sci.Production.PPIC
                                 from Orders o
                                 inner join Order_Artwork oa on o.ID = oa.ID
                                 left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-                                where o.ID in (select  id from Orders o1 where  o1.poID = '{0}' )
+                                where o.ID in (select  id from Orders o1 where 
+                                o1.POID = o.POID 
+                                AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
                                 group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID
                                 order by oa.ArtworkTypeID", this.Order_ArtworkId);
             DataTable head;
@@ -102,7 +104,9 @@ namespace Sci.Production.PPIC
                                 from Orders o
                                 inner join Order_Artwork oa on o.ID = oa.ID
                                 left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-                                where o.ID in (select  id from Orders o1 where  o1.poID = '{0}' )
+                                where o.ID in (select  id from Orders o1 where 
+                                o1.POID = o.POID 
+                                AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
                                 group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
                                 order by oa.ID", this.Order_ArtworkId);
             DataTable Left;
@@ -120,7 +124,9 @@ namespace Sci.Production.PPIC
                                 from Orders o
                                 inner join Order_Artwork oa on o.ID = oa.ID
                                 left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-                                where o.ID in (select  id from Orders o1 where  o1.poID = '{0}' )
+                                where o.ID in (select  id from Orders o1 where 
+                                o1.POID = o.POID 
+                                AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
                                 group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
                                 order by oa.ArtworkTypeID", this.Order_ArtworkId);
             DataTable value;
@@ -201,7 +207,9 @@ namespace Sci.Production.PPIC
                                 FROM Orders o
                                 INNER JOIN Order_Artwork oa ON o.ID = oa.ID
                                 LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
-                                WHERE Exists (select 1 FROM Orders o1 WHERE o1.POID = o.POID AND (o.ID = '{0}' or o1.POID='{0}') )
+                                WHERE Exists (select 1 FROM Orders o1 WHERE
+                                o1.POID = o.POID 
+                                AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
                                 GROUP BY o.POID ,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
                                 ORDER BY  oa.ArtworkTypeID, oa.ArtworkID, oa.PatternCode
 
@@ -220,7 +228,9 @@ namespace Sci.Production.PPIC
                                     FROM Orders o
                                     INNER JOIN Order_Artwork oa ON o.ID = oa.ID
                                     LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
-                                    WHERE Exists (select 1 FROM Orders o1 WHERE o1.POID = o.POID AND (o.ID = '{0}' or o1.POID='{0}') )
+                                    WHERE Exists (select 1 FROM Orders o1 WHERE
+                                    o1.POID = o.POID 
+                                    AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
                                     GROUP BY o.POID ,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
                                     )
                                     SELECT 
@@ -230,7 +240,9 @@ namespace Sci.Production.PPIC
                                     INNER JOIN Order_Artwork oa ON o.ID = oa.ID
                                     LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
                                     LEFT JOIN LeftCol lc ON  lc.ArtworkTypeID=oa.ArtworkTypeID AND lc.ArtworkID=oa.ArtworkID AND lc.PatternCode=oa.PatternCode
-                                    WHERE Exists (select 1 FROM Orders o1 WHERE o1.POID = o.POID AND (o.ID = '{0}' or o1.POID='{0}') )
+                                    WHERE Exists (select 1 FROM Orders o1 WHERE 
+                                    o1.POID = o.POID 
+                                    AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
                                     GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,oa.Article,o.Junk
                                     ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,oa.Article
 
