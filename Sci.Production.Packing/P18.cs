@@ -189,7 +189,7 @@ namespace Sci.Production.Packing
                 this.tabControlScanArea.SelectedTab = this.tabControlScanArea.TabPages[1];
                 this.txtScanEAN.Focus();
                 this.numBoxScanQty.Value = 0;
-                if (this.scanDetailBS != null)
+                if (this.scanDetailBS.DataSource != null)
                 {
                     this.numBoxScanTtlQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (int)s["QtyPerCTN"]);
                 }
