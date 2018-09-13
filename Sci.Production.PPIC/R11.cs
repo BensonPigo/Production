@@ -415,7 +415,7 @@ from
 並且BuyerDelivery > ReadyDate。*/
 
 	select * from #tmp1
-	where BuyerDelivery > ReadyDate	
+	where BuyerDelivery >= ReadyDate	
 
 union all
 
