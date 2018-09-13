@@ -100,7 +100,7 @@ select 0 as Selected, isnull(o.SeamLength,0) SeamLength
       ,o.DescEN as OperationDescEN
       ,td.MtlFactorID
       , m.DescEN
-      ,(isnull(td.Frequency,0) * isnull(td.SeamLength,0)) as ttlSeamLength
+      ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join Mold m WITH (NOLOCK) on m.ID=td.Mold
