@@ -524,10 +524,13 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             // 如果都掃完 update PackingList_Detail
             if (this.numBoxScanQty.Value == this.numBoxScanTtlQty.Value)
             {
-                if (!(sql_result = DBProxy.Current.Execute(null, upd_sql_barcode)))
+                if (!MyUtility.Check.Empty(this.upd_sql_barcode))
                 {
-                    this.ShowErr(sql_result);
-                    return;
+                    if (!(sql_result = DBProxy.Current.Execute(null, this.upd_sql_barcode)))
+                    {
+                        this.ShowErr(sql_result);
+                        return;
+                    }
                 }
 
                 string upd_sql = $@"update PackingList_Detail set ScanQty = QtyPerCTN , ScanEditDate = GETDATE(), ScanName = '{Env.User.UserID}' 
