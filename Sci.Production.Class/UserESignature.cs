@@ -34,16 +34,21 @@ namespace Sci.Production.Class
         public static Image getUserESignature(string UserID)
         {
             string FilePath = getESignaturePath() + MyUtility.GetValue.Lookup($@"select ESignature from Pass1 where id='{UserID}'");
-         
+
             if (File.Exists(FilePath))
             {
-                Image img = Image.FromFile(FilePath);
+                Image img = null;
+                using (FileStream stream = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
+                {
+                    img = new Bitmap(Image.FromStream(stream));
+                }
+
                 return img;
             }
             else
             {
                 return null;
-            }           
+            }
         }
 
         /// <summary>
