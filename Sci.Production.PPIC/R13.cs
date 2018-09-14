@@ -330,7 +330,7 @@ select	o.MDivisionID,
 		[HT] = isnull(SubProcess.HT,iif(SubProcessOut.HT is not null,0,null)),
 		[PAD-PRT] = isnull(SubProcess.[PAD-PRT],iif(SubProcessOut.[PAD-PRT] is not null,0,null)),
 		[PRINTING] = isnull(SubProcess.PRT,iif(SubProcessOut.PRT is not null,0,null)),
-		[SubCon] = otc.LocalSuppID,
+		[SubCon] = ls.abb,
 		[ReadyDate] = o.OriReadyDate,
 		[LoadingStatus] = iif(LoadingQty.value >= o.Qty,'Y',''),
 		[Ready] = case when subprocessqty.chksubprocesqty >= inoutcount.ct then 'Y' end
@@ -338,6 +338,7 @@ into #detailResult
 from #orders_tmp o 
 left join Country c with (Nolock) on c.id= o.Dest
 left join Order_TmsCost otc with (nolock) on o.id = otc.id and ArtworkTypeID = 'Printing'
+left join Localsupp ls with (nolock) on otc.LocalSuppID=ls.id
 left join #tmpin2 SubProcess with (Nolock) on SubProcess.SP = o.ID
 left join #tmpoutFin SubProcessOut with (Nolock) on SubProcessOut.SP = o.ID
 outer apply(
