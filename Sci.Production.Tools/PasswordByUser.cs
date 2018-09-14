@@ -299,7 +299,6 @@ namespace Sci.Production.Tools
                     if (string.IsNullOrEmpty(this.disBoxESignature.Text)) return;
                     picturePage = new PictureSubPage(img);                  
                     picturePage.ShowDialog(this);
-                    img.Dispose();
                     break;
                 // 編輯模式,只能Clear照片
                 case true:
