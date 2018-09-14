@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Sci.Data;
 
 namespace Sci.Production.Class
 {
@@ -18,7 +19,9 @@ namespace Sci.Production.Class
         /// </summary>
         public static string getESignaturePath()
         {
-            string PicPath = MyUtility.GetValue.Lookup(@"select PicPath from System WITH (NOLOCK)") + "ESignature\\";
+            // 取得當前Config moudle位置 Dummy or Formal
+            string dbName = DBProxy.Current.DefaultModuleName;
+            string PicPath = MyUtility.GetValue.Lookup(@"select PicPath from System WITH (NOLOCK)") + @"\" + dbName + @"\" + @"ESignature\";
             if (!Directory.Exists(PicPath))
             {
                 Directory.CreateDirectory(PicPath);
