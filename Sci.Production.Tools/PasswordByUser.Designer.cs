@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.btnShowImg = new Sci.Win.UI.Button();
+            this.btnSetPic = new Sci.Win.UI.Button();
+            this.disBoxESignature = new Sci.Win.UI.DisplayBox();
+            this.labESignature = new Sci.Win.UI.Label();
             this.checkAdmin = new Sci.Win.UI.CheckBox();
             this.txtPosition = new Sci.Win.UI.TextBox();
             this.txtUserDeputy = new Sci.Production.Class.txtuser();
@@ -78,11 +82,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(993, 541);
+            this.browse.Size = new System.Drawing.Size(993, 572);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1001, 570);
+            this.tabs.Size = new System.Drawing.Size(1001, 601);
             // 
             // createby
             // 
@@ -101,6 +105,10 @@
             // 
             this.radioGroup1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.radioGroup1.Controls.Add(this.btnShowImg);
+            this.radioGroup1.Controls.Add(this.btnSetPic);
+            this.radioGroup1.Controls.Add(this.disBoxESignature);
+            this.radioGroup1.Controls.Add(this.labESignature);
             this.radioGroup1.Controls.Add(this.checkAdmin);
             this.radioGroup1.Controls.Add(this.txtPosition);
             this.radioGroup1.Controls.Add(this.txtUserDeputy);
@@ -134,6 +142,45 @@
             this.radioGroup1.Size = new System.Drawing.Size(463, 494);
             this.radioGroup1.TabIndex = 3;
             this.radioGroup1.TabStop = false;
+            // 
+            // btnShowImg
+            // 
+            this.btnShowImg.Location = new System.Drawing.Point(293, 493);
+            this.btnShowImg.Name = "btnShowImg";
+            this.btnShowImg.Size = new System.Drawing.Size(80, 30);
+            this.btnShowImg.TabIndex = 57;
+            this.btnShowImg.Text = "Show";
+            this.btnShowImg.UseVisualStyleBackColor = true;
+            this.btnShowImg.Click += new System.EventHandler(this.btnShowImg_Click);
+            // 
+            // btnSetPic
+            // 
+            this.btnSetPic.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnSetPic.Location = new System.Drawing.Point(253, 493);
+            this.btnSetPic.Name = "btnSetPic";
+            this.btnSetPic.Size = new System.Drawing.Size(34, 30);
+            this.btnSetPic.TabIndex = 56;
+            this.btnSetPic.Text = "...";
+            this.btnSetPic.UseVisualStyleBackColor = true;
+            this.btnSetPic.Click += new System.EventHandler(this.btnSetPic_Click);
+            // 
+            // disBoxESignature
+            // 
+            this.disBoxESignature.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disBoxESignature.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ESignature", true));
+            this.disBoxESignature.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disBoxESignature.Location = new System.Drawing.Point(96, 496);
+            this.disBoxESignature.Name = "disBoxESignature";
+            this.disBoxESignature.Size = new System.Drawing.Size(155, 23);
+            this.disBoxESignature.TabIndex = 55;
+            // 
+            // labESignature
+            // 
+            this.labESignature.Location = new System.Drawing.Point(12, 496);
+            this.labESignature.Name = "labESignature";
+            this.labESignature.Size = new System.Drawing.Size(81, 23);
+            this.labESignature.TabIndex = 54;
+            this.labESignature.Text = "E- Signature";
             // 
             // checkAdmin
             // 
@@ -236,6 +283,7 @@
             this.comboLanguage.IsSupportUnselect = true;
             this.comboLanguage.Location = new System.Drawing.Point(322, 297);
             this.comboLanguage.Name = "comboLanguage";
+            this.comboLanguage.OldText = "";
             this.comboLanguage.Size = new System.Drawing.Size(121, 24);
             this.comboLanguage.TabIndex = 11;
             // 
@@ -422,13 +470,14 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(418, 349);
             this.grid1.TabIndex = 15;
             this.grid1.TabStop = false;
             // 
             // PasswordByUser
             // 
-            this.ClientSize = new System.Drawing.Size(1001, 603);
+            this.ClientSize = new System.Drawing.Size(1001, 634);
             this.DefaultControl = "txtIDStart";
             this.GridAlias = "Pass2";
             this.IsSupportCopy = false;
@@ -485,5 +534,9 @@
         private Class.txtuser txtUserManager;
         private Win.UI.TextBox txtPosition;
         private Win.UI.CheckBox checkAdmin;
+        private Win.UI.Label labESignature;
+        private Win.UI.Button btnShowImg;
+        private Win.UI.Button btnSetPic;
+        private Win.UI.DisplayBox disBoxESignature;
     }
 }

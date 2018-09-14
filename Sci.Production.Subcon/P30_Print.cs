@@ -13,6 +13,8 @@ using System.Linq;
 using System.Reflection;
 using Ict.Win;
 using System.Runtime.InteropServices;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace Sci.Production.Subcon
 {
@@ -87,7 +89,7 @@ select
         ,a.UnitId [Unit]
         ,format(Cast(a.Price*a.Qty as decimal(20,2)),'#,###,###,##0.00') [Amount]
 		,SortRefno = ROW_NUMBER() Over (Partition By Refno Order By a.Delivery, a.Refno)
-		,b.Category
+		,b.Category,b.apvname
 --into #tmp
 from dbo.LocalPO_Detail a WITH (NOLOCK) 
 left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
@@ -148,11 +150,12 @@ select
 		,[Unit] = a.UnitId 
         ,[UPrice] = a.Price 
         ,[Amount] = format(Cast(sum(a.Price*a.Qty) as decimal(20,4)),'#,###,###,##0.0000') 
+        ,b.apvname
 into #temp
 from dbo.LocalPO_Detail a WITH (NOLOCK) 
 left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
 where a.id=@ID
-group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery
+group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery,b.apvname
 
 select Sort = ROW_NUMBER() Over (Partition By Delivery Order By Delivery),* 
 from #temp
@@ -218,7 +221,8 @@ order by orderid,a.refno,threadcolorid", currentID);
                 decimal vat = MyUtility.Convert.GetDecimal(CurrentDataRow["vat"]);
                 string CurrencyID = CurrentDataRow["CurrencyID"].ToString();
                 string vatrate = CurrentDataRow["vatrate"].ToString() + "%";
-                string Remark = CurrentDataRow["remark"].ToString();
+                string Remark = CurrentDataRow["remark"].ToString();               
+                
                 decimal Total = (decimal)CurrentDataRow["amount"] + (decimal)CurrentDataRow["vat"];
                 report = new ReportDefinition();
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", RptTitle));
@@ -248,13 +252,13 @@ order by orderid,a.refno,threadcolorid", currentID);
                         SP = row1["SP"].ToString().Trim(),
                         Delivery = (row1["Delivery"] == DBNull.Value) ? "" : Convert.ToDateTime(row1["Delivery"]).ToShortDateString().Trim(),
                         Refno = row1["Refno"].ToString().Trim(),
-                    //Refno2 = row1["Refno2"].ToString().Trim(),
-                    Color_Shade = row1["Color_Shade"].ToString().Trim(),
+                        Color_Shade = row1["Color_Shade"].ToString().Trim(),
                         Description = row1["Description"].ToString().Trim(),
                         UPrice = row1["UPrice"].ToString().Trim(),
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
                         Amount = Convert.ToDecimal(row1["Amount"]),
+                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(row1["apvname"].ToString())
                     }).ToList();
 
                 report.ReportDataSource = data;
@@ -305,6 +309,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
                         Amount = Convert.ToDecimal(row1["Amount"]),
+                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(row1["apvname"].ToString())
                     }).ToList();
 
                 report.ReportDataSource = data;

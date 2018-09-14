@@ -368,7 +368,7 @@ namespace Sci.Production.Cutting
                     MyUtility.Msg.ErrorBox(result.ToString(), "error");
                     return false;
                 }
-                result = DBProxy.Current.Select("", string.Format(@"select id,StyleID,SeasonID,CdCodeID,FactoryID,BrandID from orders where id='{0}'", _id), out dtOrder);
+                result = DBProxy.Current.Select("", string.Format(@"select id,StyleID,SeasonID,CdCodeID,FactoryID,BrandID,ProgramID from orders where id='{0}'", _id), out dtOrder);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox(result.ToString(), "error");
@@ -424,6 +424,7 @@ namespace Sci.Production.Cutting
                 sxr.DicDatas.Add(sxr.VPrefix + "CDCode", "CD CCODE: " + dtOrder.Rows[0]["CdCodeID"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Factory", "FACTORY: " + dtOrder.Rows[0]["FactoryID"].ToString());
                 sxr.DicDatas.Add(sxr.VPrefix + "Customer", "CUSTOMER: " + dtOrder.Rows[0]["BrandID"].ToString());
+                sxr.DicDatas.Add(sxr.VPrefix + "Program", "PROGRAM: " + dtOrder.Rows[0]["ProgramID"].ToString());
                 DataTable dtMarkerNo;
                 result = DBProxy.Current.Select("", string.Format(@"select top 1 MarkerNo from order_eachcons where id='{0}'", _id), out dtMarkerNo);
                 if (!result)
@@ -440,7 +441,7 @@ namespace Sci.Production.Cutting
                 // 設定Sheet2 格式
                 Microsoft.Office.Interop.Excel.Worksheet wkcolor = sxr.ExcelApp.Sheets[2];
                 string sc2 = MyExcelPrg.GetExcelColumnName(dt2.Columns.Count);
-                int rowCnt = dt_Sheet2[0].Rows.Count + 7;
+                int rowCnt = dt_Sheet2[0].Rows.Count + 8;
                 wkcolor.get_Range(string.Format("A2:{0}2", sc2)).Merge();
                 wkcolor.get_Range(string.Format("A3:{0}3", sc2)).Merge();   
                 sxr.FontName = "Times New Roman";
@@ -470,8 +471,8 @@ namespace Sci.Production.Cutting
                 int lineChg_Count = 0;
                 for (int ii = 0; ii < dtSheet2.Rows.Count; ii++)
                 {
-                    string currentArticle = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[8 + ii, 1]).Text);
-                    string currentLine = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[8 + ii, 2]).Text);
+                    string currentArticle = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + ii, 1]).Text);
+                    string currentLine = MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + ii, 2]).Text);
                     string mergeArticle = dtMerge.Rows[artChg_Count]["SHELL A/ SIZE"].ToString();
                     string mergeSewLine = dtSewLing.Rows[lineChg_Count]["Sewing Line"].ToString();
 
@@ -480,14 +481,14 @@ namespace Sci.Production.Cutting
                         rangeMerge1++;
 
                         // 拿當前資料比較下一筆如果Aricle不同,就合併相同的範圍
-                        if (mergeArticle != MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[8 + ii + 1, 1]).Text))
+                        if (mergeArticle != MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + ii + 1, 1]).Text))
                         {
                             // 合併
-                            wkcolor.Range[string.Format("A{0}", 8 + ii - rangeMerge1 + 1), string.Format("A{0}", 8 + ii)].Merge();
+                            wkcolor.Range[string.Format("A{0}", 9 + ii - rangeMerge1 + 1), string.Format("A{0}", 9 + ii)].Merge();
                             // 水平置中
-                            wkcolor.Range[string.Format("A{0}", 8 + ii - rangeMerge1 + 1), string.Format("A{0}", 8 + ii)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                            wkcolor.Range[string.Format("A{0}", 9 + ii - rangeMerge1 + 1), string.Format("A{0}", 9 + ii)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                             // 垂直置中
-                            wkcolor.Range[string.Format("A{0}", 8 + ii - rangeMerge1 + 1), string.Format("A{0}", 8 + ii)].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                            wkcolor.Range[string.Format("A{0}", 9 + ii - rangeMerge1 + 1), string.Format("A{0}", 9 + ii)].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
                             // 拿來比較的值不可超出範圍,更新後的值須要回頭比對上一筆資料
                             if (artChg_Count < dtMerge.Rows.Count - 1)
@@ -505,13 +506,13 @@ namespace Sci.Production.Cutting
                             rangeMerge2++;
 
                             // 下一筆sewingline不同,代表當前欄位為合併的終點
-                            if (mergeSewLine != MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[8 + ii + 1, 2]).Text))
+                            if (mergeSewLine != MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + ii + 1, 2]).Text))
                             {
-                                wkcolor.Range[string.Format("B{0}", 8 + ii - rangeMerge2 + 1), string.Format("B{0}", 8 + ii)].Merge();
+                                wkcolor.Range[string.Format("B{0}", 9 + ii - rangeMerge2 + 1), string.Format("B{0}", 9 + ii)].Merge();
                                 // 水平置中
-                                wkcolor.Range[string.Format("B{0}", 8 + ii - rangeMerge2 + 1), string.Format("B{0}", 8 + ii)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                                wkcolor.Range[string.Format("B{0}", 9 + ii - rangeMerge2 + 1), string.Format("B{0}", 9 + ii)].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                                 // 垂直置中
-                                wkcolor.Range[string.Format("B{0}", 8 + ii - rangeMerge2 + 1), string.Format("B{0}", 8 + ii)].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                                wkcolor.Range[string.Format("B{0}", 9 + ii - rangeMerge2 + 1), string.Format("B{0}", 9 + ii)].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
                                 if (lineChg_Count < dtSewLing.Rows.Count - 1)
                                 {
@@ -526,8 +527,8 @@ namespace Sci.Production.Cutting
 
                 #region 填入Sheet2 底部的Line
                 // 依Line分類
-                // 計算SewingLine 底部清單放置位置 8=表身資料第一筆 + 總共表身資料筆數 + 1(一行Date+一行空白)
-                int countLine = 8 + dt_Sheet2[0].Rows.Count + 2;
+                // 計算SewingLine 底部清單放置位置 9=表身資料第一筆 + 總共表身資料筆數 + 1(一行Date+一行空白)
+                int countLine = 9 + dt_Sheet2[0].Rows.Count + 2;
                 DataTable dtBottom = dt_Sheet2[1].Copy();
                 DataTable distLine;
                 int countTotal = 0;
@@ -564,8 +565,8 @@ namespace Sci.Production.Cutting
                 // 顏色群組,以原始table計算,差別在原始有article,產生的Excel沒有
                 string range = MyExcelPrg.GetExcelColumnName(dtSheet2.Columns.Count - 6);
                 string wholRange = MyExcelPrg.GetExcelColumnName(dtSheet2.Columns.Count);
-                wkcolor.Range["A7", string.Format("{0}7", wholRange)].Interior.Color = Color.FromArgb(146, 208, 80);
-                wkcolor.Range["A7", string.Format("{0}7", wholRange)].Font.Color = Color.FromArgb(255, 0, 0);
+                wkcolor.Range["A8", string.Format("{0}8", wholRange)].Interior.Color = Color.FromArgb(146, 208, 80);
+                wkcolor.Range["A8", string.Format("{0}8", wholRange)].Font.Color = Color.FromArgb(255, 0, 0);
 
                 int ArticleID = 0;
                 for (int i = 0; i < dt_Sheet2[0].Rows.Count; i++)
@@ -581,11 +582,11 @@ namespace Sci.Production.Cutting
 
                     if (currentArticle==distArticle)
                     {
-                        wkcolor.Range[string.Format("A{0}", 8 + i), string.Format("{0}{1}", range, 8 + i)].Font.Color = Color.FromArgb(red, green, blue);
+                        wkcolor.Range[string.Format("A{0}", 9 + i), string.Format("{0}{1}", range, 9 + i)].Font.Color = Color.FromArgb(red, green, blue);
                     }
                     else
                     {
-                        wkcolor.Range[string.Format("A{0}", 8 + i - 1), string.Format("{0}{1}", wholRange, 8 + i - 1)].Interior.Color = Color.FromArgb(146, 208, 80);
+                        wkcolor.Range[string.Format("A{0}", 9 + i - 1), string.Format("{0}{1}", wholRange, 9 + i - 1)].Interior.Color = Color.FromArgb(146, 208, 80);
                         if (ArticleID < dtArticle.Rows.Count - 1)
                         {
                             ArticleID++;
@@ -594,16 +595,16 @@ namespace Sci.Production.Cutting
                     }
                 }
                 // 改變最後Total 顏色
-                wkcolor.Range[string.Format("A{0}", 7 + dt_Sheet2[0].Rows.Count), string.Format("{0}{1}", wholRange, 7 + dt_Sheet2[0].Rows.Count)].Interior.Color = Color.FromArgb(146, 208, 80);
-                wkcolor.Range[string.Format("{0}7", range), string.Format("{0}{1}", range,dt2.Rows.Count+7)].Interior.Color = Color.FromArgb(146, 208, 80);
-                wkcolor.Range[string.Format("A{0}", 7 + dt_Sheet2[0].Rows.Count), string.Format("{0}{1}", wholRange, 7 + dt_Sheet2[0].Rows.Count)].Font.Color = Color.FromArgb(255, 0, 0);
+                wkcolor.Range[string.Format("A{0}", 8 + dt_Sheet2[0].Rows.Count), string.Format("{0}{1}", wholRange, 8 + dt_Sheet2[0].Rows.Count)].Interior.Color = Color.FromArgb(146, 208, 80);
+                wkcolor.Range[string.Format("{0}8", range), string.Format("{0}{1}", range,dt2.Rows.Count+8)].Interior.Color = Color.FromArgb(146, 208, 80);
+                wkcolor.Range[string.Format("A{0}", 8 + dt_Sheet2[0].Rows.Count), string.Format("{0}{1}", wholRange, 8 + dt_Sheet2[0].Rows.Count)].Font.Color = Color.FromArgb(255, 0, 0);
                 #endregion
 
                 // 產生報表後的額外處理
                 // 畫框線 必須要Save完後處理,不然框線範圍會是Sheet1+Sheet2的總和
                 #region 畫框線
                 Microsoft.Office.Interop.Excel.Range rg1;
-                rg1 = wkcolor.Range["A7", string.Format("{0}{1}", sc2, rowCnt)];                
+                rg1 = wkcolor.Range["A8", string.Format("{0}{1}", sc2, rowCnt)];                
                 rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
                 rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
                 rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
@@ -650,13 +651,13 @@ select distinct sizecode,Seq
                 for (int i = 0; i < dt2RowsCnt; i++)
                 {
                     // 直向Total
-                    wkcolor.Cells[8 + i,dt2ColsCnt - 6 ].Value = string.Format("=SUM({0}{1}:{2}{1})", MyExcelPrg.GetExcelColumnName(3), 8 + i, MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 7));
+                    wkcolor.Cells[9 + i,dt2ColsCnt - 6 ].Value = string.Format("=SUM({0}{1}:{2}{1})", MyExcelPrg.GetExcelColumnName(3), 9 + i, MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 8));
 
                     // 取得相同的Article 數量
                     DataRow[] drArtCnt = dt_Sheet2[0].Select(string.Format("Article='{0}' and SPNO <>'' ", dt_Sheet2[0].Rows[i]["Article"]));
 
                     // 取得報表為Total columns
-                    string TotalCol =MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[8 + i, 1]).Text);
+                    string TotalCol =MyUtility.Convert.GetString(((Microsoft.Office.Interop.Excel.Range)wkcolor.Cells[9 + i, 1]).Text);
 
                     // 字串為空值代表被合併存格所以跳下一筆資料
                     if (TotalCol.Length==0)
@@ -671,7 +672,7 @@ select distinct sizecode,Seq
                             // if: 非最後一行, else: 最後一行加總
                             if (dt2RowsCnt != i + 1)
                             {
-                                wkcolor.Cells[8 + i, 3 + ii].Value = string.Format("=SUM({0}{1}:{0}{2})", MyExcelPrg.GetExcelColumnName(3 + ii), 8 + i - drArtCnt.Length, 8 + i - 1);  
+                                wkcolor.Cells[9 + i, 3 + ii].Value = string.Format("=SUM({0}{1}:{0}{2})", MyExcelPrg.GetExcelColumnName(3 + ii), 9 + i - drArtCnt.Length, 9 + i - 1);  
                             }
                             else
                             {
@@ -680,15 +681,15 @@ select distinct sizecode,Seq
                                 {
                                     sumValue = sumValue + string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(3 + ii), dtTotalNub.Rows[iii]["NubPosition"]) + ",";
                                 }
-                                wkcolor.Cells[8 + i, 3 + ii].Value = string.Format("=SUM({0})", sumValue.ToString().Substring(0, sumValue.Length - 1));
+                                wkcolor.Cells[9 + i, 3 + ii].Value = string.Format("=SUM({0})", sumValue.ToString().Substring(0, sumValue.Length - 1));
                             }
                         }
                         DataRow dr = dtTotalNub.NewRow();
-                        dr["NubPosition"] = 8 + i;
+                        dr["NubPosition"] = 9 + i;
                         dtTotalNub.Rows.Add(dr);
 
                         // 合併 Total
-                        wkcolor.Range[string.Format("A{0}", 8 + i), string.Format("B{0}", 8 + i)].Merge();
+                        wkcolor.Range[string.Format("A{0}", 9 + i), string.Format("B{0}", 9 + i)].Merge();
                     }
 
                 }
@@ -704,8 +705,8 @@ select distinct sizecode,Seq
                 // 最適欄寬
                 wkcolor.Cells.EntireColumn.AutoFit();
                 // 自動換列                
-                wkcolor.Range["A7", string.Format("A{0}", rowCnt)].WrapText = true;
-                wkcolor.Range["A7", string.Format("{0}7", sc2)].WrapText = true;
+                wkcolor.Range["A8", string.Format("A{0}", rowCnt)].WrapText = true;
+                wkcolor.Range["A8", string.Format("{0}8", sc2)].WrapText = true;
 
                 // 調整欄位 SHELL A/ SIZE 寬度
                 wkcolor.Columns[1].ColumnWidth = 12;
@@ -723,7 +724,7 @@ select distinct sizecode,Seq
                 // 調整欄位 EX-FTY Date 寬度
                 wkcolor.Columns[dt2ColsCnt - 1].ColumnWidth = 11;
                 // 加入註解                
-                wkcolor.Cells[7, dt2ColsCnt - 1].AddComment("One day in advance and Exclude weekend");
+                wkcolor.Cells[8, dt2ColsCnt - 1].AddComment("One day in advance and Exclude weekend");
                 // 調整欄位CUST CD 寬度
                 wkcolor.Columns[dt2ColsCnt - 2].ColumnWidth = 13;
                 // 調整欄位 P.O.No 寬度
@@ -736,17 +737,17 @@ select distinct sizecode,Seq
                 wkcolor.Columns[dt2ColsCnt - 6].ColumnWidth = 8;
                 
                 // 調整Sheet2表身Table header
-                wkcolor.Rows[7].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                wkcolor.Rows[7].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                wkcolor.Rows[7].RowHeight = 48;
+                wkcolor.Rows[8].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                wkcolor.Rows[8].VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                wkcolor.Rows[8].RowHeight = 48;
 
                 // 將表身數字欄位都置中
-                Microsoft.Office.Interop.Excel.Range rgBody = wkcolor.Range["A8", string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 6), rowCnt)];
+                Microsoft.Office.Interop.Excel.Range rgBody = wkcolor.Range["A9", string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 6), rowCnt)];
                 rgBody.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
                 rgBody.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
                 // 將表身欄位 :SPNO,OrderNo,P.O.No,CUST CD 都自動換列置中
-                Microsoft.Office.Interop.Excel.Range rgBody2 = wkcolor.Range[string.Format("{0}8", MyExcelPrg.GetExcelColumnName(dt2ColsCnt-5)), string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 2), rowCnt)];
+                Microsoft.Office.Interop.Excel.Range rgBody2 = wkcolor.Range[string.Format("{0}9", MyExcelPrg.GetExcelColumnName(dt2ColsCnt-5)), string.Format("{0}{1}", MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 2), rowCnt)];
                 rgBody2.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter; 
                 rgBody2.WrapText = true;
 
@@ -779,7 +780,7 @@ select distinct sizecode,Seq
 
                 // 設定從第幾行開始凍結                
                 wkcolor.Activate();
-                wkcolor.Range["A8"].Select();
+                wkcolor.Range["A9"].Select();
                 // 進行凍結視窗
                 wkcolor.Application.ActiveWindow.FreezePanes = true;
                 #endregion
