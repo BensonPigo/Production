@@ -266,7 +266,11 @@ namespace Sci.Production.Packing
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
 
-            this.IDX.IdxCall(254, "A:0=0" , "A:0=0".Length);
+            P09_IDX_CTRL iDX = new P09_IDX_CTRL();
+            if (iDX.IdxCall(1, "8:?", 4))
+            {
+                this.IDX = iDX;
+            }
         }
 
         /// <summary>
