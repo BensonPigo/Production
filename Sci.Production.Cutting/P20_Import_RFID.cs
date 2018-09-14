@@ -59,6 +59,8 @@ namespace Sci.Production.Cutting
                         ndr["cons"] = dr["cons"];
                         ndr["sizeRatio"] = dr["sizeRatio"];
                         ndr["WorkorderUkey"] = dr["WorkorderUkey"];
+                        ndr["SizeRatioQty"] = dr["SizeRatioQty"];
+                        ndr["WorkorderUkey"] = dr["WorkorderUkey"];
                         currentdetailTable.Rows.Add(ndr);
                     }
                     else
@@ -78,6 +80,8 @@ namespace Sci.Production.Cutting
                         exist[0]["Colorid"] = dr["Colorid"];
                         exist[0]["cons"] = dr["cons"];
                         exist[0]["sizeRatio"] = dr["sizeRatio"];
+                        exist[0]["ConsPC"] = dr["ConsPC"];
+                        exist[0]["SizeRatioQty"] = dr["SizeRatioQty"];
                     }
                 }
                 gridTable.Clear();
@@ -101,16 +105,22 @@ namespace Sci.Production.Cutting
                     return;
                 }
                 var dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
-
+                if (MyUtility.Convert.GetInt(e.FormattedValue).EqualDecimal(0))
+                {
+                    MyUtility.Msg.WarningBox("Cutting layer can not be zero.");
+                    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
+                    e.Cancel = true;
+                    return;
+                }
                 if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
                 {
                     MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
-                    dr["CuttingLayer"] = 0;
-                    dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["CuttingLayer"]);
-                    dr.EndEdit();
+                    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
+                    e.Cancel = true;
                     return;
                 }
                 dr["CuttingLayer"] = e.FormattedValue;
+                dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
                 dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["CuttingLayer"]);
 
                 dr.EndEdit();
@@ -173,9 +183,11 @@ select 0 as sel,
 	WorkOderLayer = wo.Layer,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
 	CuttingLayer = wo.Layer-isnull(acc.AccuCuttingLayer,0),
-	LackingLayers = 0
+	LackingLayers = 0,
+    SRQ.SizeRatioQty
 from WorkOrder WO WITH (NOLOCK) 
 outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = wo.Ukey)acc
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = wo.Ukey)SRQ
 where mDivisionid = '{0}' 
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''

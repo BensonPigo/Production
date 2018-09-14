@@ -79,9 +79,11 @@ Select a.* , e.FabricCombo, e.FabricPanelCode,
 	, WorkOderLayer = e.Layer
 	, AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
     , LackingLayers = e.Layer - a.layer
+    , e.ConsPC,SRQ.SizeRatioQty
 From cuttingoutput_Detail a WITH (NOLOCK)
 inner join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = e.Ukey and id <> '{0}')acc
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = e.Ukey)SRQ
 where a.id = '{0}' 
 ORDER BY CutRef
             ", masterID);
@@ -147,9 +149,11 @@ Select
 	WorkOderLayer = a.Layer,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
 	CuttingLayer = a.Layer-isnull(acc.AccuCuttingLayer,0),
-	LackingLayers = 0
+	LackingLayers = 0,
+    a.ConsPC,SRQ.SizeRatioQty
 from WorkOrder a WITH (NOLOCK)
 outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey)acc
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
 where CutRef = '{e.FormattedValue}'
 and CutRef != ''
 and a.Layer > isnull(acc.AccuCuttingLayer,0)
@@ -172,6 +176,8 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                         dr["FabricPanelCode"] = "";
                         dr["Workorderukey"] = 0;
                         dr["SizeRatio"] = "";
+                        dr["ConsPC"] = 0;
+                        dr["SizeRatioQty"] = 0;
                         dr.EndEdit();
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox("<Cut Ref> data not found.");
@@ -209,6 +215,8 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 dr["colorID"] = seldr["colorID"];
                 dr["Workorderukey"] = seldr["Ukey"];
                 dr["SizeRatio"] = seldr["SizeRatio"];
+                dr["ConsPC"] = seldr["ConsPC"];
+                dr["SizeRatioQty"] = seldr["SizeRatioQty"];
                 dr.EndEdit();     
             };
             #endregion
@@ -222,7 +230,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 }
             };
             #endregion
-
+            #region Cutting Layer
             Ict.Win.DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
             Layer.CellValidating += (s, e) =>
             {
@@ -235,20 +243,21 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     return;
                 }
                 var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
                 if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
                 {
                     MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
                     dr["Layer"] = 0;
-                    dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["Layer"]);
+                    dr["Cons"] = 0;
                     dr.EndEdit();
                     return;
                 }
                 dr["Layer"] = e.FormattedValue;
+                dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
                 dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["Layer"]);
 
                 dr.EndEdit();
             };
+            #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), settings: cutref)
@@ -311,6 +320,20 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 MyUtility.Msg.WarningBox("<Factory> can not be empty.");
                 return false;
             }
+            // 檢查表身不能裁0層
+            DataRow[] chkzero = ((DataTable)this.detailgridbs.DataSource).Select("Layer = '0'");
+            if (chkzero.Length > 0)
+            {
+                List<string> chkZeroItemList = new List<string>();
+                foreach (DataRow item in chkzero)
+                {
+                    chkZeroItemList.Add(MyUtility.Convert.GetString(item["Cutref"]));
+                }
+                string chkZeroItemMsg = $"Cutref: [{string.Join(",", chkZeroItemList)}] layers can not be zero.";
+                MyUtility.Msg.WarningBox(chkZeroItemMsg);
+                return false;
+            }
+
             if (this.IsDetailInserting)
             {
                 string date = dateDate.Text;

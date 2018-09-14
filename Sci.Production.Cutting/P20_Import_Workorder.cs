@@ -57,16 +57,22 @@ namespace Sci.Production.Cutting
                     return;
                 }
                 var dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
-
+                if (MyUtility.Convert.GetInt(e.FormattedValue).EqualDecimal(0))
+                {
+                    MyUtility.Msg.WarningBox("Cutting layer can not be zero.");
+                    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
+                    e.Cancel = true;
+                    return;
+                }
                 if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
                 {
                     MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
-                    dr["CuttingLayer"] = 0;
-                    dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["CuttingLayer"]);
-                    dr.EndEdit();
+                    dr["CuttingLayer"] = dr["CuttingLayer",DataRowVersion.Original];
+                    e.Cancel = true;
                     return;
                 }
                 dr["CuttingLayer"] = e.FormattedValue;
+                dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
                 dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"])- MyUtility.Convert.GetInt(dr["AccuCuttingLayer"])- MyUtility.Convert.GetInt(dr["CuttingLayer"]);
 
                 dr.EndEdit();
@@ -133,9 +139,11 @@ Select sel = 0,
 	WorkOderLayer = a.Layer,
 	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
 	CuttingLayer = a.Layer-isnull(acc.AccuCuttingLayer,0),
-	LackingLayers = 0
+	LackingLayers = 0,
+    SRQ.SizeRatioQty
 from WorkOrder a WITH (NOLOCK)
 outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey)acc
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
 where mDivisionid = '{0}' and a.estcutdate = '{1}'
 and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and CutRef != ''
