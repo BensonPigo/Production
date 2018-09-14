@@ -403,6 +403,7 @@ where Poid='{dr["id"]}' and seq1='{dr["Seq1"]}' and seq2='{dr["Seq2"]}'",out dru
             .Text("ALocation", header: "Bulk Location", iseditingreadonly: true, settings: ts9)  //31
             .Text("BLocation", header: "Stock Location", iseditingreadonly: true, settings: ts11)  //32
             .Text("FIR", header: "FIR", iseditingreadonly: true, settings: ts10)  //33
+            .Text("WashLab", header: "WashLab Report", iseditingreadonly: true, settings: ts10)  //33
             .Text("Preshrink", header: "Preshrink", iseditingreadonly: true)  //34
             .Text("Remark", header: "Remark", iseditingreadonly: true)  //35
             ;
@@ -516,22 +517,56 @@ Group by OrderID,RefNo,ThreadColorID,UnitID
             ,a.SEQ2 SEQ2
             , CASE 
 	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
+	            when isnull(a.result,'')='' then 'Blank'
 	            else a.result
 	          END as [Result] 
     from dbo.FIR a WITH (NOLOCK) 
     left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
     where   a.POID LIKE @id
-    UNION
+    UNION all
 	Select   c.InvNo InvNo
             ,a.POID POID
             ,a.SEQ1 SEQ1
             ,a.SEQ2 SEQ2
-            , a.result as [Result] 
+            , CASE 
+	            when isnull(a.result,'')='' then 'Blank'
+	            else a.result
+	          END as [Result] 
 	from dbo.AIR a WITH (NOLOCK) 
     left join dbo.Receiving c WITH (NOLOCK) on c.Id = a.ReceivingID
     where   a.POID like @id 
             and a.Result !=''
-) 
+) , washlabQA as (
+    select 
+        a.POID,
+        a.seq1,
+        a.seq2,
+	    washlab=
+	    case when a.[Crocking]='Fail'or a.Heat='Fail' or a.[Wash]='Fail' or Oven.Result='Fail' or ColorFastness.Result='Fail' then 'Fail'
+		      when a.[Crocking]=''and a.Heat='' and a.[Wash]='' and Oven.Result='' and ColorFastness.Result='' then 'Blank'
+		      else 'Pass'
+	    end
+    from dbo.FIR_Laboratory a WITH (NOLOCK) 
+    inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
+    inner join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
+    outer apply(select (case when  sum(iif(od.Result = 'Fail' ,1,0)) > 0 then 'Fail'
+						     when  sum(iif(od.Result = 'Pass' ,1,0)) > 0 then 'Pass'
+				             else '' end) as Result,
+					    MIN( ov.InspDate) as InspDate 
+				    from Oven ov
+				    inner join dbo.Oven_Detail od on od.ID = ov.ID
+				    where ov.POID=a.POID and od.SEQ1=a.Seq1 
+				    and seq2=a.Seq2 and ov.Status='Confirmed') as Oven
+    outer apply(select (case when  sum(iif(cd.Result = 'Fail' ,1,0)) > 0 then 'Fail'
+						     when  sum(iif(cd.Result = 'Pass' ,1,0)) > 0 then 'Pass'
+				             else '' end) as Result,
+					    MIN( CF.InspDate) as InspDate 
+				    from dbo.ColorFastness CF WITH (NOLOCK) 
+				    inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+				    where CF.Status = 'Confirmed' and CF.POID=a.POID 
+				    and cd.SEQ1=a.Seq1 and cd.seq2=a.Seq2) as ColorFastness
+    where a.POID like @id 
+)
 select *
 from(
     select  ROW_NUMBER() over (partition by id,seq1,seq2 order by id,seq1,seq2,len_D) as ROW_NUMBER_D
@@ -576,6 +611,7 @@ from(
             , description
             , currencyid
             , FIR
+            , washlab
             , Preshrink
             , Remark
             , OrderIdList
@@ -638,6 +674,13 @@ from(
                                                                         and seq1 = m.seq1 
                                                                         and seq2 = m.seq2 
                                                                 )t order by invNo  for xml path('')),1,1,'') FIR
+					,stuff((SELECT Concat('/',washlab)
+                               FROM washlabQA wqa
+                               where   wqa.poid = a.id 
+                                       and wqa.seq1 = a.seq1 
+                                       and wqa.seq2 = a.seq2 
+                               for xml path('')
+                               ),1,1,'') washlab
                     , iif(Fabric.Preshrink=1,'V','') Preshrink
                     ,(Select cast(tmp.Remark as nvarchar)+',' 
                       from (
@@ -717,6 +760,13 @@ from(
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
                     , stuff((select Concat('/',t.Result) from (SELECT invNo, Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t order by invNo for xml path('')),1,1,'') FIR
+					,stuff((SELECT Concat('/',washlab)
+                               FROM washlabQA wqa
+                               where   wqa.poid = a.id 
+                                       and wqa.seq1 = a.seq1 
+                                       and wqa.seq2 = a.seq2 
+                               for xml path('')
+                               ),1,1,'') washlab
                     , iif(Fabric.Preshrink=1,'V','') Preshrink
                     , (Select cast(tmp.Remark as nvarchar)+',' 
                        from (
@@ -795,6 +845,7 @@ select ROW_NUMBER_D = 1
        , [description]  = b.Description
        , [currencyid] = '-'
        , [FIR] = '-'
+       , [washlab] = '-'
        , [Preshrink]= ''
        , [Remark] = '-'
        , [OrderIdList] = l.OrderID
