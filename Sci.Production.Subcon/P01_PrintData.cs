@@ -18,5 +18,6 @@ namespace Sci.Production.Subcon
         public string QtyGMT { get; set; }
         public string Amount { get; set; }
         public string CutParts { get; set; }
+        public byte[] ApvName { get; set; }
     }
 }
