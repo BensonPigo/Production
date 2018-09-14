@@ -109,7 +109,7 @@ where se.WKNo = '{0}' and se.junk=0", this.id);
                 string DebitNote = this.gridExpenseData.Rows[0].Cells[4].Value.ToString();
                 if (DebitNote.Length != 13 || !DebitNote.StartsWith("SD"))
                 {
-                    MyUtility.Msg.ErrorBox("Debit Note is not correct, please check again!");
+                    MyUtility.Msg.WarningBox("Debit Note is not correct, please check again!");
                     return;
                 }
 
