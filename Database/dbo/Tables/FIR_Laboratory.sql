@@ -32,6 +32,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Laboratory Crocking & shrinkage Test', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory';
 
@@ -122,4 +124,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'水洗確�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Laboratory', @level2type = N'COLUMN', @level2name = N'SEQ1';
+
+
+GO
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20180917-140716]
+    ON [dbo].[FIR_Laboratory]([POID] ASC, [SEQ1] ASC, [SEQ2] ASC);
 
