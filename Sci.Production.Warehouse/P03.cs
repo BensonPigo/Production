@@ -668,12 +668,12 @@ from(
                     , fabric.BomTypeCalculate
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
-                    , stuff((select Concat('/',t.Result) from ( SELECT invNo,Result 
+                    , stuff((select Concat('/',t.Result) from ( SELECT seq1,seq2,Result 
                                                                 FROM QA 
                                                                 where   poid = m.POID 
                                                                         and seq1 = m.seq1 
                                                                         and seq2 = m.seq2 
-                                                                )t order by invNo  for xml path('')),1,1,'') FIR
+                                                                )t order by t.seq1,t.seq2  for xml path('')),1,1,'') FIR
 					,stuff((SELECT Concat('/',washlab)
                                FROM washlabQA wqa
                                where   wqa.poid = a.id 
@@ -759,7 +759,7 @@ from(
                     , fabric.BomTypeCalculate
                     , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) AS description
                     , s.currencyid
-                    , stuff((select Concat('/',t.Result) from (SELECT invNo, Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t order by invNo for xml path('')),1,1,'') FIR
+                    , stuff((select Concat('/',t.Result) from (SELECT seq1,seq2, Result FROM QA where poid = m.POID and seq1 =m.seq1 and seq2 = m.seq2 )t order by seq1,seq2 for xml path('')),1,1,'') FIR
 					,stuff((SELECT Concat('/',washlab)
                                FROM washlabQA wqa
                                where   wqa.poid = a.id 
