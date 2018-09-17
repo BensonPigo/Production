@@ -234,7 +234,7 @@ where s.OutputDate between '{0}' and '{1}' and (o.CateGory != 'G' or s.Category=
 
             if (this.checkSampleFty.Checked)
             {
-                sqlCmd.Append(string.Format(" and f.type <> 'S' ", this.mDivision));
+                sqlCmd.Append(" and f.type <> 'S' ");
             }
 
             sqlCmd.Append(@"
@@ -757,7 +757,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), 2) 
+           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
@@ -767,7 +767,7 @@ tmpAllSubprocess as(
             --排除 subcon in non sister的數值
           and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInSisterFty <> 0 ))           
           and ot.Price > 0 		    
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType)
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
 )
 select ArtworkTypeID = t1.ID
 	   , Price = isnull(sum(Price), 0)
@@ -813,7 +813,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), 2)
+           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2)
            , a.Program 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
@@ -822,7 +822,7 @@ tmpAllSubprocess as(
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
 			and ot.Price > 0 		    
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType),a.Program
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.Program
 )
 select ArtworkTypeID = t1.ID
 	   , Price = isnull(sum(Price), 0)
@@ -869,7 +869,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), 2)
+           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2)
            , a.SubconOutFty 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
@@ -878,7 +878,7 @@ tmpAllSubprocess as(
 --												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
 			and ot.Price > 0 		    
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType),a.SubconOutFty
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.SubconOutFty
 )
 select ArtworkTypeID = t1.ID
 	   , Price = isnull(sum(Price), 0)
