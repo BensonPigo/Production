@@ -32,42 +32,81 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.tabControl1 = new Sci.Win.UI.TabControl();
-            this.Artwork = new System.Windows.Forms.TabPage();
-            this.panel1 = new Sci.Win.UI.Panel();
-            this.panel4 = new Sci.Win.UI.Panel();
-            this.btnClose = new Sci.Win.UI.Button();
-            this.ArtworkGrid = new Sci.Win.UI.Grid();
             this.ArtworkSource = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.CombBySP = new System.Windows.Forms.TabPage();
-            this.panel2 = new Sci.Win.UI.Panel();
-            this.CombBySPgrid = new Sci.Win.UI.Grid();
-            this.CombByArtworkType = new System.Windows.Forms.TabPage();
-            this.panel3 = new Sci.Win.UI.Panel();
-            this.CombByArtworkGrid = new Sci.Win.UI.Grid();
             this.CombBySPSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.CombByArtworkTypeSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
-            this.button1 = new Sci.Win.UI.Button();
+            this.panel4 = new Sci.Win.UI.Panel();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.panel1 = new Sci.Win.UI.Panel();
+            this.panel2 = new Sci.Win.UI.Panel();
+            this.tabControl1 = new Sci.Win.UI.TabControl();
+            this.Artwork = new System.Windows.Forms.TabPage();
+            this.ArtworkGrid = new Sci.Win.UI.Grid();
+            this.CombBySP = new System.Windows.Forms.TabPage();
+            this.panel3 = new Sci.Win.UI.Panel();
+            this.CombBySPgrid = new Sci.Win.UI.Grid();
+            this.CombByArtworkType = new System.Windows.Forms.TabPage();
             this.panel6 = new Sci.Win.UI.Panel();
-            this.button2 = new Sci.Win.UI.Button();
-            this.tabControl1.SuspendLayout();
-            this.Artwork.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.panel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ArtworkGrid)).BeginInit();
+            this.CombByArtworkGrid = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.ArtworkSource)).BeginInit();
-            this.CombBySP.SuspendLayout();
-            this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CombBySPgrid)).BeginInit();
-            this.CombByArtworkType.SuspendLayout();
-            this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CombByArtworkGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CombBySPSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CombByArtworkTypeSource)).BeginInit();
-            this.panel5.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.Artwork.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ArtworkGrid)).BeginInit();
+            this.CombBySP.SuspendLayout();
+            this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CombBySPgrid)).BeginInit();
+            this.CombByArtworkType.SuspendLayout();
             this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CombByArtworkGrid)).BeginInit();
             this.SuspendLayout();
+            // 
+            // panel5
+            // 
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel5.Location = new System.Drawing.Point(0, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(783, 10);
+            this.panel5.TabIndex = 8;
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.btnClose);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(0, 416);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(783, 38);
+            this.panel4.TabIndex = 10;
+            // 
+            // btnClose
+            // 
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnClose.Location = new System.Drawing.Point(689, 5);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel1.Location = new System.Drawing.Point(0, 10);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(10, 406);
+            this.panel1.TabIndex = 11;
+            // 
+            // panel2
+            // 
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel2.Location = new System.Drawing.Point(773, 10);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(10, 406);
+            this.panel2.TabIndex = 12;
             // 
             // tabControl1
             // 
@@ -75,50 +114,21 @@
             this.tabControl1.Controls.Add(this.CombBySP);
             this.tabControl1.Controls.Add(this.CombByArtworkType);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Location = new System.Drawing.Point(10, 10);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(831, 524);
-            this.tabControl1.TabIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(763, 406);
+            this.tabControl1.TabIndex = 13;
             // 
             // Artwork
             // 
-            this.Artwork.Controls.Add(this.panel1);
+            this.Artwork.Controls.Add(this.ArtworkGrid);
             this.Artwork.Location = new System.Drawing.Point(4, 25);
             this.Artwork.Name = "Artwork";
             this.Artwork.Padding = new System.Windows.Forms.Padding(3);
-            this.Artwork.Size = new System.Drawing.Size(823, 495);
+            this.Artwork.Size = new System.Drawing.Size(755, 377);
             this.Artwork.TabIndex = 0;
             this.Artwork.Text = "Artwork";
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.panel4);
-            this.panel1.Controls.Add(this.ArtworkGrid);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(817, 489);
-            this.panel1.TabIndex = 1;
-            // 
-            // panel4
-            // 
-            this.panel4.Controls.Add(this.btnClose);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(0, 451);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(817, 38);
-            this.panel4.TabIndex = 1;
-            // 
-            // btnClose
-            // 
-            this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(732, 5);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 0;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
             // 
             // ArtworkGrid
             // 
@@ -135,7 +145,7 @@
             this.ArtworkGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.ArtworkGrid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.ArtworkGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.ArtworkGrid.Location = new System.Drawing.Point(0, 0);
+            this.ArtworkGrid.Location = new System.Drawing.Point(3, 3);
             this.ArtworkGrid.Name = "ArtworkGrid";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -150,28 +160,27 @@
             this.ArtworkGrid.RowTemplate.Height = 24;
             this.ArtworkGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.ArtworkGrid.ShowCellToolTips = false;
-            this.ArtworkGrid.Size = new System.Drawing.Size(817, 489);
+            this.ArtworkGrid.Size = new System.Drawing.Size(749, 371);
             this.ArtworkGrid.TabIndex = 0;
             // 
             // CombBySP
             // 
-            this.CombBySP.Controls.Add(this.panel2);
+            this.CombBySP.Controls.Add(this.panel3);
             this.CombBySP.Location = new System.Drawing.Point(4, 25);
             this.CombBySP.Name = "CombBySP";
             this.CombBySP.Padding = new System.Windows.Forms.Padding(3);
-            this.CombBySP.Size = new System.Drawing.Size(823, 495);
+            this.CombBySP.Size = new System.Drawing.Size(775, 377);
             this.CombBySP.TabIndex = 1;
             this.CombBySP.Text = "Comb by SP#";
             // 
-            // panel2
+            // panel3
             // 
-            this.panel2.Controls.Add(this.panel5);
-            this.panel2.Controls.Add(this.CombBySPgrid);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(3, 3);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(817, 489);
-            this.panel2.TabIndex = 0;
+            this.panel3.Controls.Add(this.CombBySPgrid);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel3.Location = new System.Drawing.Point(3, 3);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(769, 371);
+            this.panel3.TabIndex = 0;
             // 
             // CombBySPgrid
             // 
@@ -201,28 +210,27 @@
             this.CombBySPgrid.RowTemplate.Height = 24;
             this.CombBySPgrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.CombBySPgrid.ShowCellToolTips = false;
-            this.CombBySPgrid.Size = new System.Drawing.Size(817, 489);
+            this.CombBySPgrid.Size = new System.Drawing.Size(769, 371);
             this.CombBySPgrid.TabIndex = 0;
             // 
             // CombByArtworkType
             // 
-            this.CombByArtworkType.Controls.Add(this.panel3);
+            this.CombByArtworkType.Controls.Add(this.panel6);
             this.CombByArtworkType.Location = new System.Drawing.Point(4, 25);
             this.CombByArtworkType.Name = "CombByArtworkType";
             this.CombByArtworkType.Padding = new System.Windows.Forms.Padding(3);
-            this.CombByArtworkType.Size = new System.Drawing.Size(823, 495);
+            this.CombByArtworkType.Size = new System.Drawing.Size(775, 377);
             this.CombByArtworkType.TabIndex = 2;
             this.CombByArtworkType.Text = "Comb by Artwork Type";
             // 
-            // panel3
+            // panel6
             // 
-            this.panel3.Controls.Add(this.panel6);
-            this.panel3.Controls.Add(this.CombByArtworkGrid);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 3);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(817, 489);
-            this.panel3.TabIndex = 0;
+            this.panel6.Controls.Add(this.CombByArtworkGrid);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel6.Location = new System.Drawing.Point(3, 3);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(769, 371);
+            this.panel6.TabIndex = 0;
             // 
             // CombByArtworkGrid
             // 
@@ -252,96 +260,56 @@
             this.CombByArtworkGrid.RowTemplate.Height = 24;
             this.CombByArtworkGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.CombByArtworkGrid.ShowCellToolTips = false;
-            this.CombByArtworkGrid.Size = new System.Drawing.Size(817, 489);
+            this.CombByArtworkGrid.Size = new System.Drawing.Size(769, 371);
             this.CombByArtworkGrid.TabIndex = 0;
-            // 
-            // panel5
-            // 
-            this.panel5.Controls.Add(this.button1);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel5.Location = new System.Drawing.Point(0, 451);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(817, 38);
-            this.panel5.TabIndex = 2;
-            // 
-            // button1
-            // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(732, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // panel6
-            // 
-            this.panel6.Controls.Add(this.button2);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel6.Location = new System.Drawing.Point(0, 451);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(817, 38);
-            this.panel6.TabIndex = 2;
-            // 
-            // button2
-            // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(732, 5);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(80, 30);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Close";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // P01_Artwork
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(831, 524);
+            this.ClientSize = new System.Drawing.Size(783, 454);
             this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel4);
+            this.Controls.Add(this.panel5);
             this.Name = "P01_Artwork";
             this.Text = "P01_ArtwrokNew";
             this.WorkAlias = "Order_Artwork";
-            this.tabControl1.ResumeLayout(false);
-            this.Artwork.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ArtworkGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ArtworkSource)).EndInit();
-            this.CombBySP.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.CombBySPgrid)).EndInit();
-            this.CombByArtworkType.ResumeLayout(false);
-            this.panel3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.CombByArtworkGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CombBySPSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CombByArtworkTypeSource)).EndInit();
-            this.panel5.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.Artwork.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ArtworkGrid)).EndInit();
+            this.CombBySP.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.CombBySPgrid)).EndInit();
+            this.CombByArtworkType.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.CombByArtworkGrid)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private Win.UI.TabControl tabControl1;
-        private System.Windows.Forms.TabPage Artwork;
-        private System.Windows.Forms.TabPage CombBySP;
-        private System.Windows.Forms.TabPage CombByArtworkType;
         private Win.UI.ListControlBindingSource ArtworkSource;
-        private Win.UI.Grid ArtworkGrid;
         private Win.UI.ListControlBindingSource CombBySPSource;
         private Win.UI.ListControlBindingSource CombByArtworkTypeSource;
-        private Win.UI.Panel panel1;
-        private Win.UI.Panel panel3;
-        private Win.UI.Grid CombByArtworkGrid;
-        private Win.UI.Panel panel2;
-        private Win.UI.Grid CombBySPgrid;
+        private Win.UI.Panel panel5;
         private Win.UI.Panel panel4;
         private Win.UI.Button btnClose;
-        private Win.UI.Panel panel5;
-        private Win.UI.Button button1;
+        private Win.UI.Panel panel1;
+        private Win.UI.Panel panel2;
+        private Win.UI.TabControl tabControl1;
+        private System.Windows.Forms.TabPage Artwork;
+        private Win.UI.Grid ArtworkGrid;
+        private System.Windows.Forms.TabPage CombBySP;
+        private Win.UI.Panel panel3;
+        private Win.UI.Grid CombBySPgrid;
+        private System.Windows.Forms.TabPage CombByArtworkType;
         private Win.UI.Panel panel6;
-        private Win.UI.Button button2;
+        private Win.UI.Grid CombByArtworkGrid;
     }
 }
