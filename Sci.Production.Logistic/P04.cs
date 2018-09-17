@@ -242,7 +242,7 @@ namespace Sci.Production.Logistic
                             //                                    set ClogLocationId = @clogLocationId, Remark = @remark
                             //                                    where id = @id and CTNStartNo = @ctnStartNo;";
                             string updateCmd = @"update PackingList_Detail 
-                                                set ClogLocationId = @clogLocationId, Remark = @remark 
+                                                set ClogLocationId = @clogLocationId, Remark = @remark ,EditLocationDate=@EditLocationDate
                                                 where id = @id and CTNStartNo = @ctnStartNo;";
 
                             #region 準備sql參數資料
@@ -268,7 +268,12 @@ namespace Sci.Production.Logistic
                             System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
                             sp6.ParameterName = "@remark";
                             sp6.Value = currentRow["Remark"].ToString();
+                            
+                            System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
+                            sp7.ParameterName = "@EditLocationDate";
+                            sp7.Value = DateTime.Now;
 
+                            //EditLocationDate
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
 
@@ -277,6 +282,7 @@ namespace Sci.Production.Logistic
                             cmds.Add(sp4);
                             cmds.Add(sp5);
                             cmds.Add(sp6);
+                            cmds.Add(sp7);
                             #endregion
                             DualResult result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
                             if (!result)
