@@ -223,6 +223,12 @@
     <Compile Include="P01_ArtworkTrans.Designer.cs">
       <DependentUpon>P01_ArtworkTrans.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_Artwork.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_Artwork.Designer.cs">
+      <DependentUpon>P01_Artwork.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_BatchShipmentFinished.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -518,12 +524,6 @@
     <Compile Include="P04_WeightData.Designer.cs">
       <DependentUpon>P04_WeightData.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_Artwork.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P01_Artwork.Designer.cs">
-      <DependentUpon>P01_Artwork.cs</DependentUpon>
-    </Compile>
     <Compile Include="P01_TMSAndCost.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -667,6 +667,9 @@
     <EmbeddedResource Include="P01_ArtworkTrans.resx">
       <DependentUpon>P01_ArtworkTrans.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_Artwork.resx">
+      <DependentUpon>P01_Artwork.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_BatchShipmentFinished.resx">
       <DependentUpon>P01_BatchShipmentFinished.cs</DependentUpon>
     </EmbeddedResource>
@@ -806,9 +809,6 @@
     <EmbeddedResource Include="P04_WeightData.resx">
       <DependentUpon>P04_WeightData.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_Artwork.resx">
-      <DependentUpon>P01_Artwork.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P01_TMSAndCost.resx">
       <DependentUpon>P01_TMSAndCost.cs</DependentUpon>
     </EmbeddedResource>
@@ -900,6 +900,8 @@
     <None Include="Sci.Production.PPIC.ruleset" />
     <None Include="stylecop.json" />
     <None Include="stylecop1.json" />
+    <None Include="stylecop2.json" />
+    <None Include="stylecop3.json" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
