@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnPoRemark = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.PcHandleText = new Sci.Production.Class.txttpeuser();
             this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
             this.btnMeterialStatus = new Sci.Win.UI.Button();
             this.btnEachCons = new Sci.Win.UI.Button();
@@ -138,7 +141,6 @@
             this.labelDetailsStyleNo = new Sci.Win.UI.Label();
             this.labelDetailsSPNo = new Sci.Win.UI.Label();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape8 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -147,6 +149,7 @@
             this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
+            this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelBuyer = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
@@ -285,6 +288,7 @@
             this.shapeContainer4 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.disCustCD = new Sci.Win.UI.DisplayBox();
             this.btnBuyerDeliveryHistory = new Sci.Win.UI.Button();
+            this.shapeContainer5 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -293,11 +297,6 @@
             this.tabs.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailcont
             // 
@@ -433,12 +432,12 @@
             this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Size = new System.Drawing.Size(1000, 661);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 661);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -475,6 +474,9 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnPoRemark);
+            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.btnMeterialStatus_Local);
             this.tabPage1.Controls.Add(this.btnMeterialStatus);
             this.tabPage1.Controls.Add(this.btnEachCons);
@@ -593,6 +595,33 @@
             this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // btnPoRemark
+            // 
+            this.btnPoRemark.Location = new System.Drawing.Point(405, 535);
+            this.btnPoRemark.Name = "btnPoRemark";
+            this.btnPoRemark.Size = new System.Drawing.Size(191, 27);
+            this.btnPoRemark.TabIndex = 192;
+            this.btnPoRemark.Text = "P/O Remark";
+            this.btnPoRemark.UseVisualStyleBackColor = true;
+            this.btnPoRemark.Click += new System.EventHandler(this.btnPoRemark_Click);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(600, 31);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 21);
+            this.label1.TabIndex = 190;
+            this.label1.Text = "PC Handle";
+            // 
+            // PcHandleText
+            // 
+            this.PcHandleText.DisplayBox1Binding = "";
+            this.PcHandleText.DisplayBox2Binding = "";
+            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
+            this.PcHandleText.Name = "PcHandleText";
+            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
+            this.PcHandleText.TabIndex = 191;
             // 
             // btnMeterialStatus_Local
             // 
@@ -1595,7 +1624,7 @@
             // 
             // labelDetailsPOHandle
             // 
-            this.labelDetailsPOHandle.Location = new System.Drawing.Point(399, 31);
+            this.labelDetailsPOHandle.Location = new System.Drawing.Point(210, 31);
             this.labelDetailsPOHandle.Name = "labelDetailsPOHandle";
             this.labelDetailsPOHandle.Size = new System.Drawing.Size(65, 21);
             this.labelDetailsPOHandle.TabIndex = 5;
@@ -1603,7 +1632,7 @@
             // 
             // labelDetailsPOSMR
             // 
-            this.labelDetailsPOSMR.Location = new System.Drawing.Point(399, 4);
+            this.labelDetailsPOSMR.Location = new System.Drawing.Point(210, 4);
             this.labelDetailsPOSMR.Name = "labelDetailsPOSMR";
             this.labelDetailsPOSMR.Size = new System.Drawing.Size(65, 21);
             this.labelDetailsPOSMR.TabIndex = 4;
@@ -1651,7 +1680,6 @@
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer2.Name = "shapeContainer2";
             this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape10,
             this.lineShape9,
             this.lineShape8,
             this.lineShape7,
@@ -1660,15 +1688,6 @@
             this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
-            // 
-            // lineShape10
-            // 
-            this.lineShape10.BorderColor = System.Drawing.SystemColors.ControlDark;
-            this.lineShape10.Name = "lineShape10";
-            this.lineShape10.X1 = 0;
-            this.lineShape10.X2 = 987;
-            this.lineShape10.Y1 = 471;
-            this.lineShape10.Y2 = 471;
             // 
             // lineShape9
             // 
@@ -1729,7 +1748,7 @@
             // 
             this.txttpeuser4.DisplayBox1Binding = "";
             this.txttpeuser4.DisplayBox2Binding = "";
-            this.txttpeuser4.Location = new System.Drawing.Point(468, 31);
+            this.txttpeuser4.Location = new System.Drawing.Point(279, 31);
             this.txttpeuser4.Name = "txttpeuser4";
             this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser4.TabIndex = 7;
@@ -1738,10 +1757,19 @@
             // 
             this.txttpeuser3.DisplayBox1Binding = "";
             this.txttpeuser3.DisplayBox2Binding = "";
-            this.txttpeuser3.Location = new System.Drawing.Point(468, 4);
+            this.txttpeuser3.Location = new System.Drawing.Point(279, 4);
             this.txttpeuser3.Name = "txttpeuser3";
             this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser3.TabIndex = 6;
+            // 
+            // lineShape10
+            // 
+            this.lineShape10.BorderColor = System.Drawing.SystemColors.ControlDark;
+            this.lineShape10.Name = "lineShape10";
+            this.lineShape10.X1 = 0;
+            this.lineShape10.X2 = 987;
+            this.lineShape10.Y1 = 471;
+            this.lineShape10.Y2 = 471;
             // 
             // labelSPNo
             // 
@@ -2117,7 +2145,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
+            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3201,6 +3229,15 @@
             this.btnBuyerDeliveryHistory.UseVisualStyleBackColor = true;
             this.btnBuyerDeliveryHistory.Click += new System.EventHandler(this.BtnBuyerDeliveryHistory_Click);
             // 
+            // shapeContainer5
+            // 
+            this.shapeContainer5.Location = new System.Drawing.Point(3, 3);
+            this.shapeContainer5.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer5.Name = "shapeContainer2";
+            this.shapeContainer5.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer5.TabIndex = 8;
+            this.shapeContainer5.TabStop = false;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3489,5 +3526,9 @@
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer4;
         private Win.UI.DisplayBox disCustCD;
         private Win.UI.Button btnBuyerDeliveryHistory;
+        private Win.UI.Label label1;
+        private Class.txttpeuser PcHandleText;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer5;
+        private Win.UI.Button btnPoRemark;
     }
 }
