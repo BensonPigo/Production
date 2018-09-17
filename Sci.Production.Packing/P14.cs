@@ -58,7 +58,8 @@ namespace Sci.Production.Packing
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
                 .DateTime("AddDate", header: "Create Date", iseditable: false)
-                .Date("ReceiveDate", header: "Rec. Date", iseditable: false)
+                .Date("ReceiveDate", header: "CLOG CFM", iseditable: false)
+                .Date("ReturnDate", header: "Return Date", iseditable: false)
                 .Text("AddName", header: "AddName", width: Widths.AnsiChars(15), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
@@ -119,6 +120,7 @@ from (
             , t.AddDate
             , tid = t.id
             , pd.ReceiveDate
+			, pd.ReturnDate
 			, AddName = (select concat(id,'-',Name) from pass1 where id = t.AddName)
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
