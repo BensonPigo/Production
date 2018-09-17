@@ -56,7 +56,13 @@ EMBAmt = tms.EMBAmt*r.rate,
 PrintingAmt = tms.PrintingAmt*r.rate,
 OtherPrice = tms.OtherPrice*r.rate,
 EMBPrice = tms.EMBPrice*r.rate,
-PrintingPrice = tms.PrintingPrice*r.rate
+PrintingPrice = tms.PrintingPrice*r.rate,
+LocalCurrencyID = LocalCurrencyID,
+LocalUnitPrice = isnull(LocalUnitPrice,0),
+Vat = isnull(Vat,0),
+UPIncludeVAT = isnull(LocalUnitPrice,0)+isnull(Vat,0),
+KpiRate = isnull(KpiRate,0)
+
 from dbo.SubconOutContract_Detail sd with (nolock)
 left join Orders o with (nolock) on sd.Orderid = o.ID
 OUTER apply (
@@ -429,6 +435,24 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
             };
             #endregion
 
+            #region
+            DataGridViewGeneratorNumericColumnSettings LocalUnitPrice = new DataGridViewGeneratorNumericColumnSettings();
+            LocalUnitPrice.CellValidating += (s, e) =>
+            {
+                this.CurrentDetailData["LocalUnitPrice"] = e.FormattedValue;
+                this.CurrentDetailData["UPIncludeVAT"] = MyUtility.Convert.GetDecimal(this.CurrentDetailData["LocalUnitPrice"]) + MyUtility.Convert.GetDecimal(this.CurrentDetailData["Vat"]);
+                this.CurrentDetailData.EndEdit();
+            };
+
+            DataGridViewGeneratorNumericColumnSettings Vat = new DataGridViewGeneratorNumericColumnSettings();
+            Vat.CellValidating += (s, e) =>
+            {
+                this.CurrentDetailData["Vat"] = e.FormattedValue;
+                this.CurrentDetailData["UPIncludeVAT"] = MyUtility.Convert.GetDecimal(this.CurrentDetailData["LocalUnitPrice"]) + MyUtility.Convert.GetDecimal(this.CurrentDetailData["Vat"]);
+                this.CurrentDetailData.EndEdit();
+            };
+            #endregion
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(15), settings: orderIdSet).Get(out this.col_OrderId)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(18), iseditingreadonly: true)
@@ -445,6 +469,12 @@ where o.id = '{this.CurrentDetailData["OrderID"]}' and sl.Location = '{e.Formatt
                 .Numeric("OtherAmt", header: "Other Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("EMBAmt", header: "EMB Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                 .Numeric("PrintingAmt", header: "Printing Amt", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+
+                .Text("LocalCurrencyID", header: "Currency", width: Widths.AnsiChars(3))
+                .Numeric("LocalUnitPrice", header: "U/P Exclude VAT(Local currency)", width: Widths.AnsiChars(12), decimal_places: 4,settings: LocalUnitPrice)
+                .Numeric("Vat", header: "VAT (Local currency)", width: Widths.AnsiChars(10), decimal_places: 2, settings: Vat)
+                .Numeric("UPIncludeVAT", header: "U/P Include VAT(Local currency)", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("KpiRate", header: "Kpi Rate", width: Widths.AnsiChars(3), maximum: 9, decimal_places: 2)
                 ;
             this.detailgrid.RowSelecting += (s, e) =>
             {

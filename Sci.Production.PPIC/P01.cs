@@ -67,7 +67,8 @@ namespace Sci.Production.PPIC
          this.btnLocalMRCFM.Enabled = this.CurrentMaintain != null;
          this.btnProductionOutput.Enabled = this.CurrentMaintain != null;
          this.btnOrderRemark.Enabled = this.CurrentMaintain != null;
-         this.btnFactoryCMT.Enabled = this.CurrentMaintain != null;
+            this.btnPoRemark.Enabled = this.CurrentMaintain != null;
+            this.btnFactoryCMT.Enabled = this.CurrentMaintain != null;
          this.btnLabelHangtag.Enabled = this.CurrentMaintain != null;
          this.btnQtyBdownByShipmode.Enabled = this.CurrentMaintain != null;
          this.btnQuantityBreakdown.Enabled = this.CurrentMaintain != null;
@@ -195,16 +196,18 @@ namespace Sci.Production.PPIC
             #endregion
             #region 填PO SMR, PO Handle欄位值
             DataRow pOData;
-            sqlCmd = string.Format("select POSMR,POHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            sqlCmd = string.Format("select POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             if (MyUtility.Check.Seek(sqlCmd, out pOData))
             {
                 this.txttpeuser3.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POSMR"]);
                 this.txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POHandle"]);
+                this.PcHandleText.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["PCHandle"]);
             }
             else
             {
                 this.txttpeuser3.DisplayBox1Binding = string.Empty;
                 this.txttpeuser4.DisplayBox1Binding = string.Empty;
+                this.PcHandleText.DisplayBox1Binding = string.Empty;
             }
             #endregion
             #region 填PO Combo, Cutting Combo, MTLExport, PulloutComplete, Garment L/T, OrderCombo 欄位值
@@ -256,6 +259,10 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             this.btnProductionOutput.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnOrderRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
+
+            //若有資料顯示藍色，否則黑色
+            this.btnPoRemark.ForeColor = MyUtility.Check.Seek(string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}' AND PoRemark != '' ", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+
             this.btnFactoryCMT.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             this.btnLabelHangtag.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Label"]) ? Color.Blue : Color.Black;
             this.btnQtyBdownByShipmode.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
@@ -774,6 +781,32 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
             callNextForm.ShowDialog(this);
         }
 
+        //Po Rematk
+        private void btnPoRemark_Click(object sender, EventArgs e)
+        {
+            System.Data.DataTable data;
+            //串接規則Orders.ID=PO.ID
+            string sqlCmd = string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]);
+
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, out data);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (data.Rows.Count > 0)
+            {
+                Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(data.Rows[0]["PoRemark"].ToString(), "PO Remark", false, null);
+                callNextForm.ShowDialog(this);
+            }
+            else
+            {
+                Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(" ", "PO Remark", false, null);
+                callNextForm.ShowDialog(this);
+            }
+        }
+
         // Factory CMT
         private void BtnFactoryCMT_Click(object sender, EventArgs e)
         {
@@ -976,7 +1009,8 @@ where o.Junk = 0 and o.POID= @POID order by o.ID";
         // Artwork
         private void BtnArtwork_Click(object sender, EventArgs e)
         {
-            Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(false, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), null, null, MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]));
+
+            Sci.Production.PPIC.P01_Artwork callNextForm = new Sci.Production.PPIC.P01_Artwork(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -1428,5 +1462,6 @@ where POID = @poid group by POID,b.spno";
             P01_BuyerDeliveryHistory pb = new P01_BuyerDeliveryHistory("Order", "Orders", "OrdersBuyerDelivery", orderID);
             pb.ShowDialog(this);
         }
+        
     }
 }
