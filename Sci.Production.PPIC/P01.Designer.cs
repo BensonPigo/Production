@@ -17,15 +17,7 @@
             {
                 components.Dispose();
             }
-            try
-            {
-
-                base.Dispose(disposing);
-            }
-            catch (System.Exception)
-            {
-                
-            }
+            base.Dispose(disposing);
         }
 
         #region Windows Form 設計工具產生的程式碼

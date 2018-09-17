@@ -259,7 +259,6 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             bool haveTmsCost = MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             this.btnProductionOutput.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnOrderRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
-            this.btnPoRemark.ForeColor = MyUtility.Check.Seek(string.Format("select PoRemark from PO WITH (NOLOCK) where ID =  '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnFactoryCMT.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
             this.btnLabelHangtag.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["Label"]) ? Color.Blue : Color.Black;
             this.btnQtyBdownByShipmode.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
@@ -786,7 +785,13 @@ select '{0}',ArtworkTypeID,Seq,Qty,ArtworkUnit,TMS,Price,'{1}',GETDATE() from St
             string sqlCmd = string.Format("select PoRemark from PO WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"]);
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out data);
-            if (result)
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (data.Rows.Count > 0)
             {
                 Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(data.Rows[0]["PoRemark"].ToString(), "PO Remark", false, null);
                 callNextForm.ShowDialog(this);
