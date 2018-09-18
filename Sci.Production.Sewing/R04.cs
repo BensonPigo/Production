@@ -67,7 +67,7 @@ namespace Sci.Production.Sewing
             sqlCmd.Append(string.Format(@"--根據條件撈基本資料
 select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
 	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
-	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,''), CASE WHEN ot.IsDevSample =1 THEN 'Y' WHEN ot.IsDevSample=0 THEN 'N' ELSE '' END AS IsDevSample
+	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,''), CASE WHEN ot.IsDevSample =1 THEN 'Y' ELSE 'N' END AS IsDevSample
 	,OrderBrandID = isnull(o.BrandID,'')    ,OrderCdCodeID = isnull(o.CdCodeID,'')
 	,OrderProgram = isnull(o.ProgramID,'')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'') ,OrderSeason = isnull(o.SeasonID,'')
 	,MockupBrandID= isnull(mo.BrandID,'')   ,MockupCDCodeID= isnull(mo.MockupID,'')
