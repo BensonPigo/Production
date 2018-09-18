@@ -33,11 +33,6 @@ namespace Sci.Production.Packing
         {
             this.InitializeComponent();
             this.EditMode = true;
-            P09_IDX_CTRL iDX = new P09_IDX_CTRL();
-            if (iDX.IdxCall(1, "8:?", 4))
-            {
-                this.IDX = iDX;
-            }
         }
 
         /// <summary>
@@ -194,6 +189,12 @@ namespace Sci.Production.Packing
                 {
                     this.numBoxScanTtlQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (int)s["QtyPerCTN"]);
                 }
+
+                P09_IDX_CTRL iDX = new P09_IDX_CTRL();
+                if (iDX.IdxCall(1, "8:?", 4))
+                {
+                    this.IDX = iDX;
+                }
             }
             else if (type.Equals("CARTON"))
             {
@@ -265,12 +266,6 @@ namespace Sci.Production.Packing
             }
 
             this.upd_sql_barcode = string.Empty; // 換箱清空更新barcode字串
-
-            P09_IDX_CTRL iDX = new P09_IDX_CTRL();
-            if (iDX.IdxCall(1, "8:?", 4))
-            {
-                this.IDX = iDX;
-            }
         }
 
         /// <summary>
@@ -441,7 +436,8 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
 
             DualResult sql_result;
             int barcode_pos = this.scanDetailBS.Find("Barcode", this.txtScanEAN.Text);
-            // 有資料
+
+            // 無Barcode
             if (barcode_pos == -1)
             {
                 int no_barcode_cnt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).Count();
