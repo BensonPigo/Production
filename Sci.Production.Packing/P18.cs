@@ -455,20 +455,21 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                 else
                 {
                     DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
-
-                    // 有空的barcode就開窗
-                    SelectItem sele = new SelectItem(no_barcode_dt, "Article,Color,SizeCode", "8,6,8", string.Empty, headercaptions: "Colorway,Color,Size");
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel)
+                    if (no_barcode_dt.Rows.Count > 1)
                     {
-                        this.txtScanEAN.Text = string.Empty;
-                        e.Cancel = true;
-                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
-                        return;
-                    }
+                        // 有空的barcode就開窗
+                        SelectItem sele = new SelectItem(no_barcode_dt, "Article,Color,SizeCode", "8,6,8", string.Empty, headercaptions: "Colorway,Color,Size");
+                        DialogResult result = sele.ShowDialog();
+                        if (result == DialogResult.Cancel)
+                        {
+                            this.txtScanEAN.Text = string.Empty;
+                            e.Cancel = true;
+                            this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
+                            return;
+                        }
 
-                    var sellist = sele.GetSelecteds();
-                    this.upd_sql_barcode += $@"update PackingList_Detail
+                        var sellist = sele.GetSelecteds();
+                        this.upd_sql_barcode += $@"update PackingList_Detail
 set BarCode = '{this.txtScanEAN.Text}'
 where PackingList_Detail.Article 
 =  '{sellist[0]["Article"]}'
@@ -477,18 +478,35 @@ and PackingList_Detail.SizeCode
 and PackingList_Detail.ID = '{this.selecedPK.ID}'
 and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
 ";
-                    foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
-                    {
-                        if (dr["Article"].Equals(sellist[0]["Article"]) && dr["SizeCode"].Equals(sellist[0]["SizeCode"]))
+                        foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
                         {
-                            dr["Barcode"] = this.txtScanEAN.Text;
-                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
-                            this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
-                            break;
+                            if (dr["Article"].Equals(sellist[0]["Article"]) && dr["SizeCode"].Equals(sellist[0]["SizeCode"]))
+                            {
+                                dr["Barcode"] = this.txtScanEAN.Text;
+                                dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+                                this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
+                                break;
+                            }
                         }
-                    }
 
-                    this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim()).Length);
+                        this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim()).Length);
+                    }
+                    else
+                    {
+                        this.upd_sql_barcode += $@"update PackingList_Detail
+set BarCode = '{this.txtScanEAN.Text}'
+where PackingList_Detail.Article 
+=  '{((DataTable)this.scanDetailBS.DataSource).Rows[0]["Article"]}'
+and PackingList_Detail.SizeCode
+=  '{((DataTable)this.scanDetailBS.DataSource).Rows[0]["SizeCode"]}'
+and PackingList_Detail.ID = '{this.selecedPK.ID}'
+and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+";
+                        ((DataTable)this.scanDetailBS.DataSource).Rows[0]["Barcode"] = this.txtScanEAN.Text;
+                        ((DataTable)this.scanDetailBS.DataSource).Rows[0]["ScanQty"] = MyUtility.Convert.GetInt(((DataTable)this.scanDetailBS.DataSource).Rows[0]["ScanQty"]) + 1;
+                        this.UpdScanQty((long)((DataTable)this.scanDetailBS.DataSource).Rows[0]["Ukey"], (string)((DataTable)this.scanDetailBS.DataSource).Rows[0]["Barcode"]);
+                        this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + ((DataTable)this.scanDetailBS.DataSource).Rows[0]["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + ((DataTable)this.scanDetailBS.DataSource).Rows[0]["QtyPerCtn"].ToString().Trim()).Length);
+                    }
                 }
             }
             else
