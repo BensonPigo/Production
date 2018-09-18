@@ -173,26 +173,27 @@ select 0 as [selected]
 				FIR_Result1.WeightResult is null) 
 				then 
 					(case when 
-					FIR_Result2.ContinuityResult='Pass' and FIR_Result2.PhyResult='Pass' and
-					FIR_Result2.ShadeboneResult='Pass' and FIR_Result2.WeightResult='Pass'
-					then 'Pass' 
+					FIR_Result2.ContinuityResult='Fail' or FIR_Result2.PhyResult='Fail' or
+					FIR_Result2.ShadeboneResult='Fail' or FIR_Result2.WeightResult='Fail'
+					then 'Fail' 
 					when 
 					FIR_Result2.ContinuityResult is null and FIR_Result2.PhyResult is null and
 					FIR_Result2.ShadeboneResult is null and FIR_Result2.WeightResult is null
 					then 'Blank'
-					else 'Fail' end
+					else 'Pass' end
 					)
 				else (case when 
-					FIR_Result1.ContinuityResult='Pass' and FIR_Result1.PhyResult='Pass' and
-					FIR_Result1.ShadeboneResult='Pass' and FIR_Result1.WeightResult='Pass'
-					then 'Pass' else 'Fail' end
+					FIR_Result1.ContinuityResult='Fail' or FIR_Result1.PhyResult='Fail' or
+					FIR_Result1.ShadeboneResult='Fail' or FIR_Result1.WeightResult='Fail'
+					then 'Fail' else 'Pass' end
 					)
 				end
-		,[WashLab Report] = case when WashLab.FLResult='Pass' and WashLab.ovenResult='Pass' and WashLab.cfResult='Pass'
-							then 'Pass'
+		,[WashLab Report] = case when pd.FabricType='A' then ''
+							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'
+								then 'Fail'
 							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
-							then 'Blank'
-							else 'Fail' end
+								then 'Blank'
+							else 'Pass' end
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
@@ -218,19 +219,15 @@ outer apply(
 )FIR_Result1
 outer apply(
 	select 
-	PhyResult = case when PhyResult=1 then 'Pass' when phyNull=1 then null else 'Fail' end
-	,WeightResult = case when WeightResult=1 then 'Pass' when WeightResultNull=1 then null else 'Fail' end
-	,ShadeboneResult = case when ShadeboneResult=1 then 'Pass' when ShadeboneResultNull=1 then null else 'Fail' end
-	,ContinuityResult = case when ContinuityResult=1 then 'Pass' when ContinuityResultNull=1 then null else 'Fail' end
+	PhyResult = case when PhyResult > 0 then 'Fail' when PhyResult is null then null else 'Pass' end
+	,WeightResult = case when WeightResult >0 then 'Fail' when WeightResult is null then null else 'Pass' end
+	,ShadeboneResult = case when ShadeboneResult >0 then 'Fail' when ShadeboneResult is null then null else 'Pass' end
+	,ContinuityResult = case when ContinuityResult >0 then 'Fail' when ContinuityResult is null then null else 'Pass' end
 	from (
-		select round(convert(float, sum(iif(PhyResult = 'Pass',1,0))) / convert(float,(count(*))),2) PhyResult
-		, round(convert(float, sum(iif(PhyResult is null,1,0))) / convert(float,(count(*))),2) phyNull
-		, round(convert(float, sum(iif(WeightResult = 'Pass',1,0))) / convert(float,(count(*))),2) WeightResult
-		, round(convert(float, sum(iif(WeightResult is null,1,0))) / convert(float,(count(*))),2) WeightResultNull
-		, round(convert(float, sum(iif(ShadeboneResult = 'Pass',1,0))) / convert(float,(count(*))),2) ShadeboneResult
-		, round(convert(float, sum(iif(ShadeboneResult is null,1,0))) / convert(float,(count(*))),2) ShadeboneResultNull
-		, round(convert(float, sum(iif(ContinuityResult = 'Pass',1,0))) / convert(float,(count(*))),2) ContinuityResult
-		, round(convert(float, sum(iif(ContinuityResult is null,1,0))) / convert(float,(count(*))),2) ContinuityResultNull
+		select round(convert(float, sum(iif(PhyResult = 'Fail',1,0))) / convert(float,(count(*))),2) PhyResult		
+		, round(convert(float, sum(iif(WeightResult = 'Fail',1,0))) / convert(float,(count(*))),2) WeightResult		
+		, round(convert(float, sum(iif(ShadeboneResult = 'Fail',1,0))) / convert(float,(count(*))),2) ShadeboneResult		
+		, round(convert(float, sum(iif(ContinuityResult = 'Fail',1,0))) / convert(float,(count(*))),2) ContinuityResult		
 		from (
 		select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult
 		from fir f
@@ -245,17 +242,14 @@ outer apply(
 )FIR_Result2
 outer apply(
 	select 
-	FLResult = case when fl=1 then 'Pass' when flNull=1 then null else 'Fail' end
-	,ovenResult = case when oven=1 then 'Pass' when ovenNull=1 then null else 'Fail' end
-	,cfResult = case when cf=1 then 'Pass' when cfNull=1 then null else 'Fail' end
+	FLResult = case when fl >0 then 'Fail' when fl is null then null else 'Pass' end
+	,ovenResult = case when oven>1 then 'Fail' when oven is null then null else 'Pass' end
+	,cfResult = case when cf>1 then 'Fail' when cf is null then null else 'Pass' end
 	from
 	(
-		select round(convert(float, sum(iif(fl = 'Pass',1,0))) / convert(float,(count(*))),2) fl
-			, round(convert(float, sum(iif(fl is null,1,0))) / convert(float,(count(*))),2) flNull
-			, round(convert(float, sum(iif(oven = 'Pass',1,0))) / convert(float,(count(*))),2) oven
-			, round(convert(float, sum(iif(oven is null,1,0))) / convert(float,(count(*))),2) ovenNull
-			, round(convert(float, sum(iif(cf = 'Pass',1,0))) / convert(float,(count(*))),2) cf
-			, round(convert(float, sum(iif(cf is null,1,0))) / convert(float,(count(*))),2) cfNull
+		select round(convert(float, sum(iif(fl = 'Fail',1,0))) / convert(float,(count(*))),2) fl
+			, round(convert(float, sum(iif(oven = 'Fail',1,0))) / convert(float,(count(*))),2) oven
+			, round(convert(float, sum(iif(cf = 'Fail',1,0))) / convert(float,(count(*))),2) cf
 		from (
 		SELECT FL.Result as fl ,O.Result as oven ,C.Result as cf
 		FROM fir f
