@@ -79,6 +79,7 @@
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.chkAEQ = new Sci.Win.UI.CheckBox();
             this.labelBalance = new Sci.Win.UI.Label();
             this.labelBalanceValue = new Sci.Win.UI.Label();
             this.labelToalCutOutputValue = new Sci.Win.UI.Label();
@@ -86,7 +87,6 @@
             this.splitContainer6 = new System.Windows.Forms.SplitContainer();
             this.splitContainer7 = new System.Windows.Forms.SplitContainer();
             this.splitContainer8 = new System.Windows.Forms.SplitContainer();
-            this.chkAEQ = new Sci.Win.UI.CheckBox();
             this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCutpart)).BeginInit();
             this.art_contextMenuStrip.SuspendLayout();
@@ -782,6 +782,17 @@
             this.splitContainer5.SplitterDistance = 30;
             this.splitContainer5.TabIndex = 100;
             // 
+            // chkAEQ
+            // 
+            this.chkAEQ.AutoSize = true;
+            this.chkAEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkAEQ.Location = new System.Drawing.Point(711, 6);
+            this.chkAEQ.Name = "chkAEQ";
+            this.chkAEQ.Size = new System.Drawing.Size(147, 21);
+            this.chkAEQ.TabIndex = 99;
+            this.chkAEQ.Text = "Allocate excess qty";
+            this.chkAEQ.UseVisualStyleBackColor = true;
+            // 
             // labelBalance
             // 
             this.labelBalance.BackColor = System.Drawing.Color.Transparent;
@@ -888,17 +899,6 @@
             this.splitContainer8.Size = new System.Drawing.Size(1169, 333);
             this.splitContainer8.SplitterDistance = 283;
             this.splitContainer8.TabIndex = 0;
-            // 
-            // chkAEQ
-            // 
-            this.chkAEQ.AutoSize = true;
-            this.chkAEQ.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAEQ.Location = new System.Drawing.Point(711, 6);
-            this.chkAEQ.Name = "chkAEQ";
-            this.chkAEQ.Size = new System.Drawing.Size(147, 21);
-            this.chkAEQ.TabIndex = 99;
-            this.chkAEQ.Text = "Allocate excess qty";
-            this.chkAEQ.UseVisualStyleBackColor = true;
             // 
             // P11
             // 
