@@ -166,7 +166,8 @@ select 0 as [selected]
         , o.FactoryID
         , x.*
         , fi.Remark,fi.ukey
-		,[FIR] = case when 
+		,[FIR] = case when pd.FabricType='A' then iif(Air.Result ='','Blank',Air.Result)
+				when 
 				(FIR_Result1.ContinuityResult is null or 
 				FIR_Result1.PhyResult is null or
 				FIR_Result1.ShadeboneResult is null or
@@ -188,7 +189,7 @@ select 0 as [selected]
 					then 'Fail' else 'Pass' end
 					)
 				end
-		,[WashLab Report] = case when pd.FabricType='A' then ''
+		,[WashLab Report] = case when pd.FabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
 							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'
 								then 'Fail'
 							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
@@ -260,6 +261,12 @@ outer apply(
 		) a
 	)b
 )WashLab
+outer apply(
+	select Result from AIR where POID=fi.POID and Seq1=fi.Seq1 and Seq2=fi.Seq2 
+)Air
+outer apply(
+	select result from AIR_Laboratory where POID=fi.POID and Seq1=fi.Seq1 and Seq2=fi.Seq2
+) Air_Lab
 {strMtlLocation}
 where   f.MDivisionID = '{Sci.Env.User.Keyword}' 
         and fi.POID like @poid1 
