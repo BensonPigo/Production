@@ -67,7 +67,7 @@ namespace Sci.Production.Sewing
             sqlCmd.Append(string.Format(@"--根據條件撈基本資料
 select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
 	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
-	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,'')
+	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,''), CASE WHEN ot.IsDevSample =1 THEN 'Y' ELSE 'N' END AS IsDevSample
 	,OrderBrandID = isnull(o.BrandID,'')    ,OrderCdCodeID = isnull(o.CdCodeID,'')
 	,OrderProgram = isnull(o.ProgramID,'')  ,OrderCPU = isnull(o.CPU,0) ,OrderCPUFactor = isnull(o.CPUFactor,0) ,OrderStyle = isnull(o.StyleID,'') ,OrderSeason = isnull(o.SeasonID,'')
 	,MockupBrandID= isnull(mo.BrandID,'')   ,MockupCDCodeID= isnull(mo.MockupID,'')
@@ -83,6 +83,7 @@ into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 --left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
 outer apply
@@ -122,7 +123,7 @@ where 1=1 "));
 select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionID,OrderId,ComboType
 	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType),WorkHour = sum(Round(WorkHour,3))over(partition by id,OrderId,ComboType)
 	,QAQty = sum(QAQty)over(partition by id,OrderId,ComboType),InlineQty = sum(InlineQty)over(partition by id,OrderId,ComboType)
-	,LocalOrder,CustPONo,OrderCategory,OrderType
+	,LocalOrder,CustPONo,OrderCategory,OrderType,IsDevSample
 	,OrderBrandID ,OrderCdCodeID ,OrderProgram ,OrderCPU ,OrderCPUFactor ,OrderStyle ,OrderSeason
 	,MockupBrandID,MockupCDCodeID,MockupProgram,MockupCPU,MockupCPUFactor,MockupStyle,MockupSeason
 	,Rate,StdTMS,InspectQty,RejectQty
@@ -295,6 +296,7 @@ select * from(
 		,Category = IIF(t.OrderCategory=''M'',''Mockup'',IIF(LocalOrder = 1,''Local Order'',IIF(t.OrderCategory=''B'',''Bulk'',IIF(t.OrderCategory=''S'',''Sample'',IIF(t.OrderCategory=''G'',''Garment'','''')))))
 		,Program = IIF(t.Category=''M'',MockupProgram,OrderProgram)
 		,OrderType
+        ,IsDevSample
 		,CPURate = IIF(t.Category=''M'',MockupCPUFactor,OrderCPUFactor)
 		,Style = IIF(t.Category=''M'',MockupStyle,OrderStyle)
 		,Season = IIF(t.Category=''M'',MockupSeason,OrderSeason)

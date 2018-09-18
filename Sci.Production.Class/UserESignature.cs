@@ -7,24 +7,55 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Sci.Data;
+using System.Configuration;
 
 namespace Sci.Production.Class
 {
     public class UserESignature
     {
-        public static int LimitWidth = 550;
-        public static int LimitHeight = 300;
+        public static int LimitWidth = 750;
+        public static int LimitHeight = 500;
         /// <summary>
         /// 取得電子簽章路徑
         /// </summary>
         public static string getESignaturePath()
         {
-            // 取得當前Config moudle位置 Dummy or Formal
             string dbName = DBProxy.Current.DefaultModuleName;
-            string PicPath = MyUtility.GetValue.Lookup(@"select PicPath from System WITH (NOLOCK)") + @"\" + dbName + @"\" + @"ESignature\";
-            if (!Directory.Exists(PicPath))
+            // 取得當前Config moudle位置 Dummy or Formal
+            string PicPath = null;
+
+            if (string.IsNullOrEmpty((ConfigurationManager.AppSettings["TaipeiServer"])))
             {
-                Directory.CreateDirectory(PicPath);
+                PicPath = MyUtility.GetValue.Lookup(@"select PicPath from System WITH (NOLOCK)") + @"\" + dbName + @"\" + @"ESignature\";
+                if (Directory.Exists(PicPath) == false)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(PicPath);
+                    }
+                    catch (Exception e)
+                    {
+                        MyUtility.Msg.ErrorBox(e.ToString());
+                        return null;
+                    }
+                }
+            }
+            else
+            {
+                /*
+                 * 無法取得路徑
+                 * 其問題可能是在台北端使用系統
+                 * 若要在台北端測試系統
+                 * 則請將下列註解打開
+                 * 
+                 * 若要編譯 Release 版
+                 * 請將以下語法註解
+                 */
+                //PicPath = @"D:\ESignature\";
+                //if (Directory.Exists(PicPath) == false)
+                //{
+                //    Directory.CreateDirectory(PicPath);
+                //}
             }
 
             return PicPath;
@@ -69,27 +100,20 @@ namespace Sci.Production.Class
             int fixWidth = 0, fixHeight = 0;
             int sourWidth = img.Width;
             int sourHeight = img.Height;
-            // 原始圖檔任一邊大於縮放極限,就依比例調整長寬
-            if (sourWidth > LimitWidth || sourHeight > LimitHeight)
+
+            // 使用長寬轉換比例，依最小的轉換比例調整長寬
+            if ((float)LimitWidth / sourWidth < (float)LimitHeight / sourHeight)
             {
-                if ((sourWidth * LimitHeight) > (sourHeight * LimitWidth))
-                {
-                    fixWidth = LimitWidth;
-                    fixHeight = (LimitWidth * sourHeight) / sourWidth;
-                }
-                else
-                {
-                    fixWidth = (sourWidth * LimitHeight) / sourHeight;
-                    fixHeight = LimitHeight;
-                }
+                fixWidth = LimitWidth;
+                fixHeight = (LimitWidth * sourHeight) / sourWidth;                
             }
             else
             {
-                fixWidth = sourWidth;
-                fixHeight = sourHeight;
+                fixWidth = (sourWidth * LimitHeight) / sourHeight;
+                fixHeight = LimitHeight;
             }
-            Bitmap finalBitmap = new Bitmap(img, fixWidth, fixHeight);
-          
+
+            Bitmap finalBitmap = new Bitmap(img, fixWidth, fixHeight);                     
 
             using (MemoryStream ms = new MemoryStream())
             {
