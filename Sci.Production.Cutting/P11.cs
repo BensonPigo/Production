@@ -64,9 +64,10 @@ namespace Sci.Production.Cutting
                 DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
                 if (!MyUtility.Convert.GetString(dr["isExcess"]).EqualString("Y")) return;
                 string scalecmd = $@"
-select wd.Orderid,Article,w.Colorid,SizeCode
+select wd.Orderid,Article,w.Colorid,SizeCode,o.SewLine,w.CutCellid
 from workorder_Distribute wd WITH (NOLOCK) 
 inner join WorkOrder w WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey
+inner join orders o WITH (NOLOCK) on w.id = o.cuttingsp and wd.OrderID = o.id
 where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
 ";
                 SelectItem item1 = new SelectItem(scalecmd, string.Empty, dr["Orderid"].ToString());
@@ -79,6 +80,8 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
                 dr["Article"] = item1.GetSelecteds()[0]["Article"];
                 dr["Colorid"] = item1.GetSelecteds()[0]["Colorid"];
                 dr["SizeCode"] = item1.GetSelecteds()[0]["SizeCode"];
+                dr["SewingLine"] = item1.GetSelecteds()[0]["SewLine"];
+                dr["SewingCell"] = item1.GetSelecteds()[0]["CutCellid"];
             };
             Linecell.EditingMouseDown += (s, e) =>
             {
@@ -577,7 +580,6 @@ Select  distinct 0 as sel
 	    , ord.StyleUkey
 		, isEXCESS = 'Y'
 from workorder a WITH (NOLOCK) 
-inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id 
 outer apply(
 	select top 1 wd.OrderID,wd.Article,wd.SizeCode
@@ -585,6 +587,7 @@ outer apply(
 	where wd.WorkOrderUkey = a.Ukey and wd.orderid <>'EXCESS'
 	order by wd.OrderID desc
 )l
+inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp and l.OrderID = ord.id
 Where   a.CutRef is not null  
         and ord.mDivisionid = '{keyWord}'  and b.orderid ='EXCESS'
 ";
