@@ -208,6 +208,8 @@ and CutRef not in ( {2} ) ", keyWord, estcutdate, condition));
                         ndr["cons"] = dr["cons"];
                         ndr["sizeRatio"] = dr["sizeRatio"];
                         ndr["WorkorderUkey"] = dr["WorkorderUkey"];
+                        ndr["consPC"] = dr["consPC"];
+                        ndr["sizeRatioQty"] = dr["sizeRatioQty"];
                         currentdetailTable.Rows.Add(ndr);
                         
                     }
@@ -228,6 +230,9 @@ and CutRef not in ( {2} ) ", keyWord, estcutdate, condition));
                         exist[0]["Colorid"] = dr["Colorid"];
                         exist[0]["cons"] = dr["cons"];
                         exist[0]["sizeRatio"] = dr["sizeRatio"];
+                        exist[0]["WorkorderUkey"] = dr["WorkorderUkey"];
+                        exist[0]["ConsPC"] = dr["ConsPC"];
+                        exist[0]["sizeRatioQty"] = dr["sizeRatioQty"];
                     }
                     
                 }

@@ -59,8 +59,8 @@ namespace Sci.Production.Cutting
                         ndr["cons"] = dr["cons"];
                         ndr["sizeRatio"] = dr["sizeRatio"];
                         ndr["WorkorderUkey"] = dr["WorkorderUkey"];
+                        ndr["ConsPC"] = dr["ConsPC"];
                         ndr["SizeRatioQty"] = dr["SizeRatioQty"];
-                        ndr["WorkorderUkey"] = dr["WorkorderUkey"];
                         currentdetailTable.Rows.Add(ndr);
                     }
                     else
@@ -80,6 +80,7 @@ namespace Sci.Production.Cutting
                         exist[0]["Colorid"] = dr["Colorid"];
                         exist[0]["cons"] = dr["cons"];
                         exist[0]["sizeRatio"] = dr["sizeRatio"];
+                        exist[0]["WorkorderUkey"] = dr["WorkorderUkey"];
                         exist[0]["ConsPC"] = dr["ConsPC"];
                         exist[0]["SizeRatioQty"] = dr["SizeRatioQty"];
                     }
