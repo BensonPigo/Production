@@ -296,7 +296,7 @@ where
 
             // 增加 order by FtyInventory.POID, FtyInventory.Seq1, FtyInventory.Seq2,Receiving_Detail.Ukey,FtyInventory.StockType
             strSQLCmd.Insert(0, "select * from (");
-            strSQLCmd.Append(") a order by Poid,seq1,seq2,Receiving_Detail_ukey,StockType");
+            strSQLCmd.Append(") a order by Receiving_Detail_ukey,StockType"); //Poid,seq1,seq2
 
             this.ShowWaitMessage("Data Loading....");
             Ict.DualResult result;
