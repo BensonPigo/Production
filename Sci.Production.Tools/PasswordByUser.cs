@@ -183,43 +183,51 @@ namespace Sci.Production.Tools
                 CurrentMaintain["ID"] = dtSystem.Rows[0]["AccountKeyword"].ToString() + CurrentMaintain["ID"].ToString().Trim();
             }
 
-            if (MyUtility.Check.Empty(this.disBoxESignature.Text))
+            /*
+             * 進行電子簽章的存取
+             * 必須確認有明確的路徑
+             * 否則系統會將圖檔放置執行檔的目錄
+             */
+            if (this.destination_path != null)
             {
-                // 刪除pic
-                if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])))
+                if (MyUtility.Check.Empty(this.disBoxESignature.Text))
                 {
-                    try
+                    // 刪除pic
+                    if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])))
                     {
-                        string deltpath = this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
-                        System.IO.File.Delete(deltpath);
-                        this.CurrentMaintain["ESignature"] = string.Empty;
-                        this.disBoxESignature.Text = MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
+                        try
+                        {
+                            string deltpath = this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
+                            System.IO.File.Delete(deltpath);
+                            this.CurrentMaintain["ESignature"] = string.Empty;
+                            this.disBoxESignature.Text = MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
+                        }
+                        catch (System.IO.IOException exception)
+                        {
+                            MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
+                        }
                     }
-                    catch (System.IO.IOException exception)
+                    else
                     {
-                        MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
+                        this.CurrentMaintain["ESignature"] = string.Empty;
                     }
                 }
                 else
                 {
-                    this.CurrentMaintain["ESignature"] = string.Empty;
-                }
-            }
-            else
-            {
-                if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])) || !MyUtility.Check.Empty(file))
-                {
-                    try
+                    if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])) || !MyUtility.Check.Empty(file))
                     {
-                        string pathFileName = this.destination_path + this.CurrentMaintain["ID"] + Path.GetExtension(this.file);
-                        if (!MyUtility.Check.Empty(file))
+                        try
                         {
-                            File.Copy(file, pathFileName, true);
+                            string pathFileName = this.destination_path + this.CurrentMaintain["ID"] + Path.GetExtension(this.file);
+                            if (!MyUtility.Check.Empty(file))
+                            {
+                                File.Copy(file, pathFileName, true);
+                            }
                         }
-                    }
-                    catch (Exception exception)
-                    {
-                        MyUtility.Msg.ErrorBox("Error: Save file fail. Original error: " + exception.Message);
+                        catch (Exception exception)
+                        {
+                            MyUtility.Msg.ErrorBox("Error: Save file fail. Original error: " + exception.Message);
+                        }
                     }
                 }
             }
@@ -278,15 +286,18 @@ namespace Sci.Production.Tools
 
         private void btnSetPic_Click(object sender, EventArgs e)
         {
-            if (openfiledialog == null)
+            if (this.destination_path != null)
             {
-                openfiledialog = new OpenFileDialog();
-                openfiledialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.TIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
-            }
+                if (openfiledialog == null)
+                {
+                    openfiledialog = new OpenFileDialog();
+                    openfiledialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.TIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
+                }
 
-            if (DialogResult.OK != openfiledialog.ShowDialog()) return;
-            file = openfiledialog.FileName;          
-            this.CurrentMaintain["ESignature"] = CurrentMaintain["ID"] + Path.GetExtension(file);
+                if (DialogResult.OK != openfiledialog.ShowDialog()) return;
+                file = openfiledialog.FileName;
+                this.CurrentMaintain["ESignature"] = CurrentMaintain["ID"] + Path.GetExtension(file);
+            }
         }
 
         private void btnShowImg_Click(object sender, EventArgs e)
@@ -302,11 +313,14 @@ namespace Sci.Production.Tools
                     break;
                 // 編輯模式,只能Clear照片
                 case true:
-                    DialogResult delResult = MyUtility.Msg.QuestionBox("Clear the E- Signature?", buttons: MessageBoxButtons.YesNo);
-                    if (delResult == System.Windows.Forms.DialogResult.Yes)
+                    if (this.destination_path != null)
                     {
-                        // 暫時清空pic
-                        this.disBoxESignature.Text = string.Empty;
+                        DialogResult delResult = MyUtility.Msg.QuestionBox("Clear the E- Signature?", buttons: MessageBoxButtons.YesNo);
+                        if (delResult == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            // 暫時清空pic
+                            this.disBoxESignature.Text = string.Empty;
+                        }
                     }
                     break;
             }
