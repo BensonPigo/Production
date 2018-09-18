@@ -130,7 +130,20 @@ end"
 
             #region radiobtnByM
             if (radioByM.Checked)
-            {               
+            {
+                sqlCmd.Append(@"
+select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished
+into #tmpWO
+from WorkOrder WO
+left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
+left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
+INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+where 1 = 1 AND wo.EstCutDate is not null ");
+                if (!MyUtility.Check.Empty(MDivision))
+                {
+                    sqlCmd.Append(string.Format(" and wo.mdivisionid = '{0}' ", MDivision));
+                }
+
                 sqlCmd.Append(@"
 select wo.id,
 	Status = iif(wo.Layer>sl.layer,null,max(co.Status)),
@@ -138,7 +151,7 @@ select wo.id,
 	wo.mdivisionid,
 	CDate = iif(wo.Layer<>sl.layer,null,max(CO.CDate)),
 	c.Finished,wo.UKey ,wo.cutref
-into #tmpWO
+into #tmpWO2
 from WorkOrder WO
 Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
 left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
@@ -190,21 +203,21 @@ outer apply(
 ) as d2
 outer apply(
 	select count(*) as ct 
-	from #tmpWO 
+	from #tmpWO2
 	Where EstCutDate = dr.EstCutDate 
 		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
 ) as d3
 outer apply(
 	select count(*) as ct 
-	from #tmpWO
+	from #tmpWO2
 	Where EstCutDate < dr.EstCutDate 
 		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
 ) as d4
 outer apply(	
 	select count(*) as ct 
-	from #tmpWO
+	from #tmpWO2
 	Where EstCutDate > dr.EstCutDate 
 		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
@@ -221,13 +234,32 @@ drop table #tmpWO
             if (radioByFactory.Checked)
             {
                 sqlCmd.Append(@"
+select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished
+into #tmpWO
+from WorkOrder WO
+left join CuttingOutput_Detail cod WITH (NOLOCK) on  cod.WorkOrderUKey = wo.UKey 
+left join CuttingOutput as co WITH (NOLOCK) on co.ID = cod.ID and Status != 'NEW' 
+INNER join Cutting as c WITH (NOLOCK) on c.ID = wo.ID
+where 1 = 1 AND wo.EstCutDate is not null 
+");
+                if (!MyUtility.Check.Empty(MDivision))
+                {
+                    sqlCmd.Append(string.Format(" and wo.mdivisionid = '{0}' ", MDivision));
+                }
+
+                if (!MyUtility.Check.Empty(Factory))
+                {
+                    sqlCmd.Append(string.Format(" and wo.FactoryID = '{0}' ", Factory));
+                }
+
+                sqlCmd.Append(@"
 select wo.id,
 	Status = iif(wo.Layer<>sl.layer,null,max(co.Status)),
 	EstCutDate = iif(wo.Layer<>sl.layer,null,max(wo.EstCutDate)),
 	wo.mdivisionid,
 	CDate = iif(wo.Layer<>sl.layer,null,max(CO.CDate)),
 	c.Finished,wo.UKey,wo.FactoryID,wo.cutref
-into #tmpWO
+into #tmpWO2
 from WorkOrder WO
 Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
 left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
@@ -291,7 +323,7 @@ outer apply(
 ) as d2
 outer apply(
 	select count(*) as ct 
-	from #tmpWO 
+	from #tmpWO2
 	Where EstCutDate = dr.EstCutDate 
 		  and CDate = dr.EstCutDate
 		  and MDivisionId = M.MDivisionId
@@ -299,7 +331,7 @@ outer apply(
 ) as d3
 outer apply(
 	select count(*) as ct 
-	from #tmpWO
+	from #tmpWO2
 	Where EstCutDate < dr.EstCutDate 
 		  and CDate = dr.EstCutDate
 		  and MDivisionId = M.MDivisionId
@@ -307,7 +339,7 @@ outer apply(
 ) as d4
 outer apply(
 	select count(*) as ct 
-	from #tmpWO
+	from #tmpWO2
 	Where EstCutDate > dr.EstCutDate 
 		  and CDate = dr.EstCutDate
 		  and MDivisionId = M.MDivisionId
@@ -325,13 +357,34 @@ drop table #tmpWO
             if (radioByCutCell.Checked)
             {
                 sqlCmd.Append(@"
+select wo.id,co.Status,wo.EstCutDate,wo.mdivisionid,co.CDate,c.Finished
+into #tmpWO
+from  WorkOrder as wo
+Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
+inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and WO.MDivisionID = cc.MDivisionID
+left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
+left Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
+where 1 = 1 AND wo.EstCutDate is not null
+");
+                if (!MyUtility.Check.Empty(MDivision))
+                {
+                    sqlCmd.Append(string.Format(" and wo.mdivisionid = '{0}' ", MDivision));
+                }
+
+                if (!MyUtility.Check.Empty(CutCell1))
+                {
+                    sqlCmd.Append(string.Format(" and cc.ID >= '{0}' ", CutCell1));
+                }
+
+
+                sqlCmd.Append(@"
 select wo.id,
 	Status = iif(wo.Layer<>sl.layer,null,max(co.Status)),
 	EstCutDate = iif(wo.Layer<>sl.layer,null,max(wo.EstCutDate)),
 	wo.mdivisionid,
 	CDate = iif(wo.Layer<>sl.layer,null,max(CO.CDate)),
 	c.Finished,wo.UKey,ccid = cc.id,wo.cutcellid,wo.cutref
-into #tmpWO
+into #tmpWO2
 from  WorkOrder as wo
 Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
 inner join CutCell as cc WITH (NOLOCK) on cc.ID = wo.CutCellID and WO.MDivisionID = cc.MDivisionID
@@ -398,7 +451,7 @@ outer apply(
 ) as d2
 outer apply(
 	select count(*) as ct 
-	from #tmpWO 
+	from #tmpWO2
 	Where EstCutDate = dr.EstCutDate 
 		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
@@ -406,7 +459,7 @@ outer apply(
 ) as d3
 outer apply(
 	select count(*) as ct 
-	from #tmpWO
+	from #tmpWO2
 	Where EstCutDate < dr.EstCutDate 
 		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
@@ -414,7 +467,7 @@ outer apply(
 ) as d4
 outer apply(
 	select count(*) as ct 
-	from #tmpWO
+	from #tmpWO2
 	Where EstCutDate > dr.EstCutDate 
 		and CDate = dr.EstCutDate
 		and MDivisionId = M.MDivisionId
