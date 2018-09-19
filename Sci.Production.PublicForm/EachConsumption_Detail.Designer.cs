@@ -37,8 +37,8 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Location = new System.Drawing.Point(12, 108);
-            this.detailgridcont.Size = new System.Drawing.Size(760, 199);
+            this.detailgridcont.Location = new System.Drawing.Point(12, 174);
+            this.detailgridcont.Size = new System.Drawing.Size(760, 136);
             // 
             // detailgridicon
             // 
@@ -46,13 +46,13 @@
             // 
             // btmcont
             // 
-            this.btmcont.Location = new System.Drawing.Point(0, 313);
+            this.btmcont.Location = new System.Drawing.Point(0, 316);
             this.btmcont.Size = new System.Drawing.Size(784, 40);
             this.btmcont.TabIndex = 1;
             // 
             // gridcont
             // 
-            this.gridcont.Size = new System.Drawing.Size(760, 68);
+            this.gridcont.Size = new System.Drawing.Size(760, 134);
             // 
             // append
             // 
@@ -83,17 +83,16 @@
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.label1.Lines = 0;
-            this.label1.Location = new System.Drawing.Point(12, 85);
+            this.label1.Location = new System.Drawing.Point(12, 149);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(165, 22);
             this.label1.TabIndex = 0;
             this.label1.Text = "Details of Article/Size";
             this.label1.TextStyle.Color = System.Drawing.Color.Red;
             // 
-            // P01_EachConsumption_Detail
+            // EachConsumption_Detail
             // 
-            this.ClientSize = new System.Drawing.Size(784, 353);
+            this.ClientSize = new System.Drawing.Size(784, 356);
             this.Controls.Add(this.label1);
             this.DefaultDetailOrder = "Article, SizeCode";
             this.DefaultOrder = "ColorID";
@@ -105,7 +104,7 @@
             this.GridPopUp = false;
             this.KeyField1 = "Order_EachConsUkey";
             this.MasterKeyField = "Ukey";
-            this.Name = "P01_EachConsumption_Detail";
+            this.Name = "EachConsumption_Detail";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Cons. per Color - Detail";
             this.WorkAlias = "Order_EachCons_Color";

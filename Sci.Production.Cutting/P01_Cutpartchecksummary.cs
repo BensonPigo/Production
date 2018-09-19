@@ -104,13 +104,13 @@ namespace Sci.Production.Cutting
             }
             foreach (DataRow dr in gridtb.Rows)
             {
-                complete = false;
+                complete = true;
                 DataRow[] sel = panneltb.Select(string.Format("Article = '{0}'", dr["Article"]));
                 foreach (DataRow pdr in sel)
                 {
 
-                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) <= MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) 
-                        complete = true;
+                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) > MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) 
+                        complete = false;
 
                 }
                 if (complete) dr["Complete"] = "Y";
