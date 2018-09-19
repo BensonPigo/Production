@@ -248,7 +248,7 @@
             this.DefaultControlForEdit = "dateDateStart";
             this.IsSupportToPrint = false;
             this.Name = "R08";
-            this.Text = "R08. Factory Yearly CMP Report";
+            this.Text = "R08. Yearly Production output Report";
             this.Controls.SetChildIndex(this.labelDate, 0);
             this.Controls.SetChildIndex(this.labelSewingLine, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
