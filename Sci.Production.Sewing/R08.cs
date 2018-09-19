@@ -27,6 +27,7 @@ namespace Sci.Production.Sewing
         private DateTime? date1;
         private DateTime? date2;
         private int orderby;
+        private DataTable[] dts;
         private DataTable SewOutPutData;
         private DataTable printData;
         private DataTable excludeInOutTotal;
@@ -275,23 +276,12 @@ select OutputDate
 	   , FactoryID
        , SubconInSisterFty
        , SubconOutFty
-from #tmp2ndFilter");
-            #endregion
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.SewOutPutData);
-            if (!result)
-            {
-                failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
-                return failResult;
-            }
+into #tmp
+from #tmp2ndFilter
 
-            #region 整理列印資料
-            try
-            {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
-                    string.Format(@"
+select * from #tmp
+
+--
 ;with AllOutputDate as (
     select distinct [OutputMM] = FORMAT(OutputDate,'yyyy/MM') 
 	from #tmp
@@ -376,30 +366,9 @@ left join tmpTtlCPU tc on aDate.OutputMM = tc.OutputMM
 left join tmpSubconInCPU ic on aDate.OutputMM = ic.OutputMM
 left join tmpSubconOutCPU oc on aDate.OutputMM = oc.OutputMM
 left join tmpTtlManPower mp on aDate.OutputMM = mp.OutputMM
-order by aDate.OutputMM"),
-                    out this.printData);
+order by aDate.OutputMM
 
-                if (failResult == false)
-                {
-                    return failResult;
-                }
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                failResult = new DualResult(false, "Query print data fail\r\n" + ex.ToString());
-                return failResult;
-            }
-            #endregion
-
-            #region 整理Total Exclude Subcon-In & Out
-            try
-            {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
-                    string.Format(@"
+--整理Total Exclude Subcon-In & Out
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
@@ -436,30 +405,9 @@ select q.QAQty
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
-left join tmpTtlManPower mp on 1 = 1"),
-                    out this.excludeInOutTotal);
+left join tmpTtlManPower mp on 1 = 1
 
-                if (failResult == false)
-                {
-                    return failResult;
-                }
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                failResult = new DualResult(false, "Total Exclude Subcon-In & Out total data fail\r\n" + ex.ToString());
-                return failResult;
-            }
-            #endregion
-
-            #region 整理non Sister SubCon In
-            try
-            {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
-                    string.Format(@"
+--整理non Sister SubCon In
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
@@ -474,30 +422,9 @@ select q.QAQty
 	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
-from tmpQty q"),
-                    out this.NonSisterInTotal);
+from tmpQty q
 
-                if (failResult == false)
-                {
-                    return failResult;
-                }
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                failResult = new DualResult(false, "Non Sister SubCon In data fail\r\n" + ex.ToString());
-                return failResult;
-            }
-            #endregion
-
-            #region 整理Sister SubCon In
-            try
-            {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category,SubconInSisterFty",
-                    string.Format(@"
+--整理Sister SubCon In
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
@@ -512,30 +439,9 @@ select q.QAQty
 	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
-from tmpQty q"),
-                    out this.SisterInTotal);
+from tmpQty q
 
-                if (failResult == false)
-                {
-                    return failResult;
-                }
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                failResult = new DualResult(false, "Sister SubCon In data fail\r\n" + ex.ToString());
-                return failResult;
-            }
-            #endregion
-
-            #region 整理CPU Factor
-            try
-            {
-                #region 組SQL
-                failResult = MyUtility.Tool.ProcessWithDatatable(
-                    this.SewOutPutData,
-                    "Category,MockupCPUFactor,OrderCPUFactor,QAQty,MockupCPU,OrderCPU,Rate,Style",
-                    string.Format(@"
+--整理CPU Factor
 ;with tmpData as (
 	select CPUFactor = IIF(Category = 'M', MockupCPUFactor, OrderCPUFactor)
 		   , QAQty
@@ -566,31 +472,9 @@ select q.*
 	   , s.Style
 from tmpSumQAQty q
 left join tmpSumCPU c on q.CPUFactor = c.CPUFactor
-left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
-                    out this.cpuFactor);
+left join tmpCountStyle s on q.CPUFactor = s.CPUFactor
 
-                if (failResult == false)
-                {
-                    return failResult;
-                }
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                failResult = new DualResult(false, "Query CPU factor data fail\r\n" + ex.ToString());
-                return failResult;
-            }
-            #endregion
-
-            #region 整理Subprocess資料
-            if (this.printData.Rows.Count > 0)
-            {
-                try
-                {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(
-                        this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty",
-                        string.Format(@"
+--整理Subprocess資料
 ;with tmpArtwork as(
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
@@ -620,31 +504,9 @@ select ArtworkTypeID = t1.ID
 from tmpArtwork t1
 left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs
-order by t1.ID"),
-                        out this.subprocessData);
+order by t1.ID
 
-                    if (failResult == false)
-                    {
-                        return failResult;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    failResult = new DualResult(false, "Query sub process data fail\r\n" + ex.ToString());
-                    return failResult;
-                }
-            }
-            #endregion
-
-            #region 整理Subprocess by Company Subcon-In資料 Orders.program
-            if (this.printData.Rows.Count > 0)
-            {
-                try
-                {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(
-                        this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty,Program",
-                        string.Format(@"
+--整理Subprocess by Company Subcon-In資料 Orders.program
 ;with tmpArtwork as(
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
@@ -676,31 +538,9 @@ select ArtworkTypeID = t1.ID
 from tmpArtwork t1
 left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs,t2.Program having isnull(sum(Price), 0) > 0
-order by t1.ID"),
-                        out this.subprocessSubconInData);
+order by t1.ID
 
-                    if (failResult == false)
-                    {
-                        return failResult;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    failResult = new DualResult(false, "Query sub process data fail\r\n" + ex.ToString());
-                    return failResult;
-                }
-            }
-            #endregion
-
-            #region 整理Subprocess by Company Subcon-Out資料 SewingOutput.SubconOutFty
-            if (this.printData.Rows.Count > 0)
-            {
-                try
-                {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(
-                        this.SewOutPutData,
-                        "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty,SubconOutFty",
-                        string.Format(@"
+--整理Subprocess by Company Subcon-Out資料 SewingOutput.SubconOutFty
 ;with tmpArtwork as(
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
@@ -732,31 +572,9 @@ select ArtworkTypeID = t1.ID
 from tmpArtwork t1
 left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs,t2.SubconOutFty having isnull(sum(Price), 0) > 0
-order by t1.ID"),
-                        out this.subprocessSubconOutData);
+order by t1.ID
 
-                    if (failResult == false)
-                    {
-                        return failResult;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    failResult = new DualResult(false, "Query sub process data fail\r\n" + ex.ToString());
-                    return failResult;
-                }
-            }
-            #endregion
-
-            #region 整理Subcon資料
-            if (this.printData.Rows.Count > 0)
-            {
-                try
-                {
-                    failResult = MyUtility.Tool.ProcessWithDatatable(
-                        this.SewOutPutData,
-                        "SewingLineID,QAQty,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,OrderId,Program,Category,FactoryID,SubconOutFty",
-                        string.Format(@"
+--整理Subcon資料
 ;with tmpSubconIn as (
 	Select 'I' as Type
 		   , Company = Program 
@@ -777,21 +595,31 @@ select * from (
 select * from tmpSubconIn
 union all
 select * from tmpSubconOut ) as a 
-order by Type,iif(Company = 'Other','Z','A'),Company"),
-                        out this.subconData);
+order by Type,iif(Company = 'Other','Z','A'),Company
 
-                    if (failResult == false)
-                    {
-                        return failResult;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    failResult = new DualResult(false, "Query subcon data fail\r\n" + ex.ToString());
-                    return failResult;
-                }
-            }
+
+");
             #endregion
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.dts);
+            if (!result)
+            {
+                failResult = new DualResult(false, "Query sewing output data fail\r\n" + result.ToString());
+                return failResult;
+            }
+            else
+            {
+                this.SewOutPutData = this.dts[0];
+                this.printData = this.dts[1];
+                this.excludeInOutTotal = this.dts[2];
+                this.NonSisterInTotal = this.dts[3];
+                this.SisterInTotal = this.dts[4];
+                this.cpuFactor = this.dts[5];
+                this.subprocessData = this.dts[6];
+                this.subprocessSubconInData = this.dts[7];
+                this.subprocessSubconOutData = this.dts[8];
+                this.subconData = this.dts[9];
+            }
+
             if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
             {
                 this.factoryName = MyUtility.GetValue.Lookup(string.Format("select Name from Mdivision WITH (NOLOCK) where ID = '{0}'", this.mDivision));
