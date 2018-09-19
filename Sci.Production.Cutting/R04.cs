@@ -487,7 +487,7 @@ drop table #tmpWO
 select
 	[M]=wo.MDivisionID,
 	[Est. Cutting Date]=wo.EstCutDate,
-	[Act. Cutting Date]= iif(wo.Layer>sl.layer,null,max(CO.CDate) over(partition by wo.UKey)),
+	[Act. Cutting Date]= iif(wo.Layer>sl.layer,null,Act.CDate),
 	[Master SP#]=wo.ID,
 	[SP#]=wo.OrderID,
 	[Ref#]=wo.CutRef,
@@ -503,10 +503,14 @@ select
 	[Marker Length]=wo.MarkerLength
 
 from WorkOrder wo WITH (NOLOCK) 
-    left join CuttingOutput_Detail COD WITH (NOLOCK) on wo.UKey = COD.WorkOrderUKey
-    left Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
     Inner Join Cutting C WITH (NOLOCK) on C.ID = wo.ID
-    outer apply(Select layer = sum(layer) from CuttingOutput_Detail codi WITH (NOLOCK),CuttingOutput coi WITH (NOLOCK) where WorkOrderUkey = WO.Ukey and coi.id = codi.id and coi.status != 'New')sl
+outer apply(
+    select CDate=max(CDate)
+    from CuttingOutput_Detail COD WITH (NOLOCK)
+    inner Join CuttingOutput CO WITH (NOLOCK) on CO.ID = COD.ID and CO.Status != 'New'
+    where wo.UKey = COD.WorkOrderUKey
+)Act
+outer apply(Select layer = sum(layer) from CuttingOutput_Detail codi WITH (NOLOCK),CuttingOutput coi WITH (NOLOCK) where WorkOrderUkey = WO.Ukey and coi.id = codi.id and coi.status != 'New')sl
 outer apply(
 	select AC= (
 		Select distinct concat('/', WOD.Article)
@@ -558,7 +562,7 @@ where 1=1
                 string  d1= Convert.ToDateTime(Est_CutDate1).ToString("d");
                 if (!MyUtility.Check.Empty(Est_CutDate1))
                 {
-                    sqlCmd.Append(string.Format(" and (wo.EstCutDate ='{0}' or (wo.EstCutDate< '{1}' and (CO.CDate >= '{2}' or (CO.cDate is null and C.Finished = 0))))", d1,d1,d1));
+                    sqlCmd.Append(string.Format(" and (wo.EstCutDate ='{0}' or (wo.EstCutDate< '{1}' and (act.CDate >= '{2}' or (act.cDate is null and C.Finished = 0))))", d1,d1,d1));
                 }
                 #endregion
                 sqlCmd.Append(@"

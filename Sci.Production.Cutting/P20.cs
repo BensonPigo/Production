@@ -78,7 +78,7 @@ Select a.* , e.FabricCombo, e.FabricPanelCode,
     ) as SizeRatio      
 	, WorkOderLayer = e.Layer
 	, AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0)
-    , LackingLayers = e.Layer - a.layer
+    , LackingLayers = e.Layer -isnull(acc.AccuCuttingLayer,0)- a.layer
     , e.ConsPC,SRQ.SizeRatioQty
 From cuttingoutput_Detail a WITH (NOLOCK)
 inner join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
