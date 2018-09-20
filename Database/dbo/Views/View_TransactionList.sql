@@ -144,8 +144,8 @@ FROM              dbo.BorrowBack a INNER JOIN
                             dbo.BorrowBack_Detail b ON b.id = a.id
 UNION ALL
 SELECT          'BorrowBack-To' tbname, a.Type, a.Status, a.EditDate, b.Id, b.ToMDivisionID, b.ToPoId, b.ToSeq1, b.ToSeq2, b.ToRoll, 
-                            b.ToDyelot, b.Qty AS inqty, 0.0 AS outqty, 0.0 AS adjustqty, b.Qty AS AInqty, 0.00 AS AOutqty, 0.00 AS AAdjustQty, 
-                            0.00 AS BInqty, 0.00 AS BOutqty, 0.00 AS BAdjustQty, 0.00 AS CInqty, 0.00 AS COutqty, 0.00 AS CAdjustQty
+                            b.ToDyelot, b.Qty AS inqty, 0.0 AS outqty, 0.0 AS adjustqty, iif(b.ToStockType = 'B', b.Qty, 0.00) AS AInqty, 0.00 AS AOutqty, 0.00 AS AAdjustQty, 
+                            iif(b.ToStockType = 'I', b.Qty, 0.00) AS BInqty, 0.00 AS BOutqty, 0.00 AS BAdjustQty, 0.00 AS CInqty, 0.00 AS COutqty, 0.00 AS CAdjustQty
 FROM              dbo.BorrowBack a INNER JOIN
                             dbo.BorrowBack_Detail b ON b.id = a.id
 UNION ALL
