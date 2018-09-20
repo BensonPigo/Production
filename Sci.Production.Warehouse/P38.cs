@@ -85,6 +85,8 @@ namespace Sci.Production.Warehouse
                   .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .Text("lockname", header: "Lock/Unlock" + Environment.NewLine + "Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12),iseditingreadonly:false,settings: remark)
+                  .Text("FIR", header: "FIR", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                  .Text("WashLab Report", header: "WashLab Report", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                   .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
@@ -116,7 +118,7 @@ namespace Sci.Production.Warehouse
         {
             StringBuilder strSQLCmd = new StringBuilder();
             String sp1 = this.txtSP.Text.TrimEnd() + '%';
-
+            string strMtlLocation = string.Empty;
 
             if (MyUtility.Check.Empty(txtSP.Text)&& MyUtility.Check.Empty(txtwkno.Text)&& MyUtility.Check.Empty(txtReceivingid.Text)
                 && this.dateATA.Value1.Empty() && this.dateATA.Value2.Empty())
@@ -125,7 +127,16 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            strSQLCmd.Append(string.Format(@"
+            if (!MyUtility.Check.Empty(this.txtMtlLocation.Text))
+            {
+                strMtlLocation= @"outer apply(
+	select * from dbo.FtyInventory_Detail f2 WITH (NOLOCK)  
+	inner join dbo.MtlLocation mtl WITH (NOLOCK)  on mtl.ID=f2.MtlLocationID and mtl.StockType=fi.StockType
+	where fi.Ukey=Ukey 
+)fi2";
+            }
+
+            strSQLCmd.Append($@"
 select 0 as [selected]
         , fi.POID
         , fi.seq1
@@ -155,6 +166,35 @@ select 0 as [selected]
         , o.FactoryID
         , x.*
         , fi.Remark,fi.ukey
+		,[FIR] = case when pd.FabricType='A' then iif(Air.Result ='','Blank',Air.Result)
+				when 
+				(FIR_Result1.ContinuityResult is null or 
+				FIR_Result1.PhyResult is null or
+				FIR_Result1.ShadeboneResult is null or
+				FIR_Result1.WeightResult is null) 
+				then 
+					(case when 
+					FIR_Result2.ContinuityResult='Fail' or FIR_Result2.PhyResult='Fail' or
+					FIR_Result2.ShadeboneResult='Fail' or FIR_Result2.WeightResult='Fail'
+					then 'Fail' 
+					when 
+					FIR_Result2.ContinuityResult is null and FIR_Result2.PhyResult is null and
+					FIR_Result2.ShadeboneResult is null and FIR_Result2.WeightResult is null
+					then 'Blank'
+					else 'Pass' end
+					)
+				else (case when 
+					FIR_Result1.ContinuityResult='Fail' or FIR_Result1.PhyResult='Fail' or
+					FIR_Result1.ShadeboneResult='Fail' or FIR_Result1.WeightResult='Fail'
+					then 'Fail' else 'Pass' end
+					)
+				end
+		,[WashLab Report] = case when pd.FabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
+							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'
+								then 'Fail'
+							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
+								then 'Blank'
+							else 'Pass' end
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
@@ -168,9 +208,69 @@ cross apply
 	from dbo.orders o1 WITH (NOLOCK) 
     where o1.POID = fi.POID and o1.Junk = 0
 ) x
-where   f.MDivisionID = '{0}' 
+outer apply(
+	select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult
+	from fir f
+	left join FIR_Physical fp on f.id=fp.ID AND F.PhysicalEncode=1
+	left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and fw.Dyelot=fp.Dyelot and fw.Roll=fp.Roll
+	left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fw.Dyelot=fs.Dyelot and fw.Roll=fs.Roll
+	left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and fs.Dyelot=fc.Dyelot and fs.Roll=fc.Roll
+	where f.POID=fi.POID
+	and f.SEQ1 = fi.Seq1 and f.SEQ2 = fi.Seq2 and fp.Dyelot=fi.Dyelot AND FP.Roll=fi.Roll
+)FIR_Result1
+outer apply(
+	select 
+	PhyResult = case when PhyResult > 0 then 'Fail' when PhyResult is null then null else 'Pass' end
+	,WeightResult = case when WeightResult >0 then 'Fail' when WeightResult is null then null else 'Pass' end
+	,ShadeboneResult = case when ShadeboneResult >0 then 'Fail' when ShadeboneResult is null then null else 'Pass' end
+	,ContinuityResult = case when ContinuityResult >0 then 'Fail' when ContinuityResult is null then null else 'Pass' end
+	from (
+		select round(convert(float, sum(iif(PhyResult = 'Fail',1,0))) / convert(float,(count(*))),2) PhyResult		
+		, round(convert(float, sum(iif(WeightResult = 'Fail',1,0))) / convert(float,(count(*))),2) WeightResult		
+		, round(convert(float, sum(iif(ShadeboneResult = 'Fail',1,0))) / convert(float,(count(*))),2) ShadeboneResult		
+		, round(convert(float, sum(iif(ContinuityResult = 'Fail',1,0))) / convert(float,(count(*))),2) ContinuityResult		
+		from (
+		select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult
+		from fir f
+		left join FIR_Physical fp on f.id=fp.ID AND F.PhysicalEncode=1
+		left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and fw.Dyelot=fp.Dyelot --and fw.Roll=fp.Roll
+		left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fw.Dyelot=fs.Dyelot --and fw.Roll=fs.Roll
+		left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and fs.Dyelot=fc.Dyelot --and fs.Roll=fc.Roll
+		where --f.POID like '18%'
+		f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 and fp.Dyelot= fi.Dyelot --AND FP.Roll='PSRIS1'
+		) a
+	)b	
+)FIR_Result2
+outer apply(
+	select 
+	FLResult = case when fl >0 then 'Fail' when fl is null then null else 'Pass' end
+	,ovenResult = case when oven>1 then 'Fail' when oven is null then null else 'Pass' end
+	,cfResult = case when cf>1 then 'Fail' when cf is null then null else 'Pass' end
+	from
+	(
+		select round(convert(float, sum(iif(fl = 'Fail',1,0))) / convert(float,(count(*))),2) fl
+			, round(convert(float, sum(iif(oven = 'Fail',1,0))) / convert(float,(count(*))),2) oven
+			, round(convert(float, sum(iif(cf = 'Fail',1,0))) / convert(float,(count(*))),2) cf
+		from (
+		SELECT FL.Result as fl ,O.Result as oven ,C.Result as cf
+		FROM fir f
+		left join FIR_Laboratory FL on f.POID= fl.POID and f.seq1= fl.SEQ1 and f.seq2= fl.SEQ2
+		LEFT JOIN Oven O ON O.POID = FL.POID AND O.Status= 'Confirmed'
+		LEFT JOIN ColorFastness C ON C.POID = FL.POID AND C.Status= 'Confirmed'
+		WHERE f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2
+		) a
+	)b
+)WashLab
+outer apply(
+	select Result from AIR where POID=fi.POID and Seq1=fi.Seq1 and Seq2=fi.Seq2 
+)Air
+outer apply(
+	select result from AIR_Laboratory where POID=fi.POID and Seq1=fi.Seq1 and Seq2=fi.Seq2
+) Air_Lab
+{strMtlLocation}
+where   f.MDivisionID = '{Sci.Env.User.Keyword}' 
         and fi.POID like @poid1 
-", Sci.Env.User.Keyword));
+");
 
             System.Data.SqlClient.SqlParameter sp1_1 = new System.Data.SqlClient.SqlParameter();
             sp1_1.ParameterName = "@poid1";
@@ -241,6 +341,14 @@ and r.WhseArrival between '{0}' and '{1}'", dateATA.TextBox1.Text, dateATA.TextB
                 strSQLCmd.Append(string.Format(@" 
 and pd.FabricType in ({0})", comboDropDownList1.SelectedValue));
             }
+
+            if (!MyUtility.Check.Empty(this.txtMtlLocation.Text))
+            {
+                strSQLCmd.Append($@"
+and fi2.MtlLocationID ='{this.txtMtlLocation.Text}'");
+            }
+
+         
 
             Ict.DualResult result;
             DataTable dtData;
