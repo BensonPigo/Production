@@ -105,9 +105,22 @@ where se.WKNo = '{0}' and se.junk=0", this.id);
                     return;
                 }
 
-                //SD開頭, 且13碼, 才能SAVE成功
-                string DebitNote = this.gridExpenseData.Rows[0].Cells[4].Value.ToString();
-                if (DebitNote.Length != 13 || !DebitNote.StartsWith("SD"))
+                //SD開頭, 且13碼, 才能SAVE成功，不過空白要放行
+                bool checkResult = true;
+                for (int i = 0; i <= this.gridExpenseData.Rows.Count-1; i++)
+                {
+                    string DebitNote = this.gridExpenseData.Rows[i].Cells[4].Value.ToString();
+                    if (MyUtility.Check.Empty(DebitNote))
+                    {
+                        continue;
+                    }
+                    if (DebitNote.Length != 13 || !DebitNote.StartsWith("SD") )
+                    {
+                        checkResult = false;
+                    }
+                }
+
+                if (!checkResult)
                 {
                     MyUtility.Msg.WarningBox("Debit Note is not correct, please check again!");
                     return;
