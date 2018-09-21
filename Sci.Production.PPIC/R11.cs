@@ -71,7 +71,8 @@ namespace Sci.Production.PPIC
             switch (this.chkHoliday.Checked)
             {
                 case true:
-                    this.boolHoliday = @"or exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)";
+                    this.boolHoliday = @"and not exists(select 1 from Holiday where HolidayDate = Dates and FactoryID=o.FtyGroup)	";
+
                     break;
                 case false:
                     this.boolHoliday = string.Empty;
@@ -155,18 +156,13 @@ cross apply(
 	select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
 	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日
 	and Dates < CONVERT(date, o.SewOffLine)			
+    {this.boolHoliday}
 )Calendar	
 where 1=1
 and o.Category !='S' and o.junk !=1
-and CONVERT(date, o.SewOffLine) between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
+and CONVERT(date, o.SewOffLine) between @ReadyDate1 and @ReadyDate2 -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 and Dates < CONVERT(date, o.SewOffLine)	
-and not exists (select dates
-    from #Calendar            
-    where (DATEPART(WEEKDAY, Dates) = 1
-    {this.boolHoliday}
-)  --只能是星期天 
-and Dates = CONVERT(date, o.SewOffLine))   
 
 
 
@@ -278,33 +274,8 @@ SELECT
 
 /*將資料邏輯第二層 拉出來處理再下區間判斷*/
 
-SELECT distinct
-[ReadyDate] = convert(date,o.SewOffLine) --NormalCalendar.Dates
-,Calendar.Dates
-,o.FtyGroup
-into #CalendarData2
-FROM Orders o 
-left join Order_QtyShip os on o.ID=os.Id	
-cross apply(
-	select Dates,[rows] = ROW_NUMBER() over(order by dates desc) from #Calendar			
-	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
-	and Dates <= o.SewOffLine		
-)Calendar	
-where 1=1
-and o.Category !='S' and o.junk !=1 		
-and o.SewOffLine between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' 
--- 將offline跟ReadyDate綁再一起,方便取得RedayDate
-and Calendar.rows <= {MyUtility.Convert.GetInt(this.Gap)}	
-and not exists (select dates
-    from #Calendar            
-    where (DATEPART(WEEKDAY, Dates) = 1
-   {this.boolHoliday}
-)  --只能是星期天 
-and Dates = CONVERT(date, o.SewOffLine))   
-
-
 SELECT 
-		[ReadyDate] = AllDate.ReadyDate
+		[ReadyDate] = AllDate.Dates
 		,[M] = o.MDivisionID
 		,[Factory] = o.FtyGroup
 		,[BuyerDelivery] = os.BuyerDelivery
@@ -343,8 +314,7 @@ SELECT
 		into #tmp2
 		FROM Orders o 
 		left join Order_QtyShip os on o.ID=os.Id
-		inner join #CalendarData2 AllDate on AllDate.Dates= o.SewOffLine
-        and AllDate.FtyGroup= o.FtyGroup
+		inner join #Calendar AllDate on AllDate.Dates= os.BuyerDelivery
 		outer apply(
 			select top 1 [CfaName] =pass1.ID+'-'+pass1.Name
 			,case when cfa.Result='P' then 'Pass'
@@ -399,13 +369,14 @@ SELECT
 				and c.OrderID=pd.OrderID
 			where  pd.OrderID = os.ID 
 			and pd.OrderShipmodeSeq = os.Seq
-			and CONVERT(date,pd.ReceiveDate) <= AllDate.ReadyDate
+			and CONVERT(date,pd.ReceiveDate) <= AllDate.Dates
 			and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 		) Receive			
 		where 1=1
 		and o.Category !='S' and o.junk !=1 
-		and AllDate.ReadyDate=os.BuyerDelivery --Ready date =BuyerDelivery今天要交貨的資料
+		and AllDate.Dates between @ReadyDate1 and @ReadyDate2		
         {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
+        {this.boolHoliday}
 
 Select * 
 into #tmp
@@ -422,7 +393,22 @@ union all
 /*搜尋Ready date 等於Order_QtyShip.BuyerDelivery(今天要交貨的資料)，
 且並且BuyerDelivery - sewing offline要小於GAP並包含自己 。*/
 
-    select * from #tmp2
+    select t.* from #tmp2 t
+	outer apply (
+		select Dates
+		from #Calendar			
+		where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
+	)Sunday
+	where ReadyDate >= OffLine
+	and Sunday.dates = ReadyDate
+	and DATEDIFF(day,convert(date,offline),BuyerDelivery)<=2
+
+union all
+
+/*Offline > BuyerDelivery= Ready Date*/
+
+	select * from #tmp2 t
+	where OffLine > BuyerDelivery
 
 union all
 
@@ -475,7 +461,7 @@ SELECT  distinct Ready.ReadyDate,isHoliday.HolidayDates,notHoliday.WorkDates
 		SELECT [ReadyDate] = Dates	
 		FROM #Calendar	a				
 		where 1=1
-		and	a.Dates between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' 
+		and	a.Dates between @ReadyDate1 and @ReadyDate2
         -- 排除假日
 		and not exists(select dates
 			from #Calendar			
@@ -667,7 +653,7 @@ pivot
 	sum(rating) for factory in ({this.sbFtycode.ToString().Substring(0, this.sbFtycode.ToString().Length - 1)})
 ) AS PT
 
-drop table #Calendar,#CalendarData,#CalendarData2,#tmp,#tmp1,#tmp2
+drop table #Calendar,#CalendarData,#tmp,#tmp1,#tmp2
 ";
             #endregion
 
