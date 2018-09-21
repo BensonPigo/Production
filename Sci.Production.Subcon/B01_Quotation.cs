@@ -123,6 +123,21 @@ namespace Sci.Production.Subcon
 
         protected override bool ClickSaveBefore()
         {
+            bool flag = false;
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
+            sp1.ParameterName = "@refno";
+            sp1.Value = dr["refno"].ToString();
+
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            cmds.Add(sp1);
+
+            string sqlcmd = "select refno from localitem_quot WITH (NOLOCK) where refno = @refno and Status ='New'";
+            DBProxy.Current.Exists("", sqlcmd, cmds, out flag);
+            if (flag)
+            {
+                MyUtility.Msg.WarningBox("Can't add data when data have not been approved.", "Warning");
+                return false;
+            }
             var suppid = "";
             var price = 0.0;
             var currencyid = "";
