@@ -108,6 +108,8 @@ where lq.status <> 'Confirmed'
         private void Query()
         {
             DataSet datas = null;
+            this.master = null;
+            this.detail = null;
             #region
             string sqlCmd = this.Sqlcmd() +
                 $@"
@@ -225,6 +227,11 @@ drop table #bas
 
         private void Btnconfirm_Click(object sender, EventArgs e)
         {
+            if (this.master == null || this.master.Rows.Count == 0)
+            {
+                return;
+            }
+
             this.grid1.ValidateControl();
             if (this.master.Select("Selected = 1").Length == 0)
             {

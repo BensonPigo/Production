@@ -102,6 +102,8 @@ where lq.status <> 'Approved'
         private void query()
         {
             DataSet datas = null;
+            this.master = null;
+            this.detail = null;
             #region
             string sqlCmd = sqlcmd() +
                 $@"
@@ -219,6 +221,10 @@ drop table #bas
 
         private void btnconfirm_Click(object sender, EventArgs e)
         {
+            if (this.master == null || this.master.Rows.Count == 0)
+            {
+                return;
+            }
             this.grid1.ValidateControl();
             if (master.Select("Selected = 1").Length == 0)
             {
