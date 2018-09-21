@@ -36,7 +36,7 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            this.numDateGap.Text = "2";
+            this.numDateGap.Text = "1";
         }
 
         protected override bool ValidateInput()
@@ -114,7 +114,7 @@ DECLARE  @t TABLE
     StartDate DATE,
 	EndDate DATE
 );
-
+declare @time time = '{(this.txtTime.Text.Equals(":") ? "00:00:00" : this.txtTime.Text)}'
 declare @ReadyDate1 date = '{this.dateRangeReady1}';
 declare @ReadyDate2 date = '{this.dateRangeReady2}';
 
@@ -144,6 +144,7 @@ FROM CTE
 /* Temple Table 1 */
 SELECT distinct
 [ReadyDate] = pd.ReceiveDate--NormalCalendar.Dates
+,[ReadyTime] = convert(datetime,pd.ReceiveDate) + convert(datetime,@time)
 ,Calendar.Dates	
 ,o.FtyGroup
 into #CalendarData	
@@ -225,7 +226,7 @@ outer apply(
     ,cfa.EditDate as FinalInsDate
     from cfa
     left join Pass1 on cfa.CFA=pass1.ID
-    where convert(date,cfa.EditDate) <= AllDate.ReadyDate
+    where cfa.EditDate <= AllDate.ReadyTime
     and cfa.OrderID=os.Id
 	and cfa.Status='Confirmed'
     order by cfa.EditDate desc
