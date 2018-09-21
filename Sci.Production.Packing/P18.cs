@@ -190,6 +190,11 @@ namespace Sci.Production.Packing
                     this.numBoxScanTtlQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (int)s["QtyPerCTN"]);
                 }
 
+                if (this.IDX != null)
+                {
+                    this.IDX = null;
+                }
+
                 P09_IDX_CTRL iDX = new P09_IDX_CTRL();
                 if (iDX.IdxCall(1, "8:?", 4))
                 {
