@@ -259,7 +259,7 @@ select
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
-left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
 left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
@@ -307,7 +307,7 @@ select
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
-left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
 left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
@@ -384,7 +384,7 @@ select
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
-left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
 left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
@@ -432,7 +432,7 @@ select
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
-left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
 left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
