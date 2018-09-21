@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[DRYTransfer] (
     [ID]            BIGINT       IDENTITY (1, 1) NOT NULL,
-    [TransferDate]  DATE         NOT NULL,
+    [TransferDate]  DATETIME         NOT NULL,
     [MDivisionID]   VARCHAR (8)  DEFAULT ('') NOT NULL,
     [OrderID]       VARCHAR (13) DEFAULT ('') NOT NULL,
     [PackingListID] VARCHAR (13) DEFAULT ('') NOT NULL,

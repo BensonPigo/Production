@@ -35,9 +35,10 @@ namespace Sci.Production.Sewing
 
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("TransferTo", header: "Transfer To", width: Widths.Auto(), iseditingreadonly: true)
-            .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
+            .Text("TransferDate", header: "Transfer Date", iseditingreadonly: true)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: true)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Qty", header: "Qty", width: Widths.Auto(), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: true)
@@ -88,9 +89,11 @@ declare @TransferTo nvarchar(20) = '{transferTo}'
 
 select 
 	dr.TransferTo
-	,dr.TransferDate
+	,[TransferDate]=CONVERT(varchar, dr.TransferDate, 111) +' '+ RIGHT(CONVERT(varchar, dr.TransferDate, 108),5)
+    --,dr.TransferDate
 	,dr.PackingListID
 	,dr.CTNStartNo
+	,[Qty]=ISNULL(Sum(pd.QtyPerCTN),0)
 	,dr.OrderID
 	,o.CustPONo
 	,o.StyleID
@@ -102,8 +105,21 @@ select
 from DRYTransfer dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
+LEFT JOIN  PackingList_Detail pd with(nolock)  ON dr.PackingListID=pd.ID AND dr.PackingListID=pd.CTNStartNo
 where 1=1
 {sqlwhere}
+GROUP BY dr.TransferTo
+		,dr.TransferDate
+		,dr.PackingListID
+		,dr.CTNStartNo
+		,dr.OrderID
+		,o.CustPONo
+		,o.StyleID
+		,o.BrandID
+		,Country.Alias
+		,o.BuyerDelivery
+		,o.SciDelivery
+		,dr.AddName 
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
