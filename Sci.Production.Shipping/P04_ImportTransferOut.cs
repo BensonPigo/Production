@@ -46,7 +46,7 @@ namespace Sci.Production.Shipping
                 .Text("FabricType", header: "Type", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("Qty", header: "Import Q'ty", decimal_places: 2)
+                .Numeric("Qty", header: "Q'ty", decimal_places: 2)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
                 .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2);
         }

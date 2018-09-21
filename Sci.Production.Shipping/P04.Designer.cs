@@ -750,7 +750,6 @@
             this.txtdropdownlistContainerType.TabIndex = 4;
             this.txtdropdownlistContainerType.Type = "ContainerCY";
             // 
-
             // txtSubconForwarder
             // 
             this.txtSubconForwarder.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Forwarder", true));
