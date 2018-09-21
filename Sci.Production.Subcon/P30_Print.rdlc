@@ -1725,7 +1725,7 @@
             <Source>Database</Source>
             <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
             <MIMEType>image/jpeg</MIMEType>
-            <Sizing>FitProportional</Sizing>
+            <Sizing>Fit</Sizing>
             <Top>0.83283cm</Top>
             <Height>1.57181cm</Height>
             <Width>6.10369cm</Width>

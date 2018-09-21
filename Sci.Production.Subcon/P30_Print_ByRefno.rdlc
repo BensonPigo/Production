@@ -1146,7 +1146,7 @@
                           <Source>Database</Source>
                           <Value>=Fields!ApvName.Value</Value>
                           <MIMEType>image/jpeg</MIMEType>
-                          <Sizing>FitProportional</Sizing>
+                          <Sizing>Fit</Sizing>
                           <Top>0.70936cm</Top>
                           <Left>0.05821cm</Left>
                           <Height>0.99188cm</Height>

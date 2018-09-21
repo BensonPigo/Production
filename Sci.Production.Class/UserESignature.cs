@@ -13,8 +13,8 @@ namespace Sci.Production.Class
 {
     public class UserESignature
     {
-        public static int LimitWidth = 750;
-        public static int LimitHeight = 500;
+        public static int LimitWidth = 450;
+        public static int LimitHeight = 180;
         /// <summary>
         /// 取得電子簽章路徑
         /// </summary>
