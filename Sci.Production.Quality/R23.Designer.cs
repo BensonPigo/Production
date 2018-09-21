@@ -41,6 +41,8 @@
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.txtTime = new Sci.Win.UI.TextBox();
             this.label6 = new Sci.Win.UI.Label();
+            this.numInsGap = new Sci.Win.UI.NumericBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -147,7 +149,7 @@
             this.chkHoliday.Checked = true;
             this.chkHoliday.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkHoliday.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkHoliday.Location = new System.Drawing.Point(20, 122);
+            this.chkHoliday.Location = new System.Drawing.Point(20, 164);
             this.chkHoliday.Name = "chkHoliday";
             this.chkHoliday.Size = new System.Drawing.Size(127, 21);
             this.chkHoliday.TabIndex = 112;
@@ -187,7 +189,7 @@
             // 
             this.txtTime.BackColor = System.Drawing.Color.White;
             this.txtTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTime.Location = new System.Drawing.Point(317, 122);
+            this.txtTime.Location = new System.Drawing.Point(317, 162);
             this.txtTime.Mask = "90:00";
             this.txtTime.Name = "txtTime";
             this.txtTime.Size = new System.Drawing.Size(48, 23);
@@ -197,16 +199,50 @@
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(269, 122);
+            this.label6.Location = new System.Drawing.Point(269, 162);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(45, 23);
             this.label6.TabIndex = 113;
             this.label6.Text = "Time ";
             this.label6.TextStyle.Alignment = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // numInsGap
+            // 
+            this.numInsGap.BackColor = System.Drawing.Color.White;
+            this.numInsGap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInsGap.Location = new System.Drawing.Point(317, 128);
+            this.numInsGap.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.numInsGap.Name = "numInsGap";
+            this.numInsGap.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numInsGap.Size = new System.Drawing.Size(66, 23);
+            this.numInsGap.TabIndex = 116;
+            this.numInsGap.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(20, 128);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(294, 23);
+            this.label1.TabIndex = 115;
+            this.label1.Text = "Ready Date and Inspection Date gap(Days)";
+            // 
             // R23
             // 
-            this.ClientSize = new System.Drawing.Size(497, 174);
+            this.ClientSize = new System.Drawing.Size(497, 214);
+            this.Controls.Add(this.numInsGap);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtTime);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.chkHoliday);
@@ -238,6 +274,8 @@
             this.Controls.SetChildIndex(this.chkHoliday, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.txtTime, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.numInsGap, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -258,5 +296,7 @@
         private Win.UI.CheckBox chkHoliday;
         private Win.UI.TextBox txtTime;
         private Win.UI.Label label6;
+        private Win.UI.NumericBox numInsGap;
+        private Win.UI.Label label1;
     }
 }

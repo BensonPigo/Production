@@ -18,6 +18,7 @@ namespace Sci.Production.Quality
         private string F;
         private string M;
         private string Gap;
+        private string insGap;
         private string Brand;
         private string dateRangeReady1;
         private string dateRangeReady2;
@@ -36,7 +37,8 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
-            this.numDateGap.Text = "1";
+            this.numDateGap.Text = "2";
+            this.numInsGap.Text = "1";
         }
 
         protected override bool ValidateInput()
@@ -44,6 +46,7 @@ namespace Sci.Production.Quality
             this.F = this.txtfactory.Text;
             this.M = this.txtMdivision.Text;
             this.Gap = this.numDateGap.Text;
+            this.insGap = this.numInsGap.Text;
             this.Brand = this.txtbrand.Text;
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
@@ -144,7 +147,7 @@ FROM CTE
 /* Temple Table 1 */
 SELECT distinct
 [ReadyDate] = pd.ReceiveDate--NormalCalendar.Dates
-,[ReadyTime] = convert(datetime,pd.ReceiveDate) + convert(datetime,@time)
+,[ReadyTime] = convert(datetime,CalendarInspection.Dates) + convert(datetime,@time)
 ,Calendar.Dates	
 ,o.FtyGroup
 into #CalendarData	
@@ -156,10 +159,16 @@ cross apply(
 	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
 	and Dates < pd.ReceiveDate	
 )Calendar	
+cross apply(
+	select Dates,[rows] = ROW_NUMBER() over(order by dates) from #Calendar			
+	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
+	and Dates > pd.ReceiveDate	
+)CalendarInspection 
 where o.Category!='S' and o.Junk = 0
 and pd.ReceiveDate between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將ReceiveDate跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
-and Dates < pd.ReceiveDate
+and CalendarInspection.rows = {MyUtility.Convert.GetInt(this.insGap)} --inspection GAP 
+and Calendar.Dates < pd.ReceiveDate
 and not exists (select dates
 	from #Calendar			
 	where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
