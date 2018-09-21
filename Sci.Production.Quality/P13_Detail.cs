@@ -604,15 +604,23 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             int start_row = 10;
             foreach (DataRow dr in gridData.Rows)
             {
+                string remark= dr["Remark"].ToString(); 
                 worksheet.Cells[start_row, 1] = styleNo;
                 worksheet.Cells[start_row, 2] = MyUtility.Check.Empty(dr["FabricColorName"]) ? dr["FabricRefNo"].ToString() : dr["FabricRefNo"].ToString() + " - " + dr["FabricColorName"].ToString();
                 worksheet.Cells[start_row, 3] = MyUtility.Check.Empty(dr["ArtworkTypeID"]) ? dr["Design"] + " - " + dr["ArtworkColorName"].ToString() : dr["ArtworkTypeID"].ToString() + "/" + dr["Design"] + " - " + dr["ArtworkColorName"].ToString();
                 worksheet.Cells[start_row, 4] = dr["Result"].ToString();
-                worksheet.Cells[start_row, 5] = dr["Remark"].ToString();
+                worksheet.Cells[start_row, 5] = remark;
                 worksheet.Rows[start_row].Font.Bold = false;
                 worksheet.Rows[start_row].WrapText = true;
                 worksheet.Rows[start_row].HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
-                worksheet.Rows[start_row].AutoFit();
+
+                //合併儲存格無法AutoFit()因此要自己算高度
+                if ((remark.Length / 20) > 1)
+                {
+                    worksheet.Range[$"E{start_row}", $"E{start_row}"].RowHeight = remark.Length / 20 * 16.5;
+                }
+                else
+                    worksheet.Rows[start_row].AutoFit();
                 start_row++;
             }
             #endregion
