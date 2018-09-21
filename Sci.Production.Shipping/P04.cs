@@ -112,13 +112,6 @@ where ed.ID = '{0}'", masterID);
                 }
             }
 
-            if (MyUtility.Check.Empty(this.displayFtyWKNo.Text))
-            {
-                this.displayFtyWKNo.Focus();
-                MyUtility.Msg.WarningBox("Fty WK No. cannot be empty!");
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.txtInvoiceNo.Text))
             {
                 this.txtInvoiceNo.Focus();
