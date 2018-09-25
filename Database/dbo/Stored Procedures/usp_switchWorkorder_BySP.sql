@@ -167,13 +167,23 @@ Begin
 			Begin
 				set @mQty = (@ForSameID_AccuQty-@nextQty) % @maxLayerQty
 			end
-
+			
 			if (@nextQty > 0 and @OldOrderID != @orderid)or(@nextQty > 0 and @OldOrderID = @orderid and @OldArticle!=@Article)
 			Begin
-				select @nextQtyC = min(i)from(select i= @ThisTotalCutQty union all select @nextQty union all select @mQty)i
+				if @ForSameID_AccuQty >= @maxLayerQty and @mQty < @nextQty
+				begin
+					select @nextQtyC = min(i)from(select i= @ThisTotalCutQty union all select @nextQty)i
+					set @nextQty = 0
+				end
+				else
+				begin
+					select @nextQtyC = min(i)from(select i= @ThisTotalCutQty union all select @nextQty union all select @mQty)i
+				end
+
 				insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article,@SizeCode,@nextQtyC,@Order_EachConsUkey,@colorid,@tmpUkey)
 				update #_tmpdisQty set [Size_orderqty] = [Size_orderqty] - @nextQtyC where identRowid = @identRowid--減去使用的
 				set @ThisTotalCutQty = @ThisTotalCutQty - @nextQtyC
+
 				if @mQty > 0 and @ForSameID_AccuQty <@maxLayerQty
 				Begin
 					set @nextQty = @nextQty - @nextQtyC
@@ -185,7 +195,6 @@ Begin
 					set @tmpUkey = @tmpUkey + 1
 				end
 			End
-
 			
 			if @ThisTotalCutQty < @ForSameID_AccuQty
 			begin
