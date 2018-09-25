@@ -328,7 +328,7 @@ outer apply
     )
 )as SubProcess
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
-OPTION (RECOMPILE)
+OPTION (OPTIMIZE FOR UNKNOWN)
 
 select  *
 from #tmp x
@@ -343,8 +343,8 @@ outer apply
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
-" + sb+
-" OPTION(RECOMPILE)"
+" + sb+ @"
+OPTION (OPTIMIZE FOR UNKNOWN)"
 );                
                 #endregion
             }
@@ -447,7 +447,7 @@ outer apply
 )as SubProcess 
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
-OPTION (RECOMPILE)
+OPTION (OPTIMIZE FOR UNKNOWN)
 
 select *
 from #tmp x
@@ -462,8 +462,8 @@ outer apply
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
-" + sb+
-" OPTION(RECOMPILE)"
+" + sb+@"
+OPTION (OPTIMIZE FOR UNKNOWN)"
 );  
                 #endregion
             }
