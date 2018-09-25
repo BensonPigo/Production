@@ -156,87 +156,76 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
-
+            
             #region -- Return Mtl List --
             sqlcmd = string.Format(@"
-;with cte1 as(
-    select  bd.FromPoId
-            , bd.FromSeq1
-            , bd.FromSeq2
-            , bd.FromStocktype
-                  , FromFactoryID = orders.FactoryID
-            , qty = sum(bd.qty) 
-    from borrowback_detail bd WITH (NOLOCK) 
-      inner join Orders orders on bd.FromPOID = orders.ID
-      inner join Factory factory on orders.FtyGroup = factory.ID
-    where bd.id = '{0}' and factory.MDivisionID = '{1}'
-    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype, orders.FactoryID
-    )
-,cte2 as(
-    select  bd.ToPoid
-            , bd.ToSeq1
-            , bd.ToSeq2
-            , bd.ToStocktype
-            , qty = sum(bd.qty) 
-    from borrowback b WITH (NOLOCK) 
-    inner join borrowback_detail bd WITH (NOLOCK) on b.Id= bd.ID 
-      inner join Orders orders on bd.FromPOID = orders.ID
-      inner join Factory factory on orders.FtyGroup = factory.ID
-    where b.BorrowId='{0}' and b.Status = 'Confirmed' and factory.MDivisionID = '{1}'
-    group by bd.ToPoid, bd.ToSeq1, bd.ToSeq2, bd.ToStocktype
-    )
-select  cte1.FromPoId
-        , cte1.FromSeq1
-        , cte1.FromSeq2 
-        , cte1.FromStocktype
-            , cte1.FromFactoryID
-into #tmp
-from cte1 
-left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 
-    and cte2.ToStocktype = cte1.FromStocktype;
+SELECT		[FromPoId]=bd.FromPoId
+            , [FromSeq1]=bd.FromSeq1
+            , [FromSeq2]=bd.FromSeq2
+			, [FromFtyinventoryUkey] = c.ukey
+			, [FromDyelot] = c.dyelot 
+			, [FromRoll] = c.roll 
+			, [FromStocktype] = c.StockType 
+			, [FromFactoryID] = orders.FactoryID
+			, [AccuDiffQty] = c.InQty - c.OutQty + c.AdjustQty 
+			, [Balance] = c.InQty - c.OutQty + c.AdjustQty 
+			, [qty] = 0.00 
+			, psd.sizespec
+			, psd.refno
+			, psd.colorid
+			, psd.BrandId
+			,psd.ID
+INTO #tmp
+from borrowback_detail bd WITH (NOLOCK)       
+      INNER JOIN Orders orders on bd.FromPOID = orders.ID
+      INNER JOIN Factory factory on orders.FtyGroup = factory.ID
+	  INNER JOIN Ftyinventory c WITH (NOLOCK) on bd.FromPoId = c.poid AND bd.FromSeq1 = c.seq1 AND bd.FromSeq2 = c.seq2
+INNER JOIN PO_Supp_Detail psd ON psd.ID=bd.ToPoid AND psd.seq1 = bd.ToSeq1 and psd.seq2 =bd.ToSeq2
+where bd.id = '{0}'
 
-select  distinct selected = 0 
+SELECT distinct 
+		selected = 0 
         , id = '' 
-        , FromFtyinventoryUkey = c.ukey 
-        , FromPoId = bd.ToPoid 
-        , FromSeq1 = bd.ToSeq1 
-        , FromSeq2 = bd.ToSeq2 
-        , fromseq =concat(Ltrim(Rtrim(bd.ToSeq1)), ' ', bd.ToSeq2) 
-        , FromDyelot = c.dyelot 
-        , FromRoll = c.roll 
-            , FromFactoryID = orders.FactoryID
-        , FromStocktype = c.StockType 
-        , AccuDiffQty = c.InQty - c.OutQty + c.AdjustQty 
-        , balance = c.InQty - c.OutQty + c.AdjustQty 
-        , qty = 0.00 
-        , tostocktype = bd.FromStocktype  
-        , topoid = bd.FromPoId 
-        , toseq1 = bd.FromSeq1 
-        , toseq2 = bd.FromSeq2 
-        , toRoll = iif (toSP.Roll is not null, toSP.Roll, c.roll)
-        , toDyelot = iif (toSP.Roll is not null, toSP.Dyelot, c.dyelot)
-        , ToFactoryID = #tmp.FromFactoryID
-        , toseq = concat(Ltrim(Rtrim(bd.FromSeq1)), ' ', bd.FromSeq2) 
-        , location = dbo.Getlocation(c.ukey)
-        , [description] = dbo.getMtlDesc(bd.topoid,bd.toseq1,bd.toseq2,2,0) 
-        , p.StockUnit
-        , p.FabricType
-from dbo.BorrowBack_Detail as bd WITH (NOLOCK) 
-inner join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 and bd.FromSeq2 = #tmp.FromSeq2
-inner join ftyinventory c WITH (NOLOCK) on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2
-inner join Orders orders on c.POID = orders.ID
-inner join Factory factory on orders.FtyGroup = factory.ID
-left join PO_Supp_Detail p WITH (NOLOCK) on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2
+        , FromFtyinventoryUkey = #tmp.FromFtyinventoryUkey 
+        , FromPoId = #tmp.FromPoId 
+        , FromSeq1 = #tmp.FromSeq1 
+        , FromSeq2 = #tmp.FromSeq2 
+        , fromseq =concat(Ltrim(Rtrim(#tmp.FromSeq1)), ' ', #tmp.FromSeq2) 
+        , FromDyelot = #tmp.FromDyelot 
+        , FromRoll = #tmp.FromRoll 
+		, FromFactoryID = #tmp.FromFactoryID
+        , FromStocktype = #tmp.FromStocktype
+		, [AccuDiffQty] = #tmp.AccuDiffQty
+		, [Balance] = #tmp.Balance
+		, [qty] = #tmp.qty
+       , 
+		tostocktype = c.Stocktype   
+        , topoid = p.id 
+        , toseq1 = p.SEQ1 
+        , toseq2 = p.SEQ2 
+        , toRoll = iif (toSP.Roll is not null, toSP.Roll, c.roll) 
+        , toDyelot = iif (toSP.Roll is not null, toSP.Dyelot, c.dyelot) 
+        , ToFactoryID = orders.FactoryID 
+        , toseq = concat(Ltrim(Rtrim(p.SEQ1)), ' ', p.SEQ2)  
+        , location = dbo.Getlocation(c.ukey) 
+        , [description] = dbo.getMtlDesc(p.id,p.SEQ1,p.SEQ2,2,0)  
+        , p.StockUnit 
+        , p.FabricType 
+FROM  #tmp
+INNER JOIN PO_Supp_Detail p WITH (NOLOCK) on  p.Refno =#tmp.Refno  and p.SizeSpec = #tmp.SizeSpec and p.ColorID= #tmp.ColorID and p.BrandId=#tmp.BrandId AND p.ID=#tmp.ID
+INNER JOIN ftyinventory c WITH (NOLOCK) on p.id = c.poid AND p.seq1 = c.seq1 AND p.seq2 = c.seq2
+INNER JOIN Orders orders on c.POID = orders.ID
+INNER JOIN Factory factory on orders.FtyGroup = factory.ID
 outer apply(
 	select	Top 1 Roll
 			, Dyelot
 	From FtyInventory
-	where	POID = #tmp.FromPOID
-			and Seq1 = #tmp.FromSeq1
-			and Seq2 = #tmp.FromSeq2
+	where	POID = p.id
+			and Seq1 = p.seq1
+			and Seq2 = p.seq2
 			and Roll = c.Roll
 ) toSP
-where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}'
+where c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}'
     and not(c.StockType in ('I', 'O'))
 drop table #tmp
 ", dr_master["BorrowId"], Sci.Env.User.Keyword);
