@@ -55,10 +55,10 @@ namespace Sci.Production.Sewing
 
             string dateTransfer1 = string.Empty, dateTransfer2 = string.Empty, packid = string.Empty, sp = string.Empty, transferTo = string.Empty;
             string sqlwhere = string.Empty;
-            if (!MyUtility.Check.Empty(this.dateTransfer.TextBox1.Value))
+            if (!MyUtility.Check.Empty(this.dateTransfer.Value1.Value) && !MyUtility.Check.Empty(this.dateTransfer.Value2.Value))
             {
-                dateTransfer1 = this.dateTransfer.TextBox1.Text;
-                dateTransfer2 = this.dateTransfer.TextBox2.Text;
+                dateTransfer1 = this.dateTransfer.Value1.Value.ToShortDateString();
+                dateTransfer2 = this.dateTransfer.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss");
                 sqlwhere += $@" and dr.TransferDate between @TransferDate1 and @TransferDate2 ";
             }
 
@@ -81,15 +81,15 @@ namespace Sci.Production.Sewing
             }
 
             string sqlcmd = $@"
-declare @TransferDate1  date = '{dateTransfer1}'
-declare @TransferDate2  date = '{dateTransfer2}'
+declare @TransferDate1  datetime = '{dateTransfer1}'
+declare @TransferDate2  datetime = '{dateTransfer2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 declare @TransferTo nvarchar(20) = '{transferTo}'
 
 select 
 	dr.TransferTo
-	,[TransferDate]=CONVERT(varchar, dr.TransferDate, 111) +' '+ RIGHT(CONVERT(varchar, dr.TransferDate, 108),5)
+	,[TransferDate]=CONVERT(varchar, dr.TransferDate, 111) +' '+ LEFT(CONVERT(varchar, dr.TransferDate, 108),5)
     --,dr.TransferDate
 	,dr.PackingListID
 	,dr.CTNStartNo
