@@ -305,7 +305,7 @@ Begin
 	--其它Table
 	DECLARE @Cons float
 	DECLARE insertWorkorder CURSOR FOR
-	select newkey,FLayer =sum(Qty)/@FirstRatio from #tmp_WorkOrder_Distribute 
+	select newkey,FLayer = CEILING(sum(Qty)/@FirstRatio) from #tmp_WorkOrder_Distribute 
 	where sizecode = @FirstSizeCode and Order_EachConsUkey = @Order_EachConsUkey and colorid = @colorid group by newkey order by newkey
 	OPEN insertWorkorder
 	FETCH NEXT FROM insertWorkorder INTO @tmpUkey2,@FLayer
