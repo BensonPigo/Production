@@ -542,8 +542,8 @@ Group by OrderID,RefNo,ThreadColorID,UnitID
         a.seq1,
         a.seq2,
 	    washlab=
-	    case when a.[Crocking]='Fail'or a.Heat='Fail' or a.[Wash]='Fail' or Oven.Result='Fail' or ColorFastness.Result='Fail' then 'Fail'
-		      when a.[Crocking]=''and a.Heat='' and a.[Wash]='' and Oven.Result='' and ColorFastness.Result='' then 'Blank'
+	    case  when a.[Crocking]='' or a.Heat='' or a.[Wash]='' or Oven.Result='' or ColorFastness.Result='' then 'Blank'
+              when a.[Crocking]='Fail'or a.Heat='Fail' or a.[Wash]='Fail' or Oven.Result='Fail' or ColorFastness.Result='Fail' then 'Fail'
 		      else 'Pass'
 	    end
     from dbo.FIR_Laboratory a WITH (NOLOCK) 
