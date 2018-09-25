@@ -80,14 +80,15 @@ select DISTINCT
 	[Color Way] = stuff(Article.Article,1,1,''),
 	[Color]= wo.ColorID, 
 	[Layers] = wo.Layer,
+    [LackingLayers] = wo.Layer - isnull(acc.AccuCuttingLayer,0),    
 	[Qty] = Qty.Qty,
 	[Ratio] = stuff(SQty.SQty,1,1,''),
 	[Consumption] = wo.Cons,
 	[Marker Length] = wo.MarkerLength
-
 from WorkOrder wo WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.CuttingSP = wo.ID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
+outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = wo.Ukey)acc
 outer apply(
 	select MincoDate=(
 		select min(co.cDate)

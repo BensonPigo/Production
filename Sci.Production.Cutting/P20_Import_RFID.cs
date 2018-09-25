@@ -51,11 +51,16 @@ namespace Sci.Production.Cutting
                         ndr["Cutno"] = dr["cutno"];
                         ndr["MarkerName"] = dr["MarkerName"];
                         ndr["MarkerLength"] = dr["MarkerLength"];
-                        ndr["Layer"] = dr["Layer"];
+                        ndr["WorkOderLayer"] = dr["WorkOderLayer"];
+                        ndr["AccuCuttingLayer"] = dr["AccuCuttingLayer"];
+                        ndr["Layer"] = dr["CuttingLayer"];
+                        ndr["LackingLayers"] = dr["LackingLayers"];
                         ndr["Colorid"] = dr["Colorid"];
                         ndr["cons"] = dr["cons"];
                         ndr["sizeRatio"] = dr["sizeRatio"];
                         ndr["WorkorderUkey"] = dr["WorkorderUkey"];
+                        ndr["ConsPC"] = dr["ConsPC"];
+                        ndr["SizeRatioQty"] = dr["SizeRatioQty"];
                         currentdetailTable.Rows.Add(ndr);
                     }
                     else
@@ -68,10 +73,16 @@ namespace Sci.Production.Cutting
                         exist[0]["Cutno"] = dr["cutno"];
                         exist[0]["MarkerName"] = dr["MarkerName"];
                         exist[0]["MarkerLength"] = dr["MarkerLength"];
-                        exist[0]["Layer"] = dr["Layer"];
+                        exist[0]["WorkOderLayer"] = dr["WorkOderLayer"];
+                        exist[0]["AccuCuttingLayer"] = dr["AccuCuttingLayer"];
+                        exist[0]["Layer"] = dr["CuttingLayer"];
+                        exist[0]["LackingLayers"] = dr["LackingLayers"];
                         exist[0]["Colorid"] = dr["Colorid"];
                         exist[0]["cons"] = dr["cons"];
                         exist[0]["sizeRatio"] = dr["sizeRatio"];
+                        exist[0]["WorkorderUkey"] = dr["WorkorderUkey"];
+                        exist[0]["ConsPC"] = dr["ConsPC"];
+                        exist[0]["SizeRatioQty"] = dr["SizeRatioQty"];
                     }
                 }
                 gridTable.Clear();
@@ -81,13 +92,41 @@ namespace Sci.Production.Cutting
 
         protected override void OnFormLoaded()
         {
-            DBProxy.Current.Select(null,
-            @"Select 0 as Sel, '' as cutref,'' as cuttingid,'' as orderid,'' as Fabriccombo,
-            '' as FabricPanelCode,'' as cutno, '' as MarkerName, '' as MarkerLength, '' as Colorid, 0 as Layer,
-            0 as Cons, '' as SizeRatio from Workorder WITH (NOLOCK) where 1=0", out gridTable);
             base.OnFormLoaded();
+
+            Ict.Win.DataGridViewGeneratorNumericColumnSettings Layer = new DataGridViewGeneratorNumericColumnSettings();
+            Layer.CellValidating += (s, e) =>
+            {
+                if (!EditMode)
+                {
+                    return;
+                }
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+                var dr = this.gridImport.GetDataRow<DataRow>(e.RowIndex);
+                if (MyUtility.Convert.GetInt(e.FormattedValue).EqualDecimal(0))
+                {
+                    MyUtility.Msg.WarningBox("Cutting layer can not be zero.");
+                    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
+                    e.Cancel = true;
+                    return;
+                }
+                if (MyUtility.Convert.GetInt(e.FormattedValue) + MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) > MyUtility.Convert.GetInt(dr["WorkOderLayer"]))
+                {
+                    MyUtility.Msg.WarningBox("Cutting Layer can not more than LackingLayers");
+                    dr["CuttingLayer"] = dr["CuttingLayer", DataRowVersion.Original];
+                    e.Cancel = true;
+                    return;
+                }
+                dr["CuttingLayer"] = e.FormattedValue;
+                dr["Cons"] = MyUtility.Convert.GetDecimal(e.FormattedValue) * MyUtility.Convert.GetDecimal(dr["ConsPC"]) * MyUtility.Convert.GetDecimal(dr["SizeRatioQty"]);
+                dr["LackingLayers"] = MyUtility.Convert.GetInt(dr["WorkOderLayer"]) - MyUtility.Convert.GetInt(dr["AccuCuttingLayer"]) - MyUtility.Convert.GetInt(dr["CuttingLayer"]);
+
+                dr.EndEdit();
+            };
             this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = gridTable;
             Helper.Controls.Grid.Generator(this.gridImport)
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("Cutref", header: "Cut Ref#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -99,7 +138,10 @@ namespace Sci.Production.Cutting
             .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("MarkerLength", header: "Marker Length", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("WorkOderLayer", header: "WorkOder\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("AccuCuttingLayer", header: "Accu. Cutting\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
+            .Numeric("CuttingLayer", header: "Cutting Layer", width: Widths.AnsiChars(5), integer_places: 8, settings: Layer)
+            .Numeric("LackingLayers", header: "Lacking\r\nLayer", width: Widths.AnsiChars(5), integer_places: 8, iseditingreadonly: true)
             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), integer_places: 7, decimal_places: 2)
             .Text("sizeRatio", header: "Size Ratio", width: Widths.AnsiChars(15), iseditingreadonly: true);
@@ -113,7 +155,7 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.WarningBox("<RFID Date> or <SP#> should fill one before you query data!");
                 return;
             }
-            gridTable.Clear();
+            gridImport.DataSource = null;
             StringBuilder sqlcmd = new StringBuilder();
             string rfidDate1 = dateRFID.Value1.ToString();
             string rfidDate2 = dateRFID.Value2.ToString();
@@ -122,23 +164,33 @@ namespace Sci.Production.Cutting
             string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["CutRef"].ToString() : "") + "'"));
             if (MyUtility.Check.Empty(condition)) condition = @"''";
 
-            sqlcmd.Append(string.Format(
-@"select 0 as sel,WO.*,WO.id as Cuttingid,WO.ukey as workorderukey,
-(
-    Select orderid+'/' 
-    From WorkOrder_Distribute c WITH (NOLOCK) 
-    Where c.WorkOrderUkey =WO.Ukey and orderid!='EXCESS'
-    For XML path('')
-) as OrderID ,
-(
-    Select SizeCode+'/'+convert(varchar,Qty ) 
-    From WorkOrder_SizeRatio c WITH (NOLOCK) 
-    Where c.WorkOrderUkey =WO.Ukey 
-    For XML path('')
-) as SizeRatio 
+            sqlcmd.Append(string.Format(@"
+select 0 as sel,
+	WO.*,
+	Cuttingid = WO.id,
+	workorderukey = WO.ukey,
+	OrderID = (
+		Select orderid+'/' 
+		From WorkOrder_Distribute c WITH (NOLOCK) 
+		Where c.WorkOrderUkey =WO.Ukey and orderid!='EXCESS'
+		For XML path('')
+	),
+	SizeRatio = (
+		Select SizeCode+'/'+convert(varchar,Qty ) 
+		From WorkOrder_SizeRatio c WITH (NOLOCK) 
+		Where c.WorkOrderUkey =WO.Ukey 
+		For XML path('')
+	),
+	WorkOderLayer = wo.Layer,
+	AccuCuttingLayer = isnull(acc.AccuCuttingLayer,0),
+	CuttingLayer = wo.Layer-isnull(acc.AccuCuttingLayer,0),
+	LackingLayers = 0,
+    SRQ.SizeRatioQty
 from WorkOrder WO WITH (NOLOCK) 
+outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = wo.Ukey)acc
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = wo.Ukey)SRQ
 where mDivisionid = '{0}' 
-and WO.Ukey not in (Select WorkOrderUkey from CuttingOutput_Detail WITH (NOLOCK)) 
+and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''
 and WO.CutRef not in ( {1} )   
 and WO.Ukey in ( SELECT distinct WO.ukey
