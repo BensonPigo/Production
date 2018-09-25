@@ -23,7 +23,6 @@ namespace Sci.Production.Thread
         private string factory = Sci.Env.User.Factory;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_color;
         private DataGridViewNumericBoxColumn col_cons;
         private DataGridViewNumericBoxColumn col_Allowance;
@@ -391,7 +390,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             #endregion
             #region set grid
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-           .Text("Refno", header: "Thread Refno", width: Ict.Win.Widths.AnsiChars(10), settings: this.refno).Get(out this.col_refno)
+           .Text("Refno", header: "Thread Refno", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true, settings: this.refno)
            .Text("description", header: "Thread Desc", width: Ict.Win.Widths.AnsiChars(18), iseditingreadonly: true)
            .EditText("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("ThreadColorid", header: "Thread\r\nColor", width: Ict.Win.Widths.AnsiChars(4), settings: thcolor).Get(out this.col_color)
@@ -451,13 +450,11 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 this.col_Allowance.IsEditingReadOnly = true;
                 this.col_NewCone.IsEditingReadOnly = true;
                 this.col_UsedCone.IsEditingReadOnly = true;
-                this.col_refno.IsEditingReadOnly = true;
                 this.col_color.IsEditingReadOnly = true;
                 this.col_cons.IsEditingReadOnly = true;
             }
             else
             {
-                this.col_refno.IsEditingReadOnly = false;
                 this.col_Allowance.IsEditingReadOnly = false;
                 this.col_NewCone.IsEditingReadOnly = false;
                 this.col_UsedCone.IsEditingReadOnly = false;
@@ -494,24 +491,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            this.col_refno.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
