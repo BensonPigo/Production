@@ -354,7 +354,7 @@ where   StockType='O'
                 if (warningTB.Rows.Count > 0)
                 {
                     var m = MyUtility.Msg.ShowMsgGrid(warningTB, "These SP#'s Reason ID cannot be empty!", "Warning");
-                    m.Width = 400;
+                    m.Width = 650;
                     m.grid1.Columns[0].Width = 200;
                     m.grid1.Columns[0].Width = 50;
                     m.grid1.Columns[0].Width = 100;
