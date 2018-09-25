@@ -139,7 +139,7 @@ namespace Sci.Production.Shipping
         protected override bool ClickNewBefore()
         {
             // 檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
-            string sqlCmd = string.Format("select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(this.MotherData["ID"]));
+            string sqlCmd = $"select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{MyUtility.Convert.GetString(this.MotherData["ID"]).Trim()}' and Status = 'New'";
             if (MyUtility.Check.Seek(sqlCmd, null))
             {
                 MyUtility.Msg.WarningBox("Still have data not yet confirm, so can't create new record!");
@@ -177,7 +177,7 @@ namespace Sci.Production.Shipping
         protected override bool ClickSaveBefore()
         {
             // 檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
-            string sqlCmd = string.Format("select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(this.MotherData["ID"]));
+            string sqlCmd = $"select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{ MyUtility.Convert.GetString(this.MotherData["ID"]).Trim()}' and Status = 'New'  and ukey <> '{this.CurrentMaintain["ukey"]}'";
             if (MyUtility.Check.Seek(sqlCmd, null))
             {
                 MyUtility.Msg.WarningBox("Still have data not yet confirm, so can't create new record!");
