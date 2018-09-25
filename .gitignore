@@ -56,6 +56,12 @@ Production.Daily/bin/
 Production.Daily/obj/
 Sci.Production.SubProcess/bin/
 Sci.Production.SubProcess/obj/
+RFID/RFID Monitor Board/RFID Monitor Board/bin
+RFID/RFID Monitor Board/RFID Monitor Board/obj
+RFID/RFID_Monitor_Board_Setup/RFID_Monitor_Board_Setup/bin
+RFID/RFID_Monitor_Board_Setup/RFID_Monitor_Board_Setup/obj
+RFID/RFIDmiddleware/RFIDmiddleware/bin
+RFID/RFIDmiddleware/RFIDmiddleware/obj
 *.user
 PMSUploadDataToAPS.Daily/obj/Debug/PMSUploadDataToAPS.Daily.csprojResolveAssemblyReference.cache
 PMSUploadDataToAPS.Daily/obj/Debug/PMSUploadDataToAPS.Daily.csproj.GenerateResource.Cache
