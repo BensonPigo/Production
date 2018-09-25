@@ -255,18 +255,28 @@ drop table #bas
 
         public bool confirm(DataTable selectdt)
         {
-            using (TransactionScope scope = new TransactionScope())
+            DualResult upResult;
+            string chkstatus = $@"
+select s.*
+from #tmp s
+inner join localitem_quot t on s.ukey = t.ukey
+where t.status = 'New'
+";
+            DataTable dt;
+            if (!(upResult = MyUtility.Tool.ProcessWithDatatable(selectdt, string.Empty, chkstatus, out dt)))
             {
-                DualResult upResult;
+                this.ShowErr(upResult);
+                return false;
+            }
 
-                // 若有單已經被其他使用者先approve則跳過, 加上status = 'New' 為更新條件
-                string mergeSql = $@"
-Update localitem_quot set Status = 'Approved' ,editname = '{Env.User.UserID}', editdate = GETDATE() where ukey in (select ukey from #tmp) and status = 'New'
+            // 若有單已經被其他使用者先approve則跳過, 加上status = 'New' 為更新條件
+            string mergeSql = $@"
+Update localitem_quot set Status = 'Approved' ,editname = '{Env.User.UserID}', editdate = GETDATE() where ukey in (select ukey from #tmp)
 
 merge localitem t
 using #tmp s
 on t.Refno = s.Refno
-when matched and t.status = 'New' then update set
+when matched then update set
     t.localsuppid = s.NewSupp,
     t.currencyid = s.NewCurrency,
     t.price = s.NewPrice,
@@ -275,8 +285,9 @@ when matched and t.status = 'New' then update set
     t.editdate = GETDATE()
 ;
 ";
-                DataTable dt;
-                if (!(upResult = MyUtility.Tool.ProcessWithDatatable(selectdt, "Refno,Ukey,NewSupp,NewCurrency,NewPrice", mergeSql, out dt)))
+            using (TransactionScope scope = new TransactionScope())
+            {
+                if (!(upResult = MyUtility.Tool.ProcessWithDatatable(dt, "Refno,Ukey,NewSupp,NewCurrency,NewPrice", mergeSql, out dt)))
                 {
                     this.ShowErr(upResult);
                     return false;

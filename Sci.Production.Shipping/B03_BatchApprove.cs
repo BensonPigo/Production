@@ -97,7 +97,7 @@ select l.*,
 				   when ChooseSupp = 4 then price4 end,
     Selected = 0,
 	lq.Ukey,
-	CanvassDate=lq.AddDate
+	CanvassDate1=lq.AddDate
 from ShipExpense l
 inner join ShipExpense_CanVass lq on l.ID = lq.ID
 where lq.status <> 'Confirmed'
@@ -264,28 +264,40 @@ drop table #bas
         /// <inheritdoc/>
         public bool Confirm(DataTable selectdt)
         {
-            using (TransactionScope scope = new TransactionScope())
+            DualResult upResult;
+            string chkstatus = $@"
+select s.*
+from #tmp s
+inner join ShipExpense_CanVass t on s.ukey = t.ukey
+where t.status = 'New'
+";
+            DataTable dt;
+            if (!(upResult = MyUtility.Tool.ProcessWithDatatable(selectdt, string.Empty, chkstatus, out dt)))
             {
-                DualResult upResult;
+                this.ShowErr(upResult);
+                return false;
+            }
 
-                // 若有單已經被其他使用者先approve則跳過, 加上status = 'New' 為更新條件
-                string mergeSql = $@"
-Update ShipExpense_CanVass set Status = 'Confirmed' ,editname = '{Env.User.UserID}', editdate = GETDATE() where ukey in (select ukey from #tmp) and status = 'New'
+            // 若有單已經被其他使用者先approve則跳過, 加上status = 'New' 為更新條件
+            string mergeSql = $@"
+Update ShipExpense_CanVass set Status = 'Confirmed' ,editname = '{Env.User.UserID}', editdate = GETDATE() where ukey in (select ukey from #tmp)
 
 merge ShipExpense t
 using #tmp s
 on t.ID = s.ID
-when matched and t.status = 'New' then update set
+when matched then update set
     t.localsuppid = s.NewSupp,
     t.currencyid = s.NewCurrency,
     t.price = s.NewPrice,
-    t.CanvassDate = s.CanvassDate, 
+    t.CanvassDate = s.CanvassDate1, 
     t.editname = '{Env.User.UserID}',
     t.editdate = GETDATE()
 ;
 ";
-                DataTable dt;
-                if (!(upResult = MyUtility.Tool.ProcessWithDatatable(selectdt, "ID,Ukey,NewSupp,NewCurrency,NewPrice,CanvassDate", mergeSql, out dt)))
+
+            using (TransactionScope scope = new TransactionScope())
+            {
+                if (!(upResult = MyUtility.Tool.ProcessWithDatatable(dt, "ID,Ukey,NewSupp,NewCurrency,NewPrice,CanvassDate1", mergeSql, out dt)))
                 {
                     this.ShowErr(upResult);
                     return false;
