@@ -2292,6 +2292,7 @@
     <Build Include="dbo\Tables\Style_SizeItem.sql" />
     <Build Include="dbo\Tables\ThreadColorGroup.sql" />
     <Build Include="dbo\Tables\LocalItem_ThreadBuyerColorGroupPrice.sql" />
+    <Build Include="dbo\Stored Procedures\usp_Packing_P03_Confirm.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

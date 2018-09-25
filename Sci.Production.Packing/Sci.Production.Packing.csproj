@@ -181,6 +181,12 @@
     <Compile Include="P01_OverrunGMTRecord.Designer.cs">
       <DependentUpon>P01_OverrunGMTRecord.cs</DependentUpon>
     </Compile>
+    <Compile Include="P03_BatchConfirm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P03_BatchConfirm.Designer.cs">
+      <DependentUpon>P03_BatchConfirm.cs</DependentUpon>
+    </Compile>
     <Compile Include="P03_ExcelImport.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -416,6 +422,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_OverrunGMTRecord.resx">
       <DependentUpon>P01_OverrunGMTRecord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P03_BatchConfirm.resx">
+      <DependentUpon>P03_BatchConfirm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P03_ExcelImport.resx">
       <DependentUpon>P03_ExcelImport.cs</DependentUpon>
