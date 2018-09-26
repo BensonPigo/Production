@@ -155,7 +155,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateCartonEstBooking);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 287);
+            this.masterpanel.Size = new System.Drawing.Size(892, 287);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -216,7 +216,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 287);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 231);
+            this.detailpanel.Size = new System.Drawing.Size(892, 62);
             // 
             // gridicon
             // 
@@ -229,7 +229,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 231);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 62);
             // 
             // detail2
             // 
@@ -245,24 +245,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 556);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 518);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 518);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 556);
+            this.browse.Size = new System.Drawing.Size(1004, 556);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 585);
+            this.tabs.Size = new System.Drawing.Size(1012, 585);
             // 
             // createby
             // 
@@ -856,7 +856,7 @@
             // P03
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1008, 618);
+            this.ClientSize = new System.Drawing.Size(1012, 618);
             this.DefaultControl = "txtbrand";
             this.DefaultControlForEdit = "txtbrand";
             this.DefaultDetailOrder = "Seq";

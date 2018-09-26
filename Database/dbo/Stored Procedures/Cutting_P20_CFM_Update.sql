@@ -14,31 +14,45 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		Select distinct d.*,e.Colorid,e.PatternPanel
-            into #tmp1
-            from 
-            (Select b.POID,c.ID,c.Article,c.SizeCode,c.Qty from (Select distinct a.id,POID ,w.article
-            from Orders a WITH (NOLOCK) ,CuttingOutput_Detail cu WITH (NOLOCK) ,WorkOrder_Distribute w WITH (NOLOCK)  where a.id = w.OrderID and cu.id= @ID
-            and w.WorkOrderUkey = cu.WorkOrderUkey) as b,
-            order_Qty c where c.id = b.id and b.Article = c.Article) d,Order_ColorCombo e,order_Eachcons cons
-            where d.POID=e.id and d.Article = e.Article and e.FabricCode is not null and e.FabricCode !='' and cons.id =e.id and
-			      d.poid = cons.id and cons.CuttingPiece='0' and  cons.FabricCombo = e.PatternPanel
+		--find all PatternPanel
+		Select distinct orderid = o.ID,wd.SizeCode,wd.article,occ.PatternPanel,o.MDivisionID
+		into #tmp1
+		from Orders o WITH (NOLOCK)
+		inner join WorkOrder_Distribute wd WITH (NOLOCK) on o.id = wd.OrderID
+		inner join Order_ColorCombo occ on o.poid = occ.id and occ.Article = wd.Article
+		inner join order_Eachcons cons on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
+		inner join CuttingOutput_Detail cud WITH (NOLOCK) on cud.WorkOrderUkey = wd.WorkOrderUkey
+		where occ.FabricCode !='' and occ.FabricCode is not null 
+		and cud.id = @ID
+		--
+		select wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,
+			cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
+			pre_cutqty= iif(sum(iif(co.cdate < @Cdate,cod.Layer*ws.Qty,0)) >wd.Qty,-- 此單之前的單,裁的數量,排除當前單的數量
+							wd.Qty,
+							sum(iif(co.cdate < @Cdate,cod.Layer*ws.Qty,0))),
+			co.MDivisionid
+		into #tmp2
+		from WorkOrder_Distribute wd WITH (NOLOCK)
+		inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
+		inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
+		inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
+		inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
+		inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
+		where co.cdate <= @Cdate
+		and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID)
+		group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty
 
-            Select  b.orderid,b.Article,b.SizeCode,c.PatternPanel,isnull(sum(isnull(b.qty,0)),0) as cutqty ,isnull(sum(isnull(iif(ma.cdate <  @Cdate , b.qty,0),0)),0) as pre_cutqty 
-            into #tmp2
-            from CuttingOutput ma WITH (NOLOCK) ,CuttingOutput_Detail a WITH (NOLOCK) ,WorkOrder_Distribute b WITH (NOLOCK) , WorkOrder_PatternPanel c WITH (NOLOCK) , Orders O WITH (NOLOCK) 
-            Where ma.cdate <= @Cdate and ma.ID = a.id and ma.Status!='New' 
-            and a.WorkOrderUkey = b.WorkOrderUkey and a.WorkOrderUkey = c.WorkOrderUkey   and O.ID=b.OrderID
-            and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID)
-            group by b.orderid,b.Article,b.SizeCode,c.PatternPanel
-
-            Select a.poid,a.id,a.article,a.sizecode,order_cpu = o.cpu,min(isnull(b.cutqty,0)) as cutqty ,cpu = o.cpu*min(isnull(b.cutqty,0)),min(isnull(b.pre_cutqty,0)) as pre_cutqty ,pre_cpu = o.cpu*min(isnull(b.pre_cutqty,0))
-			into #tmp3
-            from #tmp1 a 
-            left join #tmp2 b on a.id = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-            left join orders o WITH (NOLOCK) on o.id = a.id
-            group by a.poid,a.id,a.article,a.sizecode ,o.cpu
-
+        Select o.poid,a.orderid,a.article,a.sizecode,
+			order_cpu = o.cpu,
+			cutqty = min(isnull(b.cutqty,0)),
+			cpu = o.cpu*min(isnull(b.cutqty,0)),
+			pre_cutqty = min(isnull(b.pre_cutqty,0)),
+			pre_cpu = o.cpu*min(isnull(b.pre_cutqty,0))
+		into #tmp3
+        from #tmp1 a 
+        left join #tmp2 b on a.orderid = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+        left join orders o WITH (NOLOCK) on o.id = a.orderid
+        group by o.poid,a.orderid,a.article,a.sizecode ,o.cpu
 
 		--update CuttingOutput.ActGarment/ PPH/ ActTTCPU
 		IF(@Run_type = 'Confirm')
@@ -47,7 +61,7 @@ BEGIN
 
 			select @ncpu = sum((a.cutqty - isnull(cw.Qty,0)) * a.order_cpu),@ActTTCPU =sum(a.cpu) - sum(a.pre_cpu),@ActGarment = sum(a.cutqty)  - sum(a.pre_cutqty) 
 			from #tmp3 a
-			left join CuttingOutput_WIP cw WITH (NOLOCK) on cw.Orderid = a.id and cw.Article = a.Article and cw.Size = a.SizeCode
+			left join CuttingOutput_WIP cw WITH (NOLOCK) on cw.Orderid = a.orderid and cw.Article = a.Article and cw.Size = a.SizeCode
 
 
 			IF(@ManPower = 0 OR @ManHours = 0 )
@@ -77,9 +91,9 @@ BEGIN
 		--merge CuttingOutput_WIP 
 		MERGE CuttingOutput_WIP AS T
 			USING #tmp3 AS S
-			ON (T.Orderid = S.id and T.Article = S.Article and T.Size = S.SizeCode) 
+			ON (T.Orderid = S.orderid and T.Article = S.Article and T.Size = S.SizeCode) 
 			WHEN NOT MATCHED BY TARGET 
-			    THEN INSERT(Orderid,Article,Size ,Qty) VALUES(S.id,  S.Article,  S.SizeCode  ,S.cutqty)
+			    THEN INSERT(Orderid,Article,Size ,Qty) VALUES(S.orderid,  S.Article,  S.SizeCode  ,S.cutqty)
 			WHEN MATCHED 
 			    THEN UPDATE SET T.Qty = S.cutqty;
 

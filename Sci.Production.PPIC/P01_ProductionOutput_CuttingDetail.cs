@@ -115,35 +115,27 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             {
                 sqlCmd = string.Format(
 @"
-select c.cDate, [CutRef] = isnull(cd.CutRef, w.CutRef), wp.PatternPanel, w.FabricPanelCode, w.Cutno,wd.Article,wd.SizeCode
-    , isNull( sum(iif(c.Status <> 'New', wd.Qty, 0)) , 0) AS CutQty
-into #tmp2
-from Orders o WITH (NOLOCK) 
-left join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID and wd.Article = '{1}' and wd.SizeCode = '{2}'
-left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
-left join WorkOrder w WITH (NOLOCK) on w.ID = wp.ID and w.Ukey = wp.WorkOrderUkey
-left join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
-left join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
-where o.ID = '{0}'
-group by c.cDate,cd.CutRef,w.CutRef,wp.PatternPanel,w.FabricPanelCode,w.Cutno,Status,wd.Article,wd.SizeCode
-order by wp.PatternPanel 
+select co.cDate,wo.CutRef,wp.PatternPanel,wo.FabricPanelCode,
+	wo.Cutno,
+	cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
+	wd.Qty
+into #tmp
+from WorkOrder_Distribute wd WITH (NOLOCK)
+inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
+inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
+inner join WorkOrder wo WITH (NOLOCK) on wo.Ukey = wd.WorkOrderUkey
+inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
+inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
+inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
+where O.id = '{0}' and wd.Article = '{1}' and wd.SizeCode = '{2}'
+group by co.cDate,wo.CutRef,wp.PatternPanel,wo.FabricPanelCode,wo.Cutno,wd.Qty
 
-Select distinct d.*,e.Colorid,e.PatternPanel
-into #tmp1
-from 
-(
-	Select POID=(select poid from orders WITH (NOLOCK) where id = c.id),c.ID,c.Article,c.SizeCode,c.Qty 
-	from order_Qty c WITH (NOLOCK)
-	where c.id = '{0}' and c.Article = '{1}' and SizeCode = '{2}'
-) d
-inner join order_Eachcons cons on d.poid = cons.id
-left join Order_ColorCombo e on d.POID=e.id and d.Article = e.Article and cons.id =e.id and cons.FabricCombo = e.PatternPanel
-where e.FabricCode is not null and e.FabricCode !=''and cons.CuttingPiece='0' 
+select cDate,CutRef,PatternPanel,FabricPanelCode,Cutno,
+	cutqty = iif(sum(cutqty) over(partition by PatternPanel,FabricPanelCode,Cutno order by cDate)>Qty,cutqty-(sum(cutqty) over(partition by PatternPanel,FabricPanelCode,Cutno order by cDate)-Qty),cutqty)
+from #tmp
+order by cDate,CutRef,PatternPanel,FabricPanelCode,Cutno
 
-select b.cDate,b.CutRef,a.PatternPanel,b.FabricPanelCode,b.Cutno,CutQty = isnull(b.CutQty,0)
-from #tmp1 a
-left join #tmp2 b on a.Article=b.Article and a.SizeCode = b.SizeCode and a.PatternPanel = b.PatternPanel
-order by a.PatternPanel,b.cDate
+drop table #tmp
 ",
                     this.id,
                     this.article,

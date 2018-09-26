@@ -28,6 +28,19 @@ namespace Sci.Production.Shipping
             this.gridicon.Insert.Visible = false;
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
+            this.txtSisFtyWK.ReadOnly = true;
+
+            #region Shipping Mode
+            string sqlcmd = @"select ID,UseFunction from ShipMode WITH (NOLOCK) where id !='AIR' order by ID";
+            Ict.DualResult cbResult;
+            DataTable shipModeTable = new DataTable();
+            if (cbResult = DBProxy.Current.Select(null, sqlcmd, out shipModeTable))
+            {
+                this.comboShippMode.DataSource = shipModeTable;
+                this.comboShippMode.DisplayMember = "ID";
+                this.comboShippMode.ValueMember = "ID";
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -79,19 +92,111 @@ where ed.ID = '{0}'", masterID);
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Forwarder"]))
+            #region 存檔不可為空判斷
+
+            // Type = 3 (Transfer out) Arrive Port Date and Dox Rcv Date 可以為空
+            if (this.CurrentMaintain["Type"].ToString() != "3")
             {
-                this.txtSubconForwarder.TextBox1.Focus();
-                MyUtility.Msg.WarningBox("Forwarder can't empty!!");
+                if (MyUtility.Check.Empty(this.dateArrivePortDate.Value))
+                {
+                    this.dateArrivePortDate.Focus();
+                    MyUtility.Msg.WarningBox("Arrive Port Date cannot be empty!");
+                    return false;
+                }
+
+                if (MyUtility.Check.Empty(this.dateDoxRcvDate.Value))
+                {
+                    this.dateDoxRcvDate.Focus();
+                    MyUtility.Msg.WarningBox("Dox Rcv Date cannot be empty!");
+                    return false;
+                }
+            }
+
+            if (MyUtility.Check.Empty(this.txtInvoiceNo.Text))
+            {
+                this.txtInvoiceNo.Focus();
+                MyUtility.Msg.WarningBox("Invoice No. cannot be empty!");
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["ShipModeID"]))
+            if (MyUtility.Check.Empty(this.txtLocalSupp.TextBox1.Text))
             {
-                this.txtShipmodeShippingMode.Focus();
-                MyUtility.Msg.WarningBox("ShipMode can't empty!!");
+                this.txtLocalSupp.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Shipper cannot be empty!");
                 return false;
             }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Forwarder"]))
+            {
+                this.txtSubconForwarder.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Forwarder cannot be empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.comboShippMode.Text))
+            {
+                this.comboShippMode.Select();
+                MyUtility.Msg.WarningBox("Shipping Mode cannot be empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.txtdropdownlistContainerType.SelectedValue))
+            {
+                this.txtdropdownlistContainerType.Select();
+                MyUtility.Msg.WarningBox("Container Type cannot be empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(MyUtility.Convert.GetInt(this.numPackages.Text)))
+            {
+                this.numPackages.Focus();
+                MyUtility.Msg.WarningBox("Packages cannot be 0!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.numCBM.Value))
+            {
+                this.numCBM.Focus();
+                MyUtility.Msg.WarningBox("CBM cannot be 0!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.txtConsignee.Text))
+            {
+                this.txtConsignee.Focus();
+                MyUtility.Msg.WarningBox("Consignee cannot be empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.txtBLAWBNo.Text))
+            {
+                this.txtBLAWBNo.Focus();
+                MyUtility.Msg.WarningBox("B/L(AWB) No. cannot be empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.txtVslvoyFltNo.Text))
+            {
+                this.txtVslvoyFltNo.Focus();
+                MyUtility.Msg.WarningBox("Vsl voy/Flt No. cannot be empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.txtUserHandle.TextBox1.Text))
+            {
+                this.txtUserHandle.TextBox1.Focus();
+                MyUtility.Msg.WarningBox("Handle cannot be empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.dateOnBoardDate.Value))
+            {
+                this.dateOnBoardDate.Focus();
+                MyUtility.Msg.WarningBox("On Board Date cannot be empty!!");
+                return false;
+            }
+
+            #endregion
 
             // 提單號碼不可重複
             if (!MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]))
@@ -109,6 +214,13 @@ where ed.ID = '{0}'", masterID);
                     MyUtility.Msg.WarningBox("B/L(AWB) No. already exist.");
                     return false;
                 }
+            }
+
+            // 表身不能沒有資料
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Detail cannot be empty");
+                return false;
             }
 
             // 加總表身欄位回寫表頭
@@ -135,6 +247,17 @@ where ed.ID = '{0}'", masterID);
                 }
 
                 this.CurrentMaintain["ID"] = newID;
+            }
+
+            if (this.CurrentMaintain["Type"].ToString() == "2" && MyUtility.Check.Empty(this.txtSisFtyWK.Text))
+            {
+                this.txtSisFtyWK.Focus();
+                DialogResult questionResult = MyUtility.Msg.QuestionBox($@" [Sis Fty WK#] is empty. Do you want to save data?", caption: "Question", buttons: MessageBoxButtons.YesNo);
+
+                if (questionResult == DialogResult.No)
+                {
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();
@@ -240,6 +363,29 @@ where ed.ID = '{0}'", masterID);
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void radioTransferIn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                if (this.radioTransferIn.Checked)
+                {
+                    this.txtSisFtyWK.ReadOnly = false;
+                }
+                else
+                {
+                    if (this.CurrentMaintain != null)
+                    {
+                        this.txtSisFtyWK.ReadOnly = true;
+                        this.CurrentMaintain["SisFtyID"] = string.Empty;
+                    }
+                }
+            }
+            else
+            {
+                this.txtSisFtyWK.ReadOnly = true;
             }
         }
     }

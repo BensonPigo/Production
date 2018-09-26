@@ -81,14 +81,15 @@ select  distinct 0 as selected
         , p1.refno
         , p1.colorid
         , p1.sizespec
-        , rd.Ukey Receiving_Detail_ukey
+        , Receiving_Detail_ukey = min(rd.Ukey) 		
         , a.StockType
 from dbo.FtyInventory a WITH (NOLOCK) 
 left join dbo.FtyInventory_Detail b WITH (NOLOCK) on a.Ukey = b.Ukey
 left join dbo.PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 inner join dbo.Factory f on f.ID=p1.factoryID 
 left join dbo.Receiving_Detail rd  WITH (NOLOCK) on rd.POID = a.POID and rd.Seq1 = a.Seq1 and rd.Seq2 = a.Seq2 and rd.StockType = a.StockType and rd.Roll = a.Roll and rd.Dyelot = a.Dyelot
-where    f.MDivisionID='{0}' ", Sci.Env.User.Keyword)); // 
+where    f.MDivisionID='{0}' 
+", Sci.Env.User.Keyword)); // 
                         
                         //if (BalanceQty.Checked)
                         //{
@@ -135,6 +136,9 @@ where    f.MDivisionID='{0}' ", Sci.Env.User.Keyword)); //
         and a.StockType = {0} ", StockType));
                         }
                     }
+
+                    strSQLCmd.Append(@" 
+group by a.Poid, a.seq1, a.seq2, a.Roll, a.Dyelot, a.InQty , a.OutQty , a.AdjustQty, a.Ukey, p1.refno, p1.colorid, p1.sizespec, a.StockType");
                     break;
 
                 case "2":
@@ -296,7 +300,8 @@ where
 
             // 增加 order by FtyInventory.POID, FtyInventory.Seq1, FtyInventory.Seq2,Receiving_Detail.Ukey,FtyInventory.StockType
             strSQLCmd.Insert(0, "select * from (");
-            strSQLCmd.Append(") a order by Receiving_Detail_ukey,StockType"); //Poid,seq1,seq2
+            strSQLCmd.Append(@"
+) a order by Receiving_Detail_ukey,StockType"); //Poid,seq1,seq2
 
             this.ShowWaitMessage("Data Loading....");
             Ict.DualResult result;

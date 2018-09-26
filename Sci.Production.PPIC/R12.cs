@@ -87,6 +87,7 @@ namespace Sci.Production.PPIC
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             string sqlwhere = string.Empty;
+            string sqlwhere2 = string.Empty;
             List<SqlParameter> listSqlPara = new List<SqlParameter>();
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))
@@ -131,14 +132,14 @@ namespace Sci.Production.PPIC
             if (this.bulk) category.Add("'B'");
             if (this.sample) category.Add("'S'");
             if (this.material) category.Add("'M'");
-            if (this.forecast) category.Add("''");
+            //if (this.forecast) category.Add("''");
             if (this.garment) category.Add("'G'");
             if (this.smtl) category.Add("'T'");
             string categorys = string.Join(",", category);
 
             if (category.Count > 0)
             {
-                sqlwhere += $" and o.Category in ({categorys}) ";
+                sqlwhere2 += $" and o.Category in ({categorys}) ";
             }
 
             string sqlCmd = $@"
@@ -165,9 +166,42 @@ inner join Order_TmsCost ot with(nolock) on o.id = ot.id and ot.ArtworkTypeID = 
 cross apply(select oq.id,oq.Article,Qty=sum(oq.Qty) from Order_Qty oq with(nolock) where oq.id = o.id group by oq.id,oq.Article)oq
 left join Order_Article_PadPrint oap with(nolock) on oap.ID = o.id and oap.Article = oq.Article
 left join Country c with(nolock) on c.id = o.Dest
-where o.Junk =0
+where isnull(o.Junk,0) =0
+{sqlwhere}
+{sqlwhere2}
+";
+            if (this.forecast)
+            {
+                sqlCmd += $@"
+union all
+select 
+	o.MDivisionID,
+	o.FactoryID,
+	o.BuyerDelivery,
+	o.SciDelivery,
+	Mon = o.SciDelivery,
+	o.id,
+	o.Category,
+	c.Alias,
+	o.styleid,
+	o.SeasonID,
+	Article='',
+	o.Qty,
+	ColorID='',
+	ttlqt =o.Qty,
+	PADPRINTINGPCS =1,
+	o.StyleUkey
+from orders o with(nolock)
+inner join Order_TmsCost ot with(nolock) on o.id = ot.id and ot.ArtworkTypeID = 'PAD PRINTING' and ot.Price > 0 
+left join Country c with(nolock) on c.id = o.Dest
+where isnull(o.Junk,0) =0
+and o.Category = ''
 {sqlwhere}
 
+";
+            }
+
+            sqlCmd += $@"
 select * from #tmp
 
 select distinct s.ID,s.SeasonID,s.BrandID,sa.Article,sap.ColorID
@@ -195,6 +229,18 @@ pivot(sum(qty) for ym in('+@ym+'))as pvt
 exec(@ex)
 
 select y=DATEPART(year,ym),m=SUBSTRING(convert(nvarchar,ym,106),4,3),ct =count(1) over(partition by DATEPART(year,ym)) from #mondt
+
+select y=DATEPART(year,ym),m=DATEPART(MM,ym),b.Qty
+from #mondt a
+outer apply(
+	select Qty = sum(o.qty)
+	from orders o with(nolock)
+	inner join Order_TmsCost ot with(nolock) on o.id = ot.id and ot.ArtworkTypeID = 'PAD PRINTING' and ot.Price > 0 
+	where isnull(o.Junk,0) =0 and o.Category = ''
+    {sqlwhere}
+	and DATEPART(year,a.ym) = DATEPART(YEAR,o.SciDelivery) and DATEPART(MONTH,a.ym) = DATEPART(MONTH,o.SciDelivery)
+)b
+
 drop table #tmp,#tmp2,#tmp3,#mondt
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, listSqlPara, out this.printData);
@@ -284,6 +330,14 @@ drop table #tmp,#tmp2,#tmp3,#mondt
                 #endregion
                 #region 第2區 FORECAST
                 int row2 = 16 + (colorCount * 5);
+                if (this.forecast)
+                {
+                    for (int i = 0; i < this.printData[4].Rows.Count; i++)
+                    {
+                        worksheet.Cells[row2 - 1, i + 3] = this.printData[4].Rows[i]["Qty"];
+                    }
+                }
+
                 for (int i = 0; i < colorCount; i++)
                 {
                     for (int j = 1; j < this.printData[2].Columns.Count; j++)

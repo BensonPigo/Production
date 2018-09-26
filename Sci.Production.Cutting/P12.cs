@@ -249,7 +249,6 @@ select
     , a.PatternCode [Cutpart]
     , '('+a.Patterncode+')' [Patterncode]
     , a.PatternDesc [Description]
-    --,SubProcess.SubProcess [SubProcess]
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     , a.Parts [Parts]
     , a.Qty [Qty]
@@ -260,7 +259,7 @@ select
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
-left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
 left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
@@ -274,10 +273,10 @@ outer apply
     )
 )as SubProcess
 " + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
-                                        
+
 union all
 
-select DISTINCT 
+select 
     Convert(bit,0) as selected
     , a.PrintDate
     , CreateDate = b.AddDate
@@ -296,12 +295,11 @@ select DISTINCT
     , b.Colorid [Color]
     , b.Article + '\' + b.Colorid [Color2]
     , a.SizeCode [Size]
-    , qq.Cutpart [Cutpart]
-    , '('+d.Patterncode+')' [Patterncode]
-    , d.PatternDesc [Description]
-    --,SubProcess.SubProcess [SubProcess]
+    , bda.PatternCode [Cutpart]
+    , '('+bda.Patterncode+')' [Patterncode]
+    , bda.PatternDesc [Description]
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
-    , d.Parts [Parts]
+    , bda.Parts [Parts]
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
@@ -309,24 +307,30 @@ select DISTINCT
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
-left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.Bundle_Detail_Allpart d WITH (NOLOCK) on d.id=a.Id
 left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
-outer apply( select iif(a.PatternCode = 'ALLPARTS',iif(@extend='1',d.PatternCode,a.PatternCode),a.PatternCode) [Cutpart] )[qq]
+outer apply
+(
+	select distinct x.PatternCode,x.PatternDesc,x.Parts
+	from Bundle_Detail_Allpart x with(nolock)
+	where x.id=b.id
+
+)bda
 outer apply
 (
     select SubProcess = 
     (
         select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= qq.Cutpart
+        where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode
         for xml path('')
     )
 )as SubProcess
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
+OPTION (OPTIMIZE FOR UNKNOWN)
 
-select distinct *
+select  *
 from #tmp x
 outer apply
 (
@@ -339,7 +343,9 @@ outer apply
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
-" + sb);                
+" + sb+ @"
+OPTION (OPTIMIZE FOR UNKNOWN)"
+);                
                 #endregion
             }
             else  //沒勾[Extend All Parts]
@@ -368,7 +374,6 @@ select
     , a.PatternCode [Cutpart]
     , '('+a.Patterncode+')' [Patterncode]
     , a.PatternDesc [Description]
-    --,SubProcess.SubProcess [SubProcess]
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     , a.Parts [Parts]
     , a.Qty [Qty]
@@ -379,7 +384,7 @@ select
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
-left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
 left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
@@ -396,7 +401,7 @@ outer apply
                                         
 union all
 
-select DISTINCT 
+select 
     Convert(bit,0) as selected
     , a.PrintDate
     , CreateDate = b.AddDate
@@ -418,7 +423,6 @@ select DISTINCT
     , a.PatternCode [Cutpart]
     , '('+a.Patterncode+')' [Patterncode]
     , a.PatternDesc [Description]
-    --,SubProcess.SubProcess [SubProcess]
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     , a.Parts [Parts]
     , a.Qty [Qty]
@@ -428,7 +432,7 @@ select DISTINCT
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
-left join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
 left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
@@ -443,8 +447,9 @@ outer apply
 )as SubProcess 
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
+OPTION (OPTIMIZE FOR UNKNOWN)
 
-select distinct *
+select *
 from #tmp x
 outer apply
 (
@@ -457,8 +462,9 @@ outer apply
 	where(mss.SizeCode is not null or msso.SizeCode  is not null) AND msi.SizeItem = 'S01' and m.ID = x.[SP]
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
-
-" + sb);  
+" + sb+@"
+OPTION (OPTIMIZE FOR UNKNOWN)"
+);  
                 #endregion
             }
 
