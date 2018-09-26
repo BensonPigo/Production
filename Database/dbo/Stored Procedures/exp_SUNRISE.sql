@@ -11,9 +11,10 @@ select @ToAddress = ToAddress ,@CcAddress = CcAddress from MailTo where id = '01
 select @RgCode = RgCode from system;
 begin try
 --抓出時間區間內SewingSchedule的orderID
-select distinct OrderID
+select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.AddName,o.SCIDelivery
 into #SrcOrderID
-from dbo.SewingSchedule with (nolock) 
+from dbo.SewingSchedule ss with (nolock)
+inner join orders o with (nolock) on  ss.OrderID = o.ID
 where inline between @StartDate and @EndDate or 
 	  Offline between @StartDate and @EndDate or
 	  (inline <= @StartDate and Offline >= @EndDate)
@@ -28,9 +29,8 @@ select
 [qty] = oq.Qty
 into #tMODCS
 from #SrcOrderID so with (nolock)
-inner join orders o with (nolock) on so.OrderID = o.id
-inner join Order_Qty oq with (nolock) on o.id = oq.ID
-inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
+inner join Order_Qty oq with (nolock) on so.OrderID = oq.ID
+inner join Style_Location sl with (nolock) on sl.StyleUkey = so.StyleUkey
 
 --tMOSeqD(制單工序明細表)
 select
@@ -38,16 +38,15 @@ select
 [OrderID] = so.OrderID,
 [Location] = sl.Location,
 [Version] = ts.Version,
-[SeqNo] = tsd.Seq,
+[SeqNo] = cast(tsd.Seq as int),
 [SeqCode] = tsd.Seq,
 [SeqName] = tsd.Annotation,
 [MachineTypeID] = tsd.MachineTypeID,
 [SAM] = Round(tsd.SMV/60,7)
 into #tMOSeqD
 from #SrcOrderID so with (nolock)
-inner join orders o with (nolock) on so.OrderID = o.id
-inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
-inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID = ts.SeasonID and o.BrandID = ts.BrandID and ts.ComboType = sl.Location
+inner join Style_Location sl with (nolock) on sl.StyleUkey = so.StyleUkey
+inner join TimeStudy ts with (nolock) on so.StyleID = ts.StyleID and so.SeasonID = ts.SeasonID and so.BrandID = ts.BrandID and ts.ComboType = sl.Location
 inner join TimeStudy_Detail tsd with (nolock) on tsd.ID = ts.ID and ISNUMERIC(tsd.Seq) = 1 and tsd.SMV<>0
 
 --tMOSeqM(制單工序主表) 
@@ -62,25 +61,23 @@ select
 [insertor] = ts.AddName
 into #tMOSeqM
 from #SrcOrderID so with (nolock)
-inner join orders o with (nolock) on so.OrderID = o.id
-inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
-inner join TimeStudy ts with (nolock) on o.StyleID = ts.StyleID and o.SeasonID = ts.SeasonID and o.BrandID = ts.BrandID and ts.ComboType = sl.Location
+inner join Style_Location sl with (nolock) on sl.StyleUkey = so.StyleUkey
+inner join TimeStudy ts with (nolock) on so.StyleID = ts.StyleID and so.SeasonID = ts.SeasonID and so.BrandID = ts.BrandID and ts.ComboType = sl.Location
 outer apply (select sum(SAM) as [Value] from #tMOSeqD where OrderID = so.OrderID and Location = sl.Location) as SAMTotal
 
 --tMOM(制單主表)
 select 
 [MONo] = so.OrderID + '-' + sl.Location,
 [ProNoticeNo] = so.OrderID,
-[Styleno] = o.StyleID,
-[Qty] = o.Qty,
-[CustName] = o.BrandID,
+[Styleno] = so.StyleID,
+[Qty] = so.Qty,
+[CustName] = so.BrandID,
 [SAMTotal] = tMM.SAMTotal,
-[Insertor] = o.AddName,
-[DeliveryDate] = o.SCIDelivery
+[Insertor] = so.AddName,
+[DeliveryDate] = so.SCIDelivery
 into #tMOM
 from #SrcOrderID so with (nolock)
-inner join orders o with (nolock) on so.OrderID = o.id
-inner join Style_Location sl with (nolock) on sl.StyleUkey = o.StyleUkey
+inner join Style_Location sl with (nolock) on sl.StyleUkey = so.StyleUkey
 left join #tMOSeqM tMM on tMM.OrderID = so.OrderID and tMM.Location = sl.Location
 
 --tMachineInfo(衣車信息表)
@@ -108,10 +105,63 @@ into #tSeqBase
 from Operation with (nolock)
 where exists (select 1 from #tMOSeqD where SeqCode = Operation.ID)
 
+--tRoute(加工方案信息表)
+select 
+[guid] = NEWID(),
+[MONo] = so.OrderID,
+[RouteName] = so.OrderID + '-' + CAST(lm.Version as varchar)
+into #tRoute
+from #SrcOrderID so with (nolock)
+inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
+where lm.Status = 'Confirmed'
+
+--tRouteLine(加工方案與生產線關係表)
+select 
+[guid] = NEWID(),
+[RouteName] = so.OrderID + '-' + CAST(lm.Version as varchar),
+[LineID] = cast(ss.SewingLineID as int)
+into #tRouteLine
+from #SrcOrderID so with (nolock)
+inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
+cross apply (select top 1 SewingLineID from SewingSchedule  with (nolock) where OrderID = so.OrderID and ISNUMERIC(SewingLineID) = 1 ) ss 
+where lm.Status = 'Confirmed'
+
+--tSeqAssign(加工方案-工序安排)
+;with tSeqAssignTmp as
+(
+select 
+[RouteName] = so.OrderID + '-' + CAST(lm.Version as varchar),
+[SeqNo] = cast(lmd.OriNO as int),
+[IsOutputSeq] = 0,
+[Station] = MIN(cast(lmd.No as int))
+from #SrcOrderID so with (nolock)
+inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
+inner join LineMapping_Detail lmd with (nolock) on lm.ID = lmd.ID and lmd.No <> ''
+where lm.Status = 'Confirmed' and ISNUMERIC(lmd.OriNO) = 1
+group by lmd.OriNO,so.OrderID,lm.Version)
+select 
+[guid] = NEWID(),
+RouteName,
+[SeqOrder] = DENSE_RANK() OVER (PARTITION BY RouteName ORDER BY SeqNo),
+[bMerge] = LAG(1,1,0) OVER (PARTITION BY RouteName,Station ORDER BY SeqNo),
+SeqNo,
+Station,
+IsOutputSeq
+into #tSeqAssign
+from tSeqAssignTmp
+
+--tStAssign(加工方案-工作站安排)
+select 
+[guid] = NEWID(),
+[SeqAssign_guid] = tsa.guid,
+[StationID] = tsa.Station,
+[StFunc] = 0
+into #tStAssign
+from #tSeqAssign tsa
+where tsa.bMerge = 0
 
 
 --同步資料至SUNRISE db
-
 --tMODCS(制單顏色尺碼錶)
 --update
 update T set	ColorName = S.ColorName,
@@ -150,14 +200,13 @@ update T set	SeqCode = S.SeqCode,
 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T
 inner join #tMOSeqD S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and 
 T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
-T.SeqNo = S.SeqNo collate SQL_Latin1_General_CP1_CI_AS
+T.SeqNo = S.SeqNo
 
 --insert 
 insert into [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD(MONo,Version,SeqNo,SeqCode ,SeqName,SAM,CmdType,CmdTime,InterfaceTime)
 select S.MONo,S.Version,S.SeqNo,S.SeqCode ,S.SeqName,S.SAM,'insert',GetDate(),null from #tMOSeqD S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS  and 
-T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
-T.SeqNo = S.SeqNo collate SQL_Latin1_General_CP1_CI_AS)
+T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and T.SeqNo = S.SeqNo )
 
 -- delete 
 update T set CmdType = 'delete',
@@ -167,7 +216,7 @@ from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqD T
 where exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS ) and  
 not exists (select 1 from #tMOSeqD S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and
 T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS and 
-T.SeqNo = S.SeqNo collate SQL_Latin1_General_CP1_CI_AS)
+T.SeqNo = S.SeqNo)
 
 --select * from #tMOSeqD where mono = '18052464GGS-B' and Version = '01' and SeqNo = '0620'
 
@@ -251,7 +300,35 @@ insert into [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo(MachineCode,TypeCode,TypeName
 select S.MachineCode,S.TypeCode,S.TypeName,S.Model,S.Brand,S.Insertor,S.IsUsing,0,'insert',GetDate(),null from #tMachineInfo S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T where T.MachineCode = S.MachineCode collate SQL_Latin1_General_CP1_CI_AS)
 
-drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo
+
+--tRoute(加工方案信息表)
+insert into [SUNRISE].SUNRISEEXCH.dbo.tRoute(guid,MONo,RouteName)
+select S.guid,S.MONo,S.RouteName from #tRoute S 
+where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tRoute T where T.RouteName = S.RouteName collate SQL_Latin1_General_CP1_CI_AS)
+
+--tRouteLine(加工方案與生產線關係表)
+insert into [SUNRISE].SUNRISEEXCH.dbo.tRouteLine(guid,RouteName,LineID)
+select S.guid,S.RouteName,S.LineID from #tRouteLine S 
+where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tRouteLine T where T.RouteName = S.RouteName collate SQL_Latin1_General_CP1_CI_AS and T.LineID = S.LineID )
+
+--tSeqAssign(加工方案-工序安排)
+update T set	SeqOrder = S.SeqOrder,
+				bMerge = S.bMerge,
+				IsOutputSeq = S.IsOutputSeq
+from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign T
+inner join #tSeqAssign S on T.RouteName = S.RouteName collate SQL_Latin1_General_CP1_CI_AS and T.SeqNo = S.SeqNo 
+
+insert into [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign(guid,RouteName,SeqOrder,bMerge,SeqNo,IsOutputSeq)
+select S.guid,S.RouteName,S.SeqOrder,S.bMerge,S.SeqNo,S.IsOutputSeq from #tSeqAssign S 
+where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign T where T.RouteName = S.RouteName collate SQL_Latin1_General_CP1_CI_AS and T.SeqNo = S.SeqNo )
+
+--tStAssign(加工方案-工作站安排)
+insert into [SUNRISE].SUNRISEEXCH.dbo.tStAssign(guid,SeqAssign_guid,StationID,StFunc)
+select S.guid,S.SeqAssign_guid,S.StationID,S.StFunc from #tStAssign S 
+where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tStAssign T where T.SeqAssign_guid = S.SeqAssign_guid and T.StationID = S.StationID )
+
+
+drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo,#tRoute,#tRouteLine,#tSeqAssign,#tStAssign
 
 -- mail 通知信
 declare @subject nvarchar(255) = concat('SUNRISE Daily transfer-',Format(getdate(),'yyyy/MM/dd'),'-',@RgCode)
