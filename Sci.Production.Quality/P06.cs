@@ -233,14 +233,10 @@ namespace Sci.Production.Quality
         // Context Menu選擇Create New test
         private void CreateNewTest()
         {
-            DataTable dt;
-            DBProxy.Current.Select(null, "select Max(id) as id from ColorFastness WITH (NOLOCK) ", out dt);
             //string ID = MyUtility.GetValue.GetID("CF", "ColorFastness", DateTime.Today, 2, "ID", null);
-            string ID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
-            //int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
-            //ID = ID + 1;
+            //string ID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
 
-            Sci.Production.Quality.P06_Detail callNewDetailForm = new P06_Detail(IsSupportEdit, ID.ToString(), null, null, null, this.displaySP.Text);
+            Sci.Production.Quality.P06_Detail callNewDetailForm = new P06_Detail(IsSupportEdit, "New", null, null, null, this.displaySP.Text);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();

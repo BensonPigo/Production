@@ -245,13 +245,13 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
 
         private void CreateNewTest()
         {
-            DataTable dt;
-            DBProxy.Current.Select(null, "select Max(id) as id from Oven WITH (NOLOCK) ", out dt);
+            //DataTable dt;
+            //DBProxy.Current.Select(null, "select Max(id) as id from Oven WITH (NOLOCK) ", out dt);
         
-               int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
-                ID = ID + 1;
+            //   int ID = MyUtility.Convert.GetInt(dt.Rows[0]["id"]);
+            //    ID = ID + 1;
                       
-            Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit,ID.ToString(), null, null, null, this.displaySP.Text);
+            Sci.Production.Quality.P05_Detail callNewDetailForm = new P05_Detail(IsSupportEdit,"0", null, null, null, this.displaySP.Text);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
             this.RenewData();
