@@ -196,6 +196,7 @@ inner join Order_TmsCost ot with(nolock) on o.id = ot.id and ot.ArtworkTypeID = 
 left join Country c with(nolock) on c.id = o.Dest
 where isnull(o.Junk,0) =0
 and o.Category = ''
+{sqlwhere}
 
 ";
             }
