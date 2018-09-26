@@ -330,9 +330,12 @@ drop table #tmp,#tmp2,#tmp3,#mondt
                 #endregion
                 #region 第2區 FORECAST
                 int row2 = 16 + (colorCount * 5);
-                for (int i = 0; i < this.printData[4].Rows.Count; i++)
+                if (this.forecast)
                 {
-                    worksheet.Cells[row2 - 1, i + 3] = this.printData[4].Rows[i]["Qty"];
+                    for (int i = 0; i < this.printData[4].Rows.Count; i++)
+                    {
+                        worksheet.Cells[row2 - 1, i + 3] = this.printData[4].Rows[i]["Qty"];
+                    }
                 }
 
                 for (int i = 0; i < colorCount; i++)
