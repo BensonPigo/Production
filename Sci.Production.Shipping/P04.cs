@@ -258,8 +258,6 @@ where ed.ID = '{0}'", masterID);
                 {
                     return false;
                 }
-
-                MyUtility.Msg.WarningBox("Sis Fty Wk# cannot be empty!");
             }
 
             return base.ClickSaveBefore();
