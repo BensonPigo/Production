@@ -155,13 +155,6 @@ namespace Sci.Production.Packing
                 {
                     if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        foreach (DataRow dr in this.dt_scanDetail.Rows)
-                        {
-                            dr["barcode"] = DBNull.Value;
-                        }
-
-                        DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{this.txtScanCartonSP.Text}'");
-
                         if (!(result = this.ClearScanQty(this.dt_scanDetail.Select(), "ALL")))
                         {
                             this.ShowErr(result);
@@ -175,6 +168,12 @@ namespace Sci.Production.Packing
                         return;
                     }
                 }
+
+                foreach (DataRow dr in this.dt_scanDetail.Rows)
+                {
+                    dr["barcode"] = DBNull.Value;
+                }
+                DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{this.txtScanCartonSP.Text}'");
 
                 DualResult result_load = this.LoadScanDetail(0);
                 if (!result_load)
@@ -255,6 +254,13 @@ namespace Sci.Production.Packing
                     return result;
                 }
             }
+
+            foreach (DataRow seledr in this.dt_scanDetail.Rows)
+            {
+                seledr["barcode"] = DBNull.Value;
+            }
+
+            DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{MyUtility.Convert.GetString(dr.ID) + MyUtility.Convert.GetString(dr.CTNStartNo)}'");
 
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
             this.LoadHeadData(dr);
