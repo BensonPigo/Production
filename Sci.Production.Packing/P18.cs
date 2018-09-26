@@ -155,6 +155,13 @@ namespace Sci.Production.Packing
                 {
                     if (MyUtility.Msg.InfoBox("This carton had been scanned, are you sure you want to rescan again?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
+                        foreach (DataRow dr in this.dt_scanDetail.Rows)
+                        {
+                            dr["barcode"] = DBNull.Value;
+                        }
+
+                        DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{this.txtScanCartonSP.Text}'");
+
                         if (!(result = this.ClearScanQty(this.dt_scanDetail.Select(), "ALL")))
                         {
                             this.ShowErr(result);
