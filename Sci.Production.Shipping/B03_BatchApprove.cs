@@ -296,7 +296,7 @@ drop table #bas
             if (chkmsg.Count > 0)
             {
                 MyUtility.Msg.WarningBox(@" [NewSupp] or [NewCurrency] or [NewPrice] can not empty!
-" + "ID: " + string.Join(",", chkmsg));
+" + "Code: " + string.Join(",", chkmsg));
                 return;
             }
 
