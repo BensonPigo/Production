@@ -1726,9 +1726,12 @@
             <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
             <MIMEType>image/jpeg</MIMEType>
             <Sizing>Fit</Sizing>
-            <Top>0.83283cm</Top>
-            <Height>1.57181cm</Height>
+            <Top>0.69172cm</Top>
+            <Height>1.71292cm</Height>
             <Width>6.10369cm</Width>
+            <Visibility>
+              <Hidden>=iif(Parameters!switchImg.Value= "False",true,false)</Hidden>
+            </Visibility>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1764,6 +1767,25 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Image Name="Image3">
+            <Source>Database</Source>
+            <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
+            <MIMEType>image/jpeg</MIMEType>
+            <Sizing>Fit</Sizing>
+            <Top>0.68987cm</Top>
+            <Left>1.55507cm</Left>
+            <Height>1.71292cm</Height>
+            <Width>2.73147cm</Width>
+            <ZIndex>2</ZIndex>
+            <Visibility>
+              <Hidden>=iif(Parameters!switchImg.Value= "True",true,false)</Hidden>
+            </Visibility>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
         </ReportItems>
         <KeepTogether>true</KeepTogether>
         <Top>5.60706cm</Top>
@@ -1778,7 +1800,7 @@
         </Style>
       </Rectangle>
     </ReportItems>
-    <Height>3.31929in</Height>
+    <Height>3.30887in</Height>
     <Style />
   </Body>
   <Width>7.45943in</Width>
@@ -2740,6 +2762,10 @@
     <ReportParameter Name="Sort">
       <DataType>Integer</DataType>
       <Nullable>true</Nullable>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="switchImg">
+      <DataType>String</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>

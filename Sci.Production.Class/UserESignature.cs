@@ -20,45 +20,23 @@ namespace Sci.Production.Class
         /// </summary>
         public static string getESignaturePath()
         {
-            string dbName = DBProxy.Current.DefaultModuleName;
             // 取得當前Config moudle位置 Dummy or Formal
-            string PicPath = null;
-
-            if (string.IsNullOrEmpty((ConfigurationManager.AppSettings["TaipeiServer"])))
+            string dbName = DBProxy.Current.DefaultModuleName;
+            string picPath = MyUtility.GetValue.Lookup(@"select PicPath from System WITH (NOLOCK)") + @"\" + dbName + @"\" + @"ESignature\";
+            if (Directory.Exists(picPath) == false)
             {
-                PicPath = MyUtility.GetValue.Lookup(@"select PicPath from System WITH (NOLOCK)") + @"\" + dbName + @"\" + @"ESignature\";
-                if (Directory.Exists(PicPath) == false)
+                try
                 {
-                    try
-                    {
-                        Directory.CreateDirectory(PicPath);
-                    }
-                    catch (Exception e)
-                    {
-                        MyUtility.Msg.ErrorBox(e.ToString());
-                        return null;
-                    }
+                    Directory.CreateDirectory(picPath);
+                }
+                catch (Exception e)
+                {
+                    MyUtility.Msg.ErrorBox(e.ToString());
+                    return null;
                 }
             }
-            else
-            {
-                /*
-                 * 無法取得路徑
-                 * 其問題可能是在台北端使用系統
-                 * 若要在台北端測試系統
-                 * 則請將下列註解打開
-                 * 
-                 * 若要編譯 Release 版
-                 * 請將以下語法註解
-                 */
-                //PicPath = @"D:\ESignature\";
-                //if (Directory.Exists(PicPath) == false)
-                //{
-                //    Directory.CreateDirectory(PicPath);
-                //}
-            }
 
-            return PicPath;
+            return picPath;
         }
 
         /// <summary>
