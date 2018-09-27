@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -65,13 +66,18 @@ namespace Sci.Production.Subcon
             query();
         }
         
-        public string sqlcmd(string Refno = "")
+        public string sqlcmd(string Refno = "",string ukey = "")
         {
             string wheresql = string.Empty;
             if (!MyUtility.Check.Empty(Refno))
             {
                 wheresql = $" and l.RefNo = '{Refno}'";
             }
+            if (!MyUtility.Check.Empty(ukey))
+            {
+                wheresql = $" and lq.ukey = '{ukey}'";
+            }
+
             string sqlcmd;
             return sqlcmd = $@"
 select l.*,
@@ -187,6 +193,36 @@ drop table #bas
                 listControlBindingSource2.DataSource = null;
             }
 
+            var query = from t in datas.Tables[0].AsEnumerable()
+                        group t by new { t1 = MyUtility.Convert.GetString(t["Refno"]) } into m
+                        select new
+                        {
+                            refno = m.Key.t1,
+                            ct = m.Count()
+                        };
+            List<string> msg = new List<string>();
+            if (query.ToList().Count > 0)
+            {
+                query.ToList().ForEach(q =>
+                {
+                    if (q.ct > 1)
+                    {
+                        msg.Add(q.refno);
+                        foreach (var item in datas.Tables[0].Select($"Refno = '{q.refno}'"))
+                        {
+                            item.Delete();
+                        }
+
+                        foreach (var item in datas.Tables[1].Select($"Refno = '{q.refno}'"))
+                        {
+                            item.Delete();
+                        }
+                    }
+                });
+            }
+            datas.Tables[0].AcceptChanges();
+            datas.Tables[1].AcceptChanges();
+
             if (datas.Tables[0].Rows.Count == 0)
             {
                 return;
@@ -212,6 +248,11 @@ drop table #bas
             this.grid1.AutoResizeColumns();
             this.grid1.Columns["Description"].Width = 100;
             this.grid2.AutoResizeColumns();
+            if (msg.Count > 0)
+            {
+                MyUtility.Msg.WarningBox($"ID {string.Join(",", msg)} has duplicates, please handle them individually");
+            }
+
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)

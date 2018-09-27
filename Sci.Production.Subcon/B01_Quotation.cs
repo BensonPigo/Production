@@ -233,7 +233,7 @@ namespace Sci.Production.Subcon
 
             DataTable dt;
             var s = new B01_BatchApprove();
-            DualResult result = DBProxy.Current.Select(string.Empty, s.sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["Refno"])), out dt);
+            DualResult result = DBProxy.Current.Select(string.Empty, s.sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["Refno"]), MyUtility.Convert.GetString(this.CurrentMaintain["ukey"])), out dt);
             if (!result)
             {
                 this.ShowErr(result);

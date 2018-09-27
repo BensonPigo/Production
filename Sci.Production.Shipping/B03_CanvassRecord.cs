@@ -285,7 +285,7 @@ namespace Sci.Production.Shipping
 
             DataTable dt;
             var s = new B03_BatchApprove();
-            DualResult result = DBProxy.Current.Select(string.Empty, s.Sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["id"])), out dt);
+            DualResult result = DBProxy.Current.Select(string.Empty, s.Sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), MyUtility.Convert.GetString(this.CurrentMaintain["ukey"])), out dt);
             if (!result)
             {
                 this.ShowErr(result);

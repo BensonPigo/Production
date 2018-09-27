@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -70,12 +71,17 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
-        public string Sqlcmd(string id = "")
+        public string Sqlcmd(string id = "", string ukey = "")
         {
             string wheresql = string.Empty;
             if (!MyUtility.Check.Empty(id))
             {
                 wheresql = $" and l.id = '{id}'";
+            }
+
+            if (!MyUtility.Check.Empty(ukey))
+            {
+                wheresql = $" and lq.ukey = '{ukey}'";
             }
 
             string sqlcmd;
@@ -193,6 +199,38 @@ drop table #bas
                 this.listControlBindingSource2.DataSource = null;
             }
 
+            var query = from t in datas.Tables[0].AsEnumerable()
+                        group t by new { t1 = MyUtility.Convert.GetString(t["id"]) } into m
+                        select new
+                        {
+                            id = m.Key.t1,
+                            ct = m.Count()
+                        };
+
+            List<string> msg = new List<string>();
+            if (query.ToList().Count > 0)
+            {
+                query.ToList().ForEach(q =>
+                {
+                    if (q.ct > 1)
+                    {
+                        msg.Add(q.id);
+                        foreach (var item in datas.Tables[0].Select($"id = '{q.id}'"))
+                        {
+                            item.Delete();
+                        }
+
+                        foreach (var item in datas.Tables[1].Select($"id = '{q.id}'"))
+                        {
+                            item.Delete();
+                        }
+                    }
+                });
+            }
+
+            datas.Tables[0].AcceptChanges();
+            datas.Tables[1].AcceptChanges();
+
             if (datas.Tables[0].Rows.Count == 0)
             {
                 return;
@@ -218,6 +256,11 @@ drop table #bas
             this.grid1.AutoResizeColumns();
             this.grid1.Columns["Description"].Width = 100;
             this.grid2.AutoResizeColumns();
+            if (msg.Count > 0)
+            {
+                MyUtility.Msg.WarningBox($"ID {string.Join(",", msg)} has duplicates, please handle them individually");
+            }
+
         }
 
         private void BtnRefresh_Click(object sender, EventArgs e)
