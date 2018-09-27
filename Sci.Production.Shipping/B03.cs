@@ -190,7 +190,7 @@ namespace Sci.Production.Shipping
         {
             if (!this.Perm.Confirm)
             {
-                MyUtility.Msg.WarningBox("You don’ have permission to confirm.");
+                MyUtility.Msg.WarningBox("You don’t have permission to confirm.");
                 return;
             }
 

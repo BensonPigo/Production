@@ -419,7 +419,7 @@ namespace Sci.Production.Subcon
         {
             if (!this.Perm.Confirm)
             {
-                MyUtility.Msg.WarningBox("You don’ have permission to confirm.");
+                MyUtility.Msg.WarningBox("You don’t have permission to confirm.");
                 return;
             }
             Form batchapprove = new Sci.Production.Subcon.B01_BatchApprove();
