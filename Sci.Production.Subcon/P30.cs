@@ -1179,6 +1179,19 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                 e.Cancel = true;
             }
         }
+
+        private void txtartworktype_ftyCategory_TextChanged(object sender, EventArgs e)
+        {
+            if (this.txtartworktype_ftyCategory.Text.EqualString("SP_Thread")
+                || this.txtartworktype_ftyCategory.Text.EqualString("EMB_Thread"))
+            {
+                this.GridUniqueKey = "orderid,refno,threadcolorid";
+            }
+            else
+            {
+                this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid"; 
+            }
+        }
     }
 }
 

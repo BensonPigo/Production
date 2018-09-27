@@ -549,6 +549,7 @@
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(167, 23);
             this.txtartworktype_ftyCategory.TabIndex = 1;
+            this.txtartworktype_ftyCategory.TextChanged += new System.EventHandler(this.txtartworktype_ftyCategory_TextChanged);
             this.txtartworktype_ftyCategory.Validated += new System.EventHandler(this.txtartworktype_ftyCategory_Validated);
             // 
             // txtsubconSupplier
