@@ -53,7 +53,17 @@ namespace Sci.Production.Quality
             {
                 ShowErr(result);
                 return;
-            }            
+            }
+
+            if (this.ID.Equals("New") && dt.Rows.Count > 0)
+            {
+                result = DBProxy.Current.Execute(null, "delete ColorFastness where id = 'New';delete ColorFastness_Detail where id = 'New';");
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
+            }
+                        
             if (dt.Rows.Count==0 && CanEdit)
             {
                 this.OnUIConvertToMaintain();
@@ -69,7 +79,7 @@ namespace Sci.Production.Quality
             DataTable dt;
             DBProxy.Current.Select(null, string.Format("select * from ColorFastness_Detail WITH (NOLOCK) where id='{0}'", ID), out dt);
 
-            if (dt.Rows.Count >= 1)
+            if (dt.Rows.Count >= 1 )
             {
                 newOven = false;
             }
@@ -799,6 +809,8 @@ namespace Sci.Production.Quality
 
                     if (newOven)  //insert 新資料進ColorFastness
                     {
+                        this.ID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
+                        this.KeyValue1 = this.ID;
                         string insCmd = @"                                            
             insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate,Temperature,Cycle,Detergent,Machine,Drying)
             values(@id ,@poid,@Testno,GETDATE(),@Article,@Result,'New',@logid,@remark,@logid,GETDATE(),@Temperature,@Cycle,@Detergent,@Machine,@Drying)";
