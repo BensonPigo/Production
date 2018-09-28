@@ -354,7 +354,9 @@ where id ='{0}' and seq1 = '{1}' and seq2 = '{2}'", sp, seq1, seq2), out tmp, nu
             this.grid2SelectIndex = e.RowIndex;
             DataRow dr = gridFromPoId.GetDataRow(this.grid2SelectIndex);
             CheckAndShowInfo(dr["FromPoid"].ToString(), dr["FromSeq1"].ToString(), dr["FromSeq2"].ToString());
-            listControlBindingSource1.Filter = string.Format("ToPoid = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}'", dr["FromPoid"].ToString(), dr["FromSeq1"].ToString(), dr["FromSeq2"].ToString());
+
+            //現在的需求不需要過濾這兩個欄位，因此去掉
+            //listControlBindingSource1.Filter = string.Format("ToPoid = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}'", dr["FromPoid"].ToString(), dr["FromSeq1"].ToString(), dr["FromSeq2"].ToString());
         }
 
         private void grid1_RowLeave(object sender, DataGridViewCellEventArgs e)
