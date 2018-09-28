@@ -250,7 +250,8 @@ drop table #bas
             this.grid2.AutoResizeColumns();
             if (msg.Count > 0)
             {
-                MyUtility.Msg.WarningBox($"ID {string.Join(",", msg)} has duplicates, please handle them individually");
+                MyUtility.Msg.WarningBox($@"Refno have more than one new quotation, please handle those individually.
+Refno {string.Join(",", msg)} ");
             }
 
         }

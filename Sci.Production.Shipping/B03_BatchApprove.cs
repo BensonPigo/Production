@@ -258,9 +258,9 @@ drop table #bas
             this.grid2.AutoResizeColumns();
             if (msg.Count > 0)
             {
-                MyUtility.Msg.WarningBox($"ID {string.Join(",", msg)} has duplicates, please handle them individually");
+                MyUtility.Msg.WarningBox($@"Code have more than one new quotation, please handle those individually. 
+Code{ string.Join(",", msg)}.");
             }
-
         }
 
         private void BtnRefresh_Click(object sender, EventArgs e)
