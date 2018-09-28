@@ -151,8 +151,12 @@ order by ID", masterData["LocalSuppID"]);
    依據長>高*2 判斷為True 顯示拉長的圖檔
    長<高*2 or 高>長  判斷為false 顯示置中縮短的圖檔
    */
-                Image img = UserESignature.getUserESignature(dtDetail.Rows[0]["apvname"].ToString().Trim());
-                bool switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
+                Image img = UserESignature.getUserESignature(masterData["apvname"].ToString());
+                bool switchImage = true;
+                if (img!=null)
+                {
+                    switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
+                }                    
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("switchImg", MyUtility.Convert.GetString(switchImage)));
 
                 // 傳 list 資料            
@@ -169,7 +173,7 @@ order by ID", masterData["LocalSuppID"]);
                         Amount = row1["Amount"].ToString(),
                         CutParts = row1["PatternDesc"].ToString(),
                         ID = row1["ID"].ToString(),
-                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(row1["apvname"].ToString())
+                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(masterData["apvname"].ToString())
                     }).ToList();
 
                 report.ReportDataSource = data;
@@ -238,8 +242,13 @@ order by ID", masterData["LocalSuppID"]);
   依據長>高*2 判斷為True 顯示拉長的圖檔
   長<高*2 or 高>長  判斷為false 顯示置中縮短的圖檔
   */
-                Image img = UserESignature.getUserESignature(dtDetail.Rows[0]["apvname"].ToString().Trim());
-                bool switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
+                Image img = UserESignature.getUserESignature(masterData["apvname"].ToString());
+                bool switchImage = true;
+                if (img!=null)
+                {
+                    switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
+                }
+              
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("switchImg", MyUtility.Convert.GetString(switchImage)));
 
                 // 傳 list 資料            
@@ -254,7 +263,7 @@ order by ID", masterData["LocalSuppID"]);
                         Unitprice = row1["Unitprice"].ToString(),
                         QtyGMT = row1["Qtygarment"].ToString(),
                         Amount = row1["Amount"].ToString(),
-                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(row1["apvname"].ToString())
+                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(masterData["apvname"].ToString())
                     }).ToList();
 
                 report.ReportDataSource = data;

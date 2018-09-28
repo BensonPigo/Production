@@ -248,7 +248,11 @@ order by orderid,a.refno,threadcolorid", currentID);
     長<高*2 or 高>長  判斷為false 顯示置中縮短的圖檔
     */
                 Image img = UserESignature.getUserESignature(dtBody.Rows[0]["apvname"].ToString().Trim());
-                bool switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
+                bool switchImage = true;
+                if (img != null)
+                {
+                    switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
+                }                    
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("switchImg", MyUtility.Convert.GetString(switchImage)));
                 #endregion
 
@@ -309,7 +313,11 @@ order by orderid,a.refno,threadcolorid", currentID);
    長<高*2 or 高>長  判斷為false 顯示置中縮短的圖檔
    */
                 Image img = UserESignature.getUserESignature(dtBody.Rows[0]["apvname"].ToString().Trim());
-                bool switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
+                bool switchImage = true;
+                if (img != null)
+                {
+                    switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
+                }
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("switchImg", MyUtility.Convert.GetString(switchImage)));
                 #endregion
 
