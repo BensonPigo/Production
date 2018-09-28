@@ -171,12 +171,15 @@ namespace Sci.Production.Packing
                     }
                 }
 
-                foreach (DataRow dr in this.dt_scanDetail.Rows)
+                if (this.UseAutoScanPack)
                 {
-                    dr["barcode"] = DBNull.Value;
-                }
-                DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{this.txtScanCartonSP.Text}'");
+                    foreach (DataRow dr in this.dt_scanDetail.Rows)
+                    {
+                        dr["barcode"] = DBNull.Value;
+                    }
 
+                    DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{this.txtScanCartonSP.Text}'");
+                }
                 DualResult result_load = this.LoadScanDetail(0);
                 if (!result_load)
                 {
@@ -260,12 +263,15 @@ namespace Sci.Production.Packing
                 }
             }
 
-            foreach (DataRow seledr in this.dt_scanDetail.Rows)
+            if (this.UseAutoScanPack)
             {
-                seledr["barcode"] = DBNull.Value;
-            }
+                foreach (DataRow seledr in this.dt_scanDetail.Rows)
+                {
+                    seledr["barcode"] = DBNull.Value;
+                }
 
-            DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{MyUtility.Convert.GetString(dr.ID) + MyUtility.Convert.GetString(dr.CTNStartNo)}'");
+                DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{MyUtility.Convert.GetString(dr.ID) + MyUtility.Convert.GetString(dr.CTNStartNo)}'");
+            }
 
             this.scanDetailBS.DataSource = dr_scanDetail.OrderBy(s => s["Article"]).ThenBy(s => s["Seq"]).CopyToDataTable();
             this.LoadHeadData(dr);
