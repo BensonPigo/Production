@@ -146,15 +146,17 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
             DataRow[] drfound = dt.Select("Selected = 1");
             foreach (DataRow dr in drfound)
             {
+                string drPulloutDate = MyUtility.Check.Empty(dr["PulloutDate"]) ? string.Empty : Convert.ToDateTime(dr["PulloutDate"]).ToString("d");
+
                 if (!MyUtility.Check.Empty(dr["PulloutDate"]) && this.CheckPullout(Convert.ToDateTime(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                 {
-                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), Convert.ToDateTime(dr["PulloutDate"]).ToString("d")));
+                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), drPulloutDate));
                     continue;
                 }
 
                 if (!MyUtility.Check.Empty(this.datePulloutDate.Value) && this.CheckPullout(Convert.ToDateTime(this.datePulloutDate.Value), MyUtility.Convert.GetString(dr["MDivisionID"])))
                 {
-                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), Convert.ToDateTime(dr["PulloutDate"]).ToString("d")));
+                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), drPulloutDate));
                     continue;
                 }
 
