@@ -189,7 +189,7 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                 {
                     SelectItem sele;
 
-                    sele = new SelectItem(dt, string.Empty, string.Empty, dr["cutref"].ToString(), false, ",");
+                    sele = new SelectItem(dt, "cutref,Orderid,FabricCombo,WorkOderLayer,AccuCuttingLayer,CuttingLayer,LackingLayers,Cons", string.Empty, dr["cutref"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.FormattedValue = sele.GetSelectedString();
