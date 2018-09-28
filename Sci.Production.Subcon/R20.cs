@@ -59,14 +59,14 @@ namespace Sci.Production.Subcon
             string strcmd = string.Empty;
             strcmd = $@"
 select l.Refno
-,junk,Description,Category,UnitID,LocalSuppid
-,l.Price,CurrencyID,ThreadTypeID,ThreadTex,Weight,AxleWeight
-,MeterToCone,QuotDate,l.AddName,l.AddDate,l.EditName,l.EditDate
-,NLCode,HSCode,CustomsUnit,ArtTkt
-,lt.BuyerID,lt.ThreadColorGroupID,lt.Price
-,lt.AddName,lt.AddDate,lt.EditName,lt.EditDate
+    ,junk,Description,Category,UnitID,LocalSuppid
+    ,l.Price,CurrencyID,ThreadTypeID,ThreadTex,Weight,AxleWeight
+    ,MeterToCone,QuotDate,l.AddName,l.AddDate,l.EditName,l.EditDate
+    ,NLCode,HSCode,CustomsUnit,ArtTkt
+    ,lt.BuyerID,lt.ThreadColorGroupID,lt.Price
+    ,lt.AddName,lt.AddDate,lt.EditName,lt.EditDate
 from LocalItem l
-inner join LocalItem_ThreadBuyerColorGroupPrice lt on l.RefNo=lt.Refno
+left join LocalItem_ThreadBuyerColorGroupPrice lt on l.RefNo=lt.Refno
 where 1=1
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 ";
