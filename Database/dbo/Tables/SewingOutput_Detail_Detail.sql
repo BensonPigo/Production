@@ -17,6 +17,8 @@
 
 
 
+
+
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Sewing Dailiy output(車縫日報明細檔)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingOutput_Detail_Detail';
 
@@ -65,4 +67,10 @@ CREATE NONCLUSTERED INDEX [SewingOutput_DetailUkey]
 GO
 CREATE NONCLUSTERED INDEX [OrderID]
     ON [dbo].[SewingOutput_Detail_Detail]([OrderId] ASC, [Article] ASC, [SizeCode] ASC, [ComboType] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [Shipping_R40]
+    ON [dbo].[SewingOutput_Detail_Detail]([Article] ASC, [SizeCode] ASC)
+    INCLUDE([OrderId], [ComboType], [QAQty]);
 
