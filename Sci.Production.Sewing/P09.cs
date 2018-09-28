@@ -105,7 +105,7 @@ select
 from DRYTransfer dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-LEFT JOIN  PackingList_Detail pd with(nolock)  ON dr.PackingListID=pd.ID AND dr.PackingListID=pd.CTNStartNo
+LEFT JOIN  PackingList_Detail pd with(nolock)  ON dr.PackingListID=pd.ID AND dr.CTNStartNo=pd.CTNStartNo
 where 1=1
 {sqlwhere}
 GROUP BY dr.TransferTo
