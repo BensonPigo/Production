@@ -159,7 +159,7 @@ cross apply(
     {this.boolHoliday}
 )Calendar	
 where 1=1
-and o.Category !='S' and o.junk !=1
+and o.Category ='B' and o.junk !=1
 and CONVERT(date, o.SewOffLine) between @ReadyDate1 and @ReadyDate2 -- 將offline跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
 and Dates < CONVERT(date, o.SewOffLine)	
@@ -268,7 +268,7 @@ SELECT
 			and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 		) Receive			
 		where 1=1
-		and o.Category !='S' and o.junk !=1 
+		and o.Category ='B' and o.junk !=1 
 		and o.SewOffLine=AllDate.Dates
         {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
@@ -373,7 +373,7 @@ SELECT
 			and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 		) Receive			
 		where 1=1
-		and o.Category !='S' and o.junk !=1 
+		and o.Category ='B' and o.junk !=1 
 		and AllDate.Dates between @ReadyDate1 and @ReadyDate2		
         {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
         {this.boolHoliday}
@@ -542,7 +542,7 @@ outer apply(
 		and CONVERT(date,pd.ReceiveDate) <= AllDate.ReadyDate
 		and datepart(HH, c.AddDate) <= 17 -- 下午5點)
 	) Receive	
-where O.Category !='S' and o.junk !=1
+where O.Category ='B' and o.junk !=1
 and oq.BuyerDelivery = AllDate.HolidayDates  
 and oq.BuyerDelivery < AllDate.WorkDates 
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
