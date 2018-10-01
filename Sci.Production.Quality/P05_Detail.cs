@@ -834,6 +834,16 @@ SET IDENTITY_INSERT oven off";
                         spamAddNew.Add(new SqlParameter("@Temperature", this.numTemperature.Value));
                         spamAddNew.Add(new SqlParameter("@Time", this.numTime.Value));
                         upResult= DBProxy.Current.Execute(null, insCmd,spamAddNew);
+
+                        if (upResult)
+                        {
+                            newOven = false;
+                        }
+                        else
+                        {
+                            this.ShowErr(upResult);
+                            return upResult;
+                        }
                     }                
                 }
                 if (dr.RowState == DataRowState.Modified || isModify)

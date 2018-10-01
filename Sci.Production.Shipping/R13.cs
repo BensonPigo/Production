@@ -89,6 +89,29 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,fd.ShipperID
 ,ROUND(o.CPU,3) as cpu
 ,ROUND(isnull(cpucost.cpucost,0),3) as cpucost
+,[Sub_Process_CPU]= ROUND((Select Isnull(sum(ot.Price),0) 
+					from Order_TmsCost ot
+					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
+					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0)
+					and a.ProductionUnit='TMS')					
+                    +
+                    (Select Isnull(sum(ot.Price),0) 
+					from Order_TmsCost ot
+					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
+					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)
+					and a.ProductionUnit='TMS'),3)
+,[Sub_Process_Cost]=ROUND(isnull(cpucost.cpucost,0),3)
+,[sub_Process_AMT]= ROUND((Select Isnull(sum(ot.Price),0) 
+					from Order_TmsCost ot
+					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
+					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0)
+					and a.ProductionUnit='Qty')					
+                    +
+                    (Select Isnull(sum(ot.Price),0) 
+					from Order_TmsCost ot
+					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
+					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)
+					and a.ProductionUnit='Qty'),3)
 ,SubPSCost=         ROUND((Select Isnull(sum(ot.Price),0) 
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
