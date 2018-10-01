@@ -119,7 +119,7 @@ namespace Sci.Production.Quality
                     this.txtArticle.Text = dtColorFastness.Rows[0]["article"].ToString();
                     this.txtuserInspector.TextBox1Binding = dtColorFastness.Rows[0]["inspector"].ToString();
                     this.txtRemark.Text = dtColorFastness.Rows[0]["Remark"].ToString();
-                    this.comboResult.Text = dtColorFastness.Rows[0]["Result"].ToString();
+                    this.comboResult.SelectedValue = dtColorFastness.Rows[0]["Result"].ToString();
                     this.comboCycle.Text = dtColorFastness.Rows[0]["Cycle"].ToString();
                     this.comboDetergent.Text = dtColorFastness.Rows[0]["Detergent"].ToString();
                     this.comboDryProcess.Text = dtColorFastness.Rows[0]["Drying"].ToString();
@@ -767,6 +767,13 @@ namespace Sci.Production.Quality
             string Machine = MyUtility.Check.Empty(this.comboMachineUs.Text) ? "" : this.comboMachineUs.Text;
             string Drying = MyUtility.Check.Empty(this.comboDryProcess.Text) ? "" : this.comboDryProcess.Text;
 
+            #region 判斷 Result
+            DataTable gridDt = (DataTable)gridbs.DataSource;
+            DataRow[] ResultAry = gridDt.Select("Result='Fail'");
+            string result = "Pass";
+            if (ResultAry.Length > 0) result = "Fail";
+            #endregion
+
             DataRow dr = ((DataTable)gridbs.DataSource).NewRow();
             for (int i = ((DataTable)gridbs.DataSource).Rows.Count; i > 0; i--)
             {
@@ -796,12 +803,6 @@ namespace Sci.Production.Quality
                 }
 
                 string Today = DateTime.Now.ToShortDateString();
-                #region 判斷 Result
-                DataTable gridDt = (DataTable)gridbs.DataSource;
-                DataRow[] ResultAry = gridDt.Select("Result='Fail'");
-                string result = "Pass";
-                if (ResultAry.Length > 0) result = "Fail";
-                #endregion
 
                 //新增
                 if (dr.RowState == DataRowState.Added)
@@ -812,15 +813,14 @@ namespace Sci.Production.Quality
                         this.ID = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "CF", "ColorFastness", DateTime.Today, 2, "ID", null);
                         this.KeyValue1 = this.ID;
                         string insCmd = @"                                            
-            insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate,Temperature,Cycle,Detergent,Machine,Drying)
-            values(@id ,@poid,@Testno,GETDATE(),@Article,@Result,'New',@logid,@remark,@logid,GETDATE(),@Temperature,@Cycle,@Detergent,@Machine,@Drying)";
+            insert into ColorFastness(ID,POID,TestNo,InspDate,Article,Status,Inspector,Remark,addName,addDate,Temperature,Cycle,Detergent,Machine,Drying)
+            values(@id ,@poid,@Testno,GETDATE(),@Article,'New',@logid,@remark,@logid,GETDATE(),@Temperature,@Cycle,@Detergent,@Machine,@Drying)";
                         List<SqlParameter> spamAddNew = new List<SqlParameter>();
                         spamAddNew.Add(new SqlParameter("@id", ID));//New ID
                         spamAddNew.Add(new SqlParameter("@poid", PoID));
                         spamAddNew.Add(new SqlParameter("@article", this.txtArticle.Text));
                         spamAddNew.Add(new SqlParameter("@logid", loginID));
                         spamAddNew.Add(new SqlParameter("@remark", this.txtRemark.Text));
-                        spamAddNew.Add(new SqlParameter("@Result", result));
                         spamAddNew.Add(new SqlParameter("@Testno", testMaxNo + 1));
                         spamAddNew.Add(new SqlParameter("@Temperature", Temperature));
                         spamAddNew.Add(new SqlParameter("@Cycle", Cycle));
@@ -828,6 +828,15 @@ namespace Sci.Production.Quality
                         spamAddNew.Add(new SqlParameter("@Machine", Machine));
                         spamAddNew.Add(new SqlParameter("@Drying", Drying));
                         upResult = DBProxy.Current.Execute(null, insCmd, spamAddNew);
+                        if (upResult)
+                        {
+                            newOven = false;
+                        }
+                        else
+                        {
+                            this.ShowErr(upResult);
+                            return upResult;
+                        }
                     }
                 }
             }
@@ -841,7 +850,6 @@ inspdate='{ this.dateTestDate.Text}'
 ,remark='{this.txtRemark.Text}'
 ,EditName='{loginID}'
 ,EditDate='{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}'
-,result ='{result}'
 ,Temperature={Temperature}
 ,Cycle={Cycle}
 ,Detergent='{Detergent}'
