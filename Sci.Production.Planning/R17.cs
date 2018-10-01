@@ -103,10 +103,10 @@ SELECT
 ,J = Order_QS.ShipmodeID
 ,K = Cast(Order_QS.QTY as int)
 ,L = CASE o.GMTComplete WHEN 'S' THEN Cast(isnull(Order_QS.QTY,0) as int)
-                        ELSE Cast(isnull(pd.Qty,0) as int) END
+                        ELSE iif(Ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, 0, Cast(Order_QS.QTY as int)), Cast(isnull(pd.Qty,0) as int)) END
 ,M = CASE o.GMTComplete WHEN 'S' THEN 0
-                        ELSE Cast(isnull(pd.FailQty,Order_QS.QTY) as int) END
-,N = CONVERT(char(10), p.PulloutDate, 20)
+                        ELSE iif(ot.isDevSample = 1, iif(pd2.isFail = 1 or pd2.PulloutDate is null, Cast(Order_QS.QTY as int), 0), Cast(isnull(pd.FailQty,Order_QS.QTY) as int)) END
+,N = iif(ot.isDevSample = 1, CONVERT(char(10), pd2.PulloutDate, 20), CONVERT(char(10), p.PulloutDate, 20))
 ,O = Order_QS.ShipmodeID
 ,P = Cast(isnull(op.PulloutDate,0) as int)
 ,Q = CASE o.GMTComplete WHEN 'C' THEN 'Y' 
@@ -119,7 +119,9 @@ SELECT
 ,U = o.SMR
 ,V = PO.POHandle
 ,W = PO.POSMR
-,X = c.alias
+,X = o.OrderTypeID
+,Y = iif(ot.isDevSample = 1, 'Y', '')
+,Z = c.alias
 into #tmp
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -128,8 +130,17 @@ LEFT JOIN Country c ON F.COUNTRYID = c.ID
 inner JOIN Order_QtyShip Order_QS on Order_QS.id = o.id
 LEFT JOIN PO ON o.POID = PO.ID
 LEFT JOIN Reason r on r.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery'          
-LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and r.ReasonTypeID = 'Order_BuyerDelivery_sample'
+LEFT JOIN Reason rs on rs.id = Order_QS.ReasonID and rs.ReasonTypeID = 'Order_BuyerDelivery_sample'
 LEFT JOIN Brand b on o.BrandID = b.ID
+--出貨次數--
+outer apply (
+	select COUNT(op.pulloutdate) PulloutDate 
+	from Pullout_Detail op 
+	where op.OrderID = o.id 
+	and op.OrderShipmodeSeq = Order_QS.Seq
+) op 
+------------
+-----isDevSample=0-----
 outer apply (
 	Select 
 		Qty = Sum(rA.Qty) - dbo.getInvAdjQtyByDate( o.ID ,Order_QS.Seq,DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI),'<='),
@@ -141,17 +152,21 @@ outer apply (
 	and pd.OrderShipmodeSeq = Order_QS.Seq
 ) pd
 outer apply (
-	select COUNT(op.PulloutDate) PulloutDate 
-	from Pullout_Detail op 
-	where op.OrderID = o.id 
-	and op.OrderShipmodeSeq = Order_QS.Seq
-) op 
-outer apply (
     select top 1 PulloutDate
     from Pullout_Detail pd 
     where pd.OrderID = o.ID and pd.OrderShipmodeSeq =  Order_QS.Seq 
     Order by PulloutDate desc
 ) p
+-------End-------
+-----isDevSample=1-----
+outer apply (
+	Select top 1 iif(pd.PulloutDate > iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 1, 0) isFail, pd.PulloutDate
+	From Pullout_Detail pd
+	where pd.OrderID = o.ID 
+	and pd.OrderShipmodeSeq = Order_QS.Seq
+	order by pd.pulloutdate ASC
+) pd2
+-------End-------
 where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) and f.IsProduceFty=1";
 
                 if (this.radioBulk.Checked)
@@ -185,7 +200,7 @@ where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Ju
                 strSQL += @"select * from (
 select * from #tmp 
 union all
-select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X 
+select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X, Y, Z
 from #tmp where (L +M) < K and I < G) as result
 order by D,E,K desc
  ";
@@ -239,6 +254,8 @@ SELECT  '' AS A
 , '' AS V 
 , '' AS W
 , '' AS X
+, '' AS Y
+, '' AS Z
 FROM ORDERS
 WHERE 1 = 0 ";
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
@@ -487,15 +504,15 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                     }
 
                     #region Calc SDP Data
-                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["X"].ToString()); // A
+                    int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["Z"].ToString()); // A
                     DataRow drSDP;
                     if (intIndex_SDP < 0)
                     {
                         drSDP = this.gdtSDP.NewRow();
                         drSDP["A"] = drData["B"].ToString();
-                        drSDP["B"] = drData["X"].ToString(); // A
+                        drSDP["B"] = drData["Z"].ToString(); // A
                         this.gdtSDP.Rows.Add(drSDP);
-                        lstSDP.Add(drData["B"].ToString() + "___" + drData["X"].ToString()); // A
+                        lstSDP.Add(drData["B"].ToString() + "___" + drData["Z"].ToString()); // A
                     }
                     else
                     {
@@ -607,16 +624,18 @@ SELECT A = c.alias
      , H = Order_QS.ShipmodeID
      , I = Order_QS.QTY
      , J = CASE o.GMTComplete WHEN 'S' THEN Order_QS.QTY
-	                    ELSE isnull(opd.sQty,0) END
-     , K = convert(varchar(10),pd.PulloutDate,111) 
+	                    ELSE iif(ot.isDevSample = 1, Order_QS.QTY, isnull(opd.sQty,0)) END
+     , K = iif(ot.isDevSample = 1, convert(varchar(10),opd2.PulloutDate,111),convert(varchar(10),pd.PulloutDate,111))
      , L = Order_QS.ShipmodeID
-     , M = ''                                                 
+     , M = o.OrderTypeID      
+     , N = iif(ot.isDevSample = 1, 'Y', '')                                                
 FROM ORDERS o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 LEFT JOIN FACTORY f ON o.FACTORYID = f.ID 
 LEFT JOIN COUNTRY c ON f.COUNTRYID = c.ID 
 INNER JOIN Order_QtyShip Order_QS on o.ID = Order_QS.ID
 LEFT JOIN Brand b on o.BrandID = b.ID
+-----isDevSample=0-----
 OUTER APPLY (select sum(ShipQty) as sQty 
              from Pullout_Detail pd              
              where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq and pd.pulloutdate <= iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI))) opd
@@ -625,6 +644,16 @@ OUTER APPLY (select top 1 PulloutDate
              where pd.OrderID = o.ID and pd.OrderShipmodeSeq = Order_QS.Seq 
              and pd.ShipQty> 0
              Order by PulloutDate desc) pd 
+-------End-------
+-----isDevSample=1-----
+outer apply (
+	Select top 1 iif(pd.PulloutDate > iif(Order_QS.ShipmodeID in ('A/C', 'A/P', 'E/C', 'E/P'), Order_QS.FtyKPI, DATEADD(day, isnull(b.OTDExtension,0), Order_QS.FtyKPI)), 1, 0) isFail, pd.PulloutDate
+	From Pullout_Detail pd
+	where pd.OrderID = o.ID 
+	and pd.OrderShipmodeSeq = Order_QS.Seq
+	order by pd.PulloutDate ASC
+) opd2
+-------End-------
 where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) 
 {where}
 ";
@@ -722,7 +751,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                 {
                     worksheet = excel.ActiveWorkbook.Worksheets[2];
                     worksheet.Name = "Fail Order List by SP";
-                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR" };
+                    string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode ", "Order Qty", "On Time Qty", "Fail Qty", "Fail PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample" };
                     object[,] objArray_1 = new object[1, aryTitles.Length];
                     for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                     {
@@ -765,7 +794,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[3];
                         worksheet.Name = "Order Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Buyer Delivery", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "On Time Qty", "Fail Qty", "PullOut Date", "ShipMode", "[P]", "Garment Complete", "ReasonID", "Order Reason", "Handle  ", "SMR", "PO Handle", "PO SMR", "Order Type", "Dev. Sample" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -808,7 +837,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[4];
                         worksheet.Name = "On time Order List by PullOut";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "PullOut Qty", "PullOut Date", "ShipMode", "Order Type", "Dev. Sample" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -864,13 +893,15 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                                         K= data.Field<string>("N"),
                                         L= data.Field<string>("O"),
                                         M= data.Field<string>("R"),
-                                        N= data.Field<string>("S")
+                                        N= data.Field<string>("S"),
+                                        O = data.Field<string>("X"),
+                                        P = data.Field<string>("Y")
                                      };
                     if ((gdtFailDetail != null) && (gdtFailDetail.Count() > 0))
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Order Type", "Dev. Sample" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
@@ -903,6 +934,8 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                             objArray_1[0, 11] = dr.L;
                             objArray_1[0, 12] = dr.M;
                             objArray_1[0, 13] = dr.N;
+                            objArray_1[0, 14] = dr.O;
+                            objArray_1[0, 15] = dr.P;
                             worksheet.Range[string.Format("A{0}:{1}{0}", i, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
 
