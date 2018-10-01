@@ -199,7 +199,7 @@ namespace Sci.Production.Quality
 	F.Physical,
 	F.PhysicalDate,
 	F.TotalInspYds,
-    ROUND( CAST (F.TotalInspYds/SUM(t.StockQty) AS FLOAT) ,1),
+    ROUND( CAST (F.TotalInspYds/SUM(t.StockQty) AS FLOAT) ,3),
 	ftp.TotalPoint,
 	F.Weight,
 	F.WeightDate,
