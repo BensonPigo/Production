@@ -117,7 +117,7 @@ namespace Sci.Production.Cutting
             string cutRef = this.txtCutRef.Text;
             string SPNo = this.txtSP.Text;
             string FactoryID = this.txtfactory.Text;
-            string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["CutRef"].ToString() : "") + "'"));
+            string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["Workorderukey"].ToString() : "") + "'"));
             if (MyUtility.Check.Empty(condition)) condition = @"''";            
             strSQLCmd.Append(string.Format(@"
 Select sel = 0,
@@ -147,7 +147,7 @@ outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.
 where mDivisionid = '{0}' and a.estcutdate = '{1}'
 and a.Layer > isnull(acc.AccuCuttingLayer,0)
 and CutRef != ''
-and CutRef not in ( {2} ) ", keyWord, estcutdate, condition));
+and a.ukey not in ( {2} ) ", keyWord, estcutdate, condition));
             if (!MyUtility.Check.Empty(cutRef))
             {
                 strSQLCmd.Append(string.Format(@" 
