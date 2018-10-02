@@ -75,12 +75,6 @@
     <Compile Include="P01.Designer.cs">
       <DependentUpon>P01.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02_BatchApprove.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P02_BatchApprove.Designer.cs">
-      <DependentUpon>P02_BatchApprove.cs</DependentUpon>
-    </Compile>
     <Compile Include="P01_CopyTo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -247,9 +241,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P02_BatchApprove.resx">
-      <DependentUpon>P02_BatchApprove.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_CopyTo.resx">
       <DependentUpon>P01_CopyTo.cs</DependentUpon>

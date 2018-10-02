@@ -28,7 +28,6 @@ namespace Sci.Production.Thread
         public P05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            this.DefaultFilter = string.Format("mDivisionid = '{0}'", this.keyWord);
 
             this.InitializeComponent();
             Dictionary<string, string> comboBox1_RowSource2 = new Dictionary<string, string>();
@@ -105,7 +104,7 @@ namespace Sci.Production.Thread
                     this.CurrentDetailData["UsedCone"] = 0;
                 }
 
-                string sql = string.Format("Select newcone, usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}' and mDivisionid = '{3}'", this.CurrentDetailData["threadColorid"], newvalue, this.CurrentDetailData["threadlocationid"], this.keyWord);
+                string sql = string.Format("Select newcone, usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}'", this.CurrentDetailData["threadColorid"], newvalue, this.CurrentDetailData["threadlocationid"]);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     this.CurrentDetailData["newconebook"] = refdr["newcone"];
@@ -149,7 +148,7 @@ namespace Sci.Production.Thread
                     this.CurrentDetailData["Colordesc"] = string.Empty;
                 }
 
-                string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", this.CurrentDetailData["Refno"], newvalue, this.CurrentDetailData["threadlocationid"], this.keyWord);
+                string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}'", this.CurrentDetailData["Refno"], newvalue, this.CurrentDetailData["threadlocationid"]);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     this.CurrentDetailData["newconebook"] = refdr["newcone"];
@@ -183,7 +182,7 @@ namespace Sci.Production.Thread
 
                     DataRow refdr;
 
-                    string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", this.CurrentDetailData["Refno"], this.CurrentDetailData["threadcolorid"], newvalue, this.keyWord);
+                    string sql = string.Format("Select newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' ", this.CurrentDetailData["Refno"], this.CurrentDetailData["threadcolorid"], newvalue);
                     if (MyUtility.Check.Seek(sql, out refdr))
                     {
                         this.CurrentDetailData["newconebook"] = refdr["newcone"];
@@ -403,20 +402,20 @@ namespace Sci.Production.Thread
 
             foreach (DataRow dr in this.DetailDatas)
             {
-                checksql = string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' and mDivisionid = '{3}'", dr["refno"], dr["threadlocationid"], dr["threadcolorid"], this.keyWord);
+                checksql = string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadLocationid = '{1}' and threadcolorid = '{2}' ", dr["refno"], dr["threadlocationid"], dr["threadcolorid"]);
                 if (MyUtility.Check.Seek(checksql))
                 {
-                    insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone+({0}),UsedCone = UsedCone + ({1}) where refno='{2}' and mDivisionid = '{3}' and ThreadColorid = '{4}' and ThreadLocationid = '{5}';", (decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"], dr["refno"], this.keyWord, dr["ThreadColorid"], dr["ThreadLocationid"]);
+                    insertSql = insertSql + string.Format("Update ThreadStock set NewCone = NewCone+({0}),UsedCone = UsedCone + ({1}) where refno='{2}' and ThreadColorid = '{3}' and ThreadLocationid = '{4}';", (decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"], dr["refno"], dr["ThreadColorid"], dr["ThreadLocationid"]);
                 }
                 else
                 {
-                    insertSql = insertSql + string.Format("insert ThreadStock(refno,mDivisionid,threadcolorid,threadlocationid,newcone,usedcone,addName,AddDate) values('{0}','{1}','{2}','{3}',{4},{5},'{6}',GetDate())", dr["refno"], this.keyWord, dr["ThreadColorid"], dr["ThreadLocationid"], (decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"], this.loginID);
+                    insertSql = insertSql + string.Format("insert ThreadStock(refno,threadcolorid,threadlocationid,newcone,usedcone,addName,AddDate) values('{0}','{1}','{2}',{3},{4},'{5}',GetDate());", dr["refno"], dr["ThreadColorid"], dr["ThreadLocationid"], (decimal)dr["NewCone"] - (decimal)dr["NewConeBook"], (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"], this.loginID);
                 }
 
                 if ((decimal)dr["NewCone"] - (decimal)dr["NewConeBook"] != 0 || (decimal)dr["UsedCone"] - (decimal)dr["UsedConeBook"] != 0)
                 {
                     insertAd = insertAd + string.Format("Insert into ThreadAdjust_Detail(ID,Refno,ThreadColorid,ThreadLocationid,NewConeBook,NewCone,UsedConeBook,UsedCone) Values('{0}','{1}','{2}','{3}',{4},{5},{6},{7});", id, dr["refno"], dr["threadcolorid"], dr["ThreadLocationid"], dr["NewConeBook"], dr["NewCone"], dr["UsedConeBook"], dr["UsedCone"]);
-                    sql = string.Format("Update ThreadInventory set Status = 'Confirmed',editname='{0}', editdate = GETDATE(),ThreadAdjustid = '{2}' where id='{1}'", this.loginID, this.CurrentMaintain["ID"].ToString(), id);
+                    sql = string.Format("Update ThreadInventory set Status = 'Confirmed',editname='{0}', editdate = GETDATE(),ThreadAdjustid = '{2}' where id='{1}';", this.loginID, this.CurrentMaintain["ID"].ToString(), id);
                     linsertad = true;
                 }
             }

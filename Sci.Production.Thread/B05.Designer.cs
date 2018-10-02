@@ -118,15 +118,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(911, 528);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(905, 482);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(905, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -209,13 +209,13 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(911, 179);
             this.grid1.TabIndex = 3;
             this.grid1.TabStop = false;
             // 
             // labelRefno
             // 
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(28, 13);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
@@ -224,7 +224,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(28, 48);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
@@ -233,7 +232,6 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Lines = 0;
             this.labelCategory.Location = new System.Drawing.Point(293, 13);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(75, 23);
@@ -242,7 +240,6 @@
             // 
             // labelThreadType
             // 
-            this.labelThreadType.Lines = 0;
             this.labelThreadType.Location = new System.Drawing.Point(506, 13);
             this.labelThreadType.Name = "labelThreadType";
             this.labelThreadType.Size = new System.Drawing.Size(88, 23);
@@ -251,7 +248,6 @@
             // 
             // labelThreadTex
             // 
-            this.labelThreadTex.Lines = 0;
             this.labelThreadTex.Location = new System.Drawing.Point(506, 48);
             this.labelThreadTex.Name = "labelThreadTex";
             this.labelThreadTex.Size = new System.Drawing.Size(88, 23);
@@ -339,6 +335,7 @@
             this.comboThreadColorLocation.IsSupportUnselect = true;
             this.comboThreadColorLocation.Location = new System.Drawing.Point(28, 79);
             this.comboThreadColorLocation.Name = "comboThreadColorLocation";
+            this.comboThreadColorLocation.OldText = "";
             this.comboThreadColorLocation.Size = new System.Drawing.Size(135, 24);
             this.comboThreadColorLocation.TabIndex = 12;
             // 
@@ -374,7 +371,6 @@
             // 
             // labelTransactionDate
             // 
-            this.labelTransactionDate.Lines = 0;
             this.labelTransactionDate.Location = new System.Drawing.Point(28, 4);
             this.labelTransactionDate.Name = "labelTransactionDate";
             this.labelTransactionDate.Size = new System.Drawing.Size(112, 23);
@@ -383,6 +379,20 @@
             // 
             // dateTransactionDate
             // 
+            // 
+            // 
+            // 
+            this.dateTransactionDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateTransactionDate.DateBox1.Name = "";
+            this.dateTransactionDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateTransactionDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateTransactionDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateTransactionDate.DateBox2.Name = "";
+            this.dateTransactionDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateTransactionDate.DateBox2.TabIndex = 1;
             this.dateTransactionDate.IsSupportEditMode = false;
             this.dateTransactionDate.Location = new System.Drawing.Point(143, 4);
             this.dateTransactionDate.Name = "dateTransactionDate";

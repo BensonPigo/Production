@@ -51,9 +51,8 @@ namespace Sci.Production.Thread
                 @"select a.*,b.description as colordesc
             from threadstock a WITH (NOLOCK)
             left join threadcolor b WITH (NOLOCK)on a.threadcolorid = b.id 
-            where a.refno = '{0}' and mDivisionid = '{1}'",
-                masterID,
-                this.keyWord);
+            where a.refno = '{0}' ",
+                masterID);
 
 // string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
 //                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname
@@ -92,7 +91,7 @@ namespace Sci.Production.Thread
             int dgi = this.detailgrid.GetSelectedRowIndex();
 
             // base.OnRefreshClick();
-            // RenewData();
+            this.RenewData();
             this.OnDetailEntered();
 
             // detailgridbs.Filter = ""; //清空Filter
@@ -158,7 +157,7 @@ namespace Sci.Production.Thread
             {
                 if (recal == 1)
                 {
-                    updatestock = updatestock + string.Format("Update ThreadStock set Newcone = {0},UsedCone = {1} where refno ='{2}' and ThreadColorid = '{3}' and ThreadLocationid ='{4}' and mDivisionid = '{5}';", dr["NewBalance"], dr["UsedBalance"], this.CurrentMaintain["Refno"], dr["ThreadColorid"], dr["ThreadLocationid"], this.keyWord);
+                    updatestock = updatestock + string.Format("Update ThreadStock set Newcone = {0},UsedCone = {1} where refno ='{2}' and ThreadColorid = '{3}' and ThreadLocationid ='{4}' ;", dr["NewBalance"], dr["UsedBalance"], this.CurrentMaintain["Refno"], dr["ThreadColorid"], dr["ThreadLocationid"]);
                 }
                 else
                 {

@@ -48,7 +48,8 @@
             this.labelSP = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.buttonQtyBreakdown = new Sci.Win.UI.Button();
-            this.btnBatchapprove = new Sci.Win.UI.Button();
+            this.displayIssueNo = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,12 +61,13 @@
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
-            this.browse.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayIssueNo);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.buttonQtyBreakdown);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.displayM);
@@ -108,6 +110,8 @@
             this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.buttonQtyBreakdown, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayIssueNo, 0);
             // 
             // detailpanel
             // 
@@ -116,7 +120,7 @@
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(789, 119);
+            this.gridicon.Location = new System.Drawing.Point(906, 119);
             this.gridicon.TabIndex = 3;
             this.gridicon.Visible = false;
             // 
@@ -142,9 +146,7 @@
             // 
             // browse
             // 
-            this.browse.Controls.Add(this.btnBatchapprove);
             this.browse.Size = new System.Drawing.Size(1015, 387);
-            this.browse.Controls.SetChildIndex(this.btnBatchapprove, 0);
             // 
             // tabs
             // 
@@ -324,7 +326,7 @@
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label7.Location = new System.Drawing.Point(759, 18);
+            this.label7.Location = new System.Drawing.Point(808, 18);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(130, 23);
             this.label7.TabIndex = 39;
@@ -332,7 +334,7 @@
             // 
             // buttonQtyBreakdown
             // 
-            this.buttonQtyBreakdown.Location = new System.Drawing.Point(772, 44);
+            this.buttonQtyBreakdown.Location = new System.Drawing.Point(768, 106);
             this.buttonQtyBreakdown.Name = "buttonQtyBreakdown";
             this.buttonQtyBreakdown.Size = new System.Drawing.Size(132, 45);
             this.buttonQtyBreakdown.TabIndex = 40;
@@ -340,15 +342,23 @@
             this.buttonQtyBreakdown.UseVisualStyleBackColor = true;
             this.buttonQtyBreakdown.Click += new System.EventHandler(this.ButtonQtyBreakdown_Click);
             // 
-            // btnBatchapprove
+            // displayIssueNo
             // 
-            this.btnBatchapprove.Location = new System.Drawing.Point(880, 5);
-            this.btnBatchapprove.Name = "btnBatchapprove";
-            this.btnBatchapprove.Size = new System.Drawing.Size(119, 30);
-            this.btnBatchapprove.TabIndex = 4;
-            this.btnBatchapprove.Text = "Batch approve";
-            this.btnBatchapprove.UseVisualStyleBackColor = true;
-            this.btnBatchapprove.Click += new System.EventHandler(this.BtnBatchapprove_Click);
+            this.displayIssueNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayIssueNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueNo", true));
+            this.displayIssueNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayIssueNo.Location = new System.Drawing.Point(856, 58);
+            this.displayIssueNo.Name = "displayIssueNo";
+            this.displayIssueNo.Size = new System.Drawing.Size(134, 23);
+            this.displayIssueNo.TabIndex = 42;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(768, 58);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(85, 23);
+            this.label1.TabIndex = 41;
+            this.label1.Text = "Issue No.";
             // 
             // P02
             // 
@@ -388,7 +398,6 @@
             this.detailcont.ResumeLayout(false);
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
-            this.browse.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -417,6 +426,7 @@
         private Win.UI.Label labelSP;
         private Win.UI.Label label7;
         private Win.UI.Button buttonQtyBreakdown;
-        private Win.UI.Button btnBatchapprove;
+        private Win.UI.DisplayBox displayIssueNo;
+        private Win.UI.Label label1;
     }
 }
