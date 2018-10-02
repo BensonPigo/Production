@@ -242,18 +242,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatrate", vatrate));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
-
-                /*判斷簽名圖檔需置中還是拉長
-    依據長>高*2 判斷為True 顯示拉長的圖檔
-    長<高*2 or 高>長  判斷為false 顯示置中縮短的圖檔
-    */
-                Image img = UserESignature.getUserESignature(dtBody.Rows[0]["apvname"].ToString().Trim());
-                bool switchImage = true;
-                if (img != null)
-                {
-                    switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
-                }                    
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("switchImg", MyUtility.Convert.GetString(switchImage)));
+             
                 #endregion
 
                 #region 表身
@@ -271,7 +260,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
                         Amount = Convert.ToDecimal(row1["Amount"]),
-                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(row1["apvname"].ToString())
+                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),235,63)
                     }).ToList();
 
                 report.ReportDataSource = data;
@@ -307,18 +296,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddName", AddName));
-
-                /*判斷簽名圖檔需置中還是拉長
-   依據長>高*2 判斷為True 顯示拉長的圖檔
-   長<高*2 or 高>長  判斷為false 顯示置中縮短的圖檔
-   */
-                Image img = UserESignature.getUserESignature(dtBody.Rows[0]["apvname"].ToString().Trim());
-                bool switchImage = true;
-                if (img != null)
-                {
-                    switchImage = (img.Width < img.Height * 2 || img.Height > img.Width) ? false : true;
-                }
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("switchImg", MyUtility.Convert.GetString(switchImage)));
+              
                 #endregion
 
                 #region 表身
@@ -334,7 +312,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
                         Amount = Convert.ToDecimal(row1["Amount"]),
-                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(row1["apvname"].ToString())
+                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),145,39)
                     }).ToList();
 
                 report.ReportDataSource = data;

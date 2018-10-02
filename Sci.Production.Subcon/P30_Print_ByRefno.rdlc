@@ -1146,35 +1146,11 @@
                           <Source>Database</Source>
                           <Value>=Fields!ApvName.Value</Value>
                           <MIMEType>image/jpeg</MIMEType>
-                          <Sizing>Fit</Sizing>
                           <Top>0.70936cm</Top>
                           <Left>0.05821cm</Left>
                           <Height>0.99188cm</Height>
                           <Width>3.73266cm</Width>
                           <ZIndex>13</ZIndex>
-                          <Visibility>
-                            <Hidden>=iif(Parameters!switchImg.Value= "False",true,false)</Hidden>
-                          </Visibility>
-                          <ToolTip>=Fields!ApvName.Value</ToolTip>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                          </Style>
-                        </Image>
-                        <Image Name="Image5">
-                          <Source>Database</Source>
-                          <Value>=Fields!ApvName.Value</Value>
-                          <MIMEType>image/jpeg</MIMEType>
-                          <Sizing>Fit</Sizing>
-                          <Top>0.70583cm</Top>
-                          <Left>0.91017cm</Left>
-                          <Height>0.99188cm</Height>
-                          <Width>1.74828cm</Width>
-                          <ZIndex>14</ZIndex>
-                          <Visibility>
-                            <Hidden>=iif(Parameters!switchImg.Value= "True",true,false)</Hidden>
-                          </Visibility>
                           <ToolTip>=Fields!ApvName.Value</ToolTip>
                           <Style>
                             <Border>
@@ -1990,10 +1966,6 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="switchImg">
-      <DataType>String</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>

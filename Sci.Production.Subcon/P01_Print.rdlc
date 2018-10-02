@@ -1377,34 +1377,11 @@
         <Source>Database</Source>
         <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
         <MIMEType>image/jpeg</MIMEType>
-        <Sizing>Fit</Sizing>
         <Top>5.44067cm</Top>
         <Left>1.68576cm</Left>
         <Height>1.28833cm</Height>
         <Width>5.50626cm</Width>
         <ZIndex>17</ZIndex>
-        <Visibility>
-          <Hidden>=iif(Parameters!switchImg.Value= "False",true,false)</Hidden>
-        </Visibility>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-        </Style>
-      </Image>
-      <Image Name="Image3">
-        <Source>Database</Source>
-        <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
-        <MIMEType>image/jpeg</MIMEType>
-        <Sizing>Fit</Sizing>
-        <Top>5.44067cm</Top>
-        <Left>3.31737cm</Left>
-        <Height>1.28833cm</Height>
-        <Width>2.25188cm</Width>
-        <ZIndex>18</ZIndex>
-        <Visibility>
-          <Hidden>=iif(Parameters!switchImg.Value= "True",true,false)</Hidden>
-        </Visibility>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2339,10 +2316,6 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="switchImg">
-      <DataType>String</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>
