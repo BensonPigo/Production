@@ -420,7 +420,7 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
+                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll,Dyelot";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
                     spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -443,7 +443,7 @@ namespace Sci.Production.Quality
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
+                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll,Dyelot";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
                     spam.Add(new SqlParameter("@seq1", dr["seq1"]));
