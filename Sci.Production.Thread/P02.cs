@@ -38,8 +38,6 @@ namespace Sci.Production.Thread
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            string defaultfilter = string.Format("MDivisionid = '{0}' ", this.keyWord);
-            this.DefaultFilter = defaultfilter;
             this.InitializeComponent();
             this.DoSubForm = new P02_Detail();
         }

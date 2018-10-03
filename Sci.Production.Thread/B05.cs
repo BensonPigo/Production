@@ -149,7 +149,7 @@ namespace Sci.Production.Thread
                 date = date2;
             }
 
-            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", this.CurrentMaintain["Refno"], this.keyWord, string.Empty, date);
+            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}' ,@date1 = '{1}' ,@date2='{2}'", this.CurrentMaintain["Refno"], string.Empty, date);
             DataTable tb, inittb;
             DualResult res = DBProxy.Current.Select(null, sql, out tb);
             MyUtility.Tool.ProcessWithDatatable(tb, "ThreadColorid,ThreadLocationid,Newin,NewOut,UsedIn,UsedOut,NewBalance,UsedBalance", @"Select ThreadColorid,ThreadLocationid,(isnull(sum(NewIn),0)-isnull(sum(NewOut),0)) as NewBalance,(isnull(sum(Usedin),0)-isnull(sum(UsedOut),0)) as UsedBalance from #tmp group by ThreadColorid,ThreadLocationid", out inittb);
@@ -211,7 +211,7 @@ namespace Sci.Production.Thread
         private void Transrecord(string date1, string date2)
         {
             this.Initqty(date1); // 計算Init
-            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", this.CurrentMaintain["Refno"], this.keyWord, date1, date2);
+            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@date1 = '{1}' ,@date2='{2}'", this.CurrentMaintain["Refno"], date1, date2);
             DataTable tb;
             DualResult res = DBProxy.Current.Select(null, sql, out tb);
             if (res)
