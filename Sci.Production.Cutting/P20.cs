@@ -123,12 +123,14 @@ ORDER BY CutRef
                 string oldvalue =  dr["Cutref"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (newvalue == oldvalue || newvalue.Trim()=="") return;
-                if (((DataTable)this.detailgridbs.DataSource).Select($"cutref = '{newvalue}'").Length>0)
-                {
-                    MyUtility.Msg.WarningBox($"Already have cutref {newvalue}");
-                    dr["cutref"] = DBNull.Value;
-                    return;
-                }
+
+                //if (((DataTable)this.detailgridbs.DataSource).Select($"cutref = '{newvalue}'").Length>0)
+                //{
+                //    MyUtility.Msg.WarningBox($"Already have cutref {newvalue}");
+                //    dr["cutref"] = DBNull.Value;
+                //    return;
+                //}
+
                 DataTable dt;
                 string cutrefsql = $@"
 Select
@@ -194,6 +196,12 @@ and a.MDivisionId = '{Sci.Env.User.Keyword}'
                     if (result == DialogResult.Cancel) { return; }
                     e.FormattedValue = sele.GetSelectedString();
                     seldr = sele.GetSelecteds()[0];
+                    if (((DataTable)this.detailgridbs.DataSource).Select($"Workorderukey = '{seldr["Ukey"]}'").Length > 0)
+                    {
+                        MyUtility.Msg.WarningBox($"CutRefno：{seldr["cutref"]}, WorkOrderUkey：{seldr["Ukey"]} can't duplicate");
+                        dr["cutref"] = DBNull.Value;
+                        return;
+                    }
                 }
                 else
                 {

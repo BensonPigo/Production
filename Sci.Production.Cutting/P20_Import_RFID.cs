@@ -161,7 +161,7 @@ namespace Sci.Production.Cutting
             string rfidDate2 = dateRFID.Value2.ToString();
             string spno = this.txtSP.Text;
             string factory = txtfactory1.Text;
-            string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["CutRef"].ToString() : "") + "'"));
+            string condition = string.Join(",", currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["Workorderukey"].ToString() : "") + "'"));
             if (MyUtility.Check.Empty(condition)) condition = @"''";
 
             sqlcmd.Append(string.Format(@"
@@ -192,7 +192,7 @@ outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.
 where mDivisionid = '{0}' 
 and wo.Layer >  isnull(acc.AccuCuttingLayer,0)
 and WO.CutRef != ''
-and WO.CutRef not in ( {1} )   
+and WO.ukey not in ( {1} )   
 and WO.Ukey in ( SELECT distinct WO.ukey
 FROM BundleInOut BIO
 left join Bundle_Detail BD on BD.BundleNo = BIO.BundleNo
