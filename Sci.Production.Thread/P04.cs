@@ -222,6 +222,11 @@ namespace Sci.Production.Thread
         {
             base.OnDetailEntered();
             this.label7.Text = this.CurrentMaintain["Status"].ToString();
+
+            if (this.toolbar.cmdUnconfirm.Enabled == true && !MyUtility.Check.Empty(this.CurrentMaintain["RequestID"]))
+            {
+                this.toolbar.cmdUnconfirm.Enabled = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -331,7 +336,7 @@ namespace Sci.Production.Thread
         {
             base.ClickUnconfirm();
             string updateThread = string.Format("update ThreadIssue set Status = 'New' ,editname='{0}', editdate = GETDATE() where id='{1}' ;", this.loginID, this.CurrentMaintain["ID"].ToString());
-            DualResult result = Prgs.ThreadIssueConfirm(this.DetailDatas, updateThread);
+            DualResult result = Prgs.ThreadIssueUnConfirm(this.DetailDatas, updateThread);
             if (!result)
             {
                 this.ShowErr(result);

@@ -550,7 +550,7 @@ where   refno = '{2}'
                         insertSql = insertSql + string.Format(
                             @"
 insert  ThreadStock(refno, threadcolorid, threadlocationid, newcone, usedcone, addName, AddDate) 
-        values('{0}', '{1}', '{2}', '{3}', {4}, {5}, GetDate());",
+        values('{0}', '{1}', '{2}', '{3}', {4}, '{5}', GetDate());",
                             dr["refno"],
                             dr["ThreadColorid"],
                             dr["LocationTo"],

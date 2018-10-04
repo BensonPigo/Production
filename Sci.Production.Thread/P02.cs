@@ -117,14 +117,25 @@ where MDivisionID = '{0}'",
             string masterID = (e.Master == null) ? string.Empty : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-SELECT  a.*
+SELECT  a.OrderID
+        , a.Refno
+        , a.ThreadColorID
+        , a.ConsumptionQty
+        , a.TotalQty
+        , a.AllowanceQty
+        , a.UseStockQty
+        , a.PurchaseQty
+        , a.PoId
+        , a.Remark
+        , a.Ukey
+        , a.AutoCreate
+        , [UseStockNewConeQty] = isnull(a.UseStockNewConeQty,0)
+        , [UseStockUseConeQty]  = isnull(a.UseStockUseConeQty,0)
         , b.description
         , b.MetertoCone 
         , c.description as colordesc
         , [CurNewCone] = X.newCone
         , [CurUsedCone] = X.usedcone
-        , a.UseStockNewConeQty
-        , a.UseStockUseConeQty
         , Article = stuff((select concat (',', Article)
                            from (
 						        select distinct Article 
@@ -389,10 +400,10 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
            .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cones", width: Ict.Win.Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
            .Numeric("TotalQty", header: "No. of\r\nCones", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
            .Numeric("AllowanceQty", header: "Allowance", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
-           .Numeric("UseStockNewConeQty", header: "Use Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: newCone).Get(out this.col_NewCone)
-           .Numeric("UseStockUseConeQty", header: "Use Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: usedCone).Get(out this.col_UsedCone)
            .Numeric("CurNewCone", header: "Current Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
            .Numeric("CurUsedCone", header: "Current Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
+           .Numeric("UseStockNewConeQty", header: "Use Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: newCone).Get(out this.col_NewCone)
+           .Numeric("UseStockUseConeQty", header: "Use Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: usedCone).Get(out this.col_UsedCone)
            .Numeric("UseStockQty", header: "Use\r\nStock", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty3)
            .Numeric("PurchaseQty", header: "PO Qty", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
            .Text("Remark", header: "Remark", width: Ict.Win.Widths.AnsiChars(10))
