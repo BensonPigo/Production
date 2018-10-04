@@ -53,7 +53,7 @@
             this.numSupplier4Price = new Sci.Win.UI.NumericBox();
             this.labelSupplier4Price = new Sci.Win.UI.Label();
             this.dateIssueDate = new Sci.Win.UI.DateBox();
-            this.btnApprove = new Sci.Win.UI.Button();
+            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -69,7 +69,7 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.btnApprove);
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.labelSupplier4Price);
             this.detailcont.Controls.Add(this.numSupplier4Price);
             this.detailcont.Controls.Add(this.numSupplier3Price);
@@ -217,7 +217,6 @@
             // 
             // labelRefno
             // 
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(56, 15);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
@@ -245,6 +244,7 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(103, 129);
             this.radioPanel1.TabIndex = 2;
+            this.radioPanel1.Value = "1";
             // 
             // radioSupplier4
             // 
@@ -254,7 +254,6 @@
             this.radioSupplier4.Name = "radioSupplier4";
             this.radioSupplier4.Size = new System.Drawing.Size(90, 21);
             this.radioSupplier4.TabIndex = 3;
-            this.radioSupplier4.TabStop = true;
             this.radioSupplier4.Text = "Supplier 4";
             this.radioSupplier4.UseVisualStyleBackColor = true;
             this.radioSupplier4.Value = "4";
@@ -267,7 +266,6 @@
             this.radioSupplier3.Name = "radioSupplier3";
             this.radioSupplier3.Size = new System.Drawing.Size(90, 21);
             this.radioSupplier3.TabIndex = 2;
-            this.radioSupplier3.TabStop = true;
             this.radioSupplier3.Text = "Supplier 3";
             this.radioSupplier3.UseVisualStyleBackColor = true;
             this.radioSupplier3.Value = "3";
@@ -280,7 +278,6 @@
             this.radioSupplier2.Name = "radioSupplier2";
             this.radioSupplier2.Size = new System.Drawing.Size(90, 21);
             this.radioSupplier2.TabIndex = 1;
-            this.radioSupplier2.TabStop = true;
             this.radioSupplier2.Text = "Supplier 2";
             this.radioSupplier2.UseVisualStyleBackColor = true;
             this.radioSupplier2.Value = "2";
@@ -288,6 +285,7 @@
             // radioSupplier1
             // 
             this.radioSupplier1.AutoSize = true;
+            this.radioSupplier1.Checked = true;
             this.radioSupplier1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioSupplier1.Location = new System.Drawing.Point(3, 5);
             this.radioSupplier1.Name = "radioSupplier1";
@@ -300,7 +298,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(377, 15);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.Size = new System.Drawing.Size(75, 23);
@@ -309,7 +306,6 @@
             // 
             // labelSupplier1Price
             // 
-            this.labelSupplier1Price.Lines = 0;
             this.labelSupplier1Price.Location = new System.Drawing.Point(377, 44);
             this.labelSupplier1Price.Name = "labelSupplier1Price";
             this.labelSupplier1Price.Size = new System.Drawing.Size(75, 23);
@@ -318,7 +314,6 @@
             // 
             // labelSupplier2Price
             // 
-            this.labelSupplier2Price.Lines = 0;
             this.labelSupplier2Price.Location = new System.Drawing.Point(377, 73);
             this.labelSupplier2Price.Name = "labelSupplier2Price";
             this.labelSupplier2Price.Size = new System.Drawing.Size(75, 23);
@@ -327,7 +322,6 @@
             // 
             // labelSupplier3Price
             // 
-            this.labelSupplier3Price.Lines = 0;
             this.labelSupplier3Price.Location = new System.Drawing.Point(377, 102);
             this.labelSupplier3Price.Name = "labelSupplier3Price";
             this.labelSupplier3Price.Size = new System.Drawing.Size(75, 23);
@@ -464,7 +458,6 @@
             // 
             // labelSupplier4Price
             // 
-            this.labelSupplier4Price.Lines = 0;
             this.labelSupplier4Price.Location = new System.Drawing.Point(377, 130);
             this.labelSupplier4Price.Name = "labelSupplier4Price";
             this.labelSupplier4Price.Size = new System.Drawing.Size(75, 23);
@@ -479,22 +472,24 @@
             this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
             this.dateIssueDate.TabIndex = 1;
             // 
-            // btnApprove
+            // label2
             // 
-            this.btnApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnApprove.Location = new System.Drawing.Point(642, 15);
-            this.btnApprove.Name = "btnApprove";
-            this.btnApprove.Size = new System.Drawing.Size(80, 30);
-            this.btnApprove.TabIndex = 15;
-            this.btnApprove.Text = "Approve";
-            this.btnApprove.UseVisualStyleBackColor = true;
-            this.btnApprove.Click += new System.EventHandler(this.btnApprove_Click);
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.label2.Location = new System.Drawing.Point(633, 15);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(131, 23);
+            this.label2.TabIndex = 23;
+            this.label2.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // B01_Quotation
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(908, 457);
             this.DefaultControl = "dateIssueDate";
             this.DefaultControlForEdit = "dateIssueDate";
+            this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.Name = "B01_Quotation";
             this.Text = "Quotation Record";
@@ -542,6 +537,6 @@
         private Class.txtsubcon txtsubconSupplier3;
         private Class.txtsubcon txtsubconSupplier2;
         private Class.txtsubcon txtsubconSupplier1;
-        private Win.UI.Button btnApprove;
+        private Win.UI.Label label2;
     }
 }

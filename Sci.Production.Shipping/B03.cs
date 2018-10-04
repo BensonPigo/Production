@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Sci.Production.PublicPrg;
+using Ict;
+using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
@@ -55,6 +57,7 @@ namespace Sci.Production.Shipping
         {
             base.ClickNewAfter();
             this.txtsubconSupplier.TextBox1.ReadOnly = true;
+            this.CurrentMaintain["Status"] = "New";
         }
 
         /// <inheritdoc/>
@@ -63,6 +66,12 @@ namespace Sci.Production.Shipping
             base.ClickEditAfter();
             this.txtCode.ReadOnly = true;
             this.txtsubconSupplier.TextBox1.ReadOnly = true;
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Locked"))
+            {
+                this.editDescription.ReadOnly = true;
+                this.txtUnit.ReadOnly = true;
+                this.txtAccountNo.ReadOnly = true;
+            }
         }
 
         /// <inheritdoc/>
@@ -74,6 +83,7 @@ namespace Sci.Production.Shipping
             this.CurrentMaintain["CurrencyID"] = string.Empty;
             this.CurrentMaintain["Price"] = 0;
             this.CurrentMaintain["CanvassDate"] = DBNull.Value;
+            this.CurrentMaintain["Status"] = "New";
             this.txtsubconSupplier.TextBox1.ReadOnly = true;
         }
 
@@ -102,6 +112,34 @@ namespace Sci.Production.Shipping
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickClose()
+        {
+            string updatesql = $@"update  ShipExpense set Status = 'Locked' where id = '{this.CurrentMaintain["id"]}'";
+            DualResult result = DBProxy.Current.Execute(null, updatesql);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            base.ClickClose();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnclose()
+        {
+            string updatesql = $@"update  ShipExpense set Status = 'New' where id = '{this.CurrentMaintain["id"]}'";
+            DualResult result = DBProxy.Current.Execute(null, updatesql);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            base.ClickUnclose();
         }
 
         /// <inheritdoc/>
@@ -137,7 +175,7 @@ namespace Sci.Production.Shipping
 
         private void BtnCanvassRecord_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.B03_CanvassRecord callNextForm = new Sci.Production.Shipping.B03_CanvassRecord(Prgs.GetAuthority(Sci.Env.User.UserID, "B03. Shipping Expense", "CanEdit"), this.CurrentMaintain);
+            Sci.Production.Shipping.B03_CanvassRecord callNextForm = new Sci.Production.Shipping.B03_CanvassRecord(Prgs.GetAuthority(Sci.Env.User.UserID, "B03. Shipping Expense", "CanEdit"), this.CurrentMaintain, this.Perm.Confirm);
             callNextForm.ShowDialog(this);
             this.RenewData();
         }
@@ -146,6 +184,20 @@ namespace Sci.Production.Shipping
         {
             Sci.Production.Shipping.B03_PaymentHistory callNextForm = new Sci.Production.Shipping.B03_PaymentHistory(this.CurrentMaintain);
             callNextForm.ShowDialog(this);
+        }
+
+        private void BtnBatchApprove_Click(object sender, EventArgs e)
+        {
+            if (!this.Perm.Confirm)
+            {
+                MyUtility.Msg.WarningBox("You don’t have permission to confirm.");
+                return;
+            }
+
+            Form batchapprove = new Sci.Production.Shipping.B03_BatchApprove();
+            batchapprove.ShowDialog(this);
+            this.ReloadDatas();
+            this.RenewData();
         }
     }
 }

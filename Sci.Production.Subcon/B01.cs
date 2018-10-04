@@ -52,6 +52,7 @@ namespace Sci.Production.Subcon
             CurrentMaintain["price"] = DBNull.Value;
             CurrentMaintain["quotdate"] = DBNull.Value;
             CurrentMaintain["currencyid"] = DBNull.Value;
+            CurrentMaintain["Status"] = "New";
             txtRefno.Focus();
             txtartworktype_ftyCategory.ValidateControl();
         }
@@ -62,6 +63,12 @@ namespace Sci.Production.Subcon
             base.ClickEditAfter();
             this.txtRefno.ReadOnly = true;
             this.txtSubconSupplier.TextBox1.ReadOnly=true;
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Locked"))
+            {
+                this.txtDescription.ReadOnly = true;
+                this.txtunit_ftyUnit.ReadOnly = true;
+                this.txtAccountNo.ReadOnly = true;
+            }
         }
 
         //存檔前檢查
@@ -166,6 +173,30 @@ namespace Sci.Production.Subcon
             return base.ClickSaveBefore();
         }
 
+        protected override void ClickClose()
+        {
+            string updatesql = $@"update  LocalItem set Status = 'Locked' where Refno = '{this.CurrentMaintain["Refno"]}'";
+            DualResult result = DBProxy.Current.Execute(null, updatesql);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            base.ClickClose();
+        }
+
+        protected override void ClickUnclose()
+        {
+            string updatesql = $@"update  LocalItem set Status = 'New' where Refno = '{this.CurrentMaintain["Refno"]}'";
+            DualResult result = DBProxy.Current.Execute(null, updatesql);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            base.ClickUnclose();
+        }
+
         //算CBM
         private void getCBM()
         {
@@ -217,7 +248,7 @@ namespace Sci.Production.Subcon
         private void btnQuotationRecord_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
-            var frm = new Sci.Production.Subcon.B01_Quotation( this.IsSupportEdit, dr);
+            var frm = new Sci.Production.Subcon.B01_Quotation( this.IsSupportEdit, dr, this.Perm.Confirm);
             frm.ShowDialog(this);
             this.RenewData();
 
@@ -289,6 +320,7 @@ namespace Sci.Production.Subcon
                     CurrentMaintain["ThreadTex"] = DBNull.Value;
                     CurrentMaintain["Weight"] = DBNull.Value;
                     CurrentMaintain["AxleWeight"] = DBNull.Value;
+                    CurrentMaintain["Status"] = "New";
 
                     CurrentMaintain["CtnLength"] = CurrentMaintain["CtnLength"] == DBNull.Value ? 0 : CurrentMaintain["CtnLength"];
                     CurrentMaintain["CtnWidth"] = CurrentMaintain["CtnWidth"] == DBNull.Value ? 0 : CurrentMaintain["CtnWidth"];
@@ -382,6 +414,18 @@ namespace Sci.Production.Subcon
             var callfrm = new B01_ThreadColorPrice(true, CurrentMaintain["Refno"].ToString(),string.Empty,string.Empty);
             callfrm.ShowDialog();
         }
-        
+
+        private void btnBatchApprove_Click(object sender, EventArgs e)
+        {
+            if (!this.Perm.Confirm)
+            {
+                MyUtility.Msg.WarningBox("You don’t have permission to confirm.");
+                return;
+            }
+            Form batchapprove = new Sci.Production.Subcon.B01_BatchApprove();
+            batchapprove.ShowDialog(this);
+            ReloadDatas();
+            this.RenewData();
+        }
     }
 }
