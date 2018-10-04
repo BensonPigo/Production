@@ -166,11 +166,12 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
             , bd.FromStocktype
                   , FromFactoryID = orders.FactoryID
             , qty = sum(bd.qty) 
+            ,bd.ToPOID
     from borrowback_detail bd WITH (NOLOCK) 
       inner join Orders orders on bd.FromPOID = orders.ID
       inner join Factory factory on orders.FtyGroup = factory.ID
     where bd.id = '{0}' and factory.MDivisionID = '{1}'
-    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype, orders.FactoryID
+    group by bd.FromPoId, bd.FromSeq1, bd.FromSeq2, bd.FromStocktype, orders.FactoryID ,bd.ToPOID
     )
 ,cte2 as(
     select  bd.ToPoid
@@ -189,27 +190,26 @@ select  cte1.FromPoId
         , cte1.FromSeq1
         , cte1.FromSeq2 
         , cte1.FromStocktype
-            , cte1.FromFactoryID
-			,psd.Refno, psd.SizeSpec, psd.ColorID ,psd.BrandId
+		, cte1.FromFactoryID
+		,psd.Refno, psd.SizeSpec, psd.ColorID ,psd.BrandId,cte1.ToPOID
 into #tmp
 from cte1 
 left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 and cte2.ToSeq2 =  cte1.FromSeq2 
     and cte2.ToStocktype = cte1.FromStocktype
 INNER JOIN PO_Supp_Detail psd ON psd.ID = cte1.FromPoId and psd.Seq1 = cte1.FromSeq1 and psd.Seq2 =  cte1.FromSeq2 ;
 
-
 SELECT DISTINCT Refno, SizeSpec, ColorID ,BrandId INTO #tmp2 FROM #tmp
 
 select  distinct selected = 0 
         , id = '' 
         , FromFtyinventoryUkey = c.ukey 
-        , FromPoId = bd.ToPoid 
-        , FromSeq1 = bd.ToSeq1 
-        , FromSeq2 = bd.ToSeq2 
-        , fromseq =concat(Ltrim(Rtrim(bd.ToSeq1)), ' ', bd.ToSeq2) 
+        , FromPoId = p.id 
+        , FromSeq1 = p.Seq1 
+        , FromSeq2 = p.Seq2 
+        , fromseq =concat(Ltrim(Rtrim(p.Seq1)), ' ', p.Seq2) 
         , FromDyelot = c.dyelot 
         , FromRoll = c.roll 
-            , FromFactoryID = orders.FactoryID
+        , FromFactoryID = orders.FactoryID
         , FromStocktype = c.StockType 
         , AccuDiffQty = c.InQty - c.OutQty + c.AdjustQty 
         , balance = c.InQty - c.OutQty + c.AdjustQty 
@@ -227,22 +227,22 @@ select  distinct selected = 0
         , p.StockUnit
         , p.FabricType
 from dbo.BorrowBack_Detail as bd WITH (NOLOCK) 
-inner join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 and bd.FromSeq2 = #tmp.FromSeq2
-left join PO_Supp_Detail p WITH (NOLOCK) on p.ID= #tmp.FromPoId AND #tmp.BrandId=p.BrandId  and #tmp.Refno=p.Refno and #tmp.ColorID=p.ColorID  and #tmp.SizeSpec=p.SizeSpec
-inner join ftyinventory c WITH (NOLOCK) on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2
-inner join Orders orders on c.POID = orders.ID
-inner join Factory factory on orders.FtyGroup = factory.ID
-outer apply(
+INNER join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 and bd.FromSeq2 = #tmp.FromSeq2
+INNER join PO_Supp_Detail p WITH (NOLOCK) on p.ID= #tmp.ToPOID AND #tmp.BrandId=p.BrandId  and #tmp.Refno=p.Refno and #tmp.ColorID=p.ColorID  and #tmp.SizeSpec=p.SizeSpec
+INNER join ftyinventory c WITH (NOLOCK) on  p.id = c.poid and  p.Seq1  = c.seq1 and  p.Seq2 = c.seq2
+INNER join Orders orders on c.POID = orders.ID
+INNER join Factory factory on orders.FtyGroup = factory.ID
+OUTER apply(
 	select	Top 1 Roll
 			, Dyelot
 	From FtyInventory
-	where	POID = #tmp.FromPOID
-			and Seq1 = #tmp.FromSeq1
-			and Seq2 = #tmp.FromSeq2
+	where	POID =p.id
+			and Seq1 = p.SEQ1
+			and Seq2 = p.SEQ2
 			and Roll = c.Roll
 ) toSP
 where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}'
-    and not(c.StockType in ('I', 'O'))
+      and  c.StockType='B'
 drop table #tmp,#tmp2
 ", dr_master["BorrowId"], Sci.Env.User.Keyword);
 
