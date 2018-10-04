@@ -48,6 +48,8 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelUnit = new Sci.Win.UI.Label();
             this.txtUnit = new Sci.Production.Class.txtunit_local();
+            this.label2 = new Sci.Win.UI.Label();
+            this.btnBatchApprove = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -58,10 +60,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(828, 395);
+            this.detail.Size = new System.Drawing.Size(836, 395);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txtUnit);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.btnPaymentHistory);
@@ -82,19 +85,19 @@
             this.detailcont.Controls.Add(this.labelBrand);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(828, 357);
+            this.detailcont.Size = new System.Drawing.Size(836, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(828, 38);
+            this.detailbtm.Size = new System.Drawing.Size(836, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(828, 395);
+            this.browse.Size = new System.Drawing.Size(882, 395);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(836, 424);
+            this.tabs.Size = new System.Drawing.Size(890, 424);
             // 
             // createby
             // 
@@ -258,7 +261,7 @@
             // 
             this.btnCanvassRecord.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnCanvassRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCanvassRecord.Location = new System.Drawing.Point(587, 22);
+            this.btnCanvassRecord.Location = new System.Drawing.Point(683, 57);
             this.btnCanvassRecord.Name = "btnCanvassRecord";
             this.btnCanvassRecord.Size = new System.Drawing.Size(138, 30);
             this.btnCanvassRecord.TabIndex = 16;
@@ -270,7 +273,7 @@
             // 
             this.btnPaymentHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnPaymentHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPaymentHistory.Location = new System.Drawing.Point(587, 59);
+            this.btnPaymentHistory.Location = new System.Drawing.Point(683, 94);
             this.btnPaymentHistory.Name = "btnPaymentHistory";
             this.btnPaymentHistory.Size = new System.Drawing.Size(138, 30);
             this.btnPaymentHistory.TabIndex = 17;
@@ -317,18 +320,46 @@
             this.txtUnit.Size = new System.Drawing.Size(66, 23);
             this.txtUnit.TabIndex = 20;
             // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.label2.Location = new System.Drawing.Point(683, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(138, 23);
+            this.label2.TabIndex = 23;
+            this.label2.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // btnBatchApprove
+            // 
+            this.btnBatchApprove.Location = new System.Drawing.Point(678, 3);
+            this.btnBatchApprove.Name = "btnBatchApprove";
+            this.btnBatchApprove.Size = new System.Drawing.Size(203, 30);
+            this.btnBatchApprove.TabIndex = 2;
+            this.btnBatchApprove.Text = "Quotation Batch Approve";
+            this.btnBatchApprove.UseVisualStyleBackColor = true;
+            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove_Click);
+            // 
             // B03
             // 
-            this.ClientSize = new System.Drawing.Size(836, 457);
+            this.ClientSize = new System.Drawing.Size(890, 457);
+            this.CloseChkValue = "New";
+            this.Controls.Add(this.btnBatchApprove);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "editDescription";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
+            this.IsSupportClose = true;
             this.IsSupportDelete = false;
+            this.IsSupportUnclose = true;
             this.Name = "B03";
             this.Text = "B03. Shipping Expense";
+            this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ShipExpense";
+            this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -364,5 +395,7 @@
         private Win.UI.CheckBox checkBox1;
         private Win.UI.Label labelUnit;
         private Class.txtunit_local txtUnit;
+        private Win.UI.Label label2;
+        private Win.UI.Button btnBatchApprove;
     }
 }

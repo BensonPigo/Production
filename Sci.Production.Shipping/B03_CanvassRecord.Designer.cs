@@ -285,6 +285,7 @@
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(95, 123);
             this.radioPanel1.TabIndex = 32;
+            this.radioPanel1.Value = "1";
             // 
             // radioSupplier4
             // 
@@ -294,7 +295,6 @@
             this.radioSupplier4.Name = "radioSupplier4";
             this.radioSupplier4.Size = new System.Drawing.Size(90, 21);
             this.radioSupplier4.TabIndex = 3;
-            this.radioSupplier4.TabStop = true;
             this.radioSupplier4.Text = "Supplier 4";
             this.radioSupplier4.UseVisualStyleBackColor = true;
             this.radioSupplier4.Value = "4";
@@ -307,7 +307,6 @@
             this.radioSupplier3.Name = "radioSupplier3";
             this.radioSupplier3.Size = new System.Drawing.Size(90, 21);
             this.radioSupplier3.TabIndex = 2;
-            this.radioSupplier3.TabStop = true;
             this.radioSupplier3.Text = "Supplier 3";
             this.radioSupplier3.UseVisualStyleBackColor = true;
             this.radioSupplier3.Value = "3";
@@ -320,7 +319,6 @@
             this.radioSupplier2.Name = "radioSupplier2";
             this.radioSupplier2.Size = new System.Drawing.Size(90, 21);
             this.radioSupplier2.TabIndex = 1;
-            this.radioSupplier2.TabStop = true;
             this.radioSupplier2.Text = "Supplier 2";
             this.radioSupplier2.UseVisualStyleBackColor = true;
             this.radioSupplier2.Value = "2";
@@ -328,6 +326,7 @@
             // radioSupplier1
             // 
             this.radioSupplier1.AutoSize = true;
+            this.radioSupplier1.Checked = true;
             this.radioSupplier1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioSupplier1.Location = new System.Drawing.Point(3, 5);
             this.radioSupplier1.Name = "radioSupplier1";

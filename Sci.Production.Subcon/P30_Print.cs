@@ -15,6 +15,7 @@ using Ict.Win;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Drawing.Imaging;
+using Sci.Production.Class;
 
 namespace Sci.Production.Subcon
 {
@@ -241,6 +242,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("vatrate", vatrate));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
+             
                 #endregion
 
                 #region 表身
@@ -258,7 +260,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
                         Amount = Convert.ToDecimal(row1["Amount"]),
-                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(row1["apvname"].ToString())
+                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),207,83)
                     }).ToList();
 
                 report.ReportDataSource = data;
@@ -294,6 +296,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("currency", CurrencyID));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("remark", Remark));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddName", AddName));
+              
                 #endregion
 
                 #region 表身
@@ -309,7 +312,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
                         Amount = Convert.ToDecimal(row1["Amount"]),
-                        ApvName = Production.Class.UserESignature.getRDLCUserESignature(row1["apvname"].ToString())
+                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),207,83)
                     }).ToList();
 
                 report.ReportDataSource = data;

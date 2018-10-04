@@ -690,9 +690,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox35</rd:DefaultName>
         <Top>2.65442cm</Top>
-        <Left>1.59051cm</Left>
+        <Left>1.19364cm</Left>
         <Height>2.14313cm</Height>
-        <Width>10.66271cm</Width>
+        <Width>11.05959cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -1016,9 +1016,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox42</rd:DefaultName>
         <Top>4.79755cm</Top>
-        <Left>1.59051cm</Left>
-        <Height>2.09021cm</Height>
-        <Width>5.77791cm</Width>
+        <Left>1.19364cm</Left>
+        <Height>2.84312cm</Height>
+        <Width>5.7cm</Width>
         <ZIndex>8</ZIndex>
         <Style>
           <Border>
@@ -1069,9 +1069,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox42</rd:DefaultName>
         <Top>4.79754cm</Top>
-        <Left>7.36841cm</Left>
-        <Height>2.09021cm</Height>
-        <Width>5.90044cm</Width>
+        <Left>6.90354cm</Left>
+        <Height>2.84313cm</Height>
+        <Width>5.34968cm</Width>
         <ZIndex>9</ZIndex>
         <Style>
           <Border>
@@ -1146,9 +1146,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox42</rd:DefaultName>
         <Top>4.79754cm</Top>
-        <Left>13.26885cm</Left>
-        <Height>2.09021cm</Height>
-        <Width>5.71674cm</Width>
+        <Left>12.25322cm</Left>
+        <Height>2.84313cm</Height>
+        <Width>6.73237cm</Width>
         <ZIndex>10</ZIndex>
         <Style>
           <Border>
@@ -1377,11 +1377,10 @@
         <Source>Database</Source>
         <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
         <MIMEType>image/jpeg</MIMEType>
-        <Sizing>FitProportional</Sizing>
-        <Top>5.44067cm</Top>
-        <Left>1.68576cm</Left>
-        <Height>1.28833cm</Height>
-        <Width>5.50626cm</Width>
+        <Top>5.37717cm</Top>
+        <Left>1.30476cm</Left>
+        <Height>2.2cm</Height>
+        <Width>5.5cm</Width>
         <ZIndex>17</ZIndex>
         <Style>
           <Border>
@@ -1390,7 +1389,7 @@
         </Style>
       </Image>
     </ReportItems>
-    <Height>2.89583in</Height>
+    <Height>3.13314in</Height>
     <Style />
   </Body>
   <Width>8.09622in</Width>

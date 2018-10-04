@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using Ict;
 using System.Transactions;
+using Sci.Data;
 
 namespace Sci.Production.Shipping
 {
@@ -13,6 +14,7 @@ namespace Sci.Production.Shipping
     {
         private DataRow motherData;
         private bool CanEdit = false;
+        private bool _canconfirm;
 
         /// <summary>
         /// MotherData
@@ -51,11 +53,12 @@ namespace Sci.Production.Shipping
         /// </summary>
         /// <param name="canedit">canedit</param>
         /// <param name="data">data</param>
-        public B03_CanvassRecord(bool canedit, DataRow data)
+        public B03_CanvassRecord(bool canedit, DataRow data, bool cancomfirmed)
         {
             this.InitializeComponent();
             this.CanEdit1 = canedit;
             this.MotherData = data;
+            this._canconfirm = cancomfirmed;
             this.DefaultFilter = "ID = '" + MyUtility.Convert.GetString(this.MotherData["ID"]).Trim() + "'";
             if (this.CurrentMaintain == null)
             {
@@ -103,7 +106,7 @@ namespace Sci.Production.Shipping
             base.EnsureToolbarExt();
             this.toolbar.cmdEdit.Enabled = this.CanEdit1 && !this.EditMode;
             this.toolbar.cmdNew.Enabled = this.CanEdit1 && !this.EditMode;
-            this.toolbar.cmdConfirm.Visible = this.CanEdit1 && !this.EditMode;
+            this.toolbar.cmdConfirm.Visible = true;
 
             if (this.CurrentMaintain != null)
             {
@@ -114,7 +117,7 @@ namespace Sci.Production.Shipping
                 }
                 else
                 {
-                    this.toolbar.cmdConfirm.Enabled = this.CanEdit1 && !this.EditMode && this.CurrentMaintain["Status"].ToString().ToUpper() == "NEW";
+                    this.toolbar.cmdConfirm.Enabled = this._canconfirm && !this.EditMode && this.CurrentMaintain["Status"].ToString().EqualString("New");
                     this.toolbar.cmdSave.Enabled = this.CanEdit1 && this.EditMode;
                 }
             }
@@ -136,7 +139,7 @@ namespace Sci.Production.Shipping
         protected override bool ClickNewBefore()
         {
             // 檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
-            string sqlCmd = string.Format("select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{0}' and Status = 'New'", MyUtility.Convert.GetString(this.MotherData["ID"]));
+            string sqlCmd = $"select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{MyUtility.Convert.GetString(this.MotherData["ID"]).Trim()}' and Status = 'New'";
             if (MyUtility.Check.Seek(sqlCmd, null))
             {
                 MyUtility.Msg.WarningBox("Still have data not yet confirm, so can't create new record!");
@@ -154,6 +157,7 @@ namespace Sci.Production.Shipping
             this.CurrentMaintain["ChooseSupp"] = 1;
             this.CurrentMaintain["Status"] = "New";
             this.label1.Text = "New";
+            this.CurrentMaintain["ChooseSupp"] = 1;
         }
 
         /// <inheritdoc/>
@@ -167,6 +171,56 @@ namespace Sci.Production.Shipping
             }
 
             return base.ClickEditBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickSaveBefore()
+        {
+            // 檢查是否還有建立的紀錄尚未被confirm，若有則無法新增資料
+            string sqlCmd = $"select ID from ShipExpense_CanVass WITH (NOLOCK) where ID = '{ MyUtility.Convert.GetString(this.MotherData["ID"]).Trim()}' and Status = 'New'  and ukey <> '{this.CurrentMaintain["ukey"]}'";
+            if (MyUtility.Check.Seek(sqlCmd, null))
+            {
+                MyUtility.Msg.WarningBox("Still have data not yet confirm, so can't create new record!");
+                return false;
+            }
+
+            var suppId = string.Empty;
+            var price = 0.0;
+            var currencyId = string.Empty;
+
+            #region 選取的報價資料
+            switch (MyUtility.Convert.GetString(this.CurrentMaintain["ChooseSupp"]))
+            {
+                case "1":
+                    suppId = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID1"]);
+                    price = MyUtility.Convert.GetDouble(this.CurrentMaintain["Price1"]);
+                    currencyId = MyUtility.Convert.GetString(this.CurrentMaintain["CurrencyID1"]);
+                    break;
+                case "2":
+                    suppId = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID2"]);
+                    price = MyUtility.Convert.GetDouble(this.CurrentMaintain["Price2"]);
+                    currencyId = MyUtility.Convert.GetString(this.CurrentMaintain["CurrencyID2"]);
+                    break;
+                case "3":
+                    suppId = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID3"]);
+                    price = MyUtility.Convert.GetDouble(this.CurrentMaintain["Price3"]);
+                    currencyId = MyUtility.Convert.GetString(this.CurrentMaintain["CurrencyID3"]);
+                    break;
+                case "4":
+                    suppId = MyUtility.Convert.GetString(this.CurrentMaintain["LocalSuppID4"]);
+                    price = MyUtility.Convert.GetDouble(this.CurrentMaintain["Price4"]);
+                    currencyId = MyUtility.Convert.GetString(this.CurrentMaintain["CurrencyID4"]);
+                    break;
+            }
+            #endregion
+
+            if (MyUtility.Check.Empty(suppId) || MyUtility.Check.Empty(currencyId) || MyUtility.Check.Empty(price))
+            {
+                MyUtility.Msg.WarningBox("Choosed Set of data can't be empty!!");
+                return false;
+            }
+
+            return base.ClickSaveBefore();
         }
 
         /// <inheritdoc/>
@@ -229,66 +283,18 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            DualResult result, result2;
-            using (TransactionScope transactionScope = new TransactionScope())
+            DataTable dt;
+            var s = new B03_BatchApprove();
+            DualResult result = DBProxy.Current.Select(string.Empty, s.Sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), MyUtility.Convert.GetString(this.CurrentMaintain["ukey"])), out dt);
+            if (!result)
             {
-                try
-                {
-                    string updateCommand = string.Format("Update ShipExpense_CanVass set Status = 'Confirmed', EditName ='{0}', EditDate = GETDATE() where UKey = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["UKey"]));
-                    string s1 = "Update ShipExpense set LocalSuppID = @suppId, Price = @price, CurrencyID = @currencyId, CanvassDate = @canvassDate, EditName = @editName, EditDate = GETDATE() where ID = @id";
-                    #region 準備sql參數資料
-                    System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                    sp1.ParameterName = "@id";
-                    sp1.Value = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+                this.ShowErr(result);
+                return;
+            }
 
-                    System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                    sp2.ParameterName = "@suppId";
-                    sp2.Value = suppId;
-
-                    System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                    sp3.ParameterName = "@price";
-                    sp3.Value = price;
-
-                    System.Data.SqlClient.SqlParameter sp4 = new System.Data.SqlClient.SqlParameter();
-                    sp4.ParameterName = "@currencyId";
-                    sp4.Value = currencyId;
-
-                    System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
-                    sp5.ParameterName = "@canvassDate";
-                    sp5.Value = Convert.ToDateTime(this.CurrentMaintain["AddDate"]).ToString("d");
-
-                    System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
-                    sp6.ParameterName = "@editName";
-                    sp6.Value = Sci.Env.User.UserID;
-
-                    IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                    cmds.Add(sp1);
-                    cmds.Add(sp2);
-                    cmds.Add(sp3);
-                    cmds.Add(sp4);
-                    cmds.Add(sp5);
-                    cmds.Add(sp6);
-                    #endregion
-
-                    result = Sci.Data.DBProxy.Current.Execute(null, updateCommand);
-                    result2 = Sci.Data.DBProxy.Current.Execute(null, s1, cmds);
-
-                    if (result && result2)
-                    {
-                        transactionScope.Complete();
-                    }
-                    else
-                    {
-                        transactionScope.Dispose();
-                        MyUtility.Msg.WarningBox("Confirm failed, Pleaes re-try");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    transactionScope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
-                }
+            if (!s.Confirm(dt))
+            {
+                return;
             }
         }
     }
