@@ -64,10 +64,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dateBoxInspDate);
-            this.masterpanel.Controls.Add(this.dateBoxDeadline);
-            this.masterpanel.Controls.Add(this.dateBoxReceivedDate);
-            this.masterpanel.Controls.Add(this.dateBoxReleasedDate);
             this.masterpanel.Controls.Add(this.displayBoxLastResult);
             this.masterpanel.Controls.Add(this.displayBoxBrand);
             this.masterpanel.Controls.Add(this.displayBoxSeason);
@@ -84,8 +80,16 @@
             this.masterpanel.Controls.Add(this.labelDeadline);
             this.masterpanel.Controls.Add(this.labelArticle);
             this.masterpanel.Controls.Add(this.labelStyle);
+            this.masterpanel.Controls.Add(this.dateBoxInspDate);
+            this.masterpanel.Controls.Add(this.dateBoxDeadline);
+            this.masterpanel.Controls.Add(this.dateBoxReceivedDate);
+            this.masterpanel.Controls.Add(this.dateBoxReleasedDate);
             this.masterpanel.Size = new System.Drawing.Size(956, 136);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxReleasedDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxReceivedDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxDeadline, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxInspDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelArticle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDeadline, 0);
@@ -102,10 +106,6 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBoxSeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxLastResult, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBoxReleasedDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBoxReceivedDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBoxDeadline, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBoxInspDate, 0);
             // 
             // detailpanel
             // 
@@ -115,7 +115,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.gridicon.Location = new System.Drawing.Point(854, 100);
+            this.gridicon.Location = new System.Drawing.Point(886, 100);
             // 
             // detailgridcont
             // 
@@ -145,6 +145,10 @@
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
             this.detailbtm.Size = new System.Drawing.Size(956, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(956, 387);
             // 
             // tabs
             // 
@@ -247,7 +251,7 @@
             this.displayBoxStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxStyle.Location = new System.Drawing.Point(134, 11);
             this.displayBoxStyle.Name = "displayBoxStyle";
-            this.displayBoxStyle.Size = new System.Drawing.Size(103, 23);
+            this.displayBoxStyle.Size = new System.Drawing.Size(130, 23);
             this.displayBoxStyle.TabIndex = 12;
             // 
             // displayBoxArticle

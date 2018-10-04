@@ -19,19 +19,37 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
+        ToolStripMenuItem edit;
 
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
+            this.detailgrid.ContextMenuStrip = detailgridmenus;
         }
 
+        protected override void OnFormLoaded()
+        {
+            detailgridmenus.Items.Clear();//清空原有的Menu Item
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
+
+            base.OnFormLoaded();
+        }
+        private void EditThisDetail()
+        {
+            Sci.Production.Quality.P10_Detail callNewDetailForm = new P10_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
+            callNewDetailForm.ShowDialog(this);
+            callNewDetailForm.Dispose();
+            this.RenewData();
+            OnDetailEntered();
+        }
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(@"
 select  sd.id,
         sd.No,
+        sd.ReportNo,
         sd.InspDate,
         sd.Result,
         sd.Technician,
@@ -228,7 +246,8 @@ where sd.id='{0}' order by sd.No
             #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Numeric("No", header: "No. Of Test", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
+            .Numeric("No", header: "No", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
+            .Text("ReportNo", header: "ReportNo", width: Widths.AnsiChars(15))
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .Text("Technician", header: "Technician", width: Widths.AnsiChars(10), settings: inspectorCell)
@@ -265,6 +284,12 @@ where sd.id='{0}' order by sd.No
             {
                 MaxNo = Convert.ToInt32(dt.Compute("Max(No)", ""));
                 CurrentDetailData["No"] = MaxNo + 1;
+
+                string tmpId =MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
+                string head = tmpId.Substring(0, 9);
+                int seq = Convert.ToInt32(tmpId.Substring(9, 4));
+                tmpId = head + string.Format("{0:0000}", seq + dt.Rows.Count - 1);
+                CurrentDetailData["ReportNo"] = tmpId;
             }
 
         }

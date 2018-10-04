@@ -14,8 +14,21 @@
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_GarmentTest_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
     [OldUkey]     VARCHAR (10)   CONSTRAINT [DF__tmp_ms_xx__OldUk__560B68B9] DEFAULT ('') NULL,
+    [SubmitDate]  DATE           NULL,
+    [ArrivedQty]  INT            DEFAULT ((0)) NOT NULL,
+    [LineDry]     BIT            DEFAULT ((1)) NOT NULL,
+    [Temperature] INT            DEFAULT ((0)) NOT NULL,
+    [TumbleDry]   BIT            DEFAULT ((0)) NOT NULL,
+    [Machine]     VARCHAR (10)   NULL,
+    [HandWash]    BIT            DEFAULT ((0)) NOT NULL,
+    [Composition] VARCHAR (50)   NULL,
+    [Neck]        BIT            DEFAULT ((1)) NOT NULL,
+    [Status]      VARCHAR (15)   NULL,
+    [SizeCode]    VARCHAR (8)    NULL,
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
 );
+
+
 
 
 
