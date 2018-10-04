@@ -161,7 +161,7 @@ order by ID", masterData["LocalSuppID"]);
                         Amount = row1["Amount"].ToString(),
                         CutParts = row1["PatternDesc"].ToString(),
                         ID = row1["ID"].ToString(),
-                        ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(),243,44)
+                        ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(),207,83)
                     }).ToList();
 
                 report.ReportDataSource = data;
@@ -238,7 +238,7 @@ order by ID", masterData["LocalSuppID"]);
                         Unitprice = row1["Unitprice"].ToString(),
                         QtyGMT = row1["Qtygarment"].ToString(),
                         Amount = row1["Amount"].ToString(),
-                        ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(),215,51)
+                        ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(),207,83)
                     }).ToList();
 
                 report.ReportDataSource = data;

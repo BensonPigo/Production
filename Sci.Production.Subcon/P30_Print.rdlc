@@ -22,7 +22,7 @@
         <rd:DefaultName>Textbox38</rd:DefaultName>
         <Top>5.60706cm</Top>
         <Left>12.9476cm</Left>
-        <Height>2.40279cm</Height>
+        <Height>2.89172cm</Height>
         <Width>5.875cm</Width>
         <Style>
           <Border>
@@ -54,7 +54,7 @@
         <rd:DefaultName>Textbox38</rd:DefaultName>
         <Top>5.60706cm</Top>
         <Left>6.13896cm</Left>
-        <Height>2.40279cm</Height>
+        <Height>2.89172cm</Height>
         <Width>6.80864cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
@@ -1725,9 +1725,10 @@
             <Source>Database</Source>
             <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
             <MIMEType>image/jpeg</MIMEType>
-            <Top>0.69172cm</Top>
-            <Height>1.71292cm</Height>
-            <Width>6.10369cm</Width>
+            <Top>0.62822cm</Top>
+            <Left>0.254cm</Left>
+            <Height>2.2cm</Height>
+            <Width>5.5cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1767,7 +1768,7 @@
         <KeepTogether>true</KeepTogether>
         <Top>5.60706cm</Top>
         <Left>0.03527cm</Left>
-        <Height>2.40464cm</Height>
+        <Height>2.89172cm</Height>
         <Width>6.10369cm</Width>
         <ZIndex>14</ZIndex>
         <Style>
@@ -1777,7 +1778,7 @@
         </Style>
       </Rectangle>
     </ReportItems>
-    <Height>3.30887in</Height>
+    <Height>3.48139in</Height>
     <Style />
   </Body>
   <Width>7.45943in</Width>

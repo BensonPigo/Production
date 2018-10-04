@@ -260,7 +260,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
                         Amount = Convert.ToDecimal(row1["Amount"]),
-                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),235,63)
+                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),207,83)
                     }).ToList();
 
                 report.ReportDataSource = data;
@@ -312,7 +312,7 @@ order by orderid,a.refno,threadcolorid", currentID);
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
                         Amount = Convert.ToDecimal(row1["Amount"]),
-                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),145,39)
+                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),207,83)
                     }).ToList();
 
                 report.ReportDataSource = data;

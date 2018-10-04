@@ -132,23 +132,15 @@ namespace Sci.Production.Class
             int fixWidth = 0, fixHeight = 0;
             int sourWidth = img.Width;
             int sourHeight = img.Height;
-            if (sourWidth > limitWidth || sourHeight > limitHeight)
+            if ((sourWidth * limitHeight) > (sourHeight * limitWidth))
             {
-                if ((sourWidth * limitHeight) > (sourHeight * limitWidth))
-                {
-                    fixWidth = limitWidth;
-                    fixHeight = (limitWidth * sourHeight) / sourWidth;
-                }
-                else
-                {
-                    fixWidth = (sourWidth * limitHeight) / sourHeight;
-                    fixHeight = limitHeight;
-                }
+                fixWidth = limitWidth;
+                fixHeight = (limitWidth * sourHeight) / sourWidth;
             }
             else
             {
-                fixWidth = sourWidth;
-                fixHeight = sourHeight;
+                fixWidth = (sourWidth * limitHeight) / sourHeight;
+                fixHeight = limitHeight;
             }
 
             Bitmap orgBitmap = new Bitmap(img, fixWidth, fixHeight);
