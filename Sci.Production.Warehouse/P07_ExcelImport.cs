@@ -514,7 +514,7 @@ where   stocktype='{0}'
                     //刪除 Import 重複的資料 by SP# Seq Carton#
                     DataRow[] checkRow = detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
                                                                                 && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
-                                                                                && row["roll"].EqualString(dr2["roll"])).ToArray();
+                                                                                && row["roll"].EqualString(dr2["roll"]) && row["Dyelot"].EqualString(dr2["Dyelot"])).ToArray();
                     if (checkRow.Length == 0)
                     {
                         dr2["id"] = master["id"];

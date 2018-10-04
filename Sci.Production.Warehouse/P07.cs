@@ -21,7 +21,7 @@ namespace Sci.Production.Warehouse
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
         private Ict.Win.UI.DataGridViewNumericBoxColumn Col_ActualW;
-        
+
 
         string UserID = Sci.Env.User.UserID;
 
@@ -173,15 +173,17 @@ namespace Sci.Production.Warehouse
                         errormsgDir[errorkey] += Environment.NewLine + "<Location> length can't be more than 60 Characters.";
                 //listRowErrMsg.Add("<Location> length can't be more than 60 Characters.");
 
-               
+
             }
 
-            foreach (KeyValuePair<string, string> item in errormsgDir) {
-                if (item.Value.Length > 0) {
+            foreach (KeyValuePair<string, string> item in errormsgDir)
+            {
+                if (item.Value.Length > 0)
+                {
                     listColumnLengthErrMsg.Add(item.Key + item.Value);
                 }
             }
-            
+
             if (listColumnLengthErrMsg.Count > 0)
             {
                 MyUtility.Msg.WarningBox(listColumnLengthErrMsg.JoinToString(Environment.NewLine + Environment.NewLine));
@@ -215,9 +217,10 @@ from (
             , Seq1
             , Seq2
             , Roll
+            , Dyelot
             , value = count(*)
     from #tmp
-    group by Poid, Seq1, Seq2, Roll
+    group by Poid, Seq1, Seq2, Roll, Dyelot
 ) x
 where x.value > 1
 ";
@@ -229,12 +232,13 @@ where x.value > 1
                     List<string> listDuplicateData = new List<string>();
                     foreach (DataRow dr in dtCheckDuplicateData.Rows)
                     {
-                        listDuplicateData.Add(string.Format("<SP#> : {0}, <Seq1> : {1}, <Seq2> : {2}, <Roll#> : {3}", dr["Poid"]
+                        listDuplicateData.Add(string.Format("<SP#> : {0}, <Seq1> : {1}, <Seq2> : {2}, <Roll#> : {3}, <Dyelot> : {4}", dr["Poid"]
                                                                                                                     , dr["Seq1"]
                                                                                                                     , dr["Seq2"]
-                                                                                                                    , dr["Roll"]));
+                                                                                                                    , dr["Roll"]
+                                                                                                                    , dr["Dyelot"]));
                     }
-                    MyUtility.Msg.WarningBox("SP#, Seq1, Seq2, Roll# cannot be duplicate." + Environment.NewLine + listDuplicateData.JoinToString(Environment.NewLine));
+                    MyUtility.Msg.WarningBox("SP#, Seq1, Seq2, Roll#, Dyelot cannot be duplicate." + Environment.NewLine + listDuplicateData.JoinToString(Environment.NewLine));
                     return false;
                 }
             }
@@ -341,9 +345,9 @@ where x.value > 1
                     }
                     if (row.RowState == DataRowState.Modified)
                     {
-                        if (MyUtility.Convert.GetString(row["poid"]) != MyUtility.Convert.GetString(row["poid", DataRowVersion.Original]) || 
+                        if (MyUtility.Convert.GetString(row["poid"]) != MyUtility.Convert.GetString(row["poid", DataRowVersion.Original]) ||
                             MyUtility.Convert.GetString(row["seq1"]) != MyUtility.Convert.GetString(row["seq1", DataRowVersion.Original]) ||
-                            MyUtility.Convert.GetString(row["seq2"]) != MyUtility.Convert.GetString(row["seq2", DataRowVersion.Original]) || 
+                            MyUtility.Convert.GetString(row["seq2"]) != MyUtility.Convert.GetString(row["seq2", DataRowVersion.Original]) ||
                             MyUtility.Convert.GetString(row["Roll"]) != MyUtility.Convert.GetString(row["Roll", DataRowVersion.Original]) ||
                             MyUtility.Convert.GetString(row["Dyelot"]) != MyUtility.Convert.GetString(row["Dyelot", DataRowVersion.Original]) ||
                             MyUtility.Convert.GetString(row["stocktype"]) != MyUtility.Convert.GetString(row["stocktype", DataRowVersion.Original]))
@@ -814,7 +818,7 @@ WHERE   StockType='{0}'
 
                 decimal gw = MyUtility.Convert.GetDecimal(dr["weight"]);
                 decimal aw = MyUtility.Convert.GetDecimal(dr["actualweight"]);
-                if (dr["fabrictype"].ToString()=="F" && gw > aw)
+                if (dr["fabrictype"].ToString() == "F" && gw > aw)
                 {
                     e.CellStyle.ForeColor = Color.Red;
                     e.CellStyle.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -881,10 +885,10 @@ where   v.FROM_U ='{0}'
             string sq = string.Empty;
             foreach (DataRow item in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
-                if(MyUtility.Convert.GetDecimal(item["stockqty"]) <0)
+                if (MyUtility.Convert.GetDecimal(item["stockqty"]) < 0)
                 {
                     sq += $@"SP#: {item["poid"]} Seq#: {item["seq"]}-{item["seq"]} Roll#: {item["Roll"]}'s Receiving Qty must not be less than 0 ! 
-";                    
+";
                 }
             }
 
@@ -913,6 +917,7 @@ left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.Seq2 = f.seq2
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
+                                            and d.Dyelot = f.Dyelot
 where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + d.StockQty < 0) 
         and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -926,8 +931,8 @@ where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + 
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than stock qty: {5}" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["stockqty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than stock qty: {5}" + Environment.NewLine
+                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["stockqty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -1190,12 +1195,14 @@ Select  d.poid
         , d.Roll
         , d.StockQty
         , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , d.Dyelot
 from dbo.Receiving_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
                                             and d.Seq2 = f.seq2
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
+                                            and d.Dyelot = f.Dyelot
 where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - d.StockQty < 0) 
         and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -1209,8 +1216,8 @@ where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - 
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than stock qty: {5}" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["stockqty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than stock qty: {5}" + Environment.NewLine
+                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["stockqty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -1509,7 +1516,7 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
 
                 dr.Delete();
             }
-            
+
         }
 
         //Accumulated Qty
@@ -1703,157 +1710,39 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 //判斷 物料 是否為 布，布料才需要 Roll & Dyelot
                 if (row["fabrictype"].ToString().ToUpper() == "F")
                 {
-                    #region 先判斷 FtyInventory 是否有相同的 Roll & Dyelot
-                    string checkFtySql = string.Format(@"
-select  total = count(*)  
-		, Dyelot
-From dbo.FtyInventory Fty
-where   POID = '{0}' 
-        and Seq1 = '{1}' 
-        and Seq2 = '{2}' 
-        and Roll = '{3}' 
-        and Dyelot = '{4}'
-group by Dyelot
-", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
-                    if (MyUtility.Check.Seek(checkFtySql, null))
-                    {
-                        listDyelot.Add(row["dyelot"].ToString());
-                    }
-                    else
-                    {
-                        #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
-                        string checkSql = string.Format(@"
-select 
-	total = sum(total)
-	, Dyelot = Dyelot
-from(
-    select  total = COUNT(*) 
-            , Dyelot
+                    #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
+                    string checkSql = string.Format(@"
+select  1
     from dbo.Receiving_Detail RD WITH (NOLOCK) 
     inner join dbo.Receiving R WITH (NOLOCK) on RD.Id = R.Id  
     where   RD.PoId = '{0}' 
             and RD.Seq1 = '{1}' 
             and RD.Seq2 = '{2}' 
             and RD.Roll = '{3}' 
-            and Dyelot != '{4}' 
+            and Dyelot = '{4}' 
             and RD.ID != '{5}' 
             and R.Status = 'Confirmed'
-	group by Dyelot
-
-	Union All	
-	select  total = COUNT(*)  
-			, Dyelot = ToDyelot
-	from dbo.SubTransfer_Detail SD WITH (NOLOCK) 
-	inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID = S.Id 
-	where   ToPOID = '{0}' 
-            and ToSeq1 = '{1}' 
-            and ToSeq2 = '{2}' 
-            and ToRoll = '{3}' 
-            and ToDyelot != '{4}' 
-            and S.Status = 'Confirmed'
-	group by ToDyelot
-	
-	Union All	
-	select  total = COUNT('POID')  
-			, Dyelot = ToDyelot
-	from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
-	inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID = B.Id  
-	where   ToPOID = '{0}' 
-            and ToSeq1 = '{1}' 
-            and ToSeq2 = '{2}' 
-            and ToRoll = '{3}' 
-            and ToDyelot != '{4}' 
-            and B.Status = 'Confirmed'
-	group by ToDyelot
-	
-	Union All	
-	select  total = count(*)   
-			, Dyelot
-	From dbo.TransferIn TI
-	inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
-	where   POID = '{0}' 
-            and Seq1 = '{1}' 
-            and Seq2 = '{2}' 
-            and Roll = '{3}' 
-            and Dyelot != '{4}' 
-            and Status = 'Confirmed'
-	group by Dyelot
-	
-	Union All	
-	select  total = count(*)  
-			, Dyelot
-	From dbo.FtyInventory Fty
-	where   POID = '{0}' 
-            and Seq1 = '{1}' 
-            and Seq2 = '{2}' 
-            and Roll = '{3}' 
-            and Dyelot != '{4}'
-	group by Dyelot
-) x
-group by Dyelot", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
-                        if (MyUtility.Check.Seek(checkSql, out dr, null))
+", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
+                    if (MyUtility.Check.Seek(checkSql, out dr, null))
+                    {
+                        if (Convert.ToInt32(dr[0]) > 0)
                         {
-                            if (Convert.ToInt32(dr[0]) > 0)
-                            {
-                                listMsg.Add(string.Format(@"
+                            listMsg.Add(string.Format(@"
 The Deylot of
-<SP#>:{0}, <Seq>:{1}, <Roll>:{2}
-already exists, system will update the Qty for original Deylot <{3}>
-", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], dr["Dyelot"].ToString().Trim()));
-                                listDyelot.Add(dr["Dyelot"].ToString().Trim());
-                            }
+<SP#>:{0}, <Seq>:{1}, <Roll>:{2}, <Deylot>:{3} already exists
+", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], row["Dyelot"].ToString().Trim()));
+                            
                         }
-                        else
-                        {
-                            listDyelot.Add(row["Dyelot"].ToString().Trim());
-                        }
-                        #endregion
                     }
                     #endregion
                 }
             }
-
-            #region 若上方判斷有 同 Roll 不同 Dyelot
+            
             if (listMsg.Count > 0)
             {
-                DialogResult Dr = MyUtility.Msg.QuestionBox(listMsg.JoinToString("").TrimStart(), buttons: MessageBoxButtons.OKCancel);
-                switch (Dr.ToString().ToUpper())
-                {
-                    case "OK":
-                        int index = 0;
-                        foreach (DataRow row in DetailDatas)
-                        {
-                            if (row["FabricType"].EqualString("F"))
-                            {
-                                DualResult result;
-                                /**
-                                * 如果在編輯模式下，直接改 Grid
-                                * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
-                                **/
-                                row["Dyelot"] = listDyelot[index++];
-
-                                if (this.EditMode != true)
-                                {
-                                    result = DBProxy.Current.Execute(null, string.Format(@"
-Update RD
-set RD.Roll = '{0}'
-    , RD.Dyelot = '{1}'
-From Receiving_Detail RD
-where RD.Ukey = '{2}'", row["Roll"], row["Dyelot"], row["Ukey"]));
-
-                                    if (!result)
-                                    {
-                                        MyUtility.Msg.WarningBox(result.Description);
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    case "CANCEL":
-                        return false;
-                }
+                DialogResult Dr = MyUtility.Msg.WarningBox(listMsg.JoinToString("").TrimStart());
+                return false;
             }
-            #endregion
             return true;
         }
         /// <summary>

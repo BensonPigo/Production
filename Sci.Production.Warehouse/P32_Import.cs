@@ -223,7 +223,7 @@ select  distinct selected = 0
         , p.FabricType
 from dbo.BorrowBack_Detail as bd WITH (NOLOCK) 
 inner join #tmp on bd.FromPoId = #tmp.FromPOID and bd.FromSeq1 = #tmp.FromSeq1 and bd.FromSeq2 = #tmp.FromSeq2
-inner join ftyinventory c WITH (NOLOCK) on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2
+inner join ftyinventory c WITH (NOLOCK) on bd.topoid = c.poid and bd.toseq1 = c.seq1 and bd.toseq2 = c.seq2 and bd.toDyelot = c.Dyelot
 inner join Orders orders on c.POID = orders.ID
 inner join Factory factory on orders.FtyGroup = factory.ID
 left join PO_Supp_Detail p WITH (NOLOCK) on p.ID= bd.ToPoid and p.SEQ1 = bd.ToSeq1 and p.SEQ2 = bd.ToSeq2
@@ -235,6 +235,7 @@ outer apply(
 			and Seq1 = #tmp.FromSeq1
 			and Seq2 = #tmp.FromSeq2
 			and Roll = c.Roll
+            and Dyelot = c.Dyelot
 ) toSP
 where bd.id='{0}' and c.lock = 0 and c.inqty-c.OutQty+c.AdjustQty > 0 and factory.MDivisionID = '{1}'
     and not(c.StockType in ('I', 'O'))
