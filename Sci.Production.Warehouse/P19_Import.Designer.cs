@@ -43,6 +43,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.displayTotal = new Sci.Win.UI.DisplayBox();
+            this.labelTotal = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -98,6 +100,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.displayTotal);
+            this.groupBox2.Controls.Add(this.labelTotal);
             this.groupBox2.Controls.Add(this.btnCancel);
             this.groupBox2.Controls.Add(this.btnImport);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -135,7 +139,6 @@
             // 
             // labelSeq
             // 
-            this.labelSeq.Lines = 0;
             this.labelSeq.Location = new System.Drawing.Point(471, 19);
             this.labelSeq.Name = "labelSeq";
             this.labelSeq.Size = new System.Drawing.Size(69, 23);
@@ -144,7 +147,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(239, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -159,7 +161,6 @@
             // 
             // labelStockType
             // 
-            this.labelStockType.Lines = 0;
             this.labelStockType.Location = new System.Drawing.Point(9, 19);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -180,6 +181,7 @@
             this.comboStockType.IsSupportUnselect = true;
             this.comboStockType.Location = new System.Drawing.Point(97, 18);
             this.comboStockType.Name = "comboStockType";
+            this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 0;
             // 
@@ -212,9 +214,27 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(1008, 422);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // displayTotal
+            // 
+            this.displayTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTotal.Location = new System.Drawing.Point(569, 19);
+            this.displayTotal.Name = "displayTotal";
+            this.displayTotal.Size = new System.Drawing.Size(100, 23);
+            this.displayTotal.TabIndex = 6;
+            // 
+            // labelTotal
+            // 
+            this.labelTotal.Location = new System.Drawing.Point(471, 19);
+            this.labelTotal.Name = "labelTotal";
+            this.labelTotal.Size = new System.Drawing.Size(95, 23);
+            this.labelTotal.TabIndex = 5;
+            this.labelTotal.Text = "Total Qty";
             // 
             // P19_Import
             // 
@@ -225,6 +245,7 @@
             this.Name = "P19_Import";
             this.Text = "P19. Import Detail";
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -250,5 +271,7 @@
         private Win.UI.Label labelStockType;
         private Win.UI.Label labelSeq;
         private Class.txtSeq txtSeq1;
+        private Win.UI.DisplayBox displayTotal;
+        private Win.UI.Label labelTotal;
     }
 }
