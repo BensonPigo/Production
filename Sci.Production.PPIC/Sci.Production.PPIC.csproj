@@ -828,10 +828,10 @@
     <EmbeddedResource Include="P17.resx">
       <DependentUpon>P17.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P18_Print.rdlc" />
     <EmbeddedResource Include="P18.resx">
       <DependentUpon>P18.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P18_Print.rdlc" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -907,6 +907,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\P18_PrintData.datasource" />
     <None Include="Resources\Carton.bmp" />
     <None Include="Sci.Production.PPIC.ruleset" />
     <None Include="stylecop.json" />

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sci.Production.PPIC
 {
-    class P18_PrintData
+    internal class P18_PrintData
     {
         public string SewLine { get; set; }
 

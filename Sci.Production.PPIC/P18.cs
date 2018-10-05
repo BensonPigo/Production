@@ -24,6 +24,7 @@ namespace Sci.Production.PPIC
     {
         private DualResult result;
         private string Excelfile;
+
         public P18(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -33,7 +34,7 @@ namespace Sci.Production.PPIC
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
+            string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = $@"
 select 
 [Brand] = o.BrandID
@@ -94,7 +95,7 @@ where a.id='{masterID}'
                  string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                  if (oldvalue == newvalue) return;
 
-                 if (this.EditMode && e.FormattedValue.ToString() != "")
+                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                  {
                      DataRow dr;
                      if (MyUtility.Check.Seek($@"select * from Orders where id='{e.FormattedValue}'
@@ -107,7 +108,7 @@ FROM Order_QtyShip
 WHERE ID= '{e.FormattedValue}'
 ";
 
-                         if (!(this.result = DBProxy.Current.Select("", sqlcmd, out dt)))
+                         if (!(this.result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt)))
                          {
                              this.ShowErr(this.result);
                              return;
@@ -131,9 +132,9 @@ WHERE ID= '{e.FormattedValue}'
                      else
                      {
                          MyUtility.Msg.WarningBox("Data not found!");
-                         this.CurrentDetailData["OrderShipmodeSeq"] = "";
-                         this.CurrentDetailData["ShipModeID"] = "";
-                         this.CurrentDetailData["OrderID"] = "";
+                         this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
+                         this.CurrentDetailData["ShipModeID"] = string.Empty;
+                         this.CurrentDetailData["OrderID"] = string.Empty;
                          this.CurrentDetailData.EndEdit();
                          return;
                      }
@@ -150,7 +151,7 @@ WHERE ID= '{e.FormattedValue}'
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                 if (oldvalue == newvalue) return;
 
-                if (this.EditMode && e.FormattedValue.ToString() != "")
+                if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     if (MyUtility.Check.Seek($@"
 select 1 
@@ -162,7 +163,7 @@ from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]} and seq='{e.For
                     else
                     {
                         MyUtility.Msg.WarningBox("Data not found!");
-                        this.CurrentDetailData["OrderShipmodeSeq"] = "";
+                        this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
                         this.CurrentDetailData.EndEdit();
                         return;
                     }
@@ -196,7 +197,7 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                 if (oldvalue == newvalue) return;
 
-                if (this.EditMode && e.FormattedValue.ToString() != "")
+                if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     if (MyUtility.Check.Seek($@"
 select 1 
@@ -208,7 +209,7 @@ from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]} and ShipmodeID=
                     else
                     {
                         MyUtility.Msg.WarningBox("Data not found!");
-                        this.CurrentDetailData["ShipModeID"] = "";
+                        this.CurrentDetailData["ShipModeID"] = string.Empty;
                         this.CurrentDetailData.EndEdit();
                         return;
                     }
@@ -243,7 +244,7 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                 if (oldvalue == newvalue) return;
 
-                if (this.EditMode && e.FormattedValue.ToString() != "")
+                if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     this.CurrentDetailData["AccLacking"] = e.FormattedValue;
                     string sqlcmd = $@"
@@ -265,12 +266,12 @@ ORDER BY PSD.Refno ";
                     List<string> trueRefno = new List<string>();
                     foreach (string refno in getRefno)
                     {
-                        if (!dt.AsEnumerable().Any(row => row["Refno"].EqualString(refno)) && !(refno.EqualString("")))
+                        if (!dt.AsEnumerable().Any(row => row["Refno"].EqualString(refno)) && !(refno.EqualString(string.Empty)))
                         {
                             selectRefno &= false;
                             errRefno.Add(refno);
                         }
-                        else if (!(refno.EqualString("")))
+                        else if (!(refno.EqualString(string.Empty)))
                         {
                             trueRefno.Add(refno);
                         }
@@ -483,19 +484,31 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override DualResult ClickSave()
         {
-            string sqlcmd = "";
+            string sqlcmd = string.Empty;
             DataTable subDetailData;
             foreach (DataRow dr in this.DetailDatas)
             {
                 string[] splitRefno = dr["AccLacking"].ToString().Split(',').Distinct().ToArray();
                 if (this.GetSubDetailDatas(dr, out subDetailData))
                 {
-                    foreach (string refno in splitRefno)
+                    // 如果變更,先刪除第三層資料
+                    if (dr.RowState == DataRowState.Modified)
                     {
-                        DataRow drtmp = subDetailData.NewRow();
-                        drtmp["Refno"] = refno;
-                        drtmp["AVO_DetailUkey"] = dr["ukey"];
-                        subDetailData.Rows.Add(drtmp);
+                        foreach (DataRow sdr in subDetailData.Rows)
+                        {
+                            sdr.Delete();
+                        }
+                    }
+                    // 變更或新增,就補上第三層資料
+                    if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
+                    {
+                        foreach (string refno in splitRefno)
+                        {
+                            DataRow drtmp = subDetailData.NewRow();
+                            drtmp["Refno"] = refno;
+                            drtmp["AVO_DetailUkey"] = dr["ukey"];
+                            subDetailData.Rows.Add(drtmp);
+                        }
                     }
                 }
             }
@@ -513,22 +526,23 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             }
             else
             {
-                string AddName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["AddName"]}') ");
-                string SupApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["SupApvName"]}') ");
-                string PPDApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["PPDApvName"]}') ");
-                string ProdApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["ProdApvName"]}') ");
+                string addName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["AddName"]}') ");
+                string supApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["SupApvName"]}') ");
+                string pPDApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["PPDApvName"]}') ");
+                string prodApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["ProdApvName"]}') ");
 
                 rd.ReportResource = reportresource;
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", this.CurrentMaintain["ID"].ToString()));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cDate", this.CurrentMaintain["cDate"].ToString()));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cDate", (this.CurrentMaintain["cDate"] == DBNull.Value) ? string.Empty : ((DateTime)this.CurrentMaintain["cDate"]).ToString("yyyy/MM/dd")));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivisionID", this.CurrentMaintain["MDivisionID"].ToString()));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Handle", this.CurrentMaintain["Handle"].ToString()));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddName", AddName));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SupApvName", SupApvName));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("PPDApvName", PPDApvName));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ProdApvName", ProdApvName));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddName", addName));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SupApvName", supApvName));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("PPDApvName", pPDApvName));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ProdApvName", prodApvName));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", this.CurrentMaintain["Remark"].ToString()));
 
-                // 傳 list 資料            
+                // 傳 list 資料
                 DataTable dt;
                 string sqlcmd = $@"
 select o.SewLine,o.SewInLine,a2.OrderID,o.CustPONo,o.StyleID,oq.Qty,a3.RefNo
@@ -559,19 +573,20 @@ where a2.id ='{this.CurrentMaintain["id"]}'
                     MyUtility.Msg.WarningBox("data faile.\r\n" + result.ToString());
                     return false;
                 }
+
                 List<P18_PrintData> data = dt.AsEnumerable()
                     .Select(row1 => new P18_PrintData()
                     {
                         SewLine = row1["SewLine"].ToString(),
-                        SewInLine = row1["SewInLine"].ToString(),
+                        SewInLine = (row1["SewInLine"] == DBNull.Value) ? string.Empty : ((DateTime)row1["SewInLine"]).ToString("yyyy/MM/dd"),
                         OrderID = row1["Orderid"].ToString(),
                         CustPONo = row1["CustPONo"].ToString(),
                         StyleID = row1["styleID"].ToString(),
                         Qty = MyUtility.Convert.GetInt(row1["Qty"]),
                         RefNo = row1["RefNo"].ToString(),
-                        FinalETA = row1["FinalETA"].ToString(),
-                        BuyerDelivery = row1["BuyerDelivery"].ToString(),
-                        VasShas = row1["VasShas"].ToString(),
+                        FinalETA = (row1["FinalETA"] == DBNull.Value) ? string.Empty : ((DateTime)row1["FinalETA"]).ToString("yyyy/MM/dd"),
+                        BuyerDelivery = (row1["BuyerDelivery"] == DBNull.Value) ? string.Empty : ((DateTime)row1["BuyerDelivery"]).ToString("yyyy/MM/dd"),
+                        VasShas = row1["VAS"].ToString(),
                         Alias = row1["Alias"].ToString()
                     }).ToList();
 
@@ -583,13 +598,12 @@ where a2.id ='{this.CurrentMaintain["id"]}'
                 frm1.Show();
             }
 
-
             return base.ClickPrint();
         }
 
         private void ToExcel()
         {
-            if (this.CurrentMaintain==null)
+            if (this.CurrentMaintain == null)
             {
                 return;
             }
@@ -628,6 +642,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_P18.xltx", objApp);
 
             Excel.Worksheet worksheet = objApp.Sheets[1];
+
             // 表頭
             worksheet.Cells[2, 2] = this.CurrentMaintain["id"];
             worksheet.Cells[2, 4] = ((DateTime)this.CurrentMaintain["cDate"]).ToString("yyyy/MM/dd");
