@@ -344,7 +344,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             newCone.CellValidating += (s, e) =>
             {
-                if (MyUtility.Check.Empty(e.FormattedValue))
+                if (!this.EditMode || MyUtility.Check.Empty(e.FormattedValue))
                 {
                     return;
                 }
@@ -363,7 +363,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             usedCone.CellValidating += (s, e) =>
             {
-                if (MyUtility.Check.Empty(e.FormattedValue))
+                if (!this.EditMode || MyUtility.Check.Empty(e.FormattedValue))
                 {
                     return;
                 }
