@@ -198,8 +198,8 @@ namespace Sci.Production.Quality
 	F.Result,
 	F.Physical,
 	F.PhysicalDate,
-	F.TotalInspYds,
-    ROUND( CAST (F.TotalInspYds/SUM(t.StockQty) AS FLOAT) ,3),
+	fta.ActualYds,
+    ROUND( CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT) ,3),
 	ftp.TotalPoint,
 	F.Weight,
 	F.WeightDate,
@@ -266,13 +266,14 @@ Outer apply(
     where od.id=o.POID
 ) ps1
 outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id=f.id)ftp
+outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id)fta
 " + sqlWhere) + @" 
 GROUP BY 
 F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
 t.ExportId,t.InvNo,t.WhseArrival,
 F.Refno,P.ColorID,C.WeaveTypeID,O.Category
 ,F.Result,F.Physical,F.PhysicalDate,
-F.TotalInspYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
+F.TotalInspYds,fta.ActualYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
 F.ContinuityDate,L.Result,LC.Crocking,
 LC.CrockingDate,LH.Heat,LH.HeatDate,
 LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR,
