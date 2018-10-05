@@ -20,9 +20,9 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox38</rd:DefaultName>
-        <Top>5.60706cm</Top>
+        <Top>5.59531cm</Top>
         <Left>12.9476cm</Left>
-        <Height>2.89172cm</Height>
+        <Height>2.88231cm</Height>
         <Width>5.875cm</Width>
         <Style>
           <Border>
@@ -52,9 +52,9 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox38</rd:DefaultName>
-        <Top>5.60706cm</Top>
+        <Top>5.57179cm</Top>
         <Left>6.13896cm</Left>
-        <Height>2.89172cm</Height>
+        <Height>2.90583cm</Height>
         <Width>6.80864cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
@@ -1481,7 +1481,7 @@
         <rd:DefaultName>Textbox12</rd:DefaultName>
         <Top>4.95767cm</Top>
         <Left>12.9476cm</Left>
-        <Height>0.6cm</Height>
+        <Height>0.63764cm</Height>
         <Width>2.81712cm</Width>
         <ZIndex>6</ZIndex>
         <Style>
@@ -1583,7 +1583,7 @@
         <rd:DefaultName>Textbox12</rd:DefaultName>
         <Top>4.95767cm</Top>
         <Left>15.76472cm</Left>
-        <Height>0.6cm</Height>
+        <Height>0.63764cm</Height>
         <Width>3.05788cm</Width>
         <ZIndex>9</ZIndex>
         <Style>
@@ -1615,9 +1615,9 @@
         </Paragraphs>
         <rd:DefaultName>Textbox38</rd:DefaultName>
         <Top>3.79531cm</Top>
-        <Left>0.03528cm</Left>
+        <Left>0.08221cm</Left>
         <Height>1.76236cm</Height>
-        <Width>12.91233cm</Width>
+        <Width>12.8654cm</Width>
         <ZIndex>10</ZIndex>
         <Style>
           <Border>
@@ -1719,66 +1719,56 @@
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
-      <Rectangle Name="Rectangle3">
-        <ReportItems>
-          <Image Name="Image2">
-            <Source>Database</Source>
-            <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
-            <MIMEType>image/jpeg</MIMEType>
-            <Top>0.62822cm</Top>
-            <Left>0.254cm</Left>
-            <Height>2.2cm</Height>
-            <Width>5.5cm</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
-          <Textbox Name="Textbox108">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Approve </Value>
-                    <Style />
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox108</rd:DefaultName>
-            <Top>0.05644cm</Top>
-            <Height>0.6cm</Height>
-            <Width>5.9273cm</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-        </ReportItems>
+      <Textbox Name="Textbox46">
+        <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
-        <Top>5.60706cm</Top>
-        <Left>0.03527cm</Left>
-        <Height>2.89172cm</Height>
-        <Width>6.10369cm</Width>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Approve</Value>
+                <Style>
+                  <FontFamily>Calibri</FontFamily>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox38</rd:DefaultName>
+        <Top>5.57179cm</Top>
+        <Left>0.08221cm</Left>
+        <Height>2.90583cm</Height>
+        <Width>6.05675cm</Width>
         <ZIndex>14</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
           </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
         </Style>
-      </Rectangle>
+      </Textbox>
+      <Image Name="Image2">
+        <Source>Database</Source>
+        <Value>=First(Fields!ApvName.Value, "DataSet1")</Value>
+        <MIMEType>image/jpeg</MIMEType>
+        <Top>6.12066cm</Top>
+        <Left>0.36732cm</Left>
+        <Height>2.2cm</Height>
+        <Width>5.5cm</Width>
+        <ZIndex>15</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Image>
     </ReportItems>
-    <Height>3.48139in</Height>
+    <Height>3.42931in</Height>
     <Style />
   </Body>
   <Width>7.45943in</Width>
