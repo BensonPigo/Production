@@ -150,12 +150,13 @@ namespace Sci.Production.Quality
                     // Parent form 若是非編輯狀態就 return 
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     SelectItem sele;
-                    string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
                     sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }                    
                     dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
                     dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
+                    dr["Ticketyds"] = sele.GetSelecteds()[0]["StockQty"].ToString().Trim();
                 }
             };
             Rollcell.CellValidating += (s, e) =>
@@ -169,22 +170,25 @@ namespace Sci.Production.Quality
                 {
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
+                    dr["Ticketyds"] = 0.00;
                     return;
                 }
                 //手動輸入,oldvalue <> newvalue,就不會return並且繼續判斷
                 if (oldvalue == newvalue) return;
-                string roll_cmd = string.Format("Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
                 {
                     dr["Roll"] = roll_dr["Roll"];
                     dr["Dyelot"] = roll_dr["Dyelot"];
+                    dr["Ticketyds"] = roll_dr["StockQty"];
                     dr.EndEdit();
                 }
                 else
                 {
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
+                    dr["Ticketyds"] = 0.00;
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
@@ -196,6 +200,7 @@ namespace Sci.Production.Quality
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .CellScale("Scale", header: "Scale", width: Widths.AnsiChars(5))
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ResulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))

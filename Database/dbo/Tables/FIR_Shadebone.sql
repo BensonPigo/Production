@@ -11,8 +11,11 @@
     [AddDate]   DATETIME       NULL,
     [EditName]  VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME       NULL,
+    [TicketYds] NUMERIC (8, 2) CONSTRAINT [DF_FIR_Shadebone_TicketYds] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Shadebone] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 
