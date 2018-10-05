@@ -344,24 +344,39 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             newCone.CellValidating += (s, e) =>
             {
-                /*int nc = Convert.ToInt32(e.FormattedValue);
-                int uc = Convert.ToInt32(CurrentDetailData["UsedCone"]);
-                if (!this.EditMode) return;
-                CurrentDetailData["NewCone"] = nc;
-                CurrentDetailData["UseStockQty"] = nc + uc;
-                CurrentDetailData.EndEdit();*/
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+                decimal useStockNewConeQty = (decimal)e.FormattedValue;
+
+                DataRow curDr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (useStockNewConeQty > (decimal)curDr["CurNewCone"])
+                {
+                    MyUtility.Msg.WarningBox($"<Use Stock New Cone>{useStockNewConeQty} can't be more than <Current Stock New Cone>{curDr["CurNewCone"]}");
+                    e.Cancel = true;
+                    return;
+                }
             };
             #endregion
             #region useStock CellValidating by NewCone+(UsedCone)
 
             usedCone.CellValidating += (s, e) =>
             {
-                /*int nc = Convert.ToInt32(CurrentDetailData["NewCone"]);
-                int uc = Convert.ToInt32(e.FormattedValue);
-                if (!this.EditMode) return;
-                CurrentDetailData["UsedCone"] = uc;
-                CurrentDetailData["UseStockQty"] = nc + uc;
-                CurrentDetailData.EndEdit();*/
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                decimal useStockUseConeQty = (decimal)e.FormattedValue;
+
+                DataRow curDr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (useStockUseConeQty > (decimal)curDr["CurUsedCone"])
+                {
+                    MyUtility.Msg.WarningBox($"<Use Stock Use Cone>{useStockUseConeQty} can't be more than <Current Stock Use Cone>{curDr["CurUsedCone"]}");
+                    e.Cancel = true;
+                    return;
+                }
             };
             #endregion
             #region poqty CellValidating by (TotalQty) + AllowanceQty - UseStockQty
@@ -631,28 +646,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 return false;
             }
 
-            #region 檢查使用量是否大於庫存
-            DataTable checkDt;
-            string checkCmd = $@"
-select t.RefNo,t.ThreadColorID,t.UseStockNewConeQty,t.UseStockUseConeQty,x.newCone,x.usedcone
-from #tmp t
-OUTER APPLY
-(
-	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone from ThreadStock d WITH (NOLOCK) 
-	where d.refno = t.refno and d.Threadcolorid = t.threadcolorid 		
-) X 
-where t.UseStockNewConeQty > x.newCone or t.UseStockUseConeQty > x.usedcone";
-
-            MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), null, checkCmd, out checkDt);
-
-            if (checkDt.Rows.Count > 0)
-            {
-                var gridMsg = new Win.UI.MsgGridForm(checkDt, caption: "The following threads are not stock enough");
-                gridMsg.ShowDialog();
-                return false;
-            }
-            #endregion
-
             return base.ClickSaveBefore();
         }
 
@@ -903,6 +896,7 @@ OUTER APPLY
                     if ((decimal)newdr["CurUsedCone"] > purchaseQty)
                     {
                         newdr["UseStockUseConeQty"] = purchaseQty;
+                        purchaseQty = 0;
                     }
                     else
                     {
@@ -920,6 +914,7 @@ OUTER APPLY
                     if ((decimal)newdr["CurNewCone"] > purchaseQty)
                     {
                         newdr["UseStockNewConeQty"] = purchaseQty;
+                        purchaseQty = 0;
                     }
                     else
                     {
@@ -927,6 +922,8 @@ OUTER APPLY
                         purchaseQty = purchaseQty - (decimal)newdr["CurNewCone"];
                     }
                 }
+
+                newdr["UseStockQty"] = (decimal)newdr["UseStockUseConeQty"] + (decimal)newdr["UseStockNewConeQty"];
                 #endregion
                 detailtb.Rows.Add(newdr);
             }
