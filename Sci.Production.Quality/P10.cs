@@ -358,5 +358,155 @@ where sd.id='{0}' order by sd.No
             return base.ClickSaveBefore();
         }
 
+
+
+        protected override DualResult ClickSave()
+        {
+            DualResult upResult = new DualResult(true);
+            string update_cmd = "";
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    if (!MyUtility.Check.Empty(dr["senddate", DataRowVersion.Original])) return new DualResult(false, "SendDate is existed, can not delete.", "Warning");
+
+                    List<SqlParameter> spamDet = new List<SqlParameter>();
+                    update_cmd = "Delete From SampleGarmentTest_Detail WITH (NOLOCK) Where id =@id and no=@no";
+                    spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
+                    spamDet.Add(new SqlParameter("@no", dr["NO", DataRowVersion.Original]));
+                    upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
+                }
+
+            }
+
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    string delete3sub = $@"
+Delete SampleGarmentTest_Detail_Shrinkage  where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete SampleGarmentTest_Detail_Twisting where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete SampleGarmentTest_Detail_Apperance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+";
+                    DBProxy.Current.Execute(null, delete3sub);
+                }
+                else
+                {
+                    if (MyUtility.Check.Empty(dr["Status"]))
+                    {
+                        dr["Status"] = "New";
+                    }
+                    if (!MyUtility.Check.Seek($"select 1 from SampleGarmentTest_Detail_Shrinkage with(nolock) where id = '{this.CurrentMaintain["ID"]}' and NO = '{dr["NO"]}'"))
+                    {
+                        List<SqlParameter> spam = new List<SqlParameter>();
+                        spam.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
+                        spam.Add(new SqlParameter("@NO", dr["NO"]));
+                        string insertShrinkage = $@"
+select sl.Location
+into #Location1
+from SampleGarmentTest gt with(nolock)
+inner join style s with(nolock) on s.id = gt.StyleID
+inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
+where gt.id = @ID and sl.Location !='B'
+group by sl.Location
+order by sl.Location desc
+CREATE TABLE #type1([type] [varchar](20),seq numeric(6,0))
+insert into #type1 values('Chest Width',1)
+insert into #type1 values('Sleeve Width',2)
+insert into #type1 values('Sleeve Length',3)
+insert into #type1 values('Back Length',4)
+insert into #type1 values('Hem Opening',5)
+---
+select distinct sl.Location
+into #Location2
+from SampleGarmentTest gt with(nolock)
+inner join style s with(nolock) on s.id = gt.StyleID
+inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
+where gt.id = @ID and sl.Location ='B'
+
+
+
+CREATE TABLE #type2([type] [varchar](20),seq numeric(6,0))
+insert into #type2 values('Waistband (relax)',1)
+insert into #type2 values('Hip Width',2)
+insert into #type2 values('Thigh Width',3)
+insert into #type2 values('Side Seam',4)
+insert into #type2 values('Leg Opening',5)
+
+
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
+select @ID,@NO,* from #Location1,#type1
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
+select @ID,@NO,* from #Location2,#type2
+
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Twisting]([ID],[No],[Location])
+select @ID,@NO,
+[Location]=CASE WHEN Location='B' THEN 'BOTTOM'
+WHEN Location='I' THEN 'INNER'
+WHEN Location='O' THEN 'OUTER'
+WHEN Location='T' THEN 'TOP'
+ELSE ''
+END
+
+from #Location1
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Twisting]([ID],[No],[Location])
+select @ID,@NO,[Location]=CASE WHEN Location='B' THEN 'BOTTOM'
+WHEN Location='I' THEN 'INNER'
+WHEN Location='O' THEN 'OUTER'
+WHEN Location='T' THEN 'TOP'
+ELSE ''
+END from #Location2
+
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Print / Heat Transfer',1)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Embroidery',2)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Label',3)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Zipper/ snap button/ button/tie cord/etc.',4)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Discoloration (colour change )',5)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Colour Staining',6)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Pilling',7)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Shrinkage & Twisting',8)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Appearance of garment after wash',9)
+";
+                        DBProxy.Current.Execute(null, insertShrinkage, spam);
+                    }
+                }
+            }
+
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+
+            if (dt.Rows.Count > 0)
+            {
+                string maxNo = dt.Compute("MAX(NO)", "").ToString();
+                string where = string.Format("NO='{0}'", maxNo);
+
+                if (dt.Select(where).Count()>0)
+                {
+                    DataRow DetailRow = dt.Select(where)[0];
+
+                    CurrentMaintain["Result"] = DetailRow["Result"];
+                    CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
+                    CurrentMaintain["Remark"] = DetailRow["remark"];
+
+                }
+            }
+            else
+            {
+                CurrentMaintain["Result"] = "";
+                CurrentMaintain["Inspdate"] = DBNull.Value;
+                CurrentMaintain["Remark"] = "";
+            }
+
+
+            return base.ClickSave();
+        }
     }
 }
