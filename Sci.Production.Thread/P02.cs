@@ -617,6 +617,13 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 return false;
             }
 
+            // 如果detail資料POID有值，不能delete
+            if (this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["POID"])).Any())
+            {
+                MyUtility.Msg.WarningBox("Detail data <PO ID> has value, can't be deleted.", "Warning");
+                return false;
+            }
+
             return base.ClickDeleteBefore();
         }
 
@@ -924,6 +931,8 @@ OUTER APPLY
                 }
 
                 newdr["UseStockQty"] = (decimal)newdr["UseStockUseConeQty"] + (decimal)newdr["UseStockNewConeQty"];
+                newdr["PurchaseQty"] = purchaseQty;
+
                 #endregion
                 detailtb.Rows.Add(newdr);
             }
