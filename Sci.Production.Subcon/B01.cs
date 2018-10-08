@@ -237,8 +237,6 @@ namespace Sci.Production.Subcon
             
         }
 
-        
-
         private void W_H_L_Validated(object sender, EventArgs e)
         {
             
@@ -297,6 +295,15 @@ namespace Sci.Production.Subcon
                 this.groupBox1.Enabled = true;
                 this.groupBox2.Enabled = true;
                 this.btnThread.Enabled = true;
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["category"]).EqualString("Carton"))
+            {
+                this.btnSetCardboardPads.Visible = true;
+            }
+            else
+            {
+                this.btnSetCardboardPads.Visible = false;
             }
         }
 
@@ -426,6 +433,29 @@ namespace Sci.Production.Subcon
             batchapprove.ShowDialog(this);
             ReloadDatas();
             this.RenewData();
+        }
+
+        private void btnSetCardboardPads_Click(object sender, EventArgs e)
+        {
+            Form form = new Sci.Production.Subcon.B01_SetCardBoarsPads(this.CurrentMaintain);
+            form.ShowDialog(this);
+            this.OnDetailEntered();
+            this.RenewData();
+        }
+
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+            if (EditMode)
+            {
+                if (this.btnSetCardboardPads != null)
+                    this.btnSetCardboardPads.Enabled = false;
+            }
+            else
+            {
+                if (this.btnSetCardboardPads != null)
+                    this.btnSetCardboardPads.Enabled = true;
+            }
         }
     }
 }
