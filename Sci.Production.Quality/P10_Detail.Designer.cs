@@ -29,31 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.label11 = new Sci.Win.UI.Label();
-            this.label9 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.txtSize = new Sci.Win.UI.TextBox();
-            this.txtBrand = new Sci.Win.UI.TextBox();
-            this.label3 = new Sci.Win.UI.Label();
-            this.txtArticle = new Sci.Win.UI.TextBox();
-            this.txtSeason = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtReportNo = new Sci.Win.UI.TextBox();
-            this.txtStyle = new Sci.Win.UI.TextBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtColour = new Sci.Win.UI.TextBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new System.Windows.Forms.Label();
+            this.comboResult = new Sci.Win.UI.ComboBox();
+            this.txtReportDate = new Sci.Win.UI.DateBox();
             this.comboNeck = new Sci.Win.UI.ComboBox();
             this.comboMachineModel = new Sci.Win.UI.ComboBox();
             this.rdbtnHand = new System.Windows.Forms.RadioButton();
@@ -70,13 +51,28 @@
             this.label13 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.panel1 = new Sci.Win.UI.Panel();
-            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
-            this.panel2 = new Sci.Win.UI.Panel();
-            this.radioPanel2 = new Sci.Win.UI.RadioPanel();
-            this.panel3 = new Sci.Win.UI.Panel();
-            this.txtReportDate = new Sci.Win.UI.DateBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtColour = new Sci.Win.UI.TextBox();
+            this.label11 = new Sci.Win.UI.Label();
+            this.label9 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtSize = new Sci.Win.UI.TextBox();
+            this.txtBrand = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.txtArticle = new Sci.Win.UI.TextBox();
+            this.txtSeason = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtReportNo = new Sci.Win.UI.TextBox();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.panel9 = new Sci.Win.UI.Panel();
             this.gridShrinkage = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.flowLayoutPanel1 = new Sci.Win.UI.Panel();
             this.panel4 = new Sci.Win.UI.Panel();
             this.label20 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
@@ -87,16 +83,14 @@
             this.numTopS1 = new Sci.Win.UI.NumericBox();
             this.numTopS2 = new Sci.Win.UI.NumericBox();
             this.numTopL = new Sci.Win.UI.NumericBox();
-            this.panel5 = new Sci.Win.UI.Panel();
-            this.label33 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.label30 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.numTwisTingInner = new Sci.Win.UI.NumericBox();
-            this.numInnerS1 = new Sci.Win.UI.NumericBox();
-            this.numInnerS2 = new Sci.Win.UI.NumericBox();
-            this.numInnerL = new Sci.Win.UI.NumericBox();
+            this.panel7 = new System.Windows.Forms.Panel();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.numBottomL = new Sci.Win.UI.NumericBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.numBottomS1 = new Sci.Win.UI.NumericBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.numTwisTingBottom = new Sci.Win.UI.NumericBox();
             this.panel6 = new Sci.Win.UI.Panel();
             this.label38 = new System.Windows.Forms.Label();
             this.label37 = new System.Windows.Forms.Label();
@@ -108,44 +102,48 @@
             this.numOuterS1 = new Sci.Win.UI.NumericBox();
             this.label34 = new System.Windows.Forms.Label();
             this.numTwisTingOuter = new Sci.Win.UI.NumericBox();
-            this.panel7 = new System.Windows.Forms.Panel();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.numBottomL = new Sci.Win.UI.NumericBox();
-            this.label25 = new System.Windows.Forms.Label();
-            this.numBottomS1 = new Sci.Win.UI.NumericBox();
-            this.label27 = new System.Windows.Forms.Label();
-            this.numTwisTingBottom = new Sci.Win.UI.NumericBox();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.flowLayoutPanel1 = new Sci.Win.UI.Panel();
+            this.panel5 = new Sci.Win.UI.Panel();
+            this.label33 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
+            this.numTwisTingInner = new Sci.Win.UI.NumericBox();
+            this.numInnerS1 = new Sci.Win.UI.NumericBox();
+            this.numInnerS2 = new Sci.Win.UI.NumericBox();
+            this.numInnerL = new Sci.Win.UI.NumericBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.panel8 = new Sci.Win.UI.Panel();
             this.gridAppearance = new Sci.Win.UI.Grid();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.panel1 = new Sci.Win.UI.Panel();
+            this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.btnAmend = new Sci.Win.UI.Button();
             this.btnEncode = new Sci.Win.UI.Button();
-            this.comboResult = new Sci.Win.UI.ComboBox();
+            this.panel2 = new Sci.Win.UI.Panel();
+            this.radioPanel2 = new Sci.Win.UI.RadioPanel();
             this.btnPDF = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
-            this.panel9 = new Sci.Win.UI.Panel();
+            this.panel3 = new Sci.Win.UI.Panel();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.panel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridShrinkage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.panel7.SuspendLayout();
+            this.panel6.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.panel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.radioPanel1.SuspendLayout();
             this.radioPanel2.SuspendLayout();
             this.panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridShrinkage)).BeginInit();
-            this.panel4.SuspendLayout();
-            this.panel5.SuspendLayout();
-            this.panel6.SuspendLayout();
-            this.panel7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
-            this.flowLayoutPanel1.SuspendLayout();
-            this.panel8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).BeginInit();
-            this.panel9.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -204,181 +202,24 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Detail";
             // 
-            // tabPage2
+            // comboResult
             // 
-            this.tabPage2.Controls.Add(this.panel9);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1059, 420);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Shrinkage";
+            this.comboResult.BackColor = System.Drawing.Color.White;
+            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboResult.FormattingEnabled = true;
+            this.comboResult.IsSupportUnselect = true;
+            this.comboResult.Location = new System.Drawing.Point(574, 73);
+            this.comboResult.Name = "comboResult";
+            this.comboResult.OldText = "";
+            this.comboResult.Size = new System.Drawing.Size(121, 24);
+            this.comboResult.TabIndex = 56;
             // 
-            // tabPage3
+            // txtReportDate
             // 
-            this.tabPage3.Controls.Add(this.panel8);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1059, 420);
-            this.tabPage3.TabIndex = 0;
-            this.tabPage3.Text = "Appearance";
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(496, 41);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(75, 23);
-            this.label11.TabIndex = 31;
-            this.label11.Text = "Size";
-            // 
-            // label9
-            // 
-            this.label9.Location = new System.Drawing.Point(3, 41);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(75, 23);
-            this.label9.TabIndex = 30;
-            this.label9.Text = "Report No.";
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(255, 41);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(80, 23);
-            this.label5.TabIndex = 29;
-            this.label5.Text = "Arricle";
-            // 
-            // txtSize
-            // 
-            this.txtSize.BackColor = System.Drawing.Color.White;
-            this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSize.Location = new System.Drawing.Point(574, 41);
-            this.txtSize.Name = "txtSize";
-            this.txtSize.Size = new System.Drawing.Size(115, 23);
-            this.txtSize.TabIndex = 28;
-            this.txtSize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSize_MouseDown);
-            // 
-            // txtBrand
-            // 
-            this.txtBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtBrand.IsSupportEditMode = false;
-            this.txtBrand.Location = new System.Drawing.Point(574, 12);
-            this.txtBrand.Name = "txtBrand";
-            this.txtBrand.ReadOnly = true;
-            this.txtBrand.Size = new System.Drawing.Size(115, 23);
-            this.txtBrand.TabIndex = 27;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(496, 12);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 26;
-            this.label3.Text = "Brand";
-            // 
-            // txtArticle
-            // 
-            this.txtArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtArticle.IsSupportEditMode = false;
-            this.txtArticle.Location = new System.Drawing.Point(342, 41);
-            this.txtArticle.Name = "txtArticle";
-            this.txtArticle.ReadOnly = true;
-            this.txtArticle.Size = new System.Drawing.Size(117, 23);
-            this.txtArticle.TabIndex = 25;
-            // 
-            // txtSeason
-            // 
-            this.txtSeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtSeason.IsSupportEditMode = false;
-            this.txtSeason.Location = new System.Drawing.Point(342, 12);
-            this.txtSeason.Name = "txtSeason";
-            this.txtSeason.ReadOnly = true;
-            this.txtSeason.Size = new System.Drawing.Size(117, 23);
-            this.txtSeason.TabIndex = 24;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(255, 12);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 23);
-            this.label2.TabIndex = 23;
-            this.label2.Text = "Season";
-            // 
-            // txtReportNo
-            // 
-            this.txtReportNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtReportNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtReportNo.IsSupportEditMode = false;
-            this.txtReportNo.Location = new System.Drawing.Point(81, 41);
-            this.txtReportNo.Name = "txtReportNo";
-            this.txtReportNo.ReadOnly = true;
-            this.txtReportNo.Size = new System.Drawing.Size(139, 23);
-            this.txtReportNo.TabIndex = 22;
-            // 
-            // txtStyle
-            // 
-            this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtStyle.IsSupportEditMode = false;
-            this.txtStyle.Location = new System.Drawing.Point(81, 12);
-            this.txtStyle.Name = "txtStyle";
-            this.txtStyle.ReadOnly = true;
-            this.txtStyle.Size = new System.Drawing.Size(139, 23);
-            this.txtStyle.TabIndex = 21;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(3, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "Style#";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(3, 74);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 33;
-            this.label4.Text = "Colour";
-            // 
-            // txtColour
-            // 
-            this.txtColour.BackColor = System.Drawing.Color.White;
-            this.txtColour.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtColour.Location = new System.Drawing.Point(81, 74);
-            this.txtColour.Name = "txtColour";
-            this.txtColour.Size = new System.Drawing.Size(139, 23);
-            this.txtColour.TabIndex = 32;
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(255, 74);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(80, 23);
-            this.label6.TabIndex = 35;
-            this.label6.Text = "Report Date";
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(496, 74);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 23);
-            this.label7.TabIndex = 37;
-            this.label7.Text = "Result";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.label8.Location = new System.Drawing.Point(3, 121);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(171, 25);
-            this.label8.TabIndex = 38;
-            this.label8.Text = "Washing Cindition";
+            this.txtReportDate.Location = new System.Drawing.Point(342, 74);
+            this.txtReportDate.Name = "txtReportDate";
+            this.txtReportDate.Size = new System.Drawing.Size(140, 23);
+            this.txtReportDate.TabIndex = 0;
             // 
             // comboNeck
             // 
@@ -553,58 +394,181 @@
             this.label10.TabIndex = 40;
             this.label10.Text = "Line Dry";
             // 
-            // panel1
+            // label8
             // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(10, 520);
-            this.panel1.TabIndex = 7;
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
+            this.label8.Location = new System.Drawing.Point(3, 121);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(171, 25);
+            this.label8.TabIndex = 38;
+            this.label8.Text = "Washing Cindition";
             // 
-            // radioPanel1
+            // label7
             // 
-            this.radioPanel1.Controls.Add(this.btnAmend);
-            this.radioPanel1.Controls.Add(this.btnEncode);
-            this.radioPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.radioPanel1.Location = new System.Drawing.Point(10, 0);
-            this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(1077, 36);
-            this.radioPanel1.TabIndex = 8;
+            this.label7.Location = new System.Drawing.Point(496, 74);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(75, 23);
+            this.label7.TabIndex = 37;
+            this.label7.Text = "Result";
             // 
-            // panel2
+            // label6
             // 
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(1077, 36);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 484);
-            this.panel2.TabIndex = 9;
+            this.label6.Location = new System.Drawing.Point(255, 74);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(80, 23);
+            this.label6.TabIndex = 35;
+            this.label6.Text = "Report Date";
             // 
-            // radioPanel2
+            // label4
             // 
-            this.radioPanel2.Controls.Add(this.btnPDF);
-            this.radioPanel2.Controls.Add(this.btnEdit);
-            this.radioPanel2.Controls.Add(this.btnClose);
-            this.radioPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.radioPanel2.Location = new System.Drawing.Point(10, 485);
-            this.radioPanel2.Name = "radioPanel2";
-            this.radioPanel2.Size = new System.Drawing.Size(1067, 35);
-            this.radioPanel2.TabIndex = 9;
+            this.label4.Location = new System.Drawing.Point(3, 74);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.TabIndex = 33;
+            this.label4.Text = "Colour";
             // 
-            // panel3
+            // txtColour
             // 
-            this.panel3.Controls.Add(this.tabControl1);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(10, 36);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1067, 449);
-            this.panel3.TabIndex = 10;
+            this.txtColour.BackColor = System.Drawing.Color.White;
+            this.txtColour.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtColour.Location = new System.Drawing.Point(81, 74);
+            this.txtColour.Name = "txtColour";
+            this.txtColour.Size = new System.Drawing.Size(139, 23);
+            this.txtColour.TabIndex = 32;
             // 
-            // txtReportDate
+            // label11
             // 
-            this.txtReportDate.Location = new System.Drawing.Point(342, 74);
-            this.txtReportDate.Name = "txtReportDate";
-            this.txtReportDate.Size = new System.Drawing.Size(140, 23);
-            this.txtReportDate.TabIndex = 0;
+            this.label11.Location = new System.Drawing.Point(496, 41);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(75, 23);
+            this.label11.TabIndex = 31;
+            this.label11.Text = "Size";
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(3, 41);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(75, 23);
+            this.label9.TabIndex = 30;
+            this.label9.Text = "Report No.";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(255, 41);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(80, 23);
+            this.label5.TabIndex = 29;
+            this.label5.Text = "Arricle";
+            // 
+            // txtSize
+            // 
+            this.txtSize.BackColor = System.Drawing.Color.White;
+            this.txtSize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSize.Location = new System.Drawing.Point(574, 41);
+            this.txtSize.Name = "txtSize";
+            this.txtSize.Size = new System.Drawing.Size(115, 23);
+            this.txtSize.TabIndex = 28;
+            this.txtSize.MouseDown += new System.Windows.Forms.MouseEventHandler(this.txtSize_MouseDown);
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBrand.IsSupportEditMode = false;
+            this.txtBrand.Location = new System.Drawing.Point(574, 12);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.ReadOnly = true;
+            this.txtBrand.Size = new System.Drawing.Size(115, 23);
+            this.txtBrand.TabIndex = 27;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(496, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.TabIndex = 26;
+            this.label3.Text = "Brand";
+            // 
+            // txtArticle
+            // 
+            this.txtArticle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtArticle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtArticle.IsSupportEditMode = false;
+            this.txtArticle.Location = new System.Drawing.Point(342, 41);
+            this.txtArticle.Name = "txtArticle";
+            this.txtArticle.ReadOnly = true;
+            this.txtArticle.Size = new System.Drawing.Size(117, 23);
+            this.txtArticle.TabIndex = 25;
+            // 
+            // txtSeason
+            // 
+            this.txtSeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSeason.IsSupportEditMode = false;
+            this.txtSeason.Location = new System.Drawing.Point(342, 12);
+            this.txtSeason.Name = "txtSeason";
+            this.txtSeason.ReadOnly = true;
+            this.txtSeason.Size = new System.Drawing.Size(117, 23);
+            this.txtSeason.TabIndex = 24;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(255, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(80, 23);
+            this.label2.TabIndex = 23;
+            this.label2.Text = "Season";
+            // 
+            // txtReportNo
+            // 
+            this.txtReportNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtReportNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtReportNo.IsSupportEditMode = false;
+            this.txtReportNo.Location = new System.Drawing.Point(81, 41);
+            this.txtReportNo.Name = "txtReportNo";
+            this.txtReportNo.ReadOnly = true;
+            this.txtReportNo.Size = new System.Drawing.Size(139, 23);
+            this.txtReportNo.TabIndex = 22;
+            // 
+            // txtStyle
+            // 
+            this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtStyle.IsSupportEditMode = false;
+            this.txtStyle.Location = new System.Drawing.Point(81, 12);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.ReadOnly = true;
+            this.txtStyle.Size = new System.Drawing.Size(139, 23);
+            this.txtStyle.TabIndex = 21;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(3, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Style#";
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.panel9);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(1059, 423);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Shrinkage";
+            // 
+            // panel9
+            // 
+            this.panel9.Controls.Add(this.gridShrinkage);
+            this.panel9.Controls.Add(this.flowLayoutPanel1);
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel9.Location = new System.Drawing.Point(3, 3);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(1053, 417);
+            this.panel9.TabIndex = 62;
             // 
             // gridShrinkage
             // 
@@ -613,24 +577,8 @@
             this.gridShrinkage.AllowUserToResizeRows = false;
             this.gridShrinkage.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridShrinkage.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridShrinkage.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.gridShrinkage.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridShrinkage.DataSource = this.listControlBindingSource1;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridShrinkage.DefaultCellStyle = dataGridViewCellStyle6;
             this.gridShrinkage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridShrinkage.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridShrinkage.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -639,21 +587,33 @@
             this.gridShrinkage.Location = new System.Drawing.Point(0, 0);
             this.gridShrinkage.Name = "gridShrinkage";
             this.gridShrinkage.ReadOnly = true;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridShrinkage.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridShrinkage.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridShrinkage.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridShrinkage.RowTemplate.Height = 24;
             this.gridShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridShrinkage.ShowCellToolTips = false;
-            this.gridShrinkage.Size = new System.Drawing.Size(1053, 271);
+            this.gridShrinkage.Size = new System.Drawing.Size(1053, 274);
             this.gridShrinkage.TabIndex = 0;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.panel4);
+            this.flowLayoutPanel1.Controls.Add(this.panel7);
+            this.flowLayoutPanel1.Controls.Add(this.panel6);
+            this.flowLayoutPanel1.Controls.Add(this.panel5);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 274);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1053, 143);
+            this.flowLayoutPanel1.TabIndex = 61;
             // 
             // panel4
             // 
@@ -804,150 +764,118 @@
             0,
             0});
             // 
-            // panel5
+            // panel7
             // 
-            this.panel5.Controls.Add(this.label33);
-            this.panel5.Controls.Add(this.label32);
-            this.panel5.Controls.Add(this.label31);
-            this.panel5.Controls.Add(this.label30);
-            this.panel5.Controls.Add(this.label29);
-            this.panel5.Controls.Add(this.numTwisTingInner);
-            this.panel5.Controls.Add(this.numInnerS1);
-            this.panel5.Controls.Add(this.numInnerS2);
-            this.panel5.Controls.Add(this.numInnerL);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel5.Location = new System.Drawing.Point(0, 113);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1053, 30);
-            this.panel5.TabIndex = 58;
+            this.panel7.Controls.Add(this.label21);
+            this.panel7.Controls.Add(this.label23);
+            this.panel7.Controls.Add(this.numBottomL);
+            this.panel7.Controls.Add(this.label25);
+            this.panel7.Controls.Add(this.numBottomS1);
+            this.panel7.Controls.Add(this.label27);
+            this.panel7.Controls.Add(this.numTwisTingBottom);
+            this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel7.Location = new System.Drawing.Point(0, 57);
+            this.panel7.Name = "panel7";
+            this.panel7.Size = new System.Drawing.Size(1053, 26);
+            this.panel7.TabIndex = 60;
             // 
-            // label33
+            // label21
             // 
-            this.label33.AutoSize = true;
-            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label33.Location = new System.Drawing.Point(3, 3);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(160, 17);
-            this.label33.TabIndex = 35;
-            this.label33.Text = "TWISTING (INNER)%";
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label21.Location = new System.Drawing.Point(3, 5);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(179, 17);
+            this.label21.TabIndex = 19;
+            this.label21.Text = "TWISTING (BOTTOM)%";
             // 
-            // label32
+            // label23
             // 
-            this.label32.AutoSize = true;
-            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label32.Location = new System.Drawing.Point(378, 3);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(97, 17);
-            this.label32.TabIndex = 36;
-            this.label32.Text = "FOR INNER:";
+            this.label23.AutoSize = true;
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label23.Location = new System.Drawing.Point(378, 5);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(116, 17);
+            this.label23.TabIndex = 21;
+            this.label23.Text = "FOR BOTTOM:";
             // 
-            // label31
+            // numBottomL
             // 
-            this.label31.AutoSize = true;
-            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label31.Location = new System.Drawing.Point(515, 3);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(25, 17);
-            this.label31.TabIndex = 37;
-            this.label31.Text = "S1";
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label30.Location = new System.Drawing.Point(671, 3);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(25, 17);
-            this.label30.TabIndex = 38;
-            this.label30.Text = "S2";
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label29.Location = new System.Drawing.Point(823, 3);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(16, 17);
-            this.label29.TabIndex = 39;
-            this.label29.Text = "L";
-            // 
-            // numTwisTingInner
-            // 
-            this.numTwisTingInner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingInner.DecimalPlaces = 2;
-            this.numTwisTingInner.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingInner.IsSupportEditMode = false;
-            this.numTwisTingInner.Location = new System.Drawing.Point(196, 3);
-            this.numTwisTingInner.Name = "numTwisTingInner";
-            this.numTwisTingInner.NullValue = new decimal(new int[] {
+            this.numBottomL.BackColor = System.Drawing.Color.White;
+            this.numBottomL.DecimalPlaces = 2;
+            this.numBottomL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomL.Location = new System.Drawing.Point(702, 2);
+            this.numBottomL.Name = "numBottomL";
+            this.numBottomL.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numTwisTingInner.ReadOnly = true;
-            this.numTwisTingInner.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingInner.TabIndex = 40;
-            this.numTwisTingInner.Value = new decimal(new int[] {
+            this.numBottomL.Size = new System.Drawing.Size(73, 23);
+            this.numBottomL.TabIndex = 33;
+            this.numBottomL.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numInnerS1
+            // label25
             // 
-            this.numInnerS1.BackColor = System.Drawing.Color.White;
-            this.numInnerS1.DecimalPlaces = 2;
-            this.numInnerS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerS1.Location = new System.Drawing.Point(542, 3);
-            this.numInnerS1.Name = "numInnerS1";
-            this.numInnerS1.NullValue = new decimal(new int[] {
+            this.label25.AutoSize = true;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label25.Location = new System.Drawing.Point(515, 5);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(17, 17);
+            this.label25.TabIndex = 23;
+            this.label25.Text = "S";
+            // 
+            // numBottomS1
+            // 
+            this.numBottomS1.BackColor = System.Drawing.Color.White;
+            this.numBottomS1.DecimalPlaces = 2;
+            this.numBottomS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numBottomS1.Location = new System.Drawing.Point(542, 2);
+            this.numBottomS1.Name = "numBottomS1";
+            this.numBottomS1.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numInnerS1.Size = new System.Drawing.Size(73, 23);
-            this.numInnerS1.TabIndex = 41;
-            this.numInnerS1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // numInnerS2
-            // 
-            this.numInnerS2.BackColor = System.Drawing.Color.White;
-            this.numInnerS2.DecimalPlaces = 2;
-            this.numInnerS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerS2.Location = new System.Drawing.Point(702, 3);
-            this.numInnerS2.Name = "numInnerS2";
-            this.numInnerS2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numInnerS2.Size = new System.Drawing.Size(73, 23);
-            this.numInnerS2.TabIndex = 42;
-            this.numInnerS2.Value = new decimal(new int[] {
+            this.numBottomS1.Size = new System.Drawing.Size(73, 23);
+            this.numBottomS1.TabIndex = 31;
+            this.numBottomS1.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // numInnerL
+            // label27
             // 
-            this.numInnerL.BackColor = System.Drawing.Color.White;
-            this.numInnerL.DecimalPlaces = 2;
-            this.numInnerL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInnerL.Location = new System.Drawing.Point(845, 3);
-            this.numInnerL.Name = "numInnerL";
-            this.numInnerL.NullValue = new decimal(new int[] {
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label27.Location = new System.Drawing.Point(671, 5);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(16, 17);
+            this.label27.TabIndex = 25;
+            this.label27.Text = "L";
+            // 
+            // numTwisTingBottom
+            // 
+            this.numTwisTingBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTwisTingBottom.DecimalPlaces = 2;
+            this.numTwisTingBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTwisTingBottom.IsSupportEditMode = false;
+            this.numTwisTingBottom.Location = new System.Drawing.Point(196, 3);
+            this.numTwisTingBottom.Name = "numTwisTingBottom";
+            this.numTwisTingBottom.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numInnerL.Size = new System.Drawing.Size(73, 23);
-            this.numInnerL.TabIndex = 43;
-            this.numInnerL.Value = new decimal(new int[] {
+            this.numTwisTingBottom.ReadOnly = true;
+            this.numTwisTingBottom.Size = new System.Drawing.Size(100, 23);
+            this.numTwisTingBottom.TabIndex = 29;
+            this.numTwisTingBottom.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -1113,134 +1041,164 @@
             0,
             0});
             // 
-            // panel7
+            // panel5
             // 
-            this.panel7.Controls.Add(this.label21);
-            this.panel7.Controls.Add(this.label23);
-            this.panel7.Controls.Add(this.numBottomL);
-            this.panel7.Controls.Add(this.label25);
-            this.panel7.Controls.Add(this.numBottomS1);
-            this.panel7.Controls.Add(this.label27);
-            this.panel7.Controls.Add(this.numTwisTingBottom);
-            this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel7.Location = new System.Drawing.Point(0, 57);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(1053, 26);
-            this.panel7.TabIndex = 60;
+            this.panel5.Controls.Add(this.label33);
+            this.panel5.Controls.Add(this.label32);
+            this.panel5.Controls.Add(this.label31);
+            this.panel5.Controls.Add(this.label30);
+            this.panel5.Controls.Add(this.label29);
+            this.panel5.Controls.Add(this.numTwisTingInner);
+            this.panel5.Controls.Add(this.numInnerS1);
+            this.panel5.Controls.Add(this.numInnerS2);
+            this.panel5.Controls.Add(this.numInnerL);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel5.Location = new System.Drawing.Point(0, 113);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(1053, 30);
+            this.panel5.TabIndex = 58;
             // 
-            // label21
+            // label33
             // 
-            this.label21.AutoSize = true;
-            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label21.Location = new System.Drawing.Point(3, 5);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(179, 17);
-            this.label21.TabIndex = 19;
-            this.label21.Text = "TWISTING (BOTTOM)%";
+            this.label33.AutoSize = true;
+            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label33.Location = new System.Drawing.Point(3, 3);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(160, 17);
+            this.label33.TabIndex = 35;
+            this.label33.Text = "TWISTING (INNER)%";
             // 
-            // label23
+            // label32
             // 
-            this.label23.AutoSize = true;
-            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label23.Location = new System.Drawing.Point(378, 5);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(116, 17);
-            this.label23.TabIndex = 21;
-            this.label23.Text = "FOR BOTTOM:";
+            this.label32.AutoSize = true;
+            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label32.Location = new System.Drawing.Point(378, 3);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(97, 17);
+            this.label32.TabIndex = 36;
+            this.label32.Text = "FOR INNER:";
             // 
-            // numBottomL
+            // label31
             // 
-            this.numBottomL.BackColor = System.Drawing.Color.White;
-            this.numBottomL.DecimalPlaces = 2;
-            this.numBottomL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBottomL.Location = new System.Drawing.Point(702, 2);
-            this.numBottomL.Name = "numBottomL";
-            this.numBottomL.NullValue = new decimal(new int[] {
+            this.label31.AutoSize = true;
+            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label31.Location = new System.Drawing.Point(515, 3);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(25, 17);
+            this.label31.TabIndex = 37;
+            this.label31.Text = "S1";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label30.Location = new System.Drawing.Point(671, 3);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(25, 17);
+            this.label30.TabIndex = 38;
+            this.label30.Text = "S2";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label29.Location = new System.Drawing.Point(823, 3);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(16, 17);
+            this.label29.TabIndex = 39;
+            this.label29.Text = "L";
+            // 
+            // numTwisTingInner
+            // 
+            this.numTwisTingInner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTwisTingInner.DecimalPlaces = 2;
+            this.numTwisTingInner.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTwisTingInner.IsSupportEditMode = false;
+            this.numTwisTingInner.Location = new System.Drawing.Point(196, 3);
+            this.numTwisTingInner.Name = "numTwisTingInner";
+            this.numTwisTingInner.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numBottomL.Size = new System.Drawing.Size(73, 23);
-            this.numBottomL.TabIndex = 33;
-            this.numBottomL.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label25.Location = new System.Drawing.Point(515, 5);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(17, 17);
-            this.label25.TabIndex = 23;
-            this.label25.Text = "S";
-            // 
-            // numBottomS1
-            // 
-            this.numBottomS1.BackColor = System.Drawing.Color.White;
-            this.numBottomS1.DecimalPlaces = 2;
-            this.numBottomS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numBottomS1.Location = new System.Drawing.Point(542, 2);
-            this.numBottomS1.Name = "numBottomS1";
-            this.numBottomS1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numBottomS1.Size = new System.Drawing.Size(73, 23);
-            this.numBottomS1.TabIndex = 31;
-            this.numBottomS1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label27.Location = new System.Drawing.Point(671, 5);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(16, 17);
-            this.label27.TabIndex = 25;
-            this.label27.Text = "L";
-            // 
-            // numTwisTingBottom
-            // 
-            this.numTwisTingBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numTwisTingBottom.DecimalPlaces = 2;
-            this.numTwisTingBottom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numTwisTingBottom.IsSupportEditMode = false;
-            this.numTwisTingBottom.Location = new System.Drawing.Point(196, 3);
-            this.numTwisTingBottom.Name = "numTwisTingBottom";
-            this.numTwisTingBottom.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numTwisTingBottom.ReadOnly = true;
-            this.numTwisTingBottom.Size = new System.Drawing.Size(100, 23);
-            this.numTwisTingBottom.TabIndex = 29;
-            this.numTwisTingBottom.Value = new decimal(new int[] {
+            this.numTwisTingInner.ReadOnly = true;
+            this.numTwisTingInner.Size = new System.Drawing.Size(100, 23);
+            this.numTwisTingInner.TabIndex = 40;
+            this.numTwisTingInner.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
             // 
-            // flowLayoutPanel1
+            // numInnerS1
             // 
-            this.flowLayoutPanel1.Controls.Add(this.panel4);
-            this.flowLayoutPanel1.Controls.Add(this.panel7);
-            this.flowLayoutPanel1.Controls.Add(this.panel6);
-            this.flowLayoutPanel1.Controls.Add(this.panel5);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 271);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1053, 143);
-            this.flowLayoutPanel1.TabIndex = 61;
+            this.numInnerS1.BackColor = System.Drawing.Color.White;
+            this.numInnerS1.DecimalPlaces = 2;
+            this.numInnerS1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInnerS1.Location = new System.Drawing.Point(542, 3);
+            this.numInnerS1.Name = "numInnerS1";
+            this.numInnerS1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numInnerS1.Size = new System.Drawing.Size(73, 23);
+            this.numInnerS1.TabIndex = 41;
+            this.numInnerS1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numInnerS2
+            // 
+            this.numInnerS2.BackColor = System.Drawing.Color.White;
+            this.numInnerS2.DecimalPlaces = 2;
+            this.numInnerS2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInnerS2.Location = new System.Drawing.Point(702, 3);
+            this.numInnerS2.Name = "numInnerS2";
+            this.numInnerS2.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numInnerS2.Size = new System.Drawing.Size(73, 23);
+            this.numInnerS2.TabIndex = 42;
+            this.numInnerS2.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numInnerL
+            // 
+            this.numInnerL.BackColor = System.Drawing.Color.White;
+            this.numInnerL.DecimalPlaces = 2;
+            this.numInnerL.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numInnerL.Location = new System.Drawing.Point(845, 3);
+            this.numInnerL.Name = "numInnerL";
+            this.numInnerL.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numInnerL.Size = new System.Drawing.Size(73, 23);
+            this.numInnerL.TabIndex = 43;
+            this.numInnerL.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.panel8);
+            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(1059, 420);
+            this.tabPage3.TabIndex = 0;
+            this.tabPage3.Text = "Appearance";
             // 
             // panel8
             // 
@@ -1268,14 +1226,14 @@
             this.gridAppearance.Location = new System.Drawing.Point(0, 0);
             this.gridAppearance.Name = "gridAppearance";
             this.gridAppearance.ReadOnly = true;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridAppearance.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridAppearance.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAppearance.RowTemplate.Height = 24;
@@ -1283,6 +1241,25 @@
             this.gridAppearance.ShowCellToolTips = false;
             this.gridAppearance.Size = new System.Drawing.Size(1053, 414);
             this.gridAppearance.TabIndex = 1;
+            this.gridAppearance.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.gridAppearance_CellBeginEdit);
+            // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(10, 520);
+            this.panel1.TabIndex = 7;
+            // 
+            // radioPanel1
+            // 
+            this.radioPanel1.Controls.Add(this.btnAmend);
+            this.radioPanel1.Controls.Add(this.btnEncode);
+            this.radioPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.radioPanel1.Location = new System.Drawing.Point(10, 0);
+            this.radioPanel1.Name = "radioPanel1";
+            this.radioPanel1.Size = new System.Drawing.Size(1077, 36);
+            this.radioPanel1.TabIndex = 8;
             // 
             // btnAmend
             // 
@@ -1306,17 +1283,24 @@
             this.btnEncode.UseVisualStyleBackColor = true;
             this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
             // 
-            // comboResult
+            // panel2
             // 
-            this.comboResult.BackColor = System.Drawing.Color.White;
-            this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboResult.FormattingEnabled = true;
-            this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(574, 73);
-            this.comboResult.Name = "comboResult";
-            this.comboResult.OldText = "";
-            this.comboResult.Size = new System.Drawing.Size(121, 24);
-            this.comboResult.TabIndex = 56;
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel2.Location = new System.Drawing.Point(1077, 36);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(10, 484);
+            this.panel2.TabIndex = 9;
+            // 
+            // radioPanel2
+            // 
+            this.radioPanel2.Controls.Add(this.btnPDF);
+            this.radioPanel2.Controls.Add(this.btnEdit);
+            this.radioPanel2.Controls.Add(this.btnClose);
+            this.radioPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.radioPanel2.Location = new System.Drawing.Point(10, 485);
+            this.radioPanel2.Name = "radioPanel2";
+            this.radioPanel2.Size = new System.Drawing.Size(1067, 35);
+            this.radioPanel2.TabIndex = 9;
             // 
             // btnPDF
             // 
@@ -1351,15 +1335,14 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // panel9
+            // panel3
             // 
-            this.panel9.Controls.Add(this.gridShrinkage);
-            this.panel9.Controls.Add(this.flowLayoutPanel1);
-            this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel9.Location = new System.Drawing.Point(3, 3);
-            this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(1053, 414);
-            this.panel9.TabIndex = 62;
+            this.panel3.Controls.Add(this.tabControl1);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel3.Location = new System.Drawing.Point(10, 36);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(1067, 449);
+            this.panel3.TabIndex = 10;
             // 
             // P10_Detail
             // 
@@ -1378,25 +1361,25 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.panel9.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridShrinkage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.panel7.ResumeLayout(false);
+            this.panel7.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.tabPage3.ResumeLayout(false);
+            this.panel8.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.radioPanel1.ResumeLayout(false);
             this.radioPanel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridShrinkage)).EndInit();
-            this.panel4.ResumeLayout(false);
-            this.panel4.PerformLayout();
-            this.panel5.ResumeLayout(false);
-            this.panel5.PerformLayout();
-            this.panel6.ResumeLayout(false);
-            this.panel6.PerformLayout();
-            this.panel7.ResumeLayout(false);
-            this.panel7.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.panel8.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridAppearance)).EndInit();
-            this.panel9.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

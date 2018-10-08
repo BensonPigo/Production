@@ -22,6 +22,9 @@ namespace Sci.Production.Quality
     {
         private DataRow Deatilrow;
         private DataRow MasterRow;
+        private string style = "";
+        private string season = "";
+        private string brand = "";
 
         public P10_Detail(bool editmode, DataRow masterrow, DataRow deatilrow)
         {
@@ -60,6 +63,9 @@ namespace Sci.Production.Quality
             comboResult.DisplayMember = "Value";
 
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
+
+            DataGridViewGeneratorTextColumnSettings TextColumnSetting = new DataGridViewGeneratorTextColumnSettings();
+
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
             ResultCombo.Add("N/A", "N/A");
             ResultCombo.Add("Accepted", "Accepted");
@@ -68,8 +74,11 @@ namespace Sci.Production.Quality
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
 
+            //預設選取的時候會全部變成大寫，關掉這個設定。
+            TextColumnSetting.CharacterCasing= CharacterCasing.Normal;
+
             Helper.Controls.Grid.Generator(this.gridAppearance)
-            .Text("Type", header: "After Wash Appearance Check list", width: Widths.AnsiChars(40), iseditingreadonly: true)
+            .Text("Type", header: "After Wash Appearance Check list", width: Widths.AnsiChars(40), iseditingreadonly: false,settings:TextColumnSetting)
             .ComboBox("Wash1", header: "Wash1", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .ComboBox("Wash2", header: "Wash2", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .ComboBox("Wash3", header: "Wash3", width: Widths.AnsiChars(10), settings: ResultComboCell)
@@ -79,12 +88,12 @@ namespace Sci.Production.Quality
             tab1Load();
             tab2Load();
             tab3Load();
-
-
+           
             tabControl1.SelectedIndex = 1;
             tabControl1.SelectedIndex = 2;
             tabControl1.SelectedIndex = 0;
         }
+
 
 
         private void btnenable()
@@ -104,12 +113,14 @@ namespace Sci.Production.Quality
         {
             //主檔資料
             txtStyle.Text = MyUtility.Convert.GetString(MasterRow["StyleID"]);
+            style = MyUtility.Convert.GetString(MasterRow["StyleID"]);
             txtSeason.Text = MyUtility.Convert.GetString(MasterRow["SeasonID"]);
+            season = MyUtility.Convert.GetString(MasterRow["SeasonID"]); 
             txtBrand.Text = MyUtility.Convert.GetString(MasterRow["BrandID"]);
+            brand = MyUtility.Convert.GetString(MasterRow["BrandID"]);
 
             txtReportNo.Text = MyUtility.Convert.GetString(Deatilrow["ReportNo"]);
             txtArticle.Text = MyUtility.Convert.GetString(MasterRow["Article"]);
-            txtSize.Text = MyUtility.Convert.GetString(Deatilrow["SizeCode"]);
 
             //明細檔資料
             string sqlShrinkage = $@"select * from[SampleGarmentTest_Detail] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} ";
@@ -118,6 +129,7 @@ namespace Sci.Production.Quality
             DataRow dr = tmp.Rows[0];
 
 
+            txtSize.Text = MyUtility.Convert.GetString(dr["SizeCode"]);
             txtColour.Text = MyUtility.Convert.GetString(dr["Colour"]);
             txtReportDate.Value = MyUtility.Convert.GetDate(dr["ReportDate"]);
             comboResult.Text = MyUtility.Convert.GetString(dr["Result"]);
@@ -154,7 +166,7 @@ namespace Sci.Production.Quality
                                when Location='B' then 'BOTTOM' end
       ,[Type]      ,[BeforeWash]      ,[SizeSpec]      ,[AfterWash1]      ,[Shrinkage1]      ,[AfterWash2]      ,[Shrinkage2]      ,[AfterWash3]      ,[Shrinkage3]
 from[SampleGarmentTest_Detail_Shrinkage] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}
-order by Location desc";
+order by Seq,Location desc";
 
             DBProxy.Current.Select(null, sqlShrinkage, out dtShrinkage);
             listControlBindingSource1.DataSource = null;
@@ -208,7 +220,7 @@ order by Location desc";
         {
             gridAppearance.IsEditingReadOnly = false;
 
-            string sqlApperance = $@"select * from[SampleGarmentTest_Detail_Apperance] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} order by seq";
+            string sqlApperance = $@"select * from[SampleGarmentTest_Detail_Appearance] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} order by seq";
 
             DBProxy.Current.Select(null, sqlApperance, out dtApperance);
             listControlBindingSource2.DataSource = null;
@@ -336,18 +348,19 @@ update [SampleGarmentTest_Detail_Twisting] set S1={numBottomS1.Value},L={numBott
         private void tab3ApperanceSave()
         {
             string savetab2Apperance = $@"
-  merge [SampleGarmentTest_Detail_Apperance] t
+  merge [SampleGarmentTest_Detail_Appearance] t
   using #tmp s
-  on s.id = t.id and s.no = t.no and s.type = t.type
+  on s.id = t.id and s.no = t.no and s.seq = t.seq
   when matched then
   update set
+	t.[Type]  = s.[Type],
 	t.[Wash1]  = s.[Wash1],
     t.[Wash2]	= s.[Wash2]	,
     t.[Wash3]	= s.[Wash3],
     t.[Comment]	= s.[Comment]
 	;
 
-select * from [SampleGarmentTest_Detail_Apperance]  where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} order by seq";
+select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} order by seq";
 
             DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)listControlBindingSource2.DataSource, string.Empty, savetab2Apperance, out dtApperance);
             if (!result)
@@ -368,7 +381,13 @@ select * from [SampleGarmentTest_Detail_Apperance]  where id = {this.Deatilrow["
         {
             if (e.Button == MouseButtons.Right)
             {
-                string sql = $@"SELECT distinct(SizeCode) FROM  Style_SizeCode";
+                string sql = $@"
+                SELECT SizeCode
+                FROM  Style_SizeCode ss
+                INNER JOIN Style s
+                ON ss.StyleUkey=s.Ukey
+                WHERE s.ID='{style}' AND s.SeasonID='{season}' AND s.BrandID='{brand}'
+";
                 SelectItem item = new SelectItem(sql, "30,30", null);
                 DialogResult dresult = item.ShowDialog();
                 if (dresult == DialogResult.Cancel) return;
@@ -455,7 +474,7 @@ select * from [SampleGarmentTest_Detail_Apperance]  where id = {this.Deatilrow["
             }
             else
             {
-                worksheet.Cells[73, 5] = "V";
+                worksheet.Cells[73, 6] = "V";
             }
 
             #region 插入圖片與Technician名字
@@ -476,7 +495,7 @@ select * from [SampleGarmentTest_Detail_Apperance]  where id = {this.Deatilrow["
                 picSource = drTechnicianInfo["SignaturePic"].ToString();
             }
             //Name
-            worksheet.Cells[79, 9] = technicianName;
+            worksheet.Cells[74, 9] = technicianName;
 
             //插入圖檔
             if (!MyUtility.Check.Empty(picSource))
@@ -484,7 +503,9 @@ select * from [SampleGarmentTest_Detail_Apperance]  where id = {this.Deatilrow["
                 if (File.Exists(picSource))
                 {
                     img = Image.FromFile(picSource);
-                    worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cell.Left, cell.Top, 100, 24);
+                    Microsoft.Office.Interop.Excel.Range cellPic = worksheet.Cells[72, 9];
+
+                    worksheet.Shapes.AddPicture(picSource, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellPic.Left, cellPic.Top, 100, 24);
                 }
             }
             #endregion
@@ -567,6 +588,9 @@ select * from [SampleGarmentTest_Detail_Apperance]  where id = {this.Deatilrow["
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash1"]);
+            string type= MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["type"]);
+            worksheet.Cells[64, 3] = type;
+
             if (tmpAR.EqualString("Accepted"))
                 worksheet.Cells[64, 4] = "V";
             else if (tmpAR.EqualString("Rejected"))
@@ -968,6 +992,15 @@ select * from [SampleGarmentTest_Detail_Apperance]  where id = {this.Deatilrow["
             else
             {
                 btnenable();
+            }
+        }
+
+        private void gridAppearance_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            // 非第 0 column 則取消編輯動作
+            if (e.ColumnIndex == 0 && e.RowIndex!=3)
+            {
+                e.Cancel = true;
             }
         }
     }

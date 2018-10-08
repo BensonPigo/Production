@@ -37,6 +37,11 @@ namespace Sci.Production.Quality
         }
         private void EditThisDetail()
         {
+            if (CurrentDetailData==null)
+            {
+                MyUtility.Msg.WarningBox("No Detail Data!");
+                return;
+            }
             Sci.Production.Quality.P10_Detail callNewDetailForm = new P10_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
@@ -386,7 +391,7 @@ where sd.id='{0}' order by sd.No
                     string delete3sub = $@"
 Delete SampleGarmentTest_Detail_Shrinkage  where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 Delete SampleGarmentTest_Detail_Twisting where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
-Delete SampleGarmentTest_Detail_Apperance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete SampleGarmentTest_Detail_Appearance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
 ";
                     DBProxy.Current.Execute(null, delete3sub);
                 }
@@ -457,23 +462,23 @@ WHEN Location='T' THEN 'TOP'
 ELSE ''
 END from #Location2
 
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Print / Heat Transfer',1)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Embroidery',2)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Label',3)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Zipper/ snap button/ button/tie cord/etc.',4)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Discoloration (colour change )',5)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Colour Staining',6)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Pilling',7)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Shrinkage & Twisting',8)
-INSERT INTO [dbo].[SampleGarmentTest_Detail_Apperance]([ID],[No],[Type],[Seq])
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
 values (@ID,@NO,'Appearance of garment after wash',9)
 ";
                         DBProxy.Current.Execute(null, insertShrinkage, spam);
