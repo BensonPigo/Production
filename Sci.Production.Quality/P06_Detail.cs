@@ -462,6 +462,9 @@ namespace Sci.Production.Quality
             rollCell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Roll"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (oldvalue.Equals(newvalue)) return;
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
 

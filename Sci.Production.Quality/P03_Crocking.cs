@@ -240,6 +240,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return 
+                if (oldvalue.Equals(newvalue)) return;
                 if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
                 {
                     dr["Roll"] = "";
@@ -422,10 +423,10 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             {
                 foreach (DataRow dr in afterDT.Rows)
                 {
-                    DataRow[] drArray = afterDT.Select(string.Format("Roll='{0}'", MyUtility.Convert.GetString(dr["Roll"])));
+                    DataRow[] drArray = afterDT.Select(string.Format("Roll='{0}' and Dyelot = '{1}'", MyUtility.Convert.GetString(dr["Roll"]), MyUtility.Convert.GetString(dr["Dyelot"])));
                     if (drArray.Length > 1)
                     {
-                        MyUtility.Msg.WarningBox("<Roll>" + MyUtility.Convert.GetString(dr["Roll"]) + " is already exist ! ");
+                        MyUtility.Msg.WarningBox($"<Roll>{MyUtility.Convert.GetString(dr["Roll"])}, <Dyelot>{MyUtility.Convert.GetString(dr["Dyelot"])} is already exist ! ");
                         return false;
                     }
                 }
