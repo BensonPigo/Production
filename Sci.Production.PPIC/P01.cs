@@ -56,6 +56,9 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override void OnDetailDetached()
         {
+            if (this.CurrentDataRow!=null)
+                this.GetCustCDKit();
+
             base.OnDetailDetached();
             this.ControlButton();
         }
@@ -1118,6 +1121,30 @@ where o.Junk = 0 and o.POID= @POID order by o.ID";
                 oSheet.Cells[4, colIdx].HorizontalAlignment = XlHAlign.xlHAlignLeft;
             }
         }
+
+        private void GetCustCDKit()
+        {
+            DataRow tmp;
+            string cmd = string.Empty;
+            cmd = @"
+            SELECT DISTINCT c.Kit
+            FROm CustCD c
+            LEFT JOIN Orders o
+            ON c.ID=o.CustCDID AND c.BrandID=@BrandID
+            WHERE o.ID=@OrderId ";
+
+            //主索引鍵：CustCD.ID+CustCD.BrandID
+
+            bool res = MyUtility.Check.Seek(cmd, new List<SqlParameter> { new SqlParameter("@OrderId", this.CurrentDataRow["ID"]), new SqlParameter("@BrandID", this.CurrentDataRow["BrandID"]) }, out tmp, null);
+            if (res && tmp["Kit"] != null)
+            {
+
+                this.displayKit.Text = tmp["Kit"].ToString();
+            }
+            else
+                this.displayKit.Text = string.Empty;
+        }
+    
 
      private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
         {
