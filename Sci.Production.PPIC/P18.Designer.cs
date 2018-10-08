@@ -99,7 +99,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(1030, 48);
+            this.gridicon.Location = new System.Drawing.Point(866, 48);
             // 
             // refresh
             // 
@@ -145,7 +145,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(974, 465);
+            this.browse.Size = new System.Drawing.Size(974, 490);
             // 
             // tabs
             // 
