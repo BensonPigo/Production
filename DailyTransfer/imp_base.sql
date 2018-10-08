@@ -669,7 +669,7 @@ SET
       ,a.AddDate		      =b.AddDate
       ,a.EditName		      =b.EditName
       ,a.EditDate		      =b.EditDate
-
+	  ,a.Kit		          =b.Kit
 from Production.dbo.CustCD as a inner join Trade_To_Pms.dbo.CustCD as b ON a.id=b.id and a.BrandID=b.BrandID
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.CustCD(
@@ -705,7 +705,7 @@ BrandID
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,Kit
 )
 select 
 BrandID
@@ -740,7 +740,7 @@ BrandID
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,Kit
 from Trade_To_Pms.dbo.CustCD as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.CustCD as a WITH (NOLOCK) where a.id = b.id and a.BrandID=b.BrandID)
 

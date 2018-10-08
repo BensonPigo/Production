@@ -24,8 +24,6 @@ namespace Sci.Production.Thread
         {
             this.InitializeComponent();
 
-            string defaultfilter = string.Format("MDivisionid = '{0}' ", this.keyword);
-            this.DefaultFilter = defaultfilter;
         }
 
         /// <inheritdoc/>
@@ -39,7 +37,6 @@ namespace Sci.Production.Thread
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
-            this.CurrentMaintain["mDivisionid"] = this.keyword;
         }
 
         /// <inheritdoc/>

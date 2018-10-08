@@ -268,18 +268,18 @@ namespace Sci
                             if (isChangeSelItem == true)
                             {
                                 DataRow dd = g.GetDataRow<DataRow>(e.RowIndex);
-                                string ddsql = string.Format("select 1 from ThreadStock where Refno='{0}' and ThreadColorID='{1}' and MDivisionid='{2}'", dd["Refno"].ToString(), dd["ThreadColorid"].ToString(), keyword);
+                                string ddsql = string.Format("select 1 from ThreadStock where Refno='{0}' and ThreadColorID='{1}' ", dd["Refno"].ToString(), dd["ThreadColorid"].ToString());
                                 if (MyUtility.Check.Seek(ddsql))
                                 {
-                                    sql = string.Format("select ID,Description,NewCone,UsedCone from ThreadLocation a left join ThreadStock b on a.id=b.ThreadLocationID  where  junk = 0 and Refno='{0}' and ThreadColorID='{1}' and a.MDivisionid='{2}' order by ID", dd["Refno"].ToString(), dd["ThreadColorid"].ToString(), keyword);
+                                    sql = string.Format("select ID,Description,NewCone,UsedCone from ThreadLocation a left join ThreadStock b on a.id=b.ThreadLocationID  where  junk = 0 and Refno='{0}' and ThreadColorID='{1}' order by ID", dd["Refno"].ToString(), dd["ThreadColorid"].ToString());
                                     strwidth = "8,18,10,10";
                                 }
                                 else {
-                                    sql = string.Format("select ID,Description from ThreadLocation where mDivisionid = '{0}' and junk = 0 order by ID", keyword);
+                                    sql = "select ID,Description from ThreadLocation where junk = 0 order by ID";
                                 }
                             }
                             else {
-                                sql = string.Format("select ID,Description from ThreadLocation where mDivisionid = '{0}' and junk = 0 order by ID", keyword);
+                                sql = "select ID,Description from ThreadLocation where junk = 0 order by ID";
                             }
 
                             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, strwidth, dr["ThreadLocationid"].ToString().Trim());

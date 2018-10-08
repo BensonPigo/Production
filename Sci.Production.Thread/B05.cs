@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -51,39 +52,38 @@ namespace Sci.Production.Thread
                 @"select a.*,b.description as colordesc
             from threadstock a WITH (NOLOCK)
             left join threadcolor b WITH (NOLOCK)on a.threadcolorid = b.id 
-            where a.refno = '{0}' and mDivisionid = '{1}'",
-                masterID,
-                this.keyWord);
+            where a.refno = '{0}' ",
+                masterID);
 
-// string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
-//                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname
-//                            from ThreadIncoming a where 1=0";
-//            DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
+            // string sql = @"Select cdate, id, '' as name, 0.0 as Newin,0.0 as Newout,0.0 as Newbalance, 0.0 as Usedin,0.0 as Usedout ,
+            //                            0.0 as Usedbalance,'' as ThreadColorid,'' as ThreadLocationid, '' as editname
+            //                            from ThreadIncoming a where 1=0";
+            //            DualResult sqlReault = DBProxy.Current.Select(null, sql, out gridTb);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
         /// <inheritdoc/>
         protected override bool OnGridSetup()
         {
-             this.Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("Threadcolorid", header: "Thread Color", width: Widths.AnsiChars(15))
-            .Text("colordesc", header: "Color Description", width: Widths.AnsiChars(20))
-            .Text("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10))
-            .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 5)
-            .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(5), integer_places: 5);
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+           .Text("Threadcolorid", header: "Thread Color", width: Widths.AnsiChars(15))
+           .Text("colordesc", header: "Color Description", width: Widths.AnsiChars(20))
+           .Text("ThreadLocationid", header: "Location", width: Widths.AnsiChars(10))
+           .Numeric("NewCone", header: "New Cone", width: Widths.AnsiChars(5), integer_places: 5)
+           .Numeric("UsedCone", header: "Used Cone", width: Widths.AnsiChars(5), integer_places: 5);
 
-             this.Helper.Controls.Grid.Generator(this.grid1)
-             .Date("cDate", header: "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Text("ID", header: "Transaction#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-             .Text("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
-             .Numeric("Newin", header: "New Cone\nIn Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
-             .Numeric("Newout", header: "New Cone\nOut Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
-              .Numeric("Newbalance", header: "New Cone\nBalance", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
-             .Numeric("Usedin", header: "Used Cone\nIn Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
-              .Numeric("Usedout", header: "Used Cone\nOut Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
-             .Numeric("Usedbalance", header: "Used Cone\nBalance", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
-             .Text("editname", header: "Last update", width: Widths.AnsiChars(20), iseditingreadonly: true);
-             return base.OnGridSetup();
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Date("cDate", header: "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("ID", header: "Transaction#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Numeric("Newin", header: "New Cone\nIn Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
+            .Numeric("Newout", header: "New Cone\nOut Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
+             .Numeric("Newbalance", header: "New Cone\nBalance", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
+            .Numeric("Usedin", header: "Used Cone\nIn Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
+             .Numeric("Usedout", header: "Used Cone\nOut Qty", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
+            .Numeric("Usedbalance", header: "Used Cone\nBalance", width: Widths.AnsiChars(5), integer_places: 9, iseditingreadonly: true)
+            .Text("editname", header: "Last update", width: Widths.AnsiChars(20), iseditingreadonly: true);
+            return base.OnGridSetup();
         }
 
         /// <inheritdoc/>
@@ -92,7 +92,7 @@ namespace Sci.Production.Thread
             int dgi = this.detailgrid.GetSelectedRowIndex();
 
             // base.OnRefreshClick();
-            // RenewData();
+            this.RenewData();
             this.OnDetailEntered();
 
             // detailgridbs.Filter = ""; //清空Filter
@@ -149,7 +149,7 @@ namespace Sci.Production.Thread
                 date = date2;
             }
 
-            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", this.CurrentMaintain["Refno"], this.keyWord, string.Empty, date);
+            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}' ,@date1 = '{1}' ,@date2='{2}'", this.CurrentMaintain["Refno"], string.Empty, date);
             DataTable tb, inittb;
             DualResult res = DBProxy.Current.Select(null, sql, out tb);
             MyUtility.Tool.ProcessWithDatatable(tb, "ThreadColorid,ThreadLocationid,Newin,NewOut,UsedIn,UsedOut,NewBalance,UsedBalance", @"Select ThreadColorid,ThreadLocationid,(isnull(sum(NewIn),0)-isnull(sum(NewOut),0)) as NewBalance,(isnull(sum(Usedin),0)-isnull(sum(UsedOut),0)) as UsedBalance from #tmp group by ThreadColorid,ThreadLocationid", out inittb);
@@ -158,7 +158,7 @@ namespace Sci.Production.Thread
             {
                 if (recal == 1)
                 {
-                    updatestock = updatestock + string.Format("Update ThreadStock set Newcone = {0},UsedCone = {1} where refno ='{2}' and ThreadColorid = '{3}' and ThreadLocationid ='{4}' and mDivisionid = '{5}';", dr["NewBalance"], dr["UsedBalance"], this.CurrentMaintain["Refno"], dr["ThreadColorid"], dr["ThreadLocationid"], this.keyWord);
+                    updatestock = updatestock + string.Format("Update ThreadStock set Newcone = {0},UsedCone = {1} where refno ='{2}' and ThreadColorid = '{3}' and ThreadLocationid ='{4}' ;", dr["NewBalance"], dr["UsedBalance"], this.CurrentMaintain["Refno"], dr["ThreadColorid"], dr["ThreadLocationid"]);
                 }
                 else
                 {
@@ -211,12 +211,14 @@ namespace Sci.Production.Thread
         private void Transrecord(string date1, string date2)
         {
             this.Initqty(date1); // 計算Init
-            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@mDivisionid='{1}',@date1 = '{2}' ,@date2='{3}'", this.CurrentMaintain["Refno"], this.keyWord, date1, date2);
+            string sql = string.Format("dbo.usp_ThreadTransactionList @refno='{0}',@date1 = '{1}' ,@date2='{2}'", this.CurrentMaintain["Refno"], date1, date2);
             DataTable tb;
             DualResult res = DBProxy.Current.Select(null, sql, out tb);
             if (res)
             {
                 decimal newIn, newOut, usedIn, usedOut, newbal, usedbal, newbalance = 0, usedbalance = 0;
+                string preThreadColorid = string.Empty;
+                string preThreadLocationid = string.Empty;
                 if (this.gtbflag)
                 {
                     this.gridTb.Merge(tb);
@@ -227,58 +229,59 @@ namespace Sci.Production.Thread
                 }
 
                 this.gtbflag = false;
-                foreach (DataRow drg in this.DetailDatas)
+
+                var gridTbOrderBy = this.gridTb.AsEnumerable().OrderBy(s => s["ThreadColorid"]).ThenBy(s => s["ThreadLocationid"]).ThenBy(s => MyUtility.Check.Empty(s["cdate"]) ? DateTime.MinValue : (DateTime)s["cdate"]);
+
+                foreach (var dr in gridTbOrderBy)
                 {
-                    newbalance = 0;
-                    usedbalance = 0;
-                    foreach (DataRow dr in this.gridTb.Rows)
+                    if (dr["ThreadColorid"].Equals(preThreadColorid) || dr["ThreadLocationid"].Equals(preThreadLocationid))
                     {
-                        if (drg["ThreadColorid"].ToString() != dr["ThreadColorid"].ToString() || drg["ThreadLocationid"].ToString() != dr["ThreadLocationid"].ToString())
-                        {
-                            continue; // group by 計算
-                        }
-
-                        newIn = 0;
-                        newOut = 0;
-                        usedIn = 0;
-                        usedOut = 0;
-                        newbal = 0;
-                        usedbal = 0;
-                        if (!MyUtility.Check.Empty(dr["newIn"]))
-                        {
-                            newIn = (decimal)dr["newIn"];
-                        }
-
-                        if (!MyUtility.Check.Empty(dr["newOut"]))
-                        {
-                            newOut = (decimal)dr["newOut"];
-                        }
-
-                        if (!MyUtility.Check.Empty(dr["usedIn"]))
-                        {
-                            usedIn = (decimal)dr["usedIn"];
-                        }
-
-                        if (!MyUtility.Check.Empty(dr["usedOut"]))
-                        {
-                            usedOut = (decimal)dr["usedOut"];
-                        }
-
-                        if (!MyUtility.Check.Empty(dr["Newbalance"]))
-                        {
-                            newbal = (decimal)dr["Newbalance"];
-                        }
-
-                        if (!MyUtility.Check.Empty(dr["Usedbalance"]))
-                        {
-                            usedbal = (decimal)dr["Usedbalance"];
-                        }
-
-                        newbalance = newbalance + newIn - newOut + newbal;
-                        usedbalance = usedbalance + usedIn - usedOut + usedbal;
-                        dr["Newbalance"] = newbalance;
-                        dr["Usedbalance"] = usedbalance;
+                        newbalance = 0;
+                        usedbalance = 0;
+                        preThreadColorid = dr["ThreadColorid"].ToString();
+                        preThreadLocationid = dr["ThreadLocationid"].ToString();
                     }
+
+                    newIn = 0;
+                    newOut = 0;
+                    usedIn = 0;
+                    usedOut = 0;
+                    newbal = 0;
+                    usedbal = 0;
+                    if (!MyUtility.Check.Empty(dr["newIn"]))
+                    {
+                        newIn = (decimal)dr["newIn"];
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["newOut"]))
+                    {
+                        newOut = (decimal)dr["newOut"];
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["usedIn"]))
+                    {
+                        usedIn = (decimal)dr["usedIn"];
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["usedOut"]))
+                    {
+                        usedOut = (decimal)dr["usedOut"];
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["Newbalance"]))
+                    {
+                        newbal = (decimal)dr["Newbalance"];
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["Usedbalance"]))
+                    {
+                        usedbal = (decimal)dr["Usedbalance"];
+                    }
+
+                    newbalance = newbalance + newIn - newOut + newbal;
+                    usedbalance = usedbalance + usedIn - usedOut + usedbal;
+                    dr["Newbalance"] = newbalance;
+                    dr["Usedbalance"] = usedbalance;
                 }
             }
         }

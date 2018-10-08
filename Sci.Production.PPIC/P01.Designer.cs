@@ -289,6 +289,8 @@
             this.disCustCD = new Sci.Win.UI.DisplayBox();
             this.btnBuyerDeliveryHistory = new Sci.Win.UI.Button();
             this.shapeContainer5 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.labelKit = new Sci.Win.UI.Label();
+            this.displayKit = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -298,8 +300,15 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 24);
+            this.detail.Size = new System.Drawing.Size(1000, 661);
+            // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayKit);
+            this.detailcont.Controls.Add(this.labelKit);
             this.detailcont.Controls.Add(this.btnBuyerDeliveryHistory);
             this.detailcont.Controls.Add(this.disCustCD);
             this.detailcont.Controls.Add(this.labeOrderCombo);
@@ -432,12 +441,12 @@
             this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Size = new System.Drawing.Size(897, 395);
+            this.detailcont.Size = new System.Drawing.Size(1000, 661);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 395);
-            this.detailbtm.Size = new System.Drawing.Size(897, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 661);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
             // 
             // browse
             // 
@@ -589,10 +598,10 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
+            this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -1685,7 +1694,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
+            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -2145,7 +2154,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
+            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3238,6 +3247,23 @@
             this.shapeContainer5.TabIndex = 8;
             this.shapeContainer5.TabStop = false;
             // 
+            // labelKit
+            // 
+            this.labelKit.Location = new System.Drawing.Point(554, 197);
+            this.labelKit.Name = "labelKit";
+            this.labelKit.Size = new System.Drawing.Size(42, 21);
+            this.labelKit.TabIndex = 219;
+            this.labelKit.Text = "KIT";
+            // 
+            // displayKit
+            // 
+            this.displayKit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayKit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayKit.Location = new System.Drawing.Point(600, 198);
+            this.displayKit.Name = "displayKit";
+            this.displayKit.Size = new System.Drawing.Size(94, 21);
+            this.displayKit.TabIndex = 220;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3530,5 +3556,7 @@
         private Class.txttpeuser PcHandleText;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer5;
         private Win.UI.Button btnPoRemark;
+        private Win.UI.DisplayBox displayKit;
+        private Win.UI.Label labelKit;
     }
 }
