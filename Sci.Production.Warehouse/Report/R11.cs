@@ -157,7 +157,7 @@ inner join dbo.SubTransfer_Detail sd WITH (NOLOCK) on o.id = sd.FromPOID
 inner join dbo.SubTransfer s WITH (NOLOCK) on s.id = sd.id
 inner join dbo.PO_Supp_Detail p WITH (NOLOCK) on p.id = sd.FromPOID and p.seq1 = sd.FromSeq1 and p.seq2 = sd.FromSeq2
 left join dbo.FtyInventory Fi on sd.FromPoid = fi.poid and sd.fromSeq1 = fi.seq1 and sd.fromSeq2 = fi.seq2 
-    and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype
+    and sd.fromRoll = fi.roll and sd.fromStocktype = fi.stocktype and sd.fromDyelot = fi.Dyelot
 left join PO_Supp ps on ps.id = p.id and ps. SEQ1 = p.SEQ1
 where s.Status = 'Confirmed' 
 ");

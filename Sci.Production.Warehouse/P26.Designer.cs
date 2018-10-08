@@ -60,7 +60,7 @@
             this.masterpanel.Controls.Add(this.labelIssueDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(991, 110);
+            this.masterpanel.Size = new System.Drawing.Size(892, 110);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
@@ -74,7 +74,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 110);
-            this.detailpanel.Size = new System.Drawing.Size(991, 367);
+            this.detailpanel.Size = new System.Drawing.Size(892, 239);
             // 
             // gridicon
             // 
@@ -89,7 +89,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(991, 367);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 239);
             // 
             // detail2
             // 
@@ -105,16 +105,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(991, 515);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(991, 477);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(991, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -224,7 +224,7 @@
             this.Grid2New = 0;
             this.GridAlias = "LocationTrans_detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll";
+            this.GridUniqueKey = "mdivisionid,poid,seq1,seq2,roll,Dyelot";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;

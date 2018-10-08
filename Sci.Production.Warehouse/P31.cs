@@ -165,7 +165,7 @@ select  FromSP = a.FromPOID + '(' + a.FromSeq1 + '-' + a.Fromseq2 + ')'
         ,[Total] = sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.FromSeq2 )
 from dbo.Borrowback_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
-left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2
+left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
     and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
 left join dbo.SubTransfer_Detail c on c.id=a.id
 where a.id= @ID", pars, out dd);
@@ -410,9 +410,10 @@ Select  d.frompoid
         ,d.fromseq2
         ,d.fromRoll,d.Qty
         ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID  
-  AND D.FromStockType = F.StockType and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
+  AND D.FromStockType = F.StockType and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.fromDyelot = f.Dyelot
 where f.lock = 1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -425,8 +426,8 @@ where f.lock = 1 and d.Id = '{0}'", CurrentMaintain["id"]);
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} is locked!!" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -443,9 +444,10 @@ Select  d.frompoid
         ,d.fromRoll
         ,d.Qty
         ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+        ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID AND D.FromStockType = F.StockType 
-    and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
+    and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.fromDyelot = f.Dyelot
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -458,8 +460,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than qty: {5}" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than qty: {5}" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -711,12 +713,14 @@ Select  d.topoid
         ,d.toRoll
         ,d.Qty
         ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
   on d.toPoId = f.PoId
   and d.toSeq1 = f.Seq1
   and d.toSeq2 = f.seq2
   and d.toStocktype = f.StockType
   and d.toRoll = f.Roll
+  and d.toDyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -729,8 +733,8 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} is locked!!" + Environment.NewLine
-                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -747,12 +751,14 @@ Select  d.topoid
         ,d.toRoll
         ,d.Qty
         ,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        ,f.Dyelot
 from dbo.BorrowBack_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
   on d.toPoId = f.PoId
   and d.toSeq1 = f.Seq1
   and d.toSeq2 = f.seq2
   and d.toStocktype = f.StockType
   and d.toRoll = f.Roll
+  and d.toDyelot = f.Dyelot
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -765,8 +771,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than borrowed qty: {5}" + Environment.NewLine
-                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["balanceqty"], tmp["qty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than borrowed qty: {5}" + Environment.NewLine
+                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -1040,132 +1046,40 @@ Where a.id = '{0}'", masterID);
                 //判斷 物料 是否為 布，布料才需要 Roll & Dyelot
                 if (row["fabrictype"].ToString().ToUpper() == "F")
                 {
-                    #region 先判斷 FtyInventory 是否有相同的 Roll & Dyelot
-                    string checkFtySql = string.Format(@"
-select  total = count(*)  
-		, Dyelot
-From dbo.FtyInventory Fty
-where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot = '{4}'
-group by Dyelot
-", row["toPoid"], row["toSeq1"], row["toSeq2"], row["toRoll"], row["toDyelot"], CurrentMaintain["id"]);
-                    if (MyUtility.Check.Seek(checkFtySql, null))
-                    {
-                        listDyelot.Add(row["toDyelot"].ToString());
-                    }
-                    else
-                    {
-                        #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
-                        string checkSql = string.Format(@"
-select 
-	total = sum(total)
-	, Dyelot = Dyelot
-from(
-    select  total = COUNT(*) 
-            , Dyelot
-    from dbo.Receiving_Detail RD WITH (NOLOCK) 
-    inner join dbo.Receiving R WITH (NOLOCK) on RD.Id = R.Id  
-    where RD.PoId = '{0}' and RD.Seq1 = '{1}' and RD.Seq2 = '{2}' and RD.Roll = '{3}' and Dyelot != '{4}' and R.Status = 'Confirmed'
-	group by Dyelot
-
-	Union All
-	
-	select  total = COUNT(*)  
-			, Dyelot = ToDyelot
-	from dbo.SubTransfer_Detail SD WITH (NOLOCK) 
-	inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID = S.Id 
-	where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and S.Status = 'Confirmed'
-	group by ToDyelot
-	
-	Union All
-	
-	select  total = COUNT('POID')  
-			, Dyelot = ToDyelot
-	from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
+                    #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
+                    string checkSql = string.Format(@"
+select  1
+    from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
 	inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID = B.Id  
-	where ToPOID = '{0}' and ToSeq1 = '{1}' and ToSeq2 = '{2}' and ToRoll = '{3}' and ToDyelot != '{4}' and B.ID != '{5}' and B.Status = 'Confirmed'
-	group by ToDyelot
-	
-	Union All
-	
-	select  total = count(*)   
-			, Dyelot
-	From dbo.TransferIn TI
-	inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
-	where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}' and Status = 'Confirmed'
-	group by Dyelot
-	
-	Union All
-	
-	select  total = count(*)  
-			, Dyelot
-	From dbo.FtyInventory Fty
-	where POID = '{0}' and Seq1 = '{1}' and Seq2 = '{2}' and Roll = '{3}' and Dyelot != '{4}'
-	group by Dyelot
-) x
-group by Dyelot", row["toPoid"], row["toSeq1"], row["toSeq2"], row["toRoll"], row["toDyelot"], CurrentMaintain["id"]);
-                        if (MyUtility.Check.Seek(checkSql, out dr, null))
+	where 
+ToPOID = '{0}' and 
+ToSeq1 = '{1}' and 
+ToSeq2 = '{2}' and 
+ToRoll = '{3}' and 
+ToDyelot = '{4}' and 
+B.ID != '{5}' and 
+B.Status = 'Confirmed'
+", row["topoid"], row["toseq1"], row["toseq2"], row["toroll"], row["todyelot"], CurrentMaintain["id"]);
+                    if (MyUtility.Check.Seek(checkSql, out dr, null))
+                    {
+                        if (Convert.ToInt32(dr[0]) > 0)
                         {
-                            if (Convert.ToInt32(dr[0]) > 0)
-                            {
-                                listMsg.Add(string.Format(@"
+                            listMsg.Add(string.Format(@"
 The Deylot of
-<SP#>:{0}, <Seq>:{1}, <Roll>:{2}
-already exists, system will update the Qty for original Deylot <{3}>
-", row["toPoid"], row["toSeq1"].ToString() + " " + row["toSeq2"].ToString(), row["toRoll"], dr["Dyelot"].ToString().Trim()));
-                                listDyelot.Add(dr["Dyelot"].ToString().Trim());
-                            }
+<SP#>:{0}, <Seq>:{1}, <Roll>:{2}, <Deylot>:{3} already exists
+", row["topoid"], row["toseq1"].ToString() + " " + row["toseq2"].ToString(), row["toroll"], row["toDyelot"].ToString().Trim()));
+
                         }
-                        else
-                        {
-                            listDyelot.Add(row["toDyelot"].ToString().Trim());
-                        }
-                        #endregion
                     }
                     #endregion
                 }
             }
-
-            #region 若上方判斷有 同 Roll 不同 Dyelot
+            
             if (listMsg.Count > 0)
             {
-                DialogResult Dr = MyUtility.Msg.QuestionBox(listMsg.JoinToString("").TrimStart(), buttons: MessageBoxButtons.OKCancel);
-                switch (Dr.ToString().ToUpper())
-                {
-                    case "OK":
-                        int index = 0;
-                        foreach (DataRow row in DetailDatas)
-                        {
-                            if (row["FabricType"].EqualString("F"))
-                            {
-                                DualResult result;
-                                /**
-                                * 如果在編輯模式下，直接改 Grid
-                                * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
-                                **/
-                                row["toDyelot"] = listDyelot[index++];
-
-                                if (this.EditMode != true)
-                                {
-                                    result = DBProxy.Current.Execute(null, string.Format(@"
-Update BB
-set BB.Roll = '{0}'
-    , BB.Dyelot = '{1}'
-From BorrowBack BB
-where BB.Ukey = '{2}'", row["toRoll"], row["toDyelot"], row["Ukey"]));
-
-                                    if (!result)
-                                    {
-                                        MyUtility.Msg.WarningBox(result.Description);
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    case "CANCEL":
-                        return false;
-                }
+                DialogResult Dr = MyUtility.Msg.WarningBox(listMsg.JoinToString("").TrimStart());
+                return false;
             }
-            #endregion 
             return true;
         }
     }
