@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Linq;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Packing
 {
@@ -102,7 +103,7 @@ namespace Sci.Production.Packing
         protected override bool ValidateInput()
         {
             this.reportType = this.radioPackingListReportFormA.Checked ? "1" :
-                this.radioPackingListReportFormB.Checked ? "2" : this.radioPackingGuideReport.Checked ? "3" : "4";
+                this.radioPackingListReportFormB.Checked ? "2" : this.radioPackingGuideReport.Checked ? "3" : this.rdbtnShippingMark.Checked ? "5" : "4";
             this.ctn1 = this.txtCTNStart.Text;
             this.ctn2 = this.txtCTNEnd.Text;
             this.ReportResourceName = "P03_BarcodePrint.rdlc";
@@ -145,9 +146,13 @@ namespace Sci.Production.Packing
             {
                 result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, "New", this.country);
             }
-            else
+            else if (this.radioBarcodePrint.Checked)
             {
                 result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+            }
+            else
+            {
+                result = this.PrintShippingmark();
             }
 
             if (result == false)
@@ -186,6 +191,106 @@ namespace Sci.Production.Packing
 
             this.HideWaitMessage();
             return true;
+        }
+
+        public DualResult PrintShippingmark()
+        {
+            #region.
+            string sqlcmd = $@"
+select * from(
+    select distinct pd.CTNStartno,o.Customize1,o.CustPOno,pd.Article,a.SizeCode,qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS'
+    from PackingList_Detail pd
+    inner join orders o on o.id = pd.orderid
+    outer apply (select SizeCode=stuff((select concat('/',SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,''))a
+    outer apply (select ct = count(SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo)b1
+    outer apply (select qty=stuff((select concat('/',SizeCode,'-',ShipQty) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,''))b
+    where pd.id = '{this.masterData["ID"]}'
+)a
+order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.printData);
+
+            if (this.printData == null || this.printData.Rows.Count == 0)
+            {
+                return new DualResult(false, "Data not found.");
+            }
+
+            Microsoft.Office.Interop.Word._Application winword = new Microsoft.Office.Interop.Word.Application();
+            winword.FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip;
+            winword.Visible = false;
+            object printFile;
+            Microsoft.Office.Interop.Word._Document document;
+            Word.Table tables = null;
+
+            printFile = Sci.Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark.dotx";
+            document = winword.Documents.Add(ref printFile);
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                #region 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                int page = this.printData.Rows.Count;
+                for (int i = 1; i < page; i++)
+                {
+                    winword.Selection.MoveDown();
+                    if (page > 1)
+                    {
+                        winword.Selection.InsertNewPage();
+                    }
+
+                    winword.Selection.Paste();
+                }
+                #endregion
+                #region 填入資料
+                for (int i = 0; i < page; i++)
+                {
+                    tables = table[i + 1];
+
+                    #region 
+                    string customize1 = this.printData.Rows[i]["Customize1"].ToString();
+                    string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
+                    string article = this.printData.Rows[i]["Article"].ToString();
+                    string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
+                    string qty = this.printData.Rows[i]["qty"].ToString();
+                    #endregion
+
+                    tables.Cell(1, 2).Range.Text = customize1;
+                    tables.Cell(2, 2).Range.Text = custPOno;
+                    tables.Cell(3, 2).Range.Text = article;
+                    tables.Cell(4, 2).Range.Text = sizeCode;
+                    tables.Cell(5, 2).Range.Text = qty;
+                    tables.Cell(6, 2).Range.Text = "PHILIPPINES";
+                }
+                #endregion
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+
+                #region Save & Show Word
+                winword.Visible = true;
+                Marshal.ReleaseComObject(winword);
+                Marshal.ReleaseComObject(document);
+                Marshal.ReleaseComObject(table);
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                if (winword != null)
+                {
+                    winword.Quit();
+                }
+
+                return new DualResult(false, "Export word error.", ex);
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+
+            return new DualResult(true);
+            #endregion
         }
     }
 }
