@@ -28,10 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
-            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
-            this.labelM = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.txtLocationEnd = new Sci.Win.UI.TextBox();
@@ -67,8 +64,6 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.comboMDivision);
-            this.panel1.Controls.Add(this.labelM);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.txtLocationEnd);
@@ -85,27 +80,8 @@
             this.panel1.Controls.Add(this.labelRefno);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(434, 190);
+            this.panel1.Size = new System.Drawing.Size(434, 163);
             this.panel1.TabIndex = 0;
-            // 
-            // comboMDivision
-            // 
-            this.comboMDivision.BackColor = System.Drawing.Color.White;
-            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboMDivision.FormattingEnabled = true;
-            this.comboMDivision.IsSupportUnselect = true;
-            this.comboMDivision.Location = new System.Drawing.Point(99, 153);
-            this.comboMDivision.Name = "comboMDivision";
-            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
-            this.comboMDivision.TabIndex = 7;
-            // 
-            // labelM
-            // 
-            this.labelM.Location = new System.Drawing.Point(16, 154);
-            this.labelM.Name = "labelM";
-            this.labelM.Size = new System.Drawing.Size(80, 23);
-            this.labelM.TabIndex = 14;
-            this.labelM.Text = "M";
             // 
             // label7
             // 
@@ -246,7 +222,7 @@
             // 
             // R21
             // 
-            this.ClientSize = new System.Drawing.Size(555, 240);
+            this.ClientSize = new System.Drawing.Size(555, 205);
             this.Controls.Add(this.panel1);
             this.Name = "R21";
             this.Text = "R21.Thread Stock List";
@@ -278,7 +254,5 @@
         private Win.UI.Label labelType;
         private Win.UI.Label labelShade;
         private Win.UI.Label labelRefno;
-        private Win.UI.Label labelM;
-        private Class.comboMDivision comboMDivision;
     }
 }

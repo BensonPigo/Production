@@ -69,13 +69,11 @@ namespace Sci.Production.Thread
                 return;
             }
 
-            string sql = string.Format(
-                @"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,
+            string sql = @"Select 1 as sel,a.refno,a.threadcolorid,a.threadlocationid,
                     isnull(a.newcone,0) as newconebook,isnull(a.usedcone,0) as usedconebook,
                     b.description,c.description as colordesc,b.category
                     from Localitem b WITH (NOLOCK) 
-                    left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno and a.mdivisionid = '{0}'",
-                this.keyword);
+                    left join ThreadStock a WITH (NOLOCK) on a.refno = b.refno";
 
             if (!MyUtility.Check.Empty(threadlocation1) || !MyUtility.Check.Empty(threadlocation2))
             {
