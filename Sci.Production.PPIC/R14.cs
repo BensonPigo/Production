@@ -16,15 +16,13 @@ namespace Sci.Production.PPIC
 {
     public partial class R14 : Sci.Win.Tems.PrintForm
     {
-        private List<SqlParameter> sqlpar = new List<SqlParameter>();
         private DataTable dtPrint;
-        private DualResult result;
         private string sqlcmd;
 
         public R14(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         protected override void OnFormLoaded()
@@ -35,16 +33,12 @@ namespace Sci.Production.PPIC
 
         protected override bool ValidateInput()
         {
-            this.sqlpar.Clear();
-
-           
             string where = string.Empty;
-
             #region 檢查必輸條件 & 加入SQL where 參數
-            if ((MyUtility.Check.Empty(this.dateIssueDate.Value1) || MyUtility.Check.Empty(this.dateIssueDate.Value2))
-                && (MyUtility.Check.Empty(this.txtSpNo1.Text) || MyUtility.Check.Empty(this.txtSpNo2.Text))
+            if ((MyUtility.Check.Empty(this.dateIssueDate.Value1) && MyUtility.Check.Empty(this.dateIssueDate.Value2))
+                && (MyUtility.Check.Empty(this.txtSpNo1.Text) && MyUtility.Check.Empty(this.txtSpNo2.Text))
                 && MyUtility.Check.Empty(this.txtBrand.Text)
-                && (MyUtility.Check.Empty(dateBuyerDelivery.Value1) || MyUtility.Check.Empty(dateBuyerDelivery.Value2)))
+                && (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2)))
             {
                 MyUtility.Msg.WarningBox("Please key-in condition!");
                 return false;
@@ -67,12 +61,12 @@ namespace Sci.Production.PPIC
 
             if (!MyUtility.Check.Empty(this.txtSpNo1.Text))
             {
-                where += $" and o.id >='{this.txtSpNo1.Text}'";
+                where += $" and a2.Orderid >='{this.txtSpNo1.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.txtSpNo2.Text))
             {
-                where += $" and o.id <='{this.txtSpNo2.Text}'";
+                where += $" and a2.Orderid <='{this.txtSpNo2.Text}'";
             }
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
@@ -87,10 +81,10 @@ namespace Sci.Production.PPIC
 
             if (!MyUtility.Check.Empty(this.comboDropDownList.Text))
             {
-                where += $" and a1.status='{comboDropDownList.Text}'";
+                where += $" and a1.status in ({this.comboDropDownList.SelectedValue})";
             }
 
-            sqlcmd = $@"
+            this.sqlcmd = $@"
 select a1.cDate
 ,o.FtyGroup
 ,o.BrandID
@@ -139,29 +133,30 @@ where 1=1
 
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
-            return DBProxy.Current.Select(string.Empty, this.sqlcmd, sqlpar, out this.dtPrint);
+            return DBProxy.Current.Select(string.Empty, this.sqlcmd, out this.dtPrint);
         }
 
         protected override bool OnToExcel(ReportDefinition report)
         {
-            if (dtPrint.Rows.Count == 0)
+            if (this.dtPrint.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
             this.ShowWaitMessage("Excel Processing...");
-            this.SetCount(dtPrint.Rows.Count); // 顯示筆數
+            this.SetCount(this.dtPrint.Rows.Count); // 顯示筆數
 
             Excel.Application objApp = new Excel.Application();
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R14.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
-            com.WriteTable(dtPrint, 3);
-            worksheet.get_Range($"A3:O{MyUtility.Convert.GetString(2 + dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
+            com.WriteTable(this.dtPrint, 3);
+            worksheet.get_Range($"A3:O{MyUtility.Convert.GetString(2 + this.dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
+            this.HideWaitMessage();
             return true;
         }
     }

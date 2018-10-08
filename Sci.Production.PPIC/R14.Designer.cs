@@ -51,10 +51,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(432, 17);
+            this.toexcel.TabIndex = 6;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(432, 53);
+            this.close.TabIndex = 7;
             // 
             // labIssueDate
             // 
@@ -83,7 +85,7 @@
             this.dateIssueDate.Location = new System.Drawing.Point(131, 17);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.Size = new System.Drawing.Size(280, 23);
-            this.dateIssueDate.TabIndex = 95;
+            this.dateIssueDate.TabIndex = 0;
             // 
             // dateBuyerDelivery
             // 
@@ -104,7 +106,7 @@
             this.dateBuyerDelivery.Location = new System.Drawing.Point(131, 107);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateBuyerDelivery.TabIndex = 96;
+            this.dateBuyerDelivery.TabIndex = 4;
             // 
             // txtSpNo1
             // 
@@ -113,7 +115,7 @@
             this.txtSpNo1.Location = new System.Drawing.Point(131, 48);
             this.txtSpNo1.Name = "txtSpNo1";
             this.txtSpNo1.Size = new System.Drawing.Size(130, 23);
-            this.txtSpNo1.TabIndex = 97;
+            this.txtSpNo1.TabIndex = 1;
             // 
             // labSPNo
             // 
@@ -154,7 +156,7 @@
             this.txtSpNo2.Location = new System.Drawing.Point(283, 48);
             this.txtSpNo2.Name = "txtSpNo2";
             this.txtSpNo2.Size = new System.Drawing.Size(130, 23);
-            this.txtSpNo2.TabIndex = 102;
+            this.txtSpNo2.TabIndex = 2;
             // 
             // txtBrand
             // 
@@ -163,7 +165,7 @@
             this.txtBrand.Location = new System.Drawing.Point(131, 78);
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(130, 23);
-            this.txtBrand.TabIndex = 103;
+            this.txtBrand.TabIndex = 3;
             // 
             // comboDropDownList
             // 
@@ -175,7 +177,7 @@
             this.comboDropDownList.Name = "comboDropDownList";
             this.comboDropDownList.OldText = "";
             this.comboDropDownList.Size = new System.Drawing.Size(130, 24);
-            this.comboDropDownList.TabIndex = 104;
+            this.comboDropDownList.TabIndex = 5;
             this.comboDropDownList.Type = "Pms_AVOStatus";
             // 
             // label1
