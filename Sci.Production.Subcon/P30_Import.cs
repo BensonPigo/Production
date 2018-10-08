@@ -435,8 +435,6 @@ where Qty - ShipQty - DiffQty = 0";
                  .Text("requestid", header: "Request ID", iseditingreadonly: true)//13
                  .Text("BuyerID", header: "Buyer", iseditingreadonly: true)//14
                 ;
-            //this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty   
-
         }
 
         // close
@@ -478,6 +476,45 @@ where Qty - ShipQty - DiffQty = 0";
                         tmp.SetAdded();
                         dt_localPODetail.ImportRow(tmp);
                     }
+                }
+
+                DataTable tmpdt = dr2.CopyToDataTable();
+                string sqlcmd = $@"
+select 
+	t.POID,t.OrderID,t.StyleID,t.SciDelivery,t.SeasonID,
+	Refno=l.PadRefno,
+	Description=dbo.getitemdesc('Carton', l.PadRefno),
+	ThreadColorID='',
+	Qty=t.qty*l.qty,
+	t.UnitID,
+	t.Price,
+	amount = t.qty*l.qty*t.Price,
+	t.std_price,
+	remark='',
+	t.etd,t.requestid,t.id,t.FactoryID,t.SewInLine,t.delivery,t.BuyerID,
+	d.LocalSuppid
+from #tmp t
+inner join LocalItem_CartonCardboardPad l on t.RefNo = l.RefNo and isnull(t.BuyerID,'') = l.Buyer
+";
+                DataTable CartonCardboardPad;
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out CartonCardboardPad);
+
+                List<string> Refno = new List<string>();
+                foreach (DataRow tmp in CartonCardboardPad.Rows)
+                {
+                    if (!MyUtility.Convert.GetString(dr_localPO["localsuppid"]).EqualString(MyUtility.Convert.GetString(tmp["localsuppid"])))
+                    {
+                        Refno.Add(MyUtility.Convert.GetString(tmp["Refno"]));
+                    }
+                    tmp.AcceptChanges();
+                    tmp.SetAdded();
+                    dt_localPODetail.ImportRow(tmp);
+                }
+                if (Refno.Count>0)
+                {
+                    MyUtility.Msg.WarningBox($@"Pads supplier is not '{dr_localPO["localsuppid"]}'
+Please check carton :{string.Join(",", Refno)}
+");
                 }
             }
             else
