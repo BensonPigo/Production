@@ -1313,11 +1313,13 @@ drop table #ThreadIssue_Detail
             }
             #endregion
 
-            string issueID = MyUtility.GetValue.GetID(this.keyWord + "TS", "ThreadIssue", DateTime.Now);
-
             string updSql = $@"
-update ThreadRequisition set Status = 'Approved' ,editname='{this.loginID}', editdate = GETDATE() where orderid='{this.CurrentMaintain["Orderid"].ToString()}'
+update ThreadRequisition set Status = 'Approved' ,editname='{this.loginID}', editdate = GETDATE() where orderid='{this.CurrentMaintain["Orderid"].ToString()}'";
 
+            if (issueCheckDt.Rows.Count > 0)
+            {
+                string issueID = MyUtility.GetValue.GetID(this.keyWord + "TS", "ThreadIssue", DateTime.Now);
+                updSql += $@"
 --建立P04 Thread issue
 insert into ThreadIssue(ID,MDivisionId,CDate,Remark,Status,AddName,AddDate,RequestID)
     values('{issueID}','{Env.User.Keyword}',GETDATE(),'Auto Create By P02','Confirmed','{Env.User.UserID}',GETDATE(),'{this.CurrentMaintain["OrderID"]}')
@@ -1389,12 +1391,13 @@ CLOSE ThreadRequisition_Detail_cur
 DEALLOCATE ThreadRequisition_Detail_cur
 
 ";
-
-            result = Prgs.ThreadIssueConfirm(issueCheckDt.ToList(), updSql, false);
-            if (!result)
-            {
-                this.ShowErr(result);
             }
+
+                result = Prgs.ThreadIssueConfirm(issueCheckDt.ToList(), updSql, false);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }      
         }
 
         /// <inheritdoc/>
