@@ -695,7 +695,7 @@ from dbo.issue_detail as a WITH (NOLOCK)
 left join Orders o on a.poid = o.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-    and c.stocktype = 'B' and c.roll=a.roll
+    and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
 Where a.id = '{0}'", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }

@@ -431,7 +431,7 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                                                                 ,a.roll
                                                                 ,a.dyelot
                                                                 ,inqty - outqty + adjustqty balance
-                                                                ,ukey
+                                                                ,a.ukey
                                                         FROM dbo.ftyinventory a WITH (NOLOCK) 
                                                         WHERE   stocktype = 'B'
                                                             AND poID ='{0}'
@@ -439,8 +439,8 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                                                             AND seq2= '{2}' 
                                                         order by poid,seq1,seq2,Roll", dr["poid"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
                         Sci.Win.Tools.SelectItem item
-                            = new Sci.Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,10", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,ukey");
-
+                            = new Sci.Win.Tools.SelectItem(sqlcmd, "13,4,3,10,5,10,0", dr["roll"].ToString(), "SP#,Seq1,Seq2,Roll,Dyelot,Balance,");
+                        item.Width = 600;
                         DialogResult returnResult = item.ShowDialog();
                         if (returnResult == DialogResult.Cancel) { return; }
                         IList<DataRow> selectedData = item.GetSelecteds();

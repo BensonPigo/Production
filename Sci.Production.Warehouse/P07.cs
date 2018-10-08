@@ -1765,7 +1765,6 @@ The Deylot of
             newrow["ActualQty"] = lastRow["ActualQty"];
             newrow["stockqty"] = lastRow["stockqty"];
             newrow["weight"] = lastRow["weight"];
-            newrow["Dyelot"] = lastRow["Dyelot"];
             newrow["pounit"] = lastRow["pounit"];
             newrow["stockunit"] = lastRow["stockunit"];
             newrow["Stocktype"] = lastRow["Stocktype"];
