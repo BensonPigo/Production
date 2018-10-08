@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
@@ -46,6 +46,7 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridReceiveDate = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.btnToDRExcel = new Sci.Win.UI.Button();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -71,6 +72,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnToDRExcel);
             this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.txtSPNo);
@@ -216,14 +218,14 @@
             this.gridReceiveDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridReceiveDate.Location = new System.Drawing.Point(0, 0);
             this.gridReceiveDate.Name = "gridReceiveDate";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridReceiveDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridReceiveDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridReceiveDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridReceiveDate.RowTemplate.Height = 24;
@@ -232,6 +234,17 @@
             this.gridReceiveDate.Size = new System.Drawing.Size(719, 327);
             this.gridReceiveDate.TabIndex = 0;
             this.gridReceiveDate.TabStop = false;
+            // 
+            // btnToDRExcel
+            // 
+            this.btnToDRExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToDRExcel.Location = new System.Drawing.Point(500, 45);
+            this.btnToDRExcel.Name = "btnToDRExcel";
+            this.btnToDRExcel.Size = new System.Drawing.Size(120, 30);
+            this.btnToDRExcel.TabIndex = 8;
+            this.btnToDRExcel.Text = "To DR(For PH)";
+            this.btnToDRExcel.UseVisualStyleBackColor = true;
+            this.btnToDRExcel.Click += new System.EventHandler(this.btnToDRExcel_Click);
             // 
             // P05
             // 
@@ -277,5 +290,6 @@
         private Win.UI.TextBox txtSPNo;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnToDRExcel;
     }
 }
