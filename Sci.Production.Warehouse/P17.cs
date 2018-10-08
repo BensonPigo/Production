@@ -461,6 +461,9 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    string oldValue = dr["Roll"].ToString();
+                    string newValue = e.FormattedValue.ToString();
+                    if (oldValue.Equals(newValue)) return;
                     string sqlcmd = string.Format(@"SELECT  dyelot
                                                             ,dbo.Getlocation(a.ukey) as [location]
                                                             ,ukey
