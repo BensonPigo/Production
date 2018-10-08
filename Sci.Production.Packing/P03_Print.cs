@@ -203,7 +203,9 @@ inner join orders o on o.id = pd.orderid
 outer apply (select SizeCode=stuff((select concat('/',SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,''))a
 outer apply (select ct = count(SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo)b1
 outer apply (select qty=stuff((select concat('/',SizeCode,'-',ShipQty) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,''))b
-where pd.id = '{this.masterData["ID"]}'";
+where pd.id = '{this.masterData["ID"]}'
+order by  pd.CTNStartno
+";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.printData);
 
             if (this.printData == null || this.printData.Rows.Count == 0)
