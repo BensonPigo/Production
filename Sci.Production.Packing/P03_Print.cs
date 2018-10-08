@@ -260,7 +260,7 @@ order by  pd.CTNStartno
                     tables.Cell(3, 2).Range.Text = article;
                     tables.Cell(4, 2).Range.Text = sizeCode;
                     tables.Cell(5, 2).Range.Text = qty;
-                    tables.Cell(6, 2).Range.Text = "MADE IN: PHILIPPINES";
+                    tables.Cell(6, 2).Range.Text = "PHILIPPINES";
                 }
                 #endregion
                 winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
