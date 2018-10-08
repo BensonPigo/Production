@@ -31,11 +31,11 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnAppend = new Sci.Win.UI.Button();
             this.btnDelete = new Sci.Win.UI.Button();
             this.BtnEdit = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
@@ -68,7 +68,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(841, 326);
+            this.grid1.Size = new System.Drawing.Size(880, 326);
             this.grid1.TabIndex = 0;
             // 
             // btnAppend
@@ -93,7 +93,7 @@
             // 
             // BtnEdit
             // 
-            this.BtnEdit.Location = new System.Drawing.Point(687, 344);
+            this.BtnEdit.Location = new System.Drawing.Point(726, 344);
             this.BtnEdit.Name = "BtnEdit";
             this.BtnEdit.Size = new System.Drawing.Size(80, 30);
             this.BtnEdit.TabIndex = 3;
@@ -103,7 +103,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(773, 344);
+            this.btnClose.Location = new System.Drawing.Point(812, 344);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 4;
@@ -113,7 +113,7 @@
             // 
             // B01_SetCardBoarsPads
             // 
-            this.ClientSize = new System.Drawing.Size(865, 383);
+            this.ClientSize = new System.Drawing.Size(904, 383);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.BtnEdit);
             this.Controls.Add(this.btnDelete);

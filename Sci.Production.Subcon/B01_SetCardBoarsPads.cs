@@ -60,10 +60,16 @@ namespace Sci.Production.Subcon
                 if (!this.EditMode) return;
                 if (e.RowIndex == -1) return;
                 DataRow dr = grid1.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetString(e.FormattedValue).EqualString(string.Empty))
+                {
+                    dr["buyer"] = string.Empty;
+                    dr.EndEdit();
+                    return;
+                }
                 if (!MyUtility.Check.Seek($@"select id from buyer where junk = 0 and id = '{e.FormattedValue}'"))
                 {
                     MyUtility.Msg.WarningBox($"Buyer: {e.FormattedValue} not found!");
-                    dr["buyer"] = DBNull.Value;
+                    dr["buyer"] = string.Empty;
                     dr.EndEdit();
                 }
             };
@@ -142,9 +148,19 @@ namespace Sci.Production.Subcon
             {
                 foreach (DataRow item in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
                 {
-                    if (MyUtility.Check.Empty(item["Buyer"])|| MyUtility.Check.Empty(item["PadRefno"]))
+                    if (MyUtility.Check.Empty(item["PadRefno"]))
                     {
-                        item.Delete();
+                        MyUtility.Msg.WarningBox("PadRefno can not empty!");
+                        return;
+                    }
+                    if (MyUtility.Check.Empty(item["Qty"]))
+                    {
+                        MyUtility.Msg.WarningBox("Qty can not 0!");
+                        return;
+                    }
+                    if (MyUtility.Check.Empty(item["Buyer"]))
+                    {
+                        item["Buyer"] = string.Empty;
                     }
                 }
                 var query = from t in this.dt.AsEnumerable()
@@ -221,6 +237,7 @@ when not matched by source then
         {
             DataRow dr = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
             dr["Refno"] = this.masterrow["Refno"];
+            dr["Qty"] = 0; ;
             ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(dr);
         }
 
