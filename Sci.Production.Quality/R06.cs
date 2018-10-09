@@ -361,7 +361,7 @@ select [MIGRATIONyards] =sum(rd.StockQty),tmp.{groupby_col}
 into #mtmp
 from Receiving_Detail rd WITH (NOLOCK)
 inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
-,(select distinct {groupby_col},abben,id,Point from #tmp) tmp
+,(select distinct {groupby_col} from #tmp) tmp
 Where exists(select * from #ea where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
 or exists(select * from #eb where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
 or exists(select * from #ec where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
@@ -382,7 +382,7 @@ select [SHADINGyards] =sum(rd.StockQty),tmp.{groupby_col}
 into #Stmp
 from Receiving_Detail rd WITH (NOLOCK) 
 inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
-,(select distinct {groupby_col},abben,id,Point from #tmp) tmp
+,(select distinct {groupby_col} from #tmp) tmp
 Where exists(select * from #sa where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and {groupby_col} = Tmp.{groupby_col} ) 
 or exists(select * from #sb where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and {groupby_col} = Tmp.{groupby_col} ) 
 group by tmp.{groupby_col}
@@ -681,27 +681,52 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             int line = 7;
             string key_column = allDatas[1].Columns[0].ColumnName;
             // 依SuppID跑回圈合併欄位
-            for (int i = 0; i < allDatas[1].Rows.Count; i++)
+            if (txtsupplier.TextBox1.Text != "")
             {
-                
-                string key = allDatas[1].Rows[i][key_column].ToString();
-                DataRow[] dr = allDatas[0].Select($@"{key_column} = '{key}'");
-                int cnt = dr.Length;
-                for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                for (int i = 0; i < allDatas[0].Rows.Count; i++)
                 {
-                    // Columns=2,4,5 是不需要合併的
-                    if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
-                    {
-                        continue;
-                    }
-              
-                    // 合併儲存格,尾端要-1不然會重疊
-                    Microsoft.Office.Interop.Excel.Range rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
-                    rang.Merge();
-                }                
-                line = line + cnt;
-            }
 
+                    string key = allDatas[1].Rows[i][key_column].ToString();
+                    DataRow[] dr = allDatas[0].Select($@"{key_column} = '{txtsupplier.TextBox1.Text}'");
+                    int cnt = dr.Length;
+                    for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                    {
+                        // Columns=2,4,5 是不需要合併的
+                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
+                        {
+                            continue;
+                        }
+
+                        // 合併儲存格,尾端要-1不然會重疊
+                        Microsoft.Office.Interop.Excel.Range rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
+                        rang.Merge();
+                    }
+                    line = line + cnt;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < allDatas[1].Rows.Count; i++)
+                {
+                
+                    string key = allDatas[1].Rows[i][key_column].ToString();
+                    DataRow[] dr = allDatas[0].Select($@"{key_column} = '{key}'");
+                    int cnt = dr.Length;
+                    for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                    {
+                        // Columns=2,4,5 是不需要合併的
+                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
+                        {
+                            continue;
+                        }
+              
+                        // 合併儲存格,尾端要-1不然會重疊
+                        Microsoft.Office.Interop.Excel.Range rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
+                        rang.Merge();
+                    }                
+                    line = line + cnt;
+                }
+            }
             #region 調整欄寬
             objSheets.Columns[7].ColumnWidth = 21;
             objSheets.Columns[8].ColumnWidth = 20;
