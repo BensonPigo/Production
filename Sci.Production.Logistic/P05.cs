@@ -8,6 +8,7 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Logistic
 {
@@ -307,6 +308,66 @@ order by PackingListID, OrderID, rn");
             strExcelName.OpenFile();
             #endregion
             this.HideWaitMessage();
+        }
+
+        private void btnToDRExcel_Click(object sender, EventArgs e)
+        {
+            this.gridReceiveDate.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
+            DataTable excelTable = (DataTable)this.listControlBindingSource1.DataSource;
+
+            // 判斷是否有資料
+            if (excelTable == null || excelTable.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("No data!!");
+                return;
+            }
+
+            DataRow[] selectData = excelTable.Select("Selected = 1");
+            if (selectData.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            DataTable dtPrint;
+            MyUtility.Tool.ProcessWithDatatable(
+                              excelTable, string.Empty,
+                              $@"
+select a.orderid,o.CustPONo 
+,[Qty] = sum(Packing.Qty)
+,[TtlCtns] = sum(TTlCtns.CTNQty)
+from #tmp a
+left join Orders o on a.orderid	= o.ID
+outer apply(
+	select sum(ShipQty)  Qty
+	from PackingList_Detail p 
+	where p.OrderID=a.OrderID and p.CTNStartNo=a.CTNStartNo
+)Packing
+outer apply(
+	select p.CTNQty
+	from PackingList_Detail p 
+	where p.OrderID=a.OrderID and p.CTNStartNo=a.CTNStartNo
+)TTlCtns
+where a.Selected = 1
+group by a.orderid,o.CustPONo", out dtPrint);
+
+            if (dtPrint == null || dtPrint.Rows.Count == 0)
+            {
+                MyUtility.Msg.ErrorBox("Data not found!");
+                return;
+            }
+
+            Excel.Application objApp = new Excel.Application();
+            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Logistic_P05_ToDR.xltx", objApp);
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            com.WriteTable(dtPrint, 2);
+            worksheet.get_Range($"A2:D{MyUtility.Convert.GetString(1 + dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
+            com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
+            objApp.Visible = true;
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(objApp);
+
         }
     }
 }

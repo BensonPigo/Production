@@ -401,7 +401,8 @@ union all
 	)Sunday
 	where ReadyDate >= OffLine
 	and Sunday.dates = ReadyDate
-	and DATEDIFF(day,convert(date,offline),BuyerDelivery)<=2
+	and DATEDIFF(day,convert(date,offline),BuyerDelivery) <= {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
+    and not exists(select 1 from #tmp1 where  BuyerDelivery >= ReadyDate and t.SPNO=SPNO )
 
 union all
 
@@ -545,6 +546,7 @@ outer apply(
 where O.Category ='B' and o.junk !=1
 and oq.BuyerDelivery = AllDate.HolidayDates  
 and oq.BuyerDelivery < AllDate.WorkDates 
+and not exists(select 1 from #tmp1 where  BuyerDelivery >= ReadyDate and o.ID=SPNO)
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 ) a 
