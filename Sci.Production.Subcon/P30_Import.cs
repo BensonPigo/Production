@@ -495,6 +495,7 @@ select
 	d.LocalSuppid
 from #tmp t
 inner join LocalItem_CartonCardboardPad l on t.RefNo = l.RefNo and isnull(t.BuyerID,'') = l.Buyer
+inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo
 ";
                 DataTable CartonCardboardPad;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out CartonCardboardPad);
