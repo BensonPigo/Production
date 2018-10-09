@@ -1289,13 +1289,13 @@ namespace Sci.Production.Planning
                     {
                         decimal value = 0;
                         decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
-                        if (value >= 0)
+                        if (value > 0)
                         {
-                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FFCCFF"));
+                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FF99CC"));
                         }
-                        else
+                        else if (value < 0)
                         {
-                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#99FF99"));
+                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#CCFFCC"));
                         }
                     }
                 }
@@ -1303,34 +1303,37 @@ namespace Sci.Production.Planning
             else
             {
                 wks.Cells[sheetStart, 3].Value = cell1Str;
-                for (int i = 5; i <= 17; i++)
+
+                // Total Fill Rate的顏色依Total Vari上色
+                if (cell1Str.Contains("Total Fill Rate"))
                 {
-                    string str = string.Format(formula, MyExcelPrg.GetExcelColumnName(i));
-                    wks.Cells[sheetStart, i] = str;
-                    if (color == EnuDrawColor.Normal)
+                    for (int i = 5; i <= 17; i++)
                     {
-                        decimal value = 0;
-                        decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
-                        if (cell1Str.IndexOf("Rate") >= 0)
+                        string str = string.Format(formula, MyExcelPrg.GetExcelColumnName(i));
+                        wks.Cells[sheetStart, i] = str;
+                        if (color == EnuDrawColor.Normal)
                         {
-                            if (value >= 1)
-                            {
-                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FFCCFF"));
-                            }
-                            else
-                            {
-                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#99FF99"));
-                            }
+                            wks.Cells[sheetStart, i].Interior.Color = wks.Cells[sheetStart - 1, i].Interior.Color;
                         }
-                        else
+                    }
+                }
+                else
+                {
+                    for (int i = 5; i <= 17; i++)
+                    {
+                        string str = string.Format(formula, MyExcelPrg.GetExcelColumnName(i));
+                        wks.Cells[sheetStart, i] = str;
+                        if (color == EnuDrawColor.Normal)
                         {
-                            if (value >= 0)
+                            decimal value = 0;
+                            decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
+                            if (value > 0)
                             {
-                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FFCCFF"));
+                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FF99CC"));
                             }
-                            else
+                            else if (value < 0)
                             {
-                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#99FF99"));
+                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#CCFFCC"));
                             }
                         }
                     }
