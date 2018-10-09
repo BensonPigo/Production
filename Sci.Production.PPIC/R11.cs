@@ -401,7 +401,8 @@ union all
 	)Sunday
 	where ReadyDate >= OffLine
 	and Sunday.dates = ReadyDate
-	and DATEDIFF(day,convert(date,offline),BuyerDelivery)<=2
+	and DATEDIFF(day,convert(date,offline),BuyerDelivery) <= {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
+    and not exists(select 1 from #tmp1 where  BuyerDelivery >= ReadyDate and t.SPNO=SPNO )
 
 union all
 
