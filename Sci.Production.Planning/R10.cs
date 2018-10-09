@@ -1079,23 +1079,16 @@ namespace Sci.Production.Planning
 
                     // Total Vari.
                     wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Vari.", mDivisionID);
-                    for (int i = 5; i <= 17; i++)
-                    {
-                        string str = string.Format("={0}{1} - {0}{2}", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 2, this.sheetStart - 3);
-                        wks.Cells[this.sheetStart, i] = str;
-                    }
-
+                    string strColor = string.Empty;
+                    strColor = string.Format("={0}{1} - {0}{2}", "{0}", this.sheetStart - 2, this.sheetStart - 3);
+                    this.SetFormulaToRow(wks, this.sheetStart, $@"{mDivisionID} Total Vari.", strColor, EnuDrawColor.Normal);
                     this.sheetStart += 1;
 
                     // Total Fill Rate
                     lisPercent.Add(this.sheetStart.ToString());
                     wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Fill Rate", mDivisionID);
-                    for (int i = 5; i <= 17; i++)
-                    {
-                        string str = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 3, this.sheetStart - 4);
-                        wks.Cells[this.sheetStart, i] = str;
-                    }
-
+                    strColor = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", "{0}", this.sheetStart - 3, this.sheetStart - 4);
+                    this.SetFormulaToRow(wks, this.sheetStart, $@"{mDivisionID} Total Fill Rate", strColor, EnuDrawColor.Normal);
                     this.DrawBottomLine(wks, this.sheetStart, 4, 2, 17);
 
                     this.sheetStart += 1;
@@ -1153,23 +1146,15 @@ namespace Sci.Production.Planning
 
                 // Country Total Vari.
                 wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Vari.", countryID);
-                for (int i = 5; i <= 17; i++)
-                {
-                    string str = string.Format("={0}{1} - {0}{2}", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 2, this.sheetStart - 3);
-                    wks.Cells[this.sheetStart, i] = str;
-                }
-
+                string strVari = string.Format("={0}{1} - {0}{2}", "{0}", this.sheetStart - 2, this.sheetStart - 3);
+                this.SetFormulaToRow(wks, this.sheetStart, $@"{countryID} Total Vari.", strVari, EnuDrawColor.Normal);
                 this.sheetStart += 1;
 
                 // Country Total Fill Rate
                 lisPercent.Add(this.sheetStart.ToString());
                 wks.Cells[this.sheetStart, 3].Value = string.Format("{0} Total Fill Rate", countryID);
-                for (int i = 5; i <= 17; i++)
-                {
-                    string str = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", MyExcelPrg.GetExcelColumnName(i), this.sheetStart - 3, this.sheetStart - 4);
-                    wks.Cells[this.sheetStart, i] = str;
-                }
-
+                string strRate = string.Format("=IF({0}{2}>0,{0}{1} / {0}{2},0)", "{0}", this.sheetStart - 3, this.sheetStart - 4);
+                this.SetFormulaToRow(wks, this.sheetStart, $@"{countryID} Total Fill Rate", strRate, EnuDrawColor.Normal);
                 this.DrawBottomLine(wks, this.sheetStart, 5, 1, 17);
 
                 this.sheetStart += 1;
@@ -1293,22 +1278,61 @@ namespace Sci.Production.Planning
 
         private void SetFormulaToRow(Microsoft.Office.Interop.Excel.Worksheet wks, int sheetStart, string cell1Str, string formula, EnuDrawColor color = EnuDrawColor.None)
         {
-            wks.Cells[sheetStart, 1].Value = cell1Str;
-            for (int i = 2; i <= 14; i++)
+            if (ReportType == 1)
             {
-                string str = string.Format(formula, MyExcelPrg.GetExcelColumnName(i));
-                wks.Cells[sheetStart, i] = str;
-                if (color == EnuDrawColor.Normal)
+                wks.Cells[sheetStart, 1].Value = cell1Str;
+                for (int i = 2; i <= 14; i++)
                 {
-                    decimal value = 0;
-                    decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
-                    if (value >= 0)
+                    string str = string.Format(formula, MyExcelPrg.GetExcelColumnName(i));
+                    wks.Cells[sheetStart, i] = str;
+                    if (color == EnuDrawColor.Normal)
                     {
-                        wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FFCCFF"));
+                        decimal value = 0;
+                        decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
+                        if (value >= 0)
+                        {
+                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FFCCFF"));
+                        }
+                        else
+                        {
+                            wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#99FF99"));
+                        }
                     }
-                    else
+                }
+            }
+            else
+            {
+                wks.Cells[sheetStart, 3].Value = cell1Str;
+                for (int i = 5; i <= 17; i++)
+                {
+                    string str = string.Format(formula, MyExcelPrg.GetExcelColumnName(i));
+                    wks.Cells[sheetStart, i] = str;
+                    if (color == EnuDrawColor.Normal)
                     {
-                        wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#99FF99"));
+                        decimal value = 0;
+                        decimal.TryParse(wks.Cells[sheetStart, i].Value.ToString(), out value);
+                        if (cell1Str.IndexOf("Rate") >= 0)
+                        {
+                            if (value >= 1)
+                            {
+                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FFCCFF"));
+                            }
+                            else
+                            {
+                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#99FF99"));
+                            }
+                        }
+                        else
+                        {
+                            if (value >= 0)
+                            {
+                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#FFCCFF"));
+                            }
+                            else
+                            {
+                                wks.Cells[sheetStart, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.ColorTranslator.FromHtml("#99FF99"));
+                            }
+                        }
                     }
                 }
             }
