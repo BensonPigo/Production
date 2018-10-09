@@ -103,9 +103,17 @@ and MDivisionID='{Sci.Env.User.Keyword}'", out dr))
                      {
                          DataTable dt;
                          string sqlcmd = $@"
-SELECT Seq,ShipmodeID as 'ShipMode'
-FROM Order_QtyShip
-WHERE ID= '{e.FormattedValue}'
+SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
+,[TotalCrtns] = packing.qty
+FROM Order_QtyShip oq
+outer apply(
+	select SUM(PD.CTNQty) qty
+	from PackingList_Detail PD 
+	LEFT JOIN PackingList P ON PD.ID=P.ID
+	where PD.orderid= oq.ID AND P.ShipModeID= oq.ShipmodeID 
+	AND PD.OrderShipmodeSeq = oq.Seq
+)Packing
+WHERE oq.ID= '{e.FormattedValue}'
 ";
 
                          if (!(this.result = DBProxy.Current.Select(string.Empty, sqlcmd, out dt)))
@@ -119,6 +127,9 @@ WHERE ID= '{e.FormattedValue}'
                              {
                                  this.CurrentDetailData["OrderShipmodeSeq"] = dt.Rows[0]["Seq"].ToString();
                                  this.CurrentDetailData["ShipModeID"] = dt.Rows[0]["ShipMode"].ToString();
+                                 this.CurrentDetailData["Qty"] = dt.Rows[0]["Qty"].ToString();
+                                 this.CurrentDetailData["BuyerDelivery"] = dt.Rows[0]["BuyerDelivery"].ToString();
+                                 this.CurrentDetailData["TotalCrtns"] = dt.Rows[0]["TotalCrtns"].ToString();
                              }
                          }
 
@@ -132,12 +143,34 @@ WHERE ID= '{e.FormattedValue}'
                      else
                      {
                          MyUtility.Msg.WarningBox("Data not found!");
+                         this.CurrentDetailData["Brand"] = string.Empty;
+                         this.CurrentDetailData["SewingLine"] = string.Empty;
+                         this.CurrentDetailData["OrderID"] = string.Empty;
+                         this.CurrentDetailData["Style"] = string.Empty;
+                         this.CurrentDetailData["CustPoNo"] = string.Empty;
+                         this.CurrentDetailData["Qty"] = 0;
                          this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
                          this.CurrentDetailData["ShipModeID"] = string.Empty;
-                         this.CurrentDetailData["OrderID"] = string.Empty;
+                         this.CurrentDetailData["BuyerDelivery"] = DBNull.Value;
+                         this.CurrentDetailData["TotalCrtns"] = 0;
+                         this.CurrentDetailData["AccLacking"] = string.Empty;
                          this.CurrentDetailData.EndEdit();
                          return;
                      }
+                 }
+                 else if (this.EditMode && e.FormattedValue.ToString() == string.Empty)
+                 {
+                     this.CurrentDetailData["Brand"] = string.Empty;
+                     this.CurrentDetailData["SewingLine"] = string.Empty;
+                     this.CurrentDetailData["OrderID"] = string.Empty;
+                     this.CurrentDetailData["Style"] = string.Empty;
+                     this.CurrentDetailData["CustPoNo"] = string.Empty;
+                     this.CurrentDetailData["Qty"] = 0;
+                     this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
+                     this.CurrentDetailData["ShipModeID"] = string.Empty;
+                     this.CurrentDetailData["BuyerDelivery"] = DBNull.Value;
+                     this.CurrentDetailData["TotalCrtns"] = 0;
+                     this.CurrentDetailData["AccLacking"] = string.Empty;
                  }
              };
             #endregion
@@ -150,23 +183,46 @@ WHERE ID= '{e.FormattedValue}'
                 string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["OrderShipmodeSeq"]);
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                 if (oldvalue == newvalue) return;
-
+                DataRow dr;
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     if (MyUtility.Check.Seek($@"
-select 1 
-from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]} and seq='{e.FormattedValue}''"))
+SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
+,[TotalCrtns] = packing.qty
+FROM Order_QtyShip oq
+outer apply(
+	select SUM(PD.CTNQty) qty
+	from PackingList_Detail PD 
+	LEFT JOIN PackingList P ON PD.ID=P.ID
+	where PD.orderid= oq.ID AND P.ShipModeID= oq.ShipmodeID 
+	AND PD.OrderShipmodeSeq = oq.Seq
+)Packing
+where oq.id='{this.CurrentDetailData["OrderID"]} and oq.seq='{e.FormattedValue}''", out dr))
                     {
                         this.CurrentDetailData["OrderShipmodeSeq"] = e.FormattedValue.ToString();
+                        this.CurrentDetailData["Qty"] = dr["Qty"].ToString();
+                        this.CurrentDetailData["BuyerDelivery"] = dr["BuyerDelivery"].ToString();
+                        this.CurrentDetailData["TotalCrtns"] = dr["TotalCrtns"].ToString();
                         this.CurrentDetailData.EndEdit();
                     }
                     else
                     {
                         MyUtility.Msg.WarningBox("Data not found!");
                         this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
+                        this.CurrentDetailData["Qty"] = 0;
+                        this.CurrentDetailData["BuyerDelivery"] = string.Empty;
+                        this.CurrentDetailData["TotalCrtns"] = 0;
                         this.CurrentDetailData.EndEdit();
                         return;
                     }
+                }
+                else if (this.EditMode && e.FormattedValue.ToString() == string.Empty)
+                {
+                    this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
+                    this.CurrentDetailData["Qty"] = 0;
+                    this.CurrentDetailData["BuyerDelivery"] = string.Empty;
+                    this.CurrentDetailData["TotalCrtns"] = 0;
+                    this.CurrentDetailData.EndEdit();
                 }
             };
 
@@ -314,19 +370,23 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("Brand", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("SewingLine", header: "Sewing Line", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Brand", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("SewingLine", header: "Sewing Line", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: col_SP)
                 .Text("Style", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
-                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: col_Seq)
-                .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: col_ShipMode)
+                .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
+                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: col_Seq)
+                .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: col_ShipMode)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Numeric("TotalCrtns", header: "Total Crtns", width: Widths.AnsiChars(10), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
-                .Text("AccLacking", header: "Acc Lacking", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: col_acc)
+                .Numeric("TotalCrtns", header: "Total Crtns", width: Widths.AnsiChars(8), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
+                .Text("AccLacking", header: "Acc Lacking", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_acc)
                 ;
             #endregion
+            this.detailgrid.Columns["OrderID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["OrderShipmodeSeq"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["ShipModeID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.detailgrid.Columns["AccLacking"].DefaultCellStyle.BackColor = Color.Pink;
             base.OnDetailGridSetup();
         }
 
@@ -343,6 +403,14 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             {
                 this.btnSendEMail.Enabled = true;
             }
+
+            #region Confirmed name取值
+            this.txtAddName.Text = CurrentMaintain["AddName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{CurrentMaintain["AddName"]}'") + ((DateTime)CurrentMaintain["AddDate"]).ToString("yyyy/MM/dd hh:mm:ss");
+            this.txtSupApv.Text = CurrentMaintain["SupApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{CurrentMaintain["SupApvName"]}'") + ((DateTime)CurrentMaintain["SupApvDate"]).ToString("yyyy/MM/dd hh:mm:ss");
+            this.txtPPDApv.Text = CurrentMaintain["PPDApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{CurrentMaintain["PPDApvName"]}'") + ((DateTime)CurrentMaintain["PPDApvDate"]).ToString("yyyy/MM/dd hh:mm:ss");
+            this.txtProdApv.Text = CurrentMaintain["ProdApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{CurrentMaintain["ProdApvName"]}'") + ((DateTime)CurrentMaintain["ProdApvDate"]).ToString("yyyy/MM/dd hh:mm:ss");
+
+            #endregion
         }
 
         // 新增時預設資料
@@ -365,6 +433,10 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
                 return;
             }
+            else
+            {
+                MyUtility.Msg.InfoBox("Successful!");
+            }
         }
 
         protected override void ClickRecall()
@@ -377,6 +449,10 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
                 return;
             }
+            else
+            {
+                MyUtility.Msg.InfoBox("Successful!");
+            }
         }
 
         protected override void ClickCheck()
@@ -387,6 +463,10 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             {
                 MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
                 return;
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Successful!");
             }
 
             base.ClickCheck();
@@ -401,6 +481,10 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
                 return;
             }
+            else
+            {
+                MyUtility.Msg.InfoBox("Successful!");
+            }
 
             base.ClickUncheck();
         }
@@ -414,6 +498,10 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
                 return;
             }
+            else
+            {
+                MyUtility.Msg.InfoBox("Successful!");
+            }
 
             base.ClickConfirm();
         }
@@ -426,6 +514,10 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             {
                 MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
                 return;
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Successful!");
             }
 
             base.ClickUnconfirm();

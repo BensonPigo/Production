@@ -45,9 +45,9 @@
             this.labProdMgrApv = new Sci.Win.UI.Label();
             this.labCreate = new Sci.Win.UI.Label();
             this.txtAddName = new Sci.Win.UI.TextBox();
-            this.textBox2 = new Sci.Win.UI.TextBox();
-            this.textBox3 = new Sci.Win.UI.TextBox();
-            this.textBox4 = new Sci.Win.UI.TextBox();
+            this.txtPPDApv = new Sci.Win.UI.TextBox();
+            this.txtSupApv = new Sci.Win.UI.TextBox();
+            this.txtProdApv = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -99,7 +99,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(866, 48);
+            this.gridicon.Location = new System.Drawing.Point(864, 48);
             // 
             // refresh
             // 
@@ -119,9 +119,9 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.textBox4);
-            this.detailbtm.Controls.Add(this.textBox3);
-            this.detailbtm.Controls.Add(this.textBox2);
+            this.detailbtm.Controls.Add(this.txtProdApv);
+            this.detailbtm.Controls.Add(this.txtSupApv);
+            this.detailbtm.Controls.Add(this.txtPPDApv);
             this.detailbtm.Controls.Add(this.txtAddName);
             this.detailbtm.Controls.Add(this.labCreate);
             this.detailbtm.Controls.Add(this.labProdMgrApv);
@@ -139,9 +139,9 @@
             this.detailbtm.Controls.SetChildIndex(this.labProdMgrApv, 0);
             this.detailbtm.Controls.SetChildIndex(this.labCreate, 0);
             this.detailbtm.Controls.SetChildIndex(this.txtAddName, 0);
-            this.detailbtm.Controls.SetChildIndex(this.textBox2, 0);
-            this.detailbtm.Controls.SetChildIndex(this.textBox3, 0);
-            this.detailbtm.Controls.SetChildIndex(this.textBox4, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtPPDApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtSupApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtProdApv, 0);
             // 
             // browse
             // 
@@ -317,7 +317,6 @@
             // txtAddName
             // 
             this.txtAddName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtAddName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AddName", true));
             this.txtAddName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtAddName.IsSupportEditMode = false;
             this.txtAddName.Location = new System.Drawing.Point(99, 13);
@@ -326,41 +325,38 @@
             this.txtAddName.Size = new System.Drawing.Size(332, 23);
             this.txtAddName.TabIndex = 18;
             // 
-            // textBox2
+            // txtPPDApv
             // 
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "PPDApvName", true));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox2.IsSupportEditMode = false;
-            this.textBox2.Location = new System.Drawing.Point(99, 42);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(332, 23);
-            this.textBox2.TabIndex = 19;
+            this.txtPPDApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtPPDApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtPPDApv.IsSupportEditMode = false;
+            this.txtPPDApv.Location = new System.Drawing.Point(99, 42);
+            this.txtPPDApv.Name = "txtPPDApv";
+            this.txtPPDApv.ReadOnly = true;
+            this.txtPPDApv.Size = new System.Drawing.Size(332, 23);
+            this.txtPPDApv.TabIndex = 19;
             // 
-            // textBox3
+            // txtSupApv
             // 
-            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox3.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SupApvName", true));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox3.IsSupportEditMode = false;
-            this.textBox3.Location = new System.Drawing.Point(546, 13);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(332, 23);
-            this.textBox3.TabIndex = 20;
+            this.txtSupApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSupApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSupApv.IsSupportEditMode = false;
+            this.txtSupApv.Location = new System.Drawing.Point(546, 13);
+            this.txtSupApv.Name = "txtSupApv";
+            this.txtSupApv.ReadOnly = true;
+            this.txtSupApv.Size = new System.Drawing.Size(332, 23);
+            this.txtSupApv.TabIndex = 20;
             // 
-            // textBox4
+            // txtProdApv
             // 
-            this.textBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.textBox4.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ProdApvName", true));
-            this.textBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.textBox4.IsSupportEditMode = false;
-            this.textBox4.Location = new System.Drawing.Point(546, 43);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(332, 23);
-            this.textBox4.TabIndex = 21;
+            this.txtProdApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtProdApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtProdApv.IsSupportEditMode = false;
+            this.txtProdApv.Location = new System.Drawing.Point(546, 43);
+            this.txtProdApv.Name = "txtProdApv";
+            this.txtProdApv.ReadOnly = true;
+            this.txtProdApv.Size = new System.Drawing.Size(332, 23);
+            this.txtProdApv.TabIndex = 21;
             // 
             // P18
             // 
@@ -371,6 +367,7 @@
             this.GridAlias = "AVO_Detail";
             this.IsSupportCheck = true;
             this.IsSupportConfirm = true;
+            this.IsSupportCopy = false;
             this.IsSupportRecall = true;
             this.IsSupportSend = true;
             this.IsSupportUncheck = true;
@@ -425,9 +422,9 @@
         private Win.UI.Label labPPDMgr;
         private Win.UI.Label labProdMgrApv;
         private Win.UI.Label labSupApv;
-        private Win.UI.TextBox textBox4;
-        private Win.UI.TextBox textBox3;
-        private Win.UI.TextBox textBox2;
+        private Win.UI.TextBox txtProdApv;
+        private Win.UI.TextBox txtSupApv;
+        private Win.UI.TextBox txtPPDApv;
         private Win.UI.TextBox txtAddName;
         private Win.UI.Label labCreate;
     }

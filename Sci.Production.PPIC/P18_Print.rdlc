@@ -593,6 +593,7 @@
                               <Value>=Fields!SewLine.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -625,6 +626,7 @@
                               <Value>=Fields!SewInLine.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -657,6 +659,7 @@
                               <Value>=Fields!OrderID.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -689,6 +692,7 @@
                               <Value>=Fields!CustPONo.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                                 <Format>#,0.0000;(#,0.0000)</Format>
                               </Style>
                             </TextRun>
@@ -724,6 +728,7 @@
                               <Value>=Fields!StyleID.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                                 <Format>#,0.0000;(#,0.0000)</Format>
                               </Style>
                             </TextRun>
@@ -759,6 +764,7 @@
                               <Value>=Fields!Qty.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -793,6 +799,7 @@
                               <Value>=Fields!RefNo.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                                 <Format>#,0.000000;(#,0.000000)</Format>
                               </Style>
                             </TextRun>
@@ -828,6 +835,7 @@
                               <Value>=Fields!FinalETA.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                                 <Format>#,0.0000;(#,0.0000)</Format>
                               </Style>
                             </TextRun>
@@ -863,6 +871,7 @@
                               <Value>=Fields!BuyerDelivery.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -897,6 +906,7 @@
                               <Value>=Fields!VasShas.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -931,6 +941,7 @@
                               <Value>=Fields!Alias.Value</Value>
                               <Style>
                                 <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>9pt</FontSize>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -988,7 +999,7 @@
         <Top>0.33927cm</Top>
         <Left>0.22225cm</Left>
         <Height>1.5175cm</Height>
-        <Width>19.67061cm</Width>
+        <Width>19.67063cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -999,10 +1010,10 @@
     <Height>0.8125in</Height>
     <Style />
   </Body>
-  <Width>7.83183in</Width>
+  <Width>7.83184in</Width>
   <Page>
     <PageHeader>
-      <Height>5.0794cm</Height>
+      <Height>5.34398cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
