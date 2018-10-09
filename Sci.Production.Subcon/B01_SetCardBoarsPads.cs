@@ -75,7 +75,7 @@ namespace Sci.Production.Subcon
             };
 
             #endregion
-            #region 
+            #region  PadRefno
             Ict.Win.DataGridViewGeneratorTextColumnSettings PadRefno = new DataGridViewGeneratorTextColumnSettings();
             PadRefno.EditingMouseDown += (s, e) =>
             {
@@ -84,7 +84,7 @@ namespace Sci.Production.Subcon
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
-                    string item_cmd = $@"select Refno from LocalItem where  Category = 'CARTON' and junk = 0 and LocalSuppid = '{this.masterrow["LocalSuppid"]}'";
+                    string item_cmd = $@"select Refno from LocalItem where  Category = 'CARTON' and junk = 0 and LocalSuppid = '{this.masterrow["LocalSuppid"]}' and Refno<> '{this.masterrow["Refno"]}'";
                     SelectItem item = new SelectItem(item_cmd, "12", dr["Refno"].ToString());
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
@@ -100,7 +100,7 @@ namespace Sci.Production.Subcon
                 if (!this.EditMode) return; 
                 if (e.RowIndex == -1) return;
                 DataRow dr = grid1.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Seek($@"select Refno from LocalItem where  Category = 'CARTON' and junk = 0 and LocalSuppid = '{this.masterrow["LocalSuppid"]}' and Refno = '{e.FormattedValue}'"))
+                if (!MyUtility.Check.Seek($@"select Refno from LocalItem where  Category = 'CARTON' and junk = 0 and LocalSuppid = '{this.masterrow["LocalSuppid"]}' and Refno = '{e.FormattedValue}' and Refno<> '{this.masterrow["Refno"]}'"))
                 {
                     MyUtility.Msg.WarningBox($"PadRefno: {e.FormattedValue} not found!");
                     dr["PadRefno"] = DBNull.Value;
