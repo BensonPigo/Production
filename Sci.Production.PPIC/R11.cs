@@ -546,6 +546,7 @@ outer apply(
 where O.Category ='B' and o.junk !=1
 and oq.BuyerDelivery = AllDate.HolidayDates  
 and oq.BuyerDelivery < AllDate.WorkDates 
+and not exists(select 1 from #tmp1 where  BuyerDelivery >= ReadyDate and o.ID=SPNO)
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 ) a 
