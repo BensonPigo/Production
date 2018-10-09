@@ -461,6 +461,9 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    string oldValue = dr["Roll"].ToString();
+                    string newValue = e.FormattedValue.ToString();
+                    if (oldValue.Equals(newValue)) return;
                     string sqlcmd = string.Format(@"SELECT  dyelot
                                                             ,dbo.Getlocation(a.ukey) as [location]
                                                             ,ukey
@@ -558,29 +561,30 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
 
             #region 檢查負數庫存
 
-//            sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-//,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,d.Dyelot
-//from dbo.IssueReturn_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-//on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll
-//where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
-//            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-//            {
-//                ShowErr(sqlcmd, result2);
-//                return;
-//            }
-//            else
-//            {
-//                if (datacheck.Rows.Count > 0)
-//                {
-//                    foreach (DataRow tmp in datacheck.Rows)
-//                    {
-//                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than return qty: {5}" + Environment.NewLine
-//                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
-//                    }
-//                    MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
-//                    return;
-//                }
-//            }
+            sqlcmd = string.Format(@"Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
+,f.OutQty,d.Dyelot
+from dbo.IssueReturn_Detail d WITH (NOLOCK) 
+left join FtyInventory f WITH (NOLOCK) 
+on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.dyelot = f.dyelot
+where isnull(f.OutQty,0) < d.Qty and d.Id = '{0}'", CurrentMaintain["id"]);
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                ShowErr(sqlcmd, result2);
+                return;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    foreach (DataRow tmp in datacheck.Rows)
+                    {
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} Outqty is {5}, Return Qty can not higher than {5}" + Environment.NewLine
+                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"], tmp["OutQty"]);
+                    }
+                    MyUtility.Msg.WarningBox(ids, "Warning");
+                    return;
+                }
+            }
 
             #endregion 檢查負數庫存
 
