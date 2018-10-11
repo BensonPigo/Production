@@ -65,7 +65,18 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Sub-process and Stock Type can not empty!");
                 return false;
             }
-            
+            if (!MyUtility.Check.Empty(this.txtSewingLine.Text))
+            {
+                DataRow dr;
+                string sqlcmd = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID = '{0}' AND ID='{1}'", Sci.Env.User.Factory, this.txtSewingLine.Text);
+                if (MyUtility.Check.Seek(sqlcmd, out dr) == false)
+                {
+                    MyUtility.Msg.WarningBox(string.Format("< Sewing Line ID : {0} > not found!!!", this.txtSewingLine.Text));
+                    this.txtSewingLine.Text = string.Empty;
+                    this.txtSewingLine.Focus();
+                    return false;
+                }
+            }
             return base.ClickSaveBefore();
         }
 
@@ -80,5 +91,29 @@ namespace Sci.Production.Subcon
             base.ClickUndo();
             this.txtID.ReadOnly = true;
         }
+        
+        private void txtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            this.txtSewingLine.Text = this.SelectSewingLine(this.txtSewingLine.Text);
+
+        }
+
+
+        private string SelectSewingLine(string line)
+        {
+            string sql = string.Format("Select Distinct ID From SewingLine WITH (NOLOCK) WHERE Junk != 1  AND FactoryID = '{0}'", Sci.Env.User.Factory);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sql, "3", line, false, ",");
+            item.Width = 300;
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return item.GetSelectedString();
+            }
+        }
+        
     }
 }

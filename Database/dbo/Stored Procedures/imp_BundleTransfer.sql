@@ -45,38 +45,38 @@ BEGIN
 
 			--add BundleTransfer	
 			INSERT INTO BundleTransfer
-			SELECT RB.sid, RB.readerid, RR.type, RR.ProcessId, RB.tagid, RB.epcid, RB.transdate, GETDATE()
+			SELECT RB.sid, RB.readerid, RR.type, RR.ProcessId, RB.tagid, RB.epcid, RB.transdate, GETDATE(), RR.SewingLineID
 			FROM  #tmp  RB
 			left join RFIDReader RR on RB.readerid  collate Chinese_Taiwan_Stroke_CI_AS  =RR.Id
 						
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
 			Merge Production.dbo.BundleInOut as t
-			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type
+			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type, b.SewingLineID
 			FROM #tmp a inner join  RFIDReader b on a.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = b.Id
-			group by a.EpcId,b.processId, b.Type) as s
+			group by a.EpcId,b.processId, b.Type, b.SewingLineID) as s
 			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
 				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS and s.type=1
 			when matched then 
 				update set
-				t.incoming = s.TransDate,	t.EditDate = s.AddDate
+				t.incoming = s.TransDate,	t.EditDate = s.AddDate , t.SewingLineID=a.SewingLineID
 			when not matched by target and s.type=1 then
-				insert(BundleNo, SubProcessId, InComing, AddDate)
-				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate);
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID);
 
 			-- RFIDReader.Type=2
 			Merge Production.dbo.BundleInOut as t
-			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type
+			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type, b.SewingLineID
 			FROM #tmp a inner join  RFIDReader b on a.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = b.Id
 			group by a.EpcId,b.processId, b.Type) as s
 			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
 				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS and s.type=2 
 			when matched then 
 				update set
-				t.OutGoing = s.TransDate,	t.EditDate = s.AddDate
+				t.OutGoing = s.TransDate,	t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID
 			when not matched by target and s.type=2 then
 				insert(BundleNo, SubProcessId, OutGoing, AddDate)
-				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate);
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID);
 
 			Commit tran
 
