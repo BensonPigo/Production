@@ -46,6 +46,7 @@ namespace Sci.Production.Subcon
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
                     string item_cmd = $@"select id from buyer where junk = 0 ";
                     SelectItem item = new SelectItem(item_cmd, "12", dr["buyer"].ToString());
+                    item.Text = "Buyer";
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -84,8 +85,9 @@ namespace Sci.Production.Subcon
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid1.GetDataRow(e.RowIndex);
-                    string item_cmd = $@"select Refno from LocalItem where  Category = 'CARTON' and junk = 0 and LocalSuppid = '{this.masterrow["LocalSuppid"]}' and Refno<> '{this.masterrow["Refno"]}'";
+                    string item_cmd = $@"select Refno,Description from LocalItem where  Category = 'CARTON' and junk = 0 and LocalSuppid = '{this.masterrow["LocalSuppid"]}' and Refno<> '{this.masterrow["Refno"]}'";
                     SelectItem item = new SelectItem(item_cmd, "12", dr["Refno"].ToString());
+                    item.Text = "Pad Refno";
                     DialogResult dresult = item.ShowDialog();
                     if (dresult == DialogResult.Cancel)
                     {
@@ -115,10 +117,10 @@ namespace Sci.Production.Subcon
             .Text("Buyer", header: "Buyer", width: Widths.AnsiChars(15),settings: buyer)
             .Text("PadRefno", header: "Pad Refno", width: Widths.AnsiChars(15),settings: PadRefno)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(10))
-            .DateTime("AddDate", header: "Create Date", iseditingreadonly: true)
-            .Text("AddName", header: "Create Name", iseditingreadonly: true)
-            .DateTime("EditDate", header: "Edit Date", iseditingreadonly: true)
-            .Text("EditName", header: "Edit Name", iseditingreadonly: true)
+            .DateTime("AddDate", header: "Create Date", iseditingreadonly: true, iseditable: false)
+            .Text("AddName", header: "Create Name", iseditingreadonly: true, iseditable: false)
+            .DateTime("EditDate", header: "Edit Date", iseditingreadonly: true, iseditable: false)
+            .Text("EditName", header: "Edit Name", iseditingreadonly: true, iseditable: false)
             ;
             #endregion
         }

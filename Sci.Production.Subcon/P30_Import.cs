@@ -480,16 +480,16 @@ where Qty - ShipQty - DiffQty = 0";
 
                 DataTable tmpdt = dr2.CopyToDataTable();
                 string sqlcmd = $@"
-select 
+select selected=1,
 	t.POID,t.OrderID,t.StyleID,t.SciDelivery,t.SeasonID,
 	Refno=l.PadRefno,
 	Description=dbo.getitemdesc('Carton', l.PadRefno),
 	ThreadColorID='',
 	Qty=t.qty*l.qty,
 	t.UnitID,
-	t.Price,
-	amount = t.qty*l.qty*t.Price,
-	t.std_price,
+	d.Price,
+	amount = t.qty*l.qty*d.Price,
+    t.std_price,
 	remark='',
 	t.etd,t.requestid,t.id,t.FactoryID,t.SewInLine,t.delivery,t.BuyerID,
 	d.LocalSuppid
