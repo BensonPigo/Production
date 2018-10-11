@@ -209,10 +209,10 @@ select * from(
     )a
     outer apply (select ct = count(SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo)b1
     outer apply (
-	    select qty=stuff((select concat('/',SizeSpec,'-',ShipQty) 
+	    select qty=stuff((select concat('/',SizeSpec+'-',ShipQty) 
 	    from PackingList_Detail pd2 
-	    inner join Order_SizeSpec os on os.SizeCode = pd2.SizeCode
-	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo and os.id = o.poid and os.SizeItem = 'S01' for xml path('')),1,1,'')
+	    left join Order_SizeSpec os on os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01'
+	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,'')
     )b
     where pd.id = '{this.masterData["ID"]}'
 )a
