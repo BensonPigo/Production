@@ -160,7 +160,7 @@ select
 	ttlqt = isnull(oq.Qty*oap.Qty,0),
 	PADPRINTINGPCS = oap.Qty,
 	o.StyleUkey
-into #tmp
+into #tmpo
 from orders o with(nolock)
 inner join Order_TmsCost ot with(nolock) on o.id = ot.id and ot.ArtworkTypeID = 'PAD PRINTING' and ot.Price > 0 
 cross apply(select oq.id,oq.Article,Qty=sum(oq.Qty) from Order_Qty oq with(nolock) where oq.id = o.id group by oq.id,oq.Article)oq
@@ -197,15 +197,15 @@ left join Country c with(nolock) on c.id = o.Dest
 where isnull(o.Junk,0) =0
 and o.Category = ''
 {sqlwhere}
-
 ";
             }
 
             sqlCmd += $@"
+select * into #tmp from #tmpo where not(isnull(Category,'') = ''and isnull(ColorID,'') = '')
 select * from #tmp
 
 select distinct s.ID,s.SeasonID,s.BrandID,sa.Article,sap.ColorID
-from #tmp t
+from #tmpo t
 inner join style s with(nolock) on s.ukey = t.StyleUkey
 inner join Style_TmsCost st with(nolock) on st.StyleUkey = s.Ukey and st.ArtworkTypeID = 'PAD PRINTING' and st.Price > 0 
 left join Style_Article sa with(nolock) on sa.StyleUkey = s.Ukey and sa.Article = t.Article
@@ -222,9 +222,11 @@ end
 select ym=format(t.ym,'yyyy/MM'),t2.ColorID,t2.qty into #tmp3 from #mondt t left join #tmp2 t2 on format(t.ym,'yyyy/MM') = t2.ym
 declare @ym nvarchar(max)=stuff((select distinct concat(',[',ym,']') from #tmp3 for xml path('')),1,1,'')
 declare @ex nvarchar(max)='
-select *
-from(select ColorID,ym,qty from #tmp3 where colorid is not null)x
+select * into #sheet1
+from(select ColorID,ym,qty from #tmp3)x
 pivot(sum(qty) for ym in('+@ym+'))as pvt
+select * from #sheet1 where isnull(ColorID,'''') <>''''
+select * from #sheet1 where isnull(ColorID,'''') =''''
 '
 exec(@ex)
 
@@ -332,9 +334,9 @@ drop table #tmp,#tmp2,#tmp3,#mondt
                 int row2 = 16 + (colorCount * 5);
                 if (this.forecast)
                 {
-                    for (int i = 0; i < this.printData[4].Rows.Count; i++)
+                    for (int i = 0; i < this.printData[5].Rows.Count; i++)
                     {
-                        worksheet.Cells[row2 - 1, i + 3] = this.printData[4].Rows[i]["Qty"];
+                        worksheet.Cells[row2 - 1, i + 3] = this.printData[5].Rows[i]["Qty"];
                     }
                 }
 
@@ -379,13 +381,13 @@ drop table #tmp,#tmp2,#tmp3,#mondt
                 }
                 #endregion
                 #region 顏色
-                worksheet.get_Range((Excel.Range)worksheet.Cells[8, 3], (Excel.Range)worksheet.Cells[8 + (colorCount * 4) - 1, 3 + this.printData[3].Rows.Count - 1]).Interior.Color = Color.FromArgb(189, 215, 238);
-                worksheet.get_Range((Excel.Range)worksheet.Cells[row2, 3], (Excel.Range)worksheet.Cells[row2 + (colorCount * 4) - 1, 3 + this.printData[3].Rows.Count - 1]).Interior.Color = Color.FromArgb(189, 215, 238);
-                worksheet.get_Range((Excel.Range)worksheet.Cells[row3, 3], (Excel.Range)worksheet.Cells[row3 + (colorCount * 4) - 1, 3 + this.printData[3].Rows.Count - 1]).Interior.Color = Color.FromArgb(189, 215, 238);
-                worksheet.get_Range((Excel.Range)worksheet.Cells[row4, 3], (Excel.Range)worksheet.Cells[row4 + (colorCount * 4) - 1, 3 + this.printData[3].Rows.Count - 1]).Interior.Color = Color.FromArgb(217, 217, 217);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[8, 3], (Excel.Range)worksheet.Cells[8 + (colorCount * 4) - 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.FromArgb(189, 215, 238);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[row2, 3], (Excel.Range)worksheet.Cells[row2 + (colorCount * 4) - 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.FromArgb(189, 215, 238);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[row3, 3], (Excel.Range)worksheet.Cells[row3 + (colorCount * 4) - 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.FromArgb(189, 215, 238);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[row4, 3], (Excel.Range)worksheet.Cells[row4 + (colorCount * 4) - 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.FromArgb(217, 217, 217);
 
-                worksheet.get_Range((Excel.Range)worksheet.Cells[row2 - 1, 3], (Excel.Range)worksheet.Cells[row2 - 1, 3 + this.printData[3].Rows.Count - 1]).Interior.Color = Color.FromArgb(217, 217, 217);
-                worksheet.get_Range((Excel.Range)worksheet.Cells[row3 - 1, 3], (Excel.Range)worksheet.Cells[row3 - 1, 3 + this.printData[3].Rows.Count - 1]).Interior.Color = Color.FromArgb(217, 217, 217);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[row2 - 1, 3], (Excel.Range)worksheet.Cells[row2 - 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.FromArgb(217, 217, 217);
+                worksheet.get_Range((Excel.Range)worksheet.Cells[row3 - 1, 3], (Excel.Range)worksheet.Cells[row3 - 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.FromArgb(217, 217, 217);
                 #endregion
                 #region 隱藏列
                 worksheet.Rows[$"{row2 + colorCount}:{row2 + (colorCount * 3) - 1}", System.Type.Missing].Hidden = true;
@@ -393,7 +395,21 @@ drop table #tmp,#tmp2,#tmp3,#mondt
                 worksheet.Rows[$"{row4}:{row4 + (colorCount * 3) - 1}", System.Type.Missing].Hidden = true;
                 #endregion
             }
+            #region
+            worksheet.Rows[8, Type.Missing].Insert(Excel.XlDirection.xlDown);
+            worksheet.get_Range((Excel.Range)worksheet.Cells[8, 1], (Excel.Range)worksheet.Cells[8 + this.printData[2].Rows.Count - 1, 1]).Merge(false);
+            worksheet.get_Range((Excel.Range)worksheet.Cells[8, 2], (Excel.Range)worksheet.Cells[8, 2]).Interior.Color = Color.FromArgb(217, 217, 217);
+            worksheet.get_Range((Excel.Range)worksheet.Cells[8, 3], (Excel.Range)worksheet.Cells[8, 3 + this.printData[2].Columns.Count - 2]).Interior.Color = Color.FromArgb(189, 215, 238);
+            worksheet.get_Range((Excel.Range)worksheet.Cells[8, 3], (Excel.Range)worksheet.Cells[8, 3 + this.printData[2].Columns.Count - 2]).Font.Bold = false;
 
+            if (this.printData[3].Rows.Count > 0)
+            {
+                for (int i = 1; i < this.printData[2].Columns.Count; i++)
+                {
+                    worksheet.Cells[8, i + 2] = MyUtility.Convert.GetString(this.printData[3].Rows[0][i]);
+                }
+            }
+            #endregion
             worksheet.Columns[1].AutoFit();
             worksheet.Range[worksheet.Cells[6, 3], worksheet.Cells[6, this.printData[2].Columns.Count]].AutoFilter();
             worksheet = excel.ActiveWorkbook.Worksheets[2];
@@ -421,24 +437,24 @@ drop table #tmp,#tmp2,#tmp3,#mondt
         private void Pastecolumnname(Excel.Worksheet worksheet, int row, Color color, int headerrow)
         {
             int yct = 0;
-            for (int i = 0; i < this.printData[3].Rows.Count; i++)
+            for (int i = 0; i < this.printData[4].Rows.Count; i++)
             {
-                worksheet.Cells[row + 1, i + 3] = this.printData[3].Rows[i]["m"];
+                worksheet.Cells[row + 1, i + 3] = this.printData[4].Rows[i]["m"];
                 if (yct == 0 || yct == i)
                 {
-                    worksheet.Cells[row, i + 3] = this.printData[3].Rows[i]["y"];
-                    worksheet.get_Range((Excel.Range)worksheet.Cells[row, 3 + i], (Excel.Range)worksheet.Cells[row, 3 + i + (int)this.printData[3].Rows[i]["ct"] - 1]).Merge(false);
-                    yct += (int)this.printData[3].Rows[i]["ct"];
+                    worksheet.Cells[row, i + 3] = this.printData[4].Rows[i]["y"];
+                    worksheet.get_Range((Excel.Range)worksheet.Cells[row, 3 + i], (Excel.Range)worksheet.Cells[row, 3 + i + (int)this.printData[4].Rows[i]["ct"] - 1]).Merge(false);
+                    yct += (int)this.printData[4].Rows[i]["ct"];
                 }
             }
 
-            worksheet.get_Range((Excel.Range)worksheet.Cells[row + 2, 3], (Excel.Range)worksheet.Cells[row + 2, 3 + this.printData[3].Rows.Count - 1]).Merge(false);
+            worksheet.get_Range((Excel.Range)worksheet.Cells[row + 2, 3], (Excel.Range)worksheet.Cells[row + 2, 3 + this.printData[4].Rows.Count - 1]).Merge(false);
 
             // 範圍背景顏色
-            worksheet.get_Range((Excel.Range)worksheet.Cells[row, 3], (Excel.Range)worksheet.Cells[row, 3 + this.printData[3].Rows.Count - 1]).Interior.Color = color;
-            worksheet.get_Range((Excel.Range)worksheet.Cells[row + 1, 3], (Excel.Range)worksheet.Cells[row + 1, 3 + this.printData[3].Rows.Count - 1]).Interior.Color = Color.Black;
+            worksheet.get_Range((Excel.Range)worksheet.Cells[row, 3], (Excel.Range)worksheet.Cells[row, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = color;
+            worksheet.get_Range((Excel.Range)worksheet.Cells[row + 1, 3], (Excel.Range)worksheet.Cells[row + 1, 3 + this.printData[4].Rows.Count - 1]).Interior.Color = Color.Black;
             #region 設定全框線
-            worksheet.get_Range((Excel.Range)worksheet.Cells[row, 1], (Excel.Range)worksheet.Cells[row + headerrow + 4, 2 + this.printData[3].Rows.Count]).Borders.Weight = 2;
+            worksheet.get_Range((Excel.Range)worksheet.Cells[row, 1], (Excel.Range)worksheet.Cells[row + headerrow + 4, 2 + this.printData[4].Rows.Count]).Borders.Weight = 2;
             #endregion
         }
 
