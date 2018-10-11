@@ -122,7 +122,7 @@ BEGIN
 	SELECT distinct
 	[SHELL A/ SIZE] = case when (orderid<>'''' and Style<>'''') 
 	then isnull(colordes.ColorName,'''') + CHAR(13) + ''<'' +isnull(p.Article,'''') +''>''
-	else iif(substring(isnull(p.Orderid,''''),1,5)=''Total'',''Total: ''+''17120632NK'', ''Total: '' + isnull(p.ColorID,'''') + ''<'' + isnull(p.Article,'''') + ''>'') end
+	else iif(substring(isnull(p.Orderid,''''),1,5)=''Total'',''Total: ''+ '''+@PoID+N''', ''Total: '' + isnull(p.ColorID,'''') + ''<'' + isnull(p.Article,'''') + ''>'') end
 	, Article
 	, [Sewing Line] =isnull(Line.SewingLineID ,line2.SewingLineID)
 	, '+@cols+N'

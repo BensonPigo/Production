@@ -651,7 +651,7 @@ select distinct sizecode,Seq
                 for (int i = 0; i < dt2RowsCnt; i++)
                 {
                     // 直向Total
-                    wkcolor.Cells[9 + i,dt2ColsCnt - 6 ].Value = string.Format("=SUM({0}{1}:{2}{1})", MyExcelPrg.GetExcelColumnName(3), 9 + i, MyExcelPrg.GetExcelColumnName(dt2ColsCnt - 8));
+                    wkcolor.Cells[9 + i,dt2ColsCnt - 6 ].Value = string.Format("=SUM({0}{1}:{2}{1})", MyExcelPrg.GetExcelColumnName(3), 9 + i, MyExcelPrg.GetExcelColumnName(dt2ColsCnt -7));
 
                     // 取得相同的Article 數量
                     DataRow[] drArtCnt = dt_Sheet2[0].Select(string.Format("Article='{0}' and SPNO <>'' ", dt_Sheet2[0].Rows[i]["Article"]));
