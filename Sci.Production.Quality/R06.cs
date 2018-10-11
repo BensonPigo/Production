@@ -15,10 +15,10 @@ namespace Sci.Production.Quality
     public partial class R06 : Sci.Win.Tems.PrintForm
     {
         DateTime? DateArrStart; DateTime? DateArrEnd;
-        List<SqlParameter> lis; 
-        DataTable[] allDatas;        
-        string cmd; 
-        string Supp,refno,brand,season, ReportType;
+        List<SqlParameter> lis;
+        DataTable[] allDatas;
+        string cmd;
+        string Supp, refno, brand, season, ReportType;
 
         public R06(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -70,12 +70,14 @@ namespace Sci.Production.Quality
                 sqlSuppWhere = " and a.SuppID = @Supp ";
                 lis.Add(new SqlParameter("@Supp", Supp));
 
-            } if (!this.refno.Empty())
+            }
+            if (!this.refno.Empty())
             {
                 sqlWheres.Add("psd.Refno = @refno");
                 lis.Add(new SqlParameter("@refno", refno));
 
-            } if (!this.brand.Empty())
+            }
+            if (!this.brand.Empty())
             {
                 string str_multi = "";
                 foreach (string v_str in brand.Split(','))
@@ -86,7 +88,8 @@ namespace Sci.Production.Quality
                 sqlWheres.Add(string.Format("o.brandid in ({0})", str_multi.Substring(1)));
                 //lis.Add(new SqlParameter("@brand", brand));
 
-            } if (!this.season.Empty())
+            }
+            if (!this.season.Empty())
             {
                 sqlWheres.Add("o.Seasonid = @season");
                 lis.Add(new SqlParameter("@season", season));
@@ -648,7 +651,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 ,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 ,#tmpCountSP,#tmpTestReport,#InspReport,#tmpContinuityCard,#BulkDyelot
 ");
-           #endregion
+            #endregion
             return base.ValidateInput();
         }
 
@@ -680,57 +683,31 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             objApp.DisplayAlerts = false; // 禁止Excel跳出合併提示視窗
             int line = 7;
             string key_column = allDatas[1].Columns[0].ColumnName;
-            // 依SuppID跑回圈合併欄位
-            if (txtsupplier.TextBox1.Text != "")
+
+            for (int i = 0; i < allDatas[0].Rows.Count; i++)
             {
-                for (int i = 0; i < allDatas[0].Rows.Count; i++)
+
+                string key = allDatas[0].Rows[i][key_column].ToString();
+                DataRow[] dr = allDatas[0].Select($@"{key_column} = '{key}'");
+                int cnt = dr.Length;
+                for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
                 {
-
-                    string key = allDatas[1].Rows[i][key_column].ToString();
-                    DataRow[] dr = allDatas[0].Select($@"{key_column} = '{txtsupplier.TextBox1.Text}'");
-                    int cnt = dr.Length;
-                    for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                    // Columns=2,4,5 是不需要合併的
+                    if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
                     {
-                        // Columns=2,4,5 是不需要合併的
-                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
-                        {
-                            continue;
-                        }
-
-                        // 合併儲存格,尾端要-1不然會重疊
-                        Microsoft.Office.Interop.Excel.Range rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
-                        rang.Merge();
+                        continue;
                     }
-                    line = line + cnt;
+
+                    // 合併儲存格,尾端要-1不然會重疊
+                    Microsoft.Office.Interop.Excel.Range rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
+                    rang.Merge();
                 }
-            }
-            else
-            {
-                for (int i = 0; i < allDatas[1].Rows.Count; i++)
-                {
-                
-                    string key = allDatas[1].Rows[i][key_column].ToString();
-                    DataRow[] dr = allDatas[0].Select($@"{key_column} = '{key}'");
-                    int cnt = dr.Length;
-                    for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
-                    {
-                        // Columns=2,4,5 是不需要合併的
-                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
-                        {
-                            continue;
-                        }
-              
-                        // 合併儲存格,尾端要-1不然會重疊
-                        Microsoft.Office.Interop.Excel.Range rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
-                        rang.Merge();
-                    }                
-                    line = line + cnt;
-                }
+                line = line + cnt;
             }
             #region 調整欄寬
             objSheets.Columns[7].ColumnWidth = 21;
             objSheets.Columns[8].ColumnWidth = 20;
-            objSheets.Columns[9].ColumnWidth = 14.5;            
+            objSheets.Columns[9].ColumnWidth = 14.5;
             objSheets.Columns[10].ColumnWidth = 17;
             objSheets.Columns[11].ColumnWidth = 20;
             objSheets.Columns[12].ColumnWidth = 20;
@@ -756,7 +733,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 
             strExcelName.OpenFile();
             #endregion
-            return true;           
+            return true;
         }
     }
 }
