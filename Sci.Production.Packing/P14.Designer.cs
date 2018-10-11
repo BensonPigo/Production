@@ -29,10 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new Sci.Win.UI.Label();
             this.txtTransferSlipNo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -52,6 +54,9 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.txtCtnStart = new Sci.Win.UI.TextBox();
+            this.txtCtnEnd = new Sci.Win.UI.TextBox();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -70,13 +75,17 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(729, 0);
+            this.panel2.Location = new System.Drawing.Point(956, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 454);
             this.panel2.TabIndex = 2;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.txtCtnEnd);
+            this.panel3.Controls.Add(this.txtCtnStart);
+            this.panel3.Controls.Add(this.label4);
+            this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.txtTransferSlipNo);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.labelFactory);
@@ -94,8 +103,25 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(719, 80);
+            this.panel3.Size = new System.Drawing.Size(946, 80);
             this.panel3.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(740, 12);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(22, 17);
+            this.label4.TabIndex = 32;
+            this.label4.Text = "～";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(621, 11);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(47, 23);
+            this.label3.TabIndex = 30;
+            this.label3.Text = "CTN#";
             // 
             // txtTransferSlipNo
             // 
@@ -162,7 +188,8 @@
             // 
             // btnToExcel
             // 
-            this.btnToExcel.Location = new System.Drawing.Point(626, 44);
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Location = new System.Drawing.Point(853, 44);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(80, 30);
             this.btnToExcel.TabIndex = 7;
@@ -172,7 +199,8 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(626, 7);
+            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery.Location = new System.Drawing.Point(853, 7);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 6;
@@ -228,13 +256,13 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(10, 407);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(719, 47);
+            this.panel4.Size = new System.Drawing.Size(946, 47);
             this.panel4.TabIndex = 4;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(627, 9);
+            this.btnClose.Location = new System.Drawing.Point(854, 9);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 0;
@@ -248,7 +276,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(10, 80);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(719, 327);
+            this.panel5.Size = new System.Drawing.Size(946, 327);
             this.panel5.TabIndex = 5;
             // 
             // gridDetail
@@ -267,26 +295,49 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(0, 0);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(719, 327);
+            this.gridDetail.Size = new System.Drawing.Size(946, 327);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // txtCtnStart
+            // 
+            this.txtCtnStart.BackColor = System.Drawing.Color.White;
+            this.txtCtnStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCtnStart.Location = new System.Drawing.Point(672, 11);
+            this.txtCtnStart.Name = "txtCtnStart";
+            this.txtCtnStart.Size = new System.Drawing.Size(62, 23);
+            this.txtCtnStart.TabIndex = 33;
+            // 
+            // txtCtnEnd
+            // 
+            this.txtCtnEnd.BackColor = System.Drawing.Color.White;
+            this.txtCtnEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCtnEnd.Location = new System.Drawing.Point(768, 11);
+            this.txtCtnEnd.Name = "txtCtnEnd";
+            this.txtCtnEnd.Size = new System.Drawing.Size(62, 23);
+            this.txtCtnEnd.TabIndex = 34;
+            // 
             // P14
             // 
-            this.ClientSize = new System.Drawing.Size(739, 454);
+            this.ClientSize = new System.Drawing.Size(966, 454);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -334,5 +385,10 @@
         private Class.txtfactory txtfactory;
         private Win.UI.TextBox txtTransferSlipNo;
         private Win.UI.Label label1;
+        private System.Windows.Forms.Label label4;
+        private Win.UI.Label label3;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private Win.UI.TextBox txtCtnStart;
+        private Win.UI.TextBox txtCtnEnd;
     }
 }
