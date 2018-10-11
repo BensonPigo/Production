@@ -491,10 +491,11 @@ select selected=1,
 	amount = t.qty*l.qty*d.Price,
     t.std_price,
 	remark='',
-	t.etd,t.requestid,t.id,t.FactoryID,t.SewInLine,t.delivery,t.BuyerID,
+	t.etd,t.requestid,t.id,t.FactoryID,t.SewInLine,t.delivery,BuyerID=l.Buyer,
 	d.LocalSuppid
 from #tmp t
-inner join LocalItem_CartonCardboardPad l on t.RefNo = l.RefNo and isnull(t.BuyerID,'') = l.Buyer
+outer apply(select ct=count(1) from LocalItem_CartonCardboardPad lc where lc.Refno = t.RefNo and isnull(t.BuyerID,'') = isnull(lc.Buyer,''))a
+inner join LocalItem_CartonCardboardPad l on t.RefNo = l.RefNo and iif(ct>0, isnull(t.BuyerID,''),'') = isnull(l.Buyer,'')
 inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo
 ";
                 DataTable CartonCardboardPad;
