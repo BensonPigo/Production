@@ -201,8 +201,8 @@ and o.Category = ''
             }
 
             sqlCmd += $@"
+select * from #tmpo
 select * into #tmp from #tmpo where not(isnull(Category,'') = ''and isnull(ColorID,'') = '')
-select * from #tmp
 
 select distinct s.ID,s.SeasonID,s.BrandID,sa.Article,sap.ColorID
 from #tmpo t
