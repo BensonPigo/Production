@@ -113,6 +113,7 @@ from (
             , t.OrderID
             , t.CTNStartNo
             , pd.Id
+            , [CTN#]=pd.CTNStartNo
             , isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1
             , isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest
             , isnull(o.FactoryID,'') as FactoryID
@@ -161,6 +162,16 @@ from (
             if (!MyUtility.Check.Empty(this.txtTransferSlipNo.Text))
             {
                 sqlCmd.Append(string.Format(" and t.TransferSlipNo = '{0}'", MyUtility.Convert.GetString(this.txtTransferSlipNo.Text)));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtCtnStart.Text))
+            {
+                sqlCmd.Append(string.Format(" and ISNULL(TRY_CAST( pd.CTNStartNo AS int),0)>= {0} ", MyUtility.Convert.GetInt(this.txtCtnStart.Text)));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtCtnEnd.Text))
+            {
+                sqlCmd.Append(string.Format(" and ISNULL(TRY_CAST( pd.CTNStartNo AS int),0)<= {0} ", MyUtility.Convert.GetInt(this.txtCtnEnd.Text)));
             }
 
             sqlCmd.Append(@"
