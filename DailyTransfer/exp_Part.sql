@@ -145,13 +145,13 @@ ORDER BY PartPO.id
 
 SELECT 
 rpod.ID,rpod.Seq2,rpod.Type,rpod.MachineGroupID,rpod.BrandID,rpod.Refno,rpod.Model,rpod.SerialNo,rpod.MfgDate,rpod.RepairTypeID,
-rpod.BoxName,rpod.BoxType,rpod.BoardNo,rpod.Reason,rpod.UnitID,rpod.CurrencyID,rpod.Qty,rpod.Remark
+rpod.BoxName,rpod.BoxType,rpod.BoardNo,rpod.Reason,rpod.UnitID,rpod.CurrencyID,rpod.Qty,rpod.Remark,rpod.MasterGroupID
 INTO  RepairPO_Detail
 FROM Pms_To_Trade.dbo.RepairPO, Machine.dbo.RepairPO_Detail  rpod
 WHERE RepairPO.id= rpod.id  
 ORDER BY RepairPO.id 
 
-SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid
+SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.MasterGroupID
 INTO  MachinePO_Detail
 FROM Pms_To_Trade.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
 WHERE MachinePO.id= pod.id  

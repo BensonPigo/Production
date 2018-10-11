@@ -30,15 +30,16 @@ when matched then
 		, t.AddName= s.AddName
 		, t.AddDate= s.AddDate
 		, t.Lock = s.Lock
+		, t.MasterGroupID = s.MasterGroupID
 
 	when not matched by target and s.type='P' then 
 		insert 
-			(ID 				, Description 	, Partno 		, MachineGroupID 	, MachineBrandID
+			(ID 				, Description 	, Partno 		, MasterGroupID 		, MachineGroupID 	, MachineBrandID
 	 	 	 , UseUnit 			, PoUnit 		, Price 		, PurchaseBatchQty 	, Junk
 			 , PurchaseFrom 	, SuppID 		, CurrencyID 	, Formula	 		, Fix
 			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock)
 		values
-			(s.refno 			, s.Description , s.Partno 		, s.MachineGroupID 	, s.MachineBrandID
+			(s.refno 			, s.Description , s.Partno 		, s.MasterGroupID 	, s.MachineGroupID 	, s.MachineBrandID
 			 , s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
 			 , 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
 			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock);
@@ -273,7 +274,8 @@ s.EditDate
 		ETA = b.ETA ,
 		Cancel = b.Cancel ,
 		Complete = b.Complete ,
-		TPEPOID = b.TradePOID
+		TPEPOID = b.TradePOID,
+		MasterGroupID=a.MasterGroupID
 	from [Machine].[dbo].[RepairPO_Detail] a
 	inner join [Trade_To_Pms].[dbo].[RepairReq_Detail] b on a.id=b.ID and a.Seq2=b.Seq2
 
@@ -394,6 +396,7 @@ where a.id in (select id from @T)) as s
 	when matched then 
 				update set
 				t.MachineGroupID= s.MachineGroupID,
+				t.MasterGroupID= s.MasterGroupID,
 				t.MachineBrandID= s.MachineBrandID,
 				t.Model= s.Model,
 				t.Description= s.Description,
@@ -405,8 +408,8 @@ where a.id in (select id from @T)) as s
 				t.Junk= s.Junk,
 				t.RefNo = ISNULL(s.RefNo,'')
 		when not matched by target then
-		insert  (ID,Seq1,Seq2,MachineGroupID,MachineBrandID,Model,Description,Qty,FOC,Price,Remark,MachineReqID,Junk,RefNo)
-		values	(s.ID,s.Seq1,s.Seq2,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk,ISNULL(s.RefNo,''))
+		insert  (ID,Seq1,Seq2,MasterGroupID,MachineGroupID,MachineBrandID,Model,Description,Qty,FOC,Price,Remark,MachineReqID,Junk,RefNo)
+		values	(s.ID,s.Seq1,s.Seq2,s.MasterGroupID,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk,ISNULL(s.RefNo,''))
 		when not matched by source and t.id in (select id from @T) then
 		delete ;
 
