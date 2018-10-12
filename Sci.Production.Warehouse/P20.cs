@@ -201,7 +201,7 @@ from (
             , TYPE = CHOOSE(T.TYPE,'1-INPUT','2-OUTOUT','3-TRANSFER-OUT','4-ADJUST','5-OBSOLESCENCE','6-RETURN')
             , T.ConfirmDate
             , qty = choose(T.TYPE,T.qty,0-t.qty,0-t.qty,t.qty,0-t.qty,t.qty)
-            , seq70 = t.seq70poid+t.seq70seq1+t.seq70seq2
+            , seq70 = t.seq70poid + ' ' + t.seq70seq1 +'-' + t.seq70seq2
             , t.FactoryID
             , TransferFactory
             , T.ConfirmHandle
@@ -242,7 +242,7 @@ from (
             , '3-TRANSFER-IN' AS TYPE
             , T.ConfirmDate
             , t.qty
-            , t.seq70poid+t.seq70seq1+t.seq70seq2 as seq70
+            , t.seq70poid + ' ' +t.seq70seq1 + '-' + t.seq70seq2 as seq70
             , t.FactoryID
             , TransferFactory
             , T.ConfirmHandle
