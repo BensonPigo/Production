@@ -138,8 +138,8 @@ from #tmpSewingDetail
 select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
 into #stmp
 from #tmpSewingGroup t
-inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.OutputDate between dateadd(day,-90,t.OutputDate) and  t.OutputDate and s.FactoryID = t.FactoryID
-inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID and s.Shift = t.Shift and s.Team = t.Team
+inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID and sd.OrderId = t.OrderId and sd.ComboType = t.ComboType
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
