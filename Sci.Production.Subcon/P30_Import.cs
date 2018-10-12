@@ -486,12 +486,12 @@ select selected=1,
 	Description=dbo.getitemdesc('Carton', l.PadRefno),
 	ThreadColorID='',
 	Qty=t.qty*l.qty,
-	t.UnitID,
+	d.UnitID,
 	d.Price,
 	amount = t.qty*l.qty*d.Price,
     t.std_price,
 	remark='',
-	t.etd,t.requestid,t.id,t.FactoryID,t.SewInLine,t.delivery,BuyerID=l.Buyer,
+	t.etd,t.requestid,t.id,t.FactoryID,t.SewInLine,t.delivery,t.BuyerID,
 	d.LocalSuppid
 from #tmp t
 outer apply(select ct=count(1) from LocalItem_CartonCardboardPad lc where lc.Refno = t.RefNo and isnull(t.BuyerID,'') = isnull(lc.Buyer,''))a

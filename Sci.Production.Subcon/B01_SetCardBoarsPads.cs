@@ -195,7 +195,7 @@ namespace Sci.Production.Subcon
 merge LocalItem_CartonCardboardPad t
 using #tmp s
 on t.Refno = s.Refno and t.Buyer = s.Buyer and t.PadRefno = s.PadRefno
-when matched then update set
+when matched and t.qty <> s.qty then update set
 	t.Qty = s.Qty,
 	EditDate = getdate(),
 	EditName = '{Sci.Env.User.UserID}'
