@@ -1700,6 +1700,10 @@ Do you want to continue? ");
             }
             DataTable workorderdt = ((DataTable)detailgridbs.DataSource);
             string maxref = MyUtility.GetValue.Lookup(string.Format("Select isnull(Max(cutref),'000000') from Workorder WITH (NOLOCK) where mDivisionid = '{0}'", keyWord)); //找最大Cutref
+            if (MyUtility.Check.Empty(maxref))
+            {
+                maxref = "000000";
+            }
             string updatecutref = "", newcutref = "";
             updatecutref = @"
 
