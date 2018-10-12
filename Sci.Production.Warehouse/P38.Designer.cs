@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.labLocation = new Sci.Win.UI.Label();
+            this.txtMtlLocation = new Sci.Production.Class.txtMtlLocation(this.components);
             this.dateATA = new Sci.Win.UI.DateRange();
             this.comboDropDownList1 = new Sci.Production.Class.comboDropDownList(this.components);
             this.label4 = new Sci.Win.UI.Label();
@@ -64,6 +66,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labLocation);
+            this.panel1.Controls.Add(this.txtMtlLocation);
             this.panel1.Controls.Add(this.dateATA);
             this.panel1.Controls.Add(this.comboDropDownList1);
             this.panel1.Controls.Add(this.label4);
@@ -84,8 +88,26 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 71);
+            this.panel1.Size = new System.Drawing.Size(1008, 80);
             this.panel1.TabIndex = 0;
+            // 
+            // labLocation
+            // 
+            this.labLocation.Location = new System.Drawing.Point(765, 9);
+            this.labLocation.Name = "labLocation";
+            this.labLocation.Size = new System.Drawing.Size(65, 23);
+            this.labLocation.TabIndex = 14;
+            this.labLocation.Text = "Location";
+            // 
+            // txtMtlLocation
+            // 
+            this.txtMtlLocation.BackColor = System.Drawing.Color.White;
+            this.txtMtlLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMtlLocation.Location = new System.Drawing.Point(831, 10);
+            this.txtMtlLocation.Name = "txtMtlLocation";
+            this.txtMtlLocation.Size = new System.Drawing.Size(76, 23);
+            this.txtMtlLocation.StockTypeFilte = "B,I";
+            this.txtMtlLocation.TabIndex = 4;
             // 
             // dateATA
             // 
@@ -103,7 +125,7 @@
             this.dateATA.DateBox2.Name = "";
             this.dateATA.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateATA.DateBox2.TabIndex = 1;
-            this.dateATA.Location = new System.Drawing.Point(499, 39);
+            this.dateATA.Location = new System.Drawing.Point(499, 43);
             this.dateATA.Name = "dateATA";
             this.dateATA.Size = new System.Drawing.Size(280, 23);
             this.dateATA.TabIndex = 7;
@@ -114,7 +136,7 @@
             this.comboDropDownList1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownList1.FormattingEnabled = true;
             this.comboDropDownList1.IsSupportUnselect = true;
-            this.comboDropDownList1.Location = new System.Drawing.Point(875, 38);
+            this.comboDropDownList1.Location = new System.Drawing.Point(876, 42);
             this.comboDropDownList1.Name = "comboDropDownList1";
             this.comboDropDownList1.OldText = "";
             this.comboDropDownList1.Size = new System.Drawing.Size(121, 24);
@@ -123,25 +145,25 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(781, 39);
+            this.label4.Location = new System.Drawing.Point(782, 43);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(91, 23);
-            this.label4.TabIndex = 46;
+            this.label4.TabIndex = 18;
             this.label4.Text = "Material Type";
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(410, 39);
+            this.label3.Location = new System.Drawing.Point(410, 43);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(86, 23);
-            this.label3.TabIndex = 45;
+            this.label3.TabIndex = 17;
             this.label3.Text = "Material ATA ";
             // 
             // txtReceivingid
             // 
             this.txtReceivingid.BackColor = System.Drawing.Color.White;
             this.txtReceivingid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReceivingid.Location = new System.Drawing.Point(285, 39);
+            this.txtReceivingid.Location = new System.Drawing.Point(285, 43);
             this.txtReceivingid.MaxLength = 13;
             this.txtReceivingid.Name = "txtReceivingid";
             this.txtReceivingid.Size = new System.Drawing.Size(122, 23);
@@ -149,17 +171,17 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(196, 39);
+            this.label2.Location = new System.Drawing.Point(196, 43);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(86, 23);
-            this.label2.TabIndex = 43;
+            this.label2.TabIndex = 16;
             this.label2.Text = "Receiving ID";
             // 
             // txtwkno
             // 
             this.txtwkno.BackColor = System.Drawing.Color.White;
             this.txtwkno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtwkno.Location = new System.Drawing.Point(71, 39);
+            this.txtwkno.Location = new System.Drawing.Point(71, 43);
             this.txtwkno.MaxLength = 13;
             this.txtwkno.Name = "txtwkno";
             this.txtwkno.Size = new System.Drawing.Size(122, 23);
@@ -167,10 +189,10 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 39);
+            this.label1.Location = new System.Drawing.Point(9, 43);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(59, 23);
-            this.label1.TabIndex = 41;
+            this.label1.TabIndex = 15;
             this.label1.Text = "WK NO";
             // 
             // labelSEQ
@@ -178,7 +200,7 @@
             this.labelSEQ.Location = new System.Drawing.Point(196, 10);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(59, 23);
-            this.labelSEQ.TabIndex = 40;
+            this.labelSEQ.TabIndex = 11;
             this.labelSEQ.Text = "SEQ";
             // 
             // txtSeq
@@ -201,18 +223,18 @@
             "ALL",
             "Bulk",
             "Inventory"});
-            this.comboStockType.Location = new System.Drawing.Point(766, 10);
+            this.comboStockType.Location = new System.Drawing.Point(648, 9);
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(100, 24);
-            this.comboStockType.TabIndex = 4;
+            this.comboStockType.TabIndex = 3;
             // 
             // labelStockType
             // 
-            this.labelStockType.Location = new System.Drawing.Point(668, 10);
+            this.labelStockType.Location = new System.Drawing.Point(550, 9);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(95, 23);
-            this.labelStockType.TabIndex = 38;
+            this.labelStockType.TabIndex = 13;
             this.labelStockType.Text = "Stock Type";
             // 
             // txtSP
@@ -230,15 +252,15 @@
             this.labelSP.Location = new System.Drawing.Point(9, 10);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(59, 23);
-            this.labelSP.TabIndex = 35;
+            this.labelSP.TabIndex = 10;
             this.labelSP.Text = "SP#";
             // 
             // labelStatus
             // 
-            this.labelStatus.Location = new System.Drawing.Point(410, 10);
+            this.labelStatus.Location = new System.Drawing.Point(333, 9);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(74, 23);
-            this.labelStatus.TabIndex = 33;
+            this.labelStatus.TabIndex = 12;
             this.labelStatus.Text = "Status";
             // 
             // comboStatus
@@ -251,15 +273,15 @@
             "All",
             "Locked",
             "Unlocked"});
-            this.comboStatus.Location = new System.Drawing.Point(487, 10);
+            this.comboStatus.Location = new System.Drawing.Point(410, 9);
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(121, 24);
-            this.comboStatus.TabIndex = 3;
+            this.comboStatus.TabIndex = 2;
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(916, 6);
+            this.btnQuery.Location = new System.Drawing.Point(916, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 9;
@@ -271,9 +293,9 @@
             // 
             this.panel2.Controls.Add(this.gridMaterialLock);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 71);
+            this.panel2.Location = new System.Drawing.Point(0, 80);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 590);
+            this.panel2.Size = new System.Drawing.Size(1008, 581);
             this.panel2.TabIndex = 0;
             // 
             // gridMaterialLock
@@ -298,7 +320,7 @@
             this.gridMaterialLock.RowTemplate.Height = 24;
             this.gridMaterialLock.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridMaterialLock.ShowCellToolTips = false;
-            this.gridMaterialLock.Size = new System.Drawing.Size(1002, 521);
+            this.gridMaterialLock.Size = new System.Drawing.Size(1002, 512);
             this.gridMaterialLock.TabIndex = 0;
             this.gridMaterialLock.TabStop = false;
             // 
@@ -320,7 +342,7 @@
             this.btnExcel.Location = new System.Drawing.Point(664, 15);
             this.btnExcel.Name = "btnExcel";
             this.btnExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnExcel.TabIndex = 3;
+            this.btnExcel.TabIndex = 0;
             this.btnExcel.Text = "To Excel";
             this.btnExcel.UseVisualStyleBackColor = true;
             this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
@@ -331,7 +353,7 @@
             this.btnLock.Location = new System.Drawing.Point(750, 15);
             this.btnLock.Name = "btnLock";
             this.btnLock.Size = new System.Drawing.Size(80, 30);
-            this.btnLock.TabIndex = 0;
+            this.btnLock.TabIndex = 1;
             this.btnLock.Text = "Lock";
             this.btnLock.UseVisualStyleBackColor = true;
             this.btnLock.Click += new System.EventHandler(this.btnLock_Click);
@@ -342,7 +364,7 @@
             this.btnClose.Location = new System.Drawing.Point(922, 15);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 2;
+            this.btnClose.TabIndex = 3;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -353,7 +375,7 @@
             this.btnUnlock.Location = new System.Drawing.Point(836, 15);
             this.btnUnlock.Name = "btnUnlock";
             this.btnUnlock.Size = new System.Drawing.Size(80, 30);
-            this.btnUnlock.TabIndex = 1;
+            this.btnUnlock.TabIndex = 2;
             this.btnUnlock.Text = "Unlock";
             this.btnUnlock.UseVisualStyleBackColor = true;
             this.btnUnlock.Click += new System.EventHandler(this.btnUnlock_Click);
@@ -409,5 +431,7 @@
         private Win.UI.Label label3;
         private Class.comboDropDownList comboDropDownList1;
         private Win.UI.DateRange dateATA;
+        private Win.UI.Label labLocation;
+        private Class.txtMtlLocation txtMtlLocation;
     }
 }

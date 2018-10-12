@@ -17,6 +17,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using Sci.Win;
 using System.Reflection;
+using Sci.Production.Class;
 
 namespace Sci.Production.Subcon
 {
@@ -108,6 +109,7 @@ select ART.id
        , Amount = format(A.Amount,'#,###,###,##0.00')
        , computeAmount = A.Amount
        , a.PatternDesc
+       ,ART.apvName
 from DBO.artworkpo ART WITH (NOLOCK) 
 LEFT JOIN dbo.factory F WITH (NOLOCK) ON  F.ID = ART.factoryid
 LEFT JOIN dbo.LocalSupp L WITH (NOLOCK) ON  L.ID = ART.LocalSuppID
@@ -143,9 +145,7 @@ order by ID", masterData["LocalSuppID"]);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", totalQty.ToString()));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", TotalAmount.ToString()));
-                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("style", style));
-                
-
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("style", style));             
 
                 // 傳 list 資料            
                 List<P01_PrintData> data = dtDetail.AsEnumerable()
@@ -160,8 +160,8 @@ order by ID", masterData["LocalSuppID"]);
                         QtyGMT = row1["Qtygarment"].ToString(),
                         Amount = row1["Amount"].ToString(),
                         CutParts = row1["PatternDesc"].ToString(),
-                        ID = row1["ID"].ToString()
-
+                        ID = row1["ID"].ToString(),
+                        ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(),207,83)
                     }).ToList();
 
                 report.ReportDataSource = data;
@@ -192,7 +192,7 @@ order by ID", masterData["LocalSuppID"]);
                 DataTable dtDetail;
                 string sqlcmd = @"select 
             F.nameEn,F.AddressEN,F.Tel,ART.LocalSuppID+'-'+L.name AS TITLETO,L.Tel,L.Address,L.fax,
-            A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment,format(A.Amount,'#,###,###,##0.00')Amount
+            A.Orderid,O.styleID,A.poQty,A.artworkid,A.Stitch,A.Unitprice,A.Qtygarment,format(A.Amount,'#,###,###,##0.00')Amount ,ART.apvName
             from DBO.artworkpo ART WITH (NOLOCK) 
 			LEFT JOIN dbo.factory F WITH (NOLOCK) 
 			ON  F.ID = ART.factoryid
@@ -225,8 +225,7 @@ order by ID", masterData["LocalSuppID"]);
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FAX", FAX));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalQty", TotalPoQty));
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TotalAmount", TOTAL.ToString("#,0.00")));
-
-
+             
                 // 傳 list 資料            
                 List<P01_PrintData> data = dtDetail.AsEnumerable()
                     .Select(row1 => new P01_PrintData()
@@ -238,7 +237,8 @@ order by ID", masterData["LocalSuppID"]);
                         PCS = row1["Stitch"].ToString(),
                         Unitprice = row1["Unitprice"].ToString(),
                         QtyGMT = row1["Qtygarment"].ToString(),
-                        Amount = row1["Amount"].ToString()
+                        Amount = row1["Amount"].ToString(),
+                        ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(),207,83)
                     }).ToList();
 
                 report.ReportDataSource = data;

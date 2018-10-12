@@ -147,7 +147,7 @@ namespace Sci.Production.Warehouse
 ,CASE 
     when a.result !='' then a.result
 	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
-	else ''
+	else 'Blank'
     END as [Result]
 ,iif(a.arriveqty = 0 ,null,round(a.TotalInspYds/a.ArriveQty * 100,2)) InspRate
 ,a.TotalInspYds
@@ -270,11 +270,11 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
 ,iif(c.InvNo = '' or c.InvNo is null,c.ETA,(select export.eta from dbo.export WITH (NOLOCK) where export.id= c.exportid )) as [ETA]
 ,b.ArriveQty
 ,a.ReceiveSampleDate
-,a.[Crocking]
+,Crocking = iif(a.[Crocking]='','Blank',a.[Crocking])
 ,a.CrockingDate
-,a.Heat
+,Heat = iif(a.Heat='','Blank',a.Heat)
 ,a.HeatDate
-,a.[Wash]
+,Wash = iif(a.[Wash]='','Blank',a.[Wash])
 ,a.WashDate
 ,[Oven] = Oven.Result
 ,[OvenDate] = Oven.InspDate
@@ -286,7 +286,7 @@ inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
 inner join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
 outer apply(select (case when  sum(iif(od.Result = 'Fail' ,1,0)) > 0 then 'Fail'
 						 when  sum(iif(od.Result = 'Pass' ,1,0)) > 0 then 'Pass'
-				         else '' end) as Result,
+				         else 'Blank' end) as Result,
 					MIN( ov.InspDate) as InspDate 
 				from Oven ov
 				inner join dbo.Oven_Detail od on od.ID = ov.ID
@@ -294,7 +294,7 @@ outer apply(select (case when  sum(iif(od.Result = 'Fail' ,1,0)) > 0 then 'Fail'
 				and seq2=a.Seq2 and ov.Status='Confirmed') as Oven
 outer apply(select (case when  sum(iif(cd.Result = 'Fail' ,1,0)) > 0 then 'Fail'
 						 when  sum(iif(cd.Result = 'Pass' ,1,0)) > 0 then 'Pass'
-				         else '' end) as Result,
+				         else 'Blank' end) as Result,
 					MIN( CF.InspDate) as InspDate 
 				from dbo.ColorFastness CF WITH (NOLOCK) 
 				inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID

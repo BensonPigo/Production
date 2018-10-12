@@ -50,6 +50,21 @@ namespace Sci.Production.Quality
             base.OnFormLoaded();
             DataTable dt;
             var result = DBProxy.Current.Select(null, string.Format("select * from oven_detail WITH (NOLOCK) where id='{0}'", ID), out dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
+            if (this.ID.Equals("0") && dt.Rows.Count > 0)
+            {
+                result = DBProxy.Current.Execute(null, "delete oven where id = 0;delete oven_Detail where id = 0;");
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
+            }
+
             //CreateNew open EditMode
             if (dt.Rows.Count == 0 && canEdit)
             {
@@ -797,6 +812,13 @@ and a.seq1=@seq1";
                     
                     if (newOven)// insert 新資料進oven
                     {
+                        DataTable dtID;
+                        DBProxy.Current.Select(null, "select Max(id) as id from Oven WITH (NOLOCK) ", out dtID);
+
+                        int newID = MyUtility.Convert.GetInt(dtID.Rows[0]["id"]);
+                        this.ID = (newID + 1).ToString();
+                        this.KeyValue1 = this.ID;
+
                         string insCmd = @"
 SET IDENTITY_INSERT oven ON
 insert into Oven(ID,POID,TestNo,InspDate,Article,Result,Status,Inspector,Remark,addName,addDate,Temperature,Time)
@@ -812,6 +834,16 @@ SET IDENTITY_INSERT oven off";
                         spamAddNew.Add(new SqlParameter("@Temperature", this.numTemperature.Value));
                         spamAddNew.Add(new SqlParameter("@Time", this.numTime.Value));
                         upResult= DBProxy.Current.Execute(null, insCmd,spamAddNew);
+
+                        if (upResult)
+                        {
+                            newOven = false;
+                        }
+                        else
+                        {
+                            this.ShowErr(upResult);
+                            return upResult;
+                        }
                     }                
                 }
                 if (dr.RowState == DataRowState.Modified || isModify)

@@ -42,5 +42,29 @@ namespace Sci.Production.Thread
 
             return base.ClickSaveBefore();
         }
+
+        private void TxtThreadColorGroupID_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
+                        (@"Select ID,description  from ThreadColorGroup WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
+            item.Size = new System.Drawing.Size(630, 535);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.CurrentMaintain["ThreadColorGroupID"] = item.GetSelectedString();
+        }
+
+        private void TxtThreadColorGroupID_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtThreadColorGroupID.Text))
+            {
+                return;
+            }
+
+            if (!MyUtility.Check.Seek($@"select 1 from ThreadColorGroup WITH (NOLOCK) where junk=0 and id='{this.txtThreadColorGroupID.Text}'"))
+            {
+                MyUtility.Msg.WarningBox("<Thread Color Group>data not found!");
+                e.Cancel = true;
+            }
+        }
     }
 }

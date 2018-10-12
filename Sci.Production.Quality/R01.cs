@@ -20,6 +20,8 @@ namespace Sci.Production.Quality
         DateTime? DateSewStart;  DateTime? DateSewEnd;
         DateTime? DateEstStart;  DateTime? DateEstEnd;
         string spStrat; string spEnd; string Sea; string Brand; string Ref; string Category; string Supp; string Over;
+        string wkStrat;
+        string wkEnd;
         List<SqlParameter> lis;
         DataTable dt; string cmd;
         public R01(ToolStripMenuItem menuitem)
@@ -34,12 +36,13 @@ namespace Sci.Production.Quality
         {
             bool date_Last_Empty = !this.dateLastPhysicalInspDate.HasValue, date_Arrive_Empty = !this.dateArriveWHDate.HasValue, date_SCI_Empty = !this.dateSCIDelivery.HasValue, date_Sewing_Empty = !this.dateSewingInLineDate.HasValue, date_Est_Empty = !this.dateEstCuttingDate.HasValue,
                 textBox_SP_Empty = this.txtSPStart.Text.Empty(), textBox_SP2_Empty = this.txtSPEnd.Text.Empty(), txtSeason_Empty = this.txtSeason.Text.Empty()
-           , txtBrand_Empty = this.txtBrand.Text.Empty(), txtRef_Empty = this.txtRefno.Text.Empty(), Cate_comboBox_Empty = this.comboCategory.Text.Empty(), Supp_Empty = this.txtsupplier.Text.Empty(), Over_comboBox_Empty = this.comboOverallResultStatus.Text.Empty();
+           , txtBrand_Empty = this.txtBrand.Text.Empty(), txtRef_Empty = this.txtRefno.Text.Empty(), Cate_comboBox_Empty = this.comboCategory.Text.Empty(), Supp_Empty = this.txtsupplier.Text.Empty(), Over_comboBox_Empty = this.comboOverallResultStatus.Text.Empty()
+           , textBox_WK_Empty = this.txtWK_start.Text.Empty(), textBox_WK2_Empty = this.txtWK_end.Text.Empty();
 
-            if (date_Last_Empty && date_Arrive_Empty && date_SCI_Empty && textBox_SP_Empty && textBox_SP2_Empty && date_Sewing_Empty && date_Est_Empty )
+            if (date_Last_Empty && date_Arrive_Empty && date_SCI_Empty && textBox_SP_Empty && textBox_SP2_Empty && date_Sewing_Empty && date_Est_Empty && textBox_WK_Empty && textBox_WK2_Empty)
             {
                 dateArriveWHDate.Focus();
-                MyUtility.Msg.ErrorBox("Please select 'Last Inspection Date' or 'Arrive W/H Date' or 'SCI Delivery' or 'Sewing in-line Date' or 'Est. Cutting Date' or 'SP#'  at least one field entry");
+                MyUtility.Msg.ErrorBox("Please select 'Last Inspection Date' or 'Arrive W/H Date' or 'SCI Delivery' or 'Sewing in-line Date' or 'Est. Cutting Date' or 'SP#' or 'WK#' at least one field entry");
                 return false;
             }
 
@@ -55,6 +58,8 @@ namespace Sci.Production.Quality
             DateEstEnd = dateEstCuttingDate.Value2;
             spStrat = txtSPStart.Text.ToString();
             spEnd = txtSPEnd.Text.ToString();
+            wkStrat = txtWK_start.Text.ToString();
+            wkEnd = txtWK_end.Text.ToString();
             Sea = txtSeason.Text;
             Brand = txtBrand.Text;
             Ref = txtRefno.Text.ToString();
@@ -95,6 +100,7 @@ namespace Sci.Production.Quality
                 OWheres.Add("O.SciDelivery >= @SCIDate1");
                 lis.Add(new SqlParameter("@SCIDate1", DateSCIStart));
             }
+
             if (!this.dateSCIDelivery.Value2.Empty())
             {
                 OWheres.Add("O.SciDelivery <= @SCIDate2");
@@ -106,62 +112,91 @@ namespace Sci.Production.Quality
                 OWheres.Add("O.SewInLine >= @SewDate1");
                 lis.Add(new SqlParameter("@SewDate1", DateSewStart));
             }
+
             if (!this.dateSewingInLineDate.Value2.Empty())
             {
                 OWheres.Add("O.SewInLine <= @SewDate2");
                 lis.Add(new SqlParameter("@SewDate2", DateSewEnd));
             }
+
             if (!this.dateEstCuttingDate.Value1.Empty())
             {
                 OWheres.Add("O.CutInLine >= @Est1");
                 lis.Add(new SqlParameter("@Est1", DateEstStart));
             }
+
             if (!this.dateEstCuttingDate.Value2.Empty())
             {
                 OWheres.Add("O.CutInLine <= @Est2");
                 lis.Add(new SqlParameter("@Est2", DateEstEnd));
             }
+
             if (!this.txtSPStart.Text.Empty())
             {
                 OWheres.Add("O.Id between @sp1 and @sp2");
                 lis.Add(new SqlParameter("@sp1", spStrat));
                 lis.Add(new SqlParameter("@sp2", spEnd));
-            } if (!this.txtSeason.Text.Empty())
+            }
+
+            if (!MyUtility.Check.Empty(wkStrat))
+            {
+                RWheres.Add("R.ExportId between @wk1 and @wk2");
+                lis.Add(new SqlParameter("@wk1", wkStrat));
+                lis.Add(new SqlParameter("@wk2", wkEnd));
+            }
+
+            if (!this.txtSeason.Text.Empty())
             {
                 OWheres.Add("O.SeasonID = @Sea");
                 lis.Add(new SqlParameter("@Sea", Sea));
-            } if (!this.txtBrand.Text.Empty())
+            }
+
+            if (!this.txtBrand.Text.Empty())
             {
                 OWheres.Add("O.BrandID = @Brand");
                 lis.Add(new SqlParameter("@Brand", Brand));
-            } if (!this.txtRefno.Text.Empty())
+            }
+
+            if (!this.txtRefno.Text.Empty())
             {
                 sqlWheres.Add("P.Refno = @Ref");
                 lis.Add(new SqlParameter("@Ref", Ref));
-            } if (!MyUtility.Check.Empty(this.comboCategory.Text))
+            }
+
+            if (!MyUtility.Check.Empty(this.comboCategory.Text))
             {
                 if (Category != "")
                 {
                     OWheres.Add($"O.Category in ({this.comboCategory.SelectedValue})");
                 }
-            } if (!this.txtsupplier.Text.Empty())
+            }
+
+            if (!this.txtsupplier.Text.Empty())
             {
                 sqlWheres.Add("SP.SuppId = @Supp");
                 lis.Add(new SqlParameter("@Supp", Supp));
 
-            } if (this.comboOverallResultStatus.Text == "Pass")
+            }
+
+            if (this.comboOverallResultStatus.Text == "Pass")
             {
                 sqlWheres.Add("dbo.GetFirResult(F.id) = 'Pass'");
 
-            } if (this.comboOverallResultStatus.Text == "Fail")
+            }
+
+            if (this.comboOverallResultStatus.Text == "Fail")
             {
                 sqlWheres.Add("dbo.GetFirResult(F.id) = 'Faill'");
 
-            } if (this.comboOverallResultStatus.Text == "Empty Result")
+            }
+
+            if (this.comboOverallResultStatus.Text == "Empty Result")
             {
                 sqlWheres.Add("dbo.GetFirResult(F.id) = ' '");
 
-            } if (this.comboOverallResultStatus.Text == "N/A inspection & test")
+            }
+
+            if (this.comboOverallResultStatus.Text == "N/A inspection & test")
             {
                 sqlWheres.Add("dbo.GetFirResult(F.id) = 'None'");
 
@@ -198,7 +233,8 @@ namespace Sci.Production.Quality
 	F.Result,
 	F.Physical,
 	F.PhysicalDate,
-	F.TotalInspYds,
+	fta.ActualYds,
+    ROUND( CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT) ,3),
 	ftp.TotalPoint,
 	F.Weight,
 	F.WeightDate,
@@ -223,9 +259,9 @@ from dbo.FIR F WITH (NOLOCK)
                 + RWhere+ @" 
 			    ) t
     on t.PoId = F.POID and t.Seq1 = F.SEQ1 and t.Seq2 = F.SEQ2 AND T.Id=F.ReceivingID
-    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category from dbo.Orders o WITH (NOLOCK)  "
+    inner join (select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id from dbo.Orders o WITH (NOLOCK)  "
                 + OWhere+ @"
-		        ) O on O.poid = F.POID
+		        ) O on O.id = F.POID
     inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
     inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
     inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
@@ -265,13 +301,14 @@ Outer apply(
     where od.id=o.POID
 ) ps1
 outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id=f.id)ftp
+outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id)fta
 " + sqlWhere) + @" 
 GROUP BY 
 F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
 t.ExportId,t.InvNo,t.WhseArrival,
 F.Refno,P.ColorID,C.WeaveTypeID,O.Category
 ,F.Result,F.Physical,F.PhysicalDate,
-F.TotalInspYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
+F.TotalInspYds,fta.ActualYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F.Continuity,
 F.ContinuityDate,L.Result,LC.Crocking,
 LC.CrockingDate,LH.Heat,LH.HeatDate,
 LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR,

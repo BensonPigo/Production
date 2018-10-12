@@ -192,6 +192,7 @@ select [PackingListID] =  p.ID
 ,pd.CFAReturnFtyDate
 ,p.PulloutDate
 ,pd.ClogLocationId
+,pd.EditLocationDate
 ,pd.Remark
 ,pd.Seq
 from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
@@ -239,6 +240,7 @@ order by p.ID,pd.Seq", this.orderID);
                 .Date("CFAReturnFtyDate", header: "CFA Return Fty Date", width: Widths.AnsiChars(10))
                 .Date("PulloutDate", header: "Pull-out Date", width: Widths.AnsiChars(10))
                 .Text("ClogLocationId", header: "Location", width: Widths.AnsiChars(8))
+                .Text("EditLocationDate", header: "Edit Location Date", width: Widths.AnsiChars(10))
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(20));
         }
 

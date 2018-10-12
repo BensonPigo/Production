@@ -116,10 +116,10 @@ union all
 td.Annotation,o.DescEN
 from TimeStudy_Detail td WITH (NOLOCK) 
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
-LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON m.ID=ATD.MachineTypeID
-where td.ID = {0}{1}
-", MyUtility.Convert.GetString(this.masterData["ID"]),
+{0}
+where td.ID = {1}{2}
+", MyUtility.Check.Empty(this.artworktype) ? string.Empty : @"left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID LEFT JOIN Artworktype_Detail ATD WITH(NOLOCK) ON m.ID = ATD.MachineTypeID",
+                MyUtility.Convert.GetString(this.masterData["ID"]),
                 MyUtility.Check.Empty(this.artworktype) ? string.Empty : string.Format(" and ATD.ArtworkTypeID = '{0}'", this.artworktype));
             sqlCmd += $@"
 union all

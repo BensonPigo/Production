@@ -91,11 +91,17 @@ namespace Sci.Production.Cutting
             #region 判斷是否Complete
             bool complete = true;
             DataTable panneltb;
-            fabcodesql = string.Format(@"Select distinct a.Article,a.PatternPanel
-            from Order_ColorCombo a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
-            where a.id = '{0}' and a.FabricCode is not null 
-            and a.id = b.id and b.cuttingpiece='0' and  a.FabricPanelCode=b.FabricPanelCode
-            and a.FabricCode !='' order by Article,PatternPanel", cutid);
+            fabcodesql = string.Format(@"
+select distinct occ.Article,occ.Patternpanel
+from Orders o WITH (NOLOCK)
+inner join Order_Qty oq WITH (NOLOCK) on oq.id = o.id
+inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = o.POID and occ.FabricCode is not null and occ.FabricCode !='' and occ.Article = oq.Article
+inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0
+inner join Order_EachCons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = oe.Ukey and oec.ColorID = occ.ColorID
+inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = oec.Ukey and oeca.Article = oq.Article --and oeca.ColorID = oec.ColorID
+where o.CuttingSP = '{0}'
+and o.junk = 0
+", cutid);
             gridResult = DBProxy.Current.Select(null, fabcodesql, out panneltb);
             if (!gridResult)
             {
@@ -104,13 +110,13 @@ namespace Sci.Production.Cutting
             }
             foreach (DataRow dr in gridtb.Rows)
             {
-                complete = false;
+                complete = true;
                 DataRow[] sel = panneltb.Select(string.Format("Article = '{0}'", dr["Article"]));
                 foreach (DataRow pdr in sel)
                 {
 
-                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) <= MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) 
-                        complete = true;
+                    if (MyUtility.Convert.GetDecimal(dr["Qty"]) > MyUtility.Convert.GetDecimal(dr[pdr["Patternpanel"].ToString()])) 
+                        complete = false;
 
                 }
                 if (complete) dr["Complete"] = "Y";

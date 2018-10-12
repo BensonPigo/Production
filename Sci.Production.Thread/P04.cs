@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,8 +29,6 @@ namespace Sci.Production.Thread
         public P04(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            string defaultfilter = string.Format("MDivisionid = '{0}' ", this.keyWord);
-            this.DefaultFilter = defaultfilter;
             this.InitializeComponent();
         }
 
@@ -45,10 +44,9 @@ namespace Sci.Production.Thread
             left join threadcolor c WITH (NOLOCK) on a.threadcolorid = c.id 
             left join threadStock d WITH (NOLOCK) 
             on d.refno = a.refno and d.threadcolorid = a.threadcolorid and 
-            d.threadlocationid = a.threadlocationid and d.mDivisionid = '{1}'
+            d.threadlocationid = a.threadlocationid
             where a.id = '{0}'",
-                masterID,
-                this.keyWord);
+                masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -91,7 +89,7 @@ namespace Sci.Production.Thread
                     this.CurrentDetailData["UsedCone"] = 0;
                 }
 
-                string sql = string.Format("Select ThreadLocationid,newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}' and mDivisionid ='{3}' ", this.CurrentDetailData["threadColorid"], newvalue, this.CurrentDetailData["threadLocationid"], this.keyWord);
+                string sql = string.Format("Select ThreadLocationid,newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}' ", this.CurrentDetailData["threadColorid"], newvalue, this.CurrentDetailData["threadLocationid"]);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     this.CurrentDetailData["ThreadLocationid"] = refdr["ThreadLocationid"];
@@ -135,7 +133,7 @@ namespace Sci.Production.Thread
                     this.CurrentDetailData["Colordesc"] = string.Empty;
                 }
 
-                string sql = string.Format("Select ThreadLocationid,newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' and mDivisionid = '{3}'", this.CurrentDetailData["refno"], newvalue, this.CurrentDetailData["threadLocationid"], this.keyWord);
+                string sql = string.Format("Select ThreadLocationid,newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and threadlocationid = '{2}' ", this.CurrentDetailData["refno"], newvalue, this.CurrentDetailData["threadLocationid"]);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     this.CurrentDetailData["ThreadLocationid"] = refdr["ThreadLocationid"];
@@ -171,7 +169,7 @@ namespace Sci.Production.Thread
                 DataRow refdr;
                 if (MyUtility.Check.Seek(string.Format("Select * from ThreadLocation WITH (NOLOCK) where id = '{0}' and junk = 0", newvalue)))
                 {
-                    string sql = string.Format("Select ThreadLocationid,newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}' and mDivisionid = '{3}'", this.CurrentDetailData["threadColorid"], this.CurrentDetailData["refno"], newvalue, this.keyWord);
+                    string sql = string.Format("Select ThreadLocationid,newcone,usedcone from ThreadStock WITH (NOLOCK) where refno ='{1}' and threadcolorid = '{0}' and threadlocationid = '{2}'", this.CurrentDetailData["threadColorid"], this.CurrentDetailData["refno"], newvalue);
                     if (MyUtility.Check.Seek(sql, out refdr))
                     {
                         this.CurrentDetailData["stocknew"] = refdr["NewCone"];
@@ -224,6 +222,11 @@ namespace Sci.Production.Thread
         {
             base.OnDetailEntered();
             this.label7.Text = this.CurrentMaintain["Status"].ToString();
+
+            if (this.toolbar.cmdUnconfirm.Enabled == true && !MyUtility.Check.Empty(this.CurrentMaintain["RequestID"]))
+            {
+                this.toolbar.cmdUnconfirm.Enabled = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -333,134 +336,25 @@ namespace Sci.Production.Thread
         {
             base.ClickUnconfirm();
             string updateThread = string.Format("update ThreadIssue set Status = 'New' ,editname='{0}', editdate = GETDATE() where id='{1}' ;", this.loginID, this.CurrentMaintain["ID"].ToString());
-            string insertsql = string.Empty;
-            foreach (DataRow dr in this.DetailDatas)
+            DualResult result = Prgs.ThreadIssueUnConfirm(this.DetailDatas, updateThread);
+            if (!result)
             {
-                if (MyUtility.Check.Seek(string.Format("Select * from ThreadStock WITH (NOLOCK) where refno ='{0}' and ThreadColorid = '{1}' and threadLocationid = '{2}' and mDivisionid = '{3}'", dr["refno"].ToString(), dr["threadColorid"].ToString(), dr["threadlocationid"].ToString(), this.keyWord)))
-                {
-                    updateThread = updateThread + string.Format("update ThreadStock set UsedCone = UsedCone+ {0},NewCone = NewCone+ {1},EditName ='{6}',editDate = GetDate() where refno ='{2}' and ThreadColorid = '{3}' and threadLocationid = '{4}' and mDivisionid ='{5}' ;", dr["usedCone"], dr["newcone"], dr["refno"].ToString(), dr["threadColorid"].ToString(), dr["threadlocationid"].ToString(), this.keyWord, this.loginID);
-                }
-                else
-                {
-                    insertsql = insertsql + string.Format("Insert into ThreadStock(Refno,ThreadColorid,ThreadLocationid,NewCone,UsedCone,mDivisionid,AddName,AddDate) values('{0}','{1}','{2}',{3},{4},{5},'{6}',GETDATE())", dr["refno"].ToString(), dr["threadColorid"].ToString(), dr["threadlocationid"].ToString(), dr["newcone"], dr["usedCone"], this.keyWord, this.loginID);
-                }
+                this.ShowErr(result);
             }
-
-            DualResult upResult;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
-            {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updateThread)))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(updateThread, upResult);
-                        return;
-                    }
-
-                    if (!MyUtility.Check.Empty(insertsql))
-                    {
-                        if (!(upResult = DBProxy.Current.Execute(null, insertsql)))
-                        {
-                            transactionscope.Dispose();
-                            this.ShowErr(insertsql, upResult);
-                            return;
-                        }
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
-                }
-            }
-
-            transactionscope.Dispose();
-            transactionscope = null;
         }
 
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
-            string checksql;
+
             string updatesql = string.Format("update ThreadIssue set Status = 'Confirmed' ,editname='{0}', editdate = GETDATE() where id='{1}' ;", this.loginID, this.CurrentMaintain["ID"].ToString());
-            DataRow thdr;
-            string msg1 = "New cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n", msg2 = "Used cone stock is not enough, \nplease see below <Refno>,<Color>,<Location>\n";
-            bool lmsg1 = false, lmsg2 = false;
-            foreach (DataRow dr in this.DetailDatas)
+
+            DualResult result = Prgs.ThreadIssueConfirm(this.DetailDatas, updatesql);
+            if (!result)
             {
-                checksql = string.Format("Select isnull(newCone,0) as newCone,isnull(UsedCone,0) as usedCone from ThreadStock WITH (NOLOCK) where refno='{0}' and threadcolorid = '{1}' and threadlocationid ='{2}' and mDivisionid ='{3}' ", dr["refno"], dr["Threadcolorid"], dr["threadlocationid"], this.keyWord);
-                if (MyUtility.Check.Seek(checksql, out thdr))
-                {
-                    if ((decimal)thdr["Newcone"] < (decimal)dr["NewCone"])
-                    {
-                        msg1 = msg1 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["threadlocationid"]);
-                        lmsg1 = true;
-                    }
-
-                    if ((decimal)thdr["UsedCone"] < (decimal)dr["UsedCone"])
-                    {
-                        msg2 = msg2 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["threadlocationid"]);
-                        lmsg2 = true;
-                    }
-                }
-                else
-                {
-                    msg1 = msg1 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["threadlocationid"]);
-                    lmsg1 = true;
-                    msg2 = msg2 + string.Format("<{0}>,<{1}>,<{2}>\n", dr["refno"], dr["Threadcolorid"], dr["threadlocationid"]);
-                    lmsg2 = true;
-                }
-
-                updatesql = updatesql + string.Format("update ThreadStock set UsedCone = UsedCone-{0},NewCone = NewCone-{1},editName = '{6}',editDate = GetDate() where refno ='{2}' and ThreadColorid = '{3}' and threadLocationid = '{4}' and mDivisionid ='{5}' ;", dr["usedCone"], dr["newcone"], dr["refno"].ToString(), dr["threadColorid"].ToString(), dr["threadlocationid"].ToString(), this.keyWord, this.loginID);
+                this.ShowErr(result);
             }
-
-            if (lmsg1)
-            {
-                MyUtility.Msg.WarningBox(msg1);
-                return;
-            }
-
-            if (lmsg2)
-            {
-                MyUtility.Msg.WarningBox(msg2);
-                return;
-            }
-
-            DualResult upResult;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
-            {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updatesql)))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(updatesql, upResult);
-                        return;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
-                }
-            }
-
-            transactionscope.Dispose();
-            transactionscope = null;
         }
     }
 }

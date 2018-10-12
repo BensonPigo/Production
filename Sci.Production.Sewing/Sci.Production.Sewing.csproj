@@ -219,6 +219,12 @@
     <Compile Include="R01.Designer.cs">
       <DependentUpon>R01.cs</DependentUpon>
     </Compile>
+    <Compile Include="R08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R08.Designer.cs">
+      <DependentUpon>R08.cs</DependentUpon>
+    </Compile>
     <Compile Include="R02.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -248,6 +254,12 @@
     </Compile>
     <Compile Include="R04.Designer.cs">
       <DependentUpon>R04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R07.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R07.designer.cs">
+      <DependentUpon>R07.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -290,6 +302,9 @@
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R08.resx">
+      <DependentUpon>R08.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -304,6 +319,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R04.resx">
       <DependentUpon>R04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R07.resx">
+      <DependentUpon>R07.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

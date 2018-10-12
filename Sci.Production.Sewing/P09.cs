@@ -35,9 +35,10 @@ namespace Sci.Production.Sewing
 
             this.Helper.Controls.Grid.Generator(this.grid1)
             .Text("TransferTo", header: "Transfer To", width: Widths.Auto(), iseditingreadonly: true)
-            .Date("TransferDate", header: "Transfer Date", iseditingreadonly: true)
+            .Text("TransferDate", header: "Transfer Date", iseditingreadonly: true)
             .Text("PackingListID", header: "Pack ID", width: Widths.Auto(), iseditingreadonly: true)
             .Text("CTNStartNo", header: "CTN#", width: Widths.Auto(), iseditingreadonly: true)
+            .Text("Qty", header: "Qty", width: Widths.Auto(), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: true)
@@ -54,10 +55,10 @@ namespace Sci.Production.Sewing
 
             string dateTransfer1 = string.Empty, dateTransfer2 = string.Empty, packid = string.Empty, sp = string.Empty, transferTo = string.Empty;
             string sqlwhere = string.Empty;
-            if (!MyUtility.Check.Empty(this.dateTransfer.TextBox1.Value))
+            if (!MyUtility.Check.Empty(this.dateTransfer.Value1.Value) && !MyUtility.Check.Empty(this.dateTransfer.Value2.Value))
             {
-                dateTransfer1 = this.dateTransfer.TextBox1.Text;
-                dateTransfer2 = this.dateTransfer.TextBox2.Text;
+                dateTransfer1 = this.dateTransfer.Value1.Value.ToShortDateString();
+                dateTransfer2 = this.dateTransfer.Value2.Value.AddDays(1).AddSeconds(-1).ToString("yyyy/MM/dd HH:mm:ss");
                 sqlwhere += $@" and dr.TransferDate between @TransferDate1 and @TransferDate2 ";
             }
 
@@ -80,17 +81,19 @@ namespace Sci.Production.Sewing
             }
 
             string sqlcmd = $@"
-declare @TransferDate1  date = '{dateTransfer1}'
-declare @TransferDate2  date = '{dateTransfer2}'
+declare @TransferDate1  datetime = '{dateTransfer1}'
+declare @TransferDate2  datetime = '{dateTransfer2}'
 declare @packid nvarchar(20) = '{packid}'
 declare @sp nvarchar(20) = '{sp}'
 declare @TransferTo nvarchar(20) = '{transferTo}'
 
 select 
 	dr.TransferTo
-	,dr.TransferDate
+	,[TransferDate]=CONVERT(varchar, dr.TransferDate, 111) +' '+ LEFT(CONVERT(varchar, dr.TransferDate, 108),5)
+    --,dr.TransferDate
 	,dr.PackingListID
 	,dr.CTNStartNo
+	,[Qty]=ISNULL(Sum(pd.QtyPerCTN),0)
 	,dr.OrderID
 	,o.CustPONo
 	,o.StyleID
@@ -102,8 +105,21 @@ select
 from DRYTransfer dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
+LEFT JOIN  PackingList_Detail pd with(nolock)  ON dr.PackingListID=pd.ID AND dr.CTNStartNo=pd.CTNStartNo
 where 1=1
 {sqlwhere}
+GROUP BY dr.TransferTo
+		,dr.TransferDate
+		,dr.PackingListID
+		,dr.CTNStartNo
+		,dr.OrderID
+		,o.CustPONo
+		,o.StyleID
+		,o.BrandID
+		,Country.Alias
+		,o.BuyerDelivery
+		,o.SciDelivery
+		,dr.AddName 
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);

@@ -49,6 +49,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid2 = new Sci.Win.UI.Grid();
+            this.chkCarton = new Sci.Win.UI.CheckBox();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -184,6 +185,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.chkCarton);
             this.panel3.Controls.Add(this.btnClose);
             this.panel3.Controls.Add(this.btnToExcel);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -264,6 +266,7 @@
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(1004, 228);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
@@ -296,9 +299,21 @@
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid2.ShowCellToolTips = false;
             this.grid2.Size = new System.Drawing.Size(1004, 233);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
+            // 
+            // chkCarton
+            // 
+            this.chkCarton.AutoSize = true;
+            this.chkCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCarton.Location = new System.Drawing.Point(633, 11);
+            this.chkCarton.Name = "chkCarton";
+            this.chkCarton.Size = new System.Drawing.Size(178, 21);
+            this.chkCarton.TabIndex = 2;
+            this.chkCarton.Text = "Carton = N (for to excel)";
+            this.chkCarton.UseVisualStyleBackColor = true;
             // 
             // P32
             // 
@@ -314,6 +329,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -346,5 +362,6 @@
         private Win.UI.Grid grid1;
         private Win.UI.Grid grid2;
         private System.Windows.Forms.Label label8;
+        private Win.UI.CheckBox chkCarton;
     }
 }

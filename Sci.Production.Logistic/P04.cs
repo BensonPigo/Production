@@ -241,9 +241,27 @@ namespace Sci.Production.Logistic
                             //                              update PackingList_Detail
                             //                                    set ClogLocationId = @clogLocationId, Remark = @remark
                             //                                    where id = @id and CTNStartNo = @ctnStartNo;";
-                            string updateCmd = @"update PackingList_Detail 
+
+                            //ClogLocationId更新，EditLocationDate才要寫入，不過原本作法全部覆蓋，因此需要自己撈資料來比對
+                            DataTable tmpTable;
+                            string chkCmd =string.Format( @"SELECT ClogLocationId FROM PackingList_Detail PL WITH (NOLOCK) WHERE id ='{0}' AND CTNStartNo = '{1}' ", currentRow["ID"].ToString(), currentRow["CTNStartNo"].ToString());
+
+                            DualResult result1CHK = DBProxy.Current.Select(null, chkCmd, out tmpTable);
+
+                            string updateCmd="";
+
+                            if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
+                            {
+                                updateCmd = @"update PackingList_Detail 
+                                                set ClogLocationId = @clogLocationId, Remark = @remark ,EditLocationDate=@EditLocationDate
+                                                where id = @id and CTNStartNo = @ctnStartNo;";
+                            }
+                            else
+                            {
+                                updateCmd = @"update PackingList_Detail 
                                                 set ClogLocationId = @clogLocationId, Remark = @remark 
                                                 where id = @id and CTNStartNo = @ctnStartNo;";
+                            }
 
                             #region 準備sql參數資料
                             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -269,6 +287,13 @@ namespace Sci.Production.Logistic
                             sp6.ParameterName = "@remark";
                             sp6.Value = currentRow["Remark"].ToString();
 
+                            System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
+                            if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
+                            {
+                                sp7.ParameterName = "@EditLocationDate";
+                                sp7.Value = DateTime.Now;
+                            }
+                            //EditLocationDate
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
                             cmds.Add(sp1);
 
@@ -277,6 +302,11 @@ namespace Sci.Production.Logistic
                             cmds.Add(sp4);
                             cmds.Add(sp5);
                             cmds.Add(sp6);
+
+                            if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
+                            {
+                                cmds.Add(sp7);
+                            }
                             #endregion
                             DualResult result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
                             if (!result)

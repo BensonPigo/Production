@@ -55,7 +55,34 @@ namespace Sci.Production.Cutting
             DataGridViewGeneratorTextColumnSettings subcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings chcutref = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings charticle = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings selectExcess = new DataGridViewGeneratorTextColumnSettings();
 
+            selectExcess.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return; //判斷是Header
+                if (e.Button != MouseButtons.Right) return;
+                DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
+                if (!MyUtility.Convert.GetString(dr["isExcess"]).EqualString("Y")) return;
+                string scalecmd = $@"
+select wd.Orderid,Article,w.Colorid,SizeCode,o.SewLine,w.CutCellid
+from workorder_Distribute wd WITH (NOLOCK) 
+inner join WorkOrder w WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey
+inner join orders o WITH (NOLOCK) on w.id = o.cuttingsp and wd.OrderID = o.id
+where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
+";
+                SelectItem item1 = new SelectItem(scalecmd, string.Empty, dr["Orderid"].ToString());
+                DialogResult result = item1.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+                dr["Orderid"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                dr["Article"] = item1.GetSelecteds()[0]["Article"];
+                dr["Colorid"] = item1.GetSelecteds()[0]["Colorid"];
+                dr["SizeCode"] = item1.GetSelecteds()[0]["SizeCode"];
+                dr["SewingLine"] = item1.GetSelecteds()[0]["SewLine"];
+                dr["SewingCell"] = item1.GetSelecteds()[0]["CutCellid"];
+            };
             Linecell.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
@@ -355,18 +382,22 @@ namespace Sci.Production.Cutting
 
             #endregion
             #region 右上一Grid
-            this.gridArticleSize.IsEditingReadOnly = false;
+
+
+             this.gridArticleSize.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(gridArticleSize)
            .CheckBox("Sel", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: charticle)
-           .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-           .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
-           .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
-           .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true)
+           .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly:true, settings: selectExcess)
+           .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: selectExcess)
+           .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: selectExcess)
+           .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: selectExcess)
            .Text("SewingLine", header: "Line#", width: Widths.AnsiChars(2), settings: Linecell)
            .Text("SewingCell", header: "Sew" + Environment.NewLine + "Cell", width: Widths.AnsiChars(2), settings: Cellcell)
            .Numeric("Qty", header: "No of" + Environment.NewLine + "Bundle", width: Widths.AnsiChars(3), integer_places: 3, settings: Qtycell)
            .Numeric("Cutoutput", header: "Cut" + Environment.NewLine + "OutPut", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: false, settings: cutOutputCell)
-           .Numeric("TotalParts", header: "Total" + Environment.NewLine + "Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true);
+           .Numeric("TotalParts", header: "Total" + Environment.NewLine + "Parts", width: Widths.AnsiChars(4), integer_places: 3, iseditingreadonly: true)
+           .Text("isEXCESS", header: "EXCESS", width: Widths.AnsiChars(2), iseditingreadonly: true)
+           ;
             gridArticleSize.DefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridArticleSize.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 9);
             gridArticleSize.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
@@ -447,6 +478,16 @@ namespace Sci.Production.Cutting
                 MyUtility.Msg.WarningBox("The Condition can not empty.");
                 return;
             }
+
+            if (chkAEQ.Checked)
+            {
+                this.gridArticleSize.Columns["isEXCESS"].Visible = true;
+            }
+            else
+            {
+                this.gridArticleSize.Columns["isEXCESS"].Visible = false;
+            }
+
             this.ShowWaitMessage("Query");
             #region 條件式
             string query_cmd = string.Format(@"
@@ -501,24 +542,55 @@ Select  distinct 0 as sel
         , 0 as startno
 	    , a.Ukey
 	    , ord.StyleUkey
-	    --, ag.ArticleGroup
+		, isEXCESS = ''
 from workorder a WITH (NOLOCK) 
 inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp
 inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id and b.orderid = ord.id
---outer apply (
---	select  a.ArticleGroup
---	from pattern p WITH (NOLOCK)
---	inner join Pattern_GL_Article a WITH (NOLOCK) on  a.PatternUkey = p.ukey
---	where   p.STYLEUKEY = ord.Styleukey
---	        and a.article = b.article
---	        and Status = 'Completed' 
---	        AND p.EDITdATE = (  SELECT MAX(EditDate) 
---                                from pattern WITH (NOLOCK)
---                                where   styleukey = ord.Styleukey 
---                                        and Status = 'Completed')	
---)ag
 Where   a.CutRef is not null  
         and ord.mDivisionid = '{0}'", keyWord);
+
+            string distru_cmd_Excess = $@"
+union all
+Select  distinct 0 as sel
+        , 0 as iden
+        , a.cutref
+        , l.orderid
+        , l.article
+        , a.colorid
+        , l.sizecode
+        , a.Fabriccombo
+		, a.FabricPanelCode
+        , '' as Ratio
+        , a.cutno
+        , Sewingline = ord.SewLine
+        , SewingCell= a.CutCellid
+        , item = (  Select Reason.Name 
+		            from Reason WITH (NOLOCK) 
+                         , Style WITH (NOLOCK) 
+		            where   Reason.Reasontypeid = 'Style_Apparel_Type' 
+                            and Style.ukey = ord.styleukey 
+                            and Style.ApparelType = Reason.id )
+	    , 1 as Qty
+        , cutoutput = isnull(b.Qty,0)
+        , RealCutOutput = isnull(b.Qty,0)
+        , 0 as TotalParts
+        , ord.poid
+        , 0 as startno
+	    , a.Ukey
+	    , ord.StyleUkey
+		, isEXCESS = 'Y'
+from workorder a WITH (NOLOCK) 
+inner join workorder_Distribute b WITH (NOLOCK) on a.ukey = b.workorderukey and a.id = b.id 
+outer apply(
+	select top 1 wd.OrderID,wd.Article,wd.SizeCode
+	from workorder_Distribute wd WITH(NOLOCK)
+	where wd.WorkOrderUkey = a.Ukey and wd.orderid <>'EXCESS'
+	order by wd.OrderID desc
+)l
+inner join orders ord WITH (NOLOCK) on a.id = ord.cuttingsp and l.OrderID = ord.id
+Where   a.CutRef is not null  
+        and ord.mDivisionid = '{keyWord}'  and b.orderid ='EXCESS'
+";
 
             string Excess_cmd = string.Format(@"
 Select  distinct a.cutref
@@ -552,6 +624,7 @@ Where   a.ukey = b.workorderukey
             {
                 query_cmd = query_cmd + string.Format(" and a.cutref='{0}'", cutref);
                 distru_cmd = distru_cmd + string.Format(" and a.cutref='{0}'", cutref);
+                distru_cmd_Excess += string.Format(" and a.cutref='{0}'", cutref);
                 Excess_cmd = Excess_cmd + string.Format(" and a.cutref='{0}'", cutref);
                 SizeRatio.Append(string.Format(" and a.cutref='{0}'", cutref));
             }
@@ -559,6 +632,7 @@ Where   a.ukey = b.workorderukey
             {
                 query_cmd = query_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
                 distru_cmd = distru_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
+                distru_cmd_Excess += string.Format(" and a.estcutdate='{0}'", cutdate);
                 Excess_cmd = Excess_cmd + string.Format(" and a.estcutdate='{0}'", cutdate);
                 SizeRatio.Append(string.Format(" and a.estcutdate='{0}'", cutdate));
             }
@@ -566,6 +640,7 @@ Where   a.ukey = b.workorderukey
             {
                 query_cmd = query_cmd + string.Format(" and ord.poid='{0}'", poid);
                 distru_cmd = distru_cmd + string.Format(" and ord.poid='{0}'", poid);
+                distru_cmd_Excess += string.Format(" and ord.poid='{0}'", poid);
                 Excess_cmd = Excess_cmd + string.Format(" and  ord.poid='{0}'", poid);
                 SizeRatio.Append(string.Format(" and ord.poid='{0}'", poid));
             }
@@ -573,6 +648,7 @@ Where   a.ukey = b.workorderukey
             {
                 query_cmd = query_cmd + string.Format(" and ord.FtyGroup='{0}'", factory);
                 distru_cmd = distru_cmd + string.Format(" and ord.FtyGroup='{0}'", factory);
+                distru_cmd_Excess += string.Format(" and ord.FtyGroup='{0}'", factory); 
                 Excess_cmd = Excess_cmd + string.Format(" and  ord.FtyGroup='{0}'", factory);
                 SizeRatio.Append(string.Format(" and ord.FtyGroup='{0}'", factory));
             }
@@ -597,7 +673,16 @@ Where   a.ukey = b.workorderukey
             //Mantis_7045 將PatternPanel改成FabricPanelCode,不然會有些值不正確
             distru_cmd = distru_cmd + @" and b.orderid !='EXCESS' and a.CutRef is not null  
 group by a.cutref,b.orderid,b.article,a.colorid,b.sizecode,ord.Sewline,ord.factoryid,ord.poid,a.Fabriccombo,a.FabricPanelCode,a.cutno,ord.styleukey,a.CutCellid,a.Ukey  --,ag.ArticleGroup
-order by b.sizecode,b.orderid,a.FabricPanelCode";
+";
+            if (chkAEQ.Checked)
+            {
+                distru_cmd += distru_cmd_Excess;
+            }
+            else
+            {
+                distru_cmd += " order by b.sizecode,b.orderid,a.FabricPanelCode";
+            }
+
             query_dResult = DBProxy.Current.Select(null, distru_cmd, out ArticleSizeTb);
             if (!query_dResult)
             {
@@ -627,14 +712,22 @@ inner join tmp b WITH (NOLOCK) on  b.sizecode = a.sizecode and b.Ukey = c.Ukey")
                 ShowErr(Excess_cmd, query_dResult);
                 return;
             }
-            if (ExcessTb.Rows.Count > 0)
+
+            // 若有勾則自動分配Excess
+            if (chkAEQ.Checked)
             {
-                var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
-                m.Width = 500;
-                m.grid1.Columns[1].Width = 140;
-                m.text_Find.Width = 140;
-                m.btn_Find.Location = new Point(150, 6);
-                m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+            }
+            else
+            {
+                if (ExcessTb.Rows.Count > 0)
+                {
+                    var m = MyUtility.Msg.ShowMsgGrid(ExcessTb, "Those detail had <EXCESS> not yet distribute to SP#", "Warning");
+                    m.Width = 650;
+                    m.grid1.Columns[1].Width = 140;
+                    m.text_Find.Width = 140;
+                    m.btn_Find.Location = new Point(150, 6);
+                    m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
+                }
             }
             #endregion        
 

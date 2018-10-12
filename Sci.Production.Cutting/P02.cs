@@ -249,10 +249,10 @@ outer apply
 ) as Sewinline
 outer apply
 (
-	Select actcutdate = Min(cut.cdate)
+	Select actcutdate = iif(sum(cut_b.Layer) = a.Layer, Max(cut.cdate),null)
 	From cuttingoutput cut WITH (NOLOCK) 
 	inner join cuttingoutput_detail cut_b WITH (NOLOCK) on cut.id = cut_b.id
-	Where cut_b.workorderukey = a.Ukey
+	Where cut_b.workorderukey = a.Ukey and cut.Status != 'New' 
 )  as actcutdate
 outer apply(Select adduser = Name From Pass1 ps WITH (NOLOCK) Where ps.id = a.addName) as adduser
 outer apply(Select edituser = Name From Pass1 ps WITH (NOLOCK) Where ps.id = a.editName) as edituser

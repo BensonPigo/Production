@@ -197,7 +197,7 @@ namespace Sci.Production.Subcon
             {
                 DataTable resulttb;
                 string check_sql = $@"select lpd.ID,a.RequestId,a.OrderId,a.Refno from #TmpSource a inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''";
-      
+
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "", check_sql, out resulttb, "#TmpSource");
                 if (!result)
                 {
@@ -219,7 +219,7 @@ namespace Sci.Production.Subcon
                     m.btn_Find.Location = new Point(150, 6);
                     m.btn_Find.Anchor = (AnchorStyles.Left | AnchorStyles.Top);
                     m.ShowDialog();
-                    
+
                     return false;
                 }
             }
@@ -263,7 +263,7 @@ namespace Sci.Production.Subcon
             {
                 if (dr.RowState == DataRowState.Added)
                 {
-                    if (dr["requestid"].ToString()!="")
+                    if (dr["requestid"].ToString() != "")
                     {
                         string chk = string.Format("select distinct LocalPOID from packinglist where id = '{0}' and isnull(LocalPOID,'') != ''", dr["requestid"].ToString());
                         if (MyUtility.Check.Seek(chk))
@@ -377,7 +377,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             DataTable dt = (DataTable)detailgridbs.DataSource;
             String sqlupd2 = "";
             DualResult result2;
-           if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
+            if ((CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "SP_THREAD" || CurrentMaintain["category"].ToString().ToUpper().TrimEnd() == "EMB_THREAD"))
             {
                 //針對表身資料將ThreadRequisition_Detail.poid塞值
                 foreach (DataRow dr in dt.Rows)
@@ -431,7 +431,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            DataTable detailDt = (DataTable)detailgridbs.DataSource;            
+            DataTable detailDt = (DataTable)detailgridbs.DataSource;
             if (!(CurrentMaintain == null))
             {
                 if (!(CurrentMaintain["amount"] == DBNull.Value) && !(CurrentMaintain["vat"] == DBNull.Value))
@@ -484,6 +484,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                     CurrentDetailData["StyleID"] = "";
                     CurrentDetailData["SciDelivery"] = DBNull.Value;
                     CurrentDetailData["sewinline"] = DBNull.Value;
+                    CurrentDetailData["BuyerID"] = "";
                     return;
                 }
                 if (e.FormattedValue.ToString() == drr["orderid"].ToString()) return;
@@ -525,9 +526,10 @@ and (o.Qty-pd.ShipQty-inv.DiffQty <> 0 or o.Category='T')  "
                     }
                 }
                 if (MyUtility.Check.Seek(string.Format(@"
-select FactoryID,POID,StyleID,SciDelivery,sewinline 
+select FactoryID,POID,StyleID,SciDelivery,sewinline,Brand.BuyerID
 from orders  WITH (NOLOCK)  
 inner join factory WITH (NOLOCK) on orders.FactoryID = factory.id
+inner join Brand WITH (NOLOCK) on orders.BrandID = Brand.ID
 outer apply (
 	select ShipQty= isnull(sum(ShipQty),0)  from Pullout_Detail where OrderID=orders.ID
 ) pd
@@ -550,6 +552,13 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     CurrentDetailData["StyleID"] = dr["StyleID"];
                     CurrentDetailData["SciDelivery"] = dr["SciDelivery"];
                     CurrentDetailData["sewinline"] = dr["sewinline"];
+                    CurrentDetailData["BuyerID"] = dr["BuyerID"];
+                    this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
+
+                    if (!MyUtility.Check.Empty(CurrentDetailData["price"]) && !MyUtility.Check.Empty(CurrentDetailData["Qty"]))
+                    {
+                        CurrentDetailData["amount"] = MyUtility.Convert.GetDecimal(CurrentDetailData["price"]) * MyUtility.Convert.GetDecimal(CurrentDetailData["Qty"]);
+                    }
                 }
                 else
                 {
@@ -559,6 +568,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     CurrentDetailData["StyleID"] = "";
                     CurrentDetailData["SciDelivery"] = DBNull.Value;
                     CurrentDetailData["sewinline"] = DBNull.Value;
+                    CurrentDetailData["BuyerID"] = "";
                     MyUtility.Msg.ErrorBox("< SP# :" + e.FormattedValue + " > not found!!!");
                     return;
                 }
@@ -586,9 +596,8 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     IList<DataRow> x = item.GetSelecteds();
                     CurrentDetailData["refno"] = x[0][0];
                     CurrentDetailData["unitid"] = x[0][3];
-                    CurrentDetailData["price"] = decimal.Parse(x[0][4].ToString());
                     CurrentDetailData.EndEdit();
-                }                
+                }
             };
             ts.CellValidating += (s, e) =>
             {
@@ -604,24 +613,14 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                 }
                 else
                 {
-                    string sqlThColor = $@"
-select * from LocalItem_ThreadColorPrice 
-where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailData["threadColorid"]}'";
-                    DataRow drPrice;
-                    if (MyUtility.Check.Seek(sqlThColor, out drPrice))
-                    {
-                        CurrentDetailData["price"] = drPrice["Price"];
-                    }
-                    else
-                    {
-                        CurrentDetailData["price"] = dr[2];
-                    }
+                    CurrentDetailData["refno"] = dr[0];
+                    CurrentDetailData["unitid"] = dr[1];
+                    this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
+
                     if (!MyUtility.Check.Empty(CurrentDetailData["price"]) && !MyUtility.Check.Empty(CurrentDetailData["Qty"]))
                     {
                         CurrentDetailData["amount"] = MyUtility.Convert.GetDecimal(CurrentDetailData["price"]) * MyUtility.Convert.GetDecimal(CurrentDetailData["Qty"]);
-                    }                    
-                    CurrentDetailData["refno"] = dr[0];
-                    CurrentDetailData["unitid"] = dr[1];                   
+                    }
                 }
                 CurrentDetailData.EndEdit();
             };
@@ -653,7 +652,7 @@ where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailDa
                     //e.Cancel = true;
                     return;
                 }
-                if (!MyUtility.Check.Seek(string.Format(@"select junk from threadcolor WITH (NOLOCK) 
+                if (!MyUtility.Check.Seek(string.Format(@"select junk from ThreadColor WITH (NOLOCK) 
                                                                       where id = '{0}' and junk=0 "
                                                                 , e.FormattedValue.ToString())
                                                                 , out dr, null))
@@ -663,29 +662,13 @@ where refno='{e.FormattedValue.ToString()}' and ThreadColorID ='{CurrentDetailDa
                     return;
                 }
 
-                string sqlThColor = $@"
-select * from LocalItem_ThreadColorPrice 
-where refno='{CurrentDetailData["Refno"]}' and ThreadColorID ='{e.FormattedValue.ToString()}'";
-                if (MyUtility.Check.Seek(sqlThColor, out dr))
-                {
-                    CurrentDetailData["price"] = dr["Price"];
-                }
-                else
-                {
-                    if (MyUtility.Check.Seek($@"
-select refno,unitid,price from localitem WITH (NOLOCK) 
-where refno = '{CurrentDetailData["Refno"]}' 
-and category = '{ CurrentMaintain["category"]}'
-and localsuppid = '{CurrentMaintain["localsuppid"]}'", out dr, null))
-                    {
-                        CurrentDetailData["price"] = dr["Price"];
-                    }
-                }
+                CurrentDetailData["threadColorid"] = e.FormattedValue;
+                this.CurrentDetailData["price"] = this.GetPrice(CurrentDetailData["RefNo"].ToString(), CurrentDetailData["BuyerID"].ToString(), CurrentDetailData["Threadcolorid"].ToString());
+
                 if (!MyUtility.Check.Empty(CurrentDetailData["price"]) && !MyUtility.Check.Empty(CurrentDetailData["Qty"]))
                 {
                     CurrentDetailData["amount"] = MyUtility.Convert.GetDecimal(CurrentDetailData["price"]) * MyUtility.Convert.GetDecimal(CurrentDetailData["Qty"]);
                 }
-                CurrentDetailData["threadColorid"] = e.FormattedValue;
                 CurrentDetailData.EndEdit();
             };
             #endregion
@@ -721,6 +704,7 @@ and localsuppid = '{CurrentMaintain["localsuppid"]}'", out dr, null))
 
             #region 欄位設定
             Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("factoryid", header: "Order Factory", iseditingreadonly: true)  //0
             .Text("POID", header: "MasterSP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), settings: ts4)  //2
@@ -740,6 +724,7 @@ and localsuppid = '{CurrentMaintain["localsuppid"]}'", out dr, null))
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns2) //16
             .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns3) //17
             .Text("remark", header: "Remark", width: Widths.AnsiChars(25)) //18
+            .Text("BuyerID", header: "Buyer", width: Widths.AnsiChars(6), iseditingreadonly: true) //19
             ;
             #endregion
             #region 可編輯欄位變色
@@ -776,6 +761,61 @@ and localsuppid = '{CurrentMaintain["localsuppid"]}'", out dr, null))
                 col_color.IsEditingReadOnly = false;
                 col_Qty.IsEditingReadOnly = false;
             }
+        }
+
+        private decimal GetPrice(string refNo,string buyerID,string threadColorID)
+        {
+            string sqlCmd = $@"select Price from LocalItem_ThreadBuyerColorGroupPrice with (nolock) where Refno = @Refno and BuyerID = @BuyerID and ThreadColorGroupID = (select ThreadColorGroupID from ThreadColor with (nolock) where id = @threadColorID)";
+            string sqlCmd2 = $@"select Price from LocalItem_ThreadBuyerColorGroupPrice with (nolock) where Refno = @Refno and BuyerID = '' and ThreadColorGroupID = (select ThreadColorGroupID from ThreadColor with (nolock) where id = @threadColorID)";
+            string sqlCmd3 = $@"select Price from LocalItem with (nolock) where Refno = @Refno";
+            List<SqlParameter> sqlPar = new List<SqlParameter>() {  new SqlParameter("@Refno", refNo),
+                                                                    new SqlParameter("@BuyerID", buyerID),
+                                                                    new SqlParameter("@threadColorID", threadColorID)
+                                                                  };
+            DataTable resultDt;
+            DualResult result;
+            result = DBProxy.Current.Select(null, sqlCmd, sqlPar, out resultDt);
+            if (result)
+            {
+                if (resultDt.Rows.Count > 0)
+                {
+                    return (decimal)resultDt.Rows[0][0];
+                }
+            }
+            else
+            {
+                this.ShowErr(result);
+                return 0;
+            }
+
+            result = DBProxy.Current.Select(null, sqlCmd2, sqlPar, out resultDt);
+            if (result)
+            {
+                if (resultDt.Rows.Count > 0)
+                {
+                    return (decimal)resultDt.Rows[0][0];
+                }
+            }
+            else
+            {
+                this.ShowErr(result);
+                return 0;
+            }
+
+            result = DBProxy.Current.Select(null, sqlCmd3, sqlPar, out resultDt);
+            if (result)
+            {
+                if (resultDt.Rows.Count > 0)
+                {
+                    return (decimal)resultDt.Rows[0][0];
+                }
+            }
+            else
+            {
+                this.ShowErr(result);
+                return 0;
+            }
+            return 0;
         }
 
         private void change_record()
@@ -1031,7 +1071,7 @@ and localsuppid = '{CurrentMaintain["localsuppid"]}'", out dr, null))
 where id='{e.Master["ID"].ToString()}' ");
          
             this.DetailSelectCommand = $@"
-select [Amount]= isnull(loc2.Price*loc2.Qty,0),[std_price]=isnull(std.std_price,0),*,o.factoryid,o.sewinline,loc.description
+select [Selected] = 0,[Amount]= isnull(loc2.Price*loc2.Qty,0),[std_price]=isnull(std.std_price,0),*,o.factoryid,o.sewinline,loc.description
 from localpo_detail loc2 WITH (NOLOCK) 
 left join orders o WITH (NOLOCK) on loc2.orderid = o.id
 left join localitem loc WITH (NOLOCK) on loc.refno = loc2.refno 
@@ -1078,17 +1118,31 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
         private void btnBatchUpdateDellivery_Click(object sender, EventArgs e)
         {
             //int deleteIndex = 0;
-            foreach (DataGridViewRow dr in this.detailgrid.SelectedRows)
+            foreach (DataGridViewRow dr in this.detailgrid.Rows)
             {
                 DataRow row = ((DataRowView)dr.DataBoundItem).Row;
-                if (dateDeliveryDate.Value != null)
+                if (row["selected"].Equals(1))
                 {
-                    row["Delivery"] = (DateTime)dateDeliveryDate.Value;
+                    if (this.dateDeliveryDate.Value != null)
+                    {
+                        row["Delivery"] = (DateTime)dateDeliveryDate.Value;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtBuyer.Text))
+                    {
+                        if (!this.txtBuyer.Text.Equals(row["BuyerID"]))
+                        {
+                            row["BuyerID"] = this.txtBuyer.Text;
+                            row["price"] = this.GetPrice(row["RefNo"].ToString(), row["BuyerID"].ToString(), row["Threadcolorid"].ToString());
+
+                            if (!MyUtility.Check.Empty(row["price"]) && !MyUtility.Check.Empty(row["Qty"]))
+                            {
+                                row["amount"] = MyUtility.Convert.GetDecimal(row["price"]) * MyUtility.Convert.GetDecimal(row["Qty"]);
+                            }
+                        }
+                    }
                 }
-                else
-                {
-                    row["Delivery"] = DBNull.Value;
-                }
+                
             }
         }
 
@@ -1106,5 +1160,38 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                 numttlqty.Value = MyUtility.Convert.GetDecimal(((DataTable)detailgridbs.DataSource).Compute("sum(qty)", "")); 
             }
         }
+
+        private void txtBuyer_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
+                   (@"Select ID,NameEN  from Buyer WITH (NOLOCK) where JUNK=0 order by ID", "10,45", null);
+            item.Size = new System.Drawing.Size(630, 535);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.txtBuyer.Text = item.GetSelectedString();
+        }
+
+        private void txtBuyer_Validating(object sender, CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Seek($@"select 1 from Buyer WITH (NOLOCK) where junk=0 and id='{this.txtBuyer.Text}'"))
+            { 
+                MyUtility.Msg.WarningBox("data not found!");
+                e.Cancel = true;
+            }
+        }
+
+        private void txtartworktype_ftyCategory_TextChanged(object sender, EventArgs e)
+        {
+            if (this.txtartworktype_ftyCategory.Text.EqualString("SP_Thread")
+                || this.txtartworktype_ftyCategory.Text.EqualString("EMB_Thread"))
+            {
+                this.GridUniqueKey = "orderid,refno,threadcolorid";
+            }
+            else
+            {
+                this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid"; 
+            }
+        }
     }
 }
+

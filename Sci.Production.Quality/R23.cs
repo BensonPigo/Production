@@ -18,6 +18,7 @@ namespace Sci.Production.Quality
         private string F;
         private string M;
         private string Gap;
+        private string insGap;
         private string Brand;
         private string dateRangeReady1;
         private string dateRangeReady2;
@@ -37,6 +38,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             this.numDateGap.Text = "2";
+            this.numInsGap.Text = "1";
         }
 
         protected override bool ValidateInput()
@@ -44,6 +46,7 @@ namespace Sci.Production.Quality
             this.F = this.txtfactory.Text;
             this.M = this.txtMdivision.Text;
             this.Gap = this.numDateGap.Text;
+            this.insGap = this.numInsGap.Text;
             this.Brand = this.txtbrand.Text;
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
@@ -114,7 +117,7 @@ DECLARE  @t TABLE
     StartDate DATE,
 	EndDate DATE
 );
-
+declare @time time = '{(this.txtTime.Text.Equals(":") ? "00:00:00" : this.txtTime.Text)}'
 declare @ReadyDate1 date = '{this.dateRangeReady1}';
 declare @ReadyDate2 date = '{this.dateRangeReady2}';
 
@@ -144,6 +147,7 @@ FROM CTE
 /* Temple Table 1 */
 SELECT distinct
 [ReadyDate] = pd.ReceiveDate--NormalCalendar.Dates
+,[ReadyTime] = convert(datetime,CalendarInspection.Dates) + convert(datetime,@time)
 ,Calendar.Dates	
 ,o.FtyGroup
 into #CalendarData	
@@ -155,10 +159,16 @@ cross apply(
 	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
 	and Dates < pd.ReceiveDate	
 )Calendar	
-where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
+cross apply(
+	select Dates,[rows] = ROW_NUMBER() over(order by dates) from #Calendar			
+	where  DATEPART(WEEKDAY, Dates) <> 1 --排除星期日	
+	and Dates > pd.ReceiveDate	
+)CalendarInspection 
+where o.Category!='S' and o.Junk = 0
 and pd.ReceiveDate between '{this.dateRangeReady1}' and '{this.dateRangeReady2}' -- 將ReceiveDate跟ReadyDate綁再一起,方便取得RedayDate
 and Calendar.rows = {MyUtility.Convert.GetInt(this.Gap)} -- GAP 
-and Dates < pd.ReceiveDate
+and CalendarInspection.rows = {MyUtility.Convert.GetInt(this.insGap)} --inspection GAP 
+and Calendar.Dates < pd.ReceiveDate
 and not exists (select dates
 	from #Calendar			
 	where (DATEPART(WEEKDAY, Dates) = 1  --只能是星期天
@@ -225,7 +235,7 @@ outer apply(
     ,cfa.EditDate as FinalInsDate
     from cfa
     left join Pass1 on cfa.CFA=pass1.ID
-    where convert(date,cfa.EditDate) <= AllDate.ReadyDate
+    where cfa.EditDate <= AllDate.ReadyTime
     and cfa.OrderID=os.Id
 	and cfa.Status='Confirmed'
     order by cfa.EditDate desc
@@ -273,7 +283,7 @@ outer apply(
 		for xml path ('')
 		),1,1,'')
 )SewingLine
-where o.VasShas != 1 and o.Category!='S' and o.Junk = 0
+where o.Category!='S' and o.Junk = 0
 and iif(pdm.TotalCTN=0,0, ( isnull(convert(float,Receive.ClogCTN),0) / convert(float,pdm.TotalCTN))*100)=100
 {this.listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 

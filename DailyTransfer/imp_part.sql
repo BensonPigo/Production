@@ -294,7 +294,12 @@ s.EditDate
 	SET TPEPOID = B.id,
 	SEQ1=b.Seq1,
 	SuppDelivery=b.SuppDelivery,
-	EstETA=b.EstETA
+	EstETA=b.EstETA,
+	TPEQty=B.Qty,
+	Foc=B.Foc,
+	ShipQty=B.ShipQty,
+	ShipFoc=B.ShipFoc,
+	ShipETA=B.ShipETA
 	FROM Machine.DBO.PartPO_Detail A
 	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno and  a.SEQ2=b.Seq2 and a.id = b.MmsReqID
 	INNER JOIN  Trade_To_Pms.DBO.MmsPO C ON B.ID=C.ID
@@ -354,7 +359,12 @@ update t
 		t.seq1=s.seq1,
 		t.SuppDelivery=s.SuppDelivery,
 		t.EstETA=s.EstETA,
-		t.Complete = isnull(s.Complete,0)
+		t.Complete = isnull(s.Complete,0),
+		t.TPEQty=s.Qty,
+		t.Foc=s.Foc,
+		t.ShipQty=s.ShipQty,
+		t.ShipFoc=s.ShipFoc,
+		t.ShipETA=s.ShipETA
 		from  Machine.dbo.PartPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
 		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID

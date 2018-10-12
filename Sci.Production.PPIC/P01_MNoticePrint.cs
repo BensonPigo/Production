@@ -151,6 +151,7 @@ namespace Sci.Production.PPIC
                 this.sxr = new sxrc(xltPath, true);
                 this.sxr.BoOpenFile = false;
                 this.sxr.AddPrintRange = true;
+                this.sxr.SetPrinterAtLocal = true;
                 this.sxr.FontName = "Times New Roman";
                 this.sxr.FontSize = 14;
                 this.sxr.DicDatas.Add(this.sxr.VPrefix + "PO_NOW", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
@@ -266,6 +267,7 @@ namespace Sci.Production.PPIC
                 this.sxr = new sxrc(xltPath);
                 this.sxr.BoOpenFile = false;
                 this.sxr.AddPrintRange = true;
+                this.sxr.SetPrinterAtLocal = true;
                 this.sxr.FontName = "Times New Roman";
                 this.sxr.FontSize = 14;
                 this.sxr.CopySheets.Add("1,2,3", dtOrderCombo.Rows.Count - 1);

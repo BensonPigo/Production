@@ -1,13 +1,12 @@
 ﻿CREATE TABLE [dbo].[ThreadLocation] (
     [ID]          VARCHAR (10)  CONSTRAINT [DF_ThreadLocation_ID] DEFAULT ('') NOT NULL,
-    [MDivisionid] VARCHAR (8)   CONSTRAINT [DF_ThreadLocation_MDivisionid] DEFAULT ('') NOT NULL,
     [Description] NVARCHAR (40) CONSTRAINT [DF_ThreadLocation_Description] DEFAULT ('') NULL,
     [AddName]     VARCHAR (10)  CONSTRAINT [DF_ThreadLocation_AddName] DEFAULT ('') NULL,
     [AddDate]     DATETIME      NULL,
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_ThreadLocation_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
     [Junk]        BIT           CONSTRAINT [DF_ThreadLocation_Junk] DEFAULT ((0)) NULL,
-    CONSTRAINT [PK_ThreadLocation] PRIMARY KEY CLUSTERED ([ID] ASC, [MDivisionid] ASC)
+    CONSTRAINT [PK_ThreadLocation] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
 

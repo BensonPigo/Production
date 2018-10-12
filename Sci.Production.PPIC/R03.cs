@@ -1081,7 +1081,7 @@ from (
 ) a",
                         classify,
                         !this.artwork ? string.Empty : strUnion,
-                        "117"));
+                        this.lastColA));
                     #endregion
                     result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.subprocessColumnName);
                     if (!result)
@@ -1285,6 +1285,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             return Result.True;
         }
 
+        private int lastColA = 119; // 最後一欄 , 有新增欄位要改這
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -1302,12 +1303,13 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 return false;
             }
 
+            int lastCol = lastColA;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Name = "PPIC_Master_List";
-
+            excel.Visible = true;
             // 填Subprocess欄位名稱
-            int lastCol = 119;
-            int subConCol = 9999, ttlTMS = 118; // 紀錄SubCon與TTL_TMS的欄位
+            int subConCol = 9999, ttlTMS = lastCol + 1; // 紀錄SubCon與TTL_TMS的欄位
+            string excelColEng = string.Empty;
             if (this.artwork || this.pap)
             {
                 foreach (DataRow dr in this.subprocessColumnName.Rows)
@@ -1325,18 +1327,19 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                         ttlTMS = MyUtility.Convert.GetInt(dr["rno"]);
                     }
                 }
+                // 算出Excel的Column的英文位置
+                excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol);
             }
             else
             {
-                worksheet.Cells[1, 117] = "TTL_TMS";
+                worksheet.Cells[1, ttlTMS] = "TTL_TMS";
+                // 算出Excel的Column的英文位置
+                excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol + 1);
             }
-
-            // 算出Excel的Column的英文位置
-            string excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol);
 
             // 填內容值
             int intRowsStart = 0;
-            object[,] objArray = new object[this.printData.Rows.Count, lastCol];
+            object[,] objArray = new object[this.printData.Rows.Count, lastCol + 1];
 
             string kPIChangeReasonName;  // CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
                                          // Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
@@ -1556,7 +1559,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 }
                 else
                 {
-                    objArray[intRowsStart, 115] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                    objArray[intRowsStart, ttlTMS - 1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 }
 
                 intRowsStart++;
@@ -1580,7 +1583,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             {
                 for (int j = 0; j < intRowsStart; j++)
                 {
-                    for (int i = 118; i < lastCol; i++)
+                    for (int i = this.lastColA; i < lastCol; i++)
                     {
                         if (objArray[j, i] == null)
                         {

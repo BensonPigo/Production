@@ -481,7 +481,7 @@
             <returns>result of the method process.</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.UnRARFile(System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.UnRARFile(System.String,System.Boolean,System.String,System.String,System.Boolean)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.UnRARFile(System.String,System.Boolean,System.String,System.String,System.Boolean,System.Boolean)" -->
         <member name="M:Sci.MyUtility.File.ReadPoperty(System.String,System.String)">
             <summary>
             讀取內容為 {key} = {value} 這種多行格式的文字檔
@@ -1026,11 +1026,12 @@
             <param name="grid"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.ProjExts.GetTableWithGridLayout(System.Windows.Forms.DataGridView)">
+        <member name="M:Sci.ProjExts.GetTableWithGridLayout(System.Windows.Forms.DataGridView,System.Collections.Generic.List{System.String})">
             <summary>
             由 Grid 取回 DataSource 的 Datatable，並依照Grid顯示之欄位數量、名稱設定，若Source不為DataTable不在此Method使用範圍內
             </summary>
             <param name="grid"></param>
+            <param name="notDeleteColumn"> 需要保留的欄位 </param>
             <returns></returns>
         </member>
         <member name="M:Sci.ProjExts.CopyTo(System.Data.DataRow,System.Data.DataRow,System.String)">
@@ -1494,6 +1495,13 @@
             <param name="dt"> target datatable </param>
             <returns> column name with space </returns>
         </member>
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.KillExcelProcess(Microsoft.Office.Interop.Excel.Application)">
+            <summary>
+            透過Excel.Application 關閉工作管理員畫面裡的Excel.exe
+            </summary>
+            <param name="excelApp"></param>
+            <returns></returns>
+        </member>
         <member name="T:Sci.Utility.Excel.SaveDataToExcel">
             <summary>
             Edward : Data轉存成Excel，可自設是否加Pivot Table及其他屬性
@@ -1546,17 +1554,21 @@
             excel application, be carefully use.
             </summary>
         </member>
-        <member name="M:Sci.Utility.Excel.SaveDataToExcel.AddPivotSheet(Microsoft.Office.Interop.Excel.Application,Microsoft.Office.Interop.Excel.Worksheet,Microsoft.Office.Interop.Excel.Workbook,System.Data.DataTable,System.String,System.Collections.Generic.List{Sci.Utility.Excel.SaveDataToExcel.MyPivotField})">
+        <member name="M:Sci.Utility.Excel.SaveDataToExcel.AddPivotSheet(Microsoft.Office.Interop.Excel.Application,Microsoft.Office.Interop.Excel.Worksheet,Microsoft.Office.Interop.Excel.Workbook,System.Data.DataTable,System.String,System.Collections.Generic.List{Sci.Utility.Excel.SaveDataToExcel.MyPivotField},System.String,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             Edward : 新增Excel Pivot表
                 create : 2016-04-21 21:00:00
             </summary>
             <param name="oApp"> excel application </param>
-            <param name="oSheet"> excel work sheet </param>
+            <param name="sourceSheet"> excel work sheet </param>
             <param name="oBook"> excel work book </param>
             <param name="sourcedt"> source datatable </param>
             <param name="newSheetName"> new sheet name </param>
             <param name="pivFieldLis"> list of PivotField </param>
+            <param name="specificRange"> specific range </param>
+            <param name="repeatAllLabel"> repeat all label </param>
+            <param name="closeAllSubtotal"> close all subtotal </param>
+            <param name="setDataFieldToColumn"> set data field to column field </param>
         </member>
         <member name="M:Sci.Utility.Excel.SaveDataToExcel.#ctor(System.Data.DataTable,System.Int32,System.Boolean)">
             <summary>
@@ -1761,6 +1773,11 @@
             set excel font size.
             </summary>
         </member>
+        <member name="P:Sci.Utility.Excel.SaveXltReportCls.SetPrinterAtLocal">
+            <summary>
+            設定預設印表機為空，用以避開遠端連線時因為共享印表機而導致工廠端回抓Terminal的印表機產生額外時間差異
+            </summary>
+        </member>
         <member name="M:Sci.Utility.Excel.SaveXltReportCls.FindWindow(System.String,System.String)">
             <summary>
             find windows
@@ -1804,6 +1821,13 @@
             </summary>
             <param name="oWB"> excel work book </param>
             <param name="oSheet"> excel work sheet </param>
+        </member>
+        <member name="M:Sci.Utility.Excel.SaveXltReportCls.SetDefaultPrinter(System.String)">
+            <summary>
+            set default printer
+            </summary>
+            <param name="Name"> return name </param>
+            <returns> success or not </returns>
         </member>
         <member name="M:Sci.Utility.Excel.SaveXltReportCls.Save(System.String,System.Boolean)">
             <summary>
@@ -2618,6 +2642,11 @@
             <summary>
             此為設計工具支援所需的方法 - 請勿使用程式碼編輯器
             修改這個方法的內容。
+            </summary>
+        </member>
+        <member name="E:Sci.Win.UI.MsgGridForm.OnToExcel">
+            <summary>
+            提供外部覆寫 ToExcel 的方法
             </summary>
         </member>
         <member name="F:Sci.Win.UI.MsgGridForm.components">

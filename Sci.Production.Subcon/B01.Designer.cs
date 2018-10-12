@@ -81,6 +81,8 @@
             this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
             this.dateQuotDate = new Sci.Win.UI.DateBox();
             this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_local();
+            this.label2 = new Sci.Win.UI.Label();
+            this.btnBatchApprove = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -97,6 +99,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txtunit_ftyUnit);
             this.detailcont.Controls.Add(this.dateQuotDate);
             this.detailcont.Controls.Add(this.txtSubconSupplier);
@@ -663,11 +666,11 @@
             // btnThread
             // 
             this.btnThread.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnThread.Location = new System.Drawing.Point(609, 79);
+            this.btnThread.Location = new System.Drawing.Point(566, 79);
             this.btnThread.Name = "btnThread";
-            this.btnThread.Size = new System.Drawing.Size(133, 30);
+            this.btnThread.Size = new System.Drawing.Size(198, 30);
             this.btnThread.TabIndex = 23;
-            this.btnThread.Text = "Set Color Price";
+            this.btnThread.Text = "Set Buyer/Color Price";
             this.btnThread.UseVisualStyleBackColor = true;
             this.btnThread.Click += new System.EventHandler(this.btnThread_Click);
             // 
@@ -832,7 +835,7 @@
             // 
             this.btnQuotationRecord.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnQuotationRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQuotationRecord.Location = new System.Drawing.Point(716, 14);
+            this.btnQuotationRecord.Location = new System.Drawing.Point(723, 36);
             this.btnQuotationRecord.Name = "btnQuotationRecord";
             this.btnQuotationRecord.Size = new System.Drawing.Size(157, 30);
             this.btnQuotationRecord.TabIndex = 12;
@@ -844,7 +847,7 @@
             // 
             this.btnPaymentHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnPaymentHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnPaymentHistory.Location = new System.Drawing.Point(716, 43);
+            this.btnPaymentHistory.Location = new System.Drawing.Point(723, 65);
             this.btnPaymentHistory.Name = "btnPaymentHistory";
             this.btnPaymentHistory.Size = new System.Drawing.Size(157, 30);
             this.btnPaymentHistory.TabIndex = 13;
@@ -884,19 +887,47 @@
             this.txtunit_ftyUnit.Size = new System.Drawing.Size(66, 23);
             this.txtunit_ftyUnit.TabIndex = 21;
             // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Status", true));
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F);
+            this.label2.Location = new System.Drawing.Point(723, 10);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(157, 23);
+            this.label2.TabIndex = 22;
+            this.label2.TextStyle.Color = System.Drawing.Color.Red;
+            // 
+            // btnBatchApprove
+            // 
+            this.btnBatchApprove.Location = new System.Drawing.Point(701, 3);
+            this.btnBatchApprove.Name = "btnBatchApprove";
+            this.btnBatchApprove.Size = new System.Drawing.Size(203, 30);
+            this.btnBatchApprove.TabIndex = 3;
+            this.btnBatchApprove.Text = "Quotation Batch Approve";
+            this.btnBatchApprove.UseVisualStyleBackColor = true;
+            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 527);
+            this.CloseChkValue = "New";
+            this.Controls.Add(this.btnBatchApprove);
             this.DefaultControl = "txtRefno";
             this.DefaultControlForEdit = "txtartworktype_ftyCategory";
             this.DefaultOrder = "refno";
             this.EnableGridJunkColor = true;
+            this.IsSupportClose = true;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
+            this.IsSupportUnclose = true;
             this.Name = "B01";
             this.Text = "B01. Local Purchase Item";
+            this.UncloseChkValue = "Locked";
             this.UniqueExpress = "refno";
             this.WorkAlias = "LocalItem";
+            this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -969,5 +1000,7 @@
         private Win.UI.TextBox txtArtTkt;
         private Class.txtunit_local txtunit_ftyUnit;
         private Win.UI.Button btnThread;
+        private Win.UI.Label label2;
+        private Win.UI.Button btnBatchApprove;
     }
 }

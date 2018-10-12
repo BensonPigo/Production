@@ -1,13 +1,17 @@
 ﻿CREATE TABLE [dbo].[GarmentDefectCode] (
-    [ID]                  VARCHAR (3)   CONSTRAINT [DF_GarmentDefectCode_ID] DEFAULT ('') NOT NULL,
+    [ID]                  VARCHAR (3)    CONSTRAINT [DF_GarmentDefectCode_ID] DEFAULT ('') NOT NULL,
     [Description]         NVARCHAR (100) CONSTRAINT [DF_GarmentDefectCode_Description] DEFAULT ('') NULL,
-    [GarmentDefectTypeID] VARCHAR (1)   CONSTRAINT [DF_GarmentDefectCode_GarmentDefectTypeID] DEFAULT ('') NULL,
-    [AddName]             VARCHAR (10)  CONSTRAINT [DF_GarmentDefectCode_AddName] DEFAULT ('') NULL,
-    [AddDate]             DATETIME      NULL,
-    [EditName]            VARCHAR (10)  CONSTRAINT [DF_GarmentDefectCode_EditName] DEFAULT ('') NULL,
-    [EditDate]            DATETIME      NULL,
+    [GarmentDefectTypeID] VARCHAR (1)    CONSTRAINT [DF_GarmentDefectCode_GarmentDefectTypeID] DEFAULT ('') NULL,
+    [AddName]             VARCHAR (10)   CONSTRAINT [DF_GarmentDefectCode_AddName] DEFAULT ('') NULL,
+    [AddDate]             DATETIME       NULL,
+    [EditName]            VARCHAR (10)   CONSTRAINT [DF_GarmentDefectCode_EditName] DEFAULT ('') NULL,
+    [EditDate]            DATETIME       NULL,
+    [Junk]                BIT            NULL,
+    [LocalDescription]    NVARCHAR (100) NULL,
     CONSTRAINT [PK_GarmentDefectCode] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

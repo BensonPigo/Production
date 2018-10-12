@@ -1169,7 +1169,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
         // Expense Data
         private void BtnExpenseData_Click(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "InvNo");
+            Sci.Production.Shipping.P05_ExpenseData callNextForm = new Sci.Production.Shipping.P05_ExpenseData(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), "InvNo", false);
             callNextForm.ShowDialog(this);
         }
 

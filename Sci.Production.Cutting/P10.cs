@@ -692,7 +692,8 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
             string cuttingsp = MyUtility.GetValue.Lookup("Cuttingsp", newvalue, "Orders", "ID");
             if (!MyUtility.Check.Empty(CurrentMaintain["Cutref"]))
             {
-                string cuttingid = MyUtility.GetValue.Lookup("id", CurrentMaintain["Cutref"].ToString(), "workorder", "Cutref");
+                string findcuttingid = $@"select id from workorder where cutref = '{CurrentMaintain["Cutref"]}' and MDivisionId = '{Sci.Env.User.Keyword}' ";
+                string cuttingid = MyUtility.GetValue.Lookup(findcuttingid);
                 if (cuttingsp.Trim() != cuttingid.Trim())
                 {
                     txtSPNo.Text = "";
@@ -700,7 +701,7 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
                     MyUtility.Msg.WarningBox("<Cutref> is different.");
                     return;
                 }
-                string work_cmd = string.Format("Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}'", CurrentMaintain["Cutref"], newvalue);
+                string work_cmd = string.Format("Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{0}' and b.orderid ='{1}' and a.MDivisionId = '{2}'", CurrentMaintain["Cutref"], newvalue, Sci.Env.User.Keyword);
                 DataTable articleTb;
                 if (DBProxy.Current.Select(null, work_cmd, out articleTb))
                 {

@@ -15,14 +15,21 @@ namespace Sci.Production.Warehouse
 {
     public partial class R38 : Sci.Win.Tems.PrintForm
     {
-        string strSp1, strSp2, strM, strFty, strStockType;
+        string strSp1, strSp2, strM, strFty, strStockType, strLockStatus;
         DataTable dataTable;
+
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
         public R38(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             this.EditMode = true;
-            Dictionary < string, string> stocktype_source =  new Dictionary<string, string> {
+            Dictionary<string, string> stocktype_source = new Dictionary<string, string> {
                 {"ALL","*" },
                 {"Bulk","B" },
                 {"Inventory","I" },
@@ -33,22 +40,39 @@ namespace Sci.Production.Warehouse
 
             comboStockType.SelectedIndex = 0;
 
+            //Status下拉選單 
+            Dictionary<string, string> status_source = new Dictionary<string, string> {
+                {"ALL","*" },
+                {"Lock","1" },
+                {"UnLock","0" },};
+
+            comboStatus.DataSource = new BindingSource(status_source, null);
+            comboStatus.DisplayMember = "Key";
+            comboStatus.ValueMember = "Value";
+            comboStatus.SelectedIndex = 0;
+
             txtMdivision.Text = Env.User.Keyword;
         }
 
         protected override bool ValidateInput()
         {
-            
+
             strSp1 = txtSPNoStart.Text.Trim();
             strSp2 = txtSPNoEnd.Text.Trim();
             strM = txtMdivision.Text.Trim();
             strFty = txtfactory.Text.Trim();
             strStockType = comboStockType.SelectedValue.ToString().Trim();
+            strLockStatus = comboStatus.SelectedValue.ToString().Trim();
             return base.ValidateInput();
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            if (MyUtility.Check.Empty(txtSPNoStart.Text.Trim()) || MyUtility.Check.Empty(txtSPNoEnd.Text.Trim()))
+            {
+                return  new DualResult(false, "<SP#> can't be empty!!");
+            }
+
             #region Set SQL Command & SQLParameter
             string strSql = @"
 select	fi.POID
@@ -92,7 +116,7 @@ select	fi.POID
             List<SqlParameter> listPar = new List<SqlParameter>();
 
             /*--- SP# ---*/
-      
+
             if (!strSp1.Empty())
             {
                 //只有 sp1 輸入資料
@@ -127,10 +151,15 @@ select	fi.POID
                 listWhere.Add(" fi.StockType  = @stocktype ");
             }
 
-          
+            /*--- Lock status ---*/
+            if (!strLockStatus.Equals("*"))
+            {
+                listPar.Add(new SqlParameter("@LockStatus", strLockStatus));
+                listWhere.Add(" fi.Lock  = @LockStatus ");
+            }
+
             if (listWhere.Count > 0)
-                strSql += "where" + listWhere.JoinToString("and") +
-                          @" and fi.Lock = '1' ";
+                strSql += "where" + listWhere.JoinToString("and");
             #endregion 
             #region SQL Data Loading...
             DualResult result = DBProxy.Current.Select(null, strSql, listPar, out dataTable);

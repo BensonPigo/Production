@@ -18,7 +18,7 @@ namespace Sci.Production.Thread
     /// </summary>
     public partial class R21 : Sci.Win.Tems.PrintForm
     {
-        private string RefN1; private string RefN2; private string sha; private string TYPE; private string Thread; private string LOC1; private string LOC2; private string M;
+        private string RefN1; private string RefN2; private string sha; private string TYPE; private string Thread; private string LOC1; private string LOC2;
         private List<SqlParameter> lis;
         private DataTable dt; private string cmd;
 
@@ -30,7 +30,6 @@ namespace Sci.Production.Thread
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.comboMDivision.setDefalutIndex(true);
             this.print.Enabled = false;
         }
 
@@ -44,7 +43,6 @@ namespace Sci.Production.Thread
             this.Thread = this.txtThreadItem.Text.ToString();
             this.LOC1 = this.txtLocationStart.Text.ToString();
             this.LOC2 = this.txtLocationEnd.Text.ToString();
-            this.M = this.comboMDivision.Text.ToString();
             this.lis = new List<SqlParameter>();
             string sqlWhere = string.Empty;
             List<string> sqlWheres = new List<string>();
@@ -95,12 +93,6 @@ namespace Sci.Production.Thread
                     sqlWheres.Add("ThreadStock.threadlocationid <= @LOC2");
                     this.lis.Add(new SqlParameter("@LOC2", this.LOC2));
                 }
-            }
-
-            if (!this.M.Empty())
-            {
-                sqlWheres.Add("ThreadStock.mDivisionid = @M");
-                this.lis.Add(new SqlParameter("@M", this.M));
             }
 
             if (sqlWheres.Count > 0)

@@ -131,6 +131,14 @@ and factory.MDivisionID = '{0}'
 
         }
 
+        private void sum_checkedqty()
+        {
+            listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            Object localPrice = dt.Compute("Sum(qty)", "selected = 1");
+            this.displayTotal.Value = localPrice.ToString();
+        }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -147,6 +155,7 @@ and factory.MDivisionID = '{0}'
                 {
                     gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                     gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
+                    this.sum_checkedqty();
                 }
             };
 
@@ -167,6 +176,8 @@ and factory.MDivisionID = '{0}'
                         dr["qty"] = 0;
                     }
                     dr.EndEdit();
+
+                    this.sum_checkedqty();
                 }
             };
 

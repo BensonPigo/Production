@@ -37,6 +37,8 @@
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.txtRemark = new Sci.Win.UI.TextBox();
             this.label7 = new Sci.Win.UI.Label();
+            this.displayRequestID = new Sci.Win.UI.DisplayBox();
+            this.RequestID = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -53,6 +55,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayRequestID);
+            this.masterpanel.Controls.Add(this.RequestID);
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.displayM);
@@ -62,7 +66,7 @@
             this.masterpanel.Controls.Add(this.labelM);
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 104);
+            this.masterpanel.Size = new System.Drawing.Size(918, 104);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
@@ -73,11 +77,13 @@
             this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.RequestID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayRequestID, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 104);
-            this.detailpanel.Size = new System.Drawing.Size(892, 245);
+            this.detailpanel.Size = new System.Drawing.Size(918, 210);
             // 
             // gridicon
             // 
@@ -90,7 +96,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 245);
+            this.detailgridcont.Size = new System.Drawing.Size(918, 210);
             // 
             // detail2
             // 
@@ -106,16 +112,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(918, 352);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(918, 314);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 314);
+            this.detailbtm.Size = new System.Drawing.Size(918, 38);
             // 
             // browse
             // 
@@ -218,6 +224,24 @@
             this.label7.TabIndex = 38;
             this.label7.TextStyle.Color = System.Drawing.Color.Red;
             // 
+            // displayRequestID
+            // 
+            this.displayRequestID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayRequestID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RequestID", true));
+            this.displayRequestID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayRequestID.Location = new System.Drawing.Point(513, 22);
+            this.displayRequestID.Name = "displayRequestID";
+            this.displayRequestID.Size = new System.Drawing.Size(95, 23);
+            this.displayRequestID.TabIndex = 40;
+            // 
+            // RequestID
+            // 
+            this.RequestID.Location = new System.Drawing.Point(435, 22);
+            this.RequestID.Name = "RequestID";
+            this.RequestID.Size = new System.Drawing.Size(75, 23);
+            this.RequestID.TabIndex = 39;
+            this.RequestID.Text = "RequestID";
+            // 
             // P04
             // 
             this.ApvChkValue = "New";
@@ -267,5 +291,7 @@
         private Win.UI.Label labelDate;
         private Win.UI.Label labelM;
         private Win.UI.Label label7;
+        private Win.UI.DisplayBox displayRequestID;
+        private Win.UI.Label RequestID;
     }
 }

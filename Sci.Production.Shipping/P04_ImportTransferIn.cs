@@ -46,7 +46,7 @@ namespace Sci.Production.Shipping
                 .Text("FabricType", header: "Type", width: Widths.AnsiChars(9), iseditingreadonly: true)
                 .Text("MtlTypeID", header: "Material Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UnitId", header: "Unit", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("Qty", header: "Import Q'ty", decimal_places: 2)
+                .Numeric("Qty", header: "Q'ty", decimal_places: 2)
                 .Numeric("NetKg", header: "N.W.(kg)", decimal_places: 2)
                 .Numeric("WeightKg", header: "N.W.(kg)", decimal_places: 2);
         }
@@ -82,14 +82,15 @@ namespace Sci.Production.Shipping
                     @"select 1 as Selected,ps.ID as POID,ps.SEQ1,psd.SEQ2,(left(ps.SEQ1+' ',3)+'-'+isnull(psd.SEQ2,'')) as Seq,ps.SuppID,
 (ps.SuppID+'-'+ isnull(s.AbbEN,'')) as Supp,psd.Refno,psd.SCIRefno,f.DescDetail as Description,
 psd.FabricType, (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type,
-isnull(f.MtlTypeID,'') as MtlTypeID,psd.POUnit as UnitID,(isnull(psd.ShipQty,0)+isnull(psd.ShipFOC,0)) as Qty,0.0 as NetKg,0.0 as WeightKg,
+isnull(f.MtlTypeID,'') as MtlTypeID,psd.POUnit as UnitID
+,(isnull(psd.ShipQty,0)+isnull(psd.ShipFOC,0)) as Qty,0.0 as NetKg,0.0 as WeightKg,
 o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery
 from PO_Supp ps WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
 left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o WITH (NOLOCK) on o.ID = ps.ID
-where ps.ID = '{0}'", this.txtSPNo.Text.Trim());
+where ps.ID = '{0}' and (isnull(psd.ShipQty,0)+isnull(psd.ShipFOC,0)) <> 0", this.txtSPNo.Text.Trim());
             }
             else
             {
@@ -97,10 +98,12 @@ where ps.ID = '{0}'", this.txtSPNo.Text.Trim());
                     @"select 1 as Selected,i.InventoryPOID as POID,i.InventorySeq1 as Seq1,i.InventorySeq2 as Seq2,
 (SUBSTRING(i.InventorySeq1,1,3)+'-'+InventorySeq2) as Seq,'' as SuppID,'' as Supp,
 i.Refno,'' as SCIRefNo,'' as Description,(select top 1 type from Fabric WITH (NOLOCK) where Refno = i.Refno) as FabricType,
-(select top 1 MtlTypeID from Fabric WITH (NOLOCK) where Refno = i.Refno) as MtlTypeID,i.UnitID,i.Qty,0.0 as NetKg,0.0 as WeightKg,
+(select top 1 MtlTypeID from Fabric WITH (NOLOCK) where Refno = i.Refno) as MtlTypeID,i.UnitID
+,i.Qty,0.0 as NetKg,0.0 as WeightKg,
 null as BuyerDelivery,'' as BrandID,i.FactoryID,null as SciDelivery
 from Invtrans i WITH (NOLOCK) 
 where i.InventoryPOID = '{0}'
+and i.Qty <> 0
 and (i.Type = '2' or i.Type = '3')
 and i.FactoryID = '{1}'
 and i.TransferFactory = '{2}'",

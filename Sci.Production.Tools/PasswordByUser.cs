@@ -10,16 +10,22 @@ using Ict;
 using Sci.Data;
 using Sci.Win;
 using System.Text.RegularExpressions;
+using System.IO;
+using Sci.Production.Class;
 
 namespace Sci.Production.Tools
 {
     public partial class PasswordByUser : Sci.Win.Tems.Input1
     {
+        OpenFileDialog openfiledialog;
+        private string file;
+        private Sci.Production.Class.PictureSubPage picturePage;
         private DataTable dtPass2 = null;
         private DataTable dtSystem = null;
         private DataTable dtFactory = null;
         private DualResult result = null;
         private string sqlCmd = "";
+        private string destination_path;// 放圖檔的路徑
 
         public PasswordByUser(ToolStripMenuItem menuitem) : base(menuitem)
         {
@@ -70,6 +76,8 @@ namespace Sci.Production.Tools
             comboLanguage.DataSource = new System.Windows.Forms.BindingSource(codePageSource, null);
             comboLanguage.ValueMember = "Key";
             comboLanguage.DisplayMember = "Value";
+
+            destination_path = Sci.Production.Class.UserESignature.getESignaturePath();
         }
 
         protected override void SearchGridColumns()
@@ -109,6 +117,7 @@ namespace Sci.Production.Tools
 
             }
         }
+
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -173,6 +182,56 @@ namespace Sci.Production.Tools
                 }
                 CurrentMaintain["ID"] = dtSystem.Rows[0]["AccountKeyword"].ToString() + CurrentMaintain["ID"].ToString().Trim();
             }
+
+            /*
+             * 進行電子簽章的存取
+             * 必須確認有明確的路徑
+             * 否則系統會將圖檔放置執行檔的目錄
+             */
+            if (this.destination_path != null)
+            {
+                if (MyUtility.Check.Empty(this.disBoxESignature.Text))
+                {
+                    // 刪除pic
+                    if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])))
+                    {
+                        try
+                        {
+                            string deltpath = this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
+                            System.IO.File.Delete(deltpath);
+                            this.CurrentMaintain["ESignature"] = string.Empty;
+                            this.disBoxESignature.Text = MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"]);
+                        }
+                        catch (System.IO.IOException exception)
+                        {
+                            MyUtility.Msg.ErrorBox("Error: Delete file fail. Original error: " + exception.Message);
+                        }
+                    }
+                    else
+                    {
+                        this.CurrentMaintain["ESignature"] = string.Empty;
+                    }
+                }
+                else
+                {
+                    if (System.IO.File.Exists(this.destination_path + MyUtility.Convert.GetString(this.CurrentMaintain["ESignature"])) || !MyUtility.Check.Empty(file))
+                    {
+                        try
+                        {
+                            string pathFileName = this.destination_path + this.CurrentMaintain["ID"] + Path.GetExtension(this.file);
+                            if (!MyUtility.Check.Empty(file))
+                            {
+                                File.Copy(file, pathFileName, true);
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            MyUtility.Msg.ErrorBox("Error: Save file fail. Original error: " + exception.Message);
+                        }
+                    }
+                }
+            }
+
             return base.ClickSaveBefore();
         }
 
@@ -223,6 +282,68 @@ namespace Sci.Production.Tools
                 return;
             }
             this.listControlBindingSource1.DataSource = dtPass2;
+        }
+
+        private void btnSetPic_Click(object sender, EventArgs e)
+        {
+            if (this.destination_path != null)
+            {
+                if (openfiledialog == null)
+                {
+                    openfiledialog = new OpenFileDialog();
+                    openfiledialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.TIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
+                }
+
+                if (DialogResult.OK != openfiledialog.ShowDialog()) return;
+                file = openfiledialog.FileName;
+                this.CurrentMaintain["ESignature"] = CurrentMaintain["ID"] + Path.GetExtension(file);
+            }
+        }
+
+        private void btnShowImg_Click(object sender, EventArgs e)
+        {
+            switch (EditMode)
+            {
+                //  非編輯模式,只能Show照片
+                case false:                    
+                    Image img = UserESignature.getUserESignature(CurrentMaintain["id"].ToString());
+                    if (string.IsNullOrEmpty(this.disBoxESignature.Text)) return;
+                    picturePage = new PictureSubPage(img);                  
+                    picturePage.ShowDialog(this);
+                    break;
+                // 編輯模式,只能Clear照片
+                case true:
+                    if (this.destination_path != null)
+                    {
+                        DialogResult delResult = MyUtility.Msg.QuestionBox("Clear the E- Signature?", buttons: MessageBoxButtons.YesNo);
+                        if (delResult == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            // 暫時清空pic
+                            this.disBoxESignature.Text = string.Empty;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        protected override void OnEditModeChanged()
+        {
+            if (MyUtility.Check.Empty(this.btnShowImg))
+            {
+                return;
+            }
+
+            switch (EditMode)
+            {
+                case true:
+                    this.btnShowImg.Text = "Clear";
+                    break;
+                case false:
+                    this.btnShowImg.Text = "Show";
+                    break;
+            }
+
+            base.OnEditModeChanged();
         }
     }
 }

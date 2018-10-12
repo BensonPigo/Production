@@ -58,7 +58,8 @@ namespace Sci.Production.Packing
                 .Text("Dest", header: "Destination", width: Widths.AnsiChars(20), iseditable: false)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditable: false)
                 .DateTime("AddDate", header: "Create Date", iseditable: false)
-                .Date("ReceiveDate", header: "Rec. Date", iseditable: false)
+                .Date("ReceiveDate", header: "CLOG CFM", iseditable: false)
+                .Date("ReturnDate", header: "Return Date", iseditable: false)
                 .Text("AddName", header: "AddName", width: Widths.AnsiChars(15), iseditable: false);
 
             // 增加CTNStartNo 有中文字的情況之下 按照我們希望的順序排
@@ -112,6 +113,7 @@ from (
             , t.OrderID
             , t.CTNStartNo
             , pd.Id
+            , [CTN#]=pd.CTNStartNo
             , isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1
             , isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest
             , isnull(o.FactoryID,'') as FactoryID
@@ -119,6 +121,7 @@ from (
             , t.AddDate
             , tid = t.id
             , pd.ReceiveDate
+			, pd.ReturnDate
 			, AddName = (select concat(id,'-',Name) from pass1 where id = t.AddName)
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
@@ -159,6 +162,16 @@ from (
             if (!MyUtility.Check.Empty(this.txtTransferSlipNo.Text))
             {
                 sqlCmd.Append(string.Format(" and t.TransferSlipNo = '{0}'", MyUtility.Convert.GetString(this.txtTransferSlipNo.Text)));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtCtnStart.Text))
+            {
+                sqlCmd.Append(string.Format(" and ISNULL(TRY_CAST( pd.CTNStartNo AS int),0)>= {0} ", MyUtility.Convert.GetInt(this.txtCtnStart.Text)));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtCtnEnd.Text))
+            {
+                sqlCmd.Append(string.Format(" and ISNULL(TRY_CAST( pd.CTNStartNo AS int),0)<= {0} ", MyUtility.Convert.GetInt(this.txtCtnEnd.Text)));
             }
 
             sqlCmd.Append(@"

@@ -12,6 +12,8 @@ using System.Transactions;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using Ict.Win.UI;
+using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Thread
 {
@@ -23,7 +25,6 @@ namespace Sci.Production.Thread
         private string factory = Sci.Env.User.Factory;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_refno;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_color;
         private DataGridViewNumericBoxColumn col_cons;
         private DataGridViewNumericBoxColumn col_Allowance;
@@ -37,8 +38,6 @@ namespace Sci.Production.Thread
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            string defaultfilter = string.Format("MDivisionid = '{0}' ", this.keyWord);
-            this.DefaultFilter = defaultfilter;
             this.InitializeComponent();
             this.DoSubForm = new P02_Detail();
         }
@@ -118,12 +117,25 @@ where MDivisionID = '{0}'",
             string masterID = (e.Master == null) ? string.Empty : e.Master["OrderID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-SELECT  a.*
+SELECT  a.OrderID
+        , a.Refno
+        , a.ThreadColorID
+        , a.ConsumptionQty
+        , a.TotalQty
+        , a.AllowanceQty
+        , a.UseStockQty
+        , a.PurchaseQty
+        , a.PoId
+        , a.Remark
+        , a.Ukey
+        , a.AutoCreate
+        , [UseStockNewConeQty] = isnull(a.UseStockNewConeQty,0)
+        , [UseStockUseConeQty]  = isnull(a.UseStockUseConeQty,0)
         , b.description
         , b.MetertoCone 
         , c.description as colordesc
-        , X.newCone
-        , X.usedcone
+        , [CurNewCone] = X.newCone
+        , [CurUsedCone] = X.usedcone
         , Article = stuff((select concat (',', Article)
                            from (
 						        select distinct Article 
@@ -138,11 +150,10 @@ Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
 OUTER APPLY
 (
 	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone from ThreadStock d WITH (NOLOCK) 
-	where d.refno = a.refno and d.Threadcolorid = a.threadcolorid and d.mDivisionid = '{1}'		
+	where d.refno = a.refno and d.Threadcolorid = a.threadcolorid 		
 ) X
 WHERE a.OrderID = '{0}'",
-                masterID,
-                this.keyWord);
+                masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -215,16 +226,16 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     this.CurrentDetailData["MeterToCone"] = 0;
                 }
 
-                string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", newvalue, this.CurrentDetailData["ThreadColorid"].ToString(), this.keyWord);
+                string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' ", newvalue, this.CurrentDetailData["ThreadColorid"].ToString());
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
-                    this.CurrentDetailData["NewCone"] = refdr["NewCone"];
-                    this.CurrentDetailData["UsedCone"] = refdr["UsedCone"];
+                    this.CurrentDetailData["CurNewCone"] = refdr["NewCone"];
+                    this.CurrentDetailData["CurUsedCone"] = refdr["UsedCone"];
                 }
                 else
                 {
-                    this.CurrentDetailData["NewCone"] = 0;
-                    this.CurrentDetailData["UsedCone"] = 0;
+                    this.CurrentDetailData["CurNewCone"] = 0;
+                    this.CurrentDetailData["CurUsedCone"] = 0;
                 }
 
                 this.ReQty(this.CurrentDetailData);
@@ -262,16 +273,16 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     return;
                 }
 
-                string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' and mDivisionid ='{2}' ", this.CurrentDetailData["Refno"].ToString(), newvalue, this.keyWord);
+                string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' ", this.CurrentDetailData["Refno"].ToString(), newvalue);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
-                    this.CurrentDetailData["NewCone"] = refdr["NewCone"];
-                    this.CurrentDetailData["UsedCone"] = refdr["UsedCone"];
+                    this.CurrentDetailData["CurNewCone"] = refdr["NewCone"];
+                    this.CurrentDetailData["CurUsedCone"] = refdr["UsedCone"];
                 }
                 else
                 {
-                    this.CurrentDetailData["NewCone"] = 0;
-                    this.CurrentDetailData["UsedCone"] = 0;
+                    this.CurrentDetailData["CurNewCone"] = 0;
+                    this.CurrentDetailData["CurUsedCone"] = 0;
                 }
 
                // ReQty(CurrentDetailData);
@@ -333,24 +344,39 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             newCone.CellValidating += (s, e) =>
             {
-                /*int nc = Convert.ToInt32(e.FormattedValue);
-                int uc = Convert.ToInt32(CurrentDetailData["UsedCone"]);
-                if (!this.EditMode) return;
-                CurrentDetailData["NewCone"] = nc;
-                CurrentDetailData["UseStockQty"] = nc + uc;
-                CurrentDetailData.EndEdit();*/
+                if (!this.EditMode || MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+                decimal useStockNewConeQty = (decimal)e.FormattedValue;
+
+                DataRow curDr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (useStockNewConeQty > (decimal)curDr["CurNewCone"])
+                {
+                    MyUtility.Msg.WarningBox($"<Use Stock New Cone>{useStockNewConeQty} can't be more than <Current Stock New Cone>{curDr["CurNewCone"]}");
+                    e.Cancel = true;
+                    return;
+                }
             };
             #endregion
             #region useStock CellValidating by NewCone+(UsedCone)
 
             usedCone.CellValidating += (s, e) =>
             {
-                /*int nc = Convert.ToInt32(CurrentDetailData["NewCone"]);
-                int uc = Convert.ToInt32(e.FormattedValue);
-                if (!this.EditMode) return;
-                CurrentDetailData["UsedCone"] = uc;
-                CurrentDetailData["UseStockQty"] = nc + uc;
-                CurrentDetailData.EndEdit();*/
+                if (!this.EditMode || MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                decimal useStockUseConeQty = (decimal)e.FormattedValue;
+
+                DataRow curDr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (useStockUseConeQty > (decimal)curDr["CurUsedCone"])
+                {
+                    MyUtility.Msg.WarningBox($"<Use Stock Use Cone>{useStockUseConeQty} can't be more than <Current Stock Use Cone>{curDr["CurUsedCone"]}");
+                    e.Cancel = true;
+                    return;
+                }
             };
             #endregion
             #region poqty CellValidating by (TotalQty) + AllowanceQty - UseStockQty
@@ -380,7 +406,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             #endregion
             #region set grid
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-           .Text("Refno", header: "Thread Refno", width: Ict.Win.Widths.AnsiChars(10), settings: this.refno).Get(out this.col_refno)
+           .Text("Refno", header: "Thread Refno", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true, settings: this.refno)
            .Text("description", header: "Thread Desc", width: Ict.Win.Widths.AnsiChars(18), iseditingreadonly: true)
            .EditText("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
            .Text("ThreadColorid", header: "Thread\r\nColor", width: Ict.Win.Widths.AnsiChars(4), settings: thcolor).Get(out this.col_color)
@@ -389,8 +415,10 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
            .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cones", width: Ict.Win.Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
            .Numeric("TotalQty", header: "No. of\r\nCones", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
            .Numeric("AllowanceQty", header: "Allowance", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
-           .Numeric("NewCone", header: "New\r\nCone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: newCone).Get(out this.col_NewCone)
-           .Numeric("UsedCone", header: "Use\r\nCone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: usedCone).Get(out this.col_UsedCone)
+           .Numeric("CurNewCone", header: "Current Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
+           .Numeric("CurUsedCone", header: "Current Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
+           .Numeric("UseStockNewConeQty", header: "Use Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: newCone).Get(out this.col_NewCone)
+           .Numeric("UseStockUseConeQty", header: "Use Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: usedCone).Get(out this.col_UsedCone)
            .Numeric("UseStockQty", header: "Use\r\nStock", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty3)
            .Numeric("PurchaseQty", header: "PO Qty", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
            .Text("Remark", header: "Remark", width: Ict.Win.Widths.AnsiChars(10))
@@ -440,13 +468,11 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 this.col_Allowance.IsEditingReadOnly = true;
                 this.col_NewCone.IsEditingReadOnly = true;
                 this.col_UsedCone.IsEditingReadOnly = true;
-                this.col_refno.IsEditingReadOnly = true;
                 this.col_color.IsEditingReadOnly = true;
                 this.col_cons.IsEditingReadOnly = true;
             }
             else
             {
-                this.col_refno.IsEditingReadOnly = false;
                 this.col_Allowance.IsEditingReadOnly = false;
                 this.col_NewCone.IsEditingReadOnly = false;
                 this.col_UsedCone.IsEditingReadOnly = false;
@@ -483,24 +509,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (dr["autoCreate"].ToString() == "True" || !MyUtility.Check.Empty(dr["POID"]))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                }
-            };
-            this.col_refno.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["POID"]))
                 {
                     e.CellStyle.BackColor = Color.White;
                     e.CellStyle.ForeColor = Color.Black;
@@ -583,8 +591,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
         private void Update_detailgrid_CellValidated(int rowIndex)
         {
-            int nc = Convert.ToInt32(this.CurrentDetailData["NewCone"]);
-            int uc = Convert.ToInt32(this.CurrentDetailData["UsedCone"]);
+            int nc = Convert.ToInt32(this.CurrentDetailData["UseStockNewConeQty"]);
+            int uc = Convert.ToInt32(this.CurrentDetailData["UseStockUseConeQty"]);
             int usq = nc + uc;
             this.CurrentDetailData["UseStockQty"] = usq;
 
@@ -606,6 +614,13 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             if (this.CurrentMaintain["Status"].ToString() != "New")
             {
                 MyUtility.Msg.WarningBox("Data is confirmed, can't be deleted.", "Warning");
+                return false;
+            }
+
+            // 如果detail資料POID有值，不能delete
+            if (this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["POID"])).Any())
+            {
+                MyUtility.Msg.WarningBox("Detail data <PO ID> has value, can't be deleted.", "Warning");
                 return false;
             }
 
@@ -638,14 +653,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 return false;
             }
 
-            // foreach (DataRow dr in DetailDatas)
-            // {
-            //    if (MyUtility.Check.Empty(dr["PurchaseQty"]))
-            //    {
-            //        MyUtility.Msg.WarningBox("<PO Qty> can not be 0");
-            //        return false;
-            //    }
-            // }
             return base.ClickSaveBefore();
         }
 
@@ -805,6 +812,8 @@ where   c.Styleukey = (select o.Styleukey
 select *
        , AllowanceQty = isnull (AllowanceQty.value, 0)
        , PurchaseQty = TotalQty + isnull (AllowanceQty.value, 0)
+        , [CurNewCone] = X.newCone
+        , [CurUsedCone] = X.usedcone
 from (
     select  Orderid = '{0}'
             , #tmp.Refno
@@ -836,7 +845,13 @@ outer apply (
     from ThreadAllowanceScale tas
     where tas.LowerBound <= TotalQty
           and TotalQty <= tas.UpperBound
-) AllowanceQty",
+) AllowanceQty
+OUTER APPLY
+(
+	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone 
+    from ThreadStock d WITH (NOLOCK) 
+	where d.refno = tmp.refno and d.Threadcolorid = tmp.threadcolorid 		
+) X",
                 id);
 
             if (pretb_cons.Rows.Count <= 0)
@@ -871,10 +886,54 @@ outer apply (
                 newdr["Remark"] = dr["Remark"];
                 newdr["Description"] = dr["Threadcombdesc"];
                 newdr["colordesc"] = dr["colordesc"];
-                newdr["NewCone"] = 0;
-                newdr["UsedCone"] = 0;
+                newdr["CurNewCone"] = dr["CurNewCone"];
+                newdr["CurUsedCone"] = dr["CurUsedCone"];
                 newdr["UseStockQty"] = 0;
                 newdr["Article"] = dr["Article"];
+
+                #region 計算預設帶出使用量
+                decimal purchaseQty = (decimal)newdr["PurchaseQty"];
+
+                if ((decimal)newdr["CurUsedCone"] == 0)
+                {
+                    newdr["UseStockUseConeQty"] = 0;
+                }
+                else
+                {
+                    if ((decimal)newdr["CurUsedCone"] > purchaseQty)
+                    {
+                        newdr["UseStockUseConeQty"] = purchaseQty;
+                        purchaseQty = 0;
+                    }
+                    else
+                    {
+                        newdr["UseStockUseConeQty"] = newdr["CurUsedCone"];
+                        purchaseQty = purchaseQty - (decimal)newdr["CurUsedCone"];
+                    }
+                }
+
+                if ((decimal)newdr["CurNewCone"] == 0)
+                {
+                    newdr["UseStockNewConeQty"] = 0;
+                }
+                else
+                {
+                    if ((decimal)newdr["CurNewCone"] > purchaseQty)
+                    {
+                        newdr["UseStockNewConeQty"] = purchaseQty;
+                        purchaseQty = 0;
+                    }
+                    else
+                    {
+                        newdr["UseStockNewConeQty"] = newdr["CurNewCone"];
+                        purchaseQty = purchaseQty - (decimal)newdr["CurNewCone"];
+                    }
+                }
+
+                newdr["UseStockQty"] = (decimal)newdr["UseStockUseConeQty"] + (decimal)newdr["UseStockNewConeQty"];
+                newdr["PurchaseQty"] = purchaseQty;
+
+                #endregion
                 detailtb.Rows.Add(newdr);
             }
 
@@ -1148,34 +1207,197 @@ drop table #tmp_P01",
             base.ClickConfirm();
             this.ClickCheck();
 
-            string updSql = string.Format("update ThreadRequisition set Status = 'Approved' ,editname='{0}', editdate = GETDATE() where orderid='{1}'", this.loginID, this.CurrentMaintain["Orderid"].ToString());
-
-            DualResult upResult;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            var checkStock = this.DetailDatas
+                            .Where(s => (decimal)s["UseStockNewConeQty"] > 0 || (decimal)s["UseStockUseConeQty"] > 0);
+            DataRow checkDr;
+            string checkSql = string.Empty;
+            foreach (var item in checkStock)
             {
-                try
+                checkSql = $@"select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone 
+    from ThreadStock d WITH(NOLOCK)
+    where d.refno = '{item["Refno"]}' and d.Threadcolorid = '{item["Threadcolorid"]}' ";
+                MyUtility.Check.Seek(checkSql, out checkDr);
+                if ((decimal)checkDr["newCone"] < (decimal)item["UseStockNewConeQty"] ||
+                   (decimal)checkDr["usedcone"] < (decimal)item["UseStockUseConeQty"])
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, updSql)))
-                    {
-                        transactionscope.Dispose();
-                        return;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
+                    MyUtility.Msg.WarningBox($"<Thread Refno>{item["Refno"]},<Thread Color>{item["Threadcolorid"]} stock not enough");
                     return;
                 }
             }
 
-            transactionscope.Dispose();
-            transactionscope = null;
+            #region 產生檢查用的issue detail data table
+            string issueCheck = $@"
+Create Table #ThreadIssue_Detail(
+    [Refno] [varchar](21) NOT NULL,
+	[ThreadColorID] [varchar](15) NOT NULL,
+	[NewCone] [numeric](5, 0) NULL,
+	[UsedCone] [numeric](5, 0) NULL,
+	[ThreadLocationID] [varchar](10) NOT NULL
+)
+
+DECLARE ThreadRequisition_Detail_cur CURSOR FOR 
+     select Refno,ThreadColorID,UseStockNewConeQty,UseStockUseConeQty
+        from dbo.ThreadRequisition_Detail with (nolock)
+        where OrderID = '{this.CurrentMaintain["Orderid"].ToString()}' and (UseStockNewConeQty > 0 or UseStockUseConeQty > 0)
+
+declare @Refno varchar(24)
+declare @ThreadColorID varchar(15)
+declare @UseStockNewConeQty numeric(6,0)
+declare @UseStockUseConeQty numeric(6,0)
+declare @NewCone numeric(6,0)
+declare @UsedCone numeric(6,0)
+declare @ThreadLocationID varchar(10)
+
+OPEN ThreadRequisition_Detail_cur --開始run cursor                   
+FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
+WHILE @@FETCH_STATUS = 0
+BEGIN
+     
+	DECLARE ThreadStock_cur CURSOR FOR 
+    select NewCone,UsedCone,ThreadLocationID
+       from dbo.ThreadStock with (nolock)
+       where Refno = @Refno and ThreadColorID = @ThreadColorID and (NewCone > 0 or UsedCone > 0)
+	   order by UsedCone
+	OPEN ThreadStock_cur --開始run cursor                   
+	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		
+		if(@UsedCone > @UseStockUseConeQty)
+		begin
+			set @UsedCone = @UseStockUseConeQty
+			set @UseStockUseConeQty = 0
+		end
+		else
+		begin
+			set @UseStockUseConeQty = @UseStockUseConeQty - @UsedCone
+		end
+
+		if(@NewCone > @UseStockNewConeQty)
+		begin
+			set @NewCone = @UseStockNewConeQty
+			set @UseStockNewConeQty = 0
+		end
+		else
+		begin
+			set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
+		end
+
+		insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+				values( @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
+		
+		if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
+		begin
+			break
+		end
+
+	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+	END
+	CLOSE ThreadStock_cur
+	DEALLOCATE ThreadStock_cur
+
+FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
+END
+CLOSE ThreadRequisition_Detail_cur
+DEALLOCATE ThreadRequisition_Detail_cur
+
+select * from #ThreadIssue_Detail
+drop table #ThreadIssue_Detail
+";
+            DataTable issueCheckDt;
+            DualResult result = DBProxy.Current.Select(null, issueCheck, out issueCheckDt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            #endregion
+
+            string updSql = $@"
+update ThreadRequisition set Status = 'Approved' ,editname='{this.loginID}', editdate = GETDATE() where orderid='{this.CurrentMaintain["Orderid"].ToString()}'";
+
+            if (issueCheckDt.Rows.Count > 0)
+            {
+                string issueID = MyUtility.GetValue.GetID(this.keyWord + "TS", "ThreadIssue", DateTime.Now);
+                updSql += $@"
+--建立P04 Thread issue
+insert into ThreadIssue(ID,MDivisionId,CDate,Remark,Status,AddName,AddDate,RequestID)
+    values('{issueID}','{Env.User.Keyword}',GETDATE(),'Auto Create By P02','Confirmed','{Env.User.UserID}',GETDATE(),'{this.CurrentMaintain["OrderID"]}')
+
+DECLARE ThreadRequisition_Detail_cur CURSOR FOR 
+     select Refno,ThreadColorID,UseStockNewConeQty,UseStockUseConeQty
+        from dbo.ThreadRequisition_Detail with (nolock)
+        where OrderID = '{this.CurrentMaintain["Orderid"].ToString()}'  and (UseStockNewConeQty > 0 or UseStockUseConeQty > 0)
+
+declare @Refno varchar(24)
+declare @ThreadColorID varchar(15)
+declare @UseStockNewConeQty numeric(6,0)
+declare @UseStockUseConeQty numeric(6,0)
+declare @NewCone numeric(6,0)
+declare @UsedCone numeric(6,0)
+declare @ThreadLocationID varchar(10)
+
+OPEN ThreadRequisition_Detail_cur --開始run cursor                   
+FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
+WHILE @@FETCH_STATUS = 0
+BEGIN
+     
+	DECLARE ThreadStock_cur CURSOR FOR 
+    select NewCone,UsedCone,ThreadLocationID
+       from dbo.ThreadStock with (nolock)
+       where Refno = @Refno and ThreadColorID = @ThreadColorID and (NewCone > 0 or UsedCone > 0)
+	   order by UsedCone
+	OPEN ThreadStock_cur --開始run cursor                   
+	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		
+		if(@UsedCone > @UseStockUseConeQty)
+		begin
+			set @UsedCone = @UseStockUseConeQty
+			set @UseStockUseConeQty = 0
+		end
+		else
+		begin
+			set @UseStockUseConeQty = @UseStockUseConeQty - @UsedCone
+		end
+
+		if(@NewCone > @UseStockNewConeQty)
+		begin
+			set @NewCone = @UseStockNewConeQty
+			set @UseStockNewConeQty = 0
+		end
+		else
+		begin
+			set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
+		end
+
+		insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+				values('{issueID}', @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
+
+        if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
+		begin
+			break
+		end
+
+	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+	END
+	CLOSE ThreadStock_cur
+	DEALLOCATE ThreadStock_cur
+
+FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
+END
+CLOSE ThreadRequisition_Detail_cur
+DEALLOCATE ThreadRequisition_Detail_cur
+
+";
+            }
+
+                result = Prgs.ThreadIssueConfirm(issueCheckDt.ToList(), updSql, false);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }      
         }
 
         /// <inheritdoc/>
@@ -1183,34 +1405,32 @@ drop table #tmp_P01",
         {
             base.ClickUnconfirm();
 
-            string updSql = string.Format("update ThreadRequisition set Status = 'New' ,editname='{0}', editdate = GETDATE() where OrderID='{1}'", this.loginID, this.CurrentMaintain["OrderID"].ToString());
-
-            DualResult upResult;
-            TransactionScope transactionscope = new TransactionScope();
-            using (transactionscope)
+            DataTable issueDetailDt;
+            string getIssueDetail = $@"
+select td.* 
+from dbo.ThreadIssue t with (nolock)
+inner join dbo.ThreadIssue_Detail td with (nolock) on t.id = td.id
+where t.RequestID = '{this.CurrentMaintain["OrderID"]}'";
+            DualResult result = DBProxy.Current.Select(null, getIssueDetail, out issueDetailDt);
+            if (!result)
             {
-                try
-                {
-                    if (!(upResult = DBProxy.Current.Execute(null, updSql)))
-                    {
-                        transactionscope.Dispose();
-                        return;
-                    }
-
-                    transactionscope.Complete();
-                    transactionscope.Dispose();
-                    MyUtility.Msg.WarningBox("Successfully");
-                }
-                catch (Exception ex)
-                {
-                    transactionscope.Dispose();
-                    this.ShowErr("Commit transaction error.", ex);
-                    return;
-                }
+                this.ShowErr(result);
+                return;
             }
 
-            transactionscope.Dispose();
-            transactionscope = null;
+            string updSql = $@"
+update ThreadRequisition set Status = 'New' ,editname='{this.loginID}', editdate = GETDATE() where OrderID='{this.CurrentMaintain["OrderID"]}'
+
+delete ThreadIssue_Detail where ID = (select ID from ThreadIssue where RequestID = '{this.CurrentMaintain["OrderID"]}')
+
+delete ThreadIssue where RequestID = '{this.CurrentMaintain["OrderID"]}'
+";
+
+            result = Prgs.ThreadIssueUnConfirm(issueDetailDt.ToList(), updSql);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
 
         private void ReQty(DataRow dr) // 重算Qty

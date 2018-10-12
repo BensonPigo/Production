@@ -34,6 +34,8 @@
             this.txtDefectcode = new Sci.Win.UI.TextBox();
             this.txtDefectType = new Sci.Win.UI.TextBox();
             this.editDescription = new Sci.Win.UI.EditBox();
+            this.editLocalDesc = new Sci.Win.UI.EditBox();
+            this.labLocalDesc = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,6 +50,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editLocalDesc);
+            this.detailcont.Controls.Add(this.labLocalDesc);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.txtDefectType);
             this.detailcont.Controls.Add(this.txtDefectcode);
@@ -84,7 +88,6 @@
             // 
             // labelDefectcode
             // 
-            this.labelDefectcode.Lines = 0;
             this.labelDefectcode.Location = new System.Drawing.Point(58, 66);
             this.labelDefectcode.Name = "labelDefectcode";
             this.labelDefectcode.Size = new System.Drawing.Size(89, 23);
@@ -93,7 +96,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(58, 132);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(89, 23);
@@ -102,7 +104,6 @@
             // 
             // labelDefectType
             // 
-            this.labelDefectType.Lines = 0;
             this.labelDefectType.Location = new System.Drawing.Point(58, 99);
             this.labelDefectType.Name = "labelDefectType";
             this.labelDefectType.Size = new System.Drawing.Size(89, 23);
@@ -146,6 +147,25 @@
             this.editDescription.TabIndex = 2;
             this.editDescription.Leave += new System.EventHandler(this.editDescription_Leave);
             // 
+            // editLocalDesc
+            // 
+            this.editLocalDesc.BackColor = System.Drawing.Color.White;
+            this.editLocalDesc.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDescription", true));
+            this.editLocalDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editLocalDesc.Location = new System.Drawing.Point(150, 239);
+            this.editLocalDesc.Multiline = true;
+            this.editLocalDesc.Name = "editLocalDesc";
+            this.editLocalDesc.Size = new System.Drawing.Size(460, 86);
+            this.editLocalDesc.TabIndex = 8;
+            // 
+            // labLocalDesc
+            // 
+            this.labLocalDesc.Location = new System.Drawing.Point(58, 239);
+            this.labLocalDesc.Name = "labLocalDesc";
+            this.labLocalDesc.Size = new System.Drawing.Size(89, 23);
+            this.labLocalDesc.TabIndex = 9;
+            this.labLocalDesc.Text = "Local Desc.";
+            // 
             // B21
             // 
             this.ClientSize = new System.Drawing.Size(839, 457);
@@ -181,5 +201,7 @@
         private Win.UI.TextBox txtDefectType;
         private Win.UI.TextBox txtDefectcode;
         private Win.UI.EditBox editDescription;
+        private Win.UI.EditBox editLocalDesc;
+        private Win.UI.Label labLocalDesc;
     }
 }

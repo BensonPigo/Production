@@ -28,7 +28,7 @@ namespace Sci.Production.Class
             if (e.IsHandled) return;
 
             string keyword = Sci.Env.User.Keyword;
-            string sql = string.Format("select ID,Description from ThreadLocation WITH (NOLOCK) where mDivisionid ='{0}' order by ID", keyword);
+            string sql = "select ID,Description from ThreadLocation WITH (NOLOCK) order by ID";
             DataTable tbthLocation;
             DBProxy.Current.Select("Production", sql, out tbthLocation);
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(tbthLocation, "ID,Description", "10,40", this.Text, "ID,Description");
