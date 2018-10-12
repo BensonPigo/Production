@@ -63,6 +63,8 @@ namespace Sci.Production.Packing
                 .Text("Barcode", header: "Barcode", width: Widths.AnsiChars(15))
                 .Numeric("ScanQty", header: "Scan Qty");
             this.Tab_Focus("CARTON");
+
+            this.txtDest.TextBox1.ReadOnly = true;
         }
 
         private void TxtScanCartonSP_Validating(object sender, CancelEventArgs e)
@@ -113,7 +115,8 @@ namespace Sci.Production.Packing
                                            o.StyleID,
                                            os.Seq,
                                            pd.Ukey,
-                                           [PKseq] = pd.Seq
+                                           [PKseq] = pd.Seq,
+                                           o.Dest
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -348,7 +351,8 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                                                               CustPoNo = c.Field<string>("CustPoNo"),
                                                               Article = c.Field<string>("Article"),
                                                               BrandID = c.Field<string>("BrandID"),
-                                                              StyleID = c.Field<string>("StyleID")
+                                                              StyleID = c.Field<string>("StyleID"),
+                                                              Dest = c.Field<string>("Dest")
                                                           }
                                                           into g
                                                           select new SelectCartonDetail
@@ -359,6 +363,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                                                               Article = g.Key.Article,
                                                               BrandId = g.Key.BrandID,
                                                               StyleId = g.Key.StyleID,
+                                                              Dest = g.Key.Dest,
                                                               OrderID = string.Join("/", g.Select(st => st.Field<string>("OrderID")).Distinct().ToArray()),
                                                               SizeCode = string.Join("/", g.Select(st => st.Field<string>("SizeCode")).ToArray()),
                                                               QtyPerCTN = string.Join("/", g.Select(st => st.Field<int>("QtyPerCTN").ToString()).ToArray()),
@@ -411,6 +416,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
             this.displayPoNo.Text = dr.CustPoNo;
             this.displayBrand.Text = dr.BrandId;
             this.displayStyle.Text = dr.StyleId;
+            this.txtDest.TextBox1.Text = dr.Dest;
 
             this.numBoxttlCatons.Text = dr_sum["TtlCartons"].ToString();
             this.numBoxttlQty.Text = dr_sum["TtlQty"].ToString();
@@ -484,6 +490,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                 else
                 {
                     DataTable no_barcode_dt = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Where(s => MyUtility.Check.Empty(s["Barcode"])).CopyToDataTable();
+                    DataRow no_barcode_dr = no_barcode_dt.NewRow();
                     if (no_barcode_dt.Rows.Count > 1)
                     {
                         // 有空的barcode就開窗
@@ -497,45 +504,34 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                             return;
                         }
 
-                        var sellist = sele.GetSelecteds();
-                        this.upd_sql_barcode += $@"update PackingList_Detail
-set BarCode = '{this.txtScanEAN.Text}'
-where PackingList_Detail.Article 
-=  '{sellist[0]["Article"]}'
-and PackingList_Detail.SizeCode
-=  '{sellist[0]["SizeCode"]}'
-and PackingList_Detail.ID = '{this.selecedPK.ID}'
-and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
-";
-                        foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
-                        {
-                            if (dr["Article"].Equals(sellist[0]["Article"]) && dr["SizeCode"].Equals(sellist[0]["SizeCode"]))
-                            {
-                                dr["Barcode"] = this.txtScanEAN.Text;
-                                dr["ScanQty"] = (short)dr["ScanQty"] + 1;
-                                this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
-                                break;
-                            }
-                        }
-
-                        if (this.UseAutoScanPack) this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + sellist[0]["QtyPerCtn"].ToString().Trim()).Length);
+                        no_barcode_dr = sele.GetSelecteds()[0];
                     }
                     else
                     {
-                        this.upd_sql_barcode += $@"update PackingList_Detail
+                        no_barcode_dr = no_barcode_dt.Rows[0];
+                    }
+
+                    this.upd_sql_barcode += $@"update PackingList_Detail
 set BarCode = '{this.txtScanEAN.Text}'
 where PackingList_Detail.Article 
-=  '{((DataTable)this.scanDetailBS.DataSource).Rows[0]["Article"]}'
+=  '{no_barcode_dr["Article"]}'
 and PackingList_Detail.SizeCode
-=  '{((DataTable)this.scanDetailBS.DataSource).Rows[0]["SizeCode"]}'
+=  '{no_barcode_dr["SizeCode"]}'
 and PackingList_Detail.ID = '{this.selecedPK.ID}'
 and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
 ";
-                        ((DataTable)this.scanDetailBS.DataSource).Rows[0]["Barcode"] = this.txtScanEAN.Text;
-                        ((DataTable)this.scanDetailBS.DataSource).Rows[0]["ScanQty"] = MyUtility.Convert.GetInt(((DataTable)this.scanDetailBS.DataSource).Rows[0]["ScanQty"]) + 1;
-                        this.UpdScanQty((long)((DataTable)this.scanDetailBS.DataSource).Rows[0]["Ukey"], (string)((DataTable)this.scanDetailBS.DataSource).Rows[0]["Barcode"]);
-                        if (this.UseAutoScanPack) this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + ((DataTable)this.scanDetailBS.DataSource).Rows[0]["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + ((DataTable)this.scanDetailBS.DataSource).Rows[0]["QtyPerCtn"].ToString().Trim()).Length);
+                    foreach (DataRow dr in ((DataTable)this.scanDetailBS.DataSource).Rows)
+                    {
+                        if (dr["Article"].Equals(no_barcode_dr["Article"]) && dr["SizeCode"].Equals(no_barcode_dr["SizeCode"]))
+                        {
+                            dr["Barcode"] = this.txtScanEAN.Text;
+                            dr["ScanQty"] = (short)dr["ScanQty"] + 1;
+                            this.UpdScanQty((long)dr["Ukey"], (string)dr["Barcode"]);
+                            break;
+                        }
                     }
+
+                    if (this.UseAutoScanPack) this.IDX.IdxCall(254, "A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim(), ("A:" + this.txtScanEAN.Text.Trim() + "=" + no_barcode_dr["QtyPerCtn"].ToString().Trim()).Length);
                 }
             }
             else
@@ -637,6 +633,7 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 this.displayPoNo.Text = string.Empty;
                 this.displayBrand.Text = string.Empty;
                 this.displayStyle.Text = string.Empty;
+                this.txtDest.TextBox1.Text = string.Empty;
 
                 this.numBoxttlCatons.Text = string.Empty;
                 this.numBoxttlQty.Text = string.Empty;
@@ -665,6 +662,7 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 this.displayPoNo.Text = string.Empty;
                 this.displayBrand.Text = string.Empty;
                 this.displayStyle.Text = string.Empty;
+                this.txtDest.TextBox1.Text = string.Empty;
 
                 this.numBoxttlCatons.Text = string.Empty;
                 this.numBoxttlQty.Text = string.Empty;
@@ -692,6 +690,7 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             private int ttlScanQty;
             private int ttlQtyPerCTN;
             private string pKseq;
+            private string dest;
 
 
             public string ID
@@ -847,6 +846,19 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 set
                 {
                     pKseq = value;
+                }
+            }
+
+            public string Dest
+            {
+                get
+                {
+                    return dest;
+                }
+
+                set
+                {
+                    dest = value;
                 }
             }
 
