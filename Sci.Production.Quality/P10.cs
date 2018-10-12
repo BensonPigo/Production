@@ -497,6 +497,12 @@ values (@ID,@NO,'Appearance of garment after wash',9)
                 {
                     DataRow DetailRow = dt.Select(where)[0];
 
+                    if (DetailRow["Result"].ToString()=="Fail")
+                        DetailRow["Result"] = "F";
+
+                    if (DetailRow["Result"].ToString() == "Pass")
+                        DetailRow["Result"] = "P";
+
                     CurrentMaintain["Result"] = DetailRow["Result"];
                     CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
                     CurrentMaintain["Remark"] = DetailRow["remark"];

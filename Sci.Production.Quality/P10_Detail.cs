@@ -280,6 +280,10 @@ order by Seq,Location desc";
             {
                 gridAppearance.ForeColor = Color.Red;
                 gridAppearance.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
+
+                //Seq=4的Row全部都可以編輯
+                gridAppearance.Rows[3].DefaultCellStyle.ForeColor = Color.Red;
+
                 btnEncode.Enabled = false;
                 btnAmend.Enabled = false;
             }
