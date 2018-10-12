@@ -26,7 +26,7 @@ namespace Sci.Production.Planning
         private int intYear;
         private int intMonth;
         private string SourceStr;
-        private int sheetStart = 5;
+        private int sheetStart = 6;
 
         private string M;
         private string Fty;
@@ -180,7 +180,7 @@ namespace Sci.Production.Planning
                     else
                     {
                         xltPath = @"Planning_R10_02.xltx";
-                        strHeaderRange = "A2:Q4";
+                        strHeaderRange = "A2:Q5";
                     }
 
                     SaveXltReportCls sxrc = new SaveXltReportCls(xltPath);
@@ -202,7 +202,7 @@ namespace Sci.Production.Planning
                         }
                     }
 
-                    this.sheetStart = 5; // 起始位置
+                    this.sheetStart = 6; // 起始位置
                     int artWorkStart = 2;
 
 #if DEBUG
@@ -906,9 +906,23 @@ namespace Sci.Production.Planning
             DateTime startDate = new DateTime(this.intYear, this.intMonth, 1);
             for (int mon = 0; mon < 6; mon++)
             {
-                DateTime nextDate = startDate.AddMonths(mon);
-                wks.Cells[this.sheetStart - 1, 5 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 22).ToShortDateString();
-                wks.Cells[this.sheetStart - 1, 6 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 7).AddMonths(1).ToShortDateString();
+                if (this.isSCIDelivery)
+                {
+                    DateTime nextDate = startDate.AddMonths(mon);
+                    wks.Cells[sheetStart - 2, 5 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 1).ToString("yyyy/MM");
+                    wks.Cells[sheetStart - 1, 5 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 22).ToShortDateString();
+                    wks.Cells[sheetStart - 1, 6 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 7).AddMonths(1).ToShortDateString();
+                }
+                else
+                {
+                    DateTime nextDate = startDate.AddMonths(mon);
+                    wks.Cells[sheetStart - 2, 5 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 1).ToString("yyyy/MM");
+                    wks.Cells[sheetStart - 1, 5 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 15).ToShortDateString();
+                    wks.Cells[sheetStart - 1, 6 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 1).GetLastDayOfMonth().ToShortDateString();
+                }
+                //DateTime nextDate = startDate.AddMonths(mon);
+                //wks.Cells[this.sheetStart - 1, 5 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 22).ToShortDateString();
+                //wks.Cells[this.sheetStart - 1, 6 + (mon * 2)].Value = new DateTime(nextDate.Year, nextDate.Month, 7).AddMonths(1).ToShortDateString();
             }
 
             DataTable dtList = datas[0];
@@ -1169,7 +1183,7 @@ namespace Sci.Production.Planning
             rg.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical].Weight = 2;
 
             // 數值格式
-            rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(5) + "5", lastCell);
+            rg = wks.get_Range(MyExcelPrg.GetExcelColumnName(5) + "6", lastCell);
             rg.Cells.NumberFormat = "##,###,##0";
 
             foreach (string idx in lisPercent)
