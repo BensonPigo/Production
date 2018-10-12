@@ -168,6 +168,7 @@
             this.txtSewingLine.Size = new System.Drawing.Size(67, 23);
             this.txtSewingLine.TabIndex = 4;
             this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLine_PopUp);
+            this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLine_Validating);
             // 
             // contextMenuStrip1
             // 
