@@ -4,7 +4,8 @@
     [InComing]     DATETIME     NULL,
     [OutGoing]     DATETIME     NULL,
     [AddDate]      DATETIME     NULL,
-    [EditDate]     DATETIME     NULL
+    [EditDate]     DATETIME     NULL,
+	[SewingLineID] varchar(2) NULL
 );
 
 

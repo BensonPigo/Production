@@ -22,5 +22,12 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
         }
+
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            this.displayMasterGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString().Substring(0, 2);
+        }
     }
 }

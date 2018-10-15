@@ -39,7 +39,7 @@ namespace Sci.Production.IE
                 this.btnThreadRatio.ForeColor = Control.DefaultForeColor;
             }
 
-            this.displayMasterGroupID.Text = this.grid.SelectedRows[0].Cells["MasterGroupID"].Value.ToString();
+            this.displayMasterGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString().Substring(0,2);
         }
 
         private void BtnThreadRatio_Click(object sender, EventArgs e)
