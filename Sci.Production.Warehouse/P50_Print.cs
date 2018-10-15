@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select("",@"
+            result = DBProxy.Current.Select("", @"
 select a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
 		,a.Roll,a.Dyelot	        
@@ -66,7 +66,7 @@ select a.POID
 from dbo.Stocktaking_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-    and a.roll = fi.roll and a.stocktype = fi.stocktype
+    and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
 where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
@@ -74,7 +74,7 @@ where a.id= @ID", pars, out dd);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable da;
-            result = DBProxy.Current.Select("",@"
+            result = DBProxy.Current.Select("", @"
 select a.POID
         ,a.Seq1+'-'+a.seq2 as SEQ
 		,a.Roll,a.Dyelot	        
@@ -91,7 +91,7 @@ select a.POID
 from dbo.Stocktaking_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.Seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-    and a.roll = fi.roll and a.stocktype = fi.stocktype
+    and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
 where a.id= @ID", pars, out da);
             if (!result) { this.ShowErr(result); }
 

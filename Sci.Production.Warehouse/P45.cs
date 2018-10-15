@@ -218,7 +218,7 @@ Balacne Qty is not enough!!
             #region 	依SP#+SEQ#+Roll#+ StockType = 'O' 檢查庫存是否足夠
             string sql = string.Format(@"
 from dbo.Adjust_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
+inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot
 where d.Id = '{0}'
 and f.StockType = 'O'", CurrentMaintain["id"]);
 
@@ -314,7 +314,7 @@ select
 from Adjust_detail ad WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd.SEQ2 = ad.Seq2
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-left join FtyInventory fi WITH (NOLOCK) on fi.POID = ad.POID and fi.Seq1 = ad.Seq1 and fi.Seq2 = ad.Seq2 and fi.Roll = ad.Roll and fi.StockType = ad.StockType 
+left join FtyInventory fi WITH (NOLOCK) on fi.POID = ad.POID and fi.Seq1 = ad.Seq1 and fi.Seq2 = ad.Seq2 and fi.Roll = ad.Roll and fi.StockType = ad.StockType and fi.Dyelot = ad.Dyelot
 where ad.Id='{0}' 
 ", masterID);
             return base.OnDetailSelectCommandPrepare(e);

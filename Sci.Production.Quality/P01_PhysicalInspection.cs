@@ -319,44 +319,17 @@ where	WEAVETYPEID = '{0}'
                     dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
                     dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
                     dr["Ticketyds"] = sele.GetSelecteds()[0]["StockQty"].ToString().Trim();
-
-                    roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], dr["Roll"].ToString().Replace("'","''"));
-                    DataRow roll_dr;
-                    if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
-                    {
-                        dr["Roll"] = roll_dr["Roll"];
-                        dr["Dyelot"] = roll_dr["Dyelot"];
-                        dr["Ticketyds"] = roll_dr["StockQty"];
-                        dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(string.Format(@"
-                                                                        select width
-                                                                        from Fabric 
-                                                                        inner join Fir on Fabric.SCIRefno = fir.SCIRefno
-                                                                        where Fir.ID = '{0}'", dr["id"]), null, null);
-                        dr["Result"] = "Pass";
-                        dr["Grade"] = "A";
-                        dr["totalpoint"] = 0.00;
-                        cleanDefect(strNewKey);
-                        dr.EndEdit();
-                    }
-                    else
-                    {
-                        dr["Roll"] = "";
-                        dr["Dyelot"] = "";
-                        dr["Ticketyds"] = 0.00;
-                        dr["Actualyds"] = 0.00;
-                        dr["CutWidth"] = 0.00;
-                        dr["fullwidth"] = 0.00;
-                        dr["actualwidth"] = 0.00;
-                        dr["totalpoint"] = 0.00;
-                        dr["pointRate"] = 0.00;
-                        dr["Result"] = "";
-                        dr["Grade"] = "";
-                        dr["moisture"] = 0;
-                        dr["Remark"] = "";
-                        cleanDefect(strNewKey);
-                        dr.EndEdit();
-                        return;
-                    }  
+                    dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(string.Format(@"
+                                                                    select width
+                                                                    from Fabric 
+                                                                    inner join Fir on Fabric.SCIRefno = fir.SCIRefno
+                                                                    where Fir.ID = '{0}'", dr["id"]), null, null);
+                    dr["Result"] = "Pass";
+                    dr["Grade"] = "A";
+                    dr["totalpoint"] = 0.00;
+                    cleanDefect(strNewKey);
+                    dr.EndEdit();
+                   
                 }
             };
             Rollcell.CellValidating += (s, e) =>
