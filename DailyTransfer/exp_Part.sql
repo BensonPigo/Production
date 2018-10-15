@@ -151,7 +151,7 @@ FROM Pms_To_Trade.dbo.RepairPO, Machine.dbo.RepairPO_Detail  rpod
 WHERE RepairPO.id= rpod.id  
 ORDER BY RepairPO.id 
 
-SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid, pod.MasterGroupID
+SELECT pod.ID,pod.seq1, pod.SEQ2 , pod.PRICE, pod.QTY, pod.MachineBrandID, pod.suppid
 INTO  MachinePO_Detail
 FROM Pms_To_Trade.dbo.MachinePO, Machine.dbo.MachinePO_Detail  pod
 WHERE MachinePO.id= pod.id  

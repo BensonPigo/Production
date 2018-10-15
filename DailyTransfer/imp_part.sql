@@ -274,8 +274,7 @@ s.EditDate
 		ETA = b.ETA ,
 		Cancel = b.Cancel ,
 		Complete = b.Complete ,
-		TPEPOID = b.TradePOID,
-		MasterGroupID=a.MasterGroupID
+		TPEPOID = b.TradePOID
 	from [Machine].[dbo].[RepairPO_Detail] a
 	inner join [Trade_To_Pms].[dbo].[RepairReq_Detail] b on a.id=b.ID and a.Seq2=b.Seq2
 
