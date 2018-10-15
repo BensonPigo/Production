@@ -195,7 +195,7 @@ where a.id = @ID", pars, out dtDetail);
                 }).ToList();
 
             report.ReportDataSource = data;
-             #endregion
+            #endregion
             // 指定是哪個 RDLC
             //DualResult result;
             Type ReportResourceNamespace = typeof(P18_PrintData);
@@ -408,7 +408,7 @@ select  poid = I.InventoryPOID
 from dbo.Invtrans I WITH (NOLOCK) 
 where I.InventoryPOID ='{0}' and I.type = 3 and FactoryID = '{1}'", CurrentDetailData["poid"].ToString(), this.CurrentMaintain["FromFtyID"]);
                     }
-                    
+
                     DBProxy.Current.Select(null, sqlcmd, out dt);
 
                     Sci.Win.Tools.SelectItem selepoitem = new Win.Tools.SelectItem(dt
@@ -526,7 +526,7 @@ select    fabrictype
 from Invtrans WITH (NOLOCK) 
 where   InventoryPOID = '{0}' 
         and InventorySeq1 ='{1}'
-        and InventorySeq2 = '{2}' and type = 3 and FactoryID = '{3}'", CurrentDetailData["poid"], seq[0], seq[1],CurrentMaintain["FromFtyID"]), out dr, null))
+        and InventorySeq2 = '{2}' and type = 3 and FactoryID = '{3}'", CurrentDetailData["poid"], seq[0], seq[1], CurrentMaintain["FromFtyID"]), out dr, null))
                             {
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -586,9 +586,9 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                        e.Cancel = true; 
+                        e.Cancel = true;
                         MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-                        
+
                     }
                     trueLocation.Sort();
                     CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
@@ -645,9 +645,9 @@ WHERE   StockType='{0}'
 
                     if (!selectId)
                     {
-                       e.Cancel = true; 
-                       MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
-                        
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox("Location : " + string.Join(",", (errLocation).ToArray()) + "  Data not found !!", "Data not found");
+
                     }
                     trueLocation.Sort();
                     CurrentDetailData["location"] = string.Join(",", (trueLocation).ToArray());
@@ -708,7 +708,7 @@ select id from Invtrans where InventoryPOID = '{0}' and type = 3   and FactoryID
                         {
                             dataFrom = "Invtrans";
                         }
-                       
+
                     }
                     this.CurrentDetailData["seq"] = "";
                     this.CurrentDetailData["seq1"] = "";
@@ -732,7 +732,7 @@ select id from Invtrans where InventoryPOID = '{0}' and type = 3   and FactoryID
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //6
-            .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings:sk).Get(out cbb_stocktype)    //7
+            .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings: sk).Get(out cbb_stocktype)    //7
             .Text("Location", header: "Location", iseditingreadonly: false, settings: ts2)    //8
             ;     //
             #endregion 欄位設定
@@ -772,13 +772,14 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0),f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on  d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
                                             and d.Seq2 = f.seq2
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
+                                            and d.Dyelot = f.Dyelot
 where   f.lock=1 
         and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -792,8 +793,8 @@ where   f.lock=1
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} is locked!!" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -809,13 +810,14 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0),f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
                                             and d.Seq2 = f.seq2
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
+                                            and d.Dyelot = f.Dyelot
 where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + d.Qty < 0) 
         and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -829,8 +831,8 @@ where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) + 
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than In qty: {5}" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than In qty: {5}" + Environment.NewLine
+                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -869,39 +871,39 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             #endregion 更新表頭狀態資料
             #region -- 更新庫存數量 MDivisionPoDetail -- 
             var data_MD_2T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid").Trim(),
-                           seq1 = b.Field<string>("seq1").Trim(),
-                           seq2 = b.Field<string>("seq2").Trim(),
-                           stocktype = b.Field<string>("stocktype").Trim()
-                       } into m
-                       select new Prgs_POSuppDetailData
-                       {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
-                           location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
-                       }).ToList();
+                              group b by new
+                              {
+                                  poid = b.Field<string>("poid").Trim(),
+                                  seq1 = b.Field<string>("seq1").Trim(),
+                                  seq2 = b.Field<string>("seq2").Trim(),
+                                  stocktype = b.Field<string>("stocktype").Trim()
+                              } into m
+                              select new Prgs_POSuppDetailData
+                              {
+                                  poid = m.First().Field<string>("poid"),
+                                  seq1 = m.First().Field<string>("seq1"),
+                                  seq2 = m.First().Field<string>("seq2"),
+                                  stocktype = m.First().Field<string>("stocktype"),
+                                  qty = m.Sum(w => w.Field<decimal>("qty")),
+                                  location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
+                              }).ToList();
             var data_MD_8T = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid").Trim(),
-                           seq1 = b.Field<string>("seq1").Trim(),
-                           seq2 = b.Field<string>("seq2").Trim(),
-                           stocktype = b.Field<string>("stocktype")
-                       } into m
-                        select new Prgs_POSuppDetailData
-                       {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = m.Sum(w => w.Field<decimal>("qty")),
-                           location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
-                       }).ToList();
+                              group b by new
+                              {
+                                  poid = b.Field<string>("poid").Trim(),
+                                  seq1 = b.Field<string>("seq1").Trim(),
+                                  seq2 = b.Field<string>("seq2").Trim(),
+                                  stocktype = b.Field<string>("stocktype")
+                              } into m
+                              select new Prgs_POSuppDetailData
+                              {
+                                  poid = m.First().Field<string>("poid"),
+                                  seq1 = m.First().Field<string>("seq1"),
+                                  seq2 = m.First().Field<string>("seq2"),
+                                  stocktype = m.First().Field<string>("stocktype"),
+                                  qty = m.Sum(w => w.Field<decimal>("qty")),
+                                  location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
+                              }).ToList();
 
             #endregion
             #region -- 更新庫存數量  ftyinventory --
@@ -930,18 +932,18 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             }
 
             var data_Fty_2T = (from b in newDt.AsEnumerable()
-                         select new
-                         {
-                             poid = b.Field<string>("poid"),
-                             seq1 = b.Field<string>("seq1"),
-                             seq2 = b.Field<string>("seq2"),
-                             stocktype = b.Field<string>("stocktype"),
-                             qty = b.Field<decimal>("qty"),
-                             location = b.Field<string>("location"),
-                             roll = b.Field<string>("roll"),
-                             dyelot = b.Field<string>("dyelot"),
-                         }).ToList(); 
-           
+                               select new
+                               {
+                                   poid = b.Field<string>("poid"),
+                                   seq1 = b.Field<string>("seq1"),
+                                   seq2 = b.Field<string>("seq2"),
+                                   stocktype = b.Field<string>("stocktype"),
+                                   qty = b.Field<decimal>("qty"),
+                                   location = b.Field<string>("location"),
+                                   roll = b.Field<string>("roll"),
+                                   dyelot = b.Field<string>("dyelot"),
+                               }).ToList();
+
             upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
             #endregion 更新庫存數量  ftyinventory
 
@@ -1033,7 +1035,7 @@ when matched then
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Confirmed successful");                    
+                    MyUtility.Msg.InfoBox("Confirmed successful");
                 }
             }
             catch (Exception ex)
@@ -1044,7 +1046,7 @@ when matched then
             #endregion               
             _transactionscope.Dispose();
             _transactionscope = null;
-          
+
         }
 
         //Unconfirm
@@ -1072,13 +1074,14 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0),f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on  d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
                                             and d.Seq2 = f.seq2
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
+                                            and d.Dyelot = f.Dyelot
 where   f.lock=1 
         and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -1092,8 +1095,8 @@ where   f.lock=1
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} is locked!!" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -1109,13 +1112,14 @@ Select  d.poid
         , d.seq2
         , d.Roll
         , d.Qty
-        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0)
+        , balanceQty = isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0),f.Dyelot
 from dbo.TransferIn_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) on   d.PoId = f.PoId
                                             and d.Seq1 = f.Seq1
                                             and d.Seq2 = f.seq2
                                             and d.StockType = f.StockType
                                             and d.Roll = f.Roll
+                                            and d.Dyelot = f.Dyelot
 where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - d.Qty < 0) 
         and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -1129,8 +1133,8 @@ where   (isnull (f.InQty, 0) - isnull (f.OutQty, 0) + isnull (f.AdjustQty, 0) - 
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than In qty: {5}" + Environment.NewLine
-                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}  Dyelot#: {3}'s balance: {4} is less than In qty: {5}" + Environment.NewLine
+                            , tmp["poid"], tmp["seq1"], tmp["seq2"], tmp["roll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -1152,54 +1156,54 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #region -- 更新庫存數量 MDivisionPoDetail --
             var data_MD_2F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                       group b by new
-                       {
-                           poid = b.Field<string>("poid").Trim(),
-                           seq1 = b.Field<string>("seq1").Trim(),
-                           seq2 = b.Field<string>("seq2").Trim(),
-                           stocktype = b.Field<string>("stocktype").Trim()
-                       } into m
-                       select new Prgs_POSuppDetailData
-                       {
-                           poid = m.First().Field<string>("poid"),
-                           seq1 = m.First().Field<string>("seq1"),
-                           seq2 = m.First().Field<string>("seq2"),
-                           stocktype = m.First().Field<string>("stocktype"),
-                           qty = - (m.Sum(w => w.Field<decimal>("qty"))),
-                           location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
-                       }).ToList();
+                              group b by new
+                              {
+                                  poid = b.Field<string>("poid").Trim(),
+                                  seq1 = b.Field<string>("seq1").Trim(),
+                                  seq2 = b.Field<string>("seq2").Trim(),
+                                  stocktype = b.Field<string>("stocktype").Trim()
+                              } into m
+                              select new Prgs_POSuppDetailData
+                              {
+                                  poid = m.First().Field<string>("poid"),
+                                  seq1 = m.First().Field<string>("seq1"),
+                                  seq2 = m.First().Field<string>("seq2"),
+                                  stocktype = m.First().Field<string>("stocktype"),
+                                  qty = -(m.Sum(w => w.Field<decimal>("qty"))),
+                                  location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
+                              }).ToList();
             var data_MD_8F = (from b in ((DataTable)detailgridbs.DataSource).AsEnumerable().Where(w => w.Field<string>("stocktype").Trim() == "I")
-                        group b by new
-                        {
-                            poid = b.Field<string>("poid").Trim(),
-                            seq1 = b.Field<string>("seq1").Trim(),
-                            seq2 = b.Field<string>("seq2").Trim(),
-                            stocktype = b.Field<string>("stocktype")
-                        } into m
-                        select new Prgs_POSuppDetailData
-                        {
-                            poid = m.First().Field<string>("poid"),
-                            seq1 = m.First().Field<string>("seq1"),
-                            seq2 = m.First().Field<string>("seq2"),
-                            stocktype = m.First().Field<string>("stocktype"),
-                            qty = - (m.Sum(w => w.Field<decimal>("qty"))),
-                            location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
-                        }).ToList();
+                              group b by new
+                              {
+                                  poid = b.Field<string>("poid").Trim(),
+                                  seq1 = b.Field<string>("seq1").Trim(),
+                                  seq2 = b.Field<string>("seq2").Trim(),
+                                  stocktype = b.Field<string>("stocktype")
+                              } into m
+                              select new Prgs_POSuppDetailData
+                              {
+                                  poid = m.First().Field<string>("poid"),
+                                  seq1 = m.First().Field<string>("seq1"),
+                                  seq2 = m.First().Field<string>("seq2"),
+                                  stocktype = m.First().Field<string>("stocktype"),
+                                  qty = -(m.Sum(w => w.Field<decimal>("qty"))),
+                                  location = string.Join(",", m.Select(r => r.Field<string>("location")).Distinct()),
+                              }).ToList();
 
             #endregion
             #region -- 更新庫存數量  ftyinventory --
 
             var data_Fty_2F = (from m in ((DataTable)detailgridbs.DataSource).AsEnumerable()
-                         select new
-                         {
-                             poid = m.Field<string>("poid"),
-                             seq1 = m.Field<string>("seq1"),
-                             seq2 = m.Field<string>("seq2"),
-                             stocktype = m.Field<string>("stocktype"),
-                             qty = -(m.Field<decimal>("qty")),
-                             roll = m.Field<string>("roll"),
-                             dyelot = m.Field<string>("dyelot"),
-                         }).ToList();
+                               select new
+                               {
+                                   poid = m.Field<string>("poid"),
+                                   seq1 = m.Field<string>("seq1"),
+                                   seq2 = m.Field<string>("seq2"),
+                                   stocktype = m.Field<string>("stocktype"),
+                                   qty = -(m.Field<decimal>("qty")),
+                                   roll = m.Field<string>("roll"),
+                                   dyelot = m.Field<string>("dyelot"),
+                               }).ToList();
             upd_Fty_2F = Prgs.UpdateFtyInventory_IO(2, null, false);
             #endregion 更新庫存數量  ftyinventory
 
@@ -1272,7 +1276,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             #endregion
             _transactionscope.Dispose();
             _transactionscope = null;
-           
+
         }
 
         //寫明細撈出的sql command
@@ -1358,11 +1362,11 @@ Where a.id = '{0}'", masterID, fromFty);
         private void txtFromFactory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (!this.EditMode) return;
-                string cmd = "select ID from scifty WITH (NOLOCK) where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";
-                Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.txtFromFactory.ToString());
-                DialogResult result = item.ShowDialog();
-                if (result == DialogResult.Cancel) { return; }
-                this.txtFromFactory.Text = item.GetSelectedString();
+            string cmd = "select ID from scifty WITH (NOLOCK) where mdivisionid<>'' and Junk<>1 order by MDivisionID,ID ";
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(cmd, "6", this.txtFromFactory.ToString());
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.txtFromFactory.Text = item.GetSelectedString();
         }
 
         /// <summary>
@@ -1376,159 +1380,43 @@ Where a.id = '{0}'", masterID, fromFty);
             List<string> listDyelot = new List<string>();
             foreach (DataRow row in DetailDatas)
             {
-                DataRow dr; 
+                DataRow dr;
                 //判斷 物料 是否為 布，布料才需要 Roll & Dyelot
                 if (row["fabrictype"].ToString().ToUpper() == "F")
                 {
-                    #region 先判斷 FtyInventory 是否有相同的 Roll & Dyelot
-                    string checkFtySql = string.Format(@"
-select  total = count(*)  
-		, Dyelot
-From dbo.FtyInventory Fty
-where   POID = '{0}' 
-        and Seq1 = '{1}' 
-        and Seq2 = '{2}' 
-        and Roll = '{3}' 
-        and Dyelot = '{4}'
-group by Dyelot
-", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
-                    if (MyUtility.Check.Seek(checkFtySql, null))
-                    {
-                        listDyelot.Add(row["dyelot"].ToString());
-                    }
-                    else
-                    {
-                        #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
-                        string checkSql = string.Format(@"
-select 
-	total = sum(total)
-	, Dyelot = Dyelot
-from(
-    select  total = COUNT(*) 
-            , Dyelot
-    from dbo.Receiving_Detail RD WITH (NOLOCK) 
-    inner join dbo.Receiving R WITH (NOLOCK) on RD.Id = R.Id  
-    where   RD.PoId = '{0}' 
-            and RD.Seq1 = '{1}' 
-            and RD.Seq2 = '{2}' 
-            and RD.Roll = '{3}' 
-            and Dyelot != '{4}' 
-            and R.Status = 'Confirmed'
-	group by Dyelot
-
-	Union All
-	select  total = COUNT(*)  
-			, Dyelot = ToDyelot
-	from dbo.SubTransfer_Detail SD WITH (NOLOCK) 
-	inner join dbo.SubTransfer S WITH (NOLOCK) on SD.ID = S.Id 
-	where   ToPOID = '{0}' 
-            and ToSeq1 = '{1}' 
-            and ToSeq2 = '{2}' 
-            and ToRoll = '{3}' 
-            and ToDyelot != '{4}' 
-            and S.Status = 'Confirmed'
-	group by ToDyelot
-	
-	Union All	
-	select  total = COUNT('POID')  
-			, Dyelot = ToDyelot
-	from dbo.BorrowBack_Detail BD WITH (NOLOCK) 
-	inner join dbo.BorrowBack B WITH (NOLOCK) on BD.ID = B.Id  
-	where   ToPOID = '{0}' 
-            and ToSeq1 = '{1}' 
-            and ToSeq2 = '{2}' 
-            and ToRoll = '{3}' 
-            and ToDyelot != '{4}' 
-            and B.Status = 'Confirmed'
-	group by ToDyelot
-	
-	Union All
-	select  total = count(*)   
-			, Dyelot
-	From dbo.TransferIn TI
+                    #region 判斷 在收料記錄 & FtyInventory 是否存在【同 Roll 不同 Dyelot】
+                    string checkSql = string.Format(@"
+select  1
+    From dbo.TransferIn TI
 	inner join dbo.TransferIn_Detail TID on TI.ID = TID.ID
 	where   POID = '{0}' 
             and Seq1 = '{1}' 
             and Seq2 = '{2}' 
             and Roll = '{3}' 
-            and Dyelot != '{4}' 
+            and Dyelot = '{4}' 
             and TI.ID != '{5}' 
             and Status = 'Confirmed'
-	group by Dyelot
-	
-	Union All
-	select  total = count(*)  
-			, Dyelot
-	From dbo.FtyInventory Fty
-	where   POID = '{0}' 
-            and Seq1 = '{1}' 
-            and Seq2 = '{2}' 
-            and Roll = '{3}' 
-            and Dyelot != '{4}'
-	group by Dyelot
-) x
-group by Dyelot", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
-                        if (MyUtility.Check.Seek(checkSql, out dr, null))
+", row["poid"], row["seq1"], row["seq2"], row["roll"], row["dyelot"], CurrentMaintain["id"]);
+                    if (MyUtility.Check.Seek(checkSql, out dr, null))
+                    {
+                        if (Convert.ToInt32(dr[0]) > 0)
                         {
-                            if (Convert.ToInt32(dr[0]) > 0)
-                            {
-                                listMsg.Add(string.Format(@"
+                            listMsg.Add(string.Format(@"
 The Deylot of
-<SP#>:{0}, <Seq>:{1}, <Roll>:{2}
-already exists, system will update the Qty for original Deylot <{3}>
-", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], dr["Dyelot"].ToString().Trim()));
-                                listDyelot.Add(dr["Dyelot"].ToString().Trim());
-                            }
+<SP#>:{0}, <Seq>:{1}, <Roll>:{2}, <Deylot>:{3} already exists
+", row["poid"], row["seq1"].ToString() + " " + row["seq2"].ToString(), row["roll"], row["Dyelot"].ToString().Trim()));
+
                         }
-                        else
-                        {
-                            listDyelot.Add(row["Dyelot"].ToString().Trim());
-                        }
-                        #endregion
                     }
-                    #endregion                     
+                    #endregion
                 }
             }
-
-            #region 若上方判斷有 同 Roll 不同 Dyelot
+            
             if (listMsg.Count > 0)
             {
-                DialogResult Dr = MyUtility.Msg.QuestionBox(listMsg.JoinToString("").TrimStart(), buttons: MessageBoxButtons.OKCancel);
-                switch (Dr.ToString().ToUpper())
-                {
-                    case "OK":
-                        int index = 0;
-                        foreach (DataRow row in DetailDatas)
-                        {
-                            if (row["FabricType"].EqualString("F"))
-                            {
-                                DualResult result;
-                                /**
-                                * 如果在編輯模式下，直接改 Grid
-                                * 非編輯模式 (Confirm) 必須用 Update 才能顯示正確的資料
-                                **/
-                                row["Dyelot"] = listDyelot[index++];                                
-                                if (this.EditMode != true)
-                                {
-                                    result = DBProxy.Current.Execute(null, string.Format(@"
-Update TD
-set TD.Roll = '{0}'
-    , TD.Dyelot = '{1}'
-From TransferIn_Detail TD
-where TD.Ukey = '{2}'", row["Roll"], row["Dyelot"], row["Ukey"]));
-                                    if (!result)
-                                    {
-                                        MyUtility.Msg.WarningBox(result.Description);
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                    case "CANCEL":
-                        return false;
-                }
+                DialogResult Dr = MyUtility.Msg.WarningBox(listMsg.JoinToString("").TrimStart());
+                return false;
             }
-            #endregion 
             return true;
         }
         /// <summary>

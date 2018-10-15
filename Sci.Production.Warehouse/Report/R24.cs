@@ -78,7 +78,7 @@ left join PO_Supp_Detail po3 WITH (NOLOCK) on b.FromPOID=po3.ID
 	and b.FromSeq1=po3.SEQ1 and b.FromSeq2=po3.SEQ2
 left join FtyInventory ft WITH(NOLOCK) on b.FromPOID=ft.POID
 	and b.FromSeq1=ft.Seq1 and b.FromSeq2 = ft.Seq2 and b.FromRoll=ft.Roll
-	and b.FromStockType=ft.StockType
+	and b.FromStockType=ft.StockType and b.FromDyelot = ft.Dyelot
 left join Color c  WITH(NOLOCK) on c.ID=po3.ColorID and c.BrandId=orders.BrandID
 where a.Status = 'Confirmed' and a.type='A' 
 {0}

@@ -34,6 +34,9 @@
             this.txtID = new Sci.Win.UI.TextBox();
             this.comboSubprocess = new Sci.Win.UI.ComboBox();
             this.comboStockType = new Sci.Win.UI.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSewingLine = new Sci.Win.UI.TextBox();
+            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -48,6 +51,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtSewingLine);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.comboStockType);
             this.detailcont.Controls.Add(this.comboSubprocess);
             this.detailcont.Controls.Add(this.txtID);
@@ -85,28 +90,25 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(35, 37);
             this.labelID.Name = "labelID";
-            this.labelID.Size = new System.Drawing.Size(86, 23);
+            this.labelID.Size = new System.Drawing.Size(97, 23);
             this.labelID.TabIndex = 0;
             this.labelID.Text = "ID";
             // 
             // labelSubprocess
             // 
-            this.labelSubprocess.Lines = 0;
             this.labelSubprocess.Location = new System.Drawing.Point(35, 94);
             this.labelSubprocess.Name = "labelSubprocess";
-            this.labelSubprocess.Size = new System.Drawing.Size(86, 23);
+            this.labelSubprocess.Size = new System.Drawing.Size(97, 23);
             this.labelSubprocess.TabIndex = 1;
             this.labelSubprocess.Text = "Sub-process";
             // 
             // labelStockType
             // 
-            this.labelStockType.Lines = 0;
             this.labelStockType.Location = new System.Drawing.Point(35, 151);
             this.labelStockType.Name = "labelStockType";
-            this.labelStockType.Size = new System.Drawing.Size(86, 23);
+            this.labelStockType.Size = new System.Drawing.Size(97, 23);
             this.labelStockType.TabIndex = 2;
             this.labelStockType.Text = "Stock Type";
             // 
@@ -116,7 +118,7 @@
             this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
             this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtID.IsSupportEditMode = false;
-            this.txtID.Location = new System.Drawing.Point(124, 37);
+            this.txtID.Location = new System.Drawing.Point(135, 37);
             this.txtID.Name = "txtID";
             this.txtID.ReadOnly = true;
             this.txtID.Size = new System.Drawing.Size(201, 23);
@@ -129,8 +131,9 @@
             this.comboSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSubprocess.FormattingEnabled = true;
             this.comboSubprocess.IsSupportUnselect = true;
-            this.comboSubprocess.Location = new System.Drawing.Point(124, 94);
+            this.comboSubprocess.Location = new System.Drawing.Point(135, 94);
             this.comboSubprocess.Name = "comboSubprocess";
+            this.comboSubprocess.OldText = "";
             this.comboSubprocess.Size = new System.Drawing.Size(121, 24);
             this.comboSubprocess.TabIndex = 1;
             // 
@@ -141,10 +144,36 @@
             this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStockType.FormattingEnabled = true;
             this.comboStockType.IsSupportUnselect = true;
-            this.comboStockType.Location = new System.Drawing.Point(124, 150);
+            this.comboStockType.Location = new System.Drawing.Point(135, 150);
             this.comboStockType.Name = "comboStockType";
+            this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
             this.comboStockType.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(35, 199);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(97, 23);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Sewing Line ID";
+            // 
+            // txtSewingLine
+            // 
+            this.txtSewingLine.BackColor = System.Drawing.Color.White;
+            this.txtSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingLine.Location = new System.Drawing.Point(135, 199);
+            this.txtSewingLine.Name = "txtSewingLine";
+            this.txtSewingLine.Size = new System.Drawing.Size(67, 23);
+            this.txtSewingLine.TabIndex = 4;
+            this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLine_PopUp);
+            this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLine_Validating);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // B40
             // 
@@ -156,6 +185,7 @@
             this.Text = "B40.RFID Reader setting";
             this.UniqueExpress = "ID";
             this.WorkAlias = "RFIDReader";
+            this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -177,5 +207,8 @@
         private Win.UI.TextBox txtID;
         private Win.UI.ComboBox comboStockType;
         private Win.UI.ComboBox comboSubprocess;
+        private Win.UI.TextBox txtSewingLine;
+        private Win.UI.Label label1;
+        private Win.UI.ContextMenuStrip contextMenuStrip1;
     }
 }

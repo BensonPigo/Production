@@ -303,7 +303,7 @@ from #TmpSource
 merge dbo.FtyInventory as target
 using #tmpS1 as s
     on target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
 when matched then
     update
     set inqty = isnull(inqty,0.00) + s.qty
@@ -320,7 +320,7 @@ select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
-						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
+						 and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
 merge dbo.ftyinventory_detail as t 
 using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.location,'')
 when not matched then
@@ -352,7 +352,7 @@ from #TmpSource
 merge dbo.FtyInventory as target
 using #tmpS1 as s
     on target.poid = s.poid and target.seq1 = s.seq1 
-	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
+	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
 when matched then
     update
     set outqty = isnull(outqty,0.00) + s.qty
@@ -382,7 +382,7 @@ from #TmpSource
 merge dbo.FtyInventory as target
 using #tmpS1 as s
     on target.poid = s.poid and target.seq1 = s.seq1 
-    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
+    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
 when matched then
     update
     set outqty = isnull(outqty,0.00) + s.qty
@@ -398,7 +398,7 @@ select location,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on poid = s.poid 
-                         and seq1 = s.seq1 and seq2 = s.seq2 and roll = s.roll and f.stocktype = s.stocktype
+                         and seq1 = s.seq1 and seq2 = s.seq2 and roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
 merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and t.mtllocationid = s.location
 when not matched then
@@ -430,7 +430,7 @@ from #TmpSource
 merge dbo.FtyInventory as target
 using #tmpS1 as s
     on target.poid = s.poid and target.seq1 = s.seq1 
-    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll
+    and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
 when matched then
     update
     set adjustqty = isnull(adjustqty,0.00) + s.qty
@@ -456,7 +456,7 @@ select tolocation,[ukey] = f.ukey
 into #tmp_L_K 
 from #TmpSource s
 left join ftyinventory f WITH (NOLOCK) on f.poid = s.poid 
-                                           and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype
+                                           and f.seq1 = s.seq1 and f.seq2 = s.seq2 and f.roll = s.roll and f.stocktype = s.stocktype and f.dyelot = s.dyelot
 
 delete t from FtyInventory_Detail t
 where  t.ukey = (select distinct ukey from #tmp_L_K where t.Ukey = Ukey)                                          
@@ -1041,10 +1041,10 @@ where   poid = '{1}'
 
             #region -- 檢查庫存項lock --
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll
+and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll and d.FromDyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", dr["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -1057,8 +1057,8 @@ where f.lock=1 and d.Id = '{0}'", dr["id"]);
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} is locked!!" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return false;
@@ -1069,10 +1069,10 @@ where f.lock=1 and d.Id = '{0}'", dr["id"]);
             #region -- 檢查負數庫存 --
 
             sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll
+and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll and d.FromDyelot = f.Dyelot
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Qty>0  and d.Id = '{0}'", dr["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -1085,8 +1085,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Bulk balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return false;
@@ -1094,13 +1094,14 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             }
 
             sqlcmd = string.Format(@"Select d.topoid,d.toseq1,d.toseq2,d.toRoll,d.Qty
-,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty
+,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty, f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
 on  d.toPoId = f.PoId
 and d.toSeq1 = f.Seq1
 and d.toSeq2 = f.seq2
 and d.toStocktype = f.StockType
 and d.toRoll = f.Roll
+and d.toDyelot = f.Dyelot
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) and d.Qty<0 and d.Id = '{0}'", dr["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -1113,8 +1114,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine
-                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["balanceqty"], tmp["qty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than transfer qty: {5}" + Environment.NewLine
+                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Inventory balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return false;

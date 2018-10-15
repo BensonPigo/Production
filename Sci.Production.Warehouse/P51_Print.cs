@@ -28,7 +28,7 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select("",@"
+            DualResult result = DBProxy.Current.Select("", @"
 select  iif(T.stocktype = 'B','Bulk','Inventory') AS stocktype
         ,S.poid AS OrderID,S.seq1  + '-' +S.seq2 as SEQ
         ,S.Roll,S.dyelot
@@ -45,7 +45,7 @@ select  iif(T.stocktype = 'B','Bulk','Inventory') AS stocktype
 from dbo.Stocktaking_detail S WITH (NOLOCK) 
 LEFT join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = S.POID and  P.SEQ1 = S.Seq1 and P.seq2 = S.Seq2 
 left join dbo.FtyInventory Fi on s.poid = fi.poid and s.seq1 = fi.seq1 and s.seq2 = fi.seq2
-    and s.roll = fi.roll and s.stocktype = fi.stocktype
+    and s.roll = fi.roll and s.stocktype = fi.stocktype and s.Dyelot = fi.Dyelot
 LEFT JOIN DBO.Stocktaking T  WITH (NOLOCK) ON T.ID = S.Id  WHERE S.Id = @ID", pars, out dt); ;
               
             string StockType;

@@ -79,13 +79,24 @@ BEGIN
 	left join ArtworkType on ArtworkType.Id = Order_TmsCost.ArtworkTypeID
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Order_TmsCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Order_TmsCost.Qty, Order_TmsCost.Tms / 60 )) as cTms) amt
 	outer apply (select iif(@CalArtWorkType = 'CPU', Orders.CPU, cTms) as cCPU) ccpu
-	outer apply (select iif(@isSCIDelivery = 0, Orders.BuyerDelivery, Orders.SCIDelivery) as OrderDate) odd
-	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
+	outer apply (select iif(@isSCIDelivery = 0, Orders.BuyerDelivery, Orders.SCIDelivery) as OrderDate) odd	
+	--outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
+	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1	
+	--outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
+	outer apply (select dbo.GetHalfMonWithYear(OrderDate,@isSCIDelivery) as Date2) odd2	
 
-	select sd.ID,OrderId,SUM(QAQty*sl.Rate/100) as QAQty into #sew2 from (select *,sidx=ROW_NUMBER()over(partition by id,orderid,ComboType,Article,Color,OldDetailKey order by id) from SewingOutput_Detail) sd inner join Orders o on sd.OrderId = o.ID inner join Style_Location sl on o.StyleUkey = sl.StyleUkey and sl.Location = sd.ComboType where OrderId in (select ID from #tmpOrder1) and sidx = 1 GROUP BY sd.ID,OrderId	
+	select sd.ID,OrderId,SUM(QAQty*sl.Rate/100) as QAQty 
+	into #sew2 
+	from (select *,sidx=ROW_NUMBER()over(partition by id,orderid,ComboType,Article,Color,OldDetailKey order by id) 
+		from SewingOutput_Detail
+		) sd 
+	inner join Orders o on sd.OrderId = o.ID 
+	inner join Style_Location sl on o.StyleUkey = sl.StyleUkey 
+		and sl.Location = sd.ComboType where OrderId in (select ID from #tmpOrder1) and sidx = 1 GROUP BY sd.ID,OrderId	
 	select ID,OutputDate into #sew1 from SewingOutput where ID in (select ID from #sew2) GROUP BY ID,OutputDate
-	select s2.OrderId,sum(s2.QAQty) as QAQty, max(s1.OutputDate) as OutputDate into #sew_Order from #sew2 s2 inner join #sew1 s1 on s2.ID = s1.ID group by s2.OrderId
+	select s2.OrderId,sum(s2.QAQty) as QAQty, max(s1.OutputDate) as OutputDate into #sew_Order from #sew2 s2 
+	inner join #sew1 s1 on s2.ID = s1.ID 
+	group by s2.OrderId
 
 	--By Sewing
 	Select #tmpOrder1.*, SewingOutput.QAQty, Sewingoutput.OutputDate	
@@ -94,8 +105,10 @@ BEGIN
 	,Round((cCPU * SewingOutput.QAQty * #tmpOrder1.CPURate),0) as SewCapacity
 	into #tmpOrder2 from #tmpOrder1
 	left join #sew_Order SewingOutput on SewingOutput.OrderId = #tmpOrder1.ID
-	outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate) as Date2) odd2
+	--outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
+	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1
+	--outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate) as Date2) odd2
+	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate,@isSCIDelivery) as Date2) odd2
 	
 
 	--Fty Local Order
@@ -130,8 +143,10 @@ BEGIN
 	outer apply (select iif(@CalArtWorkType = 'CPU', FactoryOrder.CPU, cTms) as cCPU) ccpu
 	outer apply (select 1 as CpuRate ) gcRate
 	outer apply (select iif(@isSCIDelivery = 0, FactoryOrder.BuyerDelivery, FactoryOrder.SCIDelivery) as OrderDate) odd
-	outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
+	--outer apply (select format(dateadd(day,-7,OrderDate),'yyyyMM') as Date1) odd1
+	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),OrderDate),'yyyyMM') as Date1) odd1
+	--outer apply (select dbo.GetHalfMonWithYear(OrderDate) as Date2) odd2
+	outer apply (select dbo.GetHalfMonWithYear(OrderDate,@isSCIDelivery) as Date2) odd2
 	
 	
 	--By Sewing
@@ -147,7 +162,7 @@ BEGIN
 	into #tmpFactoryOrder2 From #tmpFactoryOrder1	
 	left join #sew_FtyOrder SewingOutput on SewingOutput.OrderId = #tmpFactoryOrder1.ID
 	outer apply (select format(dateadd(day,-7,SewingOutput.OutputDate),'yyyyMM') as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate) as Date2) odd2
+	outer apply (select dbo.GetHalfMonWithYear(Sewingoutput.OutputDate,@isSCIDelivery) as Date2) odd2
 
 
 	--Forecast
@@ -171,8 +186,10 @@ BEGIN
 	outer apply (select iif(ArtworkType.ArtworkUnit = 'STITCH', Style_TMSCost.Qty / 1000, iif(ArtworkType.ProductionUnit = 'Qty', Style_TMSCost.Qty, CONVERT(numeric,Style_TMSCost.Tms) / 60 )) as cTms) amt
 	outer apply (select iif(@CalArtWorkType = 'CPU', IIF(Orders.Category = 'B', Style.CPU, Orders.CPU), cTms) as cCPU) ccpu
 	outer apply (select CpuRate from dbo.GetCPURate(Orders.OrderTypeID, Orders.ProgramID, Orders.Category, Orders.BrandID, 'S') ) gcRate
-	outer apply (select format(dateadd(day,-7,Orders.BuyerDelivery),'yyyyMM') as Date1) odd1
-	outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery) as Date2) odd2
+	--outer apply (select format(dateadd(day,-7,Orders.BuyerDelivery),'yyyyMM') as Date1) odd1	
+	outer apply (select format(dateadd(day,iif(@isSCIDelivery = 0, 0, -7),Orders.BuyerDelivery),'yyyyMM') as Date1) odd1
+	--outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery) as Date2) odd2
+	outer apply (select dbo.GetHalfMonWithYear(Orders.BuyerDelivery,@isSCIDelivery) as Date2) odd2
 	Where Orders.BuyerDelivery Between @date_s and @date_e
 	And Orders.Qty > 0
 	AND @HasForecast = 1

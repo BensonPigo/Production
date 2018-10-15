@@ -377,7 +377,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Name = "P03_RollTransaction";
-            this.Text = "Transaction Detail by Roll#";
+            this.Text = "Transaction Detail by Roll# Dyelot";
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.panel3.ResumeLayout(false);

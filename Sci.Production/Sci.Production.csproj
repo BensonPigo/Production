@@ -1130,6 +1130,9 @@
     <None Include="XLT\Thread_R21.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Thread_R22.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Warehouse-P01.TrimCardPrint_A.dotx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -268,8 +268,8 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             try
             {
                 DataRelation relation = new DataRelation("Rol1"
-               , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["StockType"] }
-               , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["stocktype"] }
+               , new DataColumn[] { dtFtyinventory.Columns["Roll"], dtFtyinventory.Columns["StockType"],dtFtyinventory.Columns["Dyelot"] }
+               , new DataColumn[] { dtTrans.Columns["roll"], dtTrans.Columns["stocktype"],dtTrans.Columns["Dyelot"] }
                );
 
                 data.Relations.Add(relation);

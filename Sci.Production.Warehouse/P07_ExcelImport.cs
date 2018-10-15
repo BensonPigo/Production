@@ -480,7 +480,8 @@ where   stocktype='{0}'
                             poid = p.Field<string>("poid"),
                             seq1 = p.Field<string>("seq1"),
                             seq2 = p.Field<string>("seq2"),
-                            Roll = p.Field<string>("Roll")
+                            Roll = p.Field<string>("Roll"),
+                            Dyelot = p.Field<string>("Dyelot")
                         } into m
                         where m.Count() > 1 //只顯示超過一次以上的
                         select new
@@ -489,6 +490,7 @@ where   stocktype='{0}'
                             seq1 = m.First().Field<string>("seq1"),
                             seq2 = m.First().Field<string>("seq2"),
                             Roll = m.First().Field<string>("Roll"),
+                            Dyelot = m.First().Field<string>("Dyelot"),
                             count = m.Count()
                         };
                 if (q.ToList().Count > 0)
@@ -497,7 +499,7 @@ where   stocktype='{0}'
 
                     foreach (var dr in q)
                     {
-                        warning += string.Format("{0}-{1}-{2}-{3}" + Environment.NewLine, dr.poid, dr.seq1, dr.seq2, dr.Roll);
+                        warning += string.Format("{0}-{1}-{2}-{3}-{4}" + Environment.NewLine, dr.poid, dr.seq1, dr.seq2, dr.Roll, dr.Dyelot);
                     }
                     MyUtility.Msg.WarningBox(warning, "Roll# are duplicated!!");
                     return;
@@ -514,7 +516,7 @@ where   stocktype='{0}'
                     //刪除 Import 重複的資料 by SP# Seq Carton#
                     DataRow[] checkRow = detailData.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && row["poid"].EqualString(dr2["poid"])
                                                                                 && row["seq1"].EqualString(dr2["seq1"]) && row["seq2"].EqualString(dr2["seq2"])
-                                                                                && row["roll"].EqualString(dr2["roll"])).ToArray();
+                                                                                && row["roll"].EqualString(dr2["roll"]) && row["Dyelot"].EqualString(dr2["Dyelot"])).ToArray();
                     if (checkRow.Length == 0)
                     {
                         dr2["id"] = master["id"];
