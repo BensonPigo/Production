@@ -177,7 +177,7 @@ from Adjust_Detail AD2
 inner join PO_Supp_Detail PO3 on PO3.ID=AD2.POID 
 inner join FtyInventory FTI on FTI.POID=AD2.POID and FTI.Seq1=AD2.Seq1
 	and FTI.Seq2=AD2.Seq2 and FTI.Roll=AD2.Roll and FTI.StockType='O'
-and PO3.SEQ1=AD2.Seq1 and PO3.SEQ2=AD2.Seq2
+and PO3.SEQ1=AD2.Seq1 and PO3.SEQ2=AD2.Seq2 and FTI.Dyelot = AD2.Dyelot
 outer apply (
 	select Description from Fabric where SCIRefno=PO3.SCIRefno
 ) Fa
@@ -316,6 +316,7 @@ inner join Adjust_detail AD2 on FTI.POID=AD2.POID
 and FTI.Seq1=AD2.Seq1
 and FTI.Seq2=AD2.Seq2 
 and FTI.Roll=AD2.Roll
+and FTI.Dyelot = AD2.Dyelot
 WHERE FTI.StockType='O' and AD2.ID = '{0}' ", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -395,6 +396,7 @@ inner join Adjust_detail AD2 on FTI.POID=AD2.POID
 and FTI.Seq1=AD2.Seq1
 and FTI.Seq2=AD2.Seq2 
 and FTI.Roll=AD2.Roll
+and FTI.Dyelot = AD2.Dyelot
 WHERE FTI.StockType='O' and AD2.ID = '{0}' ", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -484,6 +486,7 @@ inner join Adjust_detail AD2 on FTI.POID=AD2.POID
 and FTI.Seq1=AD2.Seq1
 and FTI.Seq2=AD2.Seq2 
 and FTI.Roll=AD2.Roll
+and FTI.Dyelot = AD2.Dyelot
 inner join MDivisionPoDetail md on FTI.POID=md.POID and fti.Seq1=md.Seq1 and fti.Seq2=md.Seq2
 WHERE FTI.StockType='O' and AD2.ID = '{0}'
 group by md.POID,md.Seq1,md.Seq2", CurrentMaintain["id"].ToString());

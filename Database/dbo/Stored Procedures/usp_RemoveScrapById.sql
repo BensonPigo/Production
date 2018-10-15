@@ -16,7 +16,7 @@ AS
 BEGIN	
 	SET NOCOUNT ON;
 
-	--¨ÌSP#+SEQ#+Roll#+ StockType = 'O' ÀË¬d®w¦s¬O§_¨¬°÷
+		--¨ÌSP#+SEQ#+Roll#+ StockType = 'O' ÀË¬d®w¦s¬O§_¨¬°÷
 Select  d.POID
 		,seq = concat(d.Seq1,'-',d.Seq2)
 		,d.Seq1
@@ -28,7 +28,7 @@ Select  d.POID
 		,q = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) +(isnull(d.QtyAfter,0)-isnull(d.QtyBefore,0))
 into #tmpAll
 from dbo.Adjust_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
+inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.dyelot = f.dyelot and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 where 1=1
 and d.Id = @ID
 and f.StockType = 'O'
@@ -48,7 +48,7 @@ BEGIN Try
 			--Update FtyInventory.AdjustQty
 			Update f set f.AdjustQty = f.AdjustQty +(d.QtyAfter- d.QtyBefore) 
 			from dbo.Adjust_Detail d WITH (NOLOCK) 
-			inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
+			inner join FtyInventory f WITH (NOLOCK) on d.POID = f.POID and d.Roll = f.Roll  and d.dyelot = f.dyelot and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2
 			where 1=1
 			and d.Id = @ID
 			and f.StockType = 'O'

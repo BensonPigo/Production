@@ -439,7 +439,7 @@ and a.seq1=@seq1";
                     //{
                     #endregion                    
 
-                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
+                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll,Dyelot";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
                     spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -484,7 +484,7 @@ and a.seq1=@seq1";
                     //{
                     #endregion                   
 
-                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll";
+                    string item_cmd = "SELECT DISTINCT Roll,Dyelot from FtyInventory WITH (NOLOCK) where poid=@poid and Seq1=@seq1 and Seq2=@seq2 order by roll,Dyelot";
                     List<SqlParameter> spam = new List<SqlParameter>();
                     spam.Add(new SqlParameter("@poid", PoID));
                     spam.Add(new SqlParameter("@seq1", dr["seq1"]));
@@ -505,8 +505,11 @@ and a.seq1=@seq1";
             {
                 DataTable dt;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Roll"].ToString();
+                string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
+                if (oldvalue.Equals(newvalue)) return;
                 if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
                 {
                     dr["Roll"] = "";

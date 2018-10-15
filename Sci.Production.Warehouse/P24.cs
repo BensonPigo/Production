@@ -272,10 +272,11 @@ Select 	d.frompoid
 		,d.fromRoll
 		,d.Qty
 		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+        ,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) 
     on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-       and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
+       and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -288,8 +289,8 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} is locked!!" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -306,10 +307,11 @@ Select 	d.frompoid
 		,d.fromRoll
 		,d.Qty
 		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        , f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) 
 	on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
-	   and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2
+	   and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -322,8 +324,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than qty: {5}" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than qty: {5}" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -563,6 +565,7 @@ Select 	d.topoid
 		,d.toRoll
 		,d.Qty
 		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        , f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) 
 	on d.toPoId = f.PoId
@@ -570,6 +573,7 @@ inner join FtyInventory f WITH (NOLOCK)
 	and d.toSeq2 = f.seq2
 	and d.toStocktype = f.StockType
 	and d.toRoll = f.Roll
+    and d.toDyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -582,8 +586,8 @@ where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} is locked!!" + Environment.NewLine
-                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -599,6 +603,7 @@ Select 	d.topoid
 		,d.toseq2
 		,d.toRoll,d.Qty
 		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        , f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 left join FtyInventory f WITH (NOLOCK) 
 	on d.toPoId = f.PoId
@@ -606,6 +611,7 @@ left join FtyInventory f WITH (NOLOCK)
 	and d.toSeq2 = f.seq2
 	and d.toStocktype = f.StockType
 	and d.toRoll = f.Roll
+    and d.toDyelot = f.Dyelot
 where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
@@ -618,8 +624,8 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3}'s balance: {4} is less than qty: {5}" + Environment.NewLine
-                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["balanceqty"], tmp["qty"]);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot:{6}'s balance: {4} is less than qty: {5}" + Environment.NewLine
+                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
                     }
                     MyUtility.Msg.WarningBox("Balacne Qty is not enough!!" + Environment.NewLine + ids, "Warning");
                     return;
@@ -890,7 +896,7 @@ Where a.id = '{0}'", masterID);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable dd;
-            result = DBProxy.Current.Select("",@"
+            result = DBProxy.Current.Select("", @"
 select a.FromPOID
         ,a.FromSeq1+'-'+a.FromSeq2 as SEQ
 	    ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
@@ -912,7 +918,7 @@ select a.FromPOID
 from dbo.SubTransfer_Detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2			
 left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2
-    and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
+    and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype and a.fromDyelot = fi.Dyelot
 where a.id= @ID", pars, out dd);
             if (!result) { this.ShowErr(result); }
 
