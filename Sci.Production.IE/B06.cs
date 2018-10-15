@@ -27,7 +27,7 @@ namespace Sci.Production.IE
         {
             base.OnDetailEntered();
 
-            this.displayMasterGroupID.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString().Substring(0, 2);
+            this.displayCode.Text = this.grid.SelectedRows[0].Cells["MachineGroup"].Value.ToString();
         }
     }
 }
