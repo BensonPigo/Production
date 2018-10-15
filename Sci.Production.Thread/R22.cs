@@ -84,15 +84,15 @@ namespace Sci.Production.Thread
         {
             sqlWhere = string.Empty;
 
-            if (!MyUtility.Check.Empty(this.RefNo_s))
+            if (!MyUtility.Check.Empty(this.RefNo_Start.Text))
             {
                 sqlWhere = " AND ts.Refno >= @Refno_s ";
             }
-            if (!MyUtility.Check.Empty(this.RefNo_e))
+            if (!MyUtility.Check.Empty(this.RefNo_End.Text))
             {
                 sqlWhere += " AND ts.Refno <= @RefNo_e ";
             }
-            if (!MyUtility.Check.Empty(this.Shade))
+            if (!MyUtility.Check.Empty(this.textShade.Text))
             {
                 sqlWhere += " AND ts.ThreadColorID = @Shade ";
             }
