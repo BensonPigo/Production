@@ -133,12 +133,16 @@ select
 [RouteName] = so.OrderID + '-' + CAST(lm.Version as varchar),
 [SeqNo] = cast(lmd.OriNO as int),
 [IsOutputSeq] = 0,
-[Station] = MIN(cast(lmd.No as int))
+[Station] = MIN(cast(lmd.No as int)),
+[StyleUkey] = so.StyleUkey,
+[BrandID] = so.BrandID,
+[SeasonID] = so.SeasonID,
+[OriNO] = lmd.OriNO
 from #SrcOrderID so with (nolock)
 inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
 inner join LineMapping_Detail lmd with (nolock) on lm.ID = lmd.ID and lmd.No <> ''
 where lm.Status = 'Confirmed' and ISNUMERIC(lmd.OriNO) = 1
-group by lmd.OriNO,so.OrderID,lm.Version)
+group by lmd.OriNO,so.OrderID,lm.Version,so.StyleUkey,so.BrandID,so.SeasonID)
 select 
 [guid] = NEWID(),
 RouteName,
@@ -146,7 +150,11 @@ RouteName,
 [bMerge] = LAG(1,1,0) OVER (PARTITION BY RouteName,Station ORDER BY SeqNo),
 SeqNo,
 Station,
-IsOutputSeq
+IsOutputSeq,
+StyleUkey,
+BrandID,
+SeasonID,
+OriNO
 into #tSeqAssign
 from tSeqAssignTmp
 
@@ -154,11 +162,13 @@ from tSeqAssignTmp
 select 
 [guid] = NEWID(),
 [SeqAssign_guid] = tsa.guid,
-[StationID] = tsa.Station,
+[StationID] = cast(lmd.No as int),
 [StFunc] = 0
 into #tStAssign
 from #tSeqAssign tsa
-where tsa.bMerge = 0
+inner join LineMapping lm with (nolock) on tsa.StyleUkey = lm.StyleUKey and tsa.BrandID = lm.BrandID and tsa.SeasonID = lm.SeasonID
+inner join LineMapping_Detail lmd with (nolock) on lm.ID = lmd.ID and lmd.No <> '' and lmd.OriNO = tsa.OriNO
+where tsa.bMerge = 0 and lm.Status = 'Confirmed' and ISNUMERIC(lmd.OriNO) = 1
 
 
 --同步資料至SUNRISE db
