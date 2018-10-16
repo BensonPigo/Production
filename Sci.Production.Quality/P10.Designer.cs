@@ -84,7 +84,7 @@
             this.masterpanel.Controls.Add(this.dateBoxDeadline);
             this.masterpanel.Controls.Add(this.dateBoxReceivedDate);
             this.masterpanel.Controls.Add(this.dateBoxReleasedDate);
-            this.masterpanel.Size = new System.Drawing.Size(956, 136);
+            this.masterpanel.Size = new System.Drawing.Size(892, 136);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBoxReleasedDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBoxReceivedDate, 0);
@@ -110,7 +110,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 136);
-            this.detailpanel.Size = new System.Drawing.Size(956, 213);
+            this.detailpanel.Size = new System.Drawing.Size(892, 213);
             // 
             // gridicon
             // 
@@ -119,7 +119,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(956, 213);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 213);
             // 
             // detail2
             // 
@@ -135,16 +135,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(956, 387);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(956, 349);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(956, 38);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -341,7 +341,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportMove = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";

@@ -162,8 +162,8 @@ where sd.id='{0}' order by sd.No
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
-            ResultCombo.Add("Pass", "Pass");
-            ResultCombo.Add("Fail", "Fail");
+            ResultCombo.Add("P", "Pass");
+            ResultCombo.Add("F", "Fail");
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
@@ -273,6 +273,8 @@ where sd.id='{0}' order by sd.No
             this.detailgrid.InvalidateRow(RowIndex);
         }
 
+
+
         protected override void OnDetailGridInsert(int index = 1)
         {
             base.OnDetailGridInsert(index);
@@ -290,11 +292,14 @@ where sd.id='{0}' order by sd.No
                 MaxNo = Convert.ToInt32(dt.Compute("Max(No)", ""));
                 CurrentDetailData["No"] = MaxNo + 1;
 
-                string tmpId =MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
+                string tmpId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
                 string head = tmpId.Substring(0, 9);
-                int seq = Convert.ToInt32(tmpId.Substring(9, 4));
-                tmpId = head + string.Format("{0:0000}", seq + dt.Rows.Count - 1);
+                int seq = MaxNo + 1;
+
+                tmpId = head + string.Format("{0:0000}", seq);
+
                 CurrentDetailData["ReportNo"] = tmpId;
+
             }
 
         }
@@ -515,8 +520,7 @@ values (@ID,@NO,'Appearance of garment after wash',9)
                 CurrentMaintain["Inspdate"] = DBNull.Value;
                 CurrentMaintain["Remark"] = "";
             }
-
-
+            
             return base.ClickSave();
         }
     }
