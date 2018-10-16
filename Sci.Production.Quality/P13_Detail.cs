@@ -451,16 +451,22 @@ namespace Sci.Production.Quality
                 int no = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select isnull(max(No),0) + 1 from MockupWash_Detail WITH (NOLOCK) where ID = '{this.id}'"));
 
                 //insert MockupWash_Detail
-                sql_cmd = $@"insert into MockupWash_Detail(ID,ReportNo,No,SubmitDate,CombineStyle,Result,ReceivedDate,ReleasedDate,Technician,MR,AddDate,AddName,TestingMethod) 
-                                                                    values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Text}',@Result,{receivedDate},{releasedDate},'{this.txtTechnician.TextBox1.Text}','{this.txtMR.TextBox1.Text}',GETDATE(),@USERID,@TestingMethod);";
+                sql_cmd = $@"
+insert into MockupWash_Detail(ID,ReportNo,No,SubmitDate,CombineStyle,Result,ReceivedDate,ReleasedDate,Technician,MR,AddDate,AddName,TestingMethod,
+                                                HTPlate,HTFlim,HTCoolingTime,HTPressure,HTTime,HT2ndPressreversed,HT2ndPressnoreverse,HTPellOff) 
+values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Text}',@Result,{receivedDate},{releasedDate},'{this.txtTechnician.TextBox1.Text}','{this.txtMR.TextBox1.Text}',GETDATE(),@USERID,@TestingMethod,
+            '{this.numAPT.Value}', '{this.numAFT.Value}','{this.numCT.Value}','{this.numP.Value}','{this.numT.Value}','{this.num2Pr.Value}','{this.num2Pnr.Value}','{this.txtPOff.Text}');";
 
                 this.status = "Edit";
             }
             else if (this.status.Equals("Edit"))
             {
-                sql_cmd = $@"update MockupWash_Detail set CombineStyle = '{this.txtCombineStyle.Text}',SubmitDate = {submitDate},ReceivedDate = {receivedDate}, ReleasedDate = {releasedDate}, Result = @Result, Technician = '{this.txtTechnician.TextBox1.Text}' ,MR = '{this.txtMR.TextBox1.Text}',
-                            EditName = @UserID,EditDate = GETDATE(),TestingMethod = @TestingMethod
-                            where ReportNo = '{this.reportNo}';";
+                sql_cmd = $@"
+update MockupWash_Detail 
+    set CombineStyle = '{this.txtCombineStyle.Text}',SubmitDate = {submitDate},ReceivedDate = {receivedDate}, ReleasedDate = {releasedDate}, Result = @Result, Technician = '{this.txtTechnician.TextBox1.Text}' ,MR = '{this.txtMR.TextBox1.Text}',EditName = @UserID,EditDate = GETDATE(),TestingMethod = @TestingMethod,
+    HTPlate= '{this.numAPT.Value}', HTFlim='{this.numAFT.Value}',HTCoolingTime='{this.numCT.Value}',HTPressure='{this.numP.Value}',HTTime='{this.numT.Value}',
+    HT2ndPressreversed='{this.num2Pr.Value}',HT2ndPressnoreverse='{this.num2Pnr.Value}',HTPellOff='{this.txtPOff.Text}'
+where ReportNo = '{this.reportNo}';";
             }
 
             //取Result

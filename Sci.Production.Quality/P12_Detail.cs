@@ -83,7 +83,7 @@ namespace Sci.Production.Quality
                 this.numTestTemp.Value = MyUtility.Convert.GetDecimal(Detaildr["TestTemperature"]);
                 this.numTestTime.Value = MyUtility.Convert.GetDecimal(Detaildr["TestTime"]);
                 this.numAPT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPlate"]);
-                this.numAFT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPlate"]);
+                this.numAFT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTFlim"]);
                 this.numCT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTCoolingTime"]);
                 this.numP.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPressure"]);
                 this.numT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTTime"]);
@@ -149,9 +149,7 @@ namespace Sci.Production.Quality
             {
                 this.btnPDF.Enabled = !this.EditMode;
                 this.btnSendMR.Enabled = !this.EditMode;
-
             }
-         
         }
 
         protected override bool OnGridSetup()
@@ -373,17 +371,9 @@ namespace Sci.Production.Quality
                 int no = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select isnull(max(No),0) + 1 from MockupOven_Detail WITH (NOLOCK) where ID = '{this.id}'"));
 
                 //insert MockupOven_Detail
-                this.numAPT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPlate"]);
-                this.numAFT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPlate"]);
-                this.numCT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTCoolingTime"]);
-                this.numP.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPressure"]);
-                this.numT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTTime"]);
-                this.num2Pr.Value = MyUtility.Convert.GetDecimal(Detaildr["HT2ndPressreversed"]);
-                this.num2Pnr.Value = MyUtility.Convert.GetDecimal(Detaildr["HT2ndPressnoreverse"]);
-                this.txtPOff.Text = Detaildr["HTPellOff"].ToString();
                 sql_cmd = $@"
 insert into MockupOven_Detail(ID,ReportNo,No,SubmitDate,CombineStyle,Result,ReceivedDate,ReleasedDate,Technician,MR,AddDate,AddName,TestTemperature,TestTime,
-                                            HTPlate,HTFlim,HTTime,HTPressure,HTPellOff,HT2ndPressnoreverse,HT2ndPressreversed,HTCoolingTime) 
+                                            HTPlate,HTFlim,HTCoolingTime,HTPressure,HTTime,HT2ndPressreversed,HT2ndPressnoreverse,HTPellOff) 
 values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Text}',@Result,{receivedDate},{releasedDate},'{this.txtTechnician.TextBox1.Text}','{this.txtMR.TextBox1.Text}',GETDATE(),@USERID,@TestTemperature,@TestTime,
             '{this.numAPT.Value}', '{this.numAFT.Value}','{this.numCT.Value}','{this.numP.Value}','{this.numT.Value}','{this.num2Pr.Value}','{this.num2Pnr.Value}','{this.txtPOff.Text}');";
 
@@ -391,9 +381,12 @@ values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Te
             }
             else if (this.status.Equals("Edit"))
             {
-                sql_cmd = $@"update MockupOven_Detail set CombineStyle = '{this.txtCombineStyle.Text}',SubmitDate = {submitDate},ReceivedDate = {receivedDate}, ReleasedDate = {releasedDate}, Result = @Result, Technician = '{this.txtTechnician.TextBox1.Text}' ,MR = '{this.txtMR.TextBox1.Text}',
-                            EditName = @UserID,EditDate = GETDATE(),TestTemperature = @TestTemperature,TestTime = @TestTime
-                            where ReportNo = '{this.reportNo}';";
+                sql_cmd = $@"
+update MockupOven_Detail 
+    set CombineStyle = '{this.txtCombineStyle.Text}',SubmitDate = {submitDate},ReceivedDate = {receivedDate}, ReleasedDate = {releasedDate}, Result = @Result, Technician = '{this.txtTechnician.TextBox1.Text}' ,MR = '{this.txtMR.TextBox1.Text}',EditName = @UserID,EditDate = GETDATE(),TestTemperature = @TestTemperature,TestTime = @TestTime,
+    HTPlate= '{this.numAPT.Value}', HTFlim='{this.numAFT.Value}',HTCoolingTime='{this.numCT.Value}',HTPressure='{this.numP.Value}',HTTime='{this.numT.Value}',
+    HT2ndPressreversed='{this.num2Pr.Value}',HT2ndPressnoreverse='{this.num2Pnr.Value}',HTPellOff='{this.txtPOff.Text}'
+where ReportNo = '{this.reportNo}';";
             }
 
             //取Result
