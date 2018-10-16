@@ -373,8 +373,19 @@ namespace Sci.Production.Quality
                 int no = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select isnull(max(No),0) + 1 from MockupOven_Detail WITH (NOLOCK) where ID = '{this.id}'"));
 
                 //insert MockupOven_Detail
-                sql_cmd = $@"insert into MockupOven_Detail(ID,ReportNo,No,SubmitDate,CombineStyle,Result,ReceivedDate,ReleasedDate,Technician,MR,AddDate,AddName,TestTemperature,TestTime) 
-                                                                    values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Text}',@Result,{receivedDate},{releasedDate},'{this.txtTechnician.TextBox1.Text}','{this.txtMR.TextBox1.Text}',GETDATE(),@USERID,@TestTemperature,@TestTime);";
+                this.numAPT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPlate"]);
+                this.numAFT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPlate"]);
+                this.numCT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTCoolingTime"]);
+                this.numP.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPressure"]);
+                this.numT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTTime"]);
+                this.num2Pr.Value = MyUtility.Convert.GetDecimal(Detaildr["HT2ndPressreversed"]);
+                this.num2Pnr.Value = MyUtility.Convert.GetDecimal(Detaildr["HT2ndPressnoreverse"]);
+                this.txtPOff.Text = Detaildr["HTPellOff"].ToString();
+                sql_cmd = $@"
+insert into MockupOven_Detail(ID,ReportNo,No,SubmitDate,CombineStyle,Result,ReceivedDate,ReleasedDate,Technician,MR,AddDate,AddName,TestTemperature,TestTime,
+                                            HTPlate,HTFlim,HTTime,HTPressure,HTPellOff,HT2ndPressnoreverse,HT2ndPressreversed,HTCoolingTime) 
+values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Text}',@Result,{receivedDate},{releasedDate},'{this.txtTechnician.TextBox1.Text}','{this.txtMR.TextBox1.Text}',GETDATE(),@USERID,@TestTemperature,@TestTime,
+            '{this.numAPT.Value}', '{this.numAFT.Value}','{this.numCT.Value}','{this.numP.Value}','{this.numT.Value}','{this.num2Pr.Value}','{this.num2Pnr.Value}','{this.txtPOff.Text}');";
 
                 this.status = "Edit";
             }

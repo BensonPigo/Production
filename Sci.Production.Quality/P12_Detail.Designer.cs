@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panelup = new Sci.Win.UI.Panel();
+            this.label26 = new Sci.Win.UI.Label();
             this.numCT = new Sci.Win.UI.NumericBox();
             this.num2Pr = new Sci.Win.UI.NumericBox();
             this.num2Pnr = new Sci.Win.UI.NumericBox();
@@ -79,7 +80,6 @@
             this.label1 = new Sci.Win.UI.Label();
             this.btnPDF = new Sci.Win.UI.Button();
             this.btnSendMR = new Sci.Win.UI.Button();
-            this.label26 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -171,6 +171,18 @@
             this.panelup.Name = "panelup";
             this.panelup.Size = new System.Drawing.Size(995, 387);
             this.panelup.TabIndex = 98;
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label26.Location = new System.Drawing.Point(108, 347);
+            this.label26.MaximumSize = new System.Drawing.Size(8, 11);
+            this.label26.MinimumSize = new System.Drawing.Size(8, 11);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(8, 11);
+            this.label26.TabIndex = 53;
+            this.label26.Text = "2";
             // 
             // numCT
             // 
@@ -696,18 +708,6 @@
             this.btnSendMR.Text = "Send to MR";
             this.btnSendMR.UseVisualStyleBackColor = true;
             this.btnSendMR.Click += new System.EventHandler(this.btnSendMR_Click);
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.Location = new System.Drawing.Point(108, 347);
-            this.label26.MaximumSize = new System.Drawing.Size(8, 11);
-            this.label26.MinimumSize = new System.Drawing.Size(8, 11);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(8, 11);
-            this.label26.TabIndex = 53;
-            this.label26.Text = "2";
             // 
             // P12_Detail
             // 
