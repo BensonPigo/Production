@@ -133,7 +133,7 @@ namespace Sci.Production.Subcon
                 this.btnAppend.Visible = true;
                 this.btnDelete.Visible = true;
                 this.btnClose.Text = "UnDo";
-                this.BtnEdit.Text = "Edit";
+                this.BtnEdit.Text = "Save";
                 this.grid1.IsEditingReadOnly = false;
             }
             else
@@ -141,7 +141,7 @@ namespace Sci.Production.Subcon
                 this.btnAppend.Visible = false;
                 this.btnDelete.Visible = false;
                 this.btnClose.Text = "Close";
-                this.BtnEdit.Text = "Save";
+                this.BtnEdit.Text = "Edit";
                 this.grid1.IsEditingReadOnly = true;
             }
         }
