@@ -33,8 +33,6 @@
             this.displayCode = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
             this.checkJunk = new Sci.Win.UI.CheckBox();
-            this.displayMasterGroupID = new Sci.Win.UI.DisplayBox();
-            this.labelMasterGroupID = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,8 +47,6 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.displayMasterGroupID);
-            this.detailcont.Controls.Add(this.labelMasterGroupID);
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displayDescription);
             this.detailcont.Controls.Add(this.displayCode);
@@ -107,7 +103,7 @@
             this.displayCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayCode.Location = new System.Drawing.Point(140, 42);
             this.displayCode.Name = "displayCode";
-            this.displayCode.Size = new System.Drawing.Size(30, 23);
+            this.displayCode.Size = new System.Drawing.Size(50, 23);
             this.displayCode.TabIndex = 0;
             // 
             // displayDescription
@@ -131,24 +127,6 @@
             this.checkJunk.TabIndex = 2;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
-            // 
-            // displayMasterGroupID
-            // 
-            this.displayMasterGroupID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayMasterGroupID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MasterGroupID", true));
-            this.displayMasterGroupID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMasterGroupID.Location = new System.Drawing.Point(140, 134);
-            this.displayMasterGroupID.Name = "displayMasterGroupID";
-            this.displayMasterGroupID.Size = new System.Drawing.Size(106, 23);
-            this.displayMasterGroupID.TabIndex = 3;
-            // 
-            // labelMasterGroupID
-            // 
-            this.labelMasterGroupID.Location = new System.Drawing.Point(36, 134);
-            this.labelMasterGroupID.Name = "labelMasterGroupID";
-            this.labelMasterGroupID.Size = new System.Drawing.Size(101, 23);
-            this.labelMasterGroupID.TabIndex = 4;
-            this.labelMasterGroupID.Text = "Master Group";
             // 
             // B06
             // 
@@ -187,7 +165,5 @@
         private Win.UI.DisplayBox displayCode;
         private Win.UI.Label labelDescription;
         private Win.UI.Label labelCode;
-        private Win.UI.DisplayBox displayMasterGroupID;
-        private Win.UI.Label labelMasterGroupID;
     }
 }
