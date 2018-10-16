@@ -373,14 +373,14 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 .Text("Brand", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SewingLine", header: "Sewing Line", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: col_SP)
-                .Text("Style", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("Style", header: "Style", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
-                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: col_Seq)
-                .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(6), iseditingreadonly: false, settings: col_ShipMode)
-                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                .Numeric("TotalCrtns", header: "Total Crtns", width: Widths.AnsiChars(8), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
-                .Text("AccLacking", header: "Acc Lacking", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_acc)
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
+                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: col_Seq)
+                .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: col_ShipMode)
+                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(11), iseditingreadonly: true)
+                .Numeric("TotalCrtns", header: "Total Crtns", width: Widths.AnsiChars(7), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
+                .Text("AccLacking", header: "Acc Lacking", width: Widths.AnsiChars(11), iseditingreadonly: false, settings: col_acc)
                 ;
             #endregion
             this.detailgrid.Columns["OrderID"].DefaultCellStyle.BackColor = Color.Pink;
@@ -405,11 +405,11 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             }
 
             #region Confirmed name取值
-            this.txtAddName.Text = CurrentMaintain["AddName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{CurrentMaintain["AddName"]}'") + ((DateTime)CurrentMaintain["AddDate"]).ToString("yyyy/MM/dd hh:mm:ss");
-            this.txtSupApv.Text = CurrentMaintain["SupApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{CurrentMaintain["SupApvName"]}'") + ((DateTime)CurrentMaintain["SupApvDate"]).ToString("yyyy/MM/dd hh:mm:ss");
-            this.txtPPDApv.Text = CurrentMaintain["PPDApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{CurrentMaintain["PPDApvName"]}'") + ((DateTime)CurrentMaintain["PPDApvDate"]).ToString("yyyy/MM/dd hh:mm:ss");
-            this.txtProdApv.Text = CurrentMaintain["ProdApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{CurrentMaintain["ProdApvName"]}'") + ((DateTime)CurrentMaintain["ProdApvDate"]).ToString("yyyy/MM/dd hh:mm:ss");
-
+            this.txtAddName.Text = this.CurrentMaintain["AddName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["AddName"]}'") + " " + (MyUtility.Check.Empty(this.CurrentMaintain["AddDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["AddDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
+            this.txtSupApv.Text = this.CurrentMaintain["SupApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["SupApvName"]}'") + " " + (MyUtility.Check.Empty(this.CurrentMaintain["SupApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["SupApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
+            this.txtPPDApv.Text = this.CurrentMaintain["PPDApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["PPDApvName"]}'") + " " + (MyUtility.Check.Empty(this.CurrentMaintain["PPDApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["PPDApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
+            this.txtProdApv.Text = this.CurrentMaintain["ProdApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["ProdApvName"]}'")
+                + " " + (MyUtility.Check.Empty(this.CurrentMaintain["ProdApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["ProdApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
             #endregion
         }
 
@@ -538,7 +538,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
         {
             #region 存檔檢查不可為空
 
-            #region 表頭檢查
+            // 表頭檢查
             if (MyUtility.Check.Empty(this.CurrentMaintain["cDate"]))
             {
                 MyUtility.Msg.WarningBox("<Issue Date> cannot be empty!");
@@ -550,11 +550,15 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 MyUtility.Msg.WarningBox("<Handle> cannot be empty!");
                 return false;
             }
-            #endregion
 
-            #region 表身檢查
-
-            #endregion
+            // 表身檢查
+            foreach (DataRow row in DetailDatas)
+            {
+                if (MyUtility.Check.Empty(row["OrderID"]))
+                {
+                    row.Delete();
+                }
+            }
 
             #endregion
 
