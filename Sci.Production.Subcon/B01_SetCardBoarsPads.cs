@@ -133,6 +133,7 @@ namespace Sci.Production.Subcon
                 this.btnAppend.Visible = true;
                 this.btnDelete.Visible = true;
                 this.btnClose.Text = "UnDo";
+                this.BtnEdit.Text = "Edit";
                 this.grid1.IsEditingReadOnly = false;
             }
             else
@@ -140,6 +141,7 @@ namespace Sci.Production.Subcon
                 this.btnAppend.Visible = false;
                 this.btnDelete.Visible = false;
                 this.btnClose.Text = "Close";
+                this.BtnEdit.Text = "Save";
                 this.grid1.IsEditingReadOnly = true;
             }
         }
@@ -213,12 +215,10 @@ when not matched by source then
                     return;
                 }
                 Query();
-                this.BtnEdit.Text = "Edit";
                 this.EditMode = false;
             }
             else
             {
-                this.BtnEdit.Text = "Save";
                 this.EditMode = true;
             }
         }
