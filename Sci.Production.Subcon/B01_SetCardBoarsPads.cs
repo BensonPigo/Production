@@ -228,6 +228,7 @@ when not matched by source then
             if (this.EditMode)
             {
                 this.EditMode = false;
+                Query();
             }
             else
             {
