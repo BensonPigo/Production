@@ -158,6 +158,12 @@ OriNO
 into #tSeqAssign
 from tSeqAssignTmp
 
+--如果原本tSeqAssign已傳至SunRise將guid更新回本次要傳的資料中
+select * into #tSeqAssignSunRise from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign
+update t set t.guid = s.guid
+from #tSeqAssign t
+inner join #tSeqAssignSunRise s on t.RouteName = s.RouteName collate SQL_Latin1_General_CP1_CI_AS and t.SeqNo = s.SeqNo
+
 --tStAssign(加工方案-工作站安排)
 select 
 [guid] = NEWID(),
@@ -337,8 +343,12 @@ insert into [SUNRISE].SUNRISEEXCH.dbo.tStAssign(guid,SeqAssign_guid,StationID,St
 select S.guid,S.SeqAssign_guid,S.StationID,S.StFunc from #tStAssign S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tStAssign T where T.SeqAssign_guid = S.SeqAssign_guid and T.StationID = S.StationID )
 
+delete s
+from [SUNRISE].SUNRISEEXCH.dbo.tStAssign s
+where exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid) and
+not exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid and StationID = s.StationID)
 
-drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo,#tRoute,#tRouteLine,#tSeqAssign,#tStAssign
+drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo,#tRoute,#tRouteLine,#tSeqAssign,#tStAssign,#tSeqAssignSunRise
 
 -- mail 通知信
 declare @subject nvarchar(255) = concat('SUNRISE Daily transfer-',Format(getdate(),'yyyy/MM/dd'),'-',@RgCode)
