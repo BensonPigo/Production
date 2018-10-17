@@ -203,9 +203,12 @@ when matched and t.qty <> s.qty then update set
 	EditName = '{Sci.Env.User.UserID}'
 when not matched by target then
     insert(Refno,Buyer,PadRefno,Qty,AddDate,AddName)
-    values(s.Refno,s.Buyer,s.PadRefno,s.Qty,getdate(),'{Sci.Env.User.UserID}')
-when not matched by source then
-    delete;
+    values(s.Refno,s.Buyer,s.PadRefno,s.Qty,getdate(),'{Sci.Env.User.UserID}');
+
+delete lc
+from LocalItem_CartonCardboardPad lc
+where refno = '{this.masterrow["refno"]}'
+and not exists(select 1 from #tmp t where t.Refno = '{this.masterrow["refno"]}' and t.Buyer = lc.Buyer and t.PadRefno = lc.PadRefno)
 ";
                 DataTable dt;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, string.Empty, mergecmd, out dt);
