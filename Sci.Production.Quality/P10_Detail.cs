@@ -28,12 +28,139 @@ namespace Sci.Production.Quality
 
         public P10_Detail(bool editmode, DataRow masterrow, DataRow deatilrow)
         {
+            this.EditMode = false;
             InitializeComponent();
             this.MasterRow = masterrow;
             this.Deatilrow = deatilrow;
             this.EditMode = editmode;
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            DataGridViewGeneratorNumericColumnSettings BeforeWash = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings AfterWash1Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings AfterWash1Cell2 = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings AfterWash1Cell3 = new DataGridViewGeneratorNumericColumnSettings();
+
+            #region 避免除數為0的檢查
+            BeforeWash.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                DataRow dr = gridShrinkage.GetDataRow(e.RowIndex);
+                bool IsAllEmpty = (MyUtility.Check.Empty(dr["AfterWash1"]) && MyUtility.Check.Empty(dr["AfterWash2"]) && MyUtility.Check.Empty(dr["AfterWash3"]));
+
+                if (MyUtility.Check.Empty(e.FormattedValue) && !IsAllEmpty)
+                {
+                    MyUtility.Msg.WarningBox("<BeforeWash> can not be empty or 0 !!");
+                    dr["BeforeWash"] = dr["BeforeWash"];
+                }
+                else if(MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["BeforeWash"] = dr["BeforeWash"];
+                }   
+                else
+                {
+                    Double BeforeWashNum = Convert.ToDouble(e.FormattedValue);
+
+                    dr["BeforeWash"] = e.FormattedValue;
+
+                    if (!MyUtility.Check.Empty(dr["AfterWash1"]))
+                    {
+                        Double AfterWash1Num = Convert.ToDouble(dr["AfterWash1"]);
+                        dr["Shrinkage1"] = AfterWash1Num / BeforeWashNum * 100;
+                    }
+                    if (!MyUtility.Check.Empty(dr["AfterWash2"]))
+                    {
+                        Double AfterWash2Num = Convert.ToDouble(dr["AfterWash2"]);
+                        dr["Shrinkage2"] = AfterWash2Num / BeforeWashNum * 100;
+                    }
+                    if (!MyUtility.Check.Empty(dr["AfterWash3"]))
+                    {
+                        Double AfterWash3Num = Convert.ToDouble(dr["AfterWash3"]);
+                        dr["Shrinkage3"] = AfterWash3Num / BeforeWashNum * 100;
+                    }
+                    
+                }
+            };
+
+            AfterWash1Cell.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return        
+                DataRow dr = gridShrinkage.GetDataRow(e.RowIndex);
+
+                if (MyUtility.Check.Empty(dr["BeforeWash"]))
+                {
+                    MyUtility.Msg.WarningBox("<BeforeWash> can not be empty or 0 !!");
+                    dr["AfterWash1"] = dr["AfterWash1"];
+                }
+                else
+                {
+                    Double BeforeWashNum = Convert.ToDouble(dr["BeforeWash"]);
+                    Double AfterWash1Num = Convert.ToDouble(e.FormattedValue);
+                    dr["AfterWash1"] = e.FormattedValue;
+                   dr["Shrinkage1"] = AfterWash1Num / BeforeWashNum * 100;
+                }
+            };
+
+            AfterWash1Cell2.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return        
+                DataRow dr = gridShrinkage.GetDataRow(e.RowIndex);
+
+                if (MyUtility.Check.Empty(dr["BeforeWash"]))
+                {
+                    MyUtility.Msg.WarningBox("<BeforeWash> can not be empty or 0 !!");
+                    dr["AfterWash2"] = dr["AfterWash2"];
+                }
+                else
+                {
+                    Double BeforeWashNum = Convert.ToDouble(dr["BeforeWash"]);
+                    Double AfterWash2Num = Convert.ToDouble(e.FormattedValue);
+                    dr["AfterWash2"] = e.FormattedValue;
+                    dr["Shrinkage2"] = AfterWash2Num / BeforeWashNum * 100;
+                }
+            };
+
+            AfterWash1Cell3.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+                if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return        
+                DataRow dr = gridShrinkage.GetDataRow(e.RowIndex);
+
+                if (MyUtility.Check.Empty(dr["BeforeWash"]))
+                {
+                    MyUtility.Msg.WarningBox("<BeforeWash> can not be empty or 0 !!");
+                    dr["AfterWash3"] = dr["AfterWash3"];
+                }
+                else
+                {
+                    Double BeforeWashNum = Convert.ToDouble(dr["BeforeWash"]);
+                    Double AfterWash3Num = Convert.ToDouble(e.FormattedValue);
+                    dr["AfterWash3"] = e.FormattedValue;
+                    dr["Shrinkage3"] = AfterWash3Num / BeforeWashNum * 100;
+                }
+            };
+            #endregion
+
+            Helper.Controls.Grid.Generator(this.gridShrinkage)
+            .Text("Location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("Type", header: "Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2, settings: BeforeWash)
+            .Numeric("SizeSpec", header: "Size Spec Meas.", width: Widths.AnsiChars(8), decimal_places: 2)
+            .Numeric("AfterWash1", header: "After Wash 1", width: Widths.AnsiChars(6), decimal_places: 2, settings: AfterWash1Cell)
+            .Numeric("Shrinkage1", header: "Shrinkage 1(%)", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999, iseditable: false)
+            .Numeric("AfterWash2", header: "After Wash 2", width: Widths.AnsiChars(6), decimal_places: 2, settings: AfterWash1Cell2)
+            .Numeric("Shrinkage2", header: "Shrinkage 2(%)", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999, iseditable: false)
+            .Numeric("AfterWash3", header: "After Wash 3", width: Widths.AnsiChars(6), decimal_places: 2, settings: AfterWash1Cell3)
+            .Numeric("Shrinkage3", header: "Shrinkage 3(%)", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999, iseditable: false);
+        }
         private void P10_Detail_Load(object sender, EventArgs e)
         {
             btnenable();
@@ -42,17 +169,22 @@ namespace Sci.Production.Quality
             comboMachineModel.SelectedIndex = 0;
             comboNeck.SelectedIndex = 0;
 
-            Helper.Controls.Grid.Generator(this.gridShrinkage)
-            .Text("Location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Text("Type", header: "Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
-            .Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2)
-            .Numeric("SizeSpec", header: "Size Spec Meas.", width: Widths.AnsiChars(8), decimal_places: 2)
-            .Numeric("AfterWash1", header: "After Wash 1", width: Widths.AnsiChars(6), decimal_places: 2)
-            .Numeric("Shrinkage1", header: "Shrinkage 1", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999)
-            .Numeric("AfterWash2", header: "After Wash 2", width: Widths.AnsiChars(6), decimal_places: 2)
-            .Numeric("Shrinkage2", header: "Shrinkage 2", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999)
-            .Numeric("AfterWash3", header: "After Wash 3", width: Widths.AnsiChars(6), decimal_places: 2)
-            .Numeric("Shrinkage3", header: "Shrinkage 3", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999);
+            //DataGridViewGeneratorNumericColumnSettings AfterWash1Cell = new DataGridViewGeneratorNumericColumnSettings();
+            //DataGridViewGeneratorNumericColumnSettings AfterWash1Cel2 = new DataGridViewGeneratorNumericColumnSettings();
+            //DataGridViewGeneratorNumericColumnSettings AfterWash1Cel3 = new DataGridViewGeneratorNumericColumnSettings();
+
+
+            //Helper.Controls.Grid.Generator(this.gridShrinkage)
+            //.Text("Location", header: "Location", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            //.Text("Type", header: "Type", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            //.Numeric("BeforeWash", header: "Before Wash", width: Widths.AnsiChars(6), decimal_places: 2)
+            //.Numeric("SizeSpec", header: "Size Spec Meas.", width: Widths.AnsiChars(8), decimal_places: 2)
+            //.Numeric("AfterWash1", header: "After Wash 1", width: Widths.AnsiChars(6), decimal_places: 2 ,settings: AfterWash1Cell)
+            //.Numeric("Shrinkage1", header: "Shrinkage 1", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999,iseditable:false)
+            //.Numeric("AfterWash2", header: "After Wash 2", width: Widths.AnsiChars(6), decimal_places: 2, settings: AfterWash1Cel2)
+            //.Numeric("Shrinkage2", header: "Shrinkage 2", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999, iseditable: false)
+            //.Numeric("AfterWash3", header: "After Wash 3", width: Widths.AnsiChars(6), decimal_places: 2, settings: AfterWash1Cel3)
+            //.Numeric("Shrinkage3", header: "Shrinkage 3", width: Widths.AnsiChars(8), decimal_places: 2, minimum: -999999999, iseditable: false);
 
             //Result 選單
             Dictionary<string, string> ResultPF = new Dictionary<string, string>();
@@ -105,6 +237,12 @@ namespace Sci.Production.Quality
             rdbtnLine.Enabled = this.EditMode;
             rdbtnTumble.Enabled = this.EditMode;
             rdbtnHand.Enabled = this.EditMode;
+
+
+            numTwisTingTop.ReadOnly = true;
+            numTwisTingBottom.ReadOnly = true;
+            numTwisTingInner.ReadOnly = true;
+            numTwisTingOuter.ReadOnly = true; 
         }
 
         #region tab載入
@@ -164,9 +302,14 @@ namespace Sci.Production.Quality
                                when Location='I' then 'INNER'
                                when Location='O' then 'OUTER'
                                when Location='B' then 'BOTTOM' end
+       --排序專用
+      ,[LocationOrder]=case when Location='T' then 1
+                               when Location='I' then 2
+                               when Location='O' then 3
+                               when Location='B' then 4 end
       ,[Type]      ,[BeforeWash]      ,[SizeSpec]      ,[AfterWash1]      ,[Shrinkage1]      ,[AfterWash2]      ,[Shrinkage2]      ,[AfterWash3]      ,[Shrinkage3]
 from[SampleGarmentTest_Detail_Shrinkage] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]}
-order by Seq,Location desc";
+order by LocationOrder ,seq";
 
             DBProxy.Current.Select(null, sqlShrinkage, out dtShrinkage);
             listControlBindingSource1.DataSource = null;
@@ -197,21 +340,25 @@ order by Seq,Location desc";
             numTopS1.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S1 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='TOP'"));
             numTopS2.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S2 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='TOP'"));
             numTopL.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(L) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='TOP'"));
-            numTwisTingTop.Value = numTopL.Value.Empty() ? 0 : (((numTopS1.Value + numTopS2.Value) / 2) / numTopL.Value) * 100;
+            //numTwisTingTop.Value = numTopL.Value.Empty() ? 0 : (((numTopS1.Value + numTopS2.Value) / 2) / numTopL.Value) * 100;
+            numTwisTingTop.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(Twisting) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='TOP'"));
 
             numInnerS1.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S1 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='INNER'"));
             numInnerS2.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S2 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='INNER'"));
             numInnerL.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(L) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='INNER'"));
-            numTwisTingInner.Value = numInnerL.Value.Empty() ? 0 : (((numInnerS1.Value + numInnerS2.Value) / 2) / numInnerL.Value) * 100;
+            //numTwisTingInner.Value = numInnerL.Value.Empty() ? 0 : (((numInnerS1.Value + numInnerS2.Value) / 2) / numInnerL.Value) * 100;
+            numTwisTingInner.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(Twisting) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='INNER'"));
 
             numOuterS1.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S1 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='OUTER'"));
             numOuterS2.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S2 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='OUTER'"));
             numOuterL.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(L) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='OUTER'"));
-            numTwisTingOuter.Value = numOuterL.Value.Empty() ? 0 : (((numOuterS1.Value + numOuterS2.Value) / 2) / numOuterL.Value) * 100;
+            //numTwisTingOuter.Value = numOuterL.Value.Empty() ? 0 : (((numOuterS1.Value + numOuterS2.Value) / 2) / numOuterL.Value) * 100;
+            numTwisTingOuter.Value  = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(Twisting) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='OUTER'"));
 
             numBottomS1.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select S1 from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='BOTTOM'"));
             numBottomL.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select L   from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='BOTTOM'"));
-            numTwisTingBottom.Value = numBottomL.Value.Empty() ? 0 : numBottomS1.Value / numBottomL.Value * 100;
+            //numTwisTingBottom.Value = numBottomL.Value.Empty() ? 0 : numBottomS1.Value / numBottomL.Value * 100;
+            numTwisTingBottom.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"select sum(Twisting) from[SampleGarmentTest_Detail_Twisting] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} and Location ='BOTTOM'"));
         }
 
 
@@ -286,6 +433,11 @@ order by Seq,Location desc";
 
                 btnEncode.Enabled = false;
                 btnAmend.Enabled = false;
+
+                numTwisTingTop.ReadOnly = false;
+                numTwisTingBottom.ReadOnly = false;
+                numTwisTingInner.ReadOnly = false;
+                numTwisTingOuter.ReadOnly = false;
             }
 
             this.EditMode = !this.EditMode;

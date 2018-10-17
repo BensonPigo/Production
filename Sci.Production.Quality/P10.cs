@@ -19,6 +19,7 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
+        private int ReportNoCount = 0;
         ToolStripMenuItem edit;
 
         public P10(ToolStripMenuItem menuitem)
@@ -292,13 +293,15 @@ where sd.id='{0}' order by sd.No
                 MaxNo = Convert.ToInt32(dt.Compute("Max(No)", ""));
                 CurrentDetailData["No"] = MaxNo + 1;
 
+         
                 string tmpId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
                 string head = tmpId.Substring(0, 9);
-                int seq = MaxNo + 1;
+                int seq= Convert.ToInt32(tmpId.Substring(9,4));
 
-                tmpId = head + string.Format("{0:0000}", seq);
+               tmpId = head + string.Format("{0:0000}", seq+ ReportNoCount);
 
                 CurrentDetailData["ReportNo"] = tmpId;
+                ReportNoCount++;
 
             }
 
@@ -365,6 +368,8 @@ where sd.id='{0}' order by sd.No
                 CurrentMaintain["InspDate"] = DBNull.Value;
                 CurrentMaintain["Result"] = string.Empty;
             }
+            ReportNoCount = 0;
+
             return base.ClickSaveBefore();
         }
 
@@ -381,7 +386,8 @@ where sd.id='{0}' order by sd.No
                     if (!MyUtility.Check.Empty(dr["senddate", DataRowVersion.Original])) return new DualResult(false, "SendDate is existed, can not delete.", "Warning");
 
                     List<SqlParameter> spamDet = new List<SqlParameter>();
-                    update_cmd = "Delete From SampleGarmentTest_Detail WITH (NOLOCK) Where id =@id and no=@no";
+                    update_cmd = @"
+                        Delete From SampleGarmentTest_Detail WITH (NOLOCK) Where id =@id and no=@no;";
                     spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
                     spamDet.Add(new SqlParameter("@no", dr["NO", DataRowVersion.Original]));
                     upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
@@ -522,6 +528,12 @@ values (@ID,@NO,'Appearance of garment after wash',9)
             }
             
             return base.ClickSave();
+        }
+
+        protected override void OnEditModeChanged()
+        {
+            ReportNoCount = 0;
+            base.OnEditModeChanged();
         }
     }
 }

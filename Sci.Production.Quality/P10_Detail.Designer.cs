@@ -155,7 +155,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1067, 449);
+            this.tabControl1.Size = new System.Drawing.Size(1142, 449);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -553,10 +553,10 @@
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.panel9);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1059, 423);
+            this.tabPage2.Size = new System.Drawing.Size(1134, 420);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Shrinkage";
             // 
@@ -567,7 +567,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(1053, 417);
+            this.panel9.Size = new System.Drawing.Size(1128, 414);
             this.panel9.TabIndex = 62;
             // 
             // gridShrinkage
@@ -600,7 +600,7 @@
             this.gridShrinkage.RowTemplate.Height = 24;
             this.gridShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridShrinkage.ShowCellToolTips = false;
-            this.gridShrinkage.Size = new System.Drawing.Size(1053, 274);
+            this.gridShrinkage.Size = new System.Drawing.Size(1128, 271);
             this.gridShrinkage.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -610,9 +610,9 @@
             this.flowLayoutPanel1.Controls.Add(this.panel6);
             this.flowLayoutPanel1.Controls.Add(this.panel5);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 274);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 271);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1053, 143);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1128, 143);
             this.flowLayoutPanel1.TabIndex = 61;
             // 
             // panel4
@@ -629,7 +629,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(0, 25);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1053, 32);
+            this.panel4.Size = new System.Drawing.Size(1128, 32);
             this.panel4.TabIndex = 57;
             // 
             // label20
@@ -776,7 +776,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel7.Location = new System.Drawing.Point(0, 57);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(1053, 26);
+            this.panel7.Size = new System.Drawing.Size(1128, 26);
             this.panel7.TabIndex = 60;
             // 
             // label21
@@ -896,7 +896,7 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel6.Location = new System.Drawing.Point(0, 83);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1053, 30);
+            this.panel6.Size = new System.Drawing.Size(1128, 30);
             this.panel6.TabIndex = 59;
             // 
             // label38
@@ -1055,7 +1055,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel5.Location = new System.Drawing.Point(0, 113);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1053, 30);
+            this.panel5.Size = new System.Drawing.Size(1128, 30);
             this.panel5.TabIndex = 58;
             // 
             // label33
@@ -1193,10 +1193,10 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.panel8);
-            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1059, 420);
+            this.tabPage3.Size = new System.Drawing.Size(1059, 423);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "Appearance";
             // 
@@ -1206,7 +1206,7 @@
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel8.Location = new System.Drawing.Point(3, 3);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(1053, 414);
+            this.panel8.Size = new System.Drawing.Size(1053, 417);
             this.panel8.TabIndex = 0;
             // 
             // gridAppearance
@@ -1239,7 +1239,7 @@
             this.gridAppearance.RowTemplate.Height = 24;
             this.gridAppearance.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAppearance.ShowCellToolTips = false;
-            this.gridAppearance.Size = new System.Drawing.Size(1053, 414);
+            this.gridAppearance.Size = new System.Drawing.Size(1053, 417);
             this.gridAppearance.TabIndex = 1;
             this.gridAppearance.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.gridAppearance_CellBeginEdit);
             // 
@@ -1258,13 +1258,13 @@
             this.radioPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.radioPanel1.Location = new System.Drawing.Point(10, 0);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(1077, 36);
+            this.radioPanel1.Size = new System.Drawing.Size(1152, 36);
             this.radioPanel1.TabIndex = 8;
             // 
             // btnAmend
             // 
             this.btnAmend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAmend.Location = new System.Drawing.Point(894, 3);
+            this.btnAmend.Location = new System.Drawing.Point(969, 3);
             this.btnAmend.Name = "btnAmend";
             this.btnAmend.Size = new System.Drawing.Size(80, 30);
             this.btnAmend.TabIndex = 4;
@@ -1275,7 +1275,7 @@
             // btnEncode
             // 
             this.btnEncode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEncode.Location = new System.Drawing.Point(808, 3);
+            this.btnEncode.Location = new System.Drawing.Point(883, 3);
             this.btnEncode.Name = "btnEncode";
             this.btnEncode.Size = new System.Drawing.Size(80, 30);
             this.btnEncode.TabIndex = 3;
@@ -1286,7 +1286,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(1077, 36);
+            this.panel2.Location = new System.Drawing.Point(1152, 36);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(10, 484);
             this.panel2.TabIndex = 9;
@@ -1299,13 +1299,13 @@
             this.radioPanel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.radioPanel2.Location = new System.Drawing.Point(10, 485);
             this.radioPanel2.Name = "radioPanel2";
-            this.radioPanel2.Size = new System.Drawing.Size(1067, 35);
+            this.radioPanel2.Size = new System.Drawing.Size(1142, 35);
             this.radioPanel2.TabIndex = 9;
             // 
             // btnPDF
             // 
             this.btnPDF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPDF.Location = new System.Drawing.Point(808, 0);
+            this.btnPDF.Location = new System.Drawing.Point(883, 0);
             this.btnPDF.Name = "btnPDF";
             this.btnPDF.Size = new System.Drawing.Size(80, 30);
             this.btnPDF.TabIndex = 8;
@@ -1316,7 +1316,7 @@
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.Location = new System.Drawing.Point(894, 0);
+            this.btnEdit.Location = new System.Drawing.Point(969, 0);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(80, 30);
             this.btnEdit.TabIndex = 7;
@@ -1327,7 +1327,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(980, 0);
+            this.btnClose.Location = new System.Drawing.Point(1055, 0);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 6;
@@ -1341,14 +1341,14 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(10, 36);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1067, 449);
+            this.panel3.Size = new System.Drawing.Size(1142, 449);
             this.panel3.TabIndex = 10;
             // 
             // P10_Detail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1087, 520);
+            this.ClientSize = new System.Drawing.Size(1162, 520);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.radioPanel2);
             this.Controls.Add(this.panel2);
