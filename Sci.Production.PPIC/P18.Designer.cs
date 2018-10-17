@@ -39,7 +39,7 @@
             this.labRemark = new Sci.Win.UI.Label();
             this.labStatus = new Sci.Win.UI.Label();
             this.btnSendEMail = new Sci.Win.UI.Button();
-            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.txtRemark = new Sci.Win.UI.TextBox();
             this.labPPDMgr = new Sci.Win.UI.Label();
             this.labSupApv = new Sci.Win.UI.Label();
             this.labProdMgrApv = new Sci.Win.UI.Label();
@@ -64,7 +64,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.textBox1);
+            this.masterpanel.Controls.Add(this.txtRemark);
             this.masterpanel.Controls.Add(this.btnSendEMail);
             this.masterpanel.Controls.Add(this.labStatus);
             this.masterpanel.Controls.Add(this.labRemark);
@@ -89,7 +89,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labRemark, 0);
             this.masterpanel.Controls.SetChildIndex(this.labStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSendEMail, 0);
-            this.masterpanel.Controls.SetChildIndex(this.textBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtRemark, 0);
             // 
             // detailpanel
             // 
@@ -99,7 +99,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(864, 48);
+            this.gridicon.Location = new System.Drawing.Point(905, 48);
             // 
             // refresh
             // 
@@ -273,14 +273,15 @@
             this.btnSendEMail.UseVisualStyleBackColor = true;
             this.btnSendEMail.Click += new System.EventHandler(this.btnSendEMail_Click);
             // 
-            // textBox1
+            // txtRemark
             // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(402, 52);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(326, 23);
-            this.textBox1.TabIndex = 46;
+            this.txtRemark.BackColor = System.Drawing.Color.White;
+            this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
+            this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRemark.Location = new System.Drawing.Point(402, 52);
+            this.txtRemark.Name = "txtRemark";
+            this.txtRemark.Size = new System.Drawing.Size(326, 23);
+            this.txtRemark.TabIndex = 46;
             // 
             // labPPDMgr
             // 
@@ -418,7 +419,7 @@
         private Win.UI.DateBox dateIssueDate;
         private Win.UI.Button btnSendEMail;
         private Win.UI.Label labStatus;
-        private Win.UI.TextBox textBox1;
+        private Win.UI.TextBox txtRemark;
         private Win.UI.Label labPPDMgr;
         private Win.UI.Label labProdMgrApv;
         private Win.UI.Label labSupApv;

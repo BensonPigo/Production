@@ -375,8 +375,8 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: col_SP)
                 .Text("Style", header: "Style", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Text("CustPoNo", header: "PO#", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
-                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: col_Seq)
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(4), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
+                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(4), iseditingreadonly: false, settings: col_Seq)
                 .Text("ShipModeID", header: "Ship Mode", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: col_ShipMode)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Numeric("TotalCrtns", header: "Total Crtns", width: Widths.AnsiChars(7), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
@@ -649,7 +649,6 @@ left join Orders o on a2.OrderID=o.ID
 left join Order_QtyShip oq on oq.Id=o.ID and oq.ShipmodeID=a2.ShipModeID
 	and oq.Seq=a2.OrderShipmodeSeq
 left join Country c on c.ID=o.Dest
-left join (select distinct id,FinalETA from PO_Supp_Detail) po3 on o.POID=po3.ID
 outer apply(
 	select RefNo = STUFF((
 		select concat(',',RefNo)
@@ -657,10 +656,27 @@ outer apply(
 			select distinct Refno
 			from AVO_Detail_RefNo
 			where AVO_DetailUkey=a2.Ukey
-		) s
+		) s order by RefNo
 	for xml path ('')
 	) ,1,1,'')
 )a3
+outer apply(
+	select FinalETA = STUFF((
+		select concat(', ',FinalETA)
+		from ( 
+		select * from (
+			select distinct Refno,FinalETA ,row =  ROW_NUMBER() over(partition by refno order by finalETA asc)
+			from PO_Supp_Detail
+			where id = o.POID
+			and Refno in ( 	select distinct Refno
+			from AVO_Detail_RefNo
+			where AVO_DetailUkey=a2.Ukey)
+			and FinalETA is not null
+			)s2 where row=1
+		) s order by RefNo
+	for xml path ('')
+	) ,1,1,'')	
+)po3
 where a2.id ='{this.CurrentMaintain["id"]}'
 ";
                 DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -680,7 +696,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
                         StyleID = row1["styleID"].ToString(),
                         Qty = MyUtility.Convert.GetInt(row1["Qty"]),
                         RefNo = row1["RefNo"].ToString(),
-                        FinalETA = (row1["FinalETA"] == DBNull.Value) ? string.Empty : ((DateTime)row1["FinalETA"]).ToString("yyyy/MM/dd"),
+                        FinalETA = row1["FinalETA"].ToString(),
                         BuyerDelivery = (row1["BuyerDelivery"] == DBNull.Value) ? string.Empty : ((DateTime)row1["BuyerDelivery"]).ToString("yyyy/MM/dd"),
                         VasShas = row1["VAS"].ToString(),
                         Alias = row1["Alias"].ToString()
@@ -705,7 +721,8 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             }
 
             DataTable dt;
-            string sqlcmd = $@"select distinct o.SewLine,o.SewInLine,a2.OrderID,o.CustPONo,o.StyleID,oq.Qty,a3.RefNo
+            string sqlcmd = $@"
+select distinct o.SewLine,o.SewInLine,a2.OrderID,o.CustPONo,o.StyleID,oq.Qty,a3.RefNo
 ,po3.FinalETA,oq.BuyerDelivery,[VAS] = iif(o.VasShas=1,'Y','N'),c.Alias
 from avo a
 left join AVO_Detail a2 on a.ID=a2.ID
@@ -713,7 +730,6 @@ left join Orders o on a2.OrderID=o.ID
 left join Order_QtyShip oq on oq.Id=o.ID and oq.ShipmodeID=a2.ShipModeID
 	and oq.Seq=a2.OrderShipmodeSeq
 left join Country c on c.ID=o.Dest
-left join (select distinct id,FinalETA from PO_Supp_Detail) po3 on o.POID=po3.ID
 outer apply(
 	select RefNo = STUFF((
 		select concat(',',RefNo)
@@ -721,10 +737,27 @@ outer apply(
 			select distinct Refno
 			from AVO_Detail_RefNo
 			where AVO_DetailUkey=a2.Ukey
-		) s
+		) s order by RefNo
 	for xml path ('')
 	) ,1,1,'')
 )a3
+outer apply(
+	select FinalETA = STUFF((
+		select concat(',',FinalETA)
+		from ( 
+		select * from (
+			select distinct Refno,FinalETA ,row =  ROW_NUMBER() over(partition by refno order by finalETA asc)
+			from PO_Supp_Detail
+			where id = o.POID
+			and Refno in ( 	select distinct Refno
+			from AVO_Detail_RefNo
+			where AVO_DetailUkey=a2.Ukey)
+			and FinalETA is not null
+			)s2 where row=1
+		) s order by RefNo
+	for xml path ('')
+	) ,1,1,'')	
+)po3
 where a2.id ='{this.CurrentMaintain["id"]}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd,out dt);
@@ -747,8 +780,8 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             worksheet.Cells[3, 2] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["AddName"]}') ");
             worksheet.Cells[3, 4] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["SupApvName"]}') ");
             worksheet.Cells[3, 6] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["PPDApvName"]}') ");
-            worksheet.Cells[3, 8] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["ProdApvName"]}') ");
-            worksheet.Cells[4, 3] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["Remark"]}') ");
+            worksheet.Cells[3, 10] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["ProdApvName"]}') ");
+            worksheet.Cells[4, 3] = this.CurrentMaintain["Remark"];
 
             com.WriteTable(dt, 6);
             worksheet.get_Range($"A6:K{MyUtility.Convert.GetString(5 + dt.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
@@ -775,4 +808,3 @@ where a2.id ='{this.CurrentMaintain["id"]}'
         }
     }
 }
- 
