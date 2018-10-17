@@ -133,12 +133,16 @@ select
 [RouteName] = so.OrderID + '-' + CAST(lm.Version as varchar),
 [SeqNo] = cast(lmd.OriNO as int),
 [IsOutputSeq] = 0,
-[Station] = MIN(cast(lmd.No as int))
+[Station] = MIN(cast(lmd.No as int)),
+[StyleUkey] = so.StyleUkey,
+[BrandID] = so.BrandID,
+[SeasonID] = so.SeasonID,
+[OriNO] = lmd.OriNO
 from #SrcOrderID so with (nolock)
 inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
 inner join LineMapping_Detail lmd with (nolock) on lm.ID = lmd.ID and lmd.No <> ''
 where lm.Status = 'Confirmed' and ISNUMERIC(lmd.OriNO) = 1
-group by lmd.OriNO,so.OrderID,lm.Version)
+group by lmd.OriNO,so.OrderID,lm.Version,so.StyleUkey,so.BrandID,so.SeasonID)
 select 
 [guid] = NEWID(),
 RouteName,
@@ -146,19 +150,31 @@ RouteName,
 [bMerge] = LAG(1,1,0) OVER (PARTITION BY RouteName,Station ORDER BY SeqNo),
 SeqNo,
 Station,
-IsOutputSeq
+IsOutputSeq,
+StyleUkey,
+BrandID,
+SeasonID,
+OriNO
 into #tSeqAssign
 from tSeqAssignTmp
+
+--如果原本tSeqAssign已傳至SunRise將guid更新回本次要傳的資料中
+select * into #tSeqAssignSunRise from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign
+update t set t.guid = s.guid
+from #tSeqAssign t
+inner join #tSeqAssignSunRise s on t.RouteName = s.RouteName collate SQL_Latin1_General_CP1_CI_AS and t.SeqNo = s.SeqNo
 
 --tStAssign(加工方案-工作站安排)
 select 
 [guid] = NEWID(),
 [SeqAssign_guid] = tsa.guid,
-[StationID] = tsa.Station,
+[StationID] = cast(lmd.No as int),
 [StFunc] = 0
 into #tStAssign
 from #tSeqAssign tsa
-where tsa.bMerge = 0
+inner join LineMapping lm with (nolock) on tsa.StyleUkey = lm.StyleUKey and tsa.BrandID = lm.BrandID and tsa.SeasonID = lm.SeasonID
+inner join LineMapping_Detail lmd with (nolock) on lm.ID = lmd.ID and lmd.No <> '' and lmd.OriNO = tsa.OriNO
+where tsa.bMerge = 0 and lm.Status = 'Confirmed' and ISNUMERIC(lmd.OriNO) = 1
 
 
 --同步資料至SUNRISE db
@@ -327,8 +343,12 @@ insert into [SUNRISE].SUNRISEEXCH.dbo.tStAssign(guid,SeqAssign_guid,StationID,St
 select S.guid,S.SeqAssign_guid,S.StationID,S.StFunc from #tStAssign S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tStAssign T where T.SeqAssign_guid = S.SeqAssign_guid and T.StationID = S.StationID )
 
+delete s
+from [SUNRISE].SUNRISEEXCH.dbo.tStAssign s
+where exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid) and
+not exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid and StationID = s.StationID)
 
-drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo,#tRoute,#tRouteLine,#tSeqAssign,#tStAssign
+drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo,#tRoute,#tRouteLine,#tSeqAssign,#tStAssign,#tSeqAssignSunRise
 
 -- mail 通知信
 declare @subject nvarchar(255) = concat('SUNRISE Daily transfer-',Format(getdate(),'yyyy/MM/dd'),'-',@RgCode)
