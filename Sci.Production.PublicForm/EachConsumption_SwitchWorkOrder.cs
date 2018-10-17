@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Transactions;
+using System.Configuration;
 
 
 namespace Sci.Production.PublicForm
@@ -169,7 +170,15 @@ drop table #tmp1,#tmp2
             #endregion
 
             #region transaction
-            TransactionScope _transactionscope = new TransactionScope();
+            // Create the TransactionOptions object
+            TransactionOptions oTranOpt = new TransactionOptions();
+            // Set the Isolation Level
+            oTranOpt.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;            
+            // Uses the (hours, minutes, seconds) constructor
+            TimeSpan oTime = new TimeSpan(0, 5, 0);
+            oTranOpt.Timeout = oTime;
+
+            TransactionScope _transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt);
             using (_transactionscope)
             {
                 try
