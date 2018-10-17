@@ -572,7 +572,7 @@ tmpFilterZone as (
             , t.ProgramID
             , t.CdCodeID
             , t.CPU
-            , oq.Qty
+            , iif ((t.junk = 0 or t.junk is null), oq.Qty,0) as Qty
             , t.FOCQty
             , t.LocalOrder
             , t.PoPrice
