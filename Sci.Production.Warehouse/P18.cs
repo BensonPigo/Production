@@ -160,6 +160,7 @@ select  a.POID
                               , dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
         , StockUnit = dbo.GetStockUnitBySpSeq (a.poid, a.seq1, a.seq2)
 	    , a.Qty
+        , a.Weight
         , dbo.Getlocation(f.ukey)[Location] 
 from dbo.TransferIn_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
@@ -191,6 +192,7 @@ where a.id = @ID", pars, out dtDetail);
                     DESC = row1["Description"].ToString().Trim(),
                     Unit = row1["StockUnit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
+                    GW = row1["Weight"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim()
                 }).ToList();
 
