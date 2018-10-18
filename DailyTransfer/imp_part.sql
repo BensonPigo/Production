@@ -475,7 +475,7 @@ where a.id in (select id from @T)) as s
 
 		Merge Machine.dbo.MachineGroup as t
 		using Trade_To_Pms.dbo.MachineGroup as s 
-		on t.id=s.id
+		on t.id=s.id AND t.MasterGroupID = s.MasterGroupID
 		when matched then
 				update set 
 				t.ID= s.ID,
