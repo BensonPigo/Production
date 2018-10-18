@@ -180,9 +180,6 @@ WHERE oq.ID= '{e.FormattedValue}'
             col_Seq.CellValidating += (s, e) =>
             {
                 if (this.CurrentDetailData == null) return;
-                string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["OrderShipmodeSeq"]);
-                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                if (oldvalue == newvalue) return;
                 DataRow dr;
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
@@ -197,7 +194,7 @@ outer apply(
 	where PD.orderid= oq.ID AND P.ShipModeID= oq.ShipmodeID 
 	AND PD.OrderShipmodeSeq = oq.Seq
 )Packing
-where oq.id='{this.CurrentDetailData["OrderID"]} and oq.seq='{e.FormattedValue}''", out dr))
+where oq.id='{this.CurrentDetailData["OrderID"]}' and oq.seq='{e.FormattedValue}'", out dr))
                     {
                         this.CurrentDetailData["OrderShipmodeSeq"] = e.FormattedValue.ToString();
                         this.CurrentDetailData["Qty"] = dr["Qty"].ToString();
@@ -210,7 +207,7 @@ where oq.id='{this.CurrentDetailData["OrderID"]} and oq.seq='{e.FormattedValue}'
                         MyUtility.Msg.WarningBox("Data not found!");
                         this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
                         this.CurrentDetailData["Qty"] = 0;
-                        this.CurrentDetailData["BuyerDelivery"] = string.Empty;
+                        this.CurrentDetailData["BuyerDelivery"] = DBNull.Value;
                         this.CurrentDetailData["TotalCrtns"] = 0;
                         this.CurrentDetailData.EndEdit();
                         return;
@@ -220,7 +217,7 @@ where oq.id='{this.CurrentDetailData["OrderID"]} and oq.seq='{e.FormattedValue}'
                 {
                     this.CurrentDetailData["OrderShipmodeSeq"] = string.Empty;
                     this.CurrentDetailData["Qty"] = 0;
-                    this.CurrentDetailData["BuyerDelivery"] = string.Empty;
+                    this.CurrentDetailData["BuyerDelivery"] = DBNull.Value;
                     this.CurrentDetailData["TotalCrtns"] = 0;
                     this.CurrentDetailData.EndEdit();
                 }
@@ -249,15 +246,12 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
             col_ShipMode.CellValidating += (s, e) =>
             {
                 if (this.CurrentDetailData == null) return;
-                string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["ShipModeID"]);
-                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                if (oldvalue == newvalue) return;
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
                     if (MyUtility.Check.Seek($@"
 select 1 
-from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]} and ShipmodeID='{e.FormattedValue}''"))
+from Order_QtyShip where id='{this.CurrentDetailData["OrderID"]}' and ShipmodeID='{e.FormattedValue}'"))
                     {
                         this.CurrentDetailData["ShipModeID"] = e.FormattedValue.ToString();
                         this.CurrentDetailData.EndEdit();
@@ -296,9 +290,6 @@ WHERE ID = '{this.CurrentDetailData["OrderID"]}'", "Seq,ShipMode", this.CurrentD
             col_acc.CellValidating += (s, e) =>
             {
                 if (this.CurrentDetailData == null) return;
-                string oldvalue = MyUtility.Convert.GetString(this.CurrentDetailData["AccLacking"]);
-                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
-                if (oldvalue == newvalue) return;
 
                 if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                 {
@@ -641,8 +632,8 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 // 傳 list 資料
                 DataTable dt;
                 string sqlcmd = $@"
-select o.SewLine,o.SewInLine,a2.OrderID,o.CustPONo,o.StyleID,oq.Qty,a3.RefNo
-,po3.FinalETA,oq.BuyerDelivery,[VAS] = iif(o.VasShas=1,'Y','N'),c.Alias
+select o.SewLine,o.SewInLine,a2.OrderID,o.CustPONo,o.StyleID,oq.Qty,SUBSTRING(a3.RefNo,2,len(a3.Refno)) as RefNo
+,SUBSTRING(po3.FinalETA,2,len(po3.FinalETA)) as FinalETA,oq.BuyerDelivery,[VAS] = iif(o.VasShas=1,'Y','N'),c.Alias
 from avo a
 left join AVO_Detail a2 on a.ID=a2.ID
 left join Orders o on a2.OrderID=o.ID
@@ -651,7 +642,7 @@ left join Order_QtyShip oq on oq.Id=o.ID and oq.ShipmodeID=a2.ShipModeID
 left join Country c on c.ID=o.Dest
 outer apply(
 	select RefNo = STUFF((
-		select concat(',',RefNo)
+		select concat(char(10)+',' ,RefNo)
 		from(
 			select distinct Refno
 			from AVO_Detail_RefNo
@@ -662,7 +653,7 @@ outer apply(
 )a3
 outer apply(
 	select FinalETA = STUFF((
-		select concat(', ',FinalETA)
+		select concat(char(10)+',',FinalETA)
 		from ( 
 		select * from (
 			select distinct Refno,FinalETA ,row =  ROW_NUMBER() over(partition by refno order by finalETA asc)
@@ -722,8 +713,8 @@ where a2.id ='{this.CurrentMaintain["id"]}'
 
             DataTable dt;
             string sqlcmd = $@"
-select distinct o.SewLine,o.SewInLine,a2.OrderID,o.CustPONo,o.StyleID,oq.Qty,a3.RefNo
-,po3.FinalETA,oq.BuyerDelivery,[VAS] = iif(o.VasShas=1,'Y','N'),c.Alias
+select o.SewLine,o.SewInLine,a2.OrderID,o.CustPONo,o.StyleID,oq.Qty,SUBSTRING(a3.RefNo,2,len(a3.Refno)) as RefNo
+,SUBSTRING(po3.FinalETA,2,len(po3.FinalETA)) as FinalETA,oq.BuyerDelivery,[VAS] = iif(o.VasShas=1,'Y','N'),c.Alias
 from avo a
 left join AVO_Detail a2 on a.ID=a2.ID
 left join Orders o on a2.OrderID=o.ID
@@ -732,7 +723,7 @@ left join Order_QtyShip oq on oq.Id=o.ID and oq.ShipmodeID=a2.ShipModeID
 left join Country c on c.ID=o.Dest
 outer apply(
 	select RefNo = STUFF((
-		select concat(',',RefNo)
+		select concat(char(10)+',' ,RefNo)
 		from(
 			select distinct Refno
 			from AVO_Detail_RefNo
@@ -743,7 +734,7 @@ outer apply(
 )a3
 outer apply(
 	select FinalETA = STUFF((
-		select concat(',',FinalETA)
+		select concat(char(10)+',',FinalETA)
 		from ( 
 		select * from (
 			select distinct Refno,FinalETA ,row =  ROW_NUMBER() over(partition by refno order by finalETA asc)
@@ -787,6 +778,8 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             worksheet.get_Range($"A6:K{MyUtility.Convert.GetString(5 + dt.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = false;
+            objApp.Columns.AutoFit();
+            objApp.Rows.AutoFit();
             this.Excelfile = Sci.Production.Class.MicrosoftFile.GetName("PPIC_P18");
             objApp.ActiveWorkbook.SaveAs(this.Excelfile);
             objApp.Quit();
