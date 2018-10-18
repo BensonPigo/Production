@@ -75,6 +75,7 @@ select	o.MDivisionID
 		, Linv.ThreadColorID
 		, [Unit] = Linv.UnitID
 		, [Supplier] = LSupp.ID + '-' + LSupp.Abb 
+        , [Category]=Litem.Category
 		, [Arrived Qty] = Linv.InQty
 		, [Released Qty] = Linv.OutQty
 		, Linv.AdjustQty
