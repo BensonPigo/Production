@@ -1283,9 +1283,12 @@ BEGIN
 			set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
 		end
 
-		insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+        if(@NewCone > 0 or @UsedCone > 0)      
+        begin
+		        insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
 				values( @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
-		
+        end		
+
 		if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
 		begin
 			break
@@ -1371,13 +1374,16 @@ BEGIN
 		begin
 			set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
 		end
-
-		insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
-				values('{issueID}', @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
+        
+        if(@NewCone > 0 or @UsedCone > 0)      
+        begin
+            insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+			values('{issueID}', @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
+        end
 
         if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
 		begin
-			break
+			break;
 		end
 
 	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
