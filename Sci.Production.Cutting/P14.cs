@@ -32,7 +32,8 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private bool CaneditSql = true;
+
+        private bool canclearcombotype = true;
         private void txtBundleNo_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtBundleNo.Text)) return;
@@ -98,22 +99,25 @@ drop table #tmp
                 this.ShowErr(result);
                 return;
             }
-
-            this.cmdComboType.DataSource = null;
+            
             MyUtility.Tool.SetupCombox(this.cmdComboType, 1, combotypeDt);
+            if (combotypeDt.Rows.Count == 1 && MyUtility.Check.Empty(this.txtBundleNo.Text))
+            {
+                this.cmdComboType.DataSource = null;
+            }
             #endregion
         }
 
         private void txtCardNoBundleNoComboType_Validated(object sender, EventArgs e)
         {
-            if (!checkempty() || !CaneditSql) return;
+            if (!checkempty() ) return;
             InsertDatas();
             clearall();
         }
 
         private void cmdComboType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!checkempty() || !CaneditSql) return;
+            if (!checkempty()) return;
             InsertDatas();
             clearall();
         }
@@ -145,7 +149,7 @@ update t set
 	t.[BarCode]	= @CardNo,
 	t.[CmdTime]	= getdate(),
 	t.[InterfaceTime]=null
-from SciSUNRISEEXCH t
+from [dbo].[tCutbundcard] t
 where t.CardNo =@CardNo
 and(
 	t.[MONO]		<>@SP+'-'+@ComboType or
@@ -157,9 +161,9 @@ and(
 	t.[Qty]			<>@Qty
 )
 
-If not exists (select 1 from SciSUNRISEEXCH where CardNo = @CardNo)
+If not exists (select 1 from [dbo].[tCutbundcard] where CardNo = @CardNo)
 Begin
-	insert into SciSUNRISEEXCH
+	insert into [dbo].[tCutbundcard]
 	(BillDate ,MONO				 ,PONO,CutLotNo,BundNo, CardNo, CardType,ColorName, CordColor, SizeName, QTY,Vatno,
 	BarCode,CmdType,CmdTime, InterfaceTime)
 	values
@@ -172,7 +176,7 @@ End
                 DualResult upResult;
                 if (!MyUtility.Check.Empty(sqlupdatacmd))
                 {
-                    if (!(upResult = DBProxy.Current.Execute(null, sqlupdatacmd, sqlParameters)))
+                    if (!(upResult = DBProxy.Current.Execute("SUNRISEEXCH", sqlupdatacmd, sqlParameters)))
                     {
                         this.ShowErr(upResult);
                         return;
@@ -180,7 +184,7 @@ End
                 }
                 scope.Complete();
             }
-            CaneditSql = false;
+            canclearcombotype = false;
         }
 
         private bool checkempty()
@@ -204,7 +208,6 @@ End
             this.disColor.Text = string.Empty;
             this.disSize.Text = string.Empty;
             this.disBundleQty.Text = string.Empty;
-            CaneditSql = true;
             this.txtCardNo.Focus();
         }
     }
