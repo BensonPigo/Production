@@ -2293,6 +2293,9 @@
     <Build Include="dbo\Tables\ThreadColorGroup.sql" />
     <Build Include="dbo\Tables\LocalItem_ThreadBuyerColorGroupPrice.sql" />
     <Build Include="dbo\Stored Procedures\usp_Packing_P03_Confirm.sql" />
+    <Build Include="dbo\Tables\AVO.sql" />
+    <Build Include="dbo\Tables\AVO_Detail.sql" />
+    <Build Include="dbo\Tables\AVO_Detail_RefNo.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

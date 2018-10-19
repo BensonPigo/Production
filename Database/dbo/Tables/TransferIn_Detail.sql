@@ -10,6 +10,8 @@
     [Location]    VARCHAR (60)    CONSTRAINT [DF_TransferIn_Detail_Location] DEFAULT ('') NULL,
     [Qty]         NUMERIC (10, 2) CONSTRAINT [DF_TransferIn_Detail_Qty] DEFAULT ((0)) NULL,
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
+	[Weight]      numeric(7, 2)   NOT NULL DEFAULT 0,
+	[Remark]	  nvarchar(100)   NOT NULL DEFAULT(''),
     CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 

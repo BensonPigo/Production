@@ -223,7 +223,7 @@ group by a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, remark,a.IssueDate
             union all
             select a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, a.IssueDate  
                 ,'P18. Transfer In' name
-                , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
+                , sum(Qty) arrived,0 as ouqty,0 as adjust, a.remark
             	,(Select cast(tmp.Location as nvarchar)+',' 
                                     from (select b1.Location 
                                                 from TransferIn a1 WITH (NOLOCK) 

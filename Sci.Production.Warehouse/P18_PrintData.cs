@@ -13,8 +13,9 @@ namespace Sci.Production.Warehouse
         public string Roll { get; set; }
         public string DYELOT { get; set; }
         public string DESC { get; set; }
-        public string Unit { get; set; }
+        public string GW { get; set; }
         public string QTY { get; set; }
+        public string Unit { get; set; }
         public string Location { get; set; }
     }
 }
