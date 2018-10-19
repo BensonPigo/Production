@@ -37,7 +37,7 @@ namespace Sci.Production.Class
         {
             base.OnPopUp(e);
 
-            string sqlWhere = "Where 1=1";
+            string sqlWhere = "Where Junk = 0";
             string sqlCmd = string.Empty;
 
             if (!string.IsNullOrWhiteSpace(cClassify))
@@ -69,7 +69,7 @@ namespace Sci.Production.Class
             if (!string.IsNullOrWhiteSpace(str) && str != this.OldValue)
             {
 
-                string sqlWhere = string.Format("Where 1=1 and id='{0}'", str);
+                string sqlWhere = string.Format("Where Junk = 0 and id='{0}'", str);
                 string sqlCmd = string.Empty;
 
                 if (!string.IsNullOrWhiteSpace(cClassify))
