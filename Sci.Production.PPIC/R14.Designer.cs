@@ -41,6 +41,8 @@
             this.txtBrand = new Sci.Production.Class.txtbrand();
             this.comboDropDownList = new Sci.Production.Class.comboDropDownList(this.components);
             this.label1 = new System.Windows.Forms.Label();
+            this.labM = new Sci.Win.UI.Label();
+            this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.SuspendLayout();
             // 
             // print
@@ -51,12 +53,12 @@
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(432, 17);
-            this.toexcel.TabIndex = 6;
+            this.toexcel.TabIndex = 7;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(432, 53);
-            this.close.TabIndex = 7;
+            this.close.TabIndex = 8;
             // 
             // labIssueDate
             // 
@@ -143,7 +145,7 @@
             // 
             // labStatus
             // 
-            this.labStatus.Location = new System.Drawing.Point(28, 137);
+            this.labStatus.Location = new System.Drawing.Point(28, 162);
             this.labStatus.Name = "labStatus";
             this.labStatus.Size = new System.Drawing.Size(100, 23);
             this.labStatus.TabIndex = 101;
@@ -173,11 +175,11 @@
             this.comboDropDownList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownList.FormattingEnabled = true;
             this.comboDropDownList.IsSupportUnselect = true;
-            this.comboDropDownList.Location = new System.Drawing.Point(131, 137);
+            this.comboDropDownList.Location = new System.Drawing.Point(131, 162);
             this.comboDropDownList.Name = "comboDropDownList";
             this.comboDropDownList.OldText = "";
             this.comboDropDownList.Size = new System.Drawing.Size(130, 24);
-            this.comboDropDownList.TabIndex = 5;
+            this.comboDropDownList.TabIndex = 6;
             this.comboDropDownList.Type = "Pms_AVOStatus";
             // 
             // label1
@@ -189,9 +191,28 @@
             this.label1.TabIndex = 105;
             this.label1.Text = "～";
             // 
+            // labM
+            // 
+            this.labM.Location = new System.Drawing.Point(28, 134);
+            this.labM.Name = "labM";
+            this.labM.Size = new System.Drawing.Size(100, 23);
+            this.labM.TabIndex = 106;
+            this.labM.Text = "M";
+            // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(131, 134);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.Size = new System.Drawing.Size(130, 23);
+            this.txtMdivision.TabIndex = 5;
+            // 
             // R14
             // 
-            this.ClientSize = new System.Drawing.Size(524, 214);
+            this.ClientSize = new System.Drawing.Size(524, 222);
+            this.Controls.Add(this.txtMdivision);
+            this.Controls.Add(this.labM);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboDropDownList);
             this.Controls.Add(this.txtBrand);
@@ -221,6 +242,8 @@
             this.Controls.SetChildIndex(this.txtBrand, 0);
             this.Controls.SetChildIndex(this.comboDropDownList, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.labM, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -240,5 +263,7 @@
         private Class.txtbrand txtBrand;
         private Class.comboDropDownList comboDropDownList;
         private System.Windows.Forms.Label label1;
+        private Win.UI.Label labM;
+        private Class.txtMdivision txtMdivision;
     }
 }

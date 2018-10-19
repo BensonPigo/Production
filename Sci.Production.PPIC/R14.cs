@@ -23,6 +23,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
+            txtMdivision.Text = Sci.Env.User.Keyword;
         }
 
         protected override void OnFormLoaded()
@@ -84,8 +85,15 @@ namespace Sci.Production.PPIC
                 where += $" and a1.status in ({this.comboDropDownList.SelectedValue})";
             }
 
+            if (!MyUtility.Check.Empty(this.txtMdivision.Text))
+            {
+                where += $" and a1.MdivisionID = '{this.txtMdivision.Text}'";
+            }
+
             this.sqlcmd = $@"
-select a1.cDate
+select a1.id
+,a1.cDate
+,a1.MdivisionID
 ,o.FtyGroup
 ,o.BrandID
 ,o.SewLine
@@ -151,9 +159,10 @@ where 1=1
             Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\PPIC_R14.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             com.WriteTable(this.dtPrint, 3);
-            worksheet.get_Range($"A3:O{MyUtility.Convert.GetString(2 + this.dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
+            worksheet.get_Range($"A3:Q{MyUtility.Convert.GetString(2 + this.dtPrint.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
+            objApp.Rows.AutoFit();
             Marshal.ReleaseComObject(worksheet);
             Marshal.ReleaseComObject(objApp);
             this.HideWaitMessage();
