@@ -31,6 +31,7 @@ when matched then
 		, t.AddDate= s.AddDate
 		, t.Lock = s.Lock
 		, t.MasterGroupID = s.MasterGroupID
+		, t.MachineGroupID = s.MachineGroupID
 
 	when not matched by target and s.type='P' then 
 		insert 
