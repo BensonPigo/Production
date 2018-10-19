@@ -160,6 +160,7 @@ select  a.POID
                               , dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
         , StockUnit = dbo.GetStockUnitBySpSeq (a.poid, a.seq1, a.seq2)
 	    , a.Qty
+        , a.Weight
         , dbo.Getlocation(f.ukey)[Location] 
 from dbo.TransferIn_detail a WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id = a.POID 
@@ -191,6 +192,7 @@ where a.id = @ID", pars, out dtDetail);
                     DESC = row1["Description"].ToString().Trim(),
                     Unit = row1["StockUnit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
+                    GW = row1["Weight"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim()
                 }).ToList();
 
@@ -730,10 +732,12 @@ select id from Invtrans where InventoryPOID = '{0}' and type = 3   and FactoryID
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6)).Get(out cbb_Roll)  //2
             .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6)).Get(out cbb_Dyelot)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
-            .Text("stockunit", header: "Unit", iseditingreadonly: true)    //5
+            .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //5
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //6
-            .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings: sk).Get(out cbb_stocktype)    //7
-            .Text("Location", header: "Location", iseditingreadonly: false, settings: ts2)    //8
+            .Text("stockunit", header: "Unit", iseditingreadonly: true)    //7
+            .ComboBox("Stocktype", header: "Stock Type", width: Widths.AnsiChars(8), settings: sk).Get(out cbb_stocktype)    //8
+            .Text("Location", header: "Location", iseditingreadonly: false, settings: ts2)    //9
+            .Text("Remark", header: "Remark", iseditingreadonly: false)    //10
             ;     //
             #endregion 欄位設定
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
@@ -743,6 +747,8 @@ select id from Invtrans where InventoryPOID = '{0}' and type = 3   and FactoryID
             cbb_Dyelot.MaxLength = 4;
 
             detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["Weight"].DefaultCellStyle.BackColor = Color.Pink;
+            detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         //Confirm
@@ -1300,6 +1306,8 @@ select  a.id
         , a.ukey
         , FabricType = isnull(p.FabricType,I.FabricType)
         , DataFrom = iif(p.FabricType is null,'Invtrans','Po_Supp_Detail')
+		,a.Weight
+		,a.Remark
 from dbo.TransferIn_Detail a WITH (NOLOCK) 
 left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                               and a.seq1 = p.seq1
