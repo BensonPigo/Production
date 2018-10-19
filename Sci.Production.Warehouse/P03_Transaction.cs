@@ -480,7 +480,7 @@ namespace Sci.Production.Warehouse
             union all
 	            select issuedate, a.id
             ,'P18. TransferIn' name
-            , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
+            , sum(Qty) arrived,0 as ouqty,0 as adjust, a.remark
 	            ,(Select cast(tmp.Location as nvarchar)+',' 
                                     from (select b1.Location 
                                                 from TransferIn a1 WITH (NOLOCK) 
@@ -501,7 +501,7 @@ namespace Sci.Production.Warehouse
             }
 
             selectCommand1.Append(string.Format(@"
-            group by a.id, poid, seq1,Seq2, remark,a.IssueDate,AddDate
+            group by a.id, poid, seq1,Seq2, a.remark,a.IssueDate,AddDate
 
             union all
 	        select 	issuedate
