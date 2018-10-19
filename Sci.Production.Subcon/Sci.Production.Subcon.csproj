@@ -83,6 +83,7 @@
     </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SqlServer.Smo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualBasic.PowerPacks, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -532,6 +533,12 @@
     <Compile Include="R52.Designer.cs">
       <DependentUpon>R52.cs</DependentUpon>
     </Compile>
+    <Compile Include="B01_SetCardBoarsPads.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B01_SetCardBoarsPads.Designer.cs">
+      <DependentUpon>B01_SetCardBoarsPads.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
@@ -779,6 +786,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R52.resx">
       <DependentUpon>R52.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B01_SetCardBoarsPads.resx">
+      <DependentUpon>B01_SetCardBoarsPads.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

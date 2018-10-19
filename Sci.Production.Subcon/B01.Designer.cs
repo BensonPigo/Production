@@ -60,6 +60,7 @@
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.btnSetCardboardPads = new Sci.Win.UI.Button();
             this.numCTNWeight = new Sci.Win.UI.NumericBox();
             this.labelKG = new Sci.Win.UI.Label();
             this.labelCTNWeight = new Sci.Win.UI.Label();
@@ -437,6 +438,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnSetCardboardPads);
             this.groupBox1.Controls.Add(this.numCTNWeight);
             this.groupBox1.Controls.Add(this.labelKG);
             this.groupBox1.Controls.Add(this.labelCTNWeight);
@@ -457,6 +459,16 @@
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Carton Only";
+            // 
+            // btnSetCardboardPads
+            // 
+            this.btnSetCardboardPads.Location = new System.Drawing.Point(667, 16);
+            this.btnSetCardboardPads.Name = "btnSetCardboardPads";
+            this.btnSetCardboardPads.Size = new System.Drawing.Size(185, 30);
+            this.btnSetCardboardPads.TabIndex = 45;
+            this.btnSetCardboardPads.Text = "Set Cardboard Pads";
+            this.btnSetCardboardPads.UseVisualStyleBackColor = true;
+            this.btnSetCardboardPads.Click += new System.EventHandler(this.btnSetCardboardPads_Click);
             // 
             // numCTNWeight
             // 
@@ -1002,5 +1014,6 @@
         private Win.UI.Button btnThread;
         private Win.UI.Label label2;
         private Win.UI.Button btnBatchApprove;
+        private Win.UI.Button btnSetCardboardPads;
     }
 }
