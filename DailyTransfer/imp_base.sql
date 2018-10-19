@@ -579,6 +579,7 @@ when matched then
 		,t.EditName			=s.EditName		
 		,t.EditDate			=s.EditDate		
 		,t.isThread         =s.isThread
+		,t.MasterGroupID	=s.MasterGroupID	
 when not matched by target then
 	insert(
 		ID
@@ -600,6 +601,7 @@ when not matched by target then
 		,EditName
 		,EditDate
 		,isThread
+		,MasterGroupID
 	)
 	values(
 		ID
@@ -621,6 +623,7 @@ when not matched by target then
 		,EditName
 		,EditDate
 		,isThread
+		,MasterGroupID
 	)
 when not matched by source then
 	delete;
