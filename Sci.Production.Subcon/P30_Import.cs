@@ -435,8 +435,6 @@ where Qty - ShipQty - DiffQty = 0";
                  .Text("requestid", header: "Request ID", iseditingreadonly: true)//13
                  .Text("BuyerID", header: "Buyer", iseditingreadonly: true)//14
                 ;
-            //this.grid1.Columns[10].DefaultCellStyle.BackColor = Color.Pink;  //Qty   
-
         }
 
         // close
@@ -478,6 +476,47 @@ where Qty - ShipQty - DiffQty = 0";
                         tmp.SetAdded();
                         dt_localPODetail.ImportRow(tmp);
                     }
+                }
+
+                DataTable tmpdt = dr2.CopyToDataTable();
+                string sqlcmd = $@"
+select selected=1,
+	t.POID,t.OrderID,t.StyleID,t.SciDelivery,t.SeasonID,
+	Refno=l.PadRefno,
+	Description=dbo.getitemdesc('Carton', l.PadRefno),
+	ThreadColorID='',
+	Qty=t.qty*l.qty,
+	d.UnitID,
+	d.Price,
+	amount = t.qty*l.qty*d.Price,
+    t.std_price,
+	remark='',
+	t.etd,t.requestid,t.id,t.FactoryID,t.SewInLine,t.delivery,t.BuyerID,
+	d.LocalSuppid
+from #tmp t
+outer apply(select ct=count(1) from LocalItem_CartonCardboardPad lc where lc.Refno = t.RefNo and isnull(t.BuyerID,'') = isnull(lc.Buyer,''))a
+inner join LocalItem_CartonCardboardPad l on t.RefNo = l.RefNo and iif(ct>0, isnull(t.BuyerID,''),'') = isnull(l.Buyer,'')
+inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo and junk = 0 and category = 'CARTON'
+";
+                DataTable CartonCardboardPad;
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out CartonCardboardPad);
+
+                List<string> Refno = new List<string>();
+                foreach (DataRow tmp in CartonCardboardPad.Rows)
+                {
+                    if (!MyUtility.Convert.GetString(dr_localPO["localsuppid"]).EqualString(MyUtility.Convert.GetString(tmp["localsuppid"])))
+                    {
+                        Refno.Add(MyUtility.Convert.GetString(tmp["Refno"]));
+                    }
+                    tmp.AcceptChanges();
+                    tmp.SetAdded();
+                    dt_localPODetail.ImportRow(tmp);
+                }
+                if (Refno.Count>0)
+                {
+                    MyUtility.Msg.WarningBox($@"Pads supplier is not '{dr_localPO["localsuppid"]}'
+Please check carton :{string.Join(",", Refno)}
+");
                 }
             }
             else

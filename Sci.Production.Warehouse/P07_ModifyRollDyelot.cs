@@ -17,8 +17,9 @@ namespace Sci.Production.Warehouse
 {
     public partial class P07_ModifyRollDyelot : Sci.Win.Subs.Base
     {
-       // DataRow dr;
+        // DataRow dr;
         DataTable source;
+        DataTable dtGridDyelot;
         string docno = "";
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
@@ -28,14 +29,14 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             source = (DataTable)data;
             docno = data2;
-            this.Text += " - "+docno;
+            this.Text += " - " + docno;
             this.EditMode = true;
         }
 
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            
+
 
             di_fabrictype.Add("F", "Fabric");
             di_fabrictype.Add("A", "Accessory");
@@ -47,21 +48,20 @@ namespace Sci.Production.Warehouse
             Ict.Win.UI.DataGridViewComboBoxColumn cbb_stocktype;
 
             //設定Grid1的顯示欄位
-            this.gridModifyRoll.IsEditingReadOnly = true;
             this.gridModifyRoll.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridModifyRoll)
             .ComboBox("fabrictype", header: "Fabric" + Environment.NewLine + "Type", width: Widths.AnsiChars(7), iseditable: false).Get(out cbb_fabrictype)  //0
-            .Text("poid", header: "SP#", width: Widths.AnsiChars(13))  //1
-            .Text("seq", header: "Seq", width: Widths.AnsiChars(6))  //2
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9))    //3
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5))    //4
-            .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10)    //5
+            .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
+            .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false)    //3
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: false)    //4
+            .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: true, decimal_places: 2, integer_places: 10)    //5
             .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //6
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
-            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true,width: Widths.AnsiChars(5))    //8
+            .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))    //8
             .ComboBox("Stocktype", header: "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)   //9
-            .Text("Location", header: "Location")    //10
-            .Text("remark", header: "Remark")    //11
+            .Text("Location", header: "Location", iseditingreadonly: true)    //10
+            .Text("remark", header: "Remark", iseditingreadonly: true)    //11
             ;     //
 
             cbb_fabrictype.DataSource = new BindingSource(di_fabrictype, null);
@@ -70,6 +70,20 @@ namespace Sci.Production.Warehouse
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
+
+            
+            Helper.Controls.Grid.Generator(this.gridDyelot)
+            .Date("IssueDate", header: "IssueDate", width: Widths.AnsiChars(7), iseditingreadonly: true)
+            .Text("ID", header: "ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .Text("Name", header: "Name", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("InQty", header: "InQty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Numeric("OutQty", header: "OutQty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Text("remark", header: "Remark", iseditingreadonly: true)
+            .Text("Location", header: "Location", iseditingreadonly: true)
+            .Numeric("balance", header: "balance", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            ;     //
+
+            this.LoadDate();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -77,99 +91,124 @@ namespace Sci.Production.Warehouse
             this.Dispose();
         }
 
-        private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
+        private void LoadDate()
         {
-            displaySPNo.Text = source.Rows[e.RowIndex]["poid"].ToString();
-            displaySeqNo.Text = source.Rows[e.RowIndex]["seq"].ToString();
-            txtRollNo.Text = source.Rows[e.RowIndex]["roll"].ToString();
-            txtDyelotNo.Text = source.Rows[e.RowIndex]["dyelot"].ToString();
-            string selectCommand1;
+            this.GetgridDyelotData();
+            this.btnCommit.Enabled = false;
+            foreach (DataGridViewRow item in this.gridModifyRoll.Rows)
+            {
+                bool existsDetail = dtGridDyelot.AsEnumerable()
+                 .Where(s => s["poid"].Equals(item.Cells["poid"].Value) &&
+                             s["seq"].Equals(item.Cells["seq"].Value) &&
+                             s["roll"].Equals(item.Cells["roll"].Value) &&
+                             s["dyelot"].Equals(item.Cells["dyelot"].Value)).Any();
+                if (existsDetail || !item.Cells["fabrictype"].Value.Equals("F"))
+                {
+                    item.Cells["Roll"].ReadOnly = true;
+                    item.Cells["Dyelot"].ReadOnly = true;
+                }
+                else
+                {
+                    this.btnCommit.Enabled = true;
+                    item.Cells["Roll"].ReadOnly = false;
+                    item.Cells["Dyelot"].ReadOnly = false;
+                    item.Cells["Roll"].Style.BackColor = Color.Pink;
+                    item.Cells["Dyelot"].Style.BackColor = Color.Pink;
+                }
+            }
+        }
+
+        private void GetgridDyelotData()
+        {
             #region sql command
-            selectCommand1 =
-                string.Format(@"select *,
+            string selectCommand1 =
+                string.Format(@"
+SELECT DISTINCT POID,Seq1,Seq2,Roll,Dyelot into #tmp FROM Receiving_Detail WHERE id = '{0}'
+
+select IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,POID,Seq1,Seq2, Roll,Dyelot,[Seq] = Seq1 + ' ' + Seq2,
             sum(TMP.inqty - TMP.outqty+tmp.adjust) over ( order by tmp.IssueDate,tmp.iD
 ,sum(TMP.inqty - TMP.outqty+tmp.adjust) desc) as [balance] 
 from (
-            select a.IssueDate, a.ID
+            select  a.id, b.poid, b.seq1,b.Seq2,b.Roll,b.Dyelot,a.IssueDate
             ,Case type when 'A' then 'P35. Adjust Bulk Qty' 
                             when 'B' then 'P34. Adjust Stock Qty' end as Name
-            ,0 as InQty,0 as OutQty, sum(QtyAfter - QtyBefore) Adjust, Remark ,'' Location
+            ,0 as InQty,0 as OutQty, sum(QtyAfter - QtyBefore) Adjust, a.Remark ,'' Location
             from Adjust a WITH (NOLOCK) , Adjust_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
-and roll='{3}' and dyelot='{4}'
-group by a.id, poid, seq1,Seq2, remark,a.IssueDate,type
+			inner join #tmp t on b.poid = t.PoId and b.Seq1 = t.Seq1 and b.Seq2 = t.Seq2 and b.Roll = t.Roll and b.Dyelot = t.Dyelot
+            where a.id = b.id
+group by a.id, b.poid, b.seq1,b.Seq2,b.Roll,b.Dyelot, a.remark,a.IssueDate,type
             union all
-            	select a.IssueDate, a.id
+            	select a.id,[poid] = b.FromPoId,[Seq1] = b.FromSeq1,[Seq2] = b.FromSeq2,[Roll] = b.FromRoll,[Dyelot] = b.FromDyelot, a.IssueDate
             ,case type when 'A' then 'P31. Material Borrow From' 
                             when 'B' then 'P32. Material Give Back From' end as name
-            ,0 as inqty, sum(qty) released,0 as adjust, remark ,'' location
+            ,0 as inqty, sum(qty) released,0 as adjust, a.remark ,'' location
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and FromPoId ='{0}' and FromSeq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id 
-and fromroll='{3}' and fromdyelot='{4}'
-group by a.id, FromPoId, FromSeq1,FromSeq2, remark,a.IssueDate,a.type
+			inner join #tmp t on b.FromPoId = t.PoId and b.FromSeq1 = t.Seq1 and b.FromSeq2 = t.Seq2 and b.FromRoll = t.Roll and b.FromDyelot = t.Dyelot
+            where Status='Confirmed'  and a.id = b.id 
+group by a.id, b.FromPoId, b.FromSeq1,b.FromSeq2,b.FromRoll,b.FromDyelot, a.remark,a.IssueDate,a.type
             union all
-            	select issuedate, a.id
+            	select a.id,[poid] = b.ToPoid,[Seq1] = b.ToSeq1,[Seq2] = b.ToSeq2,[Roll] = b.ToRoll,[Roll] = b.ToDyelot, a.IssueDate
             ,case type when 'A' then 'P31. Material Borrow To' 
                             when 'B' then 'P32. Material Give Back To' end as name
 , sum(qty) arrived,0 as ouqty,0 as adjust, remark ,'' location
             from BorrowBack a WITH (NOLOCK) , BorrowBack_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and ToPoid ='{0}' and ToSeq1 = '{1}'and ToSeq2 = '{2}'  and a.id = b.id 
-and toroll='{3}' and todyelot='{4}'
-group by a.id, ToPoid, ToSeq1,ToSeq2, remark,a.IssueDate,a.type
+			inner join #tmp t on b.ToPoid = t.PoId and b.ToSeq1 = t.Seq1 and b.ToSeq2 = t.Seq2 and b.toroll = t.Roll and b.ToDyelot = t.Dyelot 
+            where Status='Confirmed' and a.id = b.id 
+group by a.id, b.ToPoid, b.ToSeq1,b.ToSeq2,b.ToRoll,b.ToDyelot, a.remark,a.IssueDate,a.type
             union all
-            	select issuedate, a.id
+            	select a.id, b.poid, b.seq1,b.Seq2,b.Roll,b.Dyelot,a.IssueDate
             	,case type when 'A' then 'P10. Issue Fabric to Cutting Section' 
                                 when 'B' then 'P11. Issue Sewing Material by Transfer Guide' 
                                 when 'C' then 'P12. Issue Packing Material by Transfer Guide' 
                                 when 'D' then 'P13. Issue Material by Item' end name
             	,0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
             from Issue a WITH (NOLOCK) , Issue_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-and roll='{3}' and dyelot='{4}'
-group by a.id, poid, seq1,Seq2, remark,a.IssueDate,a.type                                                                          
+			inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.Roll = t.Roll and b.Dyelot = t.Dyelot
+            where Status='Confirmed' and a.id = b.id
+group by a.id, b.poid, b.seq1,b.Seq2,b.Roll,b.Dyelot, a.remark,a.IssueDate,a.type                                                                          
             union all
-            select issuedate, a.id
+            select a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, a.IssueDate
             ,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
                                       when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
             , 0 as inqty,sum(b.Qty) outqty ,0 as adjust, remark ,'' location
             from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
-            where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id
-and roll='{3}' and dyelot='{4}'
-            group by a.id, poid, seq1,Seq2, remark  ,a.IssueDate,a.FabricType                                                               
+			inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.Roll = t.Roll and b.Dyelot = t.Dyelot
+            where Status in ('Confirmed','Closed') and a.id = b.id
+            group by a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, remark  ,a.IssueDate,a.FabricType                                                               
             union all
-            select issuedate, a.id
+            select a.Id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, a.IssueDate
             ,'P17. R/Mtl Return' name
             , 0 as inqty, sum(b.Qty) released,0 as adjust, remark,'' location
             from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
-            where status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-and roll='{3}' and dyelot='{4}'
-group by a.Id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
+			inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.Roll = t.Roll and b.Dyelot = t.Dyelot
+            where status='Confirmed'  and a.id = b.id 
+group by a.Id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, remark,a.IssueDate                                                                                 
             union all
-            select a.eta, a.id
+            select a.Id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot,[IssueDate] = a.eta
             ,'P07. Material Receiving' as name
             , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
             from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and type='A' and a.id!='{5}'
-and roll='{3}' and dyelot='{4}'
-group by a.Id, poid, seq1,Seq2,a.eta,a.Type
+			inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.Roll = t.Roll and b.Dyelot = t.Dyelot
+            where Status='Confirmed' and a.id = b.id and type='A' and a.id!='{0}'
+group by a.Id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot,a.eta,a.Type
             union all
-            select a.WhseArrival, a.id
+            select a.Id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot,[IssueDate] = a.WhseArrival
                     ,'P08. Warehouse Shopfloor Receiving' as name
             	    , sum(b.StockQty) arrived,0 as ouqty,0 as adjust,'' remark ,'' location
             from Receiving a WITH (NOLOCK) , Receiving_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id and type='B'
-and roll='{3}' and dyelot='{4}'
-group by a.Id, poid, seq1,Seq2,a.WhseArrival,a.Type                                                                              
+			inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.Roll = t.Roll and b.Dyelot = t.Dyelot
+            where Status='Confirmed'  and a.id = b.id and type='B'
+group by a.Id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot,a.WhseArrival,a.Type                                                                              
             union all
-            select issuedate, a.id
+            select a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, a.IssueDate   
             ,'P37. Return Receiving Material' name
             , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
             from ReturnReceipt a WITH (NOLOCK) , ReturnReceipt_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-and roll='{3}' and dyelot='{4}'
-group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                               
+			inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.Roll = t.Roll and b.Dyelot = t.Dyelot
+            where Status='Confirmed' and a.id = b.id 
+group by a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, remark,a.IssueDate                                                                               
             union all
-            select issuedate, a.id
+            select a.id, b.frompoid, b.FromSeq1,b.FromSeq2, b.FromRoll,b.FromDyelot,a.IssueDate
             ,case a.type when 'A' then 'P22. Transfer Bulk to Inventory'
                               when 'B' then 'P23. Transfer Inventory to Bulk'
                               when 'C' then 'P36. Transfer Scrap to Inventory' 
@@ -178,13 +217,13 @@ group by a.id, poid, seq1,Seq2, remark,a.IssueDate
              end as name
             , 0 as inqty, sum(Qty) released,0 as adjust , '' remark ,'' location
             from SubTransfer a WITH (NOLOCK) , SubTransfer_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and Frompoid='{0}' and Fromseq1 = '{1}'and FromSeq2 = '{2}'  and a.id = b.id
-and fromroll='{3}' and fromdyelot='{4}'
-            group by a.id, frompoid, FromSeq1,FromSeq2,a.IssueDate,a.Type                                                                               
+			inner join #tmp t on b.Frompoid = t.PoId and b.Fromseq1 = t.Seq1 and b.FromSeq2 = t.Seq2 and b.fromroll = t.Roll and b.FromDyelot = t.Dyelot
+            where Status='Confirmed' and a.id = b.id
+            group by a.id, b.frompoid, b.FromSeq1,b.FromSeq2, b.FromRoll,b.FromDyelot,a.IssueDate,a.Type                                                                               
             union all
-            select issuedate, a.id
+            select a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, a.IssueDate  
                 ,'P18. Transfer In' name
-                , sum(Qty) arrived,0 as ouqty,0 as adjust, remark
+                , sum(Qty) arrived,0 as ouqty,0 as adjust, a.remark
             	,(Select cast(tmp.Location as nvarchar)+',' 
                                     from (select b1.Location 
                                                 from TransferIn a1 WITH (NOLOCK) 
@@ -195,78 +234,107 @@ and fromroll='{3}' and fromdyelot='{4}'
                                                     and b1.Seq2 = b.Seq2 group by b1.Location) tmp 
                                     for XML PATH('')) as Location
             from TransferIn a WITH (NOLOCK) , TransferIn_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}' and seq2 = '{2}'  and a.id = b.id
-and roll='{3}' and dyelot='{4}'
-group by a.id, poid, seq1,Seq2, remark,a.IssueDate                                                                                 
+			inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.roll = t.Roll and b.Dyelot = t.Dyelot
+            where Status='Confirmed' and a.id = b.id
+group by a.id, b.poid, b.seq1,b.Seq2, b.Roll,b.Dyelot, a.remark,a.IssueDate                                                                                 
             union all
-            select issuedate, a.id
+            select a.id, b.poid, b.Seq1,b.Seq2, b.Roll,b.Dyelot, a.IssueDate
                 ,'P19. Transfer Out' name
                 , 0 as inqty, sum(Qty) released,0 as adjust, remark,'' location
             from TransferOut a WITH (NOLOCK) , TransferOut_Detail b WITH (NOLOCK) 
-            where Status='Confirmed' and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-and roll='{3}' and dyelot='{4}'
-group by a.id, poid, Seq1,Seq2, remark,a.IssueDate) tmp
-            group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name
+			inner join #tmp t on b.poid = t.PoId and b.seq1 = t.Seq1 and b.seq2 = t.Seq2 and b.roll = t.Roll and b.Dyelot = t.Dyelot
+            where Status='Confirmed' and a.id = b.id 
+group by a.id, b.poid, b.Seq1,b.Seq2, b.Roll,b.Dyelot, remark,a.IssueDate) tmp
+            group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,POID,Seq1,Seq2, Roll,Dyelot
             order by IssueDate,name,id
             "
-                , source.Rows[e.RowIndex]["poid"].ToString()
-                , source.Rows[e.RowIndex]["seq1"].ToString()
-                , source.Rows[e.RowIndex]["seq2"].ToString()
-                , source.Rows[e.RowIndex]["roll"].ToString()
-                , source.Rows[e.RowIndex]["dyelot"].ToString()
-                ,docno);
+                , docno);
             #endregion
 
-            DataTable dt;
             DualResult result;
-            this.ShowWaitMessage("Data Loading....");
-            //MyUtility.Msg.WaitWindows("Data Loading...");
-            if (!(result = DBProxy.Current.Select(null, selectCommand1,out dt)))
+            this.ShowWaitMessage("Data Loading...");
+            if (!(result = DBProxy.Current.Select(null, selectCommand1, out dtGridDyelot)))
             {
                 ShowErr(selectCommand1, result);
             }
+            this.HideWaitMessage();
+        }
+
+        private void grid1_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dtGridDyelot == null)
+            {
+                this.GetgridDyelotData();
+            }
+
+            if (dtGridDyelot.Rows.Count == 0)
+            {
+                return;
+            }
+
+            var dt = dtGridDyelot.AsEnumerable()
+                .Where(s => s["poid"].Equals(source.Rows[e.RowIndex]["poid"]) &&
+                            s["seq1"].Equals(source.Rows[e.RowIndex]["seq1"]) &&
+                            s["seq2"].Equals(source.Rows[e.RowIndex]["seq2"]) &&
+                            s["roll"].Equals(source.Rows[e.RowIndex]["roll"]) &&
+                            s["dyelot"].Equals(source.Rows[e.RowIndex]["dyelot"]));
+
+            if (dt.Count() == 0)
+            {
+                gridDyelot.DataSource = null;
+            }
             else
             {
-                gridDyelot.DataSource = dt;
-                gridDyelot.AutoGenerateColumns = true;
-                gridDyelot.AutoResizeColumns();
+                gridDyelot.DataSource = dt.CopyToDataTable();
             }
-            btnCommit.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString()=="F";
-            txtRollNo.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString() == "F";
-            txtDyelotNo.Enabled = !MyUtility.Check.Empty(dt) && dt.Rows.Count == 0 && source.Rows[e.RowIndex]["fabrictype"].ToString() == "F";
-            //MyUtility.Msg.WaitClear();
-            this.HideWaitMessage();
+            
+            
+            gridDyelot.AutoResizeColumns();
+
         }
 
         private void btnCommit_Click(object sender, EventArgs e)
         {
-            string sqlcmd,sqlupd1, sqlupd2, newRoll, newDyelot;
-            DualResult result1, result2;
-            newRoll = txtRollNo.Text.TrimEnd();
-            newDyelot = txtDyelotNo.Text.TrimEnd();
+            var modifyDrList = source.AsEnumerable().Where(s => s.RowState == DataRowState.Modified);
+            if (modifyDrList.Count() == 0)
+            {
+                MyUtility.Msg.InfoBox("No data has been changed!");
+                return;
+            }
 
-            if (MyUtility.Check.Empty(txtRollNo.Text) || MyUtility.Check.Empty(txtDyelotNo.Text))
+            if (modifyDrList.Where(s => MyUtility.Check.Empty(s["Roll"]) || MyUtility.Check.Empty(s["Dyelot"])).Any())
             {
                 MyUtility.Msg.WarningBox("Roll# & Dyelot# can't be empty!!");
                 return;
             }
-            int temprowindex = gridModifyRoll.GetSelectedRowIndex();
-            DataRow dr = gridModifyRoll.GetDataRow(gridModifyRoll.GetSelectedRowIndex());
-            sqlcmd = string.Format(@"select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
-                where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}'"
-                , docno, dr["poid"], dr["seq1"], dr["seq2"], newRoll, newDyelot);
-            if (MyUtility.Check.Seek(sqlcmd,null))
+
+            string sqlcmd;
+            string sqlupd1 = string.Empty;
+            string sqlupd2 = string.Empty;
+            string newRoll;
+            string newDyelot;
+
+            foreach (var drModify in modifyDrList)
             {
-                MyUtility.Msg.WarningBox("Roll# & Dyelot# already existed!!");
-                return;
+                sqlcmd = string.Format(@"select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
+                where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}'"
+                    , docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"]);
+                if (MyUtility.Check.Seek(sqlcmd, null))
+                {
+                    MyUtility.Msg.WarningBox("Roll# & Dyelot# already existed!!");
+                    return;
+                }
+
+                sqlupd1 += string.Format(@"update dbo.receiving_detail set roll = '{6}' ,dyelot = '{7}' 
+where id='{0}' and poid ='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}';"
+                    , docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll", DataRowVersion.Original], drModify["dyelot", DataRowVersion.Original], drModify["roll"], drModify["dyelot"]);
+                sqlupd2 += string.Format(@"update dbo.ftyinventory set roll='{6}', dyelot = '{7}'
+where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' and stocktype = '{5}';"
+                    , drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll", DataRowVersion.Original], drModify["dyelot", DataRowVersion.Original], drModify["stocktype"], drModify["roll"], drModify["dyelot"]);
             }
+
             
-            sqlupd1 = string.Format(@"update dbo.receiving_detail set roll = '{6}' ,dyelot = '{7}' 
-where id='{0}' and poid ='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}'"
-                , docno, dr["poid"], dr["seq1"], dr["seq2"], dr["roll"], dr["dyelot"],newRoll,newDyelot);
-            sqlupd2 = string.Format(@"update dbo.ftyinventory set roll='{6}', dyelot = '{7}'
-where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' and stocktype = '{5}'"
-                , dr["poid"], dr["seq1"], dr["seq2"], dr["roll"], dr["dyelot"],dr["stocktype"],newRoll,newDyelot);
+            DualResult result1, result2;
 
             TransactionScope _transactionscope = new TransactionScope();
             using (_transactionscope)
@@ -328,9 +396,9 @@ Where a.id = '{0}' ", docno);
             else
             {
                 source = dt;
-                gridModifyRoll.DataSource = dt;              
+                gridModifyRoll.DataSource = dt;
+                this.LoadDate();
             }
-            gridModifyRoll.SelectRowTo(temprowindex);
         }
     }
 }
