@@ -147,6 +147,7 @@ update t set
 	t.[SizeName]	= @SizeName ,
 	t.[Qty]			= @Qty ,
 	t.[BarCode]	= @CardNo,
+    t.[CmdType]  ='Update',
 	t.[CmdTime]	= getdate(),
 	t.[InterfaceTime]=null
 from [dbo].[tCutbundcard] t
@@ -168,7 +169,7 @@ Begin
 	BarCode,CmdType,CmdTime, InterfaceTime)
 	values
 	(getdate(),@SP+'-'+@ComboType,@SP, @CutNo,  @CardNo,@CardNo,2,       @ColorName,@CordColor,@SizeName,@Qty,null,
-	@CardNo,@CardNo,getdate(),null)
+	@CardNo,'Insert',getdate(),null)
 End
 ";
             using (TransactionScope scope = new TransactionScope())
