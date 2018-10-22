@@ -323,7 +323,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 if (adr.Length > 0)
                 {
                     dr["annotation"] = adr[0]["annotation"];
-                    dr["isPair"] = MyUtility.Convert.GetInt(adr[0]["Pair"]) == 1;
                 }
             }
             if (allpartTb.Rows.Count == 0)
@@ -348,7 +347,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         ndr["PatternCode"] = dr["PatternCode"];
                         ndr["PatternDesc"] = dr["PatternDesc"];
                         ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
-                        ndr["isPair"] = MyUtility.Convert.GetInt(dr["Parts"]) == 1;
                         allpartTb.Rows.Add(ndr);
                     }
                 }
@@ -988,14 +986,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         if (dr2["PatternCode"].ToString() != "ALLPARTS")
                         {
                             nDetail["subprocessid"] = dr2["art"].ToString();
-                            //if (dr2["art"].ToString().Substring(dr2["art"].ToString().Length - 1) != "+")
-                            //{
-                            //    nDetail["subprocessid"] = dr2["art"].ToString() + "+";
-                            //}
-                            //else
-                            //{
-                            //    nDetail["subprocessid"] = dr2["art"].ToString();
-                            //}
                         }                       
                         ukey++;
 
@@ -1040,11 +1030,11 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                                     if (aldr.RowState != DataRowState.Deleted)
                                     {
                                         DataRow allpart_ndr = alltmpTb.NewRow();
-                                        //allpart_ndr["Bundleno"] = dr["Bundleno"];
                                         allpart_ndr["PatternCode"] = aldr["PatternCode"];
                                         allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
                                         allpart_ndr["Parts"] = aldr["Parts"];
                                         allpart_ndr["ukey1"] = dr["ukey1"];
+                                        allpart_ndr["ispair"] = aldr["ispair"];
                                         alltmpTb.Rows.Add(allpart_ndr);
                                     }
                                 }
