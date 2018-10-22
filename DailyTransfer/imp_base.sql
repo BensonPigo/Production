@@ -1770,7 +1770,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,MasterGroupID
 )
 select 
 ID
@@ -1784,7 +1784,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,MasterGroupID
 from Trade_To_Pms.dbo.MachineGroup as b WITH (NOLOCK)
 where not exists(select id from Machine.dbo.MachineGroup as a WITH (NOLOCK) where a.id = b.id and a.MasterGroupID = b.MasterGroupID)
 
