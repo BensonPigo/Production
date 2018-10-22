@@ -14,6 +14,8 @@ using Sci.Production.PublicPrg;
 using System.Transactions;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using Sci.Production.PublicForm;
+
 namespace Sci.Production.Warehouse
 {
     public partial class P29 : Sci.Win.Tems.QueryForm
@@ -21,6 +23,7 @@ namespace Sci.Production.Warehouse
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk2 = new Ict.Win.UI.DataGridViewCheckBoxColumn();
         DataTable master, detail;
+        private msg p29_msg = new msg();
         public P29(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -571,9 +574,9 @@ drop table #tmp");
             string insertMaster = @"
 insert into subtransfer
         (id      , type   , issuedate, mdivisionid, FactoryID
-         , status, addname, adddate  , remark)
+         , status, addname, adddate,  remark)
 select   id      , type   , issuedate, mdivisionid, FactoryID
-         , status, addname, adddate   , remark
+         , status, addname, adddate,   remark
 from #tmp";
             string insertDetail = @"
 insert into subtransfer_detail
@@ -680,7 +683,7 @@ from #tmp";
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Trans. ID" + Environment.NewLine + tmpId.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!","Complete!");
+                    
                 }
                 catch(Exception ex)
                 {
@@ -690,6 +693,27 @@ from #tmp";
                 }
             }
             _transactionscope = null;
+
+            #region confirm save成功的P23單子
+            List<string> success_list = new List<string>();
+            List<string> fail_list = new List<string>();
+            foreach (DataRow dr in dtMaster.Rows)
+            {
+                if (Prgs.P23confirm(dr["ID"].ToString()))
+                {
+                    success_list.Add(dr["ID"].ToString());
+                }
+                else
+                {
+                    fail_list.Add(dr["ID"].ToString());
+                }
+            }
+
+            string msg = string.Empty;
+            msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
+            msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P23 manual Confirm" : string.Empty;
+            this.p29_msg.Show(msg);
+            #endregion
 
             if (!master.Columns.Contains("TransID")) master.Columns.Add("TransID", typeof(string));
             foreach (DataRow Alldetailrows in detail.Rows)

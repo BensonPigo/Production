@@ -116,6 +116,7 @@
             "All"});
             this.comboCategory.Location = new System.Drawing.Point(729, 42);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
             this.comboCategory.TabIndex = 6;
             // 
@@ -139,6 +140,7 @@
             "All"});
             this.comboFabricType.Location = new System.Drawing.Point(729, 9);
             this.comboFabricType.Name = "comboFabricType";
+            this.comboFabricType.OldText = "";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
             this.comboFabricType.TabIndex = 5;
             // 
@@ -152,6 +154,20 @@
             // 
             // dateOrderCfmDate
             // 
+            // 
+            // 
+            // 
+            this.dateOrderCfmDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateOrderCfmDate.DateBox1.Name = "";
+            this.dateOrderCfmDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateOrderCfmDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateOrderCfmDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateOrderCfmDate.DateBox2.Name = "";
+            this.dateOrderCfmDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateOrderCfmDate.DateBox2.TabIndex = 1;
             this.dateOrderCfmDate.Location = new System.Drawing.Point(334, 42);
             this.dateOrderCfmDate.Name = "dateOrderCfmDate";
             this.dateOrderCfmDate.Size = new System.Drawing.Size(280, 23);
@@ -159,6 +175,20 @@
             // 
             // dateCuttingInline
             // 
+            // 
+            // 
+            // 
+            this.dateCuttingInline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateCuttingInline.DateBox1.Name = "";
+            this.dateCuttingInline.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateCuttingInline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateCuttingInline.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateCuttingInline.DateBox2.Name = "";
+            this.dateCuttingInline.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateCuttingInline.DateBox2.TabIndex = 1;
             this.dateCuttingInline.Location = new System.Drawing.Point(334, 9);
             this.dateCuttingInline.Name = "dateCuttingInline";
             this.dateCuttingInline.Size = new System.Drawing.Size(280, 23);
@@ -281,18 +311,18 @@
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.Location = new System.Drawing.Point(830, 11);
+            this.btnCreate.Location = new System.Drawing.Point(763, 11);
             this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(80, 30);
+            this.btnCreate.Size = new System.Drawing.Size(147, 30);
             this.btnCreate.TabIndex = 1;
-            this.btnCreate.Text = "Create";
+            this.btnCreate.Text = "Create && Confirm";
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
             // btnExcel
             // 
             this.btnExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExcel.Location = new System.Drawing.Point(744, 11);
+            this.btnExcel.Location = new System.Drawing.Point(677, 11);
             this.btnExcel.Name = "btnExcel";
             this.btnExcel.Size = new System.Drawing.Size(80, 30);
             this.btnExcel.TabIndex = 0;
@@ -336,6 +366,7 @@
             this.gridComplete.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridComplete.RowTemplate.Height = 24;
             this.gridComplete.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridComplete.ShowCellToolTips = false;
             this.gridComplete.Size = new System.Drawing.Size(571, 441);
             this.gridComplete.TabIndex = 0;
             this.gridComplete.TabStop = false;
@@ -360,6 +391,7 @@
             this.gridRel.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridRel.RowTemplate.Height = 24;
             this.gridRel.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridRel.ShowCellToolTips = false;
             this.gridRel.Size = new System.Drawing.Size(433, 441);
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
