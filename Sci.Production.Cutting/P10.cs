@@ -71,7 +71,8 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             .Text("PatternDesc", header: "Cutpart name", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("subProcessid", header: "SubProcess", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
-            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true);
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), integer_places: 5, iseditingreadonly: true)
+            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
             return base.OnGridSetup();
         }
 
@@ -363,8 +364,8 @@ order by bundlegroup"
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     allpart_cmd = allpart_cmd + string.Format(
-                @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts) values('{0}','{1}','{2}','{3}');"
-                , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"]);
+                @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair) values('{0}','{1}','{2}','{3}','{4}');"
+                , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"], dr["isPair"]);
                 }
             }
             #endregion
@@ -1046,7 +1047,11 @@ where Article!='' and WorkorderUkey in ({0}) and Article='{1}'"
             string deleteBundleDetailQty = $@"
 delete 
 from Bundle_Detail_Qty
-where id = '{id}'";
+where id = '{id}'
+delete 
+from Bundle_Detail_Allpart
+where id = '{id}'
+";
 
             DualResult result = DBProxy.Current.Execute(null, deleteBundleDetailQty);
 
