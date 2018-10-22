@@ -1356,6 +1356,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     ndr["PatternDesc"] = dr2["PatternDesc"];
                     ndr["art"] = dr2["art"];
                     ndr["Parts"] = dr2["Parts"];
+                    ndr["isPair"] = dr2["isPair"];
                     patternTb.Rows.Add(ndr);
                 }
                 foreach (DataRow dr2 in oldAllPartDr_selected)
@@ -1368,6 +1369,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     ndr["PatternDesc"] = dr2["PatternDesc"];
                     ndr["annotation"] = dr2["annotation"];
                     ndr["Parts"] = dr2["Parts"];
+                    ndr["isPair"] = dr2["isPair"];
 
                     allpartTb.Rows.Add(ndr);
                 }
@@ -1421,6 +1423,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                         ndr["PatternDesc"] = dr2["PatternDesc"];
                         ndr["art"] = dr2["art"];
                         ndr["Parts"] = dr2["Parts"];
+                        ndr["isPair"] = dr2["isPair"];
                         patternTb.Rows.Add(ndr);
                         npart = npart + Convert.ToInt16(dr2["Parts"]);
                     }
@@ -1434,6 +1437,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                         ndr["PatternDesc"] = dr2["PatternDesc"];
                         ndr["annotation"] = dr2["annotation"];
                         ndr["Parts"] = dr2["Parts"];
+                        ndr["isPair"] = dr2["isPair"];
 
                         allpartTb.Rows.Add(ndr);
                     }
