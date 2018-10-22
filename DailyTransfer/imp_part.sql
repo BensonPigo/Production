@@ -31,6 +31,7 @@ when matched then
 		, t.AddDate= s.AddDate
 		, t.Lock = s.Lock
 		, t.MasterGroupID = s.MasterGroupID
+		, t.MachineGroupID = s.MachineGroupID
 
 	when not matched by target and s.type='P' then 
 		insert 
@@ -560,8 +561,9 @@ where a.id in (select id from @T)) as s
 		where type = 'M' 
 	)as s on t.ID = s.Refno 
 	when matched then 
-		update set 
-			t.MachineGroupID		= s.MachineGroupID
+		update set		
+		 	t.MasterGroupID		    = s.MasterGroupID
+			,t.MachineGroupID		= s.MachineGroupID
 			,t.Model				= s.Model
 			,t.MachineBrandID		= s.MachineBrandID
 			,t.Description			= s.Description
@@ -574,12 +576,12 @@ where a.id in (select id from @T)) as s
 			,t.EditDate				= s.EditDate
 	when not matched by target and s.type='M' then 
 		insert 
-			(ID,MachineGroupID,Model,MachineBrandID,Description
+			(ID,MasterGroupID,MachineGroupID,Model,MachineBrandID,Description
 			,DescriptionDetail,Origin,Picture1,Picture2,Junk
 			,AddName,AddDate,EditName,EditDate
 			)
 		values
-			(s.Refno 			, s.MachineGroupID , s.Model 		, s.MachineBrandID 	, s.Description
+			(s.Refno 			, s.MasterGroupID  , s.MachineGroupID , s.Model 		, s.MachineBrandID 	, s.Description
 			 , s.DescriptionDetail 		, s.Origin 	, '' 		, '' 		, s.Junk
 			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		);
 	

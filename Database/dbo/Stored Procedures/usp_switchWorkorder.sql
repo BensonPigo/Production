@@ -36,6 +36,7 @@ BEGIN
 	From Order_EachCons a  WITH (NOLOCK) , Order_EachCons_Color b  WITH (NOLOCK) , Order_EachCons_Color_Article c  WITH (NOLOCK) 
 	Where a.ukey = b.Order_EachConsUkey and b.Ukey = c.Order_EachCons_ColorUkey and a.id = b.id and a.id = c.id and b.id = c.id
 			and a.id = @Cuttingid and a.CuttingPiece = 0
+	
 	--and b.id = c.id 應該是沒必要寫，已經有and a.id = b.id and a.id = c.id 
 	--撈Each Cons
 	Select * into #Order_EachCons 
@@ -55,7 +56,7 @@ BEGIN
 	--撈EachCon_Color_Article 找出Article對應的層數與最大層數
 	Select a.* ,
 	iif(isnull((Select iif(isnull(c.CuttingLayer,0)=0,100,c.CuttingLayer)  From Construction c  WITH (NOLOCK)  where c.id = b.ConstructionID),0)=0,100,
-	(Select iif(isnull(c.CuttingLayer,0)=0,100,c.CuttingLayer)  From Construction c  WITH (NOLOCK)  where c.id = b.ConstructionID)) as MaxLayer
+	(Select iif(isnull(c.CuttingLayer,0)=0,100,c.CuttingLayer)  From Construction c  WITH (NOLOCK)  where c.id = b.ConstructionID)) as MaxLayer,SCIRefno
 	Into #Order_EachCons_Color_Layer
 	From #marker1 a,#Order_EachCons_BOF b 
 	Where a.Ukey = b.Order_EachConsUkey
@@ -94,10 +95,7 @@ BEGIN
 	where a.id = @POID and a.FabricCode is not null and a.FabricCode !='' 
 	and b.id = @POID    
 	Order by inline,e.ID
-
-	Select id,article,sizecode,colorid,PatternPanel,orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid,SCIRefno
-	into #disQty
-	From #_tmpdisQty group by id,article,sizecode,PatternPanel,orderqty, disqty,colorid,SCIRefno order by inline
+	
 	----------------------------------------------------------------------------------
 	--New WorkOrder
 	Select a.*,0 as newKey InTo #NewWorkorder From Workorder a  WITH (NOLOCK)  Where 1 =0
@@ -195,6 +193,18 @@ BEGIN
 		Select a.*,IDENTITY(int,1,1) as Rowid 
 		InTo #WorkOrderMix 
 		From #Order_EachCons_Color_Layer a order by MixedSizeMarker desc,MarkerName
+		--------------------------------
+		select b.id,b.article,b.sizecode,b.colorid,PatternPanel,b.orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid,a.SCIRefno
+		into #disQty
+		from #WorkOrderMix a
+		inner join #_tmpdisQty b on a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel and a.SCIRefno = b.SCIRefno
+		inner join Order_EachCons_SizeQty oes on  oes.id = a.id and oes.Order_EachConsUkey = a.Order_EachConsUkey and b.SizeCode = oes.SizeCode
+		outer apply(select top 1 A=0 from Order_EachCons_Article WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)hasforArticle
+		outer apply(select Article from Order_EachCons_Article  WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)forArticle
+		where (b.Article in (forArticle.Article) or hasforArticle.A is null)
+		--and a.MarkerName = @MarkerName and a.ColorID = @colorid and a.FabricCombo = @FabricCombo and b.SizeCode = @sizecode  and a.SCIRefno = @SCIRefno
+		group by b.id,b.article,b.sizecode,b.colorid,PatternPanel,b.orderqty, disqty,a.SCIRefno
+		order by inline
 		--------------------Factory-------------------------------------
 		Select @Factoryid = Factoryid From Orders  WITH (NOLOCK)  Where ID = @Cuttingid
 		--------------------Loop Start @CuttingCombo--------------------
@@ -330,7 +340,8 @@ BEGIN
 						DECLARE cur_disQty  CURSOR FOR 
 						Select disqty,orderqty,Article,identRowid,ID
 						from #disQty 
-						Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and SCIRefno = @SCIRefno--因為不同article要一起計算，拿掉 and Article = @Article
+						Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and SCIRefno = @SCIRefno--因為不同article要一起計算，拿掉 
+						--and Article = @Article
 						order by Article
 							
 						OPEN cur_disQty
@@ -472,4 +483,3 @@ BEGIN
 			Set @insertRow+=1
 	End
 End
-

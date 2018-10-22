@@ -265,6 +265,7 @@ select 'Import' as IE,'MATERIAL' as Type,e.ID,e.ImportCountry,e.ShipModeID,e.Por
 e.Cbm,e.Forwarder+'-'+isnull(s.AbbEN,'') as Forwarder,e.Blno,
 (select top 1 ShippingAPID from ShareExpense WITH (NOLOCK) where Blno = e.Blno) as APId1,
 (select top 1 ShippingAPID from ShareExpense WITH (NOLOCK) where WKNo = e.ID) as APId2
+,[NoImportChg] = iif(e.NoImportCharges = 0,'','V')
 from Export e WITH (NOLOCK) 
 left join Supp s WITH (NOLOCK) on s.ID = e.Forwarder
 where e.Junk = 0");
@@ -299,7 +300,7 @@ as (
 select IIF(f.Type = 3,'Export','Import') as IE,
 IIF(f.Type = 1,'3rd Country',IIF(f.Type = 2,'Transfer In',IIF(f.Type = 3,'Transfer Out','Local Purchase'))) as Type,
 f.ID,f.ImportCountry,f.ShipModeID,f.PortArrival,f.WeightKg,f.Cbm,f.Forwarder+'-'+isnull(l.Abb,'') as Forwarder,
-f.Blno
+f.Blno,[NoImportChg] =''
 from FtyExport f WITH (NOLOCK) 
 left join LocalSupp l WITH (NOLOCK) on l.ID = f.Forwarder
 where not exists (select 1 from ShareExpense WITH (NOLOCK) where WKNo = f.ID)");
@@ -332,11 +333,13 @@ where not exists (select 1 from ShareExpense WITH (NOLOCK) where WKNo = f.ID)");
 
 select IE,Type,ID,'' as Shipper,'' as BrandID,'' as Category,0 as OrderQty,'' as CustCDID,
 ImportCountry,ShipModeID,PortArrival,0 as ShipQty,0 as CTNQty,WeightKg,Cbm,Forwarder,Blno
+,NoImportChg
 from ExportData
 where (Blno <> '' and APId1 is null) or (Blno = '' and APId2 is null)
 union all
 select IE,Type,ID,'' as Shipper,'' as BrandID,'' as Category,0 as OrderQty,'' as CustCDID,
 ImportCountry,ShipModeID,PortArrival,0 as ShipQty,0 as CTNQty,WeightKg,Cbm,Forwarder,Blno
+,NoImportChg
 from FtyExportData");
                 #endregion
             }

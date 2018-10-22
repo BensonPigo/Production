@@ -98,7 +98,8 @@
             this.grid_qty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_qty.RowTemplate.Height = 24;
             this.grid_qty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid_qty.Size = new System.Drawing.Size(450, 138);
+            this.grid_qty.ShowCellToolTips = false;
+            this.grid_qty.Size = new System.Drawing.Size(493, 138);
             this.grid_qty.TabIndex = 0;
             this.grid_qty.TabStop = false;
             // 
@@ -129,7 +130,8 @@
             this.grid_art.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_art.RowTemplate.Height = 24;
             this.grid_art.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid_art.Size = new System.Drawing.Size(453, 208);
+            this.grid_art.ShowCellToolTips = false;
+            this.grid_art.Size = new System.Drawing.Size(496, 208);
             this.grid_art.TabIndex = 1;
             this.grid_art.TabStop = false;
             // 
@@ -168,7 +170,7 @@
             this.grid_allpart.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid_allpart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid_allpart.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid_allpart.Location = new System.Drawing.Point(521, 238);
+            this.grid_allpart.Location = new System.Drawing.Point(553, 238);
             this.grid_allpart.Name = "grid_allpart";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -182,7 +184,8 @@
             this.grid_allpart.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_allpart.RowTemplate.Height = 24;
             this.grid_allpart.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid_allpart.Size = new System.Drawing.Size(463, 208);
+            this.grid_allpart.ShowCellToolTips = false;
+            this.grid_allpart.Size = new System.Drawing.Size(498, 208);
             this.grid_allpart.TabIndex = 2;
             this.grid_allpart.TabStop = false;
             // 
@@ -210,7 +213,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(817, 453);
+            this.btnOK.Location = new System.Drawing.Point(885, 453);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 30);
             this.btnOK.TabIndex = 9;
@@ -220,7 +223,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(903, 453);
+            this.btnCancel.Location = new System.Drawing.Point(971, 453);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
             this.btnCancel.TabIndex = 10;
@@ -241,7 +244,7 @@
             // button_RighttoLeft
             // 
             this.button_RighttoLeft.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.button_RighttoLeft.Location = new System.Drawing.Point(467, 357);
+            this.button_RighttoLeft.Location = new System.Drawing.Point(509, 357);
             this.button_RighttoLeft.Name = "button_RighttoLeft";
             this.button_RighttoLeft.Size = new System.Drawing.Size(38, 30);
             this.button_RighttoLeft.TabIndex = 7;
@@ -252,7 +255,7 @@
             // button_LefttoRight
             // 
             this.button_LefttoRight.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.button_LefttoRight.Location = new System.Drawing.Point(467, 288);
+            this.button_LefttoRight.Location = new System.Drawing.Point(509, 288);
             this.button_LefttoRight.Name = "button_LefttoRight";
             this.button_LefttoRight.Size = new System.Drawing.Size(38, 30);
             this.button_LefttoRight.TabIndex = 6;
@@ -263,7 +266,7 @@
             // button_Qty
             // 
             this.button_Qty.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
-            this.button_Qty.Location = new System.Drawing.Point(467, 88);
+            this.button_Qty.Location = new System.Drawing.Point(509, 88);
             this.button_Qty.Name = "button_Qty";
             this.button_Qty.Size = new System.Drawing.Size(38, 30);
             this.button_Qty.TabIndex = 3;
@@ -410,7 +413,7 @@
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label6.Location = new System.Drawing.Point(485, 205);
+            this.label6.Location = new System.Drawing.Point(517, 205);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(163, 23);
             this.label6.TabIndex = 64;
@@ -429,7 +432,7 @@
             this.grid_Size.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid_Size.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid_Size.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid_Size.Location = new System.Drawing.Point(519, 45);
+            this.grid_Size.Location = new System.Drawing.Point(551, 45);
             this.grid_Size.Name = "grid_Size";
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
@@ -443,6 +446,7 @@
             this.grid_Size.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid_Size.RowTemplate.Height = 24;
             this.grid_Size.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid_Size.ShowCellToolTips = false;
             this.grid_Size.Size = new System.Drawing.Size(253, 138);
             this.grid_Size.TabIndex = 65;
             this.grid_Size.TabStop = false;
@@ -450,7 +454,7 @@
             // 
             // P10_Generate
             // 
-            this.ClientSize = new System.Drawing.Size(991, 489);
+            this.ClientSize = new System.Drawing.Size(1064, 489);
             this.Controls.Add(this.grid_Size);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.numTotalParts);

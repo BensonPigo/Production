@@ -579,6 +579,7 @@ when matched then
 		,t.EditName			=s.EditName		
 		,t.EditDate			=s.EditDate		
 		,t.isThread         =s.isThread
+		,t.MasterGroupID	=s.MasterGroupID	
 when not matched by target then
 	insert(
 		ID
@@ -600,6 +601,7 @@ when not matched by target then
 		,EditName
 		,EditDate
 		,isThread
+		,MasterGroupID
 	)
 	values(
 		ID
@@ -621,6 +623,7 @@ when not matched by target then
 		,EditName
 		,EditDate
 		,isThread
+		,MasterGroupID
 	)
 when not matched by source then
 	delete;
@@ -1736,8 +1739,8 @@ s.EditDate
 ----------------------刪除主TABLE多的資料
 Delete Machine.dbo.MachineGroup
 from Machine.dbo.MachineGroup as a left join Trade_To_Pms.dbo.MachineGroup as b
-on a.id = b.id
-where b.id is null
+on a.id = b.id and a.MasterGroupID = b.MasterGroupID
+where b.id is null and b.MasterGroupID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
@@ -1753,7 +1756,7 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
 
-from Machine.dbo.MachineGroup as a inner join Trade_To_Pms.dbo.MachineGroup as b ON a.id=b.id
+from Machine.dbo.MachineGroup as a inner join Trade_To_Pms.dbo.MachineGroup as b ON a.id=b.id and a.MasterGroupID = b.MasterGroupID
 -------------------------- INSERT INTO 抓
 INSERT INTO Machine.dbo.MachineGroup(
 ID
@@ -1767,7 +1770,7 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,MasterGroupID
 )
 select 
 ID
@@ -1781,9 +1784,9 @@ ID
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,MasterGroupID
 from Trade_To_Pms.dbo.MachineGroup as b WITH (NOLOCK)
-where not exists(select id from Machine.dbo.MachineGroup as a WITH (NOLOCK) where a.id = b.id)
+where not exists(select id from Machine.dbo.MachineGroup as a WITH (NOLOCK) where a.id = b.id and a.MasterGroupID = b.MasterGroupID)
 
 
 --Mockup
