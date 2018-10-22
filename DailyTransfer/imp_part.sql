@@ -561,7 +561,7 @@ where a.id in (select id from @T)) as s
 		where type = 'M' 
 	)as s on t.ID = s.Refno 
 	when matched then 
-		update 		
+		update set		
 		 	t.MasterGroupID		    = s.MasterGroupID
 			,t.MachineGroupID		= s.MachineGroupID
 			,t.Model				= s.Model
