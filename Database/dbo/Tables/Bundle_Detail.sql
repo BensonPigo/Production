@@ -10,9 +10,12 @@
     [Farmin]      NUMERIC (5)    CONSTRAINT [DF_Bundle_Detail_Farmin] DEFAULT ((0)) NULL,
     [FarmOut]     NUMERIC (5)    CONSTRAINT [DF_Bundle_Detail_FarmOut] DEFAULT ((0)) NULL,
     [PrintDate]   DATETIME       NULL,
-    CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC), 
-    CONSTRAINT [AK_Bundle_Detail_BundleNo] UNIQUE ([BundleNo])
+    [IsPair]      BIT            NULL,
+    CONSTRAINT [PK_Bundle_Detail] PRIMARY KEY CLUSTERED ([BundleNo] ASC, [Id] ASC),
+    CONSTRAINT [UK_BundleNo_Bundle_Detail] UNIQUE NONCLUSTERED ([BundleNo] ASC)
 );
+
+
 
 
 
