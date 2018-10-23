@@ -63,7 +63,7 @@
             this.labTypeofPrint.Name = "labTypeofPrint";
             this.labTypeofPrint.Size = new System.Drawing.Size(119, 23);
             this.labTypeofPrint.TabIndex = 94;
-            this.labTypeofPrint.Text = "Type of Print";
+            this.labTypeofPrint.Text = "Type of Testing";
             // 
             // labStyle
             // 
