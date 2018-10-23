@@ -264,6 +264,12 @@ namespace Sci.Production.Quality
             string sqlShrinkage = $@"select * from[SampleGarmentTest_Detail] where id = {this.Deatilrow["ID"]} and No = {this.Deatilrow["No"]} ";
             DataTable tmp;
             DBProxy.Current.Select(null, sqlShrinkage, out tmp);
+            if (tmp.Rows.Count==0)
+            {
+                this.Close();
+                MyUtility.Msg.WarningBox("No Detail data Be Saved!!");
+                return;
+            }
             DataRow dr = tmp.Rows[0];
 
 
@@ -967,29 +973,29 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             //先BOTTOM
             if (dtShrinkage.Select("Location = 'BOTTOM'").Length > 0)
             {
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count-1; i++)
                 {
-                    worksheet.Cells[44, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Waistband (relax)'")[0][i];
+                    worksheet.Cells[44, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Waistband (relax)'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[45, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Hip Width'")[0][i];
+                    worksheet.Cells[45, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Hip Width'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[46, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Thigh Width'")[0][i];
+                    worksheet.Cells[46, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Thigh Width'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[47, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Side Seam'")[0][i];
+                    worksheet.Cells[47, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Side Seam'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[48, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Leg Opening'")[0][i];
+                    worksheet.Cells[48, i] = dtShrinkage.Select("Location = 'BOTTOM'and type ='Leg Opening'")[0][i+1];
                 }
             }
             else
@@ -1002,29 +1008,29 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
 
             if (dtShrinkage.Select("Location = 'OUTER'").Length > 0)
             {
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[34, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Chest Width'")[0][i];
+                    worksheet.Cells[34, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Chest Width'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[35, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Width'")[0][i];
+                    worksheet.Cells[35, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Width'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[36, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Length'")[0][i];
+                    worksheet.Cells[36, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Sleeve Length'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[37, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Back Length'")[0][i];
+                    worksheet.Cells[37, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Back Length'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[38, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Hem Opening'")[0][i];
+                    worksheet.Cells[38, i] = dtShrinkage.Select("Location = 'OUTER'and type ='Hem Opening'")[0][i + 1];
                 }
             }
             else
@@ -1037,29 +1043,29 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
 
             if (dtShrinkage.Select("Location = 'INNER'").Length > 0)
             {
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[26, i] = dtShrinkage.Select("Location = 'INNER'and type ='Chest Width'")[0][i];
+                    worksheet.Cells[26, i] = dtShrinkage.Select("Location = 'INNER'and type ='Chest Width'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[27, i] = dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Width'")[0][i];
+                    worksheet.Cells[27, i] = dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Width'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[28, i] = dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Length'")[0][i];
+                    worksheet.Cells[28, i] = dtShrinkage.Select("Location = 'INNER'and type ='Sleeve Length'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[29, i] = dtShrinkage.Select("Location = 'INNER'and type ='Back Length'")[0][i];
+                    worksheet.Cells[29, i] = dtShrinkage.Select("Location = 'INNER'and type ='Back Length'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[30, i] = dtShrinkage.Select("Location = 'INNER'and type ='Hem Opening'")[0][i];
+                    worksheet.Cells[30, i] = dtShrinkage.Select("Location = 'INNER'and type ='Hem Opening'")[0][i + 1];
                 }
             }
             else
@@ -1072,29 +1078,29 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
 
             if (dtShrinkage.Select("Location = 'TOP'").Length > 0)
             {
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[18, i] = dtShrinkage.Select("Location = 'TOP'and type ='Chest Width'")[0][i];
+                    worksheet.Cells[18, i] = dtShrinkage.Select("Location = 'TOP'and type ='Chest Width'")[0][i+1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[19, i] = dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Width'")[0][i];
+                    worksheet.Cells[19, i] = dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Width'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[20, i] = dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Length'")[0][i];
+                    worksheet.Cells[20, i] = dtShrinkage.Select("Location = 'TOP'and type ='Sleeve Length'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[21, i] = dtShrinkage.Select("Location = 'TOP'and type ='Back Length'")[0][i];
+                    worksheet.Cells[21, i] = dtShrinkage.Select("Location = 'TOP'and type ='Back Length'")[0][i + 1];
                 }
 
-                for (int i = 4; i < dtShrinkage.Columns.Count; i++)
+                for (int i = 4; i < dtShrinkage.Columns.Count - 1; i++)
                 {
-                    worksheet.Cells[22, i] = dtShrinkage.Select("Location = 'TOP'and type ='Hem Opening'")[0][i];
+                    worksheet.Cells[22, i] = dtShrinkage.Select("Location = 'TOP'and type ='Hem Opening'")[0][i + 1];
                 }
             }
             else

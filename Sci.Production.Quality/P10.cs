@@ -43,6 +43,16 @@ namespace Sci.Production.Quality
                 MyUtility.Msg.WarningBox("No Detail Data!");
                 return;
             }
+
+            string sqlShrinkage = $@"select * from[SampleGarmentTest_Detail] where id = {this.CurrentDetailData["ID"]} and No = {this.CurrentDetailData["No"]} ";
+            DataTable tmp;
+            DBProxy.Current.Select(null, sqlShrinkage, out tmp);
+            if (tmp.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No Detail data is Saved!!");
+                return;
+            }
+
             Sci.Production.Quality.P10_Detail callNewDetailForm = new P10_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
             callNewDetailForm.ShowDialog(this);
             callNewDetailForm.Dispose();
