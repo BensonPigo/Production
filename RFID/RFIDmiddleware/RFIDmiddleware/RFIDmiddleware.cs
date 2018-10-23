@@ -56,7 +56,8 @@ namespace RFIDmiddleware
             Excel.Worksheet worksheet = objApp.Sheets[1];
             com.WriteTable(m, 1, 1, true);
             com.ColumnsAutoFit = true;
-            
+            worksheet.Columns[5].NumberFormat = "yyyy/mm/dd hh:mm:ss";
+
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             Marshal.ReleaseComObject(worksheet);
