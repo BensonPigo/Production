@@ -138,7 +138,7 @@ namespace Sci.Production.Quality
 select * from 
 (
 	select 
-	[TypeOfPrint] ='Mockup Crocking'
+	[TypeOfTesting] ='Mockup Crocking'
 	,[Style] = StyleID
 	,[Season] = SeasonID
 	,[Brand] = BrandID
@@ -149,11 +149,23 @@ select * from
 	,[SubmitDate] = b.SubmitDate
 	,[ReceivedDate] = b.ReceivedDate
 	,[ReleaseDate] = b.ReleasedDate
+	,TestTemperature=null
+	,TestTime=null
+	,HTPlate=null
+	,HTFlim=null
+	,HTTime=null
+	,HTPressure=null
+	,HTPellOff=null
+	,HT2ndPressnoreverse=null
+	,HT2ndPressreversed=null
+	,HTCoolingTime=null
 	,[Artwork] = c.ArtworkTypeID
+	,TypeofPrint=null
 	,[ArtworkColor] = c.ArtworkColor
 	,[FabricRefNo] = c.FabricRefNo
 	,[FabricColor] = c.FabricColor
 	,[Result] = c.Result
+	,c.Remark
 	 from MockupCrocking a
 	 left join MockupCrocking_Detail b on a.ID=b.ID
 	 left join MockupCrocking_Detail_Detail c on a.ID=c.ID
@@ -161,7 +173,7 @@ select * from
 union all 
 
 	select 
-	[TypeOfPrint] ='Mockup Oven'
+	[TypeOfTesting] ='Mockup Oven'
 	,[Style] = StyleID
 	,[Season] = SeasonID
 	,[Brand] = BrandID
@@ -172,11 +184,23 @@ union all
 	,[SubmitDate] = b.SubmitDate
 	,[ReceivedDate] = b.ReceivedDate
 	,[ReleaseDate] = b.ReleasedDate
+	,TestTemperature
+	,TestTime
+	,HTPlate
+	,HTFlim
+	,HTTime
+	,HTPressure
+	,HTPellOff
+	,HT2ndPressnoreverse
+	,HT2ndPressreversed
+	,HTCoolingTime
 	,[Artwork] = c.ArtworkTypeID
+	,TypeofPrint
 	,[ArtworkColor] = c.ArtworkColor
 	,[FabricRefNo] = c.FabricRefNo
 	,[FabricColor] = c.FabricColor
 	,[Result] = c.Result
+	,c.Remark
 	 from MockupOven a
 	 left join MockupOven_Detail b on a.ID=b.ID
 	 left join MockupOven_Detail_Detail c on a.ID=c.ID
@@ -184,7 +208,7 @@ union all
 union all
 
 	select 
-	[TypeOfPrint] ='Mockup Wash'
+	[TypeOfTesting] ='Mockup Wash'
 	,[Style] = StyleID
 	,[Season] = SeasonID
 	,[Brand] = BrandID
@@ -195,11 +219,23 @@ union all
 	,[SubmitDate] = b.SubmitDate
 	,[ReceivedDate] = b.ReceivedDate
 	,[ReleaseDate] = b.ReleasedDate
+	,TestTemperature=null
+	,TestTime=null
+	,HTPlate
+	,HTFlim
+	,HTTime
+	,HTPressure
+	,HTPellOff
+	,HT2ndPressnoreverse
+	,HT2ndPressreversed
+	,HTCoolingTime
 	,[Artwork] = c.ArtworkTypeID
+	,TypeofPrint
 	,[ArtworkColor] = c.ArtworkColor
 	,[FabricRefNo] = c.FabricRefNo
 	,[FabricColor] = c.FabricColor
 	,[Result] = c.Result
+	,c.Remark
 	 from MockupWash a
 	 left join MockupWash_Detail b on a.ID=b.ID
 	 left join MockupWash_Detail_Detail c on a.ID=c.ID
