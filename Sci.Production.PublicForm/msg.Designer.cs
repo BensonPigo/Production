@@ -56,6 +56,7 @@
             this.editBoxMsg.Multiline = true;
             this.editBoxMsg.Name = "editBoxMsg";
             this.editBoxMsg.ReadOnly = true;
+            this.editBoxMsg.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.editBoxMsg.Size = new System.Drawing.Size(284, 92);
             this.editBoxMsg.TabIndex = 4;
             // 

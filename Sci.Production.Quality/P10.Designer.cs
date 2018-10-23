@@ -64,10 +64,6 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.dateBoxInspDate);
-            this.masterpanel.Controls.Add(this.dateBoxDeadline);
-            this.masterpanel.Controls.Add(this.dateBoxReceivedDate);
-            this.masterpanel.Controls.Add(this.dateBoxReleasedDate);
             this.masterpanel.Controls.Add(this.displayBoxLastResult);
             this.masterpanel.Controls.Add(this.displayBoxBrand);
             this.masterpanel.Controls.Add(this.displayBoxSeason);
@@ -84,8 +80,16 @@
             this.masterpanel.Controls.Add(this.labelDeadline);
             this.masterpanel.Controls.Add(this.labelArticle);
             this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Size = new System.Drawing.Size(956, 136);
+            this.masterpanel.Controls.Add(this.dateBoxInspDate);
+            this.masterpanel.Controls.Add(this.dateBoxDeadline);
+            this.masterpanel.Controls.Add(this.dateBoxReceivedDate);
+            this.masterpanel.Controls.Add(this.dateBoxReleasedDate);
+            this.masterpanel.Size = new System.Drawing.Size(892, 136);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxReleasedDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxReceivedDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxDeadline, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateBoxInspDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelArticle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDeadline, 0);
@@ -102,24 +106,20 @@
             this.masterpanel.Controls.SetChildIndex(this.displayBoxSeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxBrand, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayBoxLastResult, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBoxReleasedDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBoxReceivedDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBoxDeadline, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateBoxInspDate, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 136);
-            this.detailpanel.Size = new System.Drawing.Size(956, 213);
+            this.detailpanel.Size = new System.Drawing.Size(892, 213);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.gridicon.Location = new System.Drawing.Point(854, 100);
+            this.gridicon.Location = new System.Drawing.Point(886, 100);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(956, 213);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 213);
             // 
             // detail2
             // 
@@ -135,16 +135,20 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(956, 387);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(956, 349);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(956, 38);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(956, 387);
             // 
             // tabs
             // 
@@ -247,7 +251,7 @@
             this.displayBoxStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxStyle.Location = new System.Drawing.Point(134, 11);
             this.displayBoxStyle.Name = "displayBoxStyle";
-            this.displayBoxStyle.Size = new System.Drawing.Size(103, 23);
+            this.displayBoxStyle.Size = new System.Drawing.Size(130, 23);
             this.displayBoxStyle.TabIndex = 12;
             // 
             // displayBoxArticle
@@ -337,7 +341,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportMove = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.KeyField1 = "ID";

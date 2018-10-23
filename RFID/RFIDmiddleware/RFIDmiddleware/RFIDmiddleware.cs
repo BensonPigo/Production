@@ -12,8 +12,8 @@ using System.Windows.Forms;
 using System.Linq;
 using System.IO;
 using Sci;
-using sxrc = Sci.Utility.Excel.SaveXltReportCls;
 using System.Configuration;
+using Excel = Microsoft.Office.Interop.Excel;
 using System.Data.SqlClient;
 
 namespace RFIDmiddleware
@@ -25,7 +25,7 @@ namespace RFIDmiddleware
         public RFIDmiddleware()
         {
             InitializeComponent();
-
+            
             txtServerName.Text = ConfigurationManager.AppSettings["RFIDServerName"];;
             txtDatabaseName.Text = ConfigurationManager.AppSettings["RFIDDatabaseName"]; ;
             txtTable.Text = ConfigurationManager.AppSettings["RFIDTable"]; ;
@@ -38,7 +38,7 @@ namespace RFIDmiddleware
             string sqlcme = string.Format("select * from [{0}].dbo.[{1}]",  txtDatabaseName.Text, txtTable.Text);
             DataTable m = new DataTable();
             SqlConnection conn = new SqlConnection(string.Format(@"Data Source={0};Initial Catalog={1};Persist Security Info=True;User ID={2};Password={3}", txtServerName.Text, txtDatabaseName.Text, RFIDLoginId, RFIDLoginPwd));
-            
+
             using (conn)
             {
                 SqlCommand command = new SqlCommand(sqlcme, conn);
@@ -48,26 +48,21 @@ namespace RFIDmiddleware
                 da.Dispose();
             }
             
-            //DualResult res = DBProxy.Current.Select("RFID", sqlcme, out m);
-            //if (!res) { MyUtility.Msg.ErrorBox(res.ToString(), "error"); return; }
-
             if (m.Rows.Count < 1) { MyUtility.Msg.ErrorBox("No datas.", ""); return; }
 
-            string xltPath = System.IO.Path.Combine(Sci.Env.Cfg.XltPathDir, "RFIDmiddleware.xltx");
-            sxrc sxr = new sxrc(xltPath);
-            sxrc.xltRptTable dt = new sxrc.xltRptTable(m);
+            
+            Excel.Application objApp = new Excel.Application();
+            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\RFIDmiddleware.xltx", objApp);
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            com.WriteTable(m, 1, 1, true);
+            com.ColumnsAutoFit = true;
+            worksheet.Columns[5].NumberFormat = "yyyy/mm/dd hh:mm:ss";
 
-            dt.ShowHeader = true;
-            dt.Borders.AllCellsBorders = true;
-            //自動欄位寬度
-            dt.boAutoFitColumn = true;
-            //凍結窗格
-            dt.boFreezePanes = true;
-            dt.boAddFilter = true;
-            sxr.dicDatas.Add(sxr._v + "tb", dt);
-            sxr.boOpenFile = true;
-            sxr.Save();
-
+            com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
+            objApp.Visible = true;
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(objApp);
+            this.HideWaitMessage();
         }
     }
 }
