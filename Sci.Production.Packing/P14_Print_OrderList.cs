@@ -241,6 +241,7 @@ from (
             , pd.Id
             , isnull(o.StyleID,'') as StyleID,isnull(o.BrandID,'') as BrandID,isnull(o.Customize1,'') as Customize1
             , isnull(o.CustPONo,'') as CustPONo,isnull(c.Alias,'') as Dest
+            , b.TTL_PCS
             , isnull(o.FactoryID,'') as FactoryID
             , convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery
             , t.AddDate
@@ -254,6 +255,11 @@ from (
                                                         and pd.CTNQty > 0
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
                                                     and oq.Seq = pd.OrderShipmodeSeq
+    outer apply(
+	    select [TTL_PCS]=ISNULL(SUM(shipQty),0)
+	    from PackingList_Detail pld
+	    where pld.ID = t.PackingListID and pld.CTNStartNo = t.CTNStartNo 
+    )b
     where t.MDivisionID = '{1}' and t.TransferSlipNo in (select TransferSlipNo from #tmp_TransferSlipNo)
 ) X order by rn
 
@@ -263,9 +269,9 @@ from (
                 MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", update_TransferSlipNo, out a);
                 #endregion
                 DataTable b;
-                string sqlcmd = @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid from #tmp";
+                string sqlcmd = @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid from #tmp";
 
-                MyUtility.Tool.ProcessWithDatatable(a, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid", sqlcmd, out b);
+                MyUtility.Tool.ProcessWithDatatable(a, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid", sqlcmd, out b);
 
                 var slip = (from p in b.AsEnumerable()
                             group p by new
@@ -283,6 +289,7 @@ into m
                                 OrderID = m.First()["OrderID"].ToString(),
                                 PONo = m.First()["CustPONo"].ToString(),
                                 Dest = m.First()["Dest"].ToString(),
+                                TTL_PCS = m.Sum(st => st.Field<int>("TTL_PCS")).ToString(),
                                 BuyerDelivery = m.First()["BuyerDelivery"].ToString(),
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
                                 TransferSlipNo = m.First()["TransferSlipNo"].ToString(),
@@ -296,6 +303,7 @@ select  t.TTL_Qty,
         ttlCtn = (select count(*) from PackingList_detail pk WITH (NOLOCK) where t.PackID = pk.ID and t.OrderID = pk.OrderID and ctnQty > 0),
         a.ClogLocationId,
         t.Dest,
+        t.TTL_PCS,
         t.BuyerDelivery,
         t.CartonNum,
         t.TransferSlipNo,        
@@ -326,6 +334,7 @@ outer apply(
                   ttlCtn = row1["ttlCtn"].ToString().Trim(),
                   ClogLocationId = row1["ClogLocationId"].ToString().Trim(),
                   Dest = row1["Dest"].ToString().Trim(),
+                  TTL_PCS = row1["TTL_PCS"].ToString().Trim(),
                   BuyerDelivery = row1["BuyerDelivery"].ToString().Trim(),
                   CartonNum = row1["CartonNum"].ToString().Trim(),
                   TransferSlipNo = row1["TransferSlipNo"].ToString().Trim(),
@@ -564,6 +573,12 @@ outer apply(
             /// Dest
             /// </summary>
             public string Dest { get; set; }
+
+
+            /// <summary>
+            /// Dest
+            /// </summary>
+            public string TTL_PCS { get; set; }
 
             /// <summary>
             /// BuyerDelivery
