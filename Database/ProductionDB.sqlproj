@@ -2299,6 +2299,7 @@
     <Build Include="dbo\Tables\SampleGarmentTest_Detail_Twisting.sql" />
     <Build Include="dbo\Tables\SampleGarmentTest_Detail_Apperance.sql" />
     <Build Include="dbo\Tables\SampleGarmentTest_Detail_Shrinkage.sql" />
+    <Build Include="dbo\Stored Procedures\CuttingP20calculateCutQty.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
