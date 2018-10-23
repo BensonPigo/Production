@@ -19,19 +19,53 @@ namespace Sci.Production.Quality
     {
         private string loginID = Sci.Env.User.UserID;
         private string Factory = Sci.Env.User.Keyword;
+        private int ReportNoCount = 0;
+        ToolStripMenuItem edit;
 
         public P10(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
+            this.detailgrid.ContextMenuStrip = detailgridmenus;
         }
 
+        protected override void OnFormLoaded()
+        {
+            detailgridmenus.Items.Clear();//清空原有的Menu Item
+            Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Edit this Record's detail", onclick: (s, e) => EditThisDetail()).Get(out edit);
+
+            base.OnFormLoaded();
+        }
+        private void EditThisDetail()
+        {
+            if (CurrentDetailData==null)
+            {
+                MyUtility.Msg.WarningBox("No Detail Data!");
+                return;
+            }
+
+            string sqlShrinkage = $@"select * from[SampleGarmentTest_Detail] where id = {this.CurrentDetailData["ID"]} and No = {this.CurrentDetailData["No"]} ";
+            DataTable tmp;
+            DBProxy.Current.Select(null, sqlShrinkage, out tmp);
+            if (tmp.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No Detail data is Saved!!");
+                return;
+            }
+
+            Sci.Production.Quality.P10_Detail callNewDetailForm = new P10_Detail(this.EditMode, this.CurrentMaintain, this.CurrentDetailData);
+            callNewDetailForm.ShowDialog(this);
+            callNewDetailForm.Dispose();
+            this.RenewData();
+            OnDetailEntered();
+        }
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(@"
 select  sd.id,
         sd.No,
+        sd.ReportNo,
         sd.InspDate,
         sd.Result,
         sd.Technician,
@@ -139,8 +173,8 @@ where sd.id='{0}' order by sd.No
             DataGridViewGeneratorComboBoxColumnSettings ResultComboCell = new DataGridViewGeneratorComboBoxColumnSettings();
 
             Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
-            ResultCombo.Add("Pass", "Pass");
-            ResultCombo.Add("Fail", "Fail");
+            ResultCombo.Add("P", "Pass");
+            ResultCombo.Add("F", "Fail");
             ResultComboCell.DataSource = new BindingSource(ResultCombo, null);
             ResultComboCell.ValueMember = "Key";
             ResultComboCell.DisplayMember = "Value";
@@ -228,7 +262,8 @@ where sd.id='{0}' order by sd.No
             #endregion
 
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Numeric("No", header: "No. Of Test", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
+            .Numeric("No", header: "No", integer_places: 8, decimal_places: 0, iseditingreadonly: true, width: Widths.AnsiChars(8))
+            .Text("ReportNo", header: "ReportNo", width: Widths.AnsiChars(15))
             .Date("Inspdate", header: "Test Date", width: Widths.AnsiChars(10), settings: inspDateCell)
             .ComboBox("Result", header: "Result", width: Widths.AnsiChars(10), settings: ResultComboCell)
             .Text("Technician", header: "Technician", width: Widths.AnsiChars(10), settings: inspectorCell)
@@ -249,6 +284,8 @@ where sd.id='{0}' order by sd.No
             this.detailgrid.InvalidateRow(RowIndex);
         }
 
+
+
         protected override void OnDetailGridInsert(int index = 1)
         {
             base.OnDetailGridInsert(index);
@@ -265,6 +302,17 @@ where sd.id='{0}' order by sd.No
             {
                 MaxNo = Convert.ToInt32(dt.Compute("Max(No)", ""));
                 CurrentDetailData["No"] = MaxNo + 1;
+
+         
+                string tmpId = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "GM", "SampleGarmentTest_Detail", DateTime.Today, 2, "ReportNo", null);
+                string head = tmpId.Substring(0, 9);
+                int seq= Convert.ToInt32(tmpId.Substring(9,4));
+
+               tmpId = head + string.Format("{0:0000}", seq+ ReportNoCount);
+
+                CurrentDetailData["ReportNo"] = tmpId;
+                ReportNoCount++;
+
             }
 
         }
@@ -330,8 +378,172 @@ where sd.id='{0}' order by sd.No
                 CurrentMaintain["InspDate"] = DBNull.Value;
                 CurrentMaintain["Result"] = string.Empty;
             }
+            ReportNoCount = 0;
+
             return base.ClickSaveBefore();
         }
 
+
+
+        protected override DualResult ClickSave()
+        {
+            DualResult upResult = new DualResult(true);
+            string update_cmd = "";
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    if (!MyUtility.Check.Empty(dr["senddate", DataRowVersion.Original])) return new DualResult(false, "SendDate is existed, can not delete.", "Warning");
+
+                    List<SqlParameter> spamDet = new List<SqlParameter>();
+                    update_cmd = @"
+                        Delete From SampleGarmentTest_Detail WITH (NOLOCK) Where id =@id and no=@no;";
+                    spamDet.Add(new SqlParameter("@id", dr["ID", DataRowVersion.Original]));
+                    spamDet.Add(new SqlParameter("@no", dr["NO", DataRowVersion.Original]));
+                    upResult = DBProxy.Current.Execute(null, update_cmd, spamDet);
+                }
+
+            }
+
+            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                {
+                    string delete3sub = $@"
+Delete SampleGarmentTest_Detail_Shrinkage  where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete SampleGarmentTest_Detail_Twisting where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+Delete SampleGarmentTest_Detail_Appearance where id = '{this.CurrentMaintain["ID", DataRowVersion.Original]}' and NO = '{dr["NO", DataRowVersion.Original]}'
+";
+                    DBProxy.Current.Execute(null, delete3sub);
+                }
+                else
+                {
+                    if (MyUtility.Check.Empty(dr["Status"]))
+                    {
+                        dr["Status"] = "New";
+                    }
+                    if (!MyUtility.Check.Seek($"select 1 from SampleGarmentTest_Detail_Shrinkage with(nolock) where id = '{this.CurrentMaintain["ID"]}' and NO = '{dr["NO"]}'"))
+                    {
+                        List<SqlParameter> spam = new List<SqlParameter>();
+                        spam.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
+                        spam.Add(new SqlParameter("@NO", dr["NO"]));
+                        string insertShrinkage = $@"
+select sl.Location
+into #Location1
+from SampleGarmentTest gt with(nolock)
+inner join style s with(nolock) on s.id = gt.StyleID
+inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
+where gt.id = @ID and sl.Location !='B'
+group by sl.Location
+order by sl.Location desc
+CREATE TABLE #type1([type] [varchar](20),seq numeric(6,0))
+insert into #type1 values('Chest Width',1)
+insert into #type1 values('Sleeve Width',2)
+insert into #type1 values('Sleeve Length',3)
+insert into #type1 values('Back Length',4)
+insert into #type1 values('Hem Opening',5)
+---
+select distinct sl.Location
+into #Location2
+from SampleGarmentTest gt with(nolock)
+inner join style s with(nolock) on s.id = gt.StyleID
+inner join Style_Location sl with(nolock) on sl.styleukey = s.ukey
+where gt.id = @ID and sl.Location ='B'
+
+
+
+CREATE TABLE #type2([type] [varchar](20),seq numeric(6,0))
+insert into #type2 values('Waistband (relax)',1)
+insert into #type2 values('Hip Width',2)
+insert into #type2 values('Thigh Width',3)
+insert into #type2 values('Side Seam',4)
+insert into #type2 values('Leg Opening',5)
+
+
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
+select @ID,@NO,* from #Location1,#type1
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Shrinkage]([ID],[No],[Location],[Type],[seq])
+select @ID,@NO,* from #Location2,#type2
+
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Twisting]([ID],[No],[Location])
+select @ID,@NO,
+[Location]=CASE WHEN Location='B' THEN 'BOTTOM'
+WHEN Location='I' THEN 'INNER'
+WHEN Location='O' THEN 'OUTER'
+WHEN Location='T' THEN 'TOP'
+ELSE ''
+END
+
+from #Location1
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Twisting]([ID],[No],[Location])
+select @ID,@NO,[Location]=CASE WHEN Location='B' THEN 'BOTTOM'
+WHEN Location='I' THEN 'INNER'
+WHEN Location='O' THEN 'OUTER'
+WHEN Location='T' THEN 'TOP'
+ELSE ''
+END from #Location2
+
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Print / Heat Transfer',1)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Embroidery',2)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Label',3)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Zipper/ snap button/ button/tie cord/etc.',4)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Discoloration (colour change )',5)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Colour Staining',6)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Pilling',7)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Shrinkage & Twisting',8)
+INSERT INTO [dbo].[SampleGarmentTest_Detail_Appearance]([ID],[No],[Type],[Seq])
+values (@ID,@NO,'Appearance of garment after wash',9)
+";
+                        DBProxy.Current.Execute(null, insertShrinkage, spam);
+                    }
+                }
+            }
+
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+
+            if (dt.Rows.Count > 0)
+            {
+                string maxNo = dt.Compute("MAX(NO)", "").ToString();
+                string where = string.Format("NO='{0}'", maxNo);
+
+                if (dt.Select(where).Count()>0)
+                {
+                    DataRow DetailRow = dt.Select(where)[0];
+
+                    if (DetailRow["Result"].ToString()=="Fail")
+                        DetailRow["Result"] = "F";
+
+                    if (DetailRow["Result"].ToString() == "Pass")
+                        DetailRow["Result"] = "P";
+
+                    CurrentMaintain["Result"] = DetailRow["Result"];
+                    CurrentMaintain["Inspdate"] = DetailRow["Inspdate"];
+                    CurrentMaintain["Remark"] = DetailRow["remark"];
+
+                }
+            }
+            else
+            {
+                CurrentMaintain["Result"] = "";
+                CurrentMaintain["Inspdate"] = DBNull.Value;
+                CurrentMaintain["Remark"] = "";
+            }
+            
+            return base.ClickSave();
+        }
+
+        protected override void OnEditModeChanged()
+        {
+            ReportNoCount = 0;
+            base.OnEditModeChanged();
+        }
     }
 }
