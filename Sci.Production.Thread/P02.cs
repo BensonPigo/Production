@@ -149,8 +149,10 @@ Left Join Localitem b WITH (NOLOCK) on a.refno = b.refno
 Left join ThreadColor c WITH (NOLOCK) on c.id = a.ThreadColorid
 OUTER APPLY
 (
-	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone from ThreadStock d WITH (NOLOCK) 
-	where d.refno = a.refno and d.Threadcolorid = a.threadcolorid 		
+	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone 
+	from ThreadStock d WITH (NOLOCK) 
+	INNER JOIN ThreadLocation tl ON d.ThreadLocationID=tl.ID
+	where d.refno = a.refno and d.Threadcolorid = a.threadcolorid and d.Threadcolorid = a.threadcolorid AND tl.AllowAutoAllocate=1
 ) X
 WHERE a.OrderID = '{0}'",
                 masterID);
@@ -850,7 +852,8 @@ OUTER APPLY
 (
 	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone 
     from ThreadStock d WITH (NOLOCK) 
-	where d.refno = tmp.refno and d.Threadcolorid = tmp.threadcolorid 		
+    INNER JOIN ThreadLocation tl ON d.LocationID=Tl.ID
+	where d.refno = tmp.refno and d.Threadcolorid = tmp.threadcolorid AND tl.AllowAutoAllocate=1
 ) X",
                 id);
 
@@ -1215,7 +1218,9 @@ drop table #tmp_P01",
             {
                 checkSql = $@"select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone 
     from ThreadStock d WITH(NOLOCK)
-    where d.refno = '{item["Refno"]}' and d.Threadcolorid = '{item["Threadcolorid"]}' ";
+    INNER JOIN ThreadLocation tl
+    ON d.ThreadLocationID=tl.ID
+    where tl.AllowAutoAllocate=1 AND d.refno = '{item["Refno"]}' and d.Threadcolorid = '{item["Threadcolorid"]}' ";
                 MyUtility.Check.Seek(checkSql, out checkDr);
                 if ((decimal)checkDr["newCone"] < (decimal)item["UseStockNewConeQty"] ||
                    (decimal)checkDr["usedcone"] < (decimal)item["UseStockUseConeQty"])
@@ -1254,10 +1259,11 @@ WHILE @@FETCH_STATUS = 0
 BEGIN
      
 	DECLARE ThreadStock_cur CURSOR FOR 
-    select NewCone,UsedCone,ThreadLocationID
-       from dbo.ThreadStock with (nolock)
-       where Refno = @Refno and ThreadColorID = @ThreadColorID and (NewCone > 0 or UsedCone > 0)
-	   order by UsedCone
+    select ts.NewCone,ts.UsedCone,ts.ThreadLocationID
+       from dbo.ThreadStock ts with (nolock)
+       INNER JOIN ThreadLocation tl ON ts.ThreadLocationID=tl.ID
+       where ts.Refno = @Refno and ts.ThreadColorID = @ThreadColorID and (ts.NewCone > 0 or ts.UsedCone > 0) AND tl.AllowAutoAllocate=1
+	   order by ts.UsedCone
 	OPEN ThreadStock_cur --開始run cursor                   
 	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
 	WHILE @@FETCH_STATUS = 0
@@ -1343,10 +1349,11 @@ WHILE @@FETCH_STATUS = 0
 BEGIN
      
 	DECLARE ThreadStock_cur CURSOR FOR 
-    select NewCone,UsedCone,ThreadLocationID
-       from dbo.ThreadStock with (nolock)
-       where Refno = @Refno and ThreadColorID = @ThreadColorID and (NewCone > 0 or UsedCone > 0)
-	   order by UsedCone
+    select ts.NewCone,ts.UsedCone,ts.ThreadLocationID
+       from dbo.ThreadStock ts with (nolock)
+       INNER JOIN ThreadLocation tl ON ts.ThreadLocationID=tl.ID
+       wherets. Refno = @Refno and ts.ThreadColorID = @ThreadColorID and (ts.NewCone > 0 or ts.UsedCone > 0) AND tl.AllowAutoAllocate=1
+	   order by ts.UsedCone
 	OPEN ThreadStock_cur --開始run cursor                   
 	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
 	WHILE @@FETCH_STATUS = 0
