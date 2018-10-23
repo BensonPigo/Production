@@ -88,7 +88,8 @@ select
 [Model] = m.Model,
 [Brand] = m.MachineBrandID,
 [Insertor] = m.AddName,
-[IsUsing] = iif(m.Junk = 0,1,0)
+[IsUsing] = iif(m.Junk = 0,1,0),
+[CardNo] = isnull(m.RFIDCardNo,0)
 into #tMachineInfo
 from Machine.dbo.Machine m with (nolock)
 inner join Machine.dbo.MachineGroup mg with (nolock) on m.MachineGroupID = mg.id
@@ -167,6 +168,7 @@ inner join #tSeqAssignSunRise s on t.RouteName = s.RouteName collate SQL_Latin1_
 --tStAssign(加工方案-工作站安排)
 select 
 [guid] = NEWID(),
+[RouteName] = tsa.RouteName,
 [SeqAssign_guid] = tsa.guid,
 [StationID] = cast(lmd.No as int),
 [StFunc] = 0
@@ -307,43 +309,46 @@ update T set	TypeCode = S.TypeCode,
 				Insertor = S.Insertor,
 				CmdType = iif(InterfaceTime is not null,'update',CmdType),
 				CmdTime = GetDate(),
-				InterfaceTime = null
+				InterfaceTime = null,
+				CardNo = S.CardNo
 from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T
 inner join #tMachineInfo S on T.MachineCode = S.MachineCode collate SQL_Latin1_General_CP1_CI_AS
 
 --insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo(MachineCode,TypeCode,TypeName,Model,Brand,Insertor,IsUsing,CardNo,CmdType,CmdTime,InterfaceTime)
-select S.MachineCode,S.TypeCode,S.TypeName,S.Model,S.Brand,S.Insertor,S.IsUsing,0,'insert',GetDate(),null from #tMachineInfo S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo(MachineCode,TypeCode,TypeName,Model,Brand,Insertor,IsUsing,CardNo,CmdType,CmdTime,InterfaceTime,CardNo)
+select S.MachineCode,S.TypeCode,S.TypeName,S.Model,S.Brand,S.Insertor,S.IsUsing,0,'insert',GetDate(),null,S.CardNo from #tMachineInfo S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMachineInfo T where T.MachineCode = S.MachineCode collate SQL_Latin1_General_CP1_CI_AS)
 
 
 --tRoute(加工方案信息表)
-insert into [SUNRISE].SUNRISEEXCH.dbo.tRoute(guid,MONo,RouteName)
-select S.guid,S.MONo,S.RouteName from #tRoute S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tRoute(guid,MONo,RouteName,CmdType,CmdTime)
+select S.guid,S.MONo,S.RouteName,'insert',GetDate() from #tRoute S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tRoute T where T.RouteName = S.RouteName collate SQL_Latin1_General_CP1_CI_AS)
 
 --tRouteLine(加工方案與生產線關係表)
-insert into [SUNRISE].SUNRISEEXCH.dbo.tRouteLine(guid,RouteName,LineID)
-select S.guid,S.RouteName,S.LineID from #tRouteLine S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tRouteLine(guid,RouteName,LineID,CmdType,CmdTime)
+select S.guid,S.RouteName,S.LineID,'insert',GetDate() from #tRouteLine S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tRouteLine T where T.RouteName = S.RouteName collate SQL_Latin1_General_CP1_CI_AS and T.LineID = S.LineID )
 
 --tSeqAssign(加工方案-工序安排)
 update T set	SeqOrder = S.SeqOrder,
 				bMerge = S.bMerge,
-				IsOutputSeq = S.IsOutputSeq
+				IsOutputSeq = S.IsOutputSeq,
+				CmdType = 'update',
+				CmdTime = GetDate()
 from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign T
 inner join #tSeqAssign S on T.RouteName = S.RouteName collate SQL_Latin1_General_CP1_CI_AS and T.SeqNo = S.SeqNo 
 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign(guid,RouteName,SeqOrder,bMerge,SeqNo,IsOutputSeq)
-select S.guid,S.RouteName,S.SeqOrder,S.bMerge,S.SeqNo,S.IsOutputSeq from #tSeqAssign S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign(guid,RouteName,SeqOrder,bMerge,SeqNo,IsOutputSeq,CmdType,CmdTime)
+select S.guid,S.RouteName,S.SeqOrder,S.bMerge,S.SeqNo,S.IsOutputSeq,'insert',GetDate() from #tSeqAssign S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign T where T.RouteName = S.RouteName collate SQL_Latin1_General_CP1_CI_AS and T.SeqNo = S.SeqNo )
 
 --tStAssign(加工方案-工作站安排)
-insert into [SUNRISE].SUNRISEEXCH.dbo.tStAssign(guid,SeqAssign_guid,StationID,StFunc)
-select S.guid,S.SeqAssign_guid,S.StationID,S.StFunc from #tStAssign S 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tStAssign(guid,RouteName,SeqAssign_guid,StationID,StFunc,CmdType,CmdTime)
+select S.guid,S.RouteName,S.SeqAssign_guid,S.StationID,S.StFunc,'insert',GetDate() from #tStAssign S 
 where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tStAssign T where T.SeqAssign_guid = S.SeqAssign_guid and T.StationID = S.StationID )
 
-delete s
+update s set CmdType = 'delete', CmdTime = GetDate()
 from [SUNRISE].SUNRISEEXCH.dbo.tStAssign s
 where exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid) and
 not exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid and StationID = s.StationID)
