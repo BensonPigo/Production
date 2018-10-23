@@ -15,6 +15,7 @@ namespace Sci.Production.Packing
         public string ttlCtn { get; set; }
         public string ClogLocationId { get; set; }
         public string Dest { get; set; }
+        public string TTL_PCS { get; set; }
         public string BuyerDelivery { get; set; }
         public string CartonNum { get; set; }
         public string TransferSlipNo { get; set; }
