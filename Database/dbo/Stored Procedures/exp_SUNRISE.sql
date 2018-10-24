@@ -346,12 +346,12 @@ where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tSeqAssign T where T.Ro
 --tStAssign(加工方案-工作站安排)
 insert into [SUNRISE].SUNRISEEXCH.dbo.tStAssign(guid,RouteName,SeqAssign_guid,StationID,StFunc,CmdType,CmdTime)
 select S.guid,S.RouteName,S.SeqAssign_guid,S.StationID,S.StFunc,'insert',GetDate() from #tStAssign S 
-where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tStAssign T where T.SeqAssign_guid = S.SeqAssign_guid and T.StationID = S.StationID )
+where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tStAssign T where T.SeqAssign_guid = S.SeqAssign_guid and T.StationID = S.StationID and T.RouteName=s.RouteName )
 
 update s set CmdType = 'delete', CmdTime = GetDate()
 from [SUNRISE].SUNRISEEXCH.dbo.tStAssign s
 where exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid) and
-not exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid and StationID = s.StationID)
+not exists(select 1 from #tStAssign where SeqAssign_guid = s.SeqAssign_guid and StationID = s.StationID and RouteName=s.RouteName)
 
 drop table #SrcOrderID,#tMODCS,#tMOSeqD,#tMOSeqM,#tMOM,#tSeqBase,#tMachineInfo,#tRoute,#tRouteLine,#tSeqAssign,#tStAssign,#tSeqAssignSunRise
 
