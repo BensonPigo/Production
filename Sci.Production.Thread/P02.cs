@@ -228,7 +228,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     this.CurrentDetailData["MeterToCone"] = 0;
                 }
 
-                string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' ", newvalue, this.CurrentDetailData["ThreadColorid"].ToString());
+                string sql = string.Format("Select isnull(sum(d.newCone),0) as newCone,isnull(sum(d.usedCone),0) as usedCone from ThreadStock d WITH (NOLOCK) INNER JOIN ThreadLocation tl ON d.ThreadLocationID = Tl.ID where d.refno ='{0}' and d.threadcolorid = '{1}' AND tl.AllowAutoAllocate=1", newvalue, this.CurrentDetailData["ThreadColorid"].ToString());
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     this.CurrentDetailData["CurNewCone"] = refdr["NewCone"];
@@ -275,7 +275,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     return;
                 }
 
-                string sql = string.Format("Select isnull(sum(newCone),0) as newCone,isnull(sum(usedCone),0) as usedCone from ThreadStock WITH (NOLOCK) where refno ='{0}' and threadcolorid = '{1}' ", this.CurrentDetailData["Refno"].ToString(), newvalue);
+                string sql = string.Format("Select isnull(sum(d.newCone),0) as newCone,isnull(sum(d.usedCone),0) as usedCone from ThreadStock d WITH (NOLOCK) INNER JOIN ThreadLocation tl ON d.ThreadLocationID = Tl.ID  where d.refno ='{0}' and d.threadcolorid = '{1}' AND tl.AllowAutoAllocate=1 ", this.CurrentDetailData["Refno"].ToString(), newvalue);
                 if (MyUtility.Check.Seek(sql, out refdr))
                 {
                     this.CurrentDetailData["CurNewCone"] = refdr["NewCone"];
@@ -850,9 +850,9 @@ outer apply (
 ) AllowanceQty
 OUTER APPLY
 (
-	select isnull(sum(d.newCone),0) as newCone,isnull(sum(usedcone),0) as usedcone 
+	select isnull(sum(d.newCone),0) as newCone,isnull(sum(d.usedcone),0) as usedcone 
     from ThreadStock d WITH (NOLOCK) 
-    INNER JOIN ThreadLocation tl ON d.LocationID=Tl.ID
+    INNER JOIN ThreadLocation tl ON d.ThreadLocationID=Tl.ID
 	where d.refno = tmp.refno and d.Threadcolorid = tmp.threadcolorid AND tl.AllowAutoAllocate=1
 ) X",
                 id);
