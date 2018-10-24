@@ -221,8 +221,8 @@ End
 
         private void clearall()
         {
-            if (IsSuccessful) addmsg($"( {DateTime.Now.ToString("hh:mm:ss")} ) Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
-            else addmsg($"( {DateTime.Now.ToString("hh:mm:ss")} ) Not Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
+            if (IsSuccessful) addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
+            else addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Not Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
             
             this.txtCardNo.Text = string.Empty;
             this.txtBundleNo.Text = string.Empty;
