@@ -130,7 +130,7 @@ ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]
             {
                 sqlCmd.Append($@"
 select inspector,[QCName] = (select name from pass1 where id=inspector),[inspected date]
-,count([Roll#])Roll,sum([Actual YDS])[Actual YDS] 
+,count([Roll#])Roll,ROUND(sum([Actual YDS]),1)[Actual YDS] 
 from #tmp
 group by inspector,[inspected date]
 order by inspector,[inspected date]
@@ -251,9 +251,9 @@ order by [inspected date]
                         // Loop天數的次數
                         RowAdd = 5;
                         int cnt = 0;
-                        for (int i = 0; i < daydiff; i++)
+                        for (int i = 0; i < printData[2].Rows.Count; i++)
                         {
-                            DataRow[] selected = printData[0].Select($@"inspector='{dr["Inspector"]}' and [inspected date]='{InspectionDate1.Value.AddDays(i).ToString("yyyy-MM-dd")}'");
+                            DataRow[] selected = printData[0].Select($@"inspector='{dr["Inspector"]}' and [inspected date]='{((DateTime)printData[2].Rows[i]["inspected date"]).ToString("yyyy-MM-dd")}'");
                             if (selected.Length > 0)
                             {
                                 wksheet.Cells[RowAdd, ColumnAdd] = (selected[0]).ItemArray[3];
@@ -369,7 +369,7 @@ order by [inspected date]
                     // Sum
                     wksheet.Cells[daydiff + 5, ColumnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})";
                     // Avg
-                    wksheet.Cells[daydiff + 6, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{daydiff + 1},1)";
+                    wksheet.Cells[daydiff + 6, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{daydiff},1)";
 
                     ColumnAdd++;
                     wksheet.Cells[4, ColumnAdd] = "Yard";
@@ -377,7 +377,7 @@ order by [inspected date]
                     wksheet.Cells[daydiff + 5, ColumnAdd] = $"=SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})";
                     wksheet.Cells[daydiff + 5, ColumnAdd].Font.Color = Color.Red;
                     // Avg
-                    wksheet.Cells[daydiff + 6, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{daydiff + 1},1)";
+                    wksheet.Cells[daydiff + 6, ColumnAdd] = $"=ROUND(SUM({MyExcelPrg.GetExcelColumnName(ColumnAdd)}5:{MyExcelPrg.GetExcelColumnName(ColumnAdd)}{RowAdd - 1})/{daydiff},1)";
                     wksheet.Cells[daydiff + 6, ColumnAdd].Font.Color = Color.FromArgb(0, 112, 192);
 
                     // Remark
