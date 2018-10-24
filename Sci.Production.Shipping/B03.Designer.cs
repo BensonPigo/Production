@@ -40,16 +40,16 @@
             this.displayPrice = new Sci.Win.UI.DisplayBox();
             this.numPrice = new Sci.Win.UI.NumericBox();
             this.dateCanvassDate = new Sci.Win.UI.DateBox();
-            this.txtAccountNo = new Sci.Win.UI.TextBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.btnCanvassRecord = new Sci.Win.UI.Button();
             this.btnPaymentHistory = new Sci.Win.UI.Button();
-            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelUnit = new Sci.Win.UI.Label();
-            this.txtUnit = new Sci.Production.Class.txtunit_local();
             this.label2 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new Sci.Win.UI.Button();
+            this.txtUnit = new Sci.Production.Class.txtunit_local();
+            this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -60,22 +60,19 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(836, 395);
+            this.detail.Size = new System.Drawing.Size(882, 395);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtAccountNo);
             this.detailcont.Controls.Add(this.label2);
-            this.detailcont.Controls.Add(this.txtUnit);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.btnPaymentHistory);
             this.detailcont.Controls.Add(this.btnCanvassRecord);
             this.detailcont.Controls.Add(this.checkBox1);
-            this.detailcont.Controls.Add(this.txtAccountNo);
             this.detailcont.Controls.Add(this.dateCanvassDate);
             this.detailcont.Controls.Add(this.numPrice);
             this.detailcont.Controls.Add(this.displayPrice);
-            this.detailcont.Controls.Add(this.txtsubconSupplier);
-            this.detailcont.Controls.Add(this.txtbrand);
             this.detailcont.Controls.Add(this.editDescription);
             this.detailcont.Controls.Add(this.txtCode);
             this.detailcont.Controls.Add(this.labelAccountNo);
@@ -85,11 +82,14 @@
             this.detailcont.Controls.Add(this.labelBrand);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelCode);
-            this.detailcont.Size = new System.Drawing.Size(836, 357);
+            this.detailcont.Controls.Add(this.txtUnit);
+            this.detailcont.Controls.Add(this.txtsubconSupplier);
+            this.detailcont.Controls.Add(this.txtbrand);
+            this.detailcont.Size = new System.Drawing.Size(882, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(836, 38);
+            this.detailbtm.Size = new System.Drawing.Size(882, 38);
             // 
             // browse
             // 
@@ -233,18 +233,6 @@
             this.dateCanvassDate.Size = new System.Drawing.Size(130, 23);
             this.dateCanvassDate.TabIndex = 13;
             // 
-            // txtAccountNo
-            // 
-            this.txtAccountNo.BackColor = System.Drawing.Color.White;
-            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
-            this.txtAccountNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtAccountNo.Location = new System.Drawing.Point(120, 292);
-            this.txtAccountNo.Mask = "9999-9999";
-            this.txtAccountNo.Name = "txtAccountNo";
-            this.txtAccountNo.Size = new System.Drawing.Size(70, 23);
-            this.txtAccountNo.TabIndex = 2;
-            this.txtAccountNo.TextMaskFormat = System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals;
-            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
@@ -281,27 +269,6 @@
             this.btnPaymentHistory.UseVisualStyleBackColor = true;
             this.btnPaymentHistory.Click += new System.EventHandler(this.BtnPaymentHistory_Click);
             // 
-            // txtsubconSupplier
-            // 
-            this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
-            this.txtsubconSupplier.DisplayBox1Binding = "";
-            this.txtsubconSupplier.IsIncludeJunk = false;
-            this.txtsubconSupplier.Location = new System.Drawing.Point(120, 187);
-            this.txtsubconSupplier.Name = "txtsubconSupplier";
-            this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
-            this.txtsubconSupplier.TabIndex = 10;
-            this.txtsubconSupplier.TextBox1Binding = "";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(120, 118);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand.TabIndex = 1;
-            // 
             // labelUnit
             // 
             this.labelUnit.Location = new System.Drawing.Point(27, 154);
@@ -309,16 +276,6 @@
             this.labelUnit.Size = new System.Drawing.Size(90, 23);
             this.labelUnit.TabIndex = 19;
             this.labelUnit.Text = "Unit";
-            // 
-            // txtUnit
-            // 
-            this.txtUnit.BackColor = System.Drawing.Color.White;
-            this.txtUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "UnitID", true));
-            this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtUnit.Location = new System.Drawing.Point(120, 154);
-            this.txtUnit.Name = "txtUnit";
-            this.txtUnit.Size = new System.Drawing.Size(66, 23);
-            this.txtUnit.TabIndex = 20;
             // 
             // label2
             // 
@@ -341,6 +298,47 @@
             this.btnBatchApprove.UseVisualStyleBackColor = true;
             this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove_Click);
             // 
+            // txtUnit
+            // 
+            this.txtUnit.BackColor = System.Drawing.Color.White;
+            this.txtUnit.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "UnitID", true));
+            this.txtUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtUnit.Location = new System.Drawing.Point(120, 154);
+            this.txtUnit.Name = "txtUnit";
+            this.txtUnit.Size = new System.Drawing.Size(66, 23);
+            this.txtUnit.TabIndex = 20;
+            // 
+            // txtsubconSupplier
+            // 
+            this.txtsubconSupplier.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LocalSuppID", true));
+            this.txtsubconSupplier.DisplayBox1Binding = "";
+            this.txtsubconSupplier.IsIncludeJunk = false;
+            this.txtsubconSupplier.Location = new System.Drawing.Point(120, 187);
+            this.txtsubconSupplier.Name = "txtsubconSupplier";
+            this.txtsubconSupplier.Size = new System.Drawing.Size(159, 23);
+            this.txtsubconSupplier.TabIndex = 10;
+            this.txtsubconSupplier.TextBox1Binding = "";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BrandID", true));
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(120, 118);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand.TabIndex = 1;
+            // 
+            // txtAccountNo
+            // 
+            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
+            this.txtAccountNo.DisplayBox1Binding = "";
+            this.txtAccountNo.Location = new System.Drawing.Point(120, 292);
+            this.txtAccountNo.Name = "txtAccountNo";
+            this.txtAccountNo.Size = new System.Drawing.Size(308, 23);
+            this.txtAccountNo.TabIndex = 24;
+            this.txtAccountNo.TextBox1Binding = "";
+            // 
             // B03
             // 
             this.ClientSize = new System.Drawing.Size(890, 457);
@@ -358,6 +356,7 @@
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ShipExpense";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B03_FormClosing);
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -374,8 +373,6 @@
         }
 
         #endregion
-
-        private Win.UI.TextBox txtAccountNo;
         private Win.UI.DateBox dateCanvassDate;
         private Win.UI.NumericBox numPrice;
         private Win.UI.DisplayBox displayPrice;
@@ -397,5 +394,6 @@
         private Class.txtunit_local txtUnit;
         private Win.UI.Label label2;
         private Win.UI.Button btnBatchApprove;
+        private Class.txtAccountNo txtAccountNo;
     }
 }

@@ -16,11 +16,13 @@ namespace Sci.Production.Shipping
     /// <inheritdoc/>
     public partial class B03_BatchApprove : Sci.Win.Forms.Base
     {
+        Action aa;
         /// <inheritdoc/>
-        public B03_BatchApprove()
+        public B03_BatchApprove(Action aa)
         {
             this.InitializeComponent();
             this.EditMode = true;
+            this.aa = aa;
         }
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -39,6 +41,7 @@ namespace Sci.Production.Shipping
                 .Text("ID", header: "Code", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("AccountIDN", header: "Account No", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
@@ -103,7 +106,8 @@ select l.*,
 				   when ChooseSupp = 4 then price4 end,
     Selected = 0,
 	lq.Ukey,
-	CanvassDate1=lq.AddDate
+	CanvassDate1=lq.AddDate,
+	AccountIDN=concat(AccountID,' ',(select Name from  FinanceEN.dbo.AccountNo with (nolock) where junk = 0 and id = AccountID))
 from ShipExpense l
 inner join ShipExpense_CanVass lq on l.ID = lq.ID
 where lq.status <> 'Confirmed'
@@ -302,6 +306,8 @@ Code{ string.Join(",", msg)}.");
 
             this.Confirm(selectdt);
             this.Query();
+
+            this.aa();
         }
 
         /// <inheritdoc/>
@@ -350,6 +356,7 @@ when matched then update set
             }
 
             MyUtility.Msg.InfoBox("Success!");
+
             return true;
         }
     }
