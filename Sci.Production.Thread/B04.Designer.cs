@@ -121,7 +121,7 @@
             this.checkAllowAutoAllocate.Name = "checkAllowAutoAllocate";
             this.checkAllowAutoAllocate.Size = new System.Drawing.Size(138, 21);
             this.checkAllowAutoAllocate.TabIndex = 5;
-            this.checkAllowAutoAllocate.Text = "AllowAutoAllocate";
+            this.checkAllowAutoAllocate.Text = "Allow Auto Allocate";
             this.checkAllowAutoAllocate.UseVisualStyleBackColor = true;
             // 
             // B04
