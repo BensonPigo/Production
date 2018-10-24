@@ -321,6 +321,9 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             {
                 this.dateDetailsCRDdate.TextForeColor = MyUtility.Convert.GetDate(this.CurrentMaintain["CRDDate"]) < MyUtility.Convert.GetDate(this.CurrentMaintain["BuyerDelivery"]) ? Color.Red : Color.Blue;
             }
+
+
+            GetIsDevSample();
         }
 
         /// <inheritdoc/>
@@ -328,6 +331,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         {
             base.ClickNewAfter();
             this.txtpaytermar1.TextBox1.ReadOnly = true;
+            this.ChkIsDevSample.ReadOnly = true;
             this.label44.Text = "/PCS";
 
             // 帶入預設值
@@ -374,6 +378,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.txtcurrency1.ReadOnly = true;
                 this.numUnitPrice.ReadOnly = true;
                 this.numQtyCarton.ReadOnly = true;
+                this.ChkIsDevSample.ReadOnly = true;
             }
         }
 
@@ -1145,6 +1150,15 @@ where o.Junk = 0 and o.POID= @POID order by o.ID";
                 this.displayKit.Text = string.Empty;
         }
     
+        private void GetIsDevSample()
+        {
+            string result = MyUtility.GetValue.Lookup($"SELECT ot.IsDevSample FROM OrderType ot INNER JOIN Orders o ON o.BrandID=ot.BrandID AND  o.OrderTypeID=ot.ID WHERE o.ID='{this.displaySPNo.Text}'");
+            bool IsDevSample = false;
+            if (result!="" && result.ToUpper()=="TRUE")
+                IsDevSample = true;
+            
+            this.ChkIsDevSample.Checked = Convert.ToBoolean(IsDevSample);
+        }
 
      private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
         {
