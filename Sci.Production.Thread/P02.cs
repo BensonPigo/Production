@@ -1352,7 +1352,7 @@ BEGIN
     select ts.NewCone,ts.UsedCone,ts.ThreadLocationID
        from dbo.ThreadStock ts with (nolock)
        INNER JOIN ThreadLocation tl ON ts.ThreadLocationID=tl.ID
-       wherets. Refno = @Refno and ts.ThreadColorID = @ThreadColorID and (ts.NewCone > 0 or ts.UsedCone > 0) AND tl.AllowAutoAllocate=1
+       where ts.Refno = @Refno and ts.ThreadColorID = @ThreadColorID and (ts.NewCone > 0 or ts.UsedCone > 0) AND tl.AllowAutoAllocate=1
 	   order by ts.UsedCone
 	OPEN ThreadStock_cur --開始run cursor                   
 	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
