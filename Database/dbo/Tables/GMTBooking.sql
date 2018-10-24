@@ -21,10 +21,10 @@
     [Remark]                   NVARCHAR (60)   CONSTRAINT [DF_GMTBooking_Remark] DEFAULT ('') NULL,
     [TotalShipQty]             INT             CONSTRAINT [DF_GMTBooking_TotalShipQty] DEFAULT ((0)) NULL,
     [TotalCTNQty]              INT             CONSTRAINT [DF_GMTBooking_TotalCTNQty] DEFAULT ((0)) NULL,
-    [TotalNW]                  NUMERIC (10, 2) CONSTRAINT [DF_GMTBooking_TotalNW] DEFAULT ((0)) NULL,
-    [TotalGW]                  NUMERIC (10, 2) CONSTRAINT [DF_GMTBooking_TotalGW] DEFAULT ((0)) NULL,
-    [TotalNNW]                 NUMERIC (10, 2) CONSTRAINT [DF_GMTBooking_TotalNNW] DEFAULT ((0)) NULL,
-    [TotalCBM]                 NUMERIC (10, 2) CONSTRAINT [DF_GMTBooking_TotalCBM] DEFAULT ((0)) NULL,
+    [TotalNW]                  NUMERIC (10, 3) CONSTRAINT [DF_GMTBooking_TotalNW] DEFAULT ((0)) NULL,
+    [TotalGW]                  NUMERIC (10, 3) CONSTRAINT [DF_GMTBooking_TotalGW] DEFAULT ((0)) NULL,
+    [TotalNNW]                 NUMERIC (10, 3) CONSTRAINT [DF_GMTBooking_TotalNNW] DEFAULT ((0)) NULL,
+    [TotalCBM]                 NUMERIC (10, 3) CONSTRAINT [DF_GMTBooking_TotalCBM] DEFAULT ((0)) NULL,
     [Status]                   VARCHAR (15)    CONSTRAINT [DF_GMTBooking_Status] DEFAULT ('') NULL,
     [Handle]                   VARCHAR (10)    CONSTRAINT [DF_GMTBooking_Handle] DEFAULT ('') NOT NULL,
     [Description]              NVARCHAR (80)   CONSTRAINT [DF_GMTBooking_Description] DEFAULT ('') NULL,
@@ -35,8 +35,11 @@
     [AddDate]                  DATETIME        NULL,
     [EditName]                 VARCHAR (10)    CONSTRAINT [DF_GMTBooking_EditName] DEFAULT ('') NULL,
     [EditDate]                 DATETIME        NULL,
+    [NoExportCharges]          BIT             CONSTRAINT [DF_GMTBooking_NoExportCharges] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
