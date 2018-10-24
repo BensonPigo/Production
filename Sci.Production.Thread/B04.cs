@@ -37,6 +37,7 @@ namespace Sci.Production.Thread
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            this.CurrentMaintain["AllowAutoAllocate"] = true;
         }
 
         /// <inheritdoc/>

@@ -291,6 +291,7 @@
             this.shapeContainer5 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.labelKit = new Sci.Win.UI.Label();
             this.displayKit = new Sci.Win.UI.DisplayBox();
+            this.ChkIsDevSample = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -307,6 +308,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.ChkIsDevSample);
             this.detailcont.Controls.Add(this.displayKit);
             this.detailcont.Controls.Add(this.labelKit);
             this.detailcont.Controls.Add(this.btnBuyerDeliveryHistory);
@@ -3264,6 +3266,18 @@
             this.displayKit.Size = new System.Drawing.Size(94, 21);
             this.displayKit.TabIndex = 220;
             // 
+            // ChkIsDevSample
+            // 
+            this.ChkIsDevSample.AutoSize = true;
+            this.ChkIsDevSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.ChkIsDevSample.Location = new System.Drawing.Point(436, 113);
+            this.ChkIsDevSample.Name = "ChkIsDevSample";
+            this.ChkIsDevSample.ReadOnly = true;
+            this.ChkIsDevSample.Size = new System.Drawing.Size(99, 19);
+            this.ChkIsDevSample.TabIndex = 221;
+            this.ChkIsDevSample.Text = "IsDevSample";
+            this.ChkIsDevSample.UseVisualStyleBackColor = true;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3558,5 +3572,6 @@
         private Win.UI.Button btnPoRemark;
         private Win.UI.DisplayBox displayKit;
         private Win.UI.Label labelKit;
+        private Win.UI.CheckBox ChkIsDevSample;
     }
 }

@@ -303,7 +303,6 @@ LEFT JOIN ORDERS O ON O.POID=PSD.ID
 WHERE O.id ='{this.CurrentDetailData["OrderID"]}'
   AND PSD.FabricType='A'
   AND PSD.Junk=0
-  AND M.ProductionType='Packing'
 ORDER BY PSD.Refno ";
                     DataTable dt;
                     DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -349,7 +348,6 @@ LEFT JOIN ORDERS O ON O.POID=PSD.ID
 WHERE O.id ='{this.CurrentDetailData["OrderID"]}'
   AND PSD.FabricType='A'
   AND PSD.Junk=0
-  AND M.ProductionType='Packing'
 ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                      DialogResult result = item.ShowDialog();
                      if (result == DialogResult.Cancel) { return; }

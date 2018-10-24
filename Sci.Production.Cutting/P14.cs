@@ -22,6 +22,14 @@ namespace Sci.Production.Cutting
             this.EditMode = true;
         }
 
+        DataTable dt = new DataTable();
+        private void P14_FormLoaded(object sender, EventArgs e)
+        {
+            this.grid1.AutoGenerateColumns = true;
+            dt.Columns.Add("msg", typeof(System.String));
+            this.listControlBindingSource1.DataSource = dt;
+        }
+
         private void txtCardNo_KeyPress(object sender, KeyPressEventArgs e)
         {
             int ikc = e.KeyChar;
@@ -31,9 +39,7 @@ namespace Sci.Production.Cutting
                 return;
             }
         }
-
-
-        private bool canclearcombotype = true;
+        
         private void txtBundleNo_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtBundleNo.Text)) return;
@@ -122,6 +128,7 @@ drop table #tmp
             clearall();
         }
 
+        bool IsSuccessful = true;
         private void InsertDatas()
         {
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
@@ -180,12 +187,13 @@ End
                     if (!(upResult = DBProxy.Current.Execute("SUNRISEEXCH", sqlupdatacmd, sqlParameters)))
                     {
                         this.ShowErr(upResult);
+                        IsSuccessful = false;
                         return;
                     }
                 }
                 scope.Complete();
             }
-            canclearcombotype = false;
+            IsSuccessful = true;
         }
 
         private bool checkempty()
@@ -197,8 +205,25 @@ End
             return true;
         }
 
+        private void addmsg(string msg)
+        {
+            DataRow dr = dt.NewRow();
+            dr[0] = msg;
+            dt.Rows.Add(dr);
+            this.listControlBindingSource1.Position = dt.Rows.Count - 1;
+            this.grid1.AutoResizeColumns();
+        }
+        
+        private void grid1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            grid1.Rows[e.RowIndex].Cells[0].Style.ForeColor = IsSuccessful ? Color.Black : Color.Red;
+        }
+
         private void clearall()
         {
+            if (IsSuccessful) addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
+            else addmsg($"( {DateTime.Now.ToString("HH:mm:ss")} ) Not Successful Card# : {this.txtCardNo.Text}, Bundle# : {this.txtBundleNo.Text}, Combo Type : {this.cmdComboType.Text}");
+            
             this.txtCardNo.Text = string.Empty;
             this.txtBundleNo.Text = string.Empty;
             this.cmdComboType.DataSource = null;
@@ -209,7 +234,7 @@ End
             this.disColor.Text = string.Empty;
             this.disSize.Text = string.Empty;
             this.disBundleQty.Text = string.Empty;
-            this.txtCardNo.Focus();
+            this.txtBundleNo.Focus();
         }
     }
 }
