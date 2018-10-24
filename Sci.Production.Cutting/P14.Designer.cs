@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -48,11 +50,15 @@
             this.disColor = new Sci.Win.UI.DisplayBox();
             this.disSize = new Sci.Win.UI.DisplayBox();
             this.disBundleQty = new Sci.Win.UI.NumericBox();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.grid1 = new Sci.Win.UI.Grid();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(17, 12);
+            this.label1.Location = new System.Drawing.Point(17, 71);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(96, 23);
             this.label1.TabIndex = 0;
@@ -60,7 +66,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(17, 41);
+            this.label2.Location = new System.Drawing.Point(17, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(96, 23);
             this.label2.TabIndex = 1;
@@ -68,7 +74,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(17, 70);
+            this.label3.Location = new System.Drawing.Point(17, 41);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(96, 23);
             this.label3.TabIndex = 2;
@@ -135,10 +141,10 @@
             this.txtBundleNo.BackColor = System.Drawing.Color.White;
             this.txtBundleNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtBundleNo.IsSupportEditMode = false;
-            this.txtBundleNo.Location = new System.Drawing.Point(116, 41);
+            this.txtBundleNo.Location = new System.Drawing.Point(116, 12);
             this.txtBundleNo.Name = "txtBundleNo";
             this.txtBundleNo.Size = new System.Drawing.Size(147, 23);
-            this.txtBundleNo.TabIndex = 12;
+            this.txtBundleNo.TabIndex = 0;
             this.txtBundleNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtBundleNo_Validating);
             this.txtBundleNo.Validated += new System.EventHandler(this.txtCardNoBundleNoComboType_Validated);
             // 
@@ -148,21 +154,21 @@
             this.cmdComboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmdComboType.FormattingEnabled = true;
             this.cmdComboType.IsSupportUnselect = true;
-            this.cmdComboType.Location = new System.Drawing.Point(116, 70);
+            this.cmdComboType.Location = new System.Drawing.Point(116, 41);
             this.cmdComboType.Name = "cmdComboType";
             this.cmdComboType.OldText = "";
             this.cmdComboType.Size = new System.Drawing.Size(147, 24);
-            this.cmdComboType.TabIndex = 13;
+            this.cmdComboType.TabIndex = 1;
             this.cmdComboType.SelectedIndexChanged += new System.EventHandler(this.cmdComboType_SelectedIndexChanged);
             // 
             // txtCardNo
             // 
             this.txtCardNo.BackColor = System.Drawing.Color.White;
             this.txtCardNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCardNo.Location = new System.Drawing.Point(116, 12);
+            this.txtCardNo.Location = new System.Drawing.Point(116, 71);
             this.txtCardNo.Name = "txtCardNo";
             this.txtCardNo.Size = new System.Drawing.Size(147, 23);
-            this.txtCardNo.TabIndex = 11;
+            this.txtCardNo.TabIndex = 2;
             this.txtCardNo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCardNo_KeyPress);
             this.txtCardNo.Validated += new System.EventHandler(this.txtCardNoBundleNoComboType_Validated);
             // 
@@ -242,9 +248,49 @@
             0,
             0});
             // 
+            // grid1
+            // 
+            this.grid1.AllowUserToAddRows = false;
+            this.grid1.AllowUserToDeleteRows = false;
+            this.grid1.AllowUserToResizeRows = false;
+            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.ColumnHeadersVisible = false;
+            this.grid1.DataSource = this.listControlBindingSource1;
+            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid1.Location = new System.Drawing.Point(17, 158);
+            this.grid1.Name = "grid1";
+            this.grid1.ReadOnly = true;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.grid1.RowHeadersVisible = false;
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid1.RowTemplate.Height = 24;
+            this.grid1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
+            this.grid1.Size = new System.Drawing.Size(493, 79);
+            this.grid1.TabIndex = 29;
+            this.grid1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.grid1_RowsAdded);
+            // 
             // P14
             // 
-            this.ClientSize = new System.Drawing.Size(534, 164);
+            this.ClientSize = new System.Drawing.Size(531, 249);
+            this.Controls.Add(this.grid1);
             this.Controls.Add(this.disBundleQty);
             this.Controls.Add(this.disSize);
             this.Controls.Add(this.disColor);
@@ -267,6 +313,7 @@
             this.Controls.Add(this.label1);
             this.Name = "P14";
             this.Text = "P14. RFID for Hanger System";
+            this.FormLoaded += new System.EventHandler(this.P14_FormLoaded);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
@@ -287,6 +334,9 @@
             this.Controls.SetChildIndex(this.disColor, 0);
             this.Controls.SetChildIndex(this.disSize, 0);
             this.Controls.SetChildIndex(this.disBundleQty, 0);
+            this.Controls.SetChildIndex(this.grid1, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -314,5 +364,7 @@
         private Win.UI.DisplayBox disColor;
         private Win.UI.DisplayBox disSize;
         private Win.UI.NumericBox disBundleQty;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Grid grid1;
     }
 }
