@@ -192,6 +192,12 @@
     <Compile Include="txtMtlLocation.Designer.cs">
       <DependentUpon>txtMtlLocation.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtmulituser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtmulituser.designer.cs">
+      <DependentUpon>txtmulituser.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtmultifactory.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -514,6 +520,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="txtMtlLocation.resx">
       <DependentUpon>txtMtlLocation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtmulituser.resx">
+      <DependentUpon>txtmulituser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtMultiSubcon.resx">
       <DependentUpon>txtMultiSubcon.cs</DependentUpon>
