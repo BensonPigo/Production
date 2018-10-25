@@ -281,8 +281,10 @@ from (
 			apd.Qty ap_qty
 			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt
 			--,dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) rate
-	from localap ap WITH (NOLOCK) inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
-    where ap.Category = t.artworktypeid and apd.OrderId = t.POID AND AP.Status = 'Approved'  and t.FactoryID = ap.FactoryId) t
+	from localap ap WITH (NOLOCK) 
+    inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+    inner join orders o with (nolock) on apd.OrderID = o.ID
+    where ap.Category = t.artworktypeid and o.POID = t.POID AND AP.Status = 'Approved'  and t.FactoryID = ap.FactoryId) t
 ) x		
 outer apply(
 	select --orders.POID
