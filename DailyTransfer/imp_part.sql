@@ -585,4 +585,29 @@ where a.id in (select id from @T)) as s
 	
 	END
 
-
+	
+	 -----------PartPrice_History ------------------------
+	Merge Machine.dbo.PartPrice_History  as t
+	Using (
+		select * 
+		from Trade_To_Pms.dbo.TradeHIS_MMS WITH (NOLOCK) 
+		where TableName = 'Part' and HisType = 'ControlParts' 
+	)as s on t.TradeHisMMSUkey = s.Ukey  
+	when matched then 
+		update set 
+				 t.PartID 		= s.SourceID  
+				,t.HisType		= s.HisType
+				,t.OldValue		= s.OldValue
+				,t.NewValue		= s.NewValue
+				,t.Remark		= s.Remark
+				,t.AddName		= s.AddName
+				,t.AddDate		= s.AddDate
+	when not matched by target and s.type='M' then 
+		insert 
+           (Ukey,  TradeHisMMSUkey,  PartID,  HisType,  OldValue,  NewValue
+		   ,Remark,  AddName,  AddDate)
+		values
+			(s.SourceID  , s.Ukey    , s.SourceID , s.HisType 	, s.OldValue , s.NewValue 		
+			, s.Remark 	 , s.AddName , s.AddDate 		);
+	
+	END
