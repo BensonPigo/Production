@@ -324,6 +324,7 @@ group by a.id, b.poid, b.Seq1,b.Seq2, b.Roll,b.Dyelot, remark,a.IssueDate) tmp
             {
                 ShowErr(selectCommand1, result);
             }
+
             this.HideWaitMessage();
         }
 
@@ -339,12 +340,15 @@ group by a.id, b.poid, b.Seq1,b.Seq2, b.Roll,b.Dyelot, remark,a.IssueDate) tmp
                 return;
             }
 
+            if (e.RowIndex == -1) return;
+            DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+
             var dt = dtGridDyelot.AsEnumerable()
-                .Where(s => s["poid"].Equals(source.Rows[e.RowIndex]["poid"]) &&
-                            s["seq1"].Equals(source.Rows[e.RowIndex]["seq1"]) &&
-                            s["seq2"].Equals(source.Rows[e.RowIndex]["seq2"]) &&
-                            s["roll"].Equals(source.Rows[e.RowIndex]["roll"]) &&
-                            s["dyelot"].Equals(source.Rows[e.RowIndex]["dyelot"]));
+                .Where(s => s["poid"].Equals(dr["poid"]) &&
+                            s["seq1"].Equals(dr["seq1"]) &&
+                            s["seq2"].Equals(dr["seq2"]) &&
+                            s["roll"].Equals(dr["roll"]) &&
+                            s["dyelot"].Equals(dr["dyelot"]));
 
             if (dt.Count() == 0)
             {
