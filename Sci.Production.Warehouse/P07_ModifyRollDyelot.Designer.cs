@@ -126,6 +126,7 @@
             this.gridModifyRoll.TabIndex = 0;
             this.gridModifyRoll.TabStop = false;
             this.gridModifyRoll.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.grid1_RowEnter);
+            this.gridModifyRoll.Sorted += new System.EventHandler(this.gridModifyRoll_Sorted);
             // 
             // gridDyelot
             // 

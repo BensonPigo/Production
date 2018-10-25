@@ -95,6 +95,11 @@ namespace Sci.Production.Warehouse
         {
             this.GetgridDyelotData();
             this.btnCommit.Enabled = false;
+            this.setCloumn();
+        }
+
+        private void setCloumn()
+        {
             foreach (DataGridViewRow item in this.gridModifyRoll.Rows)
             {
                 bool existsDetail = dtGridDyelot.AsEnumerable()
@@ -308,6 +313,13 @@ group by a.id, b.poid, b.Seq1,b.Seq2, b.Roll,b.Dyelot, remark,a.IssueDate) tmp
                 return;
             }
 
+            if (modifyDrList.GroupBy(s => new { Roll = s["Roll"].ToString(), Dyelot = s["Dyelot"].ToString() })
+                .Select(g => new { g.Key.Roll, g.Key.Dyelot, ct = g.Count() }).Any(r => r.ct > 1))
+            {
+                MyUtility.Msg.WarningBox("Roll# & Dyelot# can not  duplicate!!");
+                return;
+            }            
+
             string sqlcmd;
             string sqlupd1 = string.Empty;
             string sqlupd2 = string.Empty;
@@ -325,9 +337,7 @@ group by a.id, b.poid, b.Seq1,b.Seq2, b.Roll,b.Dyelot, remark,a.IssueDate) tmp
                     return;
                 }
 
-                sqlupd1 += string.Format(@"update dbo.receiving_detail set roll = '{6}' ,dyelot = '{7}' 
-where id='{0}' and poid ='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}';"
-                    , docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll", DataRowVersion.Original], drModify["dyelot", DataRowVersion.Original], drModify["roll"], drModify["dyelot"]);
+                sqlupd1 += string.Format($@"update dbo.receiving_detail set roll = '{drModify["roll"]}' ,dyelot = '{drModify["dyelot"]}' where ukey = '{drModify["ukey"]}'; ");
                 sqlupd2 += string.Format(@"update dbo.ftyinventory set roll='{6}', dyelot = '{7}'
 where poid ='{0}' and seq1='{1}' and seq2='{2}' and roll='{3}' and dyelot='{4}' and stocktype = '{5}';"
                     , drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll", DataRowVersion.Original], drModify["dyelot", DataRowVersion.Original], drModify["stocktype"], drModify["roll"], drModify["dyelot"]);
@@ -399,6 +409,11 @@ Where a.id = '{0}' ", docno);
                 gridModifyRoll.DataSource = dt;
                 this.LoadDate();
             }
+        }
+
+        private void gridModifyRoll_Sorted(object sender, EventArgs e)
+        {
+            this.setCloumn();
         }
     }
 }
