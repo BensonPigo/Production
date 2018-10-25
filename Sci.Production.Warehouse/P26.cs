@@ -284,15 +284,22 @@ WHERE   StockType='{0}'
             if (null == dr) return;
 
             StringBuilder sqlupd2 = new StringBuilder();
-            String sqlupd3 = "";
+            string sqlupd3 = "";
             DualResult result;//, result2;
             string upd_MD_2T = "";
             string upd_Fty_26F = "";
 
             #region 更新表頭狀態資料
 
-            sqlupd3 = string.Format(@"update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = GETDATE()
-                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            sqlupd3 = string.Format(@"
+update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = GETDATE() where id = '{1}'
+
+update f set editname = '{0}' , editdate = GETDATE(), ApvInspectingName = '{0}', ApvInspectingDate =  GETDATE(),Status = 'Inspecting'
+from ManufacturingExecution.dbo.FabricOrderList f
+where exists(select 1 from LocationTrans_detail where ID = '{1}' and Seq1 = f.Seq1 and Seq2 = f.Seq2 and StockType='B')
+ and f.status='Waiting'
+"
+, Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
 

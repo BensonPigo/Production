@@ -980,6 +980,16 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                 return false;
             }
 
+            string sqlcmd = string.Format(@"update Issue set  PrintName = '{0}' , PrintDate = GETDATE()
+                                where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
             DataRow row = this.CurrentMaintain;
             string id = row["ID"].ToString();
             string Remark = row["Remark"].ToString();
@@ -992,7 +1002,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@MDivision", Sci.Env.User.Keyword));
             DataTable dt;
-            DualResult result = DBProxy.Current.Select("", @"
+            result = DBProxy.Current.Select("", @"
 select NameEN
 from MDivision
 where id = @MDivision", pars, out dt);
@@ -1044,7 +1054,7 @@ where id = @MDivision", pars, out dt);
             pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", id));
             DataTable bb;
-            string sqlcmd = @"
+            sqlcmd = @"
 select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll) 
 			            AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
 			            AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
