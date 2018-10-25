@@ -67,7 +67,7 @@ namespace Sci.Production.Subcon
             {
                 this.txtDescription.ReadOnly = true;
                 this.txtunit_ftyUnit.ReadOnly = true;
-                this.txtAccountNo.ReadOnly = true;
+                this.txtAccountNo.TextBox1.ReadOnly = true;
             }
         }
 
@@ -421,7 +421,7 @@ namespace Sci.Production.Subcon
             var callfrm = new B01_ThreadColorPrice(true, CurrentMaintain["Refno"].ToString(),string.Empty,string.Empty);
             callfrm.ShowDialog();
         }
-
+        Form batchapprove;
         private void btnBatchApprove_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Confirm)
@@ -429,10 +429,17 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("You don't have permission to confirm.");
                 return;
             }
-            Form batchapprove = new Sci.Production.Subcon.B01_BatchApprove();
-            batchapprove.ShowDialog(this);
-            ReloadDatas();
-            this.RenewData();
+
+            if (batchapprove == null || batchapprove.IsDisposed)
+            {
+                batchapprove = new Sci.Production.Subcon.B01_BatchApprove(reload);
+                batchapprove.Show();
+            }
+            else
+            {
+                batchapprove.Activate();
+            }
+
         }
 
         private void btnSetCardboardPads_Click(object sender, EventArgs e)
@@ -455,6 +462,20 @@ namespace Sci.Production.Subcon
             {
                 if (this.btnSetCardboardPads != null)
                     this.btnSetCardboardPads.Enabled = true;
+            }
+        }
+
+        public void reload()
+        {
+            this.ReloadDatas();
+            this.RenewData();
+        }
+
+        private void B01_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (batchapprove != null)
+            {
+                batchapprove.Dispose();
             }
         }
     }

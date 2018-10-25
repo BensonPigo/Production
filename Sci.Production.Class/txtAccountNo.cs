@@ -49,7 +49,7 @@ namespace Sci.Production.Class
             string textValue = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(string.Format(@"select name from [FinanceEN].[dbo].[AccountNo] where id = '{0}'", textValue)))
+                if (!MyUtility.Check.Seek(string.Format(@"select name from [FinanceEN].[dbo].[AccountNo] where id = '{0}' and junk = 0", textValue)))
                 {
                     this.textBox1.Text = "";
                     e.Cancel = true;
@@ -62,14 +62,14 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = MyUtility.GetValue.Lookup(string.Format(@"select name from [FinanceEN].[dbo].[AccountNo] where id = '{0}'", this.textBox1.Text));
+            this.displayBox1.Text = MyUtility.GetValue.Lookup(string.Format(@"select name from [FinanceEN].[dbo].[AccountNo] where id = '{0}' and junk = 0 ", this.textBox1.Text));
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Forms.Base myForm = (Sci.Win.Forms.Base)this.FindForm();
             if (myForm.EditMode == false || textBox1.ReadOnly == true) return;
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,name from [FinanceEN].[dbo].[AccountNo] order by ID", "8,30", this.textBox1.Text);
+            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID,name from [FinanceEN].[dbo].[AccountNo] where junk = 0 order by ID", "8,30", this.textBox1.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();

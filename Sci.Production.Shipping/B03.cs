@@ -70,7 +70,7 @@ namespace Sci.Production.Shipping
             {
                 this.editDescription.ReadOnly = true;
                 this.txtUnit.ReadOnly = true;
-                this.txtAccountNo.ReadOnly = true;
+                this.txtAccountNo.TextBox1.ReadOnly = true;
             }
         }
 
@@ -186,6 +186,7 @@ namespace Sci.Production.Shipping
             callNextForm.ShowDialog(this);
         }
 
+        Form batchapprove;
         private void BtnBatchApprove_Click(object sender, EventArgs e)
         {
             if (!this.Perm.Confirm)
@@ -194,10 +195,29 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            Form batchapprove = new Sci.Production.Shipping.B03_BatchApprove();
-            batchapprove.ShowDialog(this);
+            if (batchapprove == null || batchapprove.IsDisposed)
+            {
+                batchapprove = new Sci.Production.Shipping.B03_BatchApprove(reload);
+                batchapprove.Show();
+            }
+            else
+            {
+                batchapprove.Activate();
+            }
+        }
+
+        public void reload()
+        {
             this.ReloadDatas();
             this.RenewData();
+        }
+
+        private void B03_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (batchapprove != null)
+            {
+                batchapprove.Dispose();
+            }
         }
     }
 }

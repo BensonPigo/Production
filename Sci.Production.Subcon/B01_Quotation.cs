@@ -232,7 +232,7 @@ namespace Sci.Production.Subcon
             }
 
             DataTable dt;
-            var s = new B01_BatchApprove();
+            var s = new B01_BatchApprove(reload);
             DualResult result = DBProxy.Current.Select(string.Empty, s.sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["Refno"]), MyUtility.Convert.GetString(this.CurrentMaintain["ukey"])), out dt);
             if (!result)
             {
@@ -246,6 +246,12 @@ namespace Sci.Production.Subcon
             }
 
             base.ClickConfirm();
+        }
+
+        public void reload()
+        {
+            this.ReloadDatas();
+            this.RenewData();
         }
     }
 }
