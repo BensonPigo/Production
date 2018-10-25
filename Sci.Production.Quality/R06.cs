@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -400,7 +401,7 @@ inner join #GroupBySupp t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.
 where f.PhysicalEncode = 1 and fp.ActualYds < fp.TicketYds
 group by t.{groupby_col}
 -----#Sdtmp 
-select SHORTWIDTH = sum(t.ActualQty), f.{groupby_col}
+select SHORTWIDTH = sum(t.ActualQty)/5, f.{groupby_col}
 into #Sdtmp
 from  fir f WITH (NOLOCK) 
 inner join FIR_Physical fp on f.ID = fp.ID
@@ -538,8 +539,8 @@ select --distinct
 	,[GradeB Roll]= isnull(GBCount.GradeB_Roll,0)
 	,[GradeC Roll]= isnull(GCCount.GradeC_Roll,0)
     ,[Inspected] = iif(Tmp.stockqty = 0, 0, round(totalYds.TotalInspYds/totalStockqty.stockqty,4)) 
-    ,Tmp.yrds     
-	,[Fabric(%)] = IIF(totalYds.TotalInspYds!=0, round((Tmp.yrds/totalYds.TotalInspYds), 4), 0)        		
+    ,[yds] = isnull(TLPoint.Fabric_yards,0)   
+	,[Fabric(%)] = IIF(totalYds.TotalInspYds!=0, round((TLPoint.Fabric_yards/totalYds.TotalInspYds), 4), 0)        		
     ,id = sl.ID
     ,[Point] = point.defect
     ,[SHRINKAGEyards] = isnull(SHRINKAGE.SHRINKAGEyards,0)
@@ -563,6 +564,7 @@ from (
 	, yrds	
 	from #tmp		
 )Tmp 
+outer apply (select TotalPoint,[Fabric_yards] = isnull(TotalPoint,0)/4 from #tmpTotalPoint where {groupby_col}=tmp.{groupby_col}) TLPoint
 outer apply
 (
 	select Defect = stuff(( 
@@ -588,20 +590,20 @@ select {groupby_col} ,sum(TotalInspYds) TotalInspYds from (
 ) totalYds
 outer apply(
 	select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
-	and IIF(totalYds.TotalInspYds!=0, round((Tmp.yrds/totalYds.TotalInspYds), 4), 0) * 100 between range1 and range2 )sl
+	and IIF(totalYds.TotalInspYds!=0, round((TLPoint.Fabric_yards/totalYds.TotalInspYds), 4), 0) * 100 between range1 and range2 )sl
 left join #SHtmp SHRINKAGE on SHRINKAGE.{groupby_col} = tmp.{groupby_col}
-outer apply(select SHINGKAGE = iif(totalStockqty.stockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/totalStockqty.stockqty,4)))SHINGKAGELevel
+outer apply(select SHINGKAGE = iif(Tmp.stockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/Tmp.stockqty,4)))SHINGKAGELevel
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) * 100 between range1 and range2)sl2
 left join #mtmp MIGRATION on MIGRATION.{groupby_col} = tmp.{groupby_col} 
 outer apply(
-	select MIGRATION =  iif(totalStockqty.stockqty = 0, 0, round(MIGRATION.MIGRATIONyards/totalStockqty.stockqty,4))
+	select MIGRATION =  iif(Tmp.stockqty = 0, 0, round(MIGRATION.MIGRATIONyards/Tmp.stockqty,4))
 )MIGRATIONLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(MIGRATIONLevel.MIGRATION,0) * 100 between range1 and range2)sl3
 left join #Stmp SHADING on SHADING.{groupby_col} = tmp.{groupby_col}
-outer apply(select SHADING = iif(totalStockqty.stockqty=0, 0, round(SHADING.SHADINGyards/totalStockqty.stockqty,4)))SHADINGLevel 
+outer apply(select SHADING = iif(Tmp.stockqty=0, 0, round(SHADING.SHADINGyards/Tmp.stockqty,4)))SHADINGLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHADINGLevel.SHADING,0) * 100 between range1 and range2)sl4
 left join #Ltmp LACKINGYARDAGE on LACKINGYARDAGE.{groupby_col}= Tmp.{groupby_col}
-outer apply(select LACKINGYARDAGE = iif(totalStockqty.stockqty=0, 0, round(LACKINGYARDAGE.ActualYds/totalStockqty.stockqty,4)))LACKINGYARDAGELevel
+outer apply(select LACKINGYARDAGE = iif(totalYds.TotalInspYds=0, 0, round(LACKINGYARDAGE.ActualYds/totalYds.TotalInspYds,4)))LACKINGYARDAGELevel
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(LACKINGYARDAGELevel.LACKINGYARDAGE,0) * 100 between range1 and range2)sl5
 left join #Sdtmp SHORTyards on SHORTyards.{groupby_col} = Tmp.{groupby_col}
 outer apply(select SHORTWIDTH = iif(totalYds.TotalInspYds=0, 0, round(SHORTyards.SHORTWIDTH/totalYds.TotalInspYds,4)))SHORTWIDTHLevel 
@@ -609,7 +611,6 @@ outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0
 and isnull(SHORTWIDTHLevel.SHORTWIDTH,0) * 100 between range1 and range2
 )sl6
 outer apply (select cnt from #tmpDyelot where {groupby_col}=Tmp.{groupby_col} ) TLDyelot
-outer apply (select TotalPoint from #tmpTotalPoint where {groupby_col}=tmp.{groupby_col}) TLPoint
 outer apply (select TotalRoll from #tmpTotalRoll where {groupby_col}=tmp.{groupby_col}) TLRoll
 outer apply (select GradeA_Roll from #tmpGrade_A where {groupby_col}=tmp.{groupby_col}) GACount
 outer apply (select GradeB_Roll from #tmpGrade_B where {groupby_col}=tmp.{groupby_col}) GBCount
@@ -633,7 +634,8 @@ select DISTINCT
 into #Weight
 FROM Inspweight
 --取加權平均數AVG & 取AVG值落在甚麼LEVEL區間 
-select a.*,[TOTALLEVEL] = s.id
+select a.*,[TOTALLEVEL] = s.id,
+       [Keycnt] = count(1) OVER (PARTITION BY {groupby_col} )
 from(
 	select t.*
 	,[Avg] = CASE WHEN sumWeight=0 THEN 0 ELSE isnull((([Fabric(%)] * [Fabric Defect] + [LACKINGYARDAGE(%)] * [Lacking Yardage] +[MIGRATION (%)] * [Migration] + 
@@ -678,49 +680,65 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             this.ShowWaitMessage("Starting EXCEL...");
             string xltx_name = ReportType.Equals("supplier") ? "Quality_R06.xltx" : "Quality_R06_by_RefNo.xltx";
             Microsoft.Office.Interop.Excel._Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + xltx_name);
-            MyUtility.Excel.CopyToXls(allDatas[0], "", xltx_name, 6, false, null, objApp);
+
+            DataTable toExcelDt = allDatas[0].Copy();
+            toExcelDt.Columns.Remove("KeyCnt");
+            MyUtility.Excel.CopyToXls(toExcelDt, "", xltx_name, 5, false, null, objApp);
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             objApp.DisplayAlerts = false; // 禁止Excel跳出合併提示視窗
-            int line = 7;
+            int line = 6;
             string key_column = allDatas[1].Columns[0].ColumnName;
 
+            var combineCheckDt = allDatas[0].AsEnumerable();
+            Microsoft.Office.Interop.Excel.Range rang;
             for (int i = 0; i < allDatas[0].Rows.Count; i++)
             {
-
-                string key = allDatas[0].Rows[i][key_column].ToString();
-                DataRow[] dr = allDatas[0].Select($@"{key_column} = '{key}'");
-                int cnt = dr.Length;
-                for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+                int cnt = (int)allDatas[0].Rows[i]["KeyCnt"];
+                if (cnt > 1)
                 {
-                    // Columns=2,4,5 是不需要合併的
-                    if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
+                    for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
                     {
-                        continue;
+                        // Columns=2,4,5 是不需要合併的
+                        if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
+                        {
+                            continue;
+                        }
+
+                        // 合併儲存格,尾端要-1不然會重疊
+                        rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
+                        rang.Merge();
                     }
-
-                    // 合併儲存格,尾端要-1不然會重疊
-                    Microsoft.Office.Interop.Excel.Range rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
-                    rang.Merge();
                 }
+                
                 line = line + cnt;
+                i = i + cnt - 1;
             }
-            #region 調整欄寬
-            objSheets.Columns[7].ColumnWidth = 21;
-            objSheets.Columns[8].ColumnWidth = 20;
-            objSheets.Columns[9].ColumnWidth = 14.5;
-            objSheets.Columns[10].ColumnWidth = 17;
-            objSheets.Columns[11].ColumnWidth = 20;
-            objSheets.Columns[12].ColumnWidth = 20;
-            objSheets.Columns[13].ColumnWidth = 14.5;
 
-            objSheets.Columns[14].ColumnWidth = 14;
-            objSheets.Columns[15].ColumnWidth = 14;
-            objSheets.Columns[16].ColumnWidth = 14;
+            objSheets.Cells[2, 1] = $"Date: {this.dateArriveWHDate.DateBox1.Text} ~ {this.dateArriveWHDate.DateBox2.Text}";
+
+            #region 調整欄寬
+            objSheets.Columns[5].ColumnWidth = 11.88;
+            objSheets.Columns[6].ColumnWidth = 11.88;
+            objSheets.Columns[7].ColumnWidth = 11.88;
+
+            objSheets.Columns[8].ColumnWidth = 13.13;
+            objSheets.Columns[9].ColumnWidth = 13.13;
+            objSheets.Columns[10].ColumnWidth = 13.13;
+            objSheets.Columns[11].ColumnWidth = 13.13;
+            objSheets.Columns[12].ColumnWidth = 13.13;
+
+            objSheets.Columns[13].ColumnWidth = 11.88;
+            objSheets.Columns[14].ColumnWidth = 11.88;
+            objSheets.Columns[15].ColumnWidth = 11.88;
+            objSheets.Columns[16].ColumnWidth = 11.88;
+            objSheets.Columns[17].ColumnWidth = 11.88;
+
             objSheets.Columns[17].ColumnWidth = 14;
 
             objSheets.Columns[19].ColumnWidth = 8;
             objSheets.Columns[20].ColumnWidth = 8;
-            objSheets.Columns[21].ColumnWidth = 5;
+            objSheets.Columns[22].ColumnWidth = 15.63;
+            objSheets.Columns[37].ColumnWidth = 11.88;
             #endregion
             this.HideWaitMessage();
 
