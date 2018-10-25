@@ -56,7 +56,6 @@
             this.displayPrice = new Sci.Win.UI.DisplayBox();
             this.comboCartonDimension = new Sci.Win.UI.ComboBox();
             this.txtThreadType = new Sci.Win.UI.TextBox();
-            this.txtAccountNo = new Sci.Win.UI.TextBox();
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
@@ -84,6 +83,7 @@
             this.txtunit_ftyUnit = new Sci.Production.Class.txtunit_local();
             this.label2 = new Sci.Win.UI.Label();
             this.btnBatchApprove = new Sci.Win.UI.Button();
+            this.txtAccountNo = new Sci.Production.Class.txtAccountNo();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -100,6 +100,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtAccountNo);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txtunit_ftyUnit);
             this.detailcont.Controls.Add(this.dateQuotDate);
@@ -109,7 +110,6 @@
             this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.groupBox2);
             this.detailcont.Controls.Add(this.groupBox1);
-            this.detailcont.Controls.Add(this.txtAccountNo);
             this.detailcont.Controls.Add(this.displayPrice);
             this.detailcont.Controls.Add(this.txtcurrencyPrice);
             this.detailcont.Controls.Add(this.txtDescription);
@@ -405,16 +405,6 @@
             this.txtThreadType.TabIndex = 1;
             this.txtThreadType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtThreadType_PopUp);
             this.txtThreadType.Validating += new System.ComponentModel.CancelEventHandler(this.txtThreadType_Validating);
-            // 
-            // txtAccountNo
-            // 
-            this.txtAccountNo.BackColor = System.Drawing.Color.White;
-            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AccountID", true));
-            this.txtAccountNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtAccountNo.Location = new System.Drawing.Point(104, 390);
-            this.txtAccountNo.Name = "txtAccountNo";
-            this.txtAccountNo.Size = new System.Drawing.Size(100, 23);
-            this.txtAccountNo.TabIndex = 11;
             // 
             // label25
             // 
@@ -920,6 +910,16 @@
             this.btnBatchApprove.UseVisualStyleBackColor = true;
             this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
             // 
+            // txtAccountNo
+            // 
+            this.txtAccountNo.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "AccountID", true));
+            this.txtAccountNo.DisplayBox1Binding = "";
+            this.txtAccountNo.Location = new System.Drawing.Point(105, 390);
+            this.txtAccountNo.Name = "txtAccountNo";
+            this.txtAccountNo.Size = new System.Drawing.Size(308, 23);
+            this.txtAccountNo.TabIndex = 23;
+            this.txtAccountNo.TextBox1Binding = "";
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(908, 527);
@@ -938,6 +938,7 @@
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "refno";
             this.WorkAlias = "LocalItem";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B01_FormClosing);
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -992,7 +993,6 @@
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Label label25;
         private Win.UI.ComboBox comboCartonDimension;
-        private Win.UI.TextBox txtAccountNo;
         private Win.UI.DisplayBox displayPrice;
         private Class.txtcurrency txtcurrencyPrice;
         private Class.txtsubcon txtSubconSupplier;
@@ -1015,5 +1015,6 @@
         private Win.UI.Label label2;
         private Win.UI.Button btnBatchApprove;
         private Win.UI.Button btnSetCardboardPads;
+        private Class.txtAccountNo txtAccountNo;
     }
 }

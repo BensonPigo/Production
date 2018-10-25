@@ -164,6 +164,7 @@
             this.ClientSize = new System.Drawing.Size(1214, 490);
             this.Controls.Add(this.splitContainer2);
             this.Name = "B03_BatchApprove";
+            this.Text = "B03.Quotation Batch Approve";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
