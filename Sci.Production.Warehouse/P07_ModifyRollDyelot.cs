@@ -23,6 +23,8 @@ namespace Sci.Production.Warehouse
         string docno = "";
         private Dictionary<string, string> di_fabrictype = new Dictionary<string, string>();
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
+        Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_dyelot;
 
         public P07_ModifyRollDyelot(object data, string data2)
         {
@@ -53,8 +55,8 @@ namespace Sci.Production.Warehouse
             .ComboBox("fabrictype", header: "Fabric" + Environment.NewLine + "Type", width: Widths.AnsiChars(7), iseditable: false).Get(out cbb_fabrictype)  //0
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
-            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false)    //3
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: false)    //4
+            .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out col_roll)    //3
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: false).Get(out col_dyelot)   //4
             .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: true, decimal_places: 2, integer_places: 10)    //5
             .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //6
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7
@@ -84,6 +86,76 @@ namespace Sci.Production.Warehouse
             ;     //
 
             this.LoadDate();
+            this.setCloumn();
+            this.changeeditable();
+        }
+
+        private void changeeditable()
+        {
+            #region roll
+            col_roll.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0
+                || !MyUtility.Convert.GetString(dr["fabrictype"]).EqualString("F"))
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                }
+                else
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                }
+            };
+            col_roll.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0
+                || !MyUtility.Convert.GetString(dr["fabrictype"]).EqualString("F"))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            #endregion
+            #region dyelot
+            col_dyelot.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0
+                || !MyUtility.Convert.GetString(dr["fabrictype"]).EqualString("F"))
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                }
+                else
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                }
+            };
+            col_dyelot.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridModifyRoll.GetDataRow(e.RowIndex);
+
+                if (dtGridDyelot.Select($"poid = '{dr["poid"]}' and seq = '{dr["seq"]}' and roll = '{dr["roll"]}' and dyelot = '{dr["dyelot"]}' ").Length > 0
+                || !MyUtility.Convert.GetString(dr["fabrictype"]).EqualString("F"))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                }
+            };
+            #endregion
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -95,7 +167,6 @@ namespace Sci.Production.Warehouse
         {
             this.GetgridDyelotData();
             this.btnCommit.Enabled = false;
-            this.setCloumn();
         }
 
         private void setCloumn()
@@ -107,18 +178,9 @@ namespace Sci.Production.Warehouse
                              s["seq"].Equals(item.Cells["seq"].Value) &&
                              s["roll"].Equals(item.Cells["roll"].Value) &&
                              s["dyelot"].Equals(item.Cells["dyelot"].Value)).Any();
-                if (existsDetail || !item.Cells["fabrictype"].Value.Equals("F"))
-                {
-                    item.Cells["Roll"].ReadOnly = true;
-                    item.Cells["Dyelot"].ReadOnly = true;
-                }
-                else
+                if (!(existsDetail || !item.Cells["fabrictype"].Value.Equals("F")))
                 {
                     this.btnCommit.Enabled = true;
-                    item.Cells["Roll"].ReadOnly = false;
-                    item.Cells["Dyelot"].ReadOnly = false;
-                    item.Cells["Roll"].Style.BackColor = Color.Pink;
-                    item.Cells["Dyelot"].Style.BackColor = Color.Pink;
                 }
             }
         }
@@ -409,11 +471,6 @@ Where a.id = '{0}' ", docno);
                 gridModifyRoll.DataSource = dt;
                 this.LoadDate();
             }
-        }
-
-        private void gridModifyRoll_Sorted(object sender, EventArgs e)
-        {
-            this.setCloumn();
         }
     }
 }
