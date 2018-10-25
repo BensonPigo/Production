@@ -1603,10 +1603,10 @@ drop table #Child, #updateChild
 
 
 update s set
-	s.WorkHour=s.WorkHour+ss.WorkHour
+	s.WorkHour=isnull(s.WorkHour,0)+isnull(ss.WorkHour,0)
 from SewingOutput_Detail s
 outer apply(
-	select WorkHour=s3.WorkHour-sum(sd.WorkHour)
+	select WorkHour=isnull(s3.WorkHour,0)-isnull(sum(sd.WorkHour),0)
 	from SewingOutput s3
 	inner join SewingOutput_Detail sd on s.id = sd.ID
 	where s3.id=s.id and sd.AutoCreate = 0
