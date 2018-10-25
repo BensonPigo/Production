@@ -338,10 +338,11 @@ select * from(
 	qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 	d.CountryName,
 	[MEASUREMENT]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
-	[Weight]=Cast(Cast(round(pd.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG'
+	[Weight]=Cast(Cast(round(p.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG'
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
 	INNER JOIN LocalItem li ON li.RefNo=pd.RefNo
+	INNER JOIN PackingList p ON p.ID=pd.ID
     outer apply (
 	    select SizeCode=stuff((select ('/'+isnull(x.SizeSpec,z.SizeSpec)) 
 	    from PackingList_Detail pd2 
@@ -475,11 +476,12 @@ select * from(
 	qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 	d.CountryName,
 	[Measurement]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
-	[Weight]=Cast(Cast(round(pd.GW,3) AS numeric(17,3))AS varchar)+' KG'
+	[Weight]=Cast(Cast(round(p.GW,3) AS numeric(17,3))AS varchar)+' KG'
 	--[CtnWeight]=Cast(round(li.CtnWeight,2) AS numeric(17,2))
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
 	INNER JOIN LocalItem li ON li.RefNo=pd.RefNo
+	INNER JOIN PackingList p ON p.ID=pd.ID
     outer apply (
 	    select SizeCode=stuff((select ('/'+isnull(x.SizeSpec,z.SizeSpec)) 
 	    from PackingList_Detail pd2 
