@@ -79,6 +79,7 @@
             this.labOnBoard = new Sci.Win.UI.Label();
             this.dateOnBoardDate = new Sci.Win.UI.DateBox();
             this.comboShippMode = new Sci.Win.UI.ComboBox();
+            this.chkNoCharge = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -96,6 +97,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkNoCharge);
             this.masterpanel.Controls.Add(this.comboShippMode);
             this.masterpanel.Controls.Add(this.labOnBoard);
             this.masterpanel.Controls.Add(this.txtLocalSupp);
@@ -192,6 +194,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtLocalSupp, 0);
             this.masterpanel.Controls.SetChildIndex(this.labOnBoard, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboShippMode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkNoCharge, 0);
             // 
             // detailpanel
             // 
@@ -831,6 +834,18 @@
             this.comboShippMode.Size = new System.Drawing.Size(121, 24);
             this.comboShippMode.TabIndex = 50;
             // 
+            // chkNoCharge
+            // 
+            this.chkNoCharge.AutoSize = true;
+            this.chkNoCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoCharges", true));
+            this.chkNoCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNoCharge.Location = new System.Drawing.Point(615, 204);
+            this.chkNoCharge.Name = "chkNoCharge";
+            this.chkNoCharge.Size = new System.Drawing.Size(189, 21);
+            this.chkNoCharge.TabIndex = 51;
+            this.chkNoCharge.Text = "No Import/Export Charges";
+            this.chkNoCharge.UseVisualStyleBackColor = true;
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(998, 556);
@@ -923,5 +938,6 @@
         private Win.UI.Label labOnBoard;
         private Win.UI.DateBox dateOnBoardDate;
         private Win.UI.ComboBox comboShippMode;
+        private Win.UI.CheckBox chkNoCharge;
     }
 }

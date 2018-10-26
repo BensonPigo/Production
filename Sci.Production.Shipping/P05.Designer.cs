@@ -97,6 +97,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.txtfactoryShipper = new Sci.Win.UI.TextBox();
             this.btnAirPPStatus = new Sci.Win.UI.Button();
+            this.chkNoExportCharge = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -113,6 +114,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkNoExportCharge);
             this.masterpanel.Controls.Add(this.btnAirPPStatus);
             this.masterpanel.Controls.Add(this.btnImportfrompackinglist);
             this.masterpanel.Controls.Add(this.txtfactoryShipper);
@@ -182,7 +184,7 @@
             this.masterpanel.Controls.Add(this.dateSendtoTPE);
             this.masterpanel.Controls.Add(this.dateFCRDate);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(990, 311);
+            this.masterpanel.Size = new System.Drawing.Size(990, 335);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateFCRDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateSendtoTPE, 0);
@@ -253,15 +255,16 @@
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportfrompackinglist, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAirPPStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkNoExportCharge, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 311);
-            this.detailpanel.Size = new System.Drawing.Size(990, 251);
+            this.detailpanel.Location = new System.Drawing.Point(0, 335);
+            this.detailpanel.Size = new System.Drawing.Size(990, 227);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(882, 273);
+            this.gridicon.Location = new System.Drawing.Point(882, 297);
             this.gridicon.TabIndex = 20;
             // 
             // refresh
@@ -270,7 +273,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(990, 251);
+            this.detailgridcont.Size = new System.Drawing.Size(990, 227);
             // 
             // detail2
             // 
@@ -912,9 +915,9 @@
             // 
             this.btnImportfrompackinglist.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportfrompackinglist.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnImportfrompackinglist.Location = new System.Drawing.Point(773, 274);
+            this.btnImportfrompackinglist.Location = new System.Drawing.Point(784, 296);
             this.btnImportfrompackinglist.Name = "btnImportfrompackinglist";
-            this.btnImportfrompackinglist.Size = new System.Drawing.Size(165, 30);
+            this.btnImportfrompackinglist.Size = new System.Drawing.Size(165, 33);
             this.btnImportfrompackinglist.TabIndex = 19;
             this.btnImportfrompackinglist.Text = "Import from packing list";
             this.btnImportfrompackinglist.UseVisualStyleBackColor = true;
@@ -1079,6 +1082,19 @@
             this.btnAirPPStatus.UseVisualStyleBackColor = true;
             this.btnAirPPStatus.Click += new System.EventHandler(this.BtnAirPPStatus_Click);
             // 
+            // chkNoExportCharge
+            // 
+            this.chkNoExportCharge.AutoSize = true;
+            this.chkNoExportCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoExportCharges", true));
+            this.chkNoExportCharge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkNoExportCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNoExportCharge.Location = new System.Drawing.Point(560, 303);
+            this.chkNoExportCharge.Name = "chkNoExportCharge";
+            this.chkNoExportCharge.Size = new System.Drawing.Size(140, 20);
+            this.chkNoExportCharge.TabIndex = 72;
+            this.chkNoExportCharge.Text = "No Export Charges";
+            this.chkNoExportCharge.UseVisualStyleBackColor = true;
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
@@ -1189,5 +1205,6 @@
         private Win.UI.TextBox txtCutoffDate;
         private Win.UI.TextBox txtfactoryShipper;
         private Win.UI.Button btnAirPPStatus;
+        private Win.UI.CheckBox chkNoExportCharge;
     }
 }

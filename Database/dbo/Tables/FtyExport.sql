@@ -20,15 +20,18 @@
     [WhseArrival]   DATE            NULL,
     [PortArrival]   DATE            NULL,
     [DocArrival]    DATE            NULL,
-    [SisFtyID]      VARCHAR (13)    NULL,
-    [Shipper]       VARCHAR (8)     NULL,
-    [OnBoardDate]   DATE            NULL,
     [AddName]       VARCHAR (10)    CONSTRAINT [DF_FtyExport_AddName] DEFAULT ('') NULL,
     [AddDate]       DATETIME        NULL,
     [EditName]      VARCHAR (10)    CONSTRAINT [DF_FtyExport_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME        NULL,
+    [SisFtyID]      VARCHAR (13)    NULL,
+    [Shipper]       VARCHAR (8)     NULL,
+    [OnBoard]       DATE            NULL,
+    [NoCharges]     BIT             CONSTRAINT [DF_FtyExport_NoCharges] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FtyExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 GO

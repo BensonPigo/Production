@@ -14,7 +14,19 @@
     [AddName] VARCHAR(10) CONSTRAINT [DF_SampleGarmentTest_Detail_AddName] DEFAULT ('') NULL, 
     [EditDate] DATETIME NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_SampleGarmentTest_Detail_EditName] DEFAULT ('') NULL,
-	CONSTRAINT [PK_SampleGarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID],[No] ASC)
+	[ReportDate] DATE NULL, 
+    [Colour] VARCHAR(20) NULL, 
+    [SizeCode] VARCHAR(8) NULL, 
+    [LineDry] BIT NOT NULL DEFAULT(0), 
+    [Temperature] INT NOT NULL DEFAULT (0), 
+    [TumbleDry] BIT NOT NULL DEFAULT (0), 
+    [Machine] VARCHAR(10) NULL, 
+    [HandWash] BIT NOT NULL, 
+    [Composition] VARCHAR(50) NULL, 
+    [Neck] BIT NOT NULL DEFAULT (1), 
+    [Status] VARCHAR(15) NULL, 
+    [ReportNo] VARCHAR(13) NOT NULL DEFAULT '', 
+    CONSTRAINT [PK_SampleGarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID],[No] ASC)
 )
 
 GO

@@ -22,6 +22,7 @@ namespace Sci.Production.Quality
     public partial class P12_Detail : Sci.Win.Subs.Input4
     {
         private DataRow masterDr;
+        private DataRow Detaildr;
         private string reportNo;
         private string id;
         private bool isSee = false;
@@ -40,7 +41,6 @@ namespace Sci.Production.Quality
         {
             #region 表頭設定
             MyUtility.Check.Seek($"select * from MockupOven WITH (NOLOCK) where ID = '{this.id}'", out this.masterDr);
-            DataRow Detaildr;
             MyUtility.Check.Seek($"select * from MockupOven_Detail WITH (NOLOCK) where ReportNo = '{this.reportNo}'", out Detaildr);
 
             this.displayStyleID.Text = this.masterDr["StyleID"].ToString();
@@ -60,6 +60,14 @@ namespace Sci.Production.Quality
                 this.txtMR.Text = "";
                 this.numTestTemp.Value = 70;
                 this.numTestTime.Value = 48;
+                this.numAPT.Value = 0;
+                this.numAFT.Value = 0;
+                this.numCT.Value = 0;
+                this.numP.Value = 0;
+                this.numT.Value = 0;
+                this.num2Pr.Value = 0;
+                this.num2Pnr.Value = 0;
+                this.txtPOff.Text = "";
             }
             else
             {
@@ -74,6 +82,14 @@ namespace Sci.Production.Quality
                 this.txtMR.textbox1_text = Detaildr["MR"].ToString();
                 this.numTestTemp.Value = MyUtility.Convert.GetDecimal(Detaildr["TestTemperature"]);
                 this.numTestTime.Value = MyUtility.Convert.GetDecimal(Detaildr["TestTime"]);
+                this.numAPT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPlate"]);
+                this.numAFT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTFlim"]);
+                this.numCT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTCoolingTime"]);
+                this.numP.Value = MyUtility.Convert.GetDecimal(Detaildr["HTPressure"]);
+                this.numT.Value = MyUtility.Convert.GetDecimal(Detaildr["HTTime"]);
+                this.num2Pr.Value = MyUtility.Convert.GetDecimal(Detaildr["HT2ndPressreversed"]);
+                this.num2Pnr.Value = MyUtility.Convert.GetDecimal(Detaildr["HT2ndPressnoreverse"]);
+                this.txtPOff.Text = Detaildr["HTPellOff"].ToString();
             }
 
             #endregion
@@ -133,9 +149,7 @@ namespace Sci.Production.Quality
             {
                 this.btnPDF.Enabled = !this.EditMode;
                 this.btnSendMR.Enabled = !this.EditMode;
-
             }
-         
         }
 
         protected override bool OnGridSetup()
@@ -306,6 +320,7 @@ namespace Sci.Production.Quality
             #endregion
             Helper.Controls.Grid.Generator(this.grid)
             .Text("ArtworkTypeID", "Artwork", width: Widths.AnsiChars(17),settings: ts_artwork)
+            .Text("Typeofprint", "Typeofprint", width: Widths.AnsiChars(17))
             .Text("Design", "Design", width: Widths.AnsiChars(15), iseditingreadonly: false)
             .Text("ArtworkColorName", "Artwork Color", width: Widths.AnsiChars(18),settings: ts_artworkColor)
             .Text("FabricRefNo", "Fabric Ref No.", width: Widths.AnsiChars(17))
@@ -356,16 +371,22 @@ namespace Sci.Production.Quality
                 int no = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup($"select isnull(max(No),0) + 1 from MockupOven_Detail WITH (NOLOCK) where ID = '{this.id}'"));
 
                 //insert MockupOven_Detail
-                sql_cmd = $@"insert into MockupOven_Detail(ID,ReportNo,No,SubmitDate,CombineStyle,Result,ReceivedDate,ReleasedDate,Technician,MR,AddDate,AddName,TestTemperature,TestTime) 
-                                                                    values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Text}',@Result,{receivedDate},{releasedDate},'{this.txtTechnician.TextBox1.Text}','{this.txtMR.TextBox1.Text}',GETDATE(),@USERID,@TestTemperature,@TestTime);";
+                sql_cmd = $@"
+insert into MockupOven_Detail(ID,ReportNo,No,SubmitDate,CombineStyle,Result,ReceivedDate,ReleasedDate,Technician,MR,AddDate,AddName,TestTemperature,TestTime,
+                                            HTPlate,HTFlim,HTCoolingTime,HTPressure,HTTime,HT2ndPressreversed,HT2ndPressnoreverse,HTPellOff) 
+values('{this.id}','{this.reportNo}',{no},{submitDate},'{this.txtCombineStyle.Text}',@Result,{receivedDate},{releasedDate},'{this.txtTechnician.TextBox1.Text}','{this.txtMR.TextBox1.Text}',GETDATE(),@USERID,@TestTemperature,@TestTime,
+            '{this.numAPT.Value}', '{this.numAFT.Value}','{this.numCT.Value}','{this.numP.Value}','{this.numT.Value}','{this.num2Pr.Value}','{this.num2Pnr.Value}','{this.txtPOff.Text}');";
 
                 this.status = "Edit";
             }
             else if (this.status.Equals("Edit"))
             {
-                sql_cmd = $@"update MockupOven_Detail set CombineStyle = '{this.txtCombineStyle.Text}',SubmitDate = {submitDate},ReceivedDate = {receivedDate}, ReleasedDate = {releasedDate}, Result = @Result, Technician = '{this.txtTechnician.TextBox1.Text}' ,MR = '{this.txtMR.TextBox1.Text}',
-                            EditName = @UserID,EditDate = GETDATE(),TestTemperature = @TestTemperature,TestTime = @TestTime
-                            where ReportNo = '{this.reportNo}';";
+                sql_cmd = $@"
+update MockupOven_Detail 
+    set CombineStyle = '{this.txtCombineStyle.Text}',SubmitDate = {submitDate},ReceivedDate = {receivedDate}, ReleasedDate = {releasedDate}, Result = @Result, Technician = '{this.txtTechnician.TextBox1.Text}' ,MR = '{this.txtMR.TextBox1.Text}',EditName = @UserID,EditDate = GETDATE(),TestTemperature = @TestTemperature,TestTime = @TestTime,
+    HTPlate= '{this.numAPT.Value}', HTFlim='{this.numAFT.Value}',HTCoolingTime='{this.numCT.Value}',HTPressure='{this.numP.Value}',HTTime='{this.numT.Value}',
+    HT2ndPressreversed='{this.num2Pr.Value}',HT2ndPressnoreverse='{this.num2Pnr.Value}',HTPellOff='{this.txtPOff.Text}'
+where ReportNo = '{this.reportNo}';";
             }
 
             //取Result
@@ -456,6 +477,7 @@ namespace Sci.Production.Quality
 
         private string CreatePDF()
         {
+            bool haveHT=((DataTable)gridbs.DataSource).AsEnumerable().Any(r => MyUtility.Convert.GetString(r["ArtworkTypeID"]).EqualString("HEAT TRANSFER"));
             this.ShowWaitMessage("PDF Processing...");
             DataTable gridData = (DataTable)gridbs.DataSource;
             if (gridData.Rows.Count == 0)
@@ -463,8 +485,10 @@ namespace Sci.Production.Quality
                 return "1";
             }
 
+            string file = haveHT ? "Quality_P12_Detail_Report2" : "Quality_P12_Detail_Report";
+            int haveHTrow = haveHT ? 6 : 0;
             string sql_cmd = string.Empty;
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P12_Detail_Report.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\"+ file+ ".xltx");
             objApp.DisplayAlerts = false;//設定Excel的警告視窗是否彈出
             Microsoft.Office.Interop.Excel.Worksheet worksheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
@@ -478,7 +502,17 @@ namespace Sci.Production.Quality
             worksheet.Cells[4,6] = MyUtility.Check.Empty(this.dateBoxReleasedDate.Value) ? string.Empty : this.dateBoxReleasedDate.Text;
             worksheet.Cells[5,6] = MyUtility.Check.Empty(this.dateBoxSubmitDate.Value) ? string.Empty : this.dateBoxSubmitDate.Text;
             worksheet.Cells[6,6] = this.masterDr["SeasonID"].ToString();
-
+            if (haveHT)
+            {
+                worksheet.Cells[10, 2] = this.Detaildr["HTPlate"].ToString();
+                worksheet.Cells[11, 2] = this.Detaildr["HTFlim"].ToString();
+                worksheet.Cells[12, 2] = this.Detaildr["HTTime"].ToString();
+                worksheet.Cells[13, 2] = this.Detaildr["HTPressure"].ToString();
+                worksheet.Cells[10, 6] = this.Detaildr["HTPellOff"].ToString();
+                worksheet.Cells[11, 6] = this.Detaildr["HT2ndPressnoreverse"].ToString();
+                worksheet.Cells[12, 6] = this.Detaildr["HT2ndPressreversed"].ToString();
+                worksheet.Cells[13, 6] = this.Detaildr["HTCoolingTime"].ToString();
+            }
             //插入圖片與Technician名字
             sql_cmd = $@"select p.name,[SignaturePic] = s.PicPath + t.SignaturePic
 from Technician t WITH (NOLOCK)
@@ -489,15 +523,15 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             string technicianName = string.Empty;
             string picSource = string.Empty;
             Image img = null;
-            Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[12, 2];
+            Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[12 + haveHTrow, 2];
 
             if (MyUtility.Check.Seek(sql_cmd, out drTechnicianInfo))
             {
                 technicianName = drTechnicianInfo["name"].ToString();
                 picSource = drTechnicianInfo["SignaturePic"].ToString();
             }
-
-            worksheet.Cells[13, 2] = technicianName;
+            
+            worksheet.Cells[13+ haveHTrow, 2] = technicianName;
 
             if (!MyUtility.Check.Empty(picSource))
             {
@@ -513,20 +547,19 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
             string styleNo = MyUtility.Check.Empty(this.txtCombineStyle.Text) ? this.masterDr["StyleID"].ToString() : this.masterDr["StyleID"].ToString() + "/ " + this.txtCombineStyle.Text.Replace("/","/ ");
             string refColor = string.Empty;
             string printArtwork = string.Empty;
-
             //插入多的row
             if (gridData.Rows.Count > 0)
             {
-                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A10:G10", Type.Missing).EntireRow;
+                Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range($"A{10+ haveHTrow}:G{10+ haveHTrow}", Type.Missing).EntireRow;
                 for (int i = 1; i < gridData.Rows.Count; i++)
                 {
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                    worksheet.get_Range(string.Format("E{0}:G{0}", MyUtility.Convert.GetString(10 + i - 1))).Merge(false);
+                    worksheet.get_Range(string.Format("E{0}:G{0}", MyUtility.Convert.GetString(10+ haveHTrow + i - 1))).Merge(false);
                 }
                 Marshal.ReleaseComObject(rngToInsert);
             }
             //塞進資料
-            int start_row = 10;
+            int start_row = 10 + haveHTrow;
             foreach (DataRow dr in gridData.Rows)
             {
                 string remark = dr["Remark"].ToString();
@@ -552,8 +585,8 @@ where t.ID = '{this.txtTechnician.TextBox1.Text}'";
 
             string strFileName = string.Empty;
             string strPDFFileName = string.Empty;
-            strFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P12_Detail_Report");
-            strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName("Quality_P12_Detail_Report", Sci.Production.Class.PDFFileNameExtension.PDF);
+            strFileName = Sci.Production.Class.MicrosoftFile.GetName(file);
+            strPDFFileName = Sci.Production.Class.MicrosoftFile.GetName(file, Sci.Production.Class.PDFFileNameExtension.PDF);
             objApp.ActiveWorkbook.SaveAs(strFileName);
             objApp.Quit();
             Marshal.ReleaseComObject(worksheet);

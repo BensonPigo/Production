@@ -29,8 +29,27 @@
         private void InitializeComponent()
         {
             this.panelup = new Sci.Win.UI.Panel();
+            this.label26 = new Sci.Win.UI.Label();
+            this.label21 = new Sci.Win.UI.Label();
+            this.numCT = new Sci.Win.UI.NumericBox();
+            this.num2Pr = new Sci.Win.UI.NumericBox();
+            this.num2Pnr = new Sci.Win.UI.NumericBox();
+            this.txtPOff = new Sci.Win.UI.TextBox();
+            this.numP = new Sci.Win.UI.NumericBox();
+            this.numT = new Sci.Win.UI.NumericBox();
+            this.numAFT = new Sci.Win.UI.NumericBox();
+            this.numAPT = new Sci.Win.UI.NumericBox();
+            this.label22 = new Sci.Win.UI.Label();
+            this.label23 = new Sci.Win.UI.Label();
+            this.label24 = new Sci.Win.UI.Label();
+            this.label25 = new Sci.Win.UI.Label();
+            this.label20 = new Sci.Win.UI.Label();
+            this.label19 = new Sci.Win.UI.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new Sci.Win.UI.Label();
             this.txtOther = new Sci.Win.UI.TextBox();
             this.chkOtherMethod = new Sci.Win.UI.CheckBox();
+            this.comboTestingMethod = new Sci.Production.Quality.ComboxBoxEx();
             this.label15 = new Sci.Win.UI.Label();
             this.txtTechnician = new Sci.Production.Class.txtTechnician();
             this.dateBoxReleasedDate = new Sci.Win.UI.DateBox();
@@ -60,7 +79,6 @@
             this.label1 = new Sci.Win.UI.Label();
             this.btnPDF = new Sci.Win.UI.Button();
             this.btnSendMR = new Sci.Win.UI.Button();
-            this.comboTestingMethod = new Sci.Production.Quality.ComboxBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -71,7 +89,7 @@
             // 
             this.btmcont.Controls.Add(this.btnSendMR);
             this.btmcont.Controls.Add(this.btnPDF);
-            this.btmcont.Location = new System.Drawing.Point(0, 434);
+            this.btmcont.Location = new System.Drawing.Point(0, 589);
             this.btmcont.Size = new System.Drawing.Size(995, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
@@ -85,8 +103,8 @@
             // 
             this.gridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridcont.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridcont.Location = new System.Drawing.Point(0, 229);
-            this.gridcont.Size = new System.Drawing.Size(995, 205);
+            this.gridcont.Location = new System.Drawing.Point(0, 415);
+            this.gridcont.Size = new System.Drawing.Size(995, 174);
             // 
             // undo
             // 
@@ -98,6 +116,24 @@
             // 
             // panelup
             // 
+            this.panelup.Controls.Add(this.label26);
+            this.panelup.Controls.Add(this.label21);
+            this.panelup.Controls.Add(this.numCT);
+            this.panelup.Controls.Add(this.num2Pr);
+            this.panelup.Controls.Add(this.num2Pnr);
+            this.panelup.Controls.Add(this.txtPOff);
+            this.panelup.Controls.Add(this.numP);
+            this.panelup.Controls.Add(this.numT);
+            this.panelup.Controls.Add(this.numAFT);
+            this.panelup.Controls.Add(this.numAPT);
+            this.panelup.Controls.Add(this.label22);
+            this.panelup.Controls.Add(this.label23);
+            this.panelup.Controls.Add(this.label24);
+            this.panelup.Controls.Add(this.label25);
+            this.panelup.Controls.Add(this.label20);
+            this.panelup.Controls.Add(this.label19);
+            this.panelup.Controls.Add(this.label18);
+            this.panelup.Controls.Add(this.label17);
             this.panelup.Controls.Add(this.txtOther);
             this.panelup.Controls.Add(this.chkOtherMethod);
             this.panelup.Controls.Add(this.comboTestingMethod);
@@ -131,8 +167,236 @@
             this.panelup.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelup.Location = new System.Drawing.Point(0, 0);
             this.panelup.Name = "panelup";
-            this.panelup.Size = new System.Drawing.Size(995, 229);
+            this.panelup.Size = new System.Drawing.Size(995, 415);
             this.panelup.TabIndex = 98;
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label26.Location = new System.Drawing.Point(109, 379);
+            this.label26.MaximumSize = new System.Drawing.Size(8, 11);
+            this.label26.MinimumSize = new System.Drawing.Size(8, 11);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(8, 11);
+            this.label26.TabIndex = 71;
+            this.label26.Text = "2";
+            // 
+            // label21
+            // 
+            this.label21.Location = new System.Drawing.Point(11, 379);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(192, 23);
+            this.label21.TabIndex = 70;
+            this.label21.Text = "Pressure(kg/cm   )";
+            // 
+            // numCT
+            // 
+            this.numCT.BackColor = System.Drawing.Color.White;
+            this.numCT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numCT.Location = new System.Drawing.Point(537, 379);
+            this.numCT.Name = "numCT";
+            this.numCT.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCT.Size = new System.Drawing.Size(84, 23);
+            this.numCT.TabIndex = 69;
+            this.numCT.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // num2Pr
+            // 
+            this.num2Pr.BackColor = System.Drawing.Color.White;
+            this.num2Pr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.num2Pr.Location = new System.Drawing.Point(537, 341);
+            this.num2Pr.Name = "num2Pr";
+            this.num2Pr.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.num2Pr.Size = new System.Drawing.Size(84, 23);
+            this.num2Pr.TabIndex = 68;
+            this.num2Pr.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // num2Pnr
+            // 
+            this.num2Pnr.BackColor = System.Drawing.Color.White;
+            this.num2Pnr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.num2Pnr.Location = new System.Drawing.Point(537, 303);
+            this.num2Pnr.Name = "num2Pnr";
+            this.num2Pnr.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.num2Pnr.Size = new System.Drawing.Size(84, 23);
+            this.num2Pnr.TabIndex = 67;
+            this.num2Pnr.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // txtPOff
+            // 
+            this.txtPOff.BackColor = System.Drawing.Color.White;
+            this.txtPOff.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPOff.Location = new System.Drawing.Point(537, 265);
+            this.txtPOff.Name = "txtPOff";
+            this.txtPOff.Size = new System.Drawing.Size(84, 23);
+            this.txtPOff.TabIndex = 66;
+            // 
+            // numP
+            // 
+            this.numP.BackColor = System.Drawing.Color.White;
+            this.numP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numP.Location = new System.Drawing.Point(222, 379);
+            this.numP.Name = "numP";
+            this.numP.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numP.Size = new System.Drawing.Size(84, 23);
+            this.numP.TabIndex = 65;
+            this.numP.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numT
+            // 
+            this.numT.BackColor = System.Drawing.Color.White;
+            this.numT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numT.Location = new System.Drawing.Point(222, 341);
+            this.numT.Name = "numT";
+            this.numT.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numT.Size = new System.Drawing.Size(84, 23);
+            this.numT.TabIndex = 64;
+            this.numT.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numAFT
+            // 
+            this.numAFT.BackColor = System.Drawing.Color.White;
+            this.numAFT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numAFT.Location = new System.Drawing.Point(222, 303);
+            this.numAFT.Name = "numAFT";
+            this.numAFT.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numAFT.Size = new System.Drawing.Size(84, 23);
+            this.numAFT.TabIndex = 63;
+            this.numAFT.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numAPT
+            // 
+            this.numAPT.BackColor = System.Drawing.Color.White;
+            this.numAPT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numAPT.Location = new System.Drawing.Point(222, 265);
+            this.numAPT.Name = "numAPT";
+            this.numAPT.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numAPT.Size = new System.Drawing.Size(84, 23);
+            this.numAPT.TabIndex = 62;
+            this.numAPT.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label22
+            // 
+            this.label22.Location = new System.Drawing.Point(329, 379);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(192, 23);
+            this.label22.TabIndex = 61;
+            this.label22.Text = "Cooling Time (min)";
+            // 
+            // label23
+            // 
+            this.label23.Location = new System.Drawing.Point(329, 341);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(192, 23);
+            this.label23.TabIndex = 60;
+            this.label23.Text = "2nd Press (reversed)(sec.)";
+            // 
+            // label24
+            // 
+            this.label24.Location = new System.Drawing.Point(329, 303);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(192, 23);
+            this.label24.TabIndex = 59;
+            this.label24.Text = "2nd Press (no reverse)(sec.)";
+            // 
+            // label25
+            // 
+            this.label25.Location = new System.Drawing.Point(329, 265);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(192, 23);
+            this.label25.TabIndex = 58;
+            this.label25.Text = "Pell Off (hot/cold)(peel)";
+            // 
+            // label20
+            // 
+            this.label20.Location = new System.Drawing.Point(11, 341);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(192, 23);
+            this.label20.TabIndex = 56;
+            this.label20.Text = "Time (sec.)";
+            // 
+            // label19
+            // 
+            this.label19.Location = new System.Drawing.Point(11, 303);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(192, 23);
+            this.label19.TabIndex = 55;
+            this.label19.Text = "Actual Flim Tempereture (˚C)";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(12, 238);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(303, 18);
+            this.label18.TabIndex = 54;
+            this.label18.Text = "Manufacturer Test Condition (For Heat Transfer)";
+            // 
+            // label17
+            // 
+            this.label17.Location = new System.Drawing.Point(11, 265);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(192, 23);
+            this.label17.TabIndex = 53;
+            this.label17.Text = "Actual Plate Tempereture (˚C)";
             // 
             // txtOther
             // 
@@ -154,6 +418,18 @@
             this.chkOtherMethod.Text = "Other Method";
             this.chkOtherMethod.UseVisualStyleBackColor = true;
             this.chkOtherMethod.CheckedChanged += new System.EventHandler(this.chkOtherMethod_CheckedChanged);
+            // 
+            // comboTestingMethod
+            // 
+            this.comboTestingMethod.BackColor = System.Drawing.Color.White;
+            this.comboTestingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboTestingMethod.FormattingEnabled = true;
+            this.comboTestingMethod.IsSupportUnselect = true;
+            this.comboTestingMethod.Location = new System.Drawing.Point(153, 172);
+            this.comboTestingMethod.Name = "comboTestingMethod";
+            this.comboTestingMethod.OldText = "";
+            this.comboTestingMethod.Size = new System.Drawing.Size(835, 24);
+            this.comboTestingMethod.TabIndex = 32;
             // 
             // label15
             // 
@@ -404,21 +680,9 @@
             this.btnSendMR.UseVisualStyleBackColor = true;
             this.btnSendMR.Click += new System.EventHandler(this.btnSendMR_Click);
             // 
-            // comboTestingMethod
-            // 
-            this.comboTestingMethod.BackColor = System.Drawing.Color.White;
-            this.comboTestingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboTestingMethod.FormattingEnabled = true;
-            this.comboTestingMethod.IsSupportUnselect = true;
-            this.comboTestingMethod.Location = new System.Drawing.Point(153, 172);
-            this.comboTestingMethod.Name = "comboTestingMethod";
-            this.comboTestingMethod.OldText = "";
-            this.comboTestingMethod.Size = new System.Drawing.Size(835, 24);
-            this.comboTestingMethod.TabIndex = 32;
-            // 
             // P13_Detail
             // 
-            this.ClientSize = new System.Drawing.Size(995, 474);
+            this.ClientSize = new System.Drawing.Size(995, 629);
             this.Controls.Add(this.panelup);
             this.GridPopUp = false;
             this.KeyField1 = "ID";
@@ -473,5 +737,23 @@
         private ComboxBoxEx comboTestingMethod;
         private Win.UI.TextBox txtOther;
         private Win.UI.CheckBox chkOtherMethod;
+        private Win.UI.NumericBox numCT;
+        private Win.UI.NumericBox num2Pr;
+        private Win.UI.NumericBox num2Pnr;
+        private Win.UI.TextBox txtPOff;
+        private Win.UI.NumericBox numP;
+        private Win.UI.NumericBox numT;
+        private Win.UI.NumericBox numAFT;
+        private Win.UI.NumericBox numAPT;
+        private Win.UI.Label label22;
+        private Win.UI.Label label23;
+        private Win.UI.Label label24;
+        private Win.UI.Label label25;
+        private Win.UI.Label label20;
+        private Win.UI.Label label19;
+        private System.Windows.Forms.Label label18;
+        private Win.UI.Label label17;
+        private Win.UI.Label label26;
+        private Win.UI.Label label21;
     }
 }

@@ -43,9 +43,9 @@ namespace Sci.Production.Cutting
             #endregion
 
             #region 取tabel的結構
-            string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
+            string cmd_st = "Select 0 as Sel, PatternCode,PatternDesc, '' as annotation,parts,IsPair from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
-            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
+            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts,IsPair from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out patternTb);
             string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_art, out artTb);
@@ -195,6 +195,7 @@ group by sizeCode"
                     ndr["PatternCode"] = dr["PatternCode"];
                     ndr["PatternDesc"] = dr["PatternDesc"];
                     ndr["parts"] = MyUtility.Convert.GetInt(dr["alone"]) + MyUtility.Convert.GetInt(dr["DV"]) * 2 + MyUtility.Convert.GetInt(dr["Pair"]) * 2;
+                    ndr["isPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
                     allpartTb.Rows.Add(ndr);
                     npart = npart + MyUtility.Convert.GetInt(dr["alone"]) + MyUtility.Convert.GetInt(dr["DV"]) * 2 + MyUtility.Convert.GetInt(dr["Pair"]) * 2;
                 }
@@ -222,6 +223,7 @@ group by sizeCode"
                                     ndr2["PatternDesc"] = dr["PatternDesc"];
                                     ndr2["Parts"] = 1;
                                     ndr2["art"] = art;
+                                    ndr2["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"])==1;
                                     patternTb.Rows.Add(ndr2);
                                 }
                             }
@@ -232,6 +234,7 @@ group by sizeCode"
                                 ndr2["PatternDesc"] = dr["PatternDesc"];
                                 ndr2["art"] = art;
                                 ndr2["Parts"] = dr["alone"];
+                                ndr2["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
                                 patternTb.Rows.Add(ndr2);
                             }
                         }
@@ -243,6 +246,7 @@ group by sizeCode"
                             ndr["Annotation"] = dr["Annotation"];
                             ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                             npart = npart + Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
+                            ndr["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
                             allpartTb.Rows.Add(ndr);
                         }
 
@@ -255,6 +259,7 @@ group by sizeCode"
                         ndr["Annotation"] = dr["Annotation"];
                         ndr["parts"] = Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
                         npart = npart + Convert.ToInt32(dr["alone"]) + Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
+                        ndr["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
                         allpartTb.Rows.Add(ndr);
                     }
                     #endregion
@@ -283,8 +288,8 @@ group by sizeCode"
             DataTable detailAccept = detailTb.Copy();
             detailAccept.AcceptChanges();
             string BundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup", string.Format(@"
-Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup 
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair", string.Format(@"
+Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair
 from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
             //需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
             MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,SubProcessid", "Select distinct PatternCode,SubProcessid from #tmp WHERE PatternCode<>'ALLPARTS'", out artTb);
@@ -295,6 +300,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 ndr["PatternCode"] = dr["PatternCode"];
                 ndr["PatternDesc"] = dr["PatternDesc"];
                 ndr["Parts"] = dr["Parts"];
+                ndr["isPair"] = dr["isPair"];
                 ndr["art"] = MyUtility.Check.Empty(dr["SubProcessid"]) ? "" : dr["SubProcessid"].ToString().Substring(0, dr["SubProcessid"].ToString().Length - 1);
                 string art = "";
                 DataRow[] dray = artTb.Select(string.Format("PatternCode = '{0}'", dr["PatternCode"]));
@@ -310,7 +316,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 patternTb.Rows.Add(ndr);
             }
 
-            MyUtility.Tool.ProcessWithDatatable(alltmpTb, "sel,PatternCode,PatternDesc,parts,annotation", "Select distinct sel,PatternCode,PatternDesc,parts,annotation from #tmp", out allpartTb);
+            MyUtility.Tool.ProcessWithDatatable(alltmpTb, "sel,PatternCode,PatternDesc,parts,annotation,isPair", "Select distinct sel,PatternCode,PatternDesc,parts,annotation,isPair from #tmp", out allpartTb);
             foreach (DataRow dr in allpartTb.Rows)
             {
                 DataRow[] adr = garmentTb.Select(string.Format("PatternCode='{0}'", dr["patternCode"]));
@@ -566,7 +572,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15))
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
-            .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1);
+            .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell1)
+            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
             grid_art.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
@@ -580,7 +587,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell2)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(13))
             .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true)
-            .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell2);
+            .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partsCell2)
+            .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
             grid_allpart.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
             grid_allpart.Columns["PatternCode"].DefaultCellStyle.BackColor = Color.Pink;
             grid_allpart.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
@@ -788,6 +796,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
             ndr["PatternCode"] = selectartDr["PatternCode"];
             ndr["PatternDesc"] = selectartDr["PatternDesc"];
             ndr["Parts"] = selectartDr["Parts"];
+            ndr["isPair"] = selectartDr["isPair"];
             //Annotation
             DataRow[] adr = garmentTb.Select(string.Format("PatternCode='{0}'", selectartDr["patternCode"]));
             if (adr.Length > 0)
@@ -855,6 +864,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                     ndr2["PatternDesc"] = chdr["PatternDesc"];
                     ndr2["Parts"] = chdr["Parts"]; ;
                     ndr2["art"] = "EMB";
+                    ndr2["isPair"] = chdr["isPair"]; ;
                     patternTb.Rows.Add(ndr2);
                     chdr.Delete(); //刪除
                 }
@@ -970,18 +980,12 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         nDetail["SizeCode"] = dr["SizeCode"];
                         nDetail["bundlegroup"] = bundlegroup;
                         nDetail["ukey1"] = ukey;
+                        nDetail["isPair"] = dr2["isPair"];
+
 
                         if (dr2["PatternCode"].ToString() != "ALLPARTS")
                         {
                             nDetail["subprocessid"] = dr2["art"].ToString();
-                            //if (dr2["art"].ToString().Substring(dr2["art"].ToString().Length - 1) != "+")
-                            //{
-                            //    nDetail["subprocessid"] = dr2["art"].ToString() + "+";
-                            //}
-                            //else
-                            //{
-                            //    nDetail["subprocessid"] = dr2["art"].ToString();
-                            //}
                         }                       
                         ukey++;
 
@@ -1013,6 +1017,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         dr["Qty"] = tmpdr["Qty"];
                         dr["SizeCode"] = tmpdr["SizeCode"];
                         dr["ukey1"] = tmpdr["ukey1"];
+                        dr["isPair"] = tmpdr["isPair"];
                         j++;
                         if (tmpdr["PatternCode"].ToString() == "ALLPARTS")
                         {
@@ -1025,11 +1030,11 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                                     if (aldr.RowState != DataRowState.Deleted)
                                     {
                                         DataRow allpart_ndr = alltmpTb.NewRow();
-                                        //allpart_ndr["Bundleno"] = dr["Bundleno"];
                                         allpart_ndr["PatternCode"] = aldr["PatternCode"];
                                         allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
                                         allpart_ndr["Parts"] = aldr["Parts"];
                                         allpart_ndr["ukey1"] = dr["ukey1"];
+                                        allpart_ndr["ispair"] = aldr["ispair"];
                                         alltmpTb.Rows.Add(allpart_ndr);
                                     }
                                 }
@@ -1075,6 +1080,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                     ndr["Qty"] = tmpdr["Qty"];
                     ndr["SizeCode"] = tmpdr["SizeCode"];
                     ndr["ukey1"] = tmpdr["ukey1"];
+                    ndr["isPair"] = tmpdr["isPair"];
                     detailTb.Rows.Add(ndr);
                     if (tmpdr["PatternCode"].ToString() == "ALLPARTS")
                     {
@@ -1092,6 +1098,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                                     allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
                                     allpart_ndr["Parts"] = aldr["Parts"];
                                     allpart_ndr["ukey1"] = tmpdr["ukey1"];
+                                    allpart_ndr["isPair"] = aldr["isPair"];
                                     alltmpTb.Rows.Add(allpart_ndr);
                                 }
                             }

@@ -1599,7 +1599,22 @@ set sod.WorkHour = upd.workHour
 from SewingOutput_Detail sod
 inner join #updateChild upd on sod.UKey = upd.SewingOutput_DetailUKey
 
-drop table #Child, #updateChild";
+drop table #Child, #updateChild
+
+
+update s set
+	s.WorkHour=isnull(s.WorkHour,0)+isnull(ss.WorkHour,0)
+from SewingOutput_Detail s
+outer apply(
+	select WorkHour=isnull(s3.WorkHour,0)-isnull(sum(sd.WorkHour),0)
+	from SewingOutput s3
+	inner join SewingOutput_Detail sd on s.id = sd.ID
+	where s3.id=s.id and sd.AutoCreate = 0
+	group by sd.ID,s3.SewingLineID,s3.OutputDate,s3.WorkHour,s3.Team,s3.Shift having sum(sd.WorkHour)<> s.WorkHour
+)ss
+where id = @SewingID
+and ukey = (select max(ukey) from SewingOutput_Detail s2 where s.id =s2.id)
+";
 
             TransactionScope transactionscope = new TransactionScope();
             using (transactionscope)

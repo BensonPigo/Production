@@ -29,9 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.txtuser1 = new Sci.Production.Class.txtuser();
             this.dateInspectionDate = new Sci.Win.UI.DateRange();
             this.label9 = new Sci.Win.UI.Label();
             this.txtSPEnd = new Sci.Win.UI.TextBox();
@@ -40,6 +38,11 @@
             this.labelInspectionDate = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
+            this.labReportType = new Sci.Win.UI.Label();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.radioSummery = new Sci.Win.UI.RadioButton();
+            this.txtmulituser = new Sci.Production.Class.txtmulituser();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,9 +61,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtmulituser);
+            this.panel1.Controls.Add(this.radioSummery);
+            this.panel1.Controls.Add(this.radioDetail);
+            this.panel1.Controls.Add(this.labReportType);
             this.panel1.Controls.Add(this.txtbrand);
             this.panel1.Controls.Add(this.labelBrand);
-            this.panel1.Controls.Add(this.txtuser1);
             this.panel1.Controls.Add(this.dateInspectionDate);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.txtSPEnd);
@@ -70,17 +76,8 @@
             this.panel1.Controls.Add(this.labelSP);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(426, 146);
+            this.panel1.Size = new System.Drawing.Size(426, 191);
             this.panel1.TabIndex = 94;
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(120, 113);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(94, 23);
-            this.txtbrand.TabIndex = 4;
             // 
             // labelBrand
             // 
@@ -89,15 +86,6 @@
             this.labelBrand.Size = new System.Drawing.Size(105, 23);
             this.labelBrand.TabIndex = 114;
             this.labelBrand.Text = "Brand";
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(120, 42);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(300, 23);
-            this.txtuser1.TabIndex = 1;
-            this.txtuser1.TextBox1Binding = "";
             // 
             // dateInspectionDate
             // 
@@ -186,9 +174,59 @@
             this.label10.TabIndex = 97;
             this.label10.Text = "Paper Size A4";
             // 
+            // labReportType
+            // 
+            this.labReportType.Location = new System.Drawing.Point(12, 149);
+            this.labReportType.Name = "labReportType";
+            this.labReportType.Size = new System.Drawing.Size(105, 23);
+            this.labReportType.TabIndex = 115;
+            this.labReportType.Text = "Report Type";
+            // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.Checked = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(132, 149);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(62, 21);
+            this.radioDetail.TabIndex = 116;
+            this.radioDetail.TabStop = true;
+            this.radioDetail.Text = "Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            // 
+            // radioSummery
+            // 
+            this.radioSummery.AutoSize = true;
+            this.radioSummery.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummery.Location = new System.Drawing.Point(200, 149);
+            this.radioSummery.Name = "radioSummery";
+            this.radioSummery.Size = new System.Drawing.Size(85, 21);
+            this.radioSummery.TabIndex = 117;
+            this.radioSummery.Text = "Summery";
+            this.radioSummery.UseVisualStyleBackColor = true;
+            // 
+            // txtmulituser
+            // 
+            this.txtmulituser.DisplayBox1Binding = "";
+            this.txtmulituser.Location = new System.Drawing.Point(123, 42);
+            this.txtmulituser.Name = "txtmulituser";
+            this.txtmulituser.Size = new System.Drawing.Size(300, 23);
+            this.txtmulituser.TabIndex = 98;
+            this.txtmulituser.TextBox1Binding = "";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(120, 113);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(94, 23);
+            this.txtbrand.TabIndex = 4;
+            // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(557, 194);
+            this.ClientSize = new System.Drawing.Size(557, 237);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.panel1);
             this.Name = "R08";
@@ -216,8 +254,11 @@
         private Win.UI.DateRange dateInspectionDate;
         private Win.UI.Label label9;
         private Win.UI.Label label10;
-        private Class.txtuser txtuser1;
         private Class.txtbrand txtbrand;
         private Win.UI.Label labelBrand;
+        private Win.UI.RadioButton radioSummery;
+        private Win.UI.RadioButton radioDetail;
+        private Win.UI.Label labReportType;
+        private Class.txtmulituser txtmulituser;
     }
 }

@@ -29,7 +29,7 @@ namespace Sci.Production.Class
                 }
                 catch (Exception e)
                 {
-                    MyUtility.Msg.ErrorBox(e.ToString());
+                    //MyUtility.Msg.ErrorBox(e.ToString());
                     return null;
                 }
             }

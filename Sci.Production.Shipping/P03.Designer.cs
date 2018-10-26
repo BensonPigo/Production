@@ -81,6 +81,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.RemarkToTaipei = new Sci.Win.UI.EditBox();
+            this.chkImportChange = new Sci.Win.UI.CheckBox();
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -98,6 +99,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkImportChange);
             this.masterpanel.Controls.Add(this.RemarkToTaipei);
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
@@ -208,6 +210,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.RemarkToTaipei, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkImportChange, 0);
             // 
             // detailpanel
             // 
@@ -840,6 +843,18 @@
             this.RemarkToTaipei.Size = new System.Drawing.Size(431, 50);
             this.RemarkToTaipei.TabIndex = 54;
             // 
+            // chkImportChange
+            // 
+            this.chkImportChange.AutoSize = true;
+            this.chkImportChange.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoImportCharges", true));
+            this.chkImportChange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkImportChange.Location = new System.Drawing.Point(577, 207);
+            this.chkImportChange.Name = "chkImportChange";
+            this.chkImportChange.Size = new System.Drawing.Size(145, 21);
+            this.chkImportChange.TabIndex = 55;
+            this.chkImportChange.Text = "No Import Charges";
+            this.chkImportChange.UseVisualStyleBackColor = true;
+            // 
             // txttpeuserHandle
             // 
             this.txttpeuserHandle.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "Handle", true));
@@ -945,5 +960,6 @@
         private Win.UI.Label label1;
         private Win.UI.Label label3;
         private Win.UI.EditBox RemarkToTaipei;
+        private Win.UI.CheckBox chkImportChange;
     }
 }

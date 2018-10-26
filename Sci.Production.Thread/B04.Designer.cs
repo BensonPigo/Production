@@ -33,6 +33,7 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.txtThreadLocation = new Sci.Win.UI.TextBox();
             this.txtDescription = new Sci.Win.UI.TextBox();
+            this.checkAllowAutoAllocate = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -43,6 +44,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkAllowAutoAllocate);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.txtThreadLocation);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -64,7 +66,6 @@
             // 
             // labelThreadLocation
             // 
-            this.labelThreadLocation.Lines = 0;
             this.labelThreadLocation.Location = new System.Drawing.Point(50, 46);
             this.labelThreadLocation.Name = "labelThreadLocation";
             this.labelThreadLocation.Size = new System.Drawing.Size(104, 23);
@@ -73,7 +74,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(50, 103);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(104, 23);
@@ -85,7 +85,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(411, 46);
+            this.checkJunk.Location = new System.Drawing.Point(412, 46);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 2;
@@ -111,6 +111,18 @@
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(249, 23);
             this.txtDescription.TabIndex = 1;
+            // 
+            // checkAllowAutoAllocate
+            // 
+            this.checkAllowAutoAllocate.AutoSize = true;
+            this.checkAllowAutoAllocate.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "AllowAutoAllocate", true));
+            this.checkAllowAutoAllocate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkAllowAutoAllocate.Location = new System.Drawing.Point(412, 105);
+            this.checkAllowAutoAllocate.Name = "checkAllowAutoAllocate";
+            this.checkAllowAutoAllocate.Size = new System.Drawing.Size(138, 21);
+            this.checkAllowAutoAllocate.TabIndex = 5;
+            this.checkAllowAutoAllocate.Text = "Allow Auto Allocate";
+            this.checkAllowAutoAllocate.UseVisualStyleBackColor = true;
             // 
             // B04
             // 
@@ -143,5 +155,6 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.TextBox txtDescription;
         private Win.UI.TextBox txtThreadLocation;
+        private Win.UI.CheckBox checkAllowAutoAllocate;
     }
 }
