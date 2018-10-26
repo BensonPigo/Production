@@ -343,8 +343,9 @@ where ap_qty > 0
             sqlCmd.Append(@" 
 select distinct *from #tmp2
 drop table #tmp,#tmp2");
-
+            DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
