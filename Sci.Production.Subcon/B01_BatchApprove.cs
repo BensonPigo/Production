@@ -15,10 +15,12 @@ namespace Sci.Production.Subcon
 {
     public partial class B01_BatchApprove : Sci.Win.Forms.Base
     {
-        public B01_BatchApprove()
+        Action aa;
+        public B01_BatchApprove(Action aa)
         {
             InitializeComponent();
             this.EditMode = true;
+            this.aa = aa;
         }
 
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -35,6 +37,7 @@ namespace Sci.Production.Subcon
                 .Text("Category", header: "Category", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Description", header: "Description", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("AccountIDN", header: "Account No", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -96,7 +99,8 @@ select l.*,
 				   when ChooseSupp = 3 then price3
 				   when ChooseSupp = 4 then price4 end,
     Selected = 0,
-	lq.Ukey
+	lq.Ukey,
+	AccountIDN=concat(AccountID,' ',(select Name from  FinanceEN.dbo.AccountNo with (nolock) where junk = 0 and id = AccountID))
 	
 from LocalItem l
 inner join LocalItem_Quot lq on l.RefNo = lq.RefNo
@@ -293,6 +297,8 @@ Refno {string.Join(",", msg)} ");
 
             confirm(selectdt);
             query();
+
+            this.aa();
         }
 
         public bool confirm(DataTable selectdt)

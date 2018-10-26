@@ -143,7 +143,7 @@ Select
 		For XML path('')
     ),1,1,''),
     SizeRatio = stuff((
-		Select SizeCode+'/'+convert(varchar,Qty ) 
+        Select  '/ '+SizeCode+'*'+convert(varchar,Qty ) 
 		From WorkOrder_SizeRatio c WITH (NOLOCK) 
 		Where c.WorkOrderUkey =a.Ukey 
 		For XML path('')
