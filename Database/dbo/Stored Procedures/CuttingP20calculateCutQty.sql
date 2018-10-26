@@ -3,7 +3,7 @@
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE CuttingP20calculateCutQty
+CREATE PROCEDURE [dbo].[CuttingP20calculateCutQty]
 	@type int,--1:pre_qty
 	@id varchar(20),
 	@Cdate date
@@ -53,12 +53,12 @@ BEGIN
 	and exists (select 1 from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID and CuttingID = o.poid)
 	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey
 	------------------
-	select * ,AccuCutQty=sum(cutqty) over(partition by SizeCode,Article,PatternPanel,WorkOrderUkey,TotalCutQty,MDivisionid order by WorkOrderUkey,orderid)
-		,Rowid=ROW_NUMBER() over(partition by SizeCode,Article,PatternPanel,WorkOrderUkey,TotalCutQty,MDivisionid order by WorkOrderUkey,orderid)
+	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderUkey order by WorkOrderUkey,orderid)
+		,Rowid=ROW_NUMBER() over(partition by WorkOrderUkey order by WorkOrderUkey,orderid)
 	into #CutQtytmp2
 	from #CutQtytmp1
 	------------------
-	select *,Lagaccu= LAG(AccuCutQty,1,AccuCutQty) over(partition by SizeCode,Article,PatternPanel,WorkOrderUkey,TotalCutQty,MDivisionid order by WorkOrderUkey,orderid)
+	select *,Lagaccu= LAG(AccuCutQty,1,AccuCutQty) over(partition by WorkOrderUkey order by WorkOrderUkey,orderid)
 	into #Lagtmp
 	from #CutQtytmp2 
 	------------------

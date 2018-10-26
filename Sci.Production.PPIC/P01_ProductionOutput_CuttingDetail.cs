@@ -129,12 +129,12 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
 	where o.poid=(select poid from orders o with(nolock) where id = '{this.id}')
 	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey,cod.CutRef,co.cDate,wo.FabricPanelCode,wo.Cutno
 	------------------
-	select * ,AccuCutQty=sum(cutqty) over(partition by SizeCode,Article,PatternPanel,WorkOrderUkey,TotalCutQty,MDivisionid order by WorkOrderUkey,orderid)
-		,Rowid=ROW_NUMBER() over(partition by SizeCode,Article,PatternPanel,WorkOrderUkey,TotalCutQty,MDivisionid order by WorkOrderUkey,orderid)
+	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderUkey order by WorkOrderUkey,orderid)
+		,Rowid=ROW_NUMBER() over(partition by WorkOrderUkey order by WorkOrderUkey,orderid)
 	into #CutQtytmp2
 	from #CutQtytmp1
 	------------------
-	select *,Lagaccu= LAG(AccuCutQty,1,AccuCutQty) over(partition by SizeCode,Article,PatternPanel,WorkOrderUkey,TotalCutQty,MDivisionid order by WorkOrderUkey,orderid)
+	select *,Lagaccu= LAG(AccuCutQty,1,AccuCutQty) over(partition by WorkOrderUkey order by WorkOrderUkey,orderid)
 	into #Lagtmp
 	from #CutQtytmp2 
 	------------------
