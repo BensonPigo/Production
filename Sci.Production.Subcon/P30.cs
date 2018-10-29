@@ -24,7 +24,7 @@ namespace Sci.Production.Subcon
 {
     public partial class P30 : Sci.Win.Tems.Input6
     {
-        public static DataTable dtPadBoardInfo = new DataTable();
+        public static DataTable dtPadBoardInfo;
 
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -371,193 +371,204 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             _transactionscope = null;
             #endregion
 
-            return base.ClickSave();
-        }
+            #region 天地板
 
-        protected override void ClickSaveAfter()
-        {
-            if (dtPadBoardInfo.Rows.Count > 0)
+            if (dtPadBoardInfo != null)
             {
-                //根據不同供應商，寫入LocalPO
-                List<string> SupplyList = dtPadBoardInfo.AsEnumerable().Select(o => o.Field<string>("localsuppid")).Distinct().ToList();
-
-                TransactionScope _transactionscope = new TransactionScope();
-                using (_transactionscope)
+                if (dtPadBoardInfo.Rows.Count > 0)
                 {
-                    try
+                    //根據不同供應商，寫入LocalPO
+                    List<string> SupplyList = dtPadBoardInfo.AsEnumerable().Select(o => o.Field<string>("localsuppid")).Distinct().ToList();
+
+                    TransactionScope _transactionscope2 = new TransactionScope();
+                    using (_transactionscope2)
                     {
-                        //用於顯示MessageBox
-                        List<string> msg_Id_List = new List<string>();
-                        List<SqlParameter> parameters = new List<SqlParameter>();
-                        StringBuilder sql = new StringBuilder();
-
-                        #region 新增LocalPO（表頭)
-
-                        #region 新增LocalPO_Detail（表身)
-
-                        foreach (string Supplyer in SupplyList)
+                        try
                         {
-                            //↑↑↑↑供應商↑↑↑↑
+                            //用於顯示MessageBox
+                            List<string> msg_Id_List = new List<string>();
+                            List<SqlParameter> parameters = new List<SqlParameter>();
+                            StringBuilder sql = new StringBuilder();
 
-                            DataTable dt = dtPadBoardInfo.AsEnumerable().Where(o => o.Field<string>("localsuppid") == Supplyer).CopyToDataTable();
+                            #region 新增LocalPO（表頭)
 
-                            //單號
-                            string ID = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LP", "Localpo");
-                            msg_Id_List.Add(ID);
+                            #region 新增LocalPO_Detail（表身)
 
-                            //採購物料總數(不知道寫哪個欄位，因此先註解)
-                           // int totalQty = dt.AsEnumerable().Sum(o => Convert.ToInt32(o.GetValue("Qty")));
-                            Decimal amount = 0;
-
-                            foreach (DataRow item in dt.Rows)
+                            int IdCount = 1;
+                            foreach (string Supplyer in SupplyList)
                             {
-                                //加總金額
-                                amount += MyUtility.Convert.GetDecimal(item["Price"]) * MyUtility.Convert.GetDecimal(item["Qty"]);
+                                //↑↑↑↑供應商↑↑↑↑
 
+                                dt = dtPadBoardInfo.AsEnumerable().Where(o => o.Field<string>("localsuppid") == Supplyer).CopyToDataTable();
+
+                                //單號
+                                //string ID = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LP", "Localpo",DateTime.Now,2);
+                                string head = this.CurrentMaintain["ID"].ToString().Substring(0, 9);
+                                int idNumber=Convert.ToInt32(this.CurrentMaintain["ID"].ToString().Substring(9, 4));
+                                string ID = head + string.Format("{0:0000}", idNumber+ IdCount);
+                                IdCount++;
+                                msg_Id_List.Add(ID);
+
+                                //採購物料總數(不知道寫哪個欄位，因此先註解)
+                                // int totalQty = dt.AsEnumerable().Sum(o => Convert.ToInt32(o.GetValue("Qty")));
+                                Decimal amount = 0;
+
+                                foreach (DataRow item in dt.Rows)
+                                {
+                                    //加總金額
+                                    amount += MyUtility.Convert.GetDecimal(item["Price"]) * MyUtility.Convert.GetDecimal(item["Qty"]);
+
+                                    parameters.Clear();
+                                    parameters.Add(new SqlParameter("@Id", ID));
+                                    parameters.Add(new SqlParameter("@OrderId", item["OrderId"]));
+                                    parameters.Add(new SqlParameter("@Refno", item["Refno"]));
+                                    parameters.Add(new SqlParameter("@ThreadColorID", item["ThreadColorID"]));
+                                    parameters.Add(new SqlParameter("@Price", item["Price"]));
+                                    parameters.Add(new SqlParameter("@Qty", item["Qty"]));
+                                    parameters.Add(new SqlParameter("@UnitId", item["UnitId"]));
+                                    parameters.Add(new SqlParameter("@RequestID", item["RequestID"]));
+                                    parameters.Add(new SqlParameter("@Delivery", item["Delivery"]));
+                                    parameters.Add(new SqlParameter("@Remark", item["Remark"]));
+                                    parameters.Add(new SqlParameter("@POID", item["POID"]));
+                                    parameters.Add(new SqlParameter("@BuyerID", item["BuyerID"]));
+
+                                    sql.Clear();
+                                    sql.Append(" INSERT INTO [dbo].[LocalPO_Detail]" + Environment.NewLine);
+                                    sql.Append("                    ([Id]" + Environment.NewLine);
+                                    sql.Append("                    ,[OrderId]" + Environment.NewLine);
+                                    sql.Append("                    ,[Refno]" + Environment.NewLine);
+                                    sql.Append("                    ,[ThreadColorID]" + Environment.NewLine);
+                                    sql.Append("                    ,[Price]" + Environment.NewLine);
+                                    sql.Append("                    ,[Qty]" + Environment.NewLine);
+                                    sql.Append("                    ,[UnitId]" + Environment.NewLine);
+                                    sql.Append("                    ,[RequestID]" + Environment.NewLine);
+                                    sql.Append("                    ,[Delivery]" + Environment.NewLine);
+                                    sql.Append("                    ,[Remark]" + Environment.NewLine);
+                                    sql.Append("                    ,[POID]" + Environment.NewLine);
+                                    sql.Append("                    ,[BuyerID])" + Environment.NewLine);
+
+                                    sql.Append(" VALUES" + Environment.NewLine);
+                                    sql.Append(" (@ID" + Environment.NewLine);
+                                    sql.Append(" ,@OrderId" + Environment.NewLine);
+                                    sql.Append(" ,@Refno" + Environment.NewLine);
+                                    sql.Append(" ,@ThreadColorID" + Environment.NewLine);
+                                    sql.Append(" ,@Price" + Environment.NewLine);
+                                    sql.Append(" ,@Qty" + Environment.NewLine);
+                                    sql.Append(" ,@UnitId" + Environment.NewLine);
+                                    sql.Append(" ,@RequestID" + Environment.NewLine);
+                                    sql.Append(" ,@Delivery" + Environment.NewLine);
+                                    sql.Append(" ,@Remark" + Environment.NewLine);
+                                    sql.Append(" ,@POID" + Environment.NewLine);
+
+                                    sql.Append(" ,@BuyerID)" + Environment.NewLine);
+
+                                    Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
+
+                                }
+
+                                #endregion
+
+
+                                #region SqlParameter設定
                                 parameters.Clear();
+
+                                string CurrencyId = MyUtility.GetValue.Lookup($"SELECT DISTINCT CurrencyID FROM LocalSupp WHERE ID='{Supplyer}'");
+
+
                                 parameters.Add(new SqlParameter("@Id", ID));
-                                parameters.Add(new SqlParameter("@OrderId", item["OrderId"]));
-                                parameters.Add(new SqlParameter("@Refno", item["Refno"]));
-                                parameters.Add(new SqlParameter("@ThreadColorID", item["ThreadColorID"]));
-                                parameters.Add(new SqlParameter("@Price", item["Price"]));
-                                parameters.Add(new SqlParameter("@Qty", item["Qty"]));
-                                parameters.Add(new SqlParameter("@UnitId", item["UnitId"]));
-                                parameters.Add(new SqlParameter("@RequestID", item["RequestID"]));
-                                parameters.Add(new SqlParameter("@Delivery", item["Delivery"]));
-                                parameters.Add(new SqlParameter("@Remark", item["Remark"]));
-                                parameters.Add(new SqlParameter("@POID", item["POID"]));
-                                parameters.Add(new SqlParameter("@BuyerID", item["BuyerID"]));
+                                parameters.Add(new SqlParameter("@MDivisionID", this.CurrentMaintain["MDivisionID"]));
+                                parameters.Add(new SqlParameter("@FactoryId", this.CurrentMaintain["FactoryId"]));
+                                parameters.Add(new SqlParameter("@LocalSuppID", Supplyer));
+                                parameters.Add(new SqlParameter("@Category", this.CurrentMaintain["Category"]));
+
+                                parameters.Add(new SqlParameter("@IssueDate", this.CurrentMaintain["IssueDate"]));
+                                parameters.Add(new SqlParameter("@Remark", this.CurrentMaintain["Remark"]));
+                                parameters.Add(new SqlParameter("@CurrencyId", CurrencyId));
+                                parameters.Add(new SqlParameter("@Amount", amount));
+                                parameters.Add(new SqlParameter("@VatRate", this.CurrentMaintain["VatRate"]));
+
+                                parameters.Add(new SqlParameter("@Vat", this.CurrentMaintain["Vat"]));
+                                parameters.Add(new SqlParameter("@InternalRemark", this.CurrentMaintain["InternalRemark"]));
+                                parameters.Add(new SqlParameter("@ApvName", this.CurrentMaintain["ApvName"]));
+                                parameters.Add(new SqlParameter("@ApvDate", this.CurrentMaintain["ApvDate"]));
+                                parameters.Add(new SqlParameter("@AddName", Sci.Env.User.UserID));
+
+                                parameters.Add(new SqlParameter("@AddDate", DateTime.Now));
+                                parameters.Add(new SqlParameter("@EditName", DBNull.Value));
+                                parameters.Add(new SqlParameter("@EditDate", DBNull.Value));
+                                parameters.Add(new SqlParameter("@Status", this.CurrentMaintain["Status"]));
+                                #endregion
+
+                                #region SQL設定
 
                                 sql.Clear();
-                                sql.Append(" INSERT INTO [dbo].[LocalPO_Detail]" + Environment.NewLine);
-                                sql.Append("                    ([Id]" + Environment.NewLine);
-                                sql.Append("                    ,[OrderId]" + Environment.NewLine);
-                                sql.Append("                    ,[Refno]" + Environment.NewLine);
-                                sql.Append("                    ,[ThreadColorID]" + Environment.NewLine);
-                                sql.Append("                    ,[Price]" + Environment.NewLine);
-                                sql.Append("                    ,[Qty]" + Environment.NewLine);
-                                sql.Append("                    ,[UnitId]" + Environment.NewLine);
-                                sql.Append("                    ,[RequestID]" + Environment.NewLine);
-                                sql.Append("                    ,[Delivery]" + Environment.NewLine);
-                                sql.Append("                    ,[Remark]" + Environment.NewLine);
-                                sql.Append("                    ,[POID]" + Environment.NewLine);
-                                sql.Append("                    ,[BuyerID])" + Environment.NewLine);
-
+                                sql.Append(" INSERT INTO [dbo].[LocalPO]" + Environment.NewLine);
+                                sql.Append("             ([Id]" + Environment.NewLine);
+                                sql.Append("             ,[MDivisionID]" + Environment.NewLine);
+                                sql.Append("             ,[FactoryId]" + Environment.NewLine);
+                                sql.Append("             ,[LocalSuppID]" + Environment.NewLine);
+                                sql.Append("             ,[Category]" + Environment.NewLine);
+                                sql.Append("             ,[IssueDate]" + Environment.NewLine);
+                                sql.Append("             ,[Remark]" + Environment.NewLine);
+                                sql.Append("             ,[CurrencyId]" + Environment.NewLine);
+                                sql.Append("             ,[Amount]" + Environment.NewLine);
+                                sql.Append("             ,[VatRate]" + Environment.NewLine);
+                                sql.Append("             ,[Vat]" + Environment.NewLine);
+                                sql.Append("             ,[InternalRemark]" + Environment.NewLine);
+                                sql.Append("             ,[ApvName]" + Environment.NewLine);
+                                sql.Append("             ,[ApvDate]" + Environment.NewLine);
+                                sql.Append("             ,[AddName]" + Environment.NewLine);
+                                sql.Append("             ,[AddDate]" + Environment.NewLine);
+                                sql.Append("             ,[EditName]" + Environment.NewLine);
+                                sql.Append("             ,[EditDate]" + Environment.NewLine);
+                                sql.Append("             ,[Status])" + Environment.NewLine);
                                 sql.Append(" VALUES" + Environment.NewLine);
                                 sql.Append(" (@ID" + Environment.NewLine);
-                                sql.Append(" ,@OrderId" + Environment.NewLine);
-                                sql.Append(" ,@Refno" + Environment.NewLine);
-                                sql.Append(" ,@ThreadColorID" + Environment.NewLine);
-                                sql.Append(" ,@Price" + Environment.NewLine);
-                                sql.Append(" ,@Qty" + Environment.NewLine);
-                                sql.Append(" ,@UnitId" + Environment.NewLine);
-                                sql.Append(" ,@RequestID" + Environment.NewLine);
-                                sql.Append(" ,@Delivery" + Environment.NewLine);
+                                sql.Append(" ,@MDivisionID" + Environment.NewLine);
+                                sql.Append(" ,@FactoryId" + Environment.NewLine);
+                                sql.Append(" ,@LocalSuppID" + Environment.NewLine);
+                                sql.Append(" ,@Category" + Environment.NewLine);
+                                sql.Append(" ,@IssueDate" + Environment.NewLine);
                                 sql.Append(" ,@Remark" + Environment.NewLine);
-                                sql.Append(" ,@POID" + Environment.NewLine);
-
-                                sql.Append(" ,@BuyerID)" + Environment.NewLine);
+                                sql.Append(" ,@CurrencyId" + Environment.NewLine);
+                                sql.Append(" ,@Amount" + Environment.NewLine);
+                                sql.Append(" ,@VatRate" + Environment.NewLine);
+                                sql.Append(" ,@Vat" + Environment.NewLine);
+                                sql.Append(" ,@InternalRemark" + Environment.NewLine);
+                                sql.Append(" ,@ApvName" + Environment.NewLine);
+                                sql.Append(" ,@ApvDate" + Environment.NewLine);
+                                sql.Append(" ,@AddName" + Environment.NewLine);
+                                sql.Append(" ,@AddDate" + Environment.NewLine);
+                                sql.Append(" ,@EditName" + Environment.NewLine);
+                                sql.Append(" ,@EditDate" + Environment.NewLine);
+                                sql.Append(" ,@Status)" + Environment.NewLine);
+                                #endregion
 
                                 Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
-
                             }
 
                             #endregion
+                            _transactionscope2.Complete();
+                            _transactionscope2.Dispose();
 
-
-                        #region SqlParameter設定
-                        parameters.Clear();
-
-                        parameters.Add(new SqlParameter("@Id", ID));
-                        parameters.Add(new SqlParameter("@MDivisionID", this.CurrentMaintain["MDivisionID"]));
-                        parameters.Add(new SqlParameter("@FactoryId", this.CurrentMaintain["FactoryId"]));
-                        parameters.Add(new SqlParameter("@LocalSuppID", Supplyer));
-                        parameters.Add(new SqlParameter("@Category", this.CurrentMaintain["Category"]));
-
-                        parameters.Add(new SqlParameter("@IssueDate", this.CurrentMaintain["IssueDate"]));
-                        parameters.Add(new SqlParameter("@Remark", this.CurrentMaintain["Remark"]));
-                        parameters.Add(new SqlParameter("@CurrencyId", this.CurrentMaintain["CurrencyId"]));
-                        parameters.Add(new SqlParameter("@Amount", amount));
-                        parameters.Add(new SqlParameter("@VatRate", this.CurrentMaintain["VatRate"]));
-
-                        parameters.Add(new SqlParameter("@Vat", this.CurrentMaintain["Vat"]));
-                        parameters.Add(new SqlParameter("@InternalRemark", this.CurrentMaintain["InternalRemark"]));
-                        parameters.Add(new SqlParameter("@ApvName", this.CurrentMaintain["ApvName"]));
-                        parameters.Add(new SqlParameter("@ApvDate", this.CurrentMaintain["ApvDate"]));
-                        parameters.Add(new SqlParameter("@AddName", Sci.Env.User.UserID));
-
-                        parameters.Add(new SqlParameter("@AddDate", DateTime.Now));
-                        parameters.Add(new SqlParameter("@EditName", DBNull.Value));
-                        parameters.Add(new SqlParameter("@EditDate", DBNull.Value));
-                        parameters.Add(new SqlParameter("@Status", this.CurrentMaintain["Status"]));
-                        #endregion
-
-                        #region SQL設定
-
-                        sql.Clear();
-                        sql.Append(" INSERT INTO [dbo].[LocalPO]" + Environment.NewLine);
-                        sql.Append("             ([Id]" + Environment.NewLine);
-                        sql.Append("             ,[MDivisionID]" + Environment.NewLine);
-                        sql.Append("             ,[FactoryId]" + Environment.NewLine);
-                        sql.Append("             ,[LocalSuppID]" + Environment.NewLine);
-                        sql.Append("             ,[Category]" + Environment.NewLine);
-                        sql.Append("             ,[IssueDate]" + Environment.NewLine);
-                        sql.Append("             ,[Remark]" + Environment.NewLine);
-                        sql.Append("             ,[CurrencyId]" + Environment.NewLine);
-                        sql.Append("             ,[Amount]" + Environment.NewLine);
-                        sql.Append("             ,[VatRate]" + Environment.NewLine);
-                        sql.Append("             ,[Vat]" + Environment.NewLine);
-                        sql.Append("             ,[InternalRemark]" + Environment.NewLine);
-                        sql.Append("             ,[ApvName]" + Environment.NewLine);
-                        sql.Append("             ,[ApvDate]" + Environment.NewLine);
-                        sql.Append("             ,[AddName]" + Environment.NewLine);
-                        sql.Append("             ,[AddDate]" + Environment.NewLine);
-                        sql.Append("             ,[EditName]" + Environment.NewLine);
-                        sql.Append("             ,[EditDate]" + Environment.NewLine);
-                        sql.Append("             ,[Status])" + Environment.NewLine);
-                        sql.Append(" VALUES" + Environment.NewLine);
-                        sql.Append(" (@ID" + Environment.NewLine);
-                        sql.Append(" ,@MDivisionID" + Environment.NewLine);
-                        sql.Append(" ,@FactoryId" + Environment.NewLine);
-                        sql.Append(" ,@LocalSuppID" + Environment.NewLine);
-                        sql.Append(" ,@Category" + Environment.NewLine);
-                        sql.Append(" ,@IssueDate" + Environment.NewLine);
-                        sql.Append(" ,@Remark" + Environment.NewLine);
-                        sql.Append(" ,@CurrencyId" + Environment.NewLine);
-                        sql.Append(" ,@Amount" + Environment.NewLine);
-                        sql.Append(" ,@VatRate" + Environment.NewLine);
-                        sql.Append(" ,@Vat" + Environment.NewLine);
-                        sql.Append(" ,@InternalRemark" + Environment.NewLine);
-                        sql.Append(" ,@ApvName" + Environment.NewLine);
-                        sql.Append(" ,@ApvDate" + Environment.NewLine);
-                        sql.Append(" ,@AddName" + Environment.NewLine);
-                        sql.Append(" ,@AddDate" + Environment.NewLine);
-                        sql.Append(" ,@EditName" + Environment.NewLine);
-                        sql.Append(" ,@EditDate" + Environment.NewLine);
-                        sql.Append(" ,@Status)" + Environment.NewLine);
-                        #endregion
-
-                        Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
+                            MyUtility.Msg.InfoBox("Auto create purchase order :" + string.Join(",", msg_Id_List.ToArray()));
                         }
-
-                        #endregion
-                        _transactionscope.Complete();
-                        _transactionscope.Dispose();
-
-                        MyUtility.Msg.InfoBox("Auto create purchase order :" + string.Join(",", msg_Id_List.ToArray()));
+                        catch (Exception ex)
+                        {
+                            _transactionscope2.Dispose();
+                            ShowErr("Commit transaction error.", ex);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        _transactionscope.Dispose();
-                        ShowErr("Commit transaction error.", ex);
-                    }
+                    _transactionscope2.Dispose();
+                    _transactionscope2 = null;
                 }
-                _transactionscope.Dispose();
-                _transactionscope = null;
-            }
 
-            base.ClickSaveAfter();
+            }
+            #endregion
+
+            return base.ClickSave();
         }
+        
         protected override DualResult ClickDelete()
         {
             DataTable dt = (DataTable)detailgridbs.DataSource;
@@ -617,6 +628,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
             DataTable detailDt = (DataTable)detailgridbs.DataSource;
             if (!(CurrentMaintain == null))
             {
@@ -643,6 +655,13 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             detailDt.AcceptChanges();
             calttlqty();
+        }
+
+        protected override void OnDetailDetached()
+        {
+            //使用者可能會多次 Import，dtPadBoardInfo 清空的時間點應該是在每一次進入 Detail 時
+            dtPadBoardInfo = new DataTable();
+            base.OnDetailDetached();
         }
 
         // detail 新增時設定預設值
