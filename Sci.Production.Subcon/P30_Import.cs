@@ -106,6 +106,7 @@ select distinct 1 as Selected
        , c.SewInLine
        , delivery = a.EstCTNArrive
        , br.BuyerID
+       , d.localsuppid
 into #tmp
 from dbo.PackingList a WITH (NOLOCK) 
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
@@ -126,7 +127,7 @@ outer apply(
 ) y
 where a.ApvToPurchase = 1 
       and a.LocalPOID = ''
-      and d.localsuppid = '{3}'
+      --and d.localsuppid = '{3}'
       --and a.factoryid = '{0}'    
       and a.mdivisionid ='{1}'
       and c.Category  in ('B','S')
@@ -153,7 +154,7 @@ where a.ApvToPurchase = 1
                     if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
 
                     strSQLCmd += string.Format(@" 
-group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID
+group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID, d.localsuppid
 
 select * from #tmp a
 where  not exists (select orderID 
@@ -212,6 +213,7 @@ select distinct 1 as Selected
        , c.SewInLine
        , delivery = a.EstArriveDate
        , br.BuyerID
+	   , d.localsuppid
 from dbo.ThreadRequisition a WITH (NOLOCK) 
 inner join ThreadRequisition_Detail b WITH (NOLOCK) on a.OrderID = b.OrderID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
@@ -237,7 +239,7 @@ outer apply(
 where a.status = 'Approved' 
       and factory.IsProduceFty = 1
       --and a.factoryid = '{0}'
-      and d.localsuppid= '{3}'
+      --and d.localsuppid= '{3}'
       and a.Mdivisionid = '{1}'
       and c.Category  in ('B','S')
       and exists (select id from orders where poid=b.OrderID and junk=0)
@@ -456,9 +458,15 @@ where Qty - ShipQty - DiffQty = 0";
             DataRow[] dr2 = dtImport.Select("Selected = 1 and remark=''");
             if (dr2.Length > 0)
             {
+                //複製DataTable結構
+                P30.dtPadBoardInfo = dtImport.Clone();
+
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow =
+                    //物料供應商與表頭相同，寫回表身
+                    if (dr_localPO["localsuppid"].ToString() == tmp["localsuppid"].ToString())
+                    {
+                        DataRow[] findrow =
                         dt_localPODetail.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'"
                                                                                 , tmp["orderid"].ToString()
                                                                                 , tmp["refno"].ToString()
@@ -475,7 +483,10 @@ where Qty - ShipQty - DiffQty = 0";
                         tmp.AcceptChanges();
                         tmp.SetAdded();
                         dt_localPODetail.ImportRow(tmp);
+                        }
                     }
+                    else//物料供應商與表頭不同，將資訊整理寫入 dtPadBoardInfo
+                        P30.dtPadBoardInfo.ImportRow(tmp);
                 }
 
                 DataTable tmpdt = dr2.CopyToDataTable();

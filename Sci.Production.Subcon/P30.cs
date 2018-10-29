@@ -24,6 +24,8 @@ namespace Sci.Production.Subcon
 {
     public partial class P30 : Sci.Win.Tems.Input6
     {
+        public static DataTable dtPadBoardInfo = new DataTable();
+
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -372,6 +374,190 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             return base.ClickSave();
         }
 
+        protected override void ClickSaveAfter()
+        {
+            if (dtPadBoardInfo.Rows.Count > 0)
+            {
+                //根據不同供應商，寫入LocalPO
+                List<string> SupplyList = dtPadBoardInfo.AsEnumerable().Select(o => o.Field<string>("localsuppid")).Distinct().ToList();
+
+                TransactionScope _transactionscope = new TransactionScope();
+                using (_transactionscope)
+                {
+                    try
+                    {
+                        //用於顯示MessageBox
+                        List<string> msg_Id_List = new List<string>();
+                        List<SqlParameter> parameters = new List<SqlParameter>();
+                        StringBuilder sql = new StringBuilder();
+
+                        #region 新增LocalPO（表頭)
+
+                        #region 新增LocalPO_Detail（表身)
+
+                        foreach (string Supplyer in SupplyList)
+                        {
+                            //↑↑↑↑供應商↑↑↑↑
+
+                            DataTable dt = dtPadBoardInfo.AsEnumerable().Where(o => o.Field<string>("localsuppid") == Supplyer).CopyToDataTable();
+
+                            //單號
+                            string ID = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LP", "Localpo");
+                            msg_Id_List.Add(ID);
+
+                            //採購物料總數(不知道寫哪個欄位，因此先註解)
+                           // int totalQty = dt.AsEnumerable().Sum(o => Convert.ToInt32(o.GetValue("Qty")));
+                            Decimal amount = 0;
+
+                            foreach (DataRow item in dt.Rows)
+                            {
+                                //加總金額
+                                amount += MyUtility.Convert.GetDecimal(item["Price"]) * MyUtility.Convert.GetDecimal(item["Qty"]);
+
+                                parameters.Clear();
+                                parameters.Add(new SqlParameter("@Id", ID));
+                                parameters.Add(new SqlParameter("@OrderId", item["OrderId"]));
+                                parameters.Add(new SqlParameter("@Refno", item["Refno"]));
+                                parameters.Add(new SqlParameter("@ThreadColorID", item["ThreadColorID"]));
+                                parameters.Add(new SqlParameter("@Price", item["Price"]));
+                                parameters.Add(new SqlParameter("@Qty", item["Qty"]));
+                                parameters.Add(new SqlParameter("@UnitId", item["UnitId"]));
+                                parameters.Add(new SqlParameter("@RequestID", item["RequestID"]));
+                                parameters.Add(new SqlParameter("@Delivery", item["Delivery"]));
+                                parameters.Add(new SqlParameter("@Remark", item["Remark"]));
+                                parameters.Add(new SqlParameter("@POID", item["POID"]));
+                                parameters.Add(new SqlParameter("@BuyerID", item["BuyerID"]));
+
+                                sql.Clear();
+                                sql.Append(" INSERT INTO [dbo].[LocalPO_Detail]" + Environment.NewLine);
+                                sql.Append("                    ([Id]" + Environment.NewLine);
+                                sql.Append("                    ,[OrderId]" + Environment.NewLine);
+                                sql.Append("                    ,[Refno]" + Environment.NewLine);
+                                sql.Append("                    ,[ThreadColorID]" + Environment.NewLine);
+                                sql.Append("                    ,[Price]" + Environment.NewLine);
+                                sql.Append("                    ,[Qty]" + Environment.NewLine);
+                                sql.Append("                    ,[UnitId]" + Environment.NewLine);
+                                sql.Append("                    ,[RequestID]" + Environment.NewLine);
+                                sql.Append("                    ,[Delivery]" + Environment.NewLine);
+                                sql.Append("                    ,[Remark]" + Environment.NewLine);
+                                sql.Append("                    ,[POID]" + Environment.NewLine);
+                                sql.Append("                    ,[BuyerID])" + Environment.NewLine);
+
+                                sql.Append(" VALUES" + Environment.NewLine);
+                                sql.Append(" (@ID" + Environment.NewLine);
+                                sql.Append(" ,@OrderId" + Environment.NewLine);
+                                sql.Append(" ,@Refno" + Environment.NewLine);
+                                sql.Append(" ,@ThreadColorID" + Environment.NewLine);
+                                sql.Append(" ,@Price" + Environment.NewLine);
+                                sql.Append(" ,@Qty" + Environment.NewLine);
+                                sql.Append(" ,@UnitId" + Environment.NewLine);
+                                sql.Append(" ,@RequestID" + Environment.NewLine);
+                                sql.Append(" ,@Delivery" + Environment.NewLine);
+                                sql.Append(" ,@Remark" + Environment.NewLine);
+                                sql.Append(" ,@POID" + Environment.NewLine);
+
+                                sql.Append(" ,@BuyerID)" + Environment.NewLine);
+
+                                Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
+
+                            }
+
+                            #endregion
+
+
+                        #region SqlParameter設定
+                        parameters.Clear();
+
+                        parameters.Add(new SqlParameter("@Id", ID));
+                        parameters.Add(new SqlParameter("@MDivisionID", this.CurrentMaintain["MDivisionID"]));
+                        parameters.Add(new SqlParameter("@FactoryId", this.CurrentMaintain["FactoryId"]));
+                        parameters.Add(new SqlParameter("@LocalSuppID", Supplyer));
+                        parameters.Add(new SqlParameter("@Category", this.CurrentMaintain["Category"]));
+
+                        parameters.Add(new SqlParameter("@IssueDate", this.CurrentMaintain["IssueDate"]));
+                        parameters.Add(new SqlParameter("@Remark", this.CurrentMaintain["Remark"]));
+                        parameters.Add(new SqlParameter("@CurrencyId", this.CurrentMaintain["CurrencyId"]));
+                        parameters.Add(new SqlParameter("@Amount", amount));
+                        parameters.Add(new SqlParameter("@VatRate", this.CurrentMaintain["VatRate"]));
+
+                        parameters.Add(new SqlParameter("@Vat", this.CurrentMaintain["Vat"]));
+                        parameters.Add(new SqlParameter("@InternalRemark", this.CurrentMaintain["InternalRemark"]));
+                        parameters.Add(new SqlParameter("@ApvName", this.CurrentMaintain["ApvName"]));
+                        parameters.Add(new SqlParameter("@ApvDate", this.CurrentMaintain["ApvDate"]));
+                        parameters.Add(new SqlParameter("@AddName", Sci.Env.User.UserID));
+
+                        parameters.Add(new SqlParameter("@AddDate", DateTime.Now));
+                        parameters.Add(new SqlParameter("@EditName", DBNull.Value));
+                        parameters.Add(new SqlParameter("@EditDate", DBNull.Value));
+                        parameters.Add(new SqlParameter("@Status", this.CurrentMaintain["Status"]));
+                        #endregion
+
+                        #region SQL設定
+
+                        sql.Clear();
+                        sql.Append(" INSERT INTO [dbo].[LocalPO]" + Environment.NewLine);
+                        sql.Append("             ([Id]" + Environment.NewLine);
+                        sql.Append("             ,[MDivisionID]" + Environment.NewLine);
+                        sql.Append("             ,[FactoryId]" + Environment.NewLine);
+                        sql.Append("             ,[LocalSuppID]" + Environment.NewLine);
+                        sql.Append("             ,[Category]" + Environment.NewLine);
+                        sql.Append("             ,[IssueDate]" + Environment.NewLine);
+                        sql.Append("             ,[Remark]" + Environment.NewLine);
+                        sql.Append("             ,[CurrencyId]" + Environment.NewLine);
+                        sql.Append("             ,[Amount]" + Environment.NewLine);
+                        sql.Append("             ,[VatRate]" + Environment.NewLine);
+                        sql.Append("             ,[Vat]" + Environment.NewLine);
+                        sql.Append("             ,[InternalRemark]" + Environment.NewLine);
+                        sql.Append("             ,[ApvName]" + Environment.NewLine);
+                        sql.Append("             ,[ApvDate]" + Environment.NewLine);
+                        sql.Append("             ,[AddName]" + Environment.NewLine);
+                        sql.Append("             ,[AddDate]" + Environment.NewLine);
+                        sql.Append("             ,[EditName]" + Environment.NewLine);
+                        sql.Append("             ,[EditDate]" + Environment.NewLine);
+                        sql.Append("             ,[Status])" + Environment.NewLine);
+                        sql.Append(" VALUES" + Environment.NewLine);
+                        sql.Append(" (@ID" + Environment.NewLine);
+                        sql.Append(" ,@MDivisionID" + Environment.NewLine);
+                        sql.Append(" ,@FactoryId" + Environment.NewLine);
+                        sql.Append(" ,@LocalSuppID" + Environment.NewLine);
+                        sql.Append(" ,@Category" + Environment.NewLine);
+                        sql.Append(" ,@IssueDate" + Environment.NewLine);
+                        sql.Append(" ,@Remark" + Environment.NewLine);
+                        sql.Append(" ,@CurrencyId" + Environment.NewLine);
+                        sql.Append(" ,@Amount" + Environment.NewLine);
+                        sql.Append(" ,@VatRate" + Environment.NewLine);
+                        sql.Append(" ,@Vat" + Environment.NewLine);
+                        sql.Append(" ,@InternalRemark" + Environment.NewLine);
+                        sql.Append(" ,@ApvName" + Environment.NewLine);
+                        sql.Append(" ,@ApvDate" + Environment.NewLine);
+                        sql.Append(" ,@AddName" + Environment.NewLine);
+                        sql.Append(" ,@AddDate" + Environment.NewLine);
+                        sql.Append(" ,@EditName" + Environment.NewLine);
+                        sql.Append(" ,@EditDate" + Environment.NewLine);
+                        sql.Append(" ,@Status)" + Environment.NewLine);
+                        #endregion
+
+                        Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
+                        }
+
+                        #endregion
+                        _transactionscope.Complete();
+                        _transactionscope.Dispose();
+
+                        MyUtility.Msg.InfoBox("Auto create purchase order :" + string.Join(",", msg_Id_List.ToArray()));
+                    }
+                    catch (Exception ex)
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr("Commit transaction error.", ex);
+                    }
+                }
+                _transactionscope.Dispose();
+                _transactionscope = null;
+            }
+
+            base.ClickSaveAfter();
+        }
         protected override DualResult ClickDelete()
         {
             DataTable dt = (DataTable)detailgridbs.DataSource;
@@ -763,7 +949,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             }
         }
 
-        private decimal GetPrice(string refNo,string buyerID,string threadColorID)
+        private decimal GetPrice(string refNo, string buyerID, string threadColorID)
         {
             string sqlCmd = $@"select Price from LocalItem_ThreadBuyerColorGroupPrice with (nolock) where Refno = @Refno and BuyerID = @BuyerID and ThreadColorGroupID = (select ThreadColorGroupID from ThreadColor with (nolock) where id = @threadColorID)";
             string sqlCmd2 = $@"select Price from LocalItem_ThreadBuyerColorGroupPrice with (nolock) where Refno = @Refno and BuyerID = '' and ThreadColorGroupID = (select ThreadColorGroupID from ThreadColor with (nolock) where id = @threadColorID)";
@@ -871,12 +1057,12 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
         private void btnImportThread_Click(object sender, EventArgs e)
         {
             var dr = CurrentMaintain; if (null == dr) return;
-            if (MyUtility.Check.Empty(dr["localsuppid"]))
-            {
-                MyUtility.Msg.WarningBox("Please fill Supplier first!");
-                txtsubconSupplier.TextBox1.Focus();
-                return;
-            }
+            //if (MyUtility.Check.Empty(dr["localsuppid"]))
+            //{
+            //    MyUtility.Msg.WarningBox("Please fill Supplier first!");
+            //    txtsubconSupplier.TextBox1.Focus();
+            //    return;
+            //}
             if (MyUtility.Check.Empty(dr["category"]))
             {
                 MyUtility.Msg.WarningBox("Please fill category first!");
@@ -886,6 +1072,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             DataTable dg = (DataTable)detailgridbs.DataSource;
             if (dg.Columns["std_price"] == null) dg.Columns.Add("std_price", typeof(Decimal));
             var frm = new Sci.Production.Subcon.P30_Import(dr, (DataTable)detailgridbs.DataSource);
+            dtPadBoardInfo = new DataTable();
             frm.ShowDialog(this);
             this.RenewData();
 
@@ -1027,7 +1214,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
         protected override void ClickUnclose()
         {
             base.ClickUnclose();
-            
+
             DialogResult dResult = MyUtility.Msg.QuestionBox("Do you want to UnClose it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
             var dr = this.CurrentMaintain; if (null == dr) return;
@@ -1069,7 +1256,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
             string category = (e.Master == null) ? "" : MyUtility.GetValue.Lookup($@"select category from LocalPO
 where id='{e.Master["ID"].ToString()}' ");
-         
+
             this.DetailSelectCommand = $@"
 select [Selected] = 0,[Amount]= isnull(loc2.Price*loc2.Qty,0),[std_price]=isnull(std.std_price,0),*,o.factoryid,o.sewinline,loc.description
 from localpo_detail loc2 WITH (NOLOCK) 
@@ -1112,7 +1299,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             P30_Print callPrintForm = new P30_Print(row, id, issuedate);
             callPrintForm.ShowDialog(this);
 
-            return true;   
+            return true;
         }
 
         private void btnBatchUpdateDellivery_Click(object sender, EventArgs e)
@@ -1142,7 +1329,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                         }
                     }
                 }
-                
+
             }
         }
 
@@ -1155,9 +1342,9 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 
         void calttlqty()
         {
-            if (DetailDatas.Count >0)
+            if (DetailDatas.Count > 0)
             {
-                numttlqty.Value = MyUtility.Convert.GetDecimal(((DataTable)detailgridbs.DataSource).Compute("sum(qty)", "")); 
+                numttlqty.Value = MyUtility.Convert.GetDecimal(((DataTable)detailgridbs.DataSource).Compute("sum(qty)", ""));
             }
         }
 
@@ -1174,7 +1361,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
         private void txtBuyer_Validating(object sender, CancelEventArgs e)
         {
             if (!MyUtility.Check.Seek($@"select 1 from Buyer WITH (NOLOCK) where junk=0 and id='{this.txtBuyer.Text}'"))
-            { 
+            {
                 MyUtility.Msg.WarningBox("data not found!");
                 e.Cancel = true;
             }
@@ -1189,7 +1376,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
             else
             {
-                this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid"; 
+                this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
             }
         }
     }
