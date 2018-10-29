@@ -717,23 +717,21 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
             objSheets.Cells[2, 1] = $"Date: {this.dateArriveWHDate.DateBox1.Text} ~ {this.dateArriveWHDate.DateBox2.Text}";
 
             #region 調整欄寬
-            objSheets.Columns[5].ColumnWidth = 11.88;
-            objSheets.Columns[6].ColumnWidth = 11.88;
-            objSheets.Columns[7].ColumnWidth = 11.88;
+            objSheets.Columns[5].ColumnWidth = 7.38;
+            objSheets.Columns[6].ColumnWidth = 7.38;
+            objSheets.Columns[7].ColumnWidth = 7.38;
 
-            objSheets.Columns[8].ColumnWidth = 13.13;
-            objSheets.Columns[9].ColumnWidth = 13.13;
-            objSheets.Columns[10].ColumnWidth = 13.13;
+            objSheets.Columns[8].ColumnWidth = 7.63;
+            objSheets.Columns[9].ColumnWidth = 9.13;
+            objSheets.Columns[10].ColumnWidth = 11;
             objSheets.Columns[11].ColumnWidth = 13.13;
             objSheets.Columns[12].ColumnWidth = 13.13;
 
             objSheets.Columns[13].ColumnWidth = 11.88;
-            objSheets.Columns[14].ColumnWidth = 11.88;
-            objSheets.Columns[15].ColumnWidth = 11.88;
-            objSheets.Columns[16].ColumnWidth = 11.88;
-            objSheets.Columns[17].ColumnWidth = 11.88;
-
-            objSheets.Columns[17].ColumnWidth = 14;
+            objSheets.Columns[14].ColumnWidth = 6.63;
+            objSheets.Columns[15].ColumnWidth = 6.63;
+            objSheets.Columns[16].ColumnWidth = 6.63;
+            objSheets.Columns[17].ColumnWidth = 6.63;
 
             objSheets.Columns[19].ColumnWidth = 8;
             objSheets.Columns[20].ColumnWidth = 8;
