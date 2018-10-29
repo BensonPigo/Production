@@ -16,6 +16,8 @@
     [EditDate]     DATETIME      NULL,
     [OrderId]      VARCHAR (13)  CONSTRAINT [DF_Issue_OrderId] DEFAULT ('') NULL,
     [Combo] BIT NOT NULL DEFAULT ('0'), 
+    [PrintDate] DATETIME NULL, 
+    [PrintName] VARCHAR(10) CONSTRAINT [DF_Issue_PrintName] DEFAULT ('') NULL,
     CONSTRAINT [PK_Issue] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
