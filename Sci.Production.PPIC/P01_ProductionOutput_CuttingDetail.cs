@@ -113,33 +113,43 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             }
             else
             {
-                sqlCmd = string.Format(
-@"
-select co.cDate,wo.CutRef,wp.PatternPanel,wo.FabricPanelCode,
-	wo.Cutno,
-	cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
-	wd.Qty
-into #tmp
-from WorkOrder_Distribute wd WITH (NOLOCK)
-inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
-inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
-inner join WorkOrder wo WITH (NOLOCK) on wo.Ukey = wd.WorkOrderUkey
-inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
-inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
-inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
-where O.id = '{0}' and wd.Article = '{1}' and wd.SizeCode = '{2}'
-group by co.cDate,wo.CutRef,wp.PatternPanel,wo.FabricPanelCode,wo.Cutno,wd.Qty
+                sqlCmd = $@"
+	select wd.OrderID,co.cDate,wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
+		cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
+		co.MDivisionid,
+		TotalCutQty=sum(cod.Layer*ws.qty),cod.CutRef,wo.FabricPanelCode,wo.Cutno
+	into #CutQtytmp1
+	from WorkOrder_Distribute wd WITH (NOLOCK)
+	inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
+	inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
+	inner join WorkOrder wo WITH (NOLOCK) on wo.Ukey = wd.WorkOrderUkey
+	inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
+	inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
+	inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
+	where o.poid=(select poid from orders o with(nolock) where id = '{this.id}')
+	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey,cod.CutRef,co.cDate,wo.FabricPanelCode,wo.Cutno
+	------------------
+	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
+		,Rowid=ROW_NUMBER() over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
+	into #CutQtytmp2
+	from #CutQtytmp1
+	------------------
+	select *,Lagaccu= LAG(AccuCutQty,1,AccuCutQty) over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
+	into #Lagtmp
+	from #CutQtytmp2 
+	------------------
+	select *,cQty=iif(TotalCutQty < AccuCutQty and TotalCutQty > Lagaccu,TotalCutQty-Lagaccu,cutqty)
+	into #tmp2_1
+	from #Lagtmp where TotalCutQty>= AccuCutQty or (TotalCutQty < AccuCutQty and TotalCutQty > Lagaccu)
+	------------------mp2_A
+	select OrderID,cDate,CutRef,SizeCode,Article,PatternPanel,MDivisionid,[cutqty] = sum(cQty),FabricPanelCode,Cutno
+	from #tmp2_1
+	where orderid = '{this.id}' and SizeCode = '{this.sizeCode}' and Article ='{this.article}'
+	group by OrderID,CutRef,SizeCode,Article,PatternPanel,MDivisionid,cDate,FabricPanelCode,Cutno
+    order by cDate,CutRef,PatternPanel,FabricPanelCode,Cutno
 
-select cDate,CutRef,PatternPanel,FabricPanelCode,Cutno,
-	cutqty = iif(sum(cutqty) over(partition by PatternPanel,FabricPanelCode,Cutno order by cDate)>Qty,cutqty-(sum(cutqty) over(partition by PatternPanel,FabricPanelCode,Cutno order by cDate)-Qty),cutqty)
-from #tmp
-order by cDate,CutRef,PatternPanel,FabricPanelCode,Cutno
-
-drop table #tmp
-",
-                    this.id,
-                    this.article,
-                    this.sizeCode);
+	drop table #CutQtytmp1,#CutQtytmp2,#Lagtmp,#tmp2_1
+";
             }
 
             DataTable gridData;
