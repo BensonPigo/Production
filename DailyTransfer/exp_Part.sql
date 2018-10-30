@@ -253,12 +253,12 @@ FROM Pms_To_Trade.dbo.MachineIn, Machine.dbo.MachineIn_Detail AS MachIn2
 WHERE MachineIn.ID = MachIn2.ID ORDER BY MachineIn.ID 
 
 -----------------------------------Machine-------------------------------------
-select MDivisionID, MachineGroupID 
+select LocationM, MachineGroupID 
 INTO Machine
 from Machine.dbo.Machine
 where Status in ('Good', 'Repairing', 'Lent')
 and Junk = 0
-group by MDivisionID, MachineGroupID
+group by LocationM, MachineGroupID
 
 
 drop table #TPI_MachIn1
