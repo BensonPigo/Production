@@ -16,7 +16,6 @@ namespace Sci.Production.Subcon
     {
         DataRow dr_localPO;
         DataTable dt_localPODetail;
-        DataTable dtPadBoardInfo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         protected DataTable dtlocal;
@@ -556,7 +555,6 @@ inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo and junk = 0 and ca
                             tmp.AcceptChanges();
                             tmp.SetAdded();
                             P30.dtPadBoardInfo.ImportRow(tmp);
-                            //P30.dtPadBoardInfo.ImportRow(tmp);
                         }
                     }
                 }
