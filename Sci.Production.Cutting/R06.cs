@@ -353,8 +353,9 @@ from #tmplast t group by t.FtyGroup,t.MDivisionID
 drop table #dateranges,#df,#DHoliday,#tmp1,#tmp2,#orderOffline
 drop table #daterangesB,#dfB,#DHolidayB,#tmp1B,#tmp2B,#orderBuyer,#tmpc,#tmpc2,#tmpc3,#tmpcB,#tmpcB2,#tmpcB3,#pOffline,#tmpP,#pBuyerB,#tmpPB,#tmplast
 ";
-
+            DBProxy.Current.DefaultTimeout = 2700;
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
