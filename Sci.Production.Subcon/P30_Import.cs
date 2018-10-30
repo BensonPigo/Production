@@ -16,6 +16,7 @@ namespace Sci.Production.Subcon
     {
         DataRow dr_localPO;
         DataTable dt_localPODetail;
+        DataTable dtPadBoardInfo;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
         protected DataTable dtlocal;
@@ -106,7 +107,6 @@ select distinct 1 as Selected
        , c.SewInLine
        , delivery = a.EstCTNArrive
        , br.BuyerID
-       , d.localsuppid
 into #tmp
 from dbo.PackingList a WITH (NOLOCK) 
 inner join PackingList_Detail b WITH (NOLOCK) on a.ID = b.ID
@@ -127,7 +127,7 @@ outer apply(
 ) y
 where a.ApvToPurchase = 1 
       and a.LocalPOID = ''
-      --and d.localsuppid = '{3}'
+      and d.localsuppid = '{3}'
       --and a.factoryid = '{0}'    
       and a.mdivisionid ='{1}'
       and c.Category  in ('B','S')
@@ -154,7 +154,7 @@ where a.ApvToPurchase = 1
                     if (!MyUtility.Check.Empty(approved_e)) { strSQLCmd += string.Format(" and a.ApvToPurchaseDate <= '{0}' ", approved_e); }
 
                     strSQLCmd += string.Format(@" 
-group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID, d.localsuppid
+group by c.POID,b.OrderID,c.StyleID,c.SeasonID,b.RefNo,d.UnitID,d.Price,a.EstCTNArrive,a.ID,c.FactoryID ,c.SewInLine,c.SciDelivery,y.order_amt,y.order_qty,y.POID,br.BuyerID
 
 select * from #tmp a
 where  not exists (select orderID 
@@ -239,7 +239,7 @@ outer apply(
 where a.status = 'Approved' 
       and factory.IsProduceFty = 1
       --and a.factoryid = '{0}'
-      --and d.localsuppid= '{3}'
+      and d.localsuppid= '{3}'
       and a.Mdivisionid = '{1}'
       and c.Category  in ('B','S')
       and exists (select id from orders where poid=b.OrderID and junk=0)
@@ -505,11 +505,13 @@ inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo and junk = 0 and ca
                 DataTable CartonCardboardPad;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out CartonCardboardPad);
 
+                //複製DataTable結構，若已複製過則不執行，否則會清空資料
+                if (P30.dtPadBoardInfo.Columns.Count == 0)
+                    P30.dtPadBoardInfo = CartonCardboardPad.Clone();
+
                 List<string> Refno = new List<string>();
                 foreach (DataRow tmp in CartonCardboardPad.Rows)
                 {
-                    //複製DataTable結構
-                    P30.dtPadBoardInfo = CartonCardboardPad.Clone();
 
                     //判斷紙箱、天地板供應商是否相同：相同寫回表身、不同則h存進P30.dtPadBoardInfo後續處理
                     if (dr_localPO["localsuppid"].ToString() == tmp["localsuppid"].ToString())
@@ -534,18 +536,29 @@ inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo and junk = 0 and ca
                             tmp.SetAdded();
                             dt_localPODetail.ImportRow(tmp);
                         }
-
-                        //if (!MyUtility.Convert.GetString(dr_localPO["localsuppid"]).EqualString(MyUtility.Convert.GetString(tmp["localsuppid"])))
-                        //{
-                        //    Refno.Add(MyUtility.Convert.GetString(tmp["Refno"]));
-                        //}
-                        //tmp.AcceptChanges();
-                        //tmp.SetAdded();
-                        //dt_localPODetail.ImportRow(tmp);
                     }
                     else//物料供應商與表頭不同，將資訊整理寫入 dtPadBoardInfo
-                        P30.dtPadBoardInfo.ImportRow(tmp);
+                    {
+                        DataRow[] findrow = P30.dtPadBoardInfo.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'"
+                                                           , tmp["orderid"].ToString()
+                                                           , tmp["refno"].ToString()
+                                                           , tmp["threadcolorid"].ToString()
+                                                           , tmp["RequestID"].ToString()));
 
+                        if (findrow.Length > 0) //已存在更新 Price 與 Qty
+                        {
+                            findrow[0]["Price"] = tmp["Price"];
+                            findrow[0]["qty"] = tmp["qty"];
+                        }
+                        else//不存在則新增
+                        {
+                            tmp["id"] = dr_localPO["id"];
+                            tmp.AcceptChanges();
+                            tmp.SetAdded();
+                            P30.dtPadBoardInfo.ImportRow(tmp);
+                            //P30.dtPadBoardInfo.ImportRow(tmp);
+                        }
+                    }
                 }
 
             }

@@ -404,8 +404,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 //單號
                                 //string ID = Sci.MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "LP", "Localpo",DateTime.Now,2);
                                 string head = this.CurrentMaintain["ID"].ToString().Substring(0, 9);
-                                int idNumber=Convert.ToInt32(this.CurrentMaintain["ID"].ToString().Substring(9, 4));
-                                string ID = head + string.Format("{0:0000}", idNumber+ IdCount);
+                                int idNumber = Convert.ToInt32(this.CurrentMaintain["ID"].ToString().Substring(9, 4));
+                                string ID = head + string.Format("{0:0000}", idNumber + IdCount);
                                 IdCount++;
                                 msg_Id_List.Add(ID);
 
@@ -473,7 +473,9 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 parameters.Clear();
 
                                 string CurrencyId = MyUtility.GetValue.Lookup($"SELECT DISTINCT CurrencyID FROM LocalSupp WHERE ID='{Supplyer}'");
-
+                                decimal VatRate = Convert.ToDecimal(this.CurrentMaintain["VatRate"]);
+                                decimal Vat = (VatRate/100) * amount;
+                                //decimal total = amount + Vat;
 
                                 parameters.Add(new SqlParameter("@Id", ID));
                                 parameters.Add(new SqlParameter("@MDivisionID", this.CurrentMaintain["MDivisionID"]));
@@ -485,9 +487,9 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 parameters.Add(new SqlParameter("@Remark", this.CurrentMaintain["Remark"]));
                                 parameters.Add(new SqlParameter("@CurrencyId", CurrencyId));
                                 parameters.Add(new SqlParameter("@Amount", amount));
-                                parameters.Add(new SqlParameter("@VatRate", this.CurrentMaintain["VatRate"]));
+                                parameters.Add(new SqlParameter("@VatRate", VatRate));
 
-                                parameters.Add(new SqlParameter("@Vat", this.CurrentMaintain["Vat"]));
+                                parameters.Add(new SqlParameter("@Vat", Vat));
                                 parameters.Add(new SqlParameter("@InternalRemark", this.CurrentMaintain["InternalRemark"]));
                                 parameters.Add(new SqlParameter("@ApvName", this.CurrentMaintain["ApvName"]));
                                 parameters.Add(new SqlParameter("@ApvDate", this.CurrentMaintain["ApvDate"]));
@@ -568,7 +570,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             return base.ClickSave();
         }
-        
+
         protected override DualResult ClickDelete()
         {
             DataTable dt = (DataTable)detailgridbs.DataSource;
@@ -1091,7 +1093,6 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             DataTable dg = (DataTable)detailgridbs.DataSource;
             if (dg.Columns["std_price"] == null) dg.Columns.Add("std_price", typeof(Decimal));
             var frm = new Sci.Production.Subcon.P30_Import(dr, (DataTable)detailgridbs.DataSource);
-            dtPadBoardInfo = new DataTable();
             frm.ShowDialog(this);
             this.RenewData();
 
