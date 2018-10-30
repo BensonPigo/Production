@@ -81,7 +81,7 @@ namespace Sci.Production.Warehouse
 			       when stocktype = 'O' then 'Scrap' End
 ,Dyelot,IssueDate,ID,name,inqty,outqty,adjust,Remark,location,
 sum(TMP.inqty - TMP.outqty+tmp.adjust) 
-over (partition by tmp.stocktype,tmp.roll order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD ) as [balance] 
+over (partition by tmp.stocktype,tmp.roll,tmp.dyelot order by tmp.IssueDate,tmp.stocktype,tmp.inqty desc,tmp.iD ) as [balance] 
 from (
 	select b.roll,b.stocktype,b.dyelot,a.IssueDate, a.id
 ,Case type when 'A' then 'P35. Adjust Bulk Qty' 
