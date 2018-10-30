@@ -25,6 +25,7 @@ namespace Sci.Production.Subcon
     public partial class P30 : Sci.Win.Tems.Input6
     {
         public static DataTable dtPadBoardInfo;
+        private bool boolNeedReaload = false;
 
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -254,6 +255,7 @@ namespace Sci.Production.Subcon
 
             return base.ClickSaveBefore();
         }
+
         protected override DualResult ClickSave()
         {
             String sqlupd2 = "", ids = "";
@@ -373,25 +375,28 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             #region 天地板
             DualResult padResult = new DualResult(false);
-            if (dtPadBoardInfo != null)
+            TransactionScope _transactionscope2 = new TransactionScope();
+            using (_transactionscope2)
             {
-                if (dtPadBoardInfo.Rows.Count > 0)
+                try
                 {
                     // 先進行原本的DB 存檔行為，有成功才繼續
                     padResult = base.ClickSave();
-                    if (!padResult)
-                        return padResult;
-
-                    //根據不同供應商，寫入LocalPO
-                    List<string> SupplyList = dtPadBoardInfo.AsEnumerable().Select(o => o.Field<string>("localsuppid")).Distinct().ToList();
-
-                    string[] IDList= Sci.MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "LP", "Localpo", DateTime.Now, batchNumber: SupplyList.Count).ToArray();
-
-                    TransactionScope _transactionscope2 = new TransactionScope();
-                    using (_transactionscope2)
+                    if (padResult == false)
                     {
-                        try
+                        _transactionscope2.Dispose();
+                        return padResult;
+                    }
+
+                    if (dtPadBoardInfo != null)
+                    {
+                        if (dtPadBoardInfo.Rows.Count > 0)
                         {
+                            //根據不同供應商，寫入LocalPO
+                            List<string> SupplyList = dtPadBoardInfo.AsEnumerable().Select(o => o.Field<string>("localsuppid")).Distinct().ToList();
+
+                            string[] IDList = Sci.MyUtility.GetValue.GetBatchID(Sci.Env.User.Keyword + "LP", "Localpo", DateTime.Now, batchNumber: SupplyList.Count).ToArray();
+
                             //用於顯示MessageBox
                             List<string> msg_Id_List = new List<string>();
                             List<SqlParameter> parameters = new List<SqlParameter>();
@@ -409,12 +414,9 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 dt = dtPadBoardInfo.AsEnumerable().Where(o => o.Field<string>("localsuppid") == Supplyer).CopyToDataTable();
 
                                 //單號
-                                string ID = IDList[IdListInsex];
-                                IdListInsex++;
+                                string ID = IDList[IdListInsex++];
                                 msg_Id_List.Add(ID);
 
-                                //採購物料總數(不知道寫哪個欄位，因此先註解)
-                                // int totalQty = dt.AsEnumerable().Sum(o => Convert.ToInt32(o.GetValue("Qty")));
                                 Decimal amount = 0;
 
                                 foreach (DataRow item in dt.Rows)
@@ -468,45 +470,48 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
                                     padResult = Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
 
-                                    if (!padResult)
+                                    if (padResult == false)
+                                    {
+                                        _transactionscope2.Dispose();
                                         return padResult;
+                                    }
                                 }
 
                                 #endregion
 
-                            #region SqlParameter設定
-                            parameters.Clear();
+                                #region SqlParameter設定
+                                parameters.Clear();
 
-                            string CurrencyId = MyUtility.GetValue.Lookup($"SELECT DISTINCT CurrencyID FROM LocalSupp WHERE ID='{Supplyer}'");
-                            decimal VatRate = Convert.ToDecimal(this.CurrentMaintain["VatRate"]);
-                            decimal Vat = (VatRate/100) * amount;
-                            //decimal total = amount + Vat;
+                                string CurrencyId = MyUtility.GetValue.Lookup($"SELECT DISTINCT CurrencyID FROM LocalSupp WHERE ID='{Supplyer}'");
+                                decimal VatRate = Convert.ToDecimal(this.CurrentMaintain["VatRate"]);
+                                decimal Vat = (VatRate / 100) * amount;
+                                //decimal total = amount + Vat;
 
-                            parameters.Add(new SqlParameter("@Id", ID));
-                            parameters.Add(new SqlParameter("@MDivisionID", this.CurrentMaintain["MDivisionID"]));
-                            parameters.Add(new SqlParameter("@FactoryId", this.CurrentMaintain["FactoryId"]));
-                            parameters.Add(new SqlParameter("@LocalSuppID", Supplyer));
-                            parameters.Add(new SqlParameter("@Category", this.CurrentMaintain["Category"]));
+                                parameters.Add(new SqlParameter("@Id", ID));
+                                parameters.Add(new SqlParameter("@MDivisionID", this.CurrentMaintain["MDivisionID"]));
+                                parameters.Add(new SqlParameter("@FactoryId", this.CurrentMaintain["FactoryId"]));
+                                parameters.Add(new SqlParameter("@LocalSuppID", Supplyer));
+                                parameters.Add(new SqlParameter("@Category", this.CurrentMaintain["Category"]));
 
-                            parameters.Add(new SqlParameter("@IssueDate", this.CurrentMaintain["IssueDate"]));
-                            parameters.Add(new SqlParameter("@Remark", this.CurrentMaintain["Remark"]));
-                            parameters.Add(new SqlParameter("@CurrencyId", CurrencyId));
-                            parameters.Add(new SqlParameter("@Amount", amount));
-                            parameters.Add(new SqlParameter("@VatRate", VatRate));
+                                parameters.Add(new SqlParameter("@IssueDate", this.CurrentMaintain["IssueDate"]));
+                                parameters.Add(new SqlParameter("@Remark", string.Empty));
+                                parameters.Add(new SqlParameter("@CurrencyId", CurrencyId));
+                                parameters.Add(new SqlParameter("@Amount", amount));
+                                parameters.Add(new SqlParameter("@VatRate", VatRate));
 
-                            parameters.Add(new SqlParameter("@Vat", Vat));
-                            parameters.Add(new SqlParameter("@InternalRemark", this.CurrentMaintain["InternalRemark"]));
-                            parameters.Add(new SqlParameter("@ApvName", this.CurrentMaintain["ApvName"]));
-                            parameters.Add(new SqlParameter("@ApvDate", this.CurrentMaintain["ApvDate"]));
-                            parameters.Add(new SqlParameter("@AddName", Sci.Env.User.UserID));
+                                parameters.Add(new SqlParameter("@Vat", Vat));
+                                parameters.Add(new SqlParameter("@InternalRemark", $"Auto create pads PO from PO#:{this.CurrentMaintain["ID"]}."));
+                                parameters.Add(new SqlParameter("@ApvName", this.CurrentMaintain["ApvName"]));
+                                parameters.Add(new SqlParameter("@ApvDate", this.CurrentMaintain["ApvDate"]));
+                                parameters.Add(new SqlParameter("@AddName", Sci.Env.User.UserID));
 
-                            parameters.Add(new SqlParameter("@AddDate", DateTime.Now));
-                            parameters.Add(new SqlParameter("@EditName", DBNull.Value));
-                            parameters.Add(new SqlParameter("@EditDate", DBNull.Value));
-                            parameters.Add(new SqlParameter("@Status", this.CurrentMaintain["Status"]));
-                            #endregion
+                                parameters.Add(new SqlParameter("@AddDate", DateTime.Now));
+                                parameters.Add(new SqlParameter("@EditName", DBNull.Value));
+                                parameters.Add(new SqlParameter("@EditDate", DBNull.Value));
+                                parameters.Add(new SqlParameter("@Status", this.CurrentMaintain["Status"]));
+                                #endregion
 
-                            #region SQL設定
+                                #region SQL設定
 
                                 sql.Clear();
                                 sql.Append(" INSERT INTO [dbo].[LocalPO]" + Environment.NewLine);
@@ -552,29 +557,48 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                                 #endregion
 
                                 padResult = Sci.Data.DBProxy.Current.Execute(null, sql.ToString(), parameters);
-                                if (!padResult)
+                                if (padResult == false)
+                                {
+                                    _transactionscope2.Dispose();
                                     return padResult;
+                                }
                             }
 
                             #endregion
-                            _transactionscope2.Complete();
-                            _transactionscope2.Dispose();
-
                             MyUtility.Msg.InfoBox("Auto create purchase order :" + string.Join(",", msg_Id_List.ToArray()));
-                        }
-                        catch (Exception ex)
-                        {
-                            _transactionscope2.Dispose();
-                            ShowErr("Commit transaction error.", ex);
+                            
+                            // 因為天地板會新建 N 張採購單，因此需要強制 Reload Data
+                            this.boolNeedReaload = true;
                         }
                     }
+
+                    _transactionscope2.Complete();
                     _transactionscope2.Dispose();
-                    _transactionscope2 = null;
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope2.Dispose();
+                    return new DualResult(false, "Commit transaction error." + ex);
                 }
             }
-            #endregion
+            _transactionscope2.Dispose();
+            _transactionscope2 = null;
+            #endregion            
 
             return padResult;
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            if (this.boolNeedReaload)
+            {
+                this.boolNeedReaload = false;
+                var idIndex = CurrentMaintain["id"];
+                this.ReloadDatas();
+                this.gridbs.Position = this.gridbs.Find("ID", idIndex);
+            }
         }
 
         protected override DualResult ClickDelete()
@@ -625,6 +649,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             return base.ClickDelete();
         }
+
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
