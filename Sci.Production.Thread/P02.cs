@@ -184,8 +184,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
 
             DataGridViewGeneratorTextColumnSettings thcolor = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings cons = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings newCone = new DataGridViewGeneratorNumericColumnSettings();
-            DataGridViewGeneratorNumericColumnSettings usedCone = new DataGridViewGeneratorNumericColumnSettings();
+
             DataGridViewGeneratorNumericColumnSettings poqty1 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings poqty2 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings poqty3 = new DataGridViewGeneratorNumericColumnSettings();
@@ -342,45 +341,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             };
 
             #endregion
-            #region useStock CellValidating by (NewCone)+UsedCone
 
-            newCone.CellValidating += (s, e) =>
-            {
-                if (!this.EditMode || MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    return;
-                }
-                decimal useStockNewConeQty = (decimal)e.FormattedValue;
-
-                DataRow curDr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (useStockNewConeQty > (decimal)curDr["CurNewCone"])
-                {
-                    MyUtility.Msg.WarningBox($"<Use Stock New Cone>{useStockNewConeQty} can't be more than <Current Stock New Cone>{curDr["CurNewCone"]}");
-                    e.Cancel = true;
-                    return;
-                }
-            };
-            #endregion
-            #region useStock CellValidating by NewCone+(UsedCone)
-
-            usedCone.CellValidating += (s, e) =>
-            {
-                if (!this.EditMode || MyUtility.Check.Empty(e.FormattedValue))
-                {
-                    return;
-                }
-
-                decimal useStockUseConeQty = (decimal)e.FormattedValue;
-
-                DataRow curDr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (useStockUseConeQty > (decimal)curDr["CurUsedCone"])
-                {
-                    MyUtility.Msg.WarningBox($"<Use Stock Use Cone>{useStockUseConeQty} can't be more than <Current Stock Use Cone>{curDr["CurUsedCone"]}");
-                    e.Cancel = true;
-                    return;
-                }
-            };
-            #endregion
             #region poqty CellValidating by (TotalQty) + AllowanceQty - UseStockQty
             poqty1.CellValidating += (s, e) =>
             {
@@ -419,8 +380,8 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
            .Numeric("AllowanceQty", header: "Allowance", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
            .Numeric("CurNewCone", header: "Current Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
            .Numeric("CurUsedCone", header: "Current Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
-           .Numeric("UseStockNewConeQty", header: "Use Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: newCone).Get(out this.col_NewCone)
-           .Numeric("UseStockUseConeQty", header: "Use Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: usedCone).Get(out this.col_UsedCone)
+           .Numeric("UseStockNewConeQty", header: "Use Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6).Get(out this.col_NewCone)
+           .Numeric("UseStockUseConeQty", header: "Use Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6).Get(out this.col_UsedCone)
            .Numeric("UseStockQty", header: "Use\r\nStock", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty3)
            .Numeric("PurchaseQty", header: "PO Qty", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
            .Text("Remark", header: "Remark", width: Ict.Win.Widths.AnsiChars(10))
@@ -653,6 +614,21 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 this.dateEstArrived.Focus();
                  MyUtility.Msg.WarningBox("<Est. Arrived> can not be empty.");
                 return false;
+            }
+
+            foreach (DataRow drs in ((DataTable)this.detailgridbs.DataSource).Rows)
+            {
+                if (MyUtility.Convert.GetDecimal(drs["UseStockNewConeQty"]) > MyUtility.Convert.GetDecimal(drs["CurNewCone"]))
+                {
+                    MyUtility.Msg.WarningBox($"<Use Stock New Cone>{drs["UseStockNewConeQty"]} can't be more than <Current Stock New Cone>{drs["CurNewCone"]}");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(drs["useStockUseConeQty"]) > MyUtility.Convert.GetDecimal(drs["CurUsedCone"]))
+                {
+                    MyUtility.Msg.WarningBox($"<Use Stock Use Cone>{drs["useStockUseConeQty"]} can't be more than <Current Stock Use Cone>{drs["CurUsedCone"]}");
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();
