@@ -456,7 +456,9 @@ drop table #detailResult
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
+            DBProxy.Current.DefaultTimeout = 2700;
             return DBProxy.Current.Select(string.Empty, this.tsql, sqlpar, out this.dts);
+            DBProxy.Current.DefaultTimeout = 300;
         }
 
         /// <inheritdoc/>
