@@ -31,18 +31,20 @@ when matched then
 		, t.AddDate= s.AddDate
 		, t.Lock = s.Lock
 		, t.MasterGroupID = s.MasterGroupID
+		, t.Needle = s.Needle
+		, t.ControlPart = s.ControlPart
 
 	when not matched by target and s.type='P' then 
 		insert 
 			(ID 				, Description 	, Partno 		, MasterGroupID 		, MachineGroupID 	, MachineBrandID
 	 	 	 , UseUnit 			, PoUnit 		, Price 		, PurchaseBatchQty 	, Junk
 			 , PurchaseFrom 	, SuppID 		, CurrencyID 	, Formula	 		, Fix
-			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock)
+			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock , Needle , ControlPart)
 		values
 			(s.refno 			, s.Description , s.Partno 		, s.MasterGroupID 	, s.MachineGroupID 	, s.MachineBrandID
 			 , s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
 			 , 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
-			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock);
+			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlPart);
 
 	---------- Misc, type='O'---------------------
 	Merge Machine.dbo.Misc as t
@@ -595,7 +597,7 @@ where a.id in (select id from @T)) as s
 	)as s on t.TradeHisMMSUkey = s.Ukey  
 	when matched then 
 		update set 
-				 t.PartID 		= s.SourceID  
+				 t.PartID 		= s.RefNo  
 				,t.HisType		= s.HisType
 				,t.OldValue		= s.OldValue
 				,t.NewValue		= s.NewValue
