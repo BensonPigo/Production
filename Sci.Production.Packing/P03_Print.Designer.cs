@@ -43,6 +43,7 @@
             this.labelCTN = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.checkBoxCountry = new Sci.Win.UI.CheckBox();
+            this.chkCartonNo = new Sci.Win.UI.CheckBox();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,6 +61,7 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.chkCartonNo);
             this.radioPanel1.Controls.Add(this.rdbtnShippingMarkToUsaInd);
             this.radioPanel1.Controls.Add(this.rdbtnShippingMarkToChina);
             this.radioPanel1.Controls.Add(this.rdbtnShippingMark);
@@ -232,6 +234,17 @@
             this.checkBoxCountry.TabIndex = 100;
             this.checkBoxCountry.UseVisualStyleBackColor = true;
             // 
+            // chkCartonNo
+            // 
+            this.chkCartonNo.AutoSize = true;
+            this.chkCartonNo.ForeColor = System.Drawing.Color.Blue;
+            this.chkCartonNo.Location = new System.Drawing.Point(250, 85);
+            this.chkCartonNo.Name = "chkCartonNo";
+            this.chkCartonNo.Size = new System.Drawing.Size(95, 21);
+            this.chkCartonNo.TabIndex = 8;
+            this.chkCartonNo.Text = "Carton No.";
+            this.chkCartonNo.UseVisualStyleBackColor = true;
+            // 
             // P03_Print
             // 
             this.ClientSize = new System.Drawing.Size(571, 281);
@@ -278,5 +291,6 @@
         private Win.UI.RadioButton rdbtnShippingMark;
         private Win.UI.RadioButton rdbtnShippingMarkToUsaInd;
         private Win.UI.RadioButton rdbtnShippingMarkToChina;
+        private Win.UI.CheckBox chkCartonNo;
     }
 }

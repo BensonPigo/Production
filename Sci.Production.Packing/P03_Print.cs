@@ -73,6 +73,7 @@ namespace Sci.Production.Packing
             this.OrderQty = orderQty;
             this.radioPackingListReportFormA.Checked = true;
             this.ControlPrintFunction(false);
+            this.chkCartonNo.ForeColor = System.Drawing.Color.Blue;
         }
 
         private void RadioBarcodePrint_CheckedChanged(object sender, EventArgs e)
@@ -295,7 +296,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(6, 2).Range.Text = country;
                 }
                 #endregion
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                //關閉word保護模式
+                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                 #region Save & Show Word
                 winword.Visible = true;
@@ -326,11 +328,12 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 
         public DualResult PrintShippingmark_ToChina()
         {
-            #region.
+            #region PrintShippingmark_ToChina
             string sqlcmd = $@"
 select * from(
     select distinct 
 	[CTNQty]='   /'+Cast(c.CTNQty as varchar),
+	[Carton_CTNQty]=pd.CTNStartno+'/'+Cast(c.CTNQty as varchar),
 	pd.CTNStartno,--只用於排序
 	o.CustPOno,
 	pd.Article,
@@ -413,8 +416,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 {
                     tables = table[i + 1];
 
-                    #region 
-                    string cARTON = this.printData.Rows[i]["CTNQty"].ToString();
+                    #region 對應SQL選取的欄位
+                    string cARTON =this.chkCartonNo.Checked ? this.printData.Rows[i]["Carton_CTNQty"].ToString() : this.printData.Rows[i]["CTNQty"].ToString();
                     string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
                     string article = this.printData.Rows[i]["Article"].ToString();
                     string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
@@ -435,7 +438,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(8, 2).Range.Text = weight;
                 }
                 #endregion
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                //關閉word保護模式
+                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                 #region Save & Show Word
                 winword.Visible = true;
@@ -562,7 +566,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(5, 2).Range.Text = sizeCode;
                 }
                 #endregion
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                //關閉word保護模式
+                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                 #region Save & Show Word
                 winword.Visible = true;
