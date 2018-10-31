@@ -273,4 +273,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Refno" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="11535600-e7b8-4265-b00b-000485e4a30d" ChangeDateTime="10/29/2018 09:31:18">
+    <Property Name="ElementName" Value="[dbo].[SentReport].[TEPInspectionReport]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SentReport]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TPEInspectionReport" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a9a6be5f-691a-431b-ba1c-cdcda00bfef6" ChangeDateTime="10/29/2018 09:31:23">
+    <Property Name="ElementName" Value="[dbo].[SentReport].[TEPTestReport]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SentReport]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TPETestReport" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e66893f3-e301-4d3f-a1bb-e9a25221441b" ChangeDateTime="10/29/2018 09:31:28">
+    <Property Name="ElementName" Value="[dbo].[SentReport].[TEPContinuityCard]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SentReport]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TPEContinuityCard" />
+  </Operation>
 </Operations>
