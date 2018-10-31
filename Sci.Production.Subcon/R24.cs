@@ -255,35 +255,39 @@ where c.Classify='P'
 
             sqlCmd.Append(string.Format(@"
 -- #tmp_localap
-select isnull(sum(ap_amt),0.00) ap_amt
-     , isnull(sum(ap_qty),0) ap_qty 
-	,Category
-	,FactoryId
-	,OrderId
+select isnull(sum(a.ap_amt),0.00) ap_amt
+     , isnull(sum(a.ap_qty),0) ap_qty 
+	,a.Category
+	,a.FactoryId
+	,a.OrderId
 into  #tmp_localap
 from(
-	select apd.Qty ap_qty
-			,apd.Qty*apd.Price*dbo.getRate('FX',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt   
+	select 
+			apd.Qty ap_qty
+			,apd.Qty*apd.Price*dbo.getRate('FX',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt 
 			,ap.Category
 			,ap.FactoryId
-			,apd.OrderId   
-	from #tmp t
-	inner join localap ap WITH (NOLOCK) on t.artworktypeid = ap.Category and t.FactoryID = ap.FactoryId AND AP.Status = 'Approved'
-	inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id  and t.POID = apd.OrderId   
-)a
-where ap_qty > 0   
-group by Category,FactoryId,OrderId
+			,o.POID as OrderId 
+	from localap ap WITH (NOLOCK) 
+	inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+	inner join orders o with (nolock) on apd.OrderID = o.ID	
+	where 1=1
+	AND AP.Status = 'Approved'
+)a 
+inner join #tmp t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.POID 
+where ap_qty > 0  
+group by a.Category,a.FactoryId,a.OrderId
 
 -- #tmp_orders
-select iif(bb.ArtworkTypeID is null,null,isnull(sum(aa.qty),0)) order_qty 
+select iif(bb.ArtworkTypeID is null,null,isnull(sum(aa.qty),0)) order_qty
  	,sum(aa.qty *Price) order_amt 
 	,t.poid
-	,bb.ArtworkTypeID  
+	,bb.ArtworkTypeID
 into #tmp_orders
-from #tmp t
-left join orders aa WITH (NOLOCK) on t.poid =aa.poid  
-left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID  and bb.ArtworkTypeID = t.artworktypeid  
-group by t.poid, bb.ArtworkTypeID
+from orders aa WITH (NOLOCK) 
+left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID 
+left join (select distinct poid,artworktypeid from #tmp) t on t.poid =aa.poid and bb.ArtworkTypeID = t.artworktypeid 
+group by  bb.ArtworkTypeID,t.poid
 
 -- #tmp_final 
 select distinct t.FactoryID
