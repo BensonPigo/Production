@@ -469,7 +469,7 @@ order by fd.SuppID
         private void btnSave2_Click(object sender, EventArgs e)
         {
             this.grid2.ValidateControl();
-            if (dt1 == null || dt1.Rows.Count == 0)
+            if (dt2 == null || dt2.Rows.Count == 0)
             {
                 return;
             }
