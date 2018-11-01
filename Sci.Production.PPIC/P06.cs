@@ -165,6 +165,16 @@ outer apply(
 		for xml path('')
 	),1,2,'')
 )ClogLocationId
+outer apply(  
+	select ColorWay = stuff((
+		select concat(', ', oqD.Article) 
+		from Order_QtyShip_Detail oqD
+		where t.id = oqD.id
+		and t.seq = oqD.seq
+		group by oqD.id, oqD.seq, oqD.Article
+		FOR XML PATH('')
+	),1,2,'') 
+)as oqD   
 
 select distinct
     o.FactoryID,o.BrandID,o.SewLine,o.Id,o.StyleID,o.CustPONo,o.CustCDID,o.Customize2,o.DoxType,oq.Qty,c.Alias,o.SewOffLine
@@ -182,6 +192,9 @@ select distinct
 	,C3.CTNQty
     ,InClogCTN = iif(isnull(C3.CTNQty,0) = 0,0,Round((cast(isnull(C3.ClogQty,0) as float)/cast(isnull(C3.CTNQty,0) as float)) * 100,0)) 
     ,C3.CBM
+	,o.OrderTypeID as OrderType
+	,o.SeasonID as Season
+	,o.ProgramID as Program 
 into #tmp2
 from #tmpIDSeq a 
 inner join Orders o WITH (NOLOCK) on o.id = a.Id
@@ -229,6 +242,7 @@ outer apply(
 select FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo,CustCDID,Customize2,DoxType,Qty,Alias,SewOffLine,InspDate
 	,SDPDate,EstPulloutDate,a.Seq,ShipmodeID,BuyerDelivery,SciDelivery,CRDDate,BuyMonth,Customize1,ScanAndPack
 	,RainwearTestPassed,Dimension,ProdRemark,ShipRemark, MtlFormA,CTNQty,InClogCTN,CBM,ClogLocationId
+    ,ColorWay,OrderType,Season,Program ,SewLine as SewInLine,CTNQty as CLOGQty
 from #tmp1 a inner join #tmp2 b on a.Id = b.ID and a.Seq = b.Seq
 order by FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo
 
