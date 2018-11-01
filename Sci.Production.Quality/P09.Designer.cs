@@ -31,8 +31,6 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabInspectionReport = new System.Windows.Forms.TabPage();
@@ -49,17 +47,21 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.tab1stBulkDyelot = new System.Windows.Forms.TabPage();
+            this.btnQuery2 = new Sci.Win.UI.Button();
+            this.button1 = new Sci.Win.UI.Button();
+            this.btnSave2 = new Sci.Win.UI.Button();
+            this.grid2 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.txtColor = new Sci.Win.UI.TextBox();
             this.txtRefno = new Sci.Win.UI.TextBox();
             this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
             this.label6 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.grid2 = new Sci.Win.UI.Grid();
-            this.btnSave2 = new Sci.Win.UI.Button();
-            this.button1 = new Sci.Win.UI.Button();
-            this.btnQuery2 = new Sci.Win.UI.Button();
-            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
+            this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInspectionReport.SuspendLayout();
@@ -67,6 +69,7 @@
             this.tab1stBulkDyelot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -271,6 +274,73 @@
             this.tab1stBulkDyelot.TabIndex = 1;
             this.tab1stBulkDyelot.Text = "1st Bulk Dyelot";
             // 
+            // btnQuery2
+            // 
+            this.btnQuery2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery2.Location = new System.Drawing.Point(998, 6);
+            this.btnQuery2.Name = "btnQuery2";
+            this.btnQuery2.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery2.TabIndex = 13;
+            this.btnQuery2.Text = "Query";
+            this.btnQuery2.UseVisualStyleBackColor = true;
+            this.btnQuery2.Click += new System.EventHandler(this.btnQuery2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(998, 459);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(80, 30);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "Close";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // btnSave2
+            // 
+            this.btnSave2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave2.Location = new System.Drawing.Point(912, 459);
+            this.btnSave2.Name = "btnSave2";
+            this.btnSave2.Size = new System.Drawing.Size(80, 30);
+            this.btnSave2.TabIndex = 11;
+            this.btnSave2.Text = "Save";
+            this.btnSave2.UseVisualStyleBackColor = true;
+            this.btnSave2.Click += new System.EventHandler(this.btnSave2_Click);
+            // 
+            // grid2
+            // 
+            this.grid2.AllowUserToAddRows = false;
+            this.grid2.AllowUserToDeleteRows = false;
+            this.grid2.AllowUserToResizeRows = false;
+            this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid2.DataSource = this.listControlBindingSource2;
+            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid2.Location = new System.Drawing.Point(6, 42);
+            this.grid2.Name = "grid2";
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid2.RowTemplate.Height = 24;
+            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid2.ShowCellToolTips = false;
+            this.grid2.Size = new System.Drawing.Size(1072, 411);
+            this.grid2.TabIndex = 8;
+            // 
             // txtColor
             // 
             this.txtColor.BackColor = System.Drawing.Color.White;
@@ -322,88 +392,27 @@
             this.label4.TabIndex = 1;
             this.label4.Text = "Supplier";
             // 
-            // grid2
+            // contextMenuStrip1
             // 
-            this.grid2.AllowUserToAddRows = false;
-            this.grid2.AllowUserToDeleteRows = false;
-            this.grid2.AllowUserToResizeRows = false;
-            this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
-            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid2.DataSource = this.listControlBindingSource2;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.grid2.DefaultCellStyle = dataGridViewCellStyle11;
-            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid2.Location = new System.Drawing.Point(6, 42);
-            this.grid2.Name = "grid2";
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.grid2.RowTemplate.Height = 24;
-            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(1072, 411);
-            this.grid2.TabIndex = 8;
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.inspectionReportToolStripMenuItem,
+            this.testReportToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(177, 48);
             // 
-            // btnSave2
+            // inspectionReportToolStripMenuItem
             // 
-            this.btnSave2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave2.Location = new System.Drawing.Point(912, 459);
-            this.btnSave2.Name = "btnSave2";
-            this.btnSave2.Size = new System.Drawing.Size(80, 30);
-            this.btnSave2.TabIndex = 11;
-            this.btnSave2.Text = "Save";
-            this.btnSave2.UseVisualStyleBackColor = true;
-            this.btnSave2.Click += new System.EventHandler(this.btnSave2_Click);
+            this.inspectionReportToolStripMenuItem.Name = "inspectionReportToolStripMenuItem";
+            this.inspectionReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.inspectionReportToolStripMenuItem.Text = "Inspection Report";
+            this.inspectionReportToolStripMenuItem.Click += new System.EventHandler(this.inspectionReportToolStripMenuItem_Click);
             // 
-            // button1
+            // testReportToolStripMenuItem
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(998, 459);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 12;
-            this.button1.Text = "Close";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // btnQuery2
-            // 
-            this.btnQuery2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery2.Location = new System.Drawing.Point(998, 6);
-            this.btnQuery2.Name = "btnQuery2";
-            this.btnQuery2.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery2.TabIndex = 13;
-            this.btnQuery2.Text = "Query";
-            this.btnQuery2.UseVisualStyleBackColor = true;
-            this.btnQuery2.Click += new System.EventHandler(this.btnQuery2_Click);
+            this.testReportToolStripMenuItem.Name = "testReportToolStripMenuItem";
+            this.testReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.testReportToolStripMenuItem.Text = "Test Report";
+            this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
             // 
             // P09
             // 
@@ -422,6 +431,7 @@
             this.tab1stBulkDyelot.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -454,5 +464,9 @@
         private Win.UI.Button button1;
         private Win.UI.Button btnQuery2;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem inspectionReportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testReportToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }

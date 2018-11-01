@@ -12,6 +12,7 @@ using Sci.DB;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.IO;
+using System.Configuration;
 
 namespace Sci.Production.Quality
 {
@@ -25,6 +26,7 @@ namespace Sci.Production.Quality
 
         private DataTable dt1;
         private DataTable dt2;
+        private string Filepath = @"\\evamgr\ftp\FACTORY\TO-ALL\MMC\for testing only\Jeff\";
 
         protected override void OnFormLoaded()
         {
@@ -32,6 +34,17 @@ namespace Sci.Production.Quality
             this.EditMode = true;
             #region tabPage1
             #region settings Event
+
+            DataGridViewGeneratorDateColumnSettings Inspection = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings Test = new DataGridViewGeneratorDateColumnSettings();
+            Inspection.CellFormatting += (s, e) =>
+            {
+                SSDCellFormatting(s, e, "-Inspection");
+            };
+            Test.CellFormatting += (s, e) =>
+            {
+                SSDCellFormatting(s, e, "-test");
+            };
             // 帶出grade
             DataGridViewGeneratorNumericColumnSettings T2IY = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings T2DP = new DataGridViewGeneratorNumericColumnSettings();
@@ -58,9 +71,9 @@ namespace Sci.Production.Quality
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
-            .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Inspection)
             .Date("TestReport", header: "Test Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
-            .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Test)
             .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -98,6 +111,47 @@ namespace Sci.Production.Quality
             #endregion tabPage2
         }
         #region Tab_Page1
+
+        private string Filename(DataRow dr, string type)
+        {
+            List<string> cols = new List<string>();
+            if (!MyUtility.Check.Empty(dr["PoID"])) cols.Add(MyUtility.Convert.GetString(dr["PoID"]));
+            if (!MyUtility.Check.Empty(dr["seq"])) cols.Add(MyUtility.Convert.GetString(dr["seq"]));
+            if (!MyUtility.Check.Empty(dr["Refno"])) cols.Add(MyUtility.Convert.GetString(dr["Refno"]));
+            if (!MyUtility.Check.Empty(dr["ColorID"])) cols.Add(MyUtility.Convert.GetString(dr["ColorID"]));
+
+            string fp = string.Join("-", cols) + type;
+            return fp;
+        }
+
+        private string Filedic(DataRow dr)
+        {
+            string fp = Filepath + MyUtility.Convert.GetString(dr["AbbEN"]) + " " + MyUtility.Convert.GetString(dr["SuppID"]) + @"\";
+            return fp;
+        }
+
+        private void SSDCellFormatting(object s, DataGridViewCellFormattingEventArgs e, string type)
+        {
+            if (e.RowIndex == -1) return;
+            var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+            if (null == dr) return;
+
+            string filepath = Filedic(dr);
+            if (Directory.Exists(filepath))
+            {
+                string filename = Filename(dr, type);
+                string[] fs = Directory.GetFiles(filepath).Where(r => r.Contains(filename)).ToArray();
+
+                if (fs.Length > 0)
+                {
+                    e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
+                    e.CellStyle.ForeColor = Color.Blue;
+                    if (type.EqualString("-Inspection")) dr["FileExistI"] = 1;
+                    else dr["FileExistT"] = 1;
+                }
+            }
+        }
+
         private void T2Validating(object s, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
             if (e.RowIndex == -1) return;
@@ -173,7 +227,9 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
 
             #region Sqlcmd
             string sqlcmd = $@"
-select selected = 0,
+select selected = cast(0 as bit),
+	FileExistI= cast(0 as bit),
+	FileExistT= cast(0 as bit),
 	ed.id,
 	ed.LastEta,
 	ed.PoID,
@@ -196,7 +252,7 @@ select selected = 0,
 	sr.T2Grade,
 	a.T1InspectedYards,
 	b.T1DefectPoints,
-	sr.Export_DetailUkey
+	ed.Ukey
 from Export_Detail ed with(nolock)
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join FirstDyelot fd with(nolock) on fd.SCIRefno = psd.SCIRefno
@@ -279,16 +335,60 @@ inner join #tmp s on t.Export_DetailUkey = s.Export_DetailUkey
         TransferPms transferPMS = new TransferPms();
         private void btnDownloadFile_Click(object sender, EventArgs e)
         {
-            if (!Directory.Exists(@"\\evamgr\ftp\FACTORY\TO-ALL\MMC\for testing only\"))
+            if (!Directory.Exists(Filepath))
             {
                 MyUtility.Msg.WarningBox("Please select ETA or SP# or PO# at least one field entry.");
                 return;
             }
 
-            if (File.Exists(@"Z:\PMS\NewPMS_2016\imp_ChangeKPILETARequest2.sql"))
+            if (dt1==null || dt1.Select("selected = 1").Length ==0)
             {
-
+                MyUtility.Msg.WarningBox("No datas selected.");
+                return;
             }
+            contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
+        }
+
+        private void Savefile(string type)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "rar Files|*.rar";
+            saveFileDialog1.Title = "Save File";
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                List<string> files = new List<string>();
+                DataRow[] drs = type.EqualString("-Inspection") ?  dt1.Select("selected = 1 and FileExistI = 1") :  dt1.Select("selected = 1 and FileExistT = 1");
+                foreach (DataRow dr in drs)
+                {
+                    string filepath = Filedic(dr);
+                    if (Directory.Exists(filepath))
+                    {
+                        string filename = Filename(dr, type);
+                        string[] fs = Directory.GetFiles(filepath).Where(r => r.Contains(filename)).ToArray();
+                        files.AddRange(fs);
+                    }
+                }
+                if (files.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("No files exists.");
+                    return;
+                }
+                //files.Add(@"\\evamgr\ftp\FACTORY\TO-ALL\MMC\for testing only\Jeff\TestFile1-Inspection.txt");
+                //files.Add(@"\\evamgr\ftp\FACTORY\TO-ALL\MMC\for testing only\Jeff\TestFile3-Inspection.txt");
+                string rarFile = ConfigurationManager.AppSettings["rarexefile"].ToString();
+                string rarOutputFilePath = MyUtility.File.RARFile(files.ToArray(), rarFile);
+                System.IO.File.Move(rarOutputFilePath, saveFileDialog1.FileName);
+            }
+        }
+
+        private void inspectionReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Savefile("-Inspection");
+        }
+
+        private void testReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Savefile("-test");
         }
         #endregion Tab_Page1
 
@@ -332,7 +432,7 @@ inner join #tmp s on t.Export_DetailUkey = s.Export_DetailUkey
             #endregion Where
             #region Sqlcmd
             string sqlcmd = $@"
-select
+select distinct
 	fd.SuppID,
 	Supp.AbbEN,
 	psd.Refno,
@@ -342,7 +442,7 @@ select
 	fd.SCIRefno
 from FirstDyelot fd with(nolock)
 left join Supp with(nolock) on Supp.ID = fd.SuppID
-left join Po_Supp_Detail psd with(nolock) on psd.SCIRefno = fd.SCIRefno
+left join Po_Supp_Detail psd with(nolock) on psd.SCIRefno = fd.SCIRefno and psd.ColorID = fd. ColorID
 {sqlwhere}
 order by fd.SuppID
 ";
@@ -354,6 +454,10 @@ order by fd.SuppID
                 return;
             }
 
+            if (dt2.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found.");
+            }
             this.listControlBindingSource2.DataSource = dt2;
         }
 
