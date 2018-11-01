@@ -5,7 +5,8 @@
     [OutGoing]     DATETIME     NULL,
     [AddDate]      DATETIME     NULL,
     [EditDate]     DATETIME     NULL,
-	[SewingLineID] varchar(2) NULL
+	[SewingLineID] varchar(2) NULL, 
+    [LocationID] VARCHAR(10) NOT NULL DEFAULT ('')
 );
 
 
