@@ -146,8 +146,8 @@ namespace Sci.Production.Quality
                 {
                     e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
                     e.CellStyle.ForeColor = Color.Blue;
-                    if (type.EqualString("-Inspection")) dr["FileExistI"] = 1;
-                    else dr["FileExistT"] = 1;
+                    //if (type.EqualString("-Inspection")) dr["FileExistI"] = 1;
+                    //else dr["FileExistT"] = 1;
                 }
             }
         }
@@ -216,7 +216,7 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
             if (!MyUtility.Check.Empty(this.txtpo.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@po", this.txtpo.Text));
-                sqlwheres.Add(" and o.CustPONo = @po ");
+                sqlwheres.Add(" o.CustPONo = @po ");
             }
 
             if (sqlwheres.Count > 0)
@@ -286,6 +286,7 @@ order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
             }
 
             this.listControlBindingSource1.DataSource = dt1;
+            dt1.AcceptChanges();
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
@@ -319,7 +320,7 @@ update t set
     EditName='{Sci.Env.User.UserID}',
     EditDate = getdate()
 from SentReport t
-inner join #tmp s on t.Export_DetailUkey = s.Export_DetailUkey
+inner join #tmp s on t.Export_DetailUkey = s.ukey
 ";
             DataTable odt;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(changedt, string.Empty, sqlupdate, out odt);
@@ -351,30 +352,30 @@ inner join #tmp s on t.Export_DetailUkey = s.Export_DetailUkey
 
         private void Savefile(string type)
         {
+            this.grid1.ValidateControl();
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
             saveFileDialog1.Filter = "rar Files|*.rar";
             saveFileDialog1.Title = "Save File";
+            List<string> files = new List<string>();
+            DataRow[] drs = dt1.Select("selected = 1");
+            foreach (DataRow dr in drs)
+            {
+                string filepath = Filedic(dr);
+                if (Directory.Exists(filepath))
+                {
+                    string filename = Filename(dr, type);
+                    string[] fs = Directory.GetFiles(filepath).Where(r => r.Contains(filename)).ToArray();
+                    files.AddRange(fs);
+                }
+            }
+            if (files.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No files exists.");
+                return;
+            }
+
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                List<string> files = new List<string>();
-                DataRow[] drs = type.EqualString("-Inspection") ?  dt1.Select("selected = 1 and FileExistI = 1") :  dt1.Select("selected = 1 and FileExistT = 1");
-                foreach (DataRow dr in drs)
-                {
-                    string filepath = Filedic(dr);
-                    if (Directory.Exists(filepath))
-                    {
-                        string filename = Filename(dr, type);
-                        string[] fs = Directory.GetFiles(filepath).Where(r => r.Contains(filename)).ToArray();
-                        files.AddRange(fs);
-                    }
-                }
-                if (files.Count == 0)
-                {
-                    MyUtility.Msg.WarningBox("No files exists.");
-                    return;
-                }
-                //files.Add(@"\\evamgr\ftp\FACTORY\TO-ALL\MMC\for testing only\Jeff\TestFile1-Inspection.txt");
-                //files.Add(@"\\evamgr\ftp\FACTORY\TO-ALL\MMC\for testing only\Jeff\TestFile3-Inspection.txt");
                 string rarFile = ConfigurationManager.AppSettings["rarexefile"].ToString();
                 string rarOutputFilePath = MyUtility.File.RARFile(files.ToArray(), rarFile);
                 System.IO.File.Move(rarOutputFilePath, saveFileDialog1.FileName);
@@ -459,6 +460,7 @@ order by fd.SuppID
                 MyUtility.Msg.WarningBox("Data not found.");
             }
             this.listControlBindingSource2.DataSource = dt2;
+            dt2.AcceptChanges();
         }
 
         private void btnQuery2_Click(object sender, EventArgs e)
