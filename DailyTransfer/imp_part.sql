@@ -33,7 +33,7 @@ when matched then
 		, t.MasterGroupID = s.MasterGroupID
         , t.MachineGroupID = s.MachineGroupID		
 		, t.Needle = s.Needle
-		, t.ControlPart = s.ControlPart
+		, t.ControlPart = s.ControlParts
 	when not matched by target and s.type='P' then 
 		insert 
 			(ID 				, Description 	, Partno 		, MasterGroupID 		, MachineGroupID 	, MachineBrandID
@@ -44,7 +44,7 @@ when matched then
 			(s.refno 			, s.Description , s.Partno 		, s.MasterGroupID 	, s.MachineGroupID 	, s.MachineBrandID
 			 , s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
 			 , 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
-			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlPart);
+			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlParts);
 
 	---------- Misc, type='O'---------------------
 	Merge Machine.dbo.Misc as t
@@ -585,9 +585,6 @@ where a.id in (select id from @T)) as s
 			(s.Refno 			, s.MasterGroupID  , s.MachineGroupID , s.Model 		, s.MachineBrandID 	, s.Description
 			 , s.DescriptionDetail 		, s.Origin 	, '' 		, '' 		, s.Junk
 			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		);
-	
-	END
-
 	
 	 -----------PartPrice_History ------------------------
 	Merge Machine.dbo.PartPrice_History  as t

@@ -109,8 +109,8 @@ where exists (select 1 from #tMOSeqD where SeqCode = Operation.ID)
 --tRoute(加工方案信息表)
 select 
 [guid] = NEWID(),
-[MONo] = so.OrderID,
-[RouteName] = so.OrderID + '-' + CAST(lm.Version as varchar)
+[MONo] = so.OrderID + '-' + lm.ComboType,
+[RouteName] = so.OrderID + '-' + lm.ComboType + '-' + CAST(lm.Version as varchar)
 into #tRoute
 from #SrcOrderID so with (nolock)
 inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
@@ -119,7 +119,7 @@ where lm.Status = 'Confirmed'
 --tRouteLine(加工方案與生產線關係表)
 select 
 [guid] = NEWID(),
-[RouteName] = so.OrderID + '-' + CAST(lm.Version as varchar),
+[RouteName] = so.OrderID  + '-' + lm.ComboType + '-' + CAST(lm.Version as varchar),
 [LineID] = cast(ss.SewingLineID as int)
 into #tRouteLine
 from #SrcOrderID so with (nolock)
@@ -131,7 +131,7 @@ where lm.Status = 'Confirmed'
 ;with tSeqAssignTmp as
 (
 select 
-[RouteName] = so.OrderID + '-' + CAST(lm.Version as varchar),
+[RouteName] = so.OrderID + '-' + lm.ComboType + '-' + CAST(lm.Version as varchar),
 [SeqNo] = cast(lmd.OriNO as int),
 [IsOutputSeq] = 0,
 [Station] = MIN(cast(lmd.No as int)),
@@ -143,7 +143,7 @@ from #SrcOrderID so with (nolock)
 inner join LineMapping lm with (nolock) on so.StyleUkey = lm.StyleUKey and so.BrandID = lm.BrandID and so.SeasonID = lm.SeasonID
 inner join LineMapping_Detail lmd with (nolock) on lm.ID = lmd.ID and lmd.No <> ''
 where lm.Status = 'Confirmed' and ISNUMERIC(lmd.OriNO) = 1
-group by lmd.OriNO,so.OrderID,lm.Version,so.StyleUkey,so.BrandID,so.SeasonID)
+group by lmd.OriNO,so.OrderID,lm.Version,so.StyleUkey,so.BrandID,so.SeasonID,lm.ComboType)
 select 
 [guid] = NEWID(),
 RouteName,
