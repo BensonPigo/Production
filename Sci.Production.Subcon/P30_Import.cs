@@ -212,6 +212,7 @@ select distinct 1 as Selected
        , c.SewInLine
        , delivery = a.EstArriveDate
        , br.BuyerID
+	   , d.localsuppid
 from dbo.ThreadRequisition a WITH (NOLOCK) 
 inner join ThreadRequisition_Detail b WITH (NOLOCK) on a.OrderID = b.OrderID
 inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
@@ -456,9 +457,11 @@ where Qty - ShipQty - DiffQty = 0";
             DataRow[] dr2 = dtImport.Select("Selected = 1 and remark=''");
             if (dr2.Length > 0)
             {
+
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow =
+
+                        DataRow[] findrow =
                         dt_localPODetail.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'"
                                                                                 , tmp["orderid"].ToString()
                                                                                 , tmp["refno"].ToString()
@@ -501,23 +504,61 @@ inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo and junk = 0 and ca
                 DataTable CartonCardboardPad;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out CartonCardboardPad);
 
+                //複製DataTable結構，若已複製過則不執行，否則會清空資料
+                if (P30.dtPadBoardInfo.Columns.Count == 0)
+                    P30.dtPadBoardInfo = CartonCardboardPad.Clone();
+
                 List<string> Refno = new List<string>();
                 foreach (DataRow tmp in CartonCardboardPad.Rows)
                 {
-                    if (!MyUtility.Convert.GetString(dr_localPO["localsuppid"]).EqualString(MyUtility.Convert.GetString(tmp["localsuppid"])))
+
+                    //判斷紙箱、天地板供應商是否相同：相同寫回表身、不同則h存進P30.dtPadBoardInfo後續處理
+                    if (dr_localPO["localsuppid"].ToString() == tmp["localsuppid"].ToString())
                     {
-                        Refno.Add(MyUtility.Convert.GetString(tmp["Refno"]));
+                        //判斷 dtPadBoardInfo 是否已經存在相同的 『OrderID, Refno, ThreadColorID, RequestID』
+                        DataRow[] findrow =
+                        dt_localPODetail.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'"
+                                                                                , tmp["orderid"].ToString()
+                                                                                , tmp["refno"].ToString()
+                                                                                , tmp["threadcolorid"].ToString()
+                                                                                , tmp["RequestID"].ToString()));
+
+                        if (findrow.Length > 0) //已存在更新 Price 與 Qty
+                        {
+                            findrow[0]["Price"] = tmp["Price"];
+                            findrow[0]["qty"] = tmp["qty"];
+                        }
+                        else//不存在則新增
+                        {
+                            tmp["id"] = dr_localPO["id"];
+                            tmp.AcceptChanges();
+                            tmp.SetAdded();
+                            dt_localPODetail.ImportRow(tmp);
+                        }
                     }
-                    tmp.AcceptChanges();
-                    tmp.SetAdded();
-                    dt_localPODetail.ImportRow(tmp);
+                    else//物料供應商與表頭不同，將資訊整理寫入 dtPadBoardInfo
+                    {
+                        DataRow[] findrow = P30.dtPadBoardInfo.Select(string.Format(@"orderid = '{0}' and refno = '{1}' and threadcolorid = '{2}' and requestID = '{3}'"
+                                                           , tmp["orderid"].ToString()
+                                                           , tmp["refno"].ToString()
+                                                           , tmp["threadcolorid"].ToString()
+                                                           , tmp["RequestID"].ToString()));
+
+                        if (findrow.Length > 0) //已存在更新 Price 與 Qty
+                        {
+                            findrow[0]["Price"] = tmp["Price"];
+                            findrow[0]["qty"] = tmp["qty"];
+                        }
+                        else//不存在則新增
+                        {
+                            tmp["id"] = dr_localPO["id"];
+                            tmp.AcceptChanges();
+                            tmp.SetAdded();
+                            P30.dtPadBoardInfo.ImportRow(tmp);
+                        }
+                    }
                 }
-                if (Refno.Count>0)
-                {
-                    MyUtility.Msg.WarningBox($@"Pads supplier is not '{dr_localPO["localsuppid"]}'
-Please check carton :{string.Join(",", Refno)}
-");
-                }
+
             }
             else
             {

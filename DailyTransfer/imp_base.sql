@@ -3146,6 +3146,3 @@ from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice a
 where b.InvDate is not null
 END
 
-
-
-
