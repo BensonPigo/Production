@@ -198,6 +198,7 @@ select distinct
 	,o.SeasonID as Season
 	,o.ProgramID as Program 
     ,o.SewInLine
+    ,C3.ClogQty
 into #tmp2
 from #tmpIDSeq a 
 inner join Orders o WITH (NOLOCK) on o.id = a.Id
@@ -245,7 +246,7 @@ outer apply(
 select FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo,CustCDID,Customize2,DoxType,Qty,Alias,SewOffLine,InspDate
 	,SDPDate,EstPulloutDate,a.Seq,ShipmodeID,BuyerDelivery,SciDelivery,CRDDate,BuyMonth,Customize1,ScanAndPack
 	,RainwearTestPassed,Dimension,ProdRemark,ShipRemark, MtlFormA,CTNQty,InClogCTN,CBM,ClogLocationId
-    ,ColorWay,OrderType,Season,Program ,SewInLine,CTNQty as CLOGQty
+    ,ColorWay,OrderType,Season,Program ,SewInLine,CLOGQty
 from #tmp1 a inner join #tmp2 b on a.Id = b.ID and a.Seq = b.Seq
 order by FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo
 
