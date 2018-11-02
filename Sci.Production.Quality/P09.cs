@@ -443,7 +443,7 @@ select distinct
 	fd.SCIRefno
 from FirstDyelot fd with(nolock)
 left join Supp with(nolock) on Supp.ID = fd.SuppID
-left join Po_Supp_Detail psd with(nolock) on psd.SCIRefno = fd.SCIRefno and psd.ColorID = fd. ColorID
+left join Po_Supp_Detail psd with(nolock) on psd.SCIRefno = fd.SCIRefno
 {sqlwhere}
 order by fd.SuppID
 ";
