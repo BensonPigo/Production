@@ -342,7 +342,7 @@ select * from(
 	d.CountryName,
 	[MEASUREMENT]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
 
-[Weight]=CASE WHEN GwIsNotZero.Count = 1 AND GwIsZero.Count >  GwIsNotZero.Count THEN Cast(Cast(round(p.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG' --避免：若混size在同一箱, Gross weight沒有抓到值
+[Weight]=CASE WHEN GwIsNotZero.Count != 0 AND GwIsZero.Count < GwIsNotZero.Count THEN Cast(Cast(round(p.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG' --避免：若混size在同一箱, Gross weight沒有抓到值
 			          ELSE Cast(Cast(round(pd.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG' END
 
     from PackingList_Detail pd
@@ -494,7 +494,7 @@ select * from(
 	d.CountryName,
 	[Measurement]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
 
-	[Weight]=CASE WHEN GwIsNotZero.Count = 1 AND GwIsZero.Count >  GwIsNotZero.Count THEN Cast(Cast(round(p.GW,3) AS numeric(17,3))AS varchar)+' KG' --1避免：若混size在同一箱, Gross weight沒有抓到值
+	[Weight]=CASE WHEN GwIsNotZero.Count !=  AND GwIsZero.Count < GwIsNotZero.Count THEN Cast(Cast(round(p.GW,3) AS numeric(17,3))AS varchar)+' KG' --1避免：若混size在同一箱, Gross weight沒有抓到值
 			      ELSE Cast(Cast(round(pd.GW,3) AS numeric(17,3))AS varchar)+' KG' END
 
 	--[CtnWeight]=Cast(round(li.CtnWeight,2) AS numeric(17,2))
