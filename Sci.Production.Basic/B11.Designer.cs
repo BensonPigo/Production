@@ -59,6 +59,8 @@
             this.txtPaytermarSample = new Sci.Production.Class.txtpaytermar();
             this.txtPaytermarBulk = new Sci.Production.Class.txtpaytermar();
             this.txtCountry = new Sci.Production.Class.txtcountry();
+            this.editBox1 = new Sci.Win.UI.EditBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -66,13 +68,15 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            //
+            // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(830, 576);
+            this.detail.Size = new System.Drawing.Size(830, 667);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.editBox1);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.btnShippingMark);
             this.detailcont.Controls.Add(this.checkSpecialCustomer);
             this.detailcont.Controls.Add(this.checkVASSHAS);
@@ -104,12 +108,12 @@
             this.detailcont.Controls.Add(this.txtPaytermarSample);
             this.detailcont.Controls.Add(this.txtPaytermarBulk);
             this.detailcont.Controls.Add(this.txtCountry);
-            this.detailcont.Size = new System.Drawing.Size(830, 538);
+            this.detailcont.Size = new System.Drawing.Size(830, 629);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 538);
+            this.detailbtm.Location = new System.Drawing.Point(0, 629);
             this.detailbtm.Size = new System.Drawing.Size(830, 38);
             // 
             // browse
@@ -118,7 +122,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(838, 605);
+            this.tabs.Size = new System.Drawing.Size(838, 696);
             // 
             // createby
             // 
@@ -136,7 +140,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(27, 15);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(116, 23);
@@ -145,7 +148,6 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Lines = 0;
             this.labelCustCD.Location = new System.Drawing.Point(27, 45);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(116, 23);
@@ -154,7 +156,6 @@
             // 
             // labelCountry
             // 
-            this.labelCountry.Lines = 0;
             this.labelCountry.Location = new System.Drawing.Point(27, 75);
             this.labelCountry.Name = "labelCountry";
             this.labelCountry.Size = new System.Drawing.Size(116, 23);
@@ -163,7 +164,6 @@
             // 
             // labelCity
             // 
-            this.labelCity.Lines = 0;
             this.labelCity.Location = new System.Drawing.Point(27, 105);
             this.labelCity.Name = "labelCity";
             this.labelCity.Size = new System.Drawing.Size(116, 23);
@@ -172,7 +172,6 @@
             // 
             // labelGroupQuota
             // 
-            this.labelGroupQuota.Lines = 0;
             this.labelGroupQuota.Location = new System.Drawing.Point(27, 135);
             this.labelGroupQuota.Name = "labelGroupQuota";
             this.labelGroupQuota.Size = new System.Drawing.Size(116, 23);
@@ -181,7 +180,6 @@
             // 
             // labelZipperInsert
             // 
-            this.labelZipperInsert.Lines = 0;
             this.labelZipperInsert.Location = new System.Drawing.Point(27, 165);
             this.labelZipperInsert.Name = "labelZipperInsert";
             this.labelZipperInsert.Size = new System.Drawing.Size(116, 23);
@@ -190,7 +188,6 @@
             // 
             // labelLabel
             // 
-            this.labelLabel.Lines = 0;
             this.labelLabel.Location = new System.Drawing.Point(27, 195);
             this.labelLabel.Name = "labelLabel";
             this.labelLabel.Size = new System.Drawing.Size(116, 23);
@@ -198,7 +195,6 @@
             // 
             // labelPaymentTerm
             // 
-            this.labelPaymentTerm.Lines = 0;
             this.labelPaymentTerm.Location = new System.Drawing.Point(27, 274);
             this.labelPaymentTerm.Name = "labelPaymentTerm";
             this.labelPaymentTerm.Size = new System.Drawing.Size(98, 23);
@@ -207,7 +203,6 @@
             // 
             // labelBulk
             // 
-            this.labelBulk.Lines = 0;
             this.labelBulk.Location = new System.Drawing.Point(82, 300);
             this.labelBulk.Name = "labelBulk";
             this.labelBulk.Size = new System.Drawing.Size(61, 23);
@@ -216,7 +211,6 @@
             // 
             // labelSample
             // 
-            this.labelSample.Lines = 0;
             this.labelSample.Location = new System.Drawing.Point(82, 330);
             this.labelSample.Name = "labelSample";
             this.labelSample.Size = new System.Drawing.Size(61, 23);
@@ -225,7 +219,6 @@
             // 
             // labelExcludeFactories
             // 
-            this.labelExcludeFactories.Lines = 0;
             this.labelExcludeFactories.Location = new System.Drawing.Point(27, 360);
             this.labelExcludeFactories.Name = "labelExcludeFactories";
             this.labelExcludeFactories.Size = new System.Drawing.Size(116, 23);
@@ -234,7 +227,6 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(27, 390);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(116, 23);
@@ -243,7 +235,6 @@
             // 
             // labelConsignee
             // 
-            this.labelConsignee.Lines = 0;
             this.labelConsignee.Location = new System.Drawing.Point(27, 420);
             this.labelConsignee.Name = "labelConsignee";
             this.labelConsignee.Size = new System.Drawing.Size(116, 23);
@@ -442,9 +433,28 @@
             this.txtCountry.TabIndex = 2;
             this.txtCountry.TextBox1Binding = "";
             // 
+            // editBox1
+            // 
+            this.editBox1.BackColor = System.Drawing.Color.White;
+            this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BIRShipTo", true));
+            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.editBox1.Location = new System.Drawing.Point(147, 539);
+            this.editBox1.Multiline = true;
+            this.editBox1.Name = "editBox1";
+            this.editBox1.Size = new System.Drawing.Size(384, 77);
+            this.editBox1.TabIndex = 18;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(27, 539);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(116, 23);
+            this.label1.TabIndex = 19;
+            this.label1.Text = "BIR Ship To";
+            // 
             // B11
             // 
-            this.ClientSize = new System.Drawing.Size(838, 638);
+            this.ClientSize = new System.Drawing.Size(838, 729);
             this.DefaultControlForEdit = "txtDestination";
             this.DefaultOrder = "BrandID,ID";
             this.EnableGridJunkColor = true;
@@ -502,5 +512,7 @@
         private Win.UI.CheckBox checkScanPack;
         private Win.UI.CheckBox checkJunk;
         private Win.UI.Button btnShippingMark;
+        private Win.UI.EditBox editBox1;
+        private Win.UI.Label label1;
     }
 }

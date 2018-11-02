@@ -32,9 +32,12 @@
     [AddDate]           DATETIME       NULL,
     [EditName]          VARCHAR (10)   CONSTRAINT [DF_CustCD_EditName] DEFAULT ('') NULL,
     [EditDate]          DATETIME       NULL,
-    [Kit]				VARCHAR(6)	   DEFAULT ('') NULL, 
+    [Kit]               VARCHAR (6)    DEFAULT ('') NULL,
+    [BIRShipTo]         VARCHAR (300)  NULL,
     CONSTRAINT [PK_CustCD] PRIMARY KEY CLUSTERED ([BrandID] ASC, [ID] ASC)
 );
+
+
 
 
 GO
