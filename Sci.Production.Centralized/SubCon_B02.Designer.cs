@@ -46,7 +46,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(637, 395);
+            this.detail.Size = new System.Drawing.Size(682, 395);
             // 
             // detailcont
             // 
@@ -57,11 +57,11 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(637, 357);
+            this.detailcont.Size = new System.Drawing.Size(682, 357);
             // 
             // detailbtm
             // 
-            this.detailbtm.Size = new System.Drawing.Size(637, 38);
+            this.detailbtm.Size = new System.Drawing.Size(682, 38);
             // 
             // browse
             // 
@@ -69,7 +69,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(645, 424);
+            this.tabs.Size = new System.Drawing.Size(690, 424);
             // 
             // label1
             // 
@@ -146,7 +146,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(645, 457);
+            this.ClientSize = new System.Drawing.Size(690, 457);
             this.ConnectionName = "ProductionTPE";
             this.DefaultFilter = "Type = \'IP\'";
             this.IsDeleteOnBrowse = false;
