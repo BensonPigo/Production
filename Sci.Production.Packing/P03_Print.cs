@@ -341,7 +341,10 @@ select * from(
 	qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 	d.CountryName,
 	[MEASUREMENT]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
-	[Weight]=Cast(Cast(round(p.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG'
+
+[Weight]=CASE WHEN GwIsNotZero.Count = 1 AND GwIsZero.Count >  GwIsNotZero.Count THEN Cast(Cast(round(p.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG' --避免：若混size在同一箱, Gross weight沒有抓到值
+			          ELSE Cast(Cast(round(pd.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG' END
+
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
 	INNER JOIN LocalItem li ON li.RefNo=pd.RefNo
@@ -371,6 +374,16 @@ select * from(
 	INNER JOIN Country c On f.CountryID=c.ID
 	WHERE f.ID='{ Sci.Env.User.Factory}'
 	)d
+	OUTER APPLY(
+		SELECT [Count]=Count(ID)
+		FROM  PackingList_Detail
+		WHERE ID=pd.ID AND GW = 0
+	)GwIsZero	
+	OUTER APPLY(
+		SELECT [Count]=Count(ID)
+		FROM  PackingList_Detail
+		WHERE ID=pd.ID AND GW != 0
+	)GwIsNotZero
     where pd.id = '{this.masterData["ID"]}'
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
@@ -470,7 +483,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 
         public DualResult PrintShippingmark_ToUsaInd()
         {
-            #region.
+            #region PrintShippingmark_ToUsaInd
             string sqlcmd = $@"
 select * from(
     select distinct 
@@ -480,7 +493,10 @@ select * from(
 	qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 	d.CountryName,
 	[Measurement]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
-	[Weight]=Cast(Cast(round(p.GW,3) AS numeric(17,3))AS varchar)+' KG'
+
+	[Weight]=CASE WHEN GwIsNotZero.Count = 1 AND GwIsZero.Count >  GwIsNotZero.Count THEN Cast(Cast(round(p.GW,3) AS numeric(17,3))AS varchar)+' KG' --1避免：若混size在同一箱, Gross weight沒有抓到值
+			      ELSE Cast(Cast(round(pd.GW,3) AS numeric(17,3))AS varchar)+' KG' END
+
 	--[CtnWeight]=Cast(round(li.CtnWeight,2) AS numeric(17,2))
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
@@ -500,11 +516,22 @@ select * from(
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
 	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,'')
-    )b	outer apply	(
-	SELECT [CountryName]=c.NameEN FROM Factory f
-	INNER JOIN Country c On f.CountryID=c.ID
-	WHERE f.ID='{ Sci.Env.User.Factory}'
+    )b	
+    outer apply	(
+	    SELECT [CountryName]=c.NameEN FROM Factory f
+	    INNER JOIN Country c On f.CountryID=c.ID
+	    WHERE f.ID='{ Sci.Env.User.Factory}'
 	)d
+	OUTER APPLY(
+		SELECT [Count]=Count(ID)
+		FROM  PackingList_Detail
+		WHERE ID=pd.ID AND GW = 0
+	)GwIsZero	
+	OUTER APPLY(
+		SELECT [Count]=Count(ID)
+		FROM  PackingList_Detail
+		WHERE ID=pd.ID AND GW != 0
+	)GwIsNotZero
     where pd.id = '{this.masterData["ID"]}'
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
