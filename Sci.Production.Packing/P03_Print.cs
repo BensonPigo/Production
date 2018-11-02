@@ -341,9 +341,7 @@ select * from(
 	qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 	d.CountryName,
 	[MEASUREMENT]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
-
-[Weight]=CASE WHEN GwIsZero.Count > 0 AND GwIsNotZero.Count > 0 THEN Cast(Cast(round(p.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG' --避免：若混size在同一箱, Gross weight沒有抓到值
-			          ELSE Cast(Cast(round(pd.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG' END
+    [Weight]=Cast(Cast(round(GW.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG'
 
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
@@ -375,15 +373,10 @@ select * from(
 	WHERE f.ID='{ Sci.Env.User.Factory}'
 	)d
 	OUTER APPLY(
-		SELECT [Count]=Count(ID)
+		SELECT DISTINCT GW
 		FROM  PackingList_Detail
-		WHERE ID=pd.ID AND GW = 0
-	)GwIsZero	
-	OUTER APPLY(
-		SELECT [Count]=Count(ID)
-		FROM  PackingList_Detail
-		WHERE ID=pd.ID AND GW != 0
-	)GwIsNotZero
+		WHERE ID=pd.ID AND CTNStartNo = pd.CTNStartNo AND GW!=0
+	)GW	
     where pd.id = '{this.masterData["ID"]}'
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
@@ -494,8 +487,7 @@ select * from(
 	d.CountryName,
 	[Measurement]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
 
-	[Weight]=CASE WHEN GwIsZero.Count > 0 AND GwIsNotZero.Count > 0 THEN Cast(Cast(round(p.GW,3) AS numeric(17,3))AS varchar)+' KG' --1避免：若混size在同一箱, Gross weight沒有抓到值
-			      ELSE Cast(Cast(round(pd.GW,3) AS numeric(17,3))AS varchar)+' KG' END
+	[Weight]=Cast(Cast(round(GW.GW,3) AS numeric(17,3))AS varchar)+' KG' 
 
 	--[CtnWeight]=Cast(round(li.CtnWeight,2) AS numeric(17,2))
     from PackingList_Detail pd
@@ -507,7 +499,7 @@ select * from(
 	    from PackingList_Detail pd2 
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
-	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,'')
+	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo AND pd2.GW=pd.GW for xml path('')),1,1,'')
     )a
     outer apply (select ct = count(SizeCode) from PackingList_Detail pd2 where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo)b1
     outer apply (
@@ -523,15 +515,10 @@ select * from(
 	    WHERE f.ID='{ Sci.Env.User.Factory}'
 	)d
 	OUTER APPLY(
-		SELECT [Count]=Count(ID)
+		SELECT DISTINCT GW
 		FROM  PackingList_Detail
-		WHERE ID=pd.ID AND GW = 0
-	)GwIsZero	
-	OUTER APPLY(
-		SELECT [Count]=Count(ID)
-		FROM  PackingList_Detail
-		WHERE ID=pd.ID AND GW != 0
-	)GwIsNotZero
+		WHERE ID=pd.ID AND CTNStartNo = pd.CTNStartNo AND GW!=0
+	)GW	
     where pd.id = '{this.masterData["ID"]}'
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
