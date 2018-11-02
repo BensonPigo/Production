@@ -167,11 +167,13 @@ outer apply(
 )ClogLocationId
 outer apply(  
 	select ColorWay = stuff((
-		select concat(', ', oqD.Article) 
-		from Order_QtyShip_Detail oqD
+		select concat(', ', b.Article) 
+		from  (
+        select distinct oqd.article
+        from Order_QtyShip_Detail oqD
 		where t.id = oqD.id
 		and t.seq = oqD.seq
-		group by oqD.id, oqD.seq, oqD.Article
+        ) b
 		FOR XML PATH('')
 	),1,2,'') 
 )as oqD   
@@ -195,6 +197,7 @@ select distinct
 	,o.OrderTypeID as OrderType
 	,o.SeasonID as Season
 	,o.ProgramID as Program 
+    ,o.SewInLine
 into #tmp2
 from #tmpIDSeq a 
 inner join Orders o WITH (NOLOCK) on o.id = a.Id
@@ -242,7 +245,7 @@ outer apply(
 select FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo,CustCDID,Customize2,DoxType,Qty,Alias,SewOffLine,InspDate
 	,SDPDate,EstPulloutDate,a.Seq,ShipmodeID,BuyerDelivery,SciDelivery,CRDDate,BuyMonth,Customize1,ScanAndPack
 	,RainwearTestPassed,Dimension,ProdRemark,ShipRemark, MtlFormA,CTNQty,InClogCTN,CBM,ClogLocationId
-    ,ColorWay,OrderType,Season,Program ,SewLine as SewInLine,CTNQty as CLOGQty
+    ,ColorWay,OrderType,Season,Program ,SewInLine,CTNQty as CLOGQty
 from #tmp1 a inner join #tmp2 b on a.Id = b.ID and a.Seq = b.Seq
 order by FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo
 
