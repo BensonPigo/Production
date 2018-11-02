@@ -79,7 +79,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
-    ,[SewingReasonDesc]=sr.Description
+    ,[SewingReasonDesc]=sr.ID+'-'+sr.Description
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
