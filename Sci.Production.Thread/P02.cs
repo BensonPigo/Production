@@ -635,6 +635,19 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickSave()
+        {
+            var result = base.ClickSave();
+            string msg = result.ToString().ToUpper();
+            if (msg.Contains("PK") && msg.Contains("DUPLICAT"))
+            {
+                result = Result.F("<OrderID> duplicated", result.GetException());
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].ToString() != "New")
@@ -692,15 +705,6 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 e.Cancel = true;
                 this.txtSP.Text = string.Empty;
                 MyUtility.Msg.WarningBox(string.Format("<SP#: {0} >Data not found!!!!", id));
-                return;
-            }
-
-            // 確認ThreadRequisition有沒有這筆,有則return
-            if (MyUtility.Check.Seek(string.Format("Select * from ThreadRequisition WITH (NOLOCK) where OrderID='{0}'", id)))
-            {
-                e.Cancel = true;
-                this.txtSP.Text = string.Empty;
-                MyUtility.Msg.WarningBox("Order number exists already.");
                 return;
             }
 
