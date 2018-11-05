@@ -3132,6 +3132,26 @@ when not matched by target then
 when not matched by source then 
       delete;     
 
+--------SubconReason---------------
+
+Merge Production.dbo.SubconReason as t
+Using Trade_To_Pms.dbo.SubconReason as s
+on t.ID = s.ID and t.Type = s.Type
+when matched then
+      update set	t.Reason		 = s.Reason		 ,
+					t.Responsible	 = s.Responsible ,
+					t.Junk			 = s.Junk		 ,
+					t.AddDate		 = s.AddDate	 ,
+					t.AddName		 = s.AddName	 ,
+					t.EditDate		 = s.EditDate	 ,
+					t.EditName		 = s.EditName
+when not matched by target then
+      insert (Type,ID,Reason,Responsible,Junk,AddDate,AddName,EditDate,EditName
+      ) values (s.Type,s.ID,s.Reason,s.Responsible,s.Junk,s.AddDate,s.AddName,s.EditDate,s.EditName
+      )
+when not matched by source then 
+      delete;     
+
 --------GMTBooking---------------
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a

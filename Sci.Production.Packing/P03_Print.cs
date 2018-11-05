@@ -73,6 +73,7 @@ namespace Sci.Production.Packing
             this.OrderQty = orderQty;
             this.radioPackingListReportFormA.Checked = true;
             this.ControlPrintFunction(false);
+            this.chkCartonNo.ForeColor = System.Drawing.Color.Blue;
         }
 
         private void RadioBarcodePrint_CheckedChanged(object sender, EventArgs e)
@@ -295,7 +296,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(6, 2).Range.Text = country;
                 }
                 #endregion
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                //關閉word保護模式
+                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                 #region Save & Show Word
                 winword.Visible = true;
@@ -326,11 +328,12 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 
         public DualResult PrintShippingmark_ToChina()
         {
-            #region.
+            #region PrintShippingmark_ToChina
             string sqlcmd = $@"
 select * from(
     select distinct 
 	[CTNQty]='   /'+Cast(c.CTNQty as varchar),
+	[Carton_CTNQty]=pd.CTNStartno+'/'+Cast(c.CTNQty as varchar),
 	pd.CTNStartno,--只用於排序
 	o.CustPOno,
 	pd.Article,
@@ -338,7 +341,8 @@ select * from(
 	qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 	d.CountryName,
 	[MEASUREMENT]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
-	[Weight]=Cast(Cast(round(p.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG'
+    [Weight]=Cast(Cast(round(GW.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG'
+
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
 	INNER JOIN LocalItem li ON li.RefNo=pd.RefNo
@@ -368,6 +372,11 @@ select * from(
 	INNER JOIN Country c On f.CountryID=c.ID
 	WHERE f.ID='{ Sci.Env.User.Factory}'
 	)d
+	OUTER APPLY(
+		SELECT DISTINCT GW
+		FROM  PackingList_Detail
+		WHERE ID=pd.ID AND CTNStartNo = pd.CTNStartNo AND GW!=0
+	)GW	
     where pd.id = '{this.masterData["ID"]}'
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
@@ -413,8 +422,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 {
                     tables = table[i + 1];
 
-                    #region 
-                    string cARTON = this.printData.Rows[i]["CTNQty"].ToString();
+                    #region 對應SQL選取的欄位
+                    string cARTON =this.chkCartonNo.Checked ? this.printData.Rows[i]["Carton_CTNQty"].ToString() : this.printData.Rows[i]["CTNQty"].ToString();
                     string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
                     string article = this.printData.Rows[i]["Article"].ToString();
                     string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
@@ -435,7 +444,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(8, 2).Range.Text = weight;
                 }
                 #endregion
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                //關閉word保護模式
+                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                 #region Save & Show Word
                 winword.Visible = true;
@@ -466,7 +476,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 
         public DualResult PrintShippingmark_ToUsaInd()
         {
-            #region.
+            #region PrintShippingmark_ToUsaInd
             string sqlcmd = $@"
 select * from(
     select distinct 
@@ -476,7 +486,9 @@ select * from(
 	qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 	d.CountryName,
 	[Measurement]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
-	[Weight]=Cast(Cast(round(p.GW,3) AS numeric(17,3))AS varchar)+' KG'
+
+	[Weight]=Cast(Cast(round(GW.GW,3) AS numeric(17,3))AS varchar)+' KG' 
+
 	--[CtnWeight]=Cast(round(li.CtnWeight,2) AS numeric(17,2))
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
@@ -496,11 +508,17 @@ select * from(
 	    outer apply(select SizeSpec from Order_SizeSpec os where os.SizeCode = pd2.SizeCode and os.id = o.poid and os.SizeItem = 'S01')x
 		outer apply(select SizeSpec from Order_SizeSpec_OrderCombo oso where oso.SizeCode = pd2.SizeCode and oso.id = o.poid and oso.OrderComboID = o.OrderComboID and SizeItem = 'S01')z
 	    where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo for xml path('')),1,1,'')
-    )b	outer apply	(
-	SELECT [CountryName]=c.NameEN FROM Factory f
-	INNER JOIN Country c On f.CountryID=c.ID
-	WHERE f.ID='{ Sci.Env.User.Factory}'
+    )b	
+    outer apply	(
+	    SELECT [CountryName]=c.NameEN FROM Factory f
+	    INNER JOIN Country c On f.CountryID=c.ID
+	    WHERE f.ID='{ Sci.Env.User.Factory}'
 	)d
+	OUTER APPLY(
+		SELECT DISTINCT GW
+		FROM  PackingList_Detail
+		WHERE ID=pd.ID AND CTNStartNo = pd.CTNStartNo AND GW!=0
+	)GW	
     where pd.id = '{this.masterData["ID"]}'
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
@@ -562,7 +580,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     tables.Cell(5, 2).Range.Text = sizeCode;
                 }
                 #endregion
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                //關閉word保護模式
+                //winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
                 #region Save & Show Word
                 winword.Visible = true;
