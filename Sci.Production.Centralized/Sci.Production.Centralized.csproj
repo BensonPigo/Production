@@ -342,13 +342,11 @@
     <EmbeddedResource Include="R20.resx">
       <DependentUpon>R20.cs</DependentUpon>
     </EmbeddedResource>
-<<<<<<< HEAD
     <EmbeddedResource Include="Sewing_B01.resx">
       <DependentUpon>Sewing_B01.cs</DependentUpon>
-=======
+    </EmbeddedResource>
     <EmbeddedResource Include="SubCon_B02.resx">
       <DependentUpon>SubCon_B02.cs</DependentUpon>
->>>>>>> Mantis/ISP20181014
     </EmbeddedResource>
     <EmbeddedResource Include="Thread_B06.resx">
       <DependentUpon>Thread_B06.cs</DependentUpon>
