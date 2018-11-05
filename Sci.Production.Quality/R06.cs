@@ -407,7 +407,7 @@ from  fir f WITH (NOLOCK)
 inner join FIR_Physical fp on f.ID = fp.ID
 inner join #tmp2groupByRoll t on f.POID = t.PoId and f.SEQ1 = t.Seq1 and f.SEQ2 = t.Seq2 and fp.Dyelot = t.Dyelot and fp.Roll = t.Roll
 left join Fabric on Fabric.SCIRefno = f.SCIRefno
-where f.PhysicalEncode = 1 and fp.ActualWidth <> Fabric.Width
+where f.PhysicalEncode = 1 and fp.ActualWidth < Fabric.Width
 group by f.{groupby_col}
 ------#FabricInspDoc TestReport
 select tmp.{groupby_col}
@@ -696,25 +696,41 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
                 int cnt = (int)allDatas[0].Rows[i]["KeyCnt"];
                 if (cnt > 1)
                 {
+                    // 合併儲存格,尾端要-1不然會重疊
+                    // 只合併最後一欄，其餘用複製格式方式合併
+                    rang = objSheets.Range[objSheets.Cells[allDatas[0].Columns.Count][line], objSheets.Cells[allDatas[0].Columns.Count][line + cnt - 1]];
+                    rang.Merge();
+                    rang.Copy(Type.Missing);
+
                     for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
                     {
+                        Microsoft.Office.Interop.Excel.Range rang2;
                         // Columns=2,4,5 是不需要合併的
                         if (ii == 2 || ii == 4 || ii == 5 || (ii == 3 && ReportType.Equals("Refno")))
                         {
                             continue;
                         }
 
-                        // 合併儲存格,尾端要-1不然會重疊
-                        rang = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
-                        rang.Merge();
+                        // 複製格式
+                        //objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]].Style = rang.Style;
+                        rang2 = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
+                        rang2.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteFormats,
+                            Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
                 }
-                
+
                 line = line + cnt;
                 i = i + cnt - 1;
             }
+            //由於複製格式的關係，會把原本的型態也取代。重新再壓回型態。
+            for (int ii = 1; ii <= allDatas[0].Columns.Count; ii++)
+            {
+                int col = (ii >= 19 && ii <= 37 && !(ii == 22)) ? 5 : 3;
+                objSheets.Columns[ii].NumberFormat = objSheets.Cells[ii][col].NumberFormat;
+            }
 
             objSheets.Cells[2, 1] = $"Date: {this.dateArriveWHDate.DateBox1.Text} ~ {this.dateArriveWHDate.DateBox2.Text}";
+            objSheets.Range["B3"].Activate();
 
             #region 調整欄寬
             objSheets.Columns[5].ColumnWidth = 7.38;
