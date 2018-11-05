@@ -263,6 +263,12 @@
     <Compile Include="Sewing_B01.Designer.cs">
       <DependentUpon>Sewing_B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubCon_B02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubCon_B02.Designer.cs">
+      <DependentUpon>SubCon_B02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Thread_B06.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -336,8 +342,13 @@
     <EmbeddedResource Include="R20.resx">
       <DependentUpon>R20.cs</DependentUpon>
     </EmbeddedResource>
+<<<<<<< HEAD
     <EmbeddedResource Include="Sewing_B01.resx">
       <DependentUpon>Sewing_B01.cs</DependentUpon>
+=======
+    <EmbeddedResource Include="SubCon_B02.resx">
+      <DependentUpon>SubCon_B02.cs</DependentUpon>
+>>>>>>> Mantis/ISP20181014
     </EmbeddedResource>
     <EmbeddedResource Include="Thread_B06.resx">
       <DependentUpon>Thread_B06.cs</DependentUpon>
