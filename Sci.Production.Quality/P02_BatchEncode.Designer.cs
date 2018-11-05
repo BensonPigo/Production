@@ -42,7 +42,8 @@
             this.btnClose = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.txtInspector = new Sci.Production.Class.txtuser();
-            this.numInspectRate = new Sci.Production.Class.numericUpDownRate();
+            this.numInspectRate = new Sci.Win.UI.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numInspectRate)).BeginInit();
             this.SuspendLayout();
@@ -188,9 +189,9 @@
             // 
             this.numInspectRate.BackColor = System.Drawing.Color.White;
             this.numInspectRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numInspectRate.Location = new System.Drawing.Point(100, 271);
+            this.numInspectRate.Location = new System.Drawing.Point(99, 271);
             this.numInspectRate.Name = "numInspectRate";
-            this.numInspectRate.Size = new System.Drawing.Size(120, 23);
+            this.numInspectRate.Size = new System.Drawing.Size(93, 23);
             this.numInspectRate.TabIndex = 16;
             this.numInspectRate.Value = new decimal(new int[] {
             0,
@@ -198,11 +199,21 @@
             0,
             0});
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(194, 273);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(20, 17);
+            this.label6.TabIndex = 17;
+            this.label6.Text = "%";
+            // 
             // P02_BatchEncode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(646, 407);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.numInspectRate);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnClose);
@@ -233,6 +244,7 @@
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.numInspectRate, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numInspectRate)).EndInit();
             this.ResumeLayout(false);
@@ -255,6 +267,7 @@
         private Win.UI.Button btnEncode;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnSave;
-        private Class.numericUpDownRate numInspectRate;
+        private Win.UI.NumericUpDown numInspectRate;
+        private System.Windows.Forms.Label label6;
     }
 }

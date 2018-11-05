@@ -70,7 +70,7 @@ namespace Sci.Production.Quality
         private void QueryData()
         {
             DataTable encodeData;
-
+                
             string sqlCmd = $@"
 Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.exportid,
                 ArriveQty,InspDeadline,a.ReplacementReportID,
@@ -93,11 +93,31 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
                 ) as SuppEn,InspQty,Inspdate,(
 				    select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id
 				) AS Inspector2,Inspector,Result
-	                From AIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
+	                From AIR a WITH (NOLOCK) 
+                    Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
                 Where a.poid='{this.masterID}' and a.Status <> 'Confirmed' order by seq1,seq2
 ";
+
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out encodeData);
 
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (this.grid.DataSource != null)
+            {
+                var srcDt = ((DataTable)this.grid.DataSource).AsEnumerable().Where(s => (int)s["select"] == 1);
+                foreach (DataRow dr in encodeData.Rows)
+                {
+                    if (srcDt.Where(s => s["ID"].Equals(dr["ID"]) && s["ReceivingID"].Equals(dr["ReceivingID"])).Any())
+                    {
+                        dr["select"] = 1;
+                    }
+                }
+            }
+            
             this.grid.DataSource = encodeData;
         }
 
