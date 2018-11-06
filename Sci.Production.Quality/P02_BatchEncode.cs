@@ -222,6 +222,14 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
                 MyUtility.Msg.WarningBox("<Inspected Qty>,<Result>,<Inspdate>,<Inspector> can not be null");
                 return;
             }
+            
+            checkResult = selectedData
+                                .Where(s => s["Result"].Equals("Approval"));
+            if (checkResult.Count() > 0)
+            {
+                MyUtility.Msg.WarningBox("<Result> Can not be Approval.");
+                return;
+            }
 
             string updSQL = string.Empty;
             foreach (var item in selectedData)
