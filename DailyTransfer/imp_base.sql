@@ -3152,6 +3152,32 @@ when not matched by target then
 when not matched by source then 
       delete;     
 
+--------SewingReason---------------
+
+Merge Production.dbo.SewingReason as sr
+Using Trade_To_Pms.dbo.SewingReason as tsr
+on sr.ID = tsr.ID AND sr.Type=tsr.Type
+when matched then
+      update set
+       sr.Type = tsr.Type,
+       sr.ID = tsr.ID,
+       sr.Description= tsr.Description,
+       sr.Junk = tsr.Junk,
+       sr.AddName = tsr.AddName,
+       sr.AddDate = tsr.AddDate,
+       sr.EditName = tsr.EditName,
+       sr.EditDate = tsr.EditDate
+when not matched by target then
+      insert (
+            Type , ID  , Description  , Junk  , AddName    , AddDate
+            , EditName   , EditDate    
+      ) values (
+            tsr.Type , tsr.ID  , tsr.Description  , tsr.Junk  , tsr.AddName    , tsr.AddDate
+            , tsr.EditName   , tsr.EditDate    
+      )
+when not matched by source then 
+      delete;     
+
 --------GMTBooking---------------
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
