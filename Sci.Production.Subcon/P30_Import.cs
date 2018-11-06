@@ -483,23 +483,68 @@ where Qty - ShipQty - DiffQty = 0";
 
                 DataTable tmpdt = dr2.CopyToDataTable();
                 string sqlcmd = $@"
-select selected=1,
-	t.POID,t.OrderID,t.StyleID,t.SciDelivery,t.SeasonID,
-	Refno=l.PadRefno,
-	Description=dbo.getitemdesc('Carton', l.PadRefno),
-	ThreadColorID='',
-	Qty=t.qty*l.qty,
-	d.UnitID,
-	d.Price,
-	amount = t.qty*l.qty*d.Price,
-    t.std_price,
-	remark='',
-	t.etd,t.requestid,t.id,t.FactoryID,t.SewInLine,t.delivery,t.BuyerID,
-	d.LocalSuppid
-from #tmp t
-outer apply(select ct=count(1) from LocalItem_CartonCardboardPad lc where lc.Refno = t.RefNo and isnull(t.BuyerID,'') = isnull(lc.Buyer,''))a
-inner join LocalItem_CartonCardboardPad l on t.RefNo = l.RefNo and iif(ct>0, isnull(t.BuyerID,''),'') = isnull(l.Buyer,'')
-inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo and junk = 0 and category = 'CARTON'
+select  selected = 1
+        , POID
+        , OrderID
+        , StyleID
+        , SciDelivery
+        , SeasonID
+        , Refno
+        , Description
+        , ThreadColorID
+        , Qty = sum (isnull (Qty, 0))
+        , UnitID
+        , Price
+        , Amount = sum (isnull (Amount, 0))
+        , std_Price
+        , remark
+        , etd
+        , requestid
+        , ID
+        , FactoryID
+        , SewInLine
+        , Delivery
+        , BuyerID
+        , LocalSuppID
+from (
+    select  t.POID
+            , t.OrderID
+            , t.StyleID
+            , t.SciDelivery
+            , t.SeasonID
+            , Refno=l.PadRefno
+            , Description=dbo.getitemdesc('Carton', l.PadRefno)
+            , ThreadColorID = ''
+            , Qty = t.qty * l.qty
+            , d.UnitID
+            , d.Price
+            , amount = t.qty * l.qty * d.Price
+            , t.std_price
+            , remark = ''
+            , t.etd
+            , t.requestid
+            , t.id
+            , t.FactoryID
+            , t.SewInLine
+            , t.delivery
+            , t.BuyerID
+            , d.LocalSuppid
+    from #tmp t
+    outer apply (
+        select ct = count(1) 
+        from LocalItem_CartonCardboardPad lc 
+        where lc.Refno = t.RefNo 
+              and isnull (t.BuyerID,'') = isnull(lc.Buyer,'')
+    )a
+    inner join LocalItem_CartonCardboardPad l on t.RefNo = l.RefNo 
+                                                 and iif(ct>0, isnull(t.BuyerID,''),'') = isnull(l.Buyer,'')
+    inner join LocalItem d WITH (NOLOCK) on l.PadRefno = d.RefNo 
+                                            and junk = 0 and category = 'CARTON'
+) detailPads
+group by POID, OrderID, StyleID, SciDelivery, SeasonID, Refno
+        , Description, ThreadColorID, UnitID, Price, std_Price
+        , remark, etd, requestid, ID, FactoryID, SewInLine
+        , Delivery, BuyerID, LocalSuppID
 ";
                 DataTable CartonCardboardPad;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(tmpdt, string.Empty, sqlcmd, out CartonCardboardPad);
