@@ -341,7 +341,7 @@ select * from(
 	qty=iif(b1.ct = 1,convert(nvarchar, pd.shipqty),b.qty)+' PCS',
 	d.CountryName,
 	[MEASUREMENT]=Cast(Cast(round(li.CtnLength,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnWidth,0) AS int)AS varchar)+'*'+Cast(Cast(round(li.CtnHeight,0) AS int)AS varchar)+' '+ li.CtnUnit,
-    [Weight]=Cast(Cast(round(GW.GW,2) AS numeric(17,2))AS varchar)+'/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG'
+    [Weight]=Cast(Cast(round(GW.GW,2) AS numeric(17,2))AS varchar)+'KG/'+Cast(Cast(round(li.CtnWeight,2) AS numeric(17,2))AS varchar)+' KG'
 
     from PackingList_Detail pd
     inner join orders o on o.id = pd.orderid
