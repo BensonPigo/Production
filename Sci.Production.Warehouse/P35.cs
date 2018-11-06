@@ -581,28 +581,37 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,p1.FabricType
-,p1.stockunit
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
-,a.Roll
-,a.Dyelot
-,a.QtyAfter
-,a.QtyBefore
-,isnull(a.QtyAfter,0.00) - isnull(a.QtyBefore,0.00) adjustqty
-,a.ReasonId
-,(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
-,a.StockType
-,a.ukey
-,a.ftyinventoryukey
-,dbo.Getlocation(fi.ukey) location
-,ColorID =dbo.GetColorMultipleID(p1.BrandId, p1.ColorID)
+            this.DetailSelectCommand = string.Format(@"
+select a.id,a.PoId,a.Seq1,a.Seq2
+    ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+    ,p1.FabricType
+    ,p1.stockunit
+    ,a.Roll
+    ,a.Dyelot
+    ,a.QtyAfter
+    ,a.QtyBefore
+    ,isnull(a.QtyAfter,0.00) - isnull(a.QtyBefore,0.00) adjustqty
+    ,a.ReasonId
+    ,(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
+    ,a.StockType
+    ,a.ukey
+    ,a.ftyinventoryukey
+    ,p1.BrandId
+    ,p1.ColorID
+into #tmp
 from dbo.Adjust_Detail a WITH (NOLOCK) 
-left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
-left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-    and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-Where a.id = '{0}'", masterID);
+inner join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+	and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
+left join PO_Supp_Detail p1 WITH (NOLOCK) on fi.PoId= p1.ID  and fi.seq1 = p1.SEQ1 and fi.SEQ2 = p1.seq2
+Where a.id = '{0}'
+
+select a.*
+	,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
+	,dbo.Getlocation(a.ukey) location
+	,ColorID =dbo.GetColorMultipleID(a.BrandId, a.ColorID)
+from #tmp a
+
+drop table #tmp", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 

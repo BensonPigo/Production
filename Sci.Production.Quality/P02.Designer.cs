@@ -57,6 +57,7 @@
             this.dateEarliestSCIDel = new Sci.Win.UI.DateBox();
             this.dateTargetLeadTime = new Sci.Win.UI.DateBox();
             this.dateCompletionDate = new Sci.Win.UI.DateBox();
+            this.btnBatchEncode = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnBatchEncode);
             this.masterpanel.Controls.Add(this.txtSEQ1);
             this.masterpanel.Controls.Add(this.labelSEQ1);
             this.masterpanel.Controls.Add(this.btnFind);
@@ -133,6 +135,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnFind, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSEQ1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSEQ1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnBatchEncode, 0);
             // 
             // detailpanel
             // 
@@ -153,15 +156,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(917, 652);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(911, 606);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(911, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -211,7 +214,6 @@
             // labelSEQ1
             // 
             this.labelSEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ1.Lines = 0;
             this.labelSEQ1.Location = new System.Drawing.Point(264, 162);
             this.labelSEQ1.Name = "labelSEQ1";
             this.labelSEQ1.Size = new System.Drawing.Size(75, 23);
@@ -327,7 +329,6 @@
             // labelSEQ2
             // 
             this.labelSEQ2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ2.Lines = 0;
             this.labelSEQ2.Location = new System.Drawing.Point(400, 162);
             this.labelSEQ2.Name = "labelSEQ2";
             this.labelSEQ2.Size = new System.Drawing.Size(75, 23);
@@ -337,7 +338,6 @@
             // labelLocateforWK
             // 
             this.labelLocateforWK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelLocateforWK.Lines = 0;
             this.labelLocateforWK.Location = new System.Drawing.Point(12, 164);
             this.labelLocateforWK.Name = "labelLocateforWK";
             this.labelLocateforWK.Size = new System.Drawing.Size(106, 23);
@@ -347,7 +347,6 @@
             // labelMTLCmlpt
             // 
             this.labelMTLCmlpt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelMTLCmlpt.Lines = 0;
             this.labelMTLCmlpt.Location = new System.Drawing.Point(505, 46);
             this.labelMTLCmlpt.Name = "labelMTLCmlpt";
             this.labelMTLCmlpt.Size = new System.Drawing.Size(105, 23);
@@ -357,7 +356,6 @@
             // labelRemark
             // 
             this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(505, 75);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(105, 23);
@@ -367,7 +365,6 @@
             // labelCompletionDate
             // 
             this.labelCompletionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelCompletionDate.Lines = 0;
             this.labelCompletionDate.Location = new System.Drawing.Point(218, 104);
             this.labelCompletionDate.Name = "labelCompletionDate";
             this.labelCompletionDate.Size = new System.Drawing.Size(137, 23);
@@ -377,7 +374,6 @@
             // labelofInspection
             // 
             this.labelofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelofInspection.Lines = 0;
             this.labelofInspection.Location = new System.Drawing.Point(505, 17);
             this.labelofInspection.Name = "labelofInspection";
             this.labelofInspection.Size = new System.Drawing.Size(105, 23);
@@ -387,7 +383,6 @@
             // labelEarliestSCIDel
             // 
             this.labelEarliestSCIDel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelEarliestSCIDel.Lines = 0;
             this.labelEarliestSCIDel.Location = new System.Drawing.Point(218, 46);
             this.labelEarliestSCIDel.Name = "labelEarliestSCIDel";
             this.labelEarliestSCIDel.Size = new System.Drawing.Size(137, 23);
@@ -397,7 +392,6 @@
             // labelTargetLeadTime
             // 
             this.labelTargetLeadTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelTargetLeadTime.Lines = 0;
             this.labelTargetLeadTime.Location = new System.Drawing.Point(218, 75);
             this.labelTargetLeadTime.Name = "labelTargetLeadTime";
             this.labelTargetLeadTime.Size = new System.Drawing.Size(137, 23);
@@ -407,7 +401,6 @@
             // labelEarliestEstCutDate
             // 
             this.labelEarliestEstCutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelEarliestEstCutDate.Lines = 0;
             this.labelEarliestEstCutDate.Location = new System.Drawing.Point(218, 17);
             this.labelEarliestEstCutDate.Name = "labelEarliestEstCutDate";
             this.labelEarliestEstCutDate.Size = new System.Drawing.Size(137, 23);
@@ -417,7 +410,6 @@
             // labelBrand
             // 
             this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(12, 106);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(55, 23);
@@ -427,7 +419,6 @@
             // labelSeason
             // 
             this.labelSeason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(12, 77);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(55, 23);
@@ -437,7 +428,6 @@
             // labelStyle
             // 
             this.labelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(12, 48);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(55, 23);
@@ -447,7 +437,6 @@
             // labelSP
             // 
             this.labelSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(12, 19);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(55, 23);
@@ -489,6 +478,16 @@
             this.dateCompletionDate.ReadOnly = true;
             this.dateCompletionDate.Size = new System.Drawing.Size(132, 23);
             this.dateCompletionDate.TabIndex = 160;
+            // 
+            // btnBatchEncode
+            // 
+            this.btnBatchEncode.Location = new System.Drawing.Point(798, 157);
+            this.btnBatchEncode.Name = "btnBatchEncode";
+            this.btnBatchEncode.Size = new System.Drawing.Size(111, 30);
+            this.btnBatchEncode.TabIndex = 161;
+            this.btnBatchEncode.Text = "Batch Encode";
+            this.btnBatchEncode.UseVisualStyleBackColor = true;
+            this.btnBatchEncode.Click += new System.EventHandler(this.btnBatchEncode_Click);
             // 
             // P02
             // 
@@ -561,5 +560,6 @@
         private Win.UI.DateBox dateTargetLeadTime;
         private Win.UI.DateBox dateEarliestSCIDel;
         private Win.UI.DateBox dateEarliestEstCutDate;
+        private Win.UI.Button btnBatchEncode;
     }
 }

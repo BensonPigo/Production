@@ -6,7 +6,8 @@
     [TagId]        VARCHAR (24) CONSTRAINT [DF_BundleTransfer_TagId] DEFAULT ('') NULL,
     [BundleNo]     VARCHAR (10) CONSTRAINT [DF_BundleTransfer_BundleNo] DEFAULT ('') NULL,
     [TransferDate] DATETIME     NULL,
-    [AddDate]      DATETIME     NULL
+    [AddDate]      DATETIME     NULL, 
+    [LocationID] VARCHAR(10) NOT NULL DEFAULT ('')
 );
 
 
