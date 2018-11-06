@@ -297,7 +297,7 @@ select distinct t.FactoryID
     ,cc.BuyerID
     ,aa.BrandID 
     ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.poid)) smr  
-    ,y.order_qty
+	,os.os
     ,x.ap_qty
     ,x.ap_amt
     ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) ap_price
@@ -310,6 +310,7 @@ left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID =
 left join Brand cc WITH (NOLOCK) on aa.BrandID=cc.id  
 left join #tmp_localap x on t.artworktypeid = x.Category and t.POID = x.OrderId and t.FactoryID = x.FactoryId  	 
 left join #tmp_orders y on t.POID = y.poid  and t.artworktypeid = y.artworktypeid
+outer apply(select os=sum(qty) from orders o with(nolock) where o.poid = aa.poid)os
 where 1=1 
 ", ratetype));
             #endregion
