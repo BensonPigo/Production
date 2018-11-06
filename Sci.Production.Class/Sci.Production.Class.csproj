@@ -81,6 +81,9 @@
     <Compile Include="Holiday.Designer.cs">
       <DependentUpon>Holiday.cs</DependentUpon>
     </Compile>
+    <Compile Include="numericUpDownRate.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PictureSubPage.cs">
       <SubType>Form</SubType>
     </Compile>
