@@ -49,6 +49,7 @@ select
 ,[BuyerDelivery] = oq.BuyerDelivery
 ,[TotalCrtns] = Packing.qty
 ,[AccLacking] = a3.RefNo
+,[Destination] = c.Alias
 ,a.*,a2.*
 from avo a
 left join AVO_Detail a2 on a.ID=a2.ID
@@ -98,8 +99,11 @@ where a.id='{masterID}'
                  if (this.EditMode && e.FormattedValue.ToString() != string.Empty)
                  {
                      DataRow dr;
-                     if (MyUtility.Check.Seek($@"select * from Orders where id='{e.FormattedValue}'
-and MDivisionID='{Sci.Env.User.Keyword}'", out dr))
+                     if (MyUtility.Check.Seek($@"
+select o.*,[Destination] = c.Alias from Orders o
+inner join Country c on c.ID= o.Dest
+where o.id='{e.FormattedValue}'
+and o.MDivisionID='{Sci.Env.User.Keyword}'", out dr))
                      {
                          DataTable dt;
                          string sqlcmd = $@"
@@ -138,6 +142,7 @@ WHERE oq.ID= '{e.FormattedValue}'
                          this.CurrentDetailData["Style"] = dr["StyleID"];
                          this.CurrentDetailData["CustPoNo"] = dr["CustPONo"];
                          this.CurrentDetailData["OrderID"] = e.FormattedValue;
+                         this.CurrentDetailData["Destination"] = dr["Destination"];
                          this.CurrentDetailData.EndEdit();
                      }
                      else
@@ -154,6 +159,7 @@ WHERE oq.ID= '{e.FormattedValue}'
                          this.CurrentDetailData["BuyerDelivery"] = DBNull.Value;
                          this.CurrentDetailData["TotalCrtns"] = 0;
                          this.CurrentDetailData["AccLacking"] = string.Empty;
+                         this.CurrentDetailData["Destination"] = string.Empty;
                          this.CurrentDetailData.EndEdit();
                          return;
                      }
@@ -171,6 +177,7 @@ WHERE oq.ID= '{e.FormattedValue}'
                      this.CurrentDetailData["BuyerDelivery"] = DBNull.Value;
                      this.CurrentDetailData["TotalCrtns"] = 0;
                      this.CurrentDetailData["AccLacking"] = string.Empty;
+                     this.CurrentDetailData["Destination"] = string.Empty;
                  }
              };
             #endregion
@@ -370,6 +377,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(11), iseditingreadonly: true)
                 .Numeric("TotalCrtns", header: "Total Crtns", width: Widths.AnsiChars(7), iseditingreadonly: true, decimal_places: 2, integer_places: 7)
                 .Text("AccLacking", header: "Acc Lacking", width: Widths.AnsiChars(11), iseditingreadonly: false, settings: col_acc)
+                .Text("Destination", header: "Destination", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 ;
             #endregion
             this.detailgrid.Columns["OrderID"].DefaultCellStyle.BackColor = Color.Pink;
