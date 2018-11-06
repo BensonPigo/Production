@@ -273,4 +273,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Refno" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="9f271077-0888-4980-8922-e8538cbae3d0" ChangeDateTime="11/05/2018 08:45:21">
+    <Property Name="ElementName" Value="[dbo].[Style_SizeTol].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Style_SizeTol]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Style_SizeTol" />
+  </Operation>
 </Operations>
