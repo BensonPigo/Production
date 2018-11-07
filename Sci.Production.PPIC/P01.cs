@@ -1519,7 +1519,7 @@ where POID = @poid group by POID,b.spno";
             string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out styleData))
             {
-                Sci.Production.PPIC.P01_ExpectionFormRemark form = new Sci.Production.PPIC.P01_ExpectionFormRemark(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]));
+                Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
                 form.ShowDialog(this);
             }
         }

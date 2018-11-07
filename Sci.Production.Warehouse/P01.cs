@@ -690,7 +690,7 @@ and po3.junk=0
             string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out styleData))
             {
-                Sci.Production.Warehouse.P01_ExpectionFormRemark form = new Sci.Production.Warehouse.P01_ExpectionFormRemark(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]));
+                Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
                 form.ShowDialog(this);
             }
         }
