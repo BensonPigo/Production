@@ -6,6 +6,8 @@
     [TPEFirstDyelot] DATE         NULL,
     [EditName]       VARCHAR (10) NULL,
     [EditDate]       DATETIME     NOT NULL,
-    CONSTRAINT [PK_FirstDyelot] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
+    CONSTRAINT [PK_FirstDyelot] PRIMARY KEY CLUSTERED ([SCIRefno] ASC, [SuppID] ASC, [ColorID] ASC)
 );
+
+
 

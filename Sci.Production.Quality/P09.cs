@@ -50,10 +50,20 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorNumericColumnSettings T2DP = new DataGridViewGeneratorNumericColumnSettings();
             T2IY.CellValidating += (s, e) =>
             {
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                dr["T2InspYds"] = e.FormattedValue;
+                dr.EndEdit();
                 T2Validating(s, e);
             };
             T2DP.CellValidating += (s, e) =>
             {
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                dr["T2DefectPoint"] = e.FormattedValue;
+                dr.EndEdit();
                 T2Validating(s, e);
             };
             #endregion settings Event
@@ -80,7 +90,7 @@ namespace Sci.Production.Quality
             .Date("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: T2IY) // W
             .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: T2DP) // W
-            .Text("Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("T2Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("T1InspectedYards", header: "T1 Inspected Yards", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("T1DefectPoints", header: "T1 Defect Points", width: Widths.AnsiChars(8), iseditingreadonly: true)
             ;
@@ -115,6 +125,7 @@ namespace Sci.Production.Quality
         private string Filename(DataRow dr, string type)
         {
             List<string> cols = new List<string>();
+            if (!MyUtility.Check.Empty(dr["ID"])) cols.Add(MyUtility.Convert.GetString(dr["ID"]));
             if (!MyUtility.Check.Empty(dr["PoID"])) cols.Add(MyUtility.Convert.GetString(dr["PoID"]));
             if (!MyUtility.Check.Empty(dr["seq"])) cols.Add(MyUtility.Convert.GetString(dr["seq"]));
             if (!MyUtility.Check.Empty(dr["Refno"])) cols.Add(MyUtility.Convert.GetString(dr["Refno"]));
@@ -157,19 +168,27 @@ namespace Sci.Production.Quality
             if (e.RowIndex == -1) return;
             var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
             if (null == dr) return;
-            decimal PointRate = MyUtility.Convert.GetDecimal(dr["T2DefectPoint"]) / MyUtility.Convert.GetDecimal(dr["T2InspYds"]) * 100;
+            decimal PointRate = 0;
+            if (MyUtility.Convert.GetDecimal(dr["T2InspYds"]).EqualDecimal(0))
+            {
+                PointRate = 0;
+            }
+            else
+            {
+                PointRate = MyUtility.Convert.GetDecimal(dr["T2DefectPoint"]) / MyUtility.Convert.GetDecimal(dr["T2InspYds"]) * 100;
+            }
             string sqlWEAVETYPEID = $@"
-SELECT MIN(grade)
+SELECT isnull(MIN(grade),'')
 FROM FIR_Grade WITH (NOLOCK) 
 WHERE WEAVETYPEID = (
 	SELECT WeaveTypeId 
 	FROM Fabric F
 	LEFT JOIN PO_Supp_Detail  PSD ON PSD.SCIRefno = F.SCIRefno
-	WHERE PSD.ID='{dr["id"]}' AND PSD.SEQ1 ='{dr["seq1"]}' AND PSD.SEQ2 ='{dr["seq2"]}'
+	WHERE PSD.ID='{dr["poid"]}' AND PSD.SEQ1 ='{dr["seq1"]}' AND PSD.SEQ2 ='{dr["seq2"]}'
 ) 
 AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
 ";
-            dr["Grade"] = MyUtility.GetValue.Lookup(sqlWEAVETYPEID);
+            dr["T2Grade"] = MyUtility.GetValue.Lookup(sqlWEAVETYPEID);
             dr.EndEdit();
         }
 
@@ -252,11 +271,13 @@ select selected = cast(0 as bit),
 	sr.T2Grade,
 	a.T1InspectedYards,
 	b.T1DefectPoints,
+    ed.seq1,
+    ed.seq2,
 	ed.Ukey
 from Export_Detail ed with(nolock)
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
-left join FirstDyelot fd with(nolock) on fd.SCIRefno = psd.SCIRefno
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
+left join FirstDyelot fd with(nolock) on fd.SCIRefno = psd.SCIRefno and fd.SuppID = ps.SuppID and fd.ColorID = psd.ColorID
 left join orders o with(nolock) on o.id = ed.PoID
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
@@ -275,6 +296,7 @@ outer apply(
 	where r.InvNo=ed.ID and f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
 )b
 {sqlwhere}
+and psd.FabricType = 'F'
 order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
 ";
             #endregion Sqlcmd
@@ -309,18 +331,25 @@ order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
             }
 
             DataTable changedt = dt1.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).CopyToDataTable();
+
             string sqlupdate = $@"
-update t set
-	InspectionReport=s.InspectionReport,
-	TestReport=s.TestReport,
-	ContinuityCard=s.ContinuityCard,
-	T2InspYds=s.T2InspYds,
-	T2DefectPoint=s.T2DefectPoint,
-	T2Grade=s.T2Grade,
-    EditName='{Sci.Env.User.UserID}',
-    EditDate = getdate()
-from SentReport t
-inner join #tmp s on t.Export_DetailUkey = s.ukey
+merge SentReport t
+using #tmp s
+on t.Export_DetailUkey = s.ukey
+when matched then update set 
+	t.InspectionReport=s.InspectionReport,
+	t.TestReport=s.TestReport,
+	t.ContinuityCard=s.ContinuityCard,
+	t.T2InspYds=isnull(s.T2InspYds,0),
+	t.T2DefectPoint=isnull(s.T2DefectPoint,0),
+	t.T2Grade=isnull(s.T2Grade,''),
+    t.EditName='{Sci.Env.User.UserID}',
+    t.EditDate = getdate()	
+when not matched by target then 
+insert([Export_DetailUkey]
+,[InspectionReport],[TestReport],[ContinuityCard],[T2InspYds],[T2DefectPoint],[T2Grade],[EditName],[EditDate])
+VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYds,0),isnull(s.T2DefectPoint,0),isnull(s.T2Grade,''),'{Sci.Env.User.UserID}',getdate())
+;
 ";
             DataTable odt;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(changedt, string.Empty, sqlupdate, out odt);
@@ -411,7 +440,7 @@ inner join #tmp s on t.Export_DetailUkey = s.ukey
             if (!MyUtility.Check.Empty(this.txtsupplier1.TextBox1.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@SuppID", this.txtsupplier1.TextBox1.Text));
-                sqlwheres.Add(" fd.SuppID = @SuppID ");
+                sqlwheres.Add(" ps.SuppID = @SuppID ");
             }
 
             if (!MyUtility.Check.Empty(this.txtRefno.Text))
@@ -428,24 +457,27 @@ inner join #tmp s on t.Export_DetailUkey = s.ukey
 
             if (sqlwheres.Count > 0)
             {
-                sqlwhere = "where " + string.Join(" and ", sqlwheres);
+                sqlwhere = string.Join(" and ", sqlwheres);
             }
             #endregion Where
             #region Sqlcmd
             string sqlcmd = $@"
 select distinct
-	fd.SuppID,
-	Supp.AbbEN,
+	ps.SuppID,
+	s.AbbEN,
 	psd.Refno,
-	fd.ColorID,
-	fd.FirstDyelot,
-	fd.TPEFirstDyelot,
-	fd.SCIRefno
-from FirstDyelot fd with(nolock)
-left join Supp with(nolock) on Supp.ID = fd.SuppID
-left join Po_Supp_Detail psd with(nolock) on psd.SCIRefno = fd.SCIRefno
+	psd.ColorID,
+	fd.FirstDyelot  FirstDyelot,
+	fd.TPEFirstDyelot as TPEFirstDyelot,
+	psd.SCIRefno
+from Po_Supp_Detail psd with(nolock)
+left join Po_Supp ps on ps.ID= psd.id and ps.SEQ1 = psd.seq1
+left join Supp s with(nolock) on s.ID = ps.SuppID
+left join FirstDyelot fd on fd.SCIRefno = psd.SCIRefno and fd.SuppID = ps.SuppID and fd.ColorID = psd.ColorID
+where   ps.seq1 not like '7%'  and 
 {sqlwhere}
-order by fd.SuppID
+and psd.FabricType = 'F'
+order by ps.SuppID
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out dt2);
@@ -484,12 +516,17 @@ order by fd.SuppID
 
             DataTable changedt = dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).CopyToDataTable();
             string sqlupdate = $@"
-update t set 
+merge FirstDyelot t
+using #tmp s
+on t.SCIRefno = s.SCIRefno and t.SuppID = s.SuppID and t.ColorID = s.ColorID
+when matched then update set 
 	FirstDyelot=s.FirstDyelot,
 	EditName = '{Sci.Env.User.UserID}',
 	EditDate = GETDATE()
-from FirstDyelot t
-inner join #tmp s on t.SCIRefno = s.SCIRefno
+when not matched by target then 
+insert([SCIRefno],[SuppID],[ColorID],[FirstDyelot],[EditName],[EditDate])
+VALUES(s.[SCIRefno],s.[SuppID],s.[ColorID],s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
+;
 ";
             DataTable odt;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(changedt, string.Empty, sqlupdate, out odt);
