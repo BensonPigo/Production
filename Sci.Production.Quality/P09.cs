@@ -71,7 +71,7 @@ namespace Sci.Production.Quality
             this.grid1.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid1)
             .CheckBox("selected", header: "", trueValue: 1, falseValue: 0, iseditable: true)
-            .Text("ID", header: "WK#", width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Text("ID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Date("LastEta", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PoID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("seq", header: "Seq#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -107,6 +107,7 @@ namespace Sci.Production.Quality
             #region Set_grid2 Columns
             this.grid2.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid2)
+            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -452,7 +453,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             if (!MyUtility.Check.Empty(this.txtColor.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@ColorID", this.txtColor.Text));
-                sqlwheres.Add(" fd.ColorID = @ColorID ");
+                sqlwheres.Add(" psd.ColorID = @ColorID ");
             }
 
             if (sqlwheres.Count > 0)
@@ -463,6 +464,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             #region Sqlcmd
             string sqlcmd = $@"
 select distinct
+    p.BrandID,
 	ps.SuppID,
 	s.AbbEN,
 	psd.Refno,
@@ -474,6 +476,7 @@ from Po_Supp_Detail psd with(nolock)
 left join Po_Supp ps on ps.ID= psd.id and ps.SEQ1 = psd.seq1
 left join Supp s with(nolock) on s.ID = ps.SuppID
 left join FirstDyelot fd on fd.SCIRefno = psd.SCIRefno and fd.SuppID = ps.SuppID and fd.ColorID = psd.ColorID
+left join po p on p.id = psd.id
 where   ps.seq1 not like '7%'  and 
 {sqlwhere}
 and psd.FabricType = 'F'
