@@ -68,7 +68,8 @@ BEGIN
 
 			-- RFIDReader.Type=2
 			Merge Production.dbo.BundleInOut as t
-			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type, b.SewingLineID, [LocationID]=isnull (a.LocationID, '')
+			Using (
+			select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type, b.SewingLineID, [LocationID]=isnull (a.LocationID, '')
 			FROM #tmp a inner join  RFIDReader b on a.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = b.Id
 			group by a.EpcId,b.processId, b.Type, b.SewingLineID,a.LocationID) as s
 			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
@@ -78,6 +79,21 @@ BEGIN
 				t.OutGoing = s.TransDate,	t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID
 			when not matched by target and s.type=2 then
 				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID, LocationID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID);
+
+			-- RFIDReader.Type=3
+			Merge Production.dbo.BundleInOut as t
+			Using (
+			select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type, b.SewingLineID, [LocationID]=isnull (a.LocationID, '')
+			FROM #tmp a inner join  RFIDReader b on a.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = b.Id
+			group by a.EpcId,b.processId, b.Type, b.SewingLineID,a.LocationID) as s
+			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
+				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS and s.type=3
+			when matched then 
+				update set
+				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID
+			when not matched by target and s.type=3 then
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID)
 				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID);
 
 			Commit tran
