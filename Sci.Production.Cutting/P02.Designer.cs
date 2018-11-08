@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelCuttingSP = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -101,10 +101,10 @@
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.lbshc = new System.Windows.Forms.Label();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.txtBoxMarkerNo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.lbshc = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -181,9 +181,9 @@
             this.detailpanel.Location = new System.Drawing.Point(0, 0);
             this.detailpanel.Size = new System.Drawing.Size(1004, 713);
             this.detailpanel.Controls.SetChildIndex(this.detailbtm, 0);
-            this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             this.detailpanel.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailpanel.Controls.SetChildIndex(this.splitContainer1, 0);
+            this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
             // gridicon
             // 
@@ -193,7 +193,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5993, 561);
+            this.refresh.Location = new System.Drawing.Point(6049, 561);
             // 
             // detailgridcont
             // 
@@ -202,7 +202,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(630, 585);
             // 
             // detail
             // 
@@ -454,7 +454,7 @@
             // btnQuantityBreakdown
             // 
             this.btnQuantityBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuantityBreakdown.Location = new System.Drawing.Point(816, 1);
+            this.btnQuantityBreakdown.Location = new System.Drawing.Point(817, 3);
             this.btnQuantityBreakdown.Name = "btnQuantityBreakdown";
             this.btnQuantityBreakdown.Size = new System.Drawing.Size(181, 30);
             this.btnQuantityBreakdown.TabIndex = 23;
@@ -465,7 +465,7 @@
             // btnPackingMethod
             // 
             this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPackingMethod.Location = new System.Drawing.Point(660, 2);
+            this.btnPackingMethod.Location = new System.Drawing.Point(661, 4);
             this.btnPackingMethod.Name = "btnPackingMethod";
             this.btnPackingMethod.Size = new System.Drawing.Size(145, 30);
             this.btnPackingMethod.TabIndex = 24;
@@ -649,7 +649,7 @@
             // labelSizeRatio
             // 
             this.labelSizeRatio.BackColor = System.Drawing.Color.Transparent;
-            this.labelSizeRatio.Location = new System.Drawing.Point(1, 205);
+            this.labelSizeRatio.Location = new System.Drawing.Point(1, 1);
             this.labelSizeRatio.Name = "labelSizeRatio";
             this.labelSizeRatio.Size = new System.Drawing.Size(71, 12);
             this.labelSizeRatio.TabIndex = 43;
@@ -672,16 +672,16 @@
             this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSizeRatio.Location = new System.Drawing.Point(0, 217);
+            this.gridSizeRatio.Location = new System.Drawing.Point(0, 13);
             this.gridSizeRatio.Name = "gridSizeRatio";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeRatio.RowTemplate.Height = 24;
@@ -715,7 +715,7 @@
             // 
             // labelCutplanNo
             // 
-            this.labelCutplanNo.Location = new System.Drawing.Point(141, 247);
+            this.labelCutplanNo.Location = new System.Drawing.Point(141, 43);
             this.labelCutplanNo.Name = "labelCutplanNo";
             this.labelCutplanNo.Size = new System.Drawing.Size(86, 23);
             this.labelCutplanNo.TabIndex = 45;
@@ -723,7 +723,7 @@
             // 
             // labelTotalCutQty
             // 
-            this.labelTotalCutQty.Location = new System.Drawing.Point(141, 274);
+            this.labelTotalCutQty.Location = new System.Drawing.Point(141, 70);
             this.labelTotalCutQty.Name = "labelTotalCutQty";
             this.labelTotalCutQty.Size = new System.Drawing.Size(86, 23);
             this.labelTotalCutQty.TabIndex = 46;
@@ -733,7 +733,7 @@
             // 
             this.displayCutplanNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCutplanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCutplanNo.Location = new System.Drawing.Point(231, 247);
+            this.displayCutplanNo.Location = new System.Drawing.Point(231, 43);
             this.displayCutplanNo.Name = "displayCutplanNo";
             this.displayCutplanNo.Size = new System.Drawing.Size(135, 23);
             this.displayCutplanNo.TabIndex = 22;
@@ -754,22 +754,22 @@
             this.gridDistributetoSPNo.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridDistributetoSPNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridDistributetoSPNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 15);
+            this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 18);
             this.gridDistributetoSPNo.Name = "gridDistributetoSPNo";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDistributetoSPNo.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
             this.gridDistributetoSPNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDistributetoSPNo.ShowCellToolTips = false;
-            this.gridDistributetoSPNo.Size = new System.Drawing.Size(373, 149);
+            this.gridDistributetoSPNo.Size = new System.Drawing.Size(377, 150);
             this.gridDistributetoSPNo.TabIndex = 48;
             this.gridDistributetoSPNo.TabStop = false;
             this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.distribute_grid_DataError);
@@ -814,14 +814,14 @@
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridQtyBreakdown.Location = new System.Drawing.Point(0, 14);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridQtyBreakdown.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
@@ -834,7 +834,7 @@
             // labelDistributetoSPNo
             // 
             this.labelDistributetoSPNo.BackColor = System.Drawing.Color.Transparent;
-            this.labelDistributetoSPNo.Location = new System.Drawing.Point(1, 0);
+            this.labelDistributetoSPNo.Location = new System.Drawing.Point(1, 3);
             this.labelDistributetoSPNo.Name = "labelDistributetoSPNo";
             this.labelDistributetoSPNo.Size = new System.Drawing.Size(112, 15);
             this.labelDistributetoSPNo.TabIndex = 50;
@@ -843,7 +843,7 @@
             // 
             // labelTotalDistributionQty
             // 
-            this.labelTotalDistributionQty.Location = new System.Drawing.Point(141, 330);
+            this.labelTotalDistributionQty.Location = new System.Drawing.Point(141, 126);
             this.labelTotalDistributionQty.Name = "labelTotalDistributionQty";
             this.labelTotalDistributionQty.Size = new System.Drawing.Size(133, 23);
             this.labelTotalDistributionQty.TabIndex = 51;
@@ -854,7 +854,7 @@
             this.numTotalDistributionQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalDistributionQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalDistributionQty.IsSupportEditMode = false;
-            this.numTotalDistributionQty.Location = new System.Drawing.Point(275, 330);
+            this.numTotalDistributionQty.Location = new System.Drawing.Point(275, 126);
             this.numTotalDistributionQty.Name = "numTotalDistributionQty";
             this.numTotalDistributionQty.NullValue = new decimal(new int[] {
             0,
@@ -929,7 +929,7 @@
             // 
             this.displayTotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotalCutQty.Location = new System.Drawing.Point(141, 301);
+            this.displayTotalCutQty.Location = new System.Drawing.Point(141, 97);
             this.displayTotalCutQty.Name = "displayTotalCutQty";
             this.displayTotalCutQty.Size = new System.Drawing.Size(225, 23);
             this.displayTotalCutQty.TabIndex = 23;
@@ -997,7 +997,7 @@
             // btn_Refresh
             // 
             this.btn_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Refresh.Location = new System.Drawing.Point(574, 3);
+            this.btn_Refresh.Location = new System.Drawing.Point(575, 4);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(80, 30);
             this.btn_Refresh.TabIndex = 49;
@@ -1007,7 +1007,7 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Right;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(631, 0);
             this.splitContainer1.Name = "splitContainer1";
@@ -1015,33 +1015,24 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.txtBoxMarkerNo);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel1.Controls.Add(this.lbshc);
             this.splitContainer1.Panel1.Controls.Add(this.labelCutCell);
-            this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.numMarkerLengthY);
             this.splitContainer1.Panel1.Controls.Add(this.labelMarkerLengthY);
-            this.splitContainer1.Panel1.Controls.Add(this.numTotalDistributionQty);
             this.splitContainer1.Panel1.Controls.Add(this.txtMarkerLength);
             this.splitContainer1.Panel1.Controls.Add(this.txtPatternPanel);
             this.splitContainer1.Panel1.Controls.Add(this.displayFabricType_Refno);
             this.splitContainer1.Panel1.Controls.Add(this.labelPatternPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.gridSizeRatio);
             this.splitContainer1.Panel1.Controls.Add(this.editDescription);
-            this.splitContainer1.Panel1.Controls.Add(this.labelTotalDistributionQty);
             this.splitContainer1.Panel1.Controls.Add(this.labelDescription);
             this.splitContainer1.Panel1.Controls.Add(this.btnPatternPanel);
             this.splitContainer1.Panel1.Controls.Add(this.labelUnitCons);
-            this.splitContainer1.Panel1.Controls.Add(this.displayCutplanNo);
             this.splitContainer1.Panel1.Controls.Add(this.txtFabricCombo);
             this.splitContainer1.Panel1.Controls.Add(this.labelCons);
-            this.splitContainer1.Panel1.Controls.Add(this.labelTotalCutQty);
             this.splitContainer1.Panel1.Controls.Add(this.txtFabricPanelCode);
-            this.splitContainer1.Panel1.Controls.Add(this.labelCutplanNo);
             this.splitContainer1.Panel1.Controls.Add(this.numCons);
-            this.splitContainer1.Panel1.Controls.Add(this.displayTotalCutQty);
             this.splitContainer1.Panel1.Controls.Add(this.labelFabricCombo);
-            this.splitContainer1.Panel1.Controls.Add(this.labelSizeRatio);
             this.splitContainer1.Panel1.Controls.Add(this.txtCutCell);
             this.splitContainer1.Panel1.Controls.Add(this.labelFabricPanelCode);
             this.splitContainer1.Panel1.Controls.Add(this.numUnitCons);
@@ -1052,11 +1043,61 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Panel2.Controls.Add(this.labelQtyBreakdown);
+            this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakdown);
             this.splitContainer1.Panel2MinSize = 1;
             this.splitContainer1.Size = new System.Drawing.Size(373, 678);
-            this.splitContainer1.SplitterDistance = 368;
+            this.splitContainer1.SplitterDistance = 536;
             this.splitContainer1.TabIndex = 61;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(0, 202);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.txtBoxMarkerNo);
+            this.splitContainer2.Panel1.Controls.Add(this.gridSizeRatio);
+            this.splitContainer2.Panel1.Controls.Add(this.labelSizeRatio);
+            this.splitContainer2.Panel1.Controls.Add(this.displayTotalCutQty);
+            this.splitContainer2.Panel1.Controls.Add(this.labelTotalDistributionQty);
+            this.splitContainer2.Panel1.Controls.Add(this.numTotalDistributionQty);
+            this.splitContainer2.Panel1.Controls.Add(this.displayCutplanNo);
+            this.splitContainer2.Panel1.Controls.Add(this.labelCutplanNo);
+            this.splitContainer2.Panel1.Controls.Add(this.label1);
+            this.splitContainer2.Panel1.Controls.Add(this.labelTotalCutQty);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.gridDistributetoSPNo);
+            this.splitContainer2.Panel2.Controls.Add(this.labelDistributetoSPNo);
+            this.splitContainer2.Size = new System.Drawing.Size(377, 334);
+            this.splitContainer2.SplitterDistance = 162;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // txtBoxMarkerNo
+            // 
+            this.txtBoxMarkerNo.BackColor = System.Drawing.Color.White;
+            this.txtBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBoxMarkerNo.Location = new System.Drawing.Point(231, 14);
+            this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
+            this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
+            this.txtBoxMarkerNo.TabIndex = 63;
+            this.txtBoxMarkerNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBoxMarkerNo_PopUp);
+            this.txtBoxMarkerNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxMarkerNo_Validating);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(141, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(86, 23);
+            this.label1.TabIndex = 61;
+            this.label1.Text = "Marker No.";
             // 
             // lbshc
             // 
@@ -1067,45 +1108,6 @@
             this.lbshc.Name = "lbshc";
             this.lbshc.Size = new System.Drawing.Size(0, 13);
             this.lbshc.TabIndex = 60;
-            // 
-            // txtBoxMarkerNo
-            // 
-            this.txtBoxMarkerNo.BackColor = System.Drawing.Color.White;
-            this.txtBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBoxMarkerNo.Location = new System.Drawing.Point(231, 218);
-            this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
-            this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
-            this.txtBoxMarkerNo.TabIndex = 63;
-            this.txtBoxMarkerNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtBoxMarkerNo_PopUp);
-            this.txtBoxMarkerNo.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxMarkerNo_Validating);
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(141, 218);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(86, 23);
-            this.label1.TabIndex = 61;
-            this.label1.Text = "Marker No.";
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.labelDistributetoSPNo);
-            this.splitContainer2.Panel1.Controls.Add(this.gridDistributetoSPNo);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.gridQtyBreakdown);
-            this.splitContainer2.Panel2.Controls.Add(this.labelQtyBreakdown);
-            this.splitContainer2.Size = new System.Drawing.Size(373, 306);
-            this.splitContainer2.SplitterDistance = 164;
-            this.splitContainer2.TabIndex = 0;
             // 
             // P02
             // 
@@ -1155,6 +1157,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
