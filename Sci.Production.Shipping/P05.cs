@@ -571,6 +571,19 @@ order by fwd.WhseNo",
 
             #endregion
 
+            #region 其他檢查
+
+            // 已經有做出口費用分攤，不能勾選[No Export Charge]
+            if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+                && this.chkNoExportCharge.Checked)
+            {
+                MyUtility.Msg.WarningBox("This GB# has share expense, please unselect [No Export Charge].");
+                return false;
+            }
+            #endregion
+
+            #region 檢查Shipper
+
             // 帶資料到Shipper
             string SP = string.Empty;
             DataTable dtShipper;
@@ -618,8 +631,9 @@ and GETDATE() between f.BeginDate and f.EndDate";
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return false;
             }
+            #endregion
 
-            // 新增單狀態下，取ID且檢查此ID是否存在
+            #region 新增單狀態下，取ID且檢查此ID是否存在 
             if (this.IsDetailInserting)
             {
                 string fac = MyUtility.GetValue.Lookup($@"
@@ -636,8 +650,9 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
 
                 this.CurrentMaintain["ID"] = newID;
             }
+            #endregion
 
-            // 組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM
+            #region 組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM 
             StringBuilder allPackID = new StringBuilder();
             int ttlshipqty = 0, ttlctnqty = 0;
             double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0;
@@ -651,6 +666,8 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
                 ttlnnw = MyUtility.Math.Round(ttlnnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
                 ttlcbm = MyUtility.Math.Round(ttlcbm + MyUtility.Convert.GetDouble(dr["CBM"]), 3);
             }
+            #endregion
+
             #region 檢查訂單的Currency是否一致與Payterm與表頭是否一致
             if (allPackID.Length > 0)
             {

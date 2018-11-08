@@ -1090,9 +1090,9 @@
             this.chkNoExportCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNoExportCharge.Location = new System.Drawing.Point(560, 303);
             this.chkNoExportCharge.Name = "chkNoExportCharge";
-            this.chkNoExportCharge.Size = new System.Drawing.Size(140, 20);
+            this.chkNoExportCharge.Size = new System.Drawing.Size(133, 20);
             this.chkNoExportCharge.TabIndex = 72;
-            this.chkNoExportCharge.Text = "No Export Charges";
+            this.chkNoExportCharge.Text = "No Export Charge";
             this.chkNoExportCharge.UseVisualStyleBackColor = true;
             // 
             // P05
