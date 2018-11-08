@@ -1486,7 +1486,7 @@ inner join FtyInventory f WITH (NOLOCK) on  d.ToPoid = f.PoId
                                             and d.toseq2 = f.seq2
                                             and d.ToStocktype = f.StockType
                                             and d.ToRoll = f.Roll
-                                            and d.ToDyelot != f.dyelot
+                                            and d.ToDyelot = f.dyelot
 where   f.InQty > 0 
         and toroll != '' 
         and toroll is not null 
@@ -1501,7 +1501,7 @@ where   f.InQty > 0
                 {
                     foreach (DataRow tmp in datacheck.Rows)
                     {
-                        ids += string.Format("Seq#: {1}-{2} Roll#: {3} exist in SP#: {0} but dyelot is not {4}" + Environment.NewLine
+                        ids += string.Format("Seq#: {1}-{2} Roll#: {3} Dyelot: {4} exist in SP#: {0} can't Confirm " + Environment.NewLine
                             , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"]);
                     }
                     return new DualResult(false, ids + Environment.NewLine + "Please change roll# !!");
