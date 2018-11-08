@@ -58,7 +58,7 @@ namespace Sci.Production.Basic
         {
             base.ClickEditAfter();
             this.txtCode.ReadOnly = true;
-            this.txtAbbreviation.ReadOnly = true;
+            this.txtAbbreviation.ReadOnly = false;
         }
 
         /// <summary>
