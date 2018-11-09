@@ -850,9 +850,9 @@
             this.chkImportChange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkImportChange.Location = new System.Drawing.Point(577, 207);
             this.chkImportChange.Name = "chkImportChange";
-            this.chkImportChange.Size = new System.Drawing.Size(145, 21);
+            this.chkImportChange.Size = new System.Drawing.Size(138, 21);
             this.chkImportChange.TabIndex = 55;
-            this.chkImportChange.Text = "No Import Charges";
+            this.chkImportChange.Text = "No Import Charge";
             this.chkImportChange.UseVisualStyleBackColor = true;
             // 
             // txttpeuserHandle

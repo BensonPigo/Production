@@ -260,6 +260,14 @@ where ed.ID = '{0}'", masterID);
                 }
             }
 
+            // 已經有做出口費用分攤，不能勾選[No Import/Export Charge]
+            if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+                && this.chkNoCharge.Checked)
+            {
+                MyUtility.Msg.WarningBox("This WK# has share expense, please unselect [No Import/Export Charge].");
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
 
