@@ -48,7 +48,7 @@ namespace Sci.Production.Shipping
                 .Text("WKNo", header: "WK#/Fty WK#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 3, width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("CBM", header: "CBM", decimal_places: 3, width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Numeric("CBM", header: "CBM", decimal_places: 4, width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
         // Query

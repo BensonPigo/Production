@@ -1236,7 +1236,7 @@ DECLARE @id VARCHAR(13),
 		@ordershipmodeseq VARCHAR(2),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
-		@cbm NUMERIC(8,3),
+		@cbm NUMERIC(8,4),
 		@remark NVARCHAR(125)
 --設定變數值
 SET @id = '{0}'
@@ -1557,7 +1557,7 @@ DECLARE @id VARCHAR(13),
 		@ordershipmodeseq VARCHAR(2),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
-		@cbm NUMERIC(8,3),
+		@cbm NUMERIC(8,4),
 		@remark NVARCHAR(125)
 --設定變數值
 SET @id = '{0}'
@@ -1807,7 +1807,7 @@ DECLARE @id VARCHAR(13),
 		@ordershipmodeseq VARCHAR(2),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
-		@cbm NUMERIC(8,3),
+		@cbm NUMERIC(8,4),
 		@remark NVARCHAR(125)
 --設定變數值
 SET @id = '{0}'
@@ -2114,7 +2114,7 @@ DECLARE @id VARCHAR(13),
 		@ordershipmodeseq VARCHAR(2),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
-		@cbm NUMERIC(8,3),
+		@cbm NUMERIC(8,4),
 		@remark NVARCHAR(125),
 		@article VARCHAR(8)
 
