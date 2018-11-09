@@ -331,40 +331,22 @@ order by g.ID", masterID);
                 {
                     this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
 
-                    // 取得該GMTBooking底下的PackingList
-                    IList<DataRow> pldatarows = packingListDt.Select(string.Format("INVNo='{0}'", MyUtility.Convert.GetString(dr["ID"])));
-
-                    // 如果全空，表示GB和PackingList對應有問題，回資料庫找
-                    if (pldatarows.Count == 0)
+                    // 不要相信畫面上的資訊!!! DB可能已經被改了，因此回DB撈出來最安全
+                    DataTable packingListDt_new;
+                    string sqlCmd = string.Format("SELECT ID,InspDate,InspStatus,PulloutDate FROM PackingList WHERE INVNo='{0}' ", MyUtility.Convert.GetString(dr["ID"]));
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out packingListDt_new);
+                    if (result)
                     {
-                        DataTable packingListDt_new;
-                        string sqlCmd = string.Format("SELECT ID,InspDate,InspStatus,PulloutDate FROM PackingList WHERE INVNo='{0}' ", MyUtility.Convert.GetString(dr["ID"]));
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, out packingListDt_new);
-                        if (result)
+                        foreach (DataRow pldatarow in packingListDt_new.Rows)
                         {
-                            foreach (DataRow pldatarow in packingListDt_new.Rows)
-                            {
-                                this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
-                            return failResult;
+                            this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
+                            continue;
                         }
                     }
                     else
                     {
-                        // 開始修改PackingList
-                        foreach (DataRow pldatarow in pldatarows)
-                        {
-                            if (pldatarow.RowState == DataRowState.Modified || pldatarow.RowState == DataRowState.Added)
-                            {
-                                this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
-                                continue;
-                            }
-                        }
+                        DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
+                        return failResult;
                     }
 
                     continue;
@@ -378,15 +360,15 @@ order by g.ID", masterID);
                 }
             }
 
-// DataTable dtPklst = plData;
-//            int count = plData.Rows.Count;
+            // DataTable dtPklst = plData;
+            //            int count = plData.Rows.Count;
 
-// foreach (DataRow dr in dtPklst.Rows)
-//            {
-//                // 20161206 確認正確的值都有insert
-//                updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate='{1}' , InspStatus='{2}',PulloutDate='{3}' where id = '{4}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), dr["InspDate"], dr["InspStatus"],Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyy/MM/dd"),
-// MyUtility.Convert.GetString(dr["ID"])));
-//            }
+            // foreach (DataRow dr in dtPklst.Rows)
+            //            {
+            //                // 20161206 確認正確的值都有insert
+            //                updateCmds.Add(string.Format("update PackingList set ShipPlanID = '{0}', InspDate='{1}' , InspStatus='{2}',PulloutDate='{3}' where id = '{4}';", MyUtility.Convert.GetString(CurrentMaintain["ID"]), dr["InspDate"], dr["InspStatus"],Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyy/MM/dd"),
+            // MyUtility.Convert.GetString(dr["ID"])));
+            //            }
 
             // 執行更新
             if (this.updateCmds.Count != 0)
@@ -528,7 +510,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         }
 
         // 組Update PackingList的SQL
-        private void UpdatePLCmd(DataRow pldatarow,string iNVno)
+        private void UpdatePLCmd(DataRow pldatarow, string iNVno)
         {
             this.updateCmds.Add(string.Format(
                 "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
@@ -536,7 +518,7 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
                 MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("d") + "'",
                 MyUtility.Convert.GetString(pldatarow["InspStatus"]),
                 MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("d") + "'",
-                MyUtility.Convert.GetString(pldatarow["ID"]), 
+                MyUtility.Convert.GetString(pldatarow["ID"]),
                 iNVno));
         }
 
