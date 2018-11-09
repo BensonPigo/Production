@@ -1312,7 +1312,8 @@ where ID = @INVNo";
 
                     System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
                     sp5.ParameterName = "@ttlGW";
-                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"]), 2);
+                    // ISP20181015 GW抓到小數點後3位
+                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"]), 3);
 
                     System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
                     sp6.ParameterName = "@ttlCBM";
