@@ -313,14 +313,17 @@ order by g.ID", masterID);
             this.gridDetail.EndEdit();
             this.listControlBindingSource1.EndEdit();
 
-            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
-            {
-                if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
-                {
-                    this.UpdatePLCmd(dr);
-                    continue;
-                }
-            }
+            DataTable packingListDt = (DataTable)this.listControlBindingSource1.DataSource;
+
+            // 避免ISP20181052的狀況發生，因此從修改PackingList的語法要跟GMTBooking綁在一起，分開作
+            //foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+            //{
+            //    if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
+            //    {
+            //        this.UpdatePLCmd(dr);
+            //        continue;
+            //    }
+            //}
 
             foreach (DataRow dr in details)
             {
@@ -328,6 +331,18 @@ order by g.ID", masterID);
                 {
                     this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
 
+                    // 取得該GMTBooking底下的PackingList
+                    IList<DataRow> pldatarows =packingListDt.Select(string.Format("INVNo='{0}'", MyUtility.Convert.GetString(dr["ID"])));
+
+                    // 開始修改PackingList
+                    foreach (DataRow pldatarow in pldatarows)
+                    {
+                        if (pldatarow.RowState == DataRowState.Modified || pldatarow.RowState == DataRowState.Added)
+                        {
+                            this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
+                            continue;
+                        }
+                    }
                     continue;
                 }
 
@@ -489,15 +504,16 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         }
 
         // 組Update PackingList的SQL
-        private void UpdatePLCmd(DataRow pldatarow)
+        private void UpdatePLCmd(DataRow pldatarow,string iNVno)
         {
             this.updateCmds.Add(string.Format(
-                "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}';",
+                "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                 MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("d") + "'",
                 MyUtility.Convert.GetString(pldatarow["InspStatus"]),
                 MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("d") + "'",
-                MyUtility.Convert.GetString(pldatarow["ID"])));
+                MyUtility.Convert.GetString(pldatarow["ID"]), 
+                iNVno));
         }
 
         // 組(Delete)Update PackingList的SQL
