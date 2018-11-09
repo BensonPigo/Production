@@ -335,12 +335,6 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
-            {
-                MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be modified!");
-                return false;
-            }
-
             return base.ClickEditBefore();
         }
 
@@ -351,14 +345,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             this.txtInvSerial.ReadOnly = true;
             this.txtbrand.ReadOnly = true;
             this.txtCountryDestination.TextBox1.ReadOnly = true;
-            if (this.CurrentMaintain["Status"].ToString().ToUpper() == "NEW")
-            {
-                this.txtShipmodeShippingMode.ReadOnly = false;
-            }
-            else
-            {
-                this.txtShipmodeShippingMode.ReadOnly = true;
-            }
+            this.txtShipmodeShippingMode.ReadOnly = true;
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
@@ -393,6 +380,38 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 this.txtTerminalWhse.ReadOnly = false;
 
                 // textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            }
+
+            switch (this.CurrentMaintain["Status"].ToString().ToUpper())
+            {
+                case "NEW":
+                    this.txtShipmodeShippingMode.ReadOnly = false;
+                    break;
+                case "CONFIRMED":
+                    // Confirm後, 仍可以按[Edit] 編輯[No Export Charge]欄位
+                    this.dateETA.ReadOnly = true;
+                    this.dateETD.ReadOnly = true;
+                    this.txtRemark.ReadOnly = true;
+                    this.txtpaytermarPaymentTerm.TextBox1.ReadOnly = true;
+                    this.txtVslvoyFltNo.ReadOnly = true;
+                    this.txtShiptermShipmentTerm.ReadOnly = true;
+
+                    this.dateInvDate.ReadOnly = true;
+                    this.dateFCRDate.ReadOnly = true;
+                    this.txtCustCD.ReadOnly = true;
+                    this.txtUserHandle.TextBox1.ReadOnly = true;
+                    this.txtSubconForwarder.TextBox1.ReadOnly = true;
+                    this.comboContainerType.ReadOnly = true;
+                    this.txtSONo.ReadOnly = true;
+                    this.col_lock.IsEditingReadOnly = true;
+                    this.col_crd.IsEditingReadOnly = true;
+                    this.detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
+                    this.detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Black;
+                    this.btnImportfrompackinglist.Enabled = false;
+                    this.gridicon.Remove.Enabled = false;
+                    this.txtCutoffDate.ReadOnly = true;
+                    this.txtTerminalWhse.ReadOnly = true;
+                    break;
             }
         }
 
