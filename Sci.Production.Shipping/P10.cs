@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Transactions;
 
 namespace Sci.Production.Shipping
 {
@@ -352,12 +353,27 @@ order by g.ID", masterID);
             if (this.updateCmds.Count != 0)
             {
                 DualResult result;
-                result = DBProxy.Current.Executes(null, this.updateCmds);
-                if (!result)
+                // 2018/11/09 Benson 加上Transaction
+                using (TransactionScope scope = new TransactionScope())
                 {
-                    DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
-                    return failResult;
+                    try
+                    {
+                        result = DBProxy.Current.Executes(null, this.updateCmds);
+                        if (!result)
+                        {
+                            DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
+                            return failResult;
+                        }
+                        scope.Complete();
+                    }
+                    catch (Exception ex)
+                    {
+                        scope.Dispose();
+                        DualResult failResult = new DualResult(false, "Update fail!!\r\n" + ex.Message.ToString());
+                        return failResult;
+                    }
                 }
+
             }
 
             return Result.True;
