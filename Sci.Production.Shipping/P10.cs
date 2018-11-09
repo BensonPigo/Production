@@ -332,17 +332,41 @@ order by g.ID", masterID);
                     this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
 
                     // 取得該GMTBooking底下的PackingList
-                    IList<DataRow> pldatarows =packingListDt.Select(string.Format("INVNo='{0}'", MyUtility.Convert.GetString(dr["ID"])));
+                    IList<DataRow> pldatarows = packingListDt.Select(string.Format("INVNo='{0}'", MyUtility.Convert.GetString(dr["ID"])));
 
-                    // 開始修改PackingList
-                    foreach (DataRow pldatarow in pldatarows)
+                    // 如果全空，表示GB和PackingList對應有問題，回資料庫找
+                    if (pldatarows.Count == 0)
                     {
-                        if (pldatarow.RowState == DataRowState.Modified || pldatarow.RowState == DataRowState.Added)
+                        DataTable packingListDt_new;
+                        string sqlCmd = string.Format("SELECT ID,InspDate,InspStatus,PulloutDate FROM PackingList WHERE INVNo='{0}' ", MyUtility.Convert.GetString(dr["ID"]));
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, out packingListDt_new);
+                        if (result)
                         {
-                            this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
-                            continue;
+                            foreach (DataRow pldatarow in packingListDt_new.Rows)
+                            {
+                                this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            DualResult failResult = new DualResult(false, "Update fail!!\r\n" + result.ToString());
+                            return failResult;
                         }
                     }
+                    else
+                    {
+                        // 開始修改PackingList
+                        foreach (DataRow pldatarow in pldatarows)
+                        {
+                            if (pldatarow.RowState == DataRowState.Modified || pldatarow.RowState == DataRowState.Added)
+                            {
+                                this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
+                                continue;
+                            }
+                        }
+                    }
+
                     continue;
                 }
 
