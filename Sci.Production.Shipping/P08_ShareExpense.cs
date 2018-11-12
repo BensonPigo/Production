@@ -345,7 +345,7 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                 .Text(MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18), settings: wKNO)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 3, iseditingreadonly: true)
-                .Numeric("CBM", header: "CBM", decimal_places: 3, iseditingreadonly: true)
+                .Numeric("CBM", header: "CBM", decimal_places: 4, iseditingreadonly: true)
                 .Numeric("Amount", header: "Total Amount", decimal_places: 2, iseditingreadonly: true);
             this.gridBLNo.SelectionChanged += (s, e) =>
             {
@@ -869,7 +869,7 @@ DECLARE @apid VARCHAR(13),
 		@shipmode VARCHAR(10),
 		@blno VARCHAR(20),
 		@gw NUMERIC(9,2),
-		@cbm NUMERIC(10,3),
+		@cbm NUMERIC(10,4),
 		@currency VARCHAR(3),
 		@subtype VARCHAR(15)
 
@@ -933,7 +933,7 @@ DECLARE @apid VARCHAR(13),
 		@shipmode VARCHAR(10),
 		@blno VARCHAR(20),
 		@gw NUMERIC(9,2),
-		@cbm NUMERIC(10,3),
+		@cbm NUMERIC(10,4),
 		@currency VARCHAR(3),
 		@subtype VARCHAR(15)
 

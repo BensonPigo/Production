@@ -15,7 +15,7 @@ namespace Sci.Production.Cutting
     {
         DataTable printData;
         string WorkOrder, factory, CuttingSP1, CuttingSP2;
-        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2;
+        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2;
         StringBuilder condition = new StringBuilder();
 
         public R03(ToolStripMenuItem menuitem)
@@ -46,8 +46,16 @@ namespace Sci.Production.Cutting
             EarliestSCIDelivery2 = dateEarliestSCIDelivery.Value2;
             EarliestSewingInline1 = dateEarliestSewingInline.Value1;
             EarliestSewingInline2 = dateEarliestSewingInline.Value2;
-            //不可 Est. Cut Date, Cutting SP#, Earliest SCI Delivery, Earliest Sewing Inline四項全為空值
-            if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2) && MyUtility.Check.Empty(CuttingSP1) && MyUtility.Check.Empty(CuttingSP2) && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2))
+            EarliestBuyerDelivery1 = dateEarliestBuyerDelivery.Value1;
+            EarliestBuyerDelivery2 = dateEarliestBuyerDelivery.Value2;
+
+            //不可 Est. Cut Date, Cutting SP#, Earliest SCI Delivery, Earliest Sewing Inline5項全為空值
+            if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2) 
+                && MyUtility.Check.Empty(CuttingSP1) && MyUtility.Check.Empty(CuttingSP2) 
+                && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) 
+                && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2)
+                && MyUtility.Check.Empty(EarliestBuyerDelivery1) && MyUtility.Check.Empty(EarliestBuyerDelivery2)
+                )
             {
                 MyUtility.Msg.WarningBox("Can't all empty!!");
                 return false;
@@ -147,11 +155,9 @@ outer apply(
 	)
 )as SQty
 outer apply(
-	select MinSCI = (
-		select min(SCIDelivery) 
-		from Orders as o WITH (NOLOCK) 
-		where o.ID = wo.OrderID
-	)
+	select MinSci=min(o.SCIDelivery), MinOBD=Min(o.BuyerDelivery) 
+	from Orders as o WITH (NOLOCK) 
+	where o.poid = wo.id
 ) as MinSci
 where 1=1
 ");
@@ -184,8 +190,18 @@ where 1=1
             if (!MyUtility.Check.Empty(CuttingSP2))
             {
                 sqlCmd.Append(string.Format(" and wo.ID <= '{0}'", CuttingSP2));
-            }            
-            
+            }
+
+            if (!MyUtility.Check.Empty(EarliestBuyerDelivery1))
+            {
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= '{0}'", Convert.ToDateTime(EarliestBuyerDelivery1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(EarliestBuyerDelivery2))
+            {
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= '{0}' ", Convert.ToDateTime(EarliestBuyerDelivery2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(EarliestSCIDelivery1))
             {
                 sqlCmd.Append(string.Format(" and MinSci.MinSCI >= '{0}'", Convert.ToDateTime(EarliestSCIDelivery1).ToString("d")));

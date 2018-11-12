@@ -293,6 +293,7 @@
             this.displayKit = new Sci.Win.UI.DisplayBox();
             this.label2 = new Sci.Win.UI.Label();
             this.txtDevSample = new Sci.Win.UI.TextBox();
+            this.btnExpectionFormRemark = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -309,6 +310,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnExpectionFormRemark);
             this.detailcont.Controls.Add(this.txtDevSample);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.displayKit);
@@ -3285,6 +3287,16 @@
             this.txtDevSample.Size = new System.Drawing.Size(35, 21);
             this.txtDevSample.TabIndex = 222;
             // 
+            // btnExpectionFormRemark
+            // 
+            this.btnExpectionFormRemark.Location = new System.Drawing.Point(930, 359);
+            this.btnExpectionFormRemark.Name = "btnExpectionFormRemark";
+            this.btnExpectionFormRemark.Size = new System.Drawing.Size(30, 25);
+            this.btnExpectionFormRemark.TabIndex = 4;
+            this.btnExpectionFormRemark.Text = "R";
+            this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
+            this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 722);
@@ -3581,5 +3593,6 @@
         private Win.UI.Label labelKit;
         private Win.UI.TextBox txtDevSample;
         private Win.UI.Label label2;
+        private Win.UI.Button btnExpectionFormRemark;
     }
 }
