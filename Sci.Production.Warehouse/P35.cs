@@ -596,22 +596,35 @@ select a.id,a.PoId,a.Seq1,a.Seq2
     ,a.StockType
     ,a.ukey
     ,a.ftyinventoryukey
-    ,p1.BrandId
-    ,p1.ColorID
-into #tmp
+    ,[location] = Getlocation.Value 
+    ,[ColorID] = ColorID.Value
 from dbo.Adjust_Detail a WITH (NOLOCK) 
-inner join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-	and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
-left join PO_Supp_Detail p1 WITH (NOLOCK) on fi.PoId= p1.ID  and fi.seq1 = p1.SEQ1 and fi.SEQ2 = p1.seq2
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
+left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
+    and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
+outer apply (
+    select   [Value] = stuff((	select ',' + MtlLocationID
+									from (	
+										select d.MtlLocationID	
+										from dbo.FtyInventory_Detail d WITH (NOLOCK) 
+										where	ukey =   fi.ukey
+												and d.MtlLocationID != ''
+												and d.MtlLocationID is not null) t
+									for xml path('')) 
+								, 1, 1, '')
+) as Getlocation
+outer apply (
+	select	[Value] = stuff((select '/' + m.ColorID 
+			   from dbo.Color as c 
+			   LEFT join dbo.Color_multiple as m on m.ID = c.ID 
+				  								    and m.BrandID = c.BrandId 
+			   where c.ID = p1.ColorID and c.BrandId =  p1.BrandId 
+			   order by m.Seqno 
+			   for xml path('') ) 
+			 , 1, 1, '')  
+) as ColorID
 Where a.id = '{0}'
-
-select a.*
-	,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
-	,dbo.Getlocation(a.ukey) location
-	,ColorID =dbo.GetColorMultipleID(a.BrandId, a.ColorID)
-from #tmp a
-
-drop table #tmp", masterID);
+", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 
