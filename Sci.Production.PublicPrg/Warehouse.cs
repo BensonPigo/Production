@@ -1470,46 +1470,6 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) "
 
             #endregion -- 檢查負數庫存 --
 
-            #region -- 檢查目的Roll是否已存在資料 --
-
-            sqlcmd = string.Format(@"
-Select  d.ToPoid
-        , d.ToSeq1
-        , d.toseq2
-        , d.ToRoll
-        , d.ToDyelot
-        , d.Qty
-        , f.InQty    
-from dbo.SubTransfer_Detail d WITH (NOLOCK) 
-inner join FtyInventory f WITH (NOLOCK) on  d.ToPoid = f.PoId
-                                            and d.ToSeq1 = f.Seq1
-                                            and d.toseq2 = f.seq2
-                                            and d.ToStocktype = f.StockType
-                                            and d.ToRoll = f.Roll
-                                            and d.ToDyelot = f.dyelot
-where   f.InQty > 0 
-        and toroll != '' 
-        and toroll is not null 
-        and d.Id = '{0}'", SubTransfer_ID);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-            {
-                return result;
-            }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
-                {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += string.Format("Seq#: {1}-{2} Roll#: {3} Dyelot: {4} exist in SP#: {0} can't Confirm " + Environment.NewLine
-                            , tmp["topoid"], tmp["toseq1"], tmp["toseq2"], tmp["toroll"], tmp["todyelot"]);
-                    }
-                    return new DualResult(false, ids + Environment.NewLine + "Please change roll# !!");
-                }
-            }
-
-            #endregion
-
             #region -- 更新表頭狀態資料 --
             sqlupd3 = string.Format(@"
 update SubTransfer 
