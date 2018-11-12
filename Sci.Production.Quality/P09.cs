@@ -45,7 +45,7 @@ namespace Sci.Production.Quality
                 if (e.RowIndex == -1) return;
                 var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                if (MyUtility.Convert.GetBool(dr["isI"]))
+                if (!MyUtility.Check.Empty(e.Value))
                 {
                     e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
                     e.CellStyle.ForeColor = Color.Blue;
@@ -56,7 +56,7 @@ namespace Sci.Production.Quality
                 if (e.RowIndex == -1) return;
                 var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                 if (null == dr) return;
-                if (MyUtility.Convert.GetBool(dr["isT"]))
+                if (!MyUtility.Check.Empty(e.Value))
                 {
                     e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
                     e.CellStyle.ForeColor = Color.Blue;
@@ -270,9 +270,7 @@ select selected = cast(0 as bit),
 	b.T1DefectPoints,
     ed.seq1,
     ed.seq2,
-	ed.Ukey,
-    isI=cast(0 as bit),
-    isT=cast(0 as bit)
+	ed.Ukey
 from Export_Detail ed with(nolock)
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
@@ -304,33 +302,6 @@ order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
             {
                 this.ShowErr(result);
                 return;
-            }
-
-            foreach (DataRow dr in dt1.Rows)
-            {
-                string filepath = Filedic(dr); // 取得根目錄+子目錄
-                
-                IList<string> ftpDir = new List<string>();
-                result = MyUtility.FTP.FTP_GetFileList(filepath, out ftpDir);  // 底下所有檔案名稱
-                if (result && ftpDir.Count > 0)
-                {
-                    string filename = Filename(dr, "-Inspection");
-                    string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
-
-                    if (fs.Length > 0)
-                    {
-                        dr["isI"] = true;
-                    }
-
-                    filename = Filename(dr, "-test");
-                    fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
-                    if (fs.Length > 0)
-                    {
-                        dr["isT"] = true;
-                    }
-                }
-                dr.EndEdit();
-                dr.AcceptChanges();
             }
 
             dt1.AcceptChanges();
