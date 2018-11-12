@@ -42,11 +42,25 @@ namespace Sci.Production.Quality
             DataGridViewGeneratorDateColumnSettings Test = new DataGridViewGeneratorDateColumnSettings();
             Inspection.CellFormatting += (s, e) =>
             {
-                SSDCellFormatting(s, e, "-Inspection");
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                if (MyUtility.Convert.GetBool(dr["isI"]))
+                {
+                    e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
+                    e.CellStyle.ForeColor = Color.Blue;
+                }
             };
             Test.CellFormatting += (s, e) =>
             {
-                SSDCellFormatting(s, e, "-test");
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                if (MyUtility.Convert.GetBool(dr["isT"]))
+                {
+                    e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
+                    e.CellStyle.ForeColor = Color.Blue;
+                }
             };
             // 帶出grade
             DataGridViewGeneratorNumericColumnSettings T2IY = new DataGridViewGeneratorNumericColumnSettings();
@@ -144,31 +158,6 @@ namespace Sci.Production.Quality
         {
             string fp = Filepath + MyUtility.Convert.GetString(dr["AbbEN"]) + " " + MyUtility.Convert.GetString(dr["SuppID"]) + @"\";
             return fp;
-        }
-
-        private void SSDCellFormatting(object s, DataGridViewCellFormattingEventArgs e, string type)
-        {
-            if (e.RowIndex == -1) return;
-            var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
-            if (null == dr) return;
-
-            string filepath = Filedic(dr); // 取得根目錄+子目錄
-
-            DualResult result;
-            IList<string> ftpDir = new List<string>();
-            result = MyUtility.FTP.FTP_GetFileList(filepath, out ftpDir);  // 底下所有檔案名稱
-
-            if (result && ftpDir.Count >0)
-            {
-                string filename = Filename(dr, type);
-                string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
-
-                if (fs.Length > 0)
-                {
-                    e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
-                    e.CellStyle.ForeColor = Color.Blue;
-                }
-            }
         }
 
         private void T2Validating(object s, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
@@ -281,7 +270,9 @@ select selected = cast(0 as bit),
 	b.T1DefectPoints,
     ed.seq1,
     ed.seq2,
-	ed.Ukey
+	ed.Ukey,
+    isI=cast(0 as bit),
+    isT=cast(0 as bit)
 from Export_Detail ed with(nolock)
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
@@ -315,8 +306,35 @@ order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
                 return;
             }
 
-            this.listControlBindingSource1.DataSource = dt1;
+            foreach (DataRow dr in dt1.Rows)
+            {
+                string filepath = Filedic(dr); // 取得根目錄+子目錄
+                
+                IList<string> ftpDir = new List<string>();
+                result = MyUtility.FTP.FTP_GetFileList(filepath, out ftpDir);  // 底下所有檔案名稱
+                if (result && ftpDir.Count > 0)
+                {
+                    string filename = Filename(dr, "-Inspection");
+                    string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
+
+                    if (fs.Length > 0)
+                    {
+                        dr["isI"] = true;
+                    }
+
+                    filename = Filename(dr, "-test");
+                    fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
+                    if (fs.Length > 0)
+                    {
+                        dr["isT"] = true;
+                    }
+                }
+                dr.EndEdit();
+                dr.AcceptChanges();
+            }
+
             dt1.AcceptChanges();
+            this.listControlBindingSource1.DataSource = dt1;
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
