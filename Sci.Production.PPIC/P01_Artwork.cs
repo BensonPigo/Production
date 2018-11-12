@@ -29,12 +29,21 @@ namespace Sci.Production.PPIC
 
             #region Artwork Tab
 
-            string sqlCmd = string.Format(
-                            @"  SELECT oa.* ,''AS CreateBy,''AS EditBy,''AS UnitID, a.ArtworkUnit 
-                                FROM Order_Artwork oa 
-                                LEFT JOIN ArtworkType a WITH (NOLOCK) on oa.ArtworkTypeID = a.ID
-                                WHERE oa.ID = '{0}'
-                                ORDER BY ArtworkTypeID,Article", this.Order_ArtworkId);
+            string sqlCmd = $@" 
+SELECT oa.ID,oa.AddDate,oa.AddName,oa.ArtworkID,oa.ArtworkName,oa.ArtworkTypeID,oa.Cost,oa.EditDate,oa.EditName,oa.PatternCode,oa.PatternDesc,oa.Price,oa.Qty,oa.Remark,oa.TMS,oa.Ukey 
+	,''AS CreateBy,''AS EditBy,''AS UnitID, a.ArtworkUnit,article=iif(oa.article='----', art.article,oa.article)
+FROM Order_Artwork oa 
+LEFT JOIN ArtworkType a WITH (NOLOCK) on oa.ArtworkTypeID = a.ID
+outer apply(
+	select article = stuff((
+		select distinct concat(',',oaa.Article)
+		from Order_Article oaa with(nolock)
+		inner join orders o with(nolock) on oaa.id = o.id
+		where o.id = (select poid from orders o2 with(nolock) where o2.id = oa.id)
+	),1,1,'')
+)art
+WHERE oa.ID = '{this.Order_ArtworkId}'
+ORDER BY ArtworkTypeID,Article";
             DataTable artworkUnit;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out artworkUnit);
 
@@ -80,7 +89,7 @@ namespace Sci.Production.PPIC
 
             //表格的head是動態的，ArtworkTypeID + ArtworkID = 一組key
             sqlCmd = string.Format(
-                            @"  select  DISTINCT
+                            $@"  select  DISTINCT
                                 oa.ArtworkTypeID
                                 ,oa.ArtworkID
 
@@ -96,39 +105,43 @@ namespace Sci.Production.PPIC
             result = DBProxy.Current.Select(null, sqlCmd, out head);
 
             //左半邊的單號
-            sqlCmd = string.Format(
-                            @"  select DISTINCT
-                                oa.ID
-                                ,oa.Article
-                                ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
-                                from Orders o
-                                inner join Order_Artwork oa on o.ID = oa.ID
-                                left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-                                where o.ID in (select  id from Orders o1 where 
-                                o1.POID = o.POID 
-                                AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
-                                group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
-                                order by oa.ID", this.Order_ArtworkId);
+            sqlCmd = $@"
+select DISTINCT
+    oa.ID
+    ,ax.article
+    ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+from Orders o
+inner join Order_Artwork oa on o.ID = oa.ID
+left join Order_Article oaa on oaa.id = o.id
+left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
+outer apply(select article=iif(oa.article='----', oaa.article,oa.article))ax
+where o.ID in (select  id from Orders o1 where 
+o1.POID = o.POID 
+AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
+group by oa.PatternCode,ax.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
+order by oa.ID";
             DataTable Left;
             result = DBProxy.Current.Select(null, sqlCmd, out Left);
 
             //一組key對應的只會有一組 PatternCode
-            sqlCmd = string.Format(
-                            @"  select DISTINCT
-                                oa.ID                               
-                                ,oa.ArtworkTypeID
-                                ,oa.ArtworkID
-                                ,oa.Article
-                                ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
-                                ,oa.PatternCode
-                                from Orders o
-                                inner join Order_Artwork oa on o.ID = oa.ID
-                                left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
-                                where o.ID in (select  id from Orders o1 where 
-                                o1.POID = o.POID 
-                                AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
-                                group by oa.PatternCode,oa.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
-                                order by oa.ArtworkTypeID", this.Order_ArtworkId);
+            sqlCmd = $@"
+select DISTINCT
+    oa.ID                               
+    ,oa.ArtworkTypeID
+    ,oa.ArtworkID
+    ,ax.Article
+    ,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+    ,oa.PatternCode
+from Orders o
+inner join Order_Artwork oa on o.ID = oa.ID
+left join Order_Article oaa on oaa.id = o.id
+left join Order_Qty oq on o.ID = oq.ID and oq.Article = oa.Article
+outer apply(select article=iif(oa.article='----', oaa.article,oa.article))ax
+where o.ID in (select  id from Orders o1 where 
+o1.POID = o.POID 
+AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
+group by oa.PatternCode,ax.Article,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,o.Junk
+order by oa.ArtworkTypeID";
             DataTable value;
             result = DBProxy.Current.Select(null, sqlCmd, out value);
 
@@ -218,36 +231,37 @@ namespace Sci.Production.PPIC
             DataTable Left_2;
             result = DBProxy.Current.Select(null, sqlCmd, out Left_2);
 
-
-            sqlCmd = string.Format(
-                            @"  
-
-                                    with LeftCol as (
-                                    SELECT DISTINCT 
-                                    oa.ArtworkTypeID ,oa.ArtworkID,oa.PatternCode
-                                    FROM Orders o
-                                    INNER JOIN Order_Artwork oa ON o.ID = oa.ID
-                                    LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
-                                    WHERE Exists (select 1 FROM Orders o1 WHERE
-                                    o1.POID = o.POID 
-                                    AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
-                                    GROUP BY o.POID ,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
-                                    )
-                                    SELECT 
-                                    DISTINCT 
-                                    lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode ,oa.Article,CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
-                                    FROM Orders o
-                                    INNER JOIN Order_Artwork oa ON o.ID = oa.ID
-                                    LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
-                                    LEFT JOIN LeftCol lc ON  lc.ArtworkTypeID=oa.ArtworkTypeID AND lc.ArtworkID=oa.ArtworkID AND lc.PatternCode=oa.PatternCode
-                                    WHERE Exists (select 1 FROM Orders o1 WHERE 
-                                    o1.POID = o.POID 
-                                    AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{0}') )
-                                    GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,oa.Article,o.Junk
-                                    ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,oa.Article
-
-                                ", this.Order_ArtworkId);
-
+            sqlCmd = $@"
+;with LeftCol as (
+	SELECT DISTINCT oa.ArtworkTypeID ,oa.ArtworkID,oa.PatternCode
+	FROM Orders o
+	INNER JOIN Order_Artwork oa ON o.ID = oa.ID
+	LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
+	WHERE Exists (select 1 FROM Orders o1 WHERE
+	o1.POID = o.POID 
+	AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
+	GROUP BY o.POID ,oa.ID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,oa.Article,o.Junk
+)
+SELECT 
+DISTINCT 
+lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode ,article=iif(oa.article='----', art.article,oa.article),CASE WHEN o.Junk = 1 THEN 0 WHEN sum(oq.Qty) IS NULL THEN 0 ELSE sum(oq.Qty)END as OrderQty  
+FROM Orders o
+INNER JOIN Order_Artwork oa ON o.ID = oa.ID
+LEFT JOIN Order_Qty oq ON o.ID = oq.ID AND oq.Article = oa.Article
+LEFT JOIN LeftCol lc ON  lc.ArtworkTypeID=oa.ArtworkTypeID AND lc.ArtworkID=oa.ArtworkID AND lc.PatternCode=oa.PatternCode
+outer apply(
+	select article = stuff((
+		select distinct concat(',', oaa.Article)
+		from Order_Article oaa with(nolock)
+		where oaa.id = o.poid
+	),1,1,'')
+)art
+WHERE Exists (select 1 FROM Orders o1 WHERE 
+o1.POID = o.POID 
+AND o1.POID=(SELECT TOP 1 POID FROM Orders WHERE ID='{this.Order_ArtworkId}') )
+GROUP BY lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,art.Article,oa.article,o.Junk
+ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,Article
+";
             DataTable Content;
             result = DBProxy.Current.Select(null, sqlCmd, out Content);
 
