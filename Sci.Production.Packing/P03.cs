@@ -1072,7 +1072,8 @@ where CustCD.value != @CustCD
                 nnw = MyUtility.Math.Round(nnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
                 if (MyUtility.Check.Empty(dr["CTNQty"]) || MyUtility.Convert.GetInt(dr["CTNQty"]) > 0)
                 {
-                    cbm = MyUtility.Math.Round(cbm + (MyUtility.Math.Round(MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo")), 3) * MyUtility.Convert.GetInt(dr["CTNQty"])), 4);
+                    // ISP20181015 CBM抓到小數點後4位
+                    cbm = cbm + (MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo")) * MyUtility.Convert.GetInt(dr["CTNQty"]));
                 }
 
                 #endregion
@@ -1311,11 +1312,13 @@ where ID = @INVNo";
 
                     System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
                     sp5.ParameterName = "@ttlGW";
-                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"]), 2);
+                    // ISP20181015 GW抓到小數點後3位
+                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"]), 3);
 
                     System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
                     sp6.ParameterName = "@ttlCBM";
-                    sp6.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"]), 2);
+                    // ISP20181015 CBM抓到小數點後4位
+                    sp6.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"]);
 
                     System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
                     sp7.ParameterName = "@INVNo";

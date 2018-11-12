@@ -19,7 +19,9 @@ BEGIN
 	DECLARE @NW numeric(9,3);
 	DECLARE @GW numeric(9,3);
 	DECLARE @NNW numeric(9,3);
-	DECLARE @CBM numeric(10,3);
+	DECLARE @CBM numeric(10,4);
+	DECLARE @OtherCBM numeric(10,4);
+	DECLARE @INVNo varchar(20);
 
     -- Insert statements for procedure here
 	WITH Packing as (
@@ -57,10 +59,14 @@ BEGIN
 		SET @msg += N'SP# M not equal to login system M so cannot confirm! '		
 	END
 
-	-- 還沒有Invoice No就不可以做Confirm
+	-- 還沒有Invoice No就不可以做Confirm，有的話取得INVNo
 	IF EXISTS (SELECT * FROM PackingList WHERE ID=@ID AND (INVNo='' OR INVNo IS NULL))
 	BEGIN 
 		SET @msg += N'Shipping is not yet booking so cannot confirm!'
+	END
+	ELSE
+	BEGIN
+	   SET @INVNo = (SELECT DISTINCT INVNo FROM PackingList WHERE ID=@ID);
 	END
 
 	-- 檢查累計Pullout數不可超過訂單數量
@@ -183,7 +189,15 @@ BEGIN
 				GW      = @GW,
 				NNW     = @NNW,
 				CBM     = @CBM
-			where id = @ID
+			where id = @ID;
+
+			--取得該INVNo其他的CBM，用以加總，回寫至GMTBooking
+			SET @OtherCBM =(SELECT [CBM]=ISNULL(SUM(CBM),0) FROM PackingList WITH (NOLOCK) WHERE INVNo = @INVNo AND ID != @ID);
+
+			UPDATE GMTBooking SET 
+				   TotalCBM = @CBM+@OtherCBM 
+			WHERE ID = @INVNo;
+
 			COMMIT TRANSACTION;
 	END TRY
 	BEGIN CATCH

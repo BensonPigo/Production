@@ -816,7 +816,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             this.CurrentMaintain["TotalNW"] = MyUtility.Math.Round(ttlnw, 3);
             this.CurrentMaintain["TotalGW"] = MyUtility.Math.Round(ttlgw, 3);
             this.CurrentMaintain["TotalNNW"] = MyUtility.Math.Round(ttlnnw, 3);
-            this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 3);
+            this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 4);
 
             return base.ClickSaveBefore();
         }
@@ -830,7 +830,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 if (dr.RowState == DataRowState.Modified)
                 {
-                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(dr["ID"])));
+                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}' , ShipPlanID = '{2}' where ID = '{1}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"])));
                 }
 
                 if (dr.RowState == DataRowState.Added)

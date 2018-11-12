@@ -659,7 +659,8 @@ order by os.Seq", dr["OrderID"].ToString(),
                 if (drCtnQty > 0)
                 {
                     ctnCBM = MyUtility.GetValue.Lookup("CBM", dr["RefNo"].ToString(), "LocalItem", "RefNo");
-                    cbm = MyUtility.Math.Round(cbm + (MyUtility.Math.Round(MyUtility.Convert.GetDouble(ctnCBM), 3) * drCtnQty), 4);
+                    // ISP20181015 CBM抓到小數點後4位
+                    cbm = MyUtility.Math.Round(cbm + (MyUtility.Convert.GetDouble(ctnCBM) * drCtnQty), 4);
                 }
                 #endregion
 
@@ -894,11 +895,13 @@ where ID = @INVNo";
 
                     System.Data.SqlClient.SqlParameter sp5 = new System.Data.SqlClient.SqlParameter();
                     sp5.ParameterName = "@ttlGW";
-                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"].ToString()), 2);
+                    // ISP20181015 GW抓到小數點後3位
+                    sp5.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["GW"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["GW"].ToString()), 3);
 
                     System.Data.SqlClient.SqlParameter sp6 = new System.Data.SqlClient.SqlParameter();
                     sp6.ParameterName = "@ttlCBM";
-                    sp6.Value = MyUtility.Math.Round(MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString()), 2);
+                    // ISP20181015 CBM抓到小數點後4位
+                    sp6.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString());
 
                     System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
                     sp7.ParameterName = "@INVNo";
@@ -1094,15 +1097,88 @@ where ID = @INVNo";
                 return;
             }
 
-            this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
-            this.result = DBProxy.Current.Execute(null, this.sqlCmd);
-            if (!this.result)
+            using (TransactionScope transactionScope = new TransactionScope())
             {
-                MyUtility.Msg.WarningBox("Confirm fail !\r\n" + this.result.ToString());
-                return;
+                try
+                {
+                    // PackingList狀態改為Confirm
+                    this.sqlCmd = string.Format("update PackingList set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, this.CurrentMaintain["ID"].ToString());
+                    this.result = DBProxy.Current.Execute(null, this.sqlCmd);
+                    if (!this.result)
+                    {
+
+                        transactionScope.Dispose();
+                        MyUtility.Msg.WarningBox("Confirm fail !\r\n" + this.result.ToString());
+                        return;
+                    }
+
+                    #region 修改GMTBooking
+
+                    if (!MyUtility.Check.Empty(this.CurrentMaintain["INVNo"]))
+                    {
+                        // 取得其他PackingList的CBM，用以加總
+                        this.sqlCmd = string.Format(
+                                            @"select isnull(sum(CBM),0) as CBM from PackingList WITH (NOLOCK) where INVNo = '{0}' and ID != '{1}'",
+                                            this.CurrentMaintain["INVNo"].ToString(),
+                                            this.CurrentMaintain["ID"].ToString());
+
+                        DataTable summaryData;
+
+                        if (this.result = DBProxy.Current.Select(null, this.sqlCmd, out summaryData))
+                        {
+                            string updateCmd = @"update GMTBooking
+                                        set  TotalCBM = @ttlCBM
+                                        where ID = @INVNo";
+
+                            System.Data.SqlClient.SqlParameter ttlCBM = new System.Data.SqlClient.SqlParameter();
+
+                            ttlCBM.ParameterName = "@ttlCBM";
+                            ttlCBM.Value = MyUtility.Convert.GetDouble(summaryData.Rows[0]["CBM"]) + MyUtility.Convert.GetDouble(this.CurrentMaintain["CBM"].ToString());
+
+                            System.Data.SqlClient.SqlParameter iNVNo = new System.Data.SqlClient.SqlParameter();
+                            iNVNo.ParameterName = "@INVNo";
+                            iNVNo.Value = this.CurrentMaintain["INVNo"].ToString();
+
+
+                            IList<System.Data.SqlClient.SqlParameter> parameters = new List<System.Data.SqlClient.SqlParameter>();
+                            parameters.Add(ttlCBM);
+                            parameters.Add(iNVNo);
+                            this.result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, parameters);
+                            if (!this.result)
+                            {
+                                transactionScope.Dispose();
+                                DualResult failResult = new DualResult(false, "Update Garment Booking fail!\r\n" + this.result.ToString());
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            transactionScope.Dispose();
+                            DualResult failResult = new DualResult(false, "Select PackingList Summary fail!\r\n" + this.result.ToString());
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        transactionScope.Dispose();
+                        DualResult failResult = new DualResult(false, "Select PackingList fail!\r\n" + this.result.ToString());
+                        return;
+                    }
+
+                    #endregion
+
+                    transactionScope.Complete();
+                    transactionScope.Dispose();
+
+                }
+                catch (Exception ex)
+                {
+                    transactionScope.Dispose();
+                    this.ShowErr("Commit transaction error.", ex);
+                    return;
+                }
             }
         }
-
         /// <summary>
         /// ClickUnconfirm
         /// </summary>
