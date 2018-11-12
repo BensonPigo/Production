@@ -177,6 +177,7 @@
             this.btnMeterialStatus = new Sci.Win.UI.Button();
             this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
             this.btnReCalculate = new Sci.Win.UI.Button();
+            this.btnExpectionFormRemark = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -192,6 +193,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnExpectionFormRemark);
             this.detailcont.Controls.Add(this.btnReCalculate);
             this.detailcont.Controls.Add(this.btnMeterialStatus_Local);
             this.detailcont.Controls.Add(this.btnMeterialStatus);
@@ -1829,6 +1831,16 @@
             this.btnReCalculate.UseVisualStyleBackColor = true;
             this.btnReCalculate.Click += new System.EventHandler(this.btnReCalculate_Click);
             // 
+            // btnExpectionFormRemark
+            // 
+            this.btnExpectionFormRemark.Location = new System.Drawing.Point(950, 360);
+            this.btnExpectionFormRemark.Name = "btnExpectionFormRemark";
+            this.btnExpectionFormRemark.Size = new System.Drawing.Size(30, 25);
+            this.btnExpectionFormRemark.TabIndex = 189;
+            this.btnExpectionFormRemark.Text = "R";
+            this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
+            this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 721);
@@ -2007,5 +2019,6 @@
         private Win.UI.Button btnMeterialStatus;
         private Win.UI.DisplayBox displaySPNo;
         private Win.UI.Button btnReCalculate;
+        private Win.UI.Button btnExpectionFormRemark;
     }
 }

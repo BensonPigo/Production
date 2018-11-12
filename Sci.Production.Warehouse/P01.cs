@@ -105,16 +105,25 @@ namespace Sci.Production.Warehouse
 
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow StyleData;
-            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style WITH (NOLOCK) where Ukey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]));
+            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate,ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out StyleData))
             {
                 displayDescription.Value = MyUtility.Convert.GetString(StyleData["Description"]);
                 checkExceptionForm.Value = MyUtility.Convert.GetString(StyleData["ExpectionForm"]);
                 editFtyRemark.Text = MyUtility.Convert.GetString(StyleData["FTYRemark"]);
 
+                if (MyUtility.Check.Empty(StyleData["ExpectionFormRemark"]))
+                {
+                    this.btnExpectionFormRemark.Enabled = false;
+                }
+                else
+                {
+                    this.btnExpectionFormRemark.Enabled = true;
+                }
             }
             else
             {
+                this.btnExpectionFormRemark.Enabled = false;
                 displayDescription.Value = "";
                 checkExceptionForm.Value = "false";
                 editFtyRemark.Text = "";
@@ -673,6 +682,17 @@ and po3.junk=0
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Finished!!");
             
+        }
+
+        private void btnExpectionFormRemark_Click(object sender, EventArgs e)
+        {
+            DataRow styleData;
+            string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+            if (MyUtility.Check.Seek(sqlCmd, out styleData))
+            {
+                Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
+                form.ShowDialog(this);
+            }
         }
     }
 }

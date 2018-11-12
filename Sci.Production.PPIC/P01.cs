@@ -157,7 +157,7 @@ namespace Sci.Production.PPIC
             }
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow styleData;
-            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate,ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out styleData))
             {
                 this.displayDescription.Value = MyUtility.Convert.GetString(styleData["Description"]);
@@ -171,9 +171,19 @@ namespace Sci.Production.PPIC
                 {
                     this.dateStyleApv.Value = MyUtility.Convert.GetDate(styleData["ApvDate"]);
                 }
+
+                if (MyUtility.Check.Empty(styleData["ExpectionFormRemark"]))
+                {
+                    this.btnExpectionFormRemark.Enabled = false;
+                }
+                else
+                {
+                    this.btnExpectionFormRemark.Enabled = true;
+                }
             }
             else
             {
+                this.btnExpectionFormRemark.Enabled = false;
                 this.displayDescription.Value = string.Empty;
                 this.checkExceptionForm.Value = "false";
                 this.editFtyRemark.Text = string.Empty;
@@ -1502,6 +1512,16 @@ where POID = @poid group by POID,b.spno";
             P01_BuyerDeliveryHistory pb = new P01_BuyerDeliveryHistory("Order", "Orders", "OrdersBuyerDelivery", orderID);
             pb.ShowDialog(this);
         }
-        
+
+        private void btnExpectionFormRemark_Click(object sender, EventArgs e)
+        {
+            DataRow styleData;
+            string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+            if (MyUtility.Check.Seek(sqlCmd, out styleData))
+            {
+                Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
+                form.ShowDialog(this);
+            }
+        }
     }
 }
