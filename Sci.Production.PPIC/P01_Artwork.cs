@@ -26,7 +26,6 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
 
-
             #region Artwork Tab
 
             string sqlCmd = $@" 
@@ -40,6 +39,7 @@ outer apply(
 		from Order_Article oaa with(nolock)
 		inner join orders o with(nolock) on oaa.id = o.id
 		where o.id = (select poid from orders o2 with(nolock) where o2.id = oa.id)
+		for xml path('')
 	),1,1,'')
 )art
 WHERE oa.ID = '{this.Order_ArtworkId}'
@@ -210,9 +210,9 @@ order by oa.ArtworkTypeID";
             this.CombBySPgrid.Columns[2].Frozen = true;
             #endregion
 
-
             #region Comb By Artwork
-            //左邊
+
+            // 左邊
             sqlCmd = string.Format(
                             @"  
                                 SELECT DISTINCT 
@@ -254,6 +254,7 @@ outer apply(
 		select distinct concat(',', oaa.Article)
 		from Order_Article oaa with(nolock)
 		where oaa.id = o.poid
+		for xml path('')
 	),1,1,'')
 )art
 WHERE Exists (select 1 FROM Orders o1 WHERE 
@@ -287,14 +288,15 @@ ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,Article
                     DataRow row;
                     row = OrderArtworks.NewRow();
 
-                    //前面是固定的
+                    // 前面是固定的
                     row["ArtworkTypeID"] = Left_item["ArtworkTypeID"].ToString();
                     row["ArtworkID"] = Left_item["ArtworkID"].ToString();
                     row["PatternCode"] = Left_item["PatternCode"].ToString();
 
                     List<string> Article = new List<string>();
                     int sum = 0;
-                    //Article
+
+                    // Article
                     foreach (DataRow Content_item in Content.Rows)
                     {
                         if (Left_item["ArtworkTypeID"].ToString() == Content_item["ArtworkTypeID"].ToString() &&
@@ -306,20 +308,18 @@ ORDER BY  lc.ArtworkTypeID,lc.ArtworkID,lc.PatternCode,Article
                             sum += Convert.ToInt32(Content_item["OrderQty"]);
                         }
                     }
-                    
+
                     row["Article"] = Article.JoinToString(",");
                     row["OrderQty"] = sum;
 
                     OrderArtworks.Rows.Add(row);
                 }
-
             }
 
             this.CombByArtworkTypeSource.DataSource = OrderArtworks;
             this.CombByArtworkGrid.IsEditingReadOnly = true;
             this.CombByArtworkGrid.DataSource = this.CombByArtworkTypeSource;
             #endregion
-
         }
     }
 }
