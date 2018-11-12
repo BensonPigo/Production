@@ -22,11 +22,14 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             InitializeComponent();
+            Env.Cfg.FtpServerIP = "ftp.sportscity.com.tw";
+            Env.Cfg.FtpServerAccount = "insp_rpt";
+            Env.Cfg.FtpServerPassword = "rpt_insp";
         }
 
         private DataTable dt1;
         private DataTable dt2;
-        private string Filepath = @"\\evamgr\ftp\FACTORY\TO-ALL\MMC\for testing only\Jeff\";
+        private string Filepath = @"TO-ALL\MMC\for testing only\Jeff\";
 
         protected override void OnFormLoaded()
         {
@@ -136,6 +139,7 @@ namespace Sci.Production.Quality
             return fp;
         }
 
+        // 子目錄
         private string Filedic(DataRow dr)
         {
             string fp = Filepath + MyUtility.Convert.GetString(dr["AbbEN"]) + " " + MyUtility.Convert.GetString(dr["SuppID"]) + @"\";
@@ -148,18 +152,21 @@ namespace Sci.Production.Quality
             var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
             if (null == dr) return;
 
-            string filepath = Filedic(dr);
-            if (Directory.Exists(filepath))
+            string filepath = Filedic(dr); // 取得根目錄+子目錄
+
+            DualResult result;
+            IList<string> ftpDir = new List<string>();
+            result = MyUtility.FTP.FTP_GetFileList(filepath, out ftpDir);  // 底下所有檔案名稱
+
+            if (result && ftpDir.Count >0)
             {
                 string filename = Filename(dr, type);
-                string[] fs = Directory.GetFiles(filepath).Where(r => r.Contains(filename)).ToArray();
+                string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
 
                 if (fs.Length > 0)
                 {
                     e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
                     e.CellStyle.ForeColor = Color.Blue;
-                    //if (type.EqualString("-Inspection")) dr["FileExistI"] = 1;
-                    //else dr["FileExistT"] = 1;
                 }
             }
         }
@@ -366,9 +373,12 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
         TransferPms transferPMS = new TransferPms();
         private void btnDownloadFile_Click(object sender, EventArgs e)
         {
-            if (!Directory.Exists(Filepath))
+            DualResult result;
+            IList<MyUtility.FTP.FtpFile> ftpDir = new List<MyUtility.FTP.FtpFile>();
+            result = MyUtility.FTP.FTP_GetFileList(this.Filepath, out ftpDir); //確認根目錄能正常取得
+            if (!result)
             {
-                MyUtility.Msg.WarningBox("Please select ETA or SP# or PO# at least one field entry.");
+                MyUtility.Msg.WarningBox("For ftp://ftp.sportscity.con.tw no access, Please find Local IT assistance to open.");
                 return;
             }
 
@@ -383,33 +393,70 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
         private void Savefile(string type)
         {
             this.grid1.ValidateControl();
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "rar Files|*.rar";
-            saveFileDialog1.Title = "Save File";
-            List<string> files = new List<string>();
+            //SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            //saveFileDialog1.Filter = "All Files|*";
+            //saveFileDialog1.Title = "Save File";
+            //saveFileDialog1.FileName = "multiple files"+ type;
+            //List<string> files = new List<string>();
+            Dictionary<string, string> filesDic = new Dictionary<string, string>();
             DataRow[] drs = dt1.Select("selected = 1");
             foreach (DataRow dr in drs)
             {
-                string filepath = Filedic(dr);
-                if (Directory.Exists(filepath))
+                string filepath = Filedic(dr); // 取得根目錄+子目錄
+
+                DualResult result;
+                IList<string> ftpDir = new List<string>();
+                result = MyUtility.FTP.FTP_GetFileList(filepath, out ftpDir);
+                if (!result)
+                {
+                    continue;
+                }
+
+                if (ftpDir.Count > 0)
                 {
                     string filename = Filename(dr, type);
-                    string[] fs = Directory.GetFiles(filepath).Where(r => r.Contains(filename)).ToArray();
-                    files.AddRange(fs);
+                    string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
+                    foreach (string item in fs)
+                    {
+                        filesDic.Add(item, filepath);
+                    }
                 }
             }
-            if (files.Count == 0)
+
+            if (filesDic.Count == 0)
             {
                 MyUtility.Msg.WarningBox("No files exists.");
                 return;
             }
-
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            using (var fbd = new FolderBrowserDialog())
             {
-                string rarFile = ConfigurationManager.AppSettings["rarexefile"].ToString();
-                string rarOutputFilePath = MyUtility.File.RARFile(files.ToArray(), rarFile);
-                System.IO.File.Move(rarOutputFilePath, saveFileDialog1.FileName);
+                DialogResult result = fbd.ShowDialog();
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    DualResult dresult;
+                    foreach (var file in filesDic)
+                    {
+                        dresult = MyUtility.FTP.FTP_Download(file.Value + @"\" + file.Key, fbd.SelectedPath + @"\" + file.Key);
+                        if (!dresult)
+                        {
+                            this.ShowErr(dresult);
+                        }
+                    }
+                }
             }
+            MyUtility.Msg.InfoBox("Success");
+            //if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            //{
+            //    DualResult result;
+            //    foreach (var file in filesDic)
+            //    {
+            //        result = MyUtility.FTP.FTP_Download(file.Value + @"\" + file.Key, Path.GetDirectoryName(saveFileDialog1.FileName) + @"\" + file.Key);
+            //        if (!result)
+            //        {
+            //            this.ShowErr(result);
+            //        }
+            //    }
+            //}
         }
 
         private void inspectionReportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -545,6 +592,13 @@ VALUES(s.[SCIRefno],s.[SuppID],s.[ColorID],s.[FirstDyelot],'{Sci.Env.User.UserID
 
         private void btnClose_Click(object sender, EventArgs e)
         {
+            DataRow drSystem;
+            if (MyUtility.Check.Seek("select * from system", out drSystem))
+            {
+                Sci.Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                Sci.Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                Sci.Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+            }
             this.Close();
         }
     }
