@@ -410,116 +410,84 @@ left join Fabric on Fabric.SCIRefno = f.SCIRefno
 where f.PhysicalEncode = 1 and fp.ActualWidth < Fabric.Width
 group by f.{groupby_col}
 ------#FabricInspDoc TestReport
-select tmp.{groupby_col}
-	   , [cnt] = case count(1)
-					when 0 then 0
-					else 1.0 * sum(ch.value) / count(1) 
-				 end
+select 
+	a.{groupby_col}
+	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpTestReport
-from (
+from(
+	select tmp.SuppID, count(b.PoId)*1.0 bcnt, count(c.TPEInspectionReport)*1.0 ccnt 
+	from (
 	select distinct {groupby_col}
 		   , poid
 		   , seq1
 		   , seq2
 	from #tmpAllData
-) tmp
-outer apply (
-	select value = count(1)
-	from FabricInspDoc fid
-	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
-	where tmp.poid = fid.ID
-		  and tmp.seq1 = fidd.seq1
-		  and tmp.seq2 = fidd.seq2
-		  and tmp.{groupby_col} = fidd.{groupby_col}
-		  and fid.Status='Confirmed'
-		  and fidd.TestReport=1
-) ch
-group by {groupby_col}
-
+	) tmp
+	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.{groupby_col} = b.{groupby_col}
+	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	group by tmp.{groupby_col}
+)a
 ------#FabricInspDoc Inspection Report
-select tmp.{groupby_col}
-	   , [cnt] = case count(1)
-					when 0 then 0
-					else 1.0 * sum(ch.value) / count(1) 
-				 end
+select 
+	a.{groupby_col}
+	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #InspReport
-from (
+from(
+	select tmp.SuppID, count(b.PoId)*1.0 bcnt, count(c.TPETestReport)*1.0 ccnt 
+	from (
 	select distinct {groupby_col}
 		   , poid
 		   , seq1
 		   , seq2
 	from #tmpAllData
-) tmp
-outer apply (
-	select value = count(1)
-	from FabricInspDoc fid
-	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
-	where tmp.poid = fid.ID
-		  and tmp.seq1 = fidd.seq1
-		  and tmp.seq2 = fidd.seq2
-		  and tmp.{groupby_col} = fidd.{groupby_col}
-		  and fid.Status='Confirmed'
-		  and fidd.InspReport=1
-) ch
-group by {groupby_col}
+	) tmp
+	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.{groupby_col} = b.{groupby_col}
+	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	group by tmp.{groupby_col}
+)a
 
 ------#FabricInspDoc Approved Continuity Card Provided %
-select tmp.{groupby_col}
-	   , [cnt] = case count(1)
-					when 0 then 0
-					else 1.0 * sum(ch.value) / count(1) 
-				 end
+select a.{groupby_col}
+	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpContinuityCard
-from (
+from(
+	select tmp.SuppID, count(b.PoId)*1.0 bcnt, count(c.ContinuityCard)*1.0 ccnt 
+	from (
 	select distinct {groupby_col}
 		   , poid
 		   , seq1
 		   , seq2
 	from #tmpAllData
-) tmp
-outer apply (
-	select value = count(1)
-	from FabricInspDoc fid
-	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
-	where tmp.poid = fid.ID
-		  and tmp.seq1 = fidd.seq1
-		  and tmp.seq2 = fidd.seq2
-		  and tmp.{groupby_col} = fidd.{groupby_col}
-		  and fid.Status='Confirmed'
-		  and fidd.ContinuityCard=1
-) ch
-group by {groupby_col}
+	) tmp
+	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.{groupby_col} = b.{groupby_col}
+	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	group by tmp.{groupby_col}
+)a
 
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
-select ta.{groupby_col}
-	   , [cnt] = case count(1)
-					when 0 then 0
-					else 1.0 * sum(ch.value) / count(1) 
-				 end
+select a.{groupby_col}
+	, iif(ccnt=0,0, round(ccnt/bcnt,4)) [cnt]
 into #BulkDyelot
-from (
-	select ta.poid, ta.seq1, ta.seq2, ta.suppID, ta.refno, ta.colorID
-	from #tmpAllData ta
-	group by ta.poid, ta.seq1, ta.seq2, ta.suppID, ta.refno, ta.colorID
-) ta
-inner join FabricInspDoc_detail fab2 on ta.poid = fab2.ID 
-										and ta.seq1 = fab2.seq1 
-										and ta.seq2 = fab2.seq2
-										and ta.suppid = fab2.suppid 
-										and ta.refno = fab2.refno 
-										and ta.colorid = fab2.colorid
-outer apply (
-	select value = count (1)
-	from FabricInspDoc_detail fab2 
-	where ta.poid = fab2.ID 
-		  and ta.seq1 = fab2.seq1 
-		  and ta.seq2 = fab2.seq2
-		  and ta.suppid = fab2.suppid 
-		  and ta.refno = fab2.refno 
-		  and ta.colorid = fab2.colorid
-		  and fab2.BulkDyelot = 1
-) ch
-group by ta.{groupby_col}
+from(
+	select b.{groupby_col}, count(b.id)*1.0 bcnt, count(c.FirstDyelot)*1.0 ccnt 
+	from (
+		select distinct SuppID
+				, poid
+				, seq1
+				, seq2
+		from #tmpAllData 
+	) tmp
+	outer apply (
+		select a.id,a.seq1,a.seq2,a.SCIRefno,a.ColorID,b.SuppID,a.RefNo 
+		from PO_Supp_Detail a
+		inner join PO_Supp b on a.ID = b.ID and a.seq1 = b.seq1 
+		where a.id =  tmp.poid
+		and a.seq1 = tmp.seq1
+		and a.seq2 = tmp.seq2
+	)b
+	left join FIRSTDYELOT c on b.SCIRefno = c.SCIRefno and b.ColorID = c.ColorID and b.SuppID = c.SuppID
+	group by b.{groupby_col}
+)a
 ------#TmpFinal 
 select --distinct
 { (ReportType.Equals("supplier") ? " Tmp.SuppID , Tmp.refno " : " Tmp.refno , Tmp.SuppID ") }
@@ -563,7 +531,8 @@ from (
 	select distinct SuppID, refno, abben, BrandID, stockqty, isnull(TotalInspYds,0)TotalInspYds
 	, yrds	
 	from #tmp		
-)Tmp 
+)Tmp
+inner join (select SuppID, sum(stockqty)totalStockqty from #tmp group by SuppID)TmpTotal on tmp.SuppID = TmpTotal.SuppID  
 outer apply (select TotalPoint,[Fabric_yards] = isnull(TotalPoint,0)/4 from #tmpTotalPoint where {groupby_col}=tmp.{groupby_col}) TLPoint
 outer apply
 (
@@ -592,7 +561,7 @@ outer apply(
 	select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
 	and IIF(totalYds.TotalInspYds!=0, round((TLPoint.Fabric_yards/totalYds.TotalInspYds), 4), 0) * 100 between range1 and range2 )sl
 left join #SHtmp SHRINKAGE on SHRINKAGE.{groupby_col} = tmp.{groupby_col}
-outer apply(select SHINGKAGE = iif(Tmp.stockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/Tmp.stockqty,4)))SHINGKAGELevel
+outer apply(select SHINGKAGE = iif(TmpTotal.totalStockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/TmpTotal.totalStockqty,4)))SHINGKAGELevel
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) * 100 between range1 and range2)sl2
 left join #mtmp MIGRATION on MIGRATION.{groupby_col} = tmp.{groupby_col} 
 outer apply(
