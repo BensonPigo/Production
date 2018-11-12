@@ -532,7 +532,7 @@ from (
 	, yrds	
 	from #tmp		
 )Tmp
-inner join (select SuppID, sum(stockqty)totalStockqty from #tmp group by SuppID)TmpTotal on tmp.SuppID = TmpTotal.SuppID  
+outer apply(select SuppID, sum(stockqty)totalStockqty from (select distinct SuppID, refno, abben, BrandID, stockqty, isnull(TotalInspYds,0)TotalInspYds, yrds from #tmp)a where tmp.suppid =a.suppid group by SuppID)TmpTotal
 outer apply (select TotalPoint,[Fabric_yards] = isnull(TotalPoint,0)/4 from #tmpTotalPoint where {groupby_col}=tmp.{groupby_col}) TLPoint
 outer apply
 (
