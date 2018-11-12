@@ -89,10 +89,6 @@
             this.label26 = new Sci.Win.UI.Label();
             this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.sizeratiobs = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labelWorkOrderDownloadID = new Sci.Win.UI.Label();
-            this.labelEachConsDownloadID = new Sci.Win.UI.Label();
-            this.displayWorkOrderDownloadid = new Sci.Win.UI.DisplayBox();
-            this.displayEachConsDownloadID = new Sci.Win.UI.DisplayBox();
             this.AutoCut = new Sci.Win.UI.Button();
             this.distributebs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.qtybreakds = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -105,6 +101,7 @@
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.txtBoxMarkerNo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.lbshc = new System.Windows.Forms.Label();
@@ -132,6 +129,10 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -180,9 +181,9 @@
             this.detailpanel.Location = new System.Drawing.Point(0, 0);
             this.detailpanel.Size = new System.Drawing.Size(1004, 713);
             this.detailpanel.Controls.SetChildIndex(this.detailbtm, 0);
-            this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             this.detailpanel.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailpanel.Controls.SetChildIndex(this.splitContainer1, 0);
+            this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
             // gridicon
             // 
@@ -192,7 +193,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(5881, 561);
+            this.refresh.Location = new System.Drawing.Point(6049, 561);
             // 
             // detailgridcont
             // 
@@ -201,19 +202,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(631, 585);
-            // 
-            // detail2
-            // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
-            // 
-            // detailgridcont2
-            // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
-            // 
-            // detailpanel2
-            // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailgridcont.Size = new System.Drawing.Size(630, 585);
             // 
             // detail
             // 
@@ -465,7 +454,7 @@
             // btnQuantityBreakdown
             // 
             this.btnQuantityBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuantityBreakdown.Location = new System.Drawing.Point(816, 1);
+            this.btnQuantityBreakdown.Location = new System.Drawing.Point(817, 3);
             this.btnQuantityBreakdown.Name = "btnQuantityBreakdown";
             this.btnQuantityBreakdown.Size = new System.Drawing.Size(181, 30);
             this.btnQuantityBreakdown.TabIndex = 23;
@@ -476,7 +465,7 @@
             // btnPackingMethod
             // 
             this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPackingMethod.Location = new System.Drawing.Point(660, 2);
+            this.btnPackingMethod.Location = new System.Drawing.Point(661, 4);
             this.btnPackingMethod.Name = "btnPackingMethod";
             this.btnPackingMethod.Size = new System.Drawing.Size(145, 30);
             this.btnPackingMethod.TabIndex = 24;
@@ -660,7 +649,7 @@
             // labelSizeRatio
             // 
             this.labelSizeRatio.BackColor = System.Drawing.Color.Transparent;
-            this.labelSizeRatio.Location = new System.Drawing.Point(1, 267);
+            this.labelSizeRatio.Location = new System.Drawing.Point(1, 1);
             this.labelSizeRatio.Name = "labelSizeRatio";
             this.labelSizeRatio.Size = new System.Drawing.Size(71, 12);
             this.labelSizeRatio.TabIndex = 43;
@@ -672,6 +661,9 @@
             this.gridSizeRatio.AllowUserToAddRows = false;
             this.gridSizeRatio.AllowUserToDeleteRows = false;
             this.gridSizeRatio.AllowUserToResizeRows = false;
+            this.gridSizeRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridSizeRatio.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridSizeRatio.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSizeRatio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -680,7 +672,7 @@
             this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSizeRatio.Location = new System.Drawing.Point(0, 279);
+            this.gridSizeRatio.Location = new System.Drawing.Point(0, 13);
             this.gridSizeRatio.Name = "gridSizeRatio";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -694,7 +686,8 @@
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeRatio.RowTemplate.Height = 24;
             this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSizeRatio.Size = new System.Drawing.Size(137, 124);
+            this.gridSizeRatio.ShowCellToolTips = false;
+            this.gridSizeRatio.Size = new System.Drawing.Size(137, 149);
             this.gridSizeRatio.TabIndex = 44;
             this.gridSizeRatio.TabStop = false;
             // 
@@ -722,7 +715,7 @@
             // 
             // labelCutplanNo
             // 
-            this.labelCutplanNo.Location = new System.Drawing.Point(141, 309);
+            this.labelCutplanNo.Location = new System.Drawing.Point(141, 43);
             this.labelCutplanNo.Name = "labelCutplanNo";
             this.labelCutplanNo.Size = new System.Drawing.Size(86, 23);
             this.labelCutplanNo.TabIndex = 45;
@@ -730,7 +723,7 @@
             // 
             // labelTotalCutQty
             // 
-            this.labelTotalCutQty.Location = new System.Drawing.Point(141, 336);
+            this.labelTotalCutQty.Location = new System.Drawing.Point(141, 70);
             this.labelTotalCutQty.Name = "labelTotalCutQty";
             this.labelTotalCutQty.Size = new System.Drawing.Size(86, 23);
             this.labelTotalCutQty.TabIndex = 46;
@@ -740,7 +733,7 @@
             // 
             this.displayCutplanNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCutplanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCutplanNo.Location = new System.Drawing.Point(231, 309);
+            this.displayCutplanNo.Location = new System.Drawing.Point(231, 43);
             this.displayCutplanNo.Name = "displayCutplanNo";
             this.displayCutplanNo.Size = new System.Drawing.Size(135, 23);
             this.displayCutplanNo.TabIndex = 22;
@@ -750,6 +743,9 @@
             this.gridDistributetoSPNo.AllowUserToAddRows = false;
             this.gridDistributetoSPNo.AllowUserToDeleteRows = false;
             this.gridDistributetoSPNo.AllowUserToResizeRows = false;
+            this.gridDistributetoSPNo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridDistributetoSPNo.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridDistributetoSPNo.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridDistributetoSPNo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -758,7 +754,7 @@
             this.gridDistributetoSPNo.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridDistributetoSPNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridDistributetoSPNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 418);
+            this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 18);
             this.gridDistributetoSPNo.Name = "gridDistributetoSPNo";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -772,7 +768,8 @@
             this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
             this.gridDistributetoSPNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDistributetoSPNo.Size = new System.Drawing.Size(373, 124);
+            this.gridDistributetoSPNo.ShowCellToolTips = false;
+            this.gridDistributetoSPNo.Size = new System.Drawing.Size(377, 150);
             this.gridDistributetoSPNo.TabIndex = 48;
             this.gridDistributetoSPNo.TabStop = false;
             this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.distribute_grid_DataError);
@@ -805,15 +802,17 @@
             this.gridQtyBreakdown.AllowUserToAddRows = false;
             this.gridQtyBreakdown.AllowUserToDeleteRows = false;
             this.gridQtyBreakdown.AllowUserToResizeRows = false;
+            this.gridQtyBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridQtyBreakdown.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridQtyBreakdown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridQtyBreakdown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridQtyBreakdown.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridQtyBreakdown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridQtyBreakdown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridQtyBreakdown.Location = new System.Drawing.Point(0, 0);
+            this.gridQtyBreakdown.Location = new System.Drawing.Point(0, 14);
             this.gridQtyBreakdown.Name = "gridQtyBreakdown";
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -827,14 +826,15 @@
             this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridQtyBreakdown.RowTemplate.Height = 24;
             this.gridQtyBreakdown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 123);
+            this.gridQtyBreakdown.ShowCellToolTips = false;
+            this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 124);
             this.gridQtyBreakdown.TabIndex = 49;
             this.gridQtyBreakdown.TabStop = false;
             // 
             // labelDistributetoSPNo
             // 
             this.labelDistributetoSPNo.BackColor = System.Drawing.Color.Transparent;
-            this.labelDistributetoSPNo.Location = new System.Drawing.Point(1, 403);
+            this.labelDistributetoSPNo.Location = new System.Drawing.Point(1, 3);
             this.labelDistributetoSPNo.Name = "labelDistributetoSPNo";
             this.labelDistributetoSPNo.Size = new System.Drawing.Size(112, 15);
             this.labelDistributetoSPNo.TabIndex = 50;
@@ -843,7 +843,7 @@
             // 
             // labelTotalDistributionQty
             // 
-            this.labelTotalDistributionQty.Location = new System.Drawing.Point(141, 392);
+            this.labelTotalDistributionQty.Location = new System.Drawing.Point(141, 126);
             this.labelTotalDistributionQty.Name = "labelTotalDistributionQty";
             this.labelTotalDistributionQty.Size = new System.Drawing.Size(133, 23);
             this.labelTotalDistributionQty.TabIndex = 51;
@@ -854,7 +854,7 @@
             this.numTotalDistributionQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalDistributionQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalDistributionQty.IsSupportEditMode = false;
-            this.numTotalDistributionQty.Location = new System.Drawing.Point(275, 392);
+            this.numTotalDistributionQty.Location = new System.Drawing.Point(275, 126);
             this.numTotalDistributionQty.Name = "numTotalDistributionQty";
             this.numTotalDistributionQty.NullValue = new decimal(new int[] {
             0,
@@ -873,7 +873,7 @@
             // labelQtyBreakdown
             // 
             this.labelQtyBreakdown.BackColor = System.Drawing.Color.Transparent;
-            this.labelQtyBreakdown.Location = new System.Drawing.Point(1, 543);
+            this.labelQtyBreakdown.Location = new System.Drawing.Point(0, 2);
             this.labelQtyBreakdown.Name = "labelQtyBreakdown";
             this.labelQtyBreakdown.Size = new System.Drawing.Size(112, 11);
             this.labelQtyBreakdown.TabIndex = 52;
@@ -909,43 +909,10 @@
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(434, 8);
             this.comboBox1.Name = "comboBox1";
+            this.comboBox1.OldText = "";
             this.comboBox1.Size = new System.Drawing.Size(137, 24);
             this.comboBox1.TabIndex = 47;
             this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
-            // 
-            // labelWorkOrderDownloadID
-            // 
-            this.labelWorkOrderDownloadID.Location = new System.Drawing.Point(3, 215);
-            this.labelWorkOrderDownloadID.Name = "labelWorkOrderDownloadID";
-            this.labelWorkOrderDownloadID.Size = new System.Drawing.Size(167, 23);
-            this.labelWorkOrderDownloadID.TabIndex = 53;
-            this.labelWorkOrderDownloadID.Text = "WorkOrder DownLoad  ID";
-            // 
-            // labelEachConsDownloadID
-            // 
-            this.labelEachConsDownloadID.Location = new System.Drawing.Point(3, 242);
-            this.labelEachConsDownloadID.Name = "labelEachConsDownloadID";
-            this.labelEachConsDownloadID.Size = new System.Drawing.Size(167, 23);
-            this.labelEachConsDownloadID.TabIndex = 54;
-            this.labelEachConsDownloadID.Text = "Each Cons DownLoad ID";
-            // 
-            // displayWorkOrderDownloadid
-            // 
-            this.displayWorkOrderDownloadid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayWorkOrderDownloadid.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayWorkOrderDownloadid.Location = new System.Drawing.Point(172, 215);
-            this.displayWorkOrderDownloadid.Name = "displayWorkOrderDownloadid";
-            this.displayWorkOrderDownloadid.Size = new System.Drawing.Size(195, 23);
-            this.displayWorkOrderDownloadid.TabIndex = 20;
-            // 
-            // displayEachConsDownloadID
-            // 
-            this.displayEachConsDownloadID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayEachConsDownloadID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayEachConsDownloadID.Location = new System.Drawing.Point(172, 242);
-            this.displayEachConsDownloadID.Name = "displayEachConsDownloadID";
-            this.displayEachConsDownloadID.Size = new System.Drawing.Size(194, 23);
-            this.displayEachConsDownloadID.TabIndex = 21;
             // 
             // AutoCut
             // 
@@ -962,7 +929,7 @@
             // 
             this.displayTotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotalCutQty.Location = new System.Drawing.Point(141, 363);
+            this.displayTotalCutQty.Location = new System.Drawing.Point(141, 97);
             this.displayTotalCutQty.Name = "displayTotalCutQty";
             this.displayTotalCutQty.Size = new System.Drawing.Size(225, 23);
             this.displayTotalCutQty.TabIndex = 23;
@@ -1030,7 +997,7 @@
             // btn_Refresh
             // 
             this.btn_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Refresh.Location = new System.Drawing.Point(574, 3);
+            this.btn_Refresh.Location = new System.Drawing.Point(575, 4);
             this.btn_Refresh.Name = "btn_Refresh";
             this.btn_Refresh.Size = new System.Drawing.Size(80, 30);
             this.btn_Refresh.TabIndex = 49;
@@ -1048,11 +1015,9 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.txtBoxMarkerNo);
-            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel1.Controls.Add(this.lbshc);
             this.splitContainer1.Panel1.Controls.Add(this.labelCutCell);
-            this.splitContainer1.Panel1.Controls.Add(this.labelQtyBreakdown);
             this.splitContainer1.Panel1.Controls.Add(this.numMarkerLengthY);
             this.splitContainer1.Panel1.Controls.Add(this.labelMarkerLengthY);
             this.splitContainer1.Panel1.Controls.Add(this.txtMarkerLength);
@@ -1060,50 +1025,66 @@
             this.splitContainer1.Panel1.Controls.Add(this.displayFabricType_Refno);
             this.splitContainer1.Panel1.Controls.Add(this.labelPatternPanel);
             this.splitContainer1.Panel1.Controls.Add(this.editDescription);
-            this.splitContainer1.Panel1.Controls.Add(this.labelDistributetoSPNo);
             this.splitContainer1.Panel1.Controls.Add(this.labelDescription);
             this.splitContainer1.Panel1.Controls.Add(this.btnPatternPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.labelSizeRatio);
             this.splitContainer1.Panel1.Controls.Add(this.labelUnitCons);
             this.splitContainer1.Panel1.Controls.Add(this.txtFabricCombo);
-            this.splitContainer1.Panel1.Controls.Add(this.displayTotalCutQty);
-            this.splitContainer1.Panel1.Controls.Add(this.gridSizeRatio);
             this.splitContainer1.Panel1.Controls.Add(this.labelCons);
             this.splitContainer1.Panel1.Controls.Add(this.txtFabricPanelCode);
-            this.splitContainer1.Panel1.Controls.Add(this.displayEachConsDownloadID);
-            this.splitContainer1.Panel1.Controls.Add(this.labelCutplanNo);
             this.splitContainer1.Panel1.Controls.Add(this.numCons);
-            this.splitContainer1.Panel1.Controls.Add(this.displayWorkOrderDownloadid);
-            this.splitContainer1.Panel1.Controls.Add(this.labelTotalCutQty);
             this.splitContainer1.Panel1.Controls.Add(this.labelFabricCombo);
             this.splitContainer1.Panel1.Controls.Add(this.txtCutCell);
-            this.splitContainer1.Panel1.Controls.Add(this.labelEachConsDownloadID);
-            this.splitContainer1.Panel1.Controls.Add(this.displayCutplanNo);
             this.splitContainer1.Panel1.Controls.Add(this.labelFabricPanelCode);
             this.splitContainer1.Panel1.Controls.Add(this.numUnitCons);
-            this.splitContainer1.Panel1.Controls.Add(this.labelWorkOrderDownloadID);
-            this.splitContainer1.Panel1.Controls.Add(this.gridDistributetoSPNo);
             this.splitContainer1.Panel1.Controls.Add(this.txtMarkerLengthE);
             this.splitContainer1.Panel1.Controls.Add(this.labelFabricType_Refno);
             this.splitContainer1.Panel1.Controls.Add(this.label17);
-            this.splitContainer1.Panel1.Controls.Add(this.numTotalDistributionQty);
-            this.splitContainer1.Panel1.Controls.Add(this.labelTotalDistributionQty);
             this.splitContainer1.Panel1MinSize = 1;
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.labelQtyBreakdown);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakdown);
             this.splitContainer1.Panel2MinSize = 1;
             this.splitContainer1.Size = new System.Drawing.Size(373, 678);
-            this.splitContainer1.SplitterDistance = 554;
-            this.splitContainer1.SplitterWidth = 1;
+            this.splitContainer1.SplitterDistance = 536;
             this.splitContainer1.TabIndex = 61;
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(0, 202);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.txtBoxMarkerNo);
+            this.splitContainer2.Panel1.Controls.Add(this.gridSizeRatio);
+            this.splitContainer2.Panel1.Controls.Add(this.labelSizeRatio);
+            this.splitContainer2.Panel1.Controls.Add(this.displayTotalCutQty);
+            this.splitContainer2.Panel1.Controls.Add(this.labelTotalDistributionQty);
+            this.splitContainer2.Panel1.Controls.Add(this.numTotalDistributionQty);
+            this.splitContainer2.Panel1.Controls.Add(this.displayCutplanNo);
+            this.splitContainer2.Panel1.Controls.Add(this.labelCutplanNo);
+            this.splitContainer2.Panel1.Controls.Add(this.label1);
+            this.splitContainer2.Panel1.Controls.Add(this.labelTotalCutQty);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.gridDistributetoSPNo);
+            this.splitContainer2.Panel2.Controls.Add(this.labelDistributetoSPNo);
+            this.splitContainer2.Size = new System.Drawing.Size(377, 334);
+            this.splitContainer2.SplitterDistance = 162;
+            this.splitContainer2.TabIndex = 0;
             // 
             // txtBoxMarkerNo
             // 
             this.txtBoxMarkerNo.BackColor = System.Drawing.Color.White;
             this.txtBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBoxMarkerNo.Location = new System.Drawing.Point(231, 280);
+            this.txtBoxMarkerNo.Location = new System.Drawing.Point(231, 14);
             this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
             this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
             this.txtBoxMarkerNo.TabIndex = 63;
@@ -1112,7 +1093,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(141, 280);
+            this.label1.Location = new System.Drawing.Point(141, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(86, 23);
             this.label1.TabIndex = 61;
@@ -1175,6 +1156,11 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1233,10 +1219,6 @@
         private Win.UI.ComboBox comboBox1;
         private Win.UI.Label label26;
         private Win.UI.Button btnQuantityBreakdown;
-        private Win.UI.DisplayBox displayEachConsDownloadID;
-        private Win.UI.DisplayBox displayWorkOrderDownloadid;
-        private Win.UI.Label labelEachConsDownloadID;
-        private Win.UI.Label labelWorkOrderDownloadID;
         private Win.UI.ListControlBindingSource sizeratiobs;
         private Win.UI.Button AutoCut;
         private Win.UI.ListControlBindingSource distributebs;
@@ -1258,5 +1240,6 @@
         private System.Windows.Forms.Label lbshc;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtBoxMarkerNo;
+        private System.Windows.Forms.SplitContainer splitContainer2;
     }
 }

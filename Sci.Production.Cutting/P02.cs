@@ -76,8 +76,7 @@ namespace Sci.Production.Cutting
             this.txtFabricPanelCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "FabricPanelCode", true));
             this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "Description", true));
             this.displayFabricType_Refno.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MtlTypeID_SCIRefno", true));
-
-            this.displayWorkOrderDownloadid.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerDownLoadId", true));
+            
             this.displayCutplanNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "Cutplanid", true));
             this.displayTotalCutQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "CutQty", true));
             this.numMarkerLengthY.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthY", true));
