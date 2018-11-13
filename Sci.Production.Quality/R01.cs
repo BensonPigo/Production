@@ -36,7 +36,7 @@ namespace Sci.Production.Quality
         {
             bool date_Last_Empty = !this.dateLastPhysicalInspDate.HasValue, date_Arrive_Empty = !this.dateArriveWHDate.HasValue, date_SCI_Empty = !this.dateSCIDelivery.HasValue, date_Sewing_Empty = !this.dateSewingInLineDate.HasValue, date_Est_Empty = !this.dateEstCuttingDate.HasValue,
                 textBox_SP_Empty = this.txtSPStart.Text.Empty(), textBox_SP2_Empty = this.txtSPEnd.Text.Empty(), txtSeason_Empty = this.txtSeason.Text.Empty()
-           , txtBrand_Empty = this.txtBrand.Text.Empty(), txtRef_Empty = this.txtRefno.Text.Empty(), Cate_comboBox_Empty = this.comboCategory.Text.Empty(), Supp_Empty = this.txtsupplier.Text.Empty(), Over_comboBox_Empty = this.comboOverallResultStatus.Text.Empty()
+           , txtBrand_Empty = this.txtBrand.Text.Empty(), txtRef_Empty = this.txtRefno.Text.Empty(), Cate_comboBox_Empty = this.comboCategory.Text.Empty(), Supp_Empty = this.txtsupplier.TextBox1.Text.Empty(), Over_comboBox_Empty = this.comboOverallResultStatus.Text.Empty()
            , textBox_WK_Empty = this.txtWK_start.Text.Empty(), textBox_WK2_Empty = this.txtWK_end.Text.Empty();
 
             if (date_Last_Empty && date_Arrive_Empty && date_SCI_Empty && textBox_SP_Empty && textBox_SP2_Empty && date_Sewing_Empty && date_Est_Empty && textBox_WK_Empty && textBox_WK2_Empty)
@@ -64,7 +64,7 @@ namespace Sci.Production.Quality
             Brand = txtBrand.Text;
             Ref = txtRefno.Text.ToString();
             Category = comboCategory.Text;
-            Supp = txtsupplier.Text;
+            Supp = txtsupplier.TextBox1.Text;
             Over = comboOverallResultStatus.SelectedItem.ToString();
 
             lis = new List<SqlParameter>();
@@ -171,7 +171,7 @@ namespace Sci.Production.Quality
                 }
             }
 
-            if (!this.txtsupplier.Text.Empty())
+            if (!this.txtsupplier.TextBox1.Text.Empty())
             {
                 sqlWheres.Add("SP.SuppId = @Supp");
                 lis.Add(new SqlParameter("@Supp", Supp));
