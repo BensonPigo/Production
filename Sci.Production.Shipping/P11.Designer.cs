@@ -58,7 +58,7 @@
             this.masterpanel.Controls.Add(this.txtInvSerial);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(779, 69);
+            this.masterpanel.Size = new System.Drawing.Size(892, 69);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
@@ -70,7 +70,7 @@
             // 
             this.detailpanel.Controls.Add(this.panel4);
             this.detailpanel.Location = new System.Drawing.Point(0, 69);
-            this.detailpanel.Size = new System.Drawing.Size(779, 417);
+            this.detailpanel.Size = new System.Drawing.Size(892, 280);
             this.detailpanel.Controls.SetChildIndex(this.panel4, 0);
             this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
@@ -85,7 +85,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(779, 417);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 280);
             // 
             // detail2
             // 
@@ -101,16 +101,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(779, 524);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(779, 486);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 486);
-            this.detailbtm.Size = new System.Drawing.Size(779, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -138,7 +138,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(779, 417);
+            this.panel4.Size = new System.Drawing.Size(892, 280);
             this.panel4.TabIndex = 5;
             // 
             // btnimport
@@ -195,7 +195,6 @@
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportEdit = false;
             this.KeyField1 = "ID";
             this.KeyField2 = "BIRID";
             this.Name = "P11";

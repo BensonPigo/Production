@@ -87,7 +87,7 @@ namespace Sci.Production.Shipping
 
                 if (dr.RowState == DataRowState.Deleted)
                 {
-                    updateCmds.Add($@"update GMTBooking set BIRID = null where ID = '{dr["id"]}';");
+                    updateCmds.Add($@"update GMTBooking set BIRID = null where ID = '{dr["id",DataRowVersion.Original]}';");
                 }
             }
 
@@ -120,6 +120,11 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         private void Btnimport_Click(object sender, EventArgs e)
         {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["InvSerial"]))
             {
                 MyUtility.Msg.WarningBox("Invoice Serial cannot be empty!");
@@ -174,9 +179,9 @@ select
 	E=sum(pd.ShipQty),
 	F='PCS',
 	G='US',
-	H=o.PoPrice,
+	H=round(o.PoPrice,2),
 	I=null,
-	J=sum(pd.ShipQty)*o.PoPrice,
+	J=sum(pd.ShipQty)*round(o.PoPrice,2),
 	K=null,
 	L=null,
 	M=round((o.CPU*f.CpuCost)+(s1.Price+s2.Price)+s3.Price,2),
@@ -208,7 +213,7 @@ outer apply(
 	where ot.ID = o.id and a.Classify = 'A'
 )s2
 outer apply(
-	select Price = sum(ot.Price)
+	select Price = Round(sum(ot.Price),3,1)
 	from Order_TmsCost ot WITH (NOLOCK) 
 	left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
 	where ot.ID = o.id and a.Classify = 'P'
