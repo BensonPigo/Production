@@ -16,13 +16,11 @@ BEGIN
 
 	Merge Production.dbo.FirstDyelot  as t
 	Using (select * from Trade_To_Pms.dbo.FirstDyelot )as s
-	on t.SCIRefno = s.SCIRefno when matched then update set 
-		t. SuppID =s. SuppID,
-		t. ColorID =s. ColorID ,
+	on t.Refno = s.Refno and t.SuppID =s. SuppID and t.ColorID =s.ColorID when matched then update set 
 		t.TPEFirstDyelot =s.FirstDyelot
 	when not matched by target then 	
-		insert(  [SCIRefno],  [SuppID],  [ColorID], TPEFirstDyelot)
-		values(s.[SCIRefno],s.[SuppID],s.[ColorID],s.[FirstDyelot]);
+		insert(  [Refno],  [SuppID],  [ColorID], TPEFirstDyelot)
+		values(s.[Refno],s.[SuppID],s.[ColorID],s.[FirstDyelot]);
 END
 
 

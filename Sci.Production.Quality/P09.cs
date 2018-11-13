@@ -124,7 +124,6 @@ namespace Sci.Production.Quality
             #region Set_grid2 Columns
             this.grid2.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid2)
-            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -274,7 +273,7 @@ select selected = cast(0 as bit),
 from Export_Detail ed with(nolock)
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join FirstDyelot fd with(nolock) on fd.SCIRefno = psd.SCIRefno and fd.SuppID = ps.SuppID and fd.ColorID = psd.ColorID
+left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID
 left join orders o with(nolock) on o.id = ed.PoID
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
@@ -507,11 +506,11 @@ select distinct
 	psd.ColorID,
 	fd.FirstDyelot  FirstDyelot,
 	fd.TPEFirstDyelot as TPEFirstDyelot,
-	psd.SCIRefno
+	psd.Refno
 from Po_Supp_Detail psd with(nolock)
 left join Po_Supp ps on ps.ID= psd.id and ps.SEQ1 = psd.seq1
 left join Supp s with(nolock) on s.ID = ps.SuppID
-left join FirstDyelot fd on fd.SCIRefno = psd.SCIRefno and fd.SuppID = ps.SuppID and fd.ColorID = psd.ColorID
+left join FirstDyelot fd on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID 
 left join po p on p.id = psd.id
 where   ps.seq1 not like '7%'  and 
 {sqlwhere}
@@ -557,14 +556,14 @@ order by ps.SuppID
             string sqlupdate = $@"
 merge FirstDyelot t
 using #tmp s
-on t.SCIRefno = s.SCIRefno and t.SuppID = s.SuppID and t.ColorID = s.ColorID
+on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID
 when matched then update set 
 	FirstDyelot=s.FirstDyelot,
 	EditName = '{Sci.Env.User.UserID}',
 	EditDate = GETDATE()
 when not matched by target then 
-insert([SCIRefno],[SuppID],[ColorID],[FirstDyelot],[EditName],[EditDate])
-VALUES(s.[SCIRefno],s.[SuppID],s.[ColorID],s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
+insert([Refno],[SuppID],[ColorID],[FirstDyelot],[EditName],[EditDate])
+VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
 ;
 ";
             DataTable odt;
