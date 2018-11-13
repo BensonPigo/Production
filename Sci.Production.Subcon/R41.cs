@@ -106,7 +106,11 @@ Select DISTINCT
     [Qty] = bd.Qty,
     [Sub-process] = s.Id,
     [InComing] = bio.InComing,
-    [Out (Time)] = bio.OutGoing
+    [Out (Time)] = bio.OutGoing,
+	bio.LocationID,
+	AvgTime = case when isnull(bio.InComing,'')='' and isnull(bio.OutGoing,'')='' then null
+				   else round(abs(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,'')))/24.0,2)
+				   end
 
 from Bundle b WITH (NOLOCK) 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
