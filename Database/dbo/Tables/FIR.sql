@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[FIR] (
+﻿CREATE TABLE [dbo].[FIR] (
     [ID]                  BIGINT          IDENTITY (1, 1) NOT NULL,
     [POID]                VARCHAR (13)    CONSTRAINT [DF_FIR_POID] DEFAULT ('') NOT NULL,
     [SEQ1]                VARCHAR (3)     CONSTRAINT [DF_FIR_SEQ] DEFAULT ('') NOT NULL,
@@ -37,10 +37,18 @@ CREATE TABLE [dbo].[FIR] (
     [EditName]            VARCHAR (10)    CONSTRAINT [DF_FIR_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME        NULL,
     [Status]              VARCHAR (15)    CONSTRAINT [DF_FIR_Status] DEFAULT ('') NULL,
-    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
-    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
+    [OldFabricUkey]       VARCHAR (10)    DEFAULT ('') NULL,
+    [OldFabricVer]        VARCHAR (2)     DEFAULT ('') NULL,
+    [nonOdor]             BIT             CONSTRAINT [DF_FIR_nonOdor] DEFAULT ((0)) NULL,
+    [Oder]                VARCHAR (5)     CONSTRAINT [DF_FIR_Oder] DEFAULT ('') NULL,
+    [OderEncode]          BIT             CONSTRAINT [DF_FIR_OderEncode] DEFAULT ((0)) NULL,
+    [OderDate]            DATETIME        NULL,
     CONSTRAINT [PK_FIR] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
+
+
 
 
 
@@ -214,4 +222,20 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠商Refno
 GO
 CREATE NONCLUSTERED INDEX [PO_Seq]
     ON [dbo].[FIR]([POID] ASC, [SEQ1] ASC, [SEQ2] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味Encode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OderEncode';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味檢驗日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OderDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味Result', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Oder';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不需檢驗氣味', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'nonOdor';
 
