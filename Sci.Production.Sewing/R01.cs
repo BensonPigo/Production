@@ -260,7 +260,7 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
 	   , CDNo = IIF(Category = 'M', MockupCDCodeID, OrderCdCodeID) + '-' + ComboType
 	   , ActManPower = IIF(SHIFT = 'O'
-                            ,MAX(IIF(QAQty > 0, ActManPower / QAQty, ActManPower)) OVER (PARTITION BY SHIFT)
+                            ,MAX(IIF(QAQty > 0, ActManPower / QAQty, ActManPower)) OVER (PARTITION BY SHIFT,Team,SewingLineID)
                             ,IIF(QAQty > 0, ActManPower / QAQty, ActManPower))
 	   , WorkHour
 	   , ManHour = ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2)
