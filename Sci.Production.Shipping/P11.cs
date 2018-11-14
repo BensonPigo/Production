@@ -169,6 +169,7 @@ and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
             {
                 ids.Add("'" + dr["id"] + "'");
             }
+
             DataTable dt;
             string sqlcmd = $@"
 select 
@@ -239,7 +240,14 @@ o.id,o.CPU,f.CpuCost,s1.Price+s2.Price,s3.Price
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
-            string top1id = MyUtility.Convert.GetString(this.DetailDatas[0]["id"]);
+            string top1idsql = $@"
+select top 1 id
+from GMTBooking
+where id in({string.Join(",", ids)})
+order by FCRDate desc
+";
+            string top1id = MyUtility.GetValue.Lookup(top1idsql);
+
             string bIRShipToSql = $@"
 select top 1 b.BIRShipTo
 from GMTBooking a
@@ -311,8 +319,7 @@ where p.INVNo in ({string.Join(",", ids)})
 
             string sumcbm = $@"
 select sumCBM=sum(p.CBM)
-from PackingList_Detail pd with(nolock)
-inner join PackingList p with(nolock) on p.ID = pd.ID
+from PackingList p with(nolock) 
 where p.INVNo in ({string.Join(",", ids)})
 ";
             worksheet.Cells[55, 3] = MyUtility.GetValue.Lookup(sumcbm);
