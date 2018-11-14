@@ -80,6 +80,7 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
     ,[SewingReasonDesc]=sr.ID+'-'+sr.Description
+	,sd.Remark
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -135,6 +136,7 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
     ,SubConOutContractNumber
     ,SubconInSisterFty
     ,SewingReasonDesc
+    ,Remark
 into #tmpSewingGroup
 from #tmpSewingDetail
 --↓計算累計天數 function table太慢直接寫在這
@@ -331,6 +333,7 @@ select * from(
 
             sqlCmd.Append($@",Diff = t.QAQty-InlineQty
 		,rate
+        ,t.Remark
         ,t.SewingReasonDesc
 		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
     from #tmp1stFilter t");
