@@ -1300,7 +1300,7 @@ DECLARE @refno VARCHAR(21),
 		@shipqty INT,
 		@nw NUMERIC(7,3),
 		@gw NUMERIC(7,3),
-		@nnw NUMERIC(5,3),
+		@nnw NUMERIC(7,3),
         @BarCode varchar(30)
 
 --宣告變數: 記錄程式中的資料
@@ -1624,7 +1624,7 @@ DECLARE @refno VARCHAR(21),
 		@shipqty INT,
 		@nw NUMERIC(7,3),
 		@gw NUMERIC(7,3),
-		@nnw NUMERIC(5,3),
+		@nnw NUMERIC(7,3),
         @BarCode varchar(30)
 
 --宣告變數: 記錄程式中的資料

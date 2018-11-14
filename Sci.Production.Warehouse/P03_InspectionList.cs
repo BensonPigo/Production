@@ -149,8 +149,8 @@ namespace Sci.Production.Warehouse
 	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
 	else 'Blank'
     END as [Result]
-,iif(a.arriveqty = 0 ,null,round(a.TotalInspYds/a.ArriveQty * 100,2)) InspRate
-,a.TotalInspYds
+,iif(isnull(c.ActualYds,0) = 0 ,0 ,round((c.ActualYds / a.ArriveQty)*100 ,2)) as InspRate
+,c.ActualYds TotalInspYds 
 ,a.TotalDefectPoint
 ,CASE when a.Physical != '' then a.Physical
 	  when a.Nonphysical=1 then  'N/A' else '' 
@@ -163,7 +163,14 @@ namespace Sci.Production.Warehouse
 ,[Continuity]=IIF(a.nonContinuity=1,'N/A',a.Continuity)		
 ,a.ContinuityDate
 ,a.id
- from dbo.FIR a WITH (NOLOCK) inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
+from dbo.FIR a WITH (NOLOCK) 
+inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
+outer apply ( 
+	select Id, isnull(sum(c.ActualYds),0) as ActualYds
+	from FIR_Physical c
+	where c.id = a.id
+	group by c.ID 
+)c
 where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr["seq2"]));
 
                 selectResult1 = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtFIR_AIR);

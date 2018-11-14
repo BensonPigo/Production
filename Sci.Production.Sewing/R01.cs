@@ -132,11 +132,11 @@ select OutputDate
 	   , Category
 	   , Shift
 	   , SewingLineID
-	   , ActManPower = Sum(Round(ActManPower,2))
+	   , ActManPower = Round(Sum(ActManPower),2)
 	   , Team
 	   , OrderId
 	   , ComboType
-	   , WorkHour = sum(Round(WorkHour,3))
+	   , WorkHour = Round(sum(WorkHour),3)
 	   , QAQty = sum(QAQty) 
 	   , InlineQty = sum(InlineQty) 
 	   , OrderCategory
@@ -260,10 +260,10 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   , Style = IIF(Category='M',MockupStyle,OrderStyle) 
 	   , CDNo = IIF(Category = 'M', MockupCDCodeID, OrderCdCodeID) + '-' + ComboType
 	   , ActManPower = IIF(SHIFT = 'O'
-                            ,MAX(IIF(QAQty > 0, ActManPower / QAQty, ActManPower)) OVER (PARTITION BY SHIFT)
+                            ,MAX(IIF(QAQty > 0, ActManPower / QAQty, ActManPower)) OVER (PARTITION BY SHIFT,Team,SewingLineID)
                             ,IIF(QAQty > 0, ActManPower / QAQty, ActManPower))
 	   , WorkHour
-	   , ManHour = ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2)
+	   , ManHour = IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour
 	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2) * 3600 / StdTMS, 2) 
 	   , TMS = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * StdTMS
 	   , CPUPrice = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
@@ -274,7 +274,7 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   					    																							     , OrderCPU * OrderCPUFactor * Rate)
 						    , 0) 
 	   , QAQty
-	   , TotalCPU = ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * QAQty, 2)
+	   , TotalCPU = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * QAQty
 	   , CPUSewer = IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
 	   									   , ActManPower) * WorkHour, 2) > 0
    							     , ROUND((IIF(Category = 'M', MockupCPU * MockupCPUFactor
@@ -339,7 +339,7 @@ SubTotal as (
 						else (s.TMS/s.QAQty)
 				   end
 		   , s.RFT
-		   , ActManPower = sum(Round(m.ActManPower,2))
+		   , ActManPower = Round(sum(m.ActManPower),2)
 	from SubSummaryData s 
 	left join SubMaxActManpower m on s.Shift = m.Shift 
 									 and s.Team = m.Team

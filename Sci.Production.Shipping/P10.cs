@@ -325,13 +325,19 @@ order by g.ID", masterID);
             //    }
             //}
 
+            // 未篩選過的packingList
+            DataTable packingList_List = (DataTable)this.listControlBindingSource1.DataSource;
+
             foreach (DataRow dr in details)
             {
                 if (dr.RowState == DataRowState.Modified || dr.RowState == DataRowState.Added)
                 {
                     this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
 
-                    // 不要相信畫面上的資訊!!! DB可能已經被改了，因此回DB撈出來最安全
+                    // 根據GMTBooking.ID篩選出對應的PackingList，這些是預先存在Form裡面的，不是DB裡面最新的資料
+                    DataTable packingListDt_on_Form = packingList_List.AsEnumerable().Where(o => o["INVNo"].ToString() == MyUtility.Convert.GetString(dr["ID"])).CopyToDataTable();
+
+                    // DB可能已經被修改，因此回DB撈出GMTBooking底下最新的PackingList
                     DataTable packingListDt_new;
                     string sqlCmd = string.Format("SELECT ID,InspDate,InspStatus,PulloutDate FROM PackingList WHERE INVNo='{0}' ", MyUtility.Convert.GetString(dr["ID"]));
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, out packingListDt_new);
@@ -339,7 +345,20 @@ order by g.ID", masterID);
                     {
                         foreach (DataRow pldatarow in packingListDt_new.Rows)
                         {
-                            this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
+                            // 因為User會修改InspDate、InspStatus、PulloutDate三個欄位，這些欄會在Form上面，因此要把Form上面的PackingList、DB裡的PackingList比對
+                            // packingListDt_new是最新的PackingList清單，packingListDt_on_Form是User修改過的PackingList清單
+                            DataTable packingList_Merge = packingListDt_on_Form.AsEnumerable().Where(o => o["ID"].ToString() == pldatarow["ID"].ToString()).CopyToDataTable();
+
+                            // 如果該筆資料packingListDt_on_Form有，但不存在packingListDt_new，表示這筆PackingList是被Import到Form上面後，其他功能在DB裡面異動過
+                            // 這類的PackingList就不UPDATE
+                            if (packingList_Merge.Rows.Count > 0)
+                            {
+                                pldatarow["InspDate"] = packingList_Merge.Rows[0]["InspDate"];
+                                pldatarow["InspStatus"] = packingList_Merge.Rows[0]["InspStatus"];
+                                pldatarow["PulloutDate"] = packingList_Merge.Rows[0]["PulloutDate"];
+                                this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
+                            }
+
                             continue;
                         }
                     }

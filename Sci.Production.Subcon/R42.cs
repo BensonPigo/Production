@@ -105,7 +105,8 @@ namespace Sci.Production.Subcon
 			              when bt.Type = '3' then 'In/Out' end,
             [TagId] = bt.TagId,
             [TransferDate] = CAST(TransferDate AS DATE),
-            [TransferTime] = TransferDate
+            [TransferTime] = TransferDate,
+            bt.LocationID
             --CAST ( bt.TransferDate AS DATE) AS TransferDate
             from BundleTransfer  bt WITH (NOLOCK)
             left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
