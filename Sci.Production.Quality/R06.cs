@@ -361,15 +361,21 @@ inner join ColorFastness_Detail CFD WITH (NOLOCK) on CFD.ID = CF.ID
 INNER JOIN FIR F WITH (NOLOCK) ON CF.POID=F.POID 
 where CF.Status ='Confirmed' and CFD.Result = 'Fail' 
 
-select [MIGRATIONyards] =sum(rd.StockQty),tmp.{groupby_col}
+select [MIGRATIONyards] =sum(a.StockQty),tmp.{groupby_col}
 into #mtmp
-from Receiving_Detail rd WITH (NOLOCK)
-inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
-,(select distinct {groupby_col} from #tmp) tmp
-Where exists(select * from #ea where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
-or exists(select * from #eb where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
-or exists(select * from #ec where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
+from(
+	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,ps.SuppID,psd.Refno 
+	from Receiving_Detail rd WITH (NOLOCK) 
+	inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
+	left join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
+	left join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
+)a
+inner join (select distinct {groupby_col} from #tmp) tmp on a.{groupby_col} = tmp.{groupby_col} 
+Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.{groupby_col} = Tmp.{groupby_col} ) 
+or exists(select * from #eb where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.{groupby_col} = Tmp.{groupby_col} ) 
+or exists(select * from #ec where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.{groupby_col} = Tmp.{groupby_col} )
 group by tmp.{groupby_col}
+
 -----#Stmp 
 select f.poid,f.SEQ1,f.seq2,fs.Dyelot,f.{groupby_col}
 into #sa
@@ -382,13 +388,18 @@ from fir f WITH (NOLOCK)
 inner join FIR_Continuity fc WITH (NOLOCK) on fc.ID = f.ID
 where f.ContinuityEncode =1 and fc.Result = 'Fail' 
 
-select [SHADINGyards] =sum(rd.StockQty),tmp.{groupby_col}
+select [SHADINGyards] =sum(a.StockQty),tmp.{groupby_col}
 into #Stmp
-from Receiving_Detail rd WITH (NOLOCK) 
-inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
-,(select distinct {groupby_col} from #tmp) tmp
-Where exists(select * from #sa where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and {groupby_col} = Tmp.{groupby_col} ) 
-or exists(select * from #sb where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and {groupby_col} = Tmp.{groupby_col} ) 
+from(
+	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,ps.SuppID,psd.Refno 
+	from Receiving_Detail rd WITH (NOLOCK) 
+	inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
+	left join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
+	left join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
+)a
+inner join (select distinct {groupby_col} from #tmp) tmp on a.{groupby_col} = tmp.{groupby_col} 
+Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.{groupby_col} = Tmp.{groupby_col} ) 
+or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.{groupby_col} = Tmp.{groupby_col} ))
 group by tmp.{groupby_col}
 
 -----#Ltmp 
@@ -485,7 +496,7 @@ from(
 		and a.seq1 = tmp.seq1
 		and a.seq2 = tmp.seq2
 	)b
-	left join FIRSTDYELOT c on b.SCIRefno = c.SCIRefno and b.ColorID = c.ColorID and b.SuppID = c.SuppID
+	left join FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID
 	group by b.{groupby_col}
 )a
 ------#TmpFinal 
@@ -565,11 +576,11 @@ outer apply(select SHINGKAGE = iif(TmpTotal.totalStockqty = 0 , 0, round(SHRINKA
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) * 100 between range1 and range2)sl2
 left join #mtmp MIGRATION on MIGRATION.{groupby_col} = tmp.{groupby_col} 
 outer apply(
-	select MIGRATION =  iif(Tmp.stockqty = 0, 0, round(MIGRATION.MIGRATIONyards/Tmp.stockqty,4))
+	select MIGRATION =  iif(TmpTotal.totalStockqty = 0, 0, round(MIGRATION.MIGRATIONyards/TmpTotal.totalStockqty,4))
 )MIGRATIONLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(MIGRATIONLevel.MIGRATION,0) * 100 between range1 and range2)sl3
 left join #Stmp SHADING on SHADING.{groupby_col} = tmp.{groupby_col}
-outer apply(select SHADING = iif(Tmp.stockqty=0, 0, round(SHADING.SHADINGyards/Tmp.stockqty,4)))SHADINGLevel 
+outer apply(select SHADING = iif(TmpTotal.totalStockqty=0, 0, round(SHADING.SHADINGyards/TmpTotal.totalStockqty,4)))SHADINGLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHADINGLevel.SHADING,0) * 100 between range1 and range2)sl4
 left join #Ltmp LACKINGYARDAGE on LACKINGYARDAGE.{groupby_col}= Tmp.{groupby_col}
 outer apply(select LACKINGYARDAGE = iif(totalYds.TotalInspYds=0, 0, round(LACKINGYARDAGE.ActualYds/totalYds.TotalInspYds,4)))LACKINGYARDAGELevel
