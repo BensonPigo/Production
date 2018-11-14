@@ -499,7 +499,6 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             #region Sqlcmd
             string sqlcmd = $@"
 select distinct
-    p.BrandID,
 	ps.SuppID,
 	s.AbbEN,
 	psd.Refno,
@@ -511,7 +510,6 @@ from Po_Supp_Detail psd with(nolock)
 left join Po_Supp ps on ps.ID= psd.id and ps.SEQ1 = psd.seq1
 left join Supp s with(nolock) on s.ID = ps.SuppID
 left join FirstDyelot fd on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID 
-left join po p on p.id = psd.id
 where   ps.seq1 not like '7%'  and 
 {sqlwhere}
 and psd.FabricType = 'F'
