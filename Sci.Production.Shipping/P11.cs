@@ -305,9 +305,8 @@ where a.id = '{top1id}'
             worksheet.Cells[44, 3] = MyUtility.Convert.USDMoney(sumJ);
 
             string sumGW = $@"
-select sumGW = Sum (pd.GW),sumNW=sum(pd.NW)
-from PackingList_Detail pd with(nolock)
-inner join PackingList p with(nolock) on p.ID = pd.ID
+select sumGW = Sum (p.GW),sumNW=sum(p.NW),sumCBM=sum(p.CBM)
+from PackingList p with(nolock)
 where p.INVNo in ({string.Join(",", ids)})
 ";
             DataRow drsum;
@@ -315,14 +314,8 @@ where p.INVNo in ({string.Join(",", ids)})
             {
                 worksheet.Cells[53, 3] = drsum["sumGW"];
                 worksheet.Cells[54, 3] = drsum["sumNW"];
+                worksheet.Cells[55, 3] = drsum["sumCBM"];
             }
-
-            string sumcbm = $@"
-select sumCBM=sum(p.CBM)
-from PackingList p with(nolock) 
-where p.INVNo in ({string.Join(",", ids)})
-";
-            worksheet.Cells[55, 3] = MyUtility.GetValue.Lookup(sumcbm);
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P11");
