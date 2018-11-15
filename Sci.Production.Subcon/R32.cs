@@ -77,11 +77,49 @@ where Junk != 1", out dtFactory);
             #region SQL Filte
             List<string> filte = new List<string>();
             if (!Factory.Empty())
-                filte.Add("and O.FactoryID = @Factory  --Factory"); 
+                filte.Add("and O.FactoryID = @Factory  --Factory");
             #endregion
             #region SQL CMD
             string sqlCmd = string.Format(@"
-SELECT  O.FactoryID
+
+--先找出User 輸入條件的BundleNo + StartProcess
+SELECT  DISTINCT  bd.BundleNo,b.StartProcess
+INTO #tmp
+FROM BundleTrack b
+INNER JOIn BundleTrack_detail bd ON b.ID = bd.id
+WHERE  (b.Id LIKE 'TB%'  OR b.Id LIKE 'TC%')
+		and b.IssueDate >= @StartDate 
+		and b.IssueDate <= @EndDate
+        and b.StartProcess = @SubProcess  
+{0}
+
+--利用BundleNo + StartProcess組合，取得最大的Farm In ，若沒有則顯示NULL
+SELECT  DISTINCT  t.BundleNo,t.StartProcess,[MaxInDate]=Max(bd.ReceiveDate)
+INTO #MaxInDateList
+FROM BundleTrack b
+INNER JOIn BundleTrack_detail bd ON b.ID = bd.id 
+RIGHT JOIN #tmp t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess AND  (bd.Id LIKE 'TC%' )
+GROUP BY t.BundleNo,t.StartProcess
+
+--利用BundleNo + StartProcess組合，取得最大的Farm Out，若沒有則顯示NULL
+SELECT  DISTINCT  t.BundleNo,t.StartProcess,[MaxOutDate]=Max(b.IssueDate)
+INTO #MaxOutDateList
+FROM BundleTrack b
+INNER JOIn BundleTrack_detail bd ON b.ID = bd.id
+RIGHT JOIN #tmp t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess  AND  (  bd.Id LIKE 'TB%' )
+GROUP BY t.BundleNo,t.StartProcess
+
+
+--組合成BundleNo 、 StartProcess  、  Farm Out  、Farm In的清單
+SELECT tmpOut.BundleNo,tmpOut.StartProcess,tmpOut.MaxOutDate,tmpIn.MaxInDate
+INTO #summary
+FROM #MaxInDateList tmpIn
+LEFT JOIN #MaxOutDateList tmpOut  ON tmpIn.BundleNo=tmpOut.BundleNo AND tmpIn.StartProcess=tmpOut.StartProcess
+
+
+--用上面清單，串接所有的BundleTrack、BundleTrack_Detail，BundleNo、StartProcess必須完全符合
+SELECT DISTINCT 
+		 O.FactoryID
 		, O.ID
 		, O.StyleID
 		, BD.SizeCode
@@ -90,23 +128,24 @@ SELECT  O.FactoryID
 		, BodyCutNo = Concat(B.FabricPanelCode, ' ', B.Cutno)
 		, BD.Qty
 		, Color = Concat(B.Article, ' ', B.Colorid)
-		, BT.IssueDate
-		, BTD_IN.ReceiveDate
+		, summary.MaxOutDate
+		, summary.MaxInDate
+		,BT.EndSite
         , [Subcon] = BT.EndSite + '-' + ls.Abb 
-		, '' remark        
+		, '' remark  
 FROM BundleTrack BT
 left join BundleTrack_detail BTD on BT.Id=BTD.Id
-left join Orders O on O.ID=BTD.orderid
+INNER JOIN #summary summary ON summary.BundleNo=BTD.BundleNo AND  summary.StartProcess=BT.StartProcess
+LEFT JOIN Orders O on O.ID=BTD.orderid
 left join Bundle_Detail BD on BD.BundleNo=BTD.BundleNo
 left join Bundle B on B.ID =BD.Id
-left join BundleTrack_detail BTD_IN on BTD_IN.Id like 'TC%' and BD.BundleNo=BTD_IN.BundleNo  --Farm In Date
 left join localSupp ls on ls.id=bt.endsite
-WHERE	BT.Id LIKE 'TB%'  --Farm out
-		and BT.IssueDate >= @StartDate  --Farm Out Date start
-		and BT.IssueDate <= @EndDate  --Farm Out Date End
-        and BT.StartProcess = @SubProcess  --Sub Process
-        {0}
-ORDER BY  BD.BundleNo", filte.JoinToString("\r\n"));
+ORDER BY BTD.BundleNo
+
+DROP TABLE #tmp,#MaxInDateList,#MaxOutDateList, #summary
+
+", filte.JoinToString("\r\n"));
+
             #endregion
             #region Get Data
             DualResult result;
