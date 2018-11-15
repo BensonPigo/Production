@@ -283,7 +283,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                      .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8),settings : continuity)
                      .Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13))
                      .Text("Odor", header: "Odor", width: Widths.AnsiChars(8), settings: Odor)
-                     .Date("OdorDate", header: "ContinuityDate", width: Widths.AnsiChars(13))
+                     .Date("OdorDate", header: "OdorDate", width: Widths.AnsiChars(13))
                      ;
 
                 sqlcmd.Clear();
