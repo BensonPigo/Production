@@ -439,7 +439,7 @@ as
 	   from PackOrderID poid
 	   left join Orders o WITH (NOLOCK) on o.ID = poid.OrderID
 	   left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
-	   left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
+	   left join Order_Location sl WITH (NOLOCK) on sl.OrderID = o.ID
 	   left join SewingOutput_Detail_Detail sodd WITH (NOLOCK) on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = sl.Location
 	   group by poid.OrderID,oq.Article,oq.SizeCode, sl.Location) a
  group by a.OrderID,a.Article,a.SizeCode
