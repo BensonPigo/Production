@@ -116,7 +116,7 @@ namespace Sci.Production.Sewing
                 @"
 select  sd.*
         , [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  )
-        , [Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
+        , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
 		, [SewingReasonID]=sr.id
 		, [ReasonDescription]=sr.Description
@@ -335,7 +335,7 @@ where   o.FtyGroup = @factoryid
                                 }
                                 else
                                 {
-                                    dr["Remark"] = "Data Migration (not belong to this line#)";
+                                    dr["Tips"] = "Data Migration (not belong to this line#)";
                                 }
                             }
 
@@ -639,7 +639,8 @@ where   o.FtyGroup = @factoryid
 
                 // .Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .Text("Tips", header: "Tips", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(40), iseditingreadonly: false)
                 .Text("SewingReasonID", header: "Reason ID", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: this.SewingReasonID)
                 .Text("ReasonDescription", header: "Description", width: Widths.AnsiChars(40), iseditingreadonly: true)
                 .CheckBox("AutoCreate", header: "Auto Create", trueValue: 1, falseValue: 0, iseditable: false);
