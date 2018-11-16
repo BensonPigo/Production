@@ -118,16 +118,25 @@ SELECT DISTINCT
 		, Color = Concat(B.Article, ' ', B.Colorid)
 		, summary.MaxOutDate
 		, summary.MaxInDate
-		,BT.EndSite
-        , [Subcon] = BT.EndSite + '-' + ls.Abb 
+        , [Subcon] = NewestFarmOut.EndSite + '-' + ls.Abb 
 		, '' remark  
 FROM BundleTrack BT
 LEFT JOIN BundleTrack_detail BTD on BT.Id=BTD.Id
 INNER JOIN #summary summary ON summary.BundleNo=BTD.BundleNo AND  summary.StartProcess=BT.StartProcess
+
+--避免資料發散，因此以最新Farm out那筆的BundleTrack.EndSite去關聯localSupp
+OUTER APPLY(
+		SELECT TOP 1 [EndSite]=a.EndSite
+		FROM BundleTrack a
+		INNER JOIN BundleTrack_detail b ON a.id = b.id
+		WHERE BundleNo=summary.BundleNo AND StartProcess=summary.StartProcess
+		ORDER BY IssueDate DESC, AddDate DESC 
+)NewestFarmOut
+
 LEFT JOIN Orders O on O.ID=BTD.orderid
 LEFT JOIN Bundle_Detail BD on BD.BundleNo=BTD.BundleNo
 LEFT JOIN Bundle B on B.ID =BD.Id
-INNER JOIN localSupp ls on ls.id=bt.endsite
+INNER join localSupp ls on ls.id=NewestFarmOut.endsite
 
 ORDER BY BTD.BundleNo
 
