@@ -35,7 +35,7 @@
     [AddDate]                  DATETIME        NULL,
     [EditName]                 VARCHAR (10)    CONSTRAINT [DF_GMTBooking_EditName] DEFAULT ('') NULL,
     [EditDate]                 DATETIME        NULL,
-    [NoExportCharges]          BIT             DEFAULT ((0)) NULL,
+    [NoExportCharges]          BIT             CONSTRAINT [DF_GMTBooking_NoExportCharges] DEFAULT ((0)) NULL,
     [BIRID]                    INT             NULL,
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
