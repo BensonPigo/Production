@@ -82,42 +82,30 @@ where Junk != 1", out dtFactory);
             #region SQL CMD
             string sqlCmd = string.Format(@"
 
---先找出User 輸入條件的BundleNo + StartProcess
-SELECT  DISTINCT  bd.BundleNo,b.StartProcess
-INTO #tmp
+
+--筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
+
+--先找出User 輸入條件的 Farm Out區間
+SELECT  DISTINCT  bd.BundleNo,b.StartProcess,[MaxOutDate]=Max(b.IssueDate)
+INTO #MaxOutDateList
 FROM BundleTrack b
-INNER JOIn BundleTrack_detail bd ON b.ID = bd.id
-WHERE  (b.Id LIKE 'TB%'  OR b.Id LIKE 'TC%')
+INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
+WHERE   b.Id LIKE 'TB%' 
 		and b.IssueDate >= @StartDate 
 		and b.IssueDate <= @EndDate
         and b.StartProcess = @SubProcess  
 {0}
+GROUP BY bd.BundleNo,b.StartProcess
 
---利用BundleNo + StartProcess組合，取得最大的Farm In ，若沒有則顯示NULL
-SELECT  DISTINCT  t.BundleNo,t.StartProcess,[MaxInDate]=Max(bd.ReceiveDate)
-INTO #MaxInDateList
-FROM BundleTrack b
-INNER JOIn BundleTrack_detail bd ON b.ID = bd.id 
-RIGHT JOIN #tmp t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess AND  (bd.Id LIKE 'TC%' )
-GROUP BY t.BundleNo,t.StartProcess
-
---利用BundleNo + StartProcess組合，取得最大的Farm Out，Farm Out不得NULL
-SELECT  DISTINCT  t.BundleNo,t.StartProcess,[MaxOutDate]=Max(b.IssueDate)
-INTO #MaxOutDateList
-FROM BundleTrack b
-INNER JOIn BundleTrack_detail bd ON b.ID = bd.id
-INNER JOIN #tmp t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess  AND  (  bd.Id LIKE 'TB%' )
-GROUP BY t.BundleNo,t.StartProcess
-
-
---組合成BundleNo 、 StartProcess  、  Farm Out  、Farm In的清單
-SELECT tmpOut.BundleNo,tmpOut.StartProcess,tmpOut.MaxOutDate,tmpIn.MaxInDate
+--根據該區間內的 BundleNo + StartProcess，找出所有Farm In，沒有的話放NULL
+SELECT  DISTINCT  t.BundleNo,t.StartProcess,t.MaxOutDate,[MaxInDate]=Max(bd.ReceiveDate)
 INTO #summary
-FROM #MaxInDateList tmpIn
-RIGHT JOIN #MaxOutDateList tmpOut  ON tmpIn.BundleNo=tmpOut.BundleNo AND tmpIn.StartProcess=tmpOut.StartProcess
+FROM BundleTrack b
+INNER JOIN BundleTrack_detail bd ON b.ID = bd.id 
+RIGHT JOIN #MaxOutDateList t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess AND  (bd.Id LIKE 'TC%' )
+GROUP BY t.BundleNo,t.StartProcess,t.MaxOutDate
 
-
---用上面清單，串接所有的BundleTrack、BundleTrack_Detail，BundleNo、StartProcess必須完全符合
+--用上面清單，串接所有的BundleTrack、BundleTrack_Detail，  BundleNo、StartProcess必須完全符合
 SELECT DISTINCT 
 		 O.FactoryID
 		, O.ID
@@ -134,15 +122,16 @@ SELECT DISTINCT
         , [Subcon] = BT.EndSite + '-' + ls.Abb 
 		, '' remark  
 FROM BundleTrack BT
-left join BundleTrack_detail BTD on BT.Id=BTD.Id
+LEFT JOIN BundleTrack_detail BTD on BT.Id=BTD.Id
 INNER JOIN #summary summary ON summary.BundleNo=BTD.BundleNo AND  summary.StartProcess=BT.StartProcess
 LEFT JOIN Orders O on O.ID=BTD.orderid
-left join Bundle_Detail BD on BD.BundleNo=BTD.BundleNo
-left join Bundle B on B.ID =BD.Id
-left join localSupp ls on ls.id=bt.endsite
+LEFT JOIN Bundle_Detail BD on BD.BundleNo=BTD.BundleNo
+LEFT JOIN Bundle B on B.ID =BD.Id
+INNER JOIN localSupp ls on ls.id=bt.endsite
+
 ORDER BY BTD.BundleNo
 
-DROP TABLE #tmp,#MaxInDateList,#MaxOutDateList, #summary
+DROP TABLE #MaxOutDateList, #summary
 
 ", filte.JoinToString("\r\n"));
 
