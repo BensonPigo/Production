@@ -101,12 +101,12 @@ INNER JOIn BundleTrack_detail bd ON b.ID = bd.id
 RIGHT JOIN #tmp t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess AND  (bd.Id LIKE 'TC%' )
 GROUP BY t.BundleNo,t.StartProcess
 
---利用BundleNo + StartProcess組合，取得最大的Farm Out，若沒有則顯示NULL
+--利用BundleNo + StartProcess組合，取得最大的Farm Out，Farm Out不得NULL
 SELECT  DISTINCT  t.BundleNo,t.StartProcess,[MaxOutDate]=Max(b.IssueDate)
 INTO #MaxOutDateList
 FROM BundleTrack b
 INNER JOIn BundleTrack_detail bd ON b.ID = bd.id
-RIGHT JOIN #tmp t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess  AND  (  bd.Id LIKE 'TB%' )
+INNER JOIN #tmp t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess  AND  (  bd.Id LIKE 'TB%' )
 GROUP BY t.BundleNo,t.StartProcess
 
 
@@ -114,7 +114,7 @@ GROUP BY t.BundleNo,t.StartProcess
 SELECT tmpOut.BundleNo,tmpOut.StartProcess,tmpOut.MaxOutDate,tmpIn.MaxInDate
 INTO #summary
 FROM #MaxInDateList tmpIn
-LEFT JOIN #MaxOutDateList tmpOut  ON tmpIn.BundleNo=tmpOut.BundleNo AND tmpIn.StartProcess=tmpOut.StartProcess
+RIGHT JOIN #MaxOutDateList tmpOut  ON tmpIn.BundleNo=tmpOut.BundleNo AND tmpIn.StartProcess=tmpOut.StartProcess
 
 
 --用上面清單，串接所有的BundleTrack、BundleTrack_Detail，BundleNo、StartProcess必須完全符合
