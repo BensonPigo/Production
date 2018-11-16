@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ShareExpense] (
-    [Junk]         BIT             CONSTRAINT [DF_ShareExpense_Junk] DEFAULT ('') NOT NULL,
+    [Junk]         BIT             CONSTRAINT [DF_ShareExpense_Junk] DEFAULT ('0') NOT NULL,
     [ShippingAPID] VARCHAR (13)    CONSTRAINT [DF_ShareExpense_ShippingAPID] DEFAULT ('') NOT NULL,
     [BLNo]         VARCHAR (20)    CONSTRAINT [DF_ShareExpense_BLNo] DEFAULT ('') NOT NULL,
     [WKNo]         VARCHAR (13)    CONSTRAINT [DF_ShareExpense_WKNo] DEFAULT ('') NOT NULL,
