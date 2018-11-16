@@ -96,6 +96,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SqlServer.Smo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -490,6 +492,12 @@
     </Compile>
     <Compile Include="P09.Designer.cs">
       <DependentUpon>P09.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P11.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P11.Designer.cs">
+      <DependentUpon>P11.cs</DependentUpon>
     </Compile>
     <Compile Include="P10.cs">
       <SubType>Form</SubType>
@@ -899,6 +907,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ImportFromPO.resx">
       <DependentUpon>P02_ImportFromPO.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P11.resx">
+      <DependentUpon>P11.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10.resx">
       <DependentUpon>P10.cs</DependentUpon>
