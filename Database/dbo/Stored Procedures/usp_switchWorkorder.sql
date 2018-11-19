@@ -206,7 +206,7 @@ BEGIN
 		group by b.id,b.article,b.sizecode,b.colorid,PatternPanel,b.orderqty, disqty,a.SCIRefno
 		order by inline
 		--------------------Factory-------------------------------------
-		Select @Factoryid = Factoryid From Orders  WITH (NOLOCK)  Where ID = @Cuttingid
+		Select @Factoryid = FtyGroup From Orders  WITH (NOLOCK)  Where ID = @Cuttingid
 		--------------------Loop Start @CuttingCombo--------------------
 		Set @WorkOrderMixRowID = 1
 		SET @NewKey = 1
