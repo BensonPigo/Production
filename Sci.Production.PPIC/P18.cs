@@ -403,10 +403,19 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
             #region Confirmed name取值
             this.txtAddName.Text = this.CurrentMaintain["AddName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["AddName"]}'") + " " + (MyUtility.Check.Empty(this.CurrentMaintain["AddDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["AddDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
-            this.txtSupApv.Text = this.CurrentMaintain["SupApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["SupApvName"]}'") + " " + (MyUtility.Check.Empty(this.CurrentMaintain["SupApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["SupApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
-            this.txtPPDApv.Text = this.CurrentMaintain["PPDApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["PPDApvName"]}'") + " " + (MyUtility.Check.Empty(this.CurrentMaintain["PPDApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["PPDApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
-            this.txtProdApv.Text = this.CurrentMaintain["ProdApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["ProdApvName"]}'")
-                + " " + (MyUtility.Check.Empty(this.CurrentMaintain["ProdApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["ProdApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
+
+            this.txtEditBy.Text = this.CurrentMaintain["editName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["editName"]}'") + " " + (MyUtility.Check.Empty(this.CurrentMaintain["EditDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["EditDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
+
+            this.txtPPICSupApv.Text = this.CurrentMaintain["PPICSupApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["PPICSupApvName"]}'") + " " + (MyUtility.Check.Empty(this.CurrentMaintain["PPICSupApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["PPICSupApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
+
+            this.txtWHSupApv.Text = this.CurrentMaintain["WHSupApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["WHSupApvName"]}'")
+                + " " + (MyUtility.Check.Empty(this.CurrentMaintain["WHSupApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["WHSupApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
+
+            this.txtPPDMgrApv.Text = this.CurrentMaintain["PPDApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["PPDApvName"]}'")
+               + " " + (MyUtility.Check.Empty(this.CurrentMaintain["PPDApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["PPDApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
+
+            this.txtProdMgrApv.Text = this.CurrentMaintain["ProdApvName"].ToString() + "-" + MyUtility.GetValue.Lookup($@"select name from pass1 where id='{this.CurrentMaintain["ProdApvName"]}'")
+              + " " + (MyUtility.Check.Empty(this.CurrentMaintain["ProdApvDate"]) ? string.Empty : ((DateTime)this.CurrentMaintain["ProdApvDate"]).ToString("yyyy/MM/dd hh:mm:ss"));
             #endregion
         }
 
@@ -423,7 +432,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
         protected override void ClickSend()
         {
             base.ClickSend();
-            string updateCmd = $@"update AVO set Status = 'Sent', SupApvDate = GETDATE(), SupApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Sent', PPICSupApvDate = GETDATE(), PPICSupApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -439,7 +448,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
         protected override void ClickRecall()
         {
             base.ClickRecall();
-            string updateCmd = $@"update AVO set Status = 'New', SupApvDate = null, SupApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'New', PPICSupApvDate = null, PPICSupApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -454,7 +463,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickCheck()
         {
-            string updateCmd = $@"update AVO set Status = 'Checked', PPDApvDate = GetDate(), PPDApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Checked', WHSupApvDate  = GetDate(), WHSupApvName = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -471,7 +480,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickUncheck()
         {
-            string updateCmd = $@"update AVO set Status = 'Sent', PPDApvDate = null, PPDApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Sent', WHSupApvDate  = null, WHSupApvName  = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
@@ -484,6 +493,40 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             }
 
             base.ClickUncheck();
+        }
+
+        protected override void ClickReceive()
+        {
+            string updateCmd = $@"update AVO set Status = 'Received', PPDApvDate  = GetDate(), PPDApvName  = '{Sci.Env.User.UserID}', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            DualResult result = DBProxy.Current.Execute(null, updateCmd);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
+                return;
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Successful!");
+            }
+
+            base.ClickReceive();
+        }
+
+        protected override void ClickReturn()
+        {
+            string updateCmd = $@"update AVO set Status = 'Checked', PPDApvDate  = null, PPDApvName  = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            DualResult result = DBProxy.Current.Execute(null, updateCmd);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Send data faile.\r\n" + result.ToString());
+                return;
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Successful!");
+            }
+
+            base.ClickReturn();
         }
 
         protected override void ClickConfirm()
@@ -620,9 +663,10 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
             else
             {
                 string addName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["AddName"]}') ");
-                string supApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["SupApvName"]}') ");
+                string pPICSupApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["PPICSupApvName"]}') ");
                 string pPDApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["PPDApvName"]}') ");
                 string prodApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["ProdApvName"]}') ");
+                string wHSupApvName = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["WHSupApvName"]}') ");
 
                 rd.ReportResource = reportresource;
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", this.CurrentMaintain["ID"].ToString()));
@@ -630,9 +674,10 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("MDivisionID", this.CurrentMaintain["MDivisionID"].ToString()));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Handle", this.CurrentMaintain["Handle"].ToString()));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("AddName", addName));
-                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SupApvName", supApvName));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("PPICSupApvName", pPICSupApvName));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("PPDApvName", pPDApvName));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ProdApvName", prodApvName));
+                rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("WHSupApvName", wHSupApvName));
                 rd.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", this.CurrentMaintain["Remark"].ToString()));
 
                 // 傳 list 資料
@@ -775,10 +820,11 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             worksheet.Cells[2, 6] = this.CurrentMaintain["MdivisionID"];
             worksheet.Cells[2, 8] = this.CurrentMaintain["Handle"];
             worksheet.Cells[3, 2] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["AddName"]}') ");
-            worksheet.Cells[3, 4] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["SupApvName"]}') ");
-            worksheet.Cells[3, 6] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["PPDApvName"]}') ");
-            worksheet.Cells[3, 10] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["ProdApvName"]}') ");
-            worksheet.Cells[4, 3] = this.CurrentMaintain["Remark"];
+            worksheet.Cells[3, 4] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["PPICSupApvName"]}') ");
+            worksheet.Cells[3, 6] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["WHSupApvName"]}') ");
+            worksheet.Cells[3, 10] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["PPDApvName"]}') ");
+            worksheet.Cells[4, 2] = MyUtility.GetValue.Lookup($"select dbo.getPass1('{this.CurrentMaintain["ProdApvName"]}') ");
+            worksheet.Cells[4, 5] = this.CurrentMaintain["Remark"];
 
             com.WriteTable(dt, 6);
             worksheet.get_Range($"A6:K{MyUtility.Convert.GetString(5 + dt.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
@@ -799,7 +845,7 @@ where a2.id ='{this.CurrentMaintain["id"]}'
             DataRow dr;
             this.ToExcel();
 
-            if (MyUtility.Check.Seek("select * from MailTo where id='017'", out dr))/////
+            if (MyUtility.Check.Seek("select * from MailTo where id='017'", out dr))
             {
                 var email = new MailTo(Sci.Env.Cfg.MailFrom, dr["ToAddress"].ToString(), dr["CCAddress"].ToString(), dr["Subject"].ToString(), this.Excelfile, dr["Content"].ToString(), false, false);
                 email.ShowDialog(this);
