@@ -167,7 +167,7 @@ outer apply (
 	order by pd.pulloutdate ASC
 ) pd2
 -------End-------
-where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) and f.IsProduceFty=1";
+where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Junk is null or o.Junk = 0) ";
 
                 if (this.radioBulk.Checked)
                 {
