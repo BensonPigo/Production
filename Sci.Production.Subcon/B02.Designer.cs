@@ -118,7 +118,7 @@
             this.comboResponsible.ReadOnly = true;
             this.comboResponsible.Size = new System.Drawing.Size(121, 24);
             this.comboResponsible.TabIndex = 4;
-            this.comboResponsible.Type = "IrregularPriceResp";
+            this.comboResponsible.Type = "Pms_PoIr_Responsible";
             // 
             // txtReason
             // 
