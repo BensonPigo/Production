@@ -77,7 +77,7 @@ where Junk != 1", out dtFactory);
             #region SQL Filte
             List<string> filte = new List<string>();
             if (!Factory.Empty())
-                filte.Add("and O.FactoryID = @Factory  --Factory");
+                filte.Add("	and O.FTYGroup = @Factory   --Factory");
             #endregion
             #region SQL CMD
             string sqlCmd = string.Format(@"
@@ -94,7 +94,6 @@ WHERE   b.Id LIKE 'TB%'
 		and b.IssueDate >= @StartDate 
 		and b.IssueDate <= @EndDate
         and b.StartProcess = @SubProcess  
-{0}
 
 --取得Farm In清單
 --Farm In的BundleNo+StartProcess，一定只能出現在Farm Out清單裡面，因此從上面找
@@ -105,7 +104,6 @@ INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
 WHERE   b.Id LIKE 'TC%' 
 		AND bd.BundleNo IN (SELECT BundleNo FROM #FarmOutList)
 		AND b.StartProcess IN (SELECT StartProcess FROM #FarmOutList)
-{0}
 
 --以FarmOutList 的為主，去掉重複
 SELECT DISTINCT BundleNo ,StartProcess
@@ -143,6 +141,7 @@ OUTER APPLY(
    ORDER BY ReceiveDate DESC,AddDate DESC
 )FarmIn
 INNER join LocalSupp ls on ls.id=FarmOut.EndSite
+WHERE 1=1 {0}
 ORDER BY base.BundleNo
 
 Drop Table #FarmOutList,#FarmInList,#Base
