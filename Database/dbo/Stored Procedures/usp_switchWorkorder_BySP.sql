@@ -15,7 +15,7 @@ update cutting set WorkType =2 where id = @Cuttingid
 
 Declare @POID varchar(13) 
 Declare @FactoryID varchar(8) 
-Select distinct @POID = POID,@FactoryID=FactoryID From Orders  WITH (NOLOCK) Where Cuttingsp = @Cuttingid and junk=0
+Select distinct @POID = POID,@FactoryID=FtyGroup From Orders  WITH (NOLOCK) Where Cuttingsp = @Cuttingid and junk=0
 
 select *,Order_EachConsUkey = 0 into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
 alter table #tmp_WorkOrder_Distribute add colorid varchar(6)
