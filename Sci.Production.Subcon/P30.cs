@@ -203,7 +203,7 @@ namespace Sci.Production.Subcon
 select lpd.ID,a.RequestId,a.OrderId,a.Refno 
 from #TmpSource a 
 inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''
-where not exists (select 1 from PackingList_Detail pld where pld.id = a.RequestID and pld.Refno = a.Refno)
+where exists (select 1 from PackingList_Detail pld where pld.id = a.RequestID and pld.Refno = a.Refno)
 ";
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "", check_sql, out resulttb, "#TmpSource");
                 if (!result)
