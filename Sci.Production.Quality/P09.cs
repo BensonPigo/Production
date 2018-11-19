@@ -265,7 +265,7 @@ select distinct
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
 	fd.FirstDyelot,
-	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no first dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
+	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no need to provide 1st dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
 	sr.T2InspYds,
 	sr.T2DefectPoint,
 	sr.T2Grade,
@@ -517,7 +517,7 @@ select distinct
     s.SeasonSCIID,
     fd.Period,
 	fd.FirstDyelot  FirstDyelot,
-	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no first dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
+	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no need to provide 1st dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
 	psd.Refno
 
 from Export_Detail ed with(nolock)
