@@ -86,7 +86,7 @@ where Junk != 1", out dtFactory);
 --筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
 
 --先找出User 輸入條件的 Farm Out區間
-SELECT  DISTINCT  bd.BundleNo,b.StartProcess,[MaxOutDate]=Max(b.IssueDate)
+SELECT  DISTINCT   b.id ,bd.BundleNo ,b.StartProcess ,[MaxOutDate]=Max(b.IssueDate)
 INTO #MaxOutDateList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
@@ -95,18 +95,18 @@ WHERE   b.Id LIKE 'TB%'
 		and b.IssueDate <= @EndDate
         and b.StartProcess = @SubProcess  
 {0}
-GROUP BY bd.BundleNo,b.StartProcess
+GROUP BY  b.id,bd.BundleNo,b.StartProcess
 
 --根據該區間內的 BundleNo + StartProcess，找出所有Farm In，沒有的話放NULL
-SELECT  DISTINCT  t.BundleNo,t.StartProcess,t.MaxOutDate,[MaxInDate]=Max(bd.ReceiveDate)
+SELECT  DISTINCT  t.ID ,t.BundleNo ,t.StartProcess ,t.MaxOutDate ,[MaxInDate]=Max(bd.ReceiveDate)
 INTO #summary
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id 
 RIGHT JOIN #MaxOutDateList t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess AND  (bd.Id LIKE 'TC%' )
-GROUP BY t.BundleNo,t.StartProcess,t.MaxOutDate
+GROUP BY t.ID ,t.BundleNo,t.StartProcess,t.MaxOutDate
 
 --用上面清單，串接所有的BundleTrack、BundleTrack_Detail，  BundleNo、StartProcess必須完全符合
-SELECT DISTINCT 
+SELECT  
 		 O.FactoryID
 		, O.ID
 		, O.StyleID
@@ -122,14 +122,14 @@ SELECT DISTINCT
 		, '' remark  
 FROM BundleTrack BT
 LEFT JOIN BundleTrack_detail BTD on BT.Id=BTD.Id
-INNER JOIN #summary summary ON summary.BundleNo=BTD.BundleNo AND  summary.StartProcess=BT.StartProcess
+INNER JOIN #summary summary ON summary.BundleNo=BTD.BundleNo AND  summary.StartProcess=BT.StartProcess AND BT.ID =summary.ID
 
 --避免資料發散，因此以最新Farm out那筆的BundleTrack.EndSite去關聯localSupp
 OUTER APPLY(
 		SELECT TOP 1 [EndSite]=a.EndSite
 		FROM BundleTrack a
 		INNER JOIN BundleTrack_detail b ON a.id = b.id
-		WHERE BundleNo=summary.BundleNo AND StartProcess=summary.StartProcess
+		WHERE BundleNo=summary.BundleNo AND StartProcess=summary.StartProcess AND a.ID=summary.ID
 		ORDER BY IssueDate DESC, AddDate DESC 
 )NewestFarmOut
 
