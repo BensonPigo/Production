@@ -66,6 +66,7 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.numttlqty = new Sci.Win.UI.NumericBox();
+            this.btnIrrPriceReason = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -83,6 +84,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnIrrPriceReason);
             this.masterpanel.Controls.Add(this.numttlqty);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.groupBox1);
@@ -116,7 +118,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 215);
+            this.masterpanel.Size = new System.Drawing.Size(1022, 253);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -151,16 +153,17 @@
             this.masterpanel.Controls.SetChildIndex(this.groupBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numttlqty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnIrrPriceReason, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 215);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 262);
+            this.detailpanel.Location = new System.Drawing.Point(0, 253);
+            this.detailpanel.Size = new System.Drawing.Size(1022, 275);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(896, 170);
+            this.gridicon.Location = new System.Drawing.Point(910, 210);
             this.gridicon.TabIndex = 9;
             // 
             // refresh
@@ -169,7 +172,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 262);
+            this.detailgridcont.Size = new System.Drawing.Size(1022, 275);
             // 
             // detail2
             // 
@@ -185,16 +188,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 515);
+            this.detail.Size = new System.Drawing.Size(1022, 566);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 477);
+            this.detailcont.Size = new System.Drawing.Size(1022, 528);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 528);
+            this.detailbtm.Size = new System.Drawing.Size(1022, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -203,7 +206,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 544);
+            this.tabs.Size = new System.Drawing.Size(1030, 595);
             // 
             // createby
             // 
@@ -279,7 +282,7 @@
             // 
             this.labelAmount.Location = new System.Drawing.Point(685, 13);
             this.labelAmount.Name = "labelAmount";
-            this.labelAmount.Size = new System.Drawing.Size(57, 23);
+            this.labelAmount.Size = new System.Drawing.Size(68, 23);
             this.labelAmount.TabIndex = 10;
             this.labelAmount.Text = "Amount";
             // 
@@ -295,7 +298,7 @@
             // 
             this.labelVat.Location = new System.Drawing.Point(685, 47);
             this.labelVat.Name = "labelVat";
-            this.labelVat.Size = new System.Drawing.Size(57, 23);
+            this.labelVat.Size = new System.Drawing.Size(68, 23);
             this.labelVat.TabIndex = 13;
             this.labelVat.Text = "Vat";
             // 
@@ -319,7 +322,7 @@
             // 
             this.labelTotal.Location = new System.Drawing.Point(685, 80);
             this.labelTotal.Name = "labelTotal";
-            this.labelTotal.Size = new System.Drawing.Size(57, 23);
+            this.labelTotal.Size = new System.Drawing.Size(68, 23);
             this.labelTotal.TabIndex = 16;
             this.labelTotal.Text = "Total";
             // 
@@ -345,7 +348,7 @@
             // btnImportThread
             // 
             this.btnImportThread.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportThread.Location = new System.Drawing.Point(851, 47);
+            this.btnImportThread.Location = new System.Drawing.Point(867, 47);
             this.btnImportThread.Name = "btnImportThread";
             this.btnImportThread.Size = new System.Drawing.Size(143, 43);
             this.btnImportThread.TabIndex = 8;
@@ -398,7 +401,7 @@
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(71, 145);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(632, 23);
+            this.txtRemark.Size = new System.Drawing.Size(785, 23);
             this.txtRemark.TabIndex = 2;
             // 
             // numVatRate
@@ -440,7 +443,7 @@
             this.txtInternalRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtInternalRemark.Location = new System.Drawing.Point(116, 179);
             this.txtInternalRemark.Name = "txtInternalRemark";
-            this.txtInternalRemark.Size = new System.Drawing.Size(587, 23);
+            this.txtInternalRemark.Size = new System.Drawing.Size(740, 23);
             this.txtInternalRemark.TabIndex = 3;
             // 
             // numVat
@@ -450,7 +453,7 @@
             this.numVat.DecimalPlaces = 2;
             this.numVat.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numVat.IsSupportEditMode = false;
-            this.numVat.Location = new System.Drawing.Point(745, 47);
+            this.numVat.Location = new System.Drawing.Point(756, 47);
             this.numVat.Name = "numVat";
             this.numVat.NullValue = new decimal(new int[] {
             0,
@@ -474,7 +477,7 @@
             this.numAmount.DecimalPlaces = 2;
             this.numAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numAmount.IsSupportEditMode = false;
-            this.numAmount.Location = new System.Drawing.Point(745, 13);
+            this.numAmount.Location = new System.Drawing.Point(756, 13);
             this.numAmount.Name = "numAmount";
             this.numAmount.NullValue = new decimal(new int[] {
             0,
@@ -497,7 +500,7 @@
             this.numTotal.DecimalPlaces = 2;
             this.numTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotal.IsSupportEditMode = false;
-            this.numTotal.Location = new System.Drawing.Point(745, 80);
+            this.numTotal.Location = new System.Drawing.Point(756, 80);
             this.numTotal.Name = "numTotal";
             this.numTotal.NullValue = new decimal(new int[] {
             0,
@@ -565,14 +568,14 @@
             // 
             // dateDeliveryDate
             // 
-            this.dateDeliveryDate.Location = new System.Drawing.Point(70, 12);
+            this.dateDeliveryDate.Location = new System.Drawing.Point(61, 12);
             this.dateDeliveryDate.Name = "dateDeliveryDate";
             this.dateDeliveryDate.Size = new System.Drawing.Size(130, 23);
             this.dateDeliveryDate.TabIndex = 6;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(12, 12);
+            this.label1.Location = new System.Drawing.Point(3, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(55, 23);
             this.label1.TabIndex = 44;
@@ -581,7 +584,7 @@
             // btnBatchUpdateDellivery
             // 
             this.btnBatchUpdateDellivery.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchUpdateDellivery.Location = new System.Drawing.Point(338, 8);
+            this.btnBatchUpdateDellivery.Location = new System.Drawing.Point(329, 8);
             this.btnBatchUpdateDellivery.Name = "btnBatchUpdateDellivery";
             this.btnBatchUpdateDellivery.Size = new System.Drawing.Size(215, 29);
             this.btnBatchUpdateDellivery.TabIndex = 45;
@@ -596,7 +599,7 @@
             this.groupBox1.Controls.Add(this.btnBatchUpdateDellivery);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dateDeliveryDate);
-            this.groupBox1.Location = new System.Drawing.Point(440, 103);
+            this.groupBox1.Location = new System.Drawing.Point(8, 205);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(557, 39);
             this.groupBox1.TabIndex = 46;
@@ -606,7 +609,7 @@
             // 
             this.txtBuyer.BackColor = System.Drawing.Color.White;
             this.txtBuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBuyer.Location = new System.Drawing.Point(254, 12);
+            this.txtBuyer.Location = new System.Drawing.Point(245, 12);
             this.txtBuyer.Name = "txtBuyer";
             this.txtBuyer.Size = new System.Drawing.Size(78, 23);
             this.txtBuyer.TabIndex = 47;
@@ -615,7 +618,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(208, 12);
+            this.label3.Location = new System.Drawing.Point(199, 12);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(43, 23);
             this.label3.TabIndex = 46;
@@ -623,7 +626,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(706, 145);
+            this.label2.Location = new System.Drawing.Point(685, 112);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(68, 23);
             this.label2.TabIndex = 47;
@@ -634,7 +637,7 @@
             this.numttlqty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numttlqty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numttlqty.IsSupportEditMode = false;
-            this.numttlqty.Location = new System.Drawing.Point(777, 145);
+            this.numttlqty.Location = new System.Drawing.Point(756, 112);
             this.numttlqty.Name = "numttlqty";
             this.numttlqty.NullValue = new decimal(new int[] {
             0,
@@ -650,10 +653,20 @@
             0,
             0});
             // 
+            // btnIrrPriceReason
+            // 
+            this.btnIrrPriceReason.Location = new System.Drawing.Point(867, 108);
+            this.btnIrrPriceReason.Name = "btnIrrPriceReason";
+            this.btnIrrPriceReason.Size = new System.Drawing.Size(143, 30);
+            this.btnIrrPriceReason.TabIndex = 49;
+            this.btnIrrPriceReason.Text = "Irregular Price Reason";
+            this.btnIrrPriceReason.UseVisualStyleBackColor = true;
+            this.btnIrrPriceReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click_1);
+            // 
             // P30
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1008, 577);
+            this.ClientSize = new System.Drawing.Size(1030, 628);
             this.DefaultControl = "txtsubconSupplier";
             this.DefaultControlForEdit = "dateIssueDate";
             this.DefaultDetailOrder = "orderid,refno,threadcolorid";
@@ -735,5 +748,6 @@
         private Win.UI.Label label2;
         private Win.UI.TextBox txtBuyer;
         private Win.UI.Label label3;
+        private Win.UI.Button btnIrrPriceReason;
     }
 }

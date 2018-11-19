@@ -73,7 +73,8 @@ namespace Sci.Production.Subcon
                 if (e.Button == MouseButtons.Right)
                 {
                     DataRow dr = this.gridgridIrregularPrice.GetDataRow<DataRow>(e.RowIndex);
-                    string sqlCmd = $"SELECT ID,Responsible,Reason FROM SubconReason WHERE Type='IP' AND Junk=0";
+                    string sqlCmd = $@"SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'IrregularPriceResp' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason 
+                                        FROM SubconReason WHERE Type = 'IP' AND Junk = 0";
                     Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,20,20", string.Empty, "ID,Responsible,Reason");
                     DialogResult returnResult = item.ShowDialog();
                     if (returnResult == DialogResult.Cancel)
@@ -85,8 +86,9 @@ namespace Sci.Production.Subcon
                         dr["SubconReasonID"] = item.GetSelectedString();
 
                         DataTable dt;
-                        DBProxy.Current.Select(null, $"SELECT ID,Responsible,Reason FROM SubconReason WHERE ID='{item.GetSelectedString()}' AND Type='IP' AND Junk=0", out dt);
-                        dr["Responsible"] = dt.Rows[0]["Responsible"];
+                        DBProxy.Current.Select(null, $"SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'IrregularPriceResp' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason FROM SubconReason WHERE ID='{item.GetSelectedString()}' AND Type='IP' AND Junk=0", out dt);
+                        dr["ResponsibleID"] = dt.Rows[0]["ResponsibleID"];
+                        dr["ResponsibleName"] = dt.Rows[0]["ResponsibleName"];
                         dr["Reason"] = dt.Rows[0]["Reason"];
                     }
                 }
@@ -99,19 +101,21 @@ namespace Sci.Production.Subcon
                 DataRow dr = gridgridIrregularPrice.GetDataRow(e.RowIndex);
                 string ori_SubconReasonID = dr["SubconReasonID"].ToString();
                 DataTable dt;
-                DBProxy.Current.Select(null, $"SELECT ID,Responsible,Reason FROM SubconReason WHERE ID='{e.FormattedValue}' AND Type='IP' AND Junk=0", out dt);
+                DBProxy.Current.Select(null, $"SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'IrregularPriceResp' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason FROM SubconReason WHERE ID='{e.FormattedValue}' AND Type='IP' AND Junk=0", out dt);
 
                 if (dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("No Data!!");
                     dr["SubconReasonID"] = ori_SubconReasonID;
-                    dr["Responsible"] = dr["Responsible"];
+                    dr["ResponsibleID"] = dr["ResponsibleID"];
+                    dr["ResponsibleName"] = dr["ResponsibleName"];
                     dr["Reason"] = dr["Reason"];
                 }
                 else
                 {
                     dr["SubconReasonID"] = dt.Rows[0]["ID"];
-                    dr["Responsible"] = dt.Rows[0]["Responsible"];
+                    dr["ResponsibleID"] = dt.Rows[0]["ResponsibleID"];
+                    dr["ResponsibleName"] = dr["ResponsibleName"];
                     dr["Reason"] = dt.Rows[0]["Reason"];
                 }
 
@@ -128,7 +132,8 @@ namespace Sci.Production.Subcon
                 .Numeric("PoPrice", header: "PO" + Environment.NewLine + "Price", decimal_places: 4, iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("StdPrice", header: "Standard" + Environment.NewLine + "Price", decimal_places: 4, iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("SubconReasonID", header: "Reason" + Environment.NewLine + "ID", width: Widths.AnsiChars(7), settings: col_SubconReasonID)
-                .Text("Responsible", header: "Responsible", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .Text("ResponsibleID", header: "ResponsibleID", iseditingreadonly: true, width: null)
+                .Text("ResponsibleName", header: "Responsible", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("Reason", header: "Reason", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("AddDate", header: "Create" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("AddName", header: "Create" + Environment.NewLine + "Name", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -137,6 +142,7 @@ namespace Sci.Production.Subcon
             #endregion
 
             this.gridgridIrregularPrice.Columns["SubconReasonID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridgridIrregularPrice.Columns["ResponsibleID"].Visible = false;
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -262,7 +268,8 @@ namespace Sci.Production.Subcon
             sql.Append(" ,[PoPrice]=al.POPrice" + Environment.NewLine);
             sql.Append(" ,[StdPrice]=al.StandardPrice" + Environment.NewLine);
             sql.Append(" ,al.SubconReasonID" + Environment.NewLine);
-            sql.Append(" ,sr.Responsible" + Environment.NewLine);
+            sql.Append(" ,[ResponsibleID]=sr.Responsible" + Environment.NewLine);
+            sql.Append(" ,[ResponsibleName]=(select Name from DropDownList d where d.type = 'IrregularPriceResp' and d.ID = sr.Responsible)" + Environment.NewLine);
             sql.Append(" ,sr.Reason" + Environment.NewLine);
             sql.Append(" ,al.AddDate" + Environment.NewLine);
             sql.Append(" ,al.AddName" + Environment.NewLine);

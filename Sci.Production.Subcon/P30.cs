@@ -1694,7 +1694,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                 #endregion
 
                 DataTable SubconReason;
-                DBProxy.Current.Select(null, "SELECT * FROM SubconReason WHERE Type='IP' AND Junk=0", out SubconReason);
+                DBProxy.Current.Select(null, "SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'IrregularPriceResp' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason  FROM SubconReason WHERE Type='IP' AND Junk=0", out SubconReason);
 
                 #region 資料串接
 
@@ -1746,7 +1746,8 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                                      a.PoPrice,
                                      a.StdPrice,
                                      a.SubconReasonID,
-                                     Responsible = MyUtility.Check.Empty(s) ? "" : s.Field<string>("Responsible"),
+                                     ResponsibleID = MyUtility.Check.Empty(s) ? "" : s.Field<string>("ResponsibleID"),
+                                     ResponsibleName = MyUtility.Check.Empty(s) ? "" : s.Field<string>("ResponsibleName"),
                                      Reason = MyUtility.Check.Empty(s) ? "" : s.Field<string>("Reason"),
                                      a.AddDate,
                                      a.AddName,
@@ -1810,6 +1811,12 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 
             }
 
+        }
+
+        private void btnIrrPriceReason_Click_1(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(_IrregularPriceReasonDT, this.CurrentMaintain["ID"].ToString(), IrregularPriceReasonType);
+            frm.ShowDialog(this);
         }
     }
 }
