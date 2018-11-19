@@ -303,6 +303,7 @@ select distinct t.FactoryID
     ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) ap_price
     ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
     ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
+    ,[Responsible_Reason]= ISNULL(IrregularPrice.Responsible,'')+ ISNULL(IrregularPrice.Reason,'')
 into #tmp_final
 from #tmp t
 left join orders aa WITH (NOLOCK) on t.poid =aa.poid  
@@ -311,6 +312,12 @@ left join Brand cc WITH (NOLOCK) on aa.BrandID=cc.id
 left join #tmp_localap x on t.artworktypeid = x.Category and t.POID = x.OrderId and t.FactoryID = x.FactoryId  	 
 left join #tmp_orders y on t.POID = y.poid  and t.artworktypeid = y.artworktypeid
 outer apply(select os=sum(qty) from orders o with(nolock) where o.poid = aa.poid)os
+outer apply(
+	SELECT sr.Responsible ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+	FROM LocalPO_IrregularPrice al
+	LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+	WHERE al.POId = aa.poid  AND al.Category=x.Category
+)IrregularPrice 
 where 1=1 
 ", ratetype));
             #endregion
@@ -331,6 +338,11 @@ where 1=1
             }
             #endregion
 
+            if (chk_IrregularPriceReason.Checked)
+            {
+                //價格異常的資料存在，卻沒有ReasonID
+                sqlCmd.Append(string.Format(@"  AND IrregularPrice.IrregularPricePoid IS NOT NULL  AND IrregularPrice.ReasonID IS NULL"));
+            }
 
             if (ordertypeindex >= 4) //include Forecast 
             {

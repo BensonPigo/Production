@@ -67,6 +67,7 @@
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
             this.labelTotalPoQty = new Sci.Win.UI.Label();
             this.numTotalPOQty = new Sci.Win.UI.NumericBox();
+            this.btnIrrPriceReason = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -83,6 +84,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnIrrPriceReason);
             this.masterpanel.Controls.Add(this.numTotalPOQty);
             this.masterpanel.Controls.Add(this.labelTotalPoQty);
             this.masterpanel.Controls.Add(this.txtmfactory);
@@ -121,7 +123,7 @@
             this.masterpanel.Controls.Add(this.dateApproveDate);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 212);
+            this.masterpanel.Size = new System.Drawing.Size(1041, 225);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
@@ -161,16 +163,17 @@
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTotalPoQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotalPOQty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnIrrPriceReason, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 212);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 265);
+            this.detailpanel.Location = new System.Drawing.Point(0, 225);
+            this.detailpanel.Size = new System.Drawing.Size(1041, 263);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(894, 175);
+            this.gridicon.Location = new System.Drawing.Point(894, 182);
             this.gridicon.TabIndex = 11;
             // 
             // refresh
@@ -179,7 +182,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 265);
+            this.detailgridcont.Size = new System.Drawing.Size(1041, 263);
             // 
             // detail2
             // 
@@ -195,16 +198,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 515);
+            this.detail.Size = new System.Drawing.Size(1041, 526);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 477);
+            this.detailcont.Size = new System.Drawing.Size(1041, 488);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 477);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 488);
+            this.detailbtm.Size = new System.Drawing.Size(1041, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -213,7 +216,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 544);
+            this.tabs.Size = new System.Drawing.Size(1049, 555);
             // 
             // createby
             // 
@@ -364,7 +367,7 @@
             // 
             this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label17.Location = new System.Drawing.Point(879, 116);
+            this.label17.Location = new System.Drawing.Point(870, 150);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(113, 23);
             this.label17.TabIndex = 44;
@@ -376,7 +379,7 @@
             this.btnBatchImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnBatchImport.Location = new System.Drawing.Point(870, 44);
             this.btnBatchImport.Name = "btnBatchImport";
-            this.btnBatchImport.Size = new System.Drawing.Size(127, 30);
+            this.btnBatchImport.Size = new System.Drawing.Size(159, 30);
             this.btnBatchImport.TabIndex = 9;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
@@ -387,7 +390,7 @@
             this.btnSpecialRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnSpecialRecord.Location = new System.Drawing.Point(870, 79);
             this.btnSpecialRecord.Name = "btnSpecialRecord";
-            this.btnSpecialRecord.Size = new System.Drawing.Size(129, 30);
+            this.btnSpecialRecord.Size = new System.Drawing.Size(159, 30);
             this.btnSpecialRecord.TabIndex = 10;
             this.btnSpecialRecord.Text = "Special Record";
             this.btnSpecialRecord.UseVisualStyleBackColor = true;
@@ -563,7 +566,7 @@
             // 
             this.btnBatchCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBatchCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchCreate.Location = new System.Drawing.Point(874, 12);
+            this.btnBatchCreate.Location = new System.Drawing.Point(918, 12);
             this.btnBatchCreate.Name = "btnBatchCreate";
             this.btnBatchCreate.Size = new System.Drawing.Size(115, 30);
             this.btnBatchCreate.TabIndex = 0;
@@ -597,15 +600,12 @@
             // 
             this.txtuserApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuserApproveName.DisplayBox1Binding = "";
-            this.txtuserApproveName.Enabled = true;
             this.txtuserApproveName.Location = new System.Drawing.Point(578, 82);
             this.txtuserApproveName.Name = "txtuserApproveName";
             this.txtuserApproveName.Size = new System.Drawing.Size(286, 23);
             this.txtuserApproveName.TabIndex = 24;
             this.txtuserApproveName.TabStop = false;
             this.txtuserApproveName.TextBox1Binding = "";
-            this.txtuserApproveName.TextBox1.IsSupportEditMode = false;
-            this.txtuserApproveName.TextBox1.ReadOnly = true;
             // 
             // txtuserHandle
             // 
@@ -671,10 +671,20 @@
             0,
             0});
             // 
+            // btnIrrPriceReason
+            // 
+            this.btnIrrPriceReason.Location = new System.Drawing.Point(870, 114);
+            this.btnIrrPriceReason.Name = "btnIrrPriceReason";
+            this.btnIrrPriceReason.Size = new System.Drawing.Size(159, 30);
+            this.btnIrrPriceReason.TabIndex = 72;
+            this.btnIrrPriceReason.Text = "Irregular Price Reason";
+            this.btnIrrPriceReason.UseVisualStyleBackColor = true;
+            this.btnIrrPriceReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
+            // 
             // P01
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1008, 577);
+            this.ClientSize = new System.Drawing.Size(1049, 588);
             this.CloseChkValue = "Approved";
             this.Controls.Add(this.btnBatchCreate);
             this.DefaultControl = "txtsubconSupplier";
@@ -757,5 +767,6 @@
         private Win.UI.DateBox dateApproveDate;
         private Win.UI.NumericBox numTotalPOQty;
         private Win.UI.Label labelTotalPoQty;
+        private Win.UI.Button btnIrrPriceReason;
     }
 }

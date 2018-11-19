@@ -50,6 +50,7 @@
             this.txtdropdownlistOrderType = new Sci.Production.Class.txtdropdownlist();
             this.dateGLDate = new Sci.Win.UI.DateRange();
             this.labelGLDate = new Sci.Win.UI.Label();
+            this.chk_IrregularPriceReason = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -69,7 +70,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(14, 78);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
@@ -78,7 +78,6 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
             this.labelArtworkType.Location = new System.Drawing.Point(13, 111);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(98, 23);
@@ -87,7 +86,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(14, 210);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(98, 23);
@@ -102,11 +100,26 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(115, 77);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 2;
             // 
             // dateAPDate
             // 
+            // 
+            // 
+            // 
+            this.dateAPDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateAPDate.DateBox1.Name = "";
+            this.dateAPDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateAPDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateAPDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateAPDate.DateBox2.Name = "";
+            this.dateAPDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateAPDate.DateBox2.TabIndex = 1;
             this.dateAPDate.IsRequired = false;
             this.dateAPDate.Location = new System.Drawing.Point(115, 12);
             this.dateAPDate.Name = "dateAPDate";
@@ -115,7 +128,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(14, 45);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
@@ -124,7 +136,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(14, 177);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(98, 23);
@@ -133,7 +144,6 @@
             // 
             // label10
             // 
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(246, 178);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
@@ -142,7 +152,6 @@
             // 
             // labelOrderType
             // 
-            this.labelOrderType.Lines = 0;
             this.labelOrderType.Location = new System.Drawing.Point(14, 243);
             this.labelOrderType.Name = "labelOrderType";
             this.labelOrderType.Size = new System.Drawing.Size(98, 23);
@@ -151,7 +160,6 @@
             // 
             // labelRateType
             // 
-            this.labelRateType.Lines = 0;
             this.labelRateType.Location = new System.Drawing.Point(14, 276);
             this.labelRateType.Name = "labelRateType";
             this.labelRateType.Size = new System.Drawing.Size(98, 23);
@@ -166,13 +174,13 @@
             this.comboStatus.IsSupportUnselect = true;
             this.comboStatus.Location = new System.Drawing.Point(114, 309);
             this.comboStatus.Name = "comboStatus";
+            this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(158, 24);
             this.comboStatus.TabIndex = 10;
             this.comboStatus.SelectedIndexChanged += new System.EventHandler(this.comboStatus_SelectedIndexChanged);
             // 
             // labelStatus
             // 
-            this.labelStatus.Lines = 0;
             this.labelStatus.Location = new System.Drawing.Point(14, 309);
             this.labelStatus.Name = "labelStatus";
             this.labelStatus.Size = new System.Drawing.Size(98, 23);
@@ -199,7 +207,6 @@
             // 
             // labelAPDate
             // 
-            this.labelAPDate.Lines = 0;
             this.labelAPDate.Location = new System.Drawing.Point(14, 12);
             this.labelAPDate.Name = "labelAPDate";
             this.labelAPDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -230,6 +237,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(170, 23);
             this.txtstyle.TabIndex = 7;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
             // 
             // txtartworktype_ftyArtworkType
             // 
@@ -250,6 +259,7 @@
             this.txtFinanceEnReasonRateType.IsSupportUnselect = true;
             this.txtFinanceEnReasonRateType.Location = new System.Drawing.Point(114, 275);
             this.txtFinanceEnReasonRateType.Name = "txtFinanceEnReasonRateType";
+            this.txtFinanceEnReasonRateType.OldText = "";
             this.txtFinanceEnReasonRateType.ReasonTypeID = "RateType";
             this.txtFinanceEnReasonRateType.Size = new System.Drawing.Size(261, 24);
             this.txtFinanceEnReasonRateType.TabIndex = 9;
@@ -262,12 +272,27 @@
             this.txtdropdownlistOrderType.IsSupportUnselect = true;
             this.txtdropdownlistOrderType.Location = new System.Drawing.Point(114, 243);
             this.txtdropdownlistOrderType.Name = "txtdropdownlistOrderType";
+            this.txtdropdownlistOrderType.OldText = "";
             this.txtdropdownlistOrderType.Size = new System.Drawing.Size(261, 24);
             this.txtdropdownlistOrderType.TabIndex = 8;
             this.txtdropdownlistOrderType.Type = "orderType";
             // 
             // dateGLDate
             // 
+            // 
+            // 
+            // 
+            this.dateGLDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateGLDate.DateBox1.Name = "";
+            this.dateGLDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateGLDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateGLDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateGLDate.DateBox2.Name = "";
+            this.dateGLDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateGLDate.DateBox2.TabIndex = 1;
             this.dateGLDate.IsRequired = false;
             this.dateGLDate.Location = new System.Drawing.Point(114, 144);
             this.dateGLDate.Name = "dateGLDate";
@@ -276,16 +301,27 @@
             // 
             // labelGLDate
             // 
-            this.labelGLDate.Lines = 0;
             this.labelGLDate.Location = new System.Drawing.Point(14, 144);
             this.labelGLDate.Name = "labelGLDate";
             this.labelGLDate.Size = new System.Drawing.Size(98, 23);
             this.labelGLDate.TabIndex = 122;
             this.labelGLDate.Text = "GL Date";
             // 
+            // chk_IrregularPriceReason
+            // 
+            this.chk_IrregularPriceReason.AutoSize = true;
+            this.chk_IrregularPriceReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chk_IrregularPriceReason.Location = new System.Drawing.Point(14, 335);
+            this.chk_IrregularPriceReason.Name = "chk_IrregularPriceReason";
+            this.chk_IrregularPriceReason.Size = new System.Drawing.Size(444, 21);
+            this.chk_IrregularPriceReason.TabIndex = 123;
+            this.chk_IrregularPriceReason.Text = "Only show as item which have irregular price but not enter reason.";
+            this.chk_IrregularPriceReason.UseVisualStyleBackColor = true;
+            // 
             // R14
             // 
             this.ClientSize = new System.Drawing.Size(522, 388);
+            this.Controls.Add(this.chk_IrregularPriceReason);
             this.Controls.Add(this.labelGLDate);
             this.Controls.Add(this.dateGLDate);
             this.Controls.Add(this.txtdropdownlistOrderType);
@@ -338,6 +374,7 @@
             this.Controls.SetChildIndex(this.txtdropdownlistOrderType, 0);
             this.Controls.SetChildIndex(this.dateGLDate, 0);
             this.Controls.SetChildIndex(this.labelGLDate, 0);
+            this.Controls.SetChildIndex(this.chk_IrregularPriceReason, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -367,5 +404,6 @@
         private Class.txtdropdownlist txtdropdownlistOrderType;
         private Win.UI.DateRange dateGLDate;
         private Win.UI.Label labelGLDate;
+        private Win.UI.CheckBox chk_IrregularPriceReason;
     }
 }

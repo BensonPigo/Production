@@ -26,6 +26,8 @@ namespace Sci.Production.Subcon
     {
         public static DataTable dtPadBoardInfo;
         private bool boolNeedReaload = false;
+        int IrregularPriceReasonType = 0;
+        public static DataTable _IrregularPriceReasonDT;
 
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -199,12 +201,8 @@ namespace Sci.Production.Subcon
             if (this.CurrentMaintain["category"].ToString().ToUpper().TrimEnd().Equals("CARTON"))
             {
                 DataTable resulttb;
-                string check_sql = $@"
-select lpd.ID,a.RequestId,a.OrderId,a.Refno 
-from #TmpSource a 
-inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''
-where exists (select 1 from PackingList_Detail pld where pld.id = a.RequestID and pld.Refno = a.Refno)
-";
+                string check_sql = $@"select lpd.ID,a.RequestId,a.OrderId,a.Refno from #TmpSource a inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''";
+
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "", check_sql, out resulttb, "#TmpSource");
                 if (!result)
                 {
@@ -681,6 +679,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyCategory.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
+            btnIrrPriceReason.Enabled = !this.EditMode;
+
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
@@ -689,7 +689,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             btnImportThread.Enabled = this.EditMode;
             btnBatchUpdateDellivery.Enabled = this.EditMode;
             #endregion
-
+            this.btnIrrPriceReason.ForeColor = Color.Black;
+            Check_Irregular_Price();
             detailDt.AcceptChanges();
             calttlqty();
         }
@@ -1433,6 +1434,382 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             {
                 this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
             }
+        }
+
+        private void btnIrrPriceReason_Click(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(_IrregularPriceReasonDT, this.CurrentMaintain["ID"].ToString(), IrregularPriceReasonType);
+            frm.ShowDialog(this);
+        }
+
+        private void Check_Irregular_Price()
+        {
+            _IrregularPriceReasonDT = null;
+
+
+            //採購價 > 標準價 =異常
+            #region 變數宣告
+
+            string poid = string.Empty;
+            string category = string.Empty;
+            string BrandID = string.Empty;
+            string StyleID = string.Empty;
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            StringBuilder sql = new StringBuilder();
+            DualResult result;
+
+            DataTable IrregularPriceReason_InDB;//A DB現有的 "價格異常紀錄" IPR資料
+            DataTable StdPrice_Dt;//B 只紀錄標準價用
+            DataTable IrregularPriceReason_Newst = new DataTable();//C 最新的 " 價格異常紀錄" IPR資料
+            DataTable Form_Except_IPR;//B not exists A 
+
+            #endregion
+
+            #region 欄位定義
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("Category", System.Type.GetType("System.String")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("POID", System.Type.GetType("System.String")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("StyleID", System.Type.GetType("System.String")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("BrandID", System.Type.GetType("System.String")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("PoPrice", System.Type.GetType("System.Decimal")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("StdPrice", System.Type.GetType("System.Decimal")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("SubconReasonID", System.Type.GetType("System.String")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("AddDate", System.Type.GetType("System.DateTime")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("AddName", System.Type.GetType("System.String")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("EditDate", System.Type.GetType("System.DateTime")));
+            IrregularPriceReason_Newst.Columns.Add(new DataColumn("EditName", System.Type.GetType("System.String")));
+            #endregion
+
+            string LocalPO_ID = this.CurrentMaintain["ID"].ToString();
+            parameters.Add(new SqlParameter("@LocalPO_ID", LocalPO_ID));
+            //標準價
+            decimal StdPrice = 0;
+
+            //	1.標準價
+            #region 取得POID以及對應的標準價、ArtworkType
+            //先找出這個加工單底下，所有單號的POID(母單)，以及其加工類別
+            sql.Append(" SELECT DISTINCT [ArtworkTypeID]=a.Category,  [POID]=o.POID  ,o.BrandID ,o.StyleID" + Environment.NewLine);
+            sql.Append(" INTO #tmp_AllOrders" + Environment.NewLine);
+            sql.Append("    FROM LocalPO a" + Environment.NewLine);
+            sql.Append("    INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
+            sql.Append("    INNER JOIN Orders o ON o.ID=ad.OrderID" + Environment.NewLine);
+            sql.Append("    WHERE a.ID=@LocalPO_ID" + Environment.NewLine);
+            sql.Append(" " + Environment.NewLine);
+
+            //用上述資訊，與Orders、Order_TmsCost關聯，取得所有「有設定標準價」的子單數量總和、個別子單標準價* 個別子單數量
+            //標準價 = SUM(子單數量 * 子單標準價) / SUM(子單數量)
+            sql.Append(" SELECT " + Environment.NewLine + Environment.NewLine);
+            sql.Append("         [Order_Qty]= IIF(odm.ArtworkTypeID IS NULL,NULL,ISNULL(SUM(od.qty),0)) " + Environment.NewLine);
+            sql.Append("        ,[Order_Amt]= SUM(od.qty *Price) " + Environment.NewLine);
+            sql.Append("        ,[POID]= t.POID" + Environment.NewLine);
+            sql.Append("        ,[ArtworkTypeID]= odm.ArtworkTypeID" + Environment.NewLine);
+            sql.Append("        ,[BrandID]= t.BrandID" + Environment.NewLine);
+            sql.Append("        ,[StyleID]=t.StyleID" + Environment.NewLine);
+            sql.Append(" INTO #tmp_summary" + Environment.NewLine);
+            sql.Append(" FROM Orders od" + Environment.NewLine);
+            sql.Append(" INNER JOIN Order_TmsCost odm ON od.id = odm.ID " + Environment.NewLine + Environment.NewLine);
+            sql.Append(" INNER JOIN (SELECT DISTINCT POID,ArtworkTypeID ,BrandID ,StyleID FROM #tmp_AllOrders) t  " + Environment.NewLine + Environment.NewLine);
+            sql.Append("            ON t.POID=od.POID AND t.ArtworkTypeID  = odm.ArtworkTypeID" + Environment.NewLine);
+            sql.Append(" GROUP BY  odm.ArtworkTypeID,t.poid ,t.BrandID ,t.StyleID" + Environment.NewLine);
+            sql.Append(" " + Environment.NewLine);
+            sql.Append(" SELECT [StdPrice]=Order_Amt/ Order_Qty ,POID ,ArtworkTypeID ,BrandID ,StyleID FROM #tmp_summary WHERE Order_Qty!=0" + Environment.NewLine);
+            sql.Append(" DROP TABLE #tmp_AllOrders,#tmp_summary" + Environment.NewLine);
+
+            result = DBProxy.Current.Select(null, sql.ToString(), parameters, out StdPrice_Dt);
+            sql.Clear();
+            #endregion
+
+            if (!result)
+            {
+                ShowErr(sql.ToString(), result);
+                return;
+            }
+
+            if (StdPrice_Dt.Rows.Count > 0)
+            {
+
+                #region 取得所有：已建立採購的子單總訂單數量
+                //已建立採購的子單總訂單數量
+                DataTable allQty;
+                sql.Clear();
+                sql.Append(" SELECT DISTINCT[ArtworkTypeID] = a.Category, [POID] = o.POID" + Environment.NewLine);
+                sql.Append(" INTO #tmp_AllOrders FROM LocalPO a" + Environment.NewLine);
+                sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID INNER JOIN Orders o ON o.ID = ad.OrderID" + Environment.NewLine);
+                sql.Append($" WHERE a.ID = @LocalPO_ID" + Environment.NewLine);
+                sql.Append(" " + Environment.NewLine);
+                sql.Append(" SELECT iif(odm.ArtworkTypeID is null,null,isnull(sum(od.qty),0)) Order_Qty,t.poid" + Environment.NewLine);
+                sql.Append(" FROM Orders od INNER JOIN Order_TmsCost odm ON od.id = odm.ID " + Environment.NewLine);
+                sql.Append(" INNER JOIN (select distinct POID,ArtworkTypeID from #tmp_AllOrders) t ON t.POID=od.POID AND t.ArtworkTypeID  = odm.ArtworkTypeID " + Environment.NewLine);
+                sql.Append(" GROUP BY  odm.ArtworkTypeID,t.poid" + Environment.NewLine);
+                sql.Append(" DROP TABLE #tmp_AllOrders" + Environment.NewLine);
+                DBProxy.Current.Select(null, sql.ToString(), parameters, out allQty);
+                #endregion
+
+                #region 取得所有：實際採購成本
+                //實際採購成本
+                DataTable poPrice;
+                sql.Clear();
+                sql.Append(" SELECT DISTINCT orders.POID,a.Category" + Environment.NewLine);
+                sql.Append(" INTO #all_Amount_By_Po" + Environment.NewLine);
+                sql.Append(" FROM LocalPO a" + Environment.NewLine);
+                sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
+                sql.Append(" OUTER APPLY(" + Environment.NewLine);
+                sql.Append(" 	SELECT [POID]=orders.POID " + Environment.NewLine);
+                sql.Append(" 	FROM orders WITH (NOLOCK) WHERE id=ad.OrderId" + Environment.NewLine);
+                sql.Append(" )orders" + Environment.NewLine);
+                sql.Append($" WHERE a.ID =@LocalPO_ID" + Environment.NewLine);
+                sql.Append(" " + Environment.NewLine);
+                sql.Append(" SELECT [Amount]=ISNULL(SUM(total.Amount),0.00) ,[POID]=total.POID " + Environment.NewLine);
+                sql.Append(" FROM( " + Environment.NewLine);
+                sql.Append("       SELECT DISTINCT a.CurrencyId, " + Environment.NewLine);
+                sql.Append("       ad.Price, " + Environment.NewLine);
+                sql.Append("       ad.Qty, " + Environment.NewLine);
+                sql.Append("       [Amount]=ad.Price * ad.Qty *dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate)  " + Environment.NewLine);
+                sql.Append("       ,t.POID " + Environment.NewLine);
+                sql.Append("       FROM LocalPO a " + Environment.NewLine);
+                sql.Append("       INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID " + Environment.NewLine);
+                sql.Append("       INNER JOIN Orders o ON o.ID = ad.OrderID " + Environment.NewLine);
+                sql.Append("       INNER JOIN  #all_Amount_By_Po t  ON t.POID=o.POID AND t.Category=a.Category " + Environment.NewLine);
+                sql.Append("       WHERE  a.ID = @LocalPO_ID " + Environment.NewLine);
+                sql.Append(" )total  GROUP BY total.POID " + Environment.NewLine);
+                sql.Append(" DROP TABLE #all_Amount_By_Po " + Environment.NewLine);
+                DBProxy.Current.Select(null, sql.ToString(), parameters, out poPrice);
+                #endregion
+
+
+                foreach (DataRow row in StdPrice_Dt.Rows)
+                {
+                    //用來準備填入 C 最新的 " 價格異常紀錄" IPR資料
+                    StdPrice = Convert.ToDecimal(row["StdPrice"]);
+                    poid = Convert.ToString(row["Poid"]);
+                    category = Convert.ToString(row["ArtworkTypeID"]);
+                    BrandID = Convert.ToString(row["BrandID"]);
+                    StyleID = Convert.ToString(row["StyleID"]);
+
+                    //  2.採購價單價 = 實際採購成本 / 已建立採購的子單總訂單數量
+                    decimal purchasePrice = 0;
+
+                    #region 實際採購成本 - 根據POID篩選
+                    DataTable filterData_PO = poPrice.AsEnumerable().Where(o => o.Field<string>("POID") == poid).CopyToDataTable();
+                    decimal realPurchasePrice = Convert.ToDecimal(filterData_PO.Rows[0]["Amount"]);                  
+                    #endregion
+
+                    #region 已建立採購的子單總訂單數量 - 根據POID篩選
+                    DataTable filterData = allQty.AsEnumerable().Where(o => o.Field<string>("poid") == poid).CopyToDataTable();
+                    int Qty = Convert.ToInt32( filterData.Rows[0]["Order_Qty"]);
+                    #endregion
+
+                    //採購價單價 計算
+                    purchasePrice = realPurchasePrice / Qty;
+
+                    //只要有異常就顯示紅色
+                    if (purchasePrice > StdPrice)
+                    {
+                        this.btnIrrPriceReason.ForeColor = Color.Red;
+                    }
+                    
+                    #region 填入C 最新的 " 價格異常紀錄" IPR資料
+                    if (purchasePrice > StdPrice)
+                    {
+                        DataRow ndr = IrregularPriceReason_Newst.NewRow();
+                        
+
+                        ndr["poid"] = poid;
+                        ndr["Category"] = category;
+                        ndr["BrandID"] = BrandID;
+                        ndr["StyleID"] = StyleID;
+                        ndr["StdPrice"] = StdPrice;
+                        ndr["PoPrice"] = purchasePrice;
+                        ndr["SubconReasonID"] =  "";
+                        ndr["AddDate"] =  DBNull.Value;
+                        ndr["AddName"] = "";
+                        ndr["EditDate"] = DBNull.Value;
+                        ndr["EditName"] =  "";
+                        IrregularPriceReason_Newst.Rows.Add(ndr);
+                    }
+                    #endregion
+                }
+
+                #region 準備 A: DB現有的 "價格異常紀錄" IPR資料
+
+                sql.Clear();
+                sql.Append(" SELECT DISTINCT al.*" + Environment.NewLine);
+
+                sql.Append(" FROM LocalPO a" + Environment.NewLine);
+                sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID" + Environment.NewLine);
+                sql.Append(" INNER JOIN Orders o ON ad.OrderID = o.ID" + Environment.NewLine);
+                sql.Append(" INNER JOIN LocalPO_IrregularPrice al ON al.POID = o.POID AND al.Category = a.Category" + Environment.NewLine);
+                sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
+                sql.Append(" WHERE a.ID = @LocalPO_ID AND sr.Junk=0" + Environment.NewLine);
+
+                result = DBProxy.Current.Select(null, sql.ToString(), parameters, out IrregularPriceReason_InDB);
+                #endregion
+
+                #region 準備B not exists A ，兩者的差
+
+                sql.Clear();
+
+                //先找出這個加工單底下，所有單號的POID(母單)，以及其加工類別
+                sql.Append(" SELECT DISTINCT [ArtworkTypeID]=a.Category,  [POID]=o.POID  ,o.BrandID ,o.StyleID" + Environment.NewLine);
+                sql.Append(" INTO #tmp_AllOrders" + Environment.NewLine);
+                sql.Append("    FROM LocalPO a" + Environment.NewLine);
+                sql.Append("    INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
+                sql.Append("    INNER JOIN Orders o ON o.ID=ad.OrderID" + Environment.NewLine);
+                sql.Append("    WHERE a.ID=@LocalPO_ID" + Environment.NewLine);
+                sql.Append(" " + Environment.NewLine);
+
+                //用上述資訊，與Orders、Order_TmsCost關聯，取得所有「有設定標準價」的子單數量總和、個別子單標準價* 個別子單數量
+                //標準價 = SUM(子單數量 * 子單標準價) / SUM(子單數量)
+                sql.Append(" SELECT " + Environment.NewLine + Environment.NewLine);
+                sql.Append("         [Order_Qty]= IIF(odm.ArtworkTypeID IS NULL,NULL,ISNULL(SUM(od.qty),0)) " + Environment.NewLine);
+                sql.Append("        ,[Order_Amt]= SUM(od.qty *Price) " + Environment.NewLine);
+                sql.Append("        ,[POID]= t.POID" + Environment.NewLine);
+                sql.Append("        ,[ArtworkTypeID]= odm.ArtworkTypeID" + Environment.NewLine);
+                sql.Append("        ,[BrandID]= t.BrandID" + Environment.NewLine);
+                sql.Append("        ,[StyleID]=t.StyleID" + Environment.NewLine);
+                sql.Append(" INTO #tmp_summary" + Environment.NewLine);
+                sql.Append(" FROM Orders od" + Environment.NewLine);
+                sql.Append(" INNER JOIN Order_TmsCost odm ON od.id = odm.ID " + Environment.NewLine + Environment.NewLine);
+                sql.Append(" INNER JOIN (SELECT DISTINCT POID,ArtworkTypeID ,BrandID ,StyleID FROM #tmp_AllOrders) t  " + Environment.NewLine + Environment.NewLine);
+                sql.Append("            ON t.POID=od.POID AND t.ArtworkTypeID  = odm.ArtworkTypeID" + Environment.NewLine);
+                sql.Append(" GROUP BY  odm.ArtworkTypeID,t.poid ,t.BrandID ,t.StyleID" + Environment.NewLine);
+                sql.Append(" " + Environment.NewLine);
+                sql.Append(" SELECT [StdPrice]=Order_Amt/ Order_Qty ,POID ,ArtworkTypeID ,BrandID ,StyleID FROM #tmp_summary WHERE Order_Qty!=0 AND not Exists(" + Environment.NewLine);
+                
+                sql.Append(" SELECT DISTINCT al.POID,al.Category,al.POPrice,al.StandardPrice" + Environment.NewLine);
+                sql.Append(" FROM LocalPO a" + Environment.NewLine);
+                sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID" + Environment.NewLine);
+                sql.Append(" INNER JOIN Orders o ON ad.OrderID = o.ID" + Environment.NewLine);
+                sql.Append(" INNER JOIN LocalPO_IrregularPrice al ON al.POID = o.POID AND al.Category = a.Category" + Environment.NewLine);
+                sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
+                sql.Append(" WHERE a.ID = @LocalPO_ID AND sr.Junk=0" + Environment.NewLine);
+                sql.Append(" )" + Environment.NewLine);
+                //最新的價格異常紀錄，DB還沒有的
+                result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Form_Except_IPR);
+                if (!result)
+                {
+                    ShowErr(sql.ToString(), result);
+                    return;
+                }
+
+                #endregion
+
+                DataTable SubconReason;
+                DBProxy.Current.Select(null, "SELECT * FROM SubconReason WHERE Type='IP' AND Junk=0", out SubconReason);
+
+                #region 資料串接
+
+                var summary = (from a in IrregularPriceReason_InDB.AsEnumerable()
+                               join c in IrregularPriceReason_Newst.AsEnumerable() on new { POID = a.Field<string>("POID"), ArtWorkType = a.Field<string>("Category") } equals new { POID = c.Field<string>("POID"), ArtWorkType = c.Field<string>("Category") }
+                               select new
+                               {
+                                   POID = a.Field<string>("POID"),
+                                   Category = a.Field<string>("Category"),
+                                   BrandID = c.Field<string>("BrandID"),
+                                   StyleID = c.Field<string>("StyleID"),
+                                   PoPrice = (string.IsNullOrEmpty(c.Field<string>("POID")) ? a.Field<decimal>("POPrice") : c.Field<decimal>("POPrice")),
+                                   StdPrice = (string.IsNullOrEmpty(c.Field<string>("POID")) ? a.Field<decimal>("StandardPrice") : c.Field<decimal>("StdPrice")),
+                                   SubconReasonID = c.Field<string>("SubconReasonID"),
+                                   AddDate = c.Field<DateTime?>("AddDate"),
+                                   AddName = c.Field<string>("AddName"),
+                                   EditDate = c.Field<DateTime?>("EditDate"),
+                                   EditName = c.Field<string>("EditName")
+
+                               }).Union
+                         (from b in Form_Except_IPR.AsEnumerable()
+                          join c in IrregularPriceReason_Newst.AsEnumerable() on new { POID = b.Field<string>("POID"), ArtWorkType = b.Field<string>("ArtworktypeID") } equals new { POID = c.Field<string>("POID"), ArtWorkType = c.Field<string>("Category") }
+                          select new
+                          {
+                              POID = c.Field<string>("POID"),
+                              Category = c.Field<string>("Category"),
+                              BrandID = c.Field<string>("BrandID"),
+                              StyleID = c.Field<string>("StyleID"),
+                              PoPrice = c.Field<decimal>("PoPrice"),
+                              StdPrice = c.Field<decimal>("StdPrice"),
+                              SubconReasonID = c.Field<string>("SubconReasonID"),
+                              AddDate = c.Field<DateTime?>("AddDate"),
+                              AddName = c.Field<string>("AddName"),
+                              EditDate = c.Field<DateTime?>("EditDate"),
+                              EditName = c.Field<string>("EditName")
+                          });
+
+
+                var newest_IPR = from a in summary
+                                 join s in SubconReason.AsEnumerable() on a.SubconReasonID equals s.Field<string>("ID") into sr
+                                 from s in sr.DefaultIfEmpty()
+                                 select new
+                                 {
+                                     Factory = this.CurrentMaintain["FactoryID"].ToString(),
+                                     a.POID,
+                                     a.Category,
+                                     a.StyleID,
+                                     a.BrandID,
+                                     a.PoPrice,
+                                     a.StdPrice,
+                                     a.SubconReasonID,
+                                     Responsible = MyUtility.Check.Empty(s) ? "" : s.Field<string>("Responsible"),
+                                     Reason = MyUtility.Check.Empty(s) ? "" : s.Field<string>("Reason"),
+                                     a.AddDate,
+                                     a.AddName,
+                                     a.EditDate,
+                                     a.EditName
+                                 };
+
+                #endregion
+
+                #region 還原成 DataTable
+
+                DataTable tbl = new DataTable();
+                PropertyInfo[] props = null;
+
+                foreach (var item in newest_IPR)
+                {
+                    if (props == null)
+                    {
+                        Type t = item.GetType();
+                        props = t.GetProperties();
+                        foreach (PropertyInfo pi in props)
+                        {
+                            Type colType = pi.PropertyType;
+                            //針對Nullable<>特別處理
+                            if (colType.IsGenericType && colType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                            {
+                                colType = colType.GetGenericArguments()[0];
+                            }
+                            //建立欄位
+                            tbl.Columns.Add(pi.Name, colType);
+                        }
+                    }
+                    DataRow row = tbl.NewRow();
+                    foreach (PropertyInfo pi in props)
+                    {
+                        row[pi.Name] = pi.GetValue(item, null) ?? DBNull.Value;
+                    }
+                    tbl.Rows.Add(row);
+                }
+
+                #endregion
+
+                //「曾經」有過價格異常紀錄，現在價格正常
+                if (IrregularPriceReason_InDB.Rows.Count > 0 && tbl.Rows.Count == 0)
+                {
+                    IrregularPriceReasonType = 3;
+                    //Irregular Price Reason放DB紀錄
+                }
+                //「曾經」有過價格異常紀錄，現在還是異常
+                else if (IrregularPriceReason_InDB.Rows.Count > 0 && IrregularPriceReason_Newst.Rows.Count > 0)
+                {
+                    IrregularPriceReasonType = 2;
+                    //Irregular Price Reason放DB紀錄
+                }
+                else if (IrregularPriceReason_InDB.Rows.Count == 0 && tbl.Rows.Count > 0)
+                {
+                    //「未曾有過」價格異常紀錄，現在價格異常 Type=1
+                    IrregularPriceReasonType = 1;
+                    _IrregularPriceReasonDT = tbl;
+                }
+
+            }
+
         }
     }
 }

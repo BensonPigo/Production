@@ -13,7 +13,7 @@ namespace Sci.Production.Subcon
 {
     public partial class R23 : Sci.Win.Tems.PrintForm
     {
-        string artworktype, factory, style, mdivision, spno1, spno2, ordertype,ratetype;//,status;
+        string artworktype, factory, style, mdivision, spno1, spno2, ordertype,ratetype, IrregularPrice;//,status;
         int ordertypeindex,statusindex;
         DateTime? IssueDate1, IssueDate2, SciDelivery1, SciDelivery2;
         DataTable printData;
@@ -106,7 +106,7 @@ namespace Sci.Production.Subcon
 
             System.Data.SqlClient.SqlParameter sp_factory = new System.Data.SqlClient.SqlParameter();
             sp_factory.ParameterName = "@factory";
-
+            
             System.Data.SqlClient.SqlParameter sp_brandid = new System.Data.SqlClient.SqlParameter();
             sp_brandid.ParameterName = "@brandid";
 
@@ -277,6 +277,7 @@ select  O.FactoryID
                           else round(round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
                                            / round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3), 2) 
                        end
+        ,[Responsible_Reason]= ISNULL(IrregularPrice.Responsible,'')+ ISNULL(IrregularPrice.Reason,'')
 from (
 	select	distinct LP.Category
 			, LPD.OrderId
@@ -309,7 +310,14 @@ outer apply(
           and ArtworkTypeID = s.Category
 	group by Orders.POID, ArtworkTypeID
 ) y
-where Po_qty > 0 {2}
+outer apply(
+	SELECT sr.Responsible ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+	FROM LocalPO_IrregularPrice al
+	LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+	WHERE al.POId = y.POID AND al.Category=s.Category
+)IrregularPrice 
+
+where Po_qty > 0 {2} {3}
 group by O.FactoryID
 		, s.Category
 		, O.POID
@@ -318,10 +326,13 @@ group by O.FactoryID
         , O.SMR
 		, y.Order_Qty
         , y.order_amt
+		,IrregularPrice.Responsible
+		,IrregularPrice.Reason
 ", ratetype
  , ("and " + sqlFilter1.JoinToString(" and "))
- , ("and " + sqlFilter2.JoinToString(" and "))));
-            #endregion           
+ , ("and " + sqlFilter2.JoinToString(" and "))
+ , chk_IrregularPriceReason.Checked ? "AND IrregularPrice.IrregularPricePoid IS NOT NULL AND IrregularPrice.ReasonID IS NULL" : ""));
+            #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
