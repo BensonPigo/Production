@@ -85,9 +85,9 @@ where Junk != 1", out dtFactory);
 
 --筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
 
---先找出User 輸入條件的 Farm Out區間
-SELECT  DISTINCT   b.id ,bd.BundleNo ,b.StartProcess ,[MaxOutDate]=Max(b.IssueDate)
-INTO #MaxOutDateList
+--先找出User 輸入條件的 Farm Out清單
+SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,b.IssueDate,b.AddDate
+INTO #FarmOutList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
 WHERE   b.Id LIKE 'TB%' 
@@ -95,52 +95,57 @@ WHERE   b.Id LIKE 'TB%'
 		and b.IssueDate <= @EndDate
         and b.StartProcess = @SubProcess  
 {0}
-GROUP BY  b.id,bd.BundleNo,b.StartProcess
 
---根據該區間內的 BundleNo + StartProcess，找出所有Farm In，沒有的話放NULL
-SELECT  DISTINCT  t.ID ,t.BundleNo ,t.StartProcess ,t.MaxOutDate ,[MaxInDate]=Max(bd.ReceiveDate)
-INTO #summary
+--取得Farm In清單
+--Farm In的BundleNo+StartProcess，一定只能出現在Farm Out清單裡面，因此從上面找
+SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,bd.ReceiveDate ,b.AddDate
+INTO #FarmInList
 FROM BundleTrack b
-INNER JOIN BundleTrack_detail bd ON b.ID = bd.id 
-RIGHT JOIN #MaxOutDateList t ON t.BundleNo=bd.BundleNo AND t.StartProcess=b.StartProcess AND  (bd.Id LIKE 'TC%' )
-GROUP BY t.ID ,t.BundleNo,t.StartProcess,t.MaxOutDate
+INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
+WHERE   b.Id LIKE 'TC%' 
+		AND bd.BundleNo IN (SELECT BundleNo FROM #FarmOutList)
+		AND b.StartProcess IN (SELECT StartProcess FROM #FarmOutList)
+{0}
 
---用上面清單，串接所有的BundleTrack、BundleTrack_Detail，  BundleNo、StartProcess必須完全符合
-SELECT  
-		 O.FactoryID
-		, O.ID
-		, O.StyleID
-		, BD.SizeCode
-		, BD.BundleGroup
-		, BTD.BundleNo
-		, BodyCutNo = Concat(B.FabricPanelCode, ' ', B.Cutno)
-		, BD.Qty
-		, Color = Concat(B.Article, ' ', B.Colorid)
-		, summary.MaxOutDate
-		, summary.MaxInDate
-        , [Subcon] = NewestFarmOut.EndSite + '-' + ls.Abb 
+--以FarmOutList 的為主，去掉重複
+SELECT DISTINCT BundleNo ,StartProcess
+INTO #Base
+FROM #FarmOutList
+
+--取最大IssueDate和ReceiveDate用Outer apply排序做
+SELECT  o.FactoryID
+		,o.ID
+		,o.StyleID
+		,bd.SizeCode
+		,bd.BundleGroup
+		,base.BundleNo
+		,BodyCutNo=Concat(b.FabricPanelCode, ' ',b.Cutno)
+		,bd.Qty
+		,Color = Concat(b.Article, ' ', b.Colorid)
+		,[MaxOutDate]=FarmOut.IssueDate
+		,[MaxInDate]=FarmIn.ReceiveDate
+		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
 		, '' remark  
-FROM BundleTrack BT
-LEFT JOIN BundleTrack_detail BTD on BT.Id=BTD.Id
-INNER JOIN #summary summary ON summary.BundleNo=BTD.BundleNo AND  summary.StartProcess=BT.StartProcess AND BT.ID =summary.ID
-
---避免資料發散，因此以最新Farm out那筆的BundleTrack.EndSite去關聯localSupp
+FROM #Base base
+LEFT JOIN Bundle_Detail bd ON bd.BundleNo=base.BundleNo
+LEFT JOIN Bundle b ON b.ID =bd.Id
+LEFT JOIN Orders o ON o.ID=b.Orderid
 OUTER APPLY(
-		SELECT TOP 1 [EndSite]=a.EndSite
-		FROM BundleTrack a
-		INNER JOIN BundleTrack_detail b ON a.id = b.id
-		WHERE BundleNo=summary.BundleNo AND StartProcess=summary.StartProcess AND a.ID=summary.ID
-		ORDER BY IssueDate DESC, AddDate DESC 
-)NewestFarmOut
+   SELECT TOP 1 EndSite,BundleNo,StartProcess,IssueDate
+   FROm #FarmOutList  
+   WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
+   ORDER BY IssueDate DESC,AddDate DESC
+)FarmOut
+OUTER APPLY(
+   SELECT TOP 1 EndSite,BundleNo,StartProcess,ReceiveDate
+   FROm  #FarmInList    
+   WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
+   ORDER BY ReceiveDate DESC,AddDate DESC
+)FarmIn
+INNER join LocalSupp ls on ls.id=FarmOut.EndSite
+ORDER BY base.BundleNo
 
-LEFT JOIN Orders O on O.ID=BTD.orderid
-LEFT JOIN Bundle_Detail BD on BD.BundleNo=BTD.BundleNo
-LEFT JOIN Bundle B on B.ID =BD.Id
-INNER join localSupp ls on ls.id=NewestFarmOut.endsite
-
-ORDER BY BTD.BundleNo
-
-DROP TABLE #MaxOutDateList, #summary
+Drop Table #FarmOutList,#FarmInList,#Base
 
 ", filte.JoinToString("\r\n"));
 
