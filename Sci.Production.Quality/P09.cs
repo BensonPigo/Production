@@ -104,7 +104,7 @@ namespace Sci.Production.Quality
             .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Date("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: T2IY) // W
             .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: T2DP) // W
             .Text("T2Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -124,12 +124,15 @@ namespace Sci.Production.Quality
             #region Set_grid2 Columns
             this.grid2.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid2)
+            .Text("Consignee", header: "Consignee", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SeasonSCIID", header: "SeasonSCIID", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
-            .Date("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion Set_grid2 Columns
             #region Color
@@ -242,7 +245,8 @@ AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
 
             #region Sqlcmd
             string sqlcmd = $@"
-select selected = cast(0 as bit),
+select distinct
+    selected = cast(0 as bit),
 	FileExistI= cast(0 as bit),
 	FileExistT= cast(0 as bit),
 	ed.id,
@@ -261,7 +265,7 @@ select selected = cast(0 as bit),
 	sr.ContinuityCard,
 	sr.TPEContinuityCard,
 	fd.FirstDyelot,
-	fd.TPEFirstDyelot,
+	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no first dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
 	sr.T2InspYds,
 	sr.T2DefectPoint,
 	sr.T2Grade,
@@ -271,12 +275,15 @@ select selected = cast(0 as bit),
     ed.seq2,
 	ed.Ukey
 from Export_Detail ed with(nolock)
+inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+inner join orders o with(nolock) on o.id = ed.PoID
+left join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
 left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
-left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID
-left join orders o with(nolock) on o.id = ed.PoID
 left join Supp with(nolock) on Supp.ID = ps.SuppID
-left join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
+left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
+left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
+left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 outer apply(
 	select T1InspectedYards=sum(fp.ActualYds)
 	from fir f
@@ -293,6 +300,9 @@ outer apply(
 )b
 {sqlwhere}
 and psd.FabricType = 'F'
+and (ed.qty + ed.Foc)>0
+and o.Category in('B','M')
+
 order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
 ";
             #endregion Sqlcmd
@@ -499,21 +509,33 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             #region Sqlcmd
             string sqlcmd = $@"
 select distinct
+    Export.Consignee,
 	ps.SuppID,
-	s.AbbEN,
+	Supp.AbbEN,
 	psd.Refno,
 	psd.ColorID,
+    s.SeasonSCIID,
+    fd.Period,
 	fd.FirstDyelot  FirstDyelot,
-	fd.TPEFirstDyelot as TPEFirstDyelot,
+	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no first dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
 	psd.Refno
-from Po_Supp_Detail psd with(nolock)
-left join Po_Supp ps on ps.ID= psd.id and ps.SEQ1 = psd.seq1
-left join Supp s with(nolock) on s.ID = ps.SuppID
-left join FirstDyelot fd on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID 
+
+from Export_Detail ed with(nolock)
+inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+inner join orders o with(nolock) on o.id = ed.PoID
+left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
+left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
+left join Supp with(nolock) on Supp.ID = ps.SuppID
+left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
+left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
+left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+
 where   ps.seq1 not like '7%'  and 
 {sqlwhere}
 and psd.FabricType = 'F'
-order by ps.SuppID
+and (ed.qty + ed.Foc)>0
+and o.Category in('B','M')
+Order by Consignee, SuppID, psd.Refno, psd.ColorID, s.SeasonSCIID
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out dt2);
@@ -529,6 +551,7 @@ order by ps.SuppID
             }
             this.listControlBindingSource2.DataSource = dt2;
             dt2.AcceptChanges();
+            this.grid2.AutoResizeColumns();
         }
 
         private void btnQuery2_Click(object sender, EventArgs e)
@@ -554,14 +577,14 @@ order by ps.SuppID
             string sqlupdate = $@"
 merge FirstDyelot t
 using #tmp s
-on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID
+on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.Consignee = s.Consignee  and t.SeasonSCIID = s.SeasonSCIID
 when matched then update set 
 	FirstDyelot=s.FirstDyelot,
 	EditName = '{Sci.Env.User.UserID}',
 	EditDate = GETDATE()
 when not matched by target then 
-insert([Refno],[SuppID],[ColorID],[FirstDyelot],[EditName],[EditDate])
-VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
+insert([Refno],[SuppID],[ColorID],Consignee,SeasonSCIID,[FirstDyelot],[EditName],[EditDate])
+VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.Consignee,SeasonSCIID,s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
 ;
 ";
             DataTable odt;

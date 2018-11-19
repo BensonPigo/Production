@@ -81,7 +81,7 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1094, 524);
-            this.tabControl1.TabIndex = 1;
+            this.tabControl1.TabIndex = 0;
             // 
             // tabInspectionReport
             // 
@@ -110,7 +110,7 @@
             this.btnClose.Location = new System.Drawing.Point(995, 459);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 11;
+            this.btnClose.TabIndex = 9;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -121,7 +121,7 @@
             this.btnSave.Location = new System.Drawing.Point(909, 459);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
-            this.btnSave.TabIndex = 10;
+            this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -132,7 +132,7 @@
             this.btnDownloadFile.Location = new System.Drawing.Point(773, 459);
             this.btnDownloadFile.Name = "btnDownloadFile";
             this.btnDownloadFile.Size = new System.Drawing.Size(130, 30);
-            this.btnDownloadFile.TabIndex = 9;
+            this.btnDownloadFile.TabIndex = 7;
             this.btnDownloadFile.Text = "Download File";
             this.btnDownloadFile.UseVisualStyleBackColor = true;
             this.btnDownloadFile.Click += new System.EventHandler(this.btnDownloadFile_Click);
@@ -177,7 +177,7 @@
             this.btnQuery.Location = new System.Drawing.Point(995, 6);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 7;
+            this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -189,7 +189,7 @@
             this.txtpo.Location = new System.Drawing.Point(611, 6);
             this.txtpo.Name = "txtpo";
             this.txtpo.Size = new System.Drawing.Size(100, 23);
-            this.txtpo.TabIndex = 6;
+            this.txtpo.TabIndex = 5;
             // 
             // txtsp
             // 
@@ -198,7 +198,7 @@
             this.txtsp.Location = new System.Drawing.Point(395, 6);
             this.txtsp.Name = "txtsp";
             this.txtsp.Size = new System.Drawing.Size(100, 23);
-            this.txtsp.TabIndex = 5;
+            this.txtsp.TabIndex = 2;
             // 
             // txtSeq
             // 
@@ -208,7 +208,7 @@
             this.txtSeq.seq1 = "";
             this.txtSeq.seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq.TabIndex = 4;
+            this.txtSeq.TabIndex = 3;
             // 
             // dateRange1
             // 
@@ -229,7 +229,7 @@
             this.dateRange1.Location = new System.Drawing.Point(72, 6);
             this.dateRange1.Name = "dateRange1";
             this.dateRange1.Size = new System.Drawing.Size(280, 23);
-            this.dateRange1.TabIndex = 3;
+            this.dateRange1.TabIndex = 0;
             // 
             // label3
             // 
@@ -348,7 +348,7 @@
             this.txtColor.Location = new System.Drawing.Point(459, 6);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(100, 23);
-            this.txtColor.TabIndex = 7;
+            this.txtColor.TabIndex = 13;
             // 
             // txtRefno
             // 
@@ -357,7 +357,7 @@
             this.txtRefno.Location = new System.Drawing.Point(289, 6);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(100, 23);
-            this.txtRefno.TabIndex = 6;
+            this.txtRefno.TabIndex = 12;
             // 
             // txtsupplier1
             // 
@@ -365,7 +365,7 @@
             this.txtsupplier1.Location = new System.Drawing.Point(72, 6);
             this.txtsupplier1.Name = "txtsupplier1";
             this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
-            this.txtsupplier1.TabIndex = 4;
+            this.txtsupplier1.TabIndex = 10;
             this.txtsupplier1.TextBox1Binding = "";
             // 
             // label6

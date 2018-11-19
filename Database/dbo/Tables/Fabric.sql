@@ -37,9 +37,12 @@
     [NLCodeEditName]   VARCHAR (10)    CONSTRAINT [DF_Fabric_NLCodeEditName] DEFAULT ('') NULL,
     [NLCodeEditDate]   DATETIME        NULL,
     [WeightM2]         NUMERIC (5, 1)  CONSTRAINT [DF_Fabric_WeightM2] DEFAULT ((0)) NULL,
-    [preshrink]        BIT             CONSTRAINT [DF_Fabric_preshrink] DEFAULT ((0)) NOT NULL,
+    [preshrink]        BIT             DEFAULT ((0)) NOT NULL,
+    [RibItem]          BIT             CONSTRAINT [DF_Fabric_RibItem] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
+
+
 
 
 
