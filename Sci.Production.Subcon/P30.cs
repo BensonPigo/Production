@@ -199,8 +199,12 @@ namespace Sci.Production.Subcon
             if (this.CurrentMaintain["category"].ToString().ToUpper().TrimEnd().Equals("CARTON"))
             {
                 DataTable resulttb;
-                string check_sql = $@"select lpd.ID,a.RequestId,a.OrderId,a.Refno from #TmpSource a inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''";
-
+                string check_sql = $@"
+select lpd.ID,a.RequestId,a.OrderId,a.Refno 
+from #TmpSource a 
+inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''
+where exists (select 1 from PackingList_Detail pld where pld.id = a.RequestID and pld.Refno = a.Refno)
+";
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "", check_sql, out resulttb, "#TmpSource");
                 if (!result)
                 {
