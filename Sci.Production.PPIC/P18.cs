@@ -548,7 +548,7 @@ ORDER BY PSD.Refno ", "Refno", this.CurrentDetailData["AccLacking"].ToString());
 
         protected override void ClickUnconfirm()
         {
-            string updateCmd = $@"update AVO set Status = 'Checked', ProdApvDate = null, ProdApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
+            string updateCmd = $@"update AVO set Status = 'Received', ProdApvDate = null, ProdApvName = '', EditDate = GETDATE(),EditName='{Sci.Env.User.UserID}' where ID = '{this.CurrentMaintain["ID"]}'";
             DualResult result = DBProxy.Current.Execute(null, updateCmd);
             if (!result)
             {
