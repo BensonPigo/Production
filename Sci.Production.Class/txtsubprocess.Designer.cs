@@ -28,7 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // txtsubprocess
+            // 
+            this.IsSupportEditMode = false;
+            this.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.ReadOnly = true;
+            this.ResumeLayout(false);
+
         }
 
         #endregion

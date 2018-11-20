@@ -27,15 +27,7 @@ namespace Sci.Production.Subcon
 
         private void comboload()
         {
-            DataTable dtSubprocessID;
             DualResult Result;
-            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
-                out dtSubprocessID))
-            {
-                this.comboSubProcess.DataSource = dtSubprocessID;
-                this.comboSubProcess.DisplayMember = "ID";
-            }
-            else { ShowErr(Result); }
 
             DataTable dtM;
             if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtM))
@@ -50,7 +42,7 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            SubProcess = this.comboSubProcess.Text;
+            SubProcess = this.txtsubprocess.Text;
             SP = this.txtSPNo.Text;
             M = this.comboM.Text;
             Factory = this.comboFactory.Text;
@@ -133,7 +125,7 @@ where 1=1
             #region Append畫面上的條件
             if (!MyUtility.Check.Empty(SubProcess))
             {
-                sqlCmd.Append(string.Format(@" and (s.Id = '{0}' or '{0}' = 'ALL') ", SubProcess));
+                sqlCmd.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
             }
             if (!MyUtility.Check.Empty(CutRef1))
             {

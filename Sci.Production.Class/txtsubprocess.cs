@@ -12,20 +12,18 @@ using Sci.Data;
 
 namespace Sci.Production.Class
 {
-    public partial class txtsubprocess : Sci.Win.UI.ComboBox
+    public partial class txtsubprocess : Sci.Win.UI.TextBox
     {
-        public txtsubprocess()
+        protected override void OnPopUp(TextBoxPopUpEventArgs e)
         {
-            string sqlCmd = "Select ID, ArtworkTypeId From Subprocess WITH (NOLOCK) where junk=0 and IsProcess=1 Order By ID";
-            Ict.DualResult cbResult;
-            DataTable SubprocessTable = new DataTable();
-            if (cbResult = DBProxy.Current.Select(null, sqlCmd, out SubprocessTable))
-            {
-                this.DataSource = SubprocessTable;
-                this.DisplayMember = "ArtworkTypeId";
-                this.ValueMember = "ID";
-                this.Size = new System.Drawing.Size(20, 80);
-            }
+            string sqlWhere = "Select ID From Subprocess WITH (NOLOCK) where junk=0";
+
+            Sci.Win.Tools.SelectItem2 item = new Sci.Win.Tools.SelectItem2(sqlWhere, headercaptions: "Subprocess ID", columnwidths: "30", defaults: null, defaultValueColumn: null);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel) { return; }
+            this.Text = item.GetSelectedString();
+
+            this.ValidateText();
         }
     }
 }
