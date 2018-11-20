@@ -77,36 +77,82 @@ where Junk != 1", out dtFactory);
             #region SQL Filte
             List<string> filte = new List<string>();
             if (!Factory.Empty())
-                filte.Add("and O.FactoryID = @Factory  --Factory"); 
+                filte.Add("	and O.FTYGroup = @Factory   --Factory");
             #endregion
             #region SQL CMD
             string sqlCmd = string.Format(@"
-SELECT  O.FactoryID
-		, O.ID
-		, O.StyleID
-		, BD.SizeCode
-		, BD.BundleGroup
-		, BTD.BundleNo
-		, BodyCutNo = Concat(B.FabricPanelCode, ' ', B.Cutno)
-		, BD.Qty
-		, Color = Concat(B.Article, ' ', B.Colorid)
-		, BT.IssueDate
-		, BTD_IN.ReceiveDate
-        , [Subcon] = BT.EndSite + '-' + ls.Abb 
-		, '' remark        
-FROM BundleTrack BT
-left join BundleTrack_detail BTD on BT.Id=BTD.Id
-left join Orders O on O.ID=BTD.orderid
-left join Bundle_Detail BD on BD.BundleNo=BTD.BundleNo
-left join Bundle B on B.ID =BD.Id
-left join BundleTrack_detail BTD_IN on BTD_IN.Id like 'TC%' and BD.BundleNo=BTD_IN.BundleNo  --Farm In Date
-left join localSupp ls on ls.id=bt.endsite
-WHERE	BT.Id LIKE 'TB%'  --Farm out
-		and BT.IssueDate >= @StartDate  --Farm Out Date start
-		and BT.IssueDate <= @EndDate  --Farm Out Date End
-        and BT.StartProcess = @SubProcess  --Sub Process
-        {0}
-ORDER BY  BD.BundleNo", filte.JoinToString("\r\n"));
+
+
+--筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
+
+--先找出該時間區段內所有的Farm Out，BundleNo、StartProcess
+SELECT DISTINCT bd.BundleNo ,b.StartProcess 
+INTO #Base
+FROM BundleTrack b
+INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
+WHERE   b.Id LIKE 'TB%' 
+		and b.IssueDate >= @StartDate 
+		and b.IssueDate <= @EndDate
+        and b.StartProcess = @SubProcess  
+
+--再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
+
+SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,b.IssueDate, lastEditDate = iif (b.EditDate is null or b.AddDate > b.EditDate, b.AddDate, b.EditDate)
+INTO #FarmOutList
+FROM BundleTrack b
+INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
+WHERE   b.Id LIKE 'TB%' 
+		AND bd.BundleNo IN (SELECT BundleNo FROM #Base)
+		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
+
+
+SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,bd.ReceiveDate ,lastEditDate = iif (b.EditDate is null or b.AddDate > b.EditDate, b.AddDate, b.EditDate)
+INTO #FarmInList
+FROM BundleTrack b
+INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
+WHERE   b.Id LIKE 'TC%' 
+		AND bd.BundleNo IN (SELECT BundleNo FROM #Base)
+		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
+
+
+--取最大IssueDate和ReceiveDate用Outer apply排序做
+SELECT  o.FactoryID
+		,o.ID
+		,o.StyleID
+		,bd.SizeCode
+		,bd.BundleGroup
+		,base.BundleNo
+		,BodyCutNo=Concat(b.FabricPanelCode, ' ',b.Cutno)
+		,bd.Qty
+		,Color = Concat(b.Article, ' ', b.Colorid)
+		,[MaxOutDate]=FarmOut.IssueDate
+		,[MaxInDate]=FarmIn.ReceiveDate
+		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
+		, '' remark  
+FROM #Base base
+LEFT JOIN Bundle_Detail bd ON bd.BundleNo=base.BundleNo
+LEFT JOIN Bundle b ON b.ID =bd.Id
+LEFT JOIN Orders o ON o.ID=b.Orderid
+OUTER APPLY(
+   SELECT TOP 1 EndSite,BundleNo,StartProcess,IssueDate
+   FROm #FarmOutList  
+   WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
+   ORDER BY lastEditDate DESC
+)FarmOut
+OUTER APPLY(
+   SELECT TOP 1 EndSite,BundleNo,StartProcess,ReceiveDate
+   FROm  #FarmInList    
+   WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
+   ORDER BY lastEditDate DESC
+)FarmIn
+INNER join LocalSupp ls on ls.id=FarmOut.EndSite
+WHERE 1=1 {0}
+ORDER BY base.BundleNo
+
+Drop Table #FarmOutList,#FarmInList,#Base
+
+", filte.JoinToString("\r\n"));
+
             #endregion
             #region Get Data
             DualResult result;
