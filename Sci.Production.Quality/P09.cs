@@ -129,7 +129,7 @@ namespace Sci.Production.Quality
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("SeasonSCIID", header: "SeasonSCIID", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SeasonSCIID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
             .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)

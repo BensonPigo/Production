@@ -291,7 +291,7 @@
             this.button1.Location = new System.Drawing.Point(998, 459);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(80, 30);
-            this.button1.TabIndex = 12;
+            this.button1.TabIndex = 15;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnClose_Click);
@@ -302,7 +302,7 @@
             this.btnSave2.Location = new System.Drawing.Point(912, 459);
             this.btnSave2.Name = "btnSave2";
             this.btnSave2.Size = new System.Drawing.Size(80, 30);
-            this.btnSave2.TabIndex = 11;
+            this.btnSave2.TabIndex = 14;
             this.btnSave2.Text = "Save";
             this.btnSave2.UseVisualStyleBackColor = true;
             this.btnSave2.Click += new System.EventHandler(this.btnSave2_Click);
@@ -348,7 +348,7 @@
             this.txtColor.Location = new System.Drawing.Point(459, 6);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(100, 23);
-            this.txtColor.TabIndex = 13;
+            this.txtColor.TabIndex = 12;
             // 
             // txtRefno
             // 
@@ -357,7 +357,7 @@
             this.txtRefno.Location = new System.Drawing.Point(289, 6);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(100, 23);
-            this.txtRefno.TabIndex = 12;
+            this.txtRefno.TabIndex = 11;
             // 
             // txtsupplier1
             // 
