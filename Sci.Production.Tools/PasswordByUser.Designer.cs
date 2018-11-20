@@ -267,6 +267,7 @@
             // editRemark
             // 
             this.editRemark.BackColor = System.Drawing.Color.White;
+            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.editRemark.Location = new System.Drawing.Point(96, 365);
             this.editRemark.Multiline = true;
