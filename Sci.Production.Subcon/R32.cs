@@ -95,9 +95,9 @@ WHERE   b.Id LIKE 'TB%'
 		and b.IssueDate <= @EndDate
         and b.StartProcess = @SubProcess  
 
---再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，AddDate用於IssueDate或ReceiveDate相同時排序
+--再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
 
-SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,b.IssueDate,b.AddDate
+SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,b.IssueDate, lastEditDate = iif (b.EditDate is null or b.AddDate > b.EditDate, b.AddDate, b.EditDate)
 INTO #FarmOutList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
@@ -106,7 +106,7 @@ WHERE   b.Id LIKE 'TB%'
 		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
 
 
-SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,bd.ReceiveDate ,b.AddDate
+SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,bd.ReceiveDate ,lastEditDate = iif (b.EditDate is null or b.AddDate > b.EditDate, b.AddDate, b.EditDate)
 INTO #FarmInList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
@@ -137,13 +137,13 @@ OUTER APPLY(
    SELECT TOP 1 EndSite,BundleNo,StartProcess,IssueDate
    FROm #FarmOutList  
    WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
-   ORDER BY IssueDate DESC,AddDate DESC
+   ORDER BY lastEditDate DESC
 )FarmOut
 OUTER APPLY(
    SELECT TOP 1 EndSite,BundleNo,StartProcess,ReceiveDate
    FROm  #FarmInList    
    WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
-   ORDER BY ReceiveDate DESC,AddDate DESC
+   ORDER BY lastEditDate DESC
 )FarmIn
 INNER join LocalSupp ls on ls.id=FarmOut.EndSite
 WHERE 1=1 {0}
