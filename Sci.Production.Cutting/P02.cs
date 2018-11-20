@@ -325,6 +325,14 @@ Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
 
             #region 建立要使用右鍵開窗Grid
             string settbsql = string.Format(@"
+select wo.id,FabricCombo,wd.article,wd.SizeCode,wd.OrderID,sum(qty) qty --min(qty) as minQty
+into #tmp
+from Workorder wo WITH (NOLOCK) 
+inner join workorder_Distribute wd WITH (NOLOCK) on wo.ukey = wd.workorderukey 
+inner join Order_fabriccode ofb WITH (NOLOCK) on wo.Id  = ofb.id and wo.FabricPanelCode = ofb.FabricPanelCode 
+Where wo.id = '{0}'
+group by wo.id,FabricCombo,wd.article,wd.SizeCode,wd.OrderID
+
 Select a.id, a.article, a.sizecode, a.qty,  isnull(balc.minQty-a.qty,0) as balance, c.workorder_Distribute_Qty
 From Order_Qty a WITH (NOLOCK)
 inner join orders b WITH (NOLOCK) on a.id = b.id 
@@ -336,15 +344,14 @@ outer apply
 ) c
 outer apply (
 select min(qty) as minQty from (
-	select FabricCombo,sum(qty) qty --min(qty) as minQty
-	from Workorder wo WITH (NOLOCK) , workorder_Distribute wd WITH (NOLOCK) , Order_fabriccode ofb WITH (NOLOCK) 
-	Where wo.id = '{0}' and wo.ukey = wd.workorderukey and wo.Id  = ofb.id and wo.FabricPanelCode = ofb.FabricPanelCode 
-	and wd.article =a.Article and wd.SizeCode=a.SizeCode and wd.OrderID=a.ID
-	group by FabricCombo
+	select qty --min(qty) as minQty
+	from #tmp t
+	Where t.id = b.cuttingsp and t.article =a.Article and t.SizeCode=a.SizeCode and t.OrderID=a.ID
 	) a
 ) balc
 Where b.cuttingsp ='{0}'
-order by id,article,sizecode"
+order by id,article,sizecode
+drop table #tmp"
                 , masterID);
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out qtybreakTb);
             sizeGroup = qtybreakTb.DefaultView.ToTable(true, "sizecode");
