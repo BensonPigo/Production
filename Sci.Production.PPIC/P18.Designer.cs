@@ -35,19 +35,23 @@
             this.label1 = new Sci.Win.UI.Label();
             this.labHandle = new Sci.Win.UI.Label();
             this.txtM = new Sci.Win.UI.TextBox();
-            this.txtuser = new Sci.Production.Class.txtuser();
             this.labRemark = new Sci.Win.UI.Label();
             this.labStatus = new Sci.Win.UI.Label();
             this.btnSendEMail = new Sci.Win.UI.Button();
             this.txtRemark = new Sci.Win.UI.TextBox();
-            this.labPPDMgr = new Sci.Win.UI.Label();
-            this.labSupApv = new Sci.Win.UI.Label();
-            this.labProdMgrApv = new Sci.Win.UI.Label();
+            this.labPPICSupApv = new Sci.Win.UI.Label();
+            this.labEditBy = new Sci.Win.UI.Label();
+            this.labWHSupApv = new Sci.Win.UI.Label();
             this.labCreate = new Sci.Win.UI.Label();
             this.txtAddName = new Sci.Win.UI.TextBox();
-            this.txtPPDApv = new Sci.Win.UI.TextBox();
-            this.txtSupApv = new Sci.Win.UI.TextBox();
-            this.txtProdApv = new Sci.Win.UI.TextBox();
+            this.txtPPICSupApv = new Sci.Win.UI.TextBox();
+            this.txtEditBy = new Sci.Win.UI.TextBox();
+            this.txtWHSupApv = new Sci.Win.UI.TextBox();
+            this.txtProdMgrApv = new Sci.Win.UI.TextBox();
+            this.txtPPDMgrApv = new Sci.Win.UI.TextBox();
+            this.labProdMgrApv = new Sci.Win.UI.Label();
+            this.labPPDMgrApv = new Sci.Win.UI.Label();
+            this.txtuser = new Sci.Production.Class.txtuser();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -94,12 +98,12 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 92);
-            this.detailpanel.Size = new System.Drawing.Size(974, 324);
+            this.detailpanel.Size = new System.Drawing.Size(974, 331);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.gridicon.Location = new System.Drawing.Point(866, 48);
+            this.gridicon.Location = new System.Drawing.Point(907, 48);
             // 
             // refresh
             // 
@@ -107,41 +111,49 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(974, 324);
+            this.detailgridcont.Size = new System.Drawing.Size(974, 331);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(974, 490);
+            this.detail.Size = new System.Drawing.Size(974, 525);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(974, 416);
+            this.detailcont.Size = new System.Drawing.Size(974, 423);
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.txtProdApv);
-            this.detailbtm.Controls.Add(this.txtSupApv);
-            this.detailbtm.Controls.Add(this.txtPPDApv);
+            this.detailbtm.Controls.Add(this.txtProdMgrApv);
+            this.detailbtm.Controls.Add(this.txtPPDMgrApv);
+            this.detailbtm.Controls.Add(this.labProdMgrApv);
+            this.detailbtm.Controls.Add(this.labPPDMgrApv);
+            this.detailbtm.Controls.Add(this.txtWHSupApv);
+            this.detailbtm.Controls.Add(this.txtEditBy);
+            this.detailbtm.Controls.Add(this.txtPPICSupApv);
             this.detailbtm.Controls.Add(this.txtAddName);
             this.detailbtm.Controls.Add(this.labCreate);
-            this.detailbtm.Controls.Add(this.labProdMgrApv);
-            this.detailbtm.Controls.Add(this.labSupApv);
-            this.detailbtm.Controls.Add(this.labPPDMgr);
-            this.detailbtm.Location = new System.Drawing.Point(0, 416);
-            this.detailbtm.Size = new System.Drawing.Size(974, 74);
+            this.detailbtm.Controls.Add(this.labWHSupApv);
+            this.detailbtm.Controls.Add(this.labEditBy);
+            this.detailbtm.Controls.Add(this.labPPICSupApv);
+            this.detailbtm.Location = new System.Drawing.Point(0, 423);
+            this.detailbtm.Size = new System.Drawing.Size(974, 102);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
-            this.detailbtm.Controls.SetChildIndex(this.labPPDMgr, 0);
-            this.detailbtm.Controls.SetChildIndex(this.labSupApv, 0);
-            this.detailbtm.Controls.SetChildIndex(this.labProdMgrApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labPPICSupApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labEditBy, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labWHSupApv, 0);
             this.detailbtm.Controls.SetChildIndex(this.labCreate, 0);
             this.detailbtm.Controls.SetChildIndex(this.txtAddName, 0);
-            this.detailbtm.Controls.SetChildIndex(this.txtPPDApv, 0);
-            this.detailbtm.Controls.SetChildIndex(this.txtSupApv, 0);
-            this.detailbtm.Controls.SetChildIndex(this.txtProdApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtPPICSupApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtEditBy, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtWHSupApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labPPDMgrApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labProdMgrApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtPPDMgrApv, 0);
+            this.detailbtm.Controls.SetChildIndex(this.txtProdMgrApv, 0);
             // 
             // browse
             // 
@@ -149,27 +161,27 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(982, 519);
+            this.tabs.Size = new System.Drawing.Size(982, 554);
             // 
             // createby
             // 
-            this.createby.Location = new System.Drawing.Point(638, 43);
+            this.createby.Location = new System.Drawing.Point(581, 72);
             this.createby.Visible = false;
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(10, 43);
+            this.editby.Location = new System.Drawing.Point(10, 71);
             this.editby.Visible = false;
             // 
             // lblcreateby
             // 
-            this.lblcreateby.Location = new System.Drawing.Point(105, 43);
+            this.lblcreateby.Location = new System.Drawing.Point(136, 71);
             this.lblcreateby.Size = new System.Drawing.Size(91, 23);
             this.lblcreateby.Visible = false;
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(386, 43);
+            this.lbleditby.Location = new System.Drawing.Point(386, 71);
             this.lbleditby.Visible = false;
             // 
             // displayID
@@ -234,16 +246,6 @@
             this.txtM.Size = new System.Drawing.Size(100, 23);
             this.txtM.TabIndex = 15;
             // 
-            // txtuser
-            // 
-            this.txtuser.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
-            this.txtuser.DisplayBox1Binding = "";
-            this.txtuser.Location = new System.Drawing.Point(477, 16);
-            this.txtuser.Name = "txtuser";
-            this.txtuser.Size = new System.Drawing.Size(251, 23);
-            this.txtuser.TabIndex = 16;
-            this.txtuser.TextBox1Binding = "";
-            // 
             // labRemark
             // 
             this.labRemark.Location = new System.Drawing.Point(221, 52);
@@ -283,35 +285,35 @@
             this.txtRemark.Size = new System.Drawing.Size(326, 23);
             this.txtRemark.TabIndex = 46;
             // 
-            // labPPDMgr
+            // labPPICSupApv
             // 
-            this.labPPDMgr.Location = new System.Drawing.Point(5, 43);
-            this.labPPDMgr.Name = "labPPDMgr";
-            this.labPPDMgr.Size = new System.Drawing.Size(91, 23);
-            this.labPPDMgr.TabIndex = 14;
-            this.labPPDMgr.Text = "PPD Mgr Apv";
+            this.labPPICSupApv.Location = new System.Drawing.Point(5, 43);
+            this.labPPICSupApv.Name = "labPPICSupApv";
+            this.labPPICSupApv.Size = new System.Drawing.Size(95, 23);
+            this.labPPICSupApv.TabIndex = 14;
+            this.labPPICSupApv.Text = "PPIC Sup Apv";
             // 
-            // labSupApv
+            // labEditBy
             // 
-            this.labSupApv.Location = new System.Drawing.Point(452, 13);
-            this.labSupApv.Name = "labSupApv";
-            this.labSupApv.Size = new System.Drawing.Size(91, 23);
-            this.labSupApv.TabIndex = 15;
-            this.labSupApv.Text = "Sup Apv";
+            this.labEditBy.Location = new System.Drawing.Point(452, 13);
+            this.labEditBy.Name = "labEditBy";
+            this.labEditBy.Size = new System.Drawing.Size(91, 23);
+            this.labEditBy.TabIndex = 15;
+            this.labEditBy.Text = "EditBy";
             // 
-            // labProdMgrApv
+            // labWHSupApv
             // 
-            this.labProdMgrApv.Location = new System.Drawing.Point(452, 43);
-            this.labProdMgrApv.Name = "labProdMgrApv";
-            this.labProdMgrApv.Size = new System.Drawing.Size(91, 23);
-            this.labProdMgrApv.TabIndex = 16;
-            this.labProdMgrApv.Text = "Prod Mgr Apv";
+            this.labWHSupApv.Location = new System.Drawing.Point(452, 43);
+            this.labWHSupApv.Name = "labWHSupApv";
+            this.labWHSupApv.Size = new System.Drawing.Size(91, 23);
+            this.labWHSupApv.TabIndex = 16;
+            this.labWHSupApv.Text = "WH Sup Apv";
             // 
             // labCreate
             // 
             this.labCreate.Location = new System.Drawing.Point(5, 13);
             this.labCreate.Name = "labCreate";
-            this.labCreate.Size = new System.Drawing.Size(91, 23);
+            this.labCreate.Size = new System.Drawing.Size(95, 23);
             this.labCreate.TabIndex = 17;
             this.labCreate.Text = "Create By";
             // 
@@ -320,62 +322,114 @@
             this.txtAddName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtAddName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtAddName.IsSupportEditMode = false;
-            this.txtAddName.Location = new System.Drawing.Point(99, 13);
+            this.txtAddName.Location = new System.Drawing.Point(103, 13);
             this.txtAddName.Name = "txtAddName";
             this.txtAddName.ReadOnly = true;
             this.txtAddName.Size = new System.Drawing.Size(332, 23);
             this.txtAddName.TabIndex = 18;
             // 
-            // txtPPDApv
+            // txtPPICSupApv
             // 
-            this.txtPPDApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtPPDApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtPPDApv.IsSupportEditMode = false;
-            this.txtPPDApv.Location = new System.Drawing.Point(99, 42);
-            this.txtPPDApv.Name = "txtPPDApv";
-            this.txtPPDApv.ReadOnly = true;
-            this.txtPPDApv.Size = new System.Drawing.Size(332, 23);
-            this.txtPPDApv.TabIndex = 19;
+            this.txtPPICSupApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtPPICSupApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtPPICSupApv.IsSupportEditMode = false;
+            this.txtPPICSupApv.Location = new System.Drawing.Point(103, 42);
+            this.txtPPICSupApv.Name = "txtPPICSupApv";
+            this.txtPPICSupApv.ReadOnly = true;
+            this.txtPPICSupApv.Size = new System.Drawing.Size(332, 23);
+            this.txtPPICSupApv.TabIndex = 19;
             // 
-            // txtSupApv
+            // txtEditBy
             // 
-            this.txtSupApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtSupApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtSupApv.IsSupportEditMode = false;
-            this.txtSupApv.Location = new System.Drawing.Point(546, 13);
-            this.txtSupApv.Name = "txtSupApv";
-            this.txtSupApv.ReadOnly = true;
-            this.txtSupApv.Size = new System.Drawing.Size(332, 23);
-            this.txtSupApv.TabIndex = 20;
+            this.txtEditBy.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtEditBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtEditBy.IsSupportEditMode = false;
+            this.txtEditBy.Location = new System.Drawing.Point(546, 13);
+            this.txtEditBy.Name = "txtEditBy";
+            this.txtEditBy.ReadOnly = true;
+            this.txtEditBy.Size = new System.Drawing.Size(332, 23);
+            this.txtEditBy.TabIndex = 20;
             // 
-            // txtProdApv
+            // txtWHSupApv
             // 
-            this.txtProdApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtProdApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtProdApv.IsSupportEditMode = false;
-            this.txtProdApv.Location = new System.Drawing.Point(546, 43);
-            this.txtProdApv.Name = "txtProdApv";
-            this.txtProdApv.ReadOnly = true;
-            this.txtProdApv.Size = new System.Drawing.Size(332, 23);
-            this.txtProdApv.TabIndex = 21;
+            this.txtWHSupApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtWHSupApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtWHSupApv.IsSupportEditMode = false;
+            this.txtWHSupApv.Location = new System.Drawing.Point(546, 43);
+            this.txtWHSupApv.Name = "txtWHSupApv";
+            this.txtWHSupApv.ReadOnly = true;
+            this.txtWHSupApv.Size = new System.Drawing.Size(332, 23);
+            this.txtWHSupApv.TabIndex = 21;
+            // 
+            // txtProdMgrApv
+            // 
+            this.txtProdMgrApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtProdMgrApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtProdMgrApv.IsSupportEditMode = false;
+            this.txtProdMgrApv.Location = new System.Drawing.Point(546, 72);
+            this.txtProdMgrApv.Name = "txtProdMgrApv";
+            this.txtProdMgrApv.ReadOnly = true;
+            this.txtProdMgrApv.Size = new System.Drawing.Size(332, 23);
+            this.txtProdMgrApv.TabIndex = 25;
+            // 
+            // txtPPDMgrApv
+            // 
+            this.txtPPDMgrApv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtPPDMgrApv.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtPPDMgrApv.IsSupportEditMode = false;
+            this.txtPPDMgrApv.Location = new System.Drawing.Point(103, 71);
+            this.txtPPDMgrApv.Name = "txtPPDMgrApv";
+            this.txtPPDMgrApv.ReadOnly = true;
+            this.txtPPDMgrApv.Size = new System.Drawing.Size(332, 23);
+            this.txtPPDMgrApv.TabIndex = 24;
+            // 
+            // labProdMgrApv
+            // 
+            this.labProdMgrApv.Location = new System.Drawing.Point(452, 72);
+            this.labProdMgrApv.Name = "labProdMgrApv";
+            this.labProdMgrApv.Size = new System.Drawing.Size(91, 23);
+            this.labProdMgrApv.TabIndex = 23;
+            this.labProdMgrApv.Text = "Prod Mgr Apv";
+            // 
+            // labPPDMgrApv
+            // 
+            this.labPPDMgrApv.Location = new System.Drawing.Point(5, 72);
+            this.labPPDMgrApv.Name = "labPPDMgrApv";
+            this.labPPDMgrApv.Size = new System.Drawing.Size(95, 23);
+            this.labPPDMgrApv.TabIndex = 22;
+            this.labPPDMgrApv.Text = "PPD Mgr Apv";
+            // 
+            // txtuser
+            // 
+            this.txtuser.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
+            this.txtuser.DisplayBox1Binding = "";
+            this.txtuser.Location = new System.Drawing.Point(477, 16);
+            this.txtuser.Name = "txtuser";
+            this.txtuser.Size = new System.Drawing.Size(251, 23);
+            this.txtuser.TabIndex = 16;
+            this.txtuser.TextBox1Binding = "";
             // 
             // P18
             // 
-            this.ApvChkValue = "Checked";
+            this.ApvChkValue = "Received";
             this.CheckChkValue = "Sent";
-            this.ClientSize = new System.Drawing.Size(982, 552);
+            this.ClientSize = new System.Drawing.Size(982, 587);
             this.DefaultOrder = "ID";
             this.GridAlias = "AVO_Detail";
             this.IsSupportCheck = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportRecall = true;
+            this.IsSupportReceive = true;
+            this.IsSupportReturn = true;
             this.IsSupportSend = true;
             this.IsSupportUncheck = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P18";
             this.RecallChkValue = "Sent";
+            this.ReceiveChkValue = "Checked";
+            this.ReturnChkValue = "Received";
             this.SendChkValue = "New";
             this.SubDetailKeyField1 = "ukey";
             this.SubDetailKeyField2 = "AVO_DetailUkey";
@@ -420,13 +474,17 @@
         private Win.UI.Button btnSendEMail;
         private Win.UI.Label labStatus;
         private Win.UI.TextBox txtRemark;
-        private Win.UI.Label labPPDMgr;
-        private Win.UI.Label labProdMgrApv;
-        private Win.UI.Label labSupApv;
-        private Win.UI.TextBox txtProdApv;
-        private Win.UI.TextBox txtSupApv;
-        private Win.UI.TextBox txtPPDApv;
+        private Win.UI.Label labPPICSupApv;
+        private Win.UI.Label labWHSupApv;
+        private Win.UI.Label labEditBy;
+        private Win.UI.TextBox txtWHSupApv;
+        private Win.UI.TextBox txtEditBy;
+        private Win.UI.TextBox txtPPICSupApv;
         private Win.UI.TextBox txtAddName;
         private Win.UI.Label labCreate;
+        private Win.UI.TextBox txtProdMgrApv;
+        private Win.UI.TextBox txtPPDMgrApv;
+        private Win.UI.Label labProdMgrApv;
+        private Win.UI.Label labPPDMgrApv;
     }
 }
