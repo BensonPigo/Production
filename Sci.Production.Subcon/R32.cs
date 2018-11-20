@@ -85,9 +85,9 @@ where Junk != 1", out dtFactory);
 
 --筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
 
---先找出User 輸入條件的 Farm Out清單
-SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,b.IssueDate,b.AddDate
-INTO #FarmOutList
+--先找出該時間區段內所有的Farm Out，BundleNo、StartProcess
+SELECT DISTINCT bd.BundleNo ,b.StartProcess 
+INTO #Base
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
 WHERE   b.Id LIKE 'TB%' 
@@ -95,20 +95,25 @@ WHERE   b.Id LIKE 'TB%'
 		and b.IssueDate <= @EndDate
         and b.StartProcess = @SubProcess  
 
---取得Farm In清單
---Farm In的BundleNo+StartProcess，一定只能出現在Farm Out清單裡面，因此從上面找
+--再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，AddDate用於IssueDate或ReceiveDate相同時排序
+
+SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,b.IssueDate,b.AddDate
+INTO #FarmOutList
+FROM BundleTrack b
+INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
+WHERE   b.Id LIKE 'TB%' 
+		AND bd.BundleNo IN (SELECT BundleNo FROM #Base)
+		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
+
+
 SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,bd.ReceiveDate ,b.AddDate
 INTO #FarmInList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
 WHERE   b.Id LIKE 'TC%' 
-		AND bd.BundleNo IN (SELECT BundleNo FROM #FarmOutList)
-		AND b.StartProcess IN (SELECT StartProcess FROM #FarmOutList)
+		AND bd.BundleNo IN (SELECT BundleNo FROM #Base)
+		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
 
---以FarmOutList 的為主，去掉重複
-SELECT DISTINCT BundleNo ,StartProcess
-INTO #Base
-FROM #FarmOutList
 
 --取最大IssueDate和ReceiveDate用Outer apply排序做
 SELECT  o.FactoryID
