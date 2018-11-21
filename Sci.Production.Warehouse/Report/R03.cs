@@ -152,6 +152,7 @@ join dbo.Supp S on S.id = PS.SuppID
 join dbo.Orders O on o.id = PSD.id
 join dbo.Factory F on f.id = o.FactoryId
 left join dbo.MDivisionPoDetail MDPD on MDPD.POID = PSD.ID and MDPD.Seq1 = PSD.Seq1 and MDPD.Seq2 = PSD.Seq2
+left join dbo.Fabric on fabric.SciRefno = psd.SciRefno
 outer apply(select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) si
 outer apply
 (
@@ -360,6 +361,9 @@ where 1=1
                 sp_refno2.Value = refno2 + "%";
                 cmds.Add(sp_refno2);
             }
+            int dwr = (chkDWR.Checked) ? 1 : 0;
+
+            sqlCmd.Append($@" and fabric.DWR = {dwr}");
 
             if (orderby.ToUpper().TrimEnd() == "SUPPLIER")
             {
