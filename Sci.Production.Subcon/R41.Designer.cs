@@ -36,13 +36,13 @@
             this.labelM = new Sci.Win.UI.Label();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.dateBundleCDate = new Sci.Win.UI.DateRange();
-            this.comboSubProcess = new Sci.Win.UI.ComboBox();
             this.comboM = new Sci.Win.UI.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtCutRefStart = new System.Windows.Forms.TextBox();
             this.txtCutRefEnd = new System.Windows.Forms.TextBox();
             this.labelFactory = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
+            this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
             this.SuspendLayout();
             // 
             // print
@@ -112,22 +112,25 @@
             // 
             // dateBundleCDate
             // 
+            // 
+            // 
+            // 
+            this.dateBundleCDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBundleCDate.DateBox1.Name = "";
+            this.dateBundleCDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBundleCDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBundleCDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBundleCDate.DateBox2.Name = "";
+            this.dateBundleCDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBundleCDate.DateBox2.TabIndex = 1;
             this.dateBundleCDate.IsRequired = false;
             this.dateBundleCDate.Location = new System.Drawing.Point(125, 77);
             this.dateBundleCDate.Name = "dateBundleCDate";
             this.dateBundleCDate.Size = new System.Drawing.Size(280, 23);
             this.dateBundleCDate.TabIndex = 3;
-            // 
-            // comboSubProcess
-            // 
-            this.comboSubProcess.BackColor = System.Drawing.Color.White;
-            this.comboSubProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboSubProcess.FormattingEnabled = true;
-            this.comboSubProcess.IsSupportUnselect = true;
-            this.comboSubProcess.Location = new System.Drawing.Point(125, 106);
-            this.comboSubProcess.Name = "comboSubProcess";
-            this.comboSubProcess.Size = new System.Drawing.Size(121, 24);
-            this.comboSubProcess.TabIndex = 4;
             // 
             // comboM
             // 
@@ -137,6 +140,7 @@
             this.comboM.IsSupportUnselect = true;
             this.comboM.Location = new System.Drawing.Point(125, 136);
             this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(121, 24);
             this.comboM.TabIndex = 5;
             // 
@@ -185,18 +189,31 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(125, 169);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
             this.comboFactory.TabIndex = 107;
+            // 
+            // txtsubprocess
+            // 
+            this.txtsubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtsubprocess.IsSupportEditMode = false;
+            this.txtsubprocess.Location = new System.Drawing.Point(125, 106);
+            this.txtsubprocess.Name = "txtsubprocess";
+            this.txtsubprocess.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtsubprocess.ReadOnly = true;
+            this.txtsubprocess.Size = new System.Drawing.Size(280, 23);
+            this.txtsubprocess.TabIndex = 108;
             // 
             // R41
             // 
             this.ClientSize = new System.Drawing.Size(517, 226);
+            this.Controls.Add(this.txtsubprocess);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.txtCutRefEnd);
             this.Controls.Add(this.txtCutRefStart);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.comboM);
-            this.Controls.Add(this.comboSubProcess);
             this.Controls.Add(this.dateBundleCDate);
             this.Controls.Add(this.txtSPNo);
             this.Controls.Add(this.labelFactory);
@@ -209,9 +226,6 @@
             this.DefaultControlForEdit = "txtCutRefStart";
             this.Name = "R41";
             this.Text = "R41.Bundle tracking list (RFID)";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelCutRefNo, 0);
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.labelBundleCDate, 0);
@@ -220,12 +234,15 @@
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.txtSPNo, 0);
             this.Controls.SetChildIndex(this.dateBundleCDate, 0);
-            this.Controls.SetChildIndex(this.comboSubProcess, 0);
             this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.txtCutRefStart, 0);
             this.Controls.SetChildIndex(this.txtCutRefEnd, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.txtsubprocess, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -240,12 +257,12 @@
         private Win.UI.Label labelM;
         private Win.UI.TextBox txtSPNo;
         private Win.UI.DateRange dateBundleCDate;
-        private Win.UI.ComboBox comboSubProcess;
         private Win.UI.ComboBox comboM;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtCutRefStart;
         private System.Windows.Forms.TextBox txtCutRefEnd;
         private Win.UI.Label labelFactory;
         private Class.comboFactory comboFactory;
+        private Class.txtsubprocess txtsubprocess;
     }
 }
