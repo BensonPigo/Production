@@ -1526,56 +1526,78 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 
             if (StdPrice_Dt.Rows.Count > 0)
             {
-
-                #region 取得所有：已建立採購的子單總訂單數量
-                //已建立採購的子單總訂單數量
-                DataTable allQty;
-                sql.Clear();
-                sql.Append(" SELECT DISTINCT[ArtworkTypeID] = a.Category, [POID] = o.POID" + Environment.NewLine);
-                sql.Append(" INTO #tmp_AllOrders FROM LocalPO a" + Environment.NewLine);
-                sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID INNER JOIN Orders o ON o.ID = ad.OrderID" + Environment.NewLine);
-                sql.Append($" WHERE a.ID = @LocalPO_ID" + Environment.NewLine);
-                sql.Append(" " + Environment.NewLine);
-                sql.Append(" SELECT iif(odm.ArtworkTypeID is null,null,isnull(sum(od.qty),0)) Order_Qty,t.poid" + Environment.NewLine);
-                sql.Append(" FROM Orders od INNER JOIN Order_TmsCost odm ON od.id = odm.ID " + Environment.NewLine);
-                sql.Append(" INNER JOIN (select distinct POID,ArtworkTypeID from #tmp_AllOrders) t ON t.POID=od.POID AND t.ArtworkTypeID  = odm.ArtworkTypeID " + Environment.NewLine);
-                sql.Append(" GROUP BY  odm.ArtworkTypeID,t.poid" + Environment.NewLine);
-                sql.Append(" DROP TABLE #tmp_AllOrders" + Environment.NewLine);
-                DBProxy.Current.Select(null, sql.ToString(), parameters, out allQty);
-                #endregion
-
                 #region 取得所有：實際採購成本
                 //實際採購成本
                 DataTable poPrice;
                 sql.Clear();
-                sql.Append(" SELECT DISTINCT orders.POID,a.Category" + Environment.NewLine);
-                sql.Append(" INTO #all_Amount_By_Po" + Environment.NewLine);
-                sql.Append(" FROM LocalPO a" + Environment.NewLine);
-                sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
-                sql.Append(" OUTER APPLY(" + Environment.NewLine);
-                sql.Append(" 	SELECT [POID]=orders.POID " + Environment.NewLine);
-                sql.Append(" 	FROM orders WITH (NOLOCK) WHERE id=ad.OrderId" + Environment.NewLine);
-                sql.Append(" )orders" + Environment.NewLine);
-                sql.Append($" WHERE a.ID =@LocalPO_ID" + Environment.NewLine);
-                sql.Append(" " + Environment.NewLine);
-                sql.Append(" SELECT [Amount]=ISNULL(SUM(total.Amount),0.00) ,[POID]=total.POID " + Environment.NewLine);
-                sql.Append(" FROM( " + Environment.NewLine);
-                sql.Append("       SELECT DISTINCT a.CurrencyId, " + Environment.NewLine);
-                sql.Append("       ad.Price, " + Environment.NewLine);
-                sql.Append("       ad.Qty, " + Environment.NewLine);
-                sql.Append("       [Amount]=ad.Price * ad.Qty *dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate)  " + Environment.NewLine);
-                sql.Append("       ,t.POID " + Environment.NewLine);
-                sql.Append("       FROM LocalPO a " + Environment.NewLine);
-                sql.Append("       INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID " + Environment.NewLine);
-                sql.Append("       INNER JOIN Orders o ON o.ID = ad.OrderID " + Environment.NewLine);
-                sql.Append("       INNER JOIN  #all_Amount_By_Po t  ON t.POID=o.POID AND t.Category=a.Category " + Environment.NewLine);
-                sql.Append("       WHERE  a.ID = @LocalPO_ID " + Environment.NewLine);
-                sql.Append(" )total  GROUP BY total.POID " + Environment.NewLine);
-                sql.Append(" DROP TABLE #all_Amount_By_Po " + Environment.NewLine);
+                //sql.Append(" SELECT DISTINCT orders.POID,a.Category" + Environment.NewLine);
+                //sql.Append(" INTO #all_Amount_By_Po" + Environment.NewLine);
+                //sql.Append(" FROM LocalPO a" + Environment.NewLine);
+                //sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
+                //sql.Append(" OUTER APPLY(" + Environment.NewLine);
+                //sql.Append(" 	SELECT [POID]=orders.POID " + Environment.NewLine);
+                //sql.Append(" 	FROM orders WITH (NOLOCK) WHERE id=ad.OrderId" + Environment.NewLine);
+                //sql.Append(" )orders" + Environment.NewLine);
+                //sql.Append($" WHERE a.ID =@LocalPO_ID" + Environment.NewLine);
+                //sql.Append(" " + Environment.NewLine);
+                //sql.Append(" SELECT [Amount]=ISNULL(SUM(total.Amount),0.00) ,[POID]=total.POID " + Environment.NewLine);
+                //sql.Append(" FROM( " + Environment.NewLine);
+                //sql.Append("       SELECT DISTINCT a.CurrencyId, " + Environment.NewLine);
+                //sql.Append("       ad.Price, " + Environment.NewLine);
+                //sql.Append("       ad.Qty, " + Environment.NewLine);
+                //sql.Append("       [Amount]=ad.Price * ad.Qty *dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate)  " + Environment.NewLine);
+                //sql.Append("       ,t.POID " + Environment.NewLine);
+                //sql.Append("       FROM LocalPO a " + Environment.NewLine);
+                //sql.Append("       INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID " + Environment.NewLine);
+                //sql.Append("       INNER JOIN Orders o ON o.ID = ad.OrderID " + Environment.NewLine);
+                //sql.Append("       INNER JOIN  #all_Amount_By_Po t  ON t.POID=o.POID AND t.Category=a.Category " + Environment.NewLine);
+                //sql.Append("       WHERE  a.ID = @LocalPO_ID " + Environment.NewLine);
+                //sql.Append(" )total  GROUP BY total.POID " + Environment.NewLine);
+                //sql.Append(" DROP TABLE #all_Amount_By_Po " + Environment.NewLine);
+                sql.Append("  " + Environment.NewLine);
+
+                sql.Append(" select distinct LP.Category, LPD.POID" + Environment.NewLine);
+                sql.Append(" INTO #all_Cat_OrderId" + Environment.NewLine);
+                sql.Append(" from dbo.LocalPO LP" + Environment.NewLine);
+                sql.Append(" inner" + Environment.NewLine);
+                sql.Append(" join dbo.LocalPO_Detail LPD on LP.Id = LPD.Id" + Environment.NewLine);
+                sql.Append(" left" + Environment.NewLine);
+                sql.Append(" join Orders O on lpd.OrderId = o.id" + Environment.NewLine);
+                sql.Append(" where 1 = 1 AND LP.ID = @LocalPO_ID" + Environment.NewLine);
+
+                sql.Append(" SELECT  [POID]=S.POID ,[poPrice] = round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) " + Environment.NewLine);
+                sql.Append(" FROM #all_Cat_OrderId s" + Environment.NewLine);
+                sql.Append(" outer apply(" + Environment.NewLine);
+                sql.Append(" select  Price = sum(LPD.Price)" + Environment.NewLine);
+                sql.Append(" , Po_Qty = sum(LPD.Qty)" + Environment.NewLine);
+                sql.Append(" , Po_amt = sum(LPD.Qty * LPD.Price * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.IssueDate))" + Environment.NewLine);
+                sql.Append(" , Rate = sum(dbo.getRate('FX', LP.CurrencyID, 'USD', LP.IssueDate))" + Environment.NewLine);
+
+                sql.Append("     from LocalPO LP" + Environment.NewLine);
+
+                sql.Append(" inner" + Environment.NewLine);
+                sql.Append(" join LocalPO_Detail LPD on LP.Id = LPD.Id" + Environment.NewLine);
+
+                sql.Append(" where LP.Category = s.Category" + Environment.NewLine);
+                sql.Append(" and LPD.POID = s.POID" + Environment.NewLine);
+                sql.Append(" ) x" + Environment.NewLine);
+                sql.Append(" outer apply(" + Environment.NewLine);
+                sql.Append(" select  Orders.POID" + Environment.NewLine);
+                sql.Append(" , Order_Qty = sum(orders.Qty)" + Environment.NewLine);
+                sql.Append(" , Order_amt = sum(Orders.Qty * Price)" + Environment.NewLine);
+
+                sql.Append(" from Orders" + Environment.NewLine);
+                sql.Append(" inner join Order_TmsCost OTC on OTC.ID = Orders.ID" + Environment.NewLine);
+                sql.Append("     where POID = S.POID" + Environment.NewLine);
+                sql.Append(" and ArtworkTypeID = s.Category" + Environment.NewLine);
+                sql.Append("     group by Orders.POID, ArtworkTypeID" + Environment.NewLine);
+                sql.Append(" ) y" + Environment.NewLine);
+                sql.Append(" group by S.POID ,y.Order_Qty , y.order_amt" + Environment.NewLine);
+                sql.Append(" DROP TABLE #all_Cat_OrderId" + Environment.NewLine);
                 DBProxy.Current.Select(null, sql.ToString(), parameters, out poPrice);
                 #endregion
 
-
+                //沒設定標準價的不理他，所以用StdPrice_Dt跑迴圈
                 foreach (DataRow row in StdPrice_Dt.Rows)
                 {
                     //用來準備填入 C 最新的 " 價格異常紀錄" IPR資料
@@ -1590,16 +1612,10 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
 
                     #region 實際採購成本 - 根據POID篩選
                     DataTable filterData_PO = poPrice.AsEnumerable().Where(o => o.Field<string>("POID") == poid).CopyToDataTable();
-                    decimal realPurchasePrice = Convert.ToDecimal(filterData_PO.Rows[0]["Amount"]);                  
+                    decimal realPurchasePrice = Convert.ToDecimal(filterData_PO.Rows[0]["poPrice"]);
                     #endregion
 
-                    #region 已建立採購的子單總訂單數量 - 根據POID篩選
-                    DataTable filterData = allQty.AsEnumerable().Where(o => o.Field<string>("poid") == poid).CopyToDataTable();
-                    int Qty = Convert.ToInt32( filterData.Rows[0]["Order_Qty"]);
-                    #endregion
-
-                    //採購價單價 計算
-                    purchasePrice = realPurchasePrice / Qty;
+                    purchasePrice = realPurchasePrice;
 
                     //只要有異常就顯示紅色
                     if (purchasePrice > StdPrice)
@@ -1612,7 +1628,6 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                     {
                         DataRow ndr = IrregularPriceReason_Newst.NewRow();
                         
-
                         ndr["poid"] = poid;
                         ndr["Category"] = category;
                         ndr["BrandID"] = BrandID;
@@ -1805,6 +1820,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                 else if (IrregularPriceReason_InDB.Rows.Count == 0 && tbl.Rows.Count > 0)
                 {
                     //「未曾有過」價格異常紀錄，現在價格異常 Type=1
+                    // 帶新的紀錄
                     IrregularPriceReasonType = 1;
                     _IrregularPriceReasonDT = tbl;
                 }

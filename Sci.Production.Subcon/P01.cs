@@ -675,32 +675,85 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             //	1.標準價
             #region 取得POID以及對應的標準價、ArtworkType
             //先找出這個加工單底下，所有單號的POID(母單)，以及其加工類別
-            sql.Append(" SELECT DISTINCT [ArtworkTypeID]=ad.ArtworkTypeID,  [POID]=o.POID  ,o.BrandID ,o.StyleID" + Environment.NewLine);
-            sql.Append(" INTO #tmp_AllOrders" + Environment.NewLine);
-            sql.Append("    FROM ArtworkPO a" + Environment.NewLine);
-            sql.Append("    INNER JOIN ArtworkPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
-            sql.Append("    INNER JOIN Orders o ON o.ID=ad.OrderID" + Environment.NewLine);
-            sql.Append("    WHERE a.ID=@artWorkPO_ID" + Environment.NewLine);
-            sql.Append(" " + Environment.NewLine);
+            //sql.Append(" SELECT DISTINCT [ArtworkTypeID]=ad.ArtworkTypeID,  [POID]=o.POID  ,o.BrandID ,o.StyleID" + Environment.NewLine);
+            //sql.Append(" INTO #tmp_AllOrders" + Environment.NewLine);
+            //sql.Append("    FROM ArtworkPO a" + Environment.NewLine);
+            //sql.Append("    INNER JOIN ArtworkPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
+            //sql.Append("    INNER JOIN Orders o ON o.ID=ad.OrderID" + Environment.NewLine);
+            //sql.Append("    WHERE a.ID=@artWorkPO_ID" + Environment.NewLine);
+            //sql.Append(" " + Environment.NewLine);
 
-            //用上述資訊，與Orders、Order_TmsCost關聯，取得所有「有設定標準價」的子單數量總和、個別子單標準價* 個別子單數量
-            //標準價 = SUM(子單數量 * 子單標準價) / SUM(子單數量)
-            sql.Append(" SELECT " + Environment.NewLine + Environment.NewLine);
-            sql.Append("         [Order_Qty]= IIF(odm.ArtworkTypeID IS NULL,NULL,ISNULL(SUM(od.qty),0)) " + Environment.NewLine);
-            sql.Append("        ,[Order_Amt]= SUM(od.qty *Price) " + Environment.NewLine);
-            sql.Append("        ,[POID]= t.POID" + Environment.NewLine);
-            sql.Append("        ,[ArtworkTypeID]= odm.ArtworkTypeID" + Environment.NewLine);
-            sql.Append("        ,[BrandID]= t.BrandID" + Environment.NewLine);
-            sql.Append("        ,[StyleID]=t.StyleID" + Environment.NewLine);
-            sql.Append(" INTO #tmp_summary" + Environment.NewLine);
-            sql.Append(" FROM Orders od" + Environment.NewLine);
-            sql.Append(" INNER JOIN Order_TmsCost odm ON od.id = odm.ID " + Environment.NewLine + Environment.NewLine);
-            sql.Append(" INNER JOIN (SELECT DISTINCT POID,ArtworkTypeID ,BrandID ,StyleID FROM #tmp_AllOrders) t  " + Environment.NewLine + Environment.NewLine);
-            sql.Append("            ON t.POID=od.POID AND t.ArtworkTypeID  = odm.ArtworkTypeID" + Environment.NewLine);
-            sql.Append(" GROUP BY  odm.ArtworkTypeID,t.poid ,t.BrandID ,t.StyleID" + Environment.NewLine);
-            sql.Append(" " + Environment.NewLine);
-            sql.Append(" SELECT [StdPrice]=Order_Amt/ Order_Qty ,POID ,ArtworkTypeID ,BrandID ,StyleID FROM #tmp_summary WHERE Order_Qty!=0" + Environment.NewLine);
-            sql.Append(" DROP TABLE #tmp_AllOrders,#tmp_summary" + Environment.NewLine);
+            ////用上述資訊，與Orders、Order_TmsCost關聯，取得所有「有設定標準價」的子單數量總和、個別子單標準價* 個別子單數量
+            ////標準價 = SUM(子單數量 * 子單標準價) / SUM(子單數量)
+            //sql.Append(" SELECT " + Environment.NewLine + Environment.NewLine);
+            //sql.Append("         [Order_Qty]= IIF(odm.ArtworkTypeID IS NULL,NULL,ISNULL(SUM(od.qty),0)) " + Environment.NewLine);
+            //sql.Append("        ,[Order_Amt]= SUM(od.qty *Price) " + Environment.NewLine);
+            //sql.Append("        ,[POID]= t.POID" + Environment.NewLine);
+            //sql.Append("        ,[ArtworkTypeID]= odm.ArtworkTypeID" + Environment.NewLine);
+            //sql.Append("        ,[BrandID]= t.BrandID" + Environment.NewLine);
+            //sql.Append("        ,[StyleID]=t.StyleID" + Environment.NewLine);
+            //sql.Append(" INTO #tmp_summary" + Environment.NewLine);
+            //sql.Append(" FROM Orders od" + Environment.NewLine);
+            //sql.Append(" INNER JOIN Order_TmsCost odm ON od.id = odm.ID " + Environment.NewLine + Environment.NewLine);
+            //sql.Append(" INNER JOIN (SELECT DISTINCT POID,ArtworkTypeID ,BrandID ,StyleID FROM #tmp_AllOrders) t  " + Environment.NewLine + Environment.NewLine);
+            //sql.Append("            ON t.POID=od.POID AND t.ArtworkTypeID  = odm.ArtworkTypeID" + Environment.NewLine);
+            //sql.Append(" GROUP BY  odm.ArtworkTypeID,t.poid ,t.BrandID ,t.StyleID" + Environment.NewLine);
+            //sql.Append(" " + Environment.NewLine);
+            //sql.Append(" SELECT [StdPrice]=Order_Amt/ Order_Qty ,POID ,ArtworkTypeID ,BrandID ,StyleID FROM #tmp_summary WHERE Order_Qty!=0" + Environment.NewLine);
+            //sql.Append(" DROP TABLE #tmp_AllOrders,#tmp_summary" + Environment.NewLine);
+
+            //取ArtWorkPO_ID底下的，ArtworkTypeID + OrderID清單
+            sql.Append(" SELECT DISTINCT[ArtworkTypeID] = ad.ArtworkTypeID,[OrderId] = ad.OrderID" + Environment.NewLine);
+            sql.Append(" INTO #tmp_AllOrders FROM ArtworkPO a INNER JOIN ArtworkPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
+            sql.Append(" WHERE a.ID = @artWorkPO_ID " + Environment.NewLine);
+            //outer apply裡面
+            sql.Append(" SELECT o.BrandID ,o.StyleID  ,t.ArtworkTypeID  ,o.POID    " + Environment.NewLine);
+            sql.Append(" ,[StdPrice]=round(Standard.order_amt/iif(Standard.order_qty=0,1,Standard.order_qty),3)  " + Environment.NewLine);
+            sql.Append(" ,[PoPrice]=round(po.ap_amt / iif(Standard.order_qty=0,1,Standard.order_qty),3)   " + Environment.NewLine);
+            sql.Append(" ,[PoPriceWithEmbroidery] =ISNULL( (po.ap_amt+Embroidery.localap_amt)/ iif(Standard.order_qty=0,1,Standard.order_qty) ,0) " + Environment.NewLine);
+
+            sql.Append(" FROm #tmp_AllOrders t" + Environment.NewLine);
+            sql.Append(" LEFT JOIN Orders o WITH(NOLOCK) on o.id = t.OrderId" + Environment.NewLine);
+            sql.Append(" LEFT JOIN Order_TmsCost otc WITH (NOLOCK) on otc.id = o.ID and otc.ArtworkTypeID = t.artworktypeid" + Environment.NewLine);
+            sql.Append(" LEFT JOIN Brand bra on bra.id= o.BrandID" + Environment.NewLine);
+            sql.Append(" outer apply(" + Environment.NewLine);
+            sql.Append("                select orders.POID" + Environment.NewLine);
+            sql.Append("                , sum(orders.qty) order_qty        --實際外發數量" + Environment.NewLine);
+            sql.Append("                , sum(orders.qty* Price) order_amt  --外發成本" + Environment.NewLine);
+            sql.Append("                from orders WITH(NOLOCK)" + Environment.NewLine);
+            sql.Append("                inner join Order_TmsCost WITH(NOLOCK) on Order_TmsCost.id = orders.ID" + Environment.NewLine);
+            sql.Append("                where POID= o.POID" + Environment.NewLine);
+            sql.Append("                and ArtworkTypeID = t.ArtworkTypeID" + Environment.NewLine);
+            sql.Append("                group by orders.poid, ArtworkTypeID" + Environment.NewLine);
+            sql.Append(" ) Standard" + Environment.NewLine);
+
+            sql.Append(" outer apply (" + Environment.NewLine);
+            sql.Append(" select isnull(sum(t.ap_amt), 0.00) ap_amt, isnull(sum(t.ap_qty), 0) ap_qty" + Environment.NewLine);
+            sql.Append(" from(" + Environment.NewLine);
+            sql.Append(" select  ap.currencyid" + Environment.NewLine);
+            sql.Append(" , apd.Price" + Environment.NewLine);
+            sql.Append(" , apd.apQty ap_qty" + Environment.NewLine);
+            sql.Append(" , apd.apQty * apd.Price * dbo.getRate('FX', ap.CurrencyID, 'USD', ap.issuedate) ap_amt" + Environment.NewLine);
+            sql.Append(" , dbo.getRate('FX', ap.CurrencyID, 'USD', ap.issuedate) rate" + Environment.NewLine);
+            sql.Append(" from ArtworkPO ap WITH(NOLOCK)" + Environment.NewLine);
+            sql.Append(" inner join ArtworkPO_Detail apd WITH(NOLOCK) on apd.id = ap.Id" + Environment.NewLine);
+            sql.Append(" inner join orders WITH(NOLOCK) on orders.id = apd.orderid" + Environment.NewLine);
+            sql.Append(" where ap.ArtworkTypeID = t.artworktypeid and orders.POId = o.POID) t" + Environment.NewLine);
+            sql.Append(" ) po" + Environment.NewLine);
+
+            sql.Append(" outer apply(" + Environment.NewLine);
+            sql.Append(" select   LP.currencyid" + Environment.NewLine);
+            sql.Append("          , LPd.Price" + Environment.NewLine);
+            sql.Append("          , LPD.Qty localap_qty" + Environment.NewLine);
+            sql.Append("          , LPD.Qty * LPD.Price * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) localap_amt" + Environment.NewLine);
+            sql.Append("          , dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) rate" + Environment.NewLine);
+            sql.Append(" from LocalPO LP" + Environment.NewLine);
+            sql.Append(" inner" + Environment.NewLine);
+            sql.Append(" join LocalPO_Detail LPD on LP.Id = LPD.Id" + Environment.NewLine);
+            sql.Append(" where LP.Category = 'EMB_Thread'" + Environment.NewLine);
+            sql.Append(" and LPD.POID = o.POID" + Environment.NewLine);
+            sql.Append(" ) Embroidery" + Environment.NewLine);
+            sql.Append("  GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,o.POID ,Standard.order_amt ,Standard.order_qty ,po.ap_amt ,Standard.order_qty,Embroidery.localap_amt" + Environment.NewLine);
 
             result = DBProxy.Current.Select(null, sql.ToString(), parameters, out StdPrice_Dt);
             sql.Clear();
@@ -715,130 +768,132 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             {
                 foreach (DataRow row in StdPrice_Dt.Rows)
                 {
+                    decimal purchasePrice = 0;
                     //用來準備填入 C 最新的 " 價格異常紀錄" IPR資料
                     StdPrice = Convert.ToDecimal(row["StdPrice"]);
                     poid = Convert.ToString(row["Poid"]);
                     artworkType = Convert.ToString(row["ArtworkTypeID"]);
                     BrandID = Convert.ToString(row["BrandID"]);
                     StyleID = Convert.ToString(row["StyleID"]);
-
+                    purchasePrice = Convert.ToDecimal(row["PoPrice"]);
                     //  2.採購價 =
                     // 如果ArtworkType = EMBROIDERY : （繡花物料成本 + 外發成本）/已建立採購的子單總訂單數量
                     // 不是EMBROIDERY :  外發成本/已建立採購的子單總訂單數量
-                    decimal purchasePrice = 0;
+   
 
-                    #region 外發成本
+                    //#region 外發成本
 
-                    //外發成本
-                    //找出 所有狀態 = Approved 的 PO (扣除自己)
-                    sql.Append(" SELECT DISTINCT [POID]= Others.POID, [ArtworkTypeID]= a.ArtworkTypeID" + Environment.NewLine);
-                    sql.Append(" INTO #others" + Environment.NewLine);
-                    sql.Append(" FROM ArtworkPO a" + Environment.NewLine);
-                    sql.Append(" INNER JOIN ArtworkPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
-                    sql.Append(" OUTER APPLY(" + Environment.NewLine);
-                    sql.Append(" 	SELECT [POID]=orders.POID " + Environment.NewLine);
-                    sql.Append(" 	FROM orders WITH (NOLOCK) WHERE id=ad.OrderId" + Environment.NewLine);
-                    sql.Append(" )Others" + Environment.NewLine);
-                    sql.Append($" WHERE a.ID !=@artWorkPO_ID AND Status='Approved' AND Others.POID='{poid}'" + Environment.NewLine);
-                    sql.Append(" " + Environment.NewLine);
+                    ////外發成本
+                    ////找出 所有狀態 = Approved 的 PO (扣除自己)
+                    //sql.Append(" SELECT DISTINCT [POID]= Others.POID, [ArtworkTypeID]= a.ArtworkTypeID" + Environment.NewLine);
+                    //sql.Append(" INTO #others" + Environment.NewLine);
+                    //sql.Append(" FROM ArtworkPO a" + Environment.NewLine);
+                    //sql.Append(" INNER JOIN ArtworkPO_Detail ad ON a.ID=ad.ID" + Environment.NewLine);
+                    //sql.Append(" OUTER APPLY(" + Environment.NewLine);
+                    //sql.Append(" 	SELECT [POID]=orders.POID " + Environment.NewLine);
+                    //sql.Append(" 	FROM orders WITH (NOLOCK) WHERE id=ad.OrderId" + Environment.NewLine);
+                    //sql.Append(" )Others" + Environment.NewLine);
+                    //sql.Append($" WHERE a.ID !=@artWorkPO_ID AND Status='Approved' AND Others.POID='{poid}'" + Environment.NewLine);
+                    //sql.Append(" " + Environment.NewLine);
                     
-                    sql.Append(" SELECT [Amount]=ISNULL(SUM(summary.Amount),0.00) " + Environment.NewLine);
-                    sql.Append("        --,[Qty]=ISNULL(SUM(summary.PoQty),0) " + Environment.NewLine);
-                    sql.Append(" FROM( " + Environment.NewLine);
-                    //與自己同POID、ArtworkType、Status='Approved'的「其他」採購單
-                    sql.Append("       SELECT DISTINCT " + Environment.NewLine);
-                    sql.Append("       a.CurrencyId, ad.Farmout, " + Environment.NewLine);
-                    sql.Append("       ad.Price, " + Environment.NewLine);
-                    sql.Append("       ad.PoQty, " + Environment.NewLine);
-                    sql.Append("       ad.PoQty * ad.Price * dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate) As Amount, " + Environment.NewLine);
-                    sql.Append("       dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate) As Rate " + Environment.NewLine);
-                    sql.Append("       FROM ArtworkPO a " + Environment.NewLine);
-                    sql.Append("       INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID " + Environment.NewLine);
-                    sql.Append("       INNER JOIN Orders o ON o.ID = ad.OrderID " + Environment.NewLine);
-                    sql.Append("       INNER JOIN  #others t3 ON t3.POID=o.POID AND t3.ArtworkTypeID=ad.ArtworkTypeID " + Environment.NewLine);
-                    sql.Append("       WHERE  a.ID != @artWorkPO_ID " + Environment.NewLine);
-                    sql.Append("       UNION ALL " + Environment.NewLine);
-                    //自己
-                    sql.Append("       SELECT DISTINCT " + Environment.NewLine);
-                    sql.Append("       a.CurrencyId, ad.Farmout, " + Environment.NewLine);
-                    sql.Append("       ad.Price, " + Environment.NewLine);
-                    sql.Append("       ad.PoQty, " + Environment.NewLine);
-                    sql.Append("       ad.PoQty * ad.Price * dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate) As Amount, " + Environment.NewLine);
-                    sql.Append("       dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate) As Rate " + Environment.NewLine);
-                    sql.Append("       FROM ArtworkPO a " + Environment.NewLine);
-                    sql.Append("       INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID " + Environment.NewLine);
-                    sql.Append("       INNER JOIN Orders o ON o.ID = ad.OrderID " + Environment.NewLine);
-                    sql.Append("       WHERE  a.ID = @artWorkPO_ID " + Environment.NewLine);
+                    //sql.Append(" SELECT [Amount]=ISNULL(SUM(summary.Amount),0.00) " + Environment.NewLine);
+                    //sql.Append("        --,[Qty]=ISNULL(SUM(summary.PoQty),0) " + Environment.NewLine);
+                    //sql.Append(" FROM( " + Environment.NewLine);
+                    ////與自己同POID、ArtworkType、Status='Approved'的「其他」採購單
+                    //sql.Append("       SELECT DISTINCT " + Environment.NewLine);
+                    //sql.Append("       a.CurrencyId, ad.Farmout, " + Environment.NewLine);
+                    //sql.Append("       ad.Price, " + Environment.NewLine);
+                    //sql.Append("       ad.PoQty, " + Environment.NewLine);
+                    //sql.Append("       ad.PoQty * ad.Price * dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate) As Amount, " + Environment.NewLine);
+                    //sql.Append("       dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate) As Rate " + Environment.NewLine);
+                    //sql.Append("       FROM ArtworkPO a " + Environment.NewLine);
+                    //sql.Append("       INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID " + Environment.NewLine);
+                    //sql.Append("       INNER JOIN Orders o ON o.ID = ad.OrderID " + Environment.NewLine);
+                    //sql.Append("       INNER JOIN  #others t3 ON t3.POID=o.POID AND t3.ArtworkTypeID=ad.ArtworkTypeID " + Environment.NewLine);
+                    //sql.Append("       WHERE  a.ID != @artWorkPO_ID " + Environment.NewLine);
+                    //sql.Append("       UNION ALL " + Environment.NewLine);
+                    ////自己
+                    //sql.Append("       SELECT DISTINCT " + Environment.NewLine);
+                    //sql.Append("       a.CurrencyId, ad.Farmout, " + Environment.NewLine);
+                    //sql.Append("       ad.Price, " + Environment.NewLine);
+                    //sql.Append("       ad.PoQty, " + Environment.NewLine);
+                    //sql.Append("       ad.PoQty * ad.Price * dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate) As Amount, " + Environment.NewLine);
+                    //sql.Append("       dbo.getRate('FX', a.CurrencyID, 'USD', a.IssueDate) As Rate " + Environment.NewLine);
+                    //sql.Append("       FROM ArtworkPO a " + Environment.NewLine);
+                    //sql.Append("       INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID " + Environment.NewLine);
+                    //sql.Append("       INNER JOIN Orders o ON o.ID = ad.OrderID " + Environment.NewLine);
+                    //sql.Append("       WHERE  a.ID = @artWorkPO_ID " + Environment.NewLine);
 
-                    sql.Append(" )summary " + Environment.NewLine);
-                    sql.Append(" DROP TABLE #others " + Environment.NewLine);
+                    //sql.Append(" )summary " + Environment.NewLine);
+                    //sql.Append(" DROP TABLE #others " + Environment.NewLine);
 
-                    decimal OutPrice = Convert.ToDecimal(MyUtility.GetValue.Lookup(sql.ToString(), parameters));
+                    //decimal OutPrice = Convert.ToDecimal(MyUtility.GetValue.Lookup(sql.ToString(), parameters));
 
-                    sql.Clear();
-                    #endregion
+                    //sql.Clear();
+                    //#endregion
 
                     #region 已建立採購的子單總訂單數量
-                    // 已建立採購的子單總訂單數量
-                    sql.Append(" SELECT DISTINCT[ArtworkTypeID] = ad.ArtworkTypeID,[POID] = o.POID" + Environment.NewLine);
-                    sql.Append(" INTO #tmp_AllOrders FROM ArtworkPO a" + Environment.NewLine);
-                    sql.Append(" INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID INNER JOIN Orders o ON o.ID = ad.OrderID" + Environment.NewLine);
-                    sql.Append($" WHERE a.ID = @artWorkPO_ID AND o.POID='{poid}'" + Environment.NewLine);
-                    sql.Append(" " + Environment.NewLine);
-                    sql.Append(" SELECT iif(odm.ArtworkTypeID is null,null,isnull(sum(od.qty),0)) Order_Qty" + Environment.NewLine);
-                    sql.Append(" FROM Orders od INNER JOIN Order_TmsCost odm ON od.id = odm.ID " + Environment.NewLine);
-                    sql.Append(" INNER JOIN (select distinct POID,ArtworkTypeID from #tmp_AllOrders) t ON t.POID=od.POID AND t.ArtworkTypeID  = odm.ArtworkTypeID " + Environment.NewLine);
-                    sql.Append(" GROUP BY  odm.ArtworkTypeID,t.poid" + Environment.NewLine);
-                    sql.Append(" DROP TABLE #tmp_AllOrders" + Environment.NewLine);
+                    //// 已建立採購的子單總訂單數量
+                    //sql.Append(" SELECT DISTINCT[ArtworkTypeID] = ad.ArtworkTypeID,[POID] = o.POID" + Environment.NewLine);
+                    //sql.Append(" INTO #tmp_AllOrders FROM ArtworkPO a" + Environment.NewLine);
+                    //sql.Append(" INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID INNER JOIN Orders o ON o.ID = ad.OrderID" + Environment.NewLine);
+                    //sql.Append($" WHERE a.ID = @artWorkPO_ID AND o.POID='{poid}'" + Environment.NewLine);
+                    //sql.Append(" " + Environment.NewLine);
+                    //sql.Append(" SELECT iif(odm.ArtworkTypeID is null,null,isnull(sum(od.qty),0)) Order_Qty" + Environment.NewLine);
+                    //sql.Append(" FROM Orders od INNER JOIN Order_TmsCost odm ON od.id = odm.ID " + Environment.NewLine);
+                    //sql.Append(" INNER JOIN (select distinct POID,ArtworkTypeID from #tmp_AllOrders) t ON t.POID=od.POID AND t.ArtworkTypeID  = odm.ArtworkTypeID " + Environment.NewLine);
+                    //sql.Append(" GROUP BY  odm.ArtworkTypeID,t.poid" + Environment.NewLine);
+                    //sql.Append(" DROP TABLE #tmp_AllOrders" + Environment.NewLine);
 
-                    decimal Qty = Convert.ToDecimal(MyUtility.GetValue.Lookup(sql.ToString(), parameters));
-                    sql.Clear();
+                    //decimal Qty = Convert.ToDecimal(MyUtility.GetValue.Lookup(sql.ToString(), parameters));
+                    //sql.Clear();
                     #endregion
 
                     //如果ArtworkType是繡花（ArtworkTypeID = Embroidery ），要加上繡花物料成本
                     if (artworkType.ToUpper() == "EMBROIDERY")
                     {
-                        #region 繡花物料成本
-                        //搜尋所有PO
-                        sql.Append(" SELECT DISTINCT [POID]=SamePoidOrders.POID, [ArtworkTypeID]=a.ArtworkTypeID" + Environment.NewLine);
-                        sql.Append(" INTO #tmp_AllPo" + Environment.NewLine);
-                        sql.Append(" FROM ArtworkPO a" + Environment.NewLine);
-                        sql.Append(" INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID" + Environment.NewLine);
-                        sql.Append(" OUTER APPLY(" + Environment.NewLine);
-                        sql.Append("             SELECT[POID] = orders.POID" + Environment.NewLine);
-                        sql.Append("             FROM orders WITH(NOLOCK) WHERE id = ad.OrderId" + Environment.NewLine);
-                        sql.Append(" )SamePoidOrders" + Environment.NewLine);
-                        sql.Append($" WHERE  a.ArtworkTypeID = '{artworkType}' AND a.ID = @artWorkPO_ID AND SamePoidOrders.POID='{poid}'" + Environment.NewLine);
-                        sql.Append(" " + Environment.NewLine);
-                        sql.Append(" SELECT [LocalPo_Amt]=ISNULL(SUM(Embroidery.localap_amt),0.00) " + Environment.NewLine);
-                        sql.Append("        --,[LocalPo_Qty]= ISNULL(SUM(Embroidery.localap_qty),0) " + Environment.NewLine);
-                        sql.Append(" FROM (" + Environment.NewLine);
-                        sql.Append("    SELECT" + Environment.NewLine);
-                        sql.Append("            l.currencyid," + Environment.NewLine);
-                        sql.Append("            ld.Price," + Environment.NewLine);
-                        sql.Append("            ld.Qty localap_qty," + Environment.NewLine);
-                        sql.Append("            ld.Qty * ld.Price * dbo.getRate('FX', l.CurrencyID, 'USD', l.issuedate) localap_amt," + Environment.NewLine);
-                        sql.Append("            dbo.getRate('FX', l.CurrencyID, 'USD', l.issuedate) rate" + Environment.NewLine);
+                        //#region 繡花物料成本
+                        ////搜尋所有PO
+                        //sql.Append(" SELECT DISTINCT [POID]=SamePoidOrders.POID, [ArtworkTypeID]=a.ArtworkTypeID" + Environment.NewLine);
+                        //sql.Append(" INTO #tmp_AllPo" + Environment.NewLine);
+                        //sql.Append(" FROM ArtworkPO a" + Environment.NewLine);
+                        //sql.Append(" INNER JOIN ArtworkPO_Detail ad ON a.ID = ad.ID" + Environment.NewLine);
+                        //sql.Append(" OUTER APPLY(" + Environment.NewLine);
+                        //sql.Append("             SELECT[POID] = orders.POID" + Environment.NewLine);
+                        //sql.Append("             FROM orders WITH(NOLOCK) WHERE id = ad.OrderId" + Environment.NewLine);
+                        //sql.Append(" )SamePoidOrders" + Environment.NewLine);
+                        //sql.Append($" WHERE  a.ArtworkTypeID = '{artworkType}' AND a.ID = @artWorkPO_ID AND SamePoidOrders.POID='{poid}'" + Environment.NewLine);
+                        //sql.Append(" " + Environment.NewLine);
+                        //sql.Append(" SELECT [LocalPo_Amt]=ISNULL(SUM(Embroidery.localap_amt),0.00) " + Environment.NewLine);
+                        //sql.Append("        --,[LocalPo_Qty]= ISNULL(SUM(Embroidery.localap_qty),0) " + Environment.NewLine);
+                        //sql.Append(" FROM (" + Environment.NewLine);
+                        //sql.Append("    SELECT" + Environment.NewLine);
+                        //sql.Append("            l.currencyid," + Environment.NewLine);
+                        //sql.Append("            ld.Price," + Environment.NewLine);
+                        //sql.Append("            ld.Qty localap_qty," + Environment.NewLine);
+                        //sql.Append("            ld.Qty * ld.Price * dbo.getRate('FX', l.CurrencyID, 'USD', l.issuedate) localap_amt," + Environment.NewLine);
+                        //sql.Append("            dbo.getRate('FX', l.CurrencyID, 'USD', l.issuedate) rate" + Environment.NewLine);
 
-                        sql.Append("            FROM LocalAP l WITH(NOLOCK)" + Environment.NewLine);
-                        sql.Append("            INNER JOIN Localap_Detail ld WITH(NOLOCK) on ld.id = l.Id" + Environment.NewLine);
-                        sql.Append("            INNER JOIN Orders o WITH(NOLOCK) ON o.id = ld.orderid" + Environment.NewLine);
-                        sql.Append("            INNER JOIN #tmp_AllPo allPo ON allPo.POID=o.POID" + Environment.NewLine);
-                        sql.Append("            WHERE l.Category = 'EMB_THREAD'" + Environment.NewLine);
-                        sql.Append(" ) Embroidery" + Environment.NewLine);
-                        sql.Append(" DROP TABLE #tmp_AllPo" + Environment.NewLine);
+                        //sql.Append("            FROM LocalAP l WITH(NOLOCK)" + Environment.NewLine);
+                        //sql.Append("            INNER JOIN Localap_Detail ld WITH(NOLOCK) on ld.id = l.Id" + Environment.NewLine);
+                        //sql.Append("            INNER JOIN Orders o WITH(NOLOCK) ON o.id = ld.orderid" + Environment.NewLine);
+                        //sql.Append("            INNER JOIN #tmp_AllPo allPo ON allPo.POID=o.POID" + Environment.NewLine);
+                        //sql.Append("            WHERE l.Category = 'EMB_THREAD'" + Environment.NewLine);
+                        //sql.Append(" ) Embroidery" + Environment.NewLine);
+                        //sql.Append(" DROP TABLE #tmp_AllPo" + Environment.NewLine);
 
-                        decimal EmbroideryPrice = Convert.ToDecimal(MyUtility.GetValue.Lookup(sql.ToString(), parameters));
-
-                        sql.Clear();
-                        #endregion
+                        //decimal EmbroideryPrice = Convert.ToDecimal(MyUtility.GetValue.Lookup(sql.ToString(), parameters));
+                        decimal PoPriceWithEmbroidery = Convert.ToDecimal(row["PoPriceWithEmbroidery"]);
+                        //sql.Clear();
+                        //#endregion
                         //加上繡花物料成本
-                        purchasePrice = (EmbroideryPrice + OutPrice) / Qty;
+                        //purchasePrice = (EmbroideryPrice + OutPrice) / Qty;
+                        purchasePrice = PoPriceWithEmbroidery;
                     }
                     else
                     {
                         //不用加上繡花物料成本
-                        purchasePrice = OutPrice / Qty;
+                       // purchasePrice = OutPrice / Qty;
                     }
 
                     //只要有異常就顯示紅色
@@ -941,7 +996,7 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
                 #endregion
 
                 DataTable SubconReason;
-                DBProxy.Current.Select(null, "SELECT * FROM SubconReason WHERE Type='IP' AND Junk=0", out SubconReason);
+                DBProxy.Current.Select(null, "SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'IrregularPriceResp' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason  FROM SubconReason WHERE Type='IP' AND Junk=0", out SubconReason);
 
                 #region 資料串接
 
@@ -993,7 +1048,8 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
                                 a.PoPrice,
                                 a.StdPrice,
                                 a.SubconReasonID,
-                                Responsible = MyUtility.Check.Empty(s) ? "" : s.Field<string>("Responsible"),
+                                ResponsibleID = MyUtility.Check.Empty(s) ? "" : s.Field<string>("ResponsibleID"),
+                                ResponsibleName = MyUtility.Check.Empty(s) ? "" : s.Field<string>("ResponsibleName"),
                                 Reason = MyUtility.Check.Empty(s) ? "" : s.Field<string>("Reason"),
                                 a.AddDate,
                                 a.AddName,

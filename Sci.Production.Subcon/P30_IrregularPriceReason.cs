@@ -39,16 +39,16 @@ namespace Sci.Production.Subcon
         protected override void OnFormLoaded()
         {
           
-            if (!MyUtility.Check.Empty(_IrregularPriceReasonDT) && (_Type==1 || _Type==2))
+            if (!MyUtility.Check.Empty(_IrregularPriceReasonDT) && _Type==1 )
             {  //Type=1和 Type 2
+                //_IrregularPriceReasonDT 不為空，表示現在有「新的」價格異常，新的意思即是DB沒有這筆紀錄
                 ModifyDT_FromP30 = _IrregularPriceReasonDT.Copy();
                 listControlBindingSource1.DataSource = _IrregularPriceReasonDT;
                 btnEdit.Enabled = true;
             }
             else
             {
-                //Type 1 和 2都抓當下P30上的資料出來修改，不用DB的
-                //Type 3 因為當下是正常的，所以用DB資料呈現
+                //DB有資料就呈現出來
                 switch (_Type)
                 {
                     case 3://Type=3
@@ -115,7 +115,7 @@ namespace Sci.Production.Subcon
                 {
                     dr["SubconReasonID"] = dt.Rows[0]["ID"];
                     dr["ResponsibleID"] = dt.Rows[0]["ResponsibleID"];
-                    dr["ResponsibleName"] = dr["ResponsibleName"];
+                    dr["ResponsibleName"] = dt.Rows[0]["ResponsibleName"];
                     dr["Reason"] = dt.Rows[0]["Reason"];
                 }
 
@@ -247,12 +247,12 @@ namespace Sci.Production.Subcon
                 this.EditMode = !this.EditMode;
                 btnEdit.Text = "Edit";
                 btnClose.Text = "Close";
-                gridgridIrregularPrice.IsEditingReadOnly = false;
+                gridgridIrregularPrice.IsEditingReadOnly = true;
                 IrregularPriceReasonDT_Initial();
             }
         }
 
-        private void IrregularPriceReasonDT_Initial(bool isSaveAct = false)
+        private void IrregularPriceReasonDT_Initial(bool DbHasData = false)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             StringBuilder sql = new StringBuilder();
@@ -291,7 +291,7 @@ namespace Sci.Production.Subcon
                 return;
             }
 
-            if (isSaveAct)
+            if (DbHasData)
             {
                 ModifyDT_FromP30 = OriginDT_FromDB.Copy();
                 P30._IrregularPriceReasonDT = OriginDT_FromDB.Copy();
