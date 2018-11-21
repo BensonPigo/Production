@@ -13,7 +13,7 @@
     [EditDate]      DATETIME      NULL,
     [EditName]      VARCHAR (10)  DEFAULT ('') NULL,
     [Design]        VARCHAR (100) DEFAULT ('') NULL,
-    [Typeofprint]   VARCHAR (5)   NULL,
+    [Typeofprint]   VARCHAR (30)   NULL,
     PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
