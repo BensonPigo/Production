@@ -60,6 +60,7 @@
             this.labelOrderBy = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.chkDWR = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -79,7 +80,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(13, 12);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -94,6 +94,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(115, 12);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -102,6 +116,20 @@
             // 
             // dateSuppDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSuppDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSuppDelivery.DateBox1.Name = "";
+            this.dateSuppDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSuppDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSuppDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSuppDelivery.DateBox2.Name = "";
+            this.dateSuppDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSuppDelivery.DateBox2.TabIndex = 1;
             this.dateSuppDelivery.IsRequired = false;
             this.dateSuppDelivery.Location = new System.Drawing.Point(115, 48);
             this.dateSuppDelivery.Name = "dateSuppDelivery";
@@ -110,7 +138,6 @@
             // 
             // labelSuppDelivery
             // 
-            this.labelSuppDelivery.Lines = 0;
             this.labelSuppDelivery.Location = new System.Drawing.Point(13, 48);
             this.labelSuppDelivery.Name = "labelSuppDelivery";
             this.labelSuppDelivery.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -143,7 +170,6 @@
             // 
             // label10
             // 
-            this.label10.Lines = 0;
             this.label10.Location = new System.Drawing.Point(245, 155);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 23);
@@ -152,7 +178,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(13, 155);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -183,7 +208,6 @@
             // 
             // label12
             // 
-            this.label12.Lines = 0;
             this.label12.Location = new System.Drawing.Point(281, 191);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(18, 23);
@@ -192,6 +216,20 @@
             // 
             // dateFinalETA
             // 
+            // 
+            // 
+            // 
+            this.dateFinalETA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateFinalETA.DateBox1.Name = "";
+            this.dateFinalETA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFinalETA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateFinalETA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateFinalETA.DateBox2.Name = "";
+            this.dateFinalETA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFinalETA.DateBox2.TabIndex = 1;
             this.dateFinalETA.IsRequired = false;
             this.dateFinalETA.Location = new System.Drawing.Point(115, 120);
             this.dateFinalETA.Name = "dateFinalETA";
@@ -200,7 +238,6 @@
             // 
             // labelFinalETA
             // 
-            this.labelFinalETA.Lines = 0;
             this.labelFinalETA.Location = new System.Drawing.Point(13, 120);
             this.labelFinalETA.Name = "labelFinalETA";
             this.labelFinalETA.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -215,6 +252,20 @@
             // 
             // dateETA
             // 
+            // 
+            // 
+            // 
+            this.dateETA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateETA.DateBox1.Name = "";
+            this.dateETA.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateETA.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateETA.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateETA.DateBox2.Name = "";
+            this.dateETA.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateETA.DateBox2.TabIndex = 1;
             this.dateETA.IsRequired = false;
             this.dateETA.Location = new System.Drawing.Point(115, 84);
             this.dateETA.Name = "dateETA";
@@ -223,7 +274,6 @@
             // 
             // labelETA
             // 
-            this.labelETA.Lines = 0;
             this.labelETA.Location = new System.Drawing.Point(13, 84);
             this.labelETA.Name = "labelETA";
             this.labelETA.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -238,7 +288,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(13, 265);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(98, 23);
@@ -247,7 +296,6 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Lines = 0;
             this.labelFabricType.Location = new System.Drawing.Point(13, 440);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(98, 23);
@@ -265,7 +313,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 372);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
@@ -292,7 +339,6 @@
             // 
             // labelCountry
             // 
-            this.labelCountry.Lines = 0;
             this.labelCountry.Location = new System.Drawing.Point(13, 301);
             this.labelCountry.Name = "labelCountry";
             this.labelCountry.Size = new System.Drawing.Size(98, 23);
@@ -310,7 +356,6 @@
             // 
             // labelRefno
             // 
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(13, 191);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -323,7 +368,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(13, 227);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(98, 23);
@@ -339,6 +383,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 8;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
             // 
             // txtsupplier
             // 
@@ -351,7 +397,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(13, 337);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(98, 23);
@@ -369,12 +414,12 @@
             "Supplier"});
             this.comboOrderBy.Location = new System.Drawing.Point(114, 474);
             this.comboOrderBy.Name = "comboOrderBy";
+            this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
             this.comboOrderBy.TabIndex = 14;
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Lines = 0;
             this.labelOrderBy.Location = new System.Drawing.Point(13, 475);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(98, 23);
@@ -383,7 +428,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 406);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
@@ -393,16 +437,29 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 406);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 139;
-            this.txtfactory.IssupportJunk = true;
+            // 
+            // chkDWR
+            // 
+            this.chkDWR.AutoSize = true;
+            this.chkDWR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkDWR.Location = new System.Drawing.Point(12, 508);
+            this.chkDWR.Name = "chkDWR";
+            this.chkDWR.Size = new System.Drawing.Size(183, 21);
+            this.chkDWR.TabIndex = 140;
+            this.chkDWR.Text = "Durable Water Repellent";
+            this.chkDWR.UseVisualStyleBackColor = true;
             // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(528, 529);
+            this.ClientSize = new System.Drawing.Size(528, 562);
+            this.Controls.Add(this.chkDWR);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.comboOrderBy);
@@ -473,6 +530,7 @@
             this.Controls.SetChildIndex(this.comboOrderBy, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.chkDWR, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -512,5 +570,6 @@
         private Win.UI.Label labelOrderBy;
         private Win.UI.Label labelFactory;
         private Class.txtfactory txtfactory;
+        private Win.UI.CheckBox chkDWR;
     }
 }
