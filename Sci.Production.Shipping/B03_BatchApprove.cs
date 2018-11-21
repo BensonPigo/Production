@@ -111,6 +111,7 @@ select l.*,
 from ShipExpense l
 inner join ShipExpense_CanVass lq on l.ID = lq.ID
 where lq.status <> 'Confirmed'
+and l.junk = 0
 {wheresql}
 ";
         }
@@ -123,13 +124,14 @@ where lq.status <> 'Confirmed'
             #region
             string sqlCmd = this.Sqlcmd() +
                 $@"
-select	ID
-		, Ukey
-		, ChooseSupp
-		, [Status]
+select	sc.ID
+		, sc.Ukey
+		, sc.ChooseSupp
+		, sc.[Status]
 into #bas
-from ShipExpense_CanVass
-where [Status] != 'Confirmed'
+from ShipExpense_CanVass sc
+inner join ShipExpense s on s.id = sc.id
+where sc.[Status] != 'Confirmed'  and s.junk=0
 
 select	[Selected] = iif (tmp.ChooseSupp = tmp.seq, 1, 0)
 		, *
