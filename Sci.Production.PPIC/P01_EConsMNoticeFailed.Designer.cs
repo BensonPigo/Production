@@ -119,11 +119,9 @@
             // 
             this.ClientSize = new System.Drawing.Size(908, 497);
             this.Controls.Add(this.radioPanel1);
-            this.DefaultControl = "comboFactory";
-            this.KeyField1 = "StyleUkey";
             this.Name = "P01_EConsMNoticeFailed";
-            this.Text = "Production Kit";
-            this.WorkAlias = "Style_EConsMNoticeFaileds";
+            this.Text = "Each Cons/M.Notice Failed";
+            this.WorkAlias = "ECons_MNoticeFailed";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);
