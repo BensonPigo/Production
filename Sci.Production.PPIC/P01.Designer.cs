@@ -294,6 +294,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtDevSample = new Sci.Win.UI.TextBox();
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
+            this.btnEConsMNFailed = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -489,9 +490,9 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnEConsMNFailed);
             this.tabPage1.Controls.Add(this.btnPoRemark);
             this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.btnMeterialStatus_Local);
             this.tabPage1.Controls.Add(this.btnMeterialStatus);
             this.tabPage1.Controls.Add(this.btnEachCons);
@@ -601,13 +602,14 @@
             this.tabPage1.Controls.Add(this.labelDetailsStyleNo);
             this.tabPage1.Controls.Add(this.labelDetailsSPNo);
             this.tabPage1.Controls.Add(this.shapeContainer2);
-            this.tabPage1.Controls.Add(this.txttpeuser5);
-            this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Controls.Add(this.txttpeuser5);
+            this.tabPage1.Controls.Add(this.PcHandleText);
+            this.tabPage1.Controls.Add(this.txttpeuser4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
             // 
@@ -683,7 +685,7 @@
             // 
             // btnBacktoPPICMasterList
             // 
-            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(797, 628);
+            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(797, 535);
             this.btnBacktoPPICMasterList.Name = "btnBacktoPPICMasterList";
             this.btnBacktoPPICMasterList.Size = new System.Drawing.Size(194, 27);
             this.btnBacktoPPICMasterList.TabIndex = 110;
@@ -1700,7 +1702,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -3204,7 +3206,7 @@
             // 
             this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Name = "shapeContainer3";
             this.shapeContainer3.Size = new System.Drawing.Size(1000, 660);
             this.shapeContainer3.TabIndex = 45;
             this.shapeContainer3.TabStop = false;
@@ -3213,7 +3215,7 @@
             // 
             this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer4.Name = "shapeContainer1";
+            this.shapeContainer4.Name = "shapeContainer4";
             this.shapeContainer4.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape4,
             this.lineShape2,
@@ -3248,7 +3250,7 @@
             // 
             this.shapeContainer5.Location = new System.Drawing.Point(3, 3);
             this.shapeContainer5.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer5.Name = "shapeContainer2";
+            this.shapeContainer5.Name = "shapeContainer5";
             this.shapeContainer5.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer5.TabIndex = 8;
             this.shapeContainer5.TabStop = false;
@@ -3296,6 +3298,17 @@
             this.btnExpectionFormRemark.Text = "R";
             this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
             this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
+            // 
+            // btnEConsMNFailed
+            // 
+            this.btnEConsMNFailed.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnEConsMNFailed.Location = new System.Drawing.Point(797, 628);
+            this.btnEConsMNFailed.Name = "btnEConsMNFailed";
+            this.btnEConsMNFailed.Size = new System.Drawing.Size(194, 27);
+            this.btnEConsMNFailed.TabIndex = 193;
+            this.btnEConsMNFailed.Text = "Econs/MN Failed";
+            this.btnEConsMNFailed.UseVisualStyleBackColor = true;
+            this.btnEConsMNFailed.Click += new System.EventHandler(this.BtnEConsMNFailed_Click);
             // 
             // P01
             // 
@@ -3594,5 +3607,6 @@
         private Win.UI.TextBox txtDevSample;
         private Win.UI.Label label2;
         private Win.UI.Button btnExpectionFormRemark;
+        private Win.UI.Button btnEConsMNFailed;
     }
 }

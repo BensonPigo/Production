@@ -277,6 +277,12 @@
     <Compile Include="P01_MTLImport.Designer.cs">
       <DependentUpon>P01_MTLImport.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_EConsMNoticeFailed.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_EConsMNoticeFailed.Designer.cs">
+      <DependentUpon>P01_EConsMNoticeFailed.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_ProductionKit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -706,6 +712,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_MTLImport.resx">
       <DependentUpon>P01_MTLImport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_EConsMNoticeFailed.resx">
+      <DependentUpon>P01_EConsMNoticeFailed.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P01_ProductionKit.resx">
       <DependentUpon>P01_ProductionKit.cs</DependentUpon>

@@ -1,24 +1,28 @@
 ﻿CREATE TABLE [dbo].[OrderType] (
-    [ID]           VARCHAR (20)   CONSTRAINT [DF_OrderType_ID] DEFAULT ('') NOT NULL,
-    [BrandID]      VARCHAR (8)    CONSTRAINT [DF_OrderType_BrandID] DEFAULT ('') NOT NULL,
-    [PhaseID]      VARCHAR (20)   CONSTRAINT [DF_OrderType_PhaseID] DEFAULT ('') NULL,
-    [ProjectID]    VARCHAR (5)    CONSTRAINT [DF_OrderType_ProjectID] DEFAULT ('') NULL,
-    [Junk]         BIT            CONSTRAINT [DF_OrderType_Junk] DEFAULT ((0)) NULL,
-    [CpuRate]      NUMERIC (3, 1) CONSTRAINT [DF_OrderType_CpuRate] DEFAULT ((0)) NULL,
-    [Category]     VARCHAR (1)    CONSTRAINT [DF_OrderType_Category] DEFAULT ('') NULL,
-    [PriceDays]    NUMERIC (16, 4)    CONSTRAINT [DF_OrderType_PriceDays] DEFAULT ((0)) NULL,
-    [MtlLetaDays]  NUMERIC (2)    CONSTRAINT [DF_OrderType_MtlLetaDays] DEFAULT ((0)) NULL,
-    [EachConsDays] NUMERIC (2)    CONSTRAINT [DF_OrderType_EachConsDays] DEFAULT ((0)) NULL,
-    [KPI]          BIT            CONSTRAINT [DF_OrderType_KPI] DEFAULT ((0)) NULL,
-    [Remark]       NVARCHAR (60)  CONSTRAINT [DF_OrderType_Remark] DEFAULT ('') NULL,
-    [AddName]      VARCHAR (10)   CONSTRAINT [DF_OrderType_AddName] DEFAULT ('') NULL,
-    [AddDate]      DATETIME       NULL,
-    [EditName]     VARCHAR (10)   CONSTRAINT [DF_OrderType_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME       NULL,
-    [IsGMTMaster] BIT NULL, 
-    [IsGMTDetail] BIT NULL, 
+    [ID]           VARCHAR (20)    CONSTRAINT [DF_OrderType_ID] DEFAULT ('') NOT NULL,
+    [BrandID]      VARCHAR (8)     CONSTRAINT [DF_OrderType_BrandID] DEFAULT ('') NOT NULL,
+    [PhaseID]      VARCHAR (20)    CONSTRAINT [DF_OrderType_PhaseID] DEFAULT ('') NULL,
+    [ProjectID]    VARCHAR (5)     CONSTRAINT [DF_OrderType_ProjectID] DEFAULT ('') NULL,
+    [Junk]         BIT             CONSTRAINT [DF_OrderType_Junk] DEFAULT ((0)) NULL,
+    [CpuRate]      NUMERIC (3, 1)  CONSTRAINT [DF_OrderType_CpuRate] DEFAULT ((0)) NULL,
+    [Category]     VARCHAR (1)     CONSTRAINT [DF_OrderType_Category] DEFAULT ('') NULL,
+    [PriceDays]    NUMERIC (16, 4) CONSTRAINT [DF_OrderType_PriceDays] DEFAULT ((0)) NULL,
+    [MtlLetaDays]  NUMERIC (2)     CONSTRAINT [DF_OrderType_MtlLetaDays] DEFAULT ((0)) NULL,
+    [EachConsDays] NUMERIC (2)     CONSTRAINT [DF_OrderType_EachConsDays] DEFAULT ((0)) NULL,
+    [KPI]          BIT             CONSTRAINT [DF_OrderType_KPI] DEFAULT ((0)) NULL,
+    [Remark]       NVARCHAR (60)   CONSTRAINT [DF_OrderType_Remark] DEFAULT ('') NULL,
+    [AddName]      VARCHAR (10)    CONSTRAINT [DF_OrderType_AddName] DEFAULT ('') NULL,
+    [AddDate]      DATETIME        NULL,
+    [EditName]     VARCHAR (10)    CONSTRAINT [DF_OrderType_EditName] DEFAULT ('') NULL,
+    [EditDate]     DATETIME        NULL,
+    [IsGMTMaster]  BIT             DEFAULT ('0') NULL,
+    [IsGMTDetail]  BIT             DEFAULT ('0') NULL,
+    [IsDevSample]  BIT             NULL,
+    [KPIProjectID] VARCHAR (5)     NULL,
     CONSTRAINT [PK_OrderType] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC)
 );
+
+
 
 
 GO
@@ -87,4 +91,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'OrderType', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�O�_���}�o��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'OrderType', @level2type = N'COLUMN', @level2name = N'IsDevSample';
 

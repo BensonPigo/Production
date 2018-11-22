@@ -2302,6 +2302,10 @@
     <Build Include="dbo\Stored Procedures\CuttingP20calculateCutQty.sql" />
     <Build Include="dbo\Tables\SubconReason.sql" />
     <Build Include="dbo\Tables\BIRInvoice.sql" />
+    <Build Include="dbo\Tables\ECons_MNoticeFailed.sql" />
+    <Build Include="dbo\Functions\CheckIsPullForward.sql" />
+    <Build Include="dbo\Functions\CheckHolidayReturnDate.sql" />
+    <Build Include="dbo\Functions\GetProvideDate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
