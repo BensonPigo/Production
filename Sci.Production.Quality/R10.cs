@@ -80,9 +80,9 @@ namespace Sci.Production.Quality
             T1SubconName = this.txtLocalSupp.TextBox1.Text;
             T2SubconName = this.txtLocalTPESupp.TextBox1.Text;
 
-            if (MyUtility.Check.Empty(Style))
+            if (MyUtility.Check.Empty(Style) && (MyUtility.Check.Empty(Season) || MyUtility.Check.Empty(Brand)))
             {
-                MyUtility.Msg.WarningBox("Style cannot be empty!");
+                MyUtility.Msg.WarningBox("[Style] or [Season/Brand] cannot be empty!");
                 return false;
             }
             return base.ValidateInput();

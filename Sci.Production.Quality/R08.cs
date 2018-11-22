@@ -91,6 +91,7 @@ SELECT [Inspected Date] = FP.InspDate,
        o.StyleID,
        [SP#] = F.POID,
        [SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2),
+       [WK#] = re.ExportID ,
 	   [Supplier]=f.SuppID,
 	   [Supplier Name]=(select AbbEN from Supp where id = f.SuppID),
 	   [ATA] = p.FinalETA ,
@@ -106,11 +107,13 @@ SELECT [Inspected Date] = FP.InspDate,
 	                Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)),
 	   [Total Defect Points]=FP.TotalPoint,
        [Grade] = FP.Grade,
+       [Remark]=FP.Remark,
        [MCHandle]= dbo.getPass1_ExtNo(o.MCHandle)
        ,Fabric.WeaveTypeID
 into #tmp
 FROM System,FIR_Physical AS FP
 LEFT JOIN FIR AS F ON FP.ID=F.ID
+LEFT JOIN Receiving re ON re.Id=F.ReceivingID
 LEFT JOIN Receiving_Detail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
 								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
 LEFT join PO_Supp_Detail p on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
