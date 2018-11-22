@@ -186,6 +186,23 @@ ID
 from Trade_To_Pms.dbo.Marker_Send as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Marker_Send as a WITH (NOLOCK) where a.id = b.id and a.SEQ=b.SEQ and a.MarkerVersion = b.MarkerVersion)
 
+----------------------ECons_MNoticeFailed
+Merge Production.dbo.ECons_MNoticeFailed t
+using Trade_To_Pms.dbo.ECons_MNoticeFailed s
+on t.id = s.id and t.type = s.type
+	when matched  then	update set 
+	 t.[KPIFailed]		  =s.[KPIFailed]	
+	,t.[FailedComment]	  =s.[FailedComment]
+	,t.[ExpectApvDate]	  =s.[ExpectApvDate]
+	,t.[AddName]		  =s.[AddName]		
+	,t.[AddDate]		  =s.[AddDate]		
+	,t.[EditName]		  =s.[EditName]		
+	,t.[EditDate]		  =s.[EditDate]	
+when not matched by target then 	
+insert([ID],[Type],[KPIFailed],[FailedComment],[ExpectApvDate],[AddName],[AddDate],[EditName],[EditDate])
+VALUES(s.[ID],s.[Type],s.[KPIFailed],s.[FailedComment],s.[ExpectApvDate],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+;
+
 END
 
 

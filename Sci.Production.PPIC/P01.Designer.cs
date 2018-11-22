@@ -30,6 +30,7 @@
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.btnPFHistory = new Sci.Win.UI.Button();
+            this.btnEConsMNFailed = new Sci.Win.UI.Button();
             this.btnPoRemark = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
             this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
@@ -486,6 +487,7 @@
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
             this.tabPage1.Controls.Add(this.btnPFHistory);
+            this.tabPage1.Controls.Add(this.btnEConsMNFailed);
             this.tabPage1.Controls.Add(this.btnPoRemark);
             this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.btnMeterialStatus_Local);
@@ -597,10 +599,10 @@
             this.tabPage1.Controls.Add(this.labelDetailsStyleNo);
             this.tabPage1.Controls.Add(this.labelDetailsSPNo);
             this.tabPage1.Controls.Add(this.shapeContainer2);
-            this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.txttpeuser3);
+            this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
+            this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -617,6 +619,17 @@
             this.btnPFHistory.Text = "PF";
             this.btnPFHistory.UseVisualStyleBackColor = true;
             this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
+            // 
+            // btnEConsMNFailed
+            // 
+            this.btnEConsMNFailed.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnEConsMNFailed.Location = new System.Drawing.Point(797, 628);
+            this.btnEConsMNFailed.Name = "btnEConsMNFailed";
+            this.btnEConsMNFailed.Size = new System.Drawing.Size(194, 27);
+            this.btnEConsMNFailed.TabIndex = 193;
+            this.btnEConsMNFailed.Text = "Econs/MN Failed";
+            this.btnEConsMNFailed.UseVisualStyleBackColor = true;
+            this.btnEConsMNFailed.Click += new System.EventHandler(this.BtnEConsMNFailed_Click);
             // 
             // btnPoRemark
             // 
@@ -681,7 +694,7 @@
             // 
             // btnBacktoPPICMasterList
             // 
-            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(797, 628);
+            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(797, 535);
             this.btnBacktoPPICMasterList.Name = "btnBacktoPPICMasterList";
             this.btnBacktoPPICMasterList.Size = new System.Drawing.Size(194, 27);
             this.btnBacktoPPICMasterList.TabIndex = 110;
@@ -3602,5 +3615,6 @@
         private Win.UI.Label label2;
         private Win.UI.Button btnExpectionFormRemark;
         private Win.UI.Button btnPFHistory;
+        private Win.UI.Button btnEConsMNFailed;
     }
 }
