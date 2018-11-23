@@ -1367,7 +1367,6 @@ where InvA.OrderID = '{0}'
                 dr["InvAdjustQty"] = MyUtility.GetValue.Lookup(strInvAdjustSQL);
                 dr["BalanceQty"] = needPackQty - Convert.ToInt32(dr["OtherConfirmQty"]) - Convert.ToInt32(dr["InvAdjustQty"]) - ttlShipQty;
                 dr["OrderQty"] = needPackQty;
-                dr["shipQty"] = ttlShipQty;
                 dr.EndEdit();
                 #endregion
             }
