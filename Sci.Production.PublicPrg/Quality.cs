@@ -74,7 +74,8 @@ namespace Sci.Production.PublicPrg
                 (maindr["Physical"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["Nonphysical"])) &&
                 (maindr["Weight"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonWeight"])) &&
                 (maindr["ShadeBond"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonShadeBond"])) &&
-                (maindr["Continuity"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonContinuity"]))
+                (maindr["Continuity"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonContinuity"])) &&
+                (maindr["Odor"].ToString() == "Pass" || MyUtility.Convert.GetBool(maindr["NonOdor"]))
                 )
             {
                 allResult = "Pass";
@@ -85,7 +86,8 @@ namespace Sci.Production.PublicPrg
                 (MyUtility.Check.Empty(maindr["Physical"]) && !MyUtility.Convert.GetBool(maindr["Nonphysical"])) ||
                 (MyUtility.Check.Empty(maindr["Weight"]) && !MyUtility.Convert.GetBool(maindr["NonWeight"])) ||
                 (MyUtility.Check.Empty(maindr["ShadeBond"]) && !MyUtility.Convert.GetBool(maindr["NonShadeBond"])) ||
-                (MyUtility.Check.Empty(maindr["Continuity"]) && !MyUtility.Convert.GetBool(maindr["NonContinuity"])))
+                (MyUtility.Check.Empty(maindr["Continuity"]) && !MyUtility.Convert.GetBool(maindr["NonContinuity"])) ||
+                (MyUtility.Check.Empty(maindr["Odor"]) && !MyUtility.Convert.GetBool(maindr["NonOdor"])))
             {
                 allResult = "";
             }
@@ -93,24 +95,6 @@ namespace Sci.Production.PublicPrg
             {
                 allResult = "Fail";
             }                
-            #endregion
-
-            #region 原本舊的邏輯
-            ////當(FIR.Physical 有值或FIR.nonphysical=T) 且(FIR.Weight有值或FIR.nonWeight=T)且(FIR.Shadebond或FIR.nonShade=T)且(FIR.Continuity有值或FIR.noncontinuity=T) 才回寫Fir.Result，只要其中一個FIR.Physical, FIR.Weight, FIR.Shadebond, FIR.Continuity 的值為’F’，Fir.Result 就回寫’F’ 
-            //if ((!MyUtility.Check.Empty(maindr["Physical"]) || MyUtility.Convert.GetBool(maindr["Nonphysical"])) 
-            //    && (!MyUtility.Check.Empty(maindr["Weight"]) || MyUtility.Convert.GetBool(maindr["NonWeight"]))
-            //    && (!MyUtility.Check.Empty(maindr["ShadeBond"]) || MyUtility.Convert.GetBool(maindr["NonShadeBond"])) 
-            //    && (!MyUtility.Check.Empty(maindr["Continuity"]) || MyUtility.Convert.GetBool(maindr["NonContinuity"])))
-            //{
-            //    if (maindr["Physical"].ToString() == "Fail" || 
-            //        maindr["Weight"].ToString() == "Fail" || 
-            //        maindr["ShadeBond"].ToString() == "Fail" || 
-            //        maindr["Continuity"].ToString() == "Fail") 
-            //        allResult = "Fail";
-            //    else allResult = "Pass";
-
-            //    status = "Confirmed";
-            //}
             #endregion
 
             string[] re_str = { allResult, status };

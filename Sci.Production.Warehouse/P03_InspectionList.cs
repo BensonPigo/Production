@@ -63,7 +63,12 @@ namespace Sci.Production.Warehouse
                                         c.Exportid,c.whseArrival,dbo.getPass1(a.Approve) as approve1,approveDate,approve,
                                         (Select d.colorid from PO_Supp_Detail d WITH (NOLOCK) Where d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2) as Colorid,
                                         (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
-                                        c.ExportID as Wkno
+                                        c.ExportID as Wkno,
+                                        NonOdor,
+                                        Odor,
+                                        OdorEncode,
+                                        OdorDate
+
                                     From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
                                     Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 and c.InvNo = @InvNo order by seq1,seq2 ";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
@@ -111,6 +116,12 @@ namespace Sci.Production.Warehouse
                     frm.ShowDialog(this);
                     frm.Dispose();
                 }
+                else if (inp_type.Equals("Odor"))
+                {
+                    var frm = new Sci.Production.Quality.P01_Odor(false, data["ID"].ToString(), null, null, data);
+                    frm.ShowDialog(this);
+                    frm.Dispose();
+                }
                 else if (inp_type.Equals("crocking"))
                 {
                     var frm = new Sci.Production.Quality.P03_Crocking(false, data["ID"].ToString(), null, null, data);
@@ -146,7 +157,7 @@ namespace Sci.Production.Warehouse
                 sqlcmd.Append(string.Format(@"select b.MDivisionID,b.InvNo,b.ExportId,b.ETA,a.ArriveQty
 ,CASE 
     when a.result !='' then a.result
-	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
+	when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 and a.nonOdor=1 then 'N/A'
 	else 'Blank'
     END as [Result]
 ,iif(isnull(c.ActualYds,0) = 0 ,0 ,round((c.ActualYds / a.ArriveQty)*100 ,2)) as InspRate
@@ -162,6 +173,8 @@ namespace Sci.Production.Warehouse
 ,a.ShadeBondDate
 ,[Continuity]=IIF(a.nonContinuity=1,'N/A',a.Continuity)		
 ,a.ContinuityDate
+,[Odor]=IIF(a.nonOdor=1,'N/A',a.Odor)		
+,a.OdorDate
 ,a.id
 from dbo.FIR a WITH (NOLOCK) 
 inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
@@ -235,6 +248,13 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                 {
                     open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "continuity");
                 };
+
+
+                DataGridViewGeneratorTextColumnSettings Odor = new DataGridViewGeneratorTextColumnSettings();
+                Odor.CellMouseDoubleClick += (s, e) =>
+                {
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "Odor");
+                };
                 #endregion
 
 
@@ -262,14 +282,8 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                      .Date("ShadeBondDate", header: "ShadeBondDate", width: Widths.AnsiChars(13))
                      .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8),settings : continuity)
                      .Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13))
-                     //.Text("Physical", header: "Physical", width: Widths.AnsiChars(8), settings: ts1)
-                     //.Date("PhysicalDate", header: "PhysicalDate", width: Widths.AnsiChars(13), settings: ds1)
-                     //.Text("Weight", header: "Weight", width: Widths.AnsiChars(8), settings: ts1)
-                     //.Date("WeightDate", header: "WeightDate", width: Widths.AnsiChars(13), settings: ds1)
-                     //.Text("ShadeBond", header: "ShadeBond", width: Widths.AnsiChars(8), settings: ts1)
-                     //.Date("ShadeBondDate", header: "ShadeBondDate", width: Widths.AnsiChars(13), settings: ds1)
-                     //.Text("Continuity", header: "Continuity", width: Widths.AnsiChars(8), settings: ts1)
-                     //.Date("ContinuityDate", header: "ContinuityDate", width: Widths.AnsiChars(13), settings: ds1)
+                     .Text("Odor", header: "Odor", width: Widths.AnsiChars(8), settings: Odor)
+                     .Date("OdorDate", header: "OdorDate", width: Widths.AnsiChars(13))
                      ;
 
                 sqlcmd.Clear();

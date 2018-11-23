@@ -2302,6 +2302,7 @@
     <Build Include="dbo\Stored Procedures\CuttingP20calculateCutQty.sql" />
     <Build Include="dbo\Tables\SubconReason.sql" />
     <Build Include="dbo\Tables\BIRInvoice.sql" />
+    <Build Include="dbo\Tables\FIR_Odor.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -242,6 +242,8 @@ namespace Sci.Production.Quality
 	F.ShadeBondDate,
 	F.Continuity,
 	F.ContinuityDate,
+	F.Odor,
+	F.OdorDate,
 	L.Result AS Result2,
 	IIF(L.nonCrocking=1,'Y',' ')[N/A Crocking],
 	LC.Crocking,	LC.CrockingDate,
@@ -312,7 +314,7 @@ F.TotalInspYds,fta.ActualYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F
 F.ContinuityDate,L.Result,LC.Crocking,
 LC.CrockingDate,LH.Heat,LH.HeatDate,
 LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR,
-ftp.TotalPoint
+ftp.TotalPoint,F.Odor,F.OdorDate
 ORDER BY POID,SEQ";
             #endregion
             return base.ValidateInput();
