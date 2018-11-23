@@ -106,7 +106,7 @@ select
 	[Marker Length] = wo.MarkerLength
 into #tmp
 from WorkOrder wo WITH (NOLOCK) 
-inner join Orders o WITH (NOLOCK) on o.id = wo.ID
+inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = wo.Ukey)acc
 outer apply(
