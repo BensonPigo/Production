@@ -317,7 +317,7 @@ DEALLOCATE CURSOR_
 
 declare @BrandsT nvarchar(max)=stuff((select concat(',[',Brand,']') from #tmpL group by Brand order by Brand for xml path('')),1,1,'')
 declare @exT nvarchar(max) = N'
-select M,[# of Layer],'+@Brands+N' from(select rn,M,[# of Layer],Brand,ct = count(1)from #tmpL group by rn,M,[# of Layer],Brand)a
+select M,[# of Layer],'+@BrandsT+N' from(select rn,M,[# of Layer],Brand,ct = count(1)from #tmpL group by rn,M,[# of Layer],Brand)a
 PIVOT(sum(ct) FOR Brand IN ('+@BrandsT+N')) AS pt
 order by rn
 '
