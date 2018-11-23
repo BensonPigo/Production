@@ -75,7 +75,7 @@ Select
       KPIFailed = iif(f.KPIFailed = 'N', 'Alread Failed', 'Failed Next Week') 
     , f.FailedComment
     , f.ExpectApvDate
-    , KPIDate = iif(f.Type = 'EC', GetECons.CheckDate, GetMNotice.CheckDate)
+    , f.KPIDate
     , o.ID
     , o.POID
     , o.BrandID
@@ -89,13 +89,11 @@ Select
     , o.SewInLIne
     , o.MnorderApv2
     , GetGMTLT.GMTLT
-    , ErrorMessage = iif(f.Type = 'EC', GetECons.ErrorMessage,GetMNotice.ErrorMessage)
+    , f.ErrorMessage
     , f.Type
 From ECons_MNoticeFailed f
 Left Join Orders o on f.id	= o.ID
 Outer Apply(Select GMTLT = dbo.GetStyleGMTLT(o.BrandID,o.StyleID,o.SeasonID,o.FactoryID)) as GetGMTLT
-Outer Apply(Select * From dbo.GetProvideDate('0',o.id)) as GetECons
-Outer Apply(Select * From dbo.GetProvideDate('1',o.id)) as GetMNotice
 Left join GetName as GetSMR on GetSMR.ID = o.SMR
 Left join GetName as GetMR on GetMR.ID = o.MRHandle
 Where 1 = 1

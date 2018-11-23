@@ -192,15 +192,17 @@ using Trade_To_Pms.dbo.ECons_MNoticeFailed s
 on t.id = s.id and t.type = s.type
 	when matched  then	update set 
 	 t.[KPIFailed]		  =s.[KPIFailed]	
+	,t.[KPIDate]		  =s.[KPIDate]	
 	,t.[FailedComment]	  =s.[FailedComment]
 	,t.[ExpectApvDate]	  =s.[ExpectApvDate]
+	,t.[ErrorMessage]	  =s.[ErrorMessage]
 	,t.[AddName]		  =s.[AddName]		
 	,t.[AddDate]		  =s.[AddDate]		
 	,t.[EditName]		  =s.[EditName]		
 	,t.[EditDate]		  =s.[EditDate]	
 when not matched by target then 	
-insert([ID],[Type],[KPIFailed],[FailedComment],[ExpectApvDate],[AddName],[AddDate],[EditName],[EditDate])
-VALUES(s.[ID],s.[Type],s.[KPIFailed],s.[FailedComment],s.[ExpectApvDate],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+insert([ID],[Type],[KPIFailed],[KPIDate],[FailedComment],[ExpectApvDate],[ErrorMessage],[AddName],[AddDate],[EditName],[EditDate])
+VALUES(s.[ID],s.[Type],s.[KPIFailed],[KPIDate],s.[FailedComment],s.[ExpectApvDate],[ErrorMessage],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
 ;
 
 END
