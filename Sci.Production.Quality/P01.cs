@@ -654,10 +654,6 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             this.RenewData();
             //重新計算表頭資料
             this.OnDetailEntered();
-            //重新判斷AllResult            
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
-            CurrentDetailData["Result"] = returnstr[0];
-            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
