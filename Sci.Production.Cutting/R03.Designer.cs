@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.dateEarliestBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtCuttingSPEnd = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -44,28 +46,42 @@
             this.labelCuttingSP = new Sci.Win.UI.Label();
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.dateEarliestBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtstyle1 = new Sci.Production.Class.txtstyle();
+            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.dateSewingInline = new Sci.Win.UI.DateRange();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(519, 12);
-            this.print.TabIndex = 1;
+            this.print.TabIndex = 12;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(519, 48);
-            this.toexcel.TabIndex = 2;
+            this.toexcel.TabIndex = 13;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(519, 84);
-            this.close.TabIndex = 3;
+            this.close.TabIndex = 14;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.dateSewingInline);
+            this.panel1.Controls.Add(this.dateSCIDelivery);
+            this.panel1.Controls.Add(this.dateBuyerDelivery);
+            this.panel1.Controls.Add(this.txtstyle1);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.dateEarliestBuyerDelivery);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.txtCuttingSPEnd);
@@ -84,14 +100,44 @@
             this.panel1.Controls.Add(this.labelEstCutDate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(472, 268);
+            this.panel1.Size = new System.Drawing.Size(472, 351);
             this.panel1.TabIndex = 0;
+            // 
+            // dateEarliestBuyerDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateEarliestBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateEarliestBuyerDelivery.DateBox1.Name = "";
+            this.dateEarliestBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateEarliestBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateEarliestBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateEarliestBuyerDelivery.DateBox2.Name = "";
+            this.dateEarliestBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateEarliestBuyerDelivery.DateBox2.TabIndex = 1;
+            this.dateEarliestBuyerDelivery.IsRequired = false;
+            this.dateEarliestBuyerDelivery.Location = new System.Drawing.Point(166, 250);
+            this.dateEarliestBuyerDelivery.Name = "dateEarliestBuyerDelivery";
+            this.dateEarliestBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateEarliestBuyerDelivery.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(16, 250);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(147, 23);
+            this.label1.TabIndex = 97;
+            this.label1.Text = "Earliest Buyer Delivery ";
             // 
             // txtCuttingSPEnd
             // 
             this.txtCuttingSPEnd.BackColor = System.Drawing.Color.White;
             this.txtCuttingSPEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCuttingSPEnd.Location = new System.Drawing.Point(318, 121);
+            this.txtCuttingSPEnd.Location = new System.Drawing.Point(318, 105);
             this.txtCuttingSPEnd.MaxLength = 13;
             this.txtCuttingSPEnd.Name = "txtCuttingSPEnd";
             this.txtCuttingSPEnd.Size = new System.Drawing.Size(126, 23);
@@ -100,7 +146,7 @@
             // label9
             // 
             this.label9.BackColor = System.Drawing.Color.Transparent;
-            this.label9.Location = new System.Drawing.Point(295, 121);
+            this.label9.Location = new System.Drawing.Point(295, 105);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(20, 23);
             this.label9.TabIndex = 7;
@@ -112,9 +158,9 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(15, 51);
+            this.labelFactory.Location = new System.Drawing.Point(16, 46);
             this.labelFactory.Name = "labelFactory";
-            this.labelFactory.Size = new System.Drawing.Size(148, 23);
+            this.labelFactory.Size = new System.Drawing.Size(147, 23);
             this.labelFactory.TabIndex = 96;
             this.labelFactory.Text = "Factory";
             // 
@@ -130,7 +176,7 @@
             // 
             this.txtCuttingSPStart.BackColor = System.Drawing.Color.White;
             this.txtCuttingSPStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCuttingSPStart.Location = new System.Drawing.Point(166, 121);
+            this.txtCuttingSPStart.Location = new System.Drawing.Point(166, 105);
             this.txtCuttingSPStart.MaxLength = 13;
             this.txtCuttingSPStart.Name = "txtCuttingSPStart";
             this.txtCuttingSPStart.Size = new System.Drawing.Size(126, 23);
@@ -142,7 +188,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(166, 51);
+            this.comboFactory.Location = new System.Drawing.Point(166, 46);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
@@ -177,10 +223,10 @@
             this.dateEarliestSewingInline.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateEarliestSewingInline.DateBox2.TabIndex = 1;
             this.dateEarliestSewingInline.IsRequired = false;
-            this.dateEarliestSewingInline.Location = new System.Drawing.Point(166, 226);
+            this.dateEarliestSewingInline.Location = new System.Drawing.Point(166, 308);
             this.dateEarliestSewingInline.Name = "dateEarliestSewingInline";
             this.dateEarliestSewingInline.Size = new System.Drawing.Size(280, 23);
-            this.dateEarliestSewingInline.TabIndex = 7;
+            this.dateEarliestSewingInline.TabIndex = 11;
             // 
             // dateEarliestSCIDelivery
             // 
@@ -199,10 +245,10 @@
             this.dateEarliestSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateEarliestSCIDelivery.DateBox2.TabIndex = 1;
             this.dateEarliestSCIDelivery.IsRequired = false;
-            this.dateEarliestSCIDelivery.Location = new System.Drawing.Point(166, 191);
+            this.dateEarliestSCIDelivery.Location = new System.Drawing.Point(166, 279);
             this.dateEarliestSCIDelivery.Name = "dateEarliestSCIDelivery";
             this.dateEarliestSCIDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateEarliestSCIDelivery.TabIndex = 6;
+            this.dateEarliestSCIDelivery.TabIndex = 10;
             // 
             // dateEstCutDate
             // 
@@ -221,14 +267,14 @@
             this.dateEstCutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateEstCutDate.DateBox2.TabIndex = 1;
             this.dateEstCutDate.IsRequired = false;
-            this.dateEstCutDate.Location = new System.Drawing.Point(166, 86);
+            this.dateEstCutDate.Location = new System.Drawing.Point(166, 76);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
             this.dateEstCutDate.TabIndex = 2;
             // 
             // labelEarliestSewingInline
             // 
-            this.labelEarliestSewingInline.Location = new System.Drawing.Point(14, 226);
+            this.labelEarliestSewingInline.Location = new System.Drawing.Point(16, 308);
             this.labelEarliestSewingInline.Name = "labelEarliestSewingInline";
             this.labelEarliestSewingInline.Size = new System.Drawing.Size(147, 23);
             this.labelEarliestSewingInline.TabIndex = 5;
@@ -236,7 +282,7 @@
             // 
             // labelEarliestSCIDelivery
             // 
-            this.labelEarliestSCIDelivery.Location = new System.Drawing.Point(14, 191);
+            this.labelEarliestSCIDelivery.Location = new System.Drawing.Point(16, 279);
             this.labelEarliestSCIDelivery.Name = "labelEarliestSCIDelivery";
             this.labelEarliestSCIDelivery.Size = new System.Drawing.Size(147, 23);
             this.labelEarliestSCIDelivery.TabIndex = 4;
@@ -244,7 +290,7 @@
             // 
             // labelCuttingSP
             // 
-            this.labelCuttingSP.Location = new System.Drawing.Point(16, 121);
+            this.labelCuttingSP.Location = new System.Drawing.Point(16, 105);
             this.labelCuttingSP.Name = "labelCuttingSP";
             this.labelCuttingSP.Size = new System.Drawing.Size(147, 23);
             this.labelCuttingSP.TabIndex = 3;
@@ -252,7 +298,7 @@
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Location = new System.Drawing.Point(16, 86);
+            this.labelEstCutDate.Location = new System.Drawing.Point(16, 76);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(147, 23);
             this.labelEstCutDate.TabIndex = 2;
@@ -266,39 +312,119 @@
             this.label7.TabIndex = 97;
             this.label7.Text = "Paper Size A4";
             // 
-            // label1
+            // label2
             // 
-            this.label1.Location = new System.Drawing.Point(14, 156);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(147, 23);
-            this.label1.TabIndex = 97;
-            this.label1.Text = "Earliest Buyer Delivery ";
+            this.label2.Location = new System.Drawing.Point(16, 221);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(147, 23);
+            this.label2.TabIndex = 98;
+            this.label2.Text = "Style";
             // 
-            // dateEarliestBuyerDelivery
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(16, 134);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(147, 23);
+            this.label3.TabIndex = 99;
+            this.label3.Text = "BuyerDelivery";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(16, 163);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(147, 23);
+            this.label4.TabIndex = 100;
+            this.label4.Text = "SCI Delivery";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(16, 192);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(147, 23);
+            this.label5.TabIndex = 101;
+            this.label5.Text = "Sewing Inline";
+            // 
+            // txtstyle1
+            // 
+            this.txtstyle1.BackColor = System.Drawing.Color.White;
+            this.txtstyle1.BrandObjectName = null;
+            this.txtstyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtstyle1.Location = new System.Drawing.Point(166, 221);
+            this.txtstyle1.Name = "txtstyle1";
+            this.txtstyle1.Size = new System.Drawing.Size(130, 23);
+            this.txtstyle1.TabIndex = 8;
+            this.txtstyle1.tarBrand = null;
+            this.txtstyle1.tarSeason = null;
+            // 
+            // dateBuyerDelivery
             // 
             // 
             // 
             // 
-            this.dateEarliestBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateEarliestBuyerDelivery.DateBox1.Name = "";
-            this.dateEarliestBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateEarliestBuyerDelivery.DateBox1.TabIndex = 0;
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
             // 
             // 
             // 
-            this.dateEarliestBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateEarliestBuyerDelivery.DateBox2.Name = "";
-            this.dateEarliestBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateEarliestBuyerDelivery.DateBox2.TabIndex = 1;
-            this.dateEarliestBuyerDelivery.IsRequired = false;
-            this.dateEarliestBuyerDelivery.Location = new System.Drawing.Point(166, 156);
-            this.dateEarliestBuyerDelivery.Name = "dateEarliestBuyerDelivery";
-            this.dateEarliestBuyerDelivery.Size = new System.Drawing.Size(280, 23);
-            this.dateEarliestBuyerDelivery.TabIndex = 5;
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
+            this.dateBuyerDelivery.IsRequired = false;
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(166, 134);
+            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
+            this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateBuyerDelivery.TabIndex = 5;
+            // 
+            // dateSCIDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(166, 163);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 6;
+            // 
+            // dateSewingInline
+            // 
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSewingInline.DateBox1.Name = "";
+            this.dateSewingInline.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSewingInline.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSewingInline.DateBox2.Name = "";
+            this.dateSewingInline.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSewingInline.DateBox2.TabIndex = 1;
+            this.dateSewingInline.IsRequired = false;
+            this.dateSewingInline.Location = new System.Drawing.Point(166, 192);
+            this.dateSewingInline.Name = "dateSewingInline";
+            this.dateSewingInline.Size = new System.Drawing.Size(280, 23);
+            this.dateSewingInline.TabIndex = 7;
             // 
             // R03
             // 
-            this.ClientSize = new System.Drawing.Size(611, 361);
+            this.ClientSize = new System.Drawing.Size(611, 396);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.panel1);
             this.DefaultControl = "comboM";
@@ -338,5 +464,13 @@
         private Win.UI.Label label7;
         private Win.UI.DateRange dateEarliestBuyerDelivery;
         private Win.UI.Label label1;
+        private Win.UI.DateRange dateSewingInline;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.DateRange dateBuyerDelivery;
+        private Class.txtstyle txtstyle1;
+        private Win.UI.Label label5;
+        private Win.UI.Label label4;
+        private Win.UI.Label label3;
+        private Win.UI.Label label2;
     }
 }
