@@ -123,7 +123,7 @@
             this.masterpanel.Controls.Add(this.dateApproveDate);
             this.masterpanel.Controls.Add(this.dateDeliveryDate);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1041, 225);
+            this.masterpanel.Size = new System.Drawing.Size(1070, 225);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDeliveryDate, 0);
@@ -168,12 +168,12 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 225);
-            this.detailpanel.Size = new System.Drawing.Size(1041, 263);
+            this.detailpanel.Size = new System.Drawing.Size(1070, 263);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(894, 182);
+            this.gridicon.Location = new System.Drawing.Point(953, 182);
             this.gridicon.TabIndex = 11;
             // 
             // refresh
@@ -182,7 +182,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1041, 263);
+            this.detailgridcont.Size = new System.Drawing.Size(1070, 263);
             // 
             // detail2
             // 
@@ -198,16 +198,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1041, 526);
+            this.detail.Size = new System.Drawing.Size(1070, 526);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1041, 488);
+            this.detailcont.Size = new System.Drawing.Size(1070, 488);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 488);
-            this.detailbtm.Size = new System.Drawing.Size(1041, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1070, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
@@ -216,7 +216,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1049, 555);
+            this.tabs.Size = new System.Drawing.Size(1078, 555);
             // 
             // createby
             // 
@@ -367,7 +367,7 @@
             // 
             this.label17.BackColor = System.Drawing.Color.Transparent;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label17.Location = new System.Drawing.Point(870, 150);
+            this.label17.Location = new System.Drawing.Point(929, 150);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(113, 23);
             this.label17.TabIndex = 44;
@@ -379,7 +379,7 @@
             this.btnBatchImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnBatchImport.Location = new System.Drawing.Point(870, 44);
             this.btnBatchImport.Name = "btnBatchImport";
-            this.btnBatchImport.Size = new System.Drawing.Size(159, 30);
+            this.btnBatchImport.Size = new System.Drawing.Size(188, 30);
             this.btnBatchImport.TabIndex = 9;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
@@ -390,7 +390,7 @@
             this.btnSpecialRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnSpecialRecord.Location = new System.Drawing.Point(870, 79);
             this.btnSpecialRecord.Name = "btnSpecialRecord";
-            this.btnSpecialRecord.Size = new System.Drawing.Size(159, 30);
+            this.btnSpecialRecord.Size = new System.Drawing.Size(188, 30);
             this.btnSpecialRecord.TabIndex = 10;
             this.btnSpecialRecord.Text = "Special Record";
             this.btnSpecialRecord.UseVisualStyleBackColor = true;
@@ -566,7 +566,7 @@
             // 
             this.btnBatchCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBatchCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchCreate.Location = new System.Drawing.Point(918, 12);
+            this.btnBatchCreate.Location = new System.Drawing.Point(947, 12);
             this.btnBatchCreate.Name = "btnBatchCreate";
             this.btnBatchCreate.Size = new System.Drawing.Size(115, 30);
             this.btnBatchCreate.TabIndex = 0;
@@ -675,7 +675,7 @@
             // 
             this.btnIrrPriceReason.Location = new System.Drawing.Point(870, 114);
             this.btnIrrPriceReason.Name = "btnIrrPriceReason";
-            this.btnIrrPriceReason.Size = new System.Drawing.Size(159, 30);
+            this.btnIrrPriceReason.Size = new System.Drawing.Size(188, 30);
             this.btnIrrPriceReason.TabIndex = 72;
             this.btnIrrPriceReason.Text = "Irregular Price Reason";
             this.btnIrrPriceReason.UseVisualStyleBackColor = true;
@@ -684,7 +684,7 @@
             // P01
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1049, 588);
+            this.ClientSize = new System.Drawing.Size(1078, 588);
             this.CloseChkValue = "Approved";
             this.Controls.Add(this.btnBatchCreate);
             this.DefaultControl = "txtsubconSupplier";

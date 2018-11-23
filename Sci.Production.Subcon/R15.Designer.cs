@@ -44,7 +44,6 @@
             this.labelM = new Sci.Win.UI.Label();
             this.txtMdivisionM = new Sci.Production.Class.txtMdivision();
             this.labelIssueDate = new Sci.Win.UI.Label();
-            this.chk_IrregularPriceReason = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -233,21 +232,9 @@
             this.labelIssueDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labelIssueDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // chk_IrregularPriceReason
-            // 
-            this.chk_IrregularPriceReason.AutoSize = true;
-            this.chk_IrregularPriceReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_IrregularPriceReason.Location = new System.Drawing.Point(13, 303);
-            this.chk_IrregularPriceReason.Name = "chk_IrregularPriceReason";
-            this.chk_IrregularPriceReason.Size = new System.Drawing.Size(444, 21);
-            this.chk_IrregularPriceReason.TabIndex = 124;
-            this.chk_IrregularPriceReason.Text = "Only show as item which have irregular price but not enter reason.";
-            this.chk_IrregularPriceReason.UseVisualStyleBackColor = true;
-            // 
             // R15
             // 
-            this.ClientSize = new System.Drawing.Size(522, 360);
-            this.Controls.Add(this.chk_IrregularPriceReason);
+            this.ClientSize = new System.Drawing.Size(522, 324);
             this.Controls.Add(this.labelIssueDate);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.txtMdivisionM);
@@ -288,7 +275,6 @@
             this.Controls.SetChildIndex(this.txtMdivisionM, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelIssueDate, 0);
-            this.Controls.SetChildIndex(this.chk_IrregularPriceReason, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -312,6 +298,5 @@
         private Win.UI.Label labelM;
         private Class.txtMdivision txtMdivisionM;
         private Win.UI.Label labelIssueDate;
-        private Win.UI.CheckBox chk_IrregularPriceReason;
     }
 }

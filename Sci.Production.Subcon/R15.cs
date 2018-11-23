@@ -82,16 +82,9 @@ namespace Sci.Production.Subcon
 , b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE) UnitPriceUSD
 , b.Cost
 , b.cost - b.UnitPrice*dbo.getRate(s.ExchangeId,a.CurrencyId,'USD',A.ISSUEDATE) AS variance
-,[Responsible_Reason]= ISNULL(IrregularPrice.Responsible,'')+ ISNULL(IrregularPrice.Reason,'')
 from dbo.system s WITH (NOLOCK) ,dbo.Artworkpo a WITH (NOLOCK) 
 inner join artworkpo_detail b WITH (NOLOCK) on b.id = a.id
 inner join orders c WITH (NOLOCK) on c.id = b.orderid
-outer apply(
-	SELECT sr.Responsible ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
-	FROM ArtworkPO_IrregularPrice al
-	LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
-	WHERE al.POId = c.POID AND al.ArtworkTypeId=b.ArtworkTypeId
-)IrregularPrice 
 where 1=1"));
 
             System.Data.SqlClient.SqlParameter sp_issuedate1 = new System.Data.SqlClient.SqlParameter();
@@ -133,13 +126,7 @@ where 1=1"));
                 sp_issuedate2.Value = issuedate2;
                 cmds.Add(sp_issuedate2);
             }
-
-            if (chk_IrregularPriceReason.Checked)
-            {
-                //價格異常的資料存在，卻沒有ReasonID
-                sqlCmd.Append(string.Format(@"  AND IrregularPrice.IrregularPricePoid IS NOT NULL 	 AND IrregularPrice.ReasonID IS NULL"));
-            }
-
+            
             if (!MyUtility.Check.Empty(artworktype))
             {
                 sqlCmd.Append(" and a.artworktypeid = @artworktype");

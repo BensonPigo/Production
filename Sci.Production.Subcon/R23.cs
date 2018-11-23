@@ -277,7 +277,7 @@ select  O.FactoryID
                           else round(round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) 
                                            / round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3), 2) 
                        end
-        ,[Responsible_Reason]= ISNULL(IrregularPrice.Responsible,'')+ ISNULL(IrregularPrice.Reason,'')
+        ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
 from (
 	select	distinct LP.Category
 			, LPD.OrderId
@@ -311,10 +311,11 @@ outer apply(
 	group by Orders.POID, ArtworkTypeID
 ) y
 outer apply(
-	SELECT sr.Responsible ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+	SELECT [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
 	FROM LocalPO_IrregularPrice al
 	LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
-	WHERE al.POId = y.POID AND al.Category=s.Category
+    LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
+	WHERE al.POId = o.POID AND al.Category=s.Category
 )IrregularPrice 
 
 where Po_qty > 0 {2} {3}
@@ -331,7 +332,8 @@ group by O.FactoryID
 ", ratetype
  , ("and " + sqlFilter1.JoinToString(" and "))
  , ("and " + sqlFilter2.JoinToString(" and "))
- , chk_IrregularPriceReason.Checked ? "AND IrregularPrice.IrregularPricePoid IS NOT NULL AND IrregularPrice.ReasonID IS NULL" : ""));
+ , chk_IrregularPriceReason.Checked ? "AND (IrregularPrice.IrregularPricePoid IS NOT NULL OR IrregularPrice.IrregularPricePoid != '') AND (IrregularPrice.ReasonID IS NULL  OR IrregularPrice.ReasonID = '')" 
+                                    : ""));
             #endregion
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
