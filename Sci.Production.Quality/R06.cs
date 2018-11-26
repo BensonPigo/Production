@@ -557,8 +557,8 @@ select --distinct
     ,totalYds.TotalInspYds 
     ,[Total PoCnt] = isnull(TLSP.cnt,0)
     ,[Total Dyelot] =isnull(TLDyelot.cnt,0)
+    ,[Insp Report] = isnull(InspReport.cnt,0)
 	,[Test Report] = isnull(TestReport.cnt,0)
-	,[Insp Report] = isnull(InspReport.cnt,0)
 	,[Continuity Card] = isnull(Contcard.cnt,0)
 	,[BulkDyelot] = isnull(BulkDyelot.cnt,0)
 	,[Total Point] = isnull(TLPoint.TotalPoint,0)
