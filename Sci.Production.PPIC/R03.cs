@@ -1305,8 +1305,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             {
                 return false;
             }
-
-            excel.Visible = true;
+            
             int lastCol = lastColA;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Name = "PPIC_Master_List";
