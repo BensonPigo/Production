@@ -664,6 +664,7 @@ SET
       , a.EditDate	      = b.EditDate
       , a.preshrink           = b.preshrink
 	  , a.DWR = isnull(b.DWR,0)
+      , a.RibItem           = b.RibItem 
 from Production.dbo.Fabric as a 
 inner join Trade_To_Pms.dbo.Fabric as b ON a.SCIRefno=b.SCIRefno
 -------------------------- INSERT INTO §ì
@@ -699,6 +700,7 @@ INSERT INTO Production.dbo.Fabric(
        , EditDate
        , preshrink
 	   , DWR
+       , RibItem
 )
 select 
       SCIRefno
@@ -732,6 +734,7 @@ select
       , EditDate
       , preshrink
 	  , isnull(DWR,0)
+      , RibItem
 from Trade_To_Pms.dbo.Fabric as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno)
 
