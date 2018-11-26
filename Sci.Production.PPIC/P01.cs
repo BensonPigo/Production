@@ -298,6 +298,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnAccessoryInspectionList.ForeColor = MyUtility.Check.Seek(string.Format("select ID from AIR WITH (NOLOCK) where PoID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
             this.btnArtworkTransactionList.ForeColor = MyUtility.Check.Seek(string.Format("select ID from ArtworkPO_Detail WITH (NOLOCK) where OrderID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnProductionKits.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = '{0}' ", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
+            this.btnPFHistory.ForeColor = MyUtility.Check.Seek($@"select id from Order_PFHis with(nolock) where id = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
 
             #region 控制[m/notice sheet]按鈕是否變色
             bool enableMNotice1 = MyUtility.Check.Seek(string.Format("select ID FROM MnOrder_ColorCombo WITH (NOLOCK) where ID = (select OrderComboID FROM MNOrder where ID = '{1}')", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -1522,6 +1523,19 @@ where POID = @poid group by POID,b.spno";
                 Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
                 form.ShowDialog(this);
             }
+        }
+
+        private void btnPFHistory_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var dlg = new PFHis(false, dr["ID"].ToString(), string.Empty, string.Empty, dr);
+            dlg.ShowDialog();
+            this.RenewData();
         }
     }
 }

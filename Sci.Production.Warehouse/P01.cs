@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Data.SqlClient;
 using Sci.Win;
 using System.Linq;
-
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.Warehouse
 {
@@ -220,6 +220,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
 
             btnOrderRemark.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
+            this.btnPFHistory.ForeColor = MyUtility.Check.Seek($@"select id from Order_PFHis with(nolock) where id = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
         }
 
         protected override void ClickNewAfter()
@@ -693,6 +694,19 @@ and po3.junk=0
                 Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
                 form.ShowDialog(this);
             }
+        }
+
+        private void btnPFHistory_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var dlg = new PFHis(false, dr["ID"].ToString(), string.Empty, string.Empty, dr);
+            dlg.ShowDialog();
+            this.RenewData();
         }
     }
 }
