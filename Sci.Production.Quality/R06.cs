@@ -426,7 +426,7 @@ select
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpTestReport
 from(
-	select tmp.SuppID, count(b.PoId)*1.0 bcnt, count(c.TPEInspectionReport)*1.0 ccnt 
+	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.TPEInspectionReport)*1.0 ccnt 
 	from (
 	select distinct {groupby_col}
 		   , poid
@@ -444,7 +444,7 @@ select
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #InspReport
 from(
-	select tmp.SuppID, count(b.PoId)*1.0 bcnt, count(c.TPETestReport)*1.0 ccnt 
+	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.TPETestReport)*1.0 ccnt 
 	from (
 	select distinct {groupby_col}
 		   , poid
@@ -462,7 +462,7 @@ select a.{groupby_col}
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpContinuityCard
 from(
-	select tmp.SuppID, count(b.PoId)*1.0 bcnt, count(c.ContinuityCard)*1.0 ccnt 
+	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.ContinuityCard)*1.0 ccnt 
 	from (
 	select distinct {groupby_col}
 		   , poid
@@ -476,7 +476,7 @@ from(
 )a
 
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
-select b.Refno, b.ColorID, b.SuppID, d.Consignee, e.SeasonSCIID, c.Period, f.RibItem 
+select b.Refno, b.ColorID, b.SuppID, d.Consignee, c.SeasonSCIID DyelotSeasion, c.FirstDyelot, e.SeasonSCIID, c.Period, f.RibItem 
 into #tmp_DyelotMain 
 from (
 		select distinct SuppID
@@ -497,39 +497,48 @@ left join FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.Sup
 LEFT JOIN Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
 left join Export d on ED.ID = D.ID AND c.Consignee = d.Consignee AND D.Confirm = 1
 left join orders o on ed.PoID = o.id and o.Category in ('B','M')
-left join Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID and e.SeasonSCIID = c.SeasonSCIID
+left join Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID --and e.SeasonSCIID = c.SeasonSCIID
 left join Fabric f on f.SCIRefno = b.SCIRefno 
-group by b.Refno, b.ColorID, b.SuppID, d.Consignee, e.SeasonSCIID,c.Period,f.RibItem
+group by b.Refno, b.ColorID, b.SuppID, d.Consignee, c.SeasonSCIID, c.FirstDyelot, e.SeasonSCIID,c.Period,f.RibItem 
 
  --分母
  select {groupby_col}, count(*)*1.0 Mcnt
  into #tmp_DyelotMcnt
- from #tmp_DyelotMain
- where not(Period is null and RibItem = 1)
+ from (
+	 select Refno, ColorID, SuppID, Consignee, SeasonSCIID, Period, RibItem  
+	 from #tmp_DyelotMain
+	 where not(FirstDyelot is null and RibItem = 1) 
+	 group by Refno, ColorID, SuppID, Consignee, SeasonSCIID, Period, RibItem 
+ )a
  group by {groupby_col}
 
 --重新計算月份
 select 
-ROW_NUMBER() OVER(order by id) as rid
+ROW_NUMBER() OVER(order by month ASC) as rid
 ,* 
 into #tmp_newSeasonSCI
 from SeasonSCI 
 
-select a.*, b.rid, b.rid + a.Period maxID
+select a.*, b.rid, (b.rid + a.Period -1) maxID
 into #tmp_DyelotMonth
 from #tmp_DyelotMain a
-left join  #tmp_newSeasonSCI b on a.SeasonSCIID = b.id
-where Period is not null
+left join  #tmp_newSeasonSCI b on a.DyelotSeasion = b.id
+where a.FirstDyelot is not null
 
  --分子
 select a.{groupby_col},count(*)*1.0 Dcnt
  into #tmp_DyelotDcnt
- from #tmp_DyelotMain a
+ from (
+	 select Refno,ColorID,SuppID,Consignee,SeasonSCIID 
+	 from #tmp_DyelotMain 
+	 group by Refno,ColorID,SuppID,Consignee,SeasonSCIID 	
+ ) a
  inner join 
  (
-	 select a.* ,b.id
+	 select a.Refno,a.ColorID,a.SuppID, a.Consignee, a.Period, a.RibItem, b.id 
 	 from #tmp_DyelotMonth a
-	 left join #tmp_newSeasonSCI b on b.rid between a.rid and a.maxID 
+	 left join #tmp_newSeasonSCI b on b.rid between a.rid and a.maxID   
+	 group by a.Refno,a.ColorID,a.SuppID, a.Consignee, a.Period, a.RibItem, b.id  
  )b on a.Refno = b.Refno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.Consignee = b.Consignee and a.SeasonSCIID = b.id
  group by a.{groupby_col}
 
@@ -538,6 +547,7 @@ select a.{groupby_col},count(*)*1.0 Dcnt
  into #BulkDyelot
  from #tmp_DyelotMcnt a
  left join #tmp_DyelotDcnt b on a.{groupby_col} = b.{groupby_col}
+
 ------#TmpFinal 
 select --distinct
 { (ReportType.Equals("supplier") ? " Tmp.SuppID , Tmp.refno " : " Tmp.refno , Tmp.SuppID ") }
