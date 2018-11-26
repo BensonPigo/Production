@@ -1,628 +1,614 @@
-﻿using Ict.Win;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Sci.Win.Tems;
-using Sci.Data;
+using System.Linq;
+using Sci.DB;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.IO;
+using System.Configuration;
 
 namespace Sci.Production.Quality
 {
-    public partial class P09 : Sci.Win.Tems.Input6
+    public partial class P09 : Sci.Win.Tems.QueryForm
     {
-        private DataTable dtDB;
-        private DataTable dtDetail;
-        private bool insert = false;
-
         public P09(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
-            InsertDetailGridOnDoubleClick = false;
+            Env.Cfg.FtpServerIP = "ftp.sportscity.com.tw";
+            Env.Cfg.FtpServerAccount = "insp_rpt";
+            Env.Cfg.FtpServerPassword = "rpt_insp";
         }
 
-        // 撈出表身資料
-        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        private DataTable dt1;
+        private DataTable dt2;
+        private string Filepath = @"TO-ALL\MMC\for testing only\Jeff\";
+
+        protected override void OnFormLoaded()
         {
-            string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
-            string cmd = string.Format(@"
-select distinct fd.id
-    ,[Seq] = seq1+'-'+seq2
-    , seq1,seq2
-    ,[RefNo] = RefNo
-    ,[Colorid] = fd.ColorID
-    ,[Color] = fd.ColorID+'-'+c.Name
-    ,[Suppid] = fd.SuppID
-    ,[Supp] = fd.SuppID+'-'+s.NameEN
-    ,[TestReport] = isnull(fd.TestReport,0)
-    ,[InspReport] = isnull(fd.InspReport,0)
-    ,[ContinuityCard] = isnull(fd.ContinuityCard,0)
-    ,[BulkDyelot] = isnull(fd.BulkDyelot,0)
-    ,[SeasonID] = fd.seasonid
-from FabricInspDoc_Detail fd WITH (NOLOCK)
-inner join orders o WITH (NOLOCK) on o.POID=fd.ID
-left join color c WITH (NOLOCK) on fd.ColorID=c.ID and c.BrandId=o.BrandID
-left join Supp s WITH (NOLOCK) on fd.SuppID=s.ID
-where fd.id='{0}' order by seq1,seq2
-", masterID);
-            this.DetailSelectCommand = cmd;
-            return base.OnDetailSelectCommandPrepare(e);
-        }
+            base.OnFormLoaded();
+            this.EditMode = true;
+            #region tabPage1
+            #region settings Event
 
-        protected override void OnDetailGridSetup()
-        {
-            DataGridViewGeneratorCheckBoxColumnSettings chx1st = new DataGridViewGeneratorCheckBoxColumnSettings();
-            DataGridViewGeneratorCheckBoxColumnSettings chxTestReport = new DataGridViewGeneratorCheckBoxColumnSettings();
-            DataGridViewGeneratorCheckBoxColumnSettings chxInsReport = new DataGridViewGeneratorCheckBoxColumnSettings();
-            DataGridViewGeneratorCheckBoxColumnSettings chxCard = new DataGridViewGeneratorCheckBoxColumnSettings();
-
-            chxTestReport.CellValidating += (s, e) =>
-             {
-                 if (!EditMode)
-                 {
-                     return;
-                 }
-                 // 比對表身與DB資料是否一致
-                 if (!MyUtility.Check.Empty(CurrentMaintain["ID"]) || DetailDatas.Count > 0)
-                 {
-                     CurrentDetailData["TestReport"] = e.FormattedValue;
-                     CurrentDetailData.EndEdit();
-                     chkDiff();
-                 }
-             };
-
-            chxInsReport.CellValidating += (s, e) =>
+            DataGridViewGeneratorDateColumnSettings Inspection = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorDateColumnSettings Test = new DataGridViewGeneratorDateColumnSettings();
+            Inspection.CellFormatting += (s, e) =>
             {
-                if (!EditMode)
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                if (!MyUtility.Check.Empty(e.Value))
                 {
-                    return;
-                }
-                // 比對表身與DB資料是否一致
-                if (!MyUtility.Check.Empty(CurrentMaintain["ID"]) || DetailDatas.Count > 0)
-                {
-                    CurrentDetailData["InspReport"] = e.FormattedValue;
-                    CurrentDetailData.EndEdit();
-                    chkDiff();
+                    e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
+                    e.CellStyle.ForeColor = Color.Blue;
                 }
             };
-
-            chxCard.CellValidating += (s, e) =>
+            Test.CellFormatting += (s, e) =>
             {
-                if (!EditMode)
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                if (!MyUtility.Check.Empty(e.Value))
                 {
-                    return;
-                }
-                // 比對表身與DB資料是否一致
-                if (!MyUtility.Check.Empty(CurrentMaintain["ID"]) || DetailDatas.Count > 0)
-                {
-                    CurrentDetailData["ContinuityCard"] = e.FormattedValue;
-                    CurrentDetailData.EndEdit();
-                    chkDiff();
+                    e.CellStyle.Font = new Font("Ariel", 10, FontStyle.Underline);
+                    e.CellStyle.ForeColor = Color.Blue;
                 }
             };
-
-            chx1st.CellValidating += (s, e) =>
+            // 帶出grade
+            DataGridViewGeneratorNumericColumnSettings T2IY = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorNumericColumnSettings T2DP = new DataGridViewGeneratorNumericColumnSettings();
+            T2IY.CellValidating += (s, e) =>
             {
-                if (!EditMode)
-                {
-                    return;
-                }
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                // 比對表身與DB資料是否一致
-                if (!MyUtility.Check.Empty(CurrentMaintain["ID"]) || DetailDatas.Count > 0)
-                {
-                    CurrentDetailData["BulkDyelot"] = e.FormattedValue;
-                    CurrentDetailData.EndEdit();                    
-                    chkDiff();
-                }
-                foreach (DataRow drt in ((DataTable)this.detailgridbs.DataSource).Rows)
-                {
-                    if (drt.RowState!=DataRowState.Deleted)
-                    {
-                        // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
-                        if (dr["colorid"].ToString() == drt["colorid"].ToString()
-                        && dr["Suppid"].ToString() == drt["Suppid"].ToString()
-                        && dr["Refno"].ToString() == drt["Refno"].ToString())
-                        {
-                            drt["BulkDyelot"] = dr["BulkDyelot"];
-                        }
-                    }                   
-                }
-                FirstBulk();
-                chkDiff();
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                dr["T2InspYds"] = e.FormattedValue;
+                dr.EndEdit();
+                T2Validating(s, e);
             };
-
-            Helper.Controls.Grid.Generator(this.detailgrid)
-               .Text("Seq", header: "Seq#", width: Widths.AnsiChars(8), iseditingreadonly: true)
-               .Text("RefNo", header: "Ref#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-               .Text("Color", header: "Color", width: Widths.AnsiChars(20), iseditingreadonly: true)
-               .Text("Supp", header: "Supp", width: Widths.AnsiChars(30), iseditingreadonly: true)
-               .CheckBox("TestReport", header: "Test Report", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, settings: chxTestReport)
-               .CheckBox("InspReport", header: "Inspection Report", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, settings: chxInsReport)
-               .CheckBox("ContinuityCard", header: "Continuity Card", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, settings: chxCard)
-               .CheckBox("BulkDyelot", header: "1stBulk Dyelot", width: Widths.AnsiChars(5), trueValue: 1, falseValue: 0, settings: chx1st);
-        }
-
-        protected override bool ClickEditBefore()
-        {
-            if (CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            T2DP.CellValidating += (s, e) =>
             {
-                MyUtility.Msg.WarningBox("Data is confirmed, can't modify.", "Warning");
-                return false;
-            }
-            return base.ClickEditBefore();
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                dr["T2DefectPoint"] = e.FormattedValue;
+                dr.EndEdit();
+                T2Validating(s, e);
+            };
+            #endregion settings Event
+            #region Set_grid1 Columns
+            this.grid1.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.grid1)
+            .CheckBox("selected", header: "", trueValue: 1, falseValue: 0, iseditable: true)
+            .Text("ID", header: "WK#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Date("LastEta", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("PoID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
+            .Text("seq", header: "Seq#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
+            .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .Date("TPEInspectionReport", header: "Inspection Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Inspection)
+            .Date("TestReport", header: "Test Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .Date("TPETestReport", header: "Test Report\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: Test)
+            .Date("ContinuityCard", header: "Continuity Card\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .Date("TPEContinuityCard", header: "Continuity Card\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("T2InspYds", header: "T2 Inspected Yards", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: T2IY) // W
+            .Numeric("T2DefectPoint", header: "T2 Defect Points", width: Widths.AnsiChars(8), integer_places: 5, settings: T2DP) // W
+            .Text("T2Grade", header: "Grade", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("T1InspectedYards", header: "T1 Inspected Yards", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("T1DefectPoints", header: "T1 Defect Points", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            ;
+            #endregion Set_grid1 Columns
+            #region Color
+            this.grid1.Columns["InspectionReport"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["TestReport"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["ContinuityCard"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["T2InspYds"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid1.Columns["T2DefectPoint"].DefaultCellStyle.BackColor = Color.Pink;
+            #endregion Color
+            #endregion tabPage1_grid1
+            #region tabPage2
+            #region Set_grid2 Columns
+            this.grid2.IsEditingReadOnly = false;
+            Helper.Controls.Grid.Generator(this.grid2)
+            .Text("Consignee", header: "Consignee", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SeasonSCIID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            ;
+            #endregion Set_grid2 Columns
+            #region Color
+            this.grid2.Columns["FirstDyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            #endregion Color
+            #endregion tabPage2
         }
+        #region Tab_Page1
 
-        protected override void ClickNewAfter()
+        private string Filename(DataRow dr, string type)
         {
-            CurrentMaintain["Status"] = "New";
-            this.txtID.ReadOnly = false;
-            insert = true;
-            btnReImport.Enabled = false;
-            btnReImport.ForeColor = Color.Black;
-            base.ClickNewAfter();
+            List<string> cols = new List<string>();
+            if (!MyUtility.Check.Empty(dr["ID"])) cols.Add(MyUtility.Convert.GetString(dr["ID"]));
+            if (!MyUtility.Check.Empty(dr["PoID"])) cols.Add(MyUtility.Convert.GetString(dr["PoID"]));
+            if (!MyUtility.Check.Empty(dr["seq"])) cols.Add(MyUtility.Convert.GetString(dr["seq"]));
+            if (!MyUtility.Check.Empty(dr["Refno"])) cols.Add(MyUtility.Convert.GetString(dr["Refno"]));
+            if (!MyUtility.Check.Empty(dr["ColorID"])) cols.Add(MyUtility.Convert.GetString(dr["ColorID"]));
+
+            string fp = string.Join("-", cols) + type;
+            return fp;
         }
 
-        protected override void ClickEditAfter()
+        // 子目錄
+        private string Filedic(DataRow dr)
         {
-            insert = false;
-            chkDiff();
-            base.ClickEditAfter();
+            string fp = Filepath + MyUtility.Convert.GetString(dr["AbbEN"]) + " " + MyUtility.Convert.GetString(dr["SuppID"]) + @"\";
+            return fp;
         }
 
-        protected override void ClickConfirm()
-        {                        
-            base.ClickConfirm();
-            string sqlcmd;
-
-            sqlcmd = string.Format("update FabricInspDoc set Status = 'Confirmed', editname = '{0}' , editdate = GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
-            DualResult result;
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+        private void T2Validating(object s, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
+        {
+            if (e.RowIndex == -1) return;
+            var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+            if (null == dr) return;
+            decimal PointRate = 0;
+            if (MyUtility.Convert.GetDecimal(dr["T2InspYds"]).EqualDecimal(0))
             {
-                ShowErr(sqlcmd, result);
-                return;
-            }
-            MyUtility.Msg.InfoBox("Confirmed successful.");
-        }
-
-        protected override void ClickUnconfirm()
-        {
-            base.ClickUnconfirm();            
-            string sqlcmd;
-
-            sqlcmd = string.Format("update FabricInspDoc set Status = 'New', editname = '{0}' , editdate = GETDATE() " +
-                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
-            DualResult result;
-            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
-            {
-                ShowErr(sqlcmd, result);
-                return;
-            }
-            MyUtility.Msg.InfoBox("UnConfirmed successful.");
-        }
-
-        private void txtID_Validating(object sender, CancelEventArgs e)
-        {
-            string spno = this.txtID.Text;
-            bool delGrid = false;
-            if (MyUtility.Check.Empty(spno))
-            {
-                delGrid = true;
+                PointRate = 0;
             }
             else
             {
-                // 檢查是否存在orders
-                if (!MyUtility.Check.Seek($"select 1 from orders where poid='{spno}'"))
-                {
-                    this.txtID.Select();
-                    MyUtility.Msg.WarningBox($"{spno} dose not exist!");
-                    delGrid = true;
-                }
-            }          
-          
-
-            // 檢查該ID是否存在FabircInspDoc
-            if (MyUtility.Check.Seek($"select 1 from FabricInspDoc where id='{spno}'"))
-            {
-                this.txtID.Select();
-                MyUtility.Msg.WarningBox($"{spno} is already exists!");                
-                return;
+                PointRate = MyUtility.Convert.GetDecimal(dr["T2DefectPoint"]) / MyUtility.Convert.GetDecimal(dr["T2InspYds"]) * 100;
             }
-
-            if (delGrid)
-            {
-                foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
-                {
-                    dr.Delete();
-                }
-                displayStyle.Text = "";
-                displaySeason.Text = "";
-                displayBrand.Text = "";
-                return;
-            }
-           
-
-            headerValue();
-            insDetailData(true);
-            //FirstBulk();
-        }
-
-        protected override bool ClickSaveBefore()
-        {
-            string spno = txtID.Text;
-            // 檢查是否存在orders
-            if (!MyUtility.Check.Seek($"select 1 from orders where poid='{spno}'"))
-            {
-                this.txtID.Select();
-                MyUtility.Msg.WarningBox($"{spno} dose not exist!");
-                return false;
-            }
-            return base.ClickSaveBefore();
-           
-        }
-
-        protected override DualResult ClickSave()
-        {
-            this.txtID.ReadOnly = true;
-            btnReImport.ForeColor = Color.Black;
-            return base.ClickSave();
-        }
-
-        protected override void ClickUndo()
-        {
-            // base.DoDetailUndo() = 直接呼叫底層的undo Fnction
-            if (base.DoDetailUndo())
-            {
-                this.txtID.ReadOnly = true;
-                insert = false;
-                btnReImport.ForeColor = Color.Black;
-                OnDetailEntered();
-            }
-            else
-            {
-                return;
-            }
-        }
-        
-        protected override void OnDetailEntered()
-        {
-            base.OnDetailEntered();
-            btnReImport.Enabled = !MyUtility.Check.Empty(txtID.Text);
-            headerValue();
-            chkDiff();
-        }
-
-        private void headerValue()
-        {
-            DataRow dr;
-            if (MyUtility.Check.Seek($@"select top 1 poid,StyleID,Seasonid,BrandID from orders where poid='{txtID.Text}'", out dr))
-            {
-                displayStyle.Text = dr["StyleID"].ToString();
-                displaySeason.Text = dr["Seasonid"].ToString();
-                displayBrand.Text = dr["BrandID"].ToString();
-            }
-            else
-            {
-                displayStyle.Text = "";
-                displaySeason.Text = "";
-                displayBrand.Text = "";
-            }
-        }
-
-        // 比對表身資料跟DB資料是否一致
-        private void chkDiff()
-        {
-            DualResult result;            
-            bool diff = false;
-            DataTable dtPo;
-
-            if (!(result = DBProxy.Current.Select(null, $@"select * from FabricInspDoc_Detail where id='{txtID.Text}' order by seq1,seq2", out dtDB)))
-            {
-                MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
-            }         
-
-            string sqlcmd = $@"
-SELECT DISTINCT 
-[ID] =psd.id
-,[Seq] = psd.SEQ1+'-'+psd.SEQ2
-,psd.SEQ1,psd.SEQ2
-,[Refno] = psd.Refno
-,[Color] = psd.colorid+'-'+c.Name
-,[Colorid]=psd.ColorID
-,[Seasonid] = O.seasonID
-,[Supp] = ps.suppid+'-'+s.NameEN
-,[Suppid]=ps.SuppID
-FROM PO_Supp_Detail psd
-LEFT JOIN po_supp ps ON ps.id=psd.id AND ps.seq1=psd.seq1
-LEFT JOIN ORDERS O ON O.ID=PSD.ID
-left join color c WITH (NOLOCK) on psd.ColorID=c.ID and c.BrandId=o.BrandID
-left join Supp s WITH (NOLOCK) on ps.SuppID=s.ID
-WHERE  FabricType='F' and psd.id ='{txtID.Text}' 
-and psd.SEQ1 <'70' and psd.Junk=0
-";
-
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out dtPo)))
-            {
-                MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
-            }
-
-            if ((MyUtility.Check.Empty(dtDB) || dtDB.Rows.Count < 1) || ((MyUtility.Check.Empty(dtPo) || dtPo.Rows.Count < 1)))
-            {
-                return;
-            }
-
-            foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
-            {
-                if (dr.RowState!=DataRowState.Deleted )
-                {
-                    #region 表身資料Check
-                    DataRow[] selectData = dtDB.Select($@"id='{dr["id"].ToString()}' and seq1='{dr["seq1".ToString()]}' and seq2='{dr["seq2"].ToString()}'");
-
-                    if (selectData.Length > 0)
-                    {
-                        if (selectData[0]["TestReport"].ToString() != dr["TestReport"].ToString() ||
-                                               selectData[0]["InspReport"].ToString() != dr["InspReport"].ToString() ||
-                                               selectData[0]["ContinuityCard"].ToString() != dr["ContinuityCard"].ToString() ||
-                                               selectData[0]["BulkDyelot"].ToString() != dr["BulkDyelot"].ToString())
-                        {
-                            diff = true;
-                        }
-                    }
-                    #endregion
-
-                    #region PO資料Check
-                    DataRow[] selectDataPO = dtPo.Select($@"id='{dr["id"].ToString()}' and seq1='{dr["seq1".ToString()]}' and seq2='{dr["seq2"].ToString()}'");
-                    
-                    if (selectDataPO.Length > 0)
-                    {
-                        if (selectDataPO[0]["ColorID"].ToString() != dr["ColorID"].ToString() ||
-                            selectDataPO[0]["seasonID"].ToString() != dr["seasonID"].ToString() ||
-                            selectDataPO[0]["SuppID"].ToString() != dr["SuppID"].ToString() ||
-                            selectDataPO[0]["Refno"].ToString() != dr["Refno"].ToString())
-                        {
-                            diff = true;
-                        }
-                    }
-                    #endregion
-
-                }
-            }
-           
-            if (DetailDatas.Count != dtDB.Rows.Count || DetailDatas.Count!=dtPo.Rows.Count)
-            {
-                diff = true;
-            }
-
-            if (diff && !insert)
-            {
-                btnReImport.Enabled = true;
-                btnReImport.ForeColor = Color.Red;
-            }
-            else
-            {
-                btnReImport.Enabled = false;
-                btnReImport.ForeColor = Color.Black;
-            }
-
-        }
-
-        private void insDetailData(bool isInsert)
-        {
-            DualResult result;           
-           
-            string sqlcmd = $@"
-SELECT DISTINCT 
-[ID] =psd.id
-,[Seq] = psd.SEQ1+'-'+psd.SEQ2
-,psd.SEQ1,psd.SEQ2
-,[Refno] = psd.Refno
-,[Color] = psd.colorid+'-'+c.Name
-,[Colorid]=psd.ColorID
-,[Seasonid] = O.seasonID
-,[Supp] = ps.suppid+'-'+s.NameEN
-,[Suppid]=ps.SuppID
-,[BulkDyelot] = ISNULL(OFD.BulkDyelot,0)
-,[TestReport]= 0
-,[InspReport]=0
-,[ContinuityCard]=0
-FROM PO_Supp_Detail psd
-LEFT JOIN po_supp ps ON ps.id=psd.id AND ps.seq1=psd.seq1
-LEFT JOIN ORDERS O ON O.ID=PSD.ID
-left join color c WITH (NOLOCK) on psd.ColorID=c.ID and c.BrandId=o.BrandID
-left join Supp s WITH (NOLOCK) on ps.SuppID=s.ID
-outer apply
-(SELECT DISTINCT FD.SeasonID, FD.Refno,FD.ColorID,FD.SuppID,FD.BulkDyelot 
-FROM FabricInspDoc_Detail FD
-WHERE FD.Refno=psd.Refno AND FD.seasonID
- =o.seasonID AND FD.colorid=psd.colorid AND  FD.suppid=ps.suppid AND FD.BulkDyelot=1
+            string sqlWEAVETYPEID = $@"
+SELECT isnull(MIN(grade),'')
+FROM FIR_Grade WITH (NOLOCK) 
+WHERE WEAVETYPEID = (
+	SELECT WeaveTypeId 
+	FROM Fabric F
+	LEFT JOIN PO_Supp_Detail  PSD ON PSD.SCIRefno = F.SCIRefno
+	WHERE PSD.ID='{dr["poid"]}' AND PSD.SEQ1 ='{dr["seq1"]}' AND PSD.SEQ2 ='{dr["seq2"]}'
 ) 
-AS OFD
-WHERE  FabricType='F' and psd.id ='{txtID.Text}' 
-and psd.SEQ1 <'70' and psd.Junk=0
+AND PERCENTAGE >= IIF({PointRate} > 100, 100, {PointRate} )
 ";
-            if (result = DBProxy.Current.Select(null, sqlcmd.ToString(), out dtDetail))
-            {
-                if (dtDetail.Rows.Count == 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                }
-                else if(!insert)
-                {
-                    btnReImport.Enabled = true;
-                    btnReImport.ForeColor = Color.Red;
-                }
-            }
-            else
-            {
-                MyUtility.Msg.WarningBox("Sql connection fail!\r\n" + result.ToString());
-            }
-
-            FirstBulk();
-            if (isInsert)
-            {
-                this.detailgridbs.DataSource = dtDetail;
-            }
-            else
-            {
-                #region 異動的資料
-                string diffRows = "";
-                DataTable dtGrid = (DataTable)this.detailgridbs.DataSource;
-
-                foreach (DataRow dr in dtDetail.Rows)
-                {
-                    DataRow[] selectIns = dtGrid.Select($@"id='{dr["id"].ToString()}' and seq1='{dr["seq1"].ToString()}' and seq2='{dr["seq2"].ToString()}'");
-                    if (selectIns.Length < 1)
-                    {
-                        diffRows = diffRows + $@"Insert " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
-                        DataRow drins = dtGrid.NewRow();
-                        drins["id"] = dr["id"];
-                        drins["seq"] = dr["seq"];
-                        drins["seq1"] = dr["seq1"];
-                        drins["seq2"] = dr["seq2"];
-                        drins["colorid"] = dr["colorid"];
-                        drins["suppid"] = dr["suppid"];
-                        drins["color"] = dr["color"];
-                        drins["supp"] = dr["supp"];
-                        drins["Refno"] = dr["Refno"];
-                        drins["SeasonID"] = dr["SeasonID"];
-                        dtGrid.Rows.Add(drins);
-                    }
-                }
-
-                foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
-                {
-                    if (dr.RowState!=DataRowState.Deleted)
-                    {
-                        DataRow[] selectDelete = dtDetail.Select($@"id='{dr["id"].ToString()}' and seq1='{dr["seq1"].ToString()}' and seq2='{dr["seq2"].ToString()}'");
-
-                        if (selectDelete.Length < 1)
-                        {
-                            diffRows = diffRows + $@"Remove " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
-                            dr.Delete();
-                        }
-                        else
-                        {
-                            // 如果不相同,就勾選相同的color,suppid,refno
-                            if (selectDelete[0]["colorid"].ToString() != dr["colorid"].ToString()
-                   || selectDelete[0]["Suppid"].ToString() != dr["Suppid"].ToString()
-                   || selectDelete[0]["Refno"].ToString() != dr["Refno"].ToString())
-                            {
-                                diffRows = diffRows + $@"Update " + dr["seq1"].ToString() + "-" + dr["seq2"].ToString() + " " + dr["Seasonid"].ToString() + " " + dr["Refno"].ToString() + " " + dr["ColorID"].ToString() + " " + dr["suppid"].ToString() + "\r\n";
-                                dr["colorid"] = selectDelete[0]["colorid"].ToString();
-                                dr["Suppid"] = selectDelete[0]["Suppid"].ToString();
-                                dr["Refno"] = selectDelete[0]["Refno"].ToString();
-                            }
-
-                        }
-                    }                    
-                }               
-                if (diffRows.Length > 1)
-                {
-                    MyUtility.Msg.InfoBox("The corrected data is as follows" + "\r\n" +
-                    "Status Seq# Season Ref# Color Supp" + "\r\n" + diffRows);
-                    btnReImport.Enabled = false;
-                    btnReImport.ForeColor = Color.Black;
-                }
-                
-                #endregion
-            }
-            
+            dr["T2Grade"] = MyUtility.GetValue.Lookup(sqlWEAVETYPEID);
+            dr.EndEdit();
         }
 
-        private void FirstBulk()
+        private void Page1_Query()
         {
-            if (!insert)
+            // 檢查[表頭][ETA+SP#+PO#] 如果全為空請跳出訊息並return
+            if (MyUtility.Check.Empty(this.dateRange1.Value1) && MyUtility.Check.Empty(this.dateRange1.Value1) && MyUtility.Check.Empty(this.txtsp.Text) && MyUtility.Check.Empty(this.txtpo.Text))
             {
-                return; 
-            }
-            string msg_bulkdyelot = "";
-            foreach (DataRow drt in ((DataTable)this.detailgridbs.DataSource).Rows)
-            {
-                if (drt.RowState != DataRowState.Deleted)
-                {
-                    if (drt["BulkDyelot"].ToString().ToUpper()=="TRUE")
-                    {
-                        foreach (DataRow drt1 in ((DataTable)this.detailgridbs.DataSource).Rows)
-                        {
-                            if (drt1.RowState !=DataRowState.Deleted)
-                            {
-                                // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
-                                if (drt1["colorid"].ToString() == drt["colorid"].ToString()
-                       && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
-                       && drt1["Refno"].ToString() == drt["Refno"].ToString())
-                                {
-                                    drt["BulkDyelot"] = true;
-                                }
-                            }                           
-                        }
-                    }
-                }
-            }
-            for (int i = 0; i < dtDetail.Rows.Count; i++)
-            {
-                if (MyUtility.Convert.GetBool(dtDetail.Rows[i]["BulkDyelot"]))
-                {
-                    msg_bulkdyelot = msg_bulkdyelot + $"{dtDetail.Rows[i]["Seq"]}, {dtDetail.Rows[i]["SeasonID"]},{dtDetail.Rows[i]["Refno"]},{dtDetail.Rows[i]["Color"]},{dtDetail.Rows[i]["supp"]}" + "\r\n";
-                }
-            }
-
-            if (msg_bulkdyelot.Length > 1)
-            {
-                MyUtility.Msg.WarningBox("Already received 1st bulk dyelot. Below data will be selected automatically.\r\n" + "seq# Season Ref# Color Supp \r\n" + msg_bulkdyelot.ToString());
-                insert = false;
-            }
-        }
-
-        private void btnFind_Click(object sender, EventArgs e)
-        {            
-            if (!EditMode)
-            {
-                MyUtility.Msg.InfoBox("Please go to 'modify mode' to click this button!");
+                MyUtility.Msg.WarningBox("Please select ETA or SP# or PO# at least one field entry.");
                 return;
             }
-            else
+
+            this.listControlBindingSource1.DataSource = null;
+
+            #region Where
+            string sqlwhere = string.Empty;
+            List<string> sqlwheres = new List<string>();
+            List<SqlParameter> listSQLParameter = new List<SqlParameter>();
+            if (!MyUtility.Check.Empty(this.dateRange1.Value1) && !MyUtility.Check.Empty(this.dateRange1.Value1))
             {
-                DialogResult dResult = MyUtility.Msg.QuestionBox("Purchase item has been modified. Reload data?", "Question", MessageBoxButtons.YesNo);
-                if (dResult.ToString().ToUpper() == "NO")
+                listSQLParameter.Add(new SqlParameter("@ETA1", this.dateRange1.Value1));
+                listSQLParameter.Add(new SqlParameter("@ETA2", this.dateRange1.Value2));
+                sqlwheres.Add(" ed.LastEta between @ETA1 and @ETA2 ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtsp.Text))
+            {
+                listSQLParameter.Add(new SqlParameter("@sp", this.txtsp.Text));
+                sqlwheres.Add(" ed.PoID = @sp ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSeq.seq1))
+            {
+                listSQLParameter.Add(new SqlParameter("@seq1", this.txtSeq.seq1));
+                sqlwheres.Add(" ed.Seq1 = @seq1 ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSeq.seq2))
+            {
+                listSQLParameter.Add(new SqlParameter("@seq2", this.txtSeq.seq2));
+                sqlwheres.Add(" ed.Seq2 = @seq2 ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtpo.Text))
+            {
+                listSQLParameter.Add(new SqlParameter("@po", this.txtpo.Text));
+                sqlwheres.Add(" o.CustPONo = @po ");
+            }
+
+            if (sqlwheres.Count > 0)
+            {
+                sqlwhere = "where " + string.Join(" and ", sqlwheres);
+            }
+            #endregion Where
+
+            #region Sqlcmd
+            string sqlcmd = $@"
+select distinct
+    selected = cast(0 as bit),
+	FileExistI= cast(0 as bit),
+	FileExistT= cast(0 as bit),
+	ed.id,
+	ed.LastEta,
+	ed.PoID,
+	seq=ed.seq1+'-'+ed.seq2,
+	ps.SuppID,
+	Supp.AbbEN,
+	psd.Refno,
+	psd.ColorID,
+	Qty = isnull(ed.Qty,0) + isnull(ed.Foc,0),
+	sr.InspectionReport,
+	sr.TPEInspectionReport,
+	sr.TestReport,
+	sr.TPETestReport,
+	sr.ContinuityCard,
+	sr.TPEContinuityCard,
+	fd.FirstDyelot,
+	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no need to provide 1st dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
+	sr.T2InspYds,
+	sr.T2DefectPoint,
+	sr.T2Grade,
+	a.T1InspectedYards,
+	b.T1DefectPoints,
+    ed.seq1,
+    ed.seq2,
+	ed.Ukey
+from Export_Detail ed with(nolock)
+inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+inner join orders o with(nolock) on o.id = ed.PoID
+left join SentReport sr with(nolock) on sr.Export_DetailUkey = ed.Ukey
+left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
+left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
+left join Supp with(nolock) on Supp.ID = ps.SuppID
+left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
+left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
+left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+outer apply(
+	select T1InspectedYards=sum(fp.ActualYds)
+	from fir f
+	left join FIR_Physical fp on fp.id=f.id
+	left join Receiving r on r.id= f.ReceivingID
+	where r.InvNo=ed.ID and f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
+)a
+outer apply(
+	select  T1DefectPoints = sum(fp.TotalPoint)
+	from fir f
+	left join FIR_Physical fp on fp.id=f.id
+	left join Receiving r on r.id= f.ReceivingID
+	where r.InvNo=ed.ID and f.POID=ed.PoID and f.SEQ1 =ed.Seq1 and f.SEQ2 =ed.Seq2
+)b
+{sqlwhere}
+and psd.FabricType = 'F'
+and (ed.qty + ed.Foc)>0
+and o.Category in('B','M')
+
+order by ed.id,ed.PoID,ed.Seq1,ed.Seq2
+";
+            #endregion Sqlcmd
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out dt1);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            dt1.AcceptChanges();
+            this.listControlBindingSource1.DataSource = dt1;
+        }
+
+        private void btnQuery_Click(object sender, EventArgs e)
+        {
+            this.Page1_Query();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            this.grid1.ValidateControl();
+            if (dt1 == null || dt1.Rows.Count == 0)
+            {
+                return;
+            }
+
+            if (dt1.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).ToList().Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No data changes.");
+                return;
+            }
+
+            DataTable changedt = dt1.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).CopyToDataTable();
+
+            string sqlupdate = $@"
+merge SentReport t
+using #tmp s
+on t.Export_DetailUkey = s.ukey
+when matched then update set 
+	t.InspectionReport=s.InspectionReport,
+	t.TestReport=s.TestReport,
+	t.ContinuityCard=s.ContinuityCard,
+	t.T2InspYds=isnull(s.T2InspYds,0),
+	t.T2DefectPoint=isnull(s.T2DefectPoint,0),
+	t.T2Grade=isnull(s.T2Grade,''),
+    t.EditName='{Sci.Env.User.UserID}',
+    t.EditDate = getdate()	
+when not matched by target then 
+insert([Export_DetailUkey]
+,[InspectionReport],[TestReport],[ContinuityCard],[T2InspYds],[T2DefectPoint],[T2Grade],[EditName],[EditDate])
+VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYds,0),isnull(s.T2DefectPoint,0),isnull(s.T2Grade,''),'{Sci.Env.User.UserID}',getdate())
+;
+";
+            DataTable odt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(changedt, string.Empty, sqlupdate, out odt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            MyUtility.Msg.InfoBox("Success!");
+            Page1_Query();
+        }
+
+        TransferPms transferPMS = new TransferPms();
+        private void btnDownloadFile_Click(object sender, EventArgs e)
+        {
+            DualResult result;
+            IList<MyUtility.FTP.FtpFile> ftpDir = new List<MyUtility.FTP.FtpFile>();
+            result = MyUtility.FTP.FTP_GetFileList(this.Filepath, out ftpDir); //確認根目錄能正常取得
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("For ftp://ftp.sportscity.con.tw no access, Please find Local IT assistance to open.");
+                return;
+            }
+
+            if (dt1==null || dt1.Select("selected = 1").Length ==0)
+            {
+                MyUtility.Msg.WarningBox("No datas selected.");
+                return;
+            }
+            contextMenuStrip1.Show(Cursor.Position.X, Cursor.Position.Y);
+        }
+
+        private void Savefile(string type)
+        {
+            this.grid1.ValidateControl();
+            //SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            //saveFileDialog1.Filter = "All Files|*";
+            //saveFileDialog1.Title = "Save File";
+            //saveFileDialog1.FileName = "multiple files"+ type;
+            //List<string> files = new List<string>();
+            Dictionary<string, string> filesDic = new Dictionary<string, string>();
+            DataRow[] drs = dt1.Select("selected = 1");
+            foreach (DataRow dr in drs)
+            {
+                string filepath = Filedic(dr); // 取得根目錄+子目錄
+
+                DualResult result;
+                IList<string> ftpDir = new List<string>();
+                result = MyUtility.FTP.FTP_GetFileList(filepath, out ftpDir);
+                if (!result)
                 {
-                    return;
+                    continue;
                 }
-                else
+
+                if (ftpDir.Count > 0)
                 {
-                    insDetailData(insert);
-                    foreach (DataRow drt in ((DataTable)this.detailgridbs.DataSource).Rows)
+                    string filename = Filename(dr, type);
+                    string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
+                    foreach (string item in fs)
                     {
-                        if (drt.RowState != DataRowState.Deleted)
-                        {
-                            if (drt["BulkDyelot"].ToString().ToUpper()=="TRUE")
-                            {
-                                foreach (DataRow drt1 in ((DataTable)this.detailgridbs.DataSource).Rows)
-                                {
-                                    if (drt1.RowState != DataRowState.Deleted)
-                                    {
-                                        // color,supp,refno 如果都相同,就勾選相同的1stBulkDyelot
-                                        if (drt1["colorid"].ToString() == drt["colorid"].ToString()
-                               && drt1["Suppid"].ToString() == drt["Suppid"].ToString()
-                               && drt1["Refno"].ToString() == drt["Refno"].ToString())
-                                        {
-                                            drt1["BulkDyelot"] = true;
-                                        }
-                                    }
-                                    
-                                }
-                            }  
-                        }
+                        filesDic.Add(item, filepath);
                     }
-                    FirstBulk();
                 }
             }
+
+            if (filesDic.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No files exists.");
+                return;
+            }
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    DualResult dresult;
+                    foreach (var file in filesDic)
+                    {
+                        dresult = MyUtility.FTP.FTP_Download(file.Value + @"\" + file.Key, fbd.SelectedPath + @"\" + file.Key);
+                        if (!dresult)
+                        {
+                            this.ShowErr(dresult);
+                        }
+                    }
+                }
+            }
+            MyUtility.Msg.InfoBox("Success");
+            //if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            //{
+            //    DualResult result;
+            //    foreach (var file in filesDic)
+            //    {
+            //        result = MyUtility.FTP.FTP_Download(file.Value + @"\" + file.Key, Path.GetDirectoryName(saveFileDialog1.FileName) + @"\" + file.Key);
+            //        if (!result)
+            //        {
+            //            this.ShowErr(result);
+            //        }
+            //    }
+            //}
+        }
+
+        private void inspectionReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Savefile("-inspection");
+        }
+
+        private void testReportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Savefile("-test");
+        }
+        #endregion Tab_Page1
+
+        #region #Tab_Page2
+        private void Page2_Query()
+        {
+            // 檢查[表頭][ETA+SP#+PO#] 如果全為空請跳出訊息並return
+            if (MyUtility.Check.Empty(this.txtsupplier1.TextBox1.Text) && MyUtility.Check.Empty(this.txtRefno.Text) && MyUtility.Check.Empty(this.txtColor.Text))
+            {
+                MyUtility.Msg.WarningBox("Please select Supplier or Refno or Color at least one field entry.");
+                return;
+            }
+
+            this.listControlBindingSource2.DataSource = null;
+            #region Where
+            string sqlwhere = string.Empty;
+            List<string> sqlwheres = new List<string>();
+            List<SqlParameter> listSQLParameter = new List<SqlParameter>();
+            if (!MyUtility.Check.Empty(this.txtsupplier1.TextBox1.Text))
+            {
+                listSQLParameter.Add(new SqlParameter("@SuppID", this.txtsupplier1.TextBox1.Text));
+                sqlwheres.Add(" ps.SuppID = @SuppID ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtRefno.Text))
+            {
+                listSQLParameter.Add(new SqlParameter("@Refno", this.txtRefno.Text));
+                sqlwheres.Add(" psd.Refno = @Refno ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtColor.Text))
+            {
+                listSQLParameter.Add(new SqlParameter("@ColorID", this.txtColor.Text));
+                sqlwheres.Add(" psd.ColorID = @ColorID ");
+            }
+
+            if (sqlwheres.Count > 0)
+            {
+                sqlwhere = string.Join(" and ", sqlwheres);
+            }
+            #endregion Where
+            #region Sqlcmd
+            string sqlcmd = $@"
+select distinct
+    Export.Consignee,
+	ps.SuppID,
+	Supp.AbbEN,
+	psd.Refno,
+	psd.ColorID,
+    s.SeasonSCIID,
+    fd.Period,
+	fd.FirstDyelot  FirstDyelot,
+	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no need to provide 1st dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
+	psd.Refno
+
+from Export_Detail ed with(nolock)
+inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
+inner join orders o with(nolock) on o.id = ed.PoID
+left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.seq1 and psd.seq2 = ed.seq2
+left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
+left join Supp with(nolock) on Supp.ID = ps.SuppID
+left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
+left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
+left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
+
+where   ps.seq1 not like '7%'  and 
+{sqlwhere}
+and psd.FabricType = 'F'
+and (ed.qty + ed.Foc)>0
+and o.Category in('B','M')
+Order by Consignee, SuppID, psd.Refno, psd.ColorID, s.SeasonSCIID
+";
+            #endregion Sqlcmd
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out dt2);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dt2.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found.");
+            }
+            this.listControlBindingSource2.DataSource = dt2;
+            dt2.AcceptChanges();
+            this.grid2.AutoResizeColumns();
+        }
+
+        private void btnQuery2_Click(object sender, EventArgs e)
+        {
+            Page2_Query();
+        }
+
+        private void btnSave2_Click(object sender, EventArgs e)
+        {
+            this.grid2.ValidateControl();
+            if (dt2 == null || dt2.Rows.Count == 0)
+            {
+                return;
+            }
+
+            if (dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).ToList().Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No data changes.");
+                return;
+            }
+
+            DataTable changedt = dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).CopyToDataTable();
+            string sqlupdate = $@"
+merge FirstDyelot t
+using #tmp s
+on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.Consignee = s.Consignee  and t.SeasonSCIID = s.SeasonSCIID
+when matched then update set 
+	FirstDyelot=s.FirstDyelot,
+	EditName = '{Sci.Env.User.UserID}',
+	EditDate = GETDATE()
+when not matched by target then 
+insert([Refno],[SuppID],[ColorID],Consignee,SeasonSCIID,[FirstDyelot],[EditName],[EditDate])
+VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.Consignee,SeasonSCIID,s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
+;
+";
+            DataTable odt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(changedt, string.Empty, sqlupdate, out odt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            MyUtility.Msg.InfoBox("Success!");
+            Page2_Query();
+        }
+        #endregion#Tab_Page2
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            DataRow drSystem;
+            if (MyUtility.Check.Seek("select * from system", out drSystem))
+            {
+                Sci.Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                Sci.Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                Sci.Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+            }
+            this.Close();
         }
     }
 }

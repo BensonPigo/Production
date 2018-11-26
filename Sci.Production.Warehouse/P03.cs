@@ -516,7 +516,7 @@ Group by OrderID,RefNo,ThreadColorID,UnitID
             ,a.SEQ1 SEQ1
             ,a.SEQ2 SEQ2
             , CASE 
-	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 then 'N/A'
+	            when a.Nonphysical = 1 and a.nonContinuity=1 and nonShadebond=1 and a.nonWeight=1 and a.nonOdor=1 then 'N/A'
 	            when isnull(a.result,'')='' then 'Blank'
 	            else a.result
 	          END as [Result] 

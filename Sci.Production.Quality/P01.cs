@@ -37,7 +37,8 @@ namespace Sci.Production.Quality
                 this.modifyPhysicalInspectionToolStripMenuItem,
                 this.modifyWeightTestToolStripMenuItem,
                 this.modifyShadeBondTestToolStripMenuItem,
-                this.modifyContinuityTestToolStripMenuItem });
+                this.modifyContinuityTestToolStripMenuItem,
+                this.modifyOdorTestToolStripMenuItem  });
             //關閉表身Grid DoubleClick 會新增row的問題
             InsertDetailGridOnDoubleClick = false;
         }
@@ -52,7 +53,6 @@ namespace Sci.Production.Quality
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
         {
-            
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
             string cmd = string.Format(
 @"Select a.id,a.poid,a.SEQ1,a.SEQ2,Receivingid,a.Refno,a.SCIRefno,Suppid,
@@ -69,6 +69,10 @@ d.ColorID,
 (Select ID+' - '+ AbbEn From Supp WITH (NOLOCK) Where a.suppid = supp.id) as SuppEn,
 c.ExportID as Wkno
 ,cn.name
+,a.nonOdor
+,a.Odor
+,a.OdorEncode
+,a.OdorDate
 From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
 outer apply(select name from color WITH (NOLOCK) where color.id = d.colorid and color.BrandId = d.BrandId)cn
@@ -85,6 +89,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             DataGridViewGeneratorCheckBoxColumnSettings nonWei = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings nonSha = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings nonCon = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings nonOdor = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings phy = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings phyD = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorNumericColumnSettings phyYds = new DataGridViewGeneratorNumericColumnSettings();
@@ -94,6 +99,8 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             DataGridViewGeneratorDateColumnSettings shaD = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorTextColumnSettings Con = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorDateColumnSettings ConD = new DataGridViewGeneratorDateColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Odor = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorDateColumnSettings OdorD = new DataGridViewGeneratorDateColumnSettings();
             #region ClickEvent
             phy.CellMouseDoubleClick += (s, e) =>
             {              
@@ -168,6 +175,22 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                 frm.Dispose();
                 this.RenewData();
             };
+            Odor.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_Odor(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
+            OdorD.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.CurrentDetailData; if (null == dr) return;
+                var frm = new Sci.Production.Quality.P01_Odor(false, CurrentDetailData["ID"].ToString(), null, null, dr);
+                frm.ShowDialog(this);
+                frm.Dispose();
+                this.RenewData();
+            };
             #endregion
             #region Validat & Editable
             nonPhy.CellEditable += (s, e) =>
@@ -219,6 +242,18 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                 dr.EndEdit();
                 FinalResult(dr);
             };
+            nonOdor.CellEditable += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (dr["Status"].ToString() == "Approved") e.IsEditable = false;
+            };
+            nonOdor.CellValidating += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                dr["nonOdor"] = e.FormattedValue;
+                dr.EndEdit();
+                FinalResult(dr);
+            };
             #endregion
             #region set grid
             this.detailgrid.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -249,6 +284,12 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                 .CheckBox("NonContinuity", header: "Continuity \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0,settings:nonCon)
                 .Text("Continuity", header: "Continuity", width: Widths.AnsiChars(5), iseditingreadonly: true,settings:Con)
                 .Date("ContinuityDate", header: "Last Cont.\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true,settings:ConD)
+
+                .CheckBox("nonOdor", header: "Odor \nN/A", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: nonOdor)
+                .Text("Odor", header: "Odor", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: Odor)
+                .Date("OdorDate", header: "Last Odor\nTest. Date", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: OdorD)
+
+
                 .Text("Approve1", header: "Approve", width: Widths.AnsiChars(10), iseditingreadonly: true) 
                 .Text("ReplacementReportID", header: "1st Replacement", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Receivingid", header: "Receiving ID", width: Widths.AnsiChars(13), iseditingreadonly: true);
@@ -259,6 +300,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             detailgrid.Columns["NonWeight"].DefaultCellStyle.BackColor = Color.MistyRose;
             detailgrid.Columns["NonShadeBond"].DefaultCellStyle.BackColor = Color.MistyRose;
             detailgrid.Columns["NonContinuity"].DefaultCellStyle.BackColor = Color.MistyRose;
+            detailgrid.Columns["nonOdor"].DefaultCellStyle.BackColor = Color.MistyRose;
             //檸檬薄紗組
             detailgrid.Columns["Physical"].DefaultCellStyle.BackColor = Color.LemonChiffon;
             detailgrid.Columns["TotalInspYds"].DefaultCellStyle.BackColor = Color.LemonChiffon;
@@ -272,14 +314,17 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             //復古色組
             detailgrid.Columns["Continuity"].DefaultCellStyle.BackColor = Color.AntiqueWhite;
             detailgrid.Columns["ContinuityDate"].DefaultCellStyle.BackColor = Color.AntiqueWhite;
+            //Lavender
+            detailgrid.Columns["Odor"].DefaultCellStyle.BackColor = Color.Lavender;
+            detailgrid.Columns["OdorDate"].DefaultCellStyle.BackColor = Color.Lavender;
             #endregion
-            
+
         }
 
         protected override void OnDetailEntered() 
         {
  	        base.OnDetailEntered();
-            
+
             DataRow queryDr;
             DualResult dResult = PublicPrg.Prgs.QueryQaInspectionHeader(CurrentMaintain["ID"].ToString(), out queryDr);
             if (!dResult)
@@ -334,7 +379,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                 
                 if (detailTb.Rows.Count != 0)
                 {
-                    DataRow[] inspectAry = detailTb.Select("Result<>'' or (nonphysical and nonweight and nonshadebond and noncontinuity)");
+                    DataRow[] inspectAry = detailTb.Select("Result<>'' or (nonphysical and nonweight and nonshadebond and noncontinuity and nonOdor)");
                     if (inspectAry.Length > 0)
                     {
                         inspnum = Math.Round(((decimal)inspectAry.Length / detailRowCount) * 100, 2).ToString();
@@ -366,6 +411,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             displayWeightTest.BackColor = Color.LightCyan;
             displayShadeBond.BackColor = Color.LightGreen;
             displayContinuity.BackColor = Color.AntiqueWhite;
+            displayOdor.BackColor = Color.Lavender;
             #endregion
             this.detailgrid.AutoResizeColumns();
         }
@@ -383,11 +429,12 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                     int nonwei = dr["NonWeight"].ToString() == "True" ? 1 : 0;
                     int nonsha = dr["NonShadeBond"].ToString() == "True" ? 1 : 0;
                     int noncon = dr["NonContinuity"].ToString() == "True" ? 1 : 0;
+                    int nonOdor = dr["NonOdor"].ToString() == "True" ? 1 : 0;
                     save_po_cmd = save_po_cmd + string.Format(
                     @"Update FIR Set Result = '{0}',NonPhysical = {1},NonWeight = {2},
-                    NonShadeBond = {3},NonContinuity = {4},Status = '{6}'
+                    NonShadeBond = {3},NonContinuity = {4},Status = '{6}',NonOdor={7}
                     Where ID = '{5}';"
-                    , dr["Result"], nonph, nonwei, nonsha, noncon, dr["ID"], dr["Status"]);
+                    , dr["Result"], nonph, nonwei, nonsha, noncon, dr["ID"], dr["Status"], nonOdor);
                 }
                 #region 重新判斷AllResult
                 //重新判斷AllResult             
@@ -518,10 +565,6 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.Dispose();
             this.RenewData();
             this.OnDetailEntered();
-            //重新判斷AllResult            
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
-            CurrentDetailData["Result"] = returnstr[0];
-            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -548,10 +591,6 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.Dispose();
             this.RenewData();
             this.OnDetailEntered();
-            //重新判斷AllResult            
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
-            CurrentDetailData["Result"] = returnstr[0];
-            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -577,10 +616,6 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             frm.Dispose();
             this.RenewData();
             this.OnDetailEntered();
-            //重新判斷AllResult            
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
-            CurrentDetailData["Result"] = returnstr[0];
-            CurrentDetailData["Status"] = returnstr[1];
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
@@ -607,10 +642,32 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             this.RenewData();
             //重新計算表頭資料
             this.OnDetailEntered();
-            //重新判斷AllResult            
-            string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(CurrentDetailData);
-            CurrentDetailData["Result"] = returnstr[0];
-            CurrentDetailData["Status"] = returnstr[1];
+            // 固定滑鼠指向位置,避免被renew影響
+            int rowindex = 0;
+            for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
+            {
+                DataGridViewRow dvr = detailgrid.Rows[rIdx];
+                DataRow row = ((DataRowView)dvr.DataBoundItem).Row;
+
+                if (row["ID"].ToString() == currentID)
+                {
+                    rowindex = rIdx;
+                    break;
+                }
+            }
+            detailgrid.SelectRowTo(rowindex);
+        }
+
+        private void modifyOdorTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentDetailData; if (null == dr) return;
+            var currentID = this.CurrentDetailData["ID"].ToString();
+            var frm = new Sci.Production.Quality.P01_Odor(IsSupportEdit, CurrentDetailData["ID"].ToString(), null, null, dr);
+            frm.ShowDialog(this);
+            frm.Dispose();
+            this.RenewData();
+            //重新計算表頭資料
+            this.OnDetailEntered();
             // 固定滑鼠指向位置,避免被renew影響
             int rowindex = 0;
             for (int rIdx = 0; rIdx < detailgrid.Rows.Count; rIdx++)
