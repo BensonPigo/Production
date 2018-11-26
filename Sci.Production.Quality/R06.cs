@@ -476,29 +476,68 @@ from(
 )a
 
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
-select a.{groupby_col}
-	, iif(ccnt=0,0, round(ccnt/bcnt,4)) [cnt]
-into #BulkDyelot
-from(
-	select b.{groupby_col}, count(b.id)*1.0 bcnt, count(c.FirstDyelot)*1.0 ccnt 
-	from (
+select b.Refno, b.ColorID, b.SuppID, d.Consignee, e.SeasonSCIID, c.Period, f.RibItem 
+into #tmp_DyelotMain 
+from (
 		select distinct SuppID
 				, poid
 				, seq1
 				, seq2
 		from #tmpAllData 
 	) tmp
-	outer apply (
-		select a.id,a.seq1,a.seq2,a.SCIRefno,a.ColorID,b.SuppID,a.RefNo 
-		from PO_Supp_Detail a
-		inner join PO_Supp b on a.ID = b.ID and a.seq1 = b.seq1 
-		where a.id =  tmp.poid
-		and a.seq1 = tmp.seq1
-		and a.seq2 = tmp.seq2
-	)b
-	left join FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID
-	group by b.{groupby_col}
-)a
+outer apply (
+	select a.id,a.seq1,a.seq2,a.SCIRefno,a.ColorID,b.SuppID,a.RefNo 
+	from PO_Supp_Detail a
+	inner join PO_Supp b on a.ID = b.ID and a.seq1 = b.seq1 
+	where a.id =  tmp.poid
+	and a.seq1 = tmp.seq1
+	and a.seq2 = tmp.seq2
+)b
+left join FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID
+LEFT JOIN Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
+left join Export d on ED.ID = D.ID AND c.Consignee = d.Consignee AND D.Confirm = 1
+left join orders o on ed.PoID = o.id and o.Category in ('B','M')
+left join Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID and e.SeasonSCIID = c.SeasonSCIID
+left join Fabric f on f.SCIRefno = b.SCIRefno 
+group by b.Refno, b.ColorID, b.SuppID, d.Consignee, e.SeasonSCIID,c.Period,f.RibItem
+
+ --分母
+ select {groupby_col}, count(*)*1.0 Mcnt
+ into #tmp_DyelotMcnt
+ from #tmp_DyelotMain
+ where not(Period is null and RibItem = 1)
+ group by {groupby_col}
+
+--重新計算月份
+select 
+ROW_NUMBER() OVER(order by id) as rid
+,* 
+into #tmp_newSeasonSCI
+from SeasonSCI 
+
+select a.*, b.rid, b.rid + a.Period maxID
+into #tmp_DyelotMonth
+from #tmp_DyelotMain a
+left join  #tmp_newSeasonSCI b on a.SeasonSCIID = b.id
+where Period is not null
+
+ --分子
+select a.{groupby_col},count(*)*1.0 Dcnt
+ into #tmp_DyelotDcnt
+ from #tmp_DyelotMain a
+ inner join 
+ (
+	 select a.* ,b.id
+	 from #tmp_DyelotMonth a
+	 left join #tmp_newSeasonSCI b on b.rid between a.rid and a.maxID 
+ )b on a.Refno = b.Refno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.Consignee = b.Consignee and a.SeasonSCIID = b.id
+ group by a.{groupby_col}
+
+ select a.{groupby_col}
+	, iif(isnull(b.Dcnt,0)=0, 0, round(b.Dcnt/a.Mcnt ,4)) [cnt]
+ into #BulkDyelot
+ from #tmp_DyelotMcnt a
+ left join #tmp_DyelotDcnt b on a.{groupby_col} = b.{groupby_col}
 ------#TmpFinal 
 select --distinct
 { (ReportType.Equals("supplier") ? " Tmp.SuppID , Tmp.refno " : " Tmp.refno , Tmp.SuppID ") }
@@ -632,6 +671,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 ,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
 ,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 ,#tmpCountSP,#tmpTestReport,#InspReport,#tmpContinuityCard,#BulkDyelot
+,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
 ");
             #endregion
             return base.ValidateInput();
