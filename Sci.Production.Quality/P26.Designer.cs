@@ -30,6 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.txtReturnTo = new Sci.Production.Class.txtDropDownList();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtPackID = new Sci.Win.UI.TextBox();
             this.dateReturnDate = new Sci.Win.UI.DateRange();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
@@ -38,9 +41,6 @@
             this.labTransDate = new Sci.Win.UI.Label();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtPackID = new Sci.Win.UI.TextBox();
-            this.txtReturnTo = new Sci.Production.Class.txtDropDownList();
             this.panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -63,6 +63,36 @@
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(747, 86);
             this.panel6.TabIndex = 41;
+            // 
+            // txtReturnTo
+            // 
+            this.txtReturnTo.BackColor = System.Drawing.Color.White;
+            this.txtReturnTo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReturnTo.IsSupportEditMode = false;
+            this.txtReturnTo.Location = new System.Drawing.Point(470, 8);
+            this.txtReturnTo.Name = "txtReturnTo";
+            this.txtReturnTo.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
+            this.txtReturnTo.Size = new System.Drawing.Size(153, 23);
+            this.txtReturnTo.TabIndex = 1;
+            this.txtReturnTo.Type = "Pms_CFAReturnReason";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(8, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 23);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Pack ID";
+            // 
+            // txtPackID
+            // 
+            this.txtPackID.BackColor = System.Drawing.Color.White;
+            this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPackID.IsSupportEditMode = false;
+            this.txtPackID.Location = new System.Drawing.Point(103, 40);
+            this.txtPackID.Name = "txtPackID";
+            this.txtPackID.Size = new System.Drawing.Size(146, 23);
+            this.txtPackID.TabIndex = 2;
             // 
             // dateReturnDate
             // 
@@ -156,36 +186,6 @@
             this.grid.Size = new System.Drawing.Size(747, 349);
             this.grid.TabIndex = 43;
             this.grid.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(8, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 23);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Pack ID";
-            // 
-            // txtPackID
-            // 
-            this.txtPackID.BackColor = System.Drawing.Color.White;
-            this.txtPackID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPackID.IsSupportEditMode = false;
-            this.txtPackID.Location = new System.Drawing.Point(103, 40);
-            this.txtPackID.Name = "txtPackID";
-            this.txtPackID.Size = new System.Drawing.Size(146, 23);
-            this.txtPackID.TabIndex = 2;
-            // 
-            // txtReturnTo
-            // 
-            this.txtReturnTo.BackColor = System.Drawing.Color.White;
-            this.txtReturnTo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReturnTo.IsSupportEditMode = false;
-            this.txtReturnTo.Location = new System.Drawing.Point(470, 8);
-            this.txtReturnTo.Name = "txtReturnTo";
-            this.txtReturnTo.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
-            this.txtReturnTo.Size = new System.Drawing.Size(153, 23);
-            this.txtReturnTo.TabIndex = 1;
-            this.txtReturnTo.Type = "Pms_CFAReturnReason";
             // 
             // P26
             // 
