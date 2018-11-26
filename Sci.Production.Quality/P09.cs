@@ -459,7 +459,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
 
         private void inspectionReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Savefile("-Inspection");
+            Savefile("-inspection");
         }
 
         private void testReportToolStripMenuItem_Click(object sender, EventArgs e)
