@@ -71,6 +71,9 @@
             this.modifyWeightTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyShadeBondTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyContinuityTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modifyOdorTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayOdor = new Sci.Win.UI.DisplayBox();
+            this.labelOdor = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -187,6 +190,8 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.displayOdor);
+            this.detailbtm.Controls.Add(this.labelOdor);
             this.detailbtm.Controls.Add(this.displayContinuity);
             this.detailbtm.Controls.Add(this.labelContinuity);
             this.detailbtm.Controls.Add(this.displayShadeBond);
@@ -214,6 +219,8 @@
             this.detailbtm.Controls.SetChildIndex(this.displayShadeBond, 0);
             this.detailbtm.Controls.SetChildIndex(this.labelContinuity, 0);
             this.detailbtm.Controls.SetChildIndex(this.displayContinuity, 0);
+            this.detailbtm.Controls.SetChildIndex(this.labelOdor, 0);
+            this.detailbtm.Controls.SetChildIndex(this.displayOdor, 0);
             // 
             // browse
             // 
@@ -451,7 +458,7 @@
             this.displayContinuity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayContinuity.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayContinuity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayContinuity.Location = new System.Drawing.Point(723, 10);
+            this.displayContinuity.Location = new System.Drawing.Point(667, 9);
             this.displayContinuity.Name = "displayContinuity";
             this.displayContinuity.Size = new System.Drawing.Size(20, 21);
             this.displayContinuity.TabIndex = 47;
@@ -460,7 +467,7 @@
             // 
             this.labelContinuity.BackColor = System.Drawing.Color.Transparent;
             this.labelContinuity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelContinuity.Location = new System.Drawing.Point(671, 10);
+            this.labelContinuity.Location = new System.Drawing.Point(615, 9);
             this.labelContinuity.Name = "labelContinuity";
             this.labelContinuity.Size = new System.Drawing.Size(51, 23);
             this.labelContinuity.TabIndex = 46;
@@ -472,7 +479,7 @@
             this.displayShadeBond.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayShadeBond.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayShadeBond.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayShadeBond.Location = new System.Drawing.Point(644, 10);
+            this.displayShadeBond.Location = new System.Drawing.Point(588, 9);
             this.displayShadeBond.Name = "displayShadeBond";
             this.displayShadeBond.Size = new System.Drawing.Size(20, 21);
             this.displayShadeBond.TabIndex = 45;
@@ -481,7 +488,7 @@
             // 
             this.labelShadeBond.BackColor = System.Drawing.Color.Transparent;
             this.labelShadeBond.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelShadeBond.Location = new System.Drawing.Point(581, 10);
+            this.labelShadeBond.Location = new System.Drawing.Point(525, 9);
             this.labelShadeBond.Name = "labelShadeBond";
             this.labelShadeBond.Size = new System.Drawing.Size(66, 23);
             this.labelShadeBond.TabIndex = 44;
@@ -493,7 +500,7 @@
             this.displayWeightTest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayWeightTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayWeightTest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayWeightTest.Location = new System.Drawing.Point(553, 10);
+            this.displayWeightTest.Location = new System.Drawing.Point(497, 9);
             this.displayWeightTest.Name = "displayWeightTest";
             this.displayWeightTest.Size = new System.Drawing.Size(20, 21);
             this.displayWeightTest.TabIndex = 43;
@@ -502,7 +509,7 @@
             // 
             this.labelWeightTest.BackColor = System.Drawing.Color.Transparent;
             this.labelWeightTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelWeightTest.Location = new System.Drawing.Point(492, 10);
+            this.labelWeightTest.Location = new System.Drawing.Point(436, 9);
             this.labelWeightTest.Name = "labelWeightTest";
             this.labelWeightTest.Size = new System.Drawing.Size(76, 23);
             this.labelWeightTest.TabIndex = 42;
@@ -514,7 +521,7 @@
             this.displayPhysicalInsp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPhysicalInsp.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayPhysicalInsp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPhysicalInsp.Location = new System.Drawing.Point(462, 10);
+            this.displayPhysicalInsp.Location = new System.Drawing.Point(406, 9);
             this.displayPhysicalInsp.Name = "displayPhysicalInsp";
             this.displayPhysicalInsp.Size = new System.Drawing.Size(20, 21);
             this.displayPhysicalInsp.TabIndex = 41;
@@ -523,7 +530,7 @@
             // 
             this.labelPhysicalInsp.BackColor = System.Drawing.Color.Transparent;
             this.labelPhysicalInsp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelPhysicalInsp.Location = new System.Drawing.Point(393, 10);
+            this.labelPhysicalInsp.Location = new System.Drawing.Point(337, 9);
             this.labelPhysicalInsp.Name = "labelPhysicalInsp";
             this.labelPhysicalInsp.Size = new System.Drawing.Size(81, 23);
             this.labelPhysicalInsp.TabIndex = 40;
@@ -535,7 +542,7 @@
             this.displayavailablemodified.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayavailablemodified.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayavailablemodified.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayavailablemodified.Location = new System.Drawing.Point(364, 10);
+            this.displayavailablemodified.Location = new System.Drawing.Point(308, 9);
             this.displayavailablemodified.Name = "displayavailablemodified";
             this.displayavailablemodified.Size = new System.Drawing.Size(20, 21);
             this.displayavailablemodified.TabIndex = 39;
@@ -544,7 +551,7 @@
             // 
             this.labelavailablemodified.BackColor = System.Drawing.Color.Transparent;
             this.labelavailablemodified.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.labelavailablemodified.Location = new System.Drawing.Point(274, 10);
+            this.labelavailablemodified.Location = new System.Drawing.Point(218, 9);
             this.labelavailablemodified.Name = "labelavailablemodified";
             this.labelavailablemodified.Size = new System.Drawing.Size(93, 23);
             this.labelavailablemodified.TabIndex = 38;
@@ -655,12 +662,34 @@
             this.modifyContinuityTestToolStripMenuItem.Text = "Modify Continuity Test";
             this.modifyContinuityTestToolStripMenuItem.Click += new System.EventHandler(this.modifyContinuityTestToolStripMenuItem_Click);
             // 
-            this.detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                this.modifyPhysicalInspectionToolStripMenuItem,
-                this.modifyWeightTestToolStripMenuItem,
-                this.modifyShadeBondTestToolStripMenuItem,
-                this.modifyContinuityTestToolStripMenuItem
-                        });
+            // modifyOdorTestToolStripMenuItem
+            // 
+            this.modifyOdorTestToolStripMenuItem.Name = "modifyOdorTestToolStripMenuItem";
+            this.modifyOdorTestToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.modifyOdorTestToolStripMenuItem.Text = "Modify OdorTest";
+            this.modifyOdorTestToolStripMenuItem.Click += new System.EventHandler(this.modifyOdorTestToolStripMenuItem_Click);
+            // 
+            // displayOdor
+            // 
+            this.displayOdor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayOdor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayOdor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayOdor.Location = new System.Drawing.Point(721, 9);
+            this.displayOdor.Name = "displayOdor";
+            this.displayOdor.Size = new System.Drawing.Size(20, 21);
+            this.displayOdor.TabIndex = 49;
+            // 
+            // labelOdor
+            // 
+            this.labelOdor.BackColor = System.Drawing.Color.Transparent;
+            this.labelOdor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.labelOdor.Location = new System.Drawing.Point(690, 9);
+            this.labelOdor.Name = "labelOdor";
+            this.labelOdor.Size = new System.Drawing.Size(28, 23);
+            this.labelOdor.TabIndex = 48;
+            this.labelOdor.Text = "Odor";
+            this.labelOdor.TextStyle.Color = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(845, 730);
@@ -747,5 +776,8 @@
         private System.Windows.Forms.ToolStripMenuItem modifyWeightTestToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyShadeBondTestToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyContinuityTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modifyOdorTestToolStripMenuItem;
+        private Win.UI.DisplayBox displayOdor;
+        private Win.UI.Label labelOdor;
     }
 }
