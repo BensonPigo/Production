@@ -29,266 +29,444 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.displayBrand = new Sci.Win.UI.DisplayBox();
-            this.displaySeason = new Sci.Win.UI.DisplayBox();
-            this.displayStyle = new Sci.Win.UI.DisplayBox();
-            this.labelBrand = new Sci.Win.UI.Label();
-            this.labelSeason = new Sci.Win.UI.Label();
-            this.labelStyle = new Sci.Win.UI.Label();
-            this.labelSP = new Sci.Win.UI.Label();
-            this.editRemark = new Sci.Win.UI.EditBox();
-            this.labelRemark = new Sci.Win.UI.Label();
-            this.btnReImport = new Sci.Win.UI.Button();
-            this.txtID = new Sci.Win.UI.TextBox();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
-            this.masterpanel.SuspendLayout();
-            this.detailpanel.SuspendLayout();
-            this.detail2.SuspendLayout();
-            this.detailpanel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
-            this.detail.SuspendLayout();
-            this.detailcont.SuspendLayout();
-            this.detailbtm.SuspendLayout();
-            this.tabs.SuspendLayout();
+            this.tabControl1 = new Sci.Win.UI.TabControl();
+            this.tabInspectionReport = new System.Windows.Forms.TabPage();
+            this.btnClose = new Sci.Win.UI.Button();
+            this.btnSave = new Sci.Win.UI.Button();
+            this.btnDownloadFile = new Sci.Win.UI.Button();
+            this.grid1 = new Sci.Win.UI.Grid();
+            this.btnQuery = new Sci.Win.UI.Button();
+            this.txtpo = new Sci.Win.UI.TextBox();
+            this.txtsp = new Sci.Win.UI.TextBox();
+            this.txtSeq = new Sci.Production.Class.txtSeq();
+            this.dateRange1 = new Sci.Win.UI.DateRange();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.tab1stBulkDyelot = new System.Windows.Forms.TabPage();
+            this.btnQuery2 = new Sci.Win.UI.Button();
+            this.button1 = new Sci.Win.UI.Button();
+            this.btnSave2 = new Sci.Win.UI.Button();
+            this.grid2 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtColor = new Sci.Win.UI.TextBox();
+            this.txtRefno = new Sci.Win.UI.TextBox();
+            this.txtsupplier1 = new Sci.Production.Class.txtsupplier();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
+            this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabInspectionReport.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            this.tab1stBulkDyelot.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // masterpanel
+            // tabControl1
             // 
-            this.masterpanel.Controls.Add(this.txtID);
-            this.masterpanel.Controls.Add(this.btnReImport);
-            this.masterpanel.Controls.Add(this.editRemark);
-            this.masterpanel.Controls.Add(this.labelRemark);
-            this.masterpanel.Controls.Add(this.displayBrand);
-            this.masterpanel.Controls.Add(this.displaySeason);
-            this.masterpanel.Controls.Add(this.displayStyle);
-            this.masterpanel.Controls.Add(this.labelBrand);
-            this.masterpanel.Controls.Add(this.labelSeason);
-            this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Controls.Add(this.labelSP);
-            this.masterpanel.Size = new System.Drawing.Size(892, 105);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayStyle, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displaySeason, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBrand, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.editRemark, 0);
-            this.masterpanel.Controls.SetChildIndex(this.btnReImport, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtID, 0);
+            this.tabControl1.Controls.Add(this.tabInspectionReport);
+            this.tabControl1.Controls.Add(this.tab1stBulkDyelot);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(1094, 524);
+            this.tabControl1.TabIndex = 0;
             // 
-            // detailpanel
+            // tabInspectionReport
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 105);
-            this.detailpanel.Size = new System.Drawing.Size(892, 244);
+            this.tabInspectionReport.Controls.Add(this.btnClose);
+            this.tabInspectionReport.Controls.Add(this.btnSave);
+            this.tabInspectionReport.Controls.Add(this.btnDownloadFile);
+            this.tabInspectionReport.Controls.Add(this.grid1);
+            this.tabInspectionReport.Controls.Add(this.btnQuery);
+            this.tabInspectionReport.Controls.Add(this.txtpo);
+            this.tabInspectionReport.Controls.Add(this.txtsp);
+            this.tabInspectionReport.Controls.Add(this.txtSeq);
+            this.tabInspectionReport.Controls.Add(this.dateRange1);
+            this.tabInspectionReport.Controls.Add(this.label3);
+            this.tabInspectionReport.Controls.Add(this.label2);
+            this.tabInspectionReport.Controls.Add(this.label1);
+            this.tabInspectionReport.Location = new System.Drawing.Point(4, 25);
+            this.tabInspectionReport.Name = "tabInspectionReport";
+            this.tabInspectionReport.Padding = new System.Windows.Forms.Padding(3);
+            this.tabInspectionReport.Size = new System.Drawing.Size(1086, 495);
+            this.tabInspectionReport.TabIndex = 0;
+            this.tabInspectionReport.Text = "Inspection Report";
             // 
-            // gridicon
+            // btnClose
             // 
-            this.gridicon.Location = new System.Drawing.Point(5, 70);
-            this.gridicon.TabIndex = 6;
-            this.gridicon.Visible = false;
+            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClose.Location = new System.Drawing.Point(995, 459);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(80, 30);
+            this.btnClose.TabIndex = 9;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // detailgridcont
+            // btnSave
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 244);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(909, 459);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 8;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // detail2
+            // btnDownloadFile
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.btnDownloadFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDownloadFile.Location = new System.Drawing.Point(773, 459);
+            this.btnDownloadFile.Name = "btnDownloadFile";
+            this.btnDownloadFile.Size = new System.Drawing.Size(130, 30);
+            this.btnDownloadFile.TabIndex = 7;
+            this.btnDownloadFile.Text = "Download File";
+            this.btnDownloadFile.UseVisualStyleBackColor = true;
+            this.btnDownloadFile.Click += new System.EventHandler(this.btnDownloadFile_Click);
             // 
-            // detailgridcont2
+            // grid1
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.grid1.AllowUserToAddRows = false;
+            this.grid1.AllowUserToDeleteRows = false;
+            this.grid1.AllowUserToResizeRows = false;
+            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
+            this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid1.Location = new System.Drawing.Point(0, 42);
+            this.grid1.Name = "grid1";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid1.RowTemplate.Height = 24;
+            this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid1.ShowCellToolTips = false;
+            this.grid1.Size = new System.Drawing.Size(1075, 411);
+            this.grid1.TabIndex = 8;
             // 
-            // detailpanel2
+            // btnQuery
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery.Location = new System.Drawing.Point(995, 6);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery.TabIndex = 6;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
             // 
-            // detail
+            // txtpo
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.txtpo.BackColor = System.Drawing.Color.White;
+            this.txtpo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtpo.Location = new System.Drawing.Point(611, 6);
+            this.txtpo.Name = "txtpo";
+            this.txtpo.Size = new System.Drawing.Size(100, 23);
+            this.txtpo.TabIndex = 5;
             // 
-            // detailcont
+            // txtsp
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.txtsp.BackColor = System.Drawing.Color.White;
+            this.txtsp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsp.Location = new System.Drawing.Point(395, 6);
+            this.txtsp.Name = "txtsp";
+            this.txtsp.Size = new System.Drawing.Size(100, 23);
+            this.txtsp.TabIndex = 2;
             // 
-            // detailbtm
+            // txtSeq
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.txtSeq.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtSeq.Location = new System.Drawing.Point(501, 6);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.seq1 = "";
+            this.txtSeq.seq2 = "";
+            this.txtSeq.Size = new System.Drawing.Size(61, 23);
+            this.txtSeq.TabIndex = 3;
             // 
-            // displayBrand
+            // dateRange1
             // 
-            this.displayBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBrand.Location = new System.Drawing.Point(323, 41);
-            this.displayBrand.Name = "displayBrand";
-            this.displayBrand.Size = new System.Drawing.Size(158, 21);
-            this.displayBrand.TabIndex = 5;
             // 
-            // displaySeason
             // 
-            this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySeason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySeason.Location = new System.Drawing.Point(323, 11);
-            this.displaySeason.Name = "displaySeason";
-            this.displaySeason.Size = new System.Drawing.Size(158, 21);
-            this.displaySeason.TabIndex = 3;
             // 
-            // displayStyle
+            this.dateRange1.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRange1.DateBox1.Name = "";
+            this.dateRange1.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRange1.DateBox1.TabIndex = 0;
             // 
-            this.displayStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayStyle.Location = new System.Drawing.Point(70, 43);
-            this.displayStyle.Name = "displayStyle";
-            this.displayStyle.Size = new System.Drawing.Size(158, 21);
-            this.displayStyle.TabIndex = 4;
             // 
-            // labelBrand
             // 
-            this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrand.Location = new System.Drawing.Point(266, 41);
-            this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(54, 23);
-            this.labelBrand.TabIndex = 22;
-            this.labelBrand.Text = "Brand";
+            this.dateRange1.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRange1.DateBox2.Name = "";
+            this.dateRange1.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRange1.DateBox2.TabIndex = 1;
+            this.dateRange1.Location = new System.Drawing.Point(72, 6);
+            this.dateRange1.Name = "dateRange1";
+            this.dateRange1.Size = new System.Drawing.Size(280, 23);
+            this.dateRange1.TabIndex = 0;
             // 
-            // labelSeason
+            // label3
             // 
-            this.labelSeason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSeason.Location = new System.Drawing.Point(266, 11);
-            this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(54, 23);
-            this.labelSeason.TabIndex = 21;
-            this.labelSeason.Text = "Season";
+            this.label3.Location = new System.Drawing.Point(575, 6);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(33, 23);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "PO";
             // 
-            // labelStyle
+            // label2
             // 
-            this.labelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelStyle.Location = new System.Drawing.Point(13, 44);
-            this.labelStyle.Name = "labelStyle";
-            this.labelStyle.Size = new System.Drawing.Size(54, 23);
-            this.labelStyle.TabIndex = 20;
-            this.labelStyle.Text = "Style";
+            this.label2.Location = new System.Drawing.Point(355, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(37, 23);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "SP#";
             // 
-            // labelSP
+            // label1
             // 
-            this.labelSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSP.Location = new System.Drawing.Point(13, 15);
-            this.labelSP.Name = "labelSP";
-            this.labelSP.Size = new System.Drawing.Size(54, 23);
-            this.labelSP.TabIndex = 19;
-            this.labelSP.Text = "SP#";
+            this.label1.Location = new System.Drawing.Point(5, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(64, 23);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "ETA";
             // 
-            // editRemark
+            // tab1stBulkDyelot
             // 
-            this.editRemark.BackColor = System.Drawing.Color.White;
-            this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
-            this.editRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(601, 7);
-            this.editRemark.Multiline = true;
-            this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(272, 55);
-            this.editRemark.TabIndex = 1;
+            this.tab1stBulkDyelot.Controls.Add(this.btnQuery2);
+            this.tab1stBulkDyelot.Controls.Add(this.button1);
+            this.tab1stBulkDyelot.Controls.Add(this.btnSave2);
+            this.tab1stBulkDyelot.Controls.Add(this.grid2);
+            this.tab1stBulkDyelot.Controls.Add(this.txtColor);
+            this.tab1stBulkDyelot.Controls.Add(this.txtRefno);
+            this.tab1stBulkDyelot.Controls.Add(this.txtsupplier1);
+            this.tab1stBulkDyelot.Controls.Add(this.label6);
+            this.tab1stBulkDyelot.Controls.Add(this.label5);
+            this.tab1stBulkDyelot.Controls.Add(this.label4);
+            this.tab1stBulkDyelot.Location = new System.Drawing.Point(4, 25);
+            this.tab1stBulkDyelot.Name = "tab1stBulkDyelot";
+            this.tab1stBulkDyelot.Padding = new System.Windows.Forms.Padding(3);
+            this.tab1stBulkDyelot.Size = new System.Drawing.Size(1086, 495);
+            this.tab1stBulkDyelot.TabIndex = 1;
+            this.tab1stBulkDyelot.Text = "1st Bulk Dyelot";
             // 
-            // labelRemark
+            // btnQuery2
             // 
-            this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRemark.Location = new System.Drawing.Point(499, 9);
-            this.labelRemark.Name = "labelRemark";
-            this.labelRemark.Size = new System.Drawing.Size(95, 23);
-            this.labelRemark.TabIndex = 28;
-            this.labelRemark.Text = "Remark";
+            this.btnQuery2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuery2.Location = new System.Drawing.Point(998, 6);
+            this.btnQuery2.Name = "btnQuery2";
+            this.btnQuery2.Size = new System.Drawing.Size(80, 30);
+            this.btnQuery2.TabIndex = 13;
+            this.btnQuery2.Text = "Query";
+            this.btnQuery2.UseVisualStyleBackColor = true;
+            this.btnQuery2.Click += new System.EventHandler(this.btnQuery2_Click);
             // 
-            // btnReImport
+            // button1
             // 
-            this.btnReImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnReImport.Location = new System.Drawing.Point(669, 68);
-            this.btnReImport.Name = "btnReImport";
-            this.btnReImport.Size = new System.Drawing.Size(204, 31);
-            this.btnReImport.TabIndex = 2;
-            this.btnReImport.Text = "Re-Import Table";
-            this.btnReImport.UseVisualStyleBackColor = true;
-            this.btnReImport.Click += new System.EventHandler(this.btnFind_Click);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(998, 459);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(80, 30);
+            this.button1.TabIndex = 15;
+            this.button1.Text = "Close";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // txtID
+            // btnSave2
             // 
-            this.txtID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
-            this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtID.IsSupportEditMode = false;
-            this.txtID.Location = new System.Drawing.Point(70, 15);
-            this.txtID.Name = "txtID";
-            this.txtID.ReadOnly = true;
-            this.txtID.Size = new System.Drawing.Size(158, 23);
-            this.txtID.TabIndex = 0;
-            this.txtID.Validating += new System.ComponentModel.CancelEventHandler(this.txtID_Validating);
+            this.btnSave2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave2.Location = new System.Drawing.Point(912, 459);
+            this.btnSave2.Name = "btnSave2";
+            this.btnSave2.Size = new System.Drawing.Size(80, 30);
+            this.btnSave2.TabIndex = 14;
+            this.btnSave2.Text = "Save";
+            this.btnSave2.UseVisualStyleBackColor = true;
+            this.btnSave2.Click += new System.EventHandler(this.btnSave2_Click);
+            // 
+            // grid2
+            // 
+            this.grid2.AllowUserToAddRows = false;
+            this.grid2.AllowUserToDeleteRows = false;
+            this.grid2.AllowUserToResizeRows = false;
+            this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grid2.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.grid2.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.grid2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid2.DataSource = this.listControlBindingSource2;
+            this.grid2.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.grid2.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.grid2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.grid2.Location = new System.Drawing.Point(6, 42);
+            this.grid2.Name = "grid2";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.grid2.RowTemplate.Height = 24;
+            this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid2.ShowCellToolTips = false;
+            this.grid2.Size = new System.Drawing.Size(1072, 411);
+            this.grid2.TabIndex = 8;
+            // 
+            // txtColor
+            // 
+            this.txtColor.BackColor = System.Drawing.Color.White;
+            this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtColor.Location = new System.Drawing.Point(459, 6);
+            this.txtColor.Name = "txtColor";
+            this.txtColor.Size = new System.Drawing.Size(100, 23);
+            this.txtColor.TabIndex = 12;
+            // 
+            // txtRefno
+            // 
+            this.txtRefno.BackColor = System.Drawing.Color.White;
+            this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRefno.Location = new System.Drawing.Point(289, 6);
+            this.txtRefno.Name = "txtRefno";
+            this.txtRefno.Size = new System.Drawing.Size(100, 23);
+            this.txtRefno.TabIndex = 11;
+            // 
+            // txtsupplier1
+            // 
+            this.txtsupplier1.DisplayBox1Binding = "";
+            this.txtsupplier1.Location = new System.Drawing.Point(72, 6);
+            this.txtsupplier1.Name = "txtsupplier1";
+            this.txtsupplier1.Size = new System.Drawing.Size(147, 23);
+            this.txtsupplier1.TabIndex = 10;
+            this.txtsupplier1.TextBox1Binding = "";
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(392, 6);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(64, 23);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "Color";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(222, 6);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(64, 23);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Refno";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(5, 6);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(64, 23);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "Supplier";
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.inspectionReportToolStripMenuItem,
+            this.testReportToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(177, 48);
+            // 
+            // inspectionReportToolStripMenuItem
+            // 
+            this.inspectionReportToolStripMenuItem.Name = "inspectionReportToolStripMenuItem";
+            this.inspectionReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.inspectionReportToolStripMenuItem.Text = "Inspection Report";
+            this.inspectionReportToolStripMenuItem.Click += new System.EventHandler(this.inspectionReportToolStripMenuItem_Click);
+            // 
+            // testReportToolStripMenuItem
+            // 
+            this.testReportToolStripMenuItem.Name = "testReportToolStripMenuItem";
+            this.testReportToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.testReportToolStripMenuItem.Text = "Test Report";
+            this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
             // 
             // P09
             // 
-            this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(900, 449);
-            this.DefaultControl = "txtID";
-            this.DefaultControlForEdit = "editRemark";
-            this.DefaultDetailOrder = "seq1,seq2";
-            this.DefaultOrder = "id";
-            this.GridAlias = "FabricInspDoc_Detail";
-            this.GridNew = 0;
-            this.GridUniqueKey = "id,seq1,seq2";
-            this.IsSupportConfirm = true;
-            this.IsSupportCopy = false;
-            this.IsSupportDelete = false;
-            this.IsSupportPrint = false;
-            this.IsSupportUnconfirm = true;
-            this.KeyField1 = "id";
+            this.ClientSize = new System.Drawing.Size(1094, 524);
+            this.Controls.Add(this.tabControl1);
+            this.DefaultControl = "txtSPNo";
             this.Name = "P09";
             this.Text = "P09.Fabric Inspection Document Record";
-            this.UnApvChkValue = "Confirmed";
-            this.WorkAlias = "FabricInspDoc";
-            this.Controls.SetChildIndex(this.tabs, 0);
-            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
-            this.masterpanel.ResumeLayout(false);
-            this.masterpanel.PerformLayout();
-            this.detailpanel.ResumeLayout(false);
-            this.detail2.ResumeLayout(false);
-            this.detailpanel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
-            this.detail.ResumeLayout(false);
-            this.detailcont.ResumeLayout(false);
-            this.detailbtm.ResumeLayout(false);
-            this.detailbtm.PerformLayout();
-            this.tabs.ResumeLayout(false);
+            this.Controls.SetChildIndex(this.tabControl1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabInspectionReport.ResumeLayout(false);
+            this.tabInspectionReport.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            this.tab1stBulkDyelot.ResumeLayout(false);
+            this.tab1stBulkDyelot.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.grid2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private Win.UI.DisplayBox displayBrand;
-        private Win.UI.DisplayBox displaySeason;
-        private Win.UI.DisplayBox displayStyle;
-        private Win.UI.Label labelBrand;
-        private Win.UI.Label labelSeason;
-        private Win.UI.Label labelStyle;
-        private Win.UI.Label labelSP;
-        private Win.UI.EditBox editRemark;
-        private Win.UI.Label labelRemark;
-        private Win.UI.Button btnReImport;
-        private Win.UI.TextBox txtID;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabInspectionReport;
+        private Win.UI.DateRange dateRange1;
+        private Win.UI.Label label3;
+        private Win.UI.Label label2;
+        private Win.UI.Label label1;
+        private System.Windows.Forms.TabPage tab1stBulkDyelot;
+        private Win.UI.TextBox txtpo;
+        private Win.UI.TextBox txtsp;
+        private Class.txtSeq txtSeq;
+        private Win.UI.Button btnQuery;
+        private Win.UI.Button btnClose;
+        private Win.UI.Button btnSave;
+        private Win.UI.Button btnDownloadFile;
+        private Win.UI.Grid grid1;
+        private Win.UI.TextBox txtColor;
+        private Win.UI.TextBox txtRefno;
+        private Class.txtsupplier txtsupplier1;
+        private Win.UI.Label label6;
+        private Win.UI.Label label5;
+        private Win.UI.Label label4;
+        private Win.UI.Grid grid2;
+        private Win.UI.Button btnSave2;
+        private Win.UI.Button button1;
+        private Win.UI.Button btnQuery2;
+        private Win.UI.ListControlBindingSource listControlBindingSource2;
+        private Win.UI.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem inspectionReportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testReportToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }

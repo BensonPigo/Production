@@ -326,12 +326,6 @@
     <Compile Include="P07_Wash.Designer.cs">
       <DependentUpon>P07_Wash.cs</DependentUpon>
     </Compile>
-    <Compile Include="P09.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P09.Designer.cs">
-      <DependentUpon>P09.cs</DependentUpon>
-    </Compile>
     <Compile Include="P10.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -343,6 +337,12 @@
     </Compile>
     <Compile Include="P10_Detail.Designer.cs">
       <DependentUpon>P10_Detail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P09.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P09.Designer.cs">
+      <DependentUpon>P09.cs</DependentUpon>
     </Compile>
     <Compile Include="P25.cs">
       <SubType>Form</SubType>
@@ -664,14 +664,14 @@
     <EmbeddedResource Include="P07_Wash.resx">
       <DependentUpon>P07_Wash.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P09.resx">
-      <DependentUpon>P09.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P10.resx">
       <DependentUpon>P10.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_Detail.resx">
       <DependentUpon>P10_Detail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P09.resx">
+      <DependentUpon>P09.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P25.resx">
       <DependentUpon>P25.cs</DependentUpon>
