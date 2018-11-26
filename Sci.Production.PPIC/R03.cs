@@ -1288,7 +1288,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             return Result.True;
         }
 
-        private int lastColA = 119; // 最後一欄 , 有新增欄位要改這
+        private int lastColA = 120; // 最後一欄 , 有新增欄位要改這
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
@@ -1311,23 +1311,23 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             worksheet.Name = "PPIC_Master_List";
             excel.Visible = true;
             // 填Subprocess欄位名稱
-            int subConCol = 9999, ttlTMS = lastCol + 2; // 紀錄SubCon與TTL_TMS的欄位
+            int subConCol = 9999, ttlTMS = lastCol + 1; // 紀錄SubCon與TTL_TMS的欄位
             string excelColEng = string.Empty;
             if (this.artwork || this.pap)
             {
                 foreach (DataRow dr in this.subprocessColumnName.Rows)
                 {
-                    worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"]) + 1] = MyUtility.Convert.GetString(dr["ColumnN"]);
-                    lastCol = MyUtility.Convert.GetInt(dr["rno"]) + 1;
+                    worksheet.Cells[1, MyUtility.Convert.GetInt(dr["rno"]) ] = MyUtility.Convert.GetString(dr["ColumnN"]);
+                    lastCol = MyUtility.Convert.GetInt(dr["rno"]) ;
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "SUBCON")
                     {
-                        subConCol = MyUtility.Convert.GetInt(dr["rno"]) + 1;
+                        subConCol = MyUtility.Convert.GetInt(dr["rno"]) ;
                          this.Subtrue = 1;
                     }
 
                     if (MyUtility.Convert.GetString(dr["ColumnN"]).ToUpper() == "TTL_TMS")
                     {
-                        ttlTMS = MyUtility.Convert.GetInt(dr["rno"]) + 1;
+                        ttlTMS = MyUtility.Convert.GetInt(dr["rno"]) ;
                     }
                 }
                 // 算出Excel的Column的英文位置
@@ -1337,12 +1337,12 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             {
                 worksheet.Cells[1, ttlTMS] = "TTL_TMS";
                 // 算出Excel的Column的英文位置
-                excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol + 2);
+                excelColEng = PublicPrg.Prgs.GetExcelEnglishColumnName(lastCol + 1);
             }
 
             // 填內容值
             int intRowsStart = 0;
-            object[,] objArray = new object[this.printData.Rows.Count, lastCol + 2];
+            object[,] objArray = new object[this.printData.Rows.Count, lastCol + 1];
 
             string kPIChangeReasonName;  // CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
                                          // Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
@@ -1506,47 +1506,47 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                         {
                             if (!MyUtility.Check.Empty(sdr["AUnitRno"]))
                             {
-                                objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["AUnitRno"]) ] = MyUtility.Convert.GetDecimal(sdr["Qty"]);
+                                objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["AUnitRno"]) -1] = MyUtility.Convert.GetDecimal(sdr["Qty"]);
                             }
 
                             if (!MyUtility.Check.Empty(sdr["PUnitRno"]))
                             {
                                 if (MyUtility.Convert.GetString(sdr["ProductionUnit"]).ToUpper() == "TMS")
                                 {
-                                    objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["PUnitRno"]) ] = sdr["TMS"];
+                                    objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["PUnitRno"]) -1] = sdr["TMS"];
                                 }
                                 else
                                 {
-                                    objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["PUnitRno"]) ] = sdr["Price"];
+                                    objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["PUnitRno"]) -1] = sdr["Price"];
                                 }
                             }
 
                             if (!MyUtility.Check.Empty(sdr["NRno"]))
                             {
-                                objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["NRno"]) ] = MyUtility.Convert.GetDecimal(sdr["Qty"]);
+                                objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["NRno"]) -1] = MyUtility.Convert.GetDecimal(sdr["Qty"]);
                             }
 
                             // TTL
                             if (!MyUtility.Check.Empty(sdr["TAUnitRno"]))
                             {
-                                objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TAUnitRno"]) ] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Qty"]);
+                                objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TAUnitRno"]) -1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Qty"]);
                             }
 
                             if (!MyUtility.Check.Empty(sdr["TPUnitRno"]))
                             {
                                 if (MyUtility.Convert.GetString(sdr["ProductionUnit"]).ToUpper() == "TMS")
                                 {
-                                    objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TPUnitRno"]) ] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["TMS"]);
+                                    objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TPUnitRno"]) -1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["TMS"]);
                                 }
                                 else
                                 {
-                                    objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TPUnitRno"]) ] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Price"]);
+                                    objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TPUnitRno"]) -1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Price"]);
                                 }
                             }
 
                             if (!MyUtility.Check.Empty(sdr["TNRno"]))
                             {
-                                objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TNRno"]) ] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Qty"]);
+                                objArray[intRowsStart, MyUtility.Convert.GetInt(sdr["TNRno"]) -1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(sdr["Qty"]);
                             }
 
                             if (subConCol != 9999)
@@ -1559,11 +1559,11 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                         }
                     }
 
-                    objArray[intRowsStart, ttlTMS ] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                    objArray[intRowsStart, ttlTMS -1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 }
                 else
                 {
-                    objArray[intRowsStart, ttlTMS ] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                    objArray[intRowsStart, ttlTMS -1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 }
 
                 intRowsStart++;
