@@ -464,7 +464,8 @@ drop table #BasBundleInfo
                 this.bgWorkerUpdateInfo.CancelAsync();
                 if (cmd != null)
                 {
-                    cmd.Cancel();
+                    cancel = true;
+                    this.cmd.Cancel();
                 }
             }
         }
