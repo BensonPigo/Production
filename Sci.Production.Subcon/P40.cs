@@ -54,7 +54,7 @@ namespace Sci.Production.Subcon
             .Text("OrderQty", header: "Order Qty per Size", width: Widths.Auto(true))
             .Numeric("LoadingQty", header: "Accu. Loading Qty" + Environment.NewLine + "per Parts", width: Widths.Auto(true), decimal_places: 2)
             .Numeric("Balance", header: "Balance Qty", width: Widths.Auto(true), decimal_places: 2)
-            .Text("Status", header: "Status", width: Widths.Auto(true)).Get(out col_StatusColor)
+            .Text("Status", header: "Status", width: Widths.AnsiChars(8)).Get(out col_StatusColor)
             ;
             Change_Color();
         }
@@ -110,14 +110,13 @@ namespace Sci.Production.Subcon
                     return;
                 }
             }
+
             if (!this.bgWorkerUpdateInfo.IsBusy)
             {
-
-                this.ShowWaitMessage("Data Loading...");
-                // 子執行緒開始執行      
-
+                // 子執行緒開始執行 
                 this.btnQuery.Enabled = false;
                 this.bgWorkerUpdateInfo.RunWorkerAsync();
+                this.bgWorkerUpdateInfo.WorkerReportsProgress = true;
             }
         }
 
@@ -136,6 +135,8 @@ namespace Sci.Production.Subcon
 
         private void Query()
         {
+            this.ShowLoadingText("ShowLoadingText");
+            Application.UseWaitCursor = true;
             this.sqlWhere.Clear();
             this.InlineDate1 = this.dateRangeInlineDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeInlineDate.Value1).ToString("yyyy/MM/dd");
             this.InlineDate2 = this.dateRangeInlineDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeInlineDate.Value2).ToString("yyyy/MM/dd");
@@ -378,13 +379,12 @@ drop table #BasBundleInfo
                 this.bgWorkerUpdateInfo.WorkerSupportsCancellation = true;
                 this.bgWorkerUpdateInfo.CancelAsync();
                 this.cmd.Cancel();
-                this.HideWaitMessage();
                 this.btnQuery.Enabled = true;
             }
-            
+
             if (dt1 == null || dt1.Rows.Count==0)
             {
-                MyUtility.Msg.WarningBox("Data not found!");
+                MyUtility.Msg.WarningBox("Data not found!");               
                 return;
             }
 
@@ -406,22 +406,39 @@ drop table #BasBundleInfo
 
         private void bgWorkerUpdateInfo_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.HideWaitMessage();
+            this.HideLoadingText();
+            this.grid.Cursor = Cursors.Default;
+            Application.UseWaitCursor = false;
+            
             this.btnQuery.Enabled = true;
-            if (ds.Tables.Count==0)
+            if (ds != null)
             {
-                return;
-            }
+                if (ds.Tables.Count == 0)
+                {
+                    return;
+                }
 
-            if (ds.Tables[0] == null || ds.Tables[0].Rows.Count == 0)
+                if (ds.Tables[0] == null || ds.Tables[0].Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox("Data not found!");
+                    return;
+                }
+
+                dt1 = ds.Tables[0].Copy();
+                dt2 = ds.Tables[1].Copy();
+                this.listControlBindingSource1.DataSource = dt1;
+            }
+         
+        }
+
+        private void grid_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (!this.bgWorkerUpdateInfo.IsBusy)
             {
-                MyUtility.Msg.WarningBox("Data not found!");
-                return;
+                this.HideLoadingText();
+                this.grid.Cursor = Cursors.Default;
+                Application.UseWaitCursor = false;
             }
-
-            dt1 = ds.Tables[0].Copy();
-            dt2 = ds.Tables[1].Copy();
-            this.listControlBindingSource1.DataSource = dt1;
         }
 
         private void P40_FormClosing(object sender, FormClosingEventArgs e)
