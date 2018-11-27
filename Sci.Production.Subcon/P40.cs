@@ -139,7 +139,7 @@ namespace Sci.Production.Subcon
 
         private void Query()
         {
-            this.ShowLoadingText("ShowLoadingText");
+            this.ShowLoadingText("Data Loading...");
             this.UseWaitCursor = true;
             this.sqlWhere.Clear();
             this.InlineDate1 = this.dateRangeInlineDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeInlineDate.Value1).ToString("yyyy/MM/dd");
