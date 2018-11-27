@@ -426,7 +426,7 @@ select
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpTestReport
 from(
-	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.TPEInspectionReport)*1.0 ccnt 
+	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.TPETestReport)*1.0 ccnt 
 	from (
 	select distinct {groupby_col}
 		   , poid
@@ -444,7 +444,7 @@ select
 	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #InspReport
 from(
-	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.TPETestReport)*1.0 ccnt 
+	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.TPEInspectionReport)*1.0 ccnt 
 	from (
 	select distinct {groupby_col}
 		   , poid
