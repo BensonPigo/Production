@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
         private DataTable dt1,dt2;
         private DataSet ds;
         private SqlCommand cmd;
+        private bool cancel;
 
         public P40(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -110,6 +111,9 @@ namespace Sci.Production.Subcon
                     return;
                 }
             }
+
+            // Query時,判斷sql並非Cancel狀態
+            cancel = false;
 
             if (!this.bgWorkerUpdateInfo.IsBusy)
             {
@@ -358,13 +362,19 @@ drop table #BasBundleInfo
                 SqlConnection sqlConnection = null;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
                 this.cmd = new SqlCommand(sqlcmd, sqlConnection);
-                cmd.CommandTimeout = 3000; // 設定time out 5分鐘
+                cmd.CommandTimeout = 3000; // 設定time out 50分鐘
                 SqlDataAdapter sqad = new SqlDataAdapter(cmd);
                 sqad.Fill(ds);
-            }
-            catch (SqlException)
-            {
 
+                cmd.Dispose();
+                sqlConnection.Close();
+            }
+            catch (SqlException ex)
+            {
+                if (!cancel)
+                {
+                    MyUtility.Msg.WarningBox(ex.Message);
+                }
             }
         }
 
@@ -379,11 +389,12 @@ drop table #BasBundleInfo
             {
                 this.bgWorkerUpdateInfo.WorkerSupportsCancellation = true;
                 this.bgWorkerUpdateInfo.CancelAsync();
+                cancel = true;
                 this.cmd.Cancel();
                 this.btnQuery.Enabled = true;
             }
 
-            if (dt1 == null || dt1.Rows.Count==0)
+            if (dt2 == null || dt2.Rows.Count==0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");               
                 return;
@@ -393,8 +404,8 @@ drop table #BasBundleInfo
             Sci.Utility.Report.ExcelCOM com= new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_P40.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
-            com.WriteTable(dt1, 2);
-            worksheet.get_Range($"A2:N{MyUtility.Convert.GetString(1 + dt1.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
+            com.WriteTable(dt2, 2);
+            worksheet.get_Range($"A2:N{MyUtility.Convert.GetString(1 + dt2.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             objApp.Columns.AutoFit();
@@ -425,8 +436,12 @@ drop table #BasBundleInfo
                     return;
                 }
 
+                if (ds.Tables.Count == 2)
+                {
+                    dt2 = ds.Tables[1].Copy();
+                }
+
                 dt1 = ds.Tables[0].Copy();
-                dt2 = ds.Tables[1].Copy();
                 this.listControlBindingSource1.DataSource = dt1;
             }
          
