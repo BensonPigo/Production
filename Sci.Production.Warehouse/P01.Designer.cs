@@ -178,6 +178,7 @@
             this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
             this.btnReCalculate = new Sci.Win.UI.Button();
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
+            this.btnPFHistory = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -193,6 +194,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnPFHistory);
             this.detailcont.Controls.Add(this.btnExpectionFormRemark);
             this.detailcont.Controls.Add(this.btnReCalculate);
             this.detailcont.Controls.Add(this.btnMeterialStatus_Local);
@@ -285,12 +287,12 @@
             this.detailcont.Controls.Add(this.numOrderQty);
             this.detailcont.Controls.Add(this.labelFOCQty);
             this.detailcont.Controls.Add(this.labelOrderQty);
-            this.detailcont.Controls.Add(this.txtuserMCHandle);
             this.detailcont.Controls.Add(this.txtuserLocalMR);
-            this.detailcont.Controls.Add(this.txttpeuserSMR);
-            this.detailcont.Controls.Add(this.txttpeuserPOHandle);
+            this.detailcont.Controls.Add(this.txtuserMCHandle);
             this.detailcont.Controls.Add(this.txttpeuserPOSMR);
+            this.detailcont.Controls.Add(this.txttpeuserPOHandle);
             this.detailcont.Controls.Add(this.txttpeuserHandle);
+            this.detailcont.Controls.Add(this.txttpeuserSMR);
             this.detailcont.Controls.Add(this.labelBuyMonth);
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.labelLocalMR);
@@ -1841,6 +1843,16 @@
             this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
             this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
             // 
+            // btnPFHistory
+            // 
+            this.btnPFHistory.Location = new System.Drawing.Point(257, 333);
+            this.btnPFHistory.Name = "btnPFHistory";
+            this.btnPFHistory.Size = new System.Drawing.Size(30, 23);
+            this.btnPFHistory.TabIndex = 194;
+            this.btnPFHistory.Text = "PF";
+            this.btnPFHistory.UseVisualStyleBackColor = true;
+            this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 721);
@@ -2020,5 +2032,6 @@
         private Win.UI.DisplayBox displaySPNo;
         private Win.UI.Button btnReCalculate;
         private Win.UI.Button btnExpectionFormRemark;
+        private Win.UI.Button btnPFHistory;
     }
 }

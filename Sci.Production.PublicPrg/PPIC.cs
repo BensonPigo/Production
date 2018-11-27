@@ -22,23 +22,23 @@ namespace Sci.Production.PublicPrg
         /// <returns>string</returns>
         public static string GetExcelEnglishColumnName(int column)
         {
-            string excelColEng;
-            if (column <= 26)
-            {
-                excelColEng = MyUtility.Convert.GetString(Convert.ToChar(column + 64));
-            }
+            string strReturn = "";
+
+            int iQuotient = column / 26;//商數
+            int iRemainder = column % 26;//餘數
+
+            if (iRemainder == 0)
+                iQuotient--;  // 剛好整除的時候，商數要減一
+
+            if (iQuotient > 0)
+                strReturn = Convert.ToChar(64 + iQuotient).ToString();//A 65 利用ASCII做轉換
+
+            if (iRemainder == 0)
+                strReturn += "Z";
             else
-            {
-                if ((column + 64) % 26 == 0)
-                {
-                    excelColEng = MyUtility.Convert.GetString(Convert.ToChar((int)((column - 1) / 26) + 64)) + 'Z';
-                }
-                else
-                {
-                    excelColEng = MyUtility.Convert.GetString(Convert.ToChar((int)((column) / 26) + 64)) + MyUtility.Convert.GetString(Convert.ToChar(column - ((int)(column / 26) * 26) + 64));
-                }
-            }
-            return excelColEng;
+                strReturn += Convert.ToChar(64 + iRemainder).ToString();    //A 65 利用ASCII做轉換
+
+            return strReturn;
         }
         #endregion;
     }
