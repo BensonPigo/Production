@@ -39,6 +39,7 @@ namespace Sci.Production.Warehouse
             Helper.Controls.Grid.Generator(this.gridComplete)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk)
                 .Text("complete", header: "Complete" + Environment.NewLine + "Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(3), iseditingreadonly: true,alignment:DataGridViewContentAlignment.MiddleCenter)
+                 .Text("FinalETA", header: "Act. ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("poid", header: "Issue SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("seq1", header: "Issue" + Environment.NewLine + "Seq1", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Text("seq2", header: "Issue" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -313,6 +314,7 @@ WHERE   StockType='{0}'
             , pd.POUnit
             , pd.StockUnit
             , isnull(x.accu_qty,0.00) accu_qty
+            , pd.FinalETA
     from dbo.orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
     inner join dbo.Factory f WITH (NOLOCK) on f.id = o.FtyGroup
