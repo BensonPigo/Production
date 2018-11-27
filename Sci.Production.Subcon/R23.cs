@@ -329,10 +329,14 @@ group by O.FactoryID
         , y.order_amt
 		,IrregularPrice.Responsible
 		,IrregularPrice.Reason
+{4}
+
 ", ratetype
  , ("and " + sqlFilter1.JoinToString(" and "))
  , ("and " + sqlFilter2.JoinToString(" and "))
- , chk_IrregularPriceReason.Checked ? "AND (IrregularPrice.IrregularPricePoid IS NOT NULL OR IrregularPrice.IrregularPricePoid != '') AND (IrregularPrice.ReasonID IS NULL  OR IrregularPrice.ReasonID = '')" 
+ , chk_IrregularPriceReason.Checked ? " AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "
+                                    : ""
+ , chk_IrregularPriceReason.Checked ? " HAVING( round(sum (x.Po_amt) / iif(y.order_qty = 0, 1, y.order_qty), 3) >  round(y.order_amt / iif(y.order_qty = 0, 1, y.order_qty), 3) ) "
                                     : ""));
             #endregion
 

@@ -90,7 +90,17 @@ namespace Sci.Production.Subcon
             {
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
+
                 DataRow dr = gridgridIrregularPrice.GetDataRow(e.RowIndex);
+                //允許空白
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    dr["SubconReasonID"] = "";
+                    dr["ResponsibleID"] = "";
+                    dr["ResponsibleName"] = "";
+                    dr["Reason"] = "";
+                    return;
+                }
                 string ori_SubconReasonID = dr["SubconReasonID"].ToString();
                 DataTable dt;
                 DBProxy.Current.Select(null, $"SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'Pms_PoIr_Responsible' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason FROM SubconReason WHERE ID='{e.FormattedValue}' AND Type='IP' AND Junk=0", out dt);
@@ -98,10 +108,10 @@ namespace Sci.Production.Subcon
                 if (dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox("No Data!!");
-                    dr["SubconReasonID"] = ori_SubconReasonID;
-                    dr["ResponsibleID"] = dr["ResponsibleID"];
-                    dr["ResponsibleName"] = dr["ResponsibleName"];
-                    dr["Reason"] = dr["Reason"];
+                    dr["SubconReasonID"] = "";
+                    dr["ResponsibleID"] = "";
+                    dr["ResponsibleName"] = "";
+                    dr["Reason"] = "";
                 }
                 else
                 {

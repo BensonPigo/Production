@@ -342,7 +342,9 @@ where 1=1
             if (chk_IrregularPriceReason.Checked)
             {
                 //價格異常的資料存在，卻沒有ReasonID
-                sqlCmd.Append(string.Format(@" AND (IrregularPrice.IrregularPricePoid IS NOT NULL OR IrregularPrice.IrregularPricePoid != '') AND (IrregularPrice.ReasonID IS NULL  OR IrregularPrice.ReasonID = '')"));
+                sqlCmd.Append(string.Format(@" AND round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) > round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3)"));
+                sqlCmd.Append(string.Format(@" AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "));
+
             }
 
             if (ordertypeindex >= 4) //include Forecast 
