@@ -136,7 +136,7 @@ namespace Sci.Production.Subcon
         private void Query()
         {
             this.ShowLoadingText("ShowLoadingText");
-            Application.UseWaitCursor = true;
+            this.UseWaitCursor = true;
             this.sqlWhere.Clear();
             this.InlineDate1 = this.dateRangeInlineDate.Value1.Empty() ? string.Empty : ((DateTime)this.dateRangeInlineDate.Value1).ToString("yyyy/MM/dd");
             this.InlineDate2 = this.dateRangeInlineDate.Value2.Empty() ? string.Empty : ((DateTime)this.dateRangeInlineDate.Value2).ToString("yyyy/MM/dd");
@@ -358,6 +358,7 @@ drop table #BasBundleInfo
                 SqlConnection sqlConnection = null;
                 DBProxy.Current.OpenConnection(null, out sqlConnection);
                 this.cmd = new SqlCommand(sqlcmd, sqlConnection);
+                cmd.CommandTimeout = 3000; // 設定time out 5分鐘
                 SqlDataAdapter sqad = new SqlDataAdapter(cmd);
                 sqad.Fill(ds);
             }
@@ -408,7 +409,7 @@ drop table #BasBundleInfo
         {
             this.HideLoadingText();
             this.grid.Cursor = Cursors.Default;
-            Application.UseWaitCursor = false;
+            this.UseWaitCursor = false;
             
             this.btnQuery.Enabled = true;
             if (ds != null)
