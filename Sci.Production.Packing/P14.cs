@@ -52,6 +52,7 @@ namespace Sci.Production.Packing
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("CTNStartNo", header: "CTN#", width: Widths.AnsiChars(6), iseditable: false)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(15), iseditable: false)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditable: false)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditable: false)
                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(15), iseditable: false)
                 .Text("CustPONo", header: "PO No.", width: Widths.AnsiChars(15), iseditable: false)
@@ -123,6 +124,7 @@ from (
             , pd.ReceiveDate
 			, pd.ReturnDate
 			, AddName = (select concat(id,'-',Name) from pass1 where id = t.AddName)
+            , pd.SizeCode
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
