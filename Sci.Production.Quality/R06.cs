@@ -361,15 +361,21 @@ inner join ColorFastness_Detail CFD WITH (NOLOCK) on CFD.ID = CF.ID
 INNER JOIN FIR F WITH (NOLOCK) ON CF.POID=F.POID 
 where CF.Status ='Confirmed' and CFD.Result = 'Fail' 
 
-select [MIGRATIONyards] =sum(rd.StockQty),tmp.{groupby_col}
+select [MIGRATIONyards] =sum(a.StockQty),tmp.{groupby_col}
 into #mtmp
-from Receiving_Detail rd WITH (NOLOCK)
-inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
-,(select distinct {groupby_col} from #tmp) tmp
-Where exists(select * from #ea where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
-or exists(select * from #eb where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
-or exists(select * from #ec where POID = RD.poid and SEQ1 = RD.seq1 and seq2 = RD.seq2  AND {groupby_col} = Tmp.{groupby_col} ) 
+from(
+	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,ps.SuppID,psd.Refno 
+	from Receiving_Detail rd WITH (NOLOCK) 
+	inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
+	left join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
+	left join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
+)a
+inner join (select distinct {groupby_col} from #tmp) tmp on a.{groupby_col} = tmp.{groupby_col} 
+Where exists(select * from #ea where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.{groupby_col} = Tmp.{groupby_col} ) 
+or exists(select * from #eb where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.{groupby_col} = Tmp.{groupby_col} ) 
+or exists(select * from #ec where POID = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2  AND a.{groupby_col} = Tmp.{groupby_col} )
 group by tmp.{groupby_col}
+
 -----#Stmp 
 select f.poid,f.SEQ1,f.seq2,fs.Dyelot,f.{groupby_col}
 into #sa
@@ -382,13 +388,18 @@ from fir f WITH (NOLOCK)
 inner join FIR_Continuity fc WITH (NOLOCK) on fc.ID = f.ID
 where f.ContinuityEncode =1 and fc.Result = 'Fail' 
 
-select [SHADINGyards] =sum(rd.StockQty),tmp.{groupby_col}
+select [SHADINGyards] =sum(a.StockQty),tmp.{groupby_col}
 into #Stmp
-from Receiving_Detail rd WITH (NOLOCK) 
-inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
-,(select distinct {groupby_col} from #tmp) tmp
-Where exists(select * from #sa where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and {groupby_col} = Tmp.{groupby_col} ) 
-or exists(select * from #sb where poid = rd.poid and SEQ1 = rd.seq1 and seq2 = rd.seq2 and Dyelot  = rd.dyelot and {groupby_col} = Tmp.{groupby_col} ) 
+from(
+	select rd.poid,rd.seq1,rd.seq2,rd.dyelot,rd.StockQty,ps.SuppID,psd.Refno 
+	from Receiving_Detail rd WITH (NOLOCK) 
+	inner join #GroupBySupp r on rd.PoId=r.POID AND rd.Seq1=r.SEQ1 and rd.Seq2=r.SEQ2
+	left join PO_Supp_Detail psd on psd.id=r.PoId and psd.SEQ1 = r.Seq1 and psd.SEQ2 = r.Seq2
+	left join  PO_Supp ps on ps.id=psd.Id and ps.seq1=psd.seq1
+)a
+inner join (select distinct {groupby_col} from #tmp) tmp on a.{groupby_col} = tmp.{groupby_col} 
+Where (exists(select * from #sa where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.{groupby_col} = Tmp.{groupby_col} ) 
+or exists(select * from #sb where poid = a.poid and SEQ1 = a.seq1 and seq2 = a.seq2 and Dyelot  = a.dyelot and a.{groupby_col} = Tmp.{groupby_col} ))
 group by tmp.{groupby_col}
 
 -----#Ltmp 
@@ -410,116 +421,133 @@ left join Fabric on Fabric.SCIRefno = f.SCIRefno
 where f.PhysicalEncode = 1 and fp.ActualWidth < Fabric.Width
 group by f.{groupby_col}
 ------#FabricInspDoc TestReport
-select tmp.{groupby_col}
-	   , [cnt] = case count(1)
-					when 0 then 0
-					else 1.0 * sum(ch.value) / count(1) 
-				 end
+select 
+	a.{groupby_col}
+	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpTestReport
-from (
+from(
+	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.TPETestReport)*1.0 ccnt 
+	from (
 	select distinct {groupby_col}
 		   , poid
 		   , seq1
 		   , seq2
 	from #tmpAllData
-) tmp
-outer apply (
-	select value = count(1)
-	from FabricInspDoc fid
-	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
-	where tmp.poid = fid.ID
-		  and tmp.seq1 = fidd.seq1
-		  and tmp.seq2 = fidd.seq2
-		  and tmp.{groupby_col} = fidd.{groupby_col}
-		  and fid.Status='Confirmed'
-		  and fidd.TestReport=1
-) ch
-group by {groupby_col}
-
+	) tmp
+	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.{groupby_col} = b.{groupby_col}
+	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	group by tmp.{groupby_col}
+)a
 ------#FabricInspDoc Inspection Report
-select tmp.{groupby_col}
-	   , [cnt] = case count(1)
-					when 0 then 0
-					else 1.0 * sum(ch.value) / count(1) 
-				 end
+select 
+	a.{groupby_col}
+	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #InspReport
-from (
+from(
+	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.TPEInspectionReport)*1.0 ccnt 
+	from (
 	select distinct {groupby_col}
 		   , poid
 		   , seq1
 		   , seq2
 	from #tmpAllData
-) tmp
-outer apply (
-	select value = count(1)
-	from FabricInspDoc fid
-	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
-	where tmp.poid = fid.ID
-		  and tmp.seq1 = fidd.seq1
-		  and tmp.seq2 = fidd.seq2
-		  and tmp.{groupby_col} = fidd.{groupby_col}
-		  and fid.Status='Confirmed'
-		  and fidd.InspReport=1
-) ch
-group by {groupby_col}
+	) tmp
+	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.{groupby_col} = b.{groupby_col}
+	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	group by tmp.{groupby_col}
+)a
 
 ------#FabricInspDoc Approved Continuity Card Provided %
-select tmp.{groupby_col}
-	   , [cnt] = case count(1)
-					when 0 then 0
-					else 1.0 * sum(ch.value) / count(1) 
-				 end
+select a.{groupby_col}
+	, iif(ccnt=0, 0, round(ccnt/bcnt,4)) [cnt] 
 into #tmpContinuityCard
-from (
+from(
+	select tmp.{groupby_col}, count(b.PoId)*1.0 bcnt, count(c.ContinuityCard)*1.0 ccnt 
+	from (
 	select distinct {groupby_col}
 		   , poid
 		   , seq1
 		   , seq2
 	from #tmpAllData
-) tmp
-outer apply (
-	select value = count(1)
-	from FabricInspDoc fid
-	inner join FabricInspDoc_Detail fidd on fid.ID = fidd.ID
-	where tmp.poid = fid.ID
-		  and tmp.seq1 = fidd.seq1
-		  and tmp.seq2 = fidd.seq2
-		  and tmp.{groupby_col} = fidd.{groupby_col}
-		  and fid.Status='Confirmed'
-		  and fidd.ContinuityCard=1
-) ch
-group by {groupby_col}
+	) tmp
+	left join Export_Detail b on tmp.PoId =b.PoID and tmp.Seq1 =b.Seq1 and tmp.Seq2 = b.Seq2 and tmp.{groupby_col} = b.{groupby_col}
+	left join SentReport c on b.Ukey = c.Export_DetailUkey
+	group by tmp.{groupby_col}
+)a
 
 ------#FabricInspDoc Approved 1st Bulk Dyelot Provided %
-select ta.{groupby_col}
-	   , [cnt] = case count(1)
-					when 0 then 0
-					else 1.0 * sum(ch.value) / count(1) 
-				 end
-into #BulkDyelot
+select b.Refno, b.ColorID, b.SuppID, d.Consignee, c.SeasonSCIID DyelotSeasion, c.FirstDyelot, e.SeasonSCIID, c.Period, f.RibItem 
+into #tmp_DyelotMain 
 from (
-	select ta.poid, ta.seq1, ta.seq2, ta.suppID, ta.refno, ta.colorID
-	from #tmpAllData ta
-	group by ta.poid, ta.seq1, ta.seq2, ta.suppID, ta.refno, ta.colorID
-) ta
-inner join FabricInspDoc_detail fab2 on ta.poid = fab2.ID 
-										and ta.seq1 = fab2.seq1 
-										and ta.seq2 = fab2.seq2
-										and ta.suppid = fab2.suppid 
-										and ta.refno = fab2.refno 
-										and ta.colorid = fab2.colorid
+		select distinct SuppID
+				, poid
+				, seq1
+				, seq2
+		from #tmpAllData 
+	) tmp
 outer apply (
-	select value = count (1)
-	from FabricInspDoc_detail fab2 
-	where ta.poid = fab2.ID 
-		  and ta.seq1 = fab2.seq1 
-		  and ta.seq2 = fab2.seq2
-		  and ta.suppid = fab2.suppid 
-		  and ta.refno = fab2.refno 
-		  and ta.colorid = fab2.colorid
-		  and fab2.BulkDyelot = 1
-) ch
-group by ta.{groupby_col}
+	select a.id,a.seq1,a.seq2,a.SCIRefno,a.ColorID,b.SuppID,a.RefNo 
+	from PO_Supp_Detail a
+	inner join PO_Supp b on a.ID = b.ID and a.seq1 = b.seq1 
+	where a.id =  tmp.poid
+	and a.seq1 = tmp.seq1
+	and a.seq2 = tmp.seq2
+)b
+left join FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID
+LEFT JOIN Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
+left join Export d on ED.ID = D.ID AND c.Consignee = d.Consignee AND D.Confirm = 1
+left join orders o on ed.PoID = o.id and o.Category in ('B','M')
+left join Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID --and e.SeasonSCIID = c.SeasonSCIID
+left join Fabric f on f.SCIRefno = b.SCIRefno 
+group by b.Refno, b.ColorID, b.SuppID, d.Consignee, c.SeasonSCIID, c.FirstDyelot, e.SeasonSCIID,c.Period,f.RibItem 
+
+ --分母
+ select {groupby_col}, count(*)*1.0 Mcnt
+ into #tmp_DyelotMcnt
+ from (
+	 select Refno, ColorID, SuppID, Consignee, SeasonSCIID, Period, RibItem  
+	 from #tmp_DyelotMain
+	 where not(FirstDyelot is null and RibItem = 1) 
+	 group by Refno, ColorID, SuppID, Consignee, SeasonSCIID, Period, RibItem 
+ )a
+ group by {groupby_col}
+
+--重新計算月份
+select 
+ROW_NUMBER() OVER(order by month ASC) as rid
+,* 
+into #tmp_newSeasonSCI
+from SeasonSCI 
+
+select a.*, b.rid, (b.rid + a.Period -1) maxID
+into #tmp_DyelotMonth
+from #tmp_DyelotMain a
+left join  #tmp_newSeasonSCI b on a.DyelotSeasion = b.id
+where a.FirstDyelot is not null
+
+ --分子
+select a.{groupby_col},count(*)*1.0 Dcnt
+ into #tmp_DyelotDcnt
+ from (
+	 select Refno,ColorID,SuppID,Consignee,SeasonSCIID 
+	 from #tmp_DyelotMain 
+	 group by Refno,ColorID,SuppID,Consignee,SeasonSCIID 	
+ ) a
+ inner join 
+ (
+	 select a.Refno,a.ColorID,a.SuppID, a.Consignee, a.Period, a.RibItem, b.id 
+	 from #tmp_DyelotMonth a
+	 left join #tmp_newSeasonSCI b on b.rid between a.rid and a.maxID   
+	 group by a.Refno,a.ColorID,a.SuppID, a.Consignee, a.Period, a.RibItem, b.id  
+ )b on a.Refno = b.Refno and a.ColorID = b.ColorID and a.SuppID = b.SuppID and a.Consignee = b.Consignee and a.SeasonSCIID = b.id
+ group by a.{groupby_col}
+
+ select a.{groupby_col}
+	, iif(isnull(b.Dcnt,0)=0, 0, round(b.Dcnt/a.Mcnt ,4)) [cnt]
+ into #BulkDyelot
+ from #tmp_DyelotMcnt a
+ left join #tmp_DyelotDcnt b on a.{groupby_col} = b.{groupby_col}
+
 ------#TmpFinal 
 select --distinct
 { (ReportType.Equals("supplier") ? " Tmp.SuppID , Tmp.refno " : " Tmp.refno , Tmp.SuppID ") }
@@ -529,8 +557,8 @@ select --distinct
     ,totalYds.TotalInspYds 
     ,[Total PoCnt] = isnull(TLSP.cnt,0)
     ,[Total Dyelot] =isnull(TLDyelot.cnt,0)
+    ,[Insp Report] = isnull(InspReport.cnt,0)
 	,[Test Report] = isnull(TestReport.cnt,0)
-	,[Insp Report] = isnull(InspReport.cnt,0)
 	,[Continuity Card] = isnull(Contcard.cnt,0)
 	,[BulkDyelot] = isnull(BulkDyelot.cnt,0)
 	,[Total Point] = isnull(TLPoint.TotalPoint,0)
@@ -563,7 +591,8 @@ from (
 	select distinct SuppID, refno, abben, BrandID, stockqty, isnull(TotalInspYds,0)TotalInspYds
 	, yrds	
 	from #tmp		
-)Tmp 
+)Tmp
+outer apply(select SuppID, sum(stockqty)totalStockqty from (select distinct SuppID, refno, abben, BrandID, stockqty, isnull(TotalInspYds,0)TotalInspYds, yrds from #tmp)a where tmp.suppid =a.suppid group by SuppID)TmpTotal
 outer apply (select TotalPoint,[Fabric_yards] = isnull(TotalPoint,0)/4 from #tmpTotalPoint where {groupby_col}=tmp.{groupby_col}) TLPoint
 outer apply
 (
@@ -592,15 +621,15 @@ outer apply(
 	select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 
 	and IIF(totalYds.TotalInspYds!=0, round((TLPoint.Fabric_yards/totalYds.TotalInspYds), 4), 0) * 100 between range1 and range2 )sl
 left join #SHtmp SHRINKAGE on SHRINKAGE.{groupby_col} = tmp.{groupby_col}
-outer apply(select SHINGKAGE = iif(Tmp.stockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/Tmp.stockqty,4)))SHINGKAGELevel
+outer apply(select SHINGKAGE = iif(TmpTotal.totalStockqty = 0 , 0, round(SHRINKAGE.SHRINKAGEyards/TmpTotal.totalStockqty,4)))SHINGKAGELevel
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHINGKAGELevel.SHINGKAGE,0) * 100 between range1 and range2)sl2
 left join #mtmp MIGRATION on MIGRATION.{groupby_col} = tmp.{groupby_col} 
 outer apply(
-	select MIGRATION =  iif(Tmp.stockqty = 0, 0, round(MIGRATION.MIGRATIONyards/Tmp.stockqty,4))
+	select MIGRATION =  iif(TmpTotal.totalStockqty = 0, 0, round(MIGRATION.MIGRATIONyards/TmpTotal.totalStockqty,4))
 )MIGRATIONLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(MIGRATIONLevel.MIGRATION,0) * 100 between range1 and range2)sl3
 left join #Stmp SHADING on SHADING.{groupby_col} = tmp.{groupby_col}
-outer apply(select SHADING = iif(Tmp.stockqty=0, 0, round(SHADING.SHADINGyards/Tmp.stockqty,4)))SHADINGLevel 
+outer apply(select SHADING = iif(TmpTotal.totalStockqty=0, 0, round(SHADING.SHADINGyards/TmpTotal.totalStockqty,4)))SHADINGLevel 
 outer apply(select id from SuppLevel WITH (NOLOCK) where type='F' and Junk=0 and isnull(SHADINGLevel.SHADING,0) * 100 between range1 and range2)sl4
 left join #Ltmp LACKINGYARDAGE on LACKINGYARDAGE.{groupby_col}= Tmp.{groupby_col}
 outer apply(select LACKINGYARDAGE = iif(totalYds.TotalInspYds=0, 0, round(LACKINGYARDAGE.ActualYds/totalYds.TotalInspYds,4)))LACKINGYARDAGELevel
@@ -652,6 +681,7 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 ,#SH1,#SH2,#SHtmp,#mtmp,#ea,#eb,#ec,#sa,#sb,#Stmp,#Ltmp,#Sdtmp,#TmpFinal,#Weight
 ,#tmpsd,#tmpDyelot,#tmpTotalPoint,#tmpTotalRoll,#tmpGrade_A,#tmpGrade_B,#tmpGrade_C,#tmpsuppEncode
 ,#tmpCountSP,#tmpTestReport,#InspReport,#tmpContinuityCard,#BulkDyelot
+,#tmp_DyelotMain,#tmp_DyelotMcnt,#tmp_newSeasonSCI,#tmp_DyelotMonth,#tmp_DyelotDcnt
 ");
             #endregion
             return base.ValidateInput();

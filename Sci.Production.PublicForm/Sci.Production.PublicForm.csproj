@@ -132,6 +132,12 @@
     <Compile Include="CIPF.Designer.cs">
       <DependentUpon>CIPF.cs</DependentUpon>
     </Compile>
+    <Compile Include="PFHis.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PFHis.Designer.cs">
+      <DependentUpon>PFHis.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditRemark.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -203,6 +209,9 @@
   <ItemGroup>
     <EmbeddedResource Include="CIPF.resx">
       <DependentUpon>CIPF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PFHis.resx">
+      <DependentUpon>PFHis.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EditRemark.resx">
       <DependentUpon>EditRemark.cs</DependentUpon>
