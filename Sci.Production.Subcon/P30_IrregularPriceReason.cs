@@ -308,9 +308,9 @@ namespace Sci.Production.Subcon
 
         private void Check_Irregular_Price()
         {
+            //重置
             _IrregularPriceReasonDT = null;
-
-
+            
             //採購價 > 標準價 =異常
             #region 變數宣告
 
@@ -319,6 +319,7 @@ namespace Sci.Production.Subcon
             string artworkType = string.Empty;
             string BrandID = string.Empty;
             string StyleID = string.Empty;
+            string LocalPO_ID = string.Empty;
             List<SqlParameter> parameters = new List<SqlParameter>();
             StringBuilder sql = new StringBuilder();
             DualResult result;
@@ -345,12 +346,14 @@ namespace Sci.Production.Subcon
             IrregularPriceReason_Real.Columns.Add(new DataColumn("EditName", System.Type.GetType("System.String")));
             #endregion
 
-            string LocalPO_ID = _LocalPO_ID;
-            parameters.Add(new SqlParameter("@LocalPO_ID", LocalPO_ID));
+            try
+            {
+                LocalPO_ID = _LocalPO_ID;
+                parameters.Add(new SqlParameter("@LocalPO_ID", LocalPO_ID));
 
-            #region 查詢所有價格異常紀錄
+                #region 查詢所有價格異常紀錄
 
-            sql.Append(@"
+                sql.Append(@"
 SELECT DISTINCT [ArtworkTypeID]=a.Category ,[OrderId]=ad.OrderID 
 INTO #tmp_AllOrders 
 FROM LocalPO a INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID
@@ -392,210 +395,213 @@ GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,o.POID ,Standard.order_amt ,Sta
 DROP TABLE #tmp_AllOrders
 " + Environment.NewLine);
 
-            #endregion
-
-            result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Price_Dt);
-            sql.Clear();
-
-            if (!result)
-            {
-                ShowErr(sql.ToString(), result);
-                return;
-            }
-
-            if (Price_Dt.Rows.Count > 0)
-            {
-
-                #region 建立新的 價格異常紀錄 Dtatable物件
-                foreach (DataRow row in Price_Dt.Rows)
-                {
-
-                    decimal StdPrice = 0;
-                    decimal purchasePrice = 0;
-                    decimal PoPriceWithEmbroidery = 0;
-                    //用來準備填入 C 最新的 " 價格異常紀錄" IPR資料
-                    StdPrice = Convert.ToDecimal(row["StdPrice"]);
-                    purchasePrice = Convert.ToDecimal(row["Po_price"]);
-                    poid = Convert.ToString(row["Poid"]);
-                    category = Convert.ToString(row["ArtworkTypeID"]);
-                    artworkType = Convert.ToString(row["ArtworkTypeID"]);
-                    BrandID = Convert.ToString(row["BrandID"]);
-                    StyleID = Convert.ToString(row["StyleID"]);
-                    //PoPriceWithEmbroidery = Convert.ToDecimal(row["PoPriceWithEmbroidery"]);
-
-                    //只要有異常就顯示紅色
-                    if (purchasePrice > StdPrice)
-                    {
-                        IrregularPriceReason_Real = CreateIrregularPriceReasonDataTabel(poid, artworkType, BrandID, StyleID, purchasePrice, StdPrice, IrregularPriceReason_Real);
-                    }
-
-                }
                 #endregion
 
-                #region 準備 A: DB現有的 "價格異常紀錄" IPR資料
-
+                result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Price_Dt);
                 sql.Clear();
-                sql.Append(" SELECT DISTINCT al.POID ,al.Category ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
-
-                sql.Append(" FROM LocalPO a" + Environment.NewLine);
-                sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID" + Environment.NewLine);
-                sql.Append(" INNER JOIN Orders o ON ad.OrderID = o.ID" + Environment.NewLine);
-                sql.Append(" INNER JOIN LocalPO_IrregularPrice al ON al.POID = o.POID AND al.Category = a.Category" + Environment.NewLine);
-                sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
-                sql.Append(" WHERE a.ID = @LocalPO_ID AND sr.Junk=0" + Environment.NewLine);
-
-                result = DBProxy.Current.Select(null, sql.ToString(), parameters, out IrregularPriceReason_InDB);
 
                 if (!result)
                 {
-                    MyUtility.Msg.WarningBox("Get LocalPO Irregular Price error!!");
+                    ShowErr(sql.ToString(), result);
+                    return;
                 }
 
-                IrregularPriceReason_InDB = MyUtility.Check.Empty(IrregularPriceReason_InDB) ? new DataTable() : IrregularPriceReason_InDB;
-                #endregion
-
-                #region 準備 B: 所有價格異常紀錄 - DB現有紀錄 = 新增的紀錄
-
-                var Btable = from c in IrregularPriceReason_Real.AsEnumerable()
-                             where !IrregularPriceReason_InDB.AsEnumerable().Any(o => o["POID"].ToString() == c["POID"].ToString() && o["Category"].ToString() == c["Category"].ToString())
-                             select c;
-
-                IrregularPriceReason_New = Btable.AsEnumerable().Count() > 0 ? Btable.AsEnumerable().CopyToDataTable() : new DataTable();
-
-
-                #endregion
-
-                #region 準備 D：找出實際紀錄 與 DB紀錄 重複的部分
-
-                //var Rep = from c in IrregularPriceReason_InDB.AsEnumerable()
-                //          where !IrregularPriceReason_Real.AsEnumerable().Any(o => o["POID"].ToString() == c["POID"].ToString() && o["ArtworkTypeID"].ToString() == c["ArtworkTypeID"].ToString())
-                //          select c;
-
-                //IrregularPriceReason_Repeat = Rep.AsEnumerable().Count() > 0 ? Rep.AsEnumerable().CopyToDataTable() : new DataTable();
-                #endregion
-
-                DataTable SubconReason;
-                DBProxy.Current.Select(null, "SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'Pms_PoIr_Responsible' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason  FROM SubconReason WHERE Type='IP' AND Junk=0", out SubconReason);
-
-                #region 資料串接
-
-                var summary = (from a in IrregularPriceReason_InDB.AsEnumerable()
-                               select new
-                               {
-                                   POID = a.Field<string>("POID"),
-                                   Category = a.Field<string>("Category"),
-                                   BrandID = a.Field<string>("BrandID"),
-                                   StyleID = a.Field<string>("StyleID"),
-                                   PoPrice = a.Field<decimal>("POPrice"),
-                                   StdPrice = a.Field<decimal>("StandardPrice"),
-                                   SubconReasonID = a.Field<string>("SubconReasonID"),
-                                   AddDate = a.Field<DateTime?>("AddDate"),
-                                   AddName = a.Field<string>("AddName"),
-                                   EditDate = a.Field<DateTime?>("EditDate"),
-                                   EditName = a.Field<string>("EditName")
-
-                               }).Union
-                         (from b in IrregularPriceReason_New.AsEnumerable()
-                          join c in IrregularPriceReason_Real.AsEnumerable() on new { POID = b.Field<string>("POID"), ArtWorkType = b.Field<string>("Category") } equals new { POID = c.Field<string>("POID"), ArtWorkType = c.Field<string>("Category") }
-                          select new
-                          {
-                              POID = c.Field<string>("POID"),
-                              Category = c.Field<string>("Category"),
-                              BrandID = c.Field<string>("BrandID"),
-                              StyleID = c.Field<string>("StyleID"),
-                              PoPrice = c.Field<decimal>("PoPrice"),
-                              StdPrice = c.Field<decimal>("StdPrice"),
-                              SubconReasonID = c.Field<string>("SubconReasonID"),
-                              AddDate = c.Field<DateTime?>("AddDate"),
-                              AddName = c.Field<string>("AddName"),
-                              EditDate = c.Field<DateTime?>("EditDate"),
-                              EditName = c.Field<string>("EditName")
-                          });
-
-
-                var total_IPR = from a in summary
-                                join s in SubconReason.AsEnumerable() on a.SubconReasonID equals s.Field<string>("ID") into sr
-                                from s in sr.DefaultIfEmpty()
-                                select new
-                                {
-                                    Factory = _FactoryID,
-                                    a.POID,
-                                    a.Category,
-                                    a.StyleID,
-                                    a.BrandID,
-                                    a.PoPrice,
-                                    a.StdPrice,
-                                    a.SubconReasonID,
-                                    ResponsibleID = MyUtility.Check.Empty(s) ? "" : s.Field<string>("ResponsibleID"),
-                                    ResponsibleName = MyUtility.Check.Empty(s) ? "" : s.Field<string>("ResponsibleName"),
-                                    Reason = MyUtility.Check.Empty(s) ? "" : s.Field<string>("Reason"),
-                                    a.AddDate,
-                                    a.AddName,
-                                    a.EditDate,
-                                    a.EditName
-                                };
-
-                #endregion
-
-                #region 還原成 DataTable
-
-                DataTable IPR_Grid = new DataTable();
-                PropertyInfo[] props = null;
-
-                foreach (var item in total_IPR)
+                if (Price_Dt.Rows.Count > 0)
                 {
-                    if (props == null)
+
+                    #region 建立新的 價格異常紀錄 Dtatable物件
+                    foreach (DataRow row in Price_Dt.Rows)
                     {
-                        Type t = item.GetType();
-                        props = t.GetProperties();
+
+                        decimal StdPrice = 0;
+                        decimal purchasePrice = 0;
+                        //用來準備填入 C 最新的 " 價格異常紀錄" IPR資料
+                        StdPrice = Convert.ToDecimal(MyUtility.Check.Empty(row["StdPrice"]) ? 0 : row["StdPrice"]);
+                        purchasePrice = Convert.ToDecimal(MyUtility.Check.Empty(row["Po_price"]) ? 0 : row["Po_price"]);
+                        poid = Convert.ToString(MyUtility.Check.Empty(row["Poid"]) ? "" : row["Poid"]);
+                        category = Convert.ToString(MyUtility.Check.Empty(row["ArtworkTypeID"]) ? "" : row["ArtworkTypeID"]);
+                        artworkType = Convert.ToString(MyUtility.Check.Empty(row["ArtworkTypeID"]) ? "" : row["ArtworkTypeID"]);
+                        BrandID = Convert.ToString(MyUtility.Check.Empty(row["BrandID"]) ? "" : row["BrandID"]);
+                        StyleID = Convert.ToString(MyUtility.Check.Empty(row["StyleID"]) ? "" : row["StyleID"]);
+
+                        //只要有異常就顯示紅色
+                        if (purchasePrice > StdPrice)
+                        {
+                            IrregularPriceReason_Real = CreateIrregularPriceReasonDataTabel(poid, artworkType, BrandID, StyleID, purchasePrice, StdPrice, IrregularPriceReason_Real);
+                        }
+
+                    }
+                    #endregion
+
+                    #region 準備 A: DB現有的 "價格異常紀錄" IPR資料
+
+                    sql.Clear();
+                    sql.Append(" SELECT DISTINCT al.POID ,al.Category ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
+
+                    sql.Append(" FROM LocalPO a" + Environment.NewLine);
+                    sql.Append(" INNER JOIN LocalPO_Detail ad ON a.ID = ad.ID" + Environment.NewLine);
+                    sql.Append(" INNER JOIN Orders o ON ad.OrderID = o.ID" + Environment.NewLine);
+                    sql.Append(" INNER JOIN LocalPO_IrregularPrice al ON al.POID = o.POID AND al.Category = a.Category" + Environment.NewLine);
+                    sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
+                    sql.Append(" WHERE a.ID = @LocalPO_ID AND sr.Junk=0" + Environment.NewLine);
+
+                    result = DBProxy.Current.Select(null, sql.ToString(), parameters, out IrregularPriceReason_InDB);
+
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox("Get LocalPO Irregular Price error!!");
+                    }
+
+                    IrregularPriceReason_InDB = MyUtility.Check.Empty(IrregularPriceReason_InDB) ? new DataTable() : IrregularPriceReason_InDB;
+                    #endregion
+
+                    #region 準備 B: 所有價格異常紀錄 - DB現有紀錄 = 新增的紀錄
+
+                    var Btable = from c in IrregularPriceReason_Real.AsEnumerable()
+                                 where !IrregularPriceReason_InDB.AsEnumerable().Any(o => o["POID"].ToString() == c["POID"].ToString() && o["Category"].ToString() == c["Category"].ToString())
+                                 select c;
+
+                    IrregularPriceReason_New = Btable.AsEnumerable().Count() > 0 ? Btable.AsEnumerable().CopyToDataTable() : new DataTable();
+
+
+                    #endregion
+
+                    #region 準備 D：找出實際紀錄 與 DB紀錄 重複的部分
+
+                    //var Rep = from c in IrregularPriceReason_InDB.AsEnumerable()
+                    //          where !IrregularPriceReason_Real.AsEnumerable().Any(o => o["POID"].ToString() == c["POID"].ToString() && o["ArtworkTypeID"].ToString() == c["ArtworkTypeID"].ToString())
+                    //          select c;
+
+                    //IrregularPriceReason_Repeat = Rep.AsEnumerable().Count() > 0 ? Rep.AsEnumerable().CopyToDataTable() : new DataTable();
+                    #endregion
+
+                    DataTable SubconReason;
+                    DBProxy.Current.Select(null, "SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'Pms_PoIr_Responsible' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason  FROM SubconReason WHERE Type='IP' AND Junk=0", out SubconReason);
+
+                    #region 資料串接
+
+                    var summary = (from a in IrregularPriceReason_InDB.AsEnumerable()
+                                   select new
+                                   {
+                                       POID = a.Field<string>("POID"),
+                                       Category = a.Field<string>("Category"),
+                                       BrandID = a.Field<string>("BrandID"),
+                                       StyleID = a.Field<string>("StyleID"),
+                                       PoPrice = a.Field<decimal>("POPrice"),
+                                       StdPrice = a.Field<decimal>("StandardPrice"),
+                                       SubconReasonID = a.Field<string>("SubconReasonID"),
+                                       AddDate = a.Field<DateTime?>("AddDate"),
+                                       AddName = a.Field<string>("AddName"),
+                                       EditDate = a.Field<DateTime?>("EditDate"),
+                                       EditName = a.Field<string>("EditName")
+
+                                   }).Union
+                             (from b in IrregularPriceReason_New.AsEnumerable()
+                              join c in IrregularPriceReason_Real.AsEnumerable() on new { POID = b.Field<string>("POID"), ArtWorkType = b.Field<string>("Category") } equals new { POID = c.Field<string>("POID"), ArtWorkType = c.Field<string>("Category") }
+                              select new
+                              {
+                                  POID = c.Field<string>("POID"),
+                                  Category = c.Field<string>("Category"),
+                                  BrandID = c.Field<string>("BrandID"),
+                                  StyleID = c.Field<string>("StyleID"),
+                                  PoPrice = c.Field<decimal>("PoPrice"),
+                                  StdPrice = c.Field<decimal>("StdPrice"),
+                                  SubconReasonID = c.Field<string>("SubconReasonID"),
+                                  AddDate = c.Field<DateTime?>("AddDate"),
+                                  AddName = c.Field<string>("AddName"),
+                                  EditDate = c.Field<DateTime?>("EditDate"),
+                                  EditName = c.Field<string>("EditName")
+                              });
+
+
+                    var total_IPR = from a in summary
+                                    join s in SubconReason.AsEnumerable() on a.SubconReasonID equals s.Field<string>("ID") into sr
+                                    from s in sr.DefaultIfEmpty()
+                                    select new
+                                    {
+                                        Factory = _FactoryID,
+                                        a.POID,
+                                        a.Category,
+                                        a.StyleID,
+                                        a.BrandID,
+                                        a.PoPrice,
+                                        a.StdPrice,
+                                        a.SubconReasonID,
+                                        ResponsibleID = MyUtility.Check.Empty(s) ? "" : s.Field<string>("ResponsibleID"),
+                                        ResponsibleName = MyUtility.Check.Empty(s) ? "" : s.Field<string>("ResponsibleName"),
+                                        Reason = MyUtility.Check.Empty(s) ? "" : s.Field<string>("Reason"),
+                                        a.AddDate,
+                                        a.AddName,
+                                        a.EditDate,
+                                        a.EditName
+                                    };
+
+                    #endregion
+
+                    #region 還原成 DataTable
+
+                    DataTable IPR_Grid = new DataTable();
+                    PropertyInfo[] props = null;
+
+                    foreach (var item in total_IPR)
+                    {
+                        if (props == null)
+                        {
+                            Type t = item.GetType();
+                            props = t.GetProperties();
+                            foreach (PropertyInfo pi in props)
+                            {
+                                Type colType = pi.PropertyType;
+                                //針對Nullable<>特別處理
+                                if (colType.IsGenericType && colType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                                {
+                                    colType = colType.GetGenericArguments()[0];
+                                }
+                                //建立欄位
+                                IPR_Grid.Columns.Add(pi.Name, colType);
+                            }
+                        }
+                        DataRow row = IPR_Grid.NewRow();
                         foreach (PropertyInfo pi in props)
                         {
-                            Type colType = pi.PropertyType;
-                            //針對Nullable<>特別處理
-                            if (colType.IsGenericType && colType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                            {
-                                colType = colType.GetGenericArguments()[0];
-                            }
-                            //建立欄位
-                            IPR_Grid.Columns.Add(pi.Name, colType);
+                            row[pi.Name] = pi.GetValue(item, null) ?? DBNull.Value;
                         }
+                        IPR_Grid.Rows.Add(row);
                     }
-                    DataRow row = IPR_Grid.NewRow();
-                    foreach (PropertyInfo pi in props)
+
+                    #endregion
+
+                    /*
+                          | DB | New |
+                    ----------------------------
+                         1| 有 | 無  | 帶DB的 Datatable
+                    ----------------------------
+                         2| 無 | 有  | 帶DB + New 的 Datatable
+                    ----------------------------
+                         3| 有 | 有  | 帶DB + New 的 Datatable
+                    ----------------------------
+                         4| 有 | 無  | 帶DB + New 的 Datatable
+                    ----------------------------
+                         5| 無 | 無  | 沒事
+
+                     */
+                    //「曾經」有過價格異常紀錄，現在價格正常，沒有新的異常紀錄，只需要帶DB資料
+                    if (IPR_Grid.Rows.Count != 0)
                     {
-                        row[pi.Name] = pi.GetValue(item, null) ?? DBNull.Value;
+                        listControlBindingSource1.DataSource = IPR_Grid;
+                        ModifyDT_FromP30 = IPR_Grid.Copy();
                     }
-                    IPR_Grid.Rows.Add(row);
+                    else
+                    {
+                        IrregularPriceReasonDT_Initial(true);
+                    }
                 }
 
-                #endregion
-
-                /*
-                      | DB | New |
-                ----------------------------
-                     1| 有 | 無  | 帶DB的 Datatable
-                ----------------------------
-                     2| 無 | 有  | 帶DB + New 的 Datatable
-                ----------------------------
-                     3| 有 | 有  | 帶DB + New 的 Datatable
-                ----------------------------
-                     4| 有 | 無  | 帶DB + New 的 Datatable
-                ----------------------------
-                     5| 無 | 無  | 沒事
-
-                 */
-                //「曾經」有過價格異常紀錄，現在價格正常，沒有新的異常紀錄，只需要帶DB資料
-                if (IPR_Grid.Rows.Count != 0)
-                {
-                    listControlBindingSource1.DataSource = IPR_Grid;
-                    ModifyDT_FromP30 = IPR_Grid.Copy();
-                }
-                else
-                {
-                    IrregularPriceReasonDT_Initial(true);
-                }
             }
-
+            catch (Exception ex)
+            {
+                ShowErr(ex.Message, ex);
+            }
         }
 
 
