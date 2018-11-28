@@ -38,11 +38,10 @@ namespace Sci.Production.Subcon
         {
             base.OnLoad(e);
             this.grid.IsEditingReadOnly = true;
-            this.grid.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.grid)
 
             .Text("FactoryID", header: "Factory", width: Widths.Auto(true))
-            .Text("Location", header: "Location", width: Widths.Auto(true))
+            .Text("LocationID", header: "Location", width: Widths.Auto(true))
             .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(14))
             .Text("Line", header: "Inline Line#", width: Widths.Auto(true))
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(15))
@@ -438,10 +437,10 @@ drop table #BasBundleInfo
 
                 if (ds.Tables.Count == 2)
                 {
-                    dt2 = ds.Tables[1].Copy();
+                    dt2 = ds.Tables[1].AsEnumerable().CopyToDataTable();
                 }
-
-                dt1 = ds.Tables[0].Copy();
+                listControlBindingSource1.DataSource = null;
+                dt1 = ds.Tables[0].AsEnumerable().CopyToDataTable();
                 this.listControlBindingSource1.DataSource = dt1;
             }
          
