@@ -60,6 +60,8 @@ where ed.ID = '{0}'", masterID);
             base.OnDetailEntered();
             this.txtLocateSP.ReadOnly = false;
             this.txtLocateSP2.ReadOnly = false;
+            this.chkReplacement.ReadOnly = true;
+            this.chkDelay.ReadOnly = true;
             this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false;
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["Payer"]))
             {
@@ -168,6 +170,14 @@ where ed.ID = '{0}'", masterID);
                         return false;
                     }
                 }
+            }
+
+            // 已經有做出口費用分攤，不能勾選[No Import Charge]
+            if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where WKNO = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+                && this.chkImportChange.Checked)
+            {
+                MyUtility.Msg.WarningBox("This WK# has share expense, please unselect [No Import Charge].");
+                return false;
             }
 
             return base.ClickSaveBefore();

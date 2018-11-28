@@ -58,7 +58,7 @@ namespace Sci.Production.Shipping
                 .Text("InvNo", header: "GB#/Packing#", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 3, width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("CBM", header: "CBM", decimal_places: 3, width: Widths.AnsiChars(10), iseditingreadonly: true);
+                .Numeric("CBM", header: "CBM", decimal_places: 4, width: Widths.AnsiChars(10), iseditingreadonly: true);
         }
 
         // Query

@@ -8,14 +8,16 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
     public partial class R03 : Sci.Win.Tems.PrintForm
     {
-        DataTable printData;
-        string WorkOrder, factory, CuttingSP1, CuttingSP2;
-        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2;
+        DataTable[] printData;
+        string WorkOrder, factory, CuttingSP1, CuttingSP2,Style;
+        DateTime? Est_CutDate1, Est_CutDate2, EarliestSCIDelivery1, EarliestSCIDelivery2, EarliestSewingInline1, EarliestSewingInline2, EarliestBuyerDelivery1, EarliestBuyerDelivery2;
+        DateTime? BuyerDelivery1, BuyerDelivery2, SCIDelivery1, SCIDelivery2, SewingInline1, SewingInline2;
         StringBuilder condition = new StringBuilder();
 
         public R03(ToolStripMenuItem menuitem)
@@ -42,12 +44,27 @@ namespace Sci.Production.Cutting
             Est_CutDate2 = dateEstCutDate.Value2;
             CuttingSP1 = txtCuttingSPStart.Text;
             CuttingSP2 = txtCuttingSPEnd.Text;
+            BuyerDelivery1 = dateBuyerDelivery.Value1;
+            BuyerDelivery2 = dateBuyerDelivery.Value2;
+            SCIDelivery1 = dateSCIDelivery.Value1;
+            SCIDelivery2 = dateSCIDelivery.Value2;
+            SewingInline1 = dateSewingInline.Value1;
+            SewingInline2 = dateSewingInline.Value2;
+            Style = txtstyle1.Text;
             EarliestSCIDelivery1 = dateEarliestSCIDelivery.Value1;
             EarliestSCIDelivery2 = dateEarliestSCIDelivery.Value2;
             EarliestSewingInline1 = dateEarliestSewingInline.Value1;
             EarliestSewingInline2 = dateEarliestSewingInline.Value2;
-            //不可 Est. Cut Date, Cutting SP#, Earliest SCI Delivery, Earliest Sewing Inline四項全為空值
-            if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2) && MyUtility.Check.Empty(CuttingSP1) && MyUtility.Check.Empty(CuttingSP2) && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2))
+            EarliestBuyerDelivery1 = dateEarliestBuyerDelivery.Value1;
+            EarliestBuyerDelivery2 = dateEarliestBuyerDelivery.Value2;
+
+            //不可 Est. Cut Date, Cutting SP#, Earliest SCI Delivery, Earliest Sewing Inline5項全為空值
+            if (MyUtility.Check.Empty(Est_CutDate1) && MyUtility.Check.Empty(Est_CutDate2) 
+                && MyUtility.Check.Empty(CuttingSP1) && MyUtility.Check.Empty(CuttingSP2) 
+                && MyUtility.Check.Empty(EarliestSCIDelivery1) && MyUtility.Check.Empty(EarliestSCIDelivery2) 
+                && MyUtility.Check.Empty(EarliestSewingInline1) && MyUtility.Check.Empty(EarliestSewingInline2)
+                && MyUtility.Check.Empty(EarliestBuyerDelivery1) && MyUtility.Check.Empty(EarliestBuyerDelivery2)
+                )
             {
                 MyUtility.Msg.WarningBox("Can't all empty!!");
                 return false;
@@ -61,7 +78,7 @@ namespace Sci.Production.Cutting
         {
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-select DISTINCT
+select
 	[M] = wo.MDivisionID,
 	[Factory] = o.FtyGroup,
 	[Est.Cutting Date]= wo.EstCutDate,
@@ -70,7 +87,9 @@ select DISTINCT
 	[Sewing Inline(SP)] = SewInLine.SewInLine,
 	[Master SP#] = wo.ID,
 	[SP#] = wo.OrderID,
+    [Brand]=o.BrandID,
 	[Style#] = o.StyleID,
+    [Switch to Workorder]=Iif(c.WorkType='1','Combination’',Iif(c.WorkType='2','By SP#’','')),
 	[Ref#] = wo.CutRef,
 	[Cut#] = wo.Cutno,
 	[Cut Cell] = wo.CutCellID,
@@ -85,8 +104,9 @@ select DISTINCT
 	[Ratio] = stuff(SQty.SQty,1,1,''),
 	[Consumption] = wo.Cons,
 	[Marker Length] = wo.MarkerLength
+into #tmp
 from WorkOrder wo WITH (NOLOCK) 
-inner join Orders o WITH (NOLOCK) on o.CuttingSP = wo.ID
+inner join Orders o WITH (NOLOCK) on o.id = wo.OrderID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
 outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = wo.Ukey)acc
 outer apply(
@@ -147,13 +167,12 @@ outer apply(
 	)
 )as SQty
 outer apply(
-	select MinSCI = (
-		select min(SCIDelivery) 
-		from Orders as o WITH (NOLOCK) 
-		where o.ID = wo.OrderID
-	)
+	select MinSci=min(o.SCIDelivery), MinOBD=Min(o.BuyerDelivery) 
+	from Orders as o WITH (NOLOCK) 
+	where o.poid = wo.id
 ) as MinSci
 where 1=1
+
 ");
             #region Append畫面上的條件
             if (!MyUtility.Check.Empty(WorkOrder))
@@ -184,8 +203,53 @@ where 1=1
             if (!MyUtility.Check.Empty(CuttingSP2))
             {
                 sqlCmd.Append(string.Format(" and wo.ID <= '{0}'", CuttingSP2));
-            }            
-            
+            }
+
+            if (!MyUtility.Check.Empty(BuyerDelivery1))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery >= '{0}'", Convert.ToDateTime(BuyerDelivery1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(BuyerDelivery2))
+            {
+                sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}' ", Convert.ToDateTime(BuyerDelivery2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(SCIDelivery1))
+            {
+                sqlCmd.Append(string.Format(" and o.SCIDelivery >= '{0}'", Convert.ToDateTime(SCIDelivery1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(SCIDelivery2))
+            {
+                sqlCmd.Append(string.Format(" and o.SCIDelivery <= '{0}' ", Convert.ToDateTime(SCIDelivery2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(SewingInline1))
+            {
+                sqlCmd.Append(string.Format(" and o.SewInLine >= '{0}'", Convert.ToDateTime(SewingInline1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(SewingInline2))
+            {
+                sqlCmd.Append(string.Format(" and o.SewInLine <= '{0}' ", Convert.ToDateTime(SewingInline2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(Style))
+            {
+                sqlCmd.Append(string.Format(" and o.StyleID = '{0}'", Style));
+            }
+
+            if (!MyUtility.Check.Empty(EarliestBuyerDelivery1))
+            {
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD >= '{0}'", Convert.ToDateTime(EarliestBuyerDelivery1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(EarliestBuyerDelivery2))
+            {
+                sqlCmd.Append(string.Format(" and MinSci.MinOBD <= '{0}' ", Convert.ToDateTime(EarliestBuyerDelivery2).ToString("d")));
+            }
+
             if (!MyUtility.Check.Empty(EarliestSCIDelivery1))
             {
                 sqlCmd.Append(string.Format(" and MinSci.MinSCI >= '{0}'", Convert.ToDateTime(EarliestSCIDelivery1).ToString("d")));
@@ -206,7 +270,60 @@ where 1=1
                 sqlCmd.Append(string.Format(" and c.SewInLine <= '{0}' ", Convert.ToDateTime(EarliestSewingInline2).ToString("d")));
             }
             #endregion
-            sqlCmd.Append(@" order by wo.MDivisionID,o.FtyGroup,wo.EstCutDate,MincDate.MincoDate,c.SewInLine,wo.Cutno");
+            sqlCmd.Append(@"
+select * from #tmp order by [M],[Factory],[Est.Cutting Date],[Act.Cutting Date],[Earliest Sewing Inline],[Cut#]
+-----------------------------------------------------------------------
+select M,Factory,Brand
+	,[# of Layer]=case when Layers between 1 and 5 then '1~5'
+					   when Layers between 6 and 10 then '6~10'
+					   when Layers between 11 and 15 then '11~15'
+					   when Layers between 16 and 30 then '16~30'
+					   when Layers between 31 and 50 then '31~50'
+					   else '50 above'
+					   end
+	,rn=case when Layers between 1 and 5 then 1
+			 when Layers between 6 and 10 then 2
+			 when Layers between 11 and 15 then 3
+			 when Layers between 16 and 30 then 4
+			 when Layers between 31 and 50 then 5
+			 else 6
+			 end
+into #tmpL
+from #tmp
+
+DECLARE CURSOR_ CURSOR FOR select distinct Factory from #tmp order by Factory
+Declare @factory nvarchar(8)
+OPEN CURSOR_
+FETCH NEXT FROM CURSOR_ INTO @factory
+While @@FETCH_STATUS = 0
+Begin
+	declare @Brands nvarchar(max)=stuff((select concat(',[',Brand,']') from #tmpL where Factory = @factory group by Brand order by Brand for xml path('')),1,1,'')
+	declare @ex nvarchar(max) = N'
+	select factory,[# of Layer],'+@Brands+N'
+	from(
+		select rn,factory,[# of Layer],Brand,ct = count(1)
+		from #tmpL
+		where Factory = '''+@factory+N'''
+		group by rn,factory,[# of Layer],Brand
+	)a
+	PIVOT(sum(ct) FOR Brand IN ('+@Brands+N')) AS pt
+	order by rn
+	'
+	exec (@ex)
+FETCH NEXT FROM CURSOR_ INTO @factory
+End
+CLOSE CURSOR_
+DEALLOCATE CURSOR_
+
+declare @BrandsT nvarchar(max)=stuff((select concat(',[',Brand,']') from #tmpL group by Brand order by Brand for xml path('')),1,1,'')
+declare @exT nvarchar(max) = N'
+select M,[# of Layer],'+@BrandsT+N' from(select rn,M,[# of Layer],Brand,ct = count(1)from #tmpL group by rn,M,[# of Layer],Brand)a
+PIVOT(sum(ct) FOR Brand IN ('+@BrandsT+N')) AS pt
+order by rn
+'
+exec (@exT)
+
+drop table #tmp,#tmpL");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (!result)
@@ -222,19 +339,39 @@ where 1=1
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            SetCount(printData.Rows.Count);
+            SetCount(printData[0].Rows.Count);
 
-            if (printData.Rows.Count <= 0)
+            if (printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
             
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R03_CuttingScheduleListReport.xltx"); //預先開啟excel app
-            MyUtility.Excel.CopyToXls(printData, "", "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData[0], "", "Cutting_R03_CuttingScheduleListReport.xltx", 2, false, null, objApp);// 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.get_Range("P2").ColumnWidth = 15.38;
             objSheets.get_Range("T2").ColumnWidth = 15.38;
+
+            objSheets = objApp.ActiveWorkbook.Worksheets[2];   // 取得工作表
+            objSheets.Name = "summary";
+            for (int i = 1; i < printData.Length; i++)
+            {
+                int row = 2 + (i - 1) * 10;
+                objSheets.Cells[row, 3] = printData[i].Rows[0][0];
+                objSheets.get_Range((Excel.Range)objSheets.Cells[row, 3], (Excel.Range)objSheets.Cells[row, printData[i].Columns.Count]).Merge(false);
+                for (int col = 1; col < printData[i].Columns.Count ; col++)
+                {
+                    objSheets.Cells[row + 1, col + 1] = printData[i].Columns[col].ColumnName;
+
+                    for (int k = 0; k < printData[i].Rows.Count ; k++)
+                    {
+                        objSheets.Cells[row + 2 + k, col + 1] = printData[i].Rows[k][col];
+                    }
+                }
+
+                objSheets.get_Range((Excel.Range)objSheets.Cells[row, 2], (Excel.Range)objSheets.Cells[row + 7, printData[i].Columns.Count]).Borders.Weight = 3; // 設定全框線
+            }
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R03_CuttingScheduleListReport");

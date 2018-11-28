@@ -26,6 +26,7 @@ namespace Sci.Production.Sewing
         private Ict.Win.DataGridViewGeneratorTextColumnSettings combotype = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings article = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings inlineqty = new Ict.Win.DataGridViewGeneratorNumericColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings SewingReasonID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private DateTime systemLockDate;
         private decimal? oldttlqaqty;
 
@@ -115,10 +116,13 @@ namespace Sci.Production.Sewing
                 @"
 select  sd.*
         , [RFT] = iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%'  )
-        , [Remark] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
+        , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
+		, [SewingReasonID]=sr.id
+		, [ReasonDescription]=sr.Description
 from SewingOutput_Detail sd WITH (NOLOCK) 
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
+LEFT JOIN SewingReason sr ON sd.SewingReasonID=sr.ID
 outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderId 
                                and rft.CDate = s.OutputDate 
                                and rft.SewinglineID = s.SewingLineID 
@@ -331,7 +335,7 @@ where   o.FtyGroup = @factoryid
                                 }
                                 else
                                 {
-                                    dr["Remark"] = "Data Migration (not belong to this line#)";
+                                    dr["Tips"] = "Data Migration (not belong to this line#)";
                                 }
                             }
 
@@ -554,8 +558,70 @@ where   o.FtyGroup = @factoryid
                 }
             };
             #endregion
+            #region SewingReasonID右鍵開窗
+            this.SewingReasonID.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    if (this.EditMode)
+                    {
+                        // 取得正在異動的這筆Row
+                        DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-            Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
+                        // 查詢視窗資料來源
+                        string sqlCmd = "SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND Junk=0  -- SO代表SewingOutput";
+                        DataTable reasonDatas;
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, out reasonDatas);
+
+                        // 寬度可以用逗號區隔開來
+                        Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "10,40", MyUtility.Convert.GetString(dr["SewingReasonID"]), headercaptions: "ID,Description");
+                        DialogResult returnResult = item.ShowDialog();
+                        if (returnResult == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+
+                        string selectedID = item.GetSelectedString();
+                        DataRow[] reasonData = reasonDatas.Select($"ID='{selectedID}'");
+                        if (reasonData.Count() > 0)
+                        {
+                            dr["SewingReasonID"] = reasonData[0]["ID"].ToString();
+                            dr["ReasonDescription"] = reasonData[0]["Description"].ToString();
+                        }
+                        else
+                        {
+                            dr["SewingReasonID"] = string.Empty;
+                            dr["ReasonDescription"] = string.Empty;
+                        }
+
+                    }
+                }
+            };
+
+            this.SewingReasonID.CellValidating += (s, e) =>
+            {
+                // 表示資料ID沒變，不需要動
+                if (this.CurrentDetailData["SewingReasonID"].EqualString(e.FormattedValue) == false)
+                {
+                    string sqlCmd = $"SELECT DISTINCT ID,Description FROM SewingReason WHERE Type='SO' AND Junk=0 AND ID ='{e.FormattedValue}'  -- SO代表SewingOutput";
+                    DataTable reasonDatas;
+                    DualResult result = DBProxy.Current.Select(null, sqlCmd, out reasonDatas);
+                    if (reasonDatas.Rows.Count > 0)
+                    {
+                        this.CurrentDetailData["SewingReasonID"] = reasonDatas.Rows[0]["ID"].ToString();
+                        this.CurrentDetailData["ReasonDescription"] = reasonDatas.Rows[0]["Description"].ToString();
+                    }
+                    else
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!!");
+                        this.CurrentDetailData["SewingReasonID"] = string.Empty;
+                        this.CurrentDetailData["ReasonDescription"] = string.Empty;
+                    }
+                }
+            };
+            #endregion
+
+         Ict.Win.UI.DataGridViewTextBoxColumn textOrderIDSetting;
             Ict.Win.UI.DataGridViewTextBoxColumn textArticleSetting;
             Ict.Win.UI.DataGridViewNumericBoxColumn numInLineQtySetting;
             Ict.Win.UI.DataGridViewNumericBoxColumn numWorkHourSetting;
@@ -573,7 +639,10 @@ where   o.FtyGroup = @factoryid
 
                 // .Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Text("Remark", header: "Remarks", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .Text("Tips", header: "Tips", width: Widths.AnsiChars(40), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(40), iseditingreadonly: false)
+                .Text("SewingReasonID", header: "Reason ID", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: this.SewingReasonID)
+                .Text("ReasonDescription", header: "Description", width: Widths.AnsiChars(40), iseditingreadonly: true)
                 .CheckBox("AutoCreate", header: "Auto Create", trueValue: 1, falseValue: 0, iseditable: false);
 
             this.detailgrid.RowEnter += (s, e) =>
@@ -1024,6 +1093,19 @@ order by a.OrderId,os.Seq",
                 this.txtSubConOutContractNumber.Focus();
                 MyUtility.Msg.WarningBox("SubCon-Out Contract Number can't empty!!");
                 return false;
+            }
+            #endregion
+
+            #region 檢查QA Ttl Output是否為0
+
+            // DataGridViewRow dr = this.detailgrid.Rows
+            foreach (DataGridViewRow item in this.detailgrid.Rows)
+            {
+                if (item.Cells["QAQty"].Value.ToString() == "0" && string.IsNullOrEmpty(item.Cells["SewingReasonID"].Value.ToString()))
+                {
+                    MyUtility.Msg.WarningBox("Please input [Reason] if [Qa Ttl Output] is 0!");
+                    return false;
+                }
             }
             #endregion
 

@@ -46,37 +46,86 @@ BEGIN
 			--add BundleTransfer	
 			INSERT INTO BundleTransfer
 			SELECT RB.sid, RB.readerid, RR.type, RR.ProcessId, RB.tagid, RB.epcid, RB.transdate, GETDATE()
+			,[LocationID]=isnull (RB.LocationID, ' + '''''' + ')
 			FROM  #tmp  RB
 			left join RFIDReader RR on RB.readerid  collate Chinese_Taiwan_Stroke_CI_AS  =RR.Id
-						
+			
+			-- 先確認有哪些捆包號 + 工段 + Type，再到紀錄中找最新的資料
+			select *
+			into #disTmp
+			from (
+				select distinct
+						tmp.EpcId
+						, rd.processId
+						, rd.Type
+				from #tmp tmp				
+				inner join RFIDReader rd on tmp.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = rd.Id
+			) disBundle
+			outer apply (
+				select top 1
+						BundleNo = tmp.EpcId
+						, SubProcessId = rd.processId
+						, TransDate = tmp.TransDate
+						, AddDate = GetDate()
+						, rd.SewingLineID
+						, [LocationID] = isnull (tmp.LocationID, ' + '''''' + ')
+				from #tmp tmp
+				inner join RFIDReader rd on tmp.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = rd.Id
+				where 	disBundle.EpcId = tmp.EpcId
+						and disBundle.processId = rd.processId
+						and disBundle.Type = rd.Type
+				order by tmp.TransDate Desc
+			) getLastTrans
+
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
 			Merge Production.dbo.BundleInOut as t
-			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type, b.SewingLineID
-			FROM #tmp a inner join  RFIDReader b on a.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = b.Id
-			group by a.EpcId,b.processId, b.Type, b.SewingLineID) as s
+			Using (
+				select *
+				from #disTmp
+			) as s
 			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
-				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS and s.type=1
+				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS
+				and s.type=1
 			when matched then 
 				update set
-				t.incoming = s.TransDate,	t.EditDate = s.AddDate , t.SewingLineID=s.SewingLineID
+				t.incoming = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID
 			when not matched by target and s.type=1 then
-				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID);
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID, s.LocationID);
 
 			-- RFIDReader.Type=2
 			Merge Production.dbo.BundleInOut as t
-			Using (select a.EpcId as BundleNo,b.processId as SubProcessId, TransDate = max(a.TransDate),GetDate() as AddDate, b.Type, b.SewingLineID
-			FROM #tmp a inner join  RFIDReader b on a.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = b.Id
-			group by a.EpcId,b.processId, b.Type, b.SewingLineID) as s
+			Using (
+				select *
+				from #disTmp
+			) as s
 			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
-				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS and s.type=2 
+				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS 
+				and s.type=2 
 			when matched then 
 				update set
-				t.OutGoing = s.TransDate,	t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID
+				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID
 			when not matched by target and s.type=2 then
-				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID);
+				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID, LocationID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID);
+
+			-- RFIDReader.Type=3
+			Merge Production.dbo.BundleInOut as t
+			Using (
+				select *
+				from #disTmp
+			) as s
+			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
+				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS 
+				and s.type=3
+			when matched then 
+				update set
+				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID
+			when not matched by target and s.type=3 then
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID);
+
 
 			Commit tran
 
@@ -92,6 +141,7 @@ BEGIN
 
 	End Try
 	Begin Catch
+		SELECT ERROR_NUMBER(), ERROR_MESSAGE();
 		RollBack Tran
 	End Catch	'
 

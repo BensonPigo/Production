@@ -31,19 +31,20 @@ when matched then
 		, t.AddDate= s.AddDate
 		, t.Lock = s.Lock
 		, t.MasterGroupID = s.MasterGroupID
-		, t.MachineGroupID = s.MachineGroupID
-
+        , t.MachineGroupID = s.MachineGroupID		
+		, t.Needle = s.Needle
+		, t.ControlPart = s.ControlParts
 	when not matched by target and s.type='P' then 
 		insert 
 			(ID 				, Description 	, Partno 		, MasterGroupID 		, MachineGroupID 	, MachineBrandID
 	 	 	 , UseUnit 			, PoUnit 		, Price 		, PurchaseBatchQty 	, Junk
 			 , PurchaseFrom 	, SuppID 		, CurrencyID 	, Formula	 		, Fix
-			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock)
+			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock , Needle , ControlPart)
 		values
 			(s.refno 			, s.Description , s.Partno 		, s.MasterGroupID 	, s.MachineGroupID 	, s.MachineBrandID
 			 , s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
 			 , 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
-			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock);
+			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlParts);
 
 	---------- Misc, type='O'---------------------
 	Merge Machine.dbo.Misc as t
@@ -585,6 +586,28 @@ where a.id in (select id from @T)) as s
 			 , s.DescriptionDetail 		, s.Origin 	, '' 		, '' 		, s.Junk
 			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		);
 	
+	 -----------PartPrice_History ------------------------
+	Merge Machine.dbo.PartPrice_History  as t
+	Using (
+		select * 
+		from Trade_To_Pms.dbo.TradeHIS_MMS WITH (NOLOCK) 
+		where TableName = 'Part' and HisType = 'ControlParts' 
+	)as s on t.TradeHisMMSUkey = s.Ukey  
+	when matched then 
+		update set 
+				 t.PartID 		= s.RefNo  
+				,t.HisType		= s.HisType
+				,t.OldValue		= s.OldValue
+				,t.NewValue		= s.NewValue
+				,t.Remark		= s.Remark
+				,t.AddName		= s.AddName
+				,t.AddDate		= s.AddDate
+	when not matched by target then 
+		insert 
+           (TradeHisMMSUkey,  PartID,  HisType,  OldValue,  NewValue
+		   ,Remark,  AddName,  AddDate)
+		values
+			(s.Ukey    , s.RefNo , s.HisType 	, s.OldValue , s.NewValue 		
+			, s.Remark 	 , s.AddName , s.AddDate 		);
+	
 	END
-
-

@@ -841,9 +841,9 @@
             this.chkNoCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkNoCharge.Location = new System.Drawing.Point(615, 204);
             this.chkNoCharge.Name = "chkNoCharge";
-            this.chkNoCharge.Size = new System.Drawing.Size(189, 21);
+            this.chkNoCharge.Size = new System.Drawing.Size(182, 21);
             this.chkNoCharge.TabIndex = 51;
-            this.chkNoCharge.Text = "No Import/Export Charges";
+            this.chkNoCharge.Text = "No Import/Export Charge";
             this.chkNoCharge.UseVisualStyleBackColor = true;
             // 
             // P04

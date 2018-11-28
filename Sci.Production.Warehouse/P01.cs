@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Data.SqlClient;
 using Sci.Win;
 using System.Linq;
-
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.Warehouse
 {
@@ -105,16 +105,25 @@ namespace Sci.Production.Warehouse
 
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow StyleData;
-            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style WITH (NOLOCK) where Ukey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]));
+            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate,ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = {0}", MyUtility.Convert.GetString(CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out StyleData))
             {
                 displayDescription.Value = MyUtility.Convert.GetString(StyleData["Description"]);
                 checkExceptionForm.Value = MyUtility.Convert.GetString(StyleData["ExpectionForm"]);
                 editFtyRemark.Text = MyUtility.Convert.GetString(StyleData["FTYRemark"]);
 
+                if (MyUtility.Check.Empty(StyleData["ExpectionFormRemark"]))
+                {
+                    this.btnExpectionFormRemark.Enabled = false;
+                }
+                else
+                {
+                    this.btnExpectionFormRemark.Enabled = true;
+                }
             }
             else
             {
+                this.btnExpectionFormRemark.Enabled = false;
                 displayDescription.Value = "";
                 checkExceptionForm.Value = "false";
                 editFtyRemark.Text = "";
@@ -211,6 +220,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(CurrentMaintain["ID"]))) ? Colo
 
             btnOrderRemark.ForeColor = !MyUtility.Check.Empty(CurrentMaintain["OrderRemark"]) ? Color.Blue : Color.Black;
 
+            this.btnPFHistory.ForeColor = MyUtility.Check.Seek($@"select id from Order_PFHis with(nolock) where id = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
         }
 
         protected override void ClickNewAfter()
@@ -673,6 +683,30 @@ and po3.junk=0
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Finished!!");
             
+        }
+
+        private void btnExpectionFormRemark_Click(object sender, EventArgs e)
+        {
+            DataRow styleData;
+            string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+            if (MyUtility.Check.Seek(sqlCmd, out styleData))
+            {
+                Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
+                form.ShowDialog(this);
+            }
+        }
+
+        private void btnPFHistory_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var dlg = new PFHis(false, dr["ID"].ToString(), string.Empty, string.Empty, dr);
+            dlg.ShowDialog();
+            this.RenewData();
         }
     }
 }

@@ -1,7 +1,7 @@
--- =============================================
+ï»¿-- =============================================
 -- Author:		Aaron
 -- Create date: 2018/02/21
--- Description: Cutting P20 confirm,unconfirm®É°w¹ïCuttingOutput.ActGarment/ PPH/ ActTTCPU ,CuttingOutput_WIPµ¥¬ÛÃötable§@­pºâ»P§ó·s
+-- Description: Cutting P20 confirm,unconfirmï¿½É°wï¿½ï¿½CuttingOutput.ActGarment/ PPH/ ActTTCPU ,CuttingOutput_WIPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½tableï¿½@ï¿½pï¿½ï¿½Pï¿½ï¿½s
 -- =============================================
 CREATE PROCEDURE [dbo].[Cutting_P20_CFM_Update]
 	-- Add the parameters for the stored procedure here
@@ -25,22 +25,39 @@ BEGIN
 		where occ.FabricCode !='' and occ.FabricCode is not null 
 		and cud.id = @ID
 		--
-		select wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,
-			cutqty= iif(sum(cod.Layer*ws.Qty)>wd.Qty,wd.Qty,sum(cod.Layer*ws.Qty)),
-			pre_cutqty= iif(sum(iif(co.cdate < @Cdate,cod.Layer*ws.Qty,0)) >wd.Qty,-- ¦¹³æ¤§«eªº³æ,µôªº¼Æ¶q,±Æ°£·í«e³æªº¼Æ¶q
-							wd.Qty,
-							sum(iif(co.cdate < @Cdate,cod.Layer*ws.Qty,0))),
-			co.MDivisionid
+		If Object_ID('tempdb..#tmp2_A') Is Null
+		Begin
+			Create Table #tmp2_A
+			(  
+				 Orderid Varchar(16)
+				, SizeCode VarChar(8)
+				, Article VarChar(8)
+				, PatternPanel VarChar(8)
+				, MDivisionid VarChar(8)
+				, cutQty int
+			);
+		End;	
+	
+		If Object_ID('tempdb..#tmp2_B') Is Null
+		Begin
+			Create Table #tmp2_B
+			(  
+				 Orderid Varchar(16)
+				, SizeCode VarChar(8)
+				, Article VarChar(8)
+				, PatternPanel VarChar(8)
+				, MDivisionid VarChar(8)
+				, cutQty int
+			);
+		End;
+		exec CuttingP20calculateCutQty '0',@ID,@Cdate
+		exec CuttingP20calculateCutQty '1',@ID,@Cdate
+		
+		select a.*,pre_cutqty=b.cutqty 
 		into #tmp2
-		from WorkOrder_Distribute wd WITH (NOLOCK)
-		inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
-		inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
-		inner join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
-		inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
-		inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
-		where co.cdate <= @Cdate
-		and O.POID in (select CuttingID from CuttingOutput_Detail WITH (NOLOCK) where CuttingOutput_Detail.ID = @ID)
-		group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty
+		from #tmp2_A a
+		left join #tmp2_B b on a.Article=b.Article and a.MDivisionid=b.MDivisionid and a.OrderID = b.OrderID and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+
 
         Select o.poid,a.orderid,a.article,a.sizecode,
 			order_cpu = o.cpu,
@@ -84,7 +101,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--UnConfirm ª½±µÂk0
+			--UnConfirm ï¿½ï¿½ï¿½ï¿½ï¿½k0
 			update CuttingOutput set ActTTCPU=0,ActGarment =0,PPH=0 where id = @ID;
 		END
 

@@ -81,6 +81,9 @@
     <Compile Include="Holiday.Designer.cs">
       <DependentUpon>Holiday.cs</DependentUpon>
     </Compile>
+    <Compile Include="numericUpDownRate.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PictureSubPage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -541,6 +544,9 @@
     <EmbeddedResource Include="txtsubcon.resx">
       <DependentUpon>txtsubcon.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtsubprocess.resx">
+      <DependentUpon>txtsubprocess.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtsupplier.resx">
       <DependentUpon>txtsupplier.cs</DependentUpon>

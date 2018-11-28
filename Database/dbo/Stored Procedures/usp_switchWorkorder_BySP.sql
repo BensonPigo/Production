@@ -15,7 +15,7 @@ update cutting set WorkType =2 where id = @Cuttingid
 
 Declare @POID varchar(13) 
 Declare @FactoryID varchar(8) 
-Select distinct @POID = POID,@FactoryID=FactoryID From Orders  WITH (NOLOCK) Where Cuttingsp = @Cuttingid and junk=0
+Select distinct @POID = POID,@FactoryID=FtyGroup From Orders  WITH (NOLOCK) Where Cuttingsp = @Cuttingid and junk=0
 
 select *,Order_EachConsUkey = 0 into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
 alter table #tmp_WorkOrder_Distribute add colorid varchar(6)
@@ -97,8 +97,13 @@ FETCH NEXT FROM CURSOR_WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivision
 @MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid
 While @@FETCH_STATUS = 0
 Begin	
-	select top 1 @FirstSizeCode=SizeCode,@FirstRatio=qty From Order_EachCons_SizeQty WITH(NOLOCK) Where Order_EachConsUkey=@Order_EachConsUkey order by Qty desc
-	DECLARE Size CURSOR FOR Select SizeCode,qty	From Order_EachCons_SizeQty WITH(NOLOCK) Where Order_EachConsUkey = @Order_EachConsUkey order by Qty desc	
+	select oes.SizeCode,qty ,IDENTITY(int,1,1) as Rowid 
+	into #tmpSQ
+	From Order_EachCons_SizeQty oes WITH(NOLOCK)left join Order_SizeCode os on oes.id = os.id and oes.SizeCode = os.SizeCode 
+	Where Order_EachConsUkey=@Order_EachConsUkey order by Qty desc,Seq
+
+	select top 1 @FirstSizeCode=SizeCode,@FirstRatio=qty from #tmpSQ order by Rowid
+	DECLARE Size CURSOR FOR select SizeCode,qty from #tmpSQ order by Rowid
 	OPEN Size
 	FETCH NEXT FROM Size INTO @SizeCode,@SizeRatio
 	While @@FETCH_STATUS = 0
@@ -310,7 +315,8 @@ Begin
 	End
 	CLOSE Size
 	DEALLOCATE Size
-
+	
+	drop table #tmpSQ
 	--其它Table
 	DECLARE @Cons float
 	DECLARE insertWorkorder CURSOR FOR

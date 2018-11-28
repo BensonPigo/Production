@@ -79,9 +79,12 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
+    ,[SewingReasonDesc]=sr.ID+'-'+sr.Description
+	,sd.Remark
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+LEFT JOIN SewingReason sr ON sd.SewingReasonID=sr.ID AND sr.Type='SO'
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
@@ -132,19 +135,22 @@ select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionI
     ,SubconOutFty
     ,SubConOutContractNumber
     ,SubconInSisterFty
+    ,SewingReasonDesc
+    ,Remark
 into #tmpSewingGroup
 from #tmpSewingDetail
 --↓計算累計天數 function table太慢直接寫在這
-select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
+select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
 into #stmp
 from #tmpSewingGroup t
 inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID
 inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID 
+--INNER JOIN SewingReason sr ON sd.SewingReasonID=sr.ID AND sr.Type='SO'
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
 --
-select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType
+select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
 into #wtmp
 from #tmpSewingGroup t
 inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate and isnull(w.Hours,0) != 0
@@ -327,6 +333,8 @@ select * from(
 
             sqlCmd.Append($@",Diff = t.QAQty-InlineQty
 		,rate
+        ,t.Remark
+        ,t.SewingReasonDesc
 		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
     from #tmp1stFilter t");
             if (this.show_Accumulate_output == true)
@@ -389,11 +397,11 @@ EXEC sp_executesql @lastSql
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
             {
-                start_column = 40;
+                start_column = 41;
             }
             else
             {
-                start_column = 38;
+                start_column = 39;
                 objSheets.get_Range("AK:AL").EntireColumn.Delete();
             }
 

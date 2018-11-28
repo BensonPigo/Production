@@ -336,7 +336,6 @@ namespace Sci.Production.Quality
 
             };
             #endregion
-
             #region Fabric Color event
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts_fabricColor = new DataGridViewGeneratorTextColumnSettings();
             ts_fabricColor.EditingMouseDown += (s, e) =>
@@ -398,9 +397,23 @@ namespace Sci.Production.Quality
                 dr.EndEdit();
             };
             #endregion
+            #region TypeOfPrint 增加長度檢核
+            Ict.Win.DataGridViewGeneratorTextColumnSettings ts_Typeofprint = new DataGridViewGeneratorTextColumnSettings();
+            ts_Typeofprint.CellValidating += (s, e) =>
+            {
+                string value = e.FormattedValue.ToString();
+                if (value.Length > 30)
+                {
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox("<Typeofprint> Can only enter 30 characters");
+                    return;
+                }
+            };
+            #endregion
+
             Helper.Controls.Grid.Generator(this.grid)
             .Text("ArtworkTypeID", "Artwork", width: Widths.AnsiChars(17),settings: ts_artwork)
-            .Text("Typeofprint", "Typeofprint", width: Widths.AnsiChars(17))
+            .Text("Typeofprint", "Typeofprint", width: Widths.AnsiChars(17), settings: ts_Typeofprint)
             .Text("Design", "Design", width: Widths.AnsiChars(15), iseditingreadonly: false)
             .Text("ArtworkColorName", "Artwork Color", width: Widths.AnsiChars(18),settings: ts_artworkColor)
             .Text("FabricRefNo", "Fabric Ref No.", width: Widths.AnsiChars(17))

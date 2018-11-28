@@ -480,6 +480,43 @@ StyleUkey
 from Trade_To_Pms.dbo.Style_SizeCode as b WITH (NOLOCK)
 where not exists(select 1 from Production.dbo.Style_SizeCode as a WITH (NOLOCK) where a.Ukey = b.Ukey)
 and b.SizeCode is not null
+
+--STYLE51
+--Style_SizeTol
+----------------------刪除主TABLE多的資料
+RAISERROR('imp_Style - Starts',0,0)
+Delete Production.dbo.Style_SizeTol
+from Production.dbo.Style_SizeTol as a 
+INNER JOIN Trade_To_Pms.dbo.Style as t on a.StyleUkey=t.Ukey
+left join Trade_To_Pms.dbo.Style_SizeTol as b
+on a.StyleUkey = b.StyleUkey and a.SizeGroup = b.SizeGroup and a.SizeItem = b.SizeItem
+where b.StyleUkey is null
+---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+RAISERROR('imp_Style - Starts',0,0)
+UPDATE a
+SET  
+a.Lower	= b.Lower
+,a.Upper	= b.Upper
+from Production.dbo.Style_SizeTol as a 
+inner join Trade_To_Pms.dbo.Style_SizeTol as b ON a.StyleUkey = b.StyleUkey and a.SizeGroup = b.SizeGroup and a.SizeItem = b.SizeItem
+-------------------------- INSERT INTO 抓
+RAISERROR('imp_Style - Starts',0,0)
+INSERT INTO Production.dbo.Style_SizeTol(
+StyleUkey
+,SizeGroup
+,SizeItem
+,Lower
+,Upper
+)
+select 
+StyleUkey
+,SizeGroup
+,SizeItem
+,Lower
+,Upper
+from Trade_To_Pms.dbo.Style_SizeTol as b WITH (NOLOCK)
+where not exists(select 1 from Production.dbo.Style_SizeTol as a WITH (NOLOCK) where a.StyleUkey = b.StyleUkey and a.SizeGroup = b.SizeGroup and a.SizeItem = b.SizeItem)
+
 --STYLE52
 --STYLE_SICESPEC(需再確認ukey欄位)
 ----------------------刪除主TABLE多的資料

@@ -171,21 +171,22 @@ select 0 as [selected]
 				(FIR_Result1.ContinuityResult is null or 
 				FIR_Result1.PhyResult is null or
 				FIR_Result1.ShadeboneResult is null or
-				FIR_Result1.WeightResult is null) 
+				FIR_Result1.WeightResult is null or
+				FIR_Result1.OdorResult is null) 
 				then 
 					(case when 
 					FIR_Result2.ContinuityResult='Fail' or FIR_Result2.PhyResult='Fail' or
-					FIR_Result2.ShadeboneResult='Fail' or FIR_Result2.WeightResult='Fail'
+					FIR_Result2.ShadeboneResult='Fail' or FIR_Result2.WeightResult='Fail' or FIR_Result2.OdorResult='Fail'
 					then 'Fail' 
 					when 
 					FIR_Result2.ContinuityResult is null and FIR_Result2.PhyResult is null and
-					FIR_Result2.ShadeboneResult is null and FIR_Result2.WeightResult is null
+					FIR_Result2.ShadeboneResult is null and FIR_Result2.WeightResult is null and FIR_Result2.OdorResult is null
 					then 'Blank'
 					else 'Pass' end
 					)
 				else (case when 
 					FIR_Result1.ContinuityResult='Fail' or FIR_Result1.PhyResult='Fail' or
-					FIR_Result1.ShadeboneResult='Fail' or FIR_Result1.WeightResult='Fail'
+					FIR_Result1.ShadeboneResult='Fail' or FIR_Result1.WeightResult='Fail' or FIR_Result1.OdorResult='Fail'
 					then 'Fail' else 'Pass' end
 					)
 				end
@@ -209,12 +210,13 @@ cross apply
     where o1.POID = fi.POID and o1.Junk = 0
 ) x
 outer apply(
-	select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult
+	select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult, FO.Result AS OdorResult
 	from fir f
 	left join FIR_Physical fp on f.id=fp.ID AND F.PhysicalEncode=1
 	left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and fw.Dyelot=fp.Dyelot and fw.Roll=fp.Roll
 	left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fw.Dyelot=fs.Dyelot and fw.Roll=fs.Roll
 	left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and fs.Dyelot=fc.Dyelot and fs.Roll=fc.Roll
+	left join FIR_Odor fo on f.id=fc.ID AND F.OdorEncode=1 and fs.Dyelot=fc.Dyelot and fs.Roll=fc.Roll
 	where f.POID=fi.POID
 	and f.SEQ1 = fi.Seq1 and f.SEQ2 = fi.Seq2 and fp.Dyelot=fi.Dyelot AND FP.Roll=fi.Roll
 )FIR_Result1
@@ -224,18 +226,21 @@ outer apply(
 	,WeightResult = case when WeightResult >0 then 'Fail' when WeightResult is null then null else 'Pass' end
 	,ShadeboneResult = case when ShadeboneResult >0 then 'Fail' when ShadeboneResult is null then null else 'Pass' end
 	,ContinuityResult = case when ContinuityResult >0 then 'Fail' when ContinuityResult is null then null else 'Pass' end
+	,OdorResult = case when OdorResult >0 then 'Fail' when OdorResult is null then null else 'Pass' end
 	from (
 		select round(convert(float, sum(iif(PhyResult = 'Fail',1,0))) / convert(float,(count(*))),2) PhyResult		
 		, round(convert(float, sum(iif(WeightResult = 'Fail',1,0))) / convert(float,(count(*))),2) WeightResult		
 		, round(convert(float, sum(iif(ShadeboneResult = 'Fail',1,0))) / convert(float,(count(*))),2) ShadeboneResult		
 		, round(convert(float, sum(iif(ContinuityResult = 'Fail',1,0))) / convert(float,(count(*))),2) ContinuityResult		
+		, round(convert(float, sum(iif(OdorResult = 'Fail',1,0))) / convert(float,(count(*))),2) OdorResult		
 		from (
-		select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult
+		select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult, FO.Result AS OdorResult
 		from fir f
 		left join FIR_Physical fp on f.id=fp.ID AND F.PhysicalEncode=1
 		left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and fw.Dyelot=fp.Dyelot --and fw.Roll=fp.Roll
 		left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fw.Dyelot=fs.Dyelot --and fw.Roll=fs.Roll
 		left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and fs.Dyelot=fc.Dyelot --and fs.Roll=fc.Roll
+		left join FIR_Odor fo on f.id=fc.ID AND F.OdorEncode=1 and fs.Dyelot=fc.Dyelot --and fs.Roll=fc.Roll
 		where --f.POID like '18%'
 		f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 and fp.Dyelot= fi.Dyelot --AND FP.Roll='PSRIS1'
 		) a

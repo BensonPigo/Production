@@ -157,7 +157,7 @@ namespace Sci.Production.PPIC
             }
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow styleData;
-            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate from Style WITH (NOLOCK) where Ukey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+            string sqlCmd = string.Format("select Description,ExpectionForm,FTYRemark,ApvDate,ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
             if (MyUtility.Check.Seek(sqlCmd, out styleData))
             {
                 this.displayDescription.Value = MyUtility.Convert.GetString(styleData["Description"]);
@@ -171,9 +171,19 @@ namespace Sci.Production.PPIC
                 {
                     this.dateStyleApv.Value = MyUtility.Convert.GetDate(styleData["ApvDate"]);
                 }
+
+                if (MyUtility.Check.Empty(styleData["ExpectionFormRemark"]))
+                {
+                    this.btnExpectionFormRemark.Enabled = false;
+                }
+                else
+                {
+                    this.btnExpectionFormRemark.Enabled = true;
+                }
             }
             else
             {
+                this.btnExpectionFormRemark.Enabled = false;
                 this.displayDescription.Value = string.Empty;
                 this.checkExceptionForm.Value = "false";
                 this.editFtyRemark.Text = string.Empty;
@@ -272,7 +282,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnQuantityBreakdown.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Qty WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnShippingMark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["MarkFront"]) || !MyUtility.Check.Empty(this.CurrentMaintain["MarkBack"]) || !MyUtility.Check.Empty(this.CurrentMaintain["MarkLeft"]) || !MyUtility.Check.Empty(this.CurrentMaintain["MarkRight"]) ? Color.Blue : Color.Black;
             this.btnTMSCost.ForeColor = haveTmsCost ? Color.Blue : Color.Black;
-            this.btnStdGSDList.ForeColor = MyUtility.Check.Seek(string.Format("select i.ID from Style s WITH (NOLOCK) , IETMS i WITH (NOLOCK) where s.Ukey = {0} and s.IETMSID = i.ID and s.IETMSVersion = i.Version", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]))) && MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
+            this.btnStdGSDList.ForeColor = MyUtility.Check.Seek(string.Format("select i.ID from Style s WITH (NOLOCK) , IETMS i WITH (NOLOCK) where s.Ukey = '{0}' and s.IETMSID = i.ID and s.IETMSVersion = i.Version", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]))) && MyUtility.Check.Seek(string.Format("select ID from Order_TmsCost where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
             this.btnCMPQRemark.ForeColor = !MyUtility.Check.Empty(this.CurrentMaintain["CMPQRemark"]) ? Color.Blue : Color.Black;
             this.btnCMPQSheet.ForeColor = MyUtility.Check.Seek(string.Format("select ID from orders WITH (NOLOCK) where Junk = 0 and POID='{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
             this.btnArtwork.ForeColor = MyUtility.Check.Seek(string.Format("select ID from Order_Artwork WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
@@ -287,7 +297,8 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             this.btnFabricInspectionList.ForeColor = MyUtility.Check.Seek(string.Format("select ID from FIR WITH (NOLOCK) where PoID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]))) ? (MyUtility.Convert.GetString(this.CurrentMaintain["POID"]) != string.Empty ? Color.Blue : Color.Black) : Color.Black;
             this.btnAccessoryInspectionList.ForeColor = MyUtility.Check.Seek(string.Format("select ID from AIR WITH (NOLOCK) where PoID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]))) ? Color.Blue : Color.Black;
             this.btnArtworkTransactionList.ForeColor = MyUtility.Check.Seek(string.Format("select ID from ArtworkPO_Detail WITH (NOLOCK) where OrderID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ? Color.Blue : Color.Black;
-            this.btnProductionKits.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
+            this.btnProductionKits.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = '{0}' ", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]))) ? Color.Blue : Color.Black;
+            this.btnPFHistory.ForeColor = MyUtility.Check.Seek($@"select id from Order_PFHis with(nolock) where id = '{this.CurrentMaintain["ID"]}'") ? Color.Blue : Color.Black;
 
             #region 控制[m/notice sheet]按鈕是否變色
             bool enableMNotice1 = MyUtility.Check.Seek(string.Format("select ID FROM MnOrder_ColorCombo WITH (NOLOCK) where ID = (select OrderComboID FROM MNOrder where ID = '{1}')", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
@@ -331,7 +342,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         {
             base.ClickNewAfter();
             this.txtpaytermar1.TextBox1.ReadOnly = true;
-            this.ChkIsDevSample.ReadOnly = true;
+            this.txtDevSample.ReadOnly = true;
             this.label44.Text = "/PCS";
 
             // 帶入預設值
@@ -378,7 +389,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.txtcurrency1.ReadOnly = true;
                 this.numUnitPrice.ReadOnly = true;
                 this.numQtyCarton.ReadOnly = true;
-                this.ChkIsDevSample.ReadOnly = true;
+                this.txtDevSample.ReadOnly = true;
             }
         }
 
@@ -548,7 +559,7 @@ select ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TM
 from (
 select '{0}'as ID,ArtworkTypeID,Article,PatternCode,PatternDesc,ArtworkID,ArtworkName,TMS,Qty,Price,Cost,Remark,'{1}' as 'loginID',GETDATE() as 'today'
 ,(select isnull(MIN(UKey),0) from Order_Artwork)as 'rownumber', Row_Number() OVER( order by PatternCode ) as 'row'
-from Style_Artwork where StyleUkey = {2}
+from Style_Artwork where StyleUkey = '{2}'
 ) x",
                          MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                          Env.User.UserID,
@@ -1155,9 +1166,8 @@ where o.Junk = 0 and o.POID= @POID order by o.ID";
             string result = MyUtility.GetValue.Lookup($"SELECT ot.IsDevSample FROM OrderType ot INNER JOIN Orders o ON o.BrandID=ot.BrandID AND  o.OrderTypeID=ot.ID WHERE o.ID='{this.displaySPNo.Text}'");
             bool IsDevSample = false;
             if (result!="" && result.ToUpper()=="TRUE")
-                IsDevSample = true;
-            
-            this.ChkIsDevSample.Checked = Convert.ToBoolean(IsDevSample);
+                IsDevSample = true;     
+            this.txtDevSample.Text = IsDevSample ? "Y" : "";
         }
 
      private DataRow GetTitleDataByCustCD(string poid, string id, bool byCustCD = true)
@@ -1503,6 +1513,43 @@ where POID = @poid group by POID,b.spno";
             P01_BuyerDeliveryHistory pb = new P01_BuyerDeliveryHistory("Order", "Orders", "OrdersBuyerDelivery", orderID);
             pb.ShowDialog(this);
         }
-        
+
+        private void btnExpectionFormRemark_Click(object sender, EventArgs e)
+        {
+            DataRow styleData;
+            string sqlCmd = string.Format("select ExpectionFormRemark from Style WITH (NOLOCK) where Ukey = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+            if (MyUtility.Check.Seek(sqlCmd, out styleData))
+            {
+                Sci.Win.Tools.EditMemo form = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(styleData["ExpectionFormRemark"]), "Expection Form Remark", false, null);
+                form.ShowDialog(this);
+            }
+        }
+
+        private void btnPFHistory_Click(object sender, EventArgs e)
+        {
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var dlg = new PFHis(false, dr["ID"].ToString(), string.Empty, string.Empty, dr);
+            dlg.ShowDialog();
+            this.RenewData();
+        }
+
+        private void BtnEConsMNFailed_Click(object sender, EventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["ID"]) && !MyUtility.Check.Empty(this.CurrentMaintain["POID"]))
+            {
+                using (var dlg = new P01_EConsMNoticeFailed(false, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString(), null))
+                {
+                    dlg.ShowDialog();
+                }
+
+                this.RenewData();
+                this.OnDetailEntered();
+            }
+        }
     }
 }

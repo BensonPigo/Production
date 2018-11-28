@@ -13,6 +13,8 @@
     [InlineQty]            INT            CONSTRAINT [DF_SewingOutput_Detail_InlineQty] DEFAULT ((0)) NULL,
     [OldDetailKey]         VARCHAR (13)   CONSTRAINT [DF_SewingOutput_Detail_OldDetailKey] DEFAULT ('') NULL,
     [AutoCreate]           BIT            NULL,
+    [SewingReasonID] VARCHAR(5) NOT NULL DEFAULT (''), 
+    [Remark] NVARCHAR(1000) NULL DEFAULT (''), 
     CONSTRAINT [PK_SewingOutput_Detail] PRIMARY KEY CLUSTERED ([UKey] ASC)
 );
 

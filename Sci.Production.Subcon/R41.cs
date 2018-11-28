@@ -27,15 +27,7 @@ namespace Sci.Production.Subcon
 
         private void comboload()
         {
-            DataTable dtSubprocessID;
             DualResult Result;
-            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
-                out dtSubprocessID))
-            {
-                this.comboSubProcess.DataSource = dtSubprocessID;
-                this.comboSubProcess.DisplayMember = "ID";
-            }
-            else { ShowErr(Result); }
 
             DataTable dtM;
             if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtM))
@@ -50,7 +42,7 @@ namespace Sci.Production.Subcon
         // 驗證輸入條件
         protected override bool ValidateInput()
         {
-            SubProcess = this.comboSubProcess.Text;
+            SubProcess = this.txtsubprocess.Text;
             SP = this.txtSPNo.Text;
             M = this.comboM.Text;
             Factory = this.comboFactory.Text;
@@ -106,7 +98,11 @@ Select DISTINCT
     [Qty] = bd.Qty,
     [Sub-process] = s.Id,
     [InComing] = bio.InComing,
-    [Out (Time)] = bio.OutGoing
+    [Out (Time)] = bio.OutGoing,
+	bio.LocationID,
+	AvgTime = case when isnull(bio.InComing,'')='' and isnull(bio.OutGoing,'')='' then null
+				   else round(abs(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,'')))/24.0,2)
+				   end
 
 from Bundle b WITH (NOLOCK) 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
@@ -129,7 +125,7 @@ where 1=1
             #region Append畫面上的條件
             if (!MyUtility.Check.Empty(SubProcess))
             {
-                sqlCmd.Append(string.Format(@" and (s.Id = '{0}' or '{0}' = 'ALL') ", SubProcess));
+                sqlCmd.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
             }
             if (!MyUtility.Check.Empty(CutRef1))
             {

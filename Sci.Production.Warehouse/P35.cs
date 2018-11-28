@@ -581,28 +581,50 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - (isnull(d.Qt
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? "" : e.Master["ID"].ToString();
-            this.DetailSelectCommand = string.Format(@"select a.id,a.PoId,a.Seq1,a.Seq2
-,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
-,p1.FabricType
-,p1.stockunit
-,dbo.getmtldesc(a.poid,a.seq1,a.seq2,2,0) as [description]
-,a.Roll
-,a.Dyelot
-,a.QtyAfter
-,a.QtyBefore
-,isnull(a.QtyAfter,0.00) - isnull(a.QtyBefore,0.00) adjustqty
-,a.ReasonId
-,(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
-,a.StockType
-,a.ukey
-,a.ftyinventoryukey
-,dbo.Getlocation(fi.ukey) location
-,ColorID =dbo.GetColorMultipleID(p1.BrandId, p1.ColorID)
+            this.DetailSelectCommand = string.Format(@"
+select a.id,a.PoId,a.Seq1,a.Seq2
+    ,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+    ,p1.FabricType
+    ,p1.stockunit
+    ,a.Roll
+    ,a.Dyelot
+    ,a.QtyAfter
+    ,a.QtyBefore
+    ,isnull(a.QtyAfter,0.00) - isnull(a.QtyBefore,0.00) adjustqty
+    ,a.ReasonId
+    ,(select Name from Reason WITH (NOLOCK) where ReasonTypeID='Stock_Adjust' AND ID= A.ReasonId) reason_nm
+    ,a.StockType
+    ,a.ukey
+    ,a.ftyinventoryukey
+    ,[location] = Getlocation.Value 
+    ,[ColorID] = ColorID.Value
 from dbo.Adjust_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2
-    and a.roll = fi.roll and a.stocktype = fi.stocktype
-Where a.id = '{0}'", masterID);
+    and a.roll = fi.roll and a.stocktype = fi.stocktype and a.Dyelot = fi.Dyelot
+outer apply (
+    select   [Value] = stuff((	select ',' + MtlLocationID
+									from (	
+										select d.MtlLocationID	
+										from dbo.FtyInventory_Detail d WITH (NOLOCK) 
+										where	ukey =   fi.ukey
+												and d.MtlLocationID != ''
+												and d.MtlLocationID is not null) t
+									for xml path('')) 
+								, 1, 1, '')
+) as Getlocation
+outer apply (
+	select	[Value] = stuff((select '/' + m.ColorID 
+			   from dbo.Color as c 
+			   LEFT join dbo.Color_multiple as m on m.ID = c.ID 
+				  								    and m.BrandID = c.BrandId 
+			   where c.ID = p1.ColorID and c.BrandId =  p1.BrandId 
+			   order by m.Seqno 
+			   for xml path('') ) 
+			 , 1, 1, '')  
+) as ColorID
+Where a.id = '{0}'
+", masterID);
             return base.OnDetailSelectCommandPrepare(e);
         }
 

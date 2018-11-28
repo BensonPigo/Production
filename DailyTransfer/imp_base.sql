@@ -1844,6 +1844,7 @@ SET
       --,a.BrandID	      =b.BrandID	
       a.PhaseID	      =b.PhaseID	
       ,a.ProjectID	      =b.ProjectID	
+      ,a.KPIProjectID	      =b.KPIProjectID	
       ,a.Junk	      =b.Junk	
       ,a.CpuRate	      =b.CpuRate	
       ,a.Category	      =b.Category	
@@ -1866,6 +1867,7 @@ INSERT INTO Production.dbo.OrderType(
       ,BrandID
       ,PhaseID
       ,ProjectID
+      ,KPIProjectID
       ,Junk
       ,CpuRate
       ,Category
@@ -1887,6 +1889,7 @@ select
       ,BrandID
       ,PhaseID
       ,ProjectID
+      ,KPIProjectID
       ,Junk
       ,CpuRate
       ,Category
@@ -3132,6 +3135,52 @@ when not matched by target then
 when not matched by source then 
       delete;     
 
+--------SubconReason---------------
+
+Merge Production.dbo.SubconReason as t
+Using Trade_To_Pms.dbo.SubconReason as s
+on t.ID = s.ID and t.Type = s.Type
+when matched then
+      update set	t.Reason		 = s.Reason		 ,
+					t.Responsible	 = s.Responsible ,
+					t.Junk			 = s.Junk		 ,
+					t.AddDate		 = s.AddDate	 ,
+					t.AddName		 = s.AddName	 ,
+					t.EditDate		 = s.EditDate	 ,
+					t.EditName		 = s.EditName
+when not matched by target then
+      insert (Type,ID,Reason,Responsible,Junk,AddDate,AddName,EditDate,EditName
+      ) values (s.Type,s.ID,s.Reason,s.Responsible,s.Junk,s.AddDate,s.AddName,s.EditDate,s.EditName
+      )
+when not matched by source then 
+      delete;     
+
+--------SewingReason---------------
+
+Merge Production.dbo.SewingReason as sr
+Using Trade_To_Pms.dbo.SewingReason as tsr
+on sr.ID = tsr.ID AND sr.Type=tsr.Type
+when matched then
+      update set
+       sr.Type = tsr.Type,
+       sr.ID = tsr.ID,
+       sr.Description= tsr.Description,
+       sr.Junk = tsr.Junk,
+       sr.AddName = tsr.AddName,
+       sr.AddDate = tsr.AddDate,
+       sr.EditName = tsr.EditName,
+       sr.EditDate = tsr.EditDate
+when not matched by target then
+      insert (
+            Type , ID  , Description  , Junk  , AddName    , AddDate
+            , EditName   , EditDate    
+      ) values (
+            tsr.Type , tsr.ID  , tsr.Description  , tsr.Junk  , tsr.AddName    , tsr.AddDate
+            , tsr.EditName   , tsr.EditDate    
+      )
+when not matched by source then 
+      delete;     
+
 --------GMTBooking---------------
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -3146,6 +3195,9 @@ from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice a
 where b.InvDate is not null
 END
 
-
+--------SeasonSCI---------------
+truncate table SeasonSCI
+insert into SeasonSCI
+select * from Trade_To_Pms.dbo.SeasonSCI
 
 

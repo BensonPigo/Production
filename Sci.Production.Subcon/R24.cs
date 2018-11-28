@@ -254,48 +254,64 @@ where c.Classify='P'
             }
 
             sqlCmd.Append(string.Format(@"
+-- #tmp_localap
+select isnull(sum(a.ap_amt),0.00) ap_amt
+     , isnull(sum(a.ap_qty),0) ap_qty 
+	,a.Category
+	,a.FactoryId
+	,a.OrderId
+into  #tmp_localap
+from(
+	select 
+			apd.Qty ap_qty
+			,apd.Qty*apd.Price*dbo.getRate('FX',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt 
+			,ap.Category
+			,ap.FactoryId
+			,o.POID as OrderId 
+	from localap ap WITH (NOLOCK) 
+	inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+	inner join orders o with (nolock) on apd.OrderID = o.ID	
+	where 1=1
+	AND AP.Status = 'Approved'
+)a 
+inner join #tmp t on t.artworktypeid = a.Category and t.FactoryID = a.FactoryId and a.OrderId = t.POID 
+where ap_qty > 0  
+group by a.Category,a.FactoryId,a.OrderId
+
+-- #tmp_orders
+select iif(bb.ArtworkTypeID is null,null,isnull(sum(aa.qty),0)) order_qty
+ 	,sum(aa.qty *Price) order_amt 
+	,t.poid
+	,bb.ArtworkTypeID
+into #tmp_orders
+from orders aa WITH (NOLOCK) 
+left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID 
+left join (select distinct poid,artworktypeid from #tmp) t on t.poid =aa.poid and bb.ArtworkTypeID = t.artworktypeid 
+group by  bb.ArtworkTypeID,t.poid
+
+-- #tmp_final 
 select distinct t.FactoryID
     ,t.artworktypeid
     ,aa.POID
     ,aa.StyleID
     ,cc.BuyerID
-    ,aa.BrandID
-    ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.poid)) smr
-    ,y.order_qty
+    ,aa.BrandID 
+    ,dbo.getTPEPass1((select SMR from orders o  WITH (NOLOCK) where o.id = aa.poid)) smr  
+	,os.os
     ,x.ap_qty
     ,x.ap_amt
     ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) ap_price
     ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
     ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty)/ iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2)  percentage
-into #tmp2
+into #tmp_final
 from #tmp t
-left join orders aa WITH (NOLOCK) on aa.poid = t.poid
+left join orders aa WITH (NOLOCK) on t.poid =aa.poid  
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
-left join Brand cc on aa.BrandID=cc.id
-outer apply (
-	select isnull(sum(t.ap_amt),0.00) ap_amt
-            , isnull(sum(t.ap_qty),0) ap_qty 
-from (
-	select --currencyid,
-			--apd.Price,
-			apd.Qty ap_qty
-			,apd.Qty*apd.Price*dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) ap_amt
-			--,dbo.getRate('{0}',AP.CurrencyID,'USD',AP.ISSUEDATE) rate
-	from localap ap WITH (NOLOCK) 
-    inner join LocalAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
-    inner join orders o with (nolock) on apd.OrderID = o.ID
-    where ap.Category = t.artworktypeid and o.POID = t.POID AND AP.Status = 'Approved'  and t.FactoryID = ap.FactoryId) t
-) x		
-outer apply(
-	select --orders.POID
-	isnull(sum(orders.qty),0) order_qty
-	,sum(orders.qty*Price) order_amt 
-	from orders WITH (NOLOCK) 
-	left join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	where poid= t.POID and ArtworkTypeID= t.artworktypeid
-	group by orders.poid,ArtworkTypeID
-) y
-where ap_qty > 0 
+left join Brand cc WITH (NOLOCK) on aa.BrandID=cc.id  
+left join #tmp_localap x on t.artworktypeid = x.Category and t.POID = x.OrderId and t.FactoryID = x.FactoryId  	 
+left join #tmp_orders y on t.POID = y.poid  and t.artworktypeid = y.artworktypeid
+outer apply(select os=sum(qty) from orders o with(nolock) where o.poid = aa.poid)os
+where 1=1 
 ", ratetype));
             #endregion
 
@@ -341,10 +357,11 @@ where ap_qty > 0
 
 
             sqlCmd.Append(@" 
-select distinct *from #tmp2
-drop table #tmp,#tmp2");
-
+select * from #tmp_final
+drop table #tmp,#tmp_orders,#tmp_localap,#tmp_final");
+            DBProxy.Current.DefaultTimeout = 1800;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);
+            DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());

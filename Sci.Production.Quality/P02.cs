@@ -12,6 +12,7 @@ using Sci.Win;
 using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
+using System.Linq;
 
 namespace Sci.Production.Quality
 {
@@ -253,8 +254,10 @@ namespace Sci.Production.Quality
             else dateCompletionDate.Text = "";
             //this.grid.AutoResizeColumns();
 
+            // 判斷Batch Encode是否可用
+            this.btnBatchEncode.Enabled = this.EditMode ? false : detailTb.AsEnumerable().Where(s => !s["Status"].Equals("Confirmed")).Any();
         }
-
+        
         protected override DualResult ClickSave()
         {
             //因為表頭是PO不能覆蓋其他資料，必需自行存檔
@@ -458,6 +461,14 @@ namespace Sci.Production.Quality
                 if (index >= find_dr.Length) index = 0;
             }
             detailgridbs.Position = DetailDatas.IndexOf(find_dr[index]);
+        }
+
+        private void btnBatchEncode_Click(object sender, EventArgs e)
+        {
+            P02_BatchEncode p02_BatchEncode = new P02_BatchEncode(this.CurrentMaintain["ID"].ToString());
+            p02_BatchEncode.ShowDialog();
+            this.RenewData();
+            this.OnDetailEntered();
         }
     }
 }

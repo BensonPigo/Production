@@ -29,9 +29,10 @@
         private void InitializeComponent()
         {
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnPFHistory = new Sci.Win.UI.Button();
+            this.btnEConsMNFailed = new Sci.Win.UI.Button();
             this.btnPoRemark = new Sci.Win.UI.Button();
             this.label1 = new Sci.Win.UI.Label();
-            this.PcHandleText = new Sci.Production.Class.txttpeuser();
             this.btnMeterialStatus_Local = new Sci.Win.UI.Button();
             this.btnMeterialStatus = new Sci.Win.UI.Button();
             this.btnEachCons = new Sci.Win.UI.Button();
@@ -146,9 +147,10 @@
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
+            this.PcHandleText = new Sci.Production.Class.txttpeuser();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelBuyer = new Sci.Win.UI.Label();
@@ -291,7 +293,10 @@
             this.shapeContainer5 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.labelKit = new Sci.Win.UI.Label();
             this.displayKit = new Sci.Win.UI.DisplayBox();
-            this.ChkIsDevSample = new Sci.Win.UI.CheckBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtDevSample = new Sci.Win.UI.TextBox();
+            this.btnExpectionFormRemark = new Sci.Win.UI.Button();
+            this.btnEConsMNFailed = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -301,14 +306,11 @@
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Location = new System.Drawing.Point(4, 24);
-            this.detail.Size = new System.Drawing.Size(1000, 661);
-            // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.ChkIsDevSample);
+            this.detailcont.Controls.Add(this.btnExpectionFormRemark);
+            this.detailcont.Controls.Add(this.txtDevSample);
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.displayKit);
             this.detailcont.Controls.Add(this.labelKit);
             this.detailcont.Controls.Add(this.btnBuyerDeliveryHistory);
@@ -443,12 +445,12 @@
             this.detailcont.Controls.Add(this.txtuser2);
             this.detailcont.Controls.Add(this.txttpeuser1);
             this.detailcont.Controls.Add(this.txttpeuser2);
-            this.detailcont.Size = new System.Drawing.Size(1000, 661);
+            this.detailcont.Size = new System.Drawing.Size(897, 395);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 661);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 0);
+            this.detailbtm.Location = new System.Drawing.Point(0, 395);
+            this.detailbtm.Size = new System.Drawing.Size(897, 0);
             // 
             // browse
             // 
@@ -485,9 +487,10 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnPFHistory);
+            this.tabPage1.Controls.Add(this.btnEConsMNFailed);
             this.tabPage1.Controls.Add(this.btnPoRemark);
             this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.btnMeterialStatus_Local);
             this.tabPage1.Controls.Add(this.btnMeterialStatus);
             this.tabPage1.Controls.Add(this.btnEachCons);
@@ -597,15 +600,37 @@
             this.tabPage1.Controls.Add(this.labelDetailsStyleNo);
             this.tabPage1.Controls.Add(this.labelDetailsSPNo);
             this.tabPage1.Controls.Add(this.shapeContainer2);
-            this.tabPage1.Controls.Add(this.txttpeuser5);
-            this.tabPage1.Controls.Add(this.txttpeuser4);
             this.tabPage1.Controls.Add(this.txttpeuser3);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Controls.Add(this.txttpeuser5);
+            this.tabPage1.Controls.Add(this.PcHandleText);
+            this.tabPage1.Controls.Add(this.txttpeuser4);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 661);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // btnPFHistory
+            // 
+            this.btnPFHistory.Location = new System.Drawing.Point(266, 62);
+            this.btnPFHistory.Name = "btnPFHistory";
+            this.btnPFHistory.Size = new System.Drawing.Size(30, 23);
+            this.btnPFHistory.TabIndex = 193;
+            this.btnPFHistory.Text = "PF";
+            this.btnPFHistory.UseVisualStyleBackColor = true;
+            this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
+            // 
+            // btnEConsMNFailed
+            // 
+            this.btnEConsMNFailed.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnEConsMNFailed.Location = new System.Drawing.Point(797, 628);
+            this.btnEConsMNFailed.Name = "btnEConsMNFailed";
+            this.btnEConsMNFailed.Size = new System.Drawing.Size(194, 27);
+            this.btnEConsMNFailed.TabIndex = 193;
+            this.btnEConsMNFailed.Text = "Econs/MN Failed";
+            this.btnEConsMNFailed.UseVisualStyleBackColor = true;
+            this.btnEConsMNFailed.Click += new System.EventHandler(this.BtnEConsMNFailed_Click);
             // 
             // btnPoRemark
             // 
@@ -624,15 +649,6 @@
             this.label1.Size = new System.Drawing.Size(65, 21);
             this.label1.TabIndex = 190;
             this.label1.Text = "PC Handle";
-            // 
-            // PcHandleText
-            // 
-            this.PcHandleText.DisplayBox1Binding = "";
-            this.PcHandleText.DisplayBox2Binding = "";
-            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
-            this.PcHandleText.Name = "PcHandleText";
-            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
-            this.PcHandleText.TabIndex = 191;
             // 
             // btnMeterialStatus_Local
             // 
@@ -679,7 +695,7 @@
             // 
             // btnBacktoPPICMasterList
             // 
-            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(797, 628);
+            this.btnBacktoPPICMasterList.Location = new System.Drawing.Point(797, 535);
             this.btnBacktoPPICMasterList.Name = "btnBacktoPPICMasterList";
             this.btnBacktoPPICMasterList.Size = new System.Drawing.Size(194, 27);
             this.btnBacktoPPICMasterList.TabIndex = 110;
@@ -1696,7 +1712,7 @@
             this.lineShape7,
             this.lineShape6,
             this.lineShape5});
-            this.shapeContainer2.Size = new System.Drawing.Size(987, 649);
+            this.shapeContainer2.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer2.TabIndex = 8;
             this.shapeContainer2.TabStop = false;
             // 
@@ -1745,6 +1761,15 @@
             this.lineShape5.Y1 = 53;
             this.lineShape5.Y2 = 53;
             // 
+            // txttpeuser4
+            // 
+            this.txttpeuser4.DisplayBox1Binding = "";
+            this.txttpeuser4.DisplayBox2Binding = "";
+            this.txttpeuser4.Location = new System.Drawing.Point(279, 31);
+            this.txttpeuser4.Name = "txttpeuser4";
+            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser4.TabIndex = 7;
+            // 
             // txttpeuser5
             // 
             this.txttpeuser5.DataBindings.Add(new System.Windows.Forms.Binding("DisplayBox1Binding", this.mtbs, "OutstandingInCharge", true));
@@ -1755,15 +1780,6 @@
             this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser5.TabIndex = 70;
             // 
-            // txttpeuser4
-            // 
-            this.txttpeuser4.DisplayBox1Binding = "";
-            this.txttpeuser4.DisplayBox2Binding = "";
-            this.txttpeuser4.Location = new System.Drawing.Point(279, 31);
-            this.txttpeuser4.Name = "txttpeuser4";
-            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser4.TabIndex = 7;
-            // 
             // txttpeuser3
             // 
             this.txttpeuser3.DisplayBox1Binding = "";
@@ -1772,6 +1788,15 @@
             this.txttpeuser3.Name = "txttpeuser3";
             this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser3.TabIndex = 6;
+            // 
+            // PcHandleText
+            // 
+            this.PcHandleText.DisplayBox1Binding = "";
+            this.PcHandleText.DisplayBox2Binding = "";
+            this.PcHandleText.Location = new System.Drawing.Point(669, 31);
+            this.PcHandleText.Name = "PcHandleText";
+            this.PcHandleText.Size = new System.Drawing.Size(302, 23);
+            this.PcHandleText.TabIndex = 191;
             // 
             // lineShape10
             // 
@@ -2156,7 +2181,7 @@
             this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape3});
-            this.shapeContainer1.Size = new System.Drawing.Size(1000, 661);
+            this.shapeContainer1.Size = new System.Drawing.Size(992, 655);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
@@ -3200,7 +3225,7 @@
             // 
             this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Name = "shapeContainer3";
             this.shapeContainer3.Size = new System.Drawing.Size(1000, 660);
             this.shapeContainer3.TabIndex = 45;
             this.shapeContainer3.TabStop = false;
@@ -3209,7 +3234,7 @@
             // 
             this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer4.Name = "shapeContainer1";
+            this.shapeContainer4.Name = "shapeContainer4";
             this.shapeContainer4.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape4,
             this.lineShape2,
@@ -3244,7 +3269,7 @@
             // 
             this.shapeContainer5.Location = new System.Drawing.Point(3, 3);
             this.shapeContainer5.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer5.Name = "shapeContainer2";
+            this.shapeContainer5.Name = "shapeContainer5";
             this.shapeContainer5.Size = new System.Drawing.Size(994, 655);
             this.shapeContainer5.TabIndex = 8;
             this.shapeContainer5.TabStop = false;
@@ -3266,17 +3291,43 @@
             this.displayKit.Size = new System.Drawing.Size(94, 21);
             this.displayKit.TabIndex = 220;
             // 
-            // ChkIsDevSample
+            // label2
             // 
-            this.ChkIsDevSample.AutoSize = true;
-            this.ChkIsDevSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.ChkIsDevSample.Location = new System.Drawing.Point(436, 113);
-            this.ChkIsDevSample.Name = "ChkIsDevSample";
-            this.ChkIsDevSample.ReadOnly = true;
-            this.ChkIsDevSample.Size = new System.Drawing.Size(99, 19);
-            this.ChkIsDevSample.TabIndex = 221;
-            this.ChkIsDevSample.Text = "IsDevSample";
-            this.ChkIsDevSample.UseVisualStyleBackColor = true;
+            this.label2.Location = new System.Drawing.Point(402, 112);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(76, 21);
+            this.label2.TabIndex = 221;
+            this.label2.Text = "Dev. Sample";
+            // 
+            // txtDevSample
+            // 
+            this.txtDevSample.BackColor = System.Drawing.Color.White;
+            this.txtDevSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDevSample.Location = new System.Drawing.Point(482, 112);
+            this.txtDevSample.Name = "txtDevSample";
+            this.txtDevSample.Size = new System.Drawing.Size(35, 21);
+            this.txtDevSample.TabIndex = 222;
+            // 
+            // btnExpectionFormRemark
+            // 
+            this.btnExpectionFormRemark.Location = new System.Drawing.Point(930, 359);
+            this.btnExpectionFormRemark.Name = "btnExpectionFormRemark";
+            this.btnExpectionFormRemark.Size = new System.Drawing.Size(30, 25);
+            this.btnExpectionFormRemark.TabIndex = 4;
+            this.btnExpectionFormRemark.Text = "R";
+            this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
+            this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
+            // 
+            // btnEConsMNFailed
+            // 
+            this.btnEConsMNFailed.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnEConsMNFailed.Location = new System.Drawing.Point(797, 628);
+            this.btnEConsMNFailed.Name = "btnEConsMNFailed";
+            this.btnEConsMNFailed.Size = new System.Drawing.Size(194, 27);
+            this.btnEConsMNFailed.TabIndex = 193;
+            this.btnEConsMNFailed.Text = "Econs/MN Failed";
+            this.btnEConsMNFailed.UseVisualStyleBackColor = true;
+            this.btnEConsMNFailed.Click += new System.EventHandler(this.BtnEConsMNFailed_Click);
             // 
             // P01
             // 
@@ -3572,6 +3623,10 @@
         private Win.UI.Button btnPoRemark;
         private Win.UI.DisplayBox displayKit;
         private Win.UI.Label labelKit;
-        private Win.UI.CheckBox ChkIsDevSample;
+        private Win.UI.TextBox txtDevSample;
+        private Win.UI.Label label2;
+        private Win.UI.Button btnExpectionFormRemark;
+        private Win.UI.Button btnPFHistory;
+        private Win.UI.Button btnEConsMNFailed;
     }
 }

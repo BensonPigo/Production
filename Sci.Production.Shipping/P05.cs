@@ -335,12 +335,6 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) == "Confirmed")
-            {
-                MyUtility.Msg.WarningBox("This record is < Confirmed >, can't be modified!");
-                return false;
-            }
-
             return base.ClickEditBefore();
         }
 
@@ -351,14 +345,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             this.txtInvSerial.ReadOnly = true;
             this.txtbrand.ReadOnly = true;
             this.txtCountryDestination.TextBox1.ReadOnly = true;
-            if (this.CurrentMaintain["Status"].ToString().ToUpper() == "NEW")
-            {
-                this.txtShipmodeShippingMode.ReadOnly = false;
-            }
-            else
-            {
-                this.txtShipmodeShippingMode.ReadOnly = true;
-            }
+            this.txtShipmodeShippingMode.ReadOnly = true;
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
@@ -393,6 +380,38 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
                 this.txtTerminalWhse.ReadOnly = false;
 
                 // textBox7.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            }
+
+            switch (this.CurrentMaintain["Status"].ToString().ToUpper())
+            {
+                case "NEW":
+                    this.txtShipmodeShippingMode.ReadOnly = false;
+                    break;
+                case "CONFIRMED":
+                    // Confirm後, 仍可以按[Edit] 編輯[No Export Charge]欄位
+                    this.dateETA.ReadOnly = true;
+                    this.dateETD.ReadOnly = true;
+                    this.txtRemark.ReadOnly = true;
+                    this.txtpaytermarPaymentTerm.TextBox1.ReadOnly = true;
+                    this.txtVslvoyFltNo.ReadOnly = true;
+                    this.txtShiptermShipmentTerm.ReadOnly = true;
+
+                    this.dateInvDate.ReadOnly = true;
+                    this.dateFCRDate.ReadOnly = true;
+                    this.txtCustCD.ReadOnly = true;
+                    this.txtUserHandle.TextBox1.ReadOnly = true;
+                    this.txtSubconForwarder.TextBox1.ReadOnly = true;
+                    this.comboContainerType.ReadOnly = true;
+                    this.txtSONo.ReadOnly = true;
+                    this.col_lock.IsEditingReadOnly = true;
+                    this.col_crd.IsEditingReadOnly = true;
+                    this.detailgrid.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
+                    this.detailgrid.Columns[4].DefaultCellStyle.ForeColor = Color.Black;
+                    this.btnImportfrompackinglist.Enabled = false;
+                    this.gridicon.Remove.Enabled = false;
+                    this.txtCutoffDate.ReadOnly = true;
+                    this.txtTerminalWhse.ReadOnly = true;
+                    break;
             }
         }
 
@@ -571,6 +590,19 @@ order by fwd.WhseNo",
 
             #endregion
 
+            #region 其他檢查
+
+            // 已經有做出口費用分攤，不能勾選[No Export Charge]
+            if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
+                && this.chkNoExportCharge.Checked)
+            {
+                MyUtility.Msg.WarningBox("This GB# has share expense, please unselect [No Export Charge].");
+                return false;
+            }
+            #endregion
+
+            #region 檢查Shipper
+
             // 帶資料到Shipper
             string SP = string.Empty;
             DataTable dtShipper;
@@ -618,8 +650,9 @@ and GETDATE() between f.BeginDate and f.EndDate";
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return false;
             }
+            #endregion
 
-            // 新增單狀態下，取ID且檢查此ID是否存在
+            #region 新增單狀態下，取ID且檢查此ID是否存在 
             if (this.IsDetailInserting)
             {
                 string fac = MyUtility.GetValue.Lookup($@"
@@ -636,8 +669,9 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
 
                 this.CurrentMaintain["ID"] = newID;
             }
+            #endregion
 
-            // 組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM
+            #region 組出表身所有的PackingListID與加總ShipQty,CTNQty,NW,GW,NNW,CBM 
             StringBuilder allPackID = new StringBuilder();
             int ttlshipqty = 0, ttlctnqty = 0;
             double ttlnw = 0.0, ttlgw = 0.0, ttlnnw = 0.0, ttlcbm = 0.0;
@@ -649,8 +683,10 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
                 ttlnw = MyUtility.Math.Round(ttlnw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
                 ttlgw = MyUtility.Math.Round(ttlgw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
                 ttlnnw = MyUtility.Math.Round(ttlnnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
-                ttlcbm = MyUtility.Math.Round(ttlcbm + MyUtility.Convert.GetDouble(dr["CBM"]), 3);
+                ttlcbm = MyUtility.Math.Round(ttlcbm + MyUtility.Convert.GetDouble(dr["CBM"]), 4);
             }
+            #endregion
+
             #region 檢查訂單的Currency是否一致與Payterm與表頭是否一致
             if (allPackID.Length > 0)
             {
@@ -780,7 +816,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             this.CurrentMaintain["TotalNW"] = MyUtility.Math.Round(ttlnw, 3);
             this.CurrentMaintain["TotalGW"] = MyUtility.Math.Round(ttlgw, 3);
             this.CurrentMaintain["TotalNNW"] = MyUtility.Math.Round(ttlnnw, 3);
-            this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 3);
+            this.CurrentMaintain["TotalCBM"] = MyUtility.Math.Round(ttlcbm, 4);
 
             return base.ClickSaveBefore();
         }
@@ -794,7 +830,7 @@ select (select CAST(a.Category as nvarchar)+'/' from (select distinct Category f
             {
                 if (dr.RowState == DataRowState.Modified)
                 {
-                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(dr["ID"])));
+                    updateCmds.Add(string.Format("update PackingList set GMTBookingLock = '{0}' , ShipPlanID = '{2}' where ID = '{1}';", MyUtility.Convert.GetString(dr["GMTBookingLock"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"])));
                 }
 
                 if (dr.RowState == DataRowState.Added)
@@ -1535,7 +1571,18 @@ Please follow up based on the Air-Prepaid Status.");
                 return;
             }
 
-            string updateCmd = string.Format("update GMTBooking set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            // TotalCBM重新計算
+            string updateCmd = string.Format(
+@"update a 
+set a.TotalCBM = b.TotalCBM, Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE()
+from GMTBooking a
+inner join (
+    select b.INVNo, sum(CBM) TotalCBM
+    from PackingList b
+    where b.INVNo = '{1}'
+    group by b.INVNo
+)b on a.id = b.INVNo
+where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result1 = DBProxy.Current.Execute(null, updateCmd);
             if (!result1)
             {
