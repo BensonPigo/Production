@@ -5,7 +5,7 @@
     [KPIFailed]     VARCHAR (1)    NULL,
     [FailedComment] VARCHAR (100)  NULL,
     [ExpectApvDate] DATE           NULL,
-    [ErrorMessage]  NVARCHAR (500) NULL,
+    [ErrorMessage]  VARCHAR (20) NULL,
     [AddName]       VARCHAR (10)   NULL,
     [AddDate]       DATETIME       NULL,
     [EditName]      VARCHAR (10)   NULL,
