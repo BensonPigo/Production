@@ -683,7 +683,7 @@ left join orders o WITH (NOLOCK) on o.id = pd.OrderID  where pd.id = '{this.Deta
                 ttlnw = MyUtility.Math.Round(ttlnw + MyUtility.Convert.GetDouble(dr["NW"]), 3);
                 ttlgw = MyUtility.Math.Round(ttlgw + MyUtility.Convert.GetDouble(dr["GW"]), 3);
                 ttlnnw = MyUtility.Math.Round(ttlnnw + MyUtility.Convert.GetDouble(dr["NNW"]), 3);
-                ttlcbm = MyUtility.Math.Round(ttlcbm + MyUtility.Convert.GetDouble(dr["CBM"]), 3);
+                ttlcbm = MyUtility.Math.Round(ttlcbm + MyUtility.Convert.GetDouble(dr["CBM"]), 4);
             }
             #endregion
 
@@ -1571,7 +1571,18 @@ Please follow up based on the Air-Prepaid Status.");
                 return;
             }
 
-            string updateCmd = string.Format("update GMTBooking set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            // TotalCBM重新計算
+            string updateCmd = string.Format(
+@"update a 
+set a.TotalCBM = b.TotalCBM, Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE()
+from GMTBooking a
+inner join (
+    select b.INVNo, sum(CBM) TotalCBM
+    from PackingList b
+    where b.INVNo = '{1}'
+    group by b.INVNo
+)b on a.id = b.INVNo
+where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
             DualResult result1 = DBProxy.Current.Execute(null, updateCmd);
             if (!result1)
             {
