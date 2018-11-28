@@ -363,7 +363,10 @@ SELECT
 t.POID ,o.BrandID ,o.StyleID  ,t.ArtworkTypeID  
 ,[StdPrice]=round(Standard.order_amt/iif(Standard.order_qty=0,1,Standard.order_qty),3)    --加總母單底下所有(「有設定標準價的」訂單數量 * 標準價) / 母單 「有設定標準價的」總訂單數量
 ,[PoPrice]=round(Po.Po_Amt / iif(Standard.order_qty=0,1,Standard.order_qty),3)   
-,[PoPriceWithEmbroidery] =IIF(Embroidery.localap_amt IS NULL ,round(po.Po_Amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) , round((po.Po_Amt+Embroidery.localap_amt) / iif(Standard.order_qty=0,1,Standard.order_qty),3) )
+,[PoPriceWithEmbroidery] =IIF(Embroidery.localap_amt IS NULL ,
+round(po.Po_Amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) , 
+round((po.Po_Amt+Embroidery.localap_amt) / iif(Standard.order_qty=0,1,Standard.order_qty)
+,3) )
  
 FROm #tmp_AllOrders t
 INNER JOIN Orders o WITH(NOLOCK) on o.id = t.OrderId
@@ -376,8 +379,8 @@ outer apply(
                 inner join Order_TmsCost WITH(NOLOCK) on Order_TmsCost.id = orders.ID
 				 OUTER APPLY(
 						 SELECT DISTINCT ad.OrderID 
-						 FROM ArtworkPO a 
-						 INNER JOIN ArtworkPO_Detail ad ON a.ID=ad.ID 
+						 FROM LocalPO a 
+						 INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID 
 						 INNER JOIn ORDERS ods ON ad.OrderID=ods.id 
 						 WHERE ods.POID=t.POID 
 				 )HasBePucharse
@@ -432,8 +435,10 @@ DROP TABLE #tmp_AllOrders
 
                 #endregion
 
+                this.ShowWaitMessage("Data Loading...");
                 result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Price_Dt);
                 sql.Clear();
+                this.HideWaitMessage();
 
                 if (!result)
                 {

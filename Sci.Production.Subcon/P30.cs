@@ -1495,11 +1495,18 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                 #region 查詢所有價格異常紀錄
 
                 sql.Append(@"
-SELECT DISTINCT [ArtworkTypeID]=a.Category ,[OrderId]=ad.OrderID 
+SELECT DISTINCT [ArtworkTypeID]=a.Category ,[OrderId]=ad.OrderID ,[POID]=ad.POID
 INTO #tmp_AllOrders 
 FROM LocalPO a INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID
 WHERE a.ID = @LocalPO_ID
- 
+
+--母單中，列出有被採購的子單（不限採購單）
+SELECT DISTINCT ad.OrderID 
+INTO #HasBePucharse
+FROM LocalPO a 
+INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID 
+INNER JOIn ORDERS ods ON ad.OrderID=ods.id 
+WHERE ods.POID IN (SELECT POID FROM  #tmp_AllOrders )
 
 SELECT o.BrandID ,o.StyleID  ,t.ArtworkTypeID  ,o.POID  
 ,[stdPrice]=round(Standard.order_amt/iif(Standard.order_qty=0,1,Standard.order_qty),3) 
@@ -1513,8 +1520,9 @@ outer apply(
 	        ,sum(orders.qty*Price) order_amt  --外發成本
 	        from orders WITH (NOLOCK) 
 	        inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	        where POID= o.POID 
-			and ArtworkTypeID= t.ArtworkTypeID
+	        where POID= o.POID                   --相同母單
+			AND ArtworkTypeID= t.ArtworkTypeID   --相同加工
+			AND Order_TmsCost.ID  IN ( SELECT OrderID FROM #HasBePucharse ) --***限定 有被採購的訂單***
 	        group by orders.poid,ArtworkTypeID
 ) Standard
 outer apply (
@@ -1533,14 +1541,14 @@ where ap.Category = t.artworktypeid and orders.POId = o.POID  ) t
 
 GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,o.POID ,Standard.order_amt ,Standard.order_qty ,po.ap_amt ,Standard.order_qty
 
-DROP TABLE #tmp_AllOrders
+DROP TABLE #tmp_AllOrders ,#HasBePucharse
 " + Environment.NewLine);
 
                 #endregion
-
+                this.ShowWaitMessage("Data Loading...");
                 result = DBProxy.Current.Select(null, sql.ToString(), parameters, out Price_Dt);
                 sql.Clear();
-
+                this.HideWaitMessage();
                 if (!result)
                 {
                     ShowErr(sql.ToString(), result);
