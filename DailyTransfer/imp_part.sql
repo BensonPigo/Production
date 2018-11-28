@@ -34,17 +34,20 @@ when matched then
         , t.MachineGroupID = s.MachineGroupID		
 		, t.Needle = s.Needle
 		, t.ControlPart = s.ControlParts
+		, t.MOQ = convert(int, s.MOQ)
 	when not matched by target and s.type='P' then 
 		insert 
 			(ID 				, Description 	, Partno 		, MasterGroupID 		, MachineGroupID 	, MachineBrandID
 	 	 	 , UseUnit 			, PoUnit 		, Price 		, PurchaseBatchQty 	, Junk
 			 , PurchaseFrom 	, SuppID 		, CurrencyID 	, Formula	 		, Fix
-			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock , Needle , ControlPart)
+			 , AddName  		, AddDate 		, EditName 		, EditDate 			, Lock , Needle , ControlPart
+			 ,	MOQ)
 		values
 			(s.refno 			, s.Description , s.Partno 		, s.MasterGroupID 	, s.MachineGroupID 	, s.MachineBrandID
 			 , s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
 			 , 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
-			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlParts);
+			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlParts
+			 ,	convert(int, s.MOQ));
 
 	---------- Misc, type='O'---------------------
 	Merge Machine.dbo.Misc as t
