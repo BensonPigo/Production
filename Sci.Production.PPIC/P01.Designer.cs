@@ -296,6 +296,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtDevSample = new Sci.Win.UI.TextBox();
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
+            this.btnEConsMNFailed = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -3316,6 +3317,17 @@
             this.btnExpectionFormRemark.Text = "R";
             this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
             this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
+            // 
+            // btnEConsMNFailed
+            // 
+            this.btnEConsMNFailed.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnEConsMNFailed.Location = new System.Drawing.Point(797, 628);
+            this.btnEConsMNFailed.Name = "btnEConsMNFailed";
+            this.btnEConsMNFailed.Size = new System.Drawing.Size(194, 27);
+            this.btnEConsMNFailed.TabIndex = 193;
+            this.btnEConsMNFailed.Text = "Econs/MN Failed";
+            this.btnEConsMNFailed.UseVisualStyleBackColor = true;
+            this.btnEConsMNFailed.Click += new System.EventHandler(this.BtnEConsMNFailed_Click);
             // 
             // P01
             // 
