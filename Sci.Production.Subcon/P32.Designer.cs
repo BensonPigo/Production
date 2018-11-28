@@ -42,6 +42,7 @@
             this.txtSPStart = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.chkCarton = new Sci.Win.UI.CheckBox();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -49,7 +50,6 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.grid1 = new Sci.Win.UI.Grid();
             this.grid2 = new Sci.Win.UI.Grid();
-            this.chkCarton = new Sci.Win.UI.CheckBox();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -194,6 +194,17 @@
             this.panel3.Size = new System.Drawing.Size(1004, 44);
             this.panel3.TabIndex = 3;
             // 
+            // chkCarton
+            // 
+            this.chkCarton.AutoSize = true;
+            this.chkCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCarton.Location = new System.Drawing.Point(633, 11);
+            this.chkCarton.Name = "chkCarton";
+            this.chkCarton.Size = new System.Drawing.Size(178, 21);
+            this.chkCarton.TabIndex = 2;
+            this.chkCarton.Text = "Carton = N (for to excel)";
+            this.chkCarton.UseVisualStyleBackColor = true;
+            // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -303,17 +314,6 @@
             this.grid2.Size = new System.Drawing.Size(1004, 233);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
-            // 
-            // chkCarton
-            // 
-            this.chkCarton.AutoSize = true;
-            this.chkCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkCarton.Location = new System.Drawing.Point(633, 11);
-            this.chkCarton.Name = "chkCarton";
-            this.chkCarton.Size = new System.Drawing.Size(178, 21);
-            this.chkCarton.TabIndex = 2;
-            this.chkCarton.Text = "Carton = N (for to excel)";
-            this.chkCarton.UseVisualStyleBackColor = true;
             // 
             // P32
             // 
