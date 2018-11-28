@@ -148,7 +148,7 @@
             // txtsewingline
             // 
             this.txtsewingline.BackColor = System.Drawing.Color.White;
-            this.txtsewingline.factoryobjectName = null;
+            this.txtsewingline.factoryobjectName = this.txtfactory;
             this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtsewingline.Location = new System.Drawing.Point(479, 38);
             this.txtsewingline.Name = "txtsewingline";
