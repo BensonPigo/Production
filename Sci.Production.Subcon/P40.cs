@@ -214,7 +214,7 @@ from Bundle b
 inner join Bundle_Detail bd on bd.ID = b.ID
 inner join Orders o on b.Orderid = o.ID
 outer apply (
-	select v = stuff ((	select CONCAT ('+', bda.SubprocessId)
+	select v = stuff ((	select distinct CONCAT ('+', bda.SubprocessId)
 						from Bundle_Detail_Art bda
 						where bd.BundleNo = bda.Bundleno
 						for xml path(''))
