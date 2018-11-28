@@ -50,7 +50,9 @@ where s.Ukey = {0} order by id.SEQ", styleUkey);
 
             #region Summary by artwork
             sqlCmd =$@"
-select  i.Location, i.ArtworkTypeID,type = iif(i.Location = 'T','Top',iif(i.Location = 'B','Bottom',iif(i.Location = 'I','Inner',iif(i.Location = 'O','Outer','')))),tms = sum(i.ProTMS)
+select  i.Location, i.ArtworkTypeID,
+	type = iif(i.Location = 'T','Top',iif(i.Location = 'B','Bottom',iif(i.Location = 'I','Inner',iif(i.Location = 'O','Outer','')))),
+	tms = CEILING(sum(i.ProTMS))
 from IETMS_Summary i
 where i.IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{styleUkey}')
 group by i.Location,i.ArtworkTypeID
