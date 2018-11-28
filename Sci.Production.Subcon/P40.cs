@@ -48,7 +48,7 @@ namespace Sci.Production.Subcon
             .Text("FComb", header: "Comb", width: Widths.Auto(true))
             .Text("ColorID", header: "Color", width: Widths.Auto(true))
             .Text("Pattern", header: "Pattern", width: Widths.AnsiChars(10))
-            .Text("PtnDesc", header: "PtnDesc", width: Widths.Auto(true))
+            .Text("PtnDes", header: "PtnDesc", width: Widths.AnsiChars(10))
             .Text("Size", header: "Size", width: Widths.Auto(true))
             .Text("Artwork", header: "Artwork", width: Widths.Auto(true))
             .Text("OrderQty", header: "Order Qty per Size", width: Widths.Auto(true))
@@ -393,7 +393,7 @@ drop table #BasBundleInfo
                 this.btnQuery.Enabled = true;
             }
 
-            if (dt2 == null || dt2.Rows.Count==0)
+            if ((dt2 == null || dt2.Rows.Count==0) || ds.Tables.Count != 2)
             {
                 MyUtility.Msg.WarningBox("Data not found!");               
                 return;
@@ -424,23 +424,24 @@ drop table #BasBundleInfo
             this.btnQuery.Enabled = true;
             if (ds != null)
             {
+                listControlBindingSource1.DataSource = null;
                 if (ds.Tables.Count == 0)
                 {
                     return;
                 }
 
-                if (ds.Tables[0] == null || ds.Tables[0].Rows.Count == 0)
+                if ((ds.Tables[0] == null || ds.Tables[0].Rows.Count == 0) ||
+                    (ds.Tables.Count != 2)
+                    )
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
+                    dt1.Clear();
+                    dt2.Clear();
                     return;
                 }
 
-                if (ds.Tables.Count == 2)
-                {
-                    dt2 = ds.Tables[1].AsEnumerable().CopyToDataTable();
-                }
-                listControlBindingSource1.DataSource = null;
                 dt1 = ds.Tables[0].AsEnumerable().CopyToDataTable();
+                dt2 = ds.Tables[1].AsEnumerable().CopyToDataTable();
                 this.listControlBindingSource1.DataSource = dt1;
             }
          
