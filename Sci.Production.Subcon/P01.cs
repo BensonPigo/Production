@@ -679,86 +679,101 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
                 #region 查詢所有價格異常紀錄
 
                 sql.Append(@"
-SELECT DISTINCT
-[ArtworkTypeID] = ad.ArtworkTypeID ,[OrderId] = ad.OrderID  ,o.POID
+
+--根據表頭LocalPO的ID，整理出ArtworkTypeID、POID、OrderID
+SELECT DISTINCT[ArtworkTypeID] = ad.ArtworkTypeID ,[OrderId] = ad.OrderID  ,[POID]=o.POID
 INTO #tmp_AllOrders 
 FROM ArtworkPO a 
 INNER JOIN ArtworkPO_Detail ad ON a.ID=ad.ID
 INNER JOIn ORDERS o ON ad.OrderID=o.id
 WHERE a.ID = @artWorkPO_ID
- 
-SELECT 
-t.POID ,o.BrandID ,o.StyleID  ,t.ArtworkTypeID  
-,[StdPrice]=round(Standard.order_amt/iif(Standard.order_qty=0,1,Standard.order_qty),3)    --加總母單底下所有(「有設定標準價的」訂單數量 * 標準價) / 母單 「有設定標準價的」總訂單數量
-,[PoPrice]=round(Po.Po_Amt / iif(Standard.order_qty=0,1,Standard.order_qty),3)   
-,[PoPriceWithEmbroidery] =IIF(Embroidery.localap_amt IS NULL ,
-round(po.Po_Amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) , 
-round((po.Po_Amt+Embroidery.localap_amt) / iif(Standard.order_qty=0,1,Standard.order_qty)
-,3) )
- 
-FROm #tmp_AllOrders t
-INNER JOIN Orders o WITH(NOLOCK) on o.id = t.OrderId
-INNER JOIN Brand bra on bra.id= o.BrandID
-outer apply(
-                select   orders.POID--,orders.qty,Price
-						, sum(orders.qty) order_qty         --有被採購的訂單 總數量
-						, sum(orders.qty *  Order_TmsCost.Price) order_amt  --標準價總額
-                from orders WITH(NOLOCK)
-                inner join Order_TmsCost WITH(NOLOCK) on Order_TmsCost.id = orders.ID
-				 OUTER APPLY(
-						 SELECT DISTINCT ad.OrderID 
-						 FROM LocalPO a 
-						 INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID 
-						 INNER JOIn ORDERS ods ON ad.OrderID=ods.id 
-						 WHERE ods.POID=t.POID 
-				 )HasBePucharse
-                where 
-				orders.POID= o.POID                        --相同母單
-				AND ArtworkTypeID = t.ArtworkTypeID		   --相同加工
-				AND Order_TmsCost.ID  IN ( HasBePucharse.OrderID ) --***有被採購的訂單***
-                group by orders.poid,ArtworkTypeID
-				
+
+--從所有採購單中，找出同ArtworkTypeID、POID，有被採購的OrderID（不限採購單）
+SELECT DISTINCT ad.OrderID 
+INTO #BePurchased
+FROM LocalPO a 
+INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID 
+INNER JOIn Orders ods ON ad.OrderID=ods.id 
+WHERE  ods.POID IN  (SELECT POID FROM  #tmp_AllOrders)
+
+--列出採購價的清單（尚未總和）
+SELECT  ap.ID
+		,ap.ArtworkTypeID
+		,Orders.POID
+		,[OID]=apd.OrderId
+		,ap.currencyid  --維護時檢查用，所以先註解留著
+		,apd.Price
+		,apd.PoQty
+		,apd.PoQty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
+		,dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) rate
+INTO #total_PO
+FROM ArtworkPO ap WITH (NOLOCK) 
+INNER JOIN ArtworkPO_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+INNER JOIN  Orders WITH (NOLOCK) on orders.id = apd.orderid
+WHERE  EXiSTS  ( 
+				SELECT ArtworkTypeID,POID 
+				FROM #tmp_AllOrders 
+				WHERE ArtworkTypeID= ap.ArtworkTypeID  AND POID=Orders.POID) --相同Category、POID
+	   AND apd.OrderId  IN  ( SELECT OrderID FROM #BePurchased ) --且有被採購的OrderID
+       --AND ap.Status = 'Approved' 現在不需要過濾狀態
+
+--繡花成本處理：列出同POID、Category=EMB_Thread（繡線）的總額清單
+SELECT   LPD.POID
+		,LP.currencyid
+		, [Price]=LPd.Price  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購單價
+		, LPD.Qty localap_qty  --採購數量
+		, [LocalPo_amt]=LPD.Price* LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
+		, dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) rate
+INTO #Embroidery_List
+FROM LocalPO LP
+inner join LocalPO_Detail LPD on LP.Id = LPD.Id
+INNER JOIN Orders ON Orders.ID=LPD.OrderId
+WHERE LP.Category = 'EMB_Thread'  
+	  AND Orders.POID IN  (SELECT POID FROM  #tmp_AllOrders)
+
+--開始整合
+SELECT o.BrandID ,o.StyleID  ,t.ArtworkTypeID  ,t.POID 
+,[stdPrice]=round(Standard.order_amt/iif(Standard.order_qty=0,1,Standard.order_qty),3) 
+,[PoPrice]=round(Po.PO_amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) 
+,[PoPriceWithEmbroidery] =IIF(Embroidery.LocalPo_amt IS NULL ,
+							round(po.Po_Amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) , 
+							round((po.Po_Amt+Embroidery.LocalPo_amt) / iif(Standard.order_qty=0,1,Standard.order_qty)
+							,3) )
+FROM #tmp_AllOrders t
+INNER JOIN Orders o WITH (NOLOCK) on o.id = t.OrderId
+INNER JOIN Brand bra on bra.id=o.BrandID
+OUTER APPLY(--標準價
+	        select orders.POID
+	        ,sum(orders.qty) order_qty        --實際外發數量
+	        ,sum(orders.qty*Price) order_amt  --外發成本
+	        from orders WITH (NOLOCK) 
+	        inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
+	        where POID= t.POID                   --相同母單
+			AND ArtworkTypeID= t.ArtworkTypeID   --相同加工
+			AND Order_TmsCost.ID  IN ( SELECT OrderID FROM #BePurchased ) --***限定 有被採購的訂單***
+	        group by orders.poid,ArtworkTypeID
 ) Standard
-outer apply (
-		select  Q.POID
-			,[Po_Amt]=isnull(sum(Q.Po_Amt), 0.00)  --母單 總採購價
-			from(
-					select  ap.currencyid
-					, apd.Price
-					, [PoQty]=apd.PoQty   --採購數量
-					, [Po_Amt]=apd.PoQty * apd.Price * dbo.getRate('FX', ap.CurrencyID, 'USD', ap.issuedate)  --子單採購價
-					, dbo.getRate('FX', ap.CurrencyID, 'USD', ap.issuedate) rate
-					,orders.POId
-					from ArtworkPO ap WITH(NOLOCK)
-					inner join ArtworkPO_Detail apd WITH(NOLOCK) on apd.id = ap.Id
-					inner join orders WITH(NOLOCK) on orders.id = apd.orderid
-					where 
-					ap.ArtworkTypeID = t.artworktypeid  --相同加工
-					AND orders.POId = t.POID   --相同母單
-					--ap.ArtworkTypeID ='EMBROIDERY' and orders.POId = '18072172GG'
-					) Q
-		GROUP BY Q.POID
-) PO
-outer apply(
-		SELECT  x.POID,[localap_amt]=SUM(x.localap_amt) 
-		FROM (
-				select   LPD.POID
-						,LP.currencyid
-						, [Price]=LPd.Price  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購單價
-						, LPD.Qty localap_qty  --採購數量
-						, [localap_amt]=LPD.Price* LPD.Qty  * dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) --採購總額
-						, dbo.getRate('FX', LP.CurrencyID, 'USD', LP.issuedate) rate
-				from LocalPO LP
-				inner join LocalPO_Detail LPD on LP.Id = LPD.Id
-				INNER JOIN Orders ON Orders.ID=LPD.OrderId
-				where LP.Category = 'EMB_Thread'  
-				and Orders.POID = t.POID 
+OUTER APPLY (--採購價，根據ArtworkTypeID、POID，作分組加總
+	SELECT isnull(sum(Q.PO_amt),0.00) PO_amt
+	FROM (
+		SELECT PO_amt FROM #total_PO
+		WHERE ArtworkTypeID = t.artworktypeid 
+		AND POID = t.POID 
+	) Q
+) Po	
+outer apply(--繡花成本，根據POID，作分組加總
+	SELECT  x.POID,[LocalPo_amt]=SUM(x.LocalPo_amt) 
+	FROM (	
+		SELECT * FROM #Embroidery_List
 		) x   
 	GROUP BY  x.POID
 ) Embroidery
 
-GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,t.POID ,Standard.order_amt ,Standard.order_qty ,po.Po_Amt ,Standard.order_qty ,Embroidery.localap_amt
-DROP TABLE #tmp_AllOrders
+GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,t.POID ,Standard.order_amt ,Standard.order_qty ,po.Po_Amt ,Standard.order_qty ,Embroidery.LocalPo_amt
+
+DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO ,#Embroidery_List
+
+
 " + Environment.NewLine);
 
                 #endregion
@@ -795,20 +810,19 @@ DROP TABLE #tmp_AllOrders
                         //如果ArtworkType是繡花（ArtworkTypeID = Embroidery ），要加上繡花物料成本
                         if (artworkType.ToUpper() == "EMBROIDERY")
                         {
-                            if (PoPriceWithEmbroidery > StdPrice)
-                            {
+                            if (PoPriceWithEmbroidery > StdPrice & StdPrice > 0)//未設定標準價不算
+                            {                                
                                 Has_Irregular_Price = true;
                                 IrregularPriceReason_Real = CreateIrregularPriceReasonDataTabel(poid, artworkType, BrandID, StyleID, PoPriceWithEmbroidery, StdPrice, IrregularPriceReason_Real);
-
                             }
                         }
                         else
                         {
                             //不用加上繡花物料成本
-                            if (purchasePrice > StdPrice)
+                            if (purchasePrice > StdPrice & StdPrice > 0)//未設定標準價不算
                             {
                                 Has_Irregular_Price = true;
-                                IrregularPriceReason_Real = CreateIrregularPriceReasonDataTabel(poid, artworkType, BrandID, StyleID, purchasePrice, StdPrice, IrregularPriceReason_Real);
+                                IrregularPriceReason_Real = CreateIrregularPriceReasonDataTabel(poid, artworkType, BrandID, StyleID, purchasePrice, StdPrice, IrregularPriceReason_Real).AsEnumerable().Where(o => (decimal)o["StdPrice"] != 0).CopyToDataTable();
                             }
                         }
                     }

@@ -354,53 +354,73 @@ namespace Sci.Production.Subcon
                 #region 查詢所有價格異常紀錄
 
                 sql.Append(@"
-SELECT DISTINCT [ArtworkTypeID]=a.Category ,[OrderId]=ad.OrderID ,[POID]=ad.POID
+
+--根據表頭LocalPO的ID，整理出Category、POID、OrderID
+SELECT DISTINCT [ArtworkTypeID]=a.Category  ,[POID]=ad.POID  ,[OrderId]=ad.OrderID 
 INTO #tmp_AllOrders 
-FROM LocalPO a INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID
+FROM LocalPO a 
+INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID
 WHERE a.ID = @LocalPO_ID
 
---母單中，列出有被採購的子單（不限採購單）
+--從所有採購單中，找出同Category、POID，有被採購的OrderID（不限採購單）
 SELECT DISTINCT ad.OrderID 
-INTO #HasBePucharse
+INTO #BePurchased
 FROM LocalPO a 
 INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID 
-INNER JOIn ORDERS ods ON ad.OrderID=ods.id 
-WHERE ods.POID IN (SELECT POID FROM  #tmp_AllOrders )
+INNER JOIn Orders ods ON ad.OrderID=ods.id 
+WHERE  ods.POID IN  (SELECT POID FROM  #tmp_AllOrders)
 
-SELECT o.BrandID ,o.StyleID  ,t.ArtworkTypeID  ,o.POID  
+--列出採購價的清單（尚未總和）
+SELECT  ap.ID
+		,ap.Category
+		,Orders.POID
+		,[OID]=apd.OrderId
+		--,ap.currencyid  --維護時檢查用，所以先註解留著
+		--,apd.Price
+		--,apd.Qty
+		,apd.Qty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
+		--,dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) rate
+INTO #total_PO
+from LocalPO ap WITH (NOLOCK) 
+INNER JOIN LocalPO_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
+INNER JOIN  Orders WITH (NOLOCK) on orders.id = apd.orderid
+WHERE  EXiSTS  ( 
+				SELECT ArtworkTypeID,POID 
+				FROM #tmp_AllOrders 
+				WHERE ArtworkTypeID= ap.Category  AND POID=Orders.POID) --相同Category、POID
+	   AND apd.OrderId  IN  ( SELECT OrderID FROM #BePurchased ) --且有被採購的OrderID
+
+
+--開始整合
+SELECT o.BrandID ,o.StyleID  ,t.ArtworkTypeID  ,t.POID 
 ,[stdPrice]=round(Standard.order_amt/iif(Standard.order_qty=0,1,Standard.order_qty),3) 
-,[Po_price]=round(po.ap_amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) 
-FROm #tmp_AllOrders t
+,[Po_price]=round(Po.PO_amt / iif(Standard.order_qty=0,1,Standard.order_qty),3) 
+FROM #tmp_AllOrders t
 INNER JOIN Orders o WITH (NOLOCK) on o.id = t.OrderId
 INNER JOIN Brand bra on bra.id=o.BrandID
-outer apply(
+OUTER APPLY(--標準價
 	        select orders.POID
 	        ,sum(orders.qty) order_qty        --實際外發數量
 	        ,sum(orders.qty*Price) order_amt  --外發成本
 	        from orders WITH (NOLOCK) 
 	        inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	        where POID= o.POID                   --相同母單
+	        where POID= t.POID                   --相同母單
 			AND ArtworkTypeID= t.ArtworkTypeID   --相同加工
-			AND Order_TmsCost.ID  IN ( SELECT OrderID FROM #HasBePucharse ) --***限定 有被採購的訂單***
+			AND Order_TmsCost.ID  IN ( SELECT OrderID FROM #BePurchased ) --***限定 有被採購的訂單***
 	        group by orders.poid,ArtworkTypeID
 ) Standard
-outer apply (
-select isnull(sum(t.ap_amt),0.00) ap_amt
-from (
-	select  ap.currencyid
-			,apd.Price
-			,apd.Qty
-			,apd.Qty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) ap_amt
-			,dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) rate
-from LocalPO ap WITH (NOLOCK) 
-inner join LocalPO_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
-inner join orders WITH (NOLOCK) on orders.id = apd.orderid
-where ap.Category = t.artworktypeid and orders.POId = o.POID  ) t
-) po	
+OUTER APPLY (--採購價，根據Category、POID，作分組加總
+	SELECT isnull(sum(Q.PO_amt),0.00) PO_amt
+	FROM (
+		SELECT PO_amt FROM #total_PO
+		WHERE Category = t.artworktypeid 
+		AND POID = t.POID 
+	) Q
+) Po	
 
-GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,o.POID ,Standard.order_amt ,Standard.order_qty ,po.ap_amt ,Standard.order_qty
+GROUP BY  o.BrandID ,o.StyleID ,t.ArtworkTypeID ,t.POID ,Standard.order_amt ,Standard.order_qty ,Po.PO_amt ,Standard.order_qty
 
-DROP TABLE #tmp_AllOrders ,#HasBePucharse
+DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO
 " + Environment.NewLine);
 
                 #endregion
@@ -435,7 +455,7 @@ DROP TABLE #tmp_AllOrders ,#HasBePucharse
                         StyleID = Convert.ToString(MyUtility.Check.Empty(row["StyleID"]) ? "" : row["StyleID"]);
 
                         //只要有異常就顯示紅色
-                        if (purchasePrice > StdPrice)
+                        if (purchasePrice > StdPrice & StdPrice > 0)
                         {
                             IrregularPriceReason_Real = CreateIrregularPriceReasonDataTabel(poid, artworkType, BrandID, StyleID, purchasePrice, StdPrice, IrregularPriceReason_Real);
                         }
