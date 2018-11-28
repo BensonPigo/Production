@@ -447,16 +447,6 @@ drop table #BasBundleInfo
          
         }
 
-        private void grid_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (!this.bgWorkerUpdateInfo.IsBusy)
-            {
-                this.HideLoadingText();
-                this.grid.Cursor = Cursors.Default;
-                Application.UseWaitCursor = false;
-            }
-        }
-
         private void P40_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (this.bgWorkerUpdateInfo.IsBusy)
