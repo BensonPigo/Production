@@ -1844,6 +1844,7 @@ SET
       --,a.BrandID	      =b.BrandID	
       a.PhaseID	      =b.PhaseID	
       ,a.ProjectID	      =b.ProjectID	
+      ,a.KPIProjectID	      =b.KPIProjectID	
       ,a.Junk	      =b.Junk	
       ,a.CpuRate	      =b.CpuRate	
       ,a.Category	      =b.Category	
@@ -1866,6 +1867,7 @@ INSERT INTO Production.dbo.OrderType(
       ,BrandID
       ,PhaseID
       ,ProjectID
+      ,KPIProjectID
       ,Junk
       ,CpuRate
       ,Category
@@ -1887,6 +1889,7 @@ select
       ,BrandID
       ,PhaseID
       ,ProjectID
+      ,KPIProjectID
       ,Junk
       ,CpuRate
       ,Category
