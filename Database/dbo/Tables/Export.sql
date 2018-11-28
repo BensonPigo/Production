@@ -61,6 +61,8 @@
     [MainExportID]    VARCHAR (13)    CONSTRAINT [DF_Export_MainExportID] DEFAULT ('') NOT NULL,
     [Remark_Factory]  NVARCHAR (2000) NULL,
     [NoImportCharges] BIT             CONSTRAINT [DF_Export_NoImportCharges] DEFAULT ((0)) NULL,
+    [Replacement] BIT NOT NULL, 
+    [Delay] BIT NOT NULL, 
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
