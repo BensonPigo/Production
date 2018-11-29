@@ -87,6 +87,26 @@ namespace Sci.Production.Shipping
                     }
                 };
             #endregion
+
+            #region 有New權限 才能copy
+
+            string sqlcmd = $@"
+select p2.CanNew,p1.IsAdmin,p1.IsMIS 
+from Pass1 p1
+left join Pass0 p on p1.FKPass0=p.PKey
+left join Pass2 p2 on p2.FKPass0=p.PKey
+where p1.ID='{Sci.Env.User.UserID}'
+and FKMenu= (select PKey from MenuDetail where FormName='Sci.Production.Shipping.P08')";
+            DataRow drCopy;
+            if (MyUtility.Check.Seek(sqlcmd, out drCopy))
+            {
+                if (!MyUtility.Check.Empty(drCopy["CanNew"]) || !MyUtility.Check.Empty(drCopy["IsAdmin"])
+                    || !MyUtility.Check.Empty(drCopy["IsMIS"]))
+                {
+                    this.IsSupportCopy = true;
+                }
+            }
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -367,6 +387,13 @@ where sd.ID = '{0}'", masterID);
             }
 
             this.txtSubconSupplier.TextBox1.ReadOnly = true;
+        }
+
+        protected override void ClickCopyAfter()
+        {
+            base.ClickCopyAfter();
+            this.CurrentMaintain["Handle"] = string.Empty;
+            this.CurrentMaintain["InvNo"] = string.Empty;
         }
 
         // protected override void ClickUndo()
