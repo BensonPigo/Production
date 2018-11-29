@@ -392,7 +392,7 @@ where sd.ID = '{0}'", masterID);
         protected override void ClickCopyAfter()
         {
             base.ClickCopyAfter();
-            this.CurrentMaintain["Handle"] = string.Empty;
+            this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["InvNo"] = string.Empty;
         }
 
