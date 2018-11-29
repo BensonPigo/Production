@@ -103,7 +103,7 @@ namespace Sci.Production.Subcon
                 }
                 string ori_SubconReasonID = dr["SubconReasonID"].ToString();
                 DataTable dt;
-                DBProxy.Current.Select(null, $"SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'Pms_PoIr_Responsible' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason FROM SubconReason WHERE ID='{e.FormattedValue}' AND Type='IP' AND Junk=0", out dt);
+                DBProxy.Current.Select(null, $"SELECT ID,[ResponsibleID]=Responsible,(select Name from DropDownList d where d.type = 'Pms_PoIr_Responsible' and d.ID = SubconReason.Responsible) as ResponsibleName,Reason FROM SubconReason WHERE ID='{e.FormattedValue}' AND Type='IP'", out dt);
 
                 if (dt.Rows.Count == 0)
                 {
@@ -473,7 +473,7 @@ DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO
                     sql.Append(" INNER JOIN Orders o ON ad.OrderID = o.ID" + Environment.NewLine);
                     sql.Append(" INNER JOIN LocalPO_IrregularPrice al ON al.POID = o.POID AND al.Category = a.Category" + Environment.NewLine);
                     sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
-                    sql.Append(" WHERE a.ID = @LocalPO_ID AND sr.Junk=0" + Environment.NewLine);
+                    sql.Append(" WHERE a.ID = @LocalPO_ID" + Environment.NewLine);
 
                     result = DBProxy.Current.Select(null, sql.ToString(), parameters, out IrregularPriceReason_InDB);
 
