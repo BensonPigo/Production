@@ -159,7 +159,7 @@ namespace Sci.Production.Logistic
                 && MyUtility.Check.Empty(this.textTransferSlipNo.Text))
             {
                 this.txtSPNoStart.Focus();
-                MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
+                MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < TransferSlipNo > or < PO# > can not empty!");
                 return;
             }
             this.numSelectQty.Value = 0;
