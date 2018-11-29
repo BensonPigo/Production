@@ -115,7 +115,8 @@ BEGIN
 	outer apply	(
 		select sum(pld.ShipQty) as PackedShipQty
 		 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
-		 where pld.OrderID = @ID
+		 where 1=1
+		 --and pld.OrderID = @ID
 		 and pl.ID = pld.ID
 		 and pl.Status = 'Confirmed'
 		 and pld.OrderID=poid.OrderID and pld.Article=oq.Article and pld.SizeCode=oq.SizeCode
