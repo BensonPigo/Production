@@ -34,7 +34,7 @@ when matched then
         , t.MachineGroupID = s.MachineGroupID		
 		, t.Needle = s.Needle
 		, t.ControlPart = s.ControlParts
-		, t.MOQ = convert(int, s.MOQ)
+		, t.MOQ = isnull(convert(int, s.MOQ),0)
 	when not matched by target and s.type='P' then 
 		insert 
 			(ID 				, Description 	, Partno 		, MasterGroupID 		, MachineGroupID 	, MachineBrandID
@@ -47,7 +47,7 @@ when matched then
 			 , s.UnitID 		, s.POUnitID 	, s.Price 		, s.BatchQty 		, s.Junk
 			 , 'T'  			, s.SuppID 		, s.CurrencyID 	, s.Formula 		, s.Fix
 			 , s.AddName 		, s.AddDate  	, s.EditName  	, s.EditDate 		, s.Lock , s.Needle , s.ControlParts
-			 ,	convert(int, s.MOQ));
+			 , isnull(convert(int, s.MOQ),0));
 
 	---------- Misc, type='O'---------------------
 	Merge Machine.dbo.Misc as t
