@@ -419,9 +419,18 @@ namespace Sci.Production.Subcon
 
             if (chk_IrregularPriceReason.Checked)
             {
-                //價格異常的資料存在，卻沒有ReasonID
-                sqlCmd.Append(string.Format(@"  AND round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) < round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3)  "));
-                sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
+                if (artworktype.ToLower().TrimEnd() == "embroidery")
+                {
+                    //價格異常的資料存在，卻沒有ReasonID
+                    sqlCmd.Append(string.Format(@"  AND round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) < round(isnull(x.ap_amt,0.0) / iif(y.order_qty=0,1,y.order_qty),3) + round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3) "));
+                    sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
+                }
+                else
+                {
+                    //價格異常的資料存在，卻沒有ReasonID
+                    sqlCmd.Append(string.Format(@"  AND round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) < round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3)  "));
+                    sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
+                }
             }
             
             if (!MyUtility.Check.Empty(style))
