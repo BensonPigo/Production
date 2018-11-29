@@ -83,6 +83,8 @@
             this.RemarkToTaipei = new Sci.Win.UI.EditBox();
             this.chkImportChange = new Sci.Win.UI.CheckBox();
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
+            this.chkReplacement = new Sci.Win.UI.CheckBox();
+            this.chkDelay = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -99,6 +101,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkDelay);
+            this.masterpanel.Controls.Add(this.chkReplacement);
             this.masterpanel.Controls.Add(this.chkImportChange);
             this.masterpanel.Controls.Add(this.RemarkToTaipei);
             this.masterpanel.Controls.Add(this.label3);
@@ -211,6 +215,8 @@
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.RemarkToTaipei, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkImportChange, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkReplacement, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkDelay, 0);
             // 
             // detailpanel
             // 
@@ -865,6 +871,32 @@
             this.txttpeuserHandle.Size = new System.Drawing.Size(302, 23);
             this.txttpeuserHandle.TabIndex = 36;
             // 
+            // chkReplacement
+            // 
+            this.chkReplacement.AutoSize = true;
+            this.chkReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
+            this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkReplacement.IsSupportEditMode = false;
+            this.chkReplacement.Location = new System.Drawing.Point(577, 234);
+            this.chkReplacement.Name = "chkReplacement";
+            this.chkReplacement.Size = new System.Drawing.Size(110, 21);
+            this.chkReplacement.TabIndex = 56;
+            this.chkReplacement.Text = "Replacement";
+            this.chkReplacement.UseVisualStyleBackColor = true;
+            // 
+            // chkDelay
+            // 
+            this.chkDelay.AutoSize = true;
+            this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
+            this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkDelay.IsSupportEditMode = false;
+            this.chkDelay.Location = new System.Drawing.Point(577, 261);
+            this.chkDelay.Name = "chkDelay";
+            this.chkDelay.Size = new System.Drawing.Size(63, 21);
+            this.chkDelay.TabIndex = 57;
+            this.chkDelay.Text = "Delay";
+            this.chkDelay.UseVisualStyleBackColor = true;
+            // 
             // P03
             // 
             this.ClientSize = new System.Drawing.Size(998, 662);
@@ -961,5 +993,7 @@
         private Win.UI.Label label3;
         private Win.UI.EditBox RemarkToTaipei;
         private Win.UI.CheckBox chkImportChange;
+        private Win.UI.CheckBox chkDelay;
+        private Win.UI.CheckBox chkReplacement;
     }
 }

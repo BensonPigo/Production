@@ -60,6 +60,8 @@ where ed.ID = '{0}'", masterID);
             base.OnDetailEntered();
             this.txtLocateSP.ReadOnly = false;
             this.txtLocateSP2.ReadOnly = false;
+            this.chkReplacement.ReadOnly = true;
+            this.chkDelay.ReadOnly = true;
             this.label21.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Junk"]) == "True" ? true : false;
             switch (MyUtility.Convert.GetString(this.CurrentMaintain["Payer"]))
             {

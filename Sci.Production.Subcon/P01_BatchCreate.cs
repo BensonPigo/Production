@@ -93,42 +93,62 @@ namespace Sci.Production.Subcon
             if (isArtwork.ToUpper() == "TRUE")
             {
                 #region -- Artwork類 的 sql command --
-                SqlCmd = string.Format(@"SELECT 0 Selected, 
-orders.FTYGroup,
-Order_TmsCost.ID as orderid,                  
-rtrim(v.article) article,                     
-rtrim(Orders.Styleid) Styleid,                
-orders.ordertypeid,
-Orders.SeasonID,                              
-Orders.SciDelivery,                           
-Order_TmsCost.ArtworkTypeID,                  
-rtrim(v.ArtworkID) ArtworkID,                 
-v.PatternCode,                                
-v.PatternDesc,                                
-rtrim(order_tmscost.LocalSuppID) LocalSuppID, 
-v.Cost,                                       
-v.qty costStitch,                          
-v.qty stitch,                                     
-isnull((select b.Price from style_artwork a WITH (NOLOCK) ,Style_Artwork_Quot b WITH (NOLOCK) where a.StyleUkey = orders.StyleUkey and a.Ukey = b.Ukey and a.Article =v.article and a.ArtworkTypeID=v.ArtworkTypeID 
-            and a.ArtworkID = v.ArtworkID and a.PatternCode = v.PatternCode and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
-order_tmscost.Qty qtygarment, 
-sum(v.poqty) poqty , 
-Order_TmsCost.ArtworkInLine, 
-Order_TmsCost.artworkoffline,
-'' message            
-,Order_TmsCost.apvdate 
-FROM Order_TmsCost WITH (NOLOCK) inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
+                SqlCmd = string.Format(@"
+SELECT 	Selected = 0 
+		, orders.FTYGroup
+		, orderid = Order_TmsCost.ID
+		, article = rtrim(v.article) 
+		, Styleid = rtrim(Orders.Styleid) 
+		, orders.ordertypeid
+		, Orders.SeasonID
+		, Orders.SciDelivery
+		, Order_TmsCost.ArtworkTypeID
+		, ArtworkID = rtrim(v.ArtworkID) 
+		, v.PatternCode
+		, v.PatternDesc
+		, LocalSuppID = rtrim(order_tmscost.LocalSuppID) 
+		, v.Cost
+		, costStitch = v.qty
+		, stitch = v.qty
+		, unitprice = isnull ((	select b.Price 
+								from style_artwork a WITH (NOLOCK) 
+									 , Style_Artwork_Quot b WITH (NOLOCK) 
+								where a.StyleUkey = orders.StyleUkey 
+									  and a.Ukey = b.Ukey 
+									  and a.Article = v.article 
+									  and a.ArtworkTypeID = v.ArtworkTypeID 
+									  and a.ArtworkID = v.ArtworkID 
+									  and a.PatternCode = v.PatternCode 
+									  and b.LocalSuppId = Order_TmsCost.LocalSuppID 
+									  and b.PriceApv = 'Y')
+							  , 0)
+		, qtygarment = order_tmscost.Qty 
+		, poqty = sum(v.poqty) 
+		, Order_TmsCost.ArtworkInLine
+		, Order_TmsCost.artworkoffline
+		, Order_TmsCost.apvdate 
+		, message = '' 
+FROM Order_TmsCost WITH (NOLOCK) 
+inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
-inner join view_order_artworks v on v.id = Order_TmsCost.id and v.artworktypeid = Order_TmsCost.artworktypeid
-WHERE not exists(select * from artworkpo a WITH (NOLOCK) inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
-and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID) 
-and orders.Finished=0                                                                 
-AND orders.IsForecast = 0                                                             
-AND orders.Junk = 0 
-and factory.mdivisionid = '{1}'
-and factory.IsProduceFty = 1
-and Order_TmsCost.localsuppid !=''
-and Orders.category  in ('B','S')", poType, Sci.Env.User.Keyword);
+inner join view_order_artworks v on v.id = Order_TmsCost.id 
+									and v.artworktypeid = Order_TmsCost.artworktypeid
+WHERE 	not exists(
+			select * 
+			from artworkpo a WITH (NOLOCK) 
+			inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id 
+			where a.potype = '{0}' 
+				  and a.localsuppid = Order_TmsCost.localsuppid 
+				  and a.artworktypeid = Order_TmsCost.artworktypeid and 
+				  ap.OrderID = orders.ID) 
+	  	and orders.Finished=0                                                                 
+		AND orders.IsForecast = 0                                                             
+		AND orders.Junk = 0 
+		and factory.mdivisionid = '{1}'
+		and factory.IsProduceFty = 1
+		and Order_TmsCost.localsuppid !=''
+		and Orders.category  in ('B','S')
+		", poType, Sci.Env.User.Keyword);
 
                 SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
 
@@ -141,68 +161,70 @@ and Orders.category  in ('B','S')", poType, Sci.Env.User.Keyword);
                 if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", sciDelivery_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
                 SqlCmd += @"
-group by
-orders.FTYGroup,
-Order_TmsCost.ID,           
-v.article,                  
-Orders.Styleid,             
-Orders.SeasonID,            
-Orders.OrderTypeId,
-Orders.SciDelivery,         
-Order_TmsCost.ArtworkTypeID,
-order_tmscost.LocalSuppID,  
-order_tmscost.Qty ,         
-Order_TmsCost.ArtworkInLine,
-Order_TmsCost.artworkoffline,
-Orders.SewInLine,           
-Order_TmsCost.ApvDate       
-,orders.StyleUkey           
-,V.ArtworkID                
-,V.PatternCode              
-,V.PatternDesc              
-,V.Cost                     
-,V.ArtworkTypeID,v.qty";
+group by 	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.SeasonID
+			, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
+			, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
+			, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
+			, orders.StyleUkey, V.ArtworkID, V.PatternCode, V.PatternDesc, V.Cost
+			, V.ArtworkTypeID, v.qty";
                 #endregion
             }
             else
             {
                 #region -- 非ArtworK類 的sql command --
-                SqlCmd = string.Format(@" SELECT 0 Selected,
-Orders.FTYGroup,
-Order_TmsCost.ID as orderid,                 
-rtrim(v.article) article,                    
-rtrim(Orders.Styleid) Styleid,               
-rtrim(Orders.SeasonID) SeasonID,             
-orders.ordertypeid,
-Orders.SciDelivery,                          
-Order_TmsCost.ArtworkTypeID,                 
-Order_TmsCost.ArtworkTypeID ArtworkID,       
-Order_TmsCost.ArtworkTypeID PatternCode,     
-Order_TmsCost.ArtworkTypeID PatternDesc,     
-rtrim(order_tmscost.LocalSuppID) LocalSuppID,
-0.0 Cost,                                    
-1 costStitch,                              
-1 stitch,                                  
-isnull((select b.Price from style_artwork a WITH (NOLOCK) ,Style_Artwork_Quot b WITH (NOLOCK) where a.StyleUkey = orders.StyleUkey and a.Ukey = b.Ukey and a.Article =v.article and b.LocalSuppId = Order_TmsCost.LocalSuppID and b.PriceApv = 'Y'),0) as unitprice,
-isnull(order_tmscost.Qty,1) qtygarment,
-sum(v.Qty) poqty ,
-Order_TmsCost.ArtworkInLine,
-Order_TmsCost.artworkoffline,
-Orders.SewInLine,
-Order_TmsCost.ApvDate,
-'' message
-FROM Order_TmsCost WITH (NOLOCK) inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
+                SqlCmd = string.Format(@"
+SELECT 	Selected = 0 
+		, Orders.FTYGroup
+		, orderid = Order_TmsCost.ID 
+		, article = rtrim(v.article) 
+		, Styleid = rtrim(Orders.Styleid) 
+		, SeasonID = rtrim(Orders.SeasonID) 
+		, orders.ordertypeid
+		, Orders.SciDelivery
+		, Order_TmsCost.ArtworkTypeID
+		, ArtworkID = Order_TmsCost.ArtworkTypeID 
+		, PatternCode = Order_TmsCost.ArtworkTypeID 
+		, PatternDesc = Order_TmsCost.ArtworkTypeID 
+		, LocalSuppID = rtrim(order_tmscost.LocalSuppID) 
+		, Cost = 0.0 
+		, costStitch = 1 
+		, stitch = 1 
+		, unitprice = isnull ((	select b.Price 
+								from style_artwork a WITH (NOLOCK) 
+									 , Style_Artwork_Quot b WITH (NOLOCK) 
+								where a.StyleUkey = orders.StyleUkey 
+									  and a.Ukey = b.Ukey 
+									  and a.Article = v.article 
+									  and b.LocalSuppId = Order_TmsCost.LocalSuppID 
+									  and b.PriceApv = 'Y')
+							  , 0)
+		, qtygarment = isnull(order_tmscost.Qty,1)
+		, poqty = sum(v.Qty) 
+		, Order_TmsCost.ArtworkInLine
+		, Order_TmsCost.artworkoffline
+		, Orders.SewInLine
+		, Order_TmsCost.ApvDate
+		, message = '' 
+FROM Order_TmsCost WITH (NOLOCK) 
+inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join order_qty v WITH (NOLOCK) on v.id = order_tmscost.id
-WHERE not exists(select * from artworkpo a WITH (NOLOCK) inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id where a.potype='{0}' and a.localsuppid = Order_TmsCost.localsuppid 
-and a.artworktypeid = Order_TmsCost.artworktypeid and ap.OrderID = orders.ID ) 
-and factory.mdivisionid = '{1}' 
-and factory.IsProduceFty = 1
-and orders.Finished=0
-and orders.IsForecast = 0
-and orders.Junk = 0
-and Order_TmsCost.localsuppid !=''
-and Orders.category  in ('B','S')", poType, Sci.Env.User.Keyword);
+WHERE 	not exists(
+			select * 
+			from artworkpo a WITH (NOLOCK) 
+			inner join artworkpo_detail ap WITH (NOLOCK) on ap.id = a.id 
+			where a.potype = '{0}' 
+				  and a.localsuppid = Order_TmsCost.localsuppid 
+				  and a.artworktypeid = Order_TmsCost.artworktypeid 
+				  and ap.OrderID = orders.ID ) 
+		and factory.mdivisionid = '{1}' 
+		and factory.IsProduceFty = 1
+		and orders.Finished=0
+		and orders.IsForecast = 0
+		and orders.Junk = 0
+		and Order_TmsCost.localsuppid !=''
+		and Orders.category  in ('B','S')
+		", poType, Sci.Env.User.Keyword);
                 SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
@@ -213,21 +235,11 @@ and Orders.category  in ('B','S')", poType, Sci.Env.User.Keyword);
                 if (!(string.IsNullOrWhiteSpace(sciDelivery_e))) { SqlCmd += string.Format("and  Orders.SciDelivery <= '{0}' ", sciDelivery_e); }
                 if (!(string.IsNullOrWhiteSpace(sp_b))) { SqlCmd += string.Format(" and orders.ID between '{0}' and '{1}'", sp_b, sp_e); }
                 SqlCmd += @" 
-group by orders.FTYGroup,
-Order_TmsCost.ID,             
-v.article,                    
-Orders.Styleid,               
-Orders.SeasonID,              
-Orders.OrderTypeId,
-Orders.SciDelivery,           
-Order_TmsCost.ArtworkTypeID,  
-order_tmscost.LocalSuppID,    
-order_tmscost.Qty ,           
-Order_TmsCost.ArtworkInLine,  
-Order_TmsCost.artworkoffline, 
-Orders.SewInLine,             
-Order_TmsCost.ApvDate         
-,orders.StyleUkey";
+group by	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.SeasonID
+			, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
+			, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
+			, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
+			, orders.StyleUkey";
                 #endregion
             }
 
