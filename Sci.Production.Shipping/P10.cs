@@ -71,7 +71,10 @@ select p.ID
 , p.InvNo
 , p.MDivisionID
 , p.ShipQty
+, p.PulloutID
+, Pullout.SendToTPE
 from PackingList p WITH (NOLOCK) 
+left join Pullout WITH (NOLOCK)  on Pullout.ID = p.PulloutID and Pullout.Status <> 'NEW'
 where {0} 
 order by p.ID", masterID);
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.plData);
@@ -189,7 +192,10 @@ order by g.ID", masterID);
                 .Numeric("ClogCTNQty", header: "CTN Q'ty at C-Logs", iseditingreadonly: true)
                 .Date("InspDate", header: "Est. Inspection Date").Get(out this.col_inspdate)
                 .Text("InspStatus", header: "Inspection Status", width: Widths.AnsiChars(10))
-                .Date("PulloutDate", header: "Pullout Date").Get(out this.col_pulloutdate);
+                .Date("PulloutDate", header: "Pullout Date").Get(out this.col_pulloutdate)
+                .Text("PulloutID", header: "Pullout ID#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("SendToTPE", header: "Send to SCI", iseditingreadonly: true)
+                ;
             #region 欄位值檢查
             this.gridDetail.CellValidating += (s, e) =>
             {
