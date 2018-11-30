@@ -363,8 +363,8 @@ WHERE a.ID =  @artWorkPO_ID
 --從所有採購單中，找出同ArtworkTypeID、POID，有被採購的OrderID（不限採購單）
 SELECT DISTINCT ad.OrderID 
 INTO #BePurchased
-FROM LocalPO a 
-INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID 
+FROM ArtworkPO a 
+INNER JOIN ArtworkPO_Detail ad ON a.ID=ad.ID 
 INNER JOIn Orders ods ON ad.OrderID=ods.id 
 WHERE  ods.POID IN  (SELECT POID FROM  #tmp_AllOrders)
 
