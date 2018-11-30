@@ -394,6 +394,7 @@ where sd.ID = '{0}'", masterID);
             base.ClickCopyAfter();
             this.CurrentMaintain["Handle"] = Sci.Env.User.UserID;
             this.CurrentMaintain["InvNo"] = string.Empty;
+            this.CurrentMaintain["ID"] = string.Empty;
         }
 
         // protected override void ClickUndo()
