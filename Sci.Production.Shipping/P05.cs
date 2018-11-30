@@ -1676,7 +1676,7 @@ order by fwd.WhseNo", this.txtTerminalWhse.Text.ToString().Trim());
                 {
                     this.CurrentMaintain["ForwarderWhse_DetailUKey"] = 0;
                     this.txtTerminalWhse.Text = string.Empty;
-                    MyUtility.Msg.WarningBox("Whse# is not found!!");
+                    MyUtility.Msg.WarningBox("Terminal/Whse# is not found!!");
                     e.Cancel = true;
                 }
             }
