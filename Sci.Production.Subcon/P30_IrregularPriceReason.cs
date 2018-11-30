@@ -18,41 +18,25 @@ namespace Sci.Production.Subcon
 {
     public partial class P30_IrregularPriceReason : Sci.Win.Subs.Base
     {
-        DataTable _IrregularPriceReasonDT;
         DataTable OriginDT_FromDB;
         DataTable ModifyDT_FromP30;
-        //int _Type = 0;
-        bool _useDBdata;
         string _LocalPO_ID = string.Empty;
         string _FactoryID = string.Empty;
-
-        //「未曾有過」價格異常紀錄，現在價格異常 Type = 1
-        //「曾經」有過價格異常紀錄，現在還是異常 Type = 2
-        //「曾經」有過價格異常紀錄，現在價格正常 Type = 3
-        public P30_IrregularPriceReason(DataTable IrregularPriceReasonDT, string LocalPO_ID, string FactoryID, bool useDBdata)
+        
+        public P30_IrregularPriceReason(string LocalPO_ID, string FactoryID)
         {
             InitializeComponent();
 
             this.EditMode = false;
-            _IrregularPriceReasonDT = IrregularPriceReasonDT;
             _LocalPO_ID = LocalPO_ID;
             _FactoryID = FactoryID;
-            _useDBdata = useDBdata;
         }
 
         protected override void OnFormLoaded()
         {
+            //重新計算價格
+            this.Check_Irregular_Price();           
 
-            if (_useDBdata || MyUtility.Check.Empty(_IrregularPriceReasonDT))
-            {
-                IrregularPriceReasonDT_Initial(true);
-            }
-            else
-            {
-                ModifyDT_FromP30 = _IrregularPriceReasonDT.Copy();
-                listControlBindingSource1.DataSource = _IrregularPriceReasonDT;
-                btnEdit.Enabled = true;
-            }
             this.gridgridIrregularPrice.DataSource = listControlBindingSource1;
 
             DataGridViewGeneratorTextColumnSettings col_SubconReasonID = new DataGridViewGeneratorTextColumnSettings();
@@ -137,14 +121,19 @@ namespace Sci.Production.Subcon
                 .Text("ResponsibleID", header: "ResponsibleID", iseditingreadonly: true, width: null)
                 .Text("ResponsibleName", header: "Responsible", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("Reason", header: "Reason", iseditingreadonly: true, width: Widths.AnsiChars(15))
-                .Text("AddDate", header: "Create" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .DateTime("AddDate", header: "Create" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("AddName", header: "Create" + Environment.NewLine + "Name", iseditingreadonly: true, width: Widths.AnsiChars(10))
-                .Text("EditDate", header: "Edit" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
+                .DateTime("EditDate", header: "Edit" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("EditName", header: "Edit" + Environment.NewLine + "Name", iseditingreadonly: true, width: Widths.AnsiChars(10));
             #endregion
 
             this.gridgridIrregularPrice.Columns["SubconReasonID"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridgridIrregularPrice.Columns["ResponsibleID"].Visible = false;
+
+            for (int i = 0; i < this.gridgridIrregularPrice.Columns.Count; i++)
+            {
+                this.gridgridIrregularPrice.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -218,7 +207,9 @@ namespace Sci.Production.Subcon
 
                             scope.Complete();
                             scope.Dispose();
-                            Check_Irregular_Price();
+                            //存檔完成後，再重新計算一次
+                             Check_Irregular_Price();
+
                         }
                         catch (Exception ex)
                         {
@@ -230,7 +221,11 @@ namespace Sci.Production.Subcon
             }
             else
             {
+                //文字=Edit的時候按下，去掉Readonly
                 gridgridIrregularPrice.IsEditingReadOnly = false;
+                //重新計算價格
+                Check_Irregular_Price();
+                //初始化OriginDT_FromDB，用來比對User修改後的DataTable            
                 IrregularPriceReasonDT_Initial();
             }
 
@@ -249,11 +244,18 @@ namespace Sci.Production.Subcon
                 btnEdit.Text = "Edit";
                 btnClose.Text = "Close";
                 gridgridIrregularPrice.IsEditingReadOnly = false;
-                IrregularPriceReasonDT_Initial();
+
+                //回到檢視模式，並且重新取得資料
+                IrregularPriceReasonDT_Initial();                
+                Check_Irregular_Price();
             }
         }
 
-        private void IrregularPriceReasonDT_Initial(bool isSaveAct = false)
+        /// <summary>
+        /// 取得DB上的價格異常紀錄OriginDT_FromDB
+        /// </summary>
+        /// <param name="UseDbData"></param>
+        private void IrregularPriceReasonDT_Initial(bool UseDbData = false)
         {
             List<SqlParameter> parameters = new List<SqlParameter>();
             StringBuilder sql = new StringBuilder();
@@ -292,25 +294,30 @@ namespace Sci.Production.Subcon
                 return;
             }
 
-            if (isSaveAct)
+            //現在沒有異常紀錄，因此只要帶DB的資料
+            if (UseDbData)
             {
                 ModifyDT_FromP30 = OriginDT_FromDB.Copy();
-                P30._IrregularPriceReasonDT = OriginDT_FromDB.Copy();
             }
 
             //原始資料：OriginDT_FromDB
             //即將異動，寫回DB的資料：ModifyDT_FromP30
             listControlBindingSource1.DataSource = ModifyDT_FromP30.Copy();
 
-
-
         }
 
-        private void Check_Irregular_Price()
+        /// <summary>
+        /// 價格異常計算
+        /// </summary>
+        /// <returns> 
+        ///     價格異常紀錄DataTable 
+        /// </returns>
+        public bool Check_Irregular_Price(bool IsP01Call = false)
         {
-            //重置
-            _IrregularPriceReasonDT = null;
-            
+
+            //是否有價格異常，用以區別P01的按鈕要不要變色
+            bool Has_Irregular_Price = false;
+
             //採購價 > 標準價 =異常
             #region 變數宣告
 
@@ -433,7 +440,6 @@ DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO
                 if (!result)
                 {
                     ShowErr(sql.ToString(), result);
-                    return;
                 }
 
                 if (Price_Dt.Rows.Count > 0)
@@ -615,15 +621,27 @@ DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO
                          5| 無 | 無  | 沒事
 
                      */
-                    //「曾經」有過價格異常紀錄，現在價格正常，沒有新的異常紀錄，只需要帶DB資料
-                    if (IPR_Grid.Rows.Count != 0)
+                    //「曾經」有過價格異常紀錄，現在價格正常
+                    if (IPR_Grid.Rows.Count > 0)
                     {
-                        listControlBindingSource1.DataSource = IPR_Grid;
+                        //只有開啟Form的時候才需要把紀錄Copy到Datasource，否則會出事
+                        if (!IsP01Call)
+                        {
+                            listControlBindingSource1.DataSource = IPR_Grid.Copy();
+                        }
                         ModifyDT_FromP30 = IPR_Grid.Copy();
                     }
                     else
                     {
+                        //沒有價格紀錄，所以全部帶DB就好
                         IrregularPriceReasonDT_Initial(true);
+                    }
+
+                    //當下有異常則true，讓P30判斷是否需要按鈕變色
+                    if (IrregularPriceReason_Real.Rows.Count > 0)
+                    {
+                        Has_Irregular_Price = true;
+
                     }
                 }
 
@@ -632,9 +650,9 @@ DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO
             {
                 ShowErr(ex.Message, ex);
             }
+
+            return Has_Irregular_Price;
         }
-
-
 
         private DataTable CreateIrregularPriceReasonDataTabel(string POID, string Category, string BrandID, string StyleID, decimal purchasePrice, decimal StdPrice, DataTable IrregularPriceReason_New)
         {
