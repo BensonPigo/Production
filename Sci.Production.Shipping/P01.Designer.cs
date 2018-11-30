@@ -1118,7 +1118,7 @@
             this.labelResponsibilityJustifcation.Name = "labelResponsibilityJustifcation";
             this.labelResponsibilityJustifcation.Size = new System.Drawing.Size(148, 18);
             this.labelResponsibilityJustifcation.TabIndex = 64;
-            this.labelResponsibilityJustifcation.Text = "Responsibility Justifcation";
+            this.labelResponsibilityJustifcation.Text = "Responsibility Justification";
             // 
             // displayResponsibilityJustifcation
             // 

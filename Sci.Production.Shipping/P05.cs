@@ -583,7 +583,7 @@ order by fwd.WhseNo",
                 if (!MyUtility.Check.Seek(sqlCmd, string.Empty))
                 {
                     this.txtTerminalWhse.Focus();
-                    MyUtility.Msg.WarningBox("Whse# is not found!!");
+                    MyUtility.Msg.WarningBox("Terminal/Whse# is not found!!");
                     return false;
                 }
             }
