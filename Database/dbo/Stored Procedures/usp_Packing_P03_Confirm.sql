@@ -109,49 +109,62 @@ BEGIN
 	END
 
 	-- 檢查Sewing Output Qty是否有超過Packing Qty
-	IF EXISTS (	select *
-	from PackingList_Detail poid
-	left join Order_Qty oq WITH (NOLOCK) on oq.ID = poid.OrderID
-	outer apply	(
-		select sum(pld.ShipQty) as PackedShipQty
-		 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
-		 where 1=1
-		 --and pld.OrderID = @ID
-		 and pl.ID = pld.ID
-		 and pl.Status = 'Confirmed'
-		 and pld.OrderID=poid.OrderID and pld.Article=oq.Article and pld.SizeCode=oq.SizeCode
-	)PackedData
-	outer apply	(
-		select sum(pld.ShipQty) as ShipQty
-		 from PackingList_Detail pld WITH (NOLOCK) 
-		 where pld.ID = @ID
-		 and pld.OrderID=poid.OrderID and pld.Article=oq.Article and pld.SizeCode=oq.SizeCode
-	)PackingData
-	outer apply	(
-		select sum(iaq.DiffQty) as DiffQty
-		 from InvAdjust ia WITH (NOLOCK) , InvAdjust_Qty iaq WITH (NOLOCK) 
-		 where ia.OrderID = poid.OrderID
-		 and ia.ID = iaq.ID
-		 and ia.OrderID=poid.OrderID and iaq.Article=oq.Article and iaq.SizeCode =oq.SizeCode
-	)InvadjQty
-	outer apply	(
-		select a.OrderID,a.Article,a.SizeCode,MIN(a.QAQty) as QAQty
-		from (select poid.OrderID,oq.Article,oq.SizeCode, sl.Location, isnull(sum(sodd.QAQty),0) as QAQty
-			 from (select distinct pld.OrderID
-						 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
-						 where pl.ID = @ID
-						 and pld.ID = pl.ID) poid
-		   left join Orders o WITH (NOLOCK) on o.ID = poid.OrderID
-		   left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
-		   left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
-		   left join SewingOutput_Detail_Detail sodd WITH (NOLOCK) on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = sl.Location
-			 group by poid.OrderID,oq.Article,oq.SizeCode, sl.Location) a		
-		group by a.OrderID,a.Article,a.SizeCode
-	)SewingData
-	where 1=1
-	and isnull(PackedData.PackedShipQty,0)+isnull(PackingData.ShipQty,0)+isnull(InvadjQty.DiffQty,0)> isnull(SewingData.QAQty,0)	
-	and SewingData.OrderID=poid.OrderID and SewingData.Article=oq.Article and SewingData.SizeCode=oq.SizeCode
-	and poid.ID= @ID)
+	IF EXISTS (	select 
+			poid.*
+				,PackedData.PackedShipQty
+				,PackingData.ShipQty 
+				,InvadjQty.DiffQty
+				,isnull(PackedData.PackedShipQty,0)+isnull(PackingData.ShipQty,0)+isnull(InvadjQty.DiffQty,0) TotalQty
+				,SewingData.QAQty
+			from (
+			select 
+				poid.OrderID
+				,pl.ID
+				,poid.SizeCode 
+				,poid.Article 	
+			from PackingList pl
+			inner join PackingList_Detail poid on pl.ID = poid.ID 
+			where pl.ID= @ID
+			group by poid.OrderID,pl.ID,poid.SizeCode ,poid.Article
+		)poid
+		left join (
+			select pld.OrderID,pld.Article,pld.SizeCode,sum(pld.ShipQty) as PackedShipQty
+			from PackingList pl WITH (NOLOCK) 
+			inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID 
+			where pl.Status = 'Confirmed'
+			and pld.OrderID in (select distinct OrderID from  PackingList_Detail where ID = @ID)
+			group by pld.OrderID,pld.Article,pld.SizeCode
+		)PackedData on PackedData.OrderID=poid.OrderID and PackedData.Article=poid.Article and PackedData.SizeCode=poid.SizeCode 
+		left join (
+			select pld.OrderID,pld.Article,pld.SizeCode,sum(pld.ShipQty) as ShipQty
+			from PackingList_Detail pld WITH (NOLOCK) 
+			where pld.ID = @ID
+			group by pld.OrderID,pld.Article,pld.SizeCode
+		)PackingData on PackingData.OrderID=poid.OrderID and PackingData.Article=poid.Article and PackingData.SizeCode=poid.SizeCode  
+		left join (
+			select ia.OrderID,iaq.Article,iaq.SizeCode,sum(iaq.DiffQty) as DiffQty
+			from InvAdjust ia WITH (NOLOCK)
+			inner join InvAdjust_Qty iaq WITH (NOLOCK) on ia.ID = iaq.ID
+			where ia.OrderID in (select distinct OrderID from  PackingList_Detail where ID = @ID)
+			group by ia.OrderID,iaq.Article,iaq.SizeCode
+		) InvadjQty on InvadjQty.OrderID=poid.OrderID and InvadjQty.Article=poid.Article and InvadjQty.SizeCode =poid.SizeCode
+		inner join (
+			select a.OrderID,a.Article,a.SizeCode,MIN(a.QAQty) as QAQty
+			from (select poid.OrderID,oq.Article,oq.SizeCode, sl.Location, isnull(sum(sodd.QAQty),0) as QAQty
+				 from (select distinct pld.OrderID
+							 from PackingList pl WITH (NOLOCK) , PackingList_Detail pld WITH (NOLOCK) 
+							 where pl.ID = @ID
+							 and pld.ID = pl.ID) poid
+			   left join Orders o WITH (NOLOCK) on o.ID = poid.OrderID
+			   left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+			   left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
+			   left join SewingOutput_Detail_Detail sodd WITH (NOLOCK) on sodd.OrderId = o.ID and sodd.Article = oq.Article  and sodd.SizeCode = oq.SizeCode and sodd.ComboType = sl.Location
+				 group by poid.OrderID,oq.Article,oq.SizeCode, sl.Location) a		
+			group by a.OrderID,a.Article,a.SizeCode
+		)SewingData on SewingData.OrderID=poid.OrderID and SewingData.Article=poid.Article and SewingData.SizeCode=poid.SizeCode
+		where 1=1
+		and poid.ID= @ID
+		and isnull(PackedData.PackedShipQty,0)+isnull(PackingData.ShipQty,0)+isnull(InvadjQty.DiffQty,0)> isnull(SewingData.QAQty,0))
 	BEGIN
 		SET @msg += N'Pullout qty cannot exceed sewing qty! ';
 	END
