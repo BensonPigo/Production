@@ -267,7 +267,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Price = frm.Check_Irregular_Price(true);
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
 
             this.HideWaitMessage();
 
@@ -645,7 +645,7 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             this.btnIrrPriceReason.ForeColor = Color.Black;
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Price = frm.Check_Irregular_Price(true);
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
 
             this.HideWaitMessage();
 

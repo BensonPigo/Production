@@ -107,7 +107,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1327, 371);
+            this.ClientSize = new System.Drawing.Size(1000, 380);
             this.Controls.Add(this.gridgridIrregularPrice);
             this.Controls.Add(this.panel1);
             this.Name = "P01_IrregularPriceReason";

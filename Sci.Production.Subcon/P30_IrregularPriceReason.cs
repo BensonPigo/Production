@@ -118,7 +118,6 @@ namespace Sci.Production.Subcon
                 .Numeric("PoPrice", header: "PO" + Environment.NewLine + "Price", decimal_places: 4, iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Numeric("StdPrice", header: "Standard" + Environment.NewLine + "Price", decimal_places: 4, iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("SubconReasonID", header: "Reason" + Environment.NewLine + "ID", width: Widths.AnsiChars(7), settings: col_SubconReasonID)
-                .Text("ResponsibleID", header: "ResponsibleID", iseditingreadonly: true, width: null)
                 .Text("ResponsibleName", header: "Responsible", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("Reason", header: "Reason", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .DateTime("AddDate", header: "Create" + Environment.NewLine + "Date", iseditingreadonly: true, width: Widths.AnsiChars(10))
@@ -128,7 +127,6 @@ namespace Sci.Production.Subcon
             #endregion
 
             this.gridgridIrregularPrice.Columns["SubconReasonID"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridgridIrregularPrice.Columns["ResponsibleID"].Visible = false;
 
             for (int i = 0; i < this.gridgridIrregularPrice.Columns.Count; i++)
             {
@@ -312,7 +310,7 @@ namespace Sci.Production.Subcon
         /// <returns> 
         ///     價格異常紀錄DataTable 
         /// </returns>
-        public bool Check_Irregular_Price(bool IsP01Call = false)
+        public bool Check_Irregular_Price(bool IsNeedUpdateDT = true)
         {
 
             //是否有價格異常，用以區別P01的按鈕要不要變色
@@ -369,13 +367,16 @@ FROM LocalPO a
 INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID
 WHERE a.ID = @LocalPO_ID
 
---從所有採購單中，找出同Category、POID，有被採購的OrderID（不限採購單）
+/*
+從所有採購單中，找出同Category、POID，有被採購的OrderID（不限採購單）
+註解原因 各項目可能會再其他子單進行採購)
 SELECT DISTINCT ad.OrderID 
 INTO #BePurchased
 FROM LocalPO a 
 INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID 
 INNER JOIn Orders ods ON ad.OrderID=ods.id 
 WHERE  ods.POID IN  (SELECT POID FROM  #tmp_AllOrders)
+*/
 
 --列出採購價的清單（尚未總和）
 SELECT  ap.ID
@@ -395,7 +396,7 @@ WHERE  EXiSTS  (
 				SELECT ArtworkTypeID,POID 
 				FROM #tmp_AllOrders 
 				WHERE ArtworkTypeID= ap.Category  AND POID=Orders.POID) --相同Category、POID
-	   AND apd.OrderId  IN  ( SELECT OrderID FROM #BePurchased ) --且有被採購的OrderID
+	   -- AND apd.OrderId  IN  ( SELECT OrderID FROM #BePurchased ) 且有被採購的OrderID (註解原因 各項目可能會再其他子單進行採購)
 
 
 --開始整合
@@ -413,7 +414,7 @@ OUTER APPLY(--標準價
 	        inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
 	        where POID= t.POID                   --相同母單
 			AND ArtworkTypeID= t.ArtworkTypeID   --相同加工
-			AND Order_TmsCost.ID  IN ( SELECT OrderID FROM #BePurchased ) --***限定 有被採購的訂單***
+			-- AND Order_TmsCost.ID  IN ( SELECT OrderID FROM #BePurchased ) ***限定 有被採購的訂單*** (註解原因 各項目可能會再其他子單進行採購)
 	        group by orders.poid,ArtworkTypeID
 ) Standard
 OUTER APPLY (--採購價，根據Category、POID，作分組加總
@@ -625,7 +626,7 @@ DROP TABLE #tmp_AllOrders ,#BePurchased ,#total_PO
                     if (IPR_Grid.Rows.Count > 0)
                     {
                         //只有開啟Form的時候才需要把紀錄Copy到Datasource，否則會出事
-                        if (!IsP01Call)
+                        if (IsNeedUpdateDT)
                         {
                             listControlBindingSource1.DataSource = IPR_Grid.Copy();
                         }

@@ -698,7 +698,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Price = frm.Check_Irregular_Price(true);
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
 
             this.HideWaitMessage();
 
@@ -845,10 +845,25 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     {
                         return;
                     }
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                         (string.Format(@"Select refno,description, localsuppid,unitid,price
-                                                    from localItem WITH (NOLOCK) where category ='{0}' and  localsuppid = '{1}' order by refno", CurrentMaintain["category"], CurrentMaintain["localsuppid"])
-                                                                                                                                  , "15,30,8,8,10", "", null, "0,0,0,0,4");
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                        string.Format(
+                             @"
+Select  refno
+        , description
+        , localsuppid
+        , unitid
+        , price
+from localItem WITH (NOLOCK) 
+where category = '{0}' 
+      and localsuppid = '{1}' 
+      and isnull (Junk, 0) = 0 
+order by refno"
+                             , CurrentMaintain["category"]
+                             , CurrentMaintain["localsuppid"])
+                        , "15,30,8,8,10"
+                        , ""
+                        , null
+                        , "0,0,0,0,4");
                     item.Size = new System.Drawing.Size(795, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -861,10 +876,22 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             ts.CellValidating += (s, e) =>
             {
                 if (MyUtility.Check.Empty(e.FormattedValue) || !this.EditMode) return;
-                if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem WITH (NOLOCK) 
-                                                                      where refno = '{0}' and category ='{1}'and localsuppid = '{2}'"
-                                                                , e.FormattedValue.ToString(), CurrentMaintain["category"], CurrentMaintain["localsuppid"])
-                                                                , out dr, null))
+                if (!MyUtility.Check.Seek(
+                    string.Format(
+                        @"
+select  refno
+        , unitid
+        , price 
+from localitem WITH (NOLOCK) 
+where refno = '{0}' 
+      and category = '{1}'
+      and localsuppid = '{2}'
+      and isnull (Junk, 0) = 0 "
+                        , e.FormattedValue.ToString()
+                        , CurrentMaintain["category"]
+                        , CurrentMaintain["localsuppid"])
+                    , out dr
+                    , null))
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Data not found!", "Ref#");
@@ -1187,7 +1214,6 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Approve successful");
                 }
                 catch (Exception ex)
                 {
@@ -1465,7 +1491,7 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             this.btnIrrPriceReason.ForeColor = Color.Black;
             this.ShowWaitMessage("Data Loading...");
 
-            bool Has_Irregular_Price = frm.Check_Irregular_Price(true);
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
 
             this.HideWaitMessage();
 
