@@ -30,19 +30,39 @@ namespace Sci.Production.Subcon
 
         }
 
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            // TaipeiDBC = true or 1 >> 台北轉入, 其餘為工廠建立
+
+            if (MyUtility.Check.Empty(dtData.Rows[0]["TaipeiDBC"]))
+            {
+                this.numExchange.ReadOnly = true;
+                this.numAmount.ReadOnly = false;
+            }
+            else
+            {
+                this.numExchange.ReadOnly = false;
+                this.numAmount.ReadOnly = true;
+            }
+        
+           
+
+        }
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
-        {
-            // Currency =USD, Exchange 只能為1
-            if (dr["currencyid"].ToString().ToUpper() == "USD" && numExchange.Value != 1)
-            {
-                MyUtility.Msg.WarningBox("If the currency is USD, then exchange must be 1 !!");
-                return ;
-            }
+        {            
+            #region 計算TAX
+            decimal amount = MyUtility.Convert.GetDecimal(dtData.Rows[0]["amount"]);
+            decimal TaxRate = MyUtility.Convert.GetDecimal(dtData.Rows[0]["taxrate"]);
+            int Exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", dtData.Rows[0]["currencyId"]), null));
+            dtData.Rows[0]["tax"] = Math.Round((amount * TaxRate) / 100, Exact);
+            
+            #endregion
 
             if (!MyUtility.Tool.CursorUpdateTable(dtData, "localdebit", null))
             {
@@ -52,6 +72,20 @@ namespace Sci.Production.Subcon
             {
                 this.Close();
             }
+        }
+
+        private void numExchange_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(numExchange.Value))
+            {
+                MyUtility.Msg.WarningBox("Exchange value cannot be 0!");
+                e.Cancel = true;
+                return;
+            }
+
+            dtData.Rows[0]["Exchange"] = numExchange.Value;
+            numAmount.Value = Math.Round(MyUtility.Convert.GetDecimal(dtData.Rows[0]["TaipeiAMT"]) * MyUtility.Convert.GetDecimal(numExchange.Value), 2);
+            dtData.Rows[0]["amount"] = numAmount.Value;
         }
     }
 }
