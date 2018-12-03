@@ -23,6 +23,7 @@ namespace Sci.Production.Subcon
     public partial class P01 : Sci.Win.Tems.Input6
     {
         string artworkunit;
+
         public P01(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -40,7 +41,7 @@ namespace Sci.Production.Subcon
                 {
                     CurrentMaintain["CurrencyID"] = MyUtility.GetValue.Lookup("CurrencyID", this.txtsubconSupplier.TextBox1.Text, "LocalSupp", "ID");
                     ((DataTable)detailgridbs.DataSource).Rows.Clear();
-                    
+
                 }
             };
         }
@@ -66,7 +67,7 @@ namespace Sci.Production.Subcon
             {
                 MyUtility.Msg.WarningBox("Data is approved or closed, can't delete.", "Warning");
                 return false;
-            } 
+            }
 
             //sql參數準備
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
@@ -81,9 +82,9 @@ namespace Sci.Production.Subcon
             DataTable dt;
             DBProxy.Current.Select(null, sqlcmd, paras, out dt);
             //有則return
-            if (dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmin"]) > 0)||
+            if (dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmin"]) > 0) ||
                 dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmout"]) > 0))
-            {                
+            {
                 MyUtility.Msg.WarningBox(string.Format("Some SP# already have Farm In/Out data!!!"), "Warning");
                 return false;
             }
@@ -194,9 +195,9 @@ namespace Sci.Production.Subcon
             CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
             CurrentMaintain["vat"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["vatrate"] / 100, exact);
 
-            
 
-            
+
+
 
             #endregion
 
@@ -240,6 +241,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyArtworkType.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
+            btnIrrPriceReason.Enabled = !this.EditMode;
+            //btnIrprice.Enabled = !this.EditMode;
             #region Status Label
             label25.Text = CurrentMaintain["Status"].ToString();
             #endregion
@@ -252,6 +255,25 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #endregion
             #region Batch create
             btnBatchCreate.Enabled = !this.EditMode;
+            #endregion
+
+            #region Irregular Price判斷
+
+            this.btnIrrPriceReason.ForeColor = Color.Black;
+
+            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+
+            //取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
+
+            this.ShowWaitMessage("Data Loading...");
+
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+
+            this.HideWaitMessage();
+
+            if (Has_Irregular_Price)
+                this.btnIrrPriceReason.ForeColor = Color.Red;
+
             #endregion
         }
 
@@ -360,12 +382,12 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             .Date("sewinline", header: "SewInLine", width: Widths.AnsiChars(10), iseditingreadonly: true)   //3
             .Date("scidelivery", header: "SciDelivery", width: Widths.AnsiChars(10), iseditingreadonly: true)   //4
             .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(8), iseditingreadonly: true)    //5
-            .Numeric("coststitch", header: "Cost"+ Environment.NewLine+"(PCS/Stitch)", width: Widths.AnsiChars(3), iseditingreadonly: true)//6
+            .Numeric("coststitch", header: "Cost" + Environment.NewLine + "(PCS/Stitch)", width: Widths.AnsiChars(3), iseditingreadonly: true)//6
             .Numeric("stitch", header: "PCS/Stitch", width: Widths.AnsiChars(3))    //7
-            .Text("patterncode", header: "Cutpart"+ Environment.NewLine+"ID", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
+            .Text("patterncode", header: "Cutpart" + Environment.NewLine + "ID", width: Widths.AnsiChars(5), iseditingreadonly: true) //8
             .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(15), iseditingreadonly: true)   //9
             .Numeric("unitprice", header: "Unit Price", width: Widths.AnsiChars(5), settings: ns, decimal_places: 4, integer_places: 4)     //10
-            .Numeric("cost", header: "Cost"+ Environment.NewLine+"(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
+            .Numeric("cost", header: "Cost" + Environment.NewLine + "(USD)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 4)  //11
             .Numeric("qtygarment", header: "Qty/GMT", width: Widths.AnsiChars(5), settings: ns2, integer_places: 2)  //12
             .Numeric("Price", header: "Price/GMT", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 4, integer_places: 5)   //13
             .Numeric("amount", header: "Amount", width: Widths.AnsiChars(8), iseditingreadonly: true, decimal_places: 2, integer_places: 14)   //14
@@ -420,7 +442,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                     MessageBox.Show("Can not unconfirm");
                     return;
                 }
-            }  
+            }
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
@@ -430,7 +452,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 ShowErr(sqlcmd, result);
                 return;
             }
-           
+
         }
 
         protected override void ClickClose()
@@ -453,7 +475,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 ShowErr(sqlcmd, result);
                 return;
             }
-            
+
         }
 
         protected override void ClickUnclose()
@@ -477,7 +499,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 ShowErr(sqlcmd, result);
                 return;
             }
-            
+
         }
 
         //batch import
@@ -577,7 +599,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
         protected override void OnDetailGridDelete()
         {
-            if (((DataTable)this.detailgridbs.DataSource).Rows.Count==0)
+            if (((DataTable)this.detailgridbs.DataSource).Rows.Count == 0)
             {
                 return;
             }
@@ -589,10 +611,10 @@ from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
 where  apd.id = '{0}' and apd.ukey = '{1}'
 ",
-                CurrentMaintain["id"],CurrentDetailData["Ukey"]);
+                CurrentMaintain["id"], CurrentDetailData["Ukey"]);
             DualResult Result;
             DataTable dt;
-            if(Result = DBProxy.Current.Select(null, chkp10exists,out dt))
+            if (Result = DBProxy.Current.Select(null, chkp10exists, out dt))
             {
                 if (dt.Rows.Count > 0)
                 {
@@ -613,5 +635,24 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
 
             base.OnDetailGridDelete();
         }
+
+        private void btnIrrPriceReason_Click(object sender, EventArgs e)
+        {
+            var frm = new Sci.Production.Subcon.P01_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+            frm.ShowDialog(this);
+
+            //畫面關掉後，再檢查一次有無價格異常
+            this.btnIrrPriceReason.ForeColor = Color.Black;
+            this.ShowWaitMessage("Data Loading...");
+
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+
+            this.HideWaitMessage();
+
+            if (Has_Irregular_Price)
+                this.btnIrrPriceReason.ForeColor = Color.Red;
+        }
+        
     }
+
 }

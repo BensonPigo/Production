@@ -126,7 +126,7 @@ where 1=1"));
                 sp_issuedate2.Value = issuedate2;
                 cmds.Add(sp_issuedate2);
             }
-
+            
             if (!MyUtility.Check.Empty(artworktype))
             {
                 sqlCmd.Append(" and a.artworktypeid = @artworktype");
