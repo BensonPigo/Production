@@ -36,6 +36,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.RefNo_End = new Sci.Win.UI.TextBox();
             this.textShade = new Sci.Win.UI.TextBox();
+            this.label5 = new Sci.Win.UI.Label();
+            this.cmbType = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
             // print
@@ -132,11 +134,37 @@
             this.textShade.Size = new System.Drawing.Size(100, 23);
             this.textShade.TabIndex = 101;
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(26, 126);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.TabIndex = 102;
+            this.label5.Text = "Type";
+            // 
+            // cmbType
+            // 
+            this.cmbType.BackColor = System.Drawing.Color.White;
+            this.cmbType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbType.FormattingEnabled = true;
+            this.cmbType.IsSupportUnselect = true;
+            this.cmbType.Items.AddRange(new object[] {
+            "",
+            "SP_THREAD",
+            "EMB_THREAD"});
+            this.cmbType.Location = new System.Drawing.Point(104, 126);
+            this.cmbType.Name = "cmbType";
+            this.cmbType.OldText = "";
+            this.cmbType.Size = new System.Drawing.Size(121, 24);
+            this.cmbType.TabIndex = 103;
+            // 
             // R22
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 181);
+            this.Controls.Add(this.cmbType);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.textShade);
             this.Controls.Add(this.RefNo_End);
             this.Controls.Add(this.label4);
@@ -147,9 +175,6 @@
             this.Controls.Add(this.label1);
             this.Name = "R22";
             this.Text = "R22.Thread Stock Summary";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
@@ -158,6 +183,11 @@
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.RefNo_End, 0);
             this.Controls.SetChildIndex(this.textShade, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.cmbType, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -173,5 +203,7 @@
         private System.Windows.Forms.Label label4;
         private Win.UI.TextBox RefNo_End;
         private Win.UI.TextBox textShade;
+        private Win.UI.Label label5;
+        private Win.UI.ComboBox cmbType;
     }
 }
