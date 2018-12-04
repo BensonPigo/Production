@@ -46,10 +46,10 @@ namespace Sci.Production.Warehouse
                  .Numeric("inputqty", header: "TPE Input", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("accu_qty", header: "Accu Trans.", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("VarianceQty", header: "Variance Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-                 .Text("PRHandle", header: "PR Handle", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Text("TransID", header: "Trans. ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("PRHandle", header: "PR Handle", width: Widths.AnsiChars(2), iseditingreadonly: true)
                   ;
             #endregion
             col_chk.CellClick += (s, e) =>
@@ -316,6 +316,7 @@ WHERE   StockType='{0}'
             , pd.POUnit
             , pd.StockUnit
             , isnull(x.accu_qty,0.00) accu_qty
+            , VarianceQty=ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty),2) - isnull(x.accu_qty,0.00)
             , pr.PRHandle
             , pd.FinalETA
     from dbo.orders o WITH (NOLOCK) 
@@ -487,7 +488,6 @@ drop table #tmp");
             
             master.Columns.Add("total_qty", typeof(decimal));
             master.Columns.Add("requestqty", typeof(decimal), "InputQty - accu_qty - sum(child.qty)");
-            master.Columns.Add("VarianceQty", typeof(decimal), "InputQty - accu_qty");
 
             if (listControlBindingSource1.DataSource != null)
             {
