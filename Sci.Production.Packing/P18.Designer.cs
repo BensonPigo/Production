@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.labelPackID = new Sci.Win.UI.Label();
             this.labelCtnNo = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
@@ -85,6 +85,10 @@
             this.displayCustomize3 = new Sci.Win.UI.DisplayBox();
             this.txtDest = new Sci.Production.Class.txtcountry();
             this.label2 = new Sci.Win.UI.Label();
+            this.lbWeight = new Sci.Win.UI.Label();
+            this.lbTotalWeight = new Sci.Win.UI.Label();
+            this.txtTotalWeight = new Sci.Win.UI.TextBox();
+            this.numWeight = new Sci.Win.UI.NumericBox();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -248,7 +252,7 @@
             // 
             this.tabControlScanArea.Controls.Add(this.tabPageCarton);
             this.tabControlScanArea.Controls.Add(this.tabPageScan);
-            this.tabControlScanArea.Location = new System.Drawing.Point(9, 179);
+            this.tabControlScanArea.Location = new System.Drawing.Point(9, 219);
             this.tabControlScanArea.Name = "tabControlScanArea";
             this.tabControlScanArea.SelectedIndex = 0;
             this.tabControlScanArea.Size = new System.Drawing.Size(319, 196);
@@ -405,17 +409,17 @@
             this.gridScanDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridScanDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridScanDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridScanDetail.Location = new System.Drawing.Point(345, 203);
+            this.gridScanDetail.Location = new System.Drawing.Point(345, 243);
             this.gridScanDetail.Name = "gridScanDetail";
             this.gridScanDetail.ReadOnly = true;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridScanDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridScanDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridScanDetail.RowTemplate.Height = 24;
@@ -428,7 +432,7 @@
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(13, 378);
+            this.label1.Location = new System.Drawing.Point(13, 418);
             this.label1.Name = "label1";
             this.label1.RectStyle.BorderColors.Bottom = System.Drawing.Color.Black;
             this.label1.RectStyle.BorderWidth = 2F;
@@ -444,7 +448,7 @@
             this.chkBoxNotScan.Checked = true;
             this.chkBoxNotScan.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBoxNotScan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 415);
+            this.chkBoxNotScan.Location = new System.Drawing.Point(13, 455);
             this.chkBoxNotScan.Name = "chkBoxNotScan";
             this.chkBoxNotScan.Size = new System.Drawing.Size(198, 21);
             this.chkBoxNotScan.TabIndex = 3;
@@ -454,7 +458,7 @@
             // 
             // labelPKFilter
             // 
-            this.labelPKFilter.Location = new System.Drawing.Point(232, 413);
+            this.labelPKFilter.Location = new System.Drawing.Point(211, 453);
             this.labelPKFilter.Name = "labelPKFilter";
             this.labelPKFilter.Size = new System.Drawing.Size(113, 23);
             this.labelPKFilter.TabIndex = 30;
@@ -466,7 +470,7 @@
             this.comboPKFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboPKFilter.FormattingEnabled = true;
             this.comboPKFilter.IsSupportUnselect = true;
-            this.comboPKFilter.Location = new System.Drawing.Point(348, 413);
+            this.comboPKFilter.Location = new System.Drawing.Point(327, 453);
             this.comboPKFilter.Name = "comboPKFilter";
             this.comboPKFilter.OldText = "";
             this.comboPKFilter.Size = new System.Drawing.Size(121, 24);
@@ -475,7 +479,7 @@
             // 
             // labelQuickSelCTN
             // 
-            this.labelQuickSelCTN.Location = new System.Drawing.Point(483, 413);
+            this.labelQuickSelCTN.Location = new System.Drawing.Point(451, 453);
             this.labelQuickSelCTN.Name = "labelQuickSelCTN";
             this.labelQuickSelCTN.Size = new System.Drawing.Size(122, 23);
             this.labelQuickSelCTN.TabIndex = 32;
@@ -485,9 +489,9 @@
             // 
             this.txtQuickSelCTN.BackColor = System.Drawing.Color.White;
             this.txtQuickSelCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtQuickSelCTN.Location = new System.Drawing.Point(608, 413);
+            this.txtQuickSelCTN.Location = new System.Drawing.Point(576, 453);
             this.txtQuickSelCTN.Name = "txtQuickSelCTN";
-            this.txtQuickSelCTN.Size = new System.Drawing.Size(130, 23);
+            this.txtQuickSelCTN.Size = new System.Drawing.Size(99, 23);
             this.txtQuickSelCTN.TabIndex = 5;
             this.txtQuickSelCTN.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TxtQuickSelCTN_KeyUp);
             // 
@@ -503,18 +507,18 @@
             this.gridSelectCartonDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSelectCartonDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSelectCartonDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 443);
+            this.gridSelectCartonDetail.Location = new System.Drawing.Point(13, 483);
             this.gridSelectCartonDetail.MultiSelect = false;
             this.gridSelectCartonDetail.Name = "gridSelectCartonDetail";
             this.gridSelectCartonDetail.ReadOnly = true;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSelectCartonDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridSelectCartonDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.gridSelectCartonDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSelectCartonDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSelectCartonDetail.RowTemplate.Height = 24;
@@ -725,9 +729,58 @@
             this.label2.TabIndex = 107;
             this.label2.Text = "Destination";
             // 
+            // lbWeight
+            // 
+            this.lbWeight.Location = new System.Drawing.Point(9, 183);
+            this.lbWeight.Name = "lbWeight";
+            this.lbWeight.Size = new System.Drawing.Size(131, 23);
+            this.lbWeight.TabIndex = 108;
+            this.lbWeight.Text = "Actual CTN# Weight";
+            // 
+            // lbTotalWeight
+            // 
+            this.lbTotalWeight.Location = new System.Drawing.Point(678, 453);
+            this.lbTotalWeight.Name = "lbTotalWeight";
+            this.lbTotalWeight.Size = new System.Drawing.Size(140, 23);
+            this.lbTotalWeight.TabIndex = 109;
+            this.lbTotalWeight.Text = "Ttl Actual CTN Weight";
+            // 
+            // txtTotalWeight
+            // 
+            this.txtTotalWeight.BackColor = System.Drawing.Color.White;
+            this.txtTotalWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTotalWeight.Location = new System.Drawing.Point(821, 453);
+            this.txtTotalWeight.Name = "txtTotalWeight";
+            this.txtTotalWeight.Size = new System.Drawing.Size(101, 23);
+            this.txtTotalWeight.TabIndex = 110;
+            // 
+            // numWeight
+            // 
+            this.numWeight.BackColor = System.Drawing.Color.White;
+            this.numWeight.DecimalPlaces = 3;
+            this.numWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numWeight.Location = new System.Drawing.Point(144, 183);
+            this.numWeight.Name = "numWeight";
+            this.numWeight.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numWeight.Size = new System.Drawing.Size(204, 23);
+            this.numWeight.TabIndex = 111;
+            this.numWeight.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P18
             // 
-            this.ClientSize = new System.Drawing.Size(934, 688);
+            this.ClientSize = new System.Drawing.Size(934, 729);
+            this.Controls.Add(this.numWeight);
+            this.Controls.Add(this.txtTotalWeight);
+            this.Controls.Add(this.lbTotalWeight);
+            this.Controls.Add(this.lbWeight);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtDest);
             this.Controls.Add(this.displayCustomize3);
@@ -813,6 +866,10 @@
             this.Controls.SetChildIndex(this.displayCustomize3, 0);
             this.Controls.SetChildIndex(this.txtDest, 0);
             this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.lbWeight, 0);
+            this.Controls.SetChildIndex(this.lbTotalWeight, 0);
+            this.Controls.SetChildIndex(this.txtTotalWeight, 0);
+            this.Controls.SetChildIndex(this.numWeight, 0);
             this.tabControlScanArea.ResumeLayout(false);
             this.tabPageCarton.ResumeLayout(false);
             this.tabPageCarton.PerformLayout();
@@ -883,5 +940,9 @@
         private Win.UI.DisplayBox displayCustomize3;
         private Class.txtcountry txtDest;
         private Win.UI.Label label2;
+        private Win.UI.Label lbWeight;
+        private Win.UI.Label lbTotalWeight;
+        private Win.UI.TextBox txtTotalWeight;
+        private Win.UI.NumericBox numWeight;
     }
 }
