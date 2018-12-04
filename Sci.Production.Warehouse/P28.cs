@@ -45,6 +45,8 @@ namespace Sci.Production.Warehouse
                  .Text("seq2", header: "Issue" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Numeric("inputqty", header: "TPE Input", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("accu_qty", header: "Accu Trans.", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("VarianceQty", header: "Variance Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Text("PRHandle", header: "PR Handle", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Text("TransID", header: "Trans. ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -314,6 +316,7 @@ WHERE   StockType='{0}'
             , pd.POUnit
             , pd.StockUnit
             , isnull(x.accu_qty,0.00) accu_qty
+            , pr.PRHandle
             , pd.FinalETA
     from dbo.orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
@@ -365,6 +368,12 @@ WHERE   StockType='{0}'
                 and i.InventorySeq1 = pd.seq1 
                 and i.InventorySeq2 = pd.SEQ2
     ) xz
+    outer apply(
+        select PRHandle=concat(TPEPass1.ID,'-',REPLACE(TPEPass1.Name,' ',''), iif(isnull(TPEPass1.ExtNo,'')='','',' #'+TPEPass1.ExtNo))
+        from TPEPass1
+        inner join po on TPEPass1.id =PO.POHandle
+        where PO.ID = o.id
+    )pr
     where   f.MDivisionID = '{Env.User.Keyword}'
             and checkProduceFty.IsProduceFty = '1'
             and o.Category in ({selectindex})");
@@ -478,6 +487,7 @@ drop table #tmp");
             
             master.Columns.Add("total_qty", typeof(decimal));
             master.Columns.Add("requestqty", typeof(decimal), "InputQty - accu_qty - sum(child.qty)");
+            master.Columns.Add("VarianceQty", typeof(decimal), "InputQty - accu_qty");
 
             if (listControlBindingSource1.DataSource != null)
             {
