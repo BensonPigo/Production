@@ -47,6 +47,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.detailBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label1 = new Sci.Win.UI.Label();
+            this.dateRangeBuyerDelivery = new Sci.Win.UI.DateRange();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -86,7 +88,7 @@
             this.btnFindNow.Location = new System.Drawing.Point(827, 50);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
-            this.btnFindNow.TabIndex = 5;
+            this.btnFindNow.TabIndex = 7;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.btnFindNow_Click);
@@ -114,6 +116,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.dateRangeBuyerDelivery);
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.labelCategory);
             this.groupBox1.Controls.Add(this.txtartworktype_ftyCategory);
@@ -144,7 +148,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(383, 54);
+            this.labelCategory.Location = new System.Drawing.Point(674, 19);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(104, 23);
             this.labelCategory.TabIndex = 105;
@@ -156,10 +160,10 @@
             this.txtartworktype_ftyCategory.cClassify = "";
             this.txtartworktype_ftyCategory.cSubprocess = "";
             this.txtartworktype_ftyCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(490, 54);
+            this.txtartworktype_ftyCategory.Location = new System.Drawing.Point(781, 19);
             this.txtartworktype_ftyCategory.Name = "txtartworktype_ftyCategory";
             this.txtartworktype_ftyCategory.Size = new System.Drawing.Size(140, 23);
-            this.txtartworktype_ftyCategory.TabIndex = 4;
+            this.txtartworktype_ftyCategory.TabIndex = 3;
             // 
             // labelLocalPO
             // 
@@ -174,7 +178,7 @@
             // labelPOIssueDate
             // 
             this.labelPOIssueDate.BackColor = System.Drawing.Color.PaleGreen;
-            this.labelPOIssueDate.Location = new System.Drawing.Point(383, 19);
+            this.labelPOIssueDate.Location = new System.Drawing.Point(266, 19);
             this.labelPOIssueDate.Name = "labelPOIssueDate";
             this.labelPOIssueDate.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.labelPOIssueDate.Size = new System.Drawing.Size(104, 23);
@@ -184,10 +188,24 @@
             // 
             // datePOIssueDate
             // 
-            this.datePOIssueDate.Location = new System.Drawing.Point(490, 19);
+            // 
+            // 
+            // 
+            this.datePOIssueDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.datePOIssueDate.DateBox1.Name = "";
+            this.datePOIssueDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.datePOIssueDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.datePOIssueDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.datePOIssueDate.DateBox2.Name = "";
+            this.datePOIssueDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.datePOIssueDate.DateBox2.TabIndex = 1;
+            this.datePOIssueDate.Location = new System.Drawing.Point(373, 19);
             this.datePOIssueDate.Name = "datePOIssueDate";
             this.datePOIssueDate.Size = new System.Drawing.Size(280, 23);
-            this.datePOIssueDate.TabIndex = 3;
+            this.datePOIssueDate.TabIndex = 2;
             // 
             // labelSPNo
             // 
@@ -206,7 +224,7 @@
             this.txtSPNoEnd.Location = new System.Drawing.Point(254, 54);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(116, 23);
-            this.txtSPNoEnd.TabIndex = 2;
+            this.txtSPNoEnd.TabIndex = 5;
             // 
             // txtSPNoStart
             // 
@@ -215,7 +233,7 @@
             this.txtSPNoStart.Location = new System.Drawing.Point(107, 54);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(122, 23);
-            this.txtSPNoStart.TabIndex = 1;
+            this.txtSPNoStart.TabIndex = 4;
             // 
             // panel1
             // 
@@ -246,9 +264,42 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(966, 524);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.PaleGreen;
+            this.label1.Location = new System.Drawing.Point(373, 54);
+            this.label1.Name = "label1";
+            this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label1.Size = new System.Drawing.Size(104, 23);
+            this.label1.TabIndex = 108;
+            this.label1.Text = "Buyer Delivery ";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // dateRangeBuyerDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateRangeBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateRangeBuyerDelivery.DateBox1.Name = "";
+            this.dateRangeBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateRangeBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateRangeBuyerDelivery.DateBox2.Name = "";
+            this.dateRangeBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateRangeBuyerDelivery.DateBox2.TabIndex = 1;
+            this.dateRangeBuyerDelivery.Location = new System.Drawing.Point(480, 54);
+            this.dateRangeBuyerDelivery.Name = "dateRangeBuyerDelivery";
+            this.dateRangeBuyerDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateRangeBuyerDelivery.TabIndex = 6;
             // 
             // P60_Import
             // 
@@ -288,5 +339,7 @@
         private Win.UI.Label labelCategory;
         private Class.txtartworktype_fty txtartworktype_ftyCategory;
         private Win.UI.Label label9;
+        private Win.UI.Label label1;
+        private Win.UI.DateRange dateRangeBuyerDelivery;
     }
 }
