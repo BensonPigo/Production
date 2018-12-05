@@ -32,16 +32,19 @@ namespace Sci.Production.Warehouse
         private void btnFindNow_Click(object sender, EventArgs e)
         {
             DateTime? issueDate1, issueDate2;
+            DateTime? DeliveryDate1, DeliveryDate2;
             String localpoid = this.txtLocalPO.Text;
             issueDate1 = datePOIssueDate.Value1;
             issueDate2 = datePOIssueDate.Value2;
+            DeliveryDate1 = dateRangeBuyerDelivery.Value1;
+            DeliveryDate2 = dateRangeBuyerDelivery.Value2;
             String spno1 = txtSPNoStart.Text;
             String spno2 = txtSPNoEnd.Text;
             String category = txtartworktype_ftyCategory.Text;
 
-            if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1))
+            if (MyUtility.Check.Empty(localpoid) && MyUtility.Check.Empty(spno1) && MyUtility.Check.Empty(spno2) && MyUtility.Check.Empty(issueDate1) && MyUtility.Check.Empty(DeliveryDate1))
             {
-                MyUtility.Msg.WarningBox("< Local Po# > < SP# > < Issue Date > can't be empty at the same time!!");
+                MyUtility.Msg.WarningBox("< Local Po# > < SP# > < Issue Date > < Buyer Delivery > can't be empty at the same time!!");
                 txtLocalPO.Focus();
                 return;
             }
@@ -93,8 +96,10 @@ select  1 as selected
         , b.Price
         , location = ''
         , remark = ''
+		, o.BuyerDelivery
 from dbo.LocalPO a WITH (NOLOCK) 
 inner join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
+INNER JOIN dbo.Orders o  WITH (NOLOCK) on o.ID = b.OrderId
 Where b.Qty - b.InQty >0
     and a.status = 'Approved' 
     and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
@@ -110,6 +115,12 @@ Where b.Qty - b.InQty >0
             {
                 strSQLCmd += string.Format(@" and a.issuedate between '{0}' and '{1}'",
                 Convert.ToDateTime(issueDate1).ToString("d"), Convert.ToDateTime(issueDate2).ToString("d"));
+            }
+
+            if (!MyUtility.Check.Empty(DeliveryDate1))
+            {
+                strSQLCmd += string.Format(@" and o.BuyerDelivery between '{0}' and '{1}'",
+                Convert.ToDateTime(DeliveryDate1).ToString("d"), Convert.ToDateTime(DeliveryDate2).ToString("d"));
             }
             if (!MyUtility.Check.Empty(spno1))
             {
@@ -222,6 +233,7 @@ where	Junk != 1
             this.gridImport.DataSource = detailBS;
             Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("LocalPoId", header: "Local PO#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("OrderID", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13))
                 .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(12))
