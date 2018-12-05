@@ -181,7 +181,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(5267, 163);
+            this.gridicon.Location = new System.Drawing.Point(5392, 163);
             // 
             // refresh
             // 
@@ -471,6 +471,7 @@
             0,
             0,
             0});
+            this.numAmount.Validating += new System.ComponentModel.CancelEventHandler(this.numAmount_Validating);
             // 
             // numTax
             // 
@@ -557,6 +558,7 @@
             0,
             0,
             0});
+            this.numtaxrate.Validating += new System.ComponentModel.CancelEventHandler(this.numtaxrate_Validating);
             // 
             // numExchange
             // 

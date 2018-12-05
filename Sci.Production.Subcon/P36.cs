@@ -132,9 +132,10 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                         return;
                     }
                     int exact = int.Parse(strExact);
-                    object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(total)", "");
-                    CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
-                    CurrentMaintain["tax"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["taxrate"] / 100, exact);
+                    object detail_Amount = ((DataTable)detailgridbs.DataSource).Compute("sum(AMOUNT)", "");
+                    object detail_Addition = ((DataTable)detailgridbs.DataSource).Compute("sum(ADDITION)", "");
+                    CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_Amount + (decimal)detail_Addition, exact);
+                    ReCalculateTax();
                     #endregion
                 }
             };
@@ -212,13 +213,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
 
             #endregion
 
-            #region 計算TAX
-            decimal amount = MyUtility.Convert.GetDecimal(CurrentMaintain["amount"]);
-            decimal TaxRate = MyUtility.Convert.GetDecimal(CurrentMaintain["taxrate"]);
-            int Exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null));
-            CurrentMaintain["Tax"] = Math.Round((amount * TaxRate) / 100, Exact);
-            #endregion
-
+            //計算TAX
+            ReCalculateTax();
             // 刪除 qty,amount,addtion皆為零的資料
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0 and amount = 0 and addition = 0"))
             {
@@ -276,6 +272,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 var frm = new P36_ModifyAfterSent(CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
+                Refresh();
+                ReCalculateTax();
                 return false;
             }
 
@@ -634,6 +632,27 @@ where Ldeb.ID= @ID";
             }
             CurrentMaintain["Exchange"] = numExchange.Text;
             CurrentMaintain["amount"] = Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["TaipeiAMT"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["Exchange"]), 2);
+        }
+
+        private void numAmount_Validating(object sender, CancelEventArgs e)
+        {
+            CurrentMaintain["amount"] = numAmount.Text;
+            ReCalculateTax();
+        }
+
+        private void ReCalculateTax()
+        {
+            decimal amount = MyUtility.Convert.GetDecimal(CurrentMaintain["amount"]);
+            decimal TaxRate = MyUtility.Convert.GetDecimal(CurrentMaintain["taxrate"]);
+            int Exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null));
+            CurrentMaintain["Tax"] = Math.Round((amount * TaxRate) / 100, Exact);
+            numTotalAmt.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) + decimal.Parse(CurrentMaintain["tax"].ToString());
+        }
+
+        private void numtaxrate_Validating(object sender, CancelEventArgs e)
+        {
+            CurrentMaintain["taxrate"] = numtaxrate.Text;
+            ReCalculateTax();
         }
     }
 }
