@@ -90,6 +90,7 @@ namespace Sci.Production.PPIC
                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ScanAndPack", header: "S&P", width: Widths.AnsiChars(1), iseditingreadonly: true)
                 .Text("RainwearTestPassed", header: "Rainwear Test Passed", width: Widths.AnsiChars(1), iseditingreadonly: true)
+                .Text("PackingMethod", header: "Packing Method", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Numeric("CTNQty", header: "Ctn Qty", iseditingreadonly: true)
                 .EditText("Dimension", header: "Carton Dimension", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ProdRemark", header: "Production Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
@@ -191,6 +192,7 @@ select distinct
 	,Dimension = Dimension.Dimension
 	,oq.ProdRemark,oq.ShipRemark
 	,MtlFormA = MtlFormA.MtlFormA
+    ,[PackingMethod]=dd.ID +'-'+dd.Name
 	,C3.CTNQty
     ,InClogCTN = iif(isnull(C3.CTNQty,0) = 0,0,Round((cast(isnull(C3.ClogQty,0) as float)/cast(isnull(C3.CTNQty,0) as float)) * 100,0)) 
     ,C3.CBM
@@ -204,6 +206,7 @@ from #tmpIDSeq a
 inner join Orders o WITH (NOLOCK) on o.id = a.Id
 left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = o.ID
 left join country c WITH (NOLOCK) on c.ID = o.Dest
+LEFT JOIN DropDownList dd ON dd.Type='PackingMethod' AND dd.ID=o.CtnType
 outer apply(
 	Select top 1 
 		CBM = first_value(p.CBM) over (order by (select 1))
@@ -245,7 +248,7 @@ outer apply(
 
 select FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo,CustCDID,Customize2,DoxType,Qty,Alias,SewOffLine,InspDate
 	,SDPDate,EstPulloutDate,a.Seq,ShipmodeID,BuyerDelivery,SciDelivery,CRDDate,BuyMonth,Customize1,ScanAndPack
-	,RainwearTestPassed,Dimension,ProdRemark,ShipRemark, MtlFormA,CTNQty,InClogCTN,CBM,ClogLocationId
+	,RainwearTestPassed,Dimension,ProdRemark,ShipRemark, MtlFormA,PackingMethod,CTNQty,InClogCTN,CBM,ClogLocationId
     ,ColorWay,OrderType,Season,Program ,SewInLine,CLOGQty
 from #tmp1 a inner join #tmp2 b on a.Id = b.ID and a.Seq = b.Seq
 order by FactoryID,BrandID,SewLine,a.Id,StyleID,CustPONo

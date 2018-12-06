@@ -296,7 +296,6 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtDevSample = new Sci.Win.UI.TextBox();
             this.btnExpectionFormRemark = new Sci.Win.UI.Button();
-            this.btnEConsMNFailed = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
