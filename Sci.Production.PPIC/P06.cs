@@ -90,6 +90,7 @@ namespace Sci.Production.PPIC
                 .Text("Customize1", header: "Order#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("ScanAndPack", header: "S&P", width: Widths.AnsiChars(1), iseditingreadonly: true)
                 .Text("RainwearTestPassed", header: "Rainwear Test Passed", width: Widths.AnsiChars(1), iseditingreadonly: true)
+                .Text("PackingMethod", header: "Packing Method", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Numeric("CTNQty", header: "Ctn Qty", iseditingreadonly: true)
                 .EditText("Dimension", header: "Carton Dimension", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("ProdRemark", header: "Production Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
