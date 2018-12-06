@@ -216,7 +216,7 @@ outer apply(
 	left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and fw.Dyelot=fp.Dyelot and fw.Roll=fp.Roll
 	left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fw.Dyelot=fs.Dyelot and fw.Roll=fs.Roll
 	left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and fs.Dyelot=fc.Dyelot and fs.Roll=fc.Roll
-	left join FIR_Odor fo on f.id=fc.ID AND F.OdorEncode=1 and fs.Dyelot=fc.Dyelot and fs.Roll=fc.Roll
+	left join FIR_Odor fo on f.id=fo.ID AND F.OdorEncode=1 and fc.Dyelot=fo.Dyelot and fc.Roll=fo.Roll
 	where f.POID=fi.POID
 	and f.SEQ1 = fi.Seq1 and f.SEQ2 = fi.Seq2 and fp.Dyelot=fi.Dyelot AND FP.Roll=fi.Roll
 )FIR_Result1

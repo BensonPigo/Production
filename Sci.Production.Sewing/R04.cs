@@ -79,12 +79,11 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
-    ,[SewingReasonDesc]=sr.ID+'-'+sr.Description
+    ,[SewingReasonDesc]=sr.SewingReasonDesc
 	,sd.Remark
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-LEFT JOIN SewingReason sr ON sd.SewingReasonID=sr.ID AND sr.Type='SO'
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
@@ -95,6 +94,16 @@ outer apply
     from Rft r WITH (NOLOCK) 
     where r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
 ) r
+outer apply
+(
+	select [SewingReasonDesc]=stuff((
+		select concat(',',sr.ID+'-'+sr.Description)
+		from SewingReason sr
+		inner join SewingOutput_Detail sd2 WITH (NOLOCK) on sd2.SewingReasonID=sr.ID
+		where sr.Type='SO' and sd2.id = s.id
+		for xml path('')
+	),1,1,'')
+)sr
 where 1=1 "));
 
             if (!MyUtility.Check.Empty(this.date1))
