@@ -183,6 +183,7 @@ where 1=1
             using (var cm = cn.CreateCommand())
             {
                 cm.CommandText = cmd1;
+                cm.CommandTimeout = 900;
                 var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
                 var cnt = 0;
                 var start = 0;
@@ -207,13 +208,13 @@ where 1=1
             //{
             //    objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬                
             //}
-
-            Marshal.ReleaseComObject(objSheets);
+                        
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
 
             strExcelName.OpenFile();
             #endregion
