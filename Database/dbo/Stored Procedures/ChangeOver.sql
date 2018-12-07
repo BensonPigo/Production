@@ -34,7 +34,7 @@ BEGIN
 	Declare cursor_tmpSewing Cursor for
 	select s.FactoryID,s.SewingLineID,s.Inline,s.APSNo,s.ComboType,s.AlloQty,s.TotalSewingTime,s.StandardOutput,
 	isnull(o.StyleID,'') as StyleID,isnull(o.SeasonID,'') as SeasonID,o.CdCodeID,s.OrderID,
-	LAG(isnull(o.StyleID,'')+s.ComboType,1,'') OVER (Partition by s.FactoryID,s.SewingLineID Order by s.FactoryID,s.SewingLineID,s.Inline) as Compare
+	LAG(isnull(o.StyleID,'')+s.ComboType,1,'') OVER (Partition by s.FactoryID,s.SewingLineID Order by s.FactoryID,s.SewingLineID,s.Inline) as Compare,f.MDivisionID 
 	from SewingSchedule s WITH (NOLOCK)
 	left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 	left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
@@ -60,12 +60,13 @@ BEGIN
 			@compare VARCHAR(26), --紀錄上一筆的StyleID+ComboType
 			@type VARCHAR(1), --New/Repeat
 			@chgoverid INT, --紀錄ChgOver.ID
-			@chgoverinline DATETIME --紀錄ChgOver.Inline
+			@chgoverinline DATETIME, --紀錄ChgOver.Inline
+			@MDivisionID as varchar(20) 
 
 	--開始run cursor
 	OPEN cursor_tmpSewing
 	--將第一筆資料填入變數
-	FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare
+	FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare,@MDivisionID
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @compare <> ''
@@ -99,12 +100,12 @@ BEGIN
 										SET @type = 'N'
 										update ChgOver set Type = 'R' where ID = @chgoverid
 									END
-								insert into ChgOver (OrderID,ComboType,FactoryID,StyleID,SeasonID,SewingLineID,CDCodeID,Inline,TotalSewingTime,AlloQty,StandardOutput,Type,Status,AddDate)
-								values (@orderid,@combotype,@factoryid,@styleid,@seasonid,@sewinglineid,@cdcodeid,@inline,@ttlsewingtime,@alloqty,@stdoutput,@type,'NEW',GETDATE())
+								insert into ChgOver (OrderID,ComboType,FactoryID,StyleID,SeasonID,SewingLineID,CDCodeID,Inline,TotalSewingTime,AlloQty,StandardOutput,Type,Status,AddDate,MDivisionID)
+								values (@orderid,@combotype,@factoryid,@styleid,@seasonid,@sewinglineid,@cdcodeid,@inline,@ttlsewingtime,@alloqty,@stdoutput,@type,'NEW',GETDATE(),@MDivisionID)
 							END
 					END
 			END
-		FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare
+		FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare,@MDivisionID
 	END
 	CLOSE cursor_tmpSewing
 	DEALLOCATE cursor_tmpSewing
