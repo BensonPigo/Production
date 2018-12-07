@@ -21,11 +21,16 @@ namespace Sci.Production.Shipping
         private DateTime? buyerDlv2;
         private DateTime? estPullout1;
         private DateTime? estPullout2;
+        private DateTime? fCRDate1;
+        private DateTime? fCRDate2;
         private string brand;
         private string mDivision;
         private string orderNo;
         private string factory;
         private string category;
+        private string buyer;
+        private string custCD;
+        private string destination;
         private bool includeLO;
         private DataTable printData;
 
@@ -59,9 +64,14 @@ namespace Sci.Production.Shipping
             this.buyerDlv2 = this.dateBuyerDelivery.Value2;
             this.estPullout1 = this.dateEstimatePullout.Value1;
             this.estPullout2 = this.dateEstimatePullout.Value2;
+            this.fCRDate1 = this.dateFCRDate.Value1;
+            this.fCRDate2 = this.dateFCRDate.Value2;
             this.brand = this.txtbrand.Text;
             this.factory = this.comboFactory.Text;
             this.category = this.comboCategory.SelectedValue.ToString();
+            this.buyer = this.txtbuyer.Text;
+            this.custCD = this.txtcustcd.Text;
+            this.destination = this.txtcountryDestination.Text;
             this.orderNo = this.txtOrderNo.Text;
             this.includeLO = this.checkIncludeLocalOrder.Checked;
 
@@ -71,9 +81,23 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            string whereFCRDate = string.Empty;
+            string whereFCRDateOut = string.Empty;
+            if (!MyUtility.Check.Empty(this.fCRDate1))
+            {
+                whereFCRDate += string.Format(" and gb.FCRDate >= '{0}' ", Convert.ToDateTime(this.fCRDate1).ToString("d"));
+                whereFCRDateOut += string.Format(" and gb2.FCRDate >= '{0}' ", Convert.ToDateTime(this.fCRDate1).ToString("d"));
+            }
+
+            if (!MyUtility.Check.Empty(this.fCRDate2))
+            {
+                whereFCRDate += string.Format(" and gb.FCRDate <= '{0}' ", Convert.ToDateTime(this.fCRDate2).ToString("d"));
+                whereFCRDateOut += string.Format(" and gb2.FCRDate <= '{0}' ", Convert.ToDateTime(this.fCRDate2).ToString("d"));
+            }
+
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"
-select 	oq.BuyerDelivery
+            sqlCmd.Append(string.Format(
+@"select 	oq.BuyerDelivery
 		,oq.EstPulloutDate
 		,o.BrandID
 		,b.BuyerID
@@ -156,6 +180,7 @@ outer apply(
 			inner join PackingList p on p.id = pd.id
 			inner join GMTBooking gb on gb.id = p.INVNo
 			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+            {0}
 		)a
 		order by a.id
 		for xml path('')
@@ -174,8 +199,15 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 )pkPulloutDate
+left join
+(
+	select distinct gb.FCRDate,pd.orderid, pd.OrderShipmodeSeq
+	from packinglist_detail pd
+	inner join PackingList p on p.id = pd.id
+	inner join GMTBooking gb on gb.id = p.INVNo 
+)gb2 on  gb2.orderid = o.id and gb2.OrderShipmodeSeq = oq.seq
 where 1=1 and isnull(ot.IsGMTMaster,0) != 1
-and o.PulloutComplete=0 and o.Qty > 0"));
+and o.PulloutComplete=0 and o.Qty > 0", whereFCRDate));
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))
             {
@@ -210,6 +242,26 @@ and o.PulloutComplete=0 and o.Qty > 0"));
             if (!MyUtility.Check.Empty(this.orderNo))
             {
                 sqlCmd.Append(string.Format(" and o.Customize1 = '{0}'", this.orderNo));
+            }
+
+            if (!MyUtility.Check.Empty(whereFCRDateOut))
+            {
+                sqlCmd.Append(whereFCRDateOut);
+            }
+
+            if (!MyUtility.Check.Empty(this.buyer))
+            {
+                sqlCmd.Append(string.Format(" and b.BuyerID = '{0}'", this.buyer));
+            }
+
+            if (!MyUtility.Check.Empty(this.custCD))
+            {
+                sqlCmd.Append(string.Format(" and o.CustCDID = '{0}'", this.custCD));
+            }
+
+            if (!MyUtility.Check.Empty(this.destination))
+            {
+                sqlCmd.Append(string.Format(" and o.Dest = '{0}'", this.destination));
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
