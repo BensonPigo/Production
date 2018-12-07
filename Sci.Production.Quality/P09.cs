@@ -29,7 +29,7 @@ namespace Sci.Production.Quality
 
         private DataTable dt1;
         private DataTable dt2;
-        private string Filepath = @"TO-ALL\MMC\for testing only\Jeff\";
+        private string Filepath = @"TO-ALL\MMC\";
 
         protected override void OnFormLoaded()
         {
