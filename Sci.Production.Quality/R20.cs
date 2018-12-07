@@ -370,6 +370,7 @@ select
 	[Factory] = A.FACTORYID,
 	[CDate] = A.CDATE,
 	[OrderID] = A.ORDERID,
+    [Destination]=ct.Alias,
 	[Brand] = C.BRANDID,
 	[Style] = C.STYLEID,
     c.BuyerDelivery ,
@@ -386,6 +387,7 @@ select
     , [Remark] = A.Remark
 From DBO.Rft A WITH (NOLOCK) 
 INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
+INNEr JOIN Country ct WITH (NOLOCK)  ON ct.ID=c.Dest
 OUTER APPLY DBO.GetCPURate(C.OrderTypeID,C.ProgramID,C.Category,C.BrandID,'O')D
 Outer Apply (
 	SELECT SewingCell 
@@ -440,6 +442,7 @@ select
 	[Factory] = A.FACTORYID,
 	[CDate] = A.CDATE,
 	[OrderID] = A.ORDERID,
+    [Destination]=ct.Alias,
 	[Brand] = C.BRANDID,
 	[Style] = C.STYLEID,
     C.BuyerDelivery ,
@@ -464,6 +467,7 @@ select
 From DBO.Rft A WITH (NOLOCK) 
 INNER JOIN DBO.Rft_Detail B WITH (NOLOCK) ON B.ID = A.ID
 INNER JOIN DBO.ORDERS C WITH (NOLOCK) ON C.ID = A.OrderID
+INNER JOIN Country ct WITH (NOLOCK)  ON ct.ID=c.Dest
 OUTER APPLY DBO.GetCPURate(C.OrderTypeID,C.ProgramID,C.Category,C.BrandID,'O')D
 Outer Apply (
 	SELECT SewingCell 
@@ -566,6 +570,7 @@ Order by [Factory], [OrderID]
 select
 	[Factory] = Z.Factory,
 	[OrderID] = Z.OrderID,
+    [Destination]=ct.Alias,
 	[Brand] = C.BRANDID,
 	[Style] = C.STYLEID,
     c.BuyerDelivery ,
@@ -588,6 +593,7 @@ from #tmpall as Z
 Inner Join DBO.Rft A WITH (NOLOCK) on Z.OrderID = A.OrderID
 Inner Join DBO.Rft_Detail B WITH (NOLOCK) ON B.ID = A.ID
 Inner Join DBO.ORDERS C WITH (NOLOCK) ON C.ID = Z.OrderID
+INNER JOIN Country ct WITH (NOLOCK)  ON ct.ID=c.Dest
 Outer Apply (
 	SELECT SewingCell 
 	FROM SewingLine WITH (NOLOCK) 
