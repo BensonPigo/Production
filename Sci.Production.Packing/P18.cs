@@ -584,15 +584,30 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     }
                 }
 
-                string upd_sql = $@"update PackingList_Detail set ScanQty = QtyPerCTN , ScanEditDate = GETDATE(), ScanName = '{Env.User.UserID}' , ActCTNWeight = {this.numWeight.Text.Trim()}
+                string upd_sql = $@"update PackingList_Detail set ScanQty = QtyPerCTN , ScanEditDate = GETDATE(), ScanName = '{Env.User.UserID}' 
                                     where id = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'";
                 if (sql_result = DBProxy.Current.Execute(null, upd_sql))
                 {
                     // 回壓DataTable
+                    DataRow drPassName;
+                    string passName = string.Empty;
+                    string sql = $@"
+select isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+from PackingList_Detail pd
+left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+where pd.id = '{this.selecedPK.ID}' 
+and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+and pd.Article = '{this.selecedPK.Article}'
+";
+                    if (MyUtility.Check.Seek(sql, out drPassName))
+                    {
+                        passName = MyUtility.Convert.GetString(drPassName["PassName"]);
+                    }
+
                     DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
                     foreach (DataRow dr in dt_scanDetailrow)
                     {
-                        dr["ActCTNWeight"] = this.numWeight.Text;
+                        dr["PassName"] = passName;
                     }
 
                     // 檢查下方carton列表是否都掃完
@@ -689,6 +704,32 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 this.numBoxRemainQty.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
                 this.selecedPK = null;
+            }
+        }
+
+        // 修改Actual CTN# Weight值時存檔
+        private void NumWeight_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(((TextBox)sender).Text.ToString()))
+            {
+                return;
+            }
+
+            if (this.selecedPK != null)
+            {
+                if (!MyUtility.Check.Empty(this.selecedPK.ID) && !MyUtility.Check.Empty(this.selecedPK.CTNStartNo) && !MyUtility.Check.Empty(this.selecedPK.Article))
+                {
+                    string upd_sql = $@"update PackingList_Detail set ActCTNWeight = {this.numWeight.Text.Trim()}
+                                    where id = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'";
+
+                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+                    foreach (DataRow dr in dt_scanDetailrow)
+                    {
+                        dr["ActCTNWeight"] = this.numWeight.Text;
+                    }
+
+                    this.LoadSelectCarton();
+                }
             }
         }
 

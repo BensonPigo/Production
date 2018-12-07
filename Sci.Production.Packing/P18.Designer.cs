@@ -773,6 +773,7 @@
             0,
             0,
             0});
+            this.numWeight.Validating += new System.ComponentModel.CancelEventHandler(this.NumWeight_Validating);
             // 
             // P18
             // 
