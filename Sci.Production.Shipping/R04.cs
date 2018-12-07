@@ -71,7 +71,7 @@ namespace Sci.Production.Shipping
             this.category = this.comboCategory.SelectedValue.ToString();
             this.buyer = this.txtbuyer.Text;
             this.custCD = this.txtcustcd.Text;
-            this.destination = this.txtcountryDestination.Text;
+            this.destination = this.txtcountryDestination.TextBox1.Text;
             this.orderNo = this.txtOrderNo.Text;
             this.includeLO = this.checkIncludeLocalOrder.Checked;
 
@@ -359,6 +359,15 @@ and o.PulloutComplete=0 and o.Qty > 0", whereFCRDate));
             strExcelName.OpenFile();
             #endregion
             return true;
+        }
+
+        // CustCD
+        private void Txtcustcd_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.EditMode && !MyUtility.Check.Empty(this.txtcustcd.Text) && this.txtcustcd.OldValue != this.txtcustcd.Text)
+            {
+                this.txtcountryDestination.TextBox1.Text = MyUtility.GetValue.Lookup(string.Format("SELECT CountryID FROM CustCD WITH (NOLOCK) WHERE BrandID = '{0}' AND ID = '{1}'", this.txtbrand.Text , this.txtcustcd.Text));
+            }
         }
     }
 }

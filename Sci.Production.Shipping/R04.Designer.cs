@@ -49,9 +49,9 @@
             this.lbCustCD = new Sci.Win.UI.Label();
             this.lbDestinction = new Sci.Win.UI.Label();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
-            this.txtbuyer = new Sci.Production.Class.txtbrand();
-            this.txtcustcd = new Sci.Production.Class.txtbrand();
-            this.txtcountryDestination = new Sci.Production.Class.txtbrand();
+            this.txtbuyer = new Sci.Production.Class.txtbuyer();
+            this.txtcountryDestination = new Sci.Production.Class.txtcountry();
+            this.txtcustcd = new Sci.Production.Class.txtcustcd();
             this.SuspendLayout();
             // 
             // print
@@ -92,7 +92,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 185);
+            this.labelM.Location = new System.Drawing.Point(13, 250);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(111, 23);
             this.labelM.TabIndex = 97;
@@ -100,7 +100,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 221);
+            this.labelFactory.Location = new System.Drawing.Point(13, 286);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(111, 23);
             this.labelFactory.TabIndex = 98;
@@ -192,7 +192,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(128, 185);
+            this.comboM.Location = new System.Drawing.Point(128, 250);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(84, 24);
@@ -204,7 +204,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(128, 221);
+            this.comboFactory.Location = new System.Drawing.Point(128, 286);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(84, 24);
@@ -250,7 +250,7 @@
             // 
             // lbCustCD
             // 
-            this.lbCustCD.Location = new System.Drawing.Point(13, 254);
+            this.lbCustCD.Location = new System.Drawing.Point(13, 183);
             this.lbCustCD.Name = "lbCustCD";
             this.lbCustCD.Size = new System.Drawing.Size(111, 23);
             this.lbCustCD.TabIndex = 142;
@@ -258,7 +258,7 @@
             // 
             // lbDestinction
             // 
-            this.lbDestinction.Location = new System.Drawing.Point(13, 289);
+            this.lbDestinction.Location = new System.Drawing.Point(13, 218);
             this.lbDestinction.Name = "lbDestinction";
             this.lbDestinction.Size = new System.Drawing.Size(111, 23);
             this.lbDestinction.TabIndex = 143;
@@ -293,32 +293,34 @@
             this.txtbuyer.Location = new System.Drawing.Point(128, 117);
             this.txtbuyer.Name = "txtbuyer";
             this.txtbuyer.Size = new System.Drawing.Size(84, 23);
-            this.txtbuyer.TabIndex = 145;
+            this.txtbuyer.TabIndex = 151;
+            // 
+            // txtcountryDestination
+            // 
+            this.txtcountryDestination.DisplayBox1Binding = "";
+            this.txtcountryDestination.Location = new System.Drawing.Point(128, 218);
+            this.txtcountryDestination.Name = "txtcountryDestination";
+            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryDestination.TabIndex = 150;
+            this.txtcountryDestination.TextBox1Binding = "";
             // 
             // txtcustcd
             // 
             this.txtcustcd.BackColor = System.Drawing.Color.White;
+            this.txtcustcd.BrandObjectName = this.txtbrand;
             this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd.Location = new System.Drawing.Point(128, 254);
+            this.txtcustcd.Location = new System.Drawing.Point(128, 183);
             this.txtcustcd.Name = "txtcustcd";
-            this.txtcustcd.Size = new System.Drawing.Size(84, 23);
-            this.txtcustcd.TabIndex = 146;
-            // 
-            // txtcountryDestination
-            // 
-            this.txtcountryDestination.BackColor = System.Drawing.Color.White;
-            this.txtcountryDestination.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcountryDestination.Location = new System.Drawing.Point(128, 289);
-            this.txtcountryDestination.Name = "txtcountryDestination";
-            this.txtcountryDestination.Size = new System.Drawing.Size(84, 23);
-            this.txtcountryDestination.TabIndex = 147;
+            this.txtcustcd.Size = new System.Drawing.Size(125, 23);
+            this.txtcustcd.TabIndex = 149;
+            this.txtcustcd.Validating += new System.ComponentModel.CancelEventHandler(this.Txtcustcd_Validating);
             // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(540, 433);
+            this.Controls.Add(this.txtbuyer);
             this.Controls.Add(this.txtcountryDestination);
             this.Controls.Add(this.txtcustcd);
-            this.Controls.Add(this.txtbuyer);
             this.Controls.Add(this.dateFCRDate);
             this.Controls.Add(this.lbDestinction);
             this.Controls.Add(this.lbCustCD);
@@ -365,9 +367,9 @@
             this.Controls.SetChildIndex(this.lbCustCD, 0);
             this.Controls.SetChildIndex(this.lbDestinction, 0);
             this.Controls.SetChildIndex(this.dateFCRDate, 0);
-            this.Controls.SetChildIndex(this.txtbuyer, 0);
             this.Controls.SetChildIndex(this.txtcustcd, 0);
             this.Controls.SetChildIndex(this.txtcountryDestination, 0);
+            this.Controls.SetChildIndex(this.txtbuyer, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -395,8 +397,8 @@
         private Win.UI.Label lbCustCD;
         private Win.UI.Label lbDestinction;
         private Win.UI.DateRange dateFCRDate;
-        private Class.txtbrand txtbuyer;
-        private Class.txtbrand txtcustcd;
-        private Class.txtbrand txtcountryDestination;
+        private Class.txtcustcd txtcustcd;
+        private Class.txtcountry txtcountryDestination;
+        private Class.txtbuyer txtbuyer;
     }
 }
