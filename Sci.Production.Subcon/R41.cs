@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -70,9 +71,50 @@ namespace Sci.Production.Subcon
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
 
+            #region Append畫面上的條件
+            StringBuilder sqlWhere = new StringBuilder();
+            if (!MyUtility.Check.Empty(SubProcess))
+            {
+                sqlWhere.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
+            }
+            if (!MyUtility.Check.Empty(CutRef1))
+            {
+                sqlWhere.Append(string.Format(@" and b.CutRef >= '{0}' ", CutRef1));
+            }
+            if (!MyUtility.Check.Empty(CutRef2))
+            {
+                sqlWhere.Append(string.Format(@" and b.CutRef <= '{0}' ", CutRef2));
+            }
+            if (!MyUtility.Check.Empty(SP))
+            {
+                sqlWhere.Append(string.Format(@" and b.Orderid = '{0}'", SP));
+            }
+            if (!MyUtility.Check.Empty(dateBundle1))
+            {
+                sqlWhere.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateBundle2))
+            {
+                sqlWhere.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(M))
+            {
+                sqlWhere.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+            }
+            if (!MyUtility.Check.Empty(Factory))
+            {
+                sqlWhere.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+            }
+            #endregion
+
             #region sqlcmd
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
+            string sqlCmd = $@"
+select  MDivisionID,
+        ProcessId, 
+	    [InOutType] = iif(sum(cast(type as int)) > 2 ,3,sum(cast(type as int))) 
+into #SubProcessInOutType
+from (select distinct  MDivisionID,ProcessId,Type from RFIDReader) a group by MDivisionID,ProcessId
+
 Select DISTINCT
     [Bundleno] = bd.BundleNo,
     [Cut Ref#] = b.CutRef,
@@ -97,19 +139,22 @@ Select DISTINCT
     [Artwork] = sub.sub,
     [Qty] = bd.Qty,
     [Sub-process] = s.Id,
+    bio.LocationID,
+    b.Cdate,
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
-	bio.LocationID,
-	AvgTime = case when isnull(bio.InComing,'')='' and isnull(bio.OutGoing,'')='' then null
-				   else round(abs(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,'')))/24.0,2)
-				   end
-
+	AvgTime = case when spio.InOutType = 1 then iif(bio.InComing is null, '', Cast(round(abs(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,'')))/24.0,2) as varchar))
+					when spio.InOutType = 2 then iif(bio.OutGoing is null, '', Cast(round(abs(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,'')))/24.0,2) as varchar))
+					when spio.InOutType = 3 then iif(bio.OutGoing is null or bio.InComing is null, '', Cast(round(abs(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,'')))/24.0,2) as varchar))
+					else  '--' end
+into #result
 from Bundle b WITH (NOLOCK) 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
 inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
+left join #SubProcessInOutType spio on s.ID = spio.ProcessId
 outer apply(
 	    select sub= stuff((
 		    Select distinct concat('+', bda.SubprocessId)
@@ -118,50 +163,65 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 ) as sub
+where 1=1 {sqlWhere}";
 
-where 1=1
-            ");
-            #endregion
-            #region Append畫面上的條件
-            if (!MyUtility.Check.Empty(SubProcess))
-            {
-                sqlCmd.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
-            }
-            if (!MyUtility.Check.Empty(CutRef1))
-            {
-                sqlCmd.Append(string.Format(@" and b.CutRef >= '{0}' ", CutRef1));
-            }
-            if (!MyUtility.Check.Empty(CutRef2))
-            {
-                sqlCmd.Append(string.Format(@" and b.CutRef <= '{0}' ", CutRef2));
-            }
-            if (!MyUtility.Check.Empty(SP))
-            {
-                sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", SP));
-            }
-            if (!MyUtility.Check.Empty(dateBundle1))
-            {
-                sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateBundle2))
-            {
-                sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(M))
-            {
-                sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
-            }
-            if (!MyUtility.Check.Empty(Factory))
-            {
-                sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
-            }
+            string sqlResult = $@"
+{sqlCmd}
+
+select
+    [Bundleno] ,
+    [Cut Ref#] ,
+    [SP#],
+    [Master SP#],
+    [M],
+    [Factory],
+    [Style],
+    [Season],
+    [Brand],
+    [Comb],
+    Cutno,
+	[Fab_Panel Code],
+    [Article],
+    [Color],
+    [Line],
+    [Cell],
+    [Pattern],
+    [PtnDesc],
+    [Group],
+    [Size],
+    [Artwork],
+    [Qty],
+    [Sub-process],
+    LocationID,
+    Cdate,
+    [InComing],
+    [Out (Time)],
+	AvgTime
+from #result
+order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc
+
+drop table #SubProcessInOutType,#result
+";
+
             #endregion
 
-            
-            string cmdct = string.Format("select count(*) ct from ({0})aaa", sqlCmd.ToString());
-            int ct = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(cmdct));
-            sqlCmd.Append(@"order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc");
-            string cmd1 = sqlCmd.ToString();
+            string cmdct = $@"
+{sqlCmd}
+
+select ct = count(1)
+from #result
+
+drop table #SubProcessInOutType,#result
+";
+            DataTable groupByDt;
+            DualResult result = DBProxy.Current.Select(null, cmdct, out groupByDt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+            var groupByLinq = groupByDt.AsEnumerable();
+            int ct = groupByLinq.Sum(s => (int)s["ct"]);
             SetCount(ct);
             if (ct <= 0)
             {
@@ -182,7 +242,7 @@ where 1=1
             using (var cn = new SqlConnection(Env.Cfg.GetConnection("", DBProxy.Current.DefaultModuleName).ConnectionString))
             using (var cm = cn.CreateCommand())
             {
-                cm.CommandText = cmd1;
+                cm.CommandText = sqlResult;
                 cm.CommandTimeout = 900;
                 var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
                 var cnt = 0;
