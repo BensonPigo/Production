@@ -37,14 +37,16 @@
     [EditName]            VARCHAR (10)    CONSTRAINT [DF_FIR_EditName] DEFAULT ('') NULL,
     [EditDate]            DATETIME        NULL,
     [Status]              VARCHAR (15)    CONSTRAINT [DF_FIR_Status] DEFAULT ('') NULL,
-    [OldFabricUkey]       VARCHAR (10)    CONSTRAINT [DF__FIR__OldFabricUk__394E6323] DEFAULT ('') NULL,
-    [OldFabricVer]        VARCHAR (2)     CONSTRAINT [DF__FIR__OldFabricVe__3A42875C] DEFAULT ('') NULL,
+    [OldFabricUkey]       VARCHAR (10)    DEFAULT ('') NULL,
+    [OldFabricVer]        VARCHAR (2)     DEFAULT ('') NULL,
     [nonOdor]             BIT             CONSTRAINT [DF_FIR_nonOdor] DEFAULT ((0)) NULL,
-    [Odor]                VARCHAR (5)     CONSTRAINT [DF_FIR_Oder] DEFAULT ('') NULL,
-    [OdorEncode]          BIT             CONSTRAINT [DF_FIR_OderEncode] DEFAULT ((0)) NULL,
+    [Odor]                VARCHAR (5)     CONSTRAINT [DF_FIR_Odor] DEFAULT ('') NULL,
+    [OdorEncode]          BIT             CONSTRAINT [DF_FIR_OdorEncode] DEFAULT ((0)) NULL,
     [OdorDate]            DATETIME        NULL,
     CONSTRAINT [PK_FIR] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -252,4 +254,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味檢�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味Result', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Odor';
+
+
+GO
+CREATE NONCLUSTERED INDEX [index_WH_P07]
+    ON [dbo].[FIR]([ReceivingID] ASC)
+    INCLUDE([POID], [SEQ1], [SEQ2]);
 
