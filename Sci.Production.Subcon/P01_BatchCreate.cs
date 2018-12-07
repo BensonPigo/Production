@@ -110,18 +110,7 @@ SELECT 	Selected = 0
 		, v.Cost
 		, costStitch = v.qty
 		, stitch = v.qty
-		, unitprice = isnull ((	select b.Price 
-								from style_artwork a WITH (NOLOCK) 
-									 , Style_Artwork_Quot b WITH (NOLOCK) 
-								where a.StyleUkey = orders.StyleUkey 
-									  and a.Ukey = b.Ukey 
-									  and a.Article = v.article 
-									  and a.ArtworkTypeID = v.ArtworkTypeID 
-									  and a.ArtworkID = v.ArtworkID 
-									  and a.PatternCode = v.PatternCode 
-									  and b.LocalSuppId = Order_TmsCost.LocalSuppID 
-									  and b.PriceApv = 'Y')
-							  , 0)
+		, unitprice = v.Cost
 		, qtygarment = order_tmscost.Qty 
 		, poqty = sum(v.poqty) 
 		, Order_TmsCost.ArtworkInLine
@@ -165,8 +154,7 @@ group by 	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.S
 			, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
 			, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
 			, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
-			, orders.StyleUkey, V.ArtworkID, V.PatternCode, V.PatternDesc, V.Cost
-			, V.ArtworkTypeID, v.qty";
+			, V.ArtworkID, V.PatternCode, V.PatternDesc, V.Cost, V.ArtworkTypeID, v.qty";
                 #endregion
             }
             else
@@ -186,18 +174,10 @@ SELECT 	Selected = 0
 		, PatternCode = Order_TmsCost.ArtworkTypeID 
 		, PatternDesc = Order_TmsCost.ArtworkTypeID 
 		, LocalSuppID = rtrim(order_tmscost.LocalSuppID) 
-		, Cost = 0.0 
+		, Cost = Order_TmsCost.Price
 		, costStitch = 1 
 		, stitch = 1 
-		, unitprice = isnull ((	select b.Price 
-								from style_artwork a WITH (NOLOCK) 
-									 , Style_Artwork_Quot b WITH (NOLOCK) 
-								where a.StyleUkey = orders.StyleUkey 
-									  and a.Ukey = b.Ukey 
-									  and a.Article = v.article 
-									  and b.LocalSuppId = Order_TmsCost.LocalSuppID 
-									  and b.PriceApv = 'Y')
-							  , 0)
+		, unitprice = Order_TmsCost.Price
 		, qtygarment = isnull(order_tmscost.Qty,1)
 		, poqty = sum(v.Qty) 
 		, Order_TmsCost.ArtworkInLine
@@ -239,7 +219,7 @@ group by	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.Se
 			, Orders.OrderTypeId, Orders.SciDelivery, Order_TmsCost.ArtworkTypeID
 			, order_tmscost.LocalSuppID, order_tmscost.Qty, Order_TmsCost.ArtworkInLine
 			, Order_TmsCost.artworkoffline, Orders.SewInLine, Order_TmsCost.ApvDate
-			, orders.StyleUkey";
+			, Order_TmsCost.Price";
                 #endregion
             }
 
