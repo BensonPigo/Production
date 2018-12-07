@@ -63,6 +63,7 @@ namespace Sci.Production.Quality
 select DISTINCT c.StyleID
        , c.BuyerDelivery 
 	   , a.OrderID
+	   , [Destination]=ct.Alias
 	   , 'VAS/SHAS' = iif(c.VasShas=0,'','v')
 	   , c.BrandID
 	   , c.CustPONo
@@ -100,6 +101,7 @@ select DISTINCT c.StyleID
 	   , Remark = a.Remark
 from dbo.Cfa a WITH (NOLOCK) 
 inner join dbo.orders c WITH (NOLOCK) 
+INNEr JOIN Country ct ON ct.ID=c.Dest
 on c.id = a.OrderID
 where a.Status = 'Confirmed'");
                 if (!MyUtility.Check.Empty(id1))
@@ -153,6 +155,7 @@ where a.Status = 'Confirmed'");
 select DISTINCT
 c.FactoryID
 ,a.OrderID
+, [Destination]=ct.Alias
 ,[VAS/SHAS]= iif(c.VasShas=0,'','v') 
 ,c.StyleID
 , c.BuyerDelivery 
@@ -196,6 +199,8 @@ inner join dbo.Cfa_Detail b WITH (NOLOCK)
 on b.id = a.ID 
 inner join dbo.orders c WITH (NOLOCK) 
 on c.id = a.OrderID
+INNEr JOIN Country ct WITH (NOLOCK)  
+ON ct.ID=c.Dest
 outer apply(select Description from dbo.GarmentDefectCode a where a.id=b.GarmentDefectCodeID) as gd
 outer apply(select description from dbo.cfaarea a where a.id=b.CFAAreaID) as ar
 where a.Status = 'Confirmed'");
