@@ -38,3 +38,6 @@ GO
 CREATE NONCLUSTERED INDEX [ID_PC_Bundleno]
     ON [dbo].[Bundle_Detail_Art]([Bundleno] ASC, [PatternCode] ASC, [ID] ASC);
 
+GO
+CREATE NONCLUSTERED INDEX [ID_Bundleno_SubID]
+    ON [dbo].[Bundle_Detail_Art]([Bundleno] ASC, [SubprocessId] ASC, [ID] ASC);

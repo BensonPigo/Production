@@ -115,7 +115,7 @@ select  MDivisionID,
 into #SubProcessInOutType
 from (select distinct  MDivisionID,ProcessId,Type from RFIDReader) a group by MDivisionID,ProcessId
 
-Select DISTINCT
+Select 
     [Bundleno] = bd.BundleNo,
     [Cut Ref#] = b.CutRef,
     [SP#] = b.Orderid,
@@ -150,11 +150,19 @@ Select DISTINCT
 into #result
 from Bundle b WITH (NOLOCK) 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
-inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
+outer apply(
+    select s.ID
+    from SubProcess s
+        where exists (
+                        select 1 from Bundle_Detail_Art bda
+                                where   bda.BundleNo = bd.BundleNo    and
+                                        bda.ID = b.ID   and
+                                        bda.SubProcessID = s.ID
+                        ) or s.IsRFIDDefault = 1
+) s
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-left join #SubProcessInOutType spio on s.ID = spio.ProcessId
+left join #SubProcessInOutType spio on s.ID = spio.ProcessId and b.MDivisionID = spio.MDivisionID
 outer apply(
 	    select sub= stuff((
 		    Select distinct concat('+', bda.SubprocessId)
