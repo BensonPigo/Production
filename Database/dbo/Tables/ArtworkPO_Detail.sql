@@ -2,7 +2,7 @@
     [ID]            VARCHAR (13)    CONSTRAINT [DF_ArtworkPO_Detail_ID] DEFAULT ('') NOT NULL,
     [OrderID]       VARCHAR (13)    CONSTRAINT [DF_ArtworkPO_Detail_OrderID] DEFAULT ('') NOT NULL,
     [ArtworkId]     VARCHAR (20)    CONSTRAINT [DF_ArtworkPO_Detail_ArtworkId] DEFAULT ('') NOT NULL,
-    [PatternCode]   VARCHAR (10)    CONSTRAINT [DF_ArtworkPO_Detail_PatternCode] DEFAULT ('') NOT NULL,
+    [PatternCode]   VARCHAR (20)    CONSTRAINT [DF_ArtworkPO_Detail_PatternCode] DEFAULT ('') NOT NULL,
     [PatternDesc]   NVARCHAR (40)   CONSTRAINT [DF_ArtworkPO_Detail_PatternDesc] DEFAULT ('') NULL,
     [CostStitch]    NUMERIC (6)     CONSTRAINT [DF_ArtworkPO_Detail_CostStitch] DEFAULT ((0)) NULL,
     [Stitch]        NUMERIC (6)     CONSTRAINT [DF_ArtworkPO_Detail_Stitch] DEFAULT ((0)) NULL,

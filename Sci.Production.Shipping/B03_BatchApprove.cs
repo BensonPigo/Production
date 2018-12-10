@@ -58,17 +58,17 @@ namespace Sci.Production.Shipping
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
                 ;
 
-            // 按Header沒有排序功能
-            for (int i = 0; i < this.grid1.ColumnCount; i++)
-            {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+            // 開啟Header沒有排序功能
+            //for (int i = 0; i < this.grid1.ColumnCount; i++)
+            //{
+            //    this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            //}
 
-            // 按Header沒有排序功能
-            for (int i = 0; i < this.grid2.ColumnCount; i++)
-            {
-                this.grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+            // 開啟Header沒有排序功能
+            //for (int i = 0; i < this.grid2.ColumnCount; i++)
+            //{
+            //    this.grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            //}
 
             this.Query();
         }
@@ -112,6 +112,8 @@ from ShipExpense l
 inner join ShipExpense_CanVass lq on l.ID = lq.ID
 where lq.status <> 'Confirmed'
 and l.junk = 0
+ORDER BY l.ID
+
 {wheresql}
 ";
         }

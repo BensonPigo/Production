@@ -259,6 +259,7 @@ namespace Sci.Production.Subcon
                 ,round(z.localap_amt,2) localap_amt
                 ,round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3) localap_price  --P2
                 ,round(z.localap_amt / iif(y.order_amt=0,1,y.order_amt),2) local_percentage
+                ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
                 from #cte
                 left join orders aa on aa.id = #cte.orderid
                 left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = #cte.artworktypeid
@@ -306,6 +307,13 @@ namespace Sci.Production.Subcon
                             left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
                             WHERE O.ID =aa.POID and artworktypeid ='EMBROIDERY'
                         ) xx
+				outer apply(
+					SELECT  [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+					FROM ArtworkPO_IrregularPrice al
+					LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+	                LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
+					WHERE al.POId = aa.POID AND al.ArtworkTypeId=#cte.ArtworkTypeId
+				)IrregularPrice 
                 where ap_qty > 0
                 ", ratetype,ordertype));
 
@@ -332,6 +340,7 @@ namespace Sci.Production.Subcon
                 ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) ap_price
                 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
                 ,round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) percentage
+                ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
                 from #cte
                 left join orders aa WITH (NOLOCK) on aa.id = #cte.orderid
                 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = #cte.artworktypeid
@@ -371,6 +380,13 @@ namespace Sci.Production.Subcon
                             left join Order_Artwork OART on OART.id=O.ID and (OART.article=OA.article or OART.article='----')
                             WHERE O.ID =aa.POID and artworktypeid = 'PRINTING'
                         ) yy
+				outer apply(
+					SELECT  [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+					FROM ArtworkPO_IrregularPrice al
+					LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+	                LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
+					WHERE al.POId = aa.POID AND al.ArtworkTypeId=#cte.ArtworkTypeId
+				)IrregularPrice 
                 where ap_qty > 0
                 ", ratetype,ordertype));
             }
@@ -399,6 +415,22 @@ namespace Sci.Production.Subcon
             else
             {
                 sqlCmd.Append(string.Format(@" and aa.category in {0} ", ordertype));
+            }
+
+            if (chk_IrregularPriceReason.Checked)
+            {
+                if (artworktype.ToLower().TrimEnd() == "embroidery")
+                {
+                    //價格異常的資料存在，卻沒有ReasonID
+                    sqlCmd.Append(string.Format(@"  AND round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) < round(isnull(x.ap_amt,0.0) / iif(y.order_qty=0,1,y.order_qty),3) + round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3) "));
+                    sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
+                }
+                else
+                {
+                    //價格異常的資料存在，卻沒有ReasonID
+                    sqlCmd.Append(string.Format(@"  AND round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) < round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3)  "));
+                    sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
+                }
             }
             
             if (!MyUtility.Check.Empty(style))

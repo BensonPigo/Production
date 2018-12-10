@@ -1022,7 +1022,7 @@ values ('{0}','Status','New','Junked','{1}','{2}','{3}',GetDate())",
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["ReasonID"]))
             {
-                MyUtility.Msg.WarningBox("Responsibility Justifcation can't empty!!");
+                MyUtility.Msg.WarningBox("Responsibility Justification can't empty!!");
                 return;
             }
 

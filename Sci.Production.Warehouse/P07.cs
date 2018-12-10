@@ -1551,7 +1551,17 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                 MyUtility.Msg.InfoBox("Please modify data directly!!");
                 return;
             }
-            var frm = new Sci.Production.Warehouse.P07_ModifyRollDyelot(detailgridbs.DataSource, CurrentMaintain["id"].ToString());
+
+            // 此功能只需顯示FabricType=F 資料,不須顯示副料
+            DataTable dt;
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable((DataTable)detailgridbs.DataSource,string.Empty, @"select * from #tmp where fabrictype='F'",out dt)))
+            {
+                ShowErr(result);
+                return;
+            }
+
+            var frm = new Sci.Production.Warehouse.P07_ModifyRollDyelot(dt, CurrentMaintain["id"].ToString());
             frm.ShowDialog(this);
             this.RenewData();
         }

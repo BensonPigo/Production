@@ -234,7 +234,7 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["DeclareNo"]))
             {
-                MyUtility.Msg.WarningBox("Already have declare no., can't delete!!");
+                MyUtility.Msg.WarningBox("Already have Custom declare no. ,can't delete!!");
                 return false;
             }
 
@@ -526,7 +526,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     {
                         this.txtContractNo.Text = string.Empty;
                         e.Cancel = true;
-                        MyUtility.Msg.WarningBox("This Contract can't use.");
+                        MyUtility.Msg.WarningBox("This Contract No. can't use.");
                         return;
                     }
                 }

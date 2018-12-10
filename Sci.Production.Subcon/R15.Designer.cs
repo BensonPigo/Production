@@ -63,7 +63,6 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Lines = 0;
             this.labelFactory.Location = new System.Drawing.Point(13, 120);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
@@ -72,7 +71,6 @@
             // 
             // labelArtworkType
             // 
-            this.labelArtworkType.Lines = 0;
             this.labelArtworkType.Location = new System.Drawing.Point(13, 48);
             this.labelArtworkType.Name = "labelArtworkType";
             this.labelArtworkType.Size = new System.Drawing.Size(98, 23);
@@ -81,7 +79,6 @@
             // 
             // labelSupplier
             // 
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(13, 157);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(98, 23);
@@ -90,7 +87,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(13, 193);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(98, 23);
@@ -99,7 +95,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(13, 229);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(98, 23);
@@ -108,7 +103,6 @@
             // 
             // labelOrderBy
             // 
-            this.labelOrderBy.Lines = 0;
             this.labelOrderBy.Location = new System.Drawing.Point(13, 265);
             this.labelOrderBy.Name = "labelOrderBy";
             this.labelOrderBy.Size = new System.Drawing.Size(98, 23);
@@ -123,11 +117,26 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(114, 119);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 3;
             // 
             // dateIssueDate
             // 
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateIssueDate.DateBox1.Name = "";
+            this.dateIssueDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateIssueDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateIssueDate.DateBox2.Name = "";
+            this.dateIssueDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateIssueDate.DateBox2.TabIndex = 1;
             this.dateIssueDate.IsRequired = false;
             this.dateIssueDate.Location = new System.Drawing.Point(115, 12);
             this.dateIssueDate.Name = "dateIssueDate";
@@ -145,6 +154,7 @@
             "Supplier"});
             this.comboOrderBy.Location = new System.Drawing.Point(114, 264);
             this.comboOrderBy.Name = "comboOrderBy";
+            this.comboOrderBy.OldText = "";
             this.comboOrderBy.Size = new System.Drawing.Size(121, 24);
             this.comboOrderBy.TabIndex = 7;
             // 
@@ -188,10 +198,11 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 6;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 84);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
@@ -209,7 +220,6 @@
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Lines = 0;
             this.labelIssueDate.Location = new System.Drawing.Point(13, 12);
             this.labelIssueDate.Name = "labelIssueDate";
             this.labelIssueDate.RectStyle.BorderColor = System.Drawing.Color.Black;
@@ -224,7 +234,7 @@
             // 
             // R15
             // 
-            this.ClientSize = new System.Drawing.Size(522, 360);
+            this.ClientSize = new System.Drawing.Size(522, 324);
             this.Controls.Add(this.labelIssueDate);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.txtMdivisionM);
