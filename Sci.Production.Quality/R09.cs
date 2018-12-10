@@ -106,13 +106,14 @@ Select row_number() over(ORDER BY ord.FactoryID, fir.poid, ord.StyleID, fir.SEQ1
 	  , fir.SEQ1+fir.SEQ2 as [SEQ]
 	  , firo.roll [Roll]
 	  , firo.Dyelot [Lot/Batch]
-	  , firo.Inspector
+	  , firo.Inspector + '-' + p.Name  as Inspector 
 	  , iif(fir.nonOdor=1,'no inspection',firo.Result)  [Result]
 From FIR fir  
 left join FIR_Odor firo on fir.id=firo.id
 inner join orders ord on ord.ID = fir.POID 
 inner join PO_Supp_Detail d on d.id = fir.poid and d.seq1 = fir.seq1 and d.seq2 = fir.seq2
 Left join Receiving rec on rec.id = fir.receivingid
+left join pass1 p on firo.Inspector = p.ID 
 {0}
 order by ord.FactoryID, fir.poid, ord.StyleID, fir.SEQ1, fir.SEQ2, firo.roll, firo.Dyelot
 ", sqlWhere);
