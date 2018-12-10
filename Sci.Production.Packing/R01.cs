@@ -260,6 +260,7 @@ select
 	,[Qty] = pld.ShipQty
 	,[Scan Date] = pld.ScanEditDate
     ,[Scan Name] = dbo.getPass1_ExtNo(pld.ScanName)
+    ,[Actual CTN Weight] = pld.ActCTNWeight
 INTO #TMP
 from PackingList_Detail pld with (nolock)
 inner join PackingList pl with (nolock) on pl.ID = pld.ID
@@ -277,6 +278,7 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],Customize1
 	,[PC/CTN] = c5.QtyPerCTN
 	,[QTY] = SUM(t.Qty)
 	,[PC/CTN Scanned] = c6.ScanQty
+    ,[Actual CTN Weight]
 	,[Ref. Barcode] = c7.Barcode
 	,[Scan Date]
     ,[Scan Name]
@@ -336,7 +338,7 @@ outer apply(
 	),1,1,'')
 )c7
 group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
-	,[CTN#]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name]
+	,[CTN#]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name] ,[Actual CTN Weight]
 order by ROW_NUMBER() OVER(ORDER BY [Packing#],[SP#], RIGHT(REPLICATE('0', 3) + CAST([CTN#] as NVARCHAR), 3))
 DROP TABLE #TMP
 ", sqlwhere.ToString());

@@ -53,7 +53,9 @@ namespace Sci.Production.Packing
                 .Text("Article", header: "Colorway", width: Widths.AnsiChars(8))
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(15))
                 .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(12))
-                .Text("ScanQty", header: "Scanned Qty", width: Widths.AnsiChars(12));
+                .Text("ScanQty", header: "Scanned Qty", width: Widths.AnsiChars(12))
+                .Text("PassName", header: "Scanned by", width: Widths.AnsiChars(12))
+                .Text("ActCTNWeight", header: "Actual CTN# Weight", width: Widths.AnsiChars(12));
 
             this.gridScanDetail.DataSource = this.scanDetailBS;
             this.Helper.Controls.Grid.Generator(this.gridScanDetail)
@@ -116,11 +118,14 @@ namespace Sci.Production.Packing
                                            os.Seq,
                                            pd.Ukey,
                                            [PKseq] = pd.Seq,
-                                           o.Dest
+                                           o.Dest,
+                                           isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
+                                           isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
                                 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
+                                left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
                                 where p.Type in ('B','L') ";
 
             foreach (string where in aLLwhere)
@@ -370,14 +375,16 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                                                               ScanQty = string.Join("/", g.Select(st => st.Field<short>("ScanQty").ToString()).ToArray()),
                                                               TtlScanQty = g.Sum(st => st.Field<short>("ScanQty")),
                                                               TtlQtyPerCTN = g.Sum(st => st.Field<int>("QtyPerCTN")),
-                                                              PKseq = g.Max(st => st.Field<string>("PKseq"))
+                                                              PKseq = g.Max(st => st.Field<string>("PKseq")),
+                                                              PassName = string.Join("/", g.Select(st => st.Field<string>("PassName").ToString()).Where(st => !string.IsNullOrEmpty(st)).ToArray()),
+                                                              ActCTNWeight = g.Sum(st => st.Field<decimal>("ActCTNWeight"))
                                                           }).OrderBy(s => s.ID).ThenBy(s => s.PKseq).ToList();
-            string default_where = string.Empty;
+            string default_where = " 1 = 1 ";
 
             // Only not yet scan complete checkbox
             if (this.chkBoxNotScan.Checked)
             {
-                default_where = " and TtlScanQty <> TtlQtyPerCTN ";
+                default_where += " and TtlScanQty <> TtlQtyPerCTN ";
             }
 
             // Packing No Filter combobox
@@ -386,14 +393,14 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                 default_where += $" and ID = \"{this.comboPKFilter.SelectedValue}\"";
             }
 
-            if (MyUtility.Check.Empty(default_where))
+            this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
+
+            var queryTotal = from c in list_selectCarton
+                             group c by c.ID into g
+                             select new { totalWeight = g.Sum(x => x.ActCTNWeight) };
+            foreach (var item in queryTotal)
             {
-                this.selcartonBS.DataSource = list_selectCarton;
-            }
-            else
-            {
-                default_where = " 1 = 1 " + default_where;
-                this.selcartonBS.DataSource = list_selectCarton.Where(default_where);
+                this.txtTotalWeight.Text = MyUtility.Convert.GetString(item.totalWeight);
             }
 
             return list_selectCarton.Count;
@@ -417,6 +424,7 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
             this.displayBrand.Text = dr.BrandId;
             this.displayStyle.Text = dr.StyleId;
             this.txtDest.TextBox1.Text = dr.Dest;
+            this.numWeight.Text = MyUtility.Convert.GetString(dr.ActCTNWeight);
 
             this.numBoxttlCatons.Text = dr_sum["TtlCartons"].ToString();
             this.numBoxttlQty.Text = dr_sum["TtlQty"].ToString();
@@ -580,6 +588,28 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                                     where id = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'";
                 if (sql_result = DBProxy.Current.Execute(null, upd_sql))
                 {
+                    // 回壓DataTable
+                    DataRow drPassName;
+                    string passName = string.Empty;
+                    string sql = $@"
+select isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+from PackingList_Detail pd
+left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+where pd.id = '{this.selecedPK.ID}' 
+and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+and pd.Article = '{this.selecedPK.Article}'
+";
+                    if (MyUtility.Check.Seek(sql, out drPassName))
+                    {
+                        passName = MyUtility.Convert.GetString(drPassName["PassName"]);
+                    }
+
+                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+                    foreach (DataRow dr in dt_scanDetailrow)
+                    {
+                        dr["PassName"] = passName;
+                    }
+
                     // 檢查下方carton列表是否都掃完
                     int carton_complete = this.dt_scanDetail.AsEnumerable().Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count();
                     if (carton_complete == 0)
@@ -634,6 +664,7 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 this.displayBrand.Text = string.Empty;
                 this.displayStyle.Text = string.Empty;
                 this.txtDest.TextBox1.Text = string.Empty;
+                this.numWeight.Text = string.Empty;
 
                 this.numBoxttlCatons.Text = string.Empty;
                 this.numBoxttlQty.Text = string.Empty;
@@ -663,6 +694,7 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 this.displayBrand.Text = string.Empty;
                 this.displayStyle.Text = string.Empty;
                 this.txtDest.TextBox1.Text = string.Empty;
+                this.numWeight.Text = string.Empty;
 
                 this.numBoxttlCatons.Text = string.Empty;
                 this.numBoxttlQty.Text = string.Empty;
@@ -672,6 +704,32 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 this.numBoxRemainQty.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
                 this.selecedPK = null;
+            }
+        }
+
+        // 修改Actual CTN# Weight值時存檔
+        private void NumWeight_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(((TextBox)sender).Text.ToString()))
+            {
+                return;
+            }
+
+            if (this.selecedPK != null)
+            {
+                if (!MyUtility.Check.Empty(this.selecedPK.ID) && !MyUtility.Check.Empty(this.selecedPK.CTNStartNo) && !MyUtility.Check.Empty(this.selecedPK.Article))
+                {
+                    string upd_sql = $@"update PackingList_Detail set ActCTNWeight = {this.numWeight.Text.Trim()}
+                                    where id = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'";
+
+                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+                    foreach (DataRow dr in dt_scanDetailrow)
+                    {
+                        dr["ActCTNWeight"] = this.numWeight.Text;
+                    }
+
+                    this.LoadSelectCarton();
+                }
             }
         }
 
@@ -691,7 +749,8 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
             private int ttlQtyPerCTN;
             private string pKseq;
             private string dest;
-
+            private string passName;
+            private decimal actCTNWeight;
 
             public string ID
             {
@@ -874,8 +933,32 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     ttlQtyPerCTN = value;
                 }
             }
-        }
 
-     
+            public string PassName
+            {
+                get
+                {
+                    return passName;
+                }
+
+                set
+                {
+                    passName = value;
+                }
+            }
+
+            public decimal ActCTNWeight
+            {
+                get
+                {
+                    return actCTNWeight;
+                }
+
+                set
+                {
+                    actCTNWeight = value;
+                }
+            }
+        }
     }
 }
