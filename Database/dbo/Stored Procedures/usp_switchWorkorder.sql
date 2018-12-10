@@ -192,7 +192,10 @@ BEGIN
 	Begin
 		Select a.*,IDENTITY(int,1,1) as Rowid 
 		InTo #WorkOrderMix 
-		From #Order_EachCons_Color_Layer a order by MixedSizeMarker desc,MarkerName
+		From #Order_EachCons_Color_Layer a 
+		outer apply(select top 1 A=0 from Order_EachCons_Article WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)hasforArticle
+		outer apply(select ct=count(1) from Order_EachCons_Article WITH (NOLOCK) where Order_EachConsUkey=a.Order_EachConsUkey)hasforArticleCt
+		order by isnull(hasforArticle.A,1),hasforArticleCt.ct,MixedSizeMarker desc,MarkerName
 		--------------------------------
 		select b.id,b.article,b.sizecode,b.colorid,PatternPanel,b.orderqty, disqty,Min(INLINE) as inline,IDENTITY(int,1,1) as identRowid,a.SCIRefno
 		into #disQty
@@ -341,8 +344,8 @@ BEGIN
 						Select disqty,orderqty,Article,identRowid,ID
 						from #disQty 
 						Where SizeCode = @sizeCode and Colorid = @colorid and PatternPanel = @FabricCombo and SCIRefno = @SCIRefno--因為不同article要一起計算，拿掉 
-						--and Article = @Article
-						order by Article
+						and (Article in(select Article from #LongArticle) or @LongArticleCount=0 )
+						order by identRowid
 							
 						OPEN cur_disQty
 						FETCH NEXT FROM cur_disQty INTO @distributeQty,@OrderQty,@Article,@WorkOrder_DisidenRow,@WorkOrder_DisOrderID

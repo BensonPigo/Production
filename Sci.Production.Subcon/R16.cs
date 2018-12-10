@@ -239,6 +239,7 @@ select aa.FactoryID
 ,round(z.localpo_amt,2) localpo_amt
 ,round(z.localpo_amt / iif(y.order_qty=0,1,y.order_qty),3) localpo_price
 ,round(z.localpo_amt / iif(y.order_amt=0,1,y.order_amt),2) local_percentage
+,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
 from cte
 left join orders aa WITH (NOLOCK) on aa.id = cte.orderid
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
@@ -277,6 +278,13 @@ outer apply (
     inner join orders WITH (NOLOCK) ON orders.id = pod.orderid
 		where po.Category = 'EMB_THREAD' and orders.POId = aa.POID AND po.Status = 'Approved') t
 		) z
+outer apply(
+	SELECT [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+	FROM ArtworkPO_IrregularPrice al
+	LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+	LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
+	WHERE al.POId = aa.POID AND al.ArtworkTypeId=cte.ArtworkTypeId
+)IrregularPrice 
 where po_qty > 0 
 ", ratetype));
             }
@@ -303,6 +311,7 @@ select aa.FactoryID
 --,y.order_qty
 ,round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) std_price
 ,round(x.po_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) percentage
+,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
 from cte
 left join orders aa WITH (NOLOCK) on aa.id = cte.orderid
 left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
@@ -326,6 +335,14 @@ outer apply(
 	inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
 	where poid= aa.POID and ArtworkTypeID= cte.artworktypeid  AND Orders.Category=aa.Category
 	group by orders.poid,ArtworkTypeID) y
+outer apply(
+	SELECT [Responsible]=d.Name ,sr.Reason , [ReasonID]=al.SubconReasonID , [IrregularPricePoid]=al.POID 
+	FROM ArtworkPO_IrregularPrice al
+	LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
+	LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
+	WHERE al.POId = aa.POID AND al.ArtworkTypeId=cte.ArtworkTypeId
+)IrregularPrice 
+
 where po_qty > 0
 ", ratetype));
             }
@@ -361,6 +378,23 @@ where po_qty > 0
                 sqlCmd.Append(" and aa.styleid = @style");
                 sp_style.Value = style;
                 cmds.Add(sp_style);
+            }
+
+            if (chk_IrregularPriceReason.Checked)
+            {
+                if (artworktype.ToLower().TrimEnd() == "embroidery")
+                {
+                    //價格異常，卻沒有存在DB
+                    sqlCmd.Append(string.Format(@"  AND round((isnull(x.po_amt,0.0)+isnull(z.localpo_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3) > round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3)   "));
+                    sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')   "));
+                }
+                else
+                {   //價格異常，卻沒有存在DB
+                    sqlCmd.Append(string.Format(@"  AND round(x.po_amt / iif(y.order_qty=0,1,y.order_qty),3) > round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) "));
+                    sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')   "));
+                }
+
+
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out printData);

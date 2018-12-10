@@ -199,12 +199,8 @@ namespace Sci.Production.Subcon
             if (this.CurrentMaintain["category"].ToString().ToUpper().TrimEnd().Equals("CARTON"))
             {
                 DataTable resulttb;
-                string check_sql = $@"
-select lpd.ID,a.RequestId,a.OrderId,a.Refno 
-from #TmpSource a 
-inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''
-where exists (select 1 from PackingList_Detail pld where pld.id = a.RequestID and pld.Refno = a.Refno)
-";
+                string check_sql = $@"select lpd.ID,a.RequestId,a.OrderId,a.Refno from #TmpSource a inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''";
+
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "", check_sql, out resulttb, "#TmpSource");
                 if (!result)
                 {
@@ -570,7 +566,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
                             #endregion
                             MyUtility.Msg.InfoBox("Auto create purchase order :" + string.Join(",", msg_Id_List.ToArray()));
-                            
+
                             // 因為天地板會新建 N 張採購單，因此需要強制 Reload Data
                             this.boolNeedReaload = true;
                         }
@@ -681,6 +677,8 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyCategory.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
+            btnIrrPriceReason.Enabled = !this.EditMode;
+
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
@@ -688,6 +686,25 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             #region Batch Import, Special record button
             btnImportThread.Enabled = this.EditMode;
             btnBatchUpdateDellivery.Enabled = this.EditMode;
+            #endregion
+            
+            #region Irregular Price判斷
+
+            this.btnIrrPriceReason.ForeColor = Color.Black;
+
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+
+            //取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
+
+            this.ShowWaitMessage("Data Loading...");
+
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+
+            this.HideWaitMessage();
+
+            if (Has_Irregular_Price)
+                this.btnIrrPriceReason.ForeColor = Color.Red;
+            
             #endregion
 
             detailDt.AcceptChanges();
@@ -828,10 +845,25 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     {
                         return;
                     }
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                         (string.Format(@"Select refno,description, localsuppid,unitid,price
-                                                    from localItem WITH (NOLOCK) where category ='{0}' and  localsuppid = '{1}' order by refno", CurrentMaintain["category"], CurrentMaintain["localsuppid"])
-                                                                                                                                  , "15,30,8,8,10", "", null, "0,0,0,0,4");
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                        string.Format(
+                             @"
+Select  refno
+        , description
+        , localsuppid
+        , unitid
+        , price
+from localItem WITH (NOLOCK) 
+where category = '{0}' 
+      and localsuppid = '{1}' 
+      and isnull (Junk, 0) = 0 
+order by refno"
+                             , CurrentMaintain["category"]
+                             , CurrentMaintain["localsuppid"])
+                        , "15,30,8,8,10"
+                        , ""
+                        , null
+                        , "0,0,0,0,4");
                     item.Size = new System.Drawing.Size(795, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -844,10 +876,22 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             ts.CellValidating += (s, e) =>
             {
                 if (MyUtility.Check.Empty(e.FormattedValue) || !this.EditMode) return;
-                if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem WITH (NOLOCK) 
-                                                                      where refno = '{0}' and category ='{1}'and localsuppid = '{2}'"
-                                                                , e.FormattedValue.ToString(), CurrentMaintain["category"], CurrentMaintain["localsuppid"])
-                                                                , out dr, null))
+                if (!MyUtility.Check.Seek(
+                    string.Format(
+                        @"
+select  refno
+        , unitid
+        , price 
+from localitem WITH (NOLOCK) 
+where refno = '{0}' 
+      and category = '{1}'
+      and localsuppid = '{2}'
+      and isnull (Junk, 0) = 0 "
+                        , e.FormattedValue.ToString()
+                        , CurrentMaintain["category"]
+                        , CurrentMaintain["localsuppid"])
+                    , out dr
+                    , null))
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Data not found!", "Ref#");
@@ -1170,7 +1214,6 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Approve successful");
                 }
                 catch (Exception ex)
                 {
@@ -1434,6 +1477,28 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                 this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
             }
         }
+
+        private void btnIrrPriceReason_Click(object sender, EventArgs e)
+        {
+            //進入Deatail畫面時，會取得_Irregular_Price_Table，直接丟進去開啟
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+
+            this.ShowWaitMessage("Data Loading...");
+            frm.ShowDialog(this);
+            this.HideWaitMessage();
+
+            //畫面關掉後，再檢查一次有無價格異常
+            this.btnIrrPriceReason.ForeColor = Color.Black;
+            this.ShowWaitMessage("Data Loading...");
+
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+
+            this.HideWaitMessage();
+
+            if (Has_Irregular_Price)
+                this.btnIrrPriceReason.ForeColor = Color.Red;
+        }      
+
     }
 }
 

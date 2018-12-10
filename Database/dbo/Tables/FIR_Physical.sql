@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[FIR_Physical] (
+CREATE TABLE [dbo].[FIR_Physical] (
     [ID]          BIGINT         CONSTRAINT [DF_FIR_Physical_ID] DEFAULT ((0)) NOT NULL,
     [Roll]        VARCHAR (8)    CONSTRAINT [DF_FIR_Physical_Roll] DEFAULT ('') NULL,
     [Dyelot]      VARCHAR (4)    CONSTRAINT [DF_FIR_Physical_Dyelot] DEFAULT ('') NULL,
@@ -23,6 +23,8 @@
     [QCStopQty]   TINYINT        CONSTRAINT [DF_FIR_Physical_QCStopQty] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
+
+
 
 
 
@@ -127,5 +129,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QC驗布時
 
 
 GO
-
+CREATE NONCLUSTERED INDEX [index_WH_P07]
+    ON [dbo].[FIR_Physical]([Roll] ASC, [Dyelot] ASC)
+    INCLUDE([ID], [InspDate]);
 
