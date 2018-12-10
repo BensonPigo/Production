@@ -78,7 +78,7 @@
             this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRefno.Location = new System.Drawing.Point(174, 113);
             this.txtRefno.Name = "txtRefno";
-            this.txtRefno.Size = new System.Drawing.Size(253, 23);
+            this.txtRefno.Size = new System.Drawing.Size(125, 23);
             this.txtRefno.TabIndex = 38;
             // 
             // label13
