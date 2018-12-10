@@ -29,8 +29,6 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            
-
         }
 
         protected override void OnFormLoaded()
@@ -120,6 +118,10 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     P36_ModifyDetail DoForm = new P36_ModifyDetail();
                     DoForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
                     DoForm.ShowDialog(this);
+                    if (e.RowIndex == -1)
+                    {
+                        return;
+                    }
                     DataRow dr = DetailDatas[e.RowIndex];
                     string reason_desc = string.Format("select concat(id,name) from dbo.reason WITH (NOLOCK) where ReasonTypeID='DebitNote_Factory' and id = '{0}'", dr["reasonid"]);
                     dr["reason_desc"] = MyUtility.GetValue.Lookup(reason_desc);
@@ -282,6 +284,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 var frm = new P36_ModifyAfterSent(CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
+                Refresh();
+                ReCalculateTax();
                 return false;
             }
             dateReceiveDate.ReadOnly = true;
@@ -500,7 +504,7 @@ where id = '{4}'"
             var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null);  //調成跟舊系統一樣，不管誰都可以編輯
             frm.ShowDialog(this);
             this.RenewData();
-
+            this.Refresh();
         }
 
         //print
@@ -624,6 +628,12 @@ where Ldeb.ID= @ID";
 
         private void numExchange_Validating(object sender, CancelEventArgs e)
         {
+            // 若 Debit Note 屬於工廠建立,則Exchange不須判斷
+            if (MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]))
+            {
+                return;
+            }
+
             if (MyUtility.Check.Empty(numExchange.Value))
             {
                 MyUtility.Msg.WarningBox("Exchange value cannot be 0!");
@@ -645,6 +655,11 @@ where Ldeb.ID= @ID";
             decimal amount = MyUtility.Convert.GetDecimal(CurrentMaintain["amount"]);
             decimal TaxRate = MyUtility.Convert.GetDecimal(CurrentMaintain["taxrate"]);
             int Exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null));
+            if (MyUtility.Check.Empty(Exact))
+            {
+                Exact = 0;
+            }
+
             CurrentMaintain["Tax"] = Math.Round((amount * TaxRate) / 100, Exact);
             numTotalAmt.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) + decimal.Parse(CurrentMaintain["tax"].ToString());
         }
