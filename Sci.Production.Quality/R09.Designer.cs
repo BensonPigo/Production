@@ -198,7 +198,7 @@
             this.ClientSize = new System.Drawing.Size(627, 218);
             this.Controls.Add(this.panel1);
             this.Name = "R09";
-            this.Text = "R09.Accessory Inspection & Laboratory Status";
+            this.Text = "R09.Odor Inspection Report";
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
