@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtWK_end = new Sci.Win.UI.TextBox();
+            this.txtWK_start = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             this.txtSeason = new Sci.Production.Class.txtseason();
             this.txtBrand = new Sci.Production.Class.txtbrand();
@@ -57,10 +61,6 @@
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelArriveWHDate = new Sci.Win.UI.Label();
             this.labellastPhysicalInspDate = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtWK_end = new Sci.Win.UI.TextBox();
-            this.txtWK_start = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -101,6 +101,44 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(491, 533);
             this.panel1.TabIndex = 94;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.label1.Location = new System.Drawing.Point(320, 200);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(22, 23);
+            this.label1.TabIndex = 55;
+            this.label1.Text = "～";
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtWK_end
+            // 
+            this.txtWK_end.BackColor = System.Drawing.Color.White;
+            this.txtWK_end.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWK_end.Location = new System.Drawing.Point(341, 200);
+            this.txtWK_end.Name = "txtWK_end";
+            this.txtWK_end.Size = new System.Drawing.Size(131, 23);
+            this.txtWK_end.TabIndex = 54;
+            // 
+            // txtWK_start
+            // 
+            this.txtWK_start.BackColor = System.Drawing.Color.White;
+            this.txtWK_start.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWK_start.Location = new System.Drawing.Point(192, 200);
+            this.txtWK_start.Name = "txtWK_start";
+            this.txtWK_start.Size = new System.Drawing.Size(125, 23);
+            this.txtWK_start.TabIndex = 53;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(26, 200);
+            this.label2.Name = "label2";
+            this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label2.Size = new System.Drawing.Size(154, 23);
+            this.label2.TabIndex = 52;
+            this.label2.Text = "WK#";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // comboCategory
             // 
@@ -153,8 +191,7 @@
             "All",
             "Pass",
             "Fail",
-            "Empty Result",
-            "N/A inspection & test"});
+            "Empty Result"});
             this.comboOverallResultStatus.Location = new System.Drawing.Point(192, 480);
             this.comboOverallResultStatus.Name = "comboOverallResultStatus";
             this.comboOverallResultStatus.OldText = "";
@@ -436,44 +473,6 @@
             this.labellastPhysicalInspDate.TabIndex = 0;
             this.labellastPhysicalInspDate.Text = "last Physical Insp Date";
             this.labellastPhysicalInspDate.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.label1.Location = new System.Drawing.Point(320, 200);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(22, 23);
-            this.label1.TabIndex = 55;
-            this.label1.Text = "～";
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // txtWK_end
-            // 
-            this.txtWK_end.BackColor = System.Drawing.Color.White;
-            this.txtWK_end.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWK_end.Location = new System.Drawing.Point(341, 200);
-            this.txtWK_end.Name = "txtWK_end";
-            this.txtWK_end.Size = new System.Drawing.Size(131, 23);
-            this.txtWK_end.TabIndex = 54;
-            // 
-            // txtWK_start
-            // 
-            this.txtWK_start.BackColor = System.Drawing.Color.White;
-            this.txtWK_start.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWK_start.Location = new System.Drawing.Point(192, 200);
-            this.txtWK_start.Name = "txtWK_start";
-            this.txtWK_start.Size = new System.Drawing.Size(125, 23);
-            this.txtWK_start.TabIndex = 53;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(26, 200);
-            this.label2.Name = "label2";
-            this.label2.RectStyle.Color = System.Drawing.Color.SkyBlue;
-            this.label2.Size = new System.Drawing.Size(154, 23);
-            this.label2.TabIndex = 52;
-            this.label2.Text = "WK#";
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // R01
             // 
