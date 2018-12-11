@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSubprocess = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
@@ -37,6 +38,8 @@
             this.label1 = new Sci.Win.UI.Label();
             this.txtSewingLine = new Sci.Win.UI.TextBox();
             this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
+            this.label2 = new Sci.Win.UI.Label();
+            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -51,6 +54,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboMDivision);
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txtSewingLine);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.comboStockType);
@@ -175,6 +180,27 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(35, 246);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(97, 23);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "M";
+            // 
+            // comboMDivision
+            // 
+            this.comboMDivision.BackColor = System.Drawing.Color.White;
+            this.comboMDivision.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionID", true));
+            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMDivision.FormattingEnabled = true;
+            this.comboMDivision.IsSupportUnselect = true;
+            this.comboMDivision.Location = new System.Drawing.Point(135, 245);
+            this.comboMDivision.Name = "comboMDivision";
+            this.comboMDivision.OldText = "";
+            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
+            this.comboMDivision.TabIndex = 6;
+            // 
             // B40
             // 
             this.ClientSize = new System.Drawing.Size(852, 457);
@@ -210,5 +236,7 @@
         private Win.UI.TextBox txtSewingLine;
         private Win.UI.Label label1;
         private Win.UI.ContextMenuStrip contextMenuStrip1;
+        private Class.comboMDivision comboMDivision;
+        private Win.UI.Label label2;
     }
 }

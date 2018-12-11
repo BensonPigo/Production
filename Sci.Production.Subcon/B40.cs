@@ -40,7 +40,8 @@ namespace Sci.Production.Subcon
             comboStockType.DataSource = new BindingSource(comboType_RowSource, null);
             comboStockType.ValueMember = "Key";
             comboStockType.DisplayMember = "Value";
-        
+
+            this.comboMDivision.setDefalutIndex();
         }
 
         protected override void ClickCopyAfter()
@@ -66,7 +67,12 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Sub-process and Stock Type can not empty!");
                 return false;
             }
-
+            if (MyUtility.Check.Empty(this.CurrentMaintain["MDivisionID"]))
+            {
+                MyUtility.Msg.WarningBox("M can not empty!");
+                return false;
+            }
+            
             return base.ClickSaveBefore();
         }
 
