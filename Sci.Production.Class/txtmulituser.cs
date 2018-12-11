@@ -85,6 +85,7 @@ namespace Sci.Production.Class
             // base.OnValidating(e);
             string textValue = this.textBox1.Text;
             mulitUsername = string.Empty;
+            if (MyUtility.Check.Empty(textValue)) { return; }
             if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.textBox1.OldValue)
             {
                 string[] getUserId = textValue.Split(',').Distinct().ToArray();
