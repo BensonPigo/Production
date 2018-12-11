@@ -17,14 +17,15 @@ namespace Sci.Production.Quality
         DateTime? DateSCIStart; DateTime? DateSCIEnd;
         List<SqlParameter> lis;
         DataTable dtFabricDetail, dtAccessoryDetail, dtFabricSummary, dtAccessorySummary;
-        string cmdFabricDetail, cmdAccessoryDetail, str_Category, str_Material, ReportType, cmdFabricSummary, cmdAccessorySummary;
+        private string cmdFabricDetail, cmdAccessoryDetail, str_Category, str_Material, ReportType, cmdFabricSummary, cmdAccessorySummary;
+        private string MaterialType = string.Empty;
         public R05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
 
             InitializeComponent();
             this.comboCategory.SelectedIndex = 0;
-
+            DualResult result;
             DataTable Material = null;
             string sqlM = (@" 
                         SELECT distinct case fabrictype
@@ -34,16 +35,24 @@ namespace Sci.Production.Quality
                         FROM Po_supp_detail WITH (NOLOCK) 
                         where fabrictype !='O'  AND fabrictype !=''
                         ");
-            DBProxy.Current.Select("", sqlM, out Material);
-            Material.DefaultView.Sort = "fabrictype";
-            this.comboMaterialType.DataSource = Material;
-            this.comboMaterialType.ValueMember = "fabrictype";
-            this.comboMaterialType.DisplayMember = "fabrictype";
-            this.comboMaterialType.SelectedIndex = 0;
-
-            this.comboMaterialType.SelectedValue = "Fabric";
+            if (!(result = DBProxy.Current.Select("", sqlM, out Material)))
+            {
+                ShowErr(result);
+            }
+            else
+            {
+                Material.DefaultView.Sort = "fabrictype";
+                this.comboMaterialType.DataSource = Material;
+                this.comboMaterialType.ValueMember = "fabrictype";
+                this.comboMaterialType.DisplayMember = "fabrictype";
+                this.comboMaterialType.SelectedIndex = 0;
+                this.comboMaterialType.SelectedValue = "Fabric";
+                MaterialType = this.comboMaterialType.SelectedValue.ToString();
+            }
+          
             print.Enabled = false;
         }
+
         protected override bool ValidateInput()
         {
 
@@ -406,17 +415,12 @@ and ai.Status='Confirmed'
 
             return base.ValidateInput();
         }
-        string MaterialType = "";
-        private void toexcel_Click(object sender, EventArgs e)
-        {
-            MaterialType = this.comboMaterialType.Text;
-        }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult res = new DualResult(false);
 
-            if ("Fabric".EqualString(MaterialType))
+            if (MaterialType.EqualString("Fabric"))
             {
                 if (radioDetail.Checked)
                 {                    
@@ -428,7 +432,7 @@ and ai.Status='Confirmed'
                 }
 
             }
-            else if ("Accessory".EqualString(MaterialType))
+            else if (MaterialType.EqualString("Accessory"))
             {
                 if (radioDetail.Checked) 
                 {
@@ -444,16 +448,11 @@ and ai.Status='Confirmed'
 
             return res;
         }
+
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
       
             var saveDialog = Sci.Utility.Excel.MyExcelPrg.GetSaveFileDialog(Sci.Utility.Excel.MyExcelPrg.Filter_Excel);
-            //saveDialog.ShowDialog();
-            //string outpath = saveDialog.FileName;
-            //if (outpath.Empty())
-            //{
-            //    return false;
-            //}
 
             if ("Fabric".EqualString(this.comboMaterialType.Text))
             {
@@ -542,6 +541,9 @@ and ai.Status='Confirmed'
             return true;
         }
 
-
+        private void comboMaterialType_SelectedValueChanged(object sender, EventArgs e)
+        {
+            MaterialType = this.comboMaterialType.SelectedValue.ToString();
+        }
     }
 }
