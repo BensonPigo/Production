@@ -284,7 +284,7 @@ namespace Sci.Production.Shipping
             }
 
             DataTable dt;
-            var s = new B03_BatchApprove(reload);
+            var s = new B03_BatchApprove(this.Reload);
             DualResult result = DBProxy.Current.Select(string.Empty, s.Sqlcmd(MyUtility.Convert.GetString(this.CurrentMaintain["id"]), MyUtility.Convert.GetString(this.CurrentMaintain["ukey"])), out dt);
             if (!result)
             {
@@ -298,7 +298,10 @@ namespace Sci.Production.Shipping
             }
         }
 
-        public void reload()
+        /// <summary>
+        /// Reload
+        /// </summary>
+        public void Reload()
         {
             this.ReloadDatas();
             this.RenewData();
