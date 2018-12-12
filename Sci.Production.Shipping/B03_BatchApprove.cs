@@ -16,13 +16,14 @@ namespace Sci.Production.Shipping
     /// <inheritdoc/>
     public partial class B03_BatchApprove : Sci.Win.Forms.Base
     {
-        Action aa;
+        Action reloadParant;
+
         /// <inheritdoc/>
-        public B03_BatchApprove(Action aa)
+        public B03_BatchApprove(Action ReloadParant)
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.aa = aa;
+            this.reloadParant = ReloadParant;
         }
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -57,18 +58,6 @@ namespace Sci.Production.Shipping
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
                 ;
-
-            // 開啟Header沒有排序功能
-            //for (int i = 0; i < this.grid1.ColumnCount; i++)
-            //{
-            //    this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //}
-
-            // 開啟Header沒有排序功能
-            //for (int i = 0; i < this.grid2.ColumnCount; i++)
-            //{
-            //    this.grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            //}
 
             this.Query();
         }
@@ -112,9 +101,8 @@ from ShipExpense l
 inner join ShipExpense_CanVass lq on l.ID = lq.ID
 where lq.status <> 'Confirmed'
 and l.junk = 0
-ORDER BY l.ID
-
 {wheresql}
+ORDER BY l.ID
 ";
         }
 
@@ -311,7 +299,7 @@ Code{ string.Join(",", msg)}.");
             this.Confirm(selectdt);
             this.Query();
 
-            this.aa();
+            this.reloadParant();
         }
 
         /// <inheritdoc/>
