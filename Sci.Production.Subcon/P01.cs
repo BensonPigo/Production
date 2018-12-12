@@ -33,8 +33,9 @@ namespace Sci.Production.Subcon
             gridicon.Append.Visible = false;
             gridicon.Insert.Enabled = false;
             gridicon.Insert.Visible = false;
+            dateLockDate.ReadOnly = true;
             dateApproveDate.ReadOnly = true;
-
+            dateCloseDate.ReadOnly = true;
             this.txtsubconSupplier.TextBox1.Validated += (s, e) =>
             {
                 if (this.EditMode && this.txtsubconSupplier.TextBox1.Text != this.txtsubconSupplier.TextBox1.OldValue)
@@ -404,13 +405,47 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             #endregion
         }
 
+        protected override void ClickCheck()
+        {
+            base.ClickCheck();
+            DualResult result;
+            string sqlcmd;
+
+            sqlcmd = string.Format("update artworkpo set status='Locked', LockName='{0}', LockDate=GETDATE(), editname='{0}', editdate=GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
+            {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+            
+        }
+
+        protected override void ClickUncheck()
+        {
+            base.ClickUncheck();
+            DualResult result;
+            String sqlcmd;
+
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Un Are you sure to unlock it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            if (dResult.ToString().ToUpper() == "NO") return;
+
+            sqlcmd = string.Format("update artworkpo set Status='New', LockName='', LockDate=null, editname='{0}', editdate=GETDATE() " +
+                            "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+
+            if (!(result = DBProxy.Current.Execute(null, sqlcmd))) {
+                ShowErr(sqlcmd, result);
+                return;
+            }
+        }
+
         protected override void ClickConfirm()
         {
             DualResult result;
 
             string sqlcmd;
 
-            sqlcmd = string.Format("update artworkpo set status = 'Approved', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
+            sqlcmd = string.Format("update artworkpo set status='Approved', apvname='{0}', apvdate=GETDATE(), editname='{0}', editdate=GETDATE() " +
                             "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
 
@@ -446,7 +481,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
 
             DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unapprove it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
-            sqlcmd = string.Format(@"update artworkpo set status = 'New', apvname='', apvdate = null , editname = '{0}' , editdate = GETDATE()  where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
+            sqlcmd = string.Format(@"update artworkpo set status='Locked', apvname='', apvdate=null, editname='{0}', editdate=GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
             {
                 ShowErr(sqlcmd, result);
@@ -466,7 +501,7 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             }
 
             String sqlcmd;
-            sqlcmd = string.Format("update artworkpo set status = 'Closed' , editname = '{0}' , editdate = GETDATE() " +
+            sqlcmd = string.Format("update artworkpo set status='Closed', CloseName='{0}', CloseDate=GETDATE(), editname='{0}', editdate=GETDATE() " +
                             "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             DualResult result;
@@ -489,9 +524,8 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             String sqlcmd;
             DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unclose it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult.ToString().ToUpper() == "NO") return;
-            sqlcmd = string.Format("update artworkpo set Status = 'Approved'  , editname = '{0}' , editdate = GETDATE() " +
+            sqlcmd = string.Format("update artworkpo set Status='Approved', CloseName='', CloseDate=null, editname='{0}', editdate=GETDATE() " +
                             "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
-
 
             DualResult result;
             if (!(result = DBProxy.Current.Execute(null, sqlcmd)))
@@ -499,7 +533,6 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 ShowErr(sqlcmd, result);
                 return;
             }
-
         }
 
         //batch import
@@ -652,7 +685,18 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
             if (Has_Irregular_Price)
                 this.btnIrrPriceReason.ForeColor = Color.Red;
         }
-        
+
+        private void btnBatchApprove_Click(object sender, EventArgs e)
+        {
+            if (this.Perm.Confirm) {
+                var frm = new Sci.Production.Subcon.P01_BatchApprove();
+                frm.ShowDialog(this);
+                ReloadDatas();
+            }
+            else {
+                MyUtility.Msg.WarningBox("You don't have permission to confirm."); 
+            }
+        }
     }
 
 }

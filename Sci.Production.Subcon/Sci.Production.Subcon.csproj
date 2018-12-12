@@ -165,6 +165,12 @@
     <Compile Include="P03_P04Import.Designer.cs">
       <DependentUpon>P03_P04Import.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_BatchApprove.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_BatchApprove.Designer.cs">
+      <DependentUpon>P01_BatchApprove.cs</DependentUpon>
+    </Compile>
     <Compile Include="P30_IrregularPriceReason.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -606,6 +612,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_P04Import.resx">
       <DependentUpon>P03_P04Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_BatchApprove.resx">
+      <DependentUpon>P01_BatchApprove.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P30_IrregularPriceReason.resx">
       <DependentUpon>P30_IrregularPriceReason.cs</DependentUpon>
