@@ -189,61 +189,61 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             DataGridViewGeneratorNumericColumnSettings poqty2 = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings poqty3 = new DataGridViewGeneratorNumericColumnSettings();
             #region Refno Cell
-             this.refno.CellValidating += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
+            this.refno.CellValidating += (s, e) =>
+           {
+               if (e.RowIndex == -1)
+               {
+                   return;
+               }
 
-                if (this.CurrentDetailData == null)
-                {
-                    return;
-                }
+               if (this.CurrentDetailData == null)
+               {
+                   return;
+               }
 
-                string oldvalue = this.CurrentDetailData["refno"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                if (!this.EditMode || oldvalue == newvalue)
-                {
-                    return;
-                }
+               string oldvalue = this.CurrentDetailData["refno"].ToString();
+               string newvalue = e.FormattedValue.ToString();
+               if (!this.EditMode || oldvalue == newvalue)
+               {
+                   return;
+               }
 
-                if (MyUtility.Check.Empty(newvalue))
-                {
-                    return;
-                }
+               if (MyUtility.Check.Empty(newvalue))
+               {
+                   return;
+               }
 
-                DataRow refdr;
-                if (MyUtility.Check.Seek(string.Format("Select * from Localitem WITH (NOLOCK) where refno = '{0}' and junk = 0", newvalue), out refdr))
-                {
-                    this.CurrentDetailData["Description"] = refdr["Description"];
-                    this.CurrentDetailData["Refno"] = refdr["refno"];
-                    this.CurrentDetailData["MeterToCone"] = refdr["MeterToCone"];
-                }
-                else
-                {
-                    this.CurrentDetailData["Description"] = string.Empty;
-                    this.CurrentDetailData["Refno"] = string.Empty;
-                    this.CurrentDetailData["MeterToCone"] = 0;
-                }
+               DataRow refdr;
+               if (MyUtility.Check.Seek(string.Format("Select * from Localitem WITH (NOLOCK) where refno = '{0}' and junk = 0", newvalue), out refdr))
+               {
+                   this.CurrentDetailData["Description"] = refdr["Description"];
+                   this.CurrentDetailData["Refno"] = refdr["refno"];
+                   this.CurrentDetailData["MeterToCone"] = refdr["MeterToCone"];
+               }
+               else
+               {
+                   this.CurrentDetailData["Description"] = string.Empty;
+                   this.CurrentDetailData["Refno"] = string.Empty;
+                   this.CurrentDetailData["MeterToCone"] = 0;
+               }
 
-                string sql = string.Format("Select isnull(sum(d.newCone),0) as newCone,isnull(sum(d.usedCone),0) as usedCone from ThreadStock d WITH (NOLOCK) INNER JOIN ThreadLocation tl ON d.ThreadLocationID = Tl.ID where d.refno ='{0}' and d.threadcolorid = '{1}' AND tl.AllowAutoAllocate=1", newvalue, this.CurrentDetailData["ThreadColorid"].ToString());
-                if (MyUtility.Check.Seek(sql, out refdr))
-                {
-                    this.CurrentDetailData["CurNewCone"] = refdr["NewCone"];
-                    this.CurrentDetailData["CurUsedCone"] = refdr["UsedCone"];
-                }
-                else
-                {
-                    this.CurrentDetailData["CurNewCone"] = 0;
-                    this.CurrentDetailData["CurUsedCone"] = 0;
-                }
+               string sql = string.Format("Select isnull(sum(d.newCone),0) as newCone,isnull(sum(d.usedCone),0) as usedCone from ThreadStock d WITH (NOLOCK) INNER JOIN ThreadLocation tl ON d.ThreadLocationID = Tl.ID where d.refno ='{0}' and d.threadcolorid = '{1}' AND tl.AllowAutoAllocate=1", newvalue, this.CurrentDetailData["ThreadColorid"].ToString());
+               if (MyUtility.Check.Seek(sql, out refdr))
+               {
+                   this.CurrentDetailData["CurNewCone"] = refdr["NewCone"];
+                   this.CurrentDetailData["CurUsedCone"] = refdr["UsedCone"];
+               }
+               else
+               {
+                   this.CurrentDetailData["CurNewCone"] = 0;
+                   this.CurrentDetailData["CurUsedCone"] = 0;
+               }
 
-                this.ReQty(this.CurrentDetailData);
-                this.CurrentDetailData.EndEdit();
-                this.Update_detailgrid_CellValidated(e.RowIndex);
-                this.detailgrid.ValidateControl();
-            };
+               this.ReQty(this.CurrentDetailData);
+               this.CurrentDetailData.EndEdit();
+               this.Update_detailgrid_CellValidated(e.RowIndex);
+               this.detailgrid.ValidateControl();
+           };
             #endregion
             #region Color Cell
             thcolor.CellValidating += (s, e) =>
@@ -286,7 +286,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     this.CurrentDetailData["CurUsedCone"] = 0;
                 }
 
-               // ReQty(CurrentDetailData);
+                // ReQty(CurrentDetailData);
                 this.CurrentDetailData.EndEdit();
                 this.Update_detailgrid_CellValidated(e.RowIndex);
             };
@@ -612,7 +612,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             if (MyUtility.Check.Empty(this.CurrentMaintain["EstArriveDate"]))
             {
                 this.dateEstArrived.Focus();
-                 MyUtility.Msg.WarningBox("<Est. Arrived> can not be empty.");
+                MyUtility.Msg.WarningBox("<Est. Arrived> can not be empty.");
                 return false;
             }
 
@@ -1237,54 +1237,78 @@ OPEN ThreadRequisition_Detail_cur --開始run cursor
 FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
 WHILE @@FETCH_STATUS = 0
 BEGIN
-     
-	DECLARE ThreadStock_cur CURSOR FOR 
-    select ts.NewCone,ts.UsedCone,ts.ThreadLocationID
-       from dbo.ThreadStock ts with (nolock)
-       INNER JOIN ThreadLocation tl ON ts.ThreadLocationID=tl.ID
-       where ts.Refno = @Refno and ts.ThreadColorID = @ThreadColorID and (ts.NewCone > 0 or ts.UsedCone > 0) AND tl.AllowAutoAllocate=1
-	   order by ts.UsedCone
-	OPEN ThreadStock_cur --開始run cursor                   
-	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		
-		if(@UsedCone > @UseStockUseConeQty)
-		begin
-			set @UsedCone = @UseStockUseConeQty
-			set @UseStockUseConeQty = 0
-		end
-		else
-		begin
-			set @UseStockUseConeQty = @UseStockUseConeQty - @UsedCone
-		end
 
-		if(@NewCone > @UseStockNewConeQty)
-		begin
-			set @NewCone = @UseStockNewConeQty
-			set @UseStockNewConeQty = 0
-		end
-		else
-		begin
-			set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
-		end
+	select ts.NewCone,ts.UsedCone,ts.ThreadLocationID
+	into #Conetmp
+	from dbo.ThreadStock ts with (nolock)
+	INNER JOIN ThreadLocation tl ON ts.ThreadLocationID=tl.ID
+	where ts.Refno = @Refno and ts.ThreadColorID = @ThreadColorID and (ts.NewCone > 0 or ts.UsedCone > 0) AND tl.AllowAutoAllocate=1
+	
+	--判斷有大於需求數量(@UseStockUseConeQty),若有使用最接近的
+	select * into #tmpUsedCone from #Conetmp where UsedCone >= @UseStockUseConeQty and @UseStockUseConeQty > 0
+	if exists(select 1 from #tmpUsedCone)
+	begin
+		select top 1 @UsedCone = iif(UsedCone>@UseStockUseConeQty,@UseStockUseConeQty,UsedCone), @ThreadLocationID = ThreadLocationID from #tmpUsedCone order by UsedCone
+		insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)	values( @Refno, @ThreadColorID, 0, @UsedCone, @ThreadLocationID)
+		set @UseStockUseConeQty = 0
+	end
+	drop table #tmpUsedCone
+	--判斷有大於需求數量(@UseStockNewConeQty),若有使用最接近的	
+	select * into #tmpNewCone from #Conetmp where NewCone >= @UseStockNewConeQty and @UseStockNewConeQty > 0
+	if exists(select 1 from #tmpNewCone)
+	begin
+		select top 1 @NewCone = iif(NewCone>@UseStockNewConeQty,@UseStockNewConeQty,NewCone), @ThreadLocationID = ThreadLocationID from #tmpNewCone order by UsedCone		
+		insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)	values( @Refno, @ThreadColorID, @NewCone, 0, @ThreadLocationID)
+		set @UseStockNewConeQty = 0
+	end
+	drop table #tmpNewCone
 
-        if(@NewCone > 0 or @UsedCone > 0)      
-        begin
-		        insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
-				values( @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
-        end		
+	if @UseStockUseConeQty > 0 or @UseStockNewConeQty > 0 
+	begin
+		DECLARE ThreadStock_cur CURSOR FOR 
+		select NewCone,UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc --小於需求數量,從多的開始分配
+		OPEN ThreadStock_cur --開始run cursor                   
+		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+		WHILE @@FETCH_STATUS = 0
+		BEGIN		
+			if(@UsedCone > @UseStockUseConeQty)
+			begin
+				set @UsedCone = @UseStockUseConeQty
+				set @UseStockUseConeQty = 0
+			end
+			else
+			begin
+				set @UseStockUseConeQty = @UseStockUseConeQty - @UsedCone
+			end
 
-		if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
-		begin
-			break
-		end
+			if(@NewCone > @UseStockNewConeQty)
+			begin
+				set @NewCone = @UseStockNewConeQty
+				set @UseStockNewConeQty = 0
+			end
+			else
+			begin
+				set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
+			end
 
-	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
-	END
-	CLOSE ThreadStock_cur
-	DEALLOCATE ThreadStock_cur
+			if(@NewCone > 0 or @UsedCone > 0)      
+			begin
+					insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+					values( @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
+			end		
 
+			if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
+			begin
+				break
+			end
+
+		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+		END
+		CLOSE ThreadStock_cur
+		DEALLOCATE ThreadStock_cur
+	end
+
+	drop table #Conetmp
 FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
 END
 CLOSE ThreadRequisition_Detail_cur
@@ -1302,8 +1326,7 @@ drop table #ThreadIssue_Detail
             }
             #endregion
 
-            string updSql = $@"
-update ThreadRequisition set Status = 'Approved' ,editname='{this.loginID}', editdate = GETDATE() where orderid='{this.CurrentMaintain["Orderid"].ToString()}'";
+            string updSql = $@"update ThreadRequisition set Status = 'Approved' ,editname='{this.loginID}', editdate = GETDATE() where orderid='{this.CurrentMaintain["Orderid"].ToString()}'";
 
             if (issueCheckDt.Rows.Count > 0)
             {
@@ -1331,66 +1354,89 @@ FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStoc
 WHILE @@FETCH_STATUS = 0
 BEGIN
      
-	DECLARE ThreadStock_cur CURSOR FOR 
-    select ts.NewCone,ts.UsedCone,ts.ThreadLocationID
-       from dbo.ThreadStock ts with (nolock)
-       INNER JOIN ThreadLocation tl ON ts.ThreadLocationID=tl.ID
-       where ts.Refno = @Refno and ts.ThreadColorID = @ThreadColorID and (ts.NewCone > 0 or ts.UsedCone > 0) AND tl.AllowAutoAllocate=1
-	   order by ts.UsedCone
-	OPEN ThreadStock_cur --開始run cursor                   
-	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		
-		if(@UsedCone > @UseStockUseConeQty)
-		begin
-			set @UsedCone = @UseStockUseConeQty
-			set @UseStockUseConeQty = 0
-		end
-		else
-		begin
-			set @UseStockUseConeQty = @UseStockUseConeQty - @UsedCone
-		end
+	select ts.NewCone,ts.UsedCone,ts.ThreadLocationID
+	into #Conetmp
+	from dbo.ThreadStock ts with (nolock)
+	INNER JOIN ThreadLocation tl ON ts.ThreadLocationID=tl.ID
+	where ts.Refno = @Refno and ts.ThreadColorID = @ThreadColorID and (ts.NewCone > 0 or ts.UsedCone > 0) AND tl.AllowAutoAllocate=1
+	
+	--判斷有大於需求數量(@UseStockUseConeQty),若有使用最接近的
+	select * into #tmpUsedCone from #Conetmp where UsedCone >= @UseStockUseConeQty and @UseStockUseConeQty > 0
+	if exists(select 1 from #tmpUsedCone)
+	begin
+		select top 1 @UsedCone = iif(UsedCone>@UseStockUseConeQty,@UseStockUseConeQty,UsedCone), @ThreadLocationID = ThreadLocationID from #tmpUsedCone order by UsedCone
+        insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID) values('{issueID}', @Refno, @ThreadColorID, 0, @UsedCone, @ThreadLocationID)
+		set @UseStockUseConeQty = 0
+	end
+	drop table #tmpUsedCone
+	--判斷有大於需求數量(@UseStockNewConeQty),若有使用最接近的	
+	select * into #tmpNewCone from #Conetmp where NewCone >= @UseStockNewConeQty and @UseStockNewConeQty > 0
+	if exists(select 1 from #tmpNewCone)
+	begin
+		select top 1 @NewCone = iif(NewCone>@UseStockNewConeQty,@UseStockNewConeQty,NewCone), @ThreadLocationID = ThreadLocationID from #tmpNewCone order by UsedCone
+        insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID) values('{issueID}', @Refno, @ThreadColorID, @NewCone, 0, @ThreadLocationID)
+		set @UseStockNewConeQty = 0
+	end
+	drop table #tmpNewCone
+	
+	if @UseStockUseConeQty > 0 or @UseStockNewConeQty > 0 
+	begin
+		DECLARE ThreadStock_cur CURSOR FOR 
+		select NewCone,UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc --小於需求數量,從多的開始分配
+		OPEN ThreadStock_cur --開始run cursor                   
+		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+		WHILE @@FETCH_STATUS = 0
+		BEGIN		
+			if(@UsedCone > @UseStockUseConeQty)
+			begin
+				set @UsedCone = @UseStockUseConeQty
+				set @UseStockUseConeQty = 0
+			end
+			else
+			begin
+				set @UseStockUseConeQty = @UseStockUseConeQty - @UsedCone
+			end
 
-		if(@NewCone > @UseStockNewConeQty)
-		begin
-			set @NewCone = @UseStockNewConeQty
-			set @UseStockNewConeQty = 0
-		end
-		else
-		begin
-			set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
-		end
-        
-        if(@NewCone > 0 or @UsedCone > 0)      
-        begin
-            insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
-			values('{issueID}', @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
-        end
+			if(@NewCone > @UseStockNewConeQty)
+			begin
+				set @NewCone = @UseStockNewConeQty
+				set @UseStockNewConeQty = 0
+			end
+			else
+			begin
+				set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
+			end
 
-        if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
-		begin
-			break;
-		end
+			if(@NewCone > 0 or @UsedCone > 0)      
+			begin
+                insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+                values('{issueID}', @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
+			end		
 
-	FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
-	END
-	CLOSE ThreadStock_cur
-	DEALLOCATE ThreadStock_cur
+			if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
+			begin
+				break
+			end
 
+		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+		END
+		CLOSE ThreadStock_cur
+		DEALLOCATE ThreadStock_cur
+	end
+
+	drop table #Conetmp
 FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
 END
 CLOSE ThreadRequisition_Detail_cur
 DEALLOCATE ThreadRequisition_Detail_cur
-
 ";
             }
 
-                result = Prgs.ThreadIssueConfirm(issueCheckDt.ToList(), updSql, false);
-                if (!result)
-                {
-                    this.ShowErr(result);
-                }      
+            result = Prgs.ThreadIssueConfirm(issueCheckDt.ToList(), updSql, false);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
         }
 
         /// <inheritdoc/>
@@ -1483,7 +1529,7 @@ and {0} <= tas.UpperBound",
             {
                 Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                 string factoryname = string.Format(@"select  f.NameEN from Factory f where f.id = '{0}'", this.CurrentMaintain["FactoryID"]);
-                string fN = this.CurrentMaintain["FactoryID"].ToString()+"-"+MyUtility.GetValue.Lookup(factoryname);
+                string fN = this.CurrentMaintain["FactoryID"].ToString() + "-" + MyUtility.GetValue.Lookup(factoryname);
                 objSheets.Cells[1, 1] = fN;
 
                 objSheets.Cells[3, 2] = this.txtSP.Text.ToString();
