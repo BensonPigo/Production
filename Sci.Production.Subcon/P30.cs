@@ -26,6 +26,8 @@ namespace Sci.Production.Subcon
     {
         public static DataTable dtPadBoardInfo;
         private bool boolNeedReaload = false;
+        Form batchapprove;
+
 
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -1640,8 +1642,16 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
                 return;
             }
 
-            Sci.Production.Subcon.P30_BatchApprove form = new P30_BatchApprove(reload);
-            form.Show();
+            //避免重複開啟視窗
+            if (batchapprove == null || batchapprove.IsDisposed)
+            {
+                batchapprove = new P30_BatchApprove(reload);
+                batchapprove.Show();
+            }
+            else
+            {
+                batchapprove.Activate();
+            }
         }
 
         public void reload()
@@ -1654,6 +1664,13 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             }
         }
 
+        private void P30_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (batchapprove != null)
+            {
+                batchapprove.Dispose();
+            }
+        }
     }
 }
 

@@ -135,7 +135,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1022, 281);
+            this.masterpanel.Size = new System.Drawing.Size(892, 281);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
@@ -183,7 +183,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 281);
-            this.detailpanel.Size = new System.Drawing.Size(1022, 274);
+            this.detailpanel.Size = new System.Drawing.Size(892, 68);
             // 
             // gridicon
             // 
@@ -197,7 +197,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1022, 274);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 68);
             // 
             // detail2
             // 
@@ -213,16 +213,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1022, 593);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1022, 555);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 555);
-            this.detailbtm.Size = new System.Drawing.Size(1022, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
@@ -797,6 +797,7 @@
             this.UnApvChkValue = "Approved";
             this.UniqueExpress = "id";
             this.WorkAlias = "LocalPO";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P30_FormClosing);
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
