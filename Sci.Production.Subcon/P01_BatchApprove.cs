@@ -155,7 +155,83 @@ namespace Sci.Production.Subcon
 
         private void btnToExcel_Click(object sender, EventArgs e)
         {
+            DataTable printData;
+            string sqlCmd = string.Format(@"
+                select p.MDivisionID
+	                ,p.FactoryId
+	                ,p.ID
+	                ,p.IssueDate
+	                ,p.Delivery 
+	                ,p.LocalSuppID
+	                ,p.ArtworkTypeID
+	                ,pd.OrderID
+	                ,pd.ArtworkId
+	                ,pd.PatternDesc
+	                ,pd.PoQty
+	                ,p.CurrencyID
+	                ,pd.UnitPrice
+	                ,pd.POQty * pd.UnitPrice as [PO Amt]
+	                ,p.VatRate * 1.0 as [Vat Rate (%)]
+	                ,(pd.POQty * pd.UnitPrice * 1.0) * p.VatRate / 100 as [Vat Amt]
+	                ,(pd.POQty * pd.UnitPrice) + ((pd.POQty * pd.UnitPrice * 1.0) * p.VatRate / 100) as [Total]
+	                ,p.Remark 
+	                ,p.InternalRemark
+                into #tmp_po
+                from ArtworkPO p
+                inner join ArtworkPO_Detail pd on p.ID= pd.ID  
+                where p.status = 'Locked' 
 
+ 
+
+                select a.OrderID, a.ID, o.Qty, ot.Price, o.qty * isnull(ot.Price,0) as detialSum, o.SewInLine,o.SciDelivery,o.StyleID
+                into #tmp_dprice
+                from #tmp_po a 
+                left join Orders o on a.OrderID = o.ID
+                left join Order_TMSCost ot on a.OrderID = ot.ID and a.ArtworkTypeID = ot.ArtworkTypeID
+
+                select ID, isnull(sum(Qty),0) totalQty
+                into #tmp_Mprice
+                from #tmp_dprice
+                where Price is not null
+                group by ID
+
+                select p.MDivisionID as [M]
+	                ,p.FactoryId as [Factory]
+	                ,p.ID as [P/O #]
+	                ,p.IssueDate as [Date]
+	                ,p.Delivery 
+	                ,p.LocalSuppID as [Supplier]
+	                ,p.ArtworkTypeID as [ArtworkType]
+	                ,p.OrderID as [SP#]
+	                ,d.SewInLine as [Sewing Inline]
+	                ,d.SciDelivery as [SCI Delivery]
+	                ,d.StyleID as [Style#]
+	                ,p.ArtworkId as [Pattern]
+	                ,p.PatternDesc as [Cutparts]
+	                ,p.PoQty as [Q'ty]
+	                ,p.CurrencyID as [Currency]
+	                ,p.UnitPrice as [Unit Prc]
+	                ,cast(iif(m.totalQty = 0, 0.0, detialSum*1.0/totalQty*1.0) as decimal(10,4)) as [Std. Price]
+	                ,p.[PO Amt]
+	                ,p.[Vat Rate (%)]
+	                ,p.[Vat Amt]
+	                ,p.[Total]
+	                ,p.Remark 
+	                ,p.InternalRemark as [Internal Remark]
+                from #tmp_po p
+                inner join #tmp_Mprice m on p.ID = m.ID
+                inner join #tmp_dprice d on p.OrderID = d.OrderID 
+
+                drop table #tmp_po,#tmp_dprice,#tmp_Mprice
+            ");
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            if (printData.Rows.Count <= 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return;
+            }
+
+            MyUtility.Excel.CopyToXls(printData, "", "Subcon_P01_BatchApprove.xltx");
         }
     }
 }
