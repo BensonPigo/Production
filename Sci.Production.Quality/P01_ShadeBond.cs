@@ -227,6 +227,7 @@ namespace Sci.Production.Quality
                         dr["InspDate"] = DateTime.Now;
                         dr["Inspector"] = Sci.Env.User.UserID;
                     }
+                    dr["Scale"] = newvalue;
                 }
 
             };
@@ -237,7 +238,7 @@ namespace Sci.Production.Quality
             ResulCell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["Roll"].ToString();
+                string oldvalue = dr["Result"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
@@ -257,6 +258,8 @@ namespace Sci.Production.Quality
                         dr["InspDate"] = DateTime.Now;
                         dr["Inspector"] = Sci.Env.User.UserID;
                     }
+
+                    dr["Result"] = newvalue;
                 }
 
             };
@@ -275,8 +278,9 @@ namespace Sci.Production.Quality
 
                 if (MyUtility.Check.Empty(newvalue))
                 {
-                    dr["Name "] = "";
+                    dr["Name"] = "";
                 }
+                dr["Inspector"] = newvalue;
 
             };
             #endregion
@@ -660,14 +664,20 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             OnRequery();
         }
 
+        protected override void OnUIConvertToMaintain()
+        {
+            base.OnUIConvertToMaintain();
+            this.append.Visible = false;
+            this.revise.Visible = false;
+            this.delete.Visible = false;
+        }
+
+
         private void button_enable()
         {
             if (maindr == null) return;
             btnEncode.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
 
-            this.append.Visible= !this.EditMode;
-            this.revise.Visible = !this.EditMode;
-            this.delete.Visible = !this.EditMode;
 
             this.btnToExcel.Enabled = !this.EditMode;
             this.btnPrintFormatReport.Enabled = !this.EditMode;
@@ -702,7 +712,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
-            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}'", ID), out dt))
+            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}' AND Result!= '' ", ID), out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -750,6 +760,8 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             objSheets.Cells[4, 6] = dateArriveWHDate.Value;
             objSheets.Cells[4, 8] = txtsupplier.DisplayBox1.Text.ToString();
             objSheets.Cells[4, 10] = displayWKNo.Text.ToString();
+
+            objSheets.Range[String.Format("A6:J{0}", dt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
 
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高

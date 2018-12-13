@@ -87,6 +87,18 @@
             this.gridcont.Location = new System.Drawing.Point(12, 163);
             this.gridcont.Size = new System.Drawing.Size(938, 520);
             // 
+            // append
+            // 
+            this.append.Visible = false;
+            // 
+            // revise
+            // 
+            this.revise.Visible = false;
+            // 
+            // delete
+            // 
+            this.delete.Visible = false;
+            // 
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(872, 5);
