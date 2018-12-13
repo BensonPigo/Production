@@ -32,7 +32,7 @@ namespace Sci.Production.Subcon
             this.gridArtworkPO.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridArtworkPO)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk) 
-                 .Text("ID", header: "A/P#", width: Widths.AnsiChars(15), iseditingreadonly :true)
+                 .Text("ID", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly :true)
                  .Text("FactoryId", header: "Factory", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Date("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(30), iseditingreadonly: true)
@@ -186,17 +186,17 @@ namespace Sci.Production.Subcon
                 inner join ArtworkPO_Detail pd on p.ID= pd.ID  
                 where p.status = 'Locked' 
 
-                select a.OrderID, a.ID, o.Qty, ot.Price, o.qty * isnull(ot.Price,0) as detialSum, o.SewInLine,o.SciDelivery,o.StyleID
+                select a.OrderID, a.ID, o.Qty, ot.Price, o.qty * isnull(ot.Price,0) as detialSum, o.SewInLine,o.SciDelivery,o.StyleID, a.ArtworkTypeID
                 into #tmp_dprice
                 from #tmp_po a 
                 left join Orders o on a.OrderID = o.ID
                 left join Order_TMSCost ot on a.OrderID = ot.ID and a.ArtworkTypeID = ot.ArtworkTypeID
 
-                select ID, isnull(sum(Qty),0) totalQty
+                select ID, ArtworkTypeID, isnull(sum(Qty),0) totalQty
                 into #tmp_Mprice
                 from #tmp_dprice
                 where Price is not null
-                group by ID
+                group by ID, ArtworkTypeID
 
                 select p.MDivisionID as [M]
 	                ,p.FactoryId as [Factory]
@@ -222,8 +222,8 @@ namespace Sci.Production.Subcon
 	                ,p.Remark 
 	                ,p.InternalRemark as [Internal Remark]
                 from #tmp_po p
-                inner join #tmp_Mprice m on p.ID = m.ID
-                inner join #tmp_dprice d on p.OrderID = d.OrderID 
+                inner join #tmp_Mprice m on p.ID = m.ID and p.ArtworkTypeID = m.ArtworkTypeID
+                inner join #tmp_dprice d on p.OrderID = d.OrderID and p.ArtworkTypeID =d.ArtworkTypeID 
                 order by p.ID,p.OrderID
 
                 drop table #tmp_po,#tmp_dprice,#tmp_Mprice
