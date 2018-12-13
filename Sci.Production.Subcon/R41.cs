@@ -117,7 +117,7 @@ from (select distinct  MDivisionID,ProcessId,Type from RFIDReader) a group by MD
 
 Select 
     [Bundleno] = bd.BundleNo,
-    [Cut Ref#] = b.CutRef,
+    [Cut Ref#] = isnull(b.CutRef,''),
     [SP#] = b.Orderid,
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
@@ -176,36 +176,52 @@ where 1=1 {sqlWhere}";
             string sqlResult = $@"
 {sqlCmd}
 
+;with GetCutDateTmp as
+(
+	select	r.[Cut Ref#],
+			r.M,
+			[EstCutDate] = MAX(w.EstCutDate),
+			[CuttingOutputDate] = MAX(co.cDate)
+	from #result r
+	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.MDivisionId = r.M
+	left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
+	left join CuttingOutput co  with (nolock) on co.ID = cod.ID
+    where r.[Cut Ref#] <> ''
+	group by r.[Cut Ref#],r.M
+)
 select
-    [Bundleno] ,
-    [Cut Ref#] ,
-    [SP#],
-    [Master SP#],
-    [M],
-    [Factory],
-    [Style],
-    [Season],
-    [Brand],
-    [Comb],
-    Cutno,
-	[Fab_Panel Code],
-    [Article],
-    [Color],
-    [Line],
-    [Cell],
-    [Pattern],
-    [PtnDesc],
-    [Group],
-    [Size],
-    [Artwork],
-    [Qty],
-    [Sub-process],
-    LocationID,
-    Cdate,
-    [InComing],
-    [Out (Time)],
-	AvgTime
-from #result
+    r.[Bundleno] ,
+    r.[Cut Ref#] ,
+    r.[SP#],
+    r.[Master SP#],
+    r.[M],
+    r.[Factory],
+    r.[Style],
+    r.[Season],
+    r.[Brand],
+    r.[Comb],
+    r.Cutno,
+	r.[Fab_Panel Code],
+    r.[Article],
+    r.[Color],
+    r.[Line],
+    r.[Cell],
+    r.[Pattern],
+    r.[PtnDesc],
+    r.[Group],
+    r.[Size],
+    r.[Artwork],
+    r.[Qty],
+    r.[Sub-process],
+    r.LocationID,
+    r.Cdate,
+    r.[InComing],
+    r.[Out (Time)],
+	r.AvgTime,
+    gcd.EstCutDate,
+    gcd.CuttingOutputDate
+from #result r
+left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc
 
 drop table #SubProcessInOutType,#result
