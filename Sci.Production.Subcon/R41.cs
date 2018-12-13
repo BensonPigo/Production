@@ -184,8 +184,8 @@ where 1=1 {sqlWhere}";
 			[CuttingOutputDate] = MAX(co.cDate)
 	from #result r
 	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.MDivisionId = r.M
-	inner join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
-	inner join CuttingOutput co  with (nolock) on co.ID = cod.ID
+	left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
+	left join CuttingOutput co  with (nolock) on co.ID = cod.ID
     where r.[Cut Ref#] <> ''
 	group by r.[Cut Ref#],r.M
 )
