@@ -1659,8 +1659,11 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             //避免User先關 P30再關P30_BatchApprove
             if (this.CurrentDataRow != null)
             {
+                var idIndex = CurrentMaintain["id"];
                 this.ReloadDatas();
                 this.RenewData();
+                this.gridbs.Position = this.gridbs.Find("ID", idIndex);
+
             }
         }
 

@@ -124,7 +124,7 @@ namespace Sci.Production.Subcon
                     _transactionscope.Dispose();
 
                     Query();
-
+                    this.delegateAct();
                     MyUtility.Msg.InfoBox("Sucessful");
                 }
                 catch (Exception ex)
@@ -195,13 +195,9 @@ namespace Sci.Production.Subcon
 
 
                         --計算採購價總合
-                        SELECT 
-                                o.BrandID 
-                                ,o.StyleID  
-                                ,t.ArtworkTypeID  
-                                ,t.POID  
-                                ,[OrderID]=o.id
-                                ,[stdPrice]=IIF(Standard.order_qty=0,0, round(Standard.order_amt/Standard.order_qty,4) )
+                        SELECT   [Category] = t.ArtworkTypeID  
+                                ,[OrderID] = o.id
+                                ,[stdPrice] = IIF(Standard.order_qty=0,0, round(Standard.order_amt/Standard.order_qty,4) )
                         INTO #StdPriceTable
                         FROM #tmp_AllOrders t
                         INNER JOIN Orders o WITH (NOLOCK) on o.id = t.OrderId
@@ -255,7 +251,7 @@ namespace Sci.Production.Subcon
                         LEFT JOIN Orders o ON o.ID= ld.OrderId
                         LEFT JOIN LocalItem li ON li.RefNo=ld.RefNo
                         OUTER APPLY(
-	                        SELECT stdPrice FROM #StdPriceTable WHERE OrderID=ld.OrderId
+	                        SELECT stdPrice FROM #StdPriceTable WHERE OrderID=ld.OrderId AND Category = l.Category
                         )std
                         WHERE l.ID IN( '{IdList.JoinToString("','")}')
 
@@ -281,15 +277,7 @@ namespace Sci.Production.Subcon
 
 
         }
-
-        protected override void OnFormDispose()
-        {
-            base.OnFormDispose();
-
-            //避免使用者沒按Close直接按 XX 關閉不會Reload
-            this.delegateAct();
-        }
-
+        
         #region 自訂事件
 
         private void Query()
