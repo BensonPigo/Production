@@ -16,29 +16,32 @@ namespace Sci.Production.Subcon
     public partial class P01_BatchApprove : Sci.Win.Subs.Base
     {
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        public P01_BatchApprove()
+        Action aa;
+        public P01_BatchApprove(Action aa)
         {
             InitializeComponent();
+            this.EditMode = true;
+            this.aa = aa;
         }
 
         protected override void OnFormLoaded()
         {
-            Query();
+            base.OnFormLoaded();            
 
             this.gridArtworkPO.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridArtworkPO.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridArtworkPO)
                  .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk) 
                  .Text("ID", header: "A/P#", width: Widths.AnsiChars(15), iseditingreadonly :true)
-                 .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Text("FactoryId", header: "Factory", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Date("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("ArtworkTypeID", header: "Artwork Type", width: Widths.AnsiChars(30), iseditingreadonly: true)
                  .Text("LocalSuppID", header: "Supplier", width: Widths.AnsiChars(30), iseditingreadonly: true)
                  .Date("Delivery", header: "Delivery Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true)
-                 .Numeric("VatRate", header: "Vat Rate (%)", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true)
-                 .Numeric("TotalAmount", header: "Total Amount", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true);
+                 .Text("CurrencyId", header: "Currency", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 4, iseditingreadonly: true)
+                 .Numeric("VatRate", header: "Vat Rate (%)", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 4, iseditingreadonly: true)
+                 .Numeric("TotalAmount", header: "Total Amount", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 4, iseditingreadonly: true);
 
             this.gridArtworkPODetail.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridArtworkPODetail.DataSource = listControlBindingSource2;
@@ -46,14 +49,15 @@ namespace Sci.Production.Subcon
                  .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                  .Text("StyleID", header: "Style", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Numeric("PoQty", header: "PO Qty", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true)
-                 .Text("ArtworkID", header: "Artwork", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                 .Text("CostStich", header: "Cost"+ Environment.NewLine +"(PCS/Stitch)", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                 .Text("Stich", header: "PCS/Stitch", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                 .Text("Curpart ID", header: "PatternCode", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                 .Numeric("UnitPrice", header: "Unit Price", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true)
+                 .Text("ArtworkId", header: "Artwork", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                 .Text("CostStitch", header: "Cost"+ Environment.NewLine +"(PCS/Stitch)", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                 .Text("Stitch", header: "PCS/Stitch", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                 .Text("PatternCode", header: "Curpart ID", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                 .Numeric("UnitPrice", header: "Unit Price", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 4, iseditingreadonly: true)
                  .Numeric("QtyGarment", header: "Qty/GMT", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true)
-                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 0, iseditingreadonly: true);
+                 .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(8), integer_places: 6, decimal_places: 4, iseditingreadonly: true);
 
+            Query();
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -151,6 +155,7 @@ namespace Sci.Production.Subcon
 
             Query();
             MyUtility.Msg.WarningBox("Sucessful");
+            this.aa();
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
@@ -180,8 +185,6 @@ namespace Sci.Production.Subcon
                 from ArtworkPO p
                 inner join ArtworkPO_Detail pd on p.ID= pd.ID  
                 where p.status = 'Locked' 
-
- 
 
                 select a.OrderID, a.ID, o.Qty, ot.Price, o.qty * isnull(ot.Price,0) as detialSum, o.SewInLine,o.SciDelivery,o.StyleID
                 into #tmp_dprice
@@ -221,6 +224,7 @@ namespace Sci.Production.Subcon
                 from #tmp_po p
                 inner join #tmp_Mprice m on p.ID = m.ID
                 inner join #tmp_dprice d on p.OrderID = d.OrderID 
+                order by p.ID,p.OrderID
 
                 drop table #tmp_po,#tmp_dprice,#tmp_Mprice
             ");

@@ -710,6 +710,7 @@
             // 
             // btnBatchApprove
             // 
+            this.btnBatchApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBatchApprove.Location = new System.Drawing.Point(958, 12);
             this.btnBatchApprove.Name = "btnBatchApprove";
             this.btnBatchApprove.Size = new System.Drawing.Size(115, 30);
@@ -825,6 +826,7 @@
             this.UncloseChkValue = "Closed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ArtworkPO";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P01_FormClosing);
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchCreate, 0);
             this.Controls.SetChildIndex(this.btnBatchApprove, 0);
