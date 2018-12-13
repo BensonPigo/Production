@@ -393,7 +393,7 @@ from (
 		,[Remark] = 'P01. ShadeBand Test',[Location]=''
 		from FIR f
 		inner join #tmp t on f.ReceivingID=t.Id and f.POID=t.PoId and f.SEQ1=t.Seq1 and f.SEQ2=t.Seq2
-		inner join FIR_Shadebone fp on fp.ID=f.ID and fp.Roll=t.roll AND FP.Dyelot=T.Dyelot
+		inner join FIR_Shadebone fp on fp.ID=f.ID and fp.Roll=t.roll AND FP.Dyelot=T.Dyelot AND fp.Result !=''
 
 		union all
 
@@ -500,15 +500,56 @@ from (
 
             foreach (var drModify in modifyDrList)
             {
-                // 判斷Roll# & Dyelot#是否重複,須排除自己
-                sqlcmd = string.Format(@"select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
-                where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}' and ( roll!='{4}' and dyelot!='{5}')"
-                    , docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"]);
+                // 只修改ActualQty時，判斷Roll# & Dyelot#是否重複,須排除自己
+                sqlcmd = string.Format(@"
+select 1 from dbo.Receiving_Detail WITH (NOLOCK) 
+where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and dyelot='{5}' and ( roll!='{4}' and dyelot!='{5}')
+"                    , docno, drModify["poid"], drModify["seq1"], drModify["seq2"], drModify["roll"], drModify["dyelot"]);
                 if (MyUtility.Check.Seek(sqlcmd, null))
                 {
                     MyUtility.Msg.WarningBox("Roll# & Dyelot# already existed!!");
                     return;
                 }
+                string Original_Roll = drModify["roll", DataRowVersion.Original].ToString();
+                string Current_Roll = drModify["roll", DataRowVersion.Current].ToString();
+
+                string Original_Dyelot = drModify["dyelot", DataRowVersion.Original].ToString();
+                string Current_Dyelot = drModify["dyelot", DataRowVersion.Current].ToString();
+
+                //修改到Roll或Dyelot時。因為主索引鍵被修改，需要檢查
+                if (Original_Roll != Current_Roll || Original_Dyelot!= Current_Dyelot)
+                {
+
+                    sqlcmd = string.Format(@"
+DECLARE @FIR_Shadebone_ID bigint
+
+SELECT   [FirID]=f.ID
+		,[Roll]=r.Roll
+		,[Dyelot]=r.Dyelot
+		,[StockQty]=r.StockQty
+		,r.Ukey
+INTO #tmpReceiving_Detail
+FROM Receiving_Detail r
+INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
+WHERE r.ID='{0}' AND p.FabricType='F'
+
+SELECT @FIR_Shadebone_ID=FirID FROM #tmpReceiving_Detail
+
+SELECT 1
+FROM FIR_Shadebone
+WHERE roll='{1}' AND dyelot='{2}' AND ID=@FIR_Shadebone_ID
+
+DROP TABLE #tmpReceiving_Detail
+", docno, drModify["roll"], drModify["dyelot"]);
+                    if (MyUtility.Check.Seek(sqlcmd, null))
+                    {
+                        MyUtility.Msg.WarningBox("Roll# & Dyelot# already existed!!");
+                        return;
+                    }
+
+                }
+
 
                 sqlupd1 += $@"
 update dbo.receiving_detail 
@@ -525,9 +566,33 @@ set roll = '{drModify["roll"]}'
 ,InQty   = '{drModify["stockqty"]}'
 where poid ='{drModify["poid"]}' 
 and seq1='{drModify["seq1"]}' and seq2='{drModify["seq2"]}' 
-and roll='{drModify["roll", DataRowVersion.Original]}' and dyelot='{drModify["dyelot", DataRowVersion.Original]}' 
-and stocktype = '{drModify["stocktype"]}';";
+and roll='{Original_Roll}' and dyelot='{Original_Dyelot}' 
+and stocktype = '{drModify["stocktype"]}';
 
+
+DECLARE @FIR_Shadebone_ID bigint
+
+SELECT   [FirID]=f.ID
+		,[Roll]=r.Roll
+		,[Dyelot]=r.Dyelot
+		,[StockQty]=r.StockQty
+		,r.Ukey
+INTO #tmpReceiving_Detail
+FROM Receiving_Detail r
+INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
+WHERE r.ID='{docno}' AND p.FabricType='F'
+
+SELECT @FIR_Shadebone_ID=FirID FROM #tmpReceiving_Detail
+
+UPDATE FIR_Shadebone SET 
+Roll = '{drModify["roll"]}'
+,Dyelot  = '{drModify["dyelot"]}'
+,TicketYds   = '{drModify["ActualQty"]}'
+,EditName = '{Sci.Env.User.UserID}'
+,EditDate = GETDATE()
+WHERE  roll='{Original_Roll}' AND dyelot='{Original_Dyelot}' AND ID=@FIR_Shadebone_ID
+";
             }
 
             
@@ -616,6 +681,8 @@ and SEQ1='{dr["Seq1"]}' and SEQ2='{dr["Seq2"]}'
                 source = dt;
                 gridModifyRoll.DataSource = dt;
                 this.LoadDate();
+
+                this.Close();
             }
         }
     }

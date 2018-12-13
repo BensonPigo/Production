@@ -1,8 +1,14 @@
-﻿-- =============================================
--- Author:		
--- Create date: <Create Date,,>
--- Description:	新增,更新 AIR,FIR資料
--- =============================================
+USE [Production]
+GO
+
+/****** Object:  StoredProcedure [dbo].[insert_Air_Fir]    Script Date: 2018/12/13 �U�� 01:35:03 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
 CREATE PROCEDURE [dbo].[insert_Air_Fir]
 (
 	@ID varchar(13),
@@ -214,8 +220,43 @@ values(s.id,s.poid,s.seq1,s.seq2,s.InspDeadline)
 when not matched by source and t.id in (select deID from @tempAir where id is null)  then
 delete ;
 
+--------------FIR_Shadebone 
+RAISERROR('insert_Air_Fir - Starts',0,0)
+
+SELECT   [FirID]=f.ID
+		,[Roll]=r.Roll
+		,[Dyelot]=r.Dyelot
+		,[StockQty]=r.StockQty
+INTO #tmp_Receiving
+FROM Receiving_Detail r
+INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
+WHERE r.ID=@ID AND p.FabricType='F'
+
+Merge dbo.FIR_Shadebone  as t
+using( 
+	 SELECT * FROM #tmp_Receiving
+) as s
+on t.Roll=s.Roll AND t.Dyelot=s.Dyelot
+
+WHEN MATCHED THEN
+	 UPDATE SET t.TicketYds=s.StockQty 
+
+WHEN NOT MATCHED by TARGET THEN 
+	insert  ([ID]           ,[Roll]           ,[Dyelot]           ,[Scale]           ,[Inspdate]           ,[Inspector]           ,[Result]
+            ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds])
+	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,''                ,NULL                 ,''                    ,''
+	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.StockQty )
+
+WHEN NOT MATCHED by SOURCE AND t.ID NOT IN (SELECT ID FROM #tmp_Receiving)   THEN
+delete ;
+
 
 drop table #InspDeadLine
 drop table #tempTableAll
 
 END
+
+GO
+
+
