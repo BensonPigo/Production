@@ -104,12 +104,14 @@ where lapd.id = '{0}'"
             if (CurrentMaintain["Status"].ToString().ToUpper() == "APPROVED")
             {
                 MyUtility.Msg.WarningBox("Data is approved, can't delete.", "Warning");
+                this.OnRefreshClick();
                 return false;
             }
 
             if (!MyUtility.Check.Seek($"select 1 from LocalAP where status = 'New' and id = '{CurrentMaintain["id"]}'"))
             {
-                MyUtility.Msg.WarningBox("Data is approved, can't delete.", "Warning");
+                MyUtility.Msg.WarningBox("Status is not New, can't delete.", "Warning");
+                this.OnRefreshClick();
                 return false;
             }
             return base.ClickDeleteBefore();
