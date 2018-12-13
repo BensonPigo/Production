@@ -688,14 +688,14 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
 
         private void btnBatchApprove_Click(object sender, EventArgs e)
         {
-            if (this.Perm.Confirm) {  
-                batchapprove = new Sci.Production.Subcon.P01_BatchApprove(reload);                
-                if (batchapprove.IsAccessible) {
+            if (this.Perm.Confirm) {
+                if (batchapprove == null || batchapprove.IsDisposed) {
+                    batchapprove = new Sci.Production.Subcon.P01_BatchApprove(reload);
+                    batchapprove.Show();
+                }
+                else  {
                     batchapprove.Activate();
                 }
-                else {
-                    batchapprove.Show();
-                } 
             }
             else {
                 MyUtility.Msg.WarningBox("You don't have permission to confirm."); 
