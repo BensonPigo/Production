@@ -106,6 +106,12 @@ where lapd.id = '{0}'"
                 MyUtility.Msg.WarningBox("Data is approved, can't delete.", "Warning");
                 return false;
             }
+
+            if (!MyUtility.Check.Seek($"select 1 from LocalAP where status = 'New' and id = '{CurrentMaintain["id"]}'"))
+            {
+                MyUtility.Msg.WarningBox("Data is approved, can't delete.", "Warning");
+                return false;
+            }
             return base.ClickDeleteBefore();
         }
 
@@ -122,8 +128,6 @@ where lapd.id = '{0}'"
 
             return base.ClickEditBefore();
         }
-
-        
 
         // save前檢查 & 取id
         protected override bool ClickSaveBefore()
@@ -225,7 +229,6 @@ where lapd.id = '{0}'"
             return base.ClickSaveBefore();
         }
 
-
         protected override void ClickSaveAfter()
         {
             //檢查localap ,localap_detail amount與vat在存檔之後是否有差異
@@ -242,7 +245,6 @@ where lapd.id = '{0}'"
 
             base.ClickSaveAfter();
         }
-
 
         string old_currencyID = "";
         int exact = 2;
