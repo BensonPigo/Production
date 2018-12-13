@@ -175,24 +175,7 @@ namespace Sci.Production.Subcon
                         FROM LocalPO a 
                         INNER JOIN LocalPO_Detail ad ON a.ID=ad.ID
                         WHERE a.ID IN( '{IdList.JoinToString("','")}')
-
-
-
-                        --列出採購價的清單（尚未總和）
-                        SELECT  ap.ID
-		                        ,ap.Category
-		                        ,Orders.POID
-		                        ,[OID]=apd.OrderId
-		                        ,apd.Qty * apd.Price * dbo.getRate('FX',ap.CurrencyID,'USD',ap.issuedate) PO_amt
-                        INTO #total_PO
-                        from LocalPO ap WITH (NOLOCK) 
-                        INNER JOIN LocalPO_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
-                        INNER JOIN  Orders WITH (NOLOCK) on orders.id = apd.orderid
-                        WHERE  EXiSTS  ( 
-				                        SELECT ArtworkTypeID,POID 
-				                        FROM #tmp_AllOrders 
-				                        WHERE ArtworkTypeID= ap.Category  AND POID=Orders.POID)
-
+                              and a.Mdivisionid = '{Sci.Env.User.Keyword}'
 
                         --計算採購價總合
                         SELECT   [Category] = t.ArtworkTypeID  
@@ -254,8 +237,9 @@ namespace Sci.Production.Subcon
 	                        SELECT stdPrice FROM #StdPriceTable WHERE OrderID=ld.OrderId AND Category = l.Category
                         )std
                         WHERE l.ID IN( '{IdList.JoinToString("','")}')
+                                and l.Mdivisionid = '{Sci.Env.User.Keyword}'
 
-                        DROP TABLE #tmp_AllOrders  ,#total_PO,#StdPriceTable";
+                        DROP TABLE #tmp_AllOrders, #StdPriceTable";
 
                 #endregion
 
@@ -288,7 +272,7 @@ namespace Sci.Production.Subcon
             string sqlCmd = string.Empty;
 
             #region 組合SQL
-            sqlCmd = @"
+            sqlCmd = $@"
                         --表頭
                         SELECT 
                              [Selected]=0
@@ -304,6 +288,7 @@ namespace Sci.Production.Subcon
                         INTO #LocalPOs
                         FROm LocalPO
                         WHERE Status ='Locked'
+                               and Mdivisionid = '{Sci.Env.User.Keyword}'
 
                         SELECT * FROM #LocalPOs
 
@@ -325,6 +310,7 @@ namespace Sci.Production.Subcon
                         LEFT JOIN Orders o On o.ID=lp.OrderId
                         WHERE     l.Status ='Locked'
                               AND lp.ID IN( SELECT ID FROM #LocalPOs)
+                              and l.Mdivisionid = '{Sci.Env.User.Keyword}'
 
                         DROP TABLE #LocalPOs";
             #endregion
