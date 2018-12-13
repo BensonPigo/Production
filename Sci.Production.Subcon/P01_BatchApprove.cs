@@ -162,72 +162,43 @@ namespace Sci.Production.Subcon
         {
             DataTable printData;
             string sqlCmd = string.Format(@"
-                select p.MDivisionID
-	                ,p.FactoryId
-	                ,p.ID
-	                ,p.IssueDate
-	                ,p.Delivery 
-	                ,p.LocalSuppID
-	                ,p.ArtworkTypeID
-	                ,pd.OrderID
-	                ,pd.ArtworkId
-	                ,pd.PatternDesc
-	                ,pd.PoQty
-	                ,p.CurrencyID
-	                ,pd.UnitPrice
-	                ,pd.POQty * pd.UnitPrice as [PO Amt]
-	                ,p.VatRate * 1.0 as [Vat Rate (%)]
-	                ,(pd.POQty * pd.UnitPrice * 1.0) * p.VatRate / 100 as [Vat Amt]
-	                ,(pd.POQty * pd.UnitPrice) + ((pd.POQty * pd.UnitPrice * 1.0) * p.VatRate / 100) as [Total]
-	                ,p.Remark 
-	                ,p.InternalRemark
-                into #tmp_po
-                from ArtworkPO p
-                inner join ArtworkPO_Detail pd on p.ID= pd.ID  
-                where p.status = 'Locked' 
-
-                select a.OrderID, a.ID, o.Qty, ot.Price, o.qty * isnull(ot.Price,0) as detialSum, o.SewInLine,o.SciDelivery,o.StyleID, a.ArtworkTypeID
-                into #tmp_dprice
-                from #tmp_po a 
-                left join Orders o on a.OrderID = o.ID
-                left join Order_TMSCost ot on a.OrderID = ot.ID and a.ArtworkTypeID = ot.ArtworkTypeID
-
-                select ID, ArtworkTypeID, isnull(sum(Qty),0) totalQty
-                into #tmp_Mprice
-                from #tmp_dprice
-                where Price is not null
-                group by ID, ArtworkTypeID
-
-                select p.MDivisionID as [M]
-	                ,p.FactoryId as [Factory]
-	                ,p.ID as [P/O #]
-	                ,p.IssueDate as [Date]
-	                ,p.Delivery 
-	                ,p.LocalSuppID as [Supplier]
-	                ,p.ArtworkTypeID as [ArtworkType]
-	                ,p.OrderID as [SP#]
-	                ,d.SewInLine as [Sewing Inline]
-	                ,d.SciDelivery as [SCI Delivery]
-	                ,d.StyleID as [Style#]
-	                ,p.ArtworkId as [Pattern]
-	                ,p.PatternDesc as [Cutparts]
-	                ,p.PoQty as [Q'ty]
-	                ,p.CurrencyID as [Currency]
-	                ,p.UnitPrice as [Unit Prc]
-	                ,cast(iif(m.totalQty = 0, 0.0, detialSum*1.0/totalQty*1.0) as decimal(10,4)) as [Std. Price]
-	                ,p.[PO Amt]
-	                ,p.[Vat Rate (%)]
-	                ,p.[Vat Amt]
-	                ,p.[Total]
-	                ,p.Remark 
-	                ,p.InternalRemark as [Internal Remark]
-                from #tmp_po p
-                inner join #tmp_Mprice m on p.ID = m.ID and p.ArtworkTypeID = m.ArtworkTypeID
-                inner join #tmp_dprice d on p.OrderID = d.OrderID and p.ArtworkTypeID =d.ArtworkTypeID 
-                order by p.ID,p.OrderID
-
-                drop table #tmp_po,#tmp_dprice,#tmp_Mprice
-            ");
+select ap.MDivisionID as [M]
+	,ap.FactoryId as [Factory]
+	,ap.ID as [P/O #]
+	,ap.IssueDate as [Date]
+	,ap.Delivery 
+	,ap.LocalSuppID as [Supplier]
+	,ap.ArtworkTypeID as [ArtworkType]
+	,apo.OrderID as [SP#]
+	,o.SewInLine as [Sewing Inline]
+	,o.SciDelivery as [SCI Delivery]
+	,o.StyleID as [Style#]
+	,apo.ArtworkId as [Pattern]
+	,apo.PatternDesc as [Cutparts]
+	,apo.PoQty as [Q'ty]
+	,ap.CurrencyID as [Currency]
+	,apo.UnitPrice as [Unit Prc]
+	,isnull(tmscost.stdPrice,0.0) [Std. Price]
+	,apo.POQty * apo.UnitPrice as [PO Amt]
+	,ap.VatRate * 1.0 as [Vat Rate (%)]
+	,(apo.POQty * apo.UnitPrice * 1.0) * ap.VatRate / 100 as [Vat Amt]
+	,(apo.POQty * apo.UnitPrice) + ((apo.POQty * apo.UnitPrice * 1.0) * ap.VatRate / 100) as [Total]
+	,ap.Remark 
+	,ap.InternalRemark as [Internal Remark]
+from ArtworkPO ap
+inner join ArtworkPO_Detail apo on ap.id = apo.id
+left join orders o on apo.OrderID = o.ID
+outer apply (
+	select stdPrice = isnull(sum (oA.Qty * ot.Price) / sum (oa.Qty),0.000)
+	from orders o
+	inner join orders oA on o.POID = oa.POID
+	inner join Order_TmsCost ot on oA.id = ot.ID
+									and ot.ArtworkTypeID = ap.ArtworkTypeID
+	where o.id = apo.OrderID
+) tmscost
+where ap.status = 'Locked' 
+and ap.POTYPE='O'
+order by ap.ID, apo.OrderID ");
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
             if (printData.Rows.Count <= 0)
             {
