@@ -262,7 +262,7 @@
             this.lbDestinction.Name = "lbDestinction";
             this.lbDestinction.Size = new System.Drawing.Size(111, 23);
             this.lbDestinction.TabIndex = 143;
-            this.lbDestinction.Text = "Destinction";
+            this.lbDestinction.Text = "Destination";
             // 
             // dateFCRDate
             // 
