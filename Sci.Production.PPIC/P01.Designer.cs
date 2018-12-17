@@ -620,17 +620,6 @@
             this.btnPFHistory.UseVisualStyleBackColor = true;
             this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
             // 
-            // btnEConsMNFailed
-            // 
-            this.btnEConsMNFailed.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnEConsMNFailed.Location = new System.Drawing.Point(797, 628);
-            this.btnEConsMNFailed.Name = "btnEConsMNFailed";
-            this.btnEConsMNFailed.Size = new System.Drawing.Size(194, 27);
-            this.btnEConsMNFailed.TabIndex = 193;
-            this.btnEConsMNFailed.Text = "Econs/MN Failed";
-            this.btnEConsMNFailed.UseVisualStyleBackColor = true;
-            this.btnEConsMNFailed.Click += new System.EventHandler(this.BtnEConsMNFailed_Click);
-            // 
             // btnPoRemark
             // 
             this.btnPoRemark.Location = new System.Drawing.Point(405, 535);

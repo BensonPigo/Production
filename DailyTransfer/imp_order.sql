@@ -1526,6 +1526,26 @@ BEGIN
 		when not matched by source and t.id in (select id from #TOrder) then
 			delete;
 
+		----------------------[Order_ECMNFailed]
+		Merge Production.dbo.[Order_ECMNFailed] t
+		using Trade_To_Pms.dbo.[Order_ECMNFailed] s
+		on t.id = s.id and t.type = s.type
+			when matched  then	update set 
+				 t.[KPIFailed]		=s.[KPIFailed]		
+				,t.[KPIDate]		=s.[KPIDate]		
+				,t.[FailedComment]	=s.[FailedComment]	
+				,t.[ExpectApvDate]	=s.[ExpectApvDate]	
+				,t.[AddName]		=s.[AddName]		
+				,t.[AddDate]		=s.[AddDate]		
+				,t.[EditName]		=s.[EditName]		
+				,t.[EditDate]		=s.[EditDate]		
+		when not matched by target then 	
+			insert([ID],[Type],[KPIFailed],[KPIDate],[FailedComment],[ExpectApvDate],[AddName],[AddDate],[EditName],[EditDate])
+			VALUES(s.[ID],s.[Type],s.[KPIFailed],s.[KPIDate],s.[FailedComment],s.[ExpectApvDate],s.[AddName],s.[AddDate],s.[EditName],s.[EditDate])
+		when not matched by source and t.id in (select id from #TOrder) then
+			delete
+		;
+
 		--------------------MNOder-------------------------M/NOtice
 		Merge Production.dbo.MNOrder as t
 		Using (select a.* from Trade_To_Pms.dbo.MNOrder a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
