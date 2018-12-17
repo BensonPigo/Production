@@ -520,28 +520,6 @@ where id='{0}' and poid='{1}' and seq1='{2}' and seq2='{3}' and roll='{4}' and d
                 if (Original_Roll != Current_Roll || Original_Dyelot!= Current_Dyelot)
                 {
 
-                    //                    sqlcmd = string.Format(@"
-                    //DECLARE @FIR_Shadebone_ID bigint
-
-                    //SELECT   [FirID]=f.ID
-                    //		,[Roll]=r.Roll
-                    //		,[Dyelot]=r.Dyelot
-                    //		,[StockQty]=r.StockQty
-                    //		,r.Ukey
-                    //INTO #tmpReceiving_Detail
-                    //FROM Receiving_Detail r
-                    //INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
-                    //INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
-                    //WHERE r.ID='{0}' AND p.FabricType='F'
-
-                    //SELECT @FIR_Shadebone_ID=FirID FROM #tmpReceiving_Detail
-
-                    //SELECT 1
-                    //FROM FIR_Shadebone
-                    //WHERE roll='{1}' AND dyelot='{2}' AND ID=@FIR_Shadebone_ID
-
-                    //DROP TABLE #tmpReceiving_Detail
-                    //", docno, drModify["roll"], drModify["dyelot"]);
                     sqlcmd = string.Format(@"
 SELECT   [FirID]=f.ID
 		,[Roll]=r.Roll
