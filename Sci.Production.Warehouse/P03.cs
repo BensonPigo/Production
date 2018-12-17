@@ -649,7 +649,7 @@ from(
 	                                        WHERE   inv.InventoryPOID = a.id
 	                                                and inv.InventorySeq1 = a.Seq1
 	                                                and inv.InventorySeq2 = a.seq2
-	                                                and inv.Type in (1, 4)
+	                                                and inv.Type in ('1', '4')
                                          )tmp), 0.00)
                     , a.POUnit
                     , iif(a.Complete='1','Y','N') as Complete
@@ -740,7 +740,7 @@ from(
 	                                        WHERE   inv.InventoryPOID = m.poid
 	                                                and inv.InventorySeq1 = m.Seq1
 	                                                and inv.InventorySeq2 = m.seq2
-	                                                and inv.Type in (1, 4)
+	                                                and inv.Type in ('1', '4')
                                         )tmp), 0.00)
                     , a.POUnit
                     , iif(a.Complete='1','Y','N') as Complete

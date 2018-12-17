@@ -408,7 +408,7 @@ select  poid = I.InventoryPOID
         , I.FabricType
         , stockunit = dbo.GetStockUnitBySPSeq (I.InventoryPOID, I.InventorySeq1, I.InventorySeq2)
 from dbo.Invtrans I WITH (NOLOCK) 
-where I.InventoryPOID ='{0}' and I.type = 3 and FactoryID = '{1}'", CurrentDetailData["poid"].ToString(), this.CurrentMaintain["FromFtyID"]);
+where I.InventoryPOID ='{0}' and I.type = '3' and FactoryID = '{1}'", CurrentDetailData["poid"].ToString(), this.CurrentMaintain["FromFtyID"]);
                     }
 
                     DBProxy.Current.Select(null, sqlcmd, out dt);
@@ -528,7 +528,7 @@ select    fabrictype
 from Invtrans WITH (NOLOCK) 
 where   InventoryPOID = '{0}' 
         and InventorySeq1 ='{1}'
-        and InventorySeq2 = '{2}' and type = 3 and FactoryID = '{3}'", CurrentDetailData["poid"], seq[0], seq[1], CurrentMaintain["FromFtyID"]), out dr, null))
+        and InventorySeq2 = '{2}' and type = '3' and FactoryID = '{3}'", CurrentDetailData["poid"], seq[0], seq[1], CurrentMaintain["FromFtyID"]), out dr, null))
                             {
                                 e.Cancel = true;
                                 MyUtility.Msg.WarningBox("Data not found!", "Seq");
@@ -695,7 +695,7 @@ where   c.POID = '{0}'
 ", e.FormattedValue, Sci.Env.User.Keyword);
 
                     string strCheckInvtrans = string.Format(@"
-select id from Invtrans where InventoryPOID = '{0}' and type = 3   and FactoryID = '{1}'
+select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and FactoryID = '{1}'
 ", e.FormattedValue, this.CurrentMaintain["FromFtyID"]);
 
                     if (!MyUtility.Check.Seek(strCheckOrders) && !MyUtility.Check.Seek(strCheckInventory))
@@ -1314,7 +1314,7 @@ left join Po_Supp_Detail p WITH (NOLOCK)  on a.poid = p.id
                               and a.seq2 = p.seq2
 left join Invtrans I WITH (NOLOCK)  on a.poid = I.InventoryPOID
                               and a.seq1 = I.InventorySeq1
-                              and a.seq2 = I.InventorySeq2 and I.FactoryID = '{1}' and I.type = 3
+                              and a.seq2 = I.InventorySeq2 and I.FactoryID = '{1}' and I.type = '3'
 Where a.id = '{0}'", masterID, fromFty);
             return base.OnDetailSelectCommandPrepare(e);
         }

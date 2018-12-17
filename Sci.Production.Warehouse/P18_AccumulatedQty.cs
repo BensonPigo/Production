@@ -107,7 +107,7 @@ namespace Sci.Production.Warehouse
 			where a1.Seq70poid = a.PoId 
 			and a1.seq70seq1 = a.seq1 
 			and a1.seq70seq2 = a.seq2 
-			and a1.type = 2 
+			and a1.type = '2' 
 			AND A1.FactoryID ='{2}' 
 			and A1.TransferFactory in (select Id from Factory WITH (NOLOCK))
 		)
