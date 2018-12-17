@@ -89,9 +89,8 @@ Select
     , o.SewInLIne
     , o.MnorderApv2
     , GetGMTLT.GMTLT
-    , f.ErrorMessage
     , f.Type
-From ECons_MNoticeFailed f
+From [Order_ECMNFailed] f
 Left Join Orders o on f.id	= o.ID
 Outer Apply(Select GMTLT = dbo.GetStyleGMTLT(o.BrandID,o.StyleID,o.SeasonID,o.FactoryID)) as GetGMTLT
 Left join GetName as GetSMR on GetSMR.ID = o.SMR

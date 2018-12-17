@@ -29,8 +29,6 @@ namespace Sci.Production.Subcon
         {
             InitializeComponent();
             this.DefaultFilter = string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword);
-            
-
         }
 
         protected override void OnFormLoaded()
@@ -84,6 +82,29 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             {
                 InsertDetailGridOnDoubleClick = true;
             }
+
+            #region 依台北轉入 or 工廠建立 開放表頭欄位編輯
+            // TaipeiDBC = true or 1 >> 台北轉入, 其餘為工廠建立
+            if (EditMode==true)
+            {
+                if (MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]))
+                {
+                    this.numExchange.ReadOnly = true;
+                    this.numAmount.ReadOnly = false;
+                }
+                else
+                {
+                    this.numExchange.ReadOnly = false;
+                    this.numAmount.ReadOnly = true;
+                }
+            }
+            else
+            {
+                this.numExchange.ReadOnly = true;
+                this.numAmount.ReadOnly = true;
+            }
+           
+            #endregion
         }
 
         // Detail Grid 設定
@@ -97,6 +118,10 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                     P36_ModifyDetail DoForm = new P36_ModifyDetail();
                     DoForm.Set(this.EditMode, this.DetailDatas, this.CurrentDetailData);
                     DoForm.ShowDialog(this);
+                    if (e.RowIndex == -1)
+                    {
+                        return;
+                    }
                     DataRow dr = DetailDatas[e.RowIndex];
                     string reason_desc = string.Format("select concat(id,name) from dbo.reason WITH (NOLOCK) where ReasonTypeID='DebitNote_Factory' and id = '{0}'", dr["reasonid"]);
                     dr["reason_desc"] = MyUtility.GetValue.Lookup(reason_desc);
@@ -109,9 +134,10 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                         return;
                     }
                     int exact = int.Parse(strExact);
-                    object detail_a = ((DataTable)detailgridbs.DataSource).Compute("sum(total)", "");
-                    CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_a, exact);
-                    CurrentMaintain["tax"] = MyUtility.Math.Round((decimal)detail_a * (decimal)CurrentMaintain["taxrate"] / 100, exact);
+                    object detail_Amount = ((DataTable)detailgridbs.DataSource).Compute("sum(AMOUNT)", "");
+                    object detail_Addition = ((DataTable)detailgridbs.DataSource).Compute("sum(ADDITION)", "");
+                    CurrentMaintain["amount"] = MyUtility.Math.Round((decimal)detail_Amount + (decimal)detail_Addition, exact);
+                    ReCalculateTax();
                     #endregion
                 }
             };
@@ -145,6 +171,7 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
             CurrentMaintain["Status"] = "New";
             CurrentMaintain["SMR"] = MyUtility.GetValue.Lookup("Supervisor", Sci.Env.User.UserID, "Pass1", "ID");
             CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            CurrentMaintain["exchange"] = 1;
             dateReceiveDate.ReadOnly = true;
         }
 
@@ -188,13 +215,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
 
             #endregion
 
-            // Currency =USD, Exchange 只能為1
-            if (this.displaycurrencyid.Value.ToString().ToUpper()=="USD" && numExchange.Value != 1)
-            {
-                MyUtility.Msg.WarningBox("If the currency is USD, then exchange must be 1 !!");
-                return false;
-            }
-
+            //計算TAX
+            ReCalculateTax();
             // 刪除 qty,amount,addtion皆為零的資料
             foreach (DataRow row in ((DataTable)detailgridbs.DataSource).Select("qty = 0 and amount = 0 and addition = 0"))
             {
@@ -252,6 +274,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 var frm = new P36_ModifyAfterSent(CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
+                Refresh();
+                ReCalculateTax();
                 return false;
             }
 
@@ -260,6 +284,8 @@ SELECT TOP 1 * FROM CTE  WHERE running_total >= {1} ", CurrentMaintain["id"], nu
                 var frm = new P36_ModifyAfterSent(CurrentMaintain);
                 frm.ShowDialog(this);
                 this.RenewData();
+                Refresh();
+                ReCalculateTax();
                 return false;
             }
             dateReceiveDate.ReadOnly = true;
@@ -432,6 +458,12 @@ where id = '{4}'"
 
         protected override void ClickUnconfirm()
         {
+            // 有傳票號碼,則不能unconfirm
+            if (!MyUtility.Check.Empty(displaySettleVoucher.Text))
+            {
+                MyUtility.Msg.WarningBox("Cannot UnComirm, debit note have voucher no.");
+                return;
+            }
             base.ClickUnconfirm();
             updateStatus(CurrentMaintain["status"].ToString(), "Received", true);
         }
@@ -472,7 +504,7 @@ where id = '{4}'"
             var frm = new Sci.Production.Subcon.P37_DebitSchedule(true, dr["ID"].ToString(), null, null);  //調成跟舊系統一樣，不管誰都可以編輯
             frm.ShowDialog(this);
             this.RenewData();
-
+            this.Refresh();
         }
 
         //print
@@ -592,6 +624,50 @@ where Ldeb.ID= @ID";
             frm.Show();
 
             return true;
+        }
+
+        private void numExchange_Validating(object sender, CancelEventArgs e)
+        {
+            // 若 Debit Note 屬於工廠建立,則Exchange不須判斷
+            if (MyUtility.Check.Empty(CurrentMaintain["TaipeiDBC"]))
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(numExchange.Value))
+            {
+                MyUtility.Msg.WarningBox("Exchange value cannot be 0!");
+                e.Cancel = true;
+                return;
+            }
+            CurrentMaintain["Exchange"] = numExchange.Text;
+            CurrentMaintain["amount"] = Math.Round(MyUtility.Convert.GetDecimal(CurrentMaintain["TaipeiAMT"]) * MyUtility.Convert.GetDecimal(CurrentMaintain["Exchange"]), 2);
+        }
+
+        private void numAmount_Validating(object sender, CancelEventArgs e)
+        {
+            CurrentMaintain["amount"] = numAmount.Text;
+            ReCalculateTax();
+        }
+
+        private void ReCalculateTax()
+        {
+            decimal amount = MyUtility.Convert.GetDecimal(CurrentMaintain["amount"]);
+            decimal TaxRate = MyUtility.Convert.GetDecimal(CurrentMaintain["taxrate"]);
+            int Exact = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format("Select exact from Currency WITH (NOLOCK) where id = '{0}'", CurrentMaintain["currencyId"]), null));
+            if (MyUtility.Check.Empty(Exact))
+            {
+                Exact = 0;
+            }
+
+            CurrentMaintain["Tax"] = Math.Round((amount * TaxRate) / 100, Exact);
+            numTotalAmt.Value = decimal.Parse(CurrentMaintain["amount"].ToString()) + decimal.Parse(CurrentMaintain["tax"].ToString());
+        }
+
+        private void numtaxrate_Validating(object sender, CancelEventArgs e)
+        {
+            CurrentMaintain["taxrate"] = numtaxrate.Text;
+            ReCalculateTax();
         }
     }
 }

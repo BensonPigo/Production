@@ -48,7 +48,6 @@ namespace Sci.Production.PPIC
                 .Date("SewInLIne", header: "In-Line Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("MnorderApv2", header: "VAS/SHAS", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("GMTLT", header: "Garment L/T", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("ErrorMessage", header: "Fail Reason", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 ;
 
             return true;
@@ -92,11 +91,10 @@ select
     , o.SewInLIne
     , o.MnorderApv2
     , GetGMTLT.GMTLT
-    , f.ErrorMessage
     , f.EditName
     , f.EditDate
     , f.Type
-From ECons_MNoticeFailed f
+From Order_ECMNFailed f
 Left Join Orders o on f.id	= o.ID
 Outer Apply(Select GMTLT = dbo.GetStyleGMTLT(o.BrandID,o.StyleID,o.SeasonID,o.FactoryID)) as GetGMTLT
 Left join GetName as GetSMR on GetSMR.ID = o.SMR

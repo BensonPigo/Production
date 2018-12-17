@@ -979,6 +979,13 @@ order by os.Seq",
                 return false;
             }
 
+            if (this.CurrentMaintain["Remark"].ToString().Length > 150)
+            {
+                this.editRemark.Focus();
+                MyUtility.Msg.WarningBox("Remark can't be more than 150 Characters.");
+                return false;
+            }
+
             #region 檢查表頭的CustCD與表身所有SP的 Orders.custcdid是否相同
             DataTable dtCheckCustCD;
             List<SqlParameter> listCheckCustCDSqlParameter = new List<SqlParameter>();

@@ -63,10 +63,5 @@ and orders.id = @id", Sci.Env.User.Factory), cmds))
                 return;
             }
         }
-
-        private void numAdditionChargeClaimAmt_Validated(object sender, EventArgs e)
-        {
-            CurrentData["total"] = decimal.Parse(CurrentData["amount"].ToString()) + decimal.Parse(CurrentData["addition"].ToString());
-        }
     }
 }

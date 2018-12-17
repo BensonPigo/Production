@@ -1542,13 +1542,10 @@ where POID = @poid group by POID,b.spno";
         {
             if (!MyUtility.Check.Empty(this.CurrentMaintain["ID"]) && !MyUtility.Check.Empty(this.CurrentMaintain["POID"]))
             {
-                using (var dlg = new P01_EConsMNoticeFailed(false, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString(), null))
-                {
-                    dlg.ShowDialog();
-                }
+                var dlg = new P01_EConsMNoticeFailed(false, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString(), null);
+                dlg.ShowDialog();
 
                 this.RenewData();
-                this.OnDetailEntered();
             }
         }
     }

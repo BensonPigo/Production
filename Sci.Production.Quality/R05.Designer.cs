@@ -42,10 +42,6 @@
             this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // toexcel
-            // 
-            this.toexcel.Click += new System.EventHandler(this.toexcel_Click);
-            // 
             // radioPanel
             // 
             this.radioPanel.Controls.Add(this.comboCategory);
@@ -70,6 +66,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(128, 63);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(185, 24);
             this.comboCategory.TabIndex = 122;
             this.comboCategory.Type = "Pms_ReportForProduct";
@@ -114,8 +111,10 @@
             this.comboMaterialType.IsSupportUnselect = true;
             this.comboMaterialType.Location = new System.Drawing.Point(128, 104);
             this.comboMaterialType.Name = "comboMaterialType";
+            this.comboMaterialType.OldText = "";
             this.comboMaterialType.Size = new System.Drawing.Size(125, 24);
             this.comboMaterialType.TabIndex = 103;
+            this.comboMaterialType.SelectedValueChanged += new System.EventHandler(this.comboMaterialType_SelectedValueChanged);
             // 
             // labelMaterialType
             // 

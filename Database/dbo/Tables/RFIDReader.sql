@@ -7,6 +7,7 @@
     [EditName]  VARCHAR (10) CONSTRAINT [DF_RFIDReader_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME     NULL, 
 	[SewingLineID] varchar(2) NULL,
+    [MDivisionID] VARCHAR(8) NOT NULL, 
     CONSTRAINT [PK_RFIDReader] PRIMARY KEY ([Id])
 );
 
