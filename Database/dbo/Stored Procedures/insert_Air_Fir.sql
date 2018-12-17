@@ -237,7 +237,7 @@ Merge dbo.FIR_Shadebone  as t
 using( 
 	 SELECT * FROM #tmp_Receiving
 ) as s
-on t.Roll=s.Roll AND t.Dyelot=s.Dyelot
+on t.ID=s.FirID AND t.Roll=s.Roll AND t.Dyelot=s.Dyelot 
 
 WHEN MATCHED THEN
 	 UPDATE SET t.TicketYds=s.StockQty 

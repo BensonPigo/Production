@@ -144,7 +144,7 @@ namespace Sci.Production.Quality
 
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Scalecell = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings ResulCell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
             DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region Roll
@@ -221,15 +221,38 @@ namespace Sci.Production.Quality
                     {
                         dr["InspDate"] = DBNull.Value;
                         dr["Inspector"] = "";
+                        dr["Name"] = "";
                     }
                     else
                     {
                         dr["InspDate"] = DateTime.Now;
                         dr["Inspector"] = Sci.Env.User.UserID;
+                        dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
                     }
                     dr["Scale"] = newvalue;
                 }
 
+            };
+
+            Scalecell.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode == false) return;
+                if (e.RowIndex == -1) return;
+                if (e.Button == MouseButtons.Right)
+                {
+                    // Parent form 若是非編輯狀態就 return 
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Scale where junk = 0 order by ID", "10,40", dr["Scale"].ToString().Trim());
+                    
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+
+                    dr["Scale"] = item.GetSelectedString();
+                    dr["InspDate"] = DateTime.Now;
+                    dr["Inspector"] = Sci.Env.User.UserID;
+                    dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
+
+                }
             };
 
             #endregion
@@ -252,11 +275,13 @@ namespace Sci.Production.Quality
 
                         dr["InspDate"] = DBNull.Value;
                         dr["Inspector"] = "";
+                        dr["Name"] = "";
                     }
                     else
                     {
                         dr["InspDate"] = DateTime.Now;
                         dr["Inspector"] = Sci.Env.User.UserID;
+                        dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
                     }
 
                     dr["Result"] = newvalue;
@@ -281,6 +306,7 @@ namespace Sci.Production.Quality
                     dr["Name"] = "";
                 }
                 dr["Inspector"] = newvalue;
+                //dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{newvalue}'");
 
             };
             #endregion
@@ -290,7 +316,7 @@ namespace Sci.Production.Quality
             .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-            .CellScale("Scale", header: "Scale", width: Widths.AnsiChars(5) ,settings: Scalecell)
+            .Text("Scale", header: "Scale", width: Widths.AnsiChars(5) ,settings: Scalecell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name",settings: InspectorCell)
@@ -465,7 +491,10 @@ namespace Sci.Production.Quality
 
                     errorMsg += singleRow+Environment.NewLine;
                 }
-                MyUtility.Msg.WarningBox(errorMsg);
+                if (!MyUtility.Check.Empty(errorMsg))
+                {
+                    MyUtility.Msg.WarningBox(errorMsg);
+                }
                 return;
             }
 
