@@ -317,7 +317,7 @@ namespace Sci.Production.Quality
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
             .Text("Scale", header: "Scale", width: Widths.AnsiChars(5) ,settings: Scalecell)
-            .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResulCell)
+            .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ResulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
             .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name",settings: InspectorCell)
             .Text("Name", header: "Name", width: Widths.AnsiChars(20))
@@ -494,8 +494,8 @@ namespace Sci.Production.Quality
                 if (!MyUtility.Check.Empty(errorMsg))
                 {
                     MyUtility.Msg.WarningBox(errorMsg);
+                    return;
                 }
-                return;
             }
 
             #endregion
