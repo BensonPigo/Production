@@ -39,9 +39,9 @@ namespace Sci.Production.Subcon
                 .Text("Category", header: "Category", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Supplier", header: "Supplier", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Currency", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("VatRate", header: "Vat Rate (%)", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
-                .Numeric("TotalAmount", header: "Total Amount", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true)
+                .Numeric("VatRate", header: "Vat Rate (%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+                .Numeric("TotalAmount", header: "Total Amount", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true)
                 ;
 
             this.gridBody.IsEditingReadOnly = false;
@@ -52,8 +52,8 @@ namespace Sci.Production.Subcon
                 .Text("ColorShade", header: "Color Shade", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Unit", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
+                .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true)
+                .Numeric("Amount", header: "Amount", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true)
                 .Text("RequestID", header: "RequestID", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 ;
