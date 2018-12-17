@@ -85,6 +85,7 @@ namespace Sci.Production.Subcon
 	                ,Amount+Vat as TotalAmount
                 from ArtworkPO
                 where [Status] = 'Locked'
+                      and POTYPE='O'
 
                 select a.ID
 	                ,ad.OrderID  
@@ -100,7 +101,8 @@ namespace Sci.Production.Subcon
                 from ArtworkPO a
                 inner join ArtworkPO_Detail ad on a.ID = ad.ID 
                 left join Orders o on ad.OrderID = o.ID
-                where a.[Status] = 'Locked'");
+                where a.[Status] = 'Locked'
+                      and a.POTYPE = 'O'");
 
             if (!SQL.Selects("", sqlCmd, out ds)){
                 MyUtility.Msg.WarningBox(sqlCmd, "DB error!!");
@@ -146,7 +148,7 @@ namespace Sci.Production.Subcon
 
             sqlcmd = string.Format(@"update ArtworkPO 
                     set [Status]='Approved', apvname='{0}', apvdate=GETDATE(), editname='{0}', editdate=GETDATE()  
-                    where [Status] = 'Locked' and ID in ('{1}')", Env.User.UserID, string.Join("','", query.ToList()));
+                    where [Status] = 'Locked' and ID in ('{1}') and POTYPE='O'", Env.User.UserID, string.Join("','", query.ToList()));
 
             if (!(result = DBProxy.Current.Execute(null, sqlcmd))) {
                 ShowErr(sqlcmd, result);
