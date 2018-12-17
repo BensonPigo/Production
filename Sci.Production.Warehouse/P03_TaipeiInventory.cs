@@ -55,8 +55,8 @@ FROM (
               end as factoryid
             , invtransreason.ReasonEN
             , case inv.type 
-                when '3' then 2 
-                else 1 
+                when '3' then '2' 
+                else '1' 
               end AS SEQ
             , inv.remark
             , inv.ukey
@@ -67,7 +67,7 @@ FROM (
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}' 
-			and inv.Type in (1, 3, 6)             
+			and inv.Type in ('1', '3', '6')             
                                                                          
     union
     SELECT  inv.ID
@@ -92,8 +92,8 @@ FROM (
               end as FactoryID
             , invtransreason.ReasonEN
             , case inv.type 
-                when '3' then 1 
-                else 2 
+                when '3' then '1' 
+                else '2' 
               end AS SEQ
             , inv.remark
             , inv.ukey
@@ -104,7 +104,7 @@ FROM (
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}'
-			and inv.type in (2, 3, 5)    
+			and inv.type in ('2', '3', '5')    
 
     union 
     SELECT  inv.ID
@@ -129,8 +129,8 @@ FROM (
               end as FactoryID
             , invtransreason.ReasonEN
             , case inv.type 
-                when '3' then 1 
-                else 2 
+                when '3' then '1' 
+                else '2' 
               end AS SEQ
             , inv.remark
             , inv.ukey
@@ -141,7 +141,7 @@ FROM (
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}'
-			and inv.type in (4)    
+			and inv.type in ('4')    
 ) TMP 
 GROUP BY    TMP.ID, TMP.TYPE, TMP.typename, TMP.ConfirmDate, TMP.ConfirmHandle, TMP.factoryid, TMP.seq70
             , TMP.ReasonEN, TMP.SEQ, TMP.inqty, TMP.Allocated, Tmp.remark, Tmp.ukey, Tmp.UseFactory"

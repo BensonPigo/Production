@@ -150,16 +150,16 @@ where l.Type = 'R'"));
             sqlCmd.Append(@" 
 ;with s1 as(
 select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty1 = isnull(sum(i.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,Seq1,Seq2,i.type),0)
-	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.Seq1 and Seq2 = T.Seq2 and Type = 1) i
+	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.Seq1 and Seq2 = T.Seq2 and Type = '1') i
 ),s2 as(
 select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty2 = isnull(sum(i2.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,Seq1,Seq2,i2.type),0)
-	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.Seq1 and InventorySeq2 = T.Seq2 and Type = 4) i2
+	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.Seq1 and InventorySeq2 = T.Seq2 and Type = '4') i2
 ),s71 as(
 select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty71 = isnull(sum(i7.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,OutputSeq1,OutputSeq2,i7.type),0)
-	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.OutputSeq1 and Seq2 = T.OutputSeq2 and Type = 1) i7	
+	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where PoID = T.POID and Seq1 = T.OutputSeq1 and Seq2 = T.OutputSeq2 and Type = '1') i7	
 ),s72 as(
 select T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,StockQty72 = isnull(sum(i72.qty) over(partition by MDivisionID,FactoryID,FabricType,POID,OutputSeq1,OutputSeq2,i72.type),0)
-	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.OutputSeq1 and InventorySeq2 = T.OutputSeq2 and Type = 4) i72
+	from #tmpData T	outer apply(select Qty,Type from Invtrans  WITH (NOLOCK) where InventoryPOID = T.POID and InventorySeq1 = T.OutputSeq1 and InventorySeq2 = T.OutputSeq2 and Type = '4') i72
 ),RequestQty as(
 	select  T.MDivisionID,T.FactoryID,T.POID,T.Seq1,T.Seq2,RequestQty = isnull(sum(RequestQty) over(partition by MDivisionID,FactoryID,FabricType,POID,Seq1,Seq2),0)
 	from #tmpData T 
