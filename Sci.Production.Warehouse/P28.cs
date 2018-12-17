@@ -329,7 +329,7 @@ WHERE   StockType='{0}'
     cross apply (
 	    select distinct 1 abc 
         from dbo.Invtrans WITH (NOLOCK) 
-        where   type = 1 
+        where   type = '1'
                 and (convert(varchar, ConfirmDate, 111) between convert(varchar, '{0}', 111) and convert(varchar, '{1}', 111)) 
                 and poid = pd.id 
                 and seq1 = pd.seq1 
@@ -364,7 +364,7 @@ WHERE   StockType='{0}'
     cross apply (   
         select sum(i.Qty) taipei_qty
         from dbo.Invtrans i WITH (NOLOCK) 
-        where   (i.type = 1 OR I.TYPE = 4) 
+        where   (i.type = '1' OR I.TYPE = '4') 
                 and i.InventoryPOID = pd.ID 
                 and i.InventorySeq1 = pd.seq1 
                 and i.InventorySeq2 = pd.SEQ2

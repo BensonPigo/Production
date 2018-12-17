@@ -327,13 +327,13 @@ WHERE   StockType='{0}'
                 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
     ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
     cross apply (
-        select  sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
+        select  sum(iif(i.type='2',i.qty,0-i.qty)) taipei_qty 
         from dbo.Invtrans i WITH (NOLOCK) 
         where   i.InventoryPOID = pd.StockPOID 
                 and i.InventorySeq1 = pd.StockSeq1 
                 and i.PoID = pd.ID 
                 and i.InventorySeq2 = pd.StockSeq2 
-                and (i.type=2 or i.type=6)
+                and (i.type='2' or i.type='6')
                 and Seq70Poid = rtrim(o.id)
                 and Seq70Seq1 = rtrim(pd.seq1)
                 and Seq70Seq2 = pd.seq2

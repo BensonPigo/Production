@@ -81,7 +81,7 @@ namespace Sci.Production.Warehouse
                 , i.InventorySeq2
                 , min(i.ConfirmDate) earliest
                 , max(i.confirmdate) lastest
-                , sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
+                , sum(iif(i.type='2',i.qty,0-i.qty)) taipei_qty 
         from dbo.Invtrans i WITH (NOLOCK) 
         where   i.InventoryPOID = pd.StockPOID 
                 and i.InventorySeq1 = pd.StockSeq1 
@@ -89,7 +89,7 @@ namespace Sci.Production.Warehouse
                 and i.InventorySeq2 = pd.StockSeq2 
                 and i.seq70seq1 = pd.seq1
                 and i.seq70seq2 = pd.seq2
-                and (i.type=2 or i.type=6)
+                and (i.type='2' or i.type='6')
         group by i.InventoryPOID, i.InventorySeq1, i.InventorySeq2
     )x
     where   f.MDivisionID='{0}' 

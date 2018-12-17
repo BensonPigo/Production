@@ -68,7 +68,7 @@ with cte as
 	cross apply
 	(select max(i.ConfirmDate) taipei_issue_date,sum(i.Qty) taipei_qty
 		from dbo.Invtrans i WITH (NOLOCK) 
-		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
+		where (i.type='1' OR I.TYPE='4') and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
 	) x
 	where f.MDivisionID ='{0}' and pd.id = @poid --AND X.taipei_qty > 0
 )
