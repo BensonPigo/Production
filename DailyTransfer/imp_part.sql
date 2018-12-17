@@ -308,9 +308,8 @@ s.EditDate
 	ShipETA=B.ShipETA
 	FROM Machine.DBO.PartPO_Detail A
 	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno and  a.SEQ2=b.Seq2 and a.id = b.MmsReqID
-	INNER JOIN  Trade_To_Pms.DBO.MmsPO C ON B.ID=C.ID
-	WHERE C.Type ='P'
-	and C.FactoryID in (select id from @Sayfty)
+	INNER JOIN  Machine.DBO.PartPO C ON A.ID=C.ID
+	WHERE C.FactoryID in (select id from @Sayfty)
 
 	UPDATE Machine.DBO.MiscPO_Detail
 	SET TPEPOID = B.id,
@@ -373,9 +372,9 @@ update t
 		t.ShipETA=s.ShipETA
 		from  Machine.dbo.PartPO_Detail as  t
 		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2
-		inner join Trade_To_Pms.DBO.MmsPO a on s.id=a.ID
+		inner join Machine.dbo.PartPO a on t.id=a.ID
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
-		where a.Type='P'
+		where 1=1
 		
 
 		update t
