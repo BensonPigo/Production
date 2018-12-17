@@ -67,6 +67,15 @@
             this.label2 = new Sci.Win.UI.Label();
             this.numttlqty = new Sci.Win.UI.NumericBox();
             this.btnIrrPriceReason = new Sci.Win.UI.Button();
+            this.txtuserLock = new Sci.Production.Class.txtuser();
+            this.displayLockDate = new Sci.Win.UI.DisplayBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtuserClose = new Sci.Production.Class.txtuser();
+            this.displayCloseDate = new Sci.Win.UI.DisplayBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label7 = new Sci.Win.UI.Label();
+            this.btnBatchApprove = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -84,6 +93,14 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtuserClose);
+            this.masterpanel.Controls.Add(this.displayCloseDate);
+            this.masterpanel.Controls.Add(this.label6);
+            this.masterpanel.Controls.Add(this.label7);
+            this.masterpanel.Controls.Add(this.txtuserLock);
+            this.masterpanel.Controls.Add(this.displayLockDate);
+            this.masterpanel.Controls.Add(this.label4);
+            this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.btnIrrPriceReason);
             this.masterpanel.Controls.Add(this.numttlqty);
             this.masterpanel.Controls.Add(this.label2);
@@ -118,7 +135,7 @@
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1022, 229);
+            this.masterpanel.Size = new System.Drawing.Size(892, 281);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
@@ -154,16 +171,24 @@
             this.masterpanel.Controls.SetChildIndex(this.numttlqty, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnIrrPriceReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayLockDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtuserLock, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label7, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayCloseDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtuserClose, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 229);
-            this.detailpanel.Size = new System.Drawing.Size(1022, 257);
+            this.detailpanel.Location = new System.Drawing.Point(0, 281);
+            this.detailpanel.Size = new System.Drawing.Size(892, 68);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.gridicon.Location = new System.Drawing.Point(910, 185);
+            this.gridicon.Location = new System.Drawing.Point(907, 240);
             this.gridicon.TabIndex = 9;
             // 
             // refresh
@@ -172,7 +197,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1022, 257);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 68);
             // 
             // detail2
             // 
@@ -188,25 +213,25 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1022, 524);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1022, 486);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 486);
-            this.detailbtm.Size = new System.Drawing.Size(1022, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1022, 566);
+            this.browse.Size = new System.Drawing.Size(1022, 593);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1030, 553);
+            this.tabs.Size = new System.Drawing.Size(1030, 622);
             // 
             // createby
             // 
@@ -288,7 +313,7 @@
             // 
             // labelApprove
             // 
-            this.labelApprove.Location = new System.Drawing.Point(8, 153);
+            this.labelApprove.Location = new System.Drawing.Point(8, 183);
             this.labelApprove.Name = "labelApprove";
             this.labelApprove.Size = new System.Drawing.Size(105, 23);
             this.labelApprove.TabIndex = 11;
@@ -304,7 +329,7 @@
             // 
             // labelApvDate
             // 
-            this.labelApvDate.Location = new System.Drawing.Point(491, 153);
+            this.labelApvDate.Location = new System.Drawing.Point(491, 183);
             this.labelApvDate.Name = "labelApvDate";
             this.labelApvDate.Size = new System.Drawing.Size(75, 23);
             this.labelApvDate.TabIndex = 14;
@@ -388,7 +413,7 @@
             // 
             this.displayApvDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApvDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApvDate.Location = new System.Drawing.Point(569, 153);
+            this.displayApvDate.Location = new System.Drawing.Point(569, 183);
             this.displayApvDate.Name = "displayApvDate";
             this.displayApvDate.Size = new System.Drawing.Size(100, 23);
             this.displayApvDate.TabIndex = 11;
@@ -535,7 +560,7 @@
             this.txtuserApprove.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "apvname", true));
             this.txtuserApprove.DisplayBox1Binding = "";
             this.txtuserApprove.Enabled = false;
-            this.txtuserApprove.Location = new System.Drawing.Point(116, 153);
+            this.txtuserApprove.Location = new System.Drawing.Point(116, 183);
             this.txtuserApprove.Name = "txtuserApprove";
             this.txtuserApprove.Size = new System.Drawing.Size(300, 23);
             this.txtuserApprove.TabIndex = 6;
@@ -599,7 +624,7 @@
             this.groupBox1.Controls.Add(this.btnBatchUpdateDellivery);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dateDeliveryDate);
-            this.groupBox1.Location = new System.Drawing.Point(8, 178);
+            this.groupBox1.Location = new System.Drawing.Point(5, 233);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(558, 39);
             this.groupBox1.TabIndex = 46;
@@ -663,10 +688,94 @@
             this.btnIrrPriceReason.UseVisualStyleBackColor = true;
             this.btnIrrPriceReason.Click += new System.EventHandler(this.btnIrrPriceReason_Click);
             // 
+            // txtuserLock
+            // 
+            this.txtuserLock.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "LockName", true));
+            this.txtuserLock.DisplayBox1Binding = "";
+            this.txtuserLock.Enabled = false;
+            this.txtuserLock.Location = new System.Drawing.Point(116, 153);
+            this.txtuserLock.Name = "txtuserLock";
+            this.txtuserLock.Size = new System.Drawing.Size(300, 23);
+            this.txtuserLock.TabIndex = 50;
+            this.txtuserLock.TextBox1Binding = "";
+            // 
+            // displayLockDate
+            // 
+            this.displayLockDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayLockDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayLockDate.Location = new System.Drawing.Point(569, 153);
+            this.displayLockDate.Name = "displayLockDate";
+            this.displayLockDate.Size = new System.Drawing.Size(100, 23);
+            this.displayLockDate.TabIndex = 51;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(491, 153);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.TabIndex = 53;
+            this.label4.Text = "Lock Date";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(8, 153);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(105, 23);
+            this.label5.TabIndex = 52;
+            this.label5.Text = "Lock";
+            // 
+            // txtuserClose
+            // 
+            this.txtuserClose.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "CloseName", true));
+            this.txtuserClose.DisplayBox1Binding = "";
+            this.txtuserClose.Enabled = false;
+            this.txtuserClose.Location = new System.Drawing.Point(117, 213);
+            this.txtuserClose.Name = "txtuserClose";
+            this.txtuserClose.Size = new System.Drawing.Size(300, 23);
+            this.txtuserClose.TabIndex = 54;
+            this.txtuserClose.TextBox1Binding = "";
+            // 
+            // displayCloseDate
+            // 
+            this.displayCloseDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCloseDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCloseDate.Location = new System.Drawing.Point(570, 213);
+            this.displayCloseDate.Name = "displayCloseDate";
+            this.displayCloseDate.Size = new System.Drawing.Size(100, 23);
+            this.displayCloseDate.TabIndex = 55;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(492, 213);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(75, 23);
+            this.label6.TabIndex = 57;
+            this.label6.Text = "Close Date";
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(9, 213);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(105, 23);
+            this.label7.TabIndex = 56;
+            this.label7.Text = "Close";
+            // 
+            // btnBatchApprove
+            // 
+            this.btnBatchApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchApprove.Location = new System.Drawing.Point(875, 12);
+            this.btnBatchApprove.Name = "btnBatchApprove";
+            this.btnBatchApprove.Size = new System.Drawing.Size(143, 30);
+            this.btnBatchApprove.TabIndex = 4;
+            this.btnBatchApprove.Text = "Batch Approve";
+            this.btnBatchApprove.UseVisualStyleBackColor = true;
+            this.btnBatchApprove.Click += new System.EventHandler(this.btnBatchApprove_Click);
+            // 
             // P30
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1030, 586);
+            this.ClientSize = new System.Drawing.Size(1030, 655);
+            this.Controls.Add(this.btnBatchApprove);
             this.DefaultControl = "txtsubconSupplier";
             this.DefaultControlForEdit = "dateIssueDate";
             this.DefaultDetailOrder = "orderid,refno,threadcolorid";
@@ -675,9 +784,11 @@
             this.GridAlias = "localPO_detail";
             this.GridNew = 0;
             this.GridUniqueKey = "orderid,refno,threadcolorid";
+            this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUncheck = true;
             this.IsSupportUnclose = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
@@ -686,7 +797,9 @@
             this.UnApvChkValue = "Approved";
             this.UniqueExpress = "id";
             this.WorkAlias = "LocalPO";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.P30_FormClosing);
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -749,5 +862,14 @@
         private Win.UI.TextBox txtBuyer;
         private Win.UI.Label label3;
         private Win.UI.Button btnIrrPriceReason;
+        private Class.txtuser txtuserClose;
+        private Win.UI.DisplayBox displayCloseDate;
+        private Win.UI.Label label6;
+        private Win.UI.Label label7;
+        private Class.txtuser txtuserLock;
+        private Win.UI.DisplayBox displayLockDate;
+        private Win.UI.Label label4;
+        private Win.UI.Label label5;
+        private System.Windows.Forms.Button btnBatchApprove;
     }
 }
