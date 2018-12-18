@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSubprocess = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
@@ -39,7 +38,9 @@
             this.txtSewingLine = new Sci.Win.UI.TextBox();
             this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
             this.label2 = new Sci.Win.UI.Label();
-            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.labLocation = new Sci.Win.UI.Label();
+            this.txtLocation = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -54,7 +55,9 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.comboMDivision);
+            this.detailcont.Controls.Add(this.txtLocation);
+            this.detailcont.Controls.Add(this.labLocation);
+            this.detailcont.Controls.Add(this.txtfactory);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txtSewingLine);
             this.detailcont.Controls.Add(this.label1);
@@ -171,7 +174,7 @@
             this.txtSewingLine.Location = new System.Drawing.Point(135, 199);
             this.txtSewingLine.Name = "txtSewingLine";
             this.txtSewingLine.Size = new System.Drawing.Size(67, 23);
-            this.txtSewingLine.TabIndex = 4;
+            this.txtSewingLine.TabIndex = 3;
             this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLine_PopUp);
             this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLine_Validating);
             // 
@@ -186,20 +189,38 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(97, 23);
             this.label2.TabIndex = 5;
-            this.label2.Text = "M";
+            this.label2.Text = "Factory";
             // 
-            // comboMDivision
+            // txtfactory
             // 
-            this.comboMDivision.BackColor = System.Drawing.Color.White;
-            this.comboMDivision.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionID", true));
-            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboMDivision.FormattingEnabled = true;
-            this.comboMDivision.IsSupportUnselect = true;
-            this.comboMDivision.Location = new System.Drawing.Point(135, 245);
-            this.comboMDivision.Name = "comboMDivision";
-            this.comboMDivision.OldText = "";
-            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
-            this.comboMDivision.TabIndex = 6;
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory.FilteMDivision = true;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(135, 246);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 4;
+            // 
+            // labLocation
+            // 
+            this.labLocation.Location = new System.Drawing.Point(35, 290);
+            this.labLocation.Name = "labLocation";
+            this.labLocation.Size = new System.Drawing.Size(97, 23);
+            this.labLocation.TabIndex = 7;
+            this.labLocation.Text = "Location";
+            // 
+            // txtLocation
+            // 
+            this.txtLocation.BackColor = System.Drawing.Color.White;
+            this.txtLocation.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Location", true));
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocation.Location = new System.Drawing.Point(135, 290);
+            this.txtLocation.MaxLength = 50;
+            this.txtLocation.Name = "txtLocation";
+            this.txtLocation.Size = new System.Drawing.Size(201, 23);
+            this.txtLocation.TabIndex = 5;
             // 
             // B40
             // 
@@ -236,7 +257,9 @@
         private Win.UI.TextBox txtSewingLine;
         private Win.UI.Label label1;
         private Win.UI.ContextMenuStrip contextMenuStrip1;
-        private Class.comboMDivision comboMDivision;
         private Win.UI.Label label2;
+        private Win.UI.Label labLocation;
+        private Class.txtfactory txtfactory;
+        private Win.UI.TextBox txtLocation;
     }
 }
