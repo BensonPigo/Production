@@ -1,7 +1,7 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[insert_Air_Fir]    Script Date: 2018/12/13 下午 01:35:03 ******/
+/****** Object:  StoredProcedure [dbo].[insert_Air_Fir]    Script Date: 2018/12/18 上午 10:48:30 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -220,8 +220,19 @@ values(s.id,s.poid,s.seq1,s.seq2,s.InspDeadline)
 when not matched by source and t.id in (select deID from @tempAir where id is null)  then
 delete ;
 
+
+
 --------------FIR_Shadebone 
 RAISERROR('insert_Air_Fir - Starts',0,0)
+
+--FabricType = F才執行以下段落
+IF EXISTS(
+SELECT 1 
+FROM Receiving_Detail r
+INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+WHERE r.ID=@ID AND p.FabricType='F' 
+)
+BEGIN 
 
 SELECT   [FirID]=f.ID
 		,[Roll]=r.Roll
@@ -240,20 +251,23 @@ using(
 on t.ID=s.FirID AND t.Roll=s.Roll AND t.Dyelot=s.Dyelot 
 
 WHEN MATCHED THEN
-	 UPDATE SET t.TicketYds=s.StockQty 
+	 UPDATE SET t.TicketYds=s.StockQty ,t.EditName=@LoginID, t.EditDate=GETDATE()
 
 WHEN NOT MATCHED by TARGET THEN 
 	insert  ([ID]           ,[Roll]           ,[Dyelot]           ,[Scale]           ,[Inspdate]           ,[Inspector]           ,[Result]
             ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds])
 	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,''                ,NULL                 ,''                    ,''
 	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.StockQty )
+;
 
-WHEN NOT MATCHED by SOURCE AND t.ID NOT IN (SELECT ID FROM #tmp_Receiving)   THEN
-delete ;
+END
+
+------
 
 
 drop table #InspDeadLine
 drop table #tempTableAll
+drop table #tmp_Receiving
 
 END
 
