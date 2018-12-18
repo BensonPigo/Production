@@ -413,12 +413,16 @@ namespace Sci.Production.Quality
             //}
 
             //改為判斷 Result欄位是否全部 = '' 
-            int ResultEmptyCount = gridTb.Select("Result = ''").Count();
-
-            if (gridTb.Rows.Count==ResultEmptyCount)
+            if (this.btnEncode.Text == "Encode")
             {
-                MyUtility.Msg.WarningBox("Must inspection one fabric !!! ");
-                return;
+                int ResultEmptyCount = gridTb.Select("Result = ''").Count();
+
+                if (gridTb.Rows.Count == ResultEmptyCount)
+                {
+                    MyUtility.Msg.WarningBox("Must inspection one fabric !!! ");
+                    return;
+                }
+
             }
 
 
