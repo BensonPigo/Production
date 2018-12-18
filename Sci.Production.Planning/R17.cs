@@ -122,6 +122,7 @@ SELECT
 ,X = o.OrderTypeID
 ,Y = iif(ot.isDevSample = 1, 'Y', '')
 ,Z = c.alias
+,o.MDivisionID
 into #tmp
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN OrderType ot on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -200,7 +201,7 @@ where Order_QS.Qty > 0 and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and (o.Ju
                 strSQL += @"select * from (
 select * from #tmp 
 union all
-select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X, Y, Z
+select A, B, C, D, E, F, G, H, I, J, K = 0, L = 0, M = K - (L +M), N = '', O, P = 0, Q, R, S, T, U, V, W, X, Y, Z, MDivisionID
 from #tmp where (L +M) < K and I < G) as result
 order by D,E,K desc
  ";
@@ -219,7 +220,7 @@ order by D,E,K desc
                 #endregion Order Detail
 
                 #region SDP
-                strSQL = @" SELECT  '' AS A,  '' AS B, 0 AS C, 0 AS D, 0 AS E, 0.00 AS F FROM ORDERS WHERE 1 = 0 ";
+                strSQL = @" SELECT  '' AS A,  '' AS B, 0 AS C, 0 AS D, 0 AS E, 0.00 AS F, '' AS MDivisionID FROM ORDERS WHERE 1 = 0 ";
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSDP);
                 if (!result)
                 {
@@ -256,6 +257,7 @@ SELECT  '' AS A
 , '' AS X
 , '' AS Y
 , '' AS Z
+, '' AS MDivisionID
 FROM ORDERS
 WHERE 1 = 0 ";
                 result = DBProxy.Current.Select(null, strSQL, null, out this.gdtSP);
@@ -511,6 +513,7 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                         drSDP = this.gdtSDP.NewRow();
                         drSDP["A"] = drData["B"].ToString();
                         drSDP["B"] = drData["Z"].ToString(); // A
+                        drSDP["MDivisionID"] = drData["MDivisionID"].ToString(); // A
                         this.gdtSDP.Rows.Add(drSDP);
                         lstSDP.Add(drData["B"].ToString() + "___" + drData["Z"].ToString()); // A
                     }
@@ -707,10 +710,15 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
             {
                 Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
+                // order by M
+                this.gdtSDP = this.gdtSDP.AsEnumerable().OrderBy(s => s["MDivisionID"]).CopyToDataTable();
+
                 int intRowsCount = this.gdtSDP.Rows.Count;
                 int intRowsStart = 2; // 匯入起始位置
+                int mdivisionRowsStart = intRowsStart;
+                int preRowsStart = intRowsStart;
                 int rownum = intRowsStart; // 每筆資料匯入之位置
-                int intColumns = 6; // 匯入欄位數
+                int intColumns = 7; // 匯入欄位數
                 string[] aryAlpha = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
                 object[,] objArray = new object[1, intColumns]; // 每列匯入欄位區間
                 #region 將資料放入陣列並寫入Excel範例檔
@@ -730,19 +738,41 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     objArray[0, 3] = dr["D"];
                     objArray[0, 4] = dr["E"];
                     objArray[0, 5] = dr["F"];
+                    objArray[0, 6] = (decimal)dr["F"] >= 97 ? "PASS" : "FAIL";
 
-                    worksheet.Range[string.Format("A{0}:F{0}", rownum + i)].Value2 = objArray;
-                    worksheet.Cells[rownum + i, 6].NumberFormatLocal = "0.00";
+                    worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
+
+                    // insert by Mdivision Summary data
+                    string nextMdisvision = string.Empty;
+                    if ((i + 1) < intRowsCount)
+                    {
+                        nextMdisvision = (string)this.gdtSDP.Rows[i+1]["MdivisionID"];
+                    }
+
+                    if ((string)dr["MdivisionID"] != nextMdisvision)
+                    {
+                        objArray[0, 0] = string.Empty;
+                        objArray[0, 1] = string.Empty;
+                        objArray[0, 2] = $"=SUM(C{mdivisionRowsStart}:C{rownum + i})";
+                        objArray[0, 3] = $"=SUM(D{mdivisionRowsStart}:D{rownum + i})";
+                        objArray[0, 4] = $"=SUM(E{mdivisionRowsStart}:E{rownum + i})";
+                        rownum++;
+                        objArray[0, 5] = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + i);
+                        objArray[0, 6] = (decimal)dr["F"] >= 97 ? "PASS" : "FAIL";
+                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Interior.Color = Color.FromArgb(230, 255, 204);
+                        mdivisionRowsStart = rownum + i + 1;
+                    }
                 }
 
                 if (intRowsCount > 0)
                 {
-                    worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount)].Value2 = "Total";
+                    worksheet.Range[string.Format("A{0}:A{0}", rownum + intRowsCount)].Value2 = "G. TTL.";
                     worksheet.Range[string.Format("C{0}:C{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("C{0}:C{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("D{0}:D{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("D{0}:D{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("E{0}:E{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
-                    worksheet.Cells[rownum + intRowsCount, 6].NumberFormatLocal = "0.00";
+                    worksheet.Cells[rownum + intRowsCount, 7] = $"=IF(F{rownum + intRowsCount}>=97,\"PASS\",\"FAIL\")";
                 }
                 #endregion
 
