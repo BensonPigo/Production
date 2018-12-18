@@ -34,10 +34,14 @@
     [CFAInspDate]        DATE           NULL,
     [ScanName]           VARCHAR (10)   DEFAULT ('') NULL,
     [CustCTN]            VARCHAR (30)   DEFAULT ('') NOT NULL,
-    [DRYReceiveDate] DATE NULL, 
-    [ActCTNWeight] NUMERIC(7, 3) NULL, 
+    [DRYReceiveDate]     DATE           NULL,
+    [EditLocationDate]   DATETIME       NULL,
+    [ActCTNWeight]       NUMERIC (7, 3) NULL,
+    [EditLocationName]   VARCHAR (10)   NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -226,11 +230,13 @@ CREATE NONCLUSTERED INDEX [IN,CTNStartNo]
 
 
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'實際箱子總重',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'PackingList_Detail',
-    @level2type = N'COLUMN',
-    @level2name = N'ActCTNWeight'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��ڽc�l�`��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'ActCTNWeight';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後更新Location人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditLocationName';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ץ�location�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditLocationDate';
+
