@@ -1665,6 +1665,77 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
             base.ClickEditAfter();
         }
 
+        /// <summary>
+        /// 刪除Receiving_Detail同時，如果FabricType=F，同時刪除FIR_Shadebone
+        /// </summary>
+        /// <returns></returns>
+        protected override DualResult ClickSave()
+        {
+            DataTable dt = (DataTable)detailgridbs.DataSource;
+            DualResult result=null;
+
+            using (TransactionScope _TransactionScope = new TransactionScope())
+            {
+                try
+                {
+                    for (int i = 0; i < ((DataTable)detailgridbs.DataSource).Rows.Count;)
+                    {
+                        DataRow dr = ((DataTable)detailgridbs.DataSource).Rows[i];
+
+                        if (dr.RowState == DataRowState.Deleted)
+                        {
+                            string Roll = dr["Roll", DataRowVersion.Original].ToString();
+                            string Dyelot = dr["Dyelot", DataRowVersion.Original].ToString();
+
+                            //判斷FabricType = F，才能刪除FIR_Shadebone
+
+                            string sqlCmd = $@"
+                                            SELECT  r.*,p.FabricType
+                                            FROM Receiving_Detail r
+                                            INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+                                            WHERE r.ID='{this.CurrentMaintain["ID"]}' AND Roll='{Roll}' AND Dyelot='{Dyelot}'  AND p.FabricType='F'
+                                            ";
+                            DataTable tmpdt;
+                            DBProxy.Current.Select(null, sqlCmd, out tmpdt);
+
+                            if (tmpdt.Rows.Count> 0)
+                            {
+                                string FIR_ID = MyUtility.GetValue.Lookup($"select TOP 1 f.id from dbo.Receiving_Detail r INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2 WHERE r.id = '{this.CurrentMaintain["ID"]}' AND r.Roll='{Roll}' AND r.Dyelot='{Dyelot}'");
+
+                                result = DBProxy.Current.Execute(null, $"DELETE FROM FIR_Shadebone WHERE ID ={FIR_ID} AND Roll='{Roll}' AND Dyelot='{Dyelot}'");
+
+                                if (!result)
+                                {
+                                    _TransactionScope.Dispose();
+                                    break;
+                                }
+                            }
+
+
+                            dr.Delete();
+                        }
+                        i++;
+                    }
+
+                    result = base.ClickSave();
+                    if (!result)
+                    {
+                        _TransactionScope.Dispose();
+                    }
+
+                    _TransactionScope.Complete();
+                }
+                catch (Exception ex)
+                {
+                    _TransactionScope.Dispose();
+                    ShowErr(ex);
+                }
+            }
+
+
+            return result;
+        }
+
         protected override void ClickSaveAfter()
         {
             foreach (DataGridViewColumn index in detailgrid.Columns) { index.SortMode = DataGridViewColumnSortMode.Automatic; }
