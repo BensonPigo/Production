@@ -1010,7 +1010,6 @@ With SubProcess  as (
         FROM ArtworkType WITH (NOLOCK) 
         WHERE   ArtworkUnit <> '' 
                 and Classify in ({0}) 
-                and Junk = 0
         
         union all
         SELECT  ID
@@ -1024,7 +1023,6 @@ With SubProcess  as (
         FROM ArtworkType WITH (NOLOCK) 
         WHERE   ProductionUnit <> '' 
                 and Classify in ({0}) 
-                and Junk = 0
         
         union all
         SELECT  ID
@@ -1039,7 +1037,6 @@ With SubProcess  as (
         WHERE   ArtworkUnit = '' 
                 and ProductionUnit = '' 
                 and Classify in ({0}) 
-                and Junk = 0
         {1}
     ) a
 ), TTL_Subprocess as (
