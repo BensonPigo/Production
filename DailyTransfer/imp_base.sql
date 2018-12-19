@@ -3035,7 +3035,8 @@ when matched then
 	t.AddDate= s.AddDate,
 	t.EditName= s.EditName,
 	t.EditDate= s.EditDate,
-	t.BCSDate= s.BCSDate
+	t.BCSDate= s.BCSDate,
+	t.InOutRule  = s.InOutRule 
 when not matched by target then
 	insert(ID
 	,ArtworkTypeId
@@ -3049,6 +3050,7 @@ when not matched by target then
 	,EditName
 	,EditDate
 	,BCSDate
+	,InOutRule 
 	)
 	values(s.ID,
 	s.ArtworkTypeId,
@@ -3061,7 +3063,8 @@ when not matched by target then
 	s.AddDate,
 	s.EditName,
 	s.EditDate,
-	s.BCSDate)
+	s.BCSDate,
+	s.InOutRule)
 when not matched by source then 
 	delete;	
 
