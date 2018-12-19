@@ -745,7 +745,10 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
-            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}' AND Result!= '' ", ID), out dt))
+            if (xresult = DBProxy.Current.Select("Production", string.Format(@"
+select Roll,Dyelot,TicketYds,Scale,Result
+,[Inspdate]=convert(varchar,Inspdate, 111) 
+,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}' AND Result!= '' ", ID), out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -774,33 +777,44 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 }
             }
             #endregion
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_ShadeBone_Report.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_ShadeBand_Report.xltx"); //預先開啟excel app
             objApp.Visible = false;
-            MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_ShadeBone_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_ShadeBand_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = displaySP.Text.ToString();
             objSheets.Cells[2, 4] = displaySEQ.Text.ToString();
             objSheets.Cells[2, 6] = displayColor.Text.ToString();
             objSheets.Cells[2, 8] = displayStyle.Text.ToString();
             objSheets.Cells[2, 10] = SeasonID;
-            objSheets.Cells[3, 2] = displaySCIRefno.Text.ToString();
+
+            string MCHandle = MyUtility.GetValue.Lookup($"SELECT MCHandle FROM Orders WHERE ID='{displaySP.Text.ToString()}'");
+            objSheets.Cells[3, 2] = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{MCHandle}')");
+
             objSheets.Cells[3, 4] = ContinuityEncode;
             objSheets.Cells[3, 6] = displayResult.Text.ToString();
-            objSheets.Cells[3, 8] = dateLastInspectionDate.Value;
+            objSheets.Cells[3, 8] = dateLastInspectionDate.Value.HasValue ? dateLastInspectionDate.Value.Value.ToString("yyyy/MM/dd") : "";
             objSheets.Cells[3, 10] = displayBrand.Text.ToString();
             objSheets.Cells[4, 2] = displayRefno.Text.ToString();
             objSheets.Cells[4, 4] = displayArriveQty.Text.ToString();
-            objSheets.Cells[4, 6] = dateArriveWHDate.Value;
+            objSheets.Cells[4, 6] = dateArriveWHDate.Value.HasValue ? dateArriveWHDate.Value.Value.ToString("yyyy/MM/dd") : "";
             objSheets.Cells[4, 8] = txtsupplier.DisplayBox1.Text.ToString();
             objSheets.Cells[4, 10] = displayWKNo.Text.ToString();
 
             objSheets.Range[String.Format("A6:J{0}", dt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
 
+
+            //合併儲存格
+            for (int i = 1; i <= dt.Rows.Count; i++)
+            {
+                objSheets.Range[String.Format("H{0}:J{0}",(i+5).ToString())].Merge(Type.Missing);
+            }
+           
+
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save Excel
-            excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_ShadeBond");
+            excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_ShadeBand");
             objApp.ActiveWorkbook.SaveAs(excelFile);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
