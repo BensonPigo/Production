@@ -137,11 +137,11 @@ Select
     b.Cdate,
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
-	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(abs(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,'')))/24.0,2))
-					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(abs(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,'')))/24.0,2))
+	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
+					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,''))/24.0,2))
 					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
-					when s.InOutRule = 3 then iif(bio.OutGoing is null or bio.InComing is null, null, round(abs(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,'')))/24.0,2))
-					when s.InOutRule = 4 then iif(bio.OutGoing is null or bio.InComing is null, null, round(abs(Datediff(Hour,isnull(bio.OutGoing,''),isnull(bio.InComing,'')))/24.0,2))
+					when s.InOutRule = 3 then iif(bio.OutGoing is null or bio.InComing is null, null, round(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,''))/24.0,2))
+					when s.InOutRule = 4 then iif(bio.OutGoing is null or bio.InComing is null, null, round(Datediff(Hour,isnull(bio.OutGoing,''),isnull(bio.InComing,''))/24.0,2))
 					end,
 	TimeRangeFail = case	when s.InOutRule = 1 and bio.InComing is null then 'No Scan'
 						when s.InOutRule = 2 and bio.OutGoing is null then 'No Scan'
@@ -221,6 +221,7 @@ select
     r.[Out (Time)],
 	r.AvgTime,
     [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
+                        when AvgTime < 0 then 'Not Valid'
 						when AvgTime >= 0 and AvgTime < 1 then '<1'
 						when AvgTime >= 1 and AvgTime < 2 then '1-2'
 						when AvgTime >= 2 and AvgTime < 3 then '2-3'
