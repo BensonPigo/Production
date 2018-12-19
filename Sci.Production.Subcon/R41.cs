@@ -109,12 +109,6 @@ namespace Sci.Production.Subcon
 
             #region sqlcmd
             string sqlCmd = $@"
-select  MDivisionID,
-        ProcessId, 
-	    [InOutType] = iif(sum(cast(type as int)) > 2 ,3,sum(cast(type as int))) 
-into #SubProcessInOutType
-from (select distinct  MDivisionID,ProcessId,Type from RFIDReader) a group by MDivisionID,ProcessId
-
 Select 
     [Bundleno] = bd.BundleNo,
     [Cut Ref#] = isnull(b.CutRef,''),
@@ -143,16 +137,25 @@ Select
     b.Cdate,
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
-	AvgTime = case when spio.InOutType = 1 then iif(bio.InComing is null, '', Cast(round(abs(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,'')))/24.0,2) as varchar))
-					when spio.InOutType = 2 then iif(bio.OutGoing is null, '', Cast(round(abs(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,'')))/24.0,2) as varchar))
-					when spio.InOutType = 3 then iif(bio.OutGoing is null or bio.InComing is null, '', Cast(round(abs(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,'')))/24.0,2) as varchar))
-					else  '--' end
+	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(abs(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,'')))/24.0,2))
+					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(abs(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,'')))/24.0,2))
+					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
+					when s.InOutRule = 3 then iif(bio.OutGoing is null or bio.InComing is null, null, round(abs(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,'')))/24.0,2))
+					when s.InOutRule = 4 then iif(bio.OutGoing is null or bio.InComing is null, null, round(abs(Datediff(Hour,isnull(bio.OutGoing,''),isnull(bio.InComing,'')))/24.0,2))
+					end,
+	TimeRangeFail = case	when s.InOutRule = 1 and bio.InComing is null then 'No Scan'
+						when s.InOutRule = 2 and bio.OutGoing is null then 'No Scan'
+						when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then 'No Scan'
+						when s.InOutRule = 3 and (bio.OutGoing is null or bio.InComing is null) then 'Not Valid'
+						when s.InOutRule = 4 and (bio.OutGoing is null or bio.InComing is null) then 'Not Valid'
+						else '' end,
+	s.InOutRule
 into #result
 from Bundle b WITH (NOLOCK) 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
 outer apply(
-    select s.ID
+    select s.ID,s.InOutRule
     from SubProcess s
         where exists (
                         select 1 from Bundle_Detail_Art bda
@@ -162,7 +165,6 @@ outer apply(
                         ) or s.IsRFIDDefault = 1
 ) s
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-left join #SubProcessInOutType spio on s.ID = spio.ProcessId and b.MDivisionID = spio.MDivisionID
 outer apply(
 	    select sub= stuff((
 		    Select distinct concat('+', bda.SubprocessId)
@@ -218,13 +220,26 @@ select
     r.[InComing],
     r.[Out (Time)],
 	r.AvgTime,
+    [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
+						when AvgTime >= 0 and AvgTime < 1 then '<1'
+						when AvgTime >= 1 and AvgTime < 2 then '1-2'
+						when AvgTime >= 2 and AvgTime < 3 then '2-3'
+						when AvgTime >= 3 and AvgTime < 4 then '3-4'
+						when AvgTime >= 4 and AvgTime < 5 then '4-5'
+						when AvgTime >= 5 and AvgTime < 10 then '5-10'
+						when AvgTime >= 10 and AvgTime < 20 then '10-20'
+						when AvgTime >= 20 and AvgTime < 30 then '20-30'
+						when AvgTime >= 30 and AvgTime < 40 then '30-40'
+						when AvgTime >= 40 and AvgTime < 50 then '40-50'
+						when AvgTime >= 50 and AvgTime < 60 then '50-60'
+						else '>60' end,
     gcd.EstCutDate,
     gcd.CuttingOutputDate
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc
 
-drop table #SubProcessInOutType,#result
+drop table #result
 ";
 
             #endregion
@@ -235,7 +250,7 @@ drop table #SubProcessInOutType,#result
 select ct = count(1)
 from #result
 
-drop table #SubProcessInOutType,#result
+drop table #result
 ";
             DataTable groupByDt;
             DualResult result = DBProxy.Current.Select(null, cmdct, out groupByDt);
