@@ -1706,7 +1706,13 @@ where   orders.id='{0}'
                 }
                 return;
             }
-            Detail_Reload();
+           DualResult result= Detail_Reload();
+
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox(result.ToString());
+                return;
+            }
             Ismatrix_Reload = true;
             matrix_Reload();
             detailgridbs.Position = 0;
@@ -1782,6 +1788,12 @@ where   b.ID = '{1}'
         and m.IssueType = 'Sewing' 
         and b.Junk != 1
 order by b.ID, b.seq1, b.seq2", Sci.Env.User.Keyword, this.poid, 0), out subData);
+
+            if (subData.Rows.Count ==0 )
+            {
+                txtOrderID.Text = "";
+                return Result.F("No PO Data !");
+            }
             //將資料塞入表身
             foreach (DataRow dr in subData.Rows)
             {
