@@ -63,7 +63,7 @@ FROM (
     FROM InvTrans Inv WITH (NOLOCK) 
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
-    INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+    LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}' 
@@ -100,7 +100,7 @@ FROM (
     FROM InvTrans inv WITH (NOLOCK) 
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
-	INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+	LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}'
@@ -137,7 +137,7 @@ FROM (
     FROM InvTrans inv WITH (NOLOCK) 
     inner join Po_Supp_Detail po on inv.InventoryPoid = po.id and inv.InventorySeq1 = po.seq1 and inv.InventorySeq2 = po.seq2
     left join invtransReason WITH (NOLOCK) on inv.reasonid = invtransreason.id
-	INNER JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
+	LEFT JOIN TPEPASS1 WITH (NOLOCK) ON inv.ConfirmHandle = TPEPASS1.ID
     WHERE   inv.InventoryPOID ='{0}'
             and inv.InventorySeq1 = '{1}'
             and inv.InventorySeq2 = '{2}'
