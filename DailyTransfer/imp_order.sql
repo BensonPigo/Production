@@ -1528,7 +1528,7 @@ BEGIN
 
 		----------------------[Order_ECMNFailed]
 		Merge Production.dbo.[Order_ECMNFailed] t
-		using Trade_To_Pms.dbo.[Order_ECMNFailed] s
+		using (select a.* from Trade_To_Pms.dbo.Order_ECMNFailed a WITH (NOLOCK) inner join #TOrder b on a.id=b.id) as s
 		on t.id = s.id and t.type = s.type
 			when matched  then	update set 
 				 t.[KPIFailed]		=s.[KPIFailed]		
