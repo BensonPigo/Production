@@ -9,6 +9,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using Sci.Production.PublicForm;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -725,6 +726,85 @@ and s.StyleUnit='PCS'
                     return false;
                 }
 
+            #endregion
+
+            #region Total GSD 檢查
+
+            // 先取得 Style.Ukey
+            List<SqlParameter> parameters = new List<SqlParameter>() {
+                new SqlParameter() { ParameterName = "@id",Value = this.CurrentMaintain["StyleID"].ToString()},
+                new SqlParameter() { ParameterName = "@seasonid",Value = this.CurrentMaintain["SeasonID"].ToString()},
+                new SqlParameter() { ParameterName = "@brandid",Value = this.CurrentMaintain["BrandID"].ToString()}
+            };
+            sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
+            DataTable styleDT;
+            result = DBProxy.Current.Select(null, sqlCmd, parameters, out styleDT);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
+                return false;
+            }
+
+            long styleUkey = 0;
+            if (styleDT.Rows.Count > 0)
+            {
+                styleUkey = MyUtility.Convert.GetLong(styleDT.Rows[0]["UKey"]);
+
+                DataTable IETMS_Summary;
+                sqlCmd = $@"
+                        select  i.Location, i.ArtworkTypeID,
+	                        type = iif(i.Location = 'T','Top',iif(i.Location = 'B','Bottom',iif(i.Location = 'I','Inner',iif(i.Location = 'O','Outer','')))),
+	                        tms = CEILING(sum(i.ProSMV) * 60)
+                        from IETMS_Summary i
+                        where i.IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{styleUkey}')
+                        group by i.Location,i.ArtworkTypeID
+                        ";
+                result = DBProxy.Current.Select(null, sqlCmd, out IETMS_Summary);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
+                }
+
+                // 若舊資料IETMS_Summary沒有資料
+                if (IETMS_Summary.Rows.Count == 0)
+                {
+                    sqlCmd = $@"
+                        select id.Location,M.ArtworkTypeID,
+                        iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
+                        round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
+                        from Style s WITH (NOLOCK) 
+                        inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+                        inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
+                        inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
+                        inner join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
+                        where s.Ukey = {styleUkey}
+                        group by id.Location,M.ArtworkTypeID
+                        ";
+                    result = DBProxy.Current.Select(null, sqlCmd, out IETMS_Summary);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
+                    }
+                }
+
+                decimal totalSewingTime = Convert.ToDecimal(this.CurrentMaintain["TotalSewingTime"]);
+                decimal totalGSD = 0;
+                if (IETMS_Summary.Rows.Count > 0)
+                {
+                     totalGSD = Convert.ToDecimal(IETMS_Summary.Compute("sum(tms)", string.Empty));
+                }
+
+                if (totalSewingTime > totalGSD)
+                {
+                    MyUtility.Msg.WarningBox("Factory GSD cannot over than total CPU TMS of Std. GSD list button.");
+                    return false;
+                }
+
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Style not found!!");
+            }
             #endregion
 
             // 回寫表頭的Total Sewing Time與表身的Sewer
