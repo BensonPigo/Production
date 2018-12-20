@@ -686,7 +686,7 @@
     <None Include="XLT\Quality_P01_Physical_Inspection_Report.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="XLT\Quality_P01_ShadeBone_Report.xltx">
+    <None Include="XLT\Quality_P01_ShadeBand_Report.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="XLT\Quality_P01_Weight_Report.xltx">
