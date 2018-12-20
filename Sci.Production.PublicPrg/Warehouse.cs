@@ -463,7 +463,7 @@ where  t.ukey = (select distinct ukey from #tmp_L_K where t.Ukey = Ukey)
 
 merge dbo.ftyinventory_detail as t
 using #tmp_L_K as s on t.ukey = s.ukey and isnull(t.mtllocationid,'') = isnull(s.tolocation,'')
-when not matched then
+when not matched AND s.Ukey IS NOT NULL then
     insert ([ukey],[mtllocationid]) 
        values (s.ukey,isnull(s.tolocation,''));
 
