@@ -250,7 +250,7 @@ drop table #bas
             this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource2.DataMember = "rel1";
             this.grid1.AutoResizeColumns();
-            this.grid1.Columns["Description"].Width = 100;
+
             this.grid2.AutoResizeColumns();
             if (msg.Count > 0)
             {
