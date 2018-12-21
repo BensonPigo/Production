@@ -728,6 +728,12 @@ and s.StyleUnit='PCS'
 
             #endregion
 
+            // 回寫表頭的Total Sewing Time與表身的Sewer
+            decimal ttlSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(SMV)", string.Empty));
+            this.CurrentMaintain["TotalSewingTime"] = Convert.ToInt32(ttlSewingTime); // MyUtility.Convert.GetInt(ttlSewingTime);
+            string totalSewing = this.CurrentMaintain["TotalSewingTime"].ToString();
+            this.numTotalSewingTimePc.Text = totalSewing;
+
             #region Total GSD 檢查
 
             // 先取得 Style.Ukey
@@ -787,11 +793,12 @@ and s.StyleUnit='PCS'
                     }
                 }
 
-                decimal totalSewingTime = Convert.ToDecimal(this.CurrentMaintain["TotalSewingTime"]);
+                // Total Sewing Time重新計算過再來比
+                decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)); ;
                 decimal totalGSD = 0;
                 if (IETMS_Summary.Rows.Count > 0)
                 {
-                     totalGSD = Convert.ToDecimal(IETMS_Summary.Compute("sum(tms)", string.Empty));
+                    totalGSD = Convert.ToDecimal(IETMS_Summary.Compute("sum(tms)", string.Empty));
                 }
 
                 if (totalSewingTime > totalGSD)
@@ -807,11 +814,6 @@ and s.StyleUnit='PCS'
             }
             #endregion
 
-            // 回寫表頭的Total Sewing Time與表身的Sewer
-            decimal ttlSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("sum(SMV)", string.Empty));
-            this.CurrentMaintain["TotalSewingTime"] = Convert.ToInt32(ttlSewingTime); // MyUtility.Convert.GetInt(ttlSewingTime);
-            string totalSewing = this.CurrentMaintain["TotalSewingTime"].ToString();
-            this.numTotalSewingTimePc.Text = totalSewing;
             decimal allSewer = MyUtility.Check.Empty(this.CurrentMaintain["NumberSewer"]) ? 0.0m : MyUtility.Convert.GetDecimal(this.CurrentMaintain["NumberSewer"]);
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
