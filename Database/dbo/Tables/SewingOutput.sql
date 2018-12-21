@@ -146,3 +146,7 @@ GO
 CREATE NONCLUSTERED INDEX [line]
     ON [dbo].[SewingOutput]([SewingLineID] ASC);
 
+GO
+CREATE NONCLUSTERED INDEX [IX_SewingOutput_OutputDate]
+	ON [dbo].[SewingOutput] ([OutputDate])
+	INCLUDE ([ID],[Shift],[FactoryID],[MDivisionID],[Category],[SubconOutFty])

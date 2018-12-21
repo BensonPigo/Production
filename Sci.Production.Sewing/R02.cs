@@ -748,7 +748,10 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, ''))
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
@@ -757,7 +760,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2) 
+           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
@@ -770,7 +773,7 @@ tmpAllSubprocess as(
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
 )
 select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Price), 0)
+	   , Price = isnull(sum(Round(Price,t1.DecimalNumber)), 0)
 	   , rs
 from tmpArtwork t1
 left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
@@ -804,7 +807,10 @@ order by t1.ID"),
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, ''))
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
@@ -813,7 +819,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2)
+           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
            , a.Program 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
@@ -825,7 +831,7 @@ tmpAllSubprocess as(
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.Program
 )
 select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Price), 0)
+	   , Price = isnull(sum(Round(Price,t1.DecimalNumber)), 0)
 	   , rs
        , [Company] = t2.Program
 from tmpArtwork t1
@@ -860,7 +866,10 @@ order by t1.ID"),
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, ''))
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
@@ -869,7 +878,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2)
+           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
            , a.SubconOutFty 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
@@ -881,7 +890,7 @@ tmpAllSubprocess as(
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.SubconOutFty
 )
 select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Price), 0)
+	   , Price = isnull(sum(Round(Price,t1.DecimalNumber)), 0)
 	   , rs
        , [Company] = t2.SubconOutFty
 from tmpArtwork t1
