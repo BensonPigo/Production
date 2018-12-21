@@ -15,13 +15,12 @@ namespace Sci.Production.Subcon
 {
     public partial class P01_BatchApprove : Sci.Win.Subs.Base
     {
-        Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
-        Action aa;
-        public P01_BatchApprove(Action aa)
+        Action delegateAct;
+        public P01_BatchApprove(Action reload)
         {
             InitializeComponent();
             this.EditMode = true;
-            this.aa = aa;
+            this.delegateAct = reload;
         }
 
         protected override void OnFormLoaded()
@@ -31,7 +30,7 @@ namespace Sci.Production.Subcon
             this.gridArtworkPO.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridArtworkPO.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridArtworkPO)
-                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk) 
+                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                  .Text("ID", header: "PO#", width: Widths.AnsiChars(15), iseditingreadonly :true)
                  .Text("FactoryId", header: "Factory", width: Widths.AnsiChars(20), iseditingreadonly: true)
                  .Date("IssueDate", header: "Issue Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -66,7 +65,9 @@ namespace Sci.Production.Subcon
         }
 
         private void Query()
-        {            
+        {
+            listControlBindingSource1.DataSource = null;
+            listControlBindingSource2.DataSource = null;
             DataSet ds = null;
             DataRelation relation;
             string sqlCmd = string.Empty; 
@@ -138,7 +139,7 @@ namespace Sci.Production.Subcon
             DualResult result;
             string sqlcmd = string.Empty;
 
-            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return;
+            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0) return; 
 
             var query = dt.AsEnumerable().Where(x => x["Selected"].EqualString("1")).Select(x => x.Field<string>("ID"));
             if (query.Count() == 0) {
@@ -157,7 +158,7 @@ namespace Sci.Production.Subcon
 
             Query();
             MyUtility.Msg.WarningBox("Sucessful");
-            this.aa();
+            this.delegateAct();
         }
 
         private void btnToExcel_Click(object sender, EventArgs e)
