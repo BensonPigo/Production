@@ -794,7 +794,7 @@ and s.StyleUnit='PCS'
                 }
 
                 // Total Sewing Time重新計算過再來比
-                decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty)); ;
+                decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty));
                 decimal totalGSD = 0;
                 if (IETMS_Summary.Rows.Count > 0)
                 {
