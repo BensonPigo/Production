@@ -59,6 +59,12 @@ namespace Sci.Production.Shipping
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
                 ;
 
+
+            for (int i = 0; i < this.grid2.Columns.Count; i++)
+            {
+                this.grid2.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
             this.Query();
         }
 
