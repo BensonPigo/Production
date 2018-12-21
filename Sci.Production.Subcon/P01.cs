@@ -704,8 +704,18 @@ where  apd.id = '{0}' and apd.ukey = '{1}'
 
         public void reload()
         {
-            this.ReloadDatas();
-            this.RenewData();
+            if (this.CurrentDataRow != null)
+            {
+                string idIndex = string.Empty;
+                if (!MyUtility.Check.Empty(CurrentMaintain)) {
+                    if (!MyUtility.Check.Empty(CurrentMaintain["id"])) {
+                        idIndex = MyUtility.Convert.GetString(CurrentMaintain["id"]);
+                    }
+                }
+                this.ReloadDatas();
+                this.RenewData();
+                if (!MyUtility.Check.Empty(idIndex)) this.gridbs.Position = this.gridbs.Find("ID", idIndex);
+            } 
         }
 
         private void P01_FormClosing(object sender, FormClosingEventArgs e)
