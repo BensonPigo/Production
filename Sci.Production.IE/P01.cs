@@ -758,52 +758,29 @@ and s.StyleUnit='PCS'
 
                 DataTable IETMS_Summary;
                 sqlCmd = $@"
-                        select  i.Location, i.ArtworkTypeID,
-	                        type = iif(i.Location = 'T','Top',iif(i.Location = 'B','Bottom',iif(i.Location = 'I','Inner',iif(i.Location = 'O','Outer','')))),
-	                        tms = CEILING(sum(i.ProSMV) * 60)
-                        from IETMS_Summary i
-                        where i.IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{styleUkey}')
-                        group by i.Location,i.ArtworkTypeID
-                        ";
+select ProductionCpuTms =  CEILING(sum(iif(a.IsTTLTMS = 1, IES.ProSMV,0))*60)
+from Style s WITH (NOLOCK) 
+left join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+left join IETMS_Summary IES on IES.IETMSUkey = i.Ukey
+left join ArtworkType a WITH (NOLOCK) on ies.ArtworkTypeID = a.ID
+where s.Ukey = {styleUkey}";
                 result = DBProxy.Current.Select(null, sqlCmd, out IETMS_Summary);
                 if (!result)
                 {
                     MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
                 }
 
-                // 若舊資料IETMS_Summary沒有資料
-                if (IETMS_Summary.Rows.Count == 0)
-                {
-                    sqlCmd = $@"
-                        select id.Location,M.ArtworkTypeID,
-                        iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-                        round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
-                        from Style s WITH (NOLOCK) 
-                        inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-                        inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
-                        inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
-                        inner join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
-                        where s.Ukey = {styleUkey}
-                        group by id.Location,M.ArtworkTypeID
-                        ";
-                    result = DBProxy.Current.Select(null, sqlCmd, out IETMS_Summary);
-                    if (!result)
-                    {
-                        MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
-                    }
-                }
-
                 // Total Sewing Time重新計算過再來比
                 decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty));
-                decimal totalGSD = 0;
+                decimal totalCPUTMS = 0;
                 if (IETMS_Summary.Rows.Count > 0)
                 {
-                    totalGSD = Convert.ToDecimal(IETMS_Summary.Compute("sum(tms)", string.Empty));
+                    totalCPUTMS = Convert.ToDecimal(IETMS_Summary.Compute("sum(ProductionCpuTms)", string.Empty));
                 }
 
-                if (totalSewingTime > totalGSD)
+                if (totalSewingTime > totalCPUTMS)
                 {
-                    MyUtility.Msg.WarningBox("Factory GSD cannot over than total CPU TMS of Std. GSD list button.");
+                    MyUtility.Msg.WarningBox($"Total sewing time can't more than total CPU TMS ({totalCPUTMS}) of Std.GSD.");
                     return false;
                 }
 
