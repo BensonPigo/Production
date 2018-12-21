@@ -177,6 +177,8 @@ select t.FactoryID
 	   , Balance= td.AllowanceQty - CEILING (td.TotalQty * est.Allowance)
        , td.UseStockQty
        , td.PurchaseQty
+       , isnull(ts.NewCone,0) NewCone
+	   , isnull(ts.UsedCone,0) UsedCone
 from dbo.ThreadRequisition t WITH (NOLOCK) 
 inner join dbo.ThreadRequisition_Detail td WITH (NOLOCK) on td.orderid = t.OrderID
 left join dbo.orders o WITH (NOLOCK) on o.id = t.OrderID
@@ -196,6 +198,12 @@ Outer apply
   group by Article,OrderQty
   ) as tdc
 ) as tdc
+outer apply
+(
+	select sum(NewCone) NewCone,sum(UsedCone)UsedCone 
+	from ThreadStock
+	where Refno=td.Refno and ThreadColorID=td.ThreadColorID
+)ts
 {sqlWhere}
 {order}";
 
