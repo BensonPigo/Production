@@ -318,7 +318,7 @@ namespace Sci.Production.Subcon
             try
             {
 
-                if (!SQL.Selects("", sqlCmd, out LocalPOs_And_Details))
+                 if (!SQL.Selects("", sqlCmd, out LocalPOs_And_Details))
                 {
                     MyUtility.Msg.WarningBox(sqlCmd, "Query error!!");
                     return;
