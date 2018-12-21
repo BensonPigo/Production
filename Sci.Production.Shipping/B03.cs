@@ -236,7 +236,8 @@ namespace Sci.Production.Shipping
             base.OnFormLoaded();
             this.queryfors.SelectedIndexChanged += (s, e) =>
             {
-                switch (this.queryfors.SelectedValue)
+                string hasJunk = MyUtility.Check.Empty(this.queryfors.SelectedValue) ? string.Empty : this.queryfors.SelectedValue.ToString();
+                switch (hasJunk)
                 {
                     case "0":
                         this.DefaultWhere = "JUNK = 0";
