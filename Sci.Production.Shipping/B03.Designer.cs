@@ -348,6 +348,7 @@
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ShipExpense";
+            this.FormLoaded += new System.EventHandler(this.B03_FormLoaded);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B03_FormClosing);
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchApprove, 0);
