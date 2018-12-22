@@ -1,4 +1,5 @@
 ﻿
+
 -- =============================================
 -- Author:		<Alger Song>
 -- Create date: <2017/01/24>
@@ -47,7 +48,7 @@ BEGIN
 	--宣告變數: 記錄程式中的資料
 	DECLARE @factoryid VARCHAR(8), --工廠別
 			@sewinglineid VARCHAR(2), --Sewing Line ID
-			@inline DATETIME, --上線日 
+			@inline DATETIME, --上線日
 			@apsno INT, --APS系統Sewing Schedule的ID
 			@combotype VARCHAR(1), --組合型態
 			@alloqty INT, --生產數量
@@ -100,8 +101,8 @@ BEGIN
 										SET @type = 'N'
 										update ChgOver set Type = 'R' where ID = @chgoverid
 									END
-								insert into ChgOver (OrderID,ComboType,FactoryID,StyleID,SeasonID,SewingLineID,CDCodeID,Inline,TotalSewingTime,AlloQty,StandardOutput,Type,Status,AddDate,MDivisionID)
-								values (@orderid,@combotype,@factoryid,@styleid,@seasonid,@sewinglineid,@cdcodeid,@inline,@ttlsewingtime,@alloqty,@stdoutput,@type,'NEW',GETDATE(),@MDivisionID)
+								insert into ChgOver (OrderID,ComboType,FactoryID,APSNo,StyleID,SeasonID,SewingLineID,CDCodeID,Inline,TotalSewingTime,AlloQty,StandardOutput,Type,Status,AddDate,MDivisionID)
+								values (@orderid,@combotype,@factoryid,@apsno,@styleid,@seasonid,@sewinglineid,@cdcodeid,@inline,@ttlsewingtime,@alloqty,@stdoutput,@type,'NEW',GETDATE(),@MDivisionID)
 							END
 					END
 			END
@@ -130,8 +131,8 @@ BEGIN
 						   when b.ProductionType = b.LastProdType and b.FabricType = b.LastFabType then 'D'
 						   else ''
 					  end) as Category
-		  from (select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline) as LastProdType,
-					LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline) as LastFabType
+		  from (select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastProdType,
+					LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastFabType
 				from (select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
 						  isnull(case when co.ComboType = 'T' then cc.TopProductionType when co.ComboType = 'B' then cc.BottomProductionType when co.ComboType = 'I' then cc.InnerProductionType when co.ComboType = 'O' then cc.OuterProductionType else '' end,'') as ProductionType,
 						  isnull(case when co.ComboType = 'T' then cc.TopFabricType when co.ComboType = 'B' then cc.BottomFabricType when co.ComboType = 'I' then cc.InnerFabricType when co.ComboType = 'O' then cc.OuterFabricType else '' end,'') as FabricType
