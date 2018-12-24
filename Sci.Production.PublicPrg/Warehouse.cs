@@ -307,12 +307,12 @@ using #tmpS1 as s
 when matched then
     update
     set inqty = isnull(inqty,0.00) + s.qty,
-         Lock ={MtlAutoLock}
+         Lock = iif((select seq1 from PO_Supp_Detail psd where psd.id = s.poid and psd.seq1 = s.seq1 and psd.seq2 = s.seq2)<'70',{MtlAutoLock},0)
 when not matched then
     insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty], [Lock])
     values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
 			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty, {MtlAutoLock});
+			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty, iif((select seq1 from PO_Supp_Detail psd where psd.id = s.poid and psd.seq1 = s.seq1 and psd.seq2 = s.seq2)<'70',{MtlAutoLock},0));
 ";
                     if (encoded)
                     {
