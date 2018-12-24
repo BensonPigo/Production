@@ -1017,6 +1017,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
                 }
             }
 
+            int MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system")) ? 1 : 0;
             var data_Fty_2T = (from m in newDt.AsEnumerable()
                                select new
                                {
@@ -1029,7 +1030,7 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
                                    roll = m.Field<string>("roll"),
                                    dyelot = m.Field<string>("dyelot"),
                                }).ToList();
-            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
+            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true, MtlAutoLock);
             #endregion 更新庫存數量  ftyinventory
 
             #region 更新 Po_Supp_Detail StockUnit

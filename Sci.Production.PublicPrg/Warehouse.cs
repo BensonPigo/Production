@@ -282,14 +282,14 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
         //(整批)
-        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded)
+        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded, int MtlAutoLock=0)
         {
             string sqlcmd = "";
             switch (type)
             {
                 case 2:
                     #region 更新 inqty
-                    sqlcmd = @"
+                    sqlcmd = $@"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
@@ -306,12 +306,13 @@ using #tmpS1 as s
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
 when matched then
     update
-    set inqty = isnull(inqty,0.00) + s.qty
+    set inqty = isnull(inqty,0.00) + s.qty,
+         Lock ={MtlAutoLock}
 when not matched then
-    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty], [Lock])
     values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
 			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty, {MtlAutoLock});
 ";
                     if (encoded)
                     {
