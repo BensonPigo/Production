@@ -55,6 +55,16 @@ namespace Sci.Production.Sewing
         }
 
         /// <inheritdoc/>
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (this.Perm.Send)
+            {
+                this.toolbar.cmdSend.Enabled = true;
+            }
+        }
+
+        /// <inheritdoc/>
         protected override void OnDetailGridDelete()
         {
             if (this.CurrentDetailData["AutoCreate"].EqualString("True"))
@@ -94,19 +104,22 @@ namespace Sci.Production.Sewing
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
-            this.btnRequestUnlock.Visible = !(MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send") || MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Locked"));
-            this.oldttlqaqty = this.numQAOutput.Value;
-            this.oldManHour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]);
-            if (this.EditMode)
+            if (this.CurrentMaintain != null)
             {
-                if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
+                this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
+                this.btnRequestUnlock.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send");
+                this.oldttlqaqty = this.numQAOutput.Value;
+                this.oldManHour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]);
+                if (this.EditMode)
                 {
-                    this.txtSubConOutContractNumber.ReadOnly = true;
-                }
-                else
-                {
-                    this.txtSubConOutContractNumber.ReadOnly = false;
+                    if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
+                    {
+                        this.txtSubConOutContractNumber.ReadOnly = true;
+                    }
+                    else
+                    {
+                        this.txtSubConOutContractNumber.ReadOnly = false;
+                    }
                 }
             }
         }
@@ -2233,7 +2246,14 @@ WHERE  sewqty < packqty ",
                 string toAddress = string.Empty;
                 string ccAddress = "PMSHelp@sportscity.com.tw";
                 string subject = "Unlock Sewing";
-                string description = $@"Date : {this.CurrentMaintain["OutputDate"]}
+
+                string od = string.Empty;
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["OutputDate"]))
+                {
+                    od = ((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd");
+                }
+
+                string description = $@"Date : {od}
 Factory : {this.CurrentMaintain["FactoryID"]}
 Line# : {this.CurrentMaintain["SewingLineID"]}
 Team : {this.CurrentMaintain["Team"]}
@@ -2315,6 +2335,10 @@ update SewingOutput set Status='New', LockDate = null where ID = '{this.CurrentM
         protected override void ClickSend()
         {
             base.ClickSend();
+            if (MyUtility.Msg.QuestionBox("Lock sewing data?") == DialogResult.No)
+            {
+                return;
+            }
 
             string sqlcmd = $@"
 update SewingOutput 
@@ -2323,6 +2347,7 @@ set LockDate = CONVERT(date, GETDATE())
 where 1=1
     and OutputDate < = getdate()
     and LockDate is null 
+    and FactoryID  = '{Sci.Env.User.Factory}'
 ";
 
             using (TransactionScope scope = new TransactionScope())
@@ -2333,11 +2358,14 @@ where 1=1
                     if (!(upResult = DBProxy.Current.Execute(null, sqlcmd)))
                     {
                         this.ShowErr(upResult);
+                        return;
                     }
                 }
 
                 scope.Complete();
             }
+
+            MyUtility.Msg.InfoBox("Lock data successfully!");
         }
     }
 }
