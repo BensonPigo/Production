@@ -59,6 +59,12 @@ namespace Sci.Production.Shipping
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
                 ;
 
+
+            for (int i = 0; i < this.grid2.Columns.Count; i++)
+            {
+                this.grid2.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
             this.Query();
         }
 
@@ -250,7 +256,7 @@ drop table #bas
             this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource2.DataMember = "rel1";
             this.grid1.AutoResizeColumns();
-            this.grid1.Columns["Description"].Width = 100;
+
             this.grid2.AutoResizeColumns();
             if (msg.Count > 0)
             {

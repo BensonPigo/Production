@@ -58,10 +58,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(882, 395);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtAccountNo);
@@ -85,11 +81,6 @@
             this.detailcont.Controls.Add(this.txtUnit);
             this.detailcont.Controls.Add(this.txtsubconSupplier);
             this.detailcont.Controls.Add(this.txtbrand);
-            this.detailcont.Size = new System.Drawing.Size(882, 357);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Size = new System.Drawing.Size(882, 38);
             // 
             // browse
             // 
@@ -348,6 +339,7 @@
             this.DefaultControlForEdit = "editDescription";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
+            this.ExpressQuery = true;
             this.IsSupportClose = true;
             this.IsSupportDelete = false;
             this.IsSupportUnclose = true;
@@ -356,6 +348,7 @@
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ShipExpense";
+            this.FormLoaded += new System.EventHandler(this.B03_FormLoaded);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B03_FormClosing);
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchApprove, 0);

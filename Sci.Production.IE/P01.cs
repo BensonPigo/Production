@@ -9,6 +9,7 @@ using Sci.Data;
 using System.Transactions;
 using Sci.Win.Tools;
 using Sci.Production.PublicForm;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -732,6 +733,64 @@ and s.StyleUnit='PCS'
             this.CurrentMaintain["TotalSewingTime"] = Convert.ToInt32(ttlSewingTime); // MyUtility.Convert.GetInt(ttlSewingTime);
             string totalSewing = this.CurrentMaintain["TotalSewingTime"].ToString();
             this.numTotalSewingTimePc.Text = totalSewing;
+
+            #region Total GSD 檢查
+
+            // 先取得 Style.Ukey
+            List<SqlParameter> parameters = new List<SqlParameter>() {
+                new SqlParameter() { ParameterName = "@id",Value = this.CurrentMaintain["StyleID"].ToString()},
+                new SqlParameter() { ParameterName = "@seasonid",Value = this.CurrentMaintain["SeasonID"].ToString()},
+                new SqlParameter() { ParameterName = "@brandid",Value = this.CurrentMaintain["BrandID"].ToString()}
+            };
+            sqlCmd = "select Ukey from Style WITH (NOLOCK) where ID = @id and SeasonID = @seasonid and BrandID = @brandid";
+            DataTable styleDT;
+            result = DBProxy.Current.Select(null, sqlCmd, parameters, out styleDT);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("SQL Connection fail!!\r\n" + result.ToString());
+                return false;
+            }
+
+            long styleUkey = 0;
+            if (styleDT.Rows.Count > 0)
+            {
+                styleUkey = MyUtility.Convert.GetLong(styleDT.Rows[0]["UKey"]);
+
+                DataTable IETMS_Summary;
+                sqlCmd = $@"
+select ProductionCpuTms =  CEILING(sum(iif(a.IsTTLTMS = 1, IES.ProSMV,0))*60)
+from Style s WITH (NOLOCK) 
+left join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+left join IETMS_Summary IES on IES.IETMSUkey = i.Ukey
+left join ArtworkType a WITH (NOLOCK) on ies.ArtworkTypeID = a.ID
+where s.Ukey = {styleUkey}";
+                result = DBProxy.Current.Select(null, sqlCmd, out IETMS_Summary);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
+                }
+
+                // Total Sewing Time重新計算過再來比
+                decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty));
+                decimal totalCPUTMS = 0;
+                if (IETMS_Summary.Rows.Count > 0)
+                {
+                    totalCPUTMS = Convert.ToDecimal(IETMS_Summary.Compute("sum(ProductionCpuTms)", string.Empty));
+                }
+
+                if (totalSewingTime > totalCPUTMS)
+                {
+                    MyUtility.Msg.WarningBox($"Total sewing time can't more than total CPU TMS ({totalCPUTMS}) of Std.GSD.");
+                    return false;
+                }
+
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Style not found!!");
+            }
+            #endregion
+
             decimal allSewer = MyUtility.Check.Empty(this.CurrentMaintain["NumberSewer"]) ? 0.0m : MyUtility.Convert.GetDecimal(this.CurrentMaintain["NumberSewer"]);
             foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
             {
