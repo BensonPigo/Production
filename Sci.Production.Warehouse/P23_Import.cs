@@ -52,6 +52,12 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
                 #region -- Sql Command --
+                bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+                string where = string.Empty;
+                if (!MtlAutoLock)
+                {
+                    where = "where fi.Lock = 0";
+                }
                 strSQLCmd.Append(string.Format(@"
 ;with cte as (
     select  rtrim(pd.ID) poid 
@@ -119,7 +125,7 @@ on fi.POID = aa.InventoryPOID
 and fi.seq1 = aa.Inventoryseq1 
 and fi.seq2 = aa.InventorySEQ2 
 and fi.StockType = 'I'
-where fi.Lock = 0 
+{2}
 order by aa.poid,aa.seq1,aa.seq2 ;
 
 select  0 AS selected
@@ -166,9 +172,9 @@ inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID
                                                 and fi.seq2 = InventorySEQ2 
                                                 and fi.StockType = 'I'
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID 
-where fi.Lock = 0 
+{2}
 Order by GroupQty desc, fromdyelot, balanceQty desc
-drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
+drop table #tmp", Sci.Env.User.Keyword, dr_master["id"], where));
                 #endregion
                 System.Data.SqlClient.SqlParameter sqlp1 = new System.Data.SqlClient.SqlParameter();
                 sqlp1.ParameterName = "@poid";
