@@ -404,6 +404,21 @@ outer apply(
             return base.ClickSaveBefore();
         }
 
+        protected override DualResult ClickSavePre()
+        {
+            DataTable dtSubDetail;
+            this.GetSubDetailDatas(out dtSubDetail);
+            
+            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(dtSubDetail.ToList());
+
+            if (!resultBarcodeNo)
+            {
+                return resultBarcodeNo;
+            }
+           
+            return base.ClickSavePre();
+        }
+
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
         {
             sum_subDetail(e.Detail, e.SubDetails);
@@ -1158,6 +1173,11 @@ where t.id= @ID";
         private void btnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+        }
+
+        private void btn_printBarcode_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

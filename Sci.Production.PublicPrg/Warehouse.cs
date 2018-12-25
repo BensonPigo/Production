@@ -1703,6 +1703,31 @@ when matched then
             _transactionscope = null;
             return result;
         }
+
+        public static DualResult FillIssueDetailBarcodeNo(IList<DataRow> result)
+        {
+            int nCount = 0;
+
+            try
+            {
+                foreach (DataRow dr in result)
+                {
+                    if (MyUtility.Check.Empty(dr["BarcodeNo"]) && dr.RowState != DataRowState.Deleted)
+                    {
+                        string keyWord = MyUtility.GetValue.Lookup($"select FtyGroup from orders where id = '{dr["POID"]}'");
+                        string barcodeNo = MyUtility.GetValue.GetID(keyWord, "Issue_Detail", default(DateTime), 3, "BarcodeNo", sequenceMode: 2);
+                        dr["BarcodeNo"] = barcodeNo;
+                        nCount++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex.Message);
+            }
+
+            return new DualResult(true);
+        }
     }
     public class Prgs_POSuppDetailData
     {
