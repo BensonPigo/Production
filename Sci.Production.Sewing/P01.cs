@@ -2245,7 +2245,7 @@ WHERE  sewqty < packqty ",
             {
                 string toAddress = string.Empty;
                 string ccAddress = "PMSHelp@sportscity.com.tw";
-                string subject = "Unlock Sewing";
+                string subject = "Request Unlock Sewing";
 
                 string od = string.Empty;
                 if (!MyUtility.Check.Empty(this.CurrentMaintain["OutputDate"]))
