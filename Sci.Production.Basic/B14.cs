@@ -37,23 +37,39 @@ namespace Sci.Production.Basic
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+
             string sqlCommand = string.Format(
-               @"
-select (
-	select concat( ',',cast(rtrim(m.ID) as nvarchar))
-	FROM MachineType m
-	INNER JOIN ArtworkType a ON m.ArtworkTypeID=a.ID
-	where  A.Seq LIKE '1%'AND m.ArtworkTypeID = '{0}' 
-	for XML Path('')
-) as MatchTypeID
-INTO #tmp
+    @"
+IF (SELECT COUNT( m.ArtworkTypeID)FROm MachineType m 
+	INNER JOIN ArtworkType a On m.ArtworkTypeID=a.ID
+	WHERE A.Seq LIKE '1%' AND m.ArtworkTypeID='{0}' ) 
+	> 0
+BEGIN
+    select (
+	    select concat( ',',cast(rtrim(m.ID) as nvarchar))
+	    FROM MachineType m
+	    INNER JOIN ArtworkType a ON m.ArtworkTypeID=a.ID
+	    where  A.Seq LIKE '1%'AND m.ArtworkTypeID = '{0}' 
+	    for XML Path('')
+    ) as MatchTypeID
+    INTO #tmp
 
-SELECt [MatchTypeID]=STUFF( MatchTypeID,1,1,'')
-FROM #tmp
+    SELECt [MatchTypeID]=STUFF( MatchTypeID,1,1,'')
+    FROM #tmp
 
-DROP TABLE #tmp
+    DROP TABLE #tmp
+END
+ELSE
+BEGIN
+    select (
+	    select cast(rtrim(ID) as nvarchar) +',' 
+	    from MachineType MT WITH (NOLOCK) LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
+	    where ATD.ArtworkTypeID = '{0}' for XML Path('')
+    ) as MatchTypeID
+END
+
 ",
-               this.CurrentMaintain["ID"]);
+    this.CurrentMaintain["ID"]);
 
             Ict.DualResult returnResult;
             DataTable machineTable = new DataTable();
