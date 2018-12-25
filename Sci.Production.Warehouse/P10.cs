@@ -658,6 +658,15 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
             {
                 this.btnPrintFabricSticker.Enabled = false;
             }
+
+            if (this.EditMode)
+            {
+                this.btn_printBarcode.Enabled = false;
+            }
+            else
+            {
+                this.btn_printBarcode.Enabled = true;
+            }
         }
 
         protected override void ClickConfirm()
@@ -1177,7 +1186,8 @@ where t.id= @ID";
 
         private void btn_printBarcode_Click(object sender, EventArgs e)
         {
-
+            P10_PrintBarcode p10_PrintBarcode = new P10_PrintBarcode(this.CurrentMaintain["ID"].ToString());
+            p10_PrintBarcode.ShowDialog();
         }
     }
 }

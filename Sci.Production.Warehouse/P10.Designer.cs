@@ -110,11 +110,11 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3710, 74);
+            this.gridicon.Location = new System.Drawing.Point(3827, 74);
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(821, 2);
+            this.refresh.Location = new System.Drawing.Point(776, 2);
             // 
             // detailgridcont
             // 
@@ -150,16 +150,16 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(320, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(471, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Location = new System.Drawing.Point(444, 7);
+            this.editby.Size = new System.Drawing.Size(320, 23);
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(423, 13);
+            this.lbleditby.Location = new System.Drawing.Point(396, 13);
             // 
             // labelID
             // 
@@ -336,9 +336,9 @@
             // 
             // btn_printBarcode
             // 
-            this.btn_printBarcode.Location = new System.Drawing.Point(902, 2);
+            this.btn_printBarcode.Location = new System.Drawing.Point(860, 2);
             this.btn_printBarcode.Name = "btn_printBarcode";
-            this.btn_printBarcode.Size = new System.Drawing.Size(105, 35);
+            this.btn_printBarcode.Size = new System.Drawing.Size(144, 35);
             this.btn_printBarcode.TabIndex = 3;
             this.btn_printBarcode.Text = "Print Barcode";
             this.btn_printBarcode.UseVisualStyleBackColor = true;

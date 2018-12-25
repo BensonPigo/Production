@@ -1963,6 +1963,7 @@
     <None Include="Properties\DataSources\P10_CutRef.datasource" />
     <None Include="Properties\DataSources\P10_Detail.datasource" />
     <None Include="Properties\DataSources\P10_Detail_Detail.datasource" />
+    <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData1.datasource" />
     <None Include="Properties\DataSources\P11.datasource" />
