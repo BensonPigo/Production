@@ -149,4 +149,4 @@ CREATE NONCLUSTERED INDEX [line]
 GO
 CREATE NONCLUSTERED INDEX [IX_SewingOutput_OutputDate]
 	ON [dbo].[SewingOutput] ([OutputDate])
-	INCLUDE ([ID],[Shift],[FactoryID],[MDivisionID],[Category],[SubconOutFty])
+	INCLUDE ([ID],[Shift],[FactoryID],[MDivisionID],[Category],[SubconOutFty],[SubConOutContractNumber])

@@ -347,21 +347,21 @@ tmpQty as (
 ),
 tmpTtlCPU as (
 	select OutputDate
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2) 
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3) 
 	from #tmp
 	where LastShift <> 'O'
 	group by OutputDate
 ),
 tmpSubconInCPU as (
 	select OutputDate
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I'
 	group by OutputDate
 ),
 tmpSubconOutCPU as (
 	select OutputDate
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2) 
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3) 
 	from #tmp
 	where LastShift = 'O'
 	group by OutputDate
@@ -453,21 +453,21 @@ tmpQty as (
 ),
 tmpTtlCPU as (
 	select SewingLineID
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift <> 'O'
 	group by SewingLineID
 ),
 tmpSubconInCPU as (
 	select SewingLineID
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I'
 	group by SewingLineID
 ),
 tmpSubconOutCPU as (
 	select SewingLineID
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'O'
 	group by SewingLineID
@@ -557,7 +557,7 @@ order by {0}",
 	select StdTMS
 		   , QAQty = Sum(QAQty)
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift <> 'O' 
           --排除Subcon in non sister資料
@@ -584,7 +584,7 @@ tmpTtlManPower as (
 )
 select q.QAQty
 	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
 	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
@@ -617,14 +617,14 @@ left join tmpTtlManPower mp on 1 = 1"),
 	select StdTMS
 		   , QAQty = Sum(QAQty)
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I' and SubconInSisterFty = 0
 	group by StdTMS
 )
 select q.QAQty
 	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q"),
@@ -655,14 +655,14 @@ from tmpQty q"),
 	select StdTMS
 		   , QAQty = Sum(QAQty)
 		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
-		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I' and SubconInSisterFty = 1
 	group by StdTMS
 )
 select q.QAQty
 	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q"),
@@ -924,7 +924,7 @@ order by t1.ID"),
 ;with tmpSubconIn as (
 	Select 'I' as Type
 		   , Company = Program 
-		   , TtlCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 2)
+		   , TtlCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I'
 	group by Program
@@ -932,7 +932,7 @@ order by t1.ID"),
 tmpSubconOut as (
     Select Type = 'O'
 		   , Company = t.SubconOutFty
-		   , TtlCPU = ROUND(Sum(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate)),2)
+		   , TtlCPU = ROUND(Sum(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate)),3)
 	from #tmp t
 	where LastShift = 'O'
 	group by t.SubconOutFty

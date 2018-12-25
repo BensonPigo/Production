@@ -264,7 +264,7 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
                             ,IIF(QAQty > 0, ActManPower / QAQty, ActManPower))
 	   , WorkHour
 	   , ManHour = IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour
-	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2) * 3600 / StdTMS, 2) 
+	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 3) * 3600 / StdTMS, 3) 
 	   , TMS = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * StdTMS
 	   , CPUPrice = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
 	   , TargetQty = IIF(IIF(Category = 'M', MockupCPU * MockupCPUFactor
@@ -278,8 +278,8 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   , CPUSewer = IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
 	   									   , ActManPower) * WorkHour, 2) > 0
    							     , ROUND((IIF(Category = 'M', MockupCPU * MockupCPUFactor
-   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 2) / ROUND(IIF(QAQty > 0, ActManPower / QAQty
-   							     																								  , ActManPower) * WorkHour, 2)
+   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 3) / ROUND(IIF(QAQty > 0, ActManPower / QAQty
+   							     																								  , ActManPower) * WorkHour, 3)
      						     , 0) 
 	   , EFF = ROUND(IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
 	   										, ActManPower) * WorkHour, 2) > 0
