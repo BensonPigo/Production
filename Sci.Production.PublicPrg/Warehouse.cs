@@ -1707,7 +1707,9 @@ when matched then
         public static DualResult FillIssueDetailBarcodeNo(IList<DataRow> result)
         {
             int nCount = 0;
-
+            int drcount = result.Count;
+            IList<string> cListBarcodeNo;
+            cListBarcodeNo = MyUtility.GetValue.GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2,sequenceLength: 4);
             try
             {
                 foreach (DataRow dr in result)
@@ -1715,8 +1717,7 @@ when matched then
                     if (MyUtility.Check.Empty(dr["BarcodeNo"]) && dr.RowState != DataRowState.Deleted)
                     {
                         string keyWord = MyUtility.GetValue.Lookup($"select FtyGroup from orders where id = '{dr["POID"]}'");
-                        string barcodeNo = MyUtility.GetValue.GetID(keyWord, "Issue_Detail", default(DateTime), 3, "BarcodeNo", sequenceMode: 2);
-                        dr["BarcodeNo"] = barcodeNo;
+                         dr["BarcodeNo"] = keyWord + cListBarcodeNo[nCount];
                         nCount++;
                     }
                 }
