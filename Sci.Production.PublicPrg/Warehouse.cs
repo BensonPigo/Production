@@ -312,12 +312,18 @@ using #tmpS11 as s
 when matched then
     update
     set inqty = isnull(inqty,0.00) + s.qty,
-         Lock = iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0)
+         Lock = iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
+         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Sci.Env.User.UserID}',''),
+         LockDate = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
 when not matched then
-    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty], [Lock])
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty], [Lock],[LockName],[LockDate])
     values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
 			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty, iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0));
+			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty,
+              iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Sci.Env.User.UserID}',''),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
+            );
 ";
                     if (encoded)
                     {
