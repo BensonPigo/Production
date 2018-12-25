@@ -24,6 +24,8 @@ namespace Sci.Production.Warehouse
         DataRow dr;
         DataTable dtFtyinventory, dtTrans, dtSummary;
         DataSet data = new DataSet();
+        decimal useQty = 0;
+        Boolean bUseQty = false; 
         public P03_RollTransaction(DataRow data)
         {
             InitializeComponent();
@@ -47,7 +49,33 @@ namespace Sci.Production.Warehouse
             decimal ADJ = (MyUtility.Check.Empty(dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
             this.numBalQtyBySeq.Value = IN - OUT + ADJ;
 
+            #region "顯示DTM"
+            DataTable dtmDt;
+            string sql = string.Format(@"
+                select id,seq1,seq2,qty,ShipQty,Refno,ColorID,iif(qty <= shipqty, 'True','False') bUseQty
+                into #tmp
+                from Po_Supp_Detail
+                where id = '{0}'
+                and seq1 = '{1}'
+                and seq2 = '{2}'
+ 
+                select isnull(Round(dbo.getUnitQty(a.POUnit, a.StockUnit, (isnull(A.NETQty,0)+isnull(A.lossQty,0))), 2),0.0) as UseQty,b.bUseQty
+                from Po_Supp_Detail a
+                inner join #tmp b on a.id = b.id and a.Refno = b.Refno and a.ColorID = b.ColorID and b.bUseQty = 'True' 
+                where a.id = '{0}'
+                and a.seq1 = 'A1' 
 
+                drop table #tmp
+            ", dr["id"].ToString(), dr["seq1"].ToString(), dr["seq2"].ToString());
+            DualResult dtmResult = DBProxy.Current.Select(null, sql, out dtmDt);
+            if (dtmResult == false) ShowErr(sql, dtmResult);
+            if (!MyUtility.Check.Empty(dtmDt)) {
+                if (dtmDt.Rows.Count > 0) {
+                    bUseQty = MyUtility.Convert.GetBool(dtmDt.Rows[0]["bUseQty"]);
+                    useQty = bUseQty ? MyUtility.Convert.GetDecimal(dtmDt.Rows[0]["useQty"]) : useQty;
+                }
+            }
+            #endregion
 
             #region Grid1 - Sql command
             string selectCommand1
@@ -244,6 +272,7 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
             dtFtyinventory.TableName = "dtFtyinventory";
             dtSummary = dtFtyinventory.Clone();
             dtSummary.Columns.Add("rollcount", typeof(int));
+            dtSummary.Columns.Add("DTM", typeof(decimal));
             bindingSource3.DataSource = dtSummary;
 
             DualResult selectResult2 = DBProxy.Current.Select(null, selectCommand2, out dtTrans);
@@ -315,7 +344,9 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                      .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("AdjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      .Numeric("Balance", header: "Balance", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
+                     .Numeric("DTM", header: "DTM", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                      ;
+                gridSummary.Columns["DTM"].Visible = bUseQty;
             }
             catch
             {
@@ -383,11 +414,12 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                            inqty = m.Sum(w => w.Field<decimal>("inqty")),
                            outQty = m.Sum(w => w.Field<decimal>("outqty")),
                            AdjustQty = m.Sum(i => i.Field<decimal>("AdjustQty")),
-                           balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty"))
+                           balance = m.Sum(w => w.Field<decimal>("inqty")) - m.Sum(w => w.Field<decimal>("outqty")) + m.Sum(i => i.Field<decimal>("AdjustQty")),
+                           DTM = m.Sum(w => w.Field<decimal>("inqty")) / numArrivedQtyBySeq.Value * useQty
                        };
 
             dtSummary.Rows.Clear();
-            tmp.ToList().ForEach(q2 => dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.balance, null, q2.rollcount));
+            tmp.ToList().ForEach(q2 => dtSummary.Rows.Add(q2.roll, q2.dyelot, null, q2.inqty, q2.outQty, q2.AdjustQty, q2.balance, null, q2.rollcount, q2.DTM));
             
         }
 
