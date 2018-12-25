@@ -2243,7 +2243,7 @@ WHERE  sewqty < packqty ",
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
-                string toAddress = MyUtility.GetValue.Lookup($@"select p.EMail from Factory f inner join pass1 p on p.id = f.Manager where f.id = '{Sci.Env.User.Factory}'");
+                string toAddress = MyUtility.GetValue.Lookup($@"select p.EMail from Factory f inner join pass1 p on p.id = f.Manager where f.id = '{this.CurrentMaintain["FactoryID"]}'");
                 string ccAddress = "PMSHelp@sportscity.com.tw";
                 string subject = "Request Unlock Sewing";
 
