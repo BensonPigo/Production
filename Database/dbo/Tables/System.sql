@@ -39,8 +39,11 @@
     [SQLServerName]              VARCHAR (130)  CONSTRAINT [DF_System_SQLServerName] DEFAULT ('') NULL,
     [APSDatabaseName]            VARCHAR (15)   CONSTRAINT [DF_System_APSDatabaseName] DEFAULT ('') NULL,
     [RFIDMiddlewareInRFIDServer] BIT            DEFAULT ((0)) NOT NULL,
-    [UseAutoScanPack]            BIT            CONSTRAINT [DF_System_UseAutoScanPack] DEFAULT ((0)) NOT NULL
+    [UseAutoScanPack]            BIT            CONSTRAINT [DF_System_UseAutoScanPack] DEFAULT ((0)) NOT NULL,
+    [MtlAutoLock]                BIT            CONSTRAINT [DF_System_MtlAutoLock] DEFAULT ((0)) NOT NULL
 );
+
+
 
 
 
