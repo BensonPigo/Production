@@ -1709,7 +1709,7 @@ when matched then
             int nCount = 0;
             int drcount = result.Count;
             IList<string> cListBarcodeNo;
-            cListBarcodeNo = MyUtility.GetValue.GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2,sequenceLength: 4);
+            cListBarcodeNo = GetBatchID("", "Issue_Detail", default(DateTime), 3, "BarcodeNo", batchNumber: drcount, sequenceMode: 2,sequenceLength: 4, ignoreSeq: 3);
             try
             {
                 foreach (DataRow dr in result)
@@ -1728,6 +1728,206 @@ when matched then
             }
 
             return new DualResult(true);
+        }
+
+        public static List<string> GetBatchID(string keyWord, string tableName, DateTime refDate = default(DateTime), int format = 2, string checkColumn = "ID", String connectionName = null, int sequenceMode = 1, int sequenceLength = 0, int batchNumber = 1,int ignoreSeq = 0)
+        {
+            List<string> IDList = new List<string>();
+
+            if (String.IsNullOrWhiteSpace(tableName)) return IDList;
+            if (refDate == DateTime.MinValue) refDate = DateTime.Today;
+
+            string TaiwanYear;
+            switch (format)
+            {
+                case 1:     // A yy xxxx
+                    keyWord = keyWord.ToUpper().Trim() + refDate.ToString("yy");
+                    break;
+                case 2:     // A yyMM xxxx
+                    keyWord = keyWord.ToUpper().Trim() + refDate.ToString("yyMM");
+                    break;
+                case 3:      // A yyMMdd xxxx
+                    keyWord = keyWord.ToUpper().Trim() + refDate.ToString("yyMMdd");
+                    break;
+                case 4:      // A yyyyMM xxxxx
+                    keyWord = keyWord.ToUpper().Trim() + refDate.ToString("yyyyMM");
+                    break;
+                case 5:     // 民國年 A yyyMM xxxx
+                    TaiwanYear = ((refDate.Year - 1911).ToString()).PadLeft(3, '0');
+                    keyWord = keyWord.ToUpper().Trim() + TaiwanYear + refDate.ToString("MM");
+                    break;
+                case 6:     // A xxxx
+                    keyWord = keyWord.ToUpper().Trim();
+                    break;
+                case 7:    // A yyyy xxxx
+                    keyWord = keyWord.ToUpper().Trim() + refDate.ToString("yyyy");
+                    break;
+                case 8:    // 民國年 A yyyMMdd xxxx
+                    TaiwanYear = ((refDate.Year - 1911).ToString()).PadLeft(3, '0');
+                    keyWord = keyWord.ToUpper().Trim() + TaiwanYear + refDate.ToString("MM") + refDate.ToString("dd");
+                    break;
+                default:
+                    return IDList;
+            }
+
+            //判斷schema欄位的結構長度
+         
+            DualResult result = null;
+            DataTable dtID = null;
+            int columnTypeLength = 0;
+            ITableSchema tableSchema = null;
+
+            if (result = DBProxy.Current.GetTableSchema(connectionName, tableName, out tableSchema))
+            {
+                foreach (IColumnSchema cs in tableSchema.Columns)
+                {
+                    if (cs.ColumnName.ToUpper() == checkColumn.ToUpper())
+                        columnTypeLength = cs.MaxLength;
+                }
+                if (columnTypeLength == 0) return IDList;
+            }
+            else
+                return IDList;
+
+            string sqlCmd = string.Format("SELECT TOP 1 {0} FROM {1} WHERE {2} LIKE '%{3}%' ORDER BY SUBSTRING({4},{5},{6}) DESC", checkColumn, tableName, checkColumn, keyWord.Trim(), checkColumn, ignoreSeq + 1, columnTypeLength);
+
+            if (result = DBProxy.Current.Select(connectionName, sqlCmd, out dtID))
+            {
+                if (dtID.Rows.Count > 0)
+                {
+                    string lastID = dtID.Rows[0][checkColumn].ToString().Substring(ignoreSeq);
+                    while (batchNumber > 0)
+                    {
+                        lastID = keyWord + GetNextValue(lastID.Substring(keyWord.Length), sequenceMode);
+                        IDList.Add(lastID);
+                        batchNumber = batchNumber - 1;
+                    }
+                }
+                else
+                {
+                    if (sequenceLength > 0)
+                    {
+                        if ((columnTypeLength - keyWord.Length) >= sequenceLength)
+                        {
+                            string nextValue = GetNextValue("0".PadLeft(sequenceLength, '0'), sequenceMode);
+                            while (batchNumber > 0)
+                            {
+                                IDList.Add(keyWord + nextValue);
+                                nextValue = GetNextValue(nextValue.PadLeft(sequenceLength, '0'), sequenceMode);
+                                batchNumber = batchNumber - 1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        string nextValue = GetNextValue("0".PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
+                        while (batchNumber > 0)
+                        {
+                            IDList.Add(keyWord + nextValue);
+                            nextValue = GetNextValue(nextValue.PadLeft(columnTypeLength - keyWord.Length, '0'), sequenceMode);
+                            batchNumber = batchNumber - 1;
+                        }
+                    }
+                }
+            }
+
+            return IDList;
+        }
+
+        public static string GetNextValue(string strValue, int sequenceMode)
+        {
+            char[] charValue = strValue.ToArray<char>();
+            int sequenceValue = 0;
+            string returnValue = "";
+            int charAscii = 0;
+
+            if (sequenceMode == 1)
+            {
+                // 當第一個字為字母
+                if (System.Convert.ToInt32(charValue[0]) >= 65 && System.Convert.ToInt32(charValue[0]) <= 90)
+                {
+                    sequenceValue = System.Convert.ToInt32(strValue.Substring(1));
+                    // 進位處理
+                    if (((sequenceValue + 1).ToString().Length > sequenceValue.ToString().Length) && string.IsNullOrWhiteSpace(strValue.Substring(1).Replace("9", "")))
+                    {
+                        charAscii = System.Convert.ToInt32(charValue[0]);
+                        if (charAscii + 1 > 90)
+                        {
+                            return strValue;
+                        }
+                        else
+                        {
+                            sequenceValue = 1;
+                            if (charAscii == 72 || charAscii == 78) // I or O略過
+                            {
+                                charValue[0] = System.Convert.ToChar(charAscii + 2);
+                            }
+                            else
+                            {
+                                charValue[0] = System.Convert.ToChar(charAscii + 1);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sequenceValue = sequenceValue + 1;
+                    }
+                    returnValue = charValue[0] + sequenceValue.ToString().PadLeft(strValue.Length - 1, '0');
+                }
+                else
+                {
+                    sequenceValue = System.Convert.ToInt32(strValue);
+                    // 進位處理
+                    if (((sequenceValue + 1).ToString().Length > sequenceValue.ToString().Length) && string.IsNullOrWhiteSpace(strValue.Replace("9", "")))
+                    {
+                        sequenceValue = 1;
+                        charValue[0] = 'A';
+                        returnValue = charValue[0] + sequenceValue.ToString().PadLeft(strValue.Length - 1, '0');
+                    }
+                    else
+                    {
+                        sequenceValue = sequenceValue + 1;
+                        returnValue = sequenceValue.ToString().PadLeft(strValue.Length, '0');
+                    }
+                }
+            }
+            else
+            {
+                for (int i = charValue.Length - 1; i >= 0; i--)
+                {
+                    charAscii = System.Convert.ToInt32(charValue[i]);
+
+                    if (charAscii == 57)   // 遇9跳A
+                    {
+                        charValue[i] = 'A';
+                        break;
+                    }
+
+                    if (charAscii == 72 || charAscii == 78) // I or O略過
+                    {
+                        charValue[i] = System.Convert.ToChar(charAscii + 2);
+                        break;
+                    }
+
+                    if (charAscii == 90)  //當字母為Z
+                    {
+                        if (i > 0)
+                        {
+                            charValue[i] = '0';
+                            continue;
+                        }
+                        else
+                        {
+                            return strValue;    //超出最大上限ZZZ...., 返回原值
+                        }
+                    }
+
+                    charValue[i] = System.Convert.ToChar(charAscii + 1);
+                    break;
+                }
+                returnValue = new String(charValue);
+            }
+            return returnValue;
         }
     }
     public class Prgs_POSuppDetailData
