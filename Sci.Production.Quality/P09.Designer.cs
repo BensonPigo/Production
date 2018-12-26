@@ -62,6 +62,8 @@
             this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.label7 = new Sci.Win.UI.Label();
+            this.displayBoxapvSeasonNull = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInspectionReport.SuspendLayout();
@@ -257,6 +259,8 @@
             // 
             // tab1stBulkDyelot
             // 
+            this.tab1stBulkDyelot.Controls.Add(this.displayBoxapvSeasonNull);
+            this.tab1stBulkDyelot.Controls.Add(this.label7);
             this.tab1stBulkDyelot.Controls.Add(this.btnQuery2);
             this.tab1stBulkDyelot.Controls.Add(this.button1);
             this.tab1stBulkDyelot.Controls.Add(this.btnSave2);
@@ -414,6 +418,28 @@
             this.testReportToolStripMenuItem.Text = "Test Report";
             this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
             // 
+            // label7
+            // 
+            this.label7.BackColor = System.Drawing.Color.Transparent;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.label7.Location = new System.Drawing.Point(35, 459);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(305, 23);
+            this.label7.TabIndex = 142;
+            this.label7.Text = "Taipei has not yet approved season, can\'t modify";
+            this.label7.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // displayBoxapvSeasonNull
+            // 
+            this.displayBoxapvSeasonNull.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
+            this.displayBoxapvSeasonNull.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.displayBoxapvSeasonNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayBoxapvSeasonNull.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
+            this.displayBoxapvSeasonNull.Location = new System.Drawing.Point(18, 463);
+            this.displayBoxapvSeasonNull.Name = "displayBoxapvSeasonNull";
+            this.displayBoxapvSeasonNull.Size = new System.Drawing.Size(14, 14);
+            this.displayBoxapvSeasonNull.TabIndex = 143;
+            // 
             // P09
             // 
             this.ClientSize = new System.Drawing.Size(1094, 524);
@@ -468,5 +494,7 @@
         private System.Windows.Forms.ToolStripMenuItem inspectionReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testReportToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private Win.UI.DisplayBox displayBoxapvSeasonNull;
+        private Win.UI.Label label7;
     }
 }
