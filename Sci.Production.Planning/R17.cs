@@ -11,6 +11,7 @@ using Sci.Production.Class;
 using System.Linq;
 using Sci.Production.Class.Commons;
 using System.Linq;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Planning
 {
@@ -732,8 +733,8 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                         objArray[0, k] = string.Empty;
                     }
 
-                    objArray[0, 0] = dr["A"];
-                    objArray[0, 1] = dr["B"];
+                    objArray[0, 0] = dr["B"];
+                    objArray[0, 1] = dr["A"];
                     objArray[0, 2] = dr["C"];
                     objArray[0, 3] = dr["D"];
                     objArray[0, 4] = dr["E"];
@@ -760,7 +761,9 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                         objArray[0, 5] = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + i);
                         objArray[0, 6] = (decimal)dr["F"] >= 97 ? "PASS" : "FAIL";
                         worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Value2 = objArray;
-                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Interior.Color = Color.FromArgb(230, 255, 204);
+                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Interior.Color = Color.FromArgb(204, 255, 204);
+                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Font.Bold = true;
+                        worksheet.Range[string.Format("A{0}:G{0}", rownum + i)].Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
                         mdivisionRowsStart = rownum + i + 1;
                     }
                 }
@@ -773,7 +776,16 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     worksheet.Range[string.Format("E{0}:E{0}", rownum + intRowsCount)].Formula = "=SUM(" + string.Format("E{0}:E{1}", 2, rownum + intRowsCount - 1) + ")";
                     worksheet.Range[string.Format("F{0}:F{0}", rownum + intRowsCount)].Formula = "=" + string.Format("D{0}/IF(C{0}=0, 1,C{0})*100", rownum + intRowsCount);
                     worksheet.Cells[rownum + intRowsCount, 7] = $"=IF(F{rownum + intRowsCount}>=97,\"PASS\",\"FAIL\")";
+                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeTop].LineStyle = 1;
+                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
+                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Interior.Color = Color.FromArgb(255, 255, 1);
+                    worksheet.Range[string.Format("A{0}:G{0}", rownum + intRowsCount)].Font.Bold = true;
                 }
+
+                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeLeft].LineStyle = 1;
+                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
+                worksheet.Range[string.Format("G1:G{0}", rownum + intRowsCount)].Interior.Color = Color.FromArgb(254, 255, 146);
+                worksheet.Columns.AutoFit();
                 #endregion
 
                 #region 匯出 Fail Order List by SP Data
