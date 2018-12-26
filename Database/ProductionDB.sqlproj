@@ -2304,7 +2304,7 @@
     <Build Include="dbo\Tables\SentReport.sql" />
     <Build Include="dbo\Tables\FirstDyelot.sql" />
     <Build Include="dbo\Tables\Style_SizeTol.sql" />
-    <Build Include="dbo\Tables\ECons_MNoticeFailed.sql" />
+    <Build Include="dbo\Tables\Order_ECMNFailed.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

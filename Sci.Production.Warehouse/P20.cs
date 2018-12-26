@@ -198,9 +198,23 @@ from (
             , i.seq1
             , i.Seq2
             , t.id
-            , TYPE = CHOOSE(T.TYPE,'1-INPUT','2-OUTOUT','3-TRANSFER-OUT','4-ADJUST','5-OBSOLESCENCE','6-RETURN')
+            , TYPE = case   when T.TYPE = '1' then '1-INPUT'
+                            when T.TYPE = '2' then '2-OUTOUT'
+                            when T.TYPE = '3' then '3-TRANSFER-OUT'
+                            when T.TYPE = '4' then '4-ADJUST'
+                            when T.TYPE = '5' then '5-OBSOLESCENCE'
+                            when T.TYPE = '6' then '6-RETURN'
+                            when T.TYPE = 'R' then 'R-Recover Inventory'
+                            else '' end
             , T.ConfirmDate
-            , qty = choose(T.TYPE,T.qty,0-t.qty,0-t.qty,t.qty,0-t.qty,t.qty)
+            , qty = case    when T.TYPE = '1' then T.qty
+                            when T.TYPE = '2' then 0-t.qty
+                            when T.TYPE = '3' then 0-t.qty
+                            when T.TYPE = '4' then t.qty
+                            when T.TYPE = '5' then 0-t.qty
+                            when T.TYPE = '6' then t.qty
+                            when T.TYPE = 'R' then t.qty
+                            else null end
             , seq70 = t.seq70poid + ' ' + t.seq70seq1 +'-' + t.seq70seq2
             , t.FactoryID
             , TransferFactory
@@ -253,7 +267,7 @@ from (
             , i.ProjectID
     from inventory i WITH (NOLOCK) 
     inner join factory f WITH (NOLOCK) on i.FactoryID = f.ID 
-    inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type=3
+    inner join invtrans t WITH (NOLOCK) on T.TransferUkey = I.Ukey and t.type='3'
     left join dbo.PO_Supp_Detail b WITH (NOLOCK) on i.PoID= b.id and i.Seq1 = b.SEQ1 and i.Seq2 = b.SEQ2
     where f.Junk = 0 ");
             if (!MyUtility.Check.Empty(spno))

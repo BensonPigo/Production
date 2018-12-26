@@ -262,27 +262,31 @@ WHERE   StockType='{0}'
             String upd_Fty_2T = "";
 
             #region -- 檢查庫存項lock --
-            sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
+            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            if (!MtlAutoLock)
+            {
+                sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.frompoid = f.POID and d.fromSeq1 = f.Seq1 and d.fromseq2 = f.seq2 and d.fromStockType = f.StockType and d.fromRoll = f.Roll and d.fromDyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-            {
-                ShowErr(sqlcmd, result2);
-                return;
-            }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
+                if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
-                    }
-                    MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                    ShowErr(sqlcmd, result2);
                     return;
+                }
+                else
+                {
+                    if (datacheck.Rows.Count > 0)
+                    {
+                        foreach (DataRow tmp in datacheck.Rows)
+                        {
+                            ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                                , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
+                        }
+                        MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                        return;
+                    }
                 }
             }
             #endregion

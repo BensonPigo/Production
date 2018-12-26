@@ -16,13 +16,14 @@ namespace Sci.Production.Shipping
     /// <inheritdoc/>
     public partial class B03_BatchApprove : Sci.Win.Forms.Base
     {
-        Action aa;
+        Action reloadParant;
+
         /// <inheritdoc/>
-        public B03_BatchApprove(Action aa)
+        public B03_BatchApprove(Action ReloadParant)
         {
             this.InitializeComponent();
             this.EditMode = true;
-            this.aa = aa;
+            this.reloadParant = ReloadParant;
         }
 
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk = new Ict.Win.UI.DataGridViewCheckBoxColumn();
@@ -58,16 +59,10 @@ namespace Sci.Production.Shipping
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
                 ;
 
-            // 按Header沒有排序功能
-            for (int i = 0; i < this.grid1.ColumnCount; i++)
-            {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
 
-            // 按Header沒有排序功能
-            for (int i = 0; i < this.grid2.ColumnCount; i++)
+            for (int i = 0; i < this.grid2.Columns.Count; i++)
             {
-                this.grid2.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                this.grid2.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
 
             this.Query();
@@ -113,6 +108,7 @@ inner join ShipExpense_CanVass lq on l.ID = lq.ID
 where lq.status <> 'Confirmed'
 and l.junk = 0
 {wheresql}
+ORDER BY l.ID
 ";
         }
 
@@ -260,7 +256,7 @@ drop table #bas
             this.listControlBindingSource2.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource2.DataMember = "rel1";
             this.grid1.AutoResizeColumns();
-            this.grid1.Columns["Description"].Width = 100;
+
             this.grid2.AutoResizeColumns();
             if (msg.Count > 0)
             {
@@ -309,7 +305,7 @@ Code{ string.Join(",", msg)}.");
             this.Confirm(selectdt);
             this.Query();
 
-            this.aa();
+            this.reloadParant();
         }
 
         /// <inheritdoc/>

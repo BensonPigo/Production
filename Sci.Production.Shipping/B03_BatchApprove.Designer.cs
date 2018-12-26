@@ -56,6 +56,7 @@
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
@@ -64,8 +65,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid2);
-            this.splitContainer1.Size = new System.Drawing.Size(1214, 442);
-            this.splitContainer1.SplitterDistance = 802;
+            this.splitContainer1.Size = new System.Drawing.Size(1337, 581);
+            this.splitContainer1.SplitterDistance = 430;
             this.splitContainer1.TabIndex = 5;
             // 
             // grid1
@@ -89,7 +90,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(802, 442);
+            this.grid1.Size = new System.Drawing.Size(1337, 430);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
@@ -114,14 +115,14 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(408, 442);
+            this.grid2.Size = new System.Drawing.Size(1337, 147);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
             // btnconfirm
             // 
             this.btnconfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnconfirm.Location = new System.Drawing.Point(971, 3);
+            this.btnconfirm.Location = new System.Drawing.Point(1094, 3);
             this.btnconfirm.Name = "btnconfirm";
             this.btnconfirm.Size = new System.Drawing.Size(117, 30);
             this.btnconfirm.TabIndex = 6;
@@ -132,7 +133,7 @@
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRefresh.Location = new System.Drawing.Point(1094, 3);
+            this.btnRefresh.Location = new System.Drawing.Point(1217, 3);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(117, 30);
             this.btnRefresh.TabIndex = 7;
@@ -155,13 +156,13 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.btnRefresh);
             this.splitContainer2.Panel2.Controls.Add(this.btnconfirm);
-            this.splitContainer2.Size = new System.Drawing.Size(1214, 490);
-            this.splitContainer2.SplitterDistance = 442;
+            this.splitContainer2.Size = new System.Drawing.Size(1337, 645);
+            this.splitContainer2.SplitterDistance = 581;
             this.splitContainer2.TabIndex = 8;
             // 
             // B03_BatchApprove
             // 
-            this.ClientSize = new System.Drawing.Size(1214, 490);
+            this.ClientSize = new System.Drawing.Size(1337, 645);
             this.Controls.Add(this.splitContainer2);
             this.Name = "B03_BatchApprove";
             this.Text = "B03.Quotation Batch Approve";

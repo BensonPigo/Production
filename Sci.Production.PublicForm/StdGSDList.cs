@@ -31,8 +31,8 @@ namespace Sci.Production.PublicForm
             string sqlCmd = string.Format(@"select id.SEQ,id.Location,id.OperationID,isnull(m.Description,'') as MachineDesc,id.Mold,isnull(o.DescEN,'') as OperationDescEN,id.Annotation,id.Frequency,
 isnull(id.MtlFactorID,'') as MtlFactorID,isnull(o.SMV,0) as SMV,isnull(o.SeamLength,0) as SeamLength,
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-round(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1),4) as newSMV,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength,
-round(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60,4) as gsdsec
+isnull(id.SMV,0) as newSMV,
+isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
@@ -50,7 +50,9 @@ where s.Ukey = {0} order by id.SEQ", styleUkey);
 
             #region Summary by artwork
             sqlCmd =$@"
-select  i.Location, i.ArtworkTypeID,type = iif(i.Location = 'T','Top',iif(i.Location = 'B','Bottom',iif(i.Location = 'I','Inner',iif(i.Location = 'O','Outer','')))),tms = sum(i.ProTMS)
+select  i.Location, i.ArtworkTypeID,
+	type = iif(i.Location = 'T','Top',iif(i.Location = 'B','Bottom',iif(i.Location = 'I','Inner',iif(i.Location = 'O','Outer','')))),
+	tms = CEILING(sum(i.ProSMV) * 60)
 from IETMS_Summary i
 where i.IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{styleUkey}')
 group by i.Location,i.ArtworkTypeID
@@ -60,7 +62,7 @@ group by i.Location,i.ArtworkTypeID
             {
                 MyUtility.Msg.ErrorBox("Query Summary by artwork fail!\r\n" + result.ToString());
             }
-            if (gridData2.Rows.Count == 0)
+            if (gridData2.Rows.Count == 0) // 若舊資料IETMS_Summary沒有資料
             {
                 sqlCmd = $@"
 select id.Location,M.ArtworkTypeID,
@@ -84,19 +86,20 @@ group by id.Location,M.ArtworkTypeID
             #endregion
 
             #region Summary by machine
-            sqlCmd = string.Format(@"select id.Location,o.MachineTypeID,isnull(m.Description,'') as Description,isnull(m.DescCH,'') as DescCH,
-isnull(m.RPM,0) as RPM,isnull(m.Stitches,0.0) as Stitches,
-iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
-from Style s WITH (NOLOCK) 
-inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
-inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
-inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
-left join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
---left join MtlFactor mf WITH (NOLOCK) on mf.Type = 'F' and o.MtlFactorID = mf.ID
-where s.Ukey = {0}
-group by id.Location,o.MachineTypeID,isnull(m.Description,''),isnull(m.DescCH,''),isnull(m.RPM,0),isnull(m.Stitches,0.0)
-ORDER BY id.Location,o.MachineTypeID", styleUkey);
+            sqlCmd = string.Format(@"
+select ies.location
+, Type=iif(ies.Location = 'T','Top',iif(ies.Location = 'B','Bottom',iif(ies.Location = 'I','Inner',iif(ies.Location = 'O','Outer',''))))
+, MachineTypeID = mt.ID
+, mt.Description
+, mt.DescCH
+, mt.RPM
+, mt.Stitches
+, TMS = CEILING(sum(ies.ProSMV) * 60)
+from IETMS_Summary ies
+Left join MachineType mt on ies.MachineTypeID =mt.ID
+where IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{0}')
+and ies.Location != ''
+Group by mt.ID,mt.Description,mt.DescCH,mt.RPM,mt.Stitches,ies.location", styleUkey);
             result = DBProxy.Current.Select(null, sqlCmd, out gridData3);
             if (!result)
             {
@@ -107,16 +110,15 @@ ORDER BY id.Location,o.MachineTypeID", styleUkey);
 
             #endregion
 
-            if (gridData1.Rows.Count > 0)
+            if (gridData2.Rows.Count > 0)
             {
-                numTotalGSD.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", ""));
-                numTotalSMV.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", ""));
+                numTotalGSD.Value = Convert.ToDecimal(gridData2.Compute("sum(tms)", ""));
             }
             else
             {
                 numTotalGSD.Value = 0;
-                numTotalSMV.Value = 0;
             }
+
             CalculateData();
 
             //設定Grid1的顯示欄位
@@ -173,13 +175,11 @@ where s.ukey = '{styleUkey}'
         private void CalculateData()
         {
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(string.Format(@"select s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion,
- round(sum(isnull(o.SMV,0)*isnull(id.Frequency,0)*(isnull(id.MtlFactorRate,0)/100+1)*60),4) as ttlTMS
+            sqlCmd.Append(string.Format(@"select s.ID,s.SeasonID,i.ActFinDate,s.IETMSID,s.IETMSVersion
  from Style s WITH (NOLOCK) 
  left join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
  left join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
  left join Operation o WITH (NOLOCK) on id.OperationID = o.ID
- --left join MtlFactor m WITH (NOLOCK) on m.Type = 'F' and o.MtlFactorID = m.ID
  left join MachineType mt WITH (NOLOCK) on o.MachineTypeID = mt.ID
  LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
  left join ArtworkType a WITH (NOLOCK) on ATD.ArtworkTypeID = a.ID and a.IsTMS = 1
@@ -201,7 +201,6 @@ where s.ukey = '{styleUkey}'
                 displaySeason.Value = tmpData.Rows[0]["SeasonID"].ToString();
                 displayApplyNo.Value = tmpData.Rows[0]["IETMSID"].ToString();
                 displayVersion.Value = tmpData.Rows[0]["IETMSVersion"].ToString();
-                numTotalCPUTMS.Value = Convert.ToDecimal(tmpData.Rows[0]["ttlTMS"]);
                 if (MyUtility.Check.Empty(tmpData.Rows[0]["ActFinDate"]))
                 {
                     dateRequireFinish.Value = null;
@@ -211,10 +210,35 @@ where s.ukey = '{styleUkey}'
                     dateRequireFinish.Value = Convert.ToDateTime(tmpData.Rows[0]["ActFinDate"]);
                 }
             }
+
+            #region TTLCpuTms
+            string sqlTTLCpuTms = $@"
+select ProductionCpuTms =  CEILING(sum(iif(a.IsTTLTMS = 1, IES.ProSMV,0))*60)
+, ProductionSMV = Round(sum(IES.ProSMV),3)
+from Style s WITH (NOLOCK) 
+left join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
+left join IETMS_Summary IES on IES.IETMSUkey = i.Ukey
+left join ArtworkType a WITH (NOLOCK) on ies.ArtworkTypeID = a.ID
+where s.Ukey = {styleUkey} 
+";
+            if (comboTypeFilter.SelectedIndex != -1 && comboTypeFilter.SelectedValue.ToString() != "A")
+            {
+                sqlTTLCpuTms += string.Format(" and IES.Location = '{0}'", comboTypeFilter.SelectedValue.ToString());
+            }
+            sqlTTLCpuTms += " group by s.ID,s.SeasonID,i.ActFinDate,i.ID,i.Version ";
+            DataRow dr;
+            if (MyUtility.Check.Seek(sqlTTLCpuTms,out dr))
+            {
+                numTotalCPUTMS.Value = MyUtility.Convert.GetDecimal(dr["ProductionCpuTms"]);
+                numTotalSMV.Value = MyUtility.Convert.GetDecimal(dr["ProductionSMV"]);
+            }
             else
             {
                 numTotalCPUTMS.Value = 0;
+                numTotalSMV.Value =0;
             }
+            #endregion
+
         }
 
         //Type Filter
@@ -228,34 +252,12 @@ where s.ukey = '{styleUkey}'
                     gridData1.DefaultView.RowFilter = filter;
                     gridData2.DefaultView.RowFilter = filter;
                     gridData3.DefaultView.RowFilter = filter;
-                    if (gridData1.DefaultView.Count > 0)
-                    {
-                        numTotalGSD.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", filter));
-                        numTotalSMV.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", filter));
-                    }
-                    else
-                    {
-                        numTotalGSD.Value = 0;
-                        numTotalSMV.Value = 0;
-                    }
-                    CalculateData();
                 }
                 else
                 {
                     gridData1.DefaultView.RowFilter = "";
                     gridData2.DefaultView.RowFilter = "";
                     gridData3.DefaultView.RowFilter = "";
-                    if (gridData1.Rows.Count > 0)
-                    {
-                        numTotalGSD.Value = Convert.ToDecimal(gridData1.Compute("sum(gsdsec)", ""));
-                        numTotalSMV.Value = Convert.ToDecimal(gridData1.Compute("sum(newSMV)", ""));
-                    }
-                    else
-                    {
-                        numTotalGSD.Value = 0;
-                        numTotalSMV.Value = 0;
-                    }
-                    CalculateData();
                 }
             }
         }

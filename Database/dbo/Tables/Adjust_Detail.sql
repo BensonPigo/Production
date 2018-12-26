@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Adjust_Detail] (
+CREATE TABLE [dbo].[Adjust_Detail] (
     [ID]               VARCHAR (13)    NOT NULL,
     [FtyInventoryUkey] BIGINT          NULL,
     [MDivisionID]      VARCHAR (8)     CONSTRAINT [DF_Adjust_Detail_MDivisionID] DEFAULT ('') NULL,
@@ -14,6 +14,8 @@
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_Adjust_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -59,5 +61,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'調整原�
 
 
 GO
-
+CREATE NONCLUSTERED INDEX [index_WH_P07]
+    ON [dbo].[Adjust_Detail]([ID] ASC, [POID] ASC, [Seq1] ASC, [Seq2] ASC, [Roll] ASC, [Dyelot] ASC);
 

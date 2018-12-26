@@ -180,28 +180,22 @@ namespace Sci.Production.Quality
 
             if (this.comboOverallResultStatus.Text == "Pass")
             {
-                sqlWheres.Add("dbo.GetFirResult(F.id) = 'Pass'");
+                sqlWheres.Add("f.result = 'Pass'");
 
             }
 
             if (this.comboOverallResultStatus.Text == "Fail")
             {
-                sqlWheres.Add("dbo.GetFirResult(F.id) = 'Faill'");
+                sqlWheres.Add("f.result = 'Fail'");
 
             }
 
             if (this.comboOverallResultStatus.Text == "Empty Result")
             {
-                sqlWheres.Add("dbo.GetFirResult(F.id) = ' '");
+                sqlWheres.Add("f.result  = '' ");
 
             }
 
-            if (this.comboOverallResultStatus.Text == "N/A inspection & test")
-            {
-                sqlWheres.Add("dbo.GetFirResult(F.id) = 'None'");
-
-            }
-            
             #endregion
             sqlWhere = string.Join(" and ", sqlWheres);
             OWhere = string.Join(" and ", OWheres);
@@ -221,6 +215,7 @@ namespace Sci.Production.Quality
             #region --撈ListExcel資料--
 
             cmd = string.Format(@"
+SET ARITHABORT ON
     select  
 	F.POID,(F.SEQ1+'-'+F.SEQ2)SEQ,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
 	t.ExportId,t.InvNo,t.WhseArrival,
@@ -315,7 +310,9 @@ F.ContinuityDate,L.Result,LC.Crocking,
 LC.CrockingDate,LH.Heat,LH.HeatDate,
 LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR,
 ftp.TotalPoint,F.Odor,F.OdorDate
-ORDER BY POID,SEQ";
+ORDER BY POID,SEQ
+OPTION (OPTIMIZE FOR UNKNOWN)
+";
             #endregion
             return base.ValidateInput();
         }

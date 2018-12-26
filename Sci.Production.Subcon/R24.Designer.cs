@@ -52,6 +52,7 @@
             this.labelAPDate = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelGLDate = new Sci.Win.UI.Label();
+            this.chk_IrregularPriceReason = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -109,6 +110,7 @@
             this.comboFactory.IsSupportUnselect = true;
             this.comboFactory.Location = new System.Drawing.Point(114, 188);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(121, 24);
             this.comboFactory.TabIndex = 6;
             // 
@@ -198,6 +200,8 @@
             this.txtstyle.Name = "txtstyle";
             this.txtstyle.Size = new System.Drawing.Size(170, 23);
             this.txtstyle.TabIndex = 8;
+            this.txtstyle.tarBrand = null;
+            this.txtstyle.tarSeason = null;
             // 
             // txtartworktype_ftyCategory
             // 
@@ -218,6 +222,7 @@
             this.comboOrderType.IsSupportUnselect = true;
             this.comboOrderType.Location = new System.Drawing.Point(114, 292);
             this.comboOrderType.Name = "comboOrderType";
+            this.comboOrderType.OldText = "";
             this.comboOrderType.Size = new System.Drawing.Size(261, 24);
             this.comboOrderType.TabIndex = 9;
             // 
@@ -237,6 +242,7 @@
             this.comboRateType.IsSupportUnselect = true;
             this.comboRateType.Location = new System.Drawing.Point(114, 327);
             this.comboRateType.Name = "comboRateType";
+            this.comboRateType.OldText = "";
             this.comboRateType.Size = new System.Drawing.Size(261, 24);
             this.comboRateType.TabIndex = 10;
             // 
@@ -256,6 +262,7 @@
             this.comboStatus.IsSupportUnselect = true;
             this.comboStatus.Location = new System.Drawing.Point(114, 363);
             this.comboStatus.Name = "comboStatus";
+            this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(158, 24);
             this.comboStatus.TabIndex = 11;
             this.comboStatus.SelectedIndexChanged += new System.EventHandler(this.comboStatus_SelectedIndexChanged);
@@ -323,9 +330,21 @@
             this.labelGLDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labelGLDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // chk_IrregularPriceReason
+            // 
+            this.chk_IrregularPriceReason.AutoSize = true;
+            this.chk_IrregularPriceReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chk_IrregularPriceReason.Location = new System.Drawing.Point(12, 395);
+            this.chk_IrregularPriceReason.Name = "chk_IrregularPriceReason";
+            this.chk_IrregularPriceReason.Size = new System.Drawing.Size(444, 21);
+            this.chk_IrregularPriceReason.TabIndex = 126;
+            this.chk_IrregularPriceReason.Text = "Only show as item which have irregular price but not enter reason.";
+            this.chk_IrregularPriceReason.UseVisualStyleBackColor = true;
+            // 
             // R24
             // 
             this.ClientSize = new System.Drawing.Size(522, 447);
+            this.Controls.Add(this.chk_IrregularPriceReason);
             this.Controls.Add(this.labelGLDate);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labelAPDate);
@@ -382,6 +401,7 @@
             this.Controls.SetChildIndex(this.labelAPDate, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.labelGLDate, 0);
+            this.Controls.SetChildIndex(this.chk_IrregularPriceReason, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -413,5 +433,6 @@
         private Win.UI.Label labelAPDate;
         private Class.txtbrand txtbrand;
         private Win.UI.Label labelGLDate;
+        private Win.UI.CheckBox chk_IrregularPriceReason;
     }
 }

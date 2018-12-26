@@ -88,6 +88,7 @@ namespace Sci.Production.Quality
 SELECT [Inspected Date] = FP.InspDate,
        [Inspector] = FP.Inspector,
        o.brandID,
+       o.FtyGroup,
        o.StyleID,
        [SP#] = F.POID,
        [SEQ#] = concat(RTRIM(F.SEQ1) ,'-',F.SEQ2),

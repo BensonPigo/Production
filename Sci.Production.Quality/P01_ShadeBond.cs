@@ -143,10 +143,98 @@ namespace Sci.Production.Quality
         {
 
             DataGridViewGeneratorTextColumnSettings Rollcell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings Scalecell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ResulCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
-            
+            DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
+
             #region Roll
-            Rollcell.EditingMouseDown += (s, e) =>
+            // 2018/12/13 ISP20181179 Benson註解
+            //Rollcell.EditingMouseDown += (s, e) =>
+            //{
+            //    if (this.EditMode == false) return;
+            //    if (e.RowIndex == -1) return;
+            //    if (e.Button == MouseButtons.Right)
+            //    {
+            //        // Parent form 若是非編輯狀態就 return 
+            //        DataRow dr = grid.GetDataRow(e.RowIndex);
+            //        SelectItem sele;
+            //        string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+            //        sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
+            //        DialogResult result = sele.ShowDialog();
+            //        if (result == DialogResult.Cancel) { return; }
+            //        dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
+            //        dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
+            //        dr["Ticketyds"] = sele.GetSelecteds()[0]["StockQty"].ToString().Trim();
+            //    }
+            //};
+            //Rollcell.CellValidating += (s, e) =>
+            //{
+            //    DataRow dr = grid.GetDataRow(e.RowIndex);
+            //    string oldvalue = dr["Roll"].ToString();
+            //    string newvalue = e.FormattedValue.ToString();
+            //    if (!this.EditMode) return;//非編輯模式 
+            //    if (e.RowIndex == -1) return; //沒東西 return
+            //    if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+            //    {
+            //        dr["Roll"] = "";
+            //        dr["Dyelot"] = "";
+            //        dr["Ticketyds"] = 0.00;
+            //        return;
+            //    }
+
+            //    if (oldvalue == newvalue) return;
+            //    string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+            //    DataRow roll_dr;
+            //    if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
+            //    {
+            //        dr["Roll"] = roll_dr["Roll"];
+            //        dr["Dyelot"] = roll_dr["Dyelot"];
+            //        dr["Ticketyds"] = roll_dr["StockQty"];
+            //        dr.EndEdit();
+            //    }
+            //    else
+            //    {
+            //        dr["Roll"] = "";
+            //        dr["Dyelot"] = "";
+            //        dr["Ticketyds"] = 0.00;
+            //        dr.EndEdit();
+            //        e.Cancel = true;
+            //        MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
+            //        return;
+            //    }  
+            //};
+            #endregion
+
+            #region Scale
+            Scalecell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Scale"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+
+                if (oldvalue == newvalue) return;
+                else
+                {
+                    if (MyUtility.Check.Empty(newvalue)  && MyUtility.Check.Empty(dr["Result"]))
+                    {
+                        dr["InspDate"] = DBNull.Value;
+                        dr["Inspector"] = "";
+                        dr["Name"] = "";
+                    }
+                    else
+                    {
+                        dr["InspDate"] = DateTime.Now;
+                        dr["Inspector"] = Sci.Env.User.UserID;
+                        dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
+                    }
+                    dr["Scale"] = newvalue;
+                }
+
+            };
+
+            Scalecell.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode == false) return;
                 if (e.RowIndex == -1) return;
@@ -154,72 +242,100 @@ namespace Sci.Production.Quality
                 {
                     // Parent form 若是非編輯狀態就 return 
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    SelectItem sele;
-                    string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
-                    sele = new SelectItem(roll_cmd, "15,10,10",dr["roll"].ToString(), false, ",");
-                    DialogResult result = sele.ShowDialog();
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem("select ID from Scale where junk = 0 order by ID", "10,40", dr["Scale"].ToString().Trim());
+                    
+                    DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
-                    dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
-                    dr["Ticketyds"] = sele.GetSelecteds()[0]["StockQty"].ToString().Trim();
+
+                    dr["Scale"] = item.GetSelectedString();
+                    dr["InspDate"] = DateTime.Now;
+                    dr["Inspector"] = Sci.Env.User.UserID;
+                    dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
+
                 }
             };
-            Rollcell.CellValidating += (s, e) =>
+
+            #endregion
+
+            #region Result
+            ResulCell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["Roll"].ToString();
+                string oldvalue = dr["Result"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
-                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
-                {
-                    dr["Roll"] = "";
-                    dr["Dyelot"] = "";
-                    dr["Ticketyds"] = 0.00;
-                    return;
-                }
 
                 if (oldvalue == newvalue) return;
-                string roll_cmd = string.Format("Select roll,dyelot,StockQty from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
-                DataRow roll_dr;
-                if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
-                {
-                    dr["Roll"] = roll_dr["Roll"];
-                    dr["Dyelot"] = roll_dr["Dyelot"];
-                    dr["Ticketyds"] = roll_dr["StockQty"];
-                    dr.EndEdit();
-                }
                 else
                 {
-                    dr["Roll"] = "";
-                    dr["Dyelot"] = "";
-                    dr["Ticketyds"] = 0.00;
-                    dr.EndEdit();
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
-                    return;
-                }  
+
+                    if (MyUtility.Check.Empty(newvalue) && MyUtility.Check.Empty(dr["Scale"]))
+                    {
+
+                        dr["InspDate"] = DBNull.Value;
+                        dr["Inspector"] = "";
+                        dr["Name"] = "";
+                    }
+                    else
+                    {
+                        dr["InspDate"] = DateTime.Now;
+                        dr["Inspector"] = Sci.Env.User.UserID;
+                        dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{Sci.Env.User.UserID}'");
+                    }
+
+                    dr["Result"] = newvalue;
+                }
+
             };
-            #endregion          
+
+            #endregion
+
+            #region Inspector
+
+            InspectorCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Inspector"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return
+
+                if (MyUtility.Check.Empty(newvalue))
+                {
+                    dr["Name"] = "";
+                }
+                dr["Inspector"] = newvalue;
+                //dr["Name"] = MyUtility.GetValue.Lookup($"SELECT Name FROM Pass1 WHERE ID='{newvalue}'");
+
+            };
+            #endregion
+
 
             Helper.Controls.Grid.Generator(this.grid)
-            .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), settings: Rollcell)
+            .Text("Roll", header: "Roll", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: Rollcell)
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Numeric("Ticketyds", header: "Ticket Yds", width: Widths.AnsiChars(7), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
-            .CellScale("Scale", header: "Scale", width: Widths.AnsiChars(5))
+            .Text("Scale", header: "Scale", width: Widths.AnsiChars(5) ,settings: Scalecell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true, settings: ResulCell)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
-            .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name")
-            .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name",settings: InspectorCell)
+            .Text("Name", header: "Name", width: Widths.AnsiChars(20))
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(20));
-            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.MistyRose;
+
+            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.White;
+            grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.White;
+            grid.Columns["Ticketyds"].DefaultCellStyle.BackColor = Color.White;
+
             grid.Columns["Scale"].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns["Result"].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
-
             grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.MistyRose;
             grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.MistyRose;
-            grid.Columns["Name"].DefaultCellStyle.BackColor = Color.MistyRose;
+            grid.Columns["Name"].DefaultCellStyle.BackColor = Color.White;
+            grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.MistyRose;
+
+            grid.Columns["Result"].DefaultCellStyle.ForeColor = Color.Red;
+
             return true;
 
         }
@@ -245,38 +361,39 @@ namespace Sci.Production.Quality
         {
             DataTable gridTb = (DataTable)gridbs.DataSource;
             #region 判斷空白不可存檔
-            DataRow[] drArray;
-            drArray = gridTb.Select("Roll=''");
-            if (drArray.Length != 0)
-            {
-                MyUtility.Msg.WarningBox("<Roll> can not be empty.");
-                return false;
-            }
-            drArray = gridTb.Select("Scale=''");
-            if (drArray.Length != 0)
-            {
-                MyUtility.Msg.WarningBox("<Scale> can not be empty.");
-                return false;
-            }
+            // 2018/12/13 ISP20181179 取消save時,Roll,Scale,Result,Inspdate,Inspector 空白不可存檔的判斷 
+            //DataRow[] drArray;
+            //drArray = gridTb.Select("Roll=''");
+            //if (drArray.Length != 0)
+            //{
+            //    MyUtility.Msg.WarningBox("<Roll> can not be empty.");
+            //    return false;
+            //}
+            //drArray = gridTb.Select("Scale=''");
+            //if (drArray.Length != 0)
+            //{
+            //    MyUtility.Msg.WarningBox("<Scale> can not be empty.");
+            //    return false;
+            //}
 
-            drArray = gridTb.Select("Result=''");
-            if (drArray.Length != 0)
-            {
-                MyUtility.Msg.WarningBox("<Rresult> can not be empty.");
-                return false;
-            }
-            drArray = gridTb.Select("Inspdate is null");
-            if (drArray.Length != 0)
-            {
-                MyUtility.Msg.WarningBox("<Insection Date> can not be empty.");
-                return false;
-            }
-            drArray = gridTb.Select("inspector=''");
-            if (drArray.Length != 0)
-            {
-                MyUtility.Msg.WarningBox("<Inspector> can not be empty.");
-                return false;
-            }
+            //drArray = gridTb.Select("Result=''");
+            //if (drArray.Length != 0)
+            //{
+            //    MyUtility.Msg.WarningBox("<Rresult> can not be empty.");
+            //    return false;
+            //}
+            //drArray = gridTb.Select("Inspdate is null");
+            //if (drArray.Length != 0)
+            //{
+            //    MyUtility.Msg.WarningBox("<Insection Date> can not be empty.");
+            //    return false;
+            //}
+            //drArray = gridTb.Select("inspector=''");
+            //if (drArray.Length != 0)
+            //{
+            //    MyUtility.Msg.WarningBox("<Inspector> can not be empty.");
+            //    return false;
+            //}
             #endregion
 
 
@@ -286,11 +403,107 @@ namespace Sci.Production.Quality
         private void btnEncode_Click(object sender, EventArgs e)
         {
             string updatesql ="";
-            if (MyUtility.Check.Empty(CurrentData) && this.btnEncode.Text=="Encode")
+            DataTable gridTb = (DataTable)gridbs.DataSource;
+
+            // 2018/12/13 ISP20181179 移除沒有資料沒法encode的判斷 
+            //if (MyUtility.Check.Empty(CurrentData) && this.btnEncode.Text=="Encode")
+            //{
+            //    MyUtility.Msg.WarningBox("Data not found! ");
+            //    return;
+            //}
+
+            //改為判斷 Result欄位是否全部 = '' 
+            if (this.btnEncode.Text == "Encode")
             {
-                MyUtility.Msg.WarningBox("Data not found! ");
-                return;
+                int ResultEmptyCount = gridTb.Select("Result = ''").Count();
+
+                if (gridTb.Rows.Count == ResultEmptyCount)
+                {
+                    MyUtility.Msg.WarningBox("Must inspection one fabric !!! ");
+                    return;
+                }
+
             }
+
+
+            #region 判斷 Scale,Result,Inspdate,Inspector 不可為空(如果全為空則不用檢查)
+
+
+
+            DataRow[] AllEmpty_drArray = gridTb.Select("Scale='' AND Result='' AND Inspdate IS NULL AND Inspector=''");
+
+            DataRow[] Total_drArray = gridTb.Select("Scale='' OR Result='' OR Inspdate IS NULL OR Inspector=''");
+
+            DataRow[] Scale_drArray = gridTb.Select("Scale=''");
+            DataRow[] Result_drArray = gridTb.Select("Result=''");
+            DataRow[] Inspdate_drArray = gridTb.Select("Inspdate IS NULL");
+            DataRow[] Inspector_drArray = gridTb.Select("Inspector=''");
+
+            if (Total_drArray.Length != 0)
+            {
+                string errorMsg = "";
+
+                foreach (DataRow row in Total_drArray)
+                {
+                    string singleRow = "";
+                    List<string> colAry = new List<string>();
+
+                    string Roll = row["Roll"].ToString();
+                    string Dyelot = row["Dyelot"].ToString();
+
+                    bool IsAllEmpty = AllEmpty_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
+
+                    //如果全為空則不用檢查
+                    if (IsAllEmpty)
+                    {
+                        continue;
+                    }
+
+                    /*
+                     如果空請出現下列訊息 (多筆請斷行)
+                    Roll:{0},Dyelot: {1} ,{2} can not be empty!
+                    {0}: 有資料為null的Roll
+                    {1}: 有資料為null的Dyelot
+                    {2}: 哪個欄位為null ,如多個請用空格分開
+                     */
+
+                    //判斷是哪個欄位空
+                    bool IsScaleEmpty = Scale_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
+                    bool IsResultEmpty = Result_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
+                    bool IsInspdateEmpty = Inspdate_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
+                    bool IsInspectorEmpty = Inspector_drArray.Where(o => o["Roll"].ToString() == Roll && o["Dyelot"].ToString() == Dyelot).Count() > 0;
+                    singleRow = string.Format("Roll:{0},Dyelot: {1} ,",Roll,Dyelot);
+
+                    if (IsScaleEmpty)
+                    {
+                        colAry.Add("Scale");
+                    }
+                    if (IsResultEmpty)
+                    {
+                        colAry.Add("Result");
+                    }
+                    if (IsInspdateEmpty)
+                    {
+                        colAry.Add("Inspdate");
+                    }
+                    if (IsInspectorEmpty)
+                    {
+                        colAry.Add("Inspector");
+                    }
+
+                    singleRow+= colAry.JoinToString(" ")+" can not be empty!";
+
+                    errorMsg += singleRow+Environment.NewLine;
+                }
+                if (!MyUtility.Check.Empty(errorMsg))
+                {
+                    MyUtility.Msg.WarningBox(errorMsg);
+                    return;
+                }
+            }
+
+            #endregion
+
             if (!MyUtility.Convert.GetBool(maindr["shadebondEncode"])) //Encode
             {
                 if (!MyUtility.Convert.GetBool(maindr["nonshadebond"])) //只要沒勾選就要判斷，有勾選就可直接Encode
@@ -322,7 +535,6 @@ namespace Sci.Production.Quality
                         }
                     }
                 }
-                DataTable gridTb = (DataTable)gridbs.DataSource;
                 DataRow[] ResultAry = gridTb.Select("Result = 'Fail'");
                 string result = "Pass";
                 if (ResultAry.Length > 0) result = "Fail";
@@ -485,10 +697,21 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             OnRequery();
         }
 
+        protected override void OnUIConvertToMaintain()
+        {
+            base.OnUIConvertToMaintain();
+            this.append.Visible = false;
+            this.revise.Visible = false;
+            this.delete.Visible = false;
+        }
+
+
         private void button_enable()
         {
             if (maindr == null) return;
             btnEncode.Enabled = this.CanEdit && !this.EditMode && maindr["Status"].ToString() != "Approved";
+
+
             this.btnToExcel.Enabled = !this.EditMode;
             this.btnPrintFormatReport.Enabled = !this.EditMode;
             string menupk = MyUtility.GetValue.Lookup("Pkey", "Sci.Production.Quality.P01", "MenuDetail", "FormName");
@@ -522,7 +745,10 @@ select ToAddress = stuff ((select concat (';', tmp.email)
             #region Excel Grid Value
             DataTable dt;
             DualResult xresult;
-            if (xresult = DBProxy.Current.Select("Production", string.Format("select Roll,Dyelot,Scale,Result,Inspdate,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}'", ID), out dt))
+            if (xresult = DBProxy.Current.Select("Production", string.Format(@"
+select Roll,Dyelot,TicketYds,Scale,Result
+,[Inspdate]=convert(varchar,Inspdate, 111) 
+,Inspector,Remark from FIR_Shadebone WITH (NOLOCK) where id='{0}' AND Result!= '' ", ID), out dt))
             {
                 if (dt.Rows.Count <= 0)
                 {
@@ -551,31 +777,44 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 }
             }
             #endregion
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_ShadeBone_Report.xltx"); //預先開啟excel app
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Quality_P01_ShadeBand_Report.xltx"); //預先開啟excel app
             objApp.Visible = false;
-            MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_ShadeBone_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(dt, "", "Quality_P01_ShadeBand_Report.xltx", 5, false, null, objApp);      // 將datatable copy to excel
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             objSheets.Cells[2, 2] = displaySP.Text.ToString();
             objSheets.Cells[2, 4] = displaySEQ.Text.ToString();
             objSheets.Cells[2, 6] = displayColor.Text.ToString();
             objSheets.Cells[2, 8] = displayStyle.Text.ToString();
             objSheets.Cells[2, 10] = SeasonID;
-            objSheets.Cells[3, 2] = displaySCIRefno.Text.ToString();
+
+            string MCHandle = MyUtility.GetValue.Lookup($"SELECT MCHandle FROM Orders WHERE ID='{displaySP.Text.ToString()}'");
+            objSheets.Cells[3, 2] = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{MCHandle}')");
+
             objSheets.Cells[3, 4] = ContinuityEncode;
             objSheets.Cells[3, 6] = displayResult.Text.ToString();
-            objSheets.Cells[3, 8] = dateLastInspectionDate.Value;
+            objSheets.Cells[3, 8] = dateLastInspectionDate.Value.HasValue ? dateLastInspectionDate.Value.Value.ToString("yyyy/MM/dd") : "";
             objSheets.Cells[3, 10] = displayBrand.Text.ToString();
             objSheets.Cells[4, 2] = displayRefno.Text.ToString();
             objSheets.Cells[4, 4] = displayArriveQty.Text.ToString();
-            objSheets.Cells[4, 6] = dateArriveWHDate.Value;
+            objSheets.Cells[4, 6] = dateArriveWHDate.Value.HasValue ? dateArriveWHDate.Value.Value.ToString("yyyy/MM/dd") : "";
             objSheets.Cells[4, 8] = txtsupplier.DisplayBox1.Text.ToString();
             objSheets.Cells[4, 10] = displayWKNo.Text.ToString();
+
+            objSheets.Range[String.Format("A6:J{0}", dt.Rows.Count + 5)].Borders.Weight = 2;//設定全框線
+
+
+            //合併儲存格
+            for (int i = 1; i <= dt.Rows.Count; i++)
+            {
+                objSheets.Range[String.Format("H{0}:J{0}",(i+5).ToString())].Merge(Type.Missing);
+            }
+           
 
             objApp.Cells.EntireColumn.AutoFit();    //自動欄寬
             objApp.Cells.EntireRow.AutoFit();       ////自動欄高
 
             #region Save Excel
-            excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_ShadeBond");
+            excelFile = Sci.Production.Class.MicrosoftFile.GetName("QA_P01_ShadeBand");
             objApp.ActiveWorkbook.SaveAs(excelFile);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

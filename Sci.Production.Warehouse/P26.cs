@@ -296,7 +296,7 @@ update dbo.LocationTrans set status='Confirmed', editname = '{0}' , editdate = G
 
 update f set editname = '{0}' , editdate = GETDATE(), ApvInspectingName = '{0}', ApvInspectingDate =  GETDATE(),Status = 'Inspecting'
 from ManufacturingExecution.dbo.FabricOrderList f
-where exists(select 1 from LocationTrans_detail where ID = '{1}' and Seq1 = f.Seq1 and Seq2 = f.Seq2 and StockType='B')
+where exists(select 1 from LocationTrans_detail where ID = '{1}' and poid=f.poid and Seq1 = f.Seq1 and Seq2 = f.Seq2 and StockType='B')
  and f.status='Waiting'
 "
 , Env.User.UserID, CurrentMaintain["id"]);

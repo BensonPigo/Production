@@ -134,19 +134,19 @@ outer apply(
 	select qty = sum(i.qty)
 	from Invtrans i WITH (NOLOCK) 
 	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = 1 or(i.type = 4 and i.qty >0))
+	and (i.type = '1' or(i.type = '4' and i.qty >0))
 )InsQty14
 outer apply(
 	select qty = sum(i.qty)
 	from Invtrans i WITH (NOLOCK) 
 	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = 6 or(i.type = 4 and i.qty < 0))
+	and (i.type = '6' or(i.type = '4' and i.qty < 0))
 )InsQty46
 outer apply(
 	select qty = sum(i.qty)
 	from Invtrans i WITH (NOLOCK) 
 	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = 2 or i.type = 5)
+	and (i.type = '2' or i.type = '5')
 )InsQty25
 outer apply (
     select  isnull(sum(m.InQty),0.00) InQty
@@ -194,19 +194,19 @@ outer apply(
 	select qty = sum(i.qty)
 	from Invtrans i WITH (NOLOCK) 
 	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = 1 or(i.type = 4 and i.qty >0))
+	and (i.type = '1' or(i.type = '4' and i.qty >0))
 )InsQty14
 outer apply(
 	select qty = sum(i.qty)
 	from Invtrans i WITH (NOLOCK) 
 	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = 6 or(i.type = 4 and i.qty < 0))
+	and (i.type = '6' or(i.type = '4' and i.qty < 0))
 )InsQty46
 outer apply(
 	select qty = sum(i.qty)
 	from Invtrans i WITH (NOLOCK) 
 	where i.inventorypoid = a.POID and i.inventoryseq1 = a.seq1 and i.inventoryseq2 = a.seq2 and i.qty !=0
-	and (i.type = 2 or i.type = 5)
+	and (i.type = '2' or i.type = '5')
 )InsQty25
 outer apply (
     select  isnull(sum(m.InQty),0.00) InQty

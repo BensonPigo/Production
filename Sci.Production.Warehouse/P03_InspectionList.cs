@@ -23,7 +23,7 @@ namespace Sci.Production.Warehouse
             this.Text += string.Format(" [Fabric Type : {0} SP# : {3} Seq : {1}-{2}]", dr["fabrictype2"], dr["seq1"], dr["seq2"], dr["id"]);
         }
 
-        private void open_QA_program(string this_inv, string inp_type) {
+        private void open_QA_program(string this_inv, string inp_type,string receivingid) {
             string sql = @"
                                     Select 
                                         a.id,
@@ -70,13 +70,13 @@ namespace Sci.Production.Warehouse
                                         OdorDate
 
                                     From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
-                                    Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 and c.InvNo = @InvNo order by seq1,seq2 ";
+                                    Where a.poid = @poid and a.seq1 = @seq1 and a.seq2 = @seq2 and c.InvNo = @InvNo and a.receivingid = @receivingid  order by seq1,seq2 ";
             List<SqlParameter> sqlPar = new List<SqlParameter>();
             sqlPar.Add(new SqlParameter("@poid", dr["id"].ToString()));
             sqlPar.Add(new SqlParameter("@seq1", dr["seq1"].ToString()));
-            sqlPar.Add(new SqlParameter("@seq2", dr["seq2"].ToString()));
-            
+            sqlPar.Add(new SqlParameter("@seq2", dr["seq2"].ToString()));            
             sqlPar.Add(new SqlParameter("@InvNo", this_inv.ToString()));
+            sqlPar.Add(new SqlParameter("@receivingid", receivingid));
 
             DataTable dt;
             DualResult result;
@@ -176,6 +176,7 @@ namespace Sci.Production.Warehouse
 ,[Odor]=IIF(a.nonOdor=1,'N/A',a.Odor)		
 ,a.OdorDate
 ,a.id
+,a.ReceivingID
 from dbo.FIR a WITH (NOLOCK) 
 inner join dbo.Receiving b WITH (NOLOCK) on b.Id= a.ReceivingID
 outer apply ( 
@@ -221,39 +222,39 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
                 DataGridViewGeneratorNumericColumnSettings inspection = new DataGridViewGeneratorNumericColumnSettings();
                 inspection.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings physical = new DataGridViewGeneratorTextColumnSettings();
                 physical.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "inspection", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings weight = new DataGridViewGeneratorTextColumnSettings();
                 weight.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "weight");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "weight", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
                 DataGridViewGeneratorTextColumnSettings shadebond = new DataGridViewGeneratorTextColumnSettings();
                 shadebond.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "shadebond");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "shadebond", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
 
                 };
 
                 DataGridViewGeneratorTextColumnSettings continuity = new DataGridViewGeneratorTextColumnSettings();
                 continuity.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "continuity");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "continuity", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
 
 
                 DataGridViewGeneratorTextColumnSettings Odor = new DataGridViewGeneratorTextColumnSettings();
                 Odor.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "Odor");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "Odor", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 #endregion
 
@@ -302,6 +303,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr
 ,[ColorFastness] = ColorFastness.Result
 ,[ColorFastnessDate] = ColorFastness.InspDate
 ,a.id
+,b.ReceivingID
 from dbo.FIR_Laboratory a WITH (NOLOCK) 
 inner join dbo.FIR b WITH (NOLOCK) on b.id = a.id
 inner join dbo.Receiving c WITH (NOLOCK) on c.Id = b.ReceivingID
@@ -358,17 +360,17 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", dr["id"], dr["seq1"], dr[
                 DataGridViewGeneratorTextColumnSettings crocking = new DataGridViewGeneratorTextColumnSettings();
                 crocking.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "crocking");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "crocking", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 DataGridViewGeneratorTextColumnSettings heat = new DataGridViewGeneratorTextColumnSettings();
                 heat.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "heat");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "heat", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 DataGridViewGeneratorTextColumnSettings wash = new DataGridViewGeneratorTextColumnSettings();
                 wash.CellMouseDoubleClick += (s, e) =>
                 {
-                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "wash");
+                    open_QA_program(dtFIR_AIR.Rows[e.RowIndex]["InvNo"].ToString(), "wash", dtFIR_AIR.Rows[e.RowIndex]["ReceivingID"].ToString());
                 };
                 #endregion
                 //設定gridFir_Laboratory的顯示欄位

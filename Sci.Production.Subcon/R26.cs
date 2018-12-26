@@ -277,6 +277,7 @@ select DISTINCT c.FactoryID
 	        ,[Description] = dbo.getItemDesc(a.Category,b.Refno) 
 	        ,b.qty
 	        ,b.UnitId
+            ,a.CurrencyID 
 	        ,b.Price
 	        ,[Amount] = b.Qty*b.Price
 	        ,b.InQty

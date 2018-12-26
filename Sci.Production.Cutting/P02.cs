@@ -172,7 +172,7 @@ Select
 	,c.DescDetail
     ,c.Description
 	,newkey = 0
-	,MarkerLengthY = RIGHT(REPLICATE('0', 2) + CAST(substring(a.MarkerLength,1,CHARINDEX('Y',a.MarkerLength)-1) as VARCHAR), 2)  
+	,MarkerLengthY = iif(CHARINDEX('Y',a.MarkerLength)>0, RIGHT(REPLICATE('0', 2) + CAST(substring(a.MarkerLength,1,CHARINDEX('Y',a.MarkerLength)-1) as VARCHAR), 2),'')
 	,MarkerLengthE = substring(a.MarkerLength,CHARINDEX('Y',a.MarkerLength)+1,15) 
     ,shc = iif(isnull(shc.RefNo,'')='','','Shrinkage Issue, Spreading Backward Speed: 2, Loose Tension')
     ,EachconsMarkerNo = e.markerNo

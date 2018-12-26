@@ -539,7 +539,7 @@ select t.MDivisionID
        , [RFID HT Farm Out Qty] = isnull (htout.AccuOutGo, 0)
         , SubProcessStatus=
 			case when t.Junk = 1 then null
-				 when subprocessqty.chksubprocesqty >= inoutcount.ct then 'Y'
+				 when subprocessqty.chksubprocesqty = inoutcount.ct and inoutcount.ct >0 then 'Y'
 			end
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
@@ -726,11 +726,18 @@ outer apply(
           and #tmpout.SubProcessId = 'HT'
 ) htout
 outer apply(
-	select ct = count(1)*2
-	from #tmpin
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT')
+	select ct = sum(xxx.Accusubprocesqty)
+	from(
+		select [Accusubprocesqty] = iif(#tmpin.AccuQty > 0, 1, 0)+
+									iif(#tmpout.AccuQty > 0, 1, 0)
+		from #tmpin,#tmpout
+		where #tmpin.SP = t.OrderID 
+		and #tmpin.Factory = t.FactoryID
+		and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
+		and #tmpout.SP = t.OrderID 
+	    and #tmpout.Factory = t.FactoryID
+		and #tmpout.SubProcessId = #tmpin.SubProcessId
+	)xxx
 )inoutcount
 outer apply(
 	select chksubprocesqty = sum(xxx.Accusubprocesqty)
@@ -1220,7 +1227,7 @@ select t.MDivisionID
        , [RFID HT Farm Out Qty] = isnull (htout.AccuOutGo, 0)
         , SubProcessStatus=
 			case when t.Junk = 1 then null
-				 when subprocessqty.chksubprocesqty >= inoutcount.ct then 'Y'
+				 when subprocessqty.chksubprocesqty = inoutcount.ct and inoutcount.ct >0 then 'Y'
 			end
        , #cte2.EMBROIDERY_qty
        , #cte2.BONDING_qty
@@ -1424,12 +1431,18 @@ outer apply(
 		  and #tmpout.Article = t.Article and #tmpout.Size = t.SizeCode
 ) htout
 outer apply(
-	select ct = count(1)*2
-	from #tmpin
-	where #tmpin.SP = t.OrderID 
-	and #tmpin.Factory = t.FactoryID
-	and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT')
-	and #tmpin.Article = t.Article and #tmpin.Size = t.SizeCode
+	select ct = sum(xxx.Accusubprocesqty)
+	from(
+		select [Accusubprocesqty] = iif(#tmpin.AccuQty > 0, 1, 0)+
+									iif(#tmpout.AccuQty > 0, 1, 0)
+		from #tmpin,#tmpout
+		where #tmpin.SP = t.OrderID 
+		and #tmpin.Factory = t.FactoryID
+		and #tmpin.SubProcessId in('Emb','BO','PRT','AT','PAD-PRT','SUBCONEMB','HT','Loading','SORTING')
+		and #tmpout.SP = t.OrderID 
+	    and #tmpout.Factory = t.FactoryID
+		and #tmpout.SubProcessId = #tmpin.SubProcessId
+	)xxx
 )inoutcount
 outer apply(
 	select chksubprocesqty = sum(xxx.Accusubprocesqty)

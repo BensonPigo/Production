@@ -45,9 +45,11 @@ namespace Sci.Production.Warehouse
                  .Text("seq2", header: "Issue" + Environment.NewLine + "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                  .Numeric("inputqty", header: "TPE Input", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("accu_qty", header: "Accu Trans.", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
+                 .Numeric("VarianceQty", header: "Variance Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("total_qty", header: "Trans. Qty", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("requestqty", header: "Balance", width: Widths.AnsiChars(6), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Text("TransID", header: "Trans. ID", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                 .Text("PRHandle", header: "PR Handle", width: Widths.AnsiChars(2), iseditingreadonly: true)
                   ;
             #endregion
             col_chk.CellClick += (s, e) =>
@@ -314,6 +316,8 @@ WHERE   StockType='{0}'
             , pd.POUnit
             , pd.StockUnit
             , isnull(x.accu_qty,0.00) accu_qty
+            , VarianceQty=ROUND(dbo.GetUnitQty(pd.POUnit, pd.StockUnit, xz.taipei_qty),2) - isnull(x.accu_qty,0.00)
+            , pr.PRHandle
             , pd.FinalETA
     from dbo.orders o WITH (NOLOCK) 
     inner join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = o.ID
@@ -325,13 +329,20 @@ WHERE   StockType='{0}'
     cross apply (
 	    select distinct 1 abc 
         from dbo.Invtrans WITH (NOLOCK) 
-        where   type = 1 
+        where   type = '1'
                 and (convert(varchar, ConfirmDate, 111) between convert(varchar, '{0}', 111) and convert(varchar, '{1}', 111)) 
                 and poid = pd.id 
                 and seq1 = pd.seq1 
                 and seq2 = pd.seq2
     ) z ", InputDate_b, InputDate_e));
             }
+            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            string where = string.Empty;
+            if (!MtlAutoLock)
+            {
+                where = " AND fi.lock = 0 ";
+            }
+
             sqlcmd.Append($@" 
     outer apply (
         select count(1) cnt 
@@ -342,7 +353,7 @@ WHERE   StockType='{0}'
                 and fi.Seq2 = pd.Seq2 
                 and fi.StockType = 'B' 
                 and fid.MtlLocationID is not null
-                and fi.Lock = 0 
+                {where}
                 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
     ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
     outer apply (
@@ -360,11 +371,17 @@ WHERE   StockType='{0}'
     cross apply (   
         select sum(i.Qty) taipei_qty
         from dbo.Invtrans i WITH (NOLOCK) 
-        where   (i.type = 1 OR I.TYPE = 4) 
+        where   (i.type = '1' OR I.TYPE = '4') 
                 and i.InventoryPOID = pd.ID 
                 and i.InventorySeq1 = pd.seq1 
                 and i.InventorySeq2 = pd.SEQ2
     ) xz
+    outer apply(
+        select PRHandle=concat(TPEPass1.ID,'-',REPLACE(TPEPass1.Name,' ',''), iif(isnull(TPEPass1.ExtNo,'')='','',' #'+TPEPass1.ExtNo))
+        from TPEPass1
+        inner join po on TPEPass1.id =PO.POHandle
+        where PO.ID = o.id
+    )pr
     where   f.MDivisionID = '{Env.User.Keyword}'
             and checkProduceFty.IsProduceFty = '1'
             and o.Category in ({selectindex})");
@@ -400,7 +417,7 @@ WHERE   StockType='{0}'
             }
 
             #endregion
-            sqlcmd.Append(@"
+            sqlcmd.Append($@"
 )
 select  *
         , 0.00 qty 
@@ -449,7 +466,7 @@ inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.POID
                                              and fi.Seq2 = t.Seq2
 left join orders o on fi.poid=o.id
 where   fi.StockType = 'B' 
-        and fi.Lock = 0 
+{where}
         and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 order by topoid, toseq1, toseq2, GroupQty DESC, fi.Dyelot, BalanceQty DESC
 drop table #tmp");

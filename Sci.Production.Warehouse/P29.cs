@@ -289,6 +289,13 @@ WHERE   StockType='{0}'
 
             StringBuilder sqlcmd = new StringBuilder();
             #region -- sql command --
+            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            string where = string.Empty;
+            if (!MtlAutoLock)
+            {
+                where = " AND fi.lock = 0 ";
+            }
+
             sqlcmd.Append(string.Format(@"
 ;with cte as (
     select  convert(bit,0) as selected
@@ -323,17 +330,17 @@ WHERE   StockType='{0}'
                 and fi.Seq2 = pd.stockSeq2 
                 and fi.StockType = 'I' 
 	            and fid.MtlLocationID is not null 
-                and fi.Lock = 0 
+                {1}
                 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
     ) y--Detail有MD為null數量,沒有則為0,沒資料也為0
     cross apply (
-        select  sum(iif(i.type=2,i.qty,0-i.qty)) taipei_qty 
+        select  sum(iif(i.type='2',i.qty,0-i.qty)) taipei_qty 
         from dbo.Invtrans i WITH (NOLOCK) 
         where   i.InventoryPOID = pd.StockPOID 
                 and i.InventorySeq1 = pd.StockSeq1 
                 and i.PoID = pd.ID 
                 and i.InventorySeq2 = pd.StockSeq2 
-                and (i.type=2 or i.type=6)
+                and (i.type='2' or i.type='6')
                 and Seq70Poid = rtrim(o.id)
                 and Seq70Seq1 = rtrim(pd.seq1)
                 and Seq70Seq2 = pd.seq2
@@ -351,7 +358,7 @@ WHERE   StockType='{0}'
     ) xx --已轉的數量
     where   pd.seq1 like '7%' 
             and f.MDivisionID = '{0}'
-            and checkProduceFty.IsProduceFty = '1'", Env.User.Keyword));
+            and checkProduceFty.IsProduceFty = '1'", Env.User.Keyword, where));
 
             #region -- 條件 --
             switch (selectindex)
@@ -413,7 +420,7 @@ WHERE   StockType='{0}'
             and o.CFMDate between '{0}' and '{1}'", OrderCfmDate_b, OrderCfmDate_e));
             }
             #endregion
-            sqlcmd.Append(@"
+            sqlcmd.Append($@"
 )
 select  *
         , 0.00 qty 
@@ -452,7 +459,7 @@ inner join FtyInventory fi WITH (NOLOCK) on  fi.POID = t.StockPOID
                                              and fi.Seq2 = t.StockSeq2
 inner join dbo.orders o WITH (NOLOCK) on fi.POID=o.id
 where   fi.StockType = 'I' 
-        and fi.Lock = 0 
+{where}
         and fi.InQty - fi.OutQty + fi.AdjustQty > 0 
 order by topoid, toseq1, toseq2, GroupQty DESC, fi.Dyelot, BalanceQty DESC
 drop table #tmp");

@@ -79,12 +79,11 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
-    ,[SewingReasonDesc]=sr.ID+'-'+sr.Description
+    ,[SewingReasonDesc]=sr.SewingReasonDesc
 	,sd.Remark
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-LEFT JOIN SewingReason sr ON sd.SewingReasonID=sr.ID AND sr.Type='SO'
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
@@ -95,6 +94,16 @@ outer apply
     from Rft r WITH (NOLOCK) 
     where r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
 ) r
+outer apply
+(
+	select [SewingReasonDesc]=stuff((
+		select concat(',',sr.ID+'-'+sr.Description)
+		from SewingReason sr
+		inner join SewingOutput_Detail sd2 WITH (NOLOCK) on sd2.SewingReasonID=sr.ID
+		where sr.Type='SO' and sd2.id = s.id
+		for xml path('')
+	),1,1,'')
+)sr
 where 1=1 "));
 
             if (!MyUtility.Check.Empty(this.date1))
@@ -317,7 +326,7 @@ select * from(
 		,CPUPrice = IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)
 		,TargetQty = IIF(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)>0,ROUND(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS,2)/IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate),0)
 		,t.QAQty
-		,TotalCPU = ROUND(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,2)
+		,TotalCPU = ROUND(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,3)
 		,CPUSewer = IIF(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(IIF(t.QAQty>0,ActManPower/t.QAQty,ActManPower)*WorkHour,2)*3600/StdTMS))*100,0),1)
 		,RFT = IIF(InspectQty>0,ROUND((InspectQty-RejectQty)/InspectQty*100,2),0)

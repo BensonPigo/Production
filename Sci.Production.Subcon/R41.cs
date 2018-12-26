@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -70,12 +71,47 @@ namespace Sci.Production.Subcon
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
 
+            #region Append畫面上的條件
+            StringBuilder sqlWhere = new StringBuilder();
+            if (!MyUtility.Check.Empty(SubProcess))
+            {
+                sqlWhere.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
+            }
+            if (!MyUtility.Check.Empty(CutRef1))
+            {
+                sqlWhere.Append(string.Format(@" and b.CutRef >= '{0}' ", CutRef1));
+            }
+            if (!MyUtility.Check.Empty(CutRef2))
+            {
+                sqlWhere.Append(string.Format(@" and b.CutRef <= '{0}' ", CutRef2));
+            }
+            if (!MyUtility.Check.Empty(SP))
+            {
+                sqlWhere.Append(string.Format(@" and b.Orderid = '{0}'", SP));
+            }
+            if (!MyUtility.Check.Empty(dateBundle1))
+            {
+                sqlWhere.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateBundle2))
+            {
+                sqlWhere.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(M))
+            {
+                sqlWhere.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
+            }
+            if (!MyUtility.Check.Empty(Factory))
+            {
+                sqlWhere.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+            }
+            #endregion
+
             #region sqlcmd
-            StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
-Select DISTINCT
+            string sqlCmd = $@"
+Select 
     [Bundleno] = bd.BundleNo,
-    [Cut Ref#] = b.CutRef,
+    [Cut Ref#] = isnull(b.CutRef,''),
     [SP#] = b.Orderid,
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
@@ -97,18 +133,37 @@ Select DISTINCT
     [Artwork] = sub.sub,
     [Qty] = bd.Qty,
     [Sub-process] = s.Id,
+    bio.LocationID,
+    b.Cdate,
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
-	bio.LocationID,
-	AvgTime = case when isnull(bio.InComing,'')='' and isnull(bio.OutGoing,'')='' then null
-				   else round(abs(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,'')))/24.0,2)
-				   end
-
+	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
+					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,''))/24.0,2))
+					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
+					when s.InOutRule = 3 then iif(bio.OutGoing is null or bio.InComing is null, null, round(Datediff(Hour,isnull(bio.InComing,''),isnull(bio.OutGoing,''))/24.0,2))
+					when s.InOutRule = 4 then iif(bio.OutGoing is null or bio.InComing is null, null, round(Datediff(Hour,isnull(bio.OutGoing,''),isnull(bio.InComing,''))/24.0,2))
+					end,
+	TimeRangeFail = case	when s.InOutRule = 1 and bio.InComing is null then 'No Scan'
+						when s.InOutRule = 2 and bio.OutGoing is null then 'No Scan'
+						when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then 'No Scan'
+						when s.InOutRule = 3 and (bio.OutGoing is null or bio.InComing is null) then 'Not Valid'
+						when s.InOutRule = 4 and (bio.OutGoing is null or bio.InComing is null) then 'Not Valid'
+						else '' end,
+	s.InOutRule
+into #result
 from Bundle b WITH (NOLOCK) 
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
-inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
+outer apply(
+    select s.ID,s.InOutRule
+    from SubProcess s
+        where exists (
+                        select 1 from Bundle_Detail_Art bda
+                                where   bda.BundleNo = bd.BundleNo    and
+                                        bda.ID = b.ID   and
+                                        bda.SubProcessID = s.ID
+                        ) or s.IsRFIDDefault = 1
+) s
 left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
 outer apply(
 	    select sub= stuff((
@@ -118,50 +173,95 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 ) as sub
+where 1=1 {sqlWhere}";
 
-where 1=1
-            ");
-            #endregion
-            #region Append畫面上的條件
-            if (!MyUtility.Check.Empty(SubProcess))
-            {
-                sqlCmd.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
-            }
-            if (!MyUtility.Check.Empty(CutRef1))
-            {
-                sqlCmd.Append(string.Format(@" and b.CutRef >= '{0}' ", CutRef1));
-            }
-            if (!MyUtility.Check.Empty(CutRef2))
-            {
-                sqlCmd.Append(string.Format(@" and b.CutRef <= '{0}' ", CutRef2));
-            }
-            if (!MyUtility.Check.Empty(SP))
-            {
-                sqlCmd.Append(string.Format(@" and b.Orderid = '{0}'", SP));
-            }
-            if (!MyUtility.Check.Empty(dateBundle1))
-            {
-                sqlCmd.Append(string.Format(@" and b.Cdate >= '{0}'", Convert.ToDateTime(dateBundle1).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(dateBundle2))
-            {
-                sqlCmd.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
-            }
-            if (!MyUtility.Check.Empty(M))
-            {
-                sqlCmd.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
-            }
-            if (!MyUtility.Check.Empty(Factory))
-            {
-                sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
-            }
+            string sqlResult = $@"
+{sqlCmd}
+
+;with GetCutDateTmp as
+(
+	select	r.[Cut Ref#],
+			r.M,
+			[EstCutDate] = MAX(w.EstCutDate),
+			[CuttingOutputDate] = MAX(co.cDate)
+	from #result r
+	inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.MDivisionId = r.M
+	left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
+	left join CuttingOutput co  with (nolock) on co.ID = cod.ID
+    where r.[Cut Ref#] <> ''
+	group by r.[Cut Ref#],r.M
+)
+select
+    r.[Bundleno] ,
+    r.[Cut Ref#] ,
+    r.[SP#],
+    r.[Master SP#],
+    r.[M],
+    r.[Factory],
+    r.[Style],
+    r.[Season],
+    r.[Brand],
+    r.[Comb],
+    r.Cutno,
+	r.[Fab_Panel Code],
+    r.[Article],
+    r.[Color],
+    r.[Line],
+    r.[Cell],
+    r.[Pattern],
+    r.[PtnDesc],
+    r.[Group],
+    r.[Size],
+    r.[Artwork],
+    r.[Qty],
+    r.[Sub-process],
+    r.LocationID,
+    r.Cdate,
+    r.[InComing],
+    r.[Out (Time)],
+	r.AvgTime,
+    [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
+                        when AvgTime < 0 then 'Not Valid'
+						when AvgTime >= 0 and AvgTime < 1 then '<1'
+						when AvgTime >= 1 and AvgTime < 2 then '1-2'
+						when AvgTime >= 2 and AvgTime < 3 then '2-3'
+						when AvgTime >= 3 and AvgTime < 4 then '3-4'
+						when AvgTime >= 4 and AvgTime < 5 then '4-5'
+						when AvgTime >= 5 and AvgTime < 10 then '5-10'
+						when AvgTime >= 10 and AvgTime < 20 then '10-20'
+						when AvgTime >= 20 and AvgTime < 30 then '20-30'
+						when AvgTime >= 30 and AvgTime < 40 then '30-40'
+						when AvgTime >= 40 and AvgTime < 50 then '40-50'
+						when AvgTime >= 50 and AvgTime < 60 then '50-60'
+						else '>60' end,
+    gcd.EstCutDate,
+    gcd.CuttingOutputDate
+from #result r
+left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
+order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc
+
+drop table #result
+";
+
             #endregion
 
-            
-            string cmdct = string.Format("select count(*) ct from ({0})aaa", sqlCmd.ToString());
-            int ct = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(cmdct));
-            sqlCmd.Append(@"order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc");
-            string cmd1 = sqlCmd.ToString();
+            string cmdct = $@"
+{sqlCmd}
+
+select ct = count(1)
+from #result
+
+drop table #result
+";
+            DataTable groupByDt;
+            DualResult result = DBProxy.Current.Select(null, cmdct, out groupByDt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+            var groupByLinq = groupByDt.AsEnumerable();
+            int ct = groupByLinq.Sum(s => (int)s["ct"]);
             SetCount(ct);
             if (ct <= 0)
             {
@@ -182,7 +282,8 @@ where 1=1
             using (var cn = new SqlConnection(Env.Cfg.GetConnection("", DBProxy.Current.DefaultModuleName).ConnectionString))
             using (var cm = cn.CreateCommand())
             {
-                cm.CommandText = cmd1;
+                cm.CommandText = sqlResult;
+                cm.CommandTimeout = 900;
                 var adp = new System.Data.SqlClient.SqlDataAdapter(cm);
                 var cnt = 0;
                 var start = 0;
@@ -207,13 +308,13 @@ where 1=1
             //{
             //    objApp.ActiveWorkbook.Worksheets[Cpage].Columns.AutoFit();//這頁需要重新調整欄寬                
             //}
-
-            Marshal.ReleaseComObject(objSheets);
+                        
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R41_Bundle tracking list (RFID)");
             objApp.ActiveWorkbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);
+            Marshal.ReleaseComObject(objSheets);
 
             strExcelName.OpenFile();
             #endregion

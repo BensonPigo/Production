@@ -24,6 +24,7 @@ namespace Sci.Production.Thread
         private string RefNo_s = string.Empty;
         private string RefNo_e = string.Empty;
         private string Shade = string.Empty;
+        private string Type = string.Empty;
         private List<SqlParameter> Parameters = new List<SqlParameter>();
         private string sqlWhere = string.Empty;
 
@@ -34,7 +35,6 @@ namespace Sci.Production.Thread
         {
             this.InitializeComponent();
         }
-
 
         protected override bool ValidateInput()
         {
@@ -77,6 +77,12 @@ namespace Sci.Production.Thread
                 this.Parameters.Add(new SqlParameter("@Shade", this.Shade));
             }
 
+            this.Type = this.cmbType.Text;
+            if (!MyUtility.Check.Empty(this.cmbType.Text))
+            {
+                this.Parameters.Add(new SqlParameter("@Type", this.Type));
+            }
+
             return base.ValidateInput();
         }
 
@@ -96,12 +102,25 @@ namespace Sci.Production.Thread
             {
                 sqlWhere += " AND ts.ThreadColorID = @Shade ";
             }
+            if (!MyUtility.Check.Empty(this.Type))
+            {
+                sqlWhere += " AND li.Category = @Type ";
+            }
 
             StringBuilder sqlCmd = new StringBuilder();
 
             #region SQL
 
             sqlCmd.Append($@"
+select ts.Refno
+	,ts.ThreadColorID
+into #tmp
+from ThreadStock ts 
+left join LocalItem li on li.RefNo = ts.RefNo
+where 1=1
+{sqlWhere}
+group by ts.Refno,ts.ThreadColorID
+
 select src.Refno
       ,src.ThreadColorID
 	  , (select LocalItem.Description from dbo.LocalItem WITH (NOLOCK) where refno= src.Refno) [Description]
@@ -111,14 +130,7 @@ select src.Refno
 	  ,adjust_between.ttl_cone [Adjust_Cone]
 	  -- Balance = Initial + incoming - issue + adjust
 	  ,((incoming_before.ttl_cone - issue_before.ttl_cone + adjust_before.ttl_cone) + incoming_between.ttl_cone - issue_between.ttl_cone + adjust_between.ttl_cone)[Balance_Cone] 
- from 
-  (select ts.Refno
-		 ,ts.ThreadColorID
-     from ThreadStock ts 
-    where 1=1
-	  {sqlWhere}
-    group by ts.Refno,ts.ThreadColorID
-  ) src
+from #tmp src
   -- incoming時間區間間內
   outer apply(select ISNULL(sum(isnull(tcd.NewCone, 0)), 0) + ISNULL(sum(isnull(tcd.UsedCone, 0)), 0) as ttl_cone 
 				from ThreadIncoming tc
@@ -199,9 +211,10 @@ select src.Refno
              ) adjust_before
  where 1=1
  order by src.Refno,src.ThreadColorID
+OPTION (OPTIMIZE FOR UNKNOWN);
+drop table #tmp
 ");
             #endregion
-
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), Parameters, out this.printData);
             if (!result)

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelID = new Sci.Win.UI.Label();
             this.labelSubprocess = new Sci.Win.UI.Label();
             this.labelStockType = new Sci.Win.UI.Label();
@@ -37,12 +38,20 @@
             this.label1 = new Sci.Win.UI.Label();
             this.txtSewingLine = new Sci.Win.UI.TextBox();
             this.contextMenuStrip1 = new Sci.Win.UI.ContextMenuStrip();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.labLocation = new Sci.Win.UI.Label();
+            this.txtLocation = new Sci.Win.UI.TextBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.comboMDivision = new Sci.Production.Class.comboMDivision(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // detail
@@ -51,6 +60,9 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.comboMDivision);
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.groupBox1);
             this.detailcont.Controls.Add(this.txtSewingLine);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.comboStockType);
@@ -98,7 +110,7 @@
             // 
             // labelSubprocess
             // 
-            this.labelSubprocess.Location = new System.Drawing.Point(35, 94);
+            this.labelSubprocess.Location = new System.Drawing.Point(35, 71);
             this.labelSubprocess.Name = "labelSubprocess";
             this.labelSubprocess.Size = new System.Drawing.Size(97, 23);
             this.labelSubprocess.TabIndex = 1;
@@ -106,7 +118,7 @@
             // 
             // labelStockType
             // 
-            this.labelStockType.Location = new System.Drawing.Point(35, 151);
+            this.labelStockType.Location = new System.Drawing.Point(35, 110);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(97, 23);
             this.labelStockType.TabIndex = 2;
@@ -131,7 +143,7 @@
             this.comboSubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSubprocess.FormattingEnabled = true;
             this.comboSubprocess.IsSupportUnselect = true;
-            this.comboSubprocess.Location = new System.Drawing.Point(135, 94);
+            this.comboSubprocess.Location = new System.Drawing.Point(135, 71);
             this.comboSubprocess.Name = "comboSubprocess";
             this.comboSubprocess.OldText = "";
             this.comboSubprocess.Size = new System.Drawing.Size(121, 24);
@@ -144,7 +156,7 @@
             this.comboStockType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStockType.FormattingEnabled = true;
             this.comboStockType.IsSupportUnselect = true;
-            this.comboStockType.Location = new System.Drawing.Point(135, 150);
+            this.comboStockType.Location = new System.Drawing.Point(135, 109);
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(121, 24);
@@ -152,7 +164,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(35, 199);
+            this.label1.Location = new System.Drawing.Point(35, 148);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(97, 23);
             this.label1.TabIndex = 3;
@@ -163,10 +175,10 @@
             this.txtSewingLine.BackColor = System.Drawing.Color.White;
             this.txtSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
             this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSewingLine.Location = new System.Drawing.Point(135, 199);
+            this.txtSewingLine.Location = new System.Drawing.Point(135, 148);
             this.txtSewingLine.Name = "txtSewingLine";
             this.txtSewingLine.Size = new System.Drawing.Size(67, 23);
-            this.txtSewingLine.TabIndex = 4;
+            this.txtSewingLine.TabIndex = 3;
             this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSewingLine_PopUp);
             this.txtSewingLine.Validating += new System.ComponentModel.CancelEventHandler(this.txtSewingLine_Validating);
             // 
@@ -174,6 +186,79 @@
             // 
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(18, 34);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(97, 23);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Factory";
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory.FilteMDivision = true;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(118, 34);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 4;
+            // 
+            // labLocation
+            // 
+            this.labLocation.Location = new System.Drawing.Point(18, 73);
+            this.labLocation.Name = "labLocation";
+            this.labLocation.Size = new System.Drawing.Size(97, 23);
+            this.labLocation.TabIndex = 7;
+            this.labLocation.Text = "Location";
+            // 
+            // txtLocation
+            // 
+            this.txtLocation.BackColor = System.Drawing.Color.White;
+            this.txtLocation.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Location", true));
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocation.Location = new System.Drawing.Point(118, 73);
+            this.txtLocation.MaxLength = 50;
+            this.txtLocation.Name = "txtLocation";
+            this.txtLocation.Size = new System.Drawing.Size(201, 23);
+            this.txtLocation.TabIndex = 5;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.txtLocation);
+            this.groupBox1.Controls.Add(this.txtfactory);
+            this.groupBox1.Controls.Add(this.labLocation);
+            this.groupBox1.Location = new System.Drawing.Point(391, 30);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(333, 113);
+            this.groupBox1.TabIndex = 8;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Physical Location Information";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(35, 186);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(97, 23);
+            this.label3.TabIndex = 9;
+            this.label3.Text = "M";
+            // 
+            // comboMDivision1
+            // 
+            this.comboMDivision.BackColor = System.Drawing.Color.White;
+            this.comboMDivision.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "MDivisionID", true));
+            this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboMDivision.FormattingEnabled = true;
+            this.comboMDivision.IsSupportUnselect = true;
+            this.comboMDivision.Location = new System.Drawing.Point(136, 186);
+            this.comboMDivision.Name = "comboMDivision1";
+            this.comboMDivision.OldText = "";
+            this.comboMDivision.Size = new System.Drawing.Size(120, 24);
+            this.comboMDivision.TabIndex = 10;
             // 
             // B40
             // 
@@ -194,6 +279,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -210,5 +297,12 @@
         private Win.UI.TextBox txtSewingLine;
         private Win.UI.Label label1;
         private Win.UI.ContextMenuStrip contextMenuStrip1;
+        private Win.UI.Label label2;
+        private Win.UI.Label labLocation;
+        private Class.txtfactory txtfactory;
+        private Win.UI.TextBox txtLocation;
+        private Win.UI.Label label3;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private Class.comboMDivision comboMDivision;
     }
 }

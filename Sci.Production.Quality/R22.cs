@@ -147,24 +147,27 @@ from query
 IF not exists(select * from #tmpall)
 GOTO AllEnd
 
-SELECT @cols = concat(@cols , ',' , QUOTENAME(DynamicColumnName) , '= max(' , QUOTENAME(DynamicColumnName),')')
+SELECT @cols = concat(@cols , ',' , QUOTENAME(DynamicColumnName) , '= iif(max(' , QUOTENAME(DynamicColumnName),')<>0,max(' , QUOTENAME(DynamicColumnName),') ,null)')
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
+order by DynamicColumnName
 SELECT @cols2 = concat(@cols2 , iif(@cols2 = N'',QUOTENAME(DynamicColumnName),concat( N',' , QUOTENAME(DynamicColumnName))))
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
-SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= avg(' , QUOTENAME(DynamicColumnName),')') ,concat('= sum(' , QUOTENAME(DynamicColumnName),')')))
+order by DynamicColumnName
+SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= iif(avg(' , QUOTENAME(DynamicColumnName),')<>0, avg(' , QUOTENAME(DynamicColumnName),'),null)') ,concat('= iif(sum(' , QUOTENAME(DynamicColumnName),')<>0,sum(' , QUOTENAME(DynamicColumnName),'),null)')))
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
+order by DynamicColumnName
 
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = N'
@@ -223,9 +226,9 @@ from query
 ;with A as(
 	select
 		  [FactoryID] = FactoryID
-		,[sum_inspTimes] = sum([1inspTimes])
-		,[sum_passTimes] = sum([2passTimes])
-		,[sum_pass_rate] = round(sum([2passTimes])/sum([1inspTimes]),4)
+		,[sum_inspTimes] = iif(sum([1inspTimes])<>0,sum([1inspTimes]),null)
+		,[sum_passTimes] = iif(sum([2passTimes])<>0,sum([2passTimes]),null)
+		,[sum_pass_rate] = iif(round(sum([2passTimes])/sum([1inspTimes]),4)<>0,round(sum([2passTimes])/sum([1inspTimes]),4),null)
 	from #All
 	pivot
 	(
@@ -356,12 +359,13 @@ from query
 IF not exists(select * from #tmpall)
 GOTO AllEnd
 
-SELECT @cols = concat(@cols , ',' , QUOTENAME(DynamicColumnName) , '= max(' , QUOTENAME(DynamicColumnName),')')
+SELECT @cols = concat(@cols , ',' , QUOTENAME(DynamicColumnName) , '= iif(max(' , QUOTENAME(DynamicColumnName),')<>0,max(' , QUOTENAME(DynamicColumnName),') ,null)')
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
+order by DynamicColumnName
 --print @cols
 SELECT @cols2 = concat(@cols2 , iif(@cols2 = N'',QUOTENAME(DynamicColumnName),concat( N',' , QUOTENAME(DynamicColumnName))))
 FROM 
@@ -369,13 +373,15 @@ FROM
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
+order by DynamicColumnName
 --print @cols2
-SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= avg(' , QUOTENAME(DynamicColumnName),')') ,concat('= sum(' , QUOTENAME(DynamicColumnName),')')))
+SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= iif(avg(' , QUOTENAME(DynamicColumnName),')<>0, avg(' , QUOTENAME(DynamicColumnName),'),null)') ,concat('= iif(sum(' , QUOTENAME(DynamicColumnName),')<>0,sum(' , QUOTENAME(DynamicColumnName),'),null)')))
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
+order by DynamicColumnName
 --print @cols3
 
 DECLARE @sql NVARCHAR(MAX)
@@ -439,9 +445,9 @@ from query
 ;with A as(
 	select
 		[DateA] = CDate
-		,[sum_inspTimes] = sum([1inspTimes])
-		,[sum_passTimes] = sum([2passTimes])
-		,[sum_pass_rate] = round(sum([2passTimes])/sum([1inspTimes]),4)
+		,[sum_inspTimes] = iif(sum([1inspTimes])<>0,sum([1inspTimes]),null)
+		,[sum_passTimes] = iif(sum([2passTimes])<>0,sum([2passTimes]),null)
+		,[sum_pass_rate] = iif(round(sum([2passTimes])/sum([1inspTimes]),4)<>0,round(sum([2passTimes])/sum([1inspTimes]),4),null)
 	from #All
 	pivot
 	(
@@ -571,12 +577,13 @@ from query
 IF not exists(select * from #tmpall)
 GOTO AllEnd
 
-SELECT @cols = concat(@cols , ',' , QUOTENAME(DynamicColumnName) , '= max(' , QUOTENAME(DynamicColumnName),')')
+SELECT @cols = concat(@cols , ',' , QUOTENAME(DynamicColumnName) , '= iif(max(' , QUOTENAME(DynamicColumnName),')<>0,max(' , QUOTENAME(DynamicColumnName),') ,null)')
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
+order by DynamicColumnName
 --print @cols
 SELECT @cols2 = concat(@cols2 , iif(@cols2 = N'',QUOTENAME(DynamicColumnName),concat( N',' , QUOTENAME(DynamicColumnName))))
 FROM 
@@ -584,13 +591,15 @@ FROM
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
+order by DynamicColumnName
 --print @cols2
-SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= avg(' , QUOTENAME(DynamicColumnName),')') ,concat('= sum(' , QUOTENAME(DynamicColumnName),')')))
+SELECT @cols3 = concat(@cols3 , ',' , QUOTENAME(DynamicColumnName) , iif(DynamicColumnName like '%_rate',concat('= iif(avg(' , QUOTENAME(DynamicColumnName),')<>0, avg(' , QUOTENAME(DynamicColumnName),'),null)') ,concat('= iif(sum(' , QUOTENAME(DynamicColumnName),')<>0,sum(' , QUOTENAME(DynamicColumnName),'),null)')))
 FROM 
 (
     SELECT DISTINCT DynamicColumnName
     FROM #tmpall 
 ) t
+order by DynamicColumnName
 --print @cols3
 
 DECLARE @sql NVARCHAR(MAX)
@@ -654,9 +663,9 @@ from query
 ;with A as(
 	select
 		[DateA] = CDate
-		,[sum_inspTimes] = sum([1inspTimes])
-		,[sum_passTimes] = sum([2passTimes])
-		,[sum_pass_rate] = round(sum([2passTimes])/sum([1inspTimes]),4)
+		,[sum_inspTimes] = iif(sum([1inspTimes])<>0,sum([1inspTimes]),null)
+		,[sum_passTimes] = iif(sum([2passTimes])<>0,sum([2passTimes]),null)
+		,[sum_pass_rate] = iif(round(sum([2passTimes])/sum([1inspTimes]),4)<>0,round(sum([2passTimes])/sum([1inspTimes]),4),null)
 	from #All
 	pivot
 	(

@@ -86,6 +86,7 @@ select  operation = case a.type
                         when '4' then 'Adjust' 
                         when '5' then 'Obsolete' 
                         when '6' then 'Return' 
+                        when 'R' then 'Recover' 
                     end 
         ,a.ConfirmDate
         ,bulkSP = iif((a.type='2' or a.type='6') , a.seq70poid+'-'+a.seq70seq1+'-'+a.seq70seq2 

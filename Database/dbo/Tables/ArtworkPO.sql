@@ -23,6 +23,10 @@
     [EditName]       VARCHAR (10)    CONSTRAINT [DF_ArtworkPO_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME        NULL,
     [Status]         VARCHAR (15)    CONSTRAINT [DF_ArtworkPO_Status] DEFAULT ('') NULL,
+    [LockName] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [LockDate] DATE NULL, 
+    [CloseName] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [CloseDate] DATE NULL, 
     CONSTRAINT [PK_ArtworkPO] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

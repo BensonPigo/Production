@@ -45,6 +45,13 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
                 #region -- Sql Command --
+
+                bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+                string where = string.Empty;
+                if (!MtlAutoLock)
+                {
+                    where = "where fi.Lock = 0";
+                }
                 strSQLCmd.Append(string.Format(@"
 with cte as 
 (
@@ -68,7 +75,7 @@ with cte as
 	cross apply
 	(select max(i.ConfirmDate) taipei_issue_date,sum(i.Qty) taipei_qty
 		from dbo.Invtrans i WITH (NOLOCK) 
-		where (i.type=1 OR I.TYPE=4) and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
+		where (i.type='1' OR I.TYPE='4') and i.InventoryPOID = pd.ID and i.InventorySeq1 = pd.seq1 and i.InventorySeq2 = pd.SEQ2
 	) x
 	where f.MDivisionID ='{0}' and pd.id = @poid --AND X.taipei_qty > 0
 )
@@ -107,7 +114,7 @@ on fi.POID = cte.poid
 and fi.seq1 = cte.seq1 
 and fi.seq2 = cte.SEQ2 
 and fi.StockType = 'B'
-where fi.Lock = 0 
+{2}
 order by cte.poid,cte.seq1,cte.seq2 ;
 
 select 0 AS selected,'' as id,o.FactoryID FromFactoryID,fi.POID FromPOID,fi.seq1 Fromseq1,fi.seq2 Fromseq2,concat(Ltrim(Rtrim(fi.seq1)), ' ', fi.seq2) as fromseq
@@ -128,9 +135,9 @@ select 0 AS selected,'' as id,o.FactoryID FromFactoryID,fi.POID FromPOID,fi.seq1
 from #tmp cte 
 inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = cte.poid and fi.seq1 = cte.seq1 and fi.seq2 = cte.SEQ2 and fi.StockType = 'B'
 left join dbo.orders o WITH (NOLOCK) on fi.poid=o.id 
-where fi.Lock = 0 
+{2}
 Order by GroupQty desc,fromdyelot,balanceQty desc
-drop table #tmp", Sci.Env.User.Keyword, dr_master["id"]));
+drop table #tmp", Sci.Env.User.Keyword, dr_master["id"], where));
                 #endregion
                 System.Data.SqlClient.SqlParameter sqlp1 = new System.Data.SqlClient.SqlParameter();
                 sqlp1.ParameterName = "@poid";

@@ -1,8 +1,14 @@
-ï»¿-- =============================================
--- Author:		
--- Create date: <Create Date,,>
--- Description:	æ–°å¢ž,æ›´æ–° AIR,FIRè³‡æ–™
--- =============================================
+USE [Production]
+GO
+
+/****** Object:  StoredProcedure [dbo].[insert_Air_Fir]    Script Date: 2018/12/18 ¤W¤È 10:48:30 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
 CREATE PROCEDURE [dbo].[insert_Air_Fir]
 (
 	@ID varchar(13),
@@ -215,7 +221,56 @@ when not matched by source and t.id in (select deID from @tempAir where id is nu
 delete ;
 
 
-drop table #InspDeadLine
-drop table #tempTableAll
+
+--------------FIR_Shadebone 
+RAISERROR('insert_Air_Fir - Starts',0,0)
+
+--FabricType = F¤~°õ¦æ¥H¤U¬q¸¨
+IF EXISTS(
+SELECT 1 
+FROM Receiving_Detail r
+INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+WHERE r.ID=@ID AND p.FabricType='F' 
+)
+BEGIN 
+
+SELECT   [FirID]=f.ID
+		,[Roll]=r.Roll
+		,[Dyelot]=r.Dyelot
+		,[StockQty]=r.StockQty
+INTO #tmp_Receiving
+FROM Receiving_Detail r
+INNER JOIN PO_Supp_Detail p ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2 
+INNER JOIN FIR f ON f.ReceivingID=r.ID AND f.POID=r.PoId AND f.SEQ1=r.Seq1 AND f.SEQ2=r.Seq2
+WHERE r.ID=@ID AND p.FabricType='F'
+
+Merge dbo.FIR_Shadebone  as t
+using( 
+	 SELECT * FROM #tmp_Receiving
+) as s
+on t.ID=s.FirID AND t.Roll=s.Roll AND t.Dyelot=s.Dyelot 
+
+WHEN MATCHED THEN
+	 UPDATE SET t.TicketYds=s.StockQty ,t.EditName=@LoginID, t.EditDate=GETDATE()
+
+WHEN NOT MATCHED by TARGET THEN 
+	insert  ([ID]           ,[Roll]           ,[Dyelot]           ,[Scale]           ,[Inspdate]           ,[Inspector]           ,[Result]
+            ,[Remark]       ,[AddName]        ,[AddDate]          ,[EditName]        ,[EditDate]           ,[TicketYds])
+	values(  s.FirID   ,s.Roll      ,s.Dyelot      ,''                ,NULL                 ,''                    ,''
+	        ,''             ,@LoginID         ,GETDATE()          ,''                ,NULL                 ,s.StockQty )
+;
 
 END
+
+------
+
+
+drop table #InspDeadLine
+drop table #tempTableAll
+drop table #tmp_Receiving
+
+END
+
+GO
+
+

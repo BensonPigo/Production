@@ -121,7 +121,7 @@
             this.Controls.Add(this.radioPanel1);
             this.Name = "P01_EConsMNoticeFailed";
             this.Text = "Each Cons/M.Notice Failed";
-            this.WorkAlias = "ECons_MNoticeFailed";
+            this.WorkAlias = "Order_ECMNFailed";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
             this.Controls.SetChildIndex(this.radioPanel1, 0);

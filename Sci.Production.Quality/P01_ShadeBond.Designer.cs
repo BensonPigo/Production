@@ -87,6 +87,18 @@
             this.gridcont.Location = new System.Drawing.Point(12, 163);
             this.gridcont.Size = new System.Drawing.Size(938, 520);
             // 
+            // append
+            // 
+            this.append.Visible = false;
+            // 
+            // revise
+            // 
+            this.revise.Visible = false;
+            // 
+            // delete
+            // 
+            this.delete.Visible = false;
+            // 
             // undo
             // 
             this.undo.Location = new System.Drawing.Point(872, 5);
@@ -128,7 +140,6 @@
             // labelBrand
             // 
             this.labelBrand.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(15, 101);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(61, 23);
@@ -138,7 +149,6 @@
             // labelStyle
             // 
             this.labelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(15, 71);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(61, 23);
@@ -148,7 +158,6 @@
             // labelSP
             // 
             this.labelSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(15, 11);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(61, 23);
@@ -168,7 +177,6 @@
             // labelWKNo
             // 
             this.labelWKNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelWKNo.Lines = 0;
             this.labelWKNo.Location = new System.Drawing.Point(15, 41);
             this.labelWKNo.Name = "labelWKNo";
             this.labelWKNo.Size = new System.Drawing.Size(61, 23);
@@ -188,7 +196,6 @@
             // labelSEQ
             // 
             this.labelSEQ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(216, 11);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(75, 23);
@@ -198,7 +205,6 @@
             // labelSupplier
             // 
             this.labelSupplier.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSupplier.Lines = 0;
             this.labelSupplier.Location = new System.Drawing.Point(216, 41);
             this.labelSupplier.Name = "labelSupplier";
             this.labelSupplier.Size = new System.Drawing.Size(75, 23);
@@ -208,7 +214,6 @@
             // labelRefno
             // 
             this.labelRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(216, 71);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(75, 23);
@@ -238,7 +243,6 @@
             // labelSCIRefno
             // 
             this.labelSCIRefno.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSCIRefno.Lines = 0;
             this.labelSCIRefno.Location = new System.Drawing.Point(216, 101);
             this.labelSCIRefno.Name = "labelSCIRefno";
             this.labelSCIRefno.Size = new System.Drawing.Size(75, 23);
@@ -268,7 +272,6 @@
             // labelColor
             // 
             this.labelColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelColor.Lines = 0;
             this.labelColor.Location = new System.Drawing.Point(462, 11);
             this.labelColor.Name = "labelColor";
             this.labelColor.Size = new System.Drawing.Size(75, 23);
@@ -278,7 +281,6 @@
             // labelArriveQty
             // 
             this.labelArriveQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveQty.Lines = 0;
             this.labelArriveQty.Location = new System.Drawing.Point(462, 41);
             this.labelArriveQty.Name = "labelArriveQty";
             this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
@@ -298,7 +300,6 @@
             // labelArriveWHDate
             // 
             this.labelArriveWHDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelArriveWHDate.Lines = 0;
             this.labelArriveWHDate.Location = new System.Drawing.Point(656, 11);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
             this.labelArriveWHDate.Size = new System.Drawing.Size(123, 23);
@@ -308,7 +309,6 @@
             // labelLastInspectionDate
             // 
             this.labelLastInspectionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelLastInspectionDate.Lines = 0;
             this.labelLastInspectionDate.Location = new System.Drawing.Point(656, 41);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
             this.labelLastInspectionDate.Size = new System.Drawing.Size(123, 23);
@@ -318,7 +318,6 @@
             // labelResult
             // 
             this.labelResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelResult.Lines = 0;
             this.labelResult.Location = new System.Drawing.Point(462, 71);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(75, 23);
@@ -361,7 +360,6 @@
             // labelApprover
             // 
             this.labelApprover.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelApprover.Lines = 0;
             this.labelApprover.Location = new System.Drawing.Point(15, 129);
             this.labelApprover.Name = "labelApprover";
             this.labelApprover.Size = new System.Drawing.Size(61, 23);

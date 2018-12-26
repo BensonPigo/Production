@@ -68,7 +68,6 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Lines = 0;
             this.labelSPNo.Location = new System.Drawing.Point(10, 9);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.Size = new System.Drawing.Size(75, 23);
@@ -99,7 +98,6 @@
             // 
             // labelAffectQty
             // 
-            this.labelAffectQty.Lines = 0;
             this.labelAffectQty.Location = new System.Drawing.Point(273, 9);
             this.labelAffectQty.Name = "labelAffectQty";
             this.labelAffectQty.Size = new System.Drawing.Size(109, 23);
@@ -149,11 +147,9 @@
             0,
             0,
             0});
-            this.numClaimAmt.Validated += new System.EventHandler(this.numAdditionChargeClaimAmt_Validated);
             // 
             // labelClaimAmt
             // 
-            this.labelClaimAmt.Lines = 0;
             this.labelClaimAmt.Location = new System.Drawing.Point(10, 42);
             this.labelClaimAmt.Name = "labelClaimAmt";
             this.labelClaimAmt.Size = new System.Drawing.Size(75, 23);
@@ -181,11 +177,9 @@
             0,
             0,
             0});
-            this.numAdditionCharge.Validated += new System.EventHandler(this.numAdditionChargeClaimAmt_Validated);
             // 
             // labelAdditionCharge
             // 
-            this.labelAdditionCharge.Lines = 0;
             this.labelAdditionCharge.Location = new System.Drawing.Point(273, 42);
             this.labelAdditionCharge.Name = "labelAdditionCharge";
             this.labelAdditionCharge.Size = new System.Drawing.Size(109, 23);
@@ -194,7 +188,6 @@
             // 
             // labelReason
             // 
-            this.labelReason.Lines = 0;
             this.labelReason.Location = new System.Drawing.Point(10, 76);
             this.labelReason.Name = "labelReason";
             this.labelReason.Size = new System.Drawing.Size(75, 23);
@@ -210,13 +203,13 @@
             this.txtReason.IsSupportUnselect = true;
             this.txtReason.Location = new System.Drawing.Point(88, 76);
             this.txtReason.Name = "txtReason";
+            this.txtReason.OldText = "";
             this.txtReason.ReasonTypeID = "DebitNote_Factory";
             this.txtReason.Size = new System.Drawing.Size(168, 24);
             this.txtReason.TabIndex = 4;
             // 
             // labelUnit
             // 
-            this.labelUnit.Lines = 0;
             this.labelUnit.Location = new System.Drawing.Point(10, 111);
             this.labelUnit.Name = "labelUnit";
             this.labelUnit.Size = new System.Drawing.Size(75, 23);
@@ -225,7 +218,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(10, 146);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);

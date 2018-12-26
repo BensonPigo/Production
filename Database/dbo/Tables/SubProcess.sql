@@ -11,6 +11,7 @@
     [EditName]      VARCHAR (10) CONSTRAINT [DF_SubProcess_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME     NULL,
     [BCSDate] NUMERIC(2) NULL, 
+    [InOutRule] TINYINT NOT NULL DEFAULT 0, 
     CONSTRAINT [PK_SubProcess] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -62,3 +63,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SubProcess', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = '0-NotSetting、1-OnlyIn、2-OnlyOut、3-FromInToOut、4-FromOutToIn',@level0type = N'Schema',   @level0name = 'dbo',@level1type = N'Table',    @level1name = 'Subprocess',@level2type = N'Column',   @level2name = 'InOutRule'

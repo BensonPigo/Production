@@ -26,6 +26,8 @@ namespace Sci.Production.Subcon
     {
         public static DataTable dtPadBoardInfo;
         private bool boolNeedReaload = false;
+        Form batchapprove;
+
 
         public P30(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -55,10 +57,16 @@ namespace Sci.Production.Subcon
             base.EnsureToolbarExt();
             if (!tabs.TabPages[0].Equals(tabs.SelectedTab) && !MyUtility.Check.Empty(CurrentMaintain))
             {
-                this.toolbar.cmdConfirm.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "New";
-                this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "Approved";
-                this.toolbar.cmdClose.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "Approved";
-                this.toolbar.cmdUnclose.Enabled = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID) && CurrentMaintain["status"].ToString() == "Closed";
+                bool NotEditModeAndHasAuthority = !this.EditMode && Sci.Production.PublicPrg.Prgs.GetAuthority(Env.User.UserID);
+                //狀態流程：New → Locked → Approved → Closed
+                this.toolbar.cmdConfirm.Enabled = !this.EditMode && this.Perm.Confirm && CurrentMaintain["status"].ToString() == "Locked";
+                this.toolbar.cmdUnconfirm.Enabled = !this.EditMode && this.Perm.Unconfirm && CurrentMaintain["status"].ToString() == "Approved";
+
+                this.toolbar.cmdClose.Enabled = !this.EditMode && this.Perm.Close && CurrentMaintain["status"].ToString() == "Approved";
+                this.toolbar.cmdUnclose.Enabled = !this.EditMode && this.Perm.Unclose && CurrentMaintain["status"].ToString() == "Closed";
+
+                this.toolbar.cmdCheck.Enabled = !this.EditMode && this.Perm.Check && CurrentMaintain["status"].ToString() == "New";
+                this.toolbar.cmdUncheck.Enabled = !this.EditMode && this.Perm.Uncheck && CurrentMaintain["status"].ToString() == "Locked";
             }
         }
 
@@ -110,10 +118,17 @@ namespace Sci.Production.Subcon
         }
 
         // edit前檢查
+        /// <summary>
+        /// Edit前檢查：若狀態為『Locked, Approved, Closed』只允許變更表頭 Remark
+        /// </summary>
+        /// <returns></returns>
         protected override bool ClickEditBefore()
         {
-            //!EMPTY(APVName) OR !EMPTY(Closed)，只能編輯remark欄。
-            if (CurrentMaintain["status"].ToString().ToUpper() == "APPROVED")
+            bool IsOnlyRemark = CurrentMaintain["status"].ToString().ToUpper() == "LOCKED" || 
+                CurrentMaintain["status"].ToString().ToUpper() == "APPROVED" || 
+                CurrentMaintain["status"].ToString().ToUpper() == "CLOSED";
+
+            if (IsOnlyRemark)
             {
                 var frm = new Sci.Production.PublicForm.EditRemark("Localpo", "remark", CurrentMaintain);
                 frm.ShowDialog(this);
@@ -123,6 +138,15 @@ namespace Sci.Production.Subcon
                 //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
                 if (!(CurrentMaintain["ApvDate"] == DBNull.Value)) displayApvDate.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
                 else displayApvDate.Text = "";
+
+                //[Lock Date]格式調整，僅顯示YYYY/MM/DD
+                if (!(CurrentMaintain["LockDate"] == DBNull.Value)) displayLockDate.Text = Convert.ToDateTime(CurrentMaintain["LockDate"]).ToShortDateString();
+                else displayLockDate.Text = "";
+
+                //[Close Date]格式調整，僅顯示YYYY/MM/DD
+                if (!(CurrentMaintain["CloseDate"] == DBNull.Value)) displayCloseDate.Text = Convert.ToDateTime(CurrentMaintain["CloseDate"]).ToShortDateString();
+                else displayCloseDate.Text = "";
+
                 return false;
             }
 
@@ -199,12 +223,8 @@ namespace Sci.Production.Subcon
             if (this.CurrentMaintain["category"].ToString().ToUpper().TrimEnd().Equals("CARTON"))
             {
                 DataTable resulttb;
-                string check_sql = $@"
-select lpd.ID,a.RequestId,a.OrderId,a.Refno 
-from #TmpSource a 
-inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''
-where exists (select 1 from PackingList_Detail pld where pld.id = a.RequestID and pld.Refno = a.Refno)
-";
+                string check_sql = $@"select lpd.ID,a.RequestId,a.OrderId,a.Refno from #TmpSource a inner join LocalPO_Detail lpd WITH (NOLOCK) on a.RequestID = lpd.RequestID and  a.OrderID = lpd.OrderID and a.RefNo = lpd.RefNo and lpd.ID <> '{CurrentMaintain["ID"]}' and a.RequestID <> ''";
+
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, "", check_sql, out resulttb, "#TmpSource");
                 if (!result)
                 {
@@ -570,7 +590,7 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
                             #endregion
                             MyUtility.Msg.InfoBox("Auto create purchase order :" + string.Join(",", msg_Id_List.ToArray()));
-                            
+
                             // 因為天地板會新建 N 張採購單，因此需要強制 Reload Data
                             this.boolNeedReaload = true;
                         }
@@ -677,10 +697,20 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
                 //[Apv. Date]格式調整，僅顯示YYYY/MM/DD
                 if (!(CurrentMaintain["ApvDate"] == DBNull.Value)) displayApvDate.Text = Convert.ToDateTime(CurrentMaintain["ApvDate"]).ToShortDateString();
                 else displayApvDate.Text = "";
+                
+                //[Lock Date]格式調整，僅顯示YYYY/MM/DD
+                if (!(CurrentMaintain["LockDate"] == DBNull.Value)) displayLockDate.Text = Convert.ToDateTime(CurrentMaintain["LockDate"]).ToShortDateString();
+                else displayLockDate.Text = "";
+
+                //[Close Date]格式調整，僅顯示YYYY/MM/DD
+                if (!(CurrentMaintain["CloseDate"] == DBNull.Value)) displayCloseDate.Text = Convert.ToDateTime(CurrentMaintain["CloseDate"]).ToShortDateString();
+                else displayCloseDate.Text = "";
             }
             txtsubconSupplier.Enabled = !this.EditMode || IsDetailInserting;
             txtartworktype_ftyCategory.Enabled = !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
+            btnIrrPriceReason.Enabled = !this.EditMode;
+
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
@@ -688,6 +718,25 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
             #region Batch Import, Special record button
             btnImportThread.Enabled = this.EditMode;
             btnBatchUpdateDellivery.Enabled = this.EditMode;
+            #endregion
+            
+            #region Irregular Price判斷
+
+            this.btnIrrPriceReason.ForeColor = Color.Black;
+
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+
+            //取得價格異常DataTable，如果有，則存在 P30的_Irregular_Price_Table，  開啟P30_IrregularPriceReason時後直接丟進去，避免再做一次查詢
+
+            this.ShowWaitMessage("Data Loading...");
+
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+
+            this.HideWaitMessage();
+
+            if (Has_Irregular_Price)
+                this.btnIrrPriceReason.ForeColor = Color.Red;
+            
             #endregion
 
             detailDt.AcceptChanges();
@@ -828,10 +877,25 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
                     {
                         return;
                     }
-                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                         (string.Format(@"Select refno,description, localsuppid,unitid,price
-                                                    from localItem WITH (NOLOCK) where category ='{0}' and  localsuppid = '{1}' order by refno", CurrentMaintain["category"], CurrentMaintain["localsuppid"])
-                                                                                                                                  , "15,30,8,8,10", "", null, "0,0,0,0,4");
+                    Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
+                        string.Format(
+                             @"
+Select  refno
+        , description
+        , localsuppid
+        , unitid
+        , price
+from localItem WITH (NOLOCK) 
+where category = '{0}' 
+      and localsuppid = '{1}' 
+      and isnull (Junk, 0) = 0 
+order by refno"
+                             , CurrentMaintain["category"]
+                             , CurrentMaintain["localsuppid"])
+                        , "15,30,8,8,10"
+                        , ""
+                        , null
+                        , "0,0,0,0,4");
                     item.Size = new System.Drawing.Size(795, 535);
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -844,10 +908,22 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             ts.CellValidating += (s, e) =>
             {
                 if (MyUtility.Check.Empty(e.FormattedValue) || !this.EditMode) return;
-                if (!MyUtility.Check.Seek(string.Format(@"select refno,unitid,price from localitem WITH (NOLOCK) 
-                                                                      where refno = '{0}' and category ='{1}'and localsuppid = '{2}'"
-                                                                , e.FormattedValue.ToString(), CurrentMaintain["category"], CurrentMaintain["localsuppid"])
-                                                                , out dr, null))
+                if (!MyUtility.Check.Seek(
+                    string.Format(
+                        @"
+select  refno
+        , unitid
+        , price 
+from localitem WITH (NOLOCK) 
+where refno = '{0}' 
+      and category = '{1}'
+      and localsuppid = '{2}'
+      and isnull (Junk, 0) = 0 "
+                        , e.FormattedValue.ToString()
+                        , CurrentMaintain["category"]
+                        , CurrentMaintain["localsuppid"])
+                    , out dr
+                    , null))
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Data not found!", "Ref#");
@@ -1148,7 +1224,98 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             }
         }
 
-        //Approve
+        #region 狀態控制相關事件 Locked/Approved/Closed
+
+        /// <summary>
+        /// Check事件 
+        /// </summary>
+        /// 只有狀態 " New " 才可以Check
+        protected override void ClickCheck()
+        {
+            base.ClickCheck();
+
+
+            string sql = string.Format("UPDATE Localpo SET Status='Locked',LockName='{0}', LockDate = GETDATE() , EditName = '{0}' , EditDate = GETDATE() WHERE ID = '{1}'"
+                        , Env.User.UserID, CurrentMaintain["ID"]);
+
+            DualResult result;
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    if (!(result = DBProxy.Current.Execute(null, sql)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(sql, result);
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                    MyUtility.Msg.InfoBox("Check successful");
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+
+        }
+
+        /// <summary>
+        /// Uncheck事件
+        /// </summary>
+        /// 只有狀態 " Locked " 才可以Check
+        protected override void ClickUncheck()
+        {
+            base.ClickUncheck();
+
+            //確認視窗
+            DialogResult dResult = MyUtility.Msg.QuestionBox("Are you sure to unlock it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            if (dResult.ToString().ToUpper() == "NO") return;
+            var dr = this.CurrentMaintain; if (null == dr) return;
+
+
+            string sql = string.Format("UPDATE Localpo SET Status='New', LockName='', LockDate = NULL , EditName = '{0}' , EditDate = GETDATE() WHERE ID = '{1}'"
+                            , Env.User.UserID, CurrentMaintain["ID"]);
+
+            DualResult result;
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    if (!(result = DBProxy.Current.Execute(null, sql)))
+                    {
+                        _transactionscope.Dispose();
+                        ShowErr(sql, result);
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                    MyUtility.Msg.InfoBox("Check successful");
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+        }
+
+        /// <summary>
+        /// Confirm事件
+        /// </summary>
+        /// 只有狀態 " Locked " 才可以Confirm
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
@@ -1170,7 +1337,6 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
 
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
-                    MyUtility.Msg.InfoBox("Approve successful");
                 }
                 catch (Exception ex)
                 {
@@ -1183,7 +1349,10 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             _transactionscope = null;
         }
 
-        //unApprove
+        /// <summary>
+        /// UnConfirm事件
+        /// </summary>
+        /// 只有狀態 " Approved " 才可以UnConfirm
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
@@ -1201,7 +1370,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             String sqlupd3 = "";
             DualResult result;
 
-            sqlupd3 = string.Format(@"update Localpo set status='New',apvname='', apvdate = null , editname = '{0}' 
+            sqlupd3 = string.Format(@"update Localpo set status='Locked',apvname='', apvdate = null , editname = '{0}' 
                                                     , editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -1231,11 +1400,14 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             _transactionscope = null;
         }
 
-        // Close
+        /// <summary>
+        /// Close事件
+        /// </summary>
+        /// 只有狀態 " Approved " 才可以Close
         protected override void ClickClose()
         {
             base.ClickClose();
-            string sqlupd3 = string.Format("update Localpo set status='Closed', apvname='{0}', apvdate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
+            string sqlupd3 = string.Format("update Localpo set status='Closed', CloseName='{0}', CloseDate = GETDATE() , editname = '{0}' , editdate = GETDATE() " +
                               "where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
             DualResult result;
             TransactionScope _transactionscope = new TransactionScope();
@@ -1265,7 +1437,10 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             _transactionscope = null;
         }
 
-        //Unclose
+        /// <summary>
+        /// Unclose事件
+        /// </summary>
+        /// 只有狀態 " Closed " 才可以Unclose
         protected override void ClickUnclose()
         {
             base.ClickUnclose();
@@ -1276,7 +1451,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             String sqlupd3 = "";
             DualResult result;
 
-            sqlupd3 = string.Format(@"update Localpo set status='Approved',apvname='', apvdate = null , editname = '{0}' 
+            sqlupd3 = string.Format(@"update Localpo set status='Approved',CloseName='', CloseDate = null , editname = '{0}' 
                                                     , editdate = GETDATE() where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             TransactionScope _transactionscope = new TransactionScope();
@@ -1305,6 +1480,7 @@ and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
             _transactionscope.Dispose();
             _transactionscope = null;
         }
+        #endregion
 
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -1432,6 +1608,74 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             else
             {
                 this.GridUniqueKey = "orderid,refno,threadcolorid,Requestid";
+            }
+        }
+
+        private void btnIrrPriceReason_Click(object sender, EventArgs e)
+        {
+            //進入Deatail畫面時，會取得_Irregular_Price_Table，直接丟進去開啟
+            var frm = new Sci.Production.Subcon.P30_IrregularPriceReason(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+
+            this.ShowWaitMessage("Data Loading...");
+            frm.ShowDialog(this);
+            this.HideWaitMessage();
+
+            //畫面關掉後，再檢查一次有無價格異常
+            this.btnIrrPriceReason.ForeColor = Color.Black;
+            this.ShowWaitMessage("Data Loading...");
+
+            bool Has_Irregular_Price = frm.Check_Irregular_Price(false);
+
+            this.HideWaitMessage();
+
+            if (Has_Irregular_Price)
+                this.btnIrrPriceReason.ForeColor = Color.Red;
+        }
+
+        private void btnBatchApprove_Click(object sender, EventArgs e)
+        {
+            bool NotEditModeAndHasAuthority = !this.EditMode && this.Perm.Confirm;
+            
+            if (!NotEditModeAndHasAuthority)
+            {
+                MyUtility.Msg.WarningBox("You don't have permission to confirm.");
+                return;
+            }
+
+            //避免重複開啟視窗
+            if (batchapprove == null || batchapprove.IsDisposed)
+            {
+                batchapprove = new P30_BatchApprove(reload);
+                batchapprove.Show();
+            }
+            else
+            {
+                batchapprove.Activate();
+            }
+        }
+
+        public void reload()
+        {
+            //避免User先關 P30再關P30_BatchApprove
+            if (this.CurrentDataRow != null)
+            {
+                string idIndex = string.Empty;
+                if (!MyUtility.Check.Empty(CurrentMaintain)) {
+                    if (!MyUtility.Check.Empty(CurrentMaintain["id"])) {
+                        idIndex = MyUtility.Convert.GetString(CurrentMaintain["id"]);
+                    }
+                } 
+                this.ReloadDatas();
+                this.RenewData();
+                if (!MyUtility.Check.Empty(idIndex)) this.gridbs.Position = this.gridbs.Find("ID", idIndex);
+            }
+        }
+
+        private void P30_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (batchapprove != null)
+            {
+                batchapprove.Dispose();
             }
         }
     }

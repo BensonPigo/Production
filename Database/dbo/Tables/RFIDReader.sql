@@ -1,14 +1,19 @@
 ﻿CREATE TABLE [dbo].[RFIDReader] (
-    [Id]        VARCHAR (24) CONSTRAINT [DF_RFIDReader_Id] DEFAULT ('') NOT NULL,
-    [ProcessId] VARCHAR (10) CONSTRAINT [DF_RFIDReader_ProcessId] DEFAULT ('') NULL,
-    [Type]      VARCHAR (1)  CONSTRAINT [DF_RFIDReader_Type] DEFAULT ('') NULL,
-    [AddName]   VARCHAR (10) CONSTRAINT [DF_RFIDReader_AddName] DEFAULT ('') NULL,
-    [AddDate]   DATETIME     NULL,
-    [EditName]  VARCHAR (10) CONSTRAINT [DF_RFIDReader_EditName] DEFAULT ('') NULL,
-    [EditDate]  DATETIME     NULL, 
-	[SewingLineID] varchar(2) NULL,
-    CONSTRAINT [PK_RFIDReader] PRIMARY KEY ([Id])
+    [Id]           VARCHAR (24) CONSTRAINT [DF_RFIDReader_Id] DEFAULT ('') NOT NULL,
+    [ProcessId]    VARCHAR (10) CONSTRAINT [DF_RFIDReader_ProcessId] DEFAULT ('') NULL,
+    [Type]         VARCHAR (1)  CONSTRAINT [DF_RFIDReader_Type] DEFAULT ('') NULL,
+    [AddName]      VARCHAR (10) CONSTRAINT [DF_RFIDReader_AddName] DEFAULT ('') NULL,
+    [AddDate]      DATETIME     NULL,
+    [EditName]     VARCHAR (10) CONSTRAINT [DF_RFIDReader_EditName] DEFAULT ('') NULL,
+    [EditDate]     DATETIME     NULL,
+    [SewingLineID] VARCHAR (2)  NULL,
+    [MDivisionID]  VARCHAR (8)  NULL,
+    [FactoryID]    VARCHAR (8)  CONSTRAINT [DF_RFIDReader_FactoryID] DEFAULT ('') NOT NULL,
+    [Location]     VARCHAR (50) CONSTRAINT [DF_RFIDReader_Location] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_RFIDReader] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 GO

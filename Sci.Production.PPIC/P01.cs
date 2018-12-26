@@ -320,6 +320,15 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             {
                 this.btnEachCons.ForeColor = Color.Black;
             }
+            string sqkchkEMNF = $@"select 1 From Order_ECMNFailed f Left Join Orders o on f.id	= o.ID Where (o.ID = '{this.CurrentMaintain["ID"]}' And f.Type = 'EC')or (o.POID = '{this.CurrentMaintain["POID"]}'  And f.Type = 'MN')";
+            if (MyUtility.Check.Seek(sqkchkEMNF))
+            {
+                this.btnEConsMNFailed.ForeColor = Color.Blue;
+            }
+            else
+            {
+                this.btnEConsMNFailed.ForeColor = Color.Black;
+            }
 
             // SciDelivery OrigBuyerDelivery
             // CRDDate
@@ -1542,13 +1551,10 @@ where POID = @poid group by POID,b.spno";
         {
             if (!MyUtility.Check.Empty(this.CurrentMaintain["ID"]) && !MyUtility.Check.Empty(this.CurrentMaintain["POID"]))
             {
-                using (var dlg = new P01_EConsMNoticeFailed(false, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString(), null))
-                {
-                    dlg.ShowDialog();
-                }
+                var dlg = new P01_EConsMNoticeFailed(false, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString(), null);
+                dlg.ShowDialog();
 
                 this.RenewData();
-                this.OnDetailEntered();
             }
         }
     }

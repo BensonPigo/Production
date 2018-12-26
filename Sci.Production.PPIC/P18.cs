@@ -108,7 +108,7 @@ and o.MDivisionID='{Sci.Env.User.Keyword}'", out dr))
                          DataTable dt;
                          string sqlcmd = $@"
 SELECT Seq,ShipmodeID as 'ShipMode',oq.Qty,BuyerDelivery
-,[TotalCrtns] = packing.qty
+,[TotalCrtns] = isnull(packing.qty,0)
 FROM Order_QtyShip oq
 outer apply(
 	select SUM(PD.CTNQty) qty

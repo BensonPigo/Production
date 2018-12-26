@@ -1,4 +1,5 @@
 ﻿
+
 -- =============================================
 -- Author:		<Alger Song>
 -- Create date: <2017/01/24>
@@ -34,7 +35,7 @@ BEGIN
 	Declare cursor_tmpSewing Cursor for
 	select s.FactoryID,s.SewingLineID,s.Inline,s.APSNo,s.ComboType,s.AlloQty,s.TotalSewingTime,s.StandardOutput,
 	isnull(o.StyleID,'') as StyleID,isnull(o.SeasonID,'') as SeasonID,o.CdCodeID,s.OrderID,
-	LAG(isnull(o.StyleID,'')+s.ComboType,1,'') OVER (Partition by s.FactoryID,s.SewingLineID Order by s.FactoryID,s.SewingLineID,s.Inline) as Compare
+	LAG(isnull(o.StyleID,'')+s.ComboType,1,'') OVER (Partition by s.FactoryID,s.SewingLineID Order by s.FactoryID,s.SewingLineID,s.Inline) as Compare,f.MDivisionID 
 	from SewingSchedule s WITH (NOLOCK)
 	left join Orders o WITH (NOLOCK) on s.OrderID = o.ID
 	left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
@@ -47,7 +48,7 @@ BEGIN
 	--宣告變數: 記錄程式中的資料
 	DECLARE @factoryid VARCHAR(8), --工廠別
 			@sewinglineid VARCHAR(2), --Sewing Line ID
-			@inline DATETIME, --上線日 
+			@inline DATETIME, --上線日
 			@apsno INT, --APS系統Sewing Schedule的ID
 			@combotype VARCHAR(1), --組合型態
 			@alloqty INT, --生產數量
@@ -60,12 +61,13 @@ BEGIN
 			@compare VARCHAR(26), --紀錄上一筆的StyleID+ComboType
 			@type VARCHAR(1), --New/Repeat
 			@chgoverid INT, --紀錄ChgOver.ID
-			@chgoverinline DATETIME --紀錄ChgOver.Inline
+			@chgoverinline DATETIME, --紀錄ChgOver.Inline
+			@MDivisionID as varchar(20) 
 
 	--開始run cursor
 	OPEN cursor_tmpSewing
 	--將第一筆資料填入變數
-	FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare
+	FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare,@MDivisionID
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF @compare <> ''
@@ -99,12 +101,12 @@ BEGIN
 										SET @type = 'N'
 										update ChgOver set Type = 'R' where ID = @chgoverid
 									END
-								insert into ChgOver (OrderID,ComboType,FactoryID,StyleID,SeasonID,SewingLineID,CDCodeID,Inline,TotalSewingTime,AlloQty,StandardOutput,Type,Status,AddDate)
-								values (@orderid,@combotype,@factoryid,@styleid,@seasonid,@sewinglineid,@cdcodeid,@inline,@ttlsewingtime,@alloqty,@stdoutput,@type,'NEW',GETDATE())
+								insert into ChgOver (OrderID,ComboType,FactoryID,APSNo,StyleID,SeasonID,SewingLineID,CDCodeID,Inline,TotalSewingTime,AlloQty,StandardOutput,Type,Status,AddDate,MDivisionID)
+								values (@orderid,@combotype,@factoryid,@apsno,@styleid,@seasonid,@sewinglineid,@cdcodeid,@inline,@ttlsewingtime,@alloqty,@stdoutput,@type,'NEW',GETDATE(),@MDivisionID)
 							END
 					END
 			END
-		FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare
+		FETCH NEXT FROM cursor_tmpSewing INTO @factoryid,@sewinglineid,@inline,@apsno,@combotype,@alloqty,@ttlsewingtime,@stdoutput,@styleid,@seasonid,@cdcodeid,@orderid,@compare,@MDivisionID
 	END
 	CLOSE cursor_tmpSewing
 	DEALLOCATE cursor_tmpSewing
@@ -129,8 +131,8 @@ BEGIN
 						   when b.ProductionType = b.LastProdType and b.FabricType = b.LastFabType then 'D'
 						   else ''
 					  end) as Category
-		  from (select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline) as LastProdType,
-					LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline) as LastFabType
+		  from (select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastProdType,
+					LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastFabType
 				from (select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
 						  isnull(case when co.ComboType = 'T' then cc.TopProductionType when co.ComboType = 'B' then cc.BottomProductionType when co.ComboType = 'I' then cc.InnerProductionType when co.ComboType = 'O' then cc.OuterProductionType else '' end,'') as ProductionType,
 						  isnull(case when co.ComboType = 'T' then cc.TopFabricType when co.ComboType = 'B' then cc.BottomFabricType when co.ComboType = 'I' then cc.InnerFabricType when co.ComboType = 'O' then cc.OuterFabricType else '' end,'') as FabricType

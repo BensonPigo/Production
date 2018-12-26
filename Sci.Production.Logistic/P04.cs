@@ -159,7 +159,7 @@ namespace Sci.Production.Logistic
                 && MyUtility.Check.Empty(this.textTransferSlipNo.Text))
             {
                 this.txtSPNoStart.Focus();
-                MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < Transfer Clog No. > or < PO# > can not empty!");
+                MyUtility.Msg.WarningBox("< SP# > or < Pack ID > or < TransferSlipNo > or < PO# > can not empty!");
                 return;
             }
             this.numSelectQty.Value = 0;
@@ -253,7 +253,7 @@ namespace Sci.Production.Logistic
                             if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
                             {
                                 updateCmd = @"update PackingList_Detail 
-                                                set ClogLocationId = @clogLocationId, Remark = @remark ,EditLocationDate=@EditLocationDate
+                                                set ClogLocationId = @clogLocationId, Remark = @remark ,EditLocationDate=@EditLocationDate, EditLocationName =@EditLocationName 
                                                 where id = @id and CTNStartNo = @ctnStartNo;";
                             }
                             else
@@ -288,10 +288,13 @@ namespace Sci.Production.Logistic
                             sp6.Value = currentRow["Remark"].ToString();
 
                             System.Data.SqlClient.SqlParameter sp7 = new System.Data.SqlClient.SqlParameter();
+                            System.Data.SqlClient.SqlParameter sp8 = new System.Data.SqlClient.SqlParameter();
                             if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
                             {
                                 sp7.ParameterName = "@EditLocationDate";
                                 sp7.Value = DateTime.Now;
+                                sp8.ParameterName = "@EditLocationName";
+                                sp8.Value = Sci.Env.User.UserID;
                             }
                             //EditLocationDate
                             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
@@ -306,6 +309,7 @@ namespace Sci.Production.Logistic
                             if (tmpTable.Rows[0]["ClogLocationId"].ToString() != currentRow["ClogLocationId"].ToString())
                             {
                                 cmds.Add(sp7);
+                                cmds.Add(sp8);
                             }
                             #endregion
                             DualResult result = Sci.Data.DBProxy.Current.Execute(null, updateCmd, cmds);
