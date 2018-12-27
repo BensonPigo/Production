@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabControl1 = new Sci.Win.UI.TabControl();
             this.tabInspectionReport = new System.Windows.Forms.TabPage();
@@ -47,6 +47,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.tab1stBulkDyelot = new System.Windows.Forms.TabPage();
+            this.displayBoxapvSeasonNull = new Sci.Win.UI.DisplayBox();
+            this.labapprovedSeasoinNull = new Sci.Win.UI.Label();
             this.btnQuery2 = new Sci.Win.UI.Button();
             this.button1 = new Sci.Win.UI.Button();
             this.btnSave2 = new Sci.Win.UI.Button();
@@ -62,8 +64,6 @@
             this.inspectionReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.label7 = new Sci.Win.UI.Label();
-            this.displayBoxapvSeasonNull = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabInspectionReport.SuspendLayout();
@@ -157,14 +157,14 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 42);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -260,7 +260,7 @@
             // tab1stBulkDyelot
             // 
             this.tab1stBulkDyelot.Controls.Add(this.displayBoxapvSeasonNull);
-            this.tab1stBulkDyelot.Controls.Add(this.label7);
+            this.tab1stBulkDyelot.Controls.Add(this.labapprovedSeasoinNull);
             this.tab1stBulkDyelot.Controls.Add(this.btnQuery2);
             this.tab1stBulkDyelot.Controls.Add(this.button1);
             this.tab1stBulkDyelot.Controls.Add(this.btnSave2);
@@ -277,6 +277,27 @@
             this.tab1stBulkDyelot.Size = new System.Drawing.Size(1086, 495);
             this.tab1stBulkDyelot.TabIndex = 1;
             this.tab1stBulkDyelot.Text = "1st Bulk Dyelot";
+            // 
+            // displayBoxapvSeasonNull
+            // 
+            this.displayBoxapvSeasonNull.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxapvSeasonNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.displayBoxapvSeasonNull.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxapvSeasonNull.Location = new System.Drawing.Point(18, 463);
+            this.displayBoxapvSeasonNull.Name = "displayBoxapvSeasonNull";
+            this.displayBoxapvSeasonNull.Size = new System.Drawing.Size(20, 21);
+            this.displayBoxapvSeasonNull.TabIndex = 143;
+            // 
+            // labapprovedSeasoinNull
+            // 
+            this.labapprovedSeasoinNull.BackColor = System.Drawing.Color.Transparent;
+            this.labapprovedSeasoinNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
+            this.labapprovedSeasoinNull.Location = new System.Drawing.Point(41, 462);
+            this.labapprovedSeasoinNull.Name = "labapprovedSeasoinNull";
+            this.labapprovedSeasoinNull.Size = new System.Drawing.Size(305, 23);
+            this.labapprovedSeasoinNull.TabIndex = 142;
+            this.labapprovedSeasoinNull.Text = "Taipei has not yet approved season, can\'t modify";
+            this.labapprovedSeasoinNull.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // btnQuery2
             // 
@@ -329,14 +350,14 @@
             this.grid2.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid2.Location = new System.Drawing.Point(6, 42);
             this.grid2.Name = "grid2";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid2.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.grid2.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid2.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid2.RowTemplate.Height = 24;
@@ -418,28 +439,6 @@
             this.testReportToolStripMenuItem.Text = "Test Report";
             this.testReportToolStripMenuItem.Click += new System.EventHandler(this.testReportToolStripMenuItem_Click);
             // 
-            // label7
-            // 
-            this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
-            this.label7.Location = new System.Drawing.Point(35, 459);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(305, 23);
-            this.label7.TabIndex = 142;
-            this.label7.Text = "Taipei has not yet approved season, can\'t modify";
-            this.label7.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // displayBoxapvSeasonNull
-            // 
-            this.displayBoxapvSeasonNull.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
-            this.displayBoxapvSeasonNull.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.displayBoxapvSeasonNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.displayBoxapvSeasonNull.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(190)))), ((int)(((byte)(190)))));
-            this.displayBoxapvSeasonNull.Location = new System.Drawing.Point(18, 463);
-            this.displayBoxapvSeasonNull.Name = "displayBoxapvSeasonNull";
-            this.displayBoxapvSeasonNull.Size = new System.Drawing.Size(14, 14);
-            this.displayBoxapvSeasonNull.TabIndex = 143;
-            // 
             // P09
             // 
             this.ClientSize = new System.Drawing.Size(1094, 524);
@@ -495,6 +494,6 @@
         private System.Windows.Forms.ToolStripMenuItem testReportToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private Win.UI.DisplayBox displayBoxapvSeasonNull;
-        private Win.UI.Label label7;
+        private Win.UI.Label labapprovedSeasoinNull;
     }
 }

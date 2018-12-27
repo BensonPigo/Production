@@ -570,10 +570,11 @@ select distinct
 	psd.Refno,
 	psd.ColorID,
 	o.SeasonID,
-    isnull(s.SeasonSCIID,'') SeasonSCIID,
+    s.SeasonSCIID,
     fd.Period,
 	fd.FirstDyelot  FirstDyelot,
 	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no need to provide 1st dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
+into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
@@ -583,13 +584,29 @@ left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 full outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
-
 where   ps.seq1 not like '7%'  and 
 {sqlwhere}
 and psd.FabricType = 'F'
 and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
-Order by Consignee, SuppID, psd.Refno, psd.ColorID, SeasonSCIID
+
+select 
+[Consignee] = iif(a.Consignee is null,b.Consignee,a.Consignee)
+,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
+,a.AbbEN
+,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
+,[ColorID] = iif(a.ColorID is null , b.ColorID, a.colorid)
+,[SeasonID] = a.SeasonID
+,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
+,[Period] = iif(a.Period is null, b.Period , a.Period)
+,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
+,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,convert(varchar(25), b.TPEFirstDyelot),a.TPEFirstDyelot)
+from #tmp a
+full join FirstDyelot b on a.consignee = b.consignee
+and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID and a.SeasonSCIID=b.SeasonSCIID
+Order by Consignee, SuppID, Refno, ColorID, a.SeasonSCIID
+
+drop table #tmp
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out dt2);
