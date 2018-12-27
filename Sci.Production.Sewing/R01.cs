@@ -70,7 +70,8 @@ namespace Sci.Production.Sewing
                 where 1=1
                     and OutputDate = cast('{0}' as date)
                     and Status in('','NEW')
-            ", Convert.ToDateTime(this.dateDate.Value).ToString("d"));
+                    and FactoryID = '{1}'
+            ", Convert.ToDateTime(this.dateDate.Value).ToString("d"), this.comboFactory.Text);
             DualResult result = DBProxy.Current.Select(null, sql, out dt);
             if (!result)
             {
