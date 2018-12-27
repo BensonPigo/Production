@@ -6,7 +6,7 @@
 CREATE function [dbo].[GetCMPDetail]
 (
 	  @M				VarChar(8)				
-	 ,@Factory		varchar(8) 
+	 ,@Factory		varchar(80) 
 	 ,@StartDate    date
 	 ,@EndDate      date	
 )
@@ -15,11 +15,16 @@ RETURNS @CMPDetail TABLE
 	OutputDate date,
 	SPNo varchar(13),
 	Factory varchar(8),
+	FactoryType varchar(6),
+	IsDevSample varchar(1),
 	MDivision varchar(8),
 	SCISeason varchar(10),
-	ArtworkType varchar(4),
+	ArtworkType varchar(20),
 	SubconType varchar(1),
 	SubconInOut varchar(12),
+	ContractNumber varchar(50),
+	UnitPrice	numeric(16,4),
+	Vat	numeric(11,2),
 	CPUPrice numeric(17,4),
 	Qty int
 )
@@ -48,15 +53,20 @@ insert into @CMPDetail
 select  s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
+		, iif(f.Type='B','Bulk',iif(f.Type='S','Sample',f.Type))
+		, CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
 		, s.MDivisionID
-		, o.SeasonID
-		, ot.Seq
+		, sea.SeasonSCIID
+		, att.ID
 		, [SubconType] = case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
 								else 'N' end
-		, [SubconInOut] = case	when s.Shift = 'O' then s.SubconOutFty
-							when o.SubconInSisterFty = 1 then o.ProgramID
+		, [SubconInOut] = case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
+							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
 							else '' end
+		, s.SubConOutContractNumber
+		, sod.UnitPrice
+		, sod.Vat
 		, [CPUPrice] = case when att.ProductionUnit = 'QTY' then ROUND(Sum(sd.QAQty * ot.Price * a.Rate), 4)
 							when att.ProductionUnit = 'TMS' then ROUND(Sum(sd.QAQty * ot.Price * a.Rate), 3)
 							else 0 end
@@ -64,6 +74,14 @@ select  s.OutputDate
 from SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
+left join OrderType otype WITH (NOLOCK) on o.OrderTypeID = otype.ID and o.BrandID = otype.BrandID
+left join Factory f on s.FactoryID = f.ID
+left join Season sea WITH (NOLOCK) on sea.ID = o.SeasonID and sea.BrandID = o.BrandID
+left join SubconOutContract_Detail sod WITH (NOLOCK) on sod.SubConOutFty = s.SubconOutFty and 
+														sod.ContractNumber = s.SubConOutContractNumber and
+														sod.OrderId = sd.OrderId and
+														sod.ComboType = sd.ComboType and 
+														sod.Article = sd.Article
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
 left join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and 
 											att.Classify in ('I','A','P') and 
@@ -73,29 +91,37 @@ left join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and
 											att.IsPrintToCMP= 1
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 outer apply (select [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100) a
-where s.MDivisionID = isnull(@M, s.MDivisionID) and s.FactoryID = isnull(@Factory, s.FactoryID) and s.OutputDate between @StartDate and @EndDate and (o.CateGory != 'G' or s.Category='M')
+where	s.MDivisionID = isnull(@M, s.MDivisionID) and 
+		(exists(select 1 from SplitString(@Factory,',') where s.FactoryID = Data )  or @Factory is null) and
+		s.OutputDate between @StartDate and @EndDate and (o.CateGory != 'G' or s.Category='M')
 group by  s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
+		, iif(f.Type='B','Bulk',iif(f.Type='S','Sample',f.Type))
+		, CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
 		, s.MDivisionID
-		, o.SeasonID
-		, ot.Seq
+		, sea.SeasonSCIID
+		, att.ID
 		, case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
 								else 'N' end
-		,case	when s.Shift = 'O' then s.SubconOutFty
-								when o.SubconInSisterFty = 1 then o.ProgramID
-								else '' end
+		,case	when s.Shift = 'O' then isnull(s.SubconOutFty,'')
+							when o.SubconInSisterFty = 1 then isnull(o.ProgramID,'')
+							else '' end
+		, s.SubConOutContractNumber
+		, sod.UnitPrice
+		, sod.Vat
 		,att.ProductionUnit
 order by 
 		s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
 		, s.MDivisionID
-		, o.SeasonID
-		, ot.Seq
+		, sea.SeasonSCIID
+		, att.ID
 	return
 end
+
 go
 
 
