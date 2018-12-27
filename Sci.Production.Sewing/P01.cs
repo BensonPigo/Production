@@ -2345,7 +2345,7 @@ update SewingOutput
 set LockDate = CONVERT(date, GETDATE())
     , Status='Send'
 where 1=1
-    and OutputDate < = getdate()
+    and OutputDate < = dateadd(day,-1,getdate())
     and LockDate is null 
     and FactoryID  = '{Sci.Env.User.Factory}'
 ";
