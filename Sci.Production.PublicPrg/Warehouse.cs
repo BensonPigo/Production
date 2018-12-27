@@ -1714,7 +1714,12 @@ when matched then
             {
                 foreach (DataRow dr in result)
                 {
-                    if (MyUtility.Check.Empty(dr["BarcodeNo"]) && dr.RowState != DataRowState.Deleted)
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        continue;
+                    }
+
+                    if (MyUtility.Check.Empty(dr["BarcodeNo"]))
                     {
                         string keyWord = MyUtility.GetValue.Lookup($"select FtyGroup from orders where id = '{dr["POID"]}'");
                          dr["BarcodeNo"] = keyWord + cListBarcodeNo[nCount];

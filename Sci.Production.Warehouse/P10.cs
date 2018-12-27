@@ -397,15 +397,7 @@ outer apply(
 
             }
 
-            //AutoPick 前清空資料，避免資料重複儲存
-            string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
-            DBProxy.Current.Execute(null, sqlst);
-
-            return base.ClickSaveBefore();
-        }
-
-        protected override DualResult ClickSavePre()
-        {
+            // 取BarcodeNo
             IList<DataRow> listSubDetail = new List<DataRow>();
             DataTable dtTmp;
             foreach (DataRow dr in this.DetailDatas)
@@ -425,7 +417,11 @@ outer apply(
                 return resultBarcodeNo;
             }
 
-            return base.ClickSavePre();
+            //AutoPick 前清空資料，避免資料重複儲存
+            string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
+            DBProxy.Current.Execute(null, sqlst);
+
+            return base.ClickSaveBefore();
         }
 
         protected override DualResult ConvertSubDetailDatasFromDoSubForm(SubDetailConvertFromEventArgs e)
