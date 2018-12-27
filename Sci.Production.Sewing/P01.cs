@@ -11,6 +11,7 @@ using Sci.Data;
 using System.Linq;
 using System.Transactions;
 using System.Data.SqlClient;
+using Sci.Win.Tools;
 
 namespace Sci.Production.Sewing
 {
@@ -29,7 +30,7 @@ namespace Sci.Production.Sewing
         private Ict.Win.DataGridViewGeneratorTextColumnSettings SewingReasonID = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private DateTime systemLockDate;
         private decimal? oldttlqaqty;
-
+        private decimal? oldManHour;
         /// <summary>
         /// P01
         /// </summary>
@@ -51,6 +52,16 @@ namespace Sci.Production.Sewing
                     this.OnDetailGridInsert();
                 }
             };
+        }
+
+        /// <inheritdoc/>
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (this.Perm.Send)
+            {
+                this.toolbar.cmdSend.Enabled = true;
+            }
         }
 
         /// <inheritdoc/>
@@ -93,17 +104,22 @@ namespace Sci.Production.Sewing
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
-            this.oldttlqaqty = this.numQAOutput.Value;
-            if (this.EditMode)
+            if (this.CurrentMaintain != null)
             {
-                if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
+                this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
+                this.btnRequestUnlock.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send");
+                this.oldttlqaqty = this.numQAOutput.Value;
+                this.oldManHour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]);
+                if (this.EditMode)
                 {
-                    this.txtSubConOutContractNumber.ReadOnly = true;
-                }
-                else
-                {
-                    this.txtSubConOutContractNumber.ReadOnly = false;
+                    if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
+                    {
+                        this.txtSubConOutContractNumber.ReadOnly = true;
+                    }
+                    else
+                    {
+                        this.txtSubConOutContractNumber.ReadOnly = false;
+                    }
                 }
             }
         }
@@ -939,7 +955,7 @@ order by a.OrderId,os.Seq",
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["LockDate"]))
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["LockDate"]) && !MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send"))
             {
                 MyUtility.Msg.WarningBox("This record already locked, can't modify.");
                 return false;
@@ -1269,7 +1285,7 @@ where (OrderID <> '' or OrderID is not null)
             }
             #endregion
 
-            #region 若sewingoutput.outputDate <= system.sewlock 表身Qty要等於表頭的Qty
+            #region 若sewingoutput.outputDate <= system.sewlock 表身Qty要等於表頭的Qty [月結]
             DataTable sys;
             DBProxy.Current.Select(null, "select sewlock from system WITH (NOLOCK) ", out sys);
             DateTime? sod = MyUtility.Convert.GetDate(this.CurrentMaintain["outputDate"]);
@@ -1288,6 +1304,32 @@ where (OrderID <> '' or OrderID is not null)
                 if (nQ != this.oldttlqaqty)
                 {
                     MyUtility.Msg.WarningBox("QA Output shouled be the same as before.");
+                    return false;
+                }
+            }
+            #endregion
+
+            #region 若status = send 表身Qty要等於表頭的Qty 且 Manhours不變 [日結]
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send"))
+            {
+                decimal nQ = 0;
+                foreach (DataRow dr in this.DetailDatas)
+                {
+                    if (!MyUtility.Check.Empty(dr["QAQty"]) && dr["AutoCreate"].EqualString("False"))
+                    {
+                        nQ += MyUtility.Convert.GetDecimal(dr["QAQty"]);
+                    }
+                }
+
+                if (nQ != this.oldttlqaqty)
+                {
+                    MyUtility.Msg.WarningBox("The reocord is already lock so [QA Output]、[Manhours] can not modify!");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]) != this.oldManHour)
+                {
+                    MyUtility.Msg.WarningBox("The reocord is already lock so [QA Output]、[Manhours] can not modify!");
                     return false;
                 }
             }
@@ -2195,5 +2237,135 @@ WHERE  sewqty < packqty ",
             }
         }
 
+        private void BtnRequestUnlock_Click(object sender, EventArgs e)
+        {
+            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Sewing_RVS");
+            DialogResult dResult = callReason.ShowDialog(this);
+            if (dResult == System.Windows.Forms.DialogResult.OK)
+            {
+                string toAddress = MyUtility.GetValue.Lookup($@"select p.EMail from Factory f inner join pass1 p on p.id = f.Manager where f.id = '{this.CurrentMaintain["FactoryID"]}'");
+                string ccAddress = "PMSHelp@sportscity.com.tw";
+                string subject = "Request Unlock Sewing";
+
+                string od = string.Empty;
+                if (!MyUtility.Check.Empty(this.CurrentMaintain["OutputDate"]))
+                {
+                    od = ((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd");
+                }
+
+                string description = $@"Date : {od}
+Factory : {this.CurrentMaintain["FactoryID"]}
+Line# : {this.CurrentMaintain["SewingLineID"]}
+Team : {this.CurrentMaintain["Team"]}
+Shift : {this.CurrentMaintain["Shift"]}
+QA Output: {this.CurrentMaintain["QAQty"]}
+Manhours : {this.CurrentMaintain["Manhour"]}
+Reason : {MyUtility.GetValue.Lookup($@"select name from Reason where ReasonTypeID='Sewing_RVS' and id= '{callReason.ReturnReason}'")}
+Remark : {callReason.ReturnRemark}
+";
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, toAddress, ccAddress, subject, null, description, false, true);
+                email.ShowDialog(this);
+                if (email.DialogResult == DialogResult.OK)
+                {
+                    string sqlcmd = $@"insert into SewingOutput_DailyUnlock(SewingOutputID,ReasonID,Remark,RequestDate,RequestName)
+values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}','{callReason.ReturnRemark}',getdate(),'{Sci.Env.User.UserID}')";
+                    DualResult rs = DBProxy.Current.Execute("Production", sqlcmd);
+                    if (!rs)
+                    {
+                        this.ShowErr(rs);
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickRecall()
+        {
+            base.ClickRecall();
+            if (!this.Perm.Recall)
+            {
+                MyUtility.Msg.WarningBox("You have no permission.");
+                return;
+            }
+
+            string sqlcmd = $@"
+declare @reasonID nvarchar(5)
+declare @remark nvarchar(max)
+declare @ukey bigint
+select top 1 @ukey=ukey,@reasonID=reasonID,@remark=remark from SewingOutput_DailyUnlock where SewingOutputID = '{this.CurrentMaintain["ID"]}' order by Ukey desc
+
+insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+values ('{this.CurrentMaintain["ID"]}','Status','Send','New',@reasonID,@remark,'{Sci.Env.User.UserID}',GETDATE())
+
+Update SewingOutput_DailyUnlock set 
+	UnLockDate = getdate()
+	,UnLockName= '{Sci.Env.User.UserID}'
+where ukey=@ukey
+
+update SewingOutput set Status='New', LockDate = null where ID = '{this.CurrentMaintain["ID"]}' 
+";
+
+            using (TransactionScope scope = new TransactionScope())
+            {
+                DualResult upResult;
+                if (!MyUtility.Check.Empty(sqlcmd))
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, sqlcmd)))
+                    {
+                        this.ShowErr(upResult);
+                    }
+                }
+
+                scope.Complete();
+            }
+        }
+
+        private void BtnBatchRecall_Click(object sender, EventArgs e)
+        {
+            if (!this.Perm.Recall)
+            {
+                MyUtility.Msg.WarningBox("You have no permission.");
+                return;
+            }
+
+            P01_BatchRecall callNextForm = new P01_BatchRecall();
+            callNextForm.ShowDialog(this);
+        }
+
+        protected override void ClickSend()
+        {
+            base.ClickSend();
+            if (MyUtility.Msg.QuestionBox("Lock sewing data?") == DialogResult.No)
+            {
+                return;
+            }
+
+            string sqlcmd = $@"
+update SewingOutput 
+set LockDate = CONVERT(date, GETDATE())
+    , Status='Send'
+where 1=1
+    and OutputDate < = getdate()
+    and LockDate is null 
+    and FactoryID  = '{Sci.Env.User.Factory}'
+";
+
+            using (TransactionScope scope = new TransactionScope())
+            {
+                DualResult upResult;
+                if (!MyUtility.Check.Empty(sqlcmd))
+                {
+                    if (!(upResult = DBProxy.Current.Execute(null, sqlcmd)))
+                    {
+                        this.ShowErr(upResult);
+                        return;
+                    }
+                }
+
+                scope.Complete();
+            }
+
+            MyUtility.Msg.InfoBox("Lock data successfully!");
+        }
     }
 }
