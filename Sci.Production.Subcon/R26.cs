@@ -329,8 +329,8 @@ order by a.id, a.FactoryId, b.OrderId,a.LocalSuppID, b.Delivery, b.Refno, b.Thre
 select  tmp.LocalPOID
         , tmp.Factory
 		, tmp.TheOrderID
-        , SP = IIF(Lag(tmp.SP, 1, 0) over (order by tmp.SP) = tmp.SP, ''
-                                                                    , tmp.SP) 
+        , SP = IIF(Lag(tmp.SP, 1, 0) over (Partition By tmp.LocalPOID ,tmp.SP  order by tmp.SP) = tmp.SP, ''
+                                                                                                , tmp.SP) 
         , tmp.Supp
         , tmp.Delivery
         , tmp.Code
