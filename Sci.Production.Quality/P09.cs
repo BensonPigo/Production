@@ -189,10 +189,6 @@ namespace Sci.Production.Quality
                  {
                      this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                  }
-                 else
-                 {
-                     this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
-                 }
              };   
         }
         #region Tab_Page1
@@ -541,19 +537,19 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             if (!MyUtility.Check.Empty(this.txtsupplier1.TextBox1.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@SuppID", this.txtsupplier1.TextBox1.Text));
-                sqlwheres.Add(" ps.SuppID = @SuppID ");
+                sqlwheres.Add(" (ps.SuppID = @SuppID or fd.Suppid = @SuppID) ");
             }
 
             if (!MyUtility.Check.Empty(this.txtRefno.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@Refno", this.txtRefno.Text));
-                sqlwheres.Add(" psd.Refno = @Refno ");
+                sqlwheres.Add(" (psd.Refno = @Refno or fd.Refno = @Refno)");
             }
 
             if (!MyUtility.Check.Empty(this.txtColor.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@ColorID", this.txtColor.Text));
-                sqlwheres.Add(" psd.ColorID = @ColorID ");
+                sqlwheres.Add(" (psd.ColorID = @ColorID or fd.ColorID = @ColorID) ");
             }
 
             if (sqlwheres.Count > 0)
@@ -570,11 +566,10 @@ select distinct
 	psd.Refno,
 	psd.ColorID,
 	o.SeasonID,
-    s.SeasonSCIID,
+    fd.SeasonSCIID,
     fd.Period,
 	fd.FirstDyelot  FirstDyelot,
 	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no need to provide 1st dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
-into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
@@ -589,24 +584,8 @@ where   ps.seq1 not like '7%'  and
 and psd.FabricType = 'F'
 and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
+Order by Consignee, SuppID, Refno, ColorID, fd.SeasonSCIID
 
-select 
-[Consignee] = iif(a.Consignee is null,b.Consignee,a.Consignee)
-,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
-,a.AbbEN
-,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
-,[ColorID] = iif(a.ColorID is null , b.ColorID, a.colorid)
-,[SeasonID] = a.SeasonID
-,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
-,[Period] = iif(a.Period is null, b.Period , a.Period)
-,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
-,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,convert(varchar(25), b.TPEFirstDyelot),a.TPEFirstDyelot)
-from #tmp a
-full join FirstDyelot b on a.consignee = b.consignee
-and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID and a.SeasonSCIID=b.SeasonSCIID
-Order by Consignee, SuppID, Refno, ColorID, a.SeasonSCIID
-
-drop table #tmp
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out dt2);
