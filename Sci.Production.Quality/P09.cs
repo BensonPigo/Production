@@ -588,7 +588,7 @@ and o.Category in('B','M')
 select 
 [Consignee] = iif(a.Consignee is null,b.Consignee,a.Consignee)
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
-,a.AbbEN
+,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
 ,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
 ,[ColorID] = iif(a.ColorID is null , b.ColorID, a.colorid)
 ,[SeasonID] = a.SeasonID
