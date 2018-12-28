@@ -46,6 +46,7 @@
             this.labelNotApprove = new Sci.Win.UI.Label();
             this.btnCutRef = new Sci.Win.UI.Button();
             this.btnPrintFabricSticker = new Sci.Win.UI.Button();
+            this.btn_printBarcode = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -109,11 +110,11 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(3476, 74);
+            this.gridicon.Location = new System.Drawing.Point(3827, 74);
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(893, 1);
+            this.refresh.Location = new System.Drawing.Point(776, 2);
             // 
             // detailgridcont
             // 
@@ -129,12 +130,19 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btn_printBarcode);
             this.detailbtm.Location = new System.Drawing.Point(0, 443);
             this.detailbtm.Size = new System.Drawing.Size(1009, 38);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btn_printBarcode, 0);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(982, 481);
+            this.browse.Size = new System.Drawing.Size(1009, 481);
             // 
             // tabs
             // 
@@ -142,16 +150,16 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(320, 23);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(471, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Location = new System.Drawing.Point(444, 7);
+            this.editby.Size = new System.Drawing.Size(320, 23);
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(423, 13);
+            this.lbleditby.Location = new System.Drawing.Point(396, 13);
             // 
             // labelID
             // 
@@ -326,6 +334,16 @@
             this.btnPrintFabricSticker.UseVisualStyleBackColor = true;
             this.btnPrintFabricSticker.Click += new System.EventHandler(this.btnPrintFabricSticker_Click);
             // 
+            // btn_printBarcode
+            // 
+            this.btn_printBarcode.Location = new System.Drawing.Point(860, 2);
+            this.btn_printBarcode.Name = "btn_printBarcode";
+            this.btn_printBarcode.Size = new System.Drawing.Size(144, 35);
+            this.btn_printBarcode.TabIndex = 3;
+            this.btn_printBarcode.Text = "Print Barcode";
+            this.btn_printBarcode.UseVisualStyleBackColor = true;
+            this.btn_printBarcode.Click += new System.EventHandler(this.btn_printBarcode_Click);
+            // 
             // P10
             // 
             this.ApvChkValue = "New";
@@ -388,5 +406,6 @@
         private Win.UI.Label labelNotApprove;
         private Win.UI.Button btnCutRef;
         private Win.UI.Button btnPrintFabricSticker;
+        private Win.UI.Button btn_printBarcode;
     }
 }

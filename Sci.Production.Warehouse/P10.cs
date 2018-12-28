@@ -85,7 +85,7 @@ namespace Sci.Production.Warehouse
                 OpenSubDetailPage();
             };
             #endregion
-            
+
             // 使用虛擬欄位顯示 "bal_qty"及"var_qty"
             this.detailgrid.VirtualMode = true;
             this.detailgrid.CellValueNeeded += (s, e) =>
@@ -97,17 +97,17 @@ namespace Sci.Production.Warehouse
                 decimal DECaccu_issue;
                 decimal DECqty;
                 if (!decimal.TryParse(STRrequestqty, out DECrequestqty))
-                { DECrequestqty= 0;}
-                 if (!decimal.TryParse(STRaccu_issue, out DECaccu_issue))
-                { DECaccu_issue= 0;}
-                 if (!decimal.TryParse(STRqty, out DECqty))
-                 { DECqty = 0; }
+                { DECrequestqty = 0; }
+                if (!decimal.TryParse(STRaccu_issue, out DECaccu_issue))
+                { DECaccu_issue = 0; }
+                if (!decimal.TryParse(STRqty, out DECqty))
+                { DECqty = 0; }
                 if (e.ColumnIndex == this.detailgrid.Columns["bal_qty"].Index && !MyUtility.Check.Empty(this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value))
-                   // e.Value = Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value.ToString()) - Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["accu_issue"].Value.ToString());
-                    e.Value = DECrequestqty-DECaccu_issue;
+                    // e.Value = Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value.ToString()) - Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["accu_issue"].Value.ToString());
+                    e.Value = DECrequestqty - DECaccu_issue;
                 if (e.ColumnIndex == this.detailgrid.Columns["var_qty"].Index && !MyUtility.Check.Empty(this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value))
                     e.Value = DECrequestqty - DECaccu_issue - DECqty;
-                   // e.Value = (Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value.ToString()) - Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["accu_issue"].Value.ToString())) - Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["qty"].Value.ToString());
+                // e.Value = (Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value.ToString()) - Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["accu_issue"].Value.ToString())) - Decimal.Parse(this.detailgrid.Rows[e.RowIndex].Cells["qty"].Value.ToString());
             };
 
 
@@ -336,7 +336,7 @@ outer apply(
 
             Double sum = 0.00;
             foreach (DataRow dr in DetailDatas)
-                sum +=  Convert.ToDouble(dr["qty"]);
+                sum += Convert.ToDouble(dr["qty"]);
             if (sum == 0)
             {
                 MyUtility.Msg.WarningBox("All Issue_Qty are zero", "Warning");
@@ -394,9 +394,29 @@ outer apply(
                 {
                     row.SetField("ID", tmpId);
                 }
-                    
+
             }
-            
+
+            // 取BarcodeNo
+            IList<DataRow> listSubDetail = new List<DataRow>();
+            DataTable dtTmp;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                this.GetSubDetailDatas(dr, out dtTmp);
+
+                foreach (DataRow subDr in dtTmp.Rows)
+                {
+                    listSubDetail.Add(subDr);
+                }
+            }
+
+            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(listSubDetail);
+
+            if (!resultBarcodeNo)
+            {
+                return resultBarcodeNo;
+            }
+
             //AutoPick 前清空資料，避免資料重複儲存
             string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
             DBProxy.Current.Execute(null, sqlst);
@@ -442,7 +462,7 @@ outer apply(
                 if (GetSubDetailDatas(dr, out subDT))
                 {
                     foreach (DataRow temp in subDT.ToList()) subDT.Rows.Remove(temp);
-                       
+
                     foreach (DataRow dr2 in issued)
                     {
                         dr2.AcceptChanges();
@@ -468,7 +488,7 @@ outer apply(
                 //    dr.Delete();
                 //}
                 dt = (DataTable)this.detailgridbs.DataSource;
-                for (int i = dt.Rows.Count-1; i >= 0; i--)
+                for (int i = dt.Rows.Count - 1; i >= 0; i--)
                 {
                     dt.Rows[i].Delete();
                 }
@@ -643,6 +663,15 @@ from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by Cu
             {
                 this.btnPrintFabricSticker.Enabled = false;
             }
+
+            if (this.EditMode)
+            {
+                this.btn_printBarcode.Enabled = false;
+            }
+            else
+            {
+                this.btn_printBarcode.Enabled = true;
+            }
         }
 
         protected override void ClickConfirm()
@@ -734,7 +763,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
                                 where id = '{1}'", Env.User.UserID, CurrentMaintain["id"]);
 
             #endregion 更新表頭狀態資料
-            
+
             #region 更新庫存數量  ftyinventory
             sqlcmd = string.Format(@"select * from issue_detail WITH (NOLOCK) where id='{0}'", CurrentMaintain["id"]);
             if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
@@ -801,7 +830,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) a
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-           
+
         }
 
         protected override void ClickUnconfirm()
@@ -897,7 +926,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                              seq1 = m.Field<string>("seq1"),
                              seq2 = m.Field<string>("seq2"),
                              stocktype = m.Field<string>("stocktype"),
-                             qty = - (m.Field<decimal>("qty")),
+                             qty = -(m.Field<decimal>("qty")),
                              roll = m.Field<string>("roll"),
                              dyelot = m.Field<string>("dyelot"),
                          }).ToList();
@@ -916,7 +945,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
                            seq1 = m.First().Field<string>("seq1"),
                            seq2 = m.First().Field<string>("seq2"),
                            stocktype = m.First().Field<string>("stocktype"),
-                           qty = - (m.Sum(w => w.Field<decimal>("qty")))
+                           qty = -(m.Sum(w => w.Field<decimal>("qty")))
                        }).ToList();
 
 
@@ -962,7 +991,7 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             }
             _transactionscope.Dispose();
             _transactionscope = null;
-           
+
         }
 
         private void btnCutRef_Click(object sender, EventArgs e)
@@ -1143,7 +1172,7 @@ where t.id= @ID";
                 //this.ShowException(result);
                 return false;
             }
-            
+
             report.ReportResource = reportresource;
             #endregion
 
@@ -1151,13 +1180,19 @@ where t.id= @ID";
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
             frm.Show();
-  
+
             return true;
         }
 
         private void btnPrintFabricSticker_Click(object sender, EventArgs e)
         {
             new P13_FabricSticker(this.CurrentMaintain["ID"]).ShowDialog();
+        }
+
+        private void btn_printBarcode_Click(object sender, EventArgs e)
+        {
+            P10_PrintBarcode p10_PrintBarcode = new P10_PrintBarcode(this.CurrentMaintain["ID"].ToString());
+            p10_PrintBarcode.ShowDialog();
         }
     }
 }

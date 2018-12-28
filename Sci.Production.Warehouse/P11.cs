@@ -402,6 +402,7 @@ select  a.Id
                             ,'') 
         , a.Ukey
         , balanceqty = isnull((fi.inqty - fi.outqty + fi.adjustqty),0.00)
+        , a.BarcodeNo
 from dbo.Issue_Detail a WITH (NOLOCK) 
 left join dbo.po_supp_detail p WITH (NOLOCK) on p.id  = a.poid 
                                                 and p.seq1= a.seq1 
@@ -582,6 +583,17 @@ VALUES ('{0}',S.OrderID,S.ARTICLE,S.SIZECODE,S.QTY)
                 }
             }
             return base.ClickSaveBefore();
+        }
+
+        protected override DualResult ClickSavePre()
+        {
+            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(this.DetailDatas);
+
+            if (!resultBarcodeNo)
+            {
+                return resultBarcodeNo;
+            }
+            return base.ClickSavePre();
         }
 
         protected override void ClickSaveAfter()

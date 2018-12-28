@@ -234,6 +234,13 @@
       <DependentUpon>P07_Sticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P07_Sticker_Data.cs" />
+    <Compile Include="P10_PrintBarcode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_PrintBarcode.Designer.cs">
+      <DependentUpon>P10_PrintBarcode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P10_PrintBarcodeData.cs" />
     <Compile Include="P10_PrintData.cs" />
     <Compile Include="P11_IssueBreakDown.cs">
       <SubType>Form</SubType>
@@ -1266,6 +1273,10 @@
       <DependentUpon>P10_Detail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_Print.rdlc" />
+    <EmbeddedResource Include="P10_PrintBarcode.rdlc" />
+    <EmbeddedResource Include="P10_PrintBarcode.resx">
+      <DependentUpon>P10_PrintBarcode.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P11_IssueBreakDown.resx">
       <DependentUpon>P11_IssueBreakDown.cs</DependentUpon>
     </EmbeddedResource>
@@ -1952,6 +1963,7 @@
     <None Include="Properties\DataSources\P10_CutRef.datasource" />
     <None Include="Properties\DataSources\P10_Detail.datasource" />
     <None Include="Properties\DataSources\P10_Detail_Detail.datasource" />
+    <None Include="Properties\DataSources\P10_PrintBarcodeData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData.datasource" />
     <None Include="Properties\DataSources\P10_PrintData1.datasource" />
     <None Include="Properties\DataSources\P11.datasource" />

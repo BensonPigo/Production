@@ -292,6 +292,17 @@ order by t.POID,SEQ, t.Dyelot,t.Roll
             return base.ClickSaveBefore();
         }
 
+        protected override DualResult ClickSavePre()
+        {
+            DualResult resultBarcodeNo = Prgs.FillIssueDetailBarcodeNo(this.DetailDatas);
+
+            if (!resultBarcodeNo)
+            {
+                return resultBarcodeNo;
+            }
+            return base.ClickSavePre();
+        }
+
         // grid 加工填值
         protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
         {
@@ -691,6 +702,7 @@ select  o.FtyGroup
         , Isnull(c.inqty-c.outqty + c.adjustqty,0.00) as balance
         , dbo.Getlocation(c.ukey) location
         , a.ukey
+        , a.BarcodeNo
 from dbo.issue_detail as a WITH (NOLOCK) 
 left join Orders o on a.poid = o.id
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
