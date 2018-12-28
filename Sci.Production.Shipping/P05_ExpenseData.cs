@@ -131,7 +131,10 @@ merge ShareExpense t
 using(select * from #tmp)s
 on s.ShippingAPID = t.ShippingAPID and s.BLNo =t.BLNo and s.WKNo =t.WKNo and s.InvNo = t.InvNo and s.AccountID = t.AccountID
 when matched then update set
-	t.DebitID = s.DebitID;
+	t.DebitID = s.DebitID,
+    t.EditName='{Sci.Env.User.UserID}',
+    t.EditDate=GETDATE()
+;
 ";
                 DataTable dt;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, string.Empty, sqlMerge, out dt);
