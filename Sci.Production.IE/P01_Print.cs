@@ -91,7 +91,10 @@ select
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
-	PcsPerHour = round(3600/ProTMS, 1),
+	PcsPerHour =IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
 	Sewer=0,
 	Annotation = null,	
 	DescEN = null
@@ -104,7 +107,10 @@ select
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
-	PcsPerHour = round(3600/ProTMS, 1),
+	PcsPerHour =IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
 	Sewer=0,
 	Annotation = 	null,
 	DescEN = '**Cutting'
@@ -130,7 +136,11 @@ select
 	Mold = null,
 	Frequency = sum(round(ProTMS, 4)),
 	SMV = sum(round(ProTMS, 4)),	
-	PcsPerHour = sum(round(3600/ProTMS, 1)),
+	PcsPerHour = sum(
+	                IIF(ProTMS=0
+	                ,0
+	                ,round(3600/ProTMS, 1))	
+	            ),
 	Sewer=0,
 	Annotation = null,	
 	DescEN = null
@@ -143,7 +153,10 @@ select
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
-	PcsPerHour = round(3600/ProTMS, 1),
+	PcsPerHour = IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
 	Sewer=0,
 	Annotation = null,
 	DescEN = '**Inspection'
@@ -156,7 +169,10 @@ select
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
-	PcsPerHour = round(3600/ProTMS, 1),
+	PcsPerHour = IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
 	Sewer=0,
 	Annotation = null,
 	DescEN = '**Pressing'
@@ -169,7 +185,10 @@ select
 	Mold = null,
 	Frequency = round(ProTMS, 4),
 	SMV = round(ProTMS, 4),	
-	PcsPerHour = round(3600/ProTMS, 1),
+	PcsPerHour = IIF(ProTMS=0
+                    ,0
+                    ,round(3600/ProTMS, 1)
+                ),
 	Sewer=0,
 	Annotation = null,
 	DescEN =  '**Packing'
