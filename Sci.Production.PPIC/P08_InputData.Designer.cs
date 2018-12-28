@@ -101,9 +101,9 @@
             this.numCostOccurred = new Sci.Win.UI.NumericBox();
             this.txtDefectReason = new Sci.Win.UI.TextBox();
             this.txtInvoice = new Sci.Win.UI.TextBox();
-            this.txtTotalDefectPoints = new Sci.Win.UI.TextBox();
             this.txtNoOfRollsOver50 = new Sci.Win.UI.TextBox();
             this.txtWidthNoOfRollsWith = new Sci.Win.UI.TextBox();
+            this.numTotalDefectPoints = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
@@ -1080,6 +1080,7 @@
             this.comboDefectResponsibilityExplanation.IsSupportUnselect = true;
             this.comboDefectResponsibilityExplanation.Location = new System.Drawing.Point(238, 532);
             this.comboDefectResponsibilityExplanation.Name = "comboDefectResponsibilityExplanation";
+            this.comboDefectResponsibilityExplanation.OldText = "";
             this.comboDefectResponsibilityExplanation.Size = new System.Drawing.Size(190, 24);
             this.comboDefectResponsibilityExplanation.TabIndex = 22;
             // 
@@ -1202,17 +1203,6 @@
             this.txtInvoice.TabIndex = 2;
             this.txtInvoice.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtInvoice_PopUp);
             // 
-            // txtTotalDefectPoints
-            // 
-            this.txtTotalDefectPoints.BackColor = System.Drawing.Color.White;
-            this.txtTotalDefectPoints.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AGradeDefect", true));
-            this.txtTotalDefectPoints.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTotalDefectPoints.Location = new System.Drawing.Point(143, 261);
-            this.txtTotalDefectPoints.Name = "txtTotalDefectPoints";
-            this.txtTotalDefectPoints.Size = new System.Drawing.Size(170, 23);
-            this.txtTotalDefectPoints.TabIndex = 8;
-            this.txtTotalDefectPoints.Validated += new System.EventHandler(this.TxtTotalDefectPoints_Validated);
-            // 
             // txtNoOfRollsOver50
             // 
             this.txtNoOfRollsOver50.BackColor = System.Drawing.Color.White;
@@ -1233,12 +1223,44 @@
             this.txtWidthNoOfRollsWith.Size = new System.Drawing.Size(170, 23);
             this.txtWidthNoOfRollsWith.TabIndex = 10;
             // 
+            // numTotalDefectPoints
+            // 
+            this.numTotalDefectPoints.BackColor = System.Drawing.Color.White;
+            this.numTotalDefectPoints.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AGradeDefect", true));
+            this.numTotalDefectPoints.DecimalPlaces = 2;
+            this.numTotalDefectPoints.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numTotalDefectPoints.Location = new System.Drawing.Point(146, 261);
+            this.numTotalDefectPoints.Maximum = new decimal(new int[] {
+            99999999,
+            0,
+            0,
+            131072});
+            this.numTotalDefectPoints.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalDefectPoints.Name = "numTotalDefectPoints";
+            this.numTotalDefectPoints.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalDefectPoints.Size = new System.Drawing.Size(169, 23);
+            this.numTotalDefectPoints.TabIndex = 153;
+            this.numTotalDefectPoints.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalDefectPoints.Validated += new System.EventHandler(this.numTotalDefectPoints_Validated);
+            // 
             // P08_InputData
             // 
             this.ClientSize = new System.Drawing.Size(929, 636);
+            this.Controls.Add(this.numTotalDefectPoints);
             this.Controls.Add(this.txtWidthNoOfRollsWith);
             this.Controls.Add(this.txtNoOfRollsOver50);
-            this.Controls.Add(this.txtTotalDefectPoints);
             this.Controls.Add(this.txtInvoice);
             this.Controls.Add(this.txtDefectReason);
             this.Controls.Add(this.numCostOccurred);
@@ -1360,9 +1382,9 @@
             this.Controls.SetChildIndex(this.numCostOccurred, 0);
             this.Controls.SetChildIndex(this.txtDefectReason, 0);
             this.Controls.SetChildIndex(this.txtInvoice, 0);
-            this.Controls.SetChildIndex(this.txtTotalDefectPoints, 0);
             this.Controls.SetChildIndex(this.txtNoOfRollsOver50, 0);
             this.Controls.SetChildIndex(this.txtWidthNoOfRollsWith, 0);
+            this.Controls.SetChildIndex(this.numTotalDefectPoints, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -1445,8 +1467,8 @@
         private Win.UI.NumericBox numCostOccurred;
         private Win.UI.TextBox txtDefectReason;
         private Win.UI.TextBox txtInvoice;
-        private Win.UI.TextBox txtTotalDefectPoints;
         private Win.UI.TextBox txtNoOfRollsOver50;
         private Win.UI.TextBox txtWidthNoOfRollsWith;
+        private Win.UI.NumericBox numTotalDefectPoints;
     }
 }
