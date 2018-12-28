@@ -85,11 +85,19 @@ select selected = cast(0 as bit)
     , sod.ukey
 from SewingOutput so
 inner join SewingOutput_DailyUnlock sod on so.id = sod.SewingOutputID
+outer apply (
+	select max(a.Ukey) Ukey, a.SewingOutputID 
+	from SewingOutput_DailyUnlock a 
+	where a.UnLockDate is null 
+	and so.id = a.SewingOutputID
+	group by a.SewingOutputID
+)sodd
 where 1=1
 and so.Status = 'Send' 
 and so.FactoryID = '{Sci.Env.User.Factory}'
+and sod.Ukey = sodd.Ukey
 {where}
-order by so.LockDate,so.SewingLineID,so.Team,so.Shift
+order by sod.ukey desc,so.LockDate,so.SewingLineID,so.Team,so.Shift
 ";
             DualResult result = DBProxy.Current.Select("Production", sqlcmd, out dt);
             if (!result)
@@ -114,18 +122,25 @@ order by so.LockDate,so.SewingLineID,so.Team,so.Shift
         private void Btnsave_Click(object sender, EventArgs e)
         {
             this.grid1.ValidateControl();
-            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").CopyToDataTable();
+            var query = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1");
+            if (query.Length <= 0)
+            {
+                MyUtility.Msg.InfoBox("Please select item first!");
+                return;
+            }
+
+            DataTable dt = query.CopyToDataTable();
             string sqlcmd = $@"
 insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
 select id,'Status','Send','New',sod.ReasonID,sod.Remark,'{Sci.Env.User.UserID}',GETDATE()
 from #tmp t
-inner join SewingOutput_DailyUnlock  sod on t.ukey = sod.ukey
+inner join SewingOutput_DailyUnlock  sod on t.id = sod.SewingOutputID and sod.UnLockDate is null
 
 Update sod set
     UnLockDate = getdate()
     , UnLockName= '{Sci.Env.User.UserID}'
 from SewingOutput_DailyUnlock sod
-where sod.ukey in (select ukey from #tmp)
+where sod.SewingOutputID in (select id from #tmp) and sod.UnLockDate is null
 
 update s set Status='New', LockDate = null from SewingOutput s where id in (select id from #tmp)
 ";
@@ -135,7 +150,7 @@ update s set Status='New', LockDate = null from SewingOutput s where id in (sele
                 DualResult upResult;
                 if (!MyUtility.Check.Empty(sqlcmd))
                 {
-                    if (!(upResult = MyUtility.Tool.ProcessWithDatatable(dt,string.Empty,sqlcmd,out dt2)))
+                    if (!(upResult = MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, sqlcmd, out dt2)))
                     {
                         this.ShowErr(upResult);
                         return;

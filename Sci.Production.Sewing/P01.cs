@@ -107,9 +107,38 @@ namespace Sci.Production.Sewing
             if (this.CurrentMaintain != null)
             {
                 this.btnRevisedHistory.Enabled = !this.EditMode && MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]) <= this.systemLockDate;
+
+                #region "btnRequestUnlock"
                 this.btnRequestUnlock.Visible = MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Send");
+                DataTable dt;
+                string sql = string.Format(
+                    @"select count(*) cnt
+                      from SewingOutput_DailyUnlock
+                     where 1=1
+                       and SewingOutputID = '{0}'
+                       and UnLockDate is null", this.CurrentMaintain["ID"]);
+                if (DBProxy.Current.Select(null, sql, null, out dt)) {
+                    if (!MyUtility.Check.Empty(dt) || dt.Rows.Count > 0) {
+                        this.btnRequestUnlock.Enabled = MyUtility.Convert.GetInt(dt.Rows[0]["cnt"]) > 0 ? false : true;
+                    }
+                }
+                #endregion
+
                 this.oldttlqaqty = this.numQAOutput.Value;
                 this.oldManHour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["ManHour"]);
+                switch (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]))
+                {
+                    case "Send":
+                        this.lbstatus.Text = "Daily Lock";
+                        break;
+                    case "Lock":
+                        this.lbstatus.Text = "Monthly Lock";
+                        break;
+                    default:
+                        this.lbstatus.Text = string.Empty;
+                        break;
+                }
+
                 if (this.EditMode)
                 {
                     if (MyUtility.Check.Seek($"select 1 from dbo.SCIFty with (nolock) where ID = '{this.CurrentMaintain["SubconOutFty"]}'"))
@@ -2062,6 +2091,7 @@ FROM   (
            , t.ComboType
            , t.article
            , t.sizecode 
+           , adjQty = InvAdjustDiffQty.value
     FROM   #tmp t 
 	outer apply
 	(
@@ -2073,8 +2103,16 @@ FROM   (
               and b.SizeCode = t.SizeCode
 		      and a.Status= 'Confirmed'
 	) pack
+	outer apply (
+		select value = isnull(sum (iaq.DiffQty),0)
+		from InvAdjust ia WITH (NOLOCK)
+		inner join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID
+		where ia.OrderID = t.OrderId 			  
+			  and iaq.Article = t.Article 
+			  and iaq.SizeCode = t.SizeCode
+	) InvAdjustDiffQty
 ) a 
-WHERE  sewqty < packqty ";
+WHERE sewqty < (packqty + adjQty) ";
 
                 resultCheckQty = MyUtility.Tool.ProcessWithDatatable(subDt, null, strCheckQty, out dtCheckQty);
                 string error = string.Empty;
@@ -2134,6 +2172,7 @@ FROM   (
            , t.ComboType
            , t.article
            , t.sizecode 
+           , adjQty = InvAdjustDiffQty.value
     FROM   #tmp t 
 	outer apply
 	(
@@ -2145,9 +2184,17 @@ FROM   (
               and b.SizeCode = t.SizeCode
 		      and a.Status= 'Confirmed'
 	) pack
+	outer apply (
+		select value = isnull(sum (iaq.DiffQty),0)
+		from InvAdjust ia WITH (NOLOCK)
+		inner join InvAdjust_Qty iaq WITH (NOLOCK) on iaq.ID = ia.ID
+		where ia.OrderID = t.OrderId 			  
+			  and iaq.Article = t.Article 
+			  and iaq.SizeCode = t.SizeCode
+	) InvAdjustDiffQty
     where Convert (bit, t.AutoCreate) != 1
 ) a 
-WHERE  sewqty < packqty ",
+WHERE sewqty < (packqty + adjQty)",
                     saveCheck ? "+ t.qaqty " : string.Empty);
 
                 resultCheckQty = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, null, strCheckQty, out dtCheckQty);
