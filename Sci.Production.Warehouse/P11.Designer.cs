@@ -103,7 +103,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(999, 164);
+            this.masterpanel.Size = new System.Drawing.Size(892, 164);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -135,7 +135,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 164);
-            this.detailpanel.Size = new System.Drawing.Size(999, 192);
+            this.detailpanel.Size = new System.Drawing.Size(892, 49);
             // 
             // gridicon
             // 
@@ -150,21 +150,17 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(999, 192);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(999, 530);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 49);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(999, 356);
+            this.detailcont.Size = new System.Drawing.Size(892, 213);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.gridIssueBreakDown);
-            this.detailbtm.Location = new System.Drawing.Point(0, 356);
-            this.detailbtm.Size = new System.Drawing.Size(999, 174);
+            this.detailbtm.Location = new System.Drawing.Point(0, 213);
+            this.detailbtm.Size = new System.Drawing.Size(892, 174);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -322,14 +318,14 @@
             this.editCutNo.Multiline = true;
             this.editCutNo.Name = "editCutNo";
             this.editCutNo.ReadOnly = true;
-            this.editCutNo.Size = new System.Drawing.Size(355, 55);
+            this.editCutNo.Size = new System.Drawing.Size(248, 55);
             this.editCutNo.TabIndex = 14;
             // 
             // btnAutoPick
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(911, 31);
+            this.btnAutoPick.Location = new System.Drawing.Point(804, 31);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 5;
@@ -342,7 +338,7 @@
             this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label25.BackColor = System.Drawing.Color.Transparent;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.label25.Location = new System.Drawing.Point(879, 8);
+            this.label25.Location = new System.Drawing.Point(772, 8);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(115, 23);
             this.label25.TabIndex = 44;
@@ -354,7 +350,7 @@
             this.btnBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBreakDown.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBreakDown.Enabled = false;
-            this.btnBreakDown.Location = new System.Drawing.Point(876, 63);
+            this.btnBreakDown.Location = new System.Drawing.Point(769, 63);
             this.btnBreakDown.Name = "btnBreakDown";
             this.btnBreakDown.Size = new System.Drawing.Size(120, 30);
             this.btnBreakDown.TabIndex = 6;
@@ -373,7 +369,7 @@
             this.editArticle.Multiline = true;
             this.editArticle.Name = "editArticle";
             this.editArticle.ReadOnly = true;
-            this.editArticle.Size = new System.Drawing.Size(355, 55);
+            this.editArticle.Size = new System.Drawing.Size(248, 55);
             this.editArticle.TabIndex = 47;
             // 
             // labelArticle
@@ -405,7 +401,7 @@
             // 
             this.btnBOA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBOA.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnBOA.Location = new System.Drawing.Point(911, 95);
+            this.btnBOA.Location = new System.Drawing.Point(804, 95);
             this.btnBOA.Name = "btnBOA";
             this.btnBOA.Size = new System.Drawing.Size(80, 30);
             this.btnBOA.TabIndex = 7;
@@ -417,7 +413,7 @@
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClear.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnClear.Location = new System.Drawing.Point(777, 128);
+            this.btnClear.Location = new System.Drawing.Point(670, 128);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(108, 30);
             this.btnClear.TabIndex = 8;
@@ -466,7 +462,7 @@
             this.gridIssueBreakDown.RowTemplate.Height = 24;
             this.gridIssueBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridIssueBreakDown.ShowCellToolTips = false;
-            this.gridIssueBreakDown.Size = new System.Drawing.Size(996, 129);
+            this.gridIssueBreakDown.Size = new System.Drawing.Size(889, 129);
             this.gridIssueBreakDown.TabIndex = 3;
             this.gridIssueBreakDown.TabStop = false;
             // 
