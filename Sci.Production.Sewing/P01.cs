@@ -131,7 +131,7 @@ namespace Sci.Production.Sewing
                     case "Send":
                         this.lbstatus.Text = "Daily Lock";
                         break;
-                    case "Lock":
+                    case "Locked":
                         this.lbstatus.Text = "Monthly Lock";
                         break;
                     default:
@@ -2314,6 +2314,7 @@ Remark : {callReason.ReturnRemark}
                 email.ShowDialog(this);
                 if (email.DialogResult == DialogResult.OK)
                 {
+                    this.btnRequestUnlock.Enabled = false;
                     string sqlcmd = $@"insert into SewingOutput_DailyUnlock(SewingOutputID,ReasonID,Remark,RequestDate,RequestName)
 values('{this.CurrentMaintain["ID"]}','{callReason.ReturnReason}','{callReason.ReturnRemark}',getdate(),'{Sci.Env.User.UserID}')";
                     DualResult rs = DBProxy.Current.Execute("Production", sqlcmd);
