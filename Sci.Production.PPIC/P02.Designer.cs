@@ -32,6 +32,9 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnQuery = new System.Windows.Forms.Button();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.labBrand = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
             this.dateUpdatedDate = new Sci.Win.UI.DateBox();
@@ -44,9 +47,6 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridUpdateOrder = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.labBrand = new Sci.Win.UI.Label();
-            this.txtbrand1 = new Sci.Production.Class.txtbrand();
-            this.btnQuery = new System.Windows.Forms.Button();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -87,6 +87,33 @@
             this.panel3.Size = new System.Drawing.Size(906, 40);
             this.panel3.TabIndex = 1;
             // 
+            // btnQuery
+            // 
+            this.btnQuery.Location = new System.Drawing.Point(779, 7);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(93, 28);
+            this.btnQuery.TabIndex = 7;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(640, 11);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.TabIndex = 6;
+            // 
+            // labBrand
+            // 
+            this.labBrand.Location = new System.Drawing.Point(582, 10);
+            this.labBrand.Name = "labBrand";
+            this.labBrand.Size = new System.Drawing.Size(55, 23);
+            this.labBrand.TabIndex = 5;
+            this.labBrand.Text = "Brand";
+            // 
             // comboFactory
             // 
             this.comboFactory.BackColor = System.Drawing.Color.White;
@@ -98,7 +125,6 @@
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(87, 24);
             this.comboFactory.TabIndex = 2;
-            this.comboFactory.SelectedValueChanged += new System.EventHandler(this.ComboFactory_SelectedValueChanged);
             // 
             // labelFactory
             // 
@@ -114,7 +140,6 @@
             this.dateUpdatedDate.Name = "dateUpdatedDate";
             this.dateUpdatedDate.Size = new System.Drawing.Size(110, 23);
             this.dateUpdatedDate.TabIndex = 1;
-            this.dateUpdatedDate.ValueChanged += new System.EventHandler(this.DateUpdatedDate_ValueChanged);
             // 
             // labelUpdatedDate
             // 
@@ -207,32 +232,6 @@
             this.gridUpdateOrder.Size = new System.Drawing.Size(906, 404);
             this.gridUpdateOrder.TabIndex = 0;
             this.gridUpdateOrder.TabStop = false;
-            // 
-            // labBrand
-            // 
-            this.labBrand.Location = new System.Drawing.Point(582, 10);
-            this.labBrand.Name = "labBrand";
-            this.labBrand.Size = new System.Drawing.Size(55, 23);
-            this.labBrand.TabIndex = 5;
-            this.labBrand.Text = "Brand";
-            // 
-            // txtbrand1
-            // 
-            this.txtbrand1.BackColor = System.Drawing.Color.White;
-            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand1.Location = new System.Drawing.Point(640, 11);
-            this.txtbrand1.Name = "txtbrand1";
-            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
-            this.txtbrand1.TabIndex = 6;
-            // 
-            // btnQuery
-            // 
-            this.btnQuery.Location = new System.Drawing.Point(779, 7);
-            this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(93, 28);
-            this.btnQuery.TabIndex = 7;
-            this.btnQuery.Text = "Query";
-            this.btnQuery.UseVisualStyleBackColor = true;
             // 
             // P02
             // 
