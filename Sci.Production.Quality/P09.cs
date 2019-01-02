@@ -644,7 +644,7 @@ drop table #tmp
             DataTable changedt = dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).Distinct().CopyToDataTable();
             string sqlupdate = $@"
 merge FirstDyelot t
-using (select ConSignee,Suppid,Refno,ColorID,SeasonSCIID,max(FirstDyelot) as FirstDyelot 
+using (select ConSignee,Suppid,Refno,ColorID,SeasonSCIID,max(convert(date,FirstDyelot)) as FirstDyelot 
 from #tmp
 group by  ConSignee,Suppid,Refno,ColorID,SeasonSCIID) s
 on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.Consignee = s.Consignee  and t.SeasonSCIID = s.SeasonSCIID
