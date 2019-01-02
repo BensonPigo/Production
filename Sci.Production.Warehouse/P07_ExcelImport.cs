@@ -69,6 +69,7 @@ namespace Sci.Production.Warehouse
             grid2Data.Columns.Add("stocktype", typeof(String));
             grid2Data.Columns.Add("id", typeof(String));
             grid2Data.Columns.Add("location", typeof(String));
+            grid2Data.Columns.Add("Remark", typeof(String));
             grid2Data.Columns.Add("ErrMsg", typeof(String));
             grid2Data.Columns.Add("fabrictype", typeof(String));
 
@@ -124,6 +125,7 @@ namespace Sci.Production.Warehouse
                 .Numeric("weight", header: "WeiKg", decimal_places: 2)
                 .Numeric("actualWeight", header: "NetKg", decimal_places: 2)
                 .Text("location", header: "Location", width: Widths.AnsiChars(8))
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(8))
                 .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
 
             for (int i = 0; i < gridPoid.ColumnCount; i++)
@@ -222,8 +224,8 @@ namespace Sci.Production.Warehouse
                         //檢查Excel格式
                         Microsoft.Office.Interop.Excel.Range range = worksheet.Range[String.Format("A{0}:AE{0}", 1)];
                         object[,] objCellArray = range.Value;                        
-                        int[] ItemPosition = new int[12];
-                        string[] ItemCheck = { "", "WK#", "SP#", "SEQ1", "SEQ2", "C/NO", "LOT NO.", "QTY", "F.O.C", "NETKG", "WEIKG", "LOCATION" };
+                        int[] ItemPosition = new int[13];
+                        string[] ItemCheck = { "", "WK#", "SP#", "SEQ1", "SEQ2", "C/NO", "LOT NO.", "QTY", "F.O.C", "NETKG", "WEIKG", "LOCATION","REMARK" };
                         string[] ExcelItem = new string[intColumnsCount+1];
 
 
@@ -233,7 +235,7 @@ namespace Sci.Production.Warehouse
                         
                         StringBuilder columnName = new StringBuilder();
                         //確認Excel各Item是否存在，並儲存所在位置
-                        for (int x = 1; x <= 11; x++)
+                        for (int x = 1; x <= 12; x++)
                         {
                             for (int y = 1; y <= intColumnsCount; y++)
                             {
@@ -280,6 +282,7 @@ namespace Sci.Production.Warehouse
                                 newRow["actualWeight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[9]], "N");
                                 newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[10]], "N");
                                 newRow["location"] = (objCellArray[1, ItemPosition[11]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[11]].ToString().Trim(), "C");
+                                newRow["Remark"] = (objCellArray[1, ItemPosition[12]] == null) ? "" : MyUtility.Excel.GetExcelCellValue(objCellArray[1, ItemPosition[12]].ToString().Trim(), "C");
 
                                 #region check Columns length
                                 List<string> listColumnLengthErrMsg = new List<string>();
@@ -319,6 +322,10 @@ namespace Sci.Production.Warehouse
                                 // Location varchar(60)
                                 if (Encoding.Default.GetBytes(newRow["Location"].ToString()).Length > 60)
                                     listColumnLengthErrMsg.Add("<Location> length can't be more than 60 Characters.");
+
+                                // Remark nvarchar(100)
+                                if (Encoding.Default.GetBytes(newRow["Remark"].ToString()).Length > 100)
+                                    listColumnLengthErrMsg.Add("<Remark> length can't be more than 100 Characters.");
 
                                 if (listColumnLengthErrMsg.Count > 0){
                                     listNewRowErrMsg.Add(listColumnLengthErrMsg.JoinToString(Environment.NewLine));

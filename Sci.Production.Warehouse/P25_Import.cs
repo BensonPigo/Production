@@ -46,6 +46,13 @@ namespace Sci.Production.Warehouse
             {
                 // 建立可以符合回傳的Cursor
                 #region -- SQL Command --
+                bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+                string where = string.Empty;
+                if (!MtlAutoLock)
+                {
+                    where = " AND c.lock = 0 ";
+                }
+
                 strSQLCmd.Append(string.Format(@"
 select  selected = 0 
         , id = '' 
@@ -80,10 +87,11 @@ from dbo.PO_Supp_Detail a WITH (NOLOCK)
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.Poid = Orders.id
 inner join Factory on Orders.FactoryID = Factory.id
-Where   c.lock = 0 
+Where  1=1
+{1}
         and c.InQty-c.OutQty+c.AdjustQty > 0 
         and c.stocktype = 'B'
-        and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword));
+        and Factory.MDivisionID = '{0}'", Sci.Env.User.Keyword, where));
                 #endregion
 
                 System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();

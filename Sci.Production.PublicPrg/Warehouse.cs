@@ -282,14 +282,14 @@ on t.poid = s.poid and t.seq1 = s.seq1 and t.seq2=s.seq2
         /// <param name="location"></param>
         /// <returns>String Sqlcmd</returns>
         //(整批)
-        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded)
+        public static string UpdateFtyInventory_IO(int type, IList<DataRow> datas, bool encoded, int MtlAutoLock=0)
         {
             string sqlcmd = "";
             switch (type)
             {
                 case 2:
                     #region 更新 inqty
-                    sqlcmd = @"
+                    sqlcmd = $@"
 alter table #TmpSource alter column poid varchar(20)
 alter table #TmpSource alter column seq1 varchar(3)
 alter table #TmpSource alter column seq2 varchar(3)
@@ -300,18 +300,30 @@ select distinct poid, seq1, seq2, stocktype, roll = RTRIM(LTRIM(isnull(roll, '')
 into #tmpS1
 from #TmpSource
 
+select s.*,psdseq1=psd.seq1
+into #tmpS11
+from #tmpS1 s
+left join PO_Supp_Detail psd on psd.id = s.poid and psd.seq1 = s.seq1 and psd.seq2 = s.seq2
+
 merge dbo.FtyInventory as target
-using #tmpS1 as s
+using #tmpS11 as s
     on target.poid = s.poid and target.seq1 = s.seq1 
 	and target.seq2 = s.seq2 and target.stocktype = s.stocktype and target.roll = s.roll and target.dyelot = s.dyelot
 when matched then
     update
-    set inqty = isnull(inqty,0.00) + s.qty
+    set inqty = isnull(inqty,0.00) + s.qty,
+         Lock = iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
+         LockName = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Sci.Env.User.UserID}',''),
+         LockDate = iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
 when not matched then
-    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty])
+    insert ( [MDivisionPoDetailUkey],[Poid],[Seq1],[Seq2],[Roll],[Dyelot],[StockType],[InQty], [Lock],[LockName],[LockDate])
     values ((select ukey from dbo.MDivisionPoDetail WITH (NOLOCK) 
 			 where poid = s.poid and seq1 = s.seq1 and seq2 = s.seq2)
-			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty);
+			 ,s.poid,s.seq1,s.seq2,s.roll,s.dyelot,s.stocktype,s.qty,
+              iif(s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99' ,{MtlAutoLock},0),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,'{Sci.Env.User.UserID}',''),
+              iif((s.psdseq1 between '01' and '69' or s.psdseq1 between '80' and '99') and {MtlAutoLock}=1 ,getdate(),null)
+            );
 ";
                     if (encoded)
                     {
@@ -332,7 +344,7 @@ when not matched then
 drop table #tmp_L_K 
 ";//↑最後一段delete寫法千萬不能用merge作,即使只有一筆資料也要跑超久
                     }
-                    sqlcmd += @"drop table #tmpS1; 
+                    sqlcmd += @"drop table #tmpS1, #tmpS11; 
                                 drop table #TmpSource;";
                     #endregion
                     break;
@@ -1040,28 +1052,33 @@ where   poid = '{1}'
             DataTable datacheck;
 
             #region -- 檢查庫存項lock --
-            sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
+
+            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            if (!MtlAutoLock)
+            {
+                sqlcmd = string.Format(@"Select d.frompoid,d.fromseq1,d.fromseq2,d.fromRoll,d.Qty
 ,isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) as balanceQty,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) inner join FtyInventory f WITH (NOLOCK) 
 on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
 and d.FromSeq1 = f.Seq1 and d.FromSeq2 = f.seq2 and d.FromRoll = f.Roll and d.FromDyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", dr["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-            {
-                MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
-                return false;
-            }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
+                if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
-                    }
-                    MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                    MyUtility.Msg.ErrorBox(sqlcmd + result2.ToString());
                     return false;
+                }
+                else
+                {
+                    if (datacheck.Rows.Count > 0)
+                    {
+                        foreach (DataRow tmp in datacheck.Rows)
+                        {
+                            ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                                , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
+                        }
+                        MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                        return false;
+                    }
                 }
             }
             #endregion
@@ -1310,7 +1327,10 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataTable datacheck;
 
             #region -- 檢查庫存項lock --
-            sqlcmd = string.Format(@"
+            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            if (!MtlAutoLock)
+            {
+                sqlcmd = string.Format(@"
 Select  d.frompoid
         , d.fromseq1
         , d.fromseq2
@@ -1327,20 +1347,21 @@ inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID
                                            and d.fromDyelot = f.Dyelot
 where   f.lock=1 
         and d.Id = '{0}'", SubTransfer_ID);
-            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-            {
-                return result;
-            }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
+                if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
-                    foreach (DataRow tmp in datacheck.Rows)
+                    return result;
+                }
+                else
+                {
+                    if (datacheck.Rows.Count > 0)
                     {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
+                        foreach (DataRow tmp in datacheck.Rows)
+                        {
+                            ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                                , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
+                        }
+                        return new DualResult(false, "Material Locked!!" + Environment.NewLine + ids);
                     }
-                    return new DualResult(false, "Material Locked!!" + Environment.NewLine + ids);
                 }
             }
             #endregion

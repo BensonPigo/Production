@@ -265,7 +265,10 @@ WHERE   StockType='{0}'
             DataTable datacheck;
 
             #region -- 檢查庫存項lock --
-            sqlcmd = string.Format(@"
+            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            if (!MtlAutoLock)
+            {
+                sqlcmd = string.Format(@"
 Select 	d.frompoid
 		,d.fromseq1
 		,d.fromseq2
@@ -278,22 +281,23 @@ inner join FtyInventory f WITH (NOLOCK)
     on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
        and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
 where f.lock=1 and d.Id = '{0}'", CurrentMaintain["id"]);
-            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
-            {
-                ShowErr(sqlcmd, result2);
-                return;
-            }
-            else
-            {
-                if (datacheck.Rows.Count > 0)
+                if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
                 {
-                    foreach (DataRow tmp in datacheck.Rows)
-                    {
-                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
-                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
-                    }
-                    MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                    ShowErr(sqlcmd, result2);
                     return;
+                }
+                else
+                {
+                    if (datacheck.Rows.Count > 0)
+                    {
+                        foreach (DataRow tmp in datacheck.Rows)
+                        {
+                            ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                                , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
+                        }
+                        MyUtility.Msg.WarningBox("Material Locked!!" + Environment.NewLine + ids, "Warning");
+                        return;
+                    }
                 }
             }
             #endregion
