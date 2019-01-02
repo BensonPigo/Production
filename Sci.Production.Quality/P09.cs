@@ -578,7 +578,7 @@ left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
+left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where   ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
@@ -595,10 +595,10 @@ select
 ,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
 ,[Period] = iif(a.Period is null, b.Period , a.Period)
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
-,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,convert(varchar(25), b.TPEFirstDyelot),a.TPEFirstDyelot)
+,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot)
 from #tmp a
 full join FirstDyelot b on a.consignee = b.consignee
-and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID and a.SeasonSCIID=b.SeasonSCIID
+and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID 
 where 1=1 and 
 {sqlwhere}
 Order by Consignee, SuppID, Refno, ColorID, a.SeasonSCIID
