@@ -505,6 +505,7 @@ from GenTotal3"),
 	from ArtworkType WITH (NOLOCK) 
 	where Classify in ('I','A','P') 
 	      and IsTtlTMS = 0
+          and IsPrintToCMP=1
 ),
 tmpAllSubprocess as (
 	select ot.ArtworkTypeID

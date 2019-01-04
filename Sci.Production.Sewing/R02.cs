@@ -755,6 +755,7 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
+          and IsPrintToCMP=1
 ),
 tmpAllSubprocess as(
 	select ot.ArtworkTypeID
@@ -814,6 +815,7 @@ order by t1.ID"),
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
+          and IsPrintToCMP=1
 ),
 tmpAllSubprocess as(
 	select ot.ArtworkTypeID
@@ -873,6 +875,7 @@ order by t1.ID"),
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
+          and IsPrintToCMP=1
 ),
 tmpAllSubprocess as(
 	select ot.ArtworkTypeID
