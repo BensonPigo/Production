@@ -55,9 +55,10 @@ namespace Sci.Production.Subcon
             dateBundleScanDate2 = this.dateBundleScanDate.Value2;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
-                MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2))
+                MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
+                MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2))
             {
-                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Bundle CDate] can not all empty !!");
+                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Bundle CDate][Bundle Scan Date] cannot all empty !!");
                 return false;
             }
             return base.ValidateInput();
@@ -101,17 +102,17 @@ namespace Sci.Production.Subcon
             }
             if (!MyUtility.Check.Empty(dateBundleScanDate1) && !MyUtility.Check.Empty(dateBundleScanDate2))
             {
-                sqlWhere.Append(string.Format(@" and ((bio.InComing >= '{0}' and bio.InComing <= '{1}' ) or (bio.OutGoing >= '{0}' and bio.OutGoing <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+                sqlWhere.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
             }
             else
             {
                 if (!MyUtility.Check.Empty(dateBundleScanDate1))
                 {
-                    sqlWhere.Append(string.Format(@" and (bio.InComing  >= '{0}' or bio.OutGoing >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
+                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
                 }
                 if (!MyUtility.Check.Empty(dateBundleScanDate2))
                 {
-                    sqlWhere.Append(string.Format(@" and (bio.InComing  <= '{0}' or bio.OutGoing <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
                 }
             } 
             if (!MyUtility.Check.Empty(M))
