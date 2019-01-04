@@ -878,7 +878,10 @@ where a.cutref = '{0}' and a.id = '{1}' and a.ukey = b.workorderukey"
             p.ShowDialog();
             string dtn = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             this.displayPrintDate.Text = dtn;
-            string sqlcmd = string.Format(@"update Bundle set PrintDate = '{0}' where ID = '{1}'", dtn, CurrentMaintain["ID"]);
+            string sqlcmd = string.Format(
+                @"update Bundle set PrintDate = '{0}' where ID = '{1}';
+                  update Bundle_Detail set PrintDate = '{0}' where ID = '{1}';"
+                , dtn, CurrentMaintain["ID"]);
             DBProxy.Current.Execute(null, sqlcmd);
             return true;
 
