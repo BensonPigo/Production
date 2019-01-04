@@ -25,11 +25,14 @@ namespace Sci.Production.Quality
             Env.Cfg.FtpServerIP = "ftp.sportscity.com.tw";
             Env.Cfg.FtpServerAccount = "insp_rpt";
             Env.Cfg.FtpServerPassword = "rpt_insp";
+            displayBoxapvSeasonNull.BackColor = Color.FromArgb(190, 190, 190);
         }
 
         private DataTable dt1;
         private DataTable dt2;
         private string Filepath = @"TO-ALL\MMC\";
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_ApprovedSeason;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_FirstDyelot;
 
         protected override void OnFormLoaded()
         {
@@ -129,16 +132,64 @@ namespace Sci.Production.Quality
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("SeasonSCIID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SeasonID", header: "Season", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("SeasonSCIID", header: "Approved Season", width: Widths.AnsiChars(8), iseditingreadonly: true).Get(out col_ApprovedSeason)
             .Numeric("Period", header: "Period", width: Widths.AnsiChars(6), iseditingreadonly: true)
-            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
+            .Date("FirstDyelot", header: "1st Bulk Dyelot\r\nFty Received Date", width: Widths.AnsiChars(10)).Get(out col_FirstDyelot) // W (Pink)
             .Text("TPEFirstDyelot", header: "1st Bulk Dyelot\r\nSupp Sent Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             #endregion Set_grid2 Columns
             #region Color
             this.grid2.Columns["FirstDyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            Change_Color();
+            this.grid2.RowEnter += this.grid2_RowEnter;
             #endregion Color
             #endregion tabPage2
+        }
+
+        private void grid2_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.grid2.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(data["SeasonSCIID"]))
+            {
+                this.col_FirstDyelot.IsEditingReadOnly = true;
+            }
+            else
+            {
+                this.col_FirstDyelot.IsEditingReadOnly = false;
+            }
+        }
+
+        private void Change_Color()
+        {
+            this.col_ApprovedSeason.CellFormatting += (s, e) =>
+             {
+                 if (e.RowIndex == -1)
+                 {
+                     return;
+                 }
+
+                 DataRow dr = this.grid2.GetDataRow(e.RowIndex);
+                 if (dr == null)
+                 {
+                     return;
+                 }
+
+                 if (MyUtility.Check.Empty(dr["SeasonSCIID"]))
+                 {
+                     this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
+                 }
+             };   
         }
         #region Tab_Page1
 
@@ -486,19 +537,19 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
             if (!MyUtility.Check.Empty(this.txtsupplier1.TextBox1.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@SuppID", this.txtsupplier1.TextBox1.Text));
-                sqlwheres.Add(" ps.SuppID = @SuppID ");
+                sqlwheres.Add(" (a.SuppID = @SuppID or b.Suppid = @SuppID) ");
             }
 
             if (!MyUtility.Check.Empty(this.txtRefno.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@Refno", this.txtRefno.Text));
-                sqlwheres.Add(" psd.Refno = @Refno ");
+                sqlwheres.Add(" (a.Refno = @Refno or b.Refno = @Refno)");
             }
 
             if (!MyUtility.Check.Empty(this.txtColor.Text))
             {
                 listSQLParameter.Add(new SqlParameter("@ColorID", this.txtColor.Text));
-                sqlwheres.Add(" psd.ColorID = @ColorID ");
+                sqlwheres.Add(" (a.ColorID = @ColorID or b.ColorID = @ColorID) ");
             }
 
             if (sqlwheres.Count > 0)
@@ -514,12 +565,12 @@ select distinct
 	Supp.AbbEN,
 	psd.Refno,
 	psd.ColorID,
-    s.SeasonSCIID,
+	o.SeasonID,
+    fd.SeasonSCIID,
     fd.Period,
 	fd.FirstDyelot  FirstDyelot,
-	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no need to provide 1st dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd')),
-	psd.Refno
-
+	TPEFirstDyelot=iif(fd.TPEFirstDyelot is null and RibItem = 1,'no need to provide 1st dye lot',format(fd.TPEFirstDyelot,'yyyy/MM/dd'))
+into #tmp
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
@@ -527,15 +578,32 @@ left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
+left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
-
-where   ps.seq1 not like '7%'  and 
-{sqlwhere}
+where   ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
 and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
-Order by Consignee, SuppID, psd.Refno, psd.ColorID, s.SeasonSCIID
+
+select 
+[Consignee] = iif(a.Consignee is null,b.Consignee,a.Consignee)
+,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
+,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
+,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
+,[ColorID] = iif(a.ColorID is null , b.ColorID, a.colorid)
+,[SeasonID] = a.SeasonID
+,[SeasonSCIID] = iif(a.SeasonSCIID is null,b.SeasonSCIID,a.SeasonSCIID)
+,[Period] = iif(a.Period is null, b.Period , a.Period)
+,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
+,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot)
+from #tmp a
+full join FirstDyelot b on a.consignee = b.consignee
+and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID 
+where 1=1 and 
+{sqlwhere}
+Order by Consignee, SuppID, Refno, ColorID, a.SeasonSCIID
+
+drop table #tmp
 ";
             #endregion Sqlcmd
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listSQLParameter, out dt2);
@@ -573,10 +641,12 @@ Order by Consignee, SuppID, psd.Refno, psd.ColorID, s.SeasonSCIID
                 return;
             }
 
-            DataTable changedt = dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).CopyToDataTable();
+            DataTable changedt = dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).Distinct().CopyToDataTable();
             string sqlupdate = $@"
 merge FirstDyelot t
-using #tmp s
+using (select ConSignee,Suppid,Refno,ColorID,SeasonSCIID,max(convert(date,FirstDyelot)) as FirstDyelot 
+from #tmp
+group by  ConSignee,Suppid,Refno,ColorID,SeasonSCIID) s
 on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.Consignee = s.Consignee  and t.SeasonSCIID = s.SeasonSCIID
 when matched then update set 
 	FirstDyelot=s.FirstDyelot,
