@@ -208,7 +208,7 @@ select OutputDate,Category
 	   , Team
 	   , OrderId
 	   , ComboType
-	   , WorkHour = sum(Round(WorkHour,3))
+	   , WorkHour = ROUND(Sum(WorkHour),3)
 	   , QAQty = sum(QAQty)
 	   , InlineQty = sum(InlineQty)
 	   , OrderCategory
@@ -290,28 +290,28 @@ tmpQty as (
 	select [OutputMM] = FORMAT(OutputDate,'yyyy/MM')
 		   , StdTMS
 		   , QAQty = Sum(QAQty)
-		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
+		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
 	from #tmp
 	where LastShift <> 'O'
 	group by FORMAT(OutputDate,'yyyy/MM'), StdTMS
 ),
 tmpTtlCPU as (
 	select [OutputMM] = FORMAT(OutputDate,'yyyy/MM')
-		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2)) 
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift <> 'O'
 	group by FORMAT(OutputDate,'yyyy/MM')
 ),
 tmpSubconInCPU as (
 	select [OutputMM] = FORMAT(OutputDate,'yyyy/MM')
-		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I'
 	group by FORMAT(OutputDate,'yyyy/MM')
 ),
 tmpSubconOutCPU as (
 	select [OutputMM] = FORMAT(OutputDate,'yyyy/MM')
-		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2)) 
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)) , 3)
 	from #tmp
 	where LastShift = 'O'
 	group by FORMAT(OutputDate,'yyyy/MM')
@@ -372,8 +372,8 @@ order by aDate.OutputMM
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
-		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
-		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift <> 'O' 
           --排除Subcon in non sister資料
@@ -400,7 +400,7 @@ tmpTtlManPower as (
 )
 select q.QAQty
 	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
 	   , AvgWorkHour = IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2))
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
@@ -411,15 +411,15 @@ left join tmpTtlManPower mp on 1 = 1
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
-		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
-		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I' and SubconInSisterFty = 0
 	group by StdTMS
 )
 select q.QAQty
 	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
@@ -428,15 +428,15 @@ from tmpQty q
 ;with tmpQty as (
 	select StdTMS
 		   , QAQty = Sum(QAQty)
-		   , ManHour = Sum(ROUND(WorkHour * ActManPower, 2))
-		   , TotalCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I' and SubconInSisterFty = 1
 	group by StdTMS
 )
 select q.QAQty
 	   , q.TotalCPU
-	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 2))
+	   , CPUSewer = IIF(q.ManHour = 0, 0, Round(isnull(q.TotalCPU,0) / q.ManHour, 3))
 	   , q.ManHour
 	   , Eff = IIF(q.ManHour * q.StdTMS = 0, 0, Round(q.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2))
 from tmpQty q
@@ -479,7 +479,10 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, ''))
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
@@ -488,7 +491,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2) 
+           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
@@ -499,7 +502,7 @@ tmpAllSubprocess as(
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
 )
 select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Price), 0)
+	   , Price = isnull(Sum(ROUND(Price,t1.DecimalNumber)), 0)
 	   , rs
 from tmpArtwork t1
 left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
@@ -511,7 +514,10 @@ order by t1.ID
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, ''))
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
@@ -520,7 +526,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2)
+           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
            , a.Program 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
@@ -532,7 +538,7 @@ tmpAllSubprocess as(
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.Program
 )
 select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Price), 0)
+	   , Price = isnull(Sum(ROUND(Price,t1.DecimalNumber)), 0)
 	   , rs
        , [Company] = t2.Program
 from tmpArtwork t1
@@ -545,7 +551,10 @@ order by t1.ID
 	Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
-		   																, ''))
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
@@ -554,7 +563,7 @@ tmpAllSubprocess as(
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100), 2)
+           , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
            , a.SubconOutFty 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
@@ -566,7 +575,7 @@ tmpAllSubprocess as(
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,a.SubconOutFty
 )
 select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Price), 0)
+	   , Price = isnull(Sum(ROUND(Price,t1.DecimalNumber)), 0)
 	   , rs
        , [Company] = t2.SubconOutFty
 from tmpArtwork t1
@@ -578,7 +587,7 @@ order by t1.ID
 ;with tmpSubconIn as (
 	Select 'I' as Type
 		   , Company = Program 
-		   , TtlCPU = Sum(ROUND(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate), 2))
+		   , TtlCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
 	from #tmp
 	where LastShift = 'I'
 	group by Program
@@ -586,7 +595,7 @@ order by t1.ID
 tmpSubconOut as (
     Select Type = 'O'
 		   , Company = t.SubconOutFty
-		   , TtlCPU = sum(ROUND(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate),2))
+		   , TtlCPU = ROUND(Sum(t.QAQty*IIF(t.Category = 'M', t.MockupCPU * t.MockupCPUFactor, t.OrderCPU * t.OrderCPUFactor * t.Rate)),3)
 	from #tmp t
 	where LastShift = 'O'
 	group by t.SubconOutFty
