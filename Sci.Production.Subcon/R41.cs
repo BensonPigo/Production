@@ -17,7 +17,7 @@ namespace Sci.Production.Subcon
     {
         DataTable printData;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
-        DateTime? dateBundle1, dateBundle2;
+        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -51,6 +51,8 @@ namespace Sci.Production.Subcon
             CutRef2 = this.txtCutRefEnd.Text;
             dateBundle1 = this.dateBundleCDate.Value1;
             dateBundle2 = this.dateBundleCDate.Value2;
+            dateBundleScanDate1 = this.dateBundleScanDate.Value1;
+            dateBundleScanDate2 = this.dateBundleScanDate.Value2;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
                 MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2))
@@ -97,6 +99,21 @@ namespace Sci.Production.Subcon
             {
                 sqlWhere.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
             }
+            if (!MyUtility.Check.Empty(dateBundleScanDate1) && !MyUtility.Check.Empty(dateBundleScanDate2))
+            {
+                sqlWhere.Append(string.Format(@" and ((bio.InComing >= '{0}' and bio.InComing <= '{1}' ) or (bio.OutGoing >= '{0}' and bio.OutGoing <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+            }
+            else
+            {
+                if (!MyUtility.Check.Empty(dateBundleScanDate1))
+                {
+                    sqlWhere.Append(string.Format(@" and (bio.InComing  >= '{0}' or bio.OutGoing >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(dateBundleScanDate2))
+                {
+                    sqlWhere.Append(string.Format(@" and (bio.InComing  <= '{0}' or bio.OutGoing <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+                }
+            } 
             if (!MyUtility.Check.Empty(M))
             {
                 sqlWhere.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
