@@ -60,6 +60,9 @@
             this.txtSubconOutFty = new Sci.Production.Class.txtLocalSupp();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSubConOutContractNumber = new Sci.Win.UI.TextBox();
+            this.btnRequestUnlock = new Sci.Win.UI.Button();
+            this.btnBatchRecall = new Sci.Win.UI.Button();
+            this.lbstatus = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -76,6 +79,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lbstatus);
+            this.masterpanel.Controls.Add(this.btnRequestUnlock);
             this.masterpanel.Controls.Add(this.txtSubConOutContractNumber);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.txtSubconOutFty);
@@ -109,7 +114,6 @@
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.dateDate);
             this.masterpanel.Size = new System.Drawing.Size(1000, 140);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLine, 0);
@@ -142,6 +146,9 @@
             this.masterpanel.Controls.SetChildIndex(this.txtSubconOutFty, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSubConOutContractNumber, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnRequestUnlock, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbstatus, 0);
             // 
             // detailpanel
             // 
@@ -521,7 +528,7 @@
             // 
             // btnRevisedHistory
             // 
-            this.btnRevisedHistory.Location = new System.Drawing.Point(865, 5);
+            this.btnRevisedHistory.Location = new System.Drawing.Point(865, 38);
             this.btnRevisedHistory.Name = "btnRevisedHistory";
             this.btnRevisedHistory.Size = new System.Drawing.Size(122, 30);
             this.btnRevisedHistory.TabIndex = 6;
@@ -532,7 +539,7 @@
             // btnShareWorkingHoursToSP
             // 
             this.btnShareWorkingHoursToSP.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnShareWorkingHoursToSP.Location = new System.Drawing.Point(753, 41);
+            this.btnShareWorkingHoursToSP.Location = new System.Drawing.Point(750, 72);
             this.btnShareWorkingHoursToSP.Name = "btnShareWorkingHoursToSP";
             this.btnShareWorkingHoursToSP.Size = new System.Drawing.Size(237, 30);
             this.btnShareWorkingHoursToSP.TabIndex = 7;
@@ -612,9 +619,44 @@
             this.txtSubConOutContractNumber.TabIndex = 33;
             this.txtSubConOutContractNumber.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSubConOutContractNumber_Validating);
             // 
+            // btnRequestUnlock
+            // 
+            this.btnRequestUnlock.Location = new System.Drawing.Point(865, 4);
+            this.btnRequestUnlock.Name = "btnRequestUnlock";
+            this.btnRequestUnlock.Size = new System.Drawing.Size(122, 30);
+            this.btnRequestUnlock.TabIndex = 34;
+            this.btnRequestUnlock.Text = "Request Unlock";
+            this.btnRequestUnlock.UseVisualStyleBackColor = true;
+            this.btnRequestUnlock.Click += new System.EventHandler(this.BtnRequestUnlock_Click);
+            // 
+            // btnBatchRecall
+            // 
+            this.btnBatchRecall.Location = new System.Drawing.Point(869, 18);
+            this.btnBatchRecall.Name = "btnBatchRecall";
+            this.btnBatchRecall.Size = new System.Drawing.Size(122, 30);
+            this.btnBatchRecall.TabIndex = 35;
+            this.btnBatchRecall.Text = "Batch Recall";
+            this.btnBatchRecall.UseVisualStyleBackColor = true;
+            this.btnBatchRecall.Click += new System.EventHandler(this.BtnBatchRecall_Click);
+            // 
+            // lbstatus
+            // 
+            this.lbstatus.AutoSize = true;
+            this.lbstatus.BackColor = System.Drawing.Color.Transparent;
+            this.lbstatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.lbstatus.Location = new System.Drawing.Point(747, 7);
+            this.lbstatus.Name = "lbstatus";
+            this.lbstatus.Size = new System.Drawing.Size(109, 23);
+            this.lbstatus.TabIndex = 35;
+            this.lbstatus.TextStyle.BorderColor = System.Drawing.Color.Fuchsia;
+            this.lbstatus.TextStyle.Color = System.Drawing.Color.Fuchsia;
+            this.lbstatus.TextStyle.ExtBorderColor = System.Drawing.Color.Fuchsia;
+            this.lbstatus.TextStyle.GradientColor = System.Drawing.Color.Fuchsia;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 525);
+            this.Controls.Add(this.btnBatchRecall);
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "txtdropdownlistShift";
             this.DefaultDetailOrder = "OrderID,ComboType,Article";
@@ -623,9 +665,12 @@
             this.GridUniqueKey = "ID,OrderID,ComboType,Article";
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
+            this.IsSupportRecall = true;
+            this.IsSupportSend = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P01";
+            this.RecallChkValue = "Send";
             this.SubDetailKeyField1 = "id,ukey";
             this.SubDetailKeyField2 = "id,SewingOutput_DetailUKey";
             this.SubGridAlias = "SewingOutput_Detail_Detail";
@@ -635,6 +680,7 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "SewingOutput";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchRecall, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -688,5 +734,8 @@
         private Win.UI.Label labelSubconOutFty;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtSubConOutContractNumber;
+        private Win.UI.Button btnRequestUnlock;
+        private Win.UI.Button btnBatchRecall;
+        private Win.UI.Label lbstatus;
     }
 }

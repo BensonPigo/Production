@@ -56,6 +56,43 @@ namespace Sci.Production.Sewing
                 return false;
             }
 
+            DataTable dt;
+            string errMsg = string.Empty;
+            string sql = string.Format(
+            @"select OutputDate
+	                ,FactoryID
+	                ,SewingLineID
+	                ,Team
+	                ,Shift
+	                ,SubconOutFty 
+	                ,SubConOutContractNumber 
+                from SewingOutput
+                where 1=1
+                    and OutputDate = cast('{0}' as date)
+                    and Status in('','NEW')
+                    and FactoryID = '{1}'
+            ", Convert.ToDateTime(this.dateDate.Value).ToString("d"), this.comboFactory.Text);
+            DualResult result = DBProxy.Current.Select(null, sql, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query data fail\r\n" + result.ToString());
+                return false;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                errMsg += MyUtility.Check.Empty(errMsg) ? "Please lock data first! \r\n" : "\r\n";
+                errMsg += string.Format(
+                    "Date:{0},Factory: {1}, Line#: {2}, Team:{3}, Shift:{4}, SubconOut-Fty:{5}, SubconOut_Contract#:{6}.",
+                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("d"), dr["FactoryID"], dr["SewingLineID"], dr["Team"], dr["Shift"], dr["SubconOutFty"], dr["SubConOutContractNumber"]);
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                MyUtility.Msg.WarningBox(errMsg);
+                return false;
+            }
+
             this._date = this.dateDate.Value;
             this._factory = this.comboFactory.Text;
             this._team = this.comboTeam.Text;
