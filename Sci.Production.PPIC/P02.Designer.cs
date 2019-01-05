@@ -32,6 +32,9 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnQuery = new System.Windows.Forms.Button();
+            this.txtbrand1 = new Sci.Production.Class.txtbrand();
+            this.labBrand = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
             this.dateUpdatedDate = new Sci.Win.UI.DateBox();
@@ -69,6 +72,9 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnQuery);
+            this.panel3.Controls.Add(this.txtbrand1);
+            this.panel3.Controls.Add(this.labBrand);
             this.panel3.Controls.Add(this.comboFactory);
             this.panel3.Controls.Add(this.labelFactory);
             this.panel3.Controls.Add(this.dateUpdatedDate);
@@ -81,21 +87,48 @@
             this.panel3.Size = new System.Drawing.Size(906, 40);
             this.panel3.TabIndex = 1;
             // 
+            // btnQuery
+            // 
+            this.btnQuery.Location = new System.Drawing.Point(779, 7);
+            this.btnQuery.Name = "btnQuery";
+            this.btnQuery.Size = new System.Drawing.Size(93, 28);
+            this.btnQuery.TabIndex = 7;
+            this.btnQuery.Text = "Query";
+            this.btnQuery.UseVisualStyleBackColor = true;
+            this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
+            // 
+            // txtbrand1
+            // 
+            this.txtbrand1.BackColor = System.Drawing.Color.White;
+            this.txtbrand1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand1.Location = new System.Drawing.Point(640, 11);
+            this.txtbrand1.Name = "txtbrand1";
+            this.txtbrand1.Size = new System.Drawing.Size(66, 23);
+            this.txtbrand1.TabIndex = 6;
+            // 
+            // labBrand
+            // 
+            this.labBrand.Location = new System.Drawing.Point(582, 10);
+            this.labBrand.Name = "labBrand";
+            this.labBrand.Size = new System.Drawing.Size(55, 23);
+            this.labBrand.TabIndex = 5;
+            this.labBrand.Text = "Brand";
+            // 
             // comboFactory
             // 
             this.comboFactory.BackColor = System.Drawing.Color.White;
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(738, 9);
+            this.comboFactory.Location = new System.Drawing.Point(479, 9);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(87, 24);
             this.comboFactory.TabIndex = 2;
-            this.comboFactory.SelectedValueChanged += new System.EventHandler(this.ComboFactory_SelectedValueChanged);
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(680, 10);
+            this.labelFactory.Location = new System.Drawing.Point(421, 10);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(55, 23);
             this.labelFactory.TabIndex = 4;
@@ -103,15 +136,14 @@
             // 
             // dateUpdatedDate
             // 
-            this.dateUpdatedDate.Location = new System.Drawing.Point(425, 10);
+            this.dateUpdatedDate.Location = new System.Drawing.Point(295, 10);
             this.dateUpdatedDate.Name = "dateUpdatedDate";
             this.dateUpdatedDate.Size = new System.Drawing.Size(110, 23);
             this.dateUpdatedDate.TabIndex = 1;
-            this.dateUpdatedDate.ValueChanged += new System.EventHandler(this.DateUpdatedDate_ValueChanged);
             // 
             // labelUpdatedDate
             // 
-            this.labelUpdatedDate.Location = new System.Drawing.Point(331, 10);
+            this.labelUpdatedDate.Location = new System.Drawing.Point(201, 10);
             this.labelUpdatedDate.Name = "labelUpdatedDate";
             this.labelUpdatedDate.Size = new System.Drawing.Size(90, 23);
             this.labelUpdatedDate.TabIndex = 2;
@@ -196,6 +228,7 @@
             this.gridUpdateOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridUpdateOrder.RowTemplate.Height = 24;
             this.gridUpdateOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridUpdateOrder.ShowCellToolTips = false;
             this.gridUpdateOrder.Size = new System.Drawing.Size(906, 404);
             this.gridUpdateOrder.TabIndex = 0;
             this.gridUpdateOrder.TabStop = false;
@@ -220,6 +253,7 @@
             this.Controls.SetChildIndex(this.panel4, 0);
             this.Controls.SetChildIndex(this.panel5, 0);
             this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridUpdateOrder)).EndInit();
@@ -245,5 +279,8 @@
         private Win.UI.Panel panel5;
         private Win.UI.Grid gridUpdateOrder;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private System.Windows.Forms.Button btnQuery;
+        private Class.txtbrand txtbrand1;
+        private Win.UI.Label labBrand;
     }
 }

@@ -194,6 +194,12 @@
     <Compile Include="P05.Designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_BatchRecall.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_BatchRecall.Designer.cs">
+      <DependentUpon>P01_BatchRecall.cs</DependentUpon>
+    </Compile>
     <Compile Include="P06.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -295,6 +301,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_BatchRecall.resx">
+      <DependentUpon>P01_BatchRecall.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P06.resx">
       <DependentUpon>P06.cs</DependentUpon>

@@ -28,8 +28,9 @@
     [TransferToFactory]     VARCHAR (8)  CONSTRAINT [DF_OrderComparisonList_TransferToFactory] DEFAULT ('') NULL,
     [MnorderApv2]           DATE         NULL,
     [JunkOrder]             BIT          CONSTRAINT [DF_OrderComparisonList_JunkOrder] DEFAULT ((0)) NULL,
-    [Ukey]                  BIGINT       IDENTITY (1, 1) NOT NULL, 
-    CONSTRAINT [PK_OrderComparisonList] PRIMARY KEY ([Ukey])
+    [Ukey]                  BIGINT       IDENTITY (1, 1) NOT NULL,
+    [BrandID]               VARCHAR (8)  CONSTRAINT [DF_OrderComparisonList_BrandID] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_OrderComparisonList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
 

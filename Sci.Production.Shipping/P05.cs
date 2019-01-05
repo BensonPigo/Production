@@ -590,17 +590,6 @@ order by fwd.WhseNo",
 
             #endregion
 
-            #region 其他檢查
-
-            // 已經有做出口費用分攤，不能勾選[No Export Charge]
-            if (MyUtility.Check.Seek(string.Format(@"select WKNO from ShareExpense WITH (NOLOCK) where InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])))
-                && this.chkNoExportCharge.Checked)
-            {
-                MyUtility.Msg.WarningBox("This GB# has share expense, please unselect [No Export Charge].");
-                return false;
-            }
-            #endregion
-
             #region 檢查Shipper
 
             // 帶資料到Shipper

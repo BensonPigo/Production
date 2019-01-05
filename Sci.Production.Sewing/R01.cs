@@ -56,6 +56,43 @@ namespace Sci.Production.Sewing
                 return false;
             }
 
+            DataTable dt;
+            string errMsg = string.Empty;
+            string sql = string.Format(
+            @"select OutputDate
+	                ,FactoryID
+	                ,SewingLineID
+	                ,Team
+	                ,Shift
+	                ,SubconOutFty 
+	                ,SubConOutContractNumber 
+                from SewingOutput
+                where 1=1
+                    and OutputDate = cast('{0}' as date)
+                    and Status in('','NEW')
+                    and FactoryID = '{1}'
+            ", Convert.ToDateTime(this.dateDate.Value).ToString("d"), this.comboFactory.Text);
+            DualResult result = DBProxy.Current.Select(null, sql, out dt);
+            if (!result)
+            {
+                MyUtility.Msg.WarningBox("Query data fail\r\n" + result.ToString());
+                return false;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                errMsg += MyUtility.Check.Empty(errMsg) ? "Please lock data first! \r\n" : "\r\n";
+                errMsg += string.Format(
+                    "Date:{0},Factory: {1}, Line#: {2}, Team:{3}, Shift:{4}, SubconOut-Fty:{5}, SubconOut_Contract#:{6}.",
+                    Convert.ToDateTime(dr["OutputDate"].ToString()).ToString("d"), dr["FactoryID"], dr["SewingLineID"], dr["Team"], dr["Shift"], dr["SubconOutFty"], dr["SubConOutContractNumber"]);
+            }
+
+            if (!MyUtility.Check.Empty(errMsg))
+            {
+                MyUtility.Msg.WarningBox(errMsg);
+                return false;
+            }
+
             this._date = this.dateDate.Value;
             this._factory = this.comboFactory.Text;
             this._team = this.comboTeam.Text;
@@ -264,7 +301,7 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
                             ,IIF(QAQty > 0, ActManPower / QAQty, ActManPower))
 	   , WorkHour
 	   , ManHour = IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour
-	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 2) * 3600 / StdTMS, 2) 
+	   , TargetCPU = ROUND(ROUND(IIF(QAQty > 0, ActManPower / QAQty, ActManPower) * WorkHour, 3) * 3600 / StdTMS, 3) 
 	   , TMS = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate) * StdTMS
 	   , CPUPrice = IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)
 	   , TargetQty = IIF(IIF(Category = 'M', MockupCPU * MockupCPUFactor
@@ -278,8 +315,8 @@ select Shift =    CASE    WHEN LastShift='D' then 'Day'
 	   , CPUSewer = IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
 	   									   , ActManPower) * WorkHour, 2) > 0
    							     , ROUND((IIF(Category = 'M', MockupCPU * MockupCPUFactor
-   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 2) / ROUND(IIF(QAQty > 0, ActManPower / QAQty
-   							     																								  , ActManPower) * WorkHour, 2)
+   							     						    , OrderCPU * OrderCPUFactor * Rate) * QAQty), 3) / ROUND(IIF(QAQty > 0, ActManPower / QAQty
+   							     																								  , ActManPower) * WorkHour, 3)
      						     , 0) 
 	   , EFF = ROUND(IIF(ROUND(IIF(QAQty > 0, ActManPower / QAQty
 	   										, ActManPower) * WorkHour, 2) > 0
@@ -498,16 +535,20 @@ from GenTotal3"),
                         "OrderId,ComboType,QAQty,LastShift",
                         string.Format(@"
 ;with tmpArtwork as (
-	Select ID 
+	Select  ID,
+            [DecimalNumber] =case   when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
 	from ArtworkType WITH (NOLOCK) 
 	where Classify in ('I','A','P') 
 	      and IsTtlTMS = 0
+          and IsPrintToCMP=1
 ),
 tmpAllSubprocess as (
 	select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
-           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), 2) 
+           , Price = Round(sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](o.id ,a.ComboType), 100) / 100), ta.DecimalNumber) 
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
@@ -517,7 +558,7 @@ tmpAllSubprocess as (
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O')) 
           and o.LocalOrder <> 1
 		  and ot.Price > 0         
-    group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType)
+    group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,[dbo].[GetOrderLocation_Rate](o.id ,a.ComboType),ta.DecimalNumber
 )
 select ArtworkTypeID
 	   , Price = sum(Price)
