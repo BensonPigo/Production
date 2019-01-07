@@ -98,8 +98,8 @@ select  1 as selected
         , remark = ''
 		, o.BuyerDelivery
 from dbo.LocalPO a WITH (NOLOCK) 
-inner join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
-INNER JOIN dbo.Orders o  WITH (NOLOCK) on o.ID = b.OrderId
+left join dbo.LocalPO_Detail b WITH (NOLOCK) on b.id = a.Id
+left JOIN dbo.Orders o  WITH (NOLOCK) on o.ID = b.OrderId
 Where b.Qty - b.InQty >0
     and a.status = 'Approved' 
     and a.LocalSuppID = '{0}'", dr_master["localsuppid"]);
