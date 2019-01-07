@@ -1707,7 +1707,6 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
 
                                 if (!result)
                                 {
-                                    _TransactionScope.Dispose();
                                     break;
                                 }
                             }
@@ -1719,12 +1718,10 @@ order by a.poid, a.seq1, a.seq2, b.FabricType
                     }
 
                     result = base.ClickSave();
-                    if (!result)
+                    if (result)
                     {
-                        _TransactionScope.Dispose();
+                        _TransactionScope.Complete();
                     }
-
-                    _TransactionScope.Complete();
                 }
                 catch (Exception ex)
                 {
