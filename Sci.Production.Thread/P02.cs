@@ -1336,6 +1336,15 @@ drop table #ThreadIssue_Detail
 insert into ThreadIssue(ID,MDivisionId,CDate,Remark,Status,AddName,AddDate,RequestID)
     values('{issueID}','{Env.User.Keyword}',GETDATE(),'Auto Create By P02','Confirmed','{Env.User.UserID}',GETDATE(),'{this.CurrentMaintain["OrderID"]}')
 
+Create Table #ThreadIssue_Detail(
+	ID varchar(13) NOT NULL,
+    [Refno] [varchar](21) NOT NULL,
+	[ThreadColorID] [varchar](15) NOT NULL,
+	[NewCone] [numeric](5, 0) NULL,
+	[UsedCone] [numeric](5, 0) NULL,
+	[ThreadLocationID] [varchar](10) NOT NULL
+)
+
 DECLARE ThreadRequisition_Detail_cur CURSOR FOR 
      select Refno,ThreadColorID,UseStockNewConeQty,UseStockUseConeQty
         from dbo.ThreadRequisition_Detail with (nolock)
@@ -1365,7 +1374,7 @@ BEGIN
 	if exists(select 1 from #tmpUsedCone)
 	begin
 		select top 1 @UsedCone = iif(UsedCone>@UseStockUseConeQty,@UseStockUseConeQty,UsedCone), @ThreadLocationID = ThreadLocationID from #tmpUsedCone order by UsedCone
-        insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID) values('{issueID}', @Refno, @ThreadColorID, 0, @UsedCone, @ThreadLocationID)
+		insert into #ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)	values('{issueID}',@Refno, @ThreadColorID, 0, @UsedCone, @ThreadLocationID)
 		set @UseStockUseConeQty = 0
 	end
 	drop table #tmpUsedCone
@@ -1374,7 +1383,7 @@ BEGIN
 	if exists(select 1 from #tmpNewCone)
 	begin
 		select top 1 @NewCone = iif(NewCone>@UseStockNewConeQty,@UseStockNewConeQty,NewCone), @ThreadLocationID = ThreadLocationID from #tmpNewCone order by UsedCone
-        insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID) values('{issueID}', @Refno, @ThreadColorID, @NewCone, 0, @ThreadLocationID)
+		insert into #ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)	values('{issueID}', @Refno, @ThreadColorID, @NewCone, 0, @ThreadLocationID)
 		set @UseStockNewConeQty = 0
 	end
 	drop table #tmpNewCone
@@ -1409,8 +1418,8 @@ BEGIN
 
 			if(@NewCone > 0 or @UsedCone > 0)      
 			begin
-                insert into ThreadIssue_Detail(ID,Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
-                values('{issueID}', @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
+					insert into #ThreadIssue_Detail(ID, Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+					values('{issueID}', @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
 			end		
 
 			if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
@@ -1429,6 +1438,9 @@ FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStoc
 END
 CLOSE ThreadRequisition_Detail_cur
 DEALLOCATE ThreadRequisition_Detail_cur
+insert into ThreadIssue_Detail(ID, Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+select ID,Refno,ThreadColorID,NewCone = sum(NewCone),UsedCone = sum(UsedCone),ThreadLocationID from #ThreadIssue_Detail group by  ID,Refno,ThreadColorID,ThreadLocationID
+drop table #ThreadIssue_Detail
 ";
             }
 
