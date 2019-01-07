@@ -1327,41 +1327,37 @@ where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) + d.Qty < 0) a
             DataTable datacheck;
 
             #region -- 檢查庫存項lock --
-            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
-            if (!MtlAutoLock)
-            {
-                sqlcmd = string.Format(@"
+            sqlcmd = string.Format(@"
 Select  d.frompoid
-        , d.fromseq1
-        , d.fromseq2
-        , d.fromRoll
-        , d.Qty
-        , balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
-        ,f.Dyelot
+    , d.fromseq1
+    , d.fromseq2
+    , d.fromRoll
+    , d.Qty
+    , balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+    ,f.Dyelot
 from dbo.SubTransfer_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) on d.FromPOID = f.POID 
-                                           and D.FromStockType = F.StockType
-                                           and d.FromRoll = f.Roll 
-                                           and d.FromSeq1 =f.Seq1 
-                                           and d.FromSeq2 = f.Seq2
-                                           and d.fromDyelot = f.Dyelot
+                                        and D.FromStockType = F.StockType
+                                        and d.FromRoll = f.Roll 
+                                        and d.FromSeq1 =f.Seq1 
+                                        and d.FromSeq2 = f.Seq2
+                                        and d.fromDyelot = f.Dyelot
 where   f.lock=1 
-        and d.Id = '{0}'", SubTransfer_ID);
-                if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+    and d.Id = '{0}'", SubTransfer_ID);
+            if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {
+                return result;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
                 {
-                    return result;
-                }
-                else
-                {
-                    if (datacheck.Rows.Count > 0)
+                    foreach (DataRow tmp in datacheck.Rows)
                     {
-                        foreach (DataRow tmp in datacheck.Rows)
-                        {
-                            ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
-                                , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
-                        }
-                        return new DualResult(false, "Material Locked!!" + Environment.NewLine + ids);
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
                     }
+                    return new DualResult(false, "Material Locked!!" + Environment.NewLine + ids);
                 }
             }
             #endregion
