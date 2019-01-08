@@ -20,7 +20,10 @@ namespace Sci.Production.Subcon
         private Ict.Win.UI.DataGridViewTextBoxColumn col_StatusColor;
         List<string> sqlWhere = new List<string>();
         string InlineDate1; string InlineDate2;
-        private DataTable dt1,dt2;
+        private DataTable dtFormGrid;
+        private DataTable dtExcel;
+        private DataTable dtBundleGroupQty;
+
         private DataSet ds;
         private SqlCommand cmd;
         private bool cancel;
@@ -38,13 +41,45 @@ namespace Sci.Production.Subcon
         {
             base.OnLoad(e);
             this.grid.IsEditingReadOnly = true;
-            this.Helper.Controls.Grid.Generator(this.grid)
+            DataGridViewGeneratorTextColumnSettings bundleGroup = new DataGridViewGeneratorTextColumnSettings();
+            bundleGroup.EditingMouseDown += (s, d) =>
+            {
+                if (d.Button != MouseButtons.Right)
+                {
+                    return;
+                }
 
+                DataRow drSelected = this.grid.GetDataRow(d.RowIndex);
+
+                if (drSelected == null)
+                {
+                    return;
+                }
+
+                this.ShowBundleGroupDetailQty(drSelected);
+
+            };
+
+            bundleGroup.CellMouseDoubleClick += (s, d) =>
+            {
+                DataRow drSelected = this.grid.GetDataRow(d.RowIndex);
+
+                if (drSelected == null)
+                {
+                    return;
+                }
+
+                this.ShowBundleGroupDetailQty(drSelected);
+            };
+
+            this.Helper.Controls.Grid.Generator(this.grid)
             .Text("FactoryID", header: "Factory", width: Widths.Auto(true))
             .Text("LocationID", header: "Location", width: Widths.Auto(true))
             .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(14))
+            .Text("POID", header: "Master SP", width: Widths.AnsiChars(14))
             .Text("Line", header: "Inline Line#", width: Widths.Auto(true))
             .Text("StyleID", header: "Style", width: Widths.AnsiChars(15))
+            .Text("BundleGroup", header: "Group", width: Widths.AnsiChars(20), settings: bundleGroup)
             .Text("FComb", header: "Comb", width: Widths.Auto(true))
             .Text("ColorID", header: "Color", width: Widths.Auto(true))
             .Text("Pattern", header: "Pattern", width: Widths.AnsiChars(10))
@@ -209,6 +244,7 @@ select	LocationID = isnull (bio.LocationID, '')
 					else isnull (bd.Qty, 0)
 				end
 		, bd.IsPair
+        , bd.BundleGroup
 into #BasBundleInfo
 from Bundle b
 inner join Bundle_Detail bd on bd.ID = b.ID
@@ -243,6 +279,7 @@ where	1=1
 									for xml path(''))
 								   , 1, 1, '')
 			, DisBundleInfo.OrderID
+			, o.POID
 			, Line = stuff ((select distinct concat ('/', ssd.SewingLineID)
 							 from SewingSchedule_Detail ssd
 							 where DisBundleInfo.Orderid = ssd.OrderID
@@ -250,6 +287,7 @@ where	1=1
 							 for xml path(''))
 							 , 1, 1, '') 
 			, o.StyleID
+			, DisBundleInfo.BundleGroup
 			, DisBundleInfo.FComb
 			, DisBundleInfo.Colorid
 			, DisBundleInfo.Pattern
@@ -265,18 +303,29 @@ where	1=1
 							else 'Excess'
 						 end
 	from (
-		select	OrderID
-				, FComb
-				, Colorid
-				, Pattern
-				, PtnDes
-				, Size
-				, Artwork
+		select	  bbi.OrderID
+				, bbi.FComb
+				, bbi.Colorid
+				, bbi.Pattern
+				, bbi.PtnDes
+				, bbi.Size
+				, bbi.Artwork
 				, Qty = sum (Qty)
 				, IsPair = count (IsPair)
-		from #BasBundleInfo
-		group by OrderID, FComb, Colorid, Pattern
-				, PtnDes, Size, Artwork
+				, BundleGroup = stuff ((select distinct concat ('/', bb.BundleGroup)
+							 from #BasBundleInfo bb
+							 where	bb.OrderID = bbi.OrderID   and
+									bb.FComb   = bbi.FComb     and
+									bb.Colorid = bbi.Colorid   and
+									bb.Pattern = bbi.Pattern   and
+									bb.PtnDes  = bbi.PtnDes    and
+									bb.Size	   = bbi.Size	   and
+									bb.Artwork = bbi.Artwork
+							 for xml path(''))
+							 , 1, 1, '') 
+		from #BasBundleInfo bbi
+		group by bbi.OrderID, bbi.FComb, bbi.Colorid, bbi.Pattern
+				, bbi.PtnDes, bbi.Size, bbi.Artwork
 	) DisBundleInfo
 	left join Orders o on DisBundleInfo.Orderid = o.ID
 	outer apply (
@@ -299,6 +348,7 @@ where	1=1
 	select	o.FactoryID
 			, DisBundleInfo.LocationID
 			, DisBundleInfo.Orderid
+            , o.POID
 			, o.StyleID
 			, Line = stuff ((select distinct concat ('/', ssd.SewingLineID)
 							 from SewingSchedule_Detail ssd
@@ -306,6 +356,7 @@ where	1=1
 								   and DisBundleInfo.Size = ssd.SizeCode
 							 for xml path(''))
 							 , 1, 1, '') 
+            , DisBundleInfo.BundleGroup
 			, DisBundleInfo.FComb
 			, DisBundleInfo.Colorid
 			, DisBundleInfo.Pattern
@@ -319,19 +370,30 @@ where	1=1
 																																			 end)
 			, AccuPerLocation = AccuPerLocation.Qty
 	from (
-		select	OrderID
-				, LocationID
-				, FComb
-				, Colorid
-				, Pattern
-				, PtnDes
-				, Size
-				, Artwork
+		select	  bbi.OrderID
+				, bbi.LocationID
+				, bbi.FComb
+				, bbi.Colorid
+				, bbi.Pattern
+				, bbi.PtnDes
+				, bbi.Size
+				, bbi.Artwork
 				, Qty = sum (Qty)
 				, IsPair = count (IsPair)
-		from #BasBundleInfo
-		group by OrderID, LocationID, FComb, Colorid, Pattern
-				, PtnDes, Size, Artwork
+				, BundleGroup = stuff ((select distinct concat ('/', bb.BundleGroup)
+							 from #BasBundleInfo bb
+							 where	bb.OrderID = bbi.OrderID   and
+									bb.FComb   = bbi.FComb     and
+									bb.Colorid = bbi.Colorid   and
+									bb.Pattern = bbi.Pattern   and
+									bb.PtnDes  = bbi.PtnDes    and
+									bb.Size	   = bbi.Size	   and
+									bb.Artwork = bbi.Artwork
+							 for xml path(''))
+							 , 1, 1, '') 
+		from #BasBundleInfo bbi
+		group by bbi.OrderID, bbi.LocationID, bbi.FComb, bbi.Colorid, bbi.Pattern
+				, bbi.PtnDes, bbi.Size, bbi.Artwork
 	) DisBundleInfo
 	left join Orders o on DisBundleInfo.Orderid = o.ID
 	outer apply (
@@ -349,6 +411,25 @@ where	1=1
 	order by o.FtyGroup, DisBundleInfo.OrderID, o.StyleID, DisBundleInfo.FComb
 			, DisBundleInfo.Colorid, DisBundleInfo.Pattern, DisBundleInfo.Size
 			, DisBundleInfo.Artwork, DisBundleInfo.LocationID
+
+    select OrderID ,
+		   FComb	 ,
+		   Colorid	 ,
+		   Pattern	 ,
+		   PtnDes	 ,
+		   Size		 ,
+		   Artwork	 ,
+		   BundleGroup,
+		   Qty = sum(isnull(Qty,0))
+	from #BasBundleInfo
+	group by	OrderID,
+				FComb	 ,
+				Colorid	 ,
+				Pattern	 ,
+				PtnDes	 ,
+				Size		 ,
+				Artwork	 ,
+				BundleGroup
 
 drop table #BasBundleInfo
 ";
@@ -393,7 +474,7 @@ drop table #BasBundleInfo
                 this.btnQuery.Enabled = true;
             }
 
-            if ((dt2 == null || dt2.Rows.Count==0) || ds.Tables.Count != 2)
+            if ((this.dtFormGrid == null || this.dtExcel.Rows.Count==0) || ds.Tables.Count != 3)
             {
                 MyUtility.Msg.WarningBox("Data not found!");               
                 return;
@@ -403,11 +484,15 @@ drop table #BasBundleInfo
             Sci.Utility.Report.ExcelCOM com= new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Subcon_P40.xltx", objApp);
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
-            com.WriteTable(dt2, 2);
-            worksheet.get_Range($"A2:N{MyUtility.Convert.GetString(1 + dt2.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
+            com.WriteTable(this.dtExcel, 2);
+            worksheet.get_Range($"A2:N{MyUtility.Convert.GetString(1 + this.dtExcel.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             objApp.Columns.AutoFit();
+            if (worksheet.Columns["G:G"].ColumnWidth > 50)
+            {
+                worksheet.Columns["G:G"].ColumnWidth = 50;
+            }
             objApp.Rows.AutoFit();
             string Excelfile = Sci.Production.Class.MicrosoftFile.GetName("Subcon_P40");
             objApp.ActiveWorkbook.SaveAs(Excelfile);
@@ -431,18 +516,23 @@ drop table #BasBundleInfo
                 }
 
                 if ((ds.Tables[0] == null || ds.Tables[0].Rows.Count == 0) ||
-                    (ds.Tables.Count != 2)
+                    (ds.Tables.Count != 3)
                     )
                 {
                     MyUtility.Msg.WarningBox("Data not found!");
-                    dt1.Clear();
-                    dt2.Clear();
+                    if (dtFormGrid != null)
+                    {
+                        this.dtFormGrid.Clear();
+                        this.dtExcel.Clear();
+                        this.dtBundleGroupQty.Clear();
+                    }
                     return;
                 }
 
-                dt1 = ds.Tables[0].AsEnumerable().CopyToDataTable();
-                dt2 = ds.Tables[1].AsEnumerable().CopyToDataTable();
-                this.listControlBindingSource1.DataSource = dt1;
+                this.dtFormGrid = ds.Tables[0].AsEnumerable().CopyToDataTable();
+                this.dtExcel = ds.Tables[1].AsEnumerable().CopyToDataTable();
+                this.dtBundleGroupQty = ds.Tables[2].AsEnumerable().CopyToDataTable();
+                this.listControlBindingSource1.DataSource = this.dtFormGrid;
             }
          
         }
@@ -458,6 +548,23 @@ drop table #BasBundleInfo
                     this.cmd.Cancel();
                 }
             }
+        }
+
+        private void ShowBundleGroupDetailQty(DataRow drSelected)
+        {
+            DataTable resultBundleQtyDetail = this.dtBundleGroupQty.AsEnumerable()
+                                                                       .Where(src => src["OrderID"].Equals(drSelected["OrderID"]) &&
+                                                                                        src["FComb"].Equals(drSelected["FComb"]) &&
+                                                                                        src["Colorid"].Equals(drSelected["Colorid"]) &&
+                                                                                        src["Pattern"].Equals(drSelected["Pattern"]) &&
+                                                                                        src["PtnDes"].Equals(drSelected["PtnDes"]) &&
+                                                                                        src["Size"].Equals(drSelected["Size"]) &&
+                                                                                        src["Artwork"].Equals(drSelected["Artwork"]))
+                                                                       .OrderByDescending(src => src["Qty"])
+                                                                       .ThenBy(src => src["BundleGroup"])
+                                                                       .CopyToDataTable();
+
+            MyUtility.Msg.ShowMsgGrid(resultBundleQtyDetail, caption: "Group Detail Qty", shownColumns: "BundleGroup,Qty");
         }
     }
 }
