@@ -144,7 +144,7 @@ BEGIN
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	select a.*
 				from #tmpOrders a
-				left join Trade_To_Pms.dbo.Orders b on a.ID = b.ID and a.FactoryID = b.FactoryID
+				left join Trade_To_Pms.dbo.Orders b on a.ID = b.ID and b.factoryid in (select ID from Production.dbo.Factory)
 				where b.id is null) as s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
 		when matched then
