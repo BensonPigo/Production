@@ -36,6 +36,7 @@ namespace Sci.Production.Packing
         private DataTable printGroupData;
         private DataTable clipData;
         private DataTable qtyBDown;
+        private DataTable[] printDataA;
 
         /// <summary>
         /// OrderQty
@@ -108,7 +109,10 @@ namespace Sci.Production.Packing
                 this.radioPackingGuideReport.Checked ? "3" : 
                 this.rdbtnShippingMark.Checked ? "5" :
                 this.rdbtnShippingMarkToChina.Checked ? "6" :
-                this.rdbtnShippingMarkToUsaInd.Checked ? "7" : "4";
+                this.rdbtnShippingMarkToUsaInd.Checked ? "7" :
+                this.radioMDform.Checked ? "8" :
+                this.radioWeighingform.Checked ? "9" :
+                "4";
             this.ctn1 = this.txtCTNStart.Text;
             this.ctn2 = this.txtCTNEnd.Text;
             this.ReportResourceName = "P03_BarcodePrint.rdlc";
@@ -131,6 +135,18 @@ namespace Sci.Production.Packing
             else if (this.reportType == "3")
             {
                 DualResult result = PublicPrg.Prgs.QueryPackingGuideReportData(MyUtility.Convert.GetString(this.masterData["ID"]), out this.printData, out this.ctnDim, out this.qtyCtn, out this.articleSizeTtlShipQty, out this.printGroupData, out this.clipData, out this.specialInstruction);
+                return result;
+            }
+
+            if (this.reportType == "8")
+            {
+                DualResult result = PublicPrg.Prgs.QueryPackingMDform(MyUtility.Convert.GetString(this.masterData["ID"]), out this.printDataA);
+                return result;
+            }
+
+            if (this.reportType == "9")
+            {
+                DualResult result = PublicPrg.Prgs.QueryPackingCartonWeighingForm(MyUtility.Convert.GetString(this.masterData["ID"]), out this.printDataA);
                 return result;
             }
 
@@ -200,6 +216,16 @@ namespace Sci.Production.Packing
             else if (this.reportType == "3")
             {
                 PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("\\Packing_P03_PackingGuideReport.xltx", this.printData, this.ctnDim, this.qtyCtn, this.articleSizeTtlShipQty, this.printGroupData, this.clipData, this.masterData, this.OrderQty, this.specialInstruction);
+            }
+
+            if (this.reportType == "8")
+            {
+                PublicPrg.Prgs.PackingListToExcel_PackingMDFormReport("\\Packing_P03_PackingMDFormReport.xltx", this.masterData, this.printDataA);
+            }
+
+            if (this.reportType == "9")
+            {
+                PublicPrg.Prgs.PackingListToExcel_PackingCartonWeighingReport("\\Packing_P03_PackingCartonWeighingForm.xltx", this.masterData, this.printDataA);
             }
 
             this.HideWaitMessage();
@@ -324,7 +350,6 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             return new DualResult(true);
             #endregion
         }
-
 
         public DualResult PrintShippingmark_ToChina()
         {
@@ -473,7 +498,6 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             #endregion
         }
 
-
         public DualResult PrintShippingmark_ToUsaInd()
         {
             #region PrintShippingmark_ToUsaInd
@@ -621,6 +645,13 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             this.ControlPrintFunction(((Sci.Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
+        }
+
+        private void radioMDform_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ControlPrintFunction(!((Sci.Win.UI.RadioButton)sender).Checked);
+            this.checkBoxCountry.Enabled = !((Sci.Win.UI.RadioButton)sender).Checked;
+            this.checkBoxCountry.Checked = !((Sci.Win.UI.RadioButton)sender).Checked;
         }
     }
 }
