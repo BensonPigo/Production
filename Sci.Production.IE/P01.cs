@@ -758,6 +758,20 @@ and s.StyleUnit='PCS'
 
                 DataTable dtGSD_Summary;
                 sqlCmd = $@" 
+select tms = cast(CEILING(sum(i.ProSMV) * 60) as decimal(20,2))
+from IETMS_Summary i
+where i.IETMSUkey = (select distinct i.Ukey from Style s WITH (NOLOCK) inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version where s.ukey = '{styleUkey}')
+group by i.Location,i.ArtworkTypeID";
+                result = DBProxy.Current.Select(null, sqlCmd, out dtGSD_Summary);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
+                }
+
+                // 若舊資料IETMS_Summary沒有資料
+                if (dtGSD_Summary.Rows.Count == 0)
+                {
+                    sqlCmd = $@" 
 select cast(round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as decimal(20,2)) as tms 
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
@@ -766,10 +780,11 @@ inner join Operation o WITH (NOLOCK) on id.OperationID = o.ID
 inner join MachineType m WITH (NOLOCK) on o.MachineTypeID = m.ID
 where s.Ukey = {styleUkey}
 group by id.Location,M.ArtworkTypeID";
-                result = DBProxy.Current.Select(null, sqlCmd, out dtGSD_Summary);
-                if (!result)
-                {
-                    MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
+                    result = DBProxy.Current.Select(null, sqlCmd, out dtGSD_Summary);
+                    if (!result)
+                    {
+                        MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
+                    }
                 }
 
                 // Total Sewing Time重新計算過再來比
@@ -782,7 +797,7 @@ group by id.Location,M.ArtworkTypeID";
 
                 if (totalSewingTime > totalGSD)
                 {
-                    MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD})) of Std.GSD.");
+                    MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD}) of Std.GSD.");
                     return false;
                 }
 
