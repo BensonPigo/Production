@@ -420,7 +420,9 @@ where	1=1
 		   Size		 ,
 		   Artwork	 ,
 		   BundleGroup,
-		   Qty = sum(isnull(Qty,0))
+		   Qty = Floor(sum(isnull(Qty,0)) / case  when count(IsPair) > 0 then 2
+											else 1
+											end)
 	from #BasBundleInfo
 	group by	OrderID,
 				FComb	 ,
@@ -485,7 +487,7 @@ drop table #BasBundleInfo
             Excel.Worksheet worksheet = objApp.Sheets[1];
 
             com.WriteTable(this.dtExcel, 2);
-            worksheet.get_Range($"A2:N{MyUtility.Convert.GetString(1 + this.dtExcel.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
+            worksheet.get_Range($"A2:P{MyUtility.Convert.GetString(1 + this.dtExcel.Rows.Count)}").Borders.LineStyle = Excel.XlLineStyle.xlContinuous; // 畫線
             com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
             objApp.Visible = true;
             objApp.Columns.AutoFit();
@@ -553,13 +555,14 @@ drop table #BasBundleInfo
         private void ShowBundleGroupDetailQty(DataRow drSelected)
         {
             DataTable resultBundleQtyDetail = this.dtBundleGroupQty.AsEnumerable()
-                                                                       .Where(src => src["OrderID"].Equals(drSelected["OrderID"]) &&
+                                                                       .Where(src =>    src["OrderID"].Equals(drSelected["OrderID"]) &&
                                                                                         src["FComb"].Equals(drSelected["FComb"]) &&
                                                                                         src["Colorid"].Equals(drSelected["Colorid"]) &&
                                                                                         src["Pattern"].Equals(drSelected["Pattern"]) &&
                                                                                         src["PtnDes"].Equals(drSelected["PtnDes"]) &&
                                                                                         src["Size"].Equals(drSelected["Size"]) &&
-                                                                                        src["Artwork"].Equals(drSelected["Artwork"]))
+                                                                                        src["Artwork"].Equals(drSelected["Artwork"]) &&
+                                                                                        (decimal)src["Qty"] > 0)
                                                                        .OrderByDescending(src => src["Qty"])
                                                                        .ThenBy(src => src["BundleGroup"])
                                                                        .CopyToDataTable();
