@@ -98,7 +98,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
                 this.gridUpdateOrder.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            this.QueryDate((string)this.comboFactory.SelectedValue, this.dateUpdatedDate.Value);
+            this.QueryDate();
 
             for (int i = 0; i < this.gridData.Rows.Count; i++)
             {
@@ -113,10 +113,21 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
         }
 
         // Query Data
-        private void QueryDate(string factoryID, DateTime? updateDate)
+        private void QueryDate()
         {
-            string sqlCmd = string.Format(
-                @"
+            string factoryID = (string)this.comboFactory.SelectedValue;
+            DateTime updateDate = (DateTime) this.dateUpdatedDate.Value;
+
+            string sqlwhere = string.Empty;
+            sqlwhere += MyUtility.Check.Empty(factoryID) ? $@" and MDivisionID = '{Sci.Env.User.Keyword}'" : $@" and FactoryID = '{factoryID}'";
+            sqlwhere += MyUtility.Check.Empty(updateDate) ? @" and UpdateDate is null" : $@" and UpdateDate='{Convert.ToDateTime(updateDate).ToString("d")}'";
+            if (!MyUtility.Check.Empty(this.txtbrand1.Text))
+            {
+                sqlwhere += $@" and BrandID='{this.txtbrand1.Text}'";
+            }
+
+            string sqlCmd =
+                $@"
 select FactoryID
 	   , OrderId
 	   , OriginalStyleID
@@ -140,11 +151,9 @@ select FactoryID
 	   , MnorderApv2 = iif(MnorderApv2 is null,'','V')
 	   , TransferDate
 from OrderComparisonList WITH (NOLOCK) 
-where {0} 
-	  and UpdateDate {1}
-order by FactoryID,OrderId",
-                MyUtility.Check.Empty(factoryID) ? string.Format("MDivisionID = '{0}'", Sci.Env.User.Keyword) : string.Format("FactoryID = '{0}'", factoryID),
-                MyUtility.Check.Empty(updateDate) ? "is null" : "='" + Convert.ToDateTime(updateDate).ToString("d") + "'");
+where 1=1
+{sqlwhere}     
+order by FactoryID,OrderId";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.gridData);
             if (!result)
@@ -181,21 +190,6 @@ order by FactoryID,OrderId",
         private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        // Factory
-        private void ComboFactory_SelectedValueChanged(object sender, EventArgs e)
-        {
-            if (this.comboFactory.SelectedIndex < 0)
-            {
-                this.QueryDate(string.Empty, (DateTime?)this.dateUpdatedDate.Value);
-            }
-            else
-            {
-                this.QueryDate((string)this.comboFactory.SelectedValue, (DateTime?)this.dateUpdatedDate.Value);
-            }
-
-            this.Changcolor();
         }
 
         // Excel
@@ -270,9 +264,9 @@ order by FactoryID,OrderId",
             #endregion
         }
 
-        private void DateUpdatedDate_ValueChanged(object sender, EventArgs e)
+        private void btnQuery_Click(object sender, EventArgs e)
         {
-            this.QueryDate((string)this.comboFactory.SelectedValue, (DateTime?)this.dateUpdatedDate.Value);
+            this.QueryDate();
             this.Changcolor();
         }
     }

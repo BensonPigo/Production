@@ -1969,7 +1969,8 @@ END";
                 newRow["DescDetail"] = OldRow["DescDetail"];
                 newRow["MarkerLengthY"] = OldRow["MarkerLengthY"];
                 newRow["MarkerLengthE"] = OldRow["MarkerLengthE"];
-
+                newRow["MtlTypeID_SCIRefno"] = OldRow["MtlTypeID_SCIRefno"];
+                newRow["Description"] = OldRow["Description"];
                 if (index == -1) index = TEMP;
                 OldRow.Table.Rows.InsertAt(newRow, index);
                 DataRow[] drTEMPS = sizeratioTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));

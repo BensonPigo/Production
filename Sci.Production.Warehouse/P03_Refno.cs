@@ -80,6 +80,15 @@ order by ColorID, SizeSpec ,SewinLine
             //if (!dts2.Empty()) comboSize.DataSource = dts3;
 
             string sizespeccmd = string.Format(@"
+Select distinct b.sizespec ,a.WhseClose
+into #tmp
+from orders a WITH (NOLOCK) 
+inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
+inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+inner join  po_supp c WITH (NOLOCK) on a.id = c.id
+where b.scirefno = '{0}'
+group by b.sizespec ,a.WhseClose
+
 select sizespec = 'All' 
 union all 
 select sizespec
@@ -87,13 +96,12 @@ from
 (
     select sizespec = ''
     union 
-    Select distinct b.sizespec
-    from orders a WITH (NOLOCK) 
-    inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
-    inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
-    inner join  po_supp c WITH (NOLOCK) on a.id = c.id
-    where   b.scirefno = '{0}'and a.WhseClose is null
+    Select distinct a.sizespec
+	from #tmp a
+	where a.WhseClose is null
 )xx
+
+drop table #tmp
 ", dr["scirefno"].ToString());
             DataTable dtsizespec;
             DualResult selectResult4 = DBProxy.Current.Select(null, sizespeccmd, out dtsizespec);
@@ -101,6 +109,16 @@ from
             MyUtility.Tool.SetupCombox(comboSize, 1, dtsizespec);
 
             string factorycmd = string.Format(@"
+
+Select a.FtyGroup ,a.WhseClose
+into #tmp
+from orders a WITH (NOLOCK) 
+inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
+inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+inner join  po_supp c WITH (NOLOCK) on a.id = c.id
+where b.scirefno = '{0}'  
+group by a.FtyGroup ,a.WhseClose
+
 select FtyGroup = 'All' 
 union all
 select FtyGroup
@@ -109,12 +127,11 @@ from
     select FtyGroup = ''
     union 
     Select distinct a.FtyGroup
-    from orders a WITH (NOLOCK) 
-    inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
-    inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
-    inner join  po_supp c WITH (NOLOCK) on a.id = c.id
-    where   b.scirefno = '{0}'and a.WhseClose is null
+	from #tmp a
+    where a.WhseClose is null
 )xx
+
+drop table #tmp
 ", dr["scirefno"].ToString());
             DataTable dtfactory;
             DualResult selectResult3 = DBProxy.Current.Select(null, factorycmd, out dtfactory);
@@ -122,20 +139,33 @@ from
             MyUtility.Tool.SetupCombox(cmbFactory, 1, dtfactory);
 
             string coloridcmd = string.Format(@"
+Select a.BrandID,b.colorid,a.WhseClose
+into #tmp
+from orders a WITH (NOLOCK) 
+inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
+inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
+inner join  po_supp c WITH (NOLOCK) on a.id = c.id
+where b.scirefno = '{0}' 
+group by a.BrandID,b.colorid,a.WhseClose
+
 select colorid = 'All' 
 union all
 select colorid
 from
 (
-    select colorid = ''
-    union 
-    Select distinct colorid = isnull(dbo.GetColorMultipleID(a.BrandID,b.colorid),'')
-    from orders a WITH (NOLOCK) 
-    inner join po_supp_detail b WITH (NOLOCK) on a.id = b.id
-    inner join dbo.MDivisionPoDetail md WITH (NOLOCK) on md.POID = b.id and md.seq1 = b.seq1 and md.seq2 = b.seq2
-    inner join  po_supp c WITH (NOLOCK) on a.id = c.id
-    where   b.scirefno = '{0}'and a.WhseClose is null
+	select colorid = ''
+	union 
+	select distinct colorid = isnull(dbo.GetColorMultipleID(a.BrandID,a.colorid),'')
+	from
+	(	
+		select a.BrandID,a.colorid
+		from  #tmp a
+		where a.WhseClose is null
+		group by a.BrandID,a.colorid
+	)a
 )xx
+
+drop table #tmp
 ", dr["scirefno"].ToString());
             DataTable dtcolorid;
             DualResult selectResult2 = DBProxy.Current.Select(null, coloridcmd, out dtcolorid);

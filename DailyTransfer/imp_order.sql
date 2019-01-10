@@ -126,22 +126,25 @@ BEGIN
 				, t.NewSCIDelivery		= s.SCIDelivery
 				, t.MDivisionID			= s.MDivisionID
 				, t.FactoryID			= s.FactoryID
+				, t.BrandID				= s.BrandID
 				, t.UpdateDate			= @dToDay--寫入到IMP MOCKUPORDER
 				, t.TransferDate		= @OldDate--寫入到IMP MOCKUPORDER
 		when not matched by target then
 			insert (
 				NewOrder		, OrderID		, OriginalStyleID	, NewQty	, NewBuyerDelivery
 				, NewSCIDelivery, MDivisionID	, FactoryID			, UpdateDate, TransferDate
+				, BrandID
 			) values (
 				1				, s.ID			, s.StyleID			, s.Qty		, s.BuyerDelivery
 				, s.SCIDelivery	, s.MDivisionID	, s.FactoryID		, @dToDay	, @OldDate
+				, s.BrandID
 			);
 
 		----2.Delete 記錄 Trade 沒有 PMS 有的資料 (DeleteOrder = 1)
 		Merge Production.dbo.OrderComparisonList as t
 		Using (	select a.*
 				from #tmpOrders a
-				left join Trade_To_Pms.dbo.Orders b on a.ID = b.ID
+				left join Trade_To_Pms.dbo.Orders b on a.ID = b.ID and b.factoryid in (select ID from Production.dbo.Factory)
 				where b.id is null) as s
 		on t.OrderID = s.ID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
 		when matched then
@@ -154,15 +157,18 @@ BEGIN
 				, t.OriginalSciDelivery		= s.SciDelivery
 				, t.MDivisionID				= s.MDivisionID
 				, t.FactoryID				= s.FactoryID
+				, t.BrandID				    = s.BrandID
 				, t.UpdateDate				= @dToday
 				, t.TransferDate			= @OldDate
 		when not matched by target then
 			insert (
 				DeleteOrder				, OrderID		, OriginalStyleID	, OriginalQty	, OriginalBuyerDelivery
 				, OriginalSciDelivery	, MDivisionID	, FactoryID			, UpdateDate	, TransferDate
+				, BrandID
 			) values (
 				1						, s.ID			, s.StyleID			, s.Qty			, s.BuyerDelivery
 				, s.SCIDelivery			, s.MDivisionID	, s.FactoryID		, @dToDay		, @OldDate
+				, s.BrandID
 			);
 
 		----3.ChangeFactory 記錄換工廠
@@ -185,7 +191,8 @@ BEGIN
 				, t.OriginalBuyerDelivery	= s.BuyerDelivery
 				, t.OriginalSciDelivery		= s.SciDelivery
 				, t.MDivisionID				= s.MDivisionID
-				, t.FactoryID				= s.FactoryID				
+				, t.FactoryID				= s.FactoryID
+				, t.BrandID				    = s.BrandID				
 				, t.UpdateDate				= @dToday
 				, t.TransferDate			= @OldDate
 		when not matched by target then
@@ -193,10 +200,12 @@ BEGIN
 				DeleteOrder				, TransferToFactory		, OrderID		, OriginalStyleID	, OriginalQty
 				, OriginalBuyerDelivery	, OriginalSciDelivery	, MDivisionID	, FactoryID			, UpdateDate
 				, TransferDate
+				, BrandID
 			) values (
 				1						, s.Transfer2Factroy	, s.ID			, s.StyleID			, s.Qty
 				, s.BuyerDelivery		, s.SCIDelivery			, s.MDivisionID	, s.FactoryID		, @dToDay
 				, @OldDate
+				, s.BrandID
 			);
 		--------3.1.2.Delete 舊工廠的資料，資料帶入 PMS.Orders(跨M)
 		Merge Production.dbo.OrderComparisonList as t
@@ -234,16 +243,19 @@ BEGIN
 				, t.NewBuyerDelivery	= s.BuyerDelivery
 				, t.NewSCIDelivery		= s.SCIDelivery
 				, t.MDivisionID			= s.MDivisionID
-				, t.FactoryID			= s.FactoryID				
+				, t.FactoryID			= s.FactoryID	
+				, t.BrandID				= s.BrandID				
 				, t.UpdateDate			= @dToday
 				, t.TransferDate		= @OldDate
 		when not matched by target then
 			insert (
 				NewOrder		, OrderID		, OriginalStyleID	, NewQty	, NewBuyerDelivery
 				, NewSCIDelivery, MDivisionID	, FactoryID			, UpdateDate, TransferDate
+				, BrandID
 			) values (
 				1				, s.ID			, s.StyleID			, s.Qty		, s.BuyerDelivery
 				, s.SCIDelivery	, s.MDivisionID	, s.FactoryID		, @dToDay	, @OldDate
+				, s.BrandID
 			);
 
 		----4.ChangeData 記錄資料異動
@@ -252,6 +264,7 @@ BEGIN
 		Merge Production.dbo.OrderComparisonList as t
 		Using (select	ID					= A.ID
 						, FactoryID			= A.FactoryID
+						, BrandID			= b.BrandID
 						, MDivisionID		= A.MDivisionID
 						, O_Qty				= iif(isnull(a.qty, 0) != isnull(b.qty, 0), a.qty, 0)
 						, N_Qty				= iif(isnull(a.qty, 0) != isnull(b.qty, 0), b.qty, 0)
@@ -298,6 +311,7 @@ BEGIN
 			update set
 				t.OrderID					= s.ID
 				, t.FactoryID				= s.FactoryID
+				, t.BrandID					= s.BrandID
 				, t.MDivisionID				= s.MDivisionID
 				, t.OriginalQty				= s.O_Qty
 				, t.OriginalBuyerDelivery	= s.O_BuyerDelivery
@@ -329,14 +343,14 @@ BEGIN
 				, OriginalSMnorderApv	, OriginalLETA		, NewQty			, NewBuyerDelivery		, NewSciDelivery
 				, NewStyleID			, NewCMPQDate		, NewEachConsApv	, NewMnorderApv			, NewSMnorderApv
 				, NewLETA				, KPILETA			, MnorderApv2		, JunkOrder				, UpdateDate
-				, TransferDate
+				, TransferDate			, BrandID
 			) values (
 				s.ID					, s.FactoryID		, s.MDivisionID		, s.O_Qty				, s.O_BuyerDelivery
 				, s.O_SciDelivery		, s.O_Style			, s.O_CMPQDate		, s.O_EachConsApv		, s.O_MnorderApv
 				, s.O_SMnorderApv		, s.O_LETA			, s.N_Qty			, s.N_BuyerDelivery		, s.N_SciDelivery
 				, s.N_Style				, s.N_CMPQDate		, s.N_EachConsApv	, s.N_MnorderApv		, s.N_SMNorderApv
 				, s.N_LETA				, s.N_KPILETA		, s.N_MnorderApv2	, s.N_Junk				, @dToday
-				, @OldDate
+				, @OldDate				, s.BrandID
 			);
 
         ----5.No Change!

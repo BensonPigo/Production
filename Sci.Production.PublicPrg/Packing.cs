@@ -1759,7 +1759,7 @@ where   p.ID = '{0}'
             #endregion 
         }
         #endregion
-
+        
         #region Packing Barcode Print
         /// <summary>
         /// PackingBarcodePrint(string,string,string,DataTable)
@@ -1830,5 +1830,373 @@ where pd.CTNQty > 0");
         }
         #endregion
 
+        #region Packing MD Form Report
+        public static void PackingListToExcel_PackingMDFormReport(string XltxName, DataRow masterdata, DataTable[] PrintData)
+        {
+            string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return;
+            decimal pageCT = 0;
+
+            #region 先準備複製幾頁
+            foreach (DataTable DT in PrintData)
+            {
+                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count / 50));
+                pageCT += pcount;
+            }
+            if (pageCT > 1)
+            {
+                for (int i = 0; i < pageCT; i++)
+                {
+                    if (i > 0)
+                    {
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1]);
+                        worksheet1.Copy(worksheetn);
+                    }
+                }
+            }
+            #endregion
+            string Alias = MyUtility.GetValue.Lookup($@"select Alias from Country where id = '{masterdata["Dest"]}'");
+            int page = 1;
+            foreach (DataTable DT in PrintData) // by custpono
+            {
+                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count /50));
+                for (int i = 0; i < pcount; i++)
+                {
+                    #region sqlcommand
+                    string orderids = $@"
+select OrderID = stuff((
+	select concat('/',a.OrderID)
+	from (
+		select distinct pd.OrderID
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	order by OrderID
+	for xml path('')
+),1,1,'')
+";
+                    string styles = $@"
+select OrderID = stuff((
+	select concat('/',a.StyleID)
+	from (
+		select distinct o.StyleID
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	order by StyleID
+	for xml path('')
+),1,1,'')";
+                    string colors = $@"
+select Color = stuff((
+	select concat('/',a.Article,' ',a.Color)
+	from (
+		select distinct pd.Article,pd.Color
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	for xml path('')
+),1,1,'')
+";
+                    string BuyerDelivery = $@"
+select BuyerDelivery = stuff((
+	select concat('/',FORMAT(a.BuyerDelivery,'MM/dd/yyyy'))
+	from (
+		select distinct o.BuyerDelivery
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	order by BuyerDelivery
+	for xml path('')
+),1,1,'')
+";
+                    #endregion
+                    Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[page];
+                    worksheet.Cells[1, 3] = MyUtility.Convert.GetString(DT.Rows[0]["CustPONo"]) +" of "+ MyUtility.Convert.GetString(masterdata["CTNQty"]);
+                    worksheet.Cells[5, 2] = MyUtility.GetValue.Lookup(orderids);
+                    worksheet.Cells[6, 2] = MyUtility.GetValue.Lookup(styles);
+                    worksheet.Cells[7, 2] = DT.Rows[0]["CustPONo"];
+                    worksheet.Cells[8, 2] = MyUtility.GetValue.Lookup(colors);
+                    worksheet.Cells[5, 6] = masterdata["CTNQty"];
+                    worksheet.Cells[6, 6] = MyUtility.Convert.GetInt(masterdata["ShipQty"]).ToString("#,#.#")+" pcs.";
+                    worksheet.Cells[8, 6] = MyUtility.GetValue.Lookup(BuyerDelivery);
+                    worksheet.Cells[5, 8] = Alias;
+                    for (int j = i * 50, k = 10; j < DT.Rows.Count && j < (i + 1) * 50; j++, k++)
+                    {
+                        worksheet.Cells[k, 2] = DT.Rows[j]["CTNStartNo"];
+                        worksheet.Cells[k, 3] = DT.Rows[j]["SizeCode"];
+                        worksheet.Cells[k, 4] = DT.Rows[j]["ShipQty"];
+                    }
+
+                    page++;
+                }
+            }
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_PackingMDFormReport");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            //Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
+        }
+        #endregion
+
+        #region MD Form Report
+        public static DualResult QueryPackingMDform(string PackingListID, out DataTable[] printData)
+        {
+            string orderidsql = $@"select o.CustPONo from PackingList_Detail pd left join orders o on o.id = pd.OrderID where pd.id = '{PackingListID}' group by CustPONo order by CustPONo";
+            DataTable CustPONoDT;
+            DualResult result;
+            result = DBProxy.Current.Select(null, orderidsql, out CustPONoDT);
+            if (!result)
+            {
+                printData = null;
+                return result;
+            }
+
+            StringBuilder sqlCmd = new StringBuilder();
+            for (int i = 0; i < CustPONoDT.Rows.Count; i++)
+            {
+                sqlCmd.Append($@"
+select CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo
+from PackingList_Detail pd
+left join orders o on o.id = pd.OrderID
+outer apply(
+	select SizeCode = stuff((
+	select concat('/',SizeCode)
+	from PackingList_Detail pd2
+	where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo
+	order by pd2.seq
+	for xml path('')
+	),1,1,'')
+)a
+outer apply(select ct=count(1)from PackingList_Detail pd2 where pd2.id=pd.id and pd2.CTNStartNo=pd.CTNStartNo and pd2.OrderID=pd.OrderID)b1
+outer apply(
+	select ShipQty = stuff((
+	select iif(b1.ct>1 ,concat('/',SizeCode,' ',ShipQty), concat('/',ShipQty))
+	from PackingList_Detail pd2
+	where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo
+	order by pd2.seq
+	for xml path('')),1,1,'')
+)b
+where pd.id = '{PackingListID}' and o.CustPONo = '{CustPONoDT.Rows[i]["CustPONo"]}'
+group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo
+order by min(pd.seq)
+");
+
+            }
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            return result;
+        }
+        #endregion
+
+        #region Packing Carton Weighing Report
+        public static void PackingListToExcel_PackingCartonWeighingReport(string XltxName, DataRow masterdata, DataTable[] PrintData)
+        {
+            string strXltName = Sci.Env.Cfg.XltPathDir + XltxName;
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null) return;
+            decimal pageCT = 0;
+
+            #region 先準備複製幾頁
+            foreach (DataTable DT in PrintData)
+            {
+                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count / 100));
+                pageCT += pcount;
+            }
+            if (pageCT > 1)
+            {
+                for (int i = 0; i < pageCT; i++)
+                {
+                    if (i > 0)
+                    {
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i + 1]);
+                        worksheet1.Copy(worksheetn);
+                    }
+                }
+            }
+            #endregion
+            string Alias = MyUtility.GetValue.Lookup($@"select Alias from Country where id = '{masterdata["Dest"]}'");
+            int page = 1;
+            foreach (DataTable DT in PrintData) // by custpono
+            {
+                decimal pcount = Math.Ceiling(((decimal)DT.Rows.Count / 100));
+                for (int i = 0; i < pcount; i++)
+                {
+                    #region sqlcommand
+                    string orderids = $@"
+select OrderID = stuff((
+	select concat('/',a.OrderID)
+	from (
+		select distinct pd.OrderID
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	order by OrderID
+	for xml path('')
+),1,1,'')
+";
+                    string styles = $@"
+select StyleID = stuff((
+	select concat('/',a.StyleID)
+	from (
+		select distinct o.StyleID
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	order by StyleID
+	for xml path('')
+),1,1,'')";
+                    string SeasonIDs = $@"
+select SeasonID = stuff((
+	select concat('/',a.SeasonID)
+	from (
+		select distinct o.SeasonID
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	order by SeasonID
+	for xml path('')
+),1,1,'')";
+                    string colors = $@"
+select Color = stuff((
+	select concat('/',a.Article,' ',a.Color)
+	from (
+		select distinct pd.Article,pd.Color
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	for xml path('')
+),1,1,'')
+";
+                    string BuyerDelivery = $@"
+select BuyerDelivery = stuff((
+	select concat('/',FORMAT(a.BuyerDelivery,'MM/dd/yyyy'))
+	from (
+		select distinct o.BuyerDelivery
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	order by BuyerDelivery
+	for xml path('')
+),1,1,'')
+";
+                    string kit = $@"
+select Kit = stuff((
+	select concat('/',Kit)
+	from (
+		select distinct c.Kit,o.CustCDID
+		from PackingList_Detail pd inner join orders o on o.id = pd.OrderID
+		inner join CustCD c on c.ID=o.CustCDID and c.BrandID = o.BrandID
+		where pd.id = '{masterdata["id"]}' and o.CustPONo = '{DT.Rows[0]["CustPONo"]}'
+	)a
+	order by Kit
+	for xml path('')
+),1,1,'') ";
+                    #endregion
+                    Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[page];
+                    worksheet.Cells[1, 2] = MyUtility.Convert.GetString(DT.Rows[0]["CustPONo"]) + " box of " + MyUtility.Convert.GetString(masterdata["CTNQty"]);
+                    worksheet.Cells[3, 2] = masterdata["FactoryID"];
+                    worksheet.Cells[4, 2] = DT.Rows[0]["CustPONo"];
+                    worksheet.Cells[5, 2] = MyUtility.GetValue.Lookup(orderids);
+                    worksheet.Cells[6, 2] = MyUtility.GetValue.Lookup(styles);
+                    worksheet.Cells[7, 2] = masterdata["BrandID"];
+                    worksheet.Cells[3, 7] = MyUtility.GetValue.Lookup(SeasonIDs);
+                    worksheet.Cells[4, 7] = MyUtility.GetValue.Lookup(colors);
+                    worksheet.Cells[5, 7] = MyUtility.GetValue.Lookup(BuyerDelivery);
+                    worksheet.Cells[6, 7] = masterdata["ShipModeID"];
+                    worksheet.Cells[7, 7] = masterdata["CustCDID"];
+                    worksheet.Cells[8, 7] = MyUtility.GetValue.Lookup(kit);
+                    for (int j = i * 100, k = 10; j < DT.Rows.Count && j < (i + 1) * 100; j++, k++)
+                    {
+                        if (k < 10 + 50)
+                        {
+                            worksheet.Cells[k, 1] = DT.Rows[j]["CTNStartNo"];
+                            worksheet.Cells[k, 2] = DT.Rows[j]["SizeCode"];
+                            worksheet.Cells[k, 3] = DT.Rows[j]["ShipQty"];
+                        }
+                        else
+                        {
+                            worksheet.Cells[k - 50, 6] = DT.Rows[j]["CTNStartNo"];
+                            worksheet.Cells[k - 50, 7] = DT.Rows[j]["SizeCode"];
+                            worksheet.Cells[k - 50, 8] = DT.Rows[j]["ShipQty"];
+                        }
+                    }
+
+                    page++;
+                }
+            }
+
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_PackingMDFormReport");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            //Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion 
+        }
+        #endregion
+
+        #region Carton Weighing Form
+        public static DualResult QueryPackingCartonWeighingForm(string PackingListID, out DataTable[] printData)
+        {
+            string orderidsql = $@"select o.CustPONo from PackingList_Detail pd left join orders o on o.id = pd.OrderID where pd.id = '{PackingListID}' group by CustPONo order by CustPONo";
+            DataTable CustPONoDT;
+            DualResult result;
+            result = DBProxy.Current.Select(null, orderidsql, out CustPONoDT);
+            if (!result)
+            {
+                printData = null;
+                return result;
+            }
+
+            StringBuilder sqlCmd = new StringBuilder();
+            for (int i = 0; i < CustPONoDT.Rows.Count; i++)
+            {
+                sqlCmd.Append($@"
+select CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo
+from PackingList_Detail pd
+left join orders o on o.id = pd.OrderID
+outer apply(
+	select SizeCode = stuff((
+	select concat('/',SizeCode)
+	from PackingList_Detail pd2
+	where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo
+	order by pd2.seq
+	for xml path('')
+	),1,1,'')
+)a
+outer apply(select ct=count(1)from PackingList_Detail pd2 where pd2.id=pd.id and pd2.CTNStartNo=pd.CTNStartNo and pd2.OrderID=pd.OrderID)b1
+outer apply(
+	select ShipQty = stuff((
+	select iif(b1.ct>1 ,concat('/',SizeCode,' ',ShipQty), concat('/',ShipQty))
+	from PackingList_Detail pd2
+	where pd2.id = pd.id and pd2.CTNStartNo = pd.CTNStartNo
+	order by pd2.seq
+	for xml path('')),1,1,'')
+)b
+where pd.id = '{PackingListID}' and o.CustPONo = '{CustPONoDT.Rows[i]["CustPONo"]}'
+group by CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo
+order by min(pd.seq)
+");
+
+            }
+            result = DBProxy.Current.Select(null, sqlCmd.ToString(), out printData);
+            return result;
+        }
+        #endregion
     }
 }

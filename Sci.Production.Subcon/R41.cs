@@ -17,7 +17,7 @@ namespace Sci.Production.Subcon
     {
         DataTable printData;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
-        DateTime? dateBundle1, dateBundle2;
+        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -51,11 +51,14 @@ namespace Sci.Production.Subcon
             CutRef2 = this.txtCutRefEnd.Text;
             dateBundle1 = this.dateBundleCDate.Value1;
             dateBundle2 = this.dateBundleCDate.Value2;
+            dateBundleScanDate1 = this.dateBundleScanDate.Value1;
+            dateBundleScanDate2 = this.dateBundleScanDate.Value2;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
-                MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2))
+                MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
+                MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2))
             {
-                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Bundle CDate] can not all empty !!");
+                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Bundle CDate][Bundle Scan Date] cannot all empty !!");
                 return false;
             }
             return base.ValidateInput();
@@ -97,6 +100,21 @@ namespace Sci.Production.Subcon
             {
                 sqlWhere.Append(string.Format(@" and b.Cdate <= '{0}'", Convert.ToDateTime(dateBundle2).ToString("d")));
             }
+            if (!MyUtility.Check.Empty(dateBundleScanDate1) && !MyUtility.Check.Empty(dateBundleScanDate2))
+            {
+                sqlWhere.Append(string.Format(@" and ((convert (date, bio.InComing) >= '{0}' and convert (date, bio.InComing) <= '{1}' ) or (convert (date, bio.OutGoing) >= '{0}' and convert (date, bio.OutGoing) <= '{1}'))", Convert.ToDateTime(dateBundleScanDate1).ToString("d"), Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+            }
+            else
+            {
+                if (!MyUtility.Check.Empty(dateBundleScanDate1))
+                {
+                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  >= '{0}' or convert (date, bio.OutGoing) >= '{0}')", Convert.ToDateTime(dateBundleScanDate1).ToString("d")));
+                }
+                if (!MyUtility.Check.Empty(dateBundleScanDate2))
+                {
+                    sqlWhere.Append(string.Format(@" and (convert (date, bio.InComing)  <= '{0}' or convert (date, bio.OutGoing) <= '{0}')", Convert.ToDateTime(dateBundleScanDate2).ToString("d")));
+                }
+            } 
             if (!MyUtility.Check.Empty(M))
             {
                 sqlWhere.Append(string.Format(@" and b.MDivisionid = '{0}'", M));
@@ -116,6 +134,8 @@ Select
     [Master SP#] = b.POID,
     [M] = b.MDivisionid,
     [Factory] = o.FtyGroup,
+	[Category]=o.Category,
+	[Program]=o.ProgramID,
     [Style] = o.StyleID,
     [Season] = o.SeasonID,
     [Brand] = o.BrandID,
@@ -198,6 +218,8 @@ select
     r.[Master SP#],
     r.[M],
     r.[Factory],
+	r.[Category],
+	r.[Program],
     r.[Style],
     r.[Season],
     r.[Brand],

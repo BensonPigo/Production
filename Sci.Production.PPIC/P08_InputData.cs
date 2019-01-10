@@ -268,30 +268,10 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
             }
         }
 
-        // Total defect points
-        private void TxtTotalDefectPoints_Validated(object sender, EventArgs e)
-        {
-            if (this.EditMode && this.txtTotalDefectPoints.OldValue != this.txtTotalDefectPoints.Text)
-            {
-                this.CurrentData["AGradeDefect"] = this.txtTotalDefectPoints.Text;
-                if (MyUtility.Check.Empty(this.txtTotalDefectPoints.Text))
-                {
-                    this.CurrentData["AGradeRequest"] = 0;
-                }
-                else
-                {
-                    this.CurrentData["AGradeRequest"] = Convert.ToDecimal(this.CurrentData["AGradeDefect"]) * 0.125m;
-                }
-
-                // 計算TotalRequest
-                this.CalculateTotalRequest();
-            }
-        }
-
         // Replacement Request / Yds
         private void NumReplacementRequestYds_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && this.numReplacementRequestYds.OldValue != this.numReplacementRequestYds.Value)
+            if (this.EditMode)
             {
                 this.CurrentData["AGradeRequest"] = this.numReplacementRequestYds.Value;
 
@@ -303,7 +283,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         // 100% replacement / Yds
         private void Num100ReplacementYds_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && this.num100ReplacementYds.OldValue != this.num100ReplacementYds.Value)
+            if (this.EditMode)
             {
                 this.CurrentData["BGradeRequest"] = this.num100ReplacementYds.Value;
 
@@ -315,7 +295,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         // Replacement Request / Yds
         private void NumNarrowReplacementRequestYds_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && this.numNarrowReplacementRequestYds.OldValue != this.numNarrowReplacementRequestYds.Value)
+            if (this.EditMode)
             {
                 this.CurrentData["NarrowRequest"] = this.numNarrowReplacementRequestYds.Value;
 
@@ -327,7 +307,7 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
         // Replacement Request / Yds
         private void NumOtherReplacementRequestYds_Validated(object sender, EventArgs e)
         {
-            if (this.EditMode && this.numOtherReplacementRequestYds.OldValue != this.numOtherReplacementRequestYds.Value)
+            if (this.EditMode)
             {
                 this.CurrentData["OtherRequest"] = this.numOtherReplacementRequestYds.Value;
 
@@ -373,6 +353,25 @@ where rd.PoId = '{0}' and rd.Seq1 = '{1}' and rd.Seq2 = '{2}' and r.Status = 'Co
                     this.CurrentData["AfterCutting"] = selectedReasonData[0]["ID"];
                     this.txtReplacementReason.Text = MyUtility.Convert.GetString(selectedReasonData[0]["Name"]);
                 }
+            }
+        }
+
+        private void numTotalDefectPoints_Validated(object sender, EventArgs e)
+        {
+            if (this.EditMode)
+            {
+                this.CurrentData["AGradeDefect"] = this.numTotalDefectPoints.Value;
+                if (MyUtility.Check.Empty(this.numTotalDefectPoints.Value))
+                {
+                    this.CurrentData["AGradeRequest"] = 0;
+                }
+                else
+                {
+                    this.CurrentData["AGradeRequest"] = MyUtility.Convert.GetDecimal(this.CurrentData["AGradeDefect"]) * 0.125m;
+                }
+
+                // 計算TotalRequest
+                this.CalculateTotalRequest();
             }
         }
     }

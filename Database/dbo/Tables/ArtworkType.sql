@@ -24,6 +24,7 @@
     [EditName]       VARCHAR (10)   CONSTRAINT [DF_ArtworkType_EditName] DEFAULT ('') NULL,
     [EditDate]       DATETIME       NULL,
     [PostSewingDays] INT NULL DEFAULT ((0)), 
+	[IsPrintToCMP] BIT CONSTRAINT [DF_ArtworkType_IsPrintToCMP] DEFAULT ((1)) NULL,
     CONSTRAINT [PK_ArtworkType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
