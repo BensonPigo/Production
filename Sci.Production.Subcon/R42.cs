@@ -29,15 +29,15 @@ namespace Sci.Production.Subcon
         //string date = "";
         private void comboload()
         {
-            DataTable dtSubprocessID;
+            //DataTable dtSubprocessID;
             DualResult Result;
-            if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
-                out dtSubprocessID))
-            {
-                this.comboSubProcess.DataSource = dtSubprocessID;
-                this.comboSubProcess.DisplayMember = "ID";
-            }
-            else { ShowErr(Result); }
+            //if (Result = DBProxy.Current.Select(null, "select 'ALL' as id,1 union select id,2 from Subprocess WITH (NOLOCK) where Junk = 0 ",
+            //    out dtSubprocessID))
+            //{
+            //    this.comboSubProcess.DataSource = dtSubprocessID;
+            //    this.comboSubProcess.DisplayMember = "ID";
+            //}
+            //else { ShowErr(Result); }
 
             DataTable dtfactory;
             if (Result = DBProxy.Current.Select(null, "select '' as id union select MDivisionID from factory WITH (NOLOCK) ", out dtfactory))
@@ -58,7 +58,7 @@ namespace Sci.Production.Subcon
                 MyUtility.Msg.WarningBox("Bundel CDate or Bundle Trans date can't empty!!");
                 return false;
             }
-            SubProcess = this.comboSubProcess.Text;
+            SubProcess = this.txtsubprocess.Text;
             SP = this.txtSPNo.Text;
             M = this.comboM.Text;
             Factory = this.comboFactory.Text;
@@ -125,8 +125,8 @@ namespace Sci.Production.Subcon
             #endregion
             #region Append畫面上的條件
             if (!MyUtility.Check.Empty(SubProcess))
-            {
-                sqlCmd.Append(string.Format(@" and (bt.SubprocessId = '{0}' or '{0}' = 'ALL') ", SubProcess));
+            {//();
+                sqlCmd.Append($@" and (bt.SubprocessId in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
             }
             if (!MyUtility.Check.Empty(CutRef1) && (!MyUtility.Check.Empty(CutRef1)))
             {
