@@ -153,6 +153,38 @@ outer apply (
 *			2. Order_BOF.Kind = 3 (表Polyfill)的資料
 *			3. 外裁項 (Order_EachCons.CuttingPiece == 0) 【0 代表非外裁項】
 */
+select	distinct #tsp.orderID
+		, b.Article
+		, FabricCombo = tpc.F_CODE
+		, artwork = isnull (stuff ((select '+' + subprocessid
+									from (
+										select distinct bda.subprocessid
+										from Bundle_Detail_Art bda WITH (NOLOCK)
+										where bd.BundleNo = bda.Bundleno
+									) k
+									for xml path('')
+								  ), 1, 1, '')
+						  , '')
+		, PatternCode = tpc.PatternCode
+into #tmp_TablePatternCode
+from #TablePatternCode tpc
+left join Bundle b WITH (NOLOCK) on b.POID = tpc.Poid
+left join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id
+							  and tpc.PatternCode = bd.Patterncode
+left join #tsp on b.Orderid = #tsp.orderID
+left join WorkOrder wo WITH (NOLOCK) on b.POID = wo.id
+						   and b.CutRef = wo.CutRef
+left join Order_BOF ob WITH (NOLOCK) on ob.Id = wo.Id 
+						  and ob.FabricCode = wo.FabricCode
+left join Order_EachCons oec WITH (NOLOCK) on oec.ID = ob.ID 
+							    and oec.MarkerName = wo.Markername 
+								and oec.FabricCombo = wo.FabricCombo 
+								and oec.FabricPanelCode = wo.FabricPanelCode 
+								and oec.FabricCode = wo.FabricCode
+
+where ob.Kind not in ('0','3')
+      and oec.CuttingPiece = 0
+
 select	#tsp.masterID
 		, #tsp.orderID
 		, #tsp.StyleID
@@ -162,40 +194,9 @@ select	#tsp.masterID
 		, #cur_artwork.artwork 
 		, #tsp.SewLine
 		, #tsp.FactoryID
-into #cutcomb
+into #cutcomb 
 from #tsp
-inner join (
-	select	distinct #tsp.orderID
-			, b.Article
-			, FabricCombo = tpc.F_CODE
-			, artwork = isnull (stuff ((select '+' + subprocessid
-										from (
-											select distinct bda.subprocessid
-											from Bundle_Detail_Art bda WITH (NOLOCK)
-											where bd.BundleNo = bda.Bundleno
-										) k
-										for xml path('')
-									  ), 1, 1, '')
-							  , '')
-			, PatternCode = tpc.PatternCode
-	from #TablePatternCode tpc
-	left join Bundle b WITH (NOLOCK) on b.POID = tpc.Poid
-	left join Bundle_Detail bd WITH (NOLOCK) on b.id = bd.id
-								  and tpc.PatternCode = bd.Patterncode
-	left join #tsp on b.Orderid = #tsp.orderID
-	left join WorkOrder wo WITH (NOLOCK) on b.POID = wo.id
-							   and b.CutRef = wo.CutRef
-	left join Order_BOF ob WITH (NOLOCK) on ob.Id = wo.Id 
-							  and ob.FabricCode = wo.FabricCode
-	left join Order_EachCons oec WITH (NOLOCK) on oec.ID = ob.ID 
-								    and oec.MarkerName = wo.Markername 
-									and oec.FabricCombo = wo.FabricCombo 
-									and oec.FabricPanelCode = wo.FabricPanelCode 
-									and oec.FabricCode = wo.FabricCode
-
-	where ob.Kind not in ('0','3')
-	      and oec.CuttingPiece = 0
-)#cur_artwork on #tsp.orderID = #cur_artwork.orderID
+inner join #tmp_TablePatternCode as #cur_artwork on #tsp.orderID = #cur_artwork.orderID
 
 /*
 *	Step3 取出被 Loader 收下的 Bundle Data
@@ -509,7 +510,7 @@ drop table #cur_bdltrack2
 drop table #Min_cut
 drop table #print
 drop table #TablePatternUkey;
-drop table #TablePatternCode
+drop table #TablePatternCode,#tmp_TablePatternCode;
 drop table #CBDate
 "
                 , (SP.Empty()) ? "" : "and o.id = @SP"
