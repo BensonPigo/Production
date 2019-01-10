@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using Sci.Win.Tems;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Shipping
 {
@@ -69,6 +70,11 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["ID"]))
+            {
+                return new DualResult(false, $"ID({this.CurrentMaintain["ID"].ToString()}) is empty,Please inform MIS to handle this issue");
+            }
+
             string updatesql = $@"update GMTBooking set BIRID = null  where BIRID = '{this.CurrentMaintain["ID"]}'  ";
             DualResult result = DBProxy.Current.Execute(null, updatesql);
             if (!result)
@@ -175,18 +181,15 @@ and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
 select 
 	A=o.CustPONo,
 	B=o.StyleID,
-	C=s.Description,
-	D=null,
-	E=sum(pd.ShipQty),
-	F='PCS',
-	G='US',
+	C=null,
+	D=s.Description,
+	E=null,
+	F=sum(pd.ShipQty),
+	G='PCS',
 	H=round(o.PoPrice,2),
-	I=null,
-	J=sum(pd.ShipQty)*round(o.PoPrice,2),
-	K=null,
-	L=null,
-	M=round((o.CPU*f.CpuCost)+(s1.Price+s2.Price)+s3.Price,2),
-	N = sum(pd.ShipQty)*round((o.CPU*f.CpuCost)+(s1.Price+s2.Price)+s3.Price,2)
+	I=sum(pd.ShipQty)*round(o.PoPrice,2),
+	L=round((o.CPU*isnull(f.CpuCost,0))+(isnull(s1.Price,0)+isnull(s2.Price,0))+isnull(s3.Price,0),2),
+	M=sum(pd.ShipQty)*round((o.CPU*isnull(f.CpuCost,0))+(isnull(s1.Price,0)+isnull(s2.Price,0))+isnull(s3.Price,0),2)
 from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
 inner join PackingList p with(nolock) on p.id = pd.id
@@ -221,7 +224,7 @@ outer apply(
 )s3
 where p.INVNo in({string.Join(",", ids)})
 group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,
-o.id,o.CPU,f.CpuCost,s1.Price+s2.Price,s3.Price
+o.id,o.CPU,isnull(f.CpuCost,0),isnull(s1.Price,0)+isnull(s2.Price,0),isnull(s3.Price,0)
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
@@ -240,6 +243,9 @@ o.id,o.CPU,f.CpuCost,s1.Price+s2.Price,s3.Price
 
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
+            #region 產生頁首頁尾資料
+
+            // 頁首
             string top1idsql = $@"
 select top 1 id
 from GMTBooking
@@ -262,7 +268,7 @@ where a.id = '{top1id}'
                 {
                     if (!MyUtility.Check.Empty(BIRShipToarry[i]))
                     {
-                        worksheet.Cells[11 + j, 2] = BIRShipToarry[i];
+                        worksheet.Cells[4 + j, 2] = BIRShipToarry[i];
                         j++;
                     }
                 }
@@ -272,37 +278,17 @@ where a.id = '{top1id}'
             string top1GMT = $@"select * from GMTBooking where id = '{top1id}'";
             if (MyUtility.Check.Seek(top1GMT, out drGMT))
             {
-                worksheet.Cells[8, 10] = drGMT["FCRDate"];
-                worksheet.Cells[10, 10] = drGMT["Vessel"];
-                worksheet.Cells[14, 10] = MyUtility.GetValue.Lookup($@"select NameEN from Country where id = '{drGMT["Dest"]}'");
+                worksheet.Cells[1, 9] = drGMT["FCRDate"];
+                worksheet.Cells[3, 9] = drGMT["Vessel"];
+                worksheet.Cells[8, 9] = MyUtility.GetValue.Lookup($@"select NameEN from Country where id = '{drGMT["Dest"]}'");
             }
 
-            int intRowsStart = 20;
-            int dataRowCount = dt.Rows.Count;
-            object[,] objArray = new object[1, 14];
-            for (int i = 0; i < dataRowCount; i++)
-            {
-                DataRow dr = dt.Rows[i];
-                int rownum = intRowsStart + i;
-                objArray[0, 0] = dr["A"];
-                objArray[0, 1] = dr["B"];
-                objArray[0, 2] = dr["C"];
-                objArray[0, 3] = dr["D"];
-                objArray[0, 4] = dr["E"];
-                objArray[0, 5] = dr["F"];
-                objArray[0, 6] = dr["G"];
-                objArray[0, 7] = dr["H"];
-                objArray[0, 8] = dr["I"];
-                objArray[0, 9] = dr["J"];
-                objArray[0, 10] = dr["K"];
-                objArray[0, 11] = dr["L"];
-                objArray[0, 12] = dr["M"];
-                objArray[0, 13] = dr["N"];
-                worksheet.Range[string.Format("A{0}:N{0}", rownum)].Value2 = objArray;
-            }
+            // 頁尾
+            decimal sumI = MyUtility.Convert.GetDecimal(dt.Compute("sum(I)", null));
+            decimal sumM = MyUtility.Convert.GetDecimal(dt.Compute("sum(M)", null));
+            decimal sumF = MyUtility.Convert.GetDecimal(dt.Compute("sum(F)", null));
 
-            decimal sumJ = MyUtility.Convert.GetDecimal(dt.Compute("sum(J)", null));
-            worksheet.Cells[44, 3] = MyUtility.Convert.USDMoney(sumJ);
+            worksheet.Cells[59, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND", Environment.NewLine + "AND");
 
             string sumGW = $@"
 select sumGW = Sum (p.GW),sumNW=sum(p.NW),sumCBM=sum(p.CBM)
@@ -310,14 +296,67 @@ from PackingList p with(nolock)
 where p.INVNo in ({string.Join(",", ids)})
 ";
             DataRow drsum;
-            if (MyUtility.Check.Seek(sumGW,out drsum))
+            if (MyUtility.Check.Seek(sumGW, out drsum))
             {
-                worksheet.Cells[53, 3] = drsum["sumGW"];
-                worksheet.Cells[54, 3] = drsum["sumNW"];
-                worksheet.Cells[55, 3] = drsum["sumCBM"];
+                worksheet.Cells[69, 4] = drsum["sumGW"];
+                worksheet.Cells[70, 4] = drsum["sumNW"];
+                worksheet.Cells[71, 4] = drsum["sumCBM"];
             }
 
+            worksheet.Cells[65, 9] = sumI;
+            worksheet.Cells[67, 9] = sumM + sumI;
+            worksheet.Cells[69, 9] = sumM;
+            worksheet.Cells[62, 2] = sumF;
+            #endregion
+
+            #region 內容
+
+            // 如果內容超過41筆插入新的頁面
+            int insertSheetCount = dt.Rows.Count / 41;
+            for (int i = 1; i <= insertSheetCount; i++)
+            {
+                worksheet.Copy(Type.Missing, worksheet);
+            }
+
+            int contentCount = 41;
+            int ttlSheetCount = excel.ActiveWorkbook.Worksheets.Count;
+            for (int i = 1; i <= ttlSheetCount; i++)
+            {
+                var xlNewSheet = (Excel.Worksheet)excel.ActiveWorkbook.Worksheets[i];
+                xlNewSheet.Name = "BIR Invoice-" + i.ToString();
+                int intRowsStart = 13;
+                int dataEnd = i * contentCount;
+                int dataStart = dataEnd - contentCount;
+                object[,] objArray = new object[1, 9];
+
+                for (int j = dataStart; j < dataEnd; j++)
+                {
+                    if (j >= dt.Rows.Count)
+                    {
+                        break;
+                    }
+
+                    DataRow dr = dt.Rows[j];
+                    int rownum = intRowsStart++;
+                    objArray[0, 0] = dr["A"];
+                    objArray[0, 1] = dr["B"];
+                    objArray[0, 2] = dr["C"];
+                    objArray[0, 3] = dr["D"];
+                    objArray[0, 4] = dr["E"];
+                    objArray[0, 5] = dr["F"];
+                    objArray[0, 6] = dr["G"];
+                    objArray[0, 7] = dr["H"];
+                    objArray[0, 8] = dr["I"];
+                    xlNewSheet.Range[string.Format("A{0}:I{0}", rownum)].Value2 = objArray;
+                }
+
+                Marshal.ReleaseComObject(xlNewSheet);
+            }
+            #endregion
+
             #region Save & Show Excel
+            worksheet = excel.ActiveWorkbook.Worksheets[1];
+            worksheet.Activate();
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_P11");
             excel.ActiveWorkbook.SaveAs(strExcelName);
             excel.Quit();
