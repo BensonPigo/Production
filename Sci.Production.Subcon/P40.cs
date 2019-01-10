@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -302,6 +303,7 @@ where	1=1
 							when oq.Qty = AccuLoading.Qty then 'Complete'
 							else 'Excess'
 						 end
+            , DisBundleInfo.isPair
 	from (
 		select	  bbi.OrderID
 				, bbi.FComb
@@ -320,7 +322,8 @@ where	1=1
 									bb.Pattern = bbi.Pattern   and
 									bb.PtnDes  = bbi.PtnDes    and
 									bb.Size	   = bbi.Size	   and
-									bb.Artwork = bbi.Artwork
+									bb.Artwork = bbi.Artwork   and
+                                    bb.Qty > 0
 							 for xml path(''))
 							 , 1, 1, '') 
 		from #BasBundleInfo bbi
@@ -388,7 +391,8 @@ where	1=1
 									bb.Pattern = bbi.Pattern   and
 									bb.PtnDes  = bbi.PtnDes    and
 									bb.Size	   = bbi.Size	   and
-									bb.Artwork = bbi.Artwork
+									bb.Artwork = bbi.Artwork   and
+                                    bb.Qty > 0
 							 for xml path(''))
 							 , 1, 1, '') 
 		from #BasBundleInfo bbi
@@ -420,10 +424,10 @@ where	1=1
 		   Size		 ,
 		   Artwork	 ,
 		   BundleGroup,
-		   Qty = Floor(sum(isnull(Qty,0)) / case  when count(IsPair) > 0 then 2
-											else 1
-											end)
+           isPair,
+		   Qty = sum(isnull(Qty,0))
 	from #BasBundleInfo
+    where Qty > 0
 	group by	OrderID,
 				FComb	 ,
 				Colorid	 ,
@@ -431,6 +435,7 @@ where	1=1
 				PtnDes	 ,
 				Size		 ,
 				Artwork	 ,
+                isPair,
 				BundleGroup
 
 drop table #BasBundleInfo
@@ -554,20 +559,23 @@ drop table #BasBundleInfo
 
         private void ShowBundleGroupDetailQty(DataRow drSelected)
         {
-            DataTable resultBundleQtyDetail = this.dtBundleGroupQty.AsEnumerable()
-                                                                       .Where(src =>    src["OrderID"].Equals(drSelected["OrderID"]) &&
+            var resultBundleQtyDetail = this.dtBundleGroupQty.AsEnumerable()
+                                                                       .Where(src => src["OrderID"].Equals(drSelected["OrderID"]) &&
                                                                                         src["FComb"].Equals(drSelected["FComb"]) &&
                                                                                         src["Colorid"].Equals(drSelected["Colorid"]) &&
                                                                                         src["Pattern"].Equals(drSelected["Pattern"]) &&
                                                                                         src["PtnDes"].Equals(drSelected["PtnDes"]) &&
                                                                                         src["Size"].Equals(drSelected["Size"]) &&
-                                                                                        src["Artwork"].Equals(drSelected["Artwork"]) &&
-                                                                                        (decimal)src["Qty"] > 0)
-                                                                       .OrderByDescending(src => src["Qty"])
+                                                                                        src["Artwork"].Equals(drSelected["Artwork"]));
+            if (resultBundleQtyDetail.Any())
+            {
+                string msgIsPair = (int)drSelected["isPair"] > 0 ? "Cut-part is pair." : string.Empty;
+                DataTable dtResult = resultBundleQtyDetail.OrderByDescending(src => src["Qty"])
                                                                        .ThenBy(src => src["BundleGroup"])
                                                                        .CopyToDataTable();
-
-            MyUtility.Msg.ShowMsgGrid(resultBundleQtyDetail, caption: "Group Detail Qty", shownColumns: "BundleGroup,Qty");
+                MyUtility.Msg.ShowMsgGrid(dtResult, msg: msgIsPair, caption: "Group Detail Qty", shownColumns: "BundleGroup,Qty");
+            }
+            
         }
     }
 }
