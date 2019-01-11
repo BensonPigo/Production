@@ -116,10 +116,10 @@ SELECT
 ,S = case o.Category when 'B' then r.Name
   when 'S' then rs.Name
   else '' end
-,T = o.MRHandle
-,U = o.SMR
-,V = PO.POHandle
-,W = PO.POSMR
+,T = dbo.getTPEPass1_ExtNo(o.MRHandle)
+,U = dbo.getTPEPass1_ExtNo(o.SMR)
+,V = dbo.getTPEPass1_ExtNo(PO.POHandle)
+,W = dbo.getTPEPass1_ExtNo(PO.POSMR)
 ,X = o.OrderTypeID
 ,Y = iif(ot.isDevSample = 1, 'Y', '')
 ,Z = c.alias
@@ -485,26 +485,6 @@ AND r.ID = TH_Order.ReasonID and (ot.IsGMTMaster = 0 or o.OrderTypeID = '')  and
                 for (int intIndex = 0; intIndex < this.gdtOrderDetail.Rows.Count; intIndex++)
                 {
                     DataRow drData = this.gdtOrderDetail.Rows[intIndex];
-                    string handleName = string.Empty;
-                    if (UserPrg.GetName(drData["T"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
-                    {
-                        drData["T"] = handleName;
-                    }
-
-                    if (UserPrg.GetName(drData["U"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
-                    {
-                        drData["U"] = handleName;
-                    }
-
-                    if (UserPrg.GetName(drData["V"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
-                    {
-                        drData["V"] = handleName;
-                    }
-
-                    if (UserPrg.GetName(drData["W"].ToString().Trim(), out handleName, UserPrg.NameType.idAndNameAndExt))
-                    {
-                        drData["W"] = handleName;
-                    }
 
                     #region Calc SDP Data
                     int intIndex_SDP = lstSDP.IndexOf(drData["B"].ToString() + "___" + drData["Z"].ToString()); // A
@@ -747,7 +727,7 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                     string nextMdisvision = string.Empty;
                     if ((i + 1) < intRowsCount)
                     {
-                        nextMdisvision = (string)this.gdtSDP.Rows[i+1]["MdivisionID"];
+                        nextMdisvision = (string)this.gdtSDP.Rows[i + 1]["MdivisionID"];
                     }
 
                     if ((string)dr["MdivisionID"] != nextMdisvision)
@@ -919,38 +899,40 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
 
                     #region 匯出 Fail Detail
                     var gdtFailDetail = from data in this.gdtOrderDetail.AsEnumerable()
-                                     where data.Field<int>("M") > 0
-                                     select new
-                                    {
-                                        A = data.Field<string>("A"),
-                                        B= data.Field<string>("B"),
-                                        C= data.Field<string>("C"),
-                                        D= data.Field<string>("D"),
-                                        E= data.Field<string>("E"),
-                                        F= data.Field<string>("H"),
-                                        G = data.Field<string>("I"),
-                                        H = data.Field<string>("J"),
-                                        I= data.Field<int>("K").ToString(),
-                                        J= data.Field<int>("M").ToString(),
-                                        K= data.Field<string>("N"),
-                                        L= data.Field<string>("O"),
-                                        M= data.Field<string>("R"),
-                                        N= data.Field<string>("S"),
-                                        O = data.Field<string>("X"),
-                                        P = data.Field<string>("Y")
-                                     };
+                                        where data.Field<int>("M") > 0
+                                        select new
+                                        {
+                                            A = data.Field<string>("A"),
+                                            B = data.Field<string>("B"),
+                                            C = data.Field<string>("C"),
+                                            D = data.Field<string>("D"),
+                                            E = data.Field<string>("E"),
+                                            F = data.Field<string>("F"),
+                                            G = data.Field<string>("H"),
+                                            H = data.Field<string>("I"),
+                                            I = data.Field<string>("J"),
+                                            J = data.Field<int>("K").ToString(),
+                                            K = data.Field<int>("M").ToString(),
+                                            L = data.Field<string>("N"),
+                                            M = data.Field<string>("O"),
+                                            N = data.Field<string>("R"),
+                                            O = data.Field<string>("S"),
+                                            P = data.Field<string>("T"),
+                                            Q = data.Field<string>("X"),
+                                            R = data.Field<string>("Y")
+                                        };
                     if ((gdtFailDetail != null) && (gdtFailDetail.Count() > 0))
                     {
                         worksheet = excel.ActiveWorkbook.Worksheets[5];
                         worksheet.Name = "Fail Detail";
-                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Order Type", "Dev. Sample" };
+                        string[] aryTitles = new string[] { "Country", "KPI Group", "Factory", "SP No", "Seq", "Brand", "Factory KPI", "Extension", "Delivery By Shipmode", "Order Qty", "Fail Qty", "PullOut Date", "ShipMode", "ReasonID", "Order Reason", "Handle", "Order Type", "Dev. Sample" };
                         object[,] objArray_1 = new object[1, aryTitles.Length];
                         for (int intIndex = 0; intIndex < aryTitles.Length; intIndex++)
                         {
                             objArray_1[0, intIndex] = aryTitles[intIndex];
                         }
 
-                        worksheet.get_Range("K:K", Type.Missing).NumberFormatLocal = "@";
+                        worksheet.get_Range("L:L", Type.Missing).NumberFormatLocal = "@";
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].AutoFilter(1); // 篩選
                         worksheet.Range[string.Format("A{0}:{1}{0}", 1, aryAlpha[aryTitles.Length - 1])].Interior.Color = Color.FromArgb(204, 255, 204);
@@ -978,14 +960,16 @@ where Order_QS.Qty > 0 and  (opd.sQty > 0 or o.GMTComplete = 'S') and (ot.IsGMTM
                             objArray_1[0, 13] = dr.N;
                             objArray_1[0, 14] = dr.O;
                             objArray_1[0, 15] = dr.P;
+                            objArray_1[0, 16] = dr.Q;
+                            objArray_1[0, 17] = dr.R;
                             worksheet.Range[string.Format("A{0}:{1}{0}", i, aryAlpha[aryTitles.Length - 1])].Value2 = objArray_1;
                         }
 
                         worksheet.Columns.AutoFit();
                         worksheet.Cells[rc + 2, 2] = "Total:";
-                        worksheet.Cells[rc + 2, 9] = string.Format("=SUM(I2:I{0})", MyUtility.Convert.GetString(rc + 1));
-
                         worksheet.Cells[rc + 2, 10] = string.Format("=SUM(J2:J{0})", MyUtility.Convert.GetString(rc + 1));
+
+                        worksheet.Cells[rc + 2, 11] = string.Format("=SUM(K2:K{0})", MyUtility.Convert.GetString(rc + 1));
 
                         // 設定分割列數
                         excel.ActiveWindow.SplitRow = 1;
