@@ -345,7 +345,7 @@ order by g.ID", masterID);
 
                     // DB可能已經被修改，因此回DB撈出GMTBooking底下最新的PackingList
                     DataTable packingListDt_new;
-                    string sqlCmd = string.Format("SELECT ID,InspDate,InspStatus,PulloutDate FROM PackingList WHERE INVNo='{0}' ", MyUtility.Convert.GetString(dr["ID"]));
+                    string sqlCmd = string.Format("SELECT ID,InspDate,InspStatus,PulloutID,PulloutDate FROM PackingList WHERE INVNo='{0}' ", MyUtility.Convert.GetString(dr["ID"]));
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, out packingListDt_new);
                     if (result)
                     {
@@ -362,6 +362,7 @@ order by g.ID", masterID);
                                 pldatarow["InspDate"] = packingList_Merge.Rows[0]["InspDate"];
                                 pldatarow["InspStatus"] = packingList_Merge.Rows[0]["InspStatus"];
                                 pldatarow["PulloutDate"] = packingList_Merge.Rows[0]["PulloutDate"];
+                                pldatarow["PulloutID"] = packingList_Merge.Rows[0]["PulloutID"];
                                 this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
                             }
 
@@ -537,14 +538,20 @@ order by p.INVNo,p.ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))
         // 組Update PackingList的SQL
         private void UpdatePLCmd(DataRow pldatarow, string iNVno)
         {
+
+            // 修改PulloutDate，理應連同PulloutID一起修改
+            string newPulloutID = MyUtility.GetValue.Lookup($@"SELECT ID FROM Pullout WHERE PulloutDate='{Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("d")}' 
+                                            AND  ID <>'{pldatarow["PulloutID"].ToString()}'");
             this.updateCmds.Add(string.Format(
-                "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
+                "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} {6} where ID = '{4}' AND INVno='{5}';",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                 MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("d") + "'",
                 MyUtility.Convert.GetString(pldatarow["InspStatus"]),
                 MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("d") + "'",
                 MyUtility.Convert.GetString(pldatarow["ID"]),
-                iNVno));
+                iNVno,
+                newPulloutID == string.Empty ? string.Empty : $", PulloutID='{newPulloutID}'"
+                ));
         }
 
         // 組(Delete)Update PackingList的SQL
