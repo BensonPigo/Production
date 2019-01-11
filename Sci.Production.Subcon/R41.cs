@@ -129,6 +129,7 @@ namespace Sci.Production.Subcon
             string sqlCmd = $@"
 Select 
     [Bundleno] = bd.BundleNo,
+    [EXCESS] = iif(b.IsEXCESS = 0, '','Y'),
     [Cut Ref#] = isnull(b.CutRef,''),
     [SP#] = b.Orderid,
     [Master SP#] = b.POID,
@@ -213,6 +214,7 @@ where 1=1 {sqlWhere}";
 )
 select
     r.[Bundleno] ,
+	r.[EXCESS],
     r.[Cut Ref#] ,
     r.[SP#],
     r.[Master SP#],
