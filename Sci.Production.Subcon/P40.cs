@@ -573,7 +573,7 @@ drop table #BasBundleInfo
                 DataTable dtResult = resultBundleQtyDetail.OrderByDescending(src => src["Qty"])
                                                                        .ThenBy(src => src["BundleGroup"])
                                                                        .CopyToDataTable();
-                MyUtility.Msg.ShowMsgGrid(dtResult, msg: msgIsPair, caption: "Group Detail Qty", shownColumns: "BundleGroup,Qty");
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dtResult, msg: msgIsPair, caption: "Group Detail Qty", shownColumns: "BundleGroup,Qty");
             }
             
         }
