@@ -313,7 +313,7 @@ where	1=1
 				, bbi.Size
 				, bbi.Artwork
 				, Qty = sum (Qty)
-				, IsPair = count (IsPair)
+				, IsPair = count (case when IsPair = 1 then 1 end)
 				, BundleGroup = stuff ((select distinct concat ('/', bb.BundleGroup)
 							 from #BasBundleInfo bb
 							 where	bb.OrderID = bbi.OrderID   and
@@ -382,7 +382,7 @@ where	1=1
 				, bbi.Size
 				, bbi.Artwork
 				, Qty = sum (Qty)
-				, IsPair = count (IsPair)
+				, IsPair = count (case when IsPair = 1 then 1 end)
 				, BundleGroup = stuff ((select distinct concat ('/', bb.BundleGroup)
 							 from #BasBundleInfo bb
 							 where	bb.OrderID = bbi.OrderID   and
