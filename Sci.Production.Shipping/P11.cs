@@ -60,11 +60,11 @@ namespace Sci.Production.Shipping
             if (ls.Count > 0)
             {
                 MyUtility.Msg.WarningBox($@"Garment Booking does not exist, please check again!
-{string.Join(", ",ls)}");
+{string.Join(", ", ls)}");
                 return false;
             }
 
-            return base.ClickSaveBefore(); 
+            return base.ClickSaveBefore();
         }
 
         /// <inheritdoc/>
@@ -288,7 +288,7 @@ where a.id = '{top1id}'
             decimal sumM = MyUtility.Convert.GetDecimal(dt.Compute("sum(M)", null));
             decimal sumF = MyUtility.Convert.GetDecimal(dt.Compute("sum(F)", null));
 
-            worksheet.Cells[59, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND", Environment.NewLine + "AND");
+            worksheet.Cells[59, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
 
             string sumGW = $@"
 select sumGW = Sum (p.GW),sumNW=sum(p.NW),sumCBM=sum(p.CBM)
