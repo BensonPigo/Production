@@ -34,7 +34,9 @@ namespace Sci.Production.Sewing
             .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
-            .Text("ReceivedBy", header: "Received By", width: Widths.Auto(), iseditingreadonly: false);
+            .Text("ReceivedBy", header: "Received By", width: Widths.Auto(), iseditingreadonly: false)
+            .Date("ReceiveDate", header: "Receive Date", width: Widths.Auto(), iseditingreadonly: false)
+            ;
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -80,6 +82,7 @@ select
 	,o.BuyerDelivery
 	,o.SciDelivery
 	,ReceivedBy = dbo.getPass1(dr.AddName)
+    ,dr.ReceiveDate
 from DRYReceive dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
