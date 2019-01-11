@@ -104,6 +104,7 @@ CFANeedInsp
 ,o.BuyerDelivery
 ,p2.ClogLocationId
 ,p2.remark
+,p2.Seq
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
@@ -158,7 +159,7 @@ and p1.Type in ('B','L')
 and p2.TransferCFADate is null
 and (po.Status ='New' or po.Status is null)
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
-order by p2.ID,p2.CTNStartNo";
+order by p2.ID,p2.Seq";
             #endregion            
             DualResult result = DBProxy.Current.Select("", strCmd, listSQLParameter, out dtDBSource);
 
