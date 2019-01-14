@@ -54,6 +54,17 @@ namespace Sci.Production.PPIC
                     return;
                 }
 
+                string[] seqSplit = this.txtSEQ.Text.Split(' ');
+
+                if (seqSplit.Length != 2)
+                {
+                    MyUtility.Msg.WarningBox("SEQ input format is wrong!!");
+                    return;
+                }
+
+                string seq1 = seqSplit[0];
+                string seq2 = seqSplit[1];
+
                 DataRow firData;
                 string sqlCmd = string.Format(
                     @"select a.Seq1,a.Seq2,isnull(psd.ColorID,'') as ColorID,isnull(psd.Refno,'') as Refno,
@@ -68,8 +79,8 @@ left join PO_Supp_Detail psd WITH (NOLOCK) on a.POID = psd.ID and a.Seq1 = psd.S
 where a.POID = '{0}' and a.Seq1 = '{1}' and a.Seq2 = '{2}' and a.Result = 'F'
 group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0)",
                     MyUtility.Convert.GetString(this.masterData["POID"]),
-                    this.txtSEQ.Text.Length < 3 ? this.txtSEQ.Text : this.txtSEQ.Text.Substring(0, 3),
-                    this.txtSEQ.Text.Length < 5 ? this.txtSEQ.Text.Length < 4 ? string.Empty : this.txtSEQ.Text.ToString().Substring(3, 1) : this.txtSEQ.Text.ToString().Substring(3, 2));
+                    seq1,
+                    seq2);
 
                 if (MyUtility.Check.Seek(sqlCmd, out firData))
                 {
@@ -104,8 +115,8 @@ and mpd.Seq1 = psd.SEQ1
 and mpd.Seq2 = psd.SEQ2
 and mpd.InQty > 0",
                         MyUtility.Convert.GetString(this.masterData["POID"]),
-                        this.txtSEQ.Text.Length < 3 ? this.txtSEQ.Text : this.txtSEQ.Text.Substring(0, 3),
-                        this.txtSEQ.Text.Length < 5 ? this.txtSEQ.Text.Length < 4 ? string.Empty : this.txtSEQ.Text.ToString().Substring(3, 1) : this.txtSEQ.Text.ToString().Substring(3, 2),
+                        seq1,
+                        seq2,
                         Sci.Env.User.Keyword);
 
                     if (!MyUtility.Check.Seek(sqlCmd, out poData))
