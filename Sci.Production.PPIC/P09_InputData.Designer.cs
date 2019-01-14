@@ -202,7 +202,7 @@
             // editDescription
             // 
             this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
+            this.editDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DescriptionDetail", true));
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editDescription.IsSupportEditMode = false;
             this.editDescription.Location = new System.Drawing.Point(92, 43);
