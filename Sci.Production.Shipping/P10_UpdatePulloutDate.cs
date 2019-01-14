@@ -183,29 +183,15 @@ where p.ShipPlanID = '{0}'", MyUtility.Convert.GetString(this.masterDate["ID"]))
             this.gridUpdatePulloutDate.ValidateControl();
             this.listControlBindingSource1.EndEdit();
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-
             foreach (DataRow dr in dt.Rows)
             {
-                
-                if ((int)dr["Selected"] == 1)
+                if (MyUtility.Check.Empty(dr["PulloutDate"]))
                 {
-                    // 修改PulloutDate，理應連同PulloutID一起修改
-                    string oldPulloutID = MyUtility.GetValue.Lookup($"SELECT PulloutID FROM PackingList WHERE ID='{MyUtility.Convert.GetString(dr["PackingListID"])}'");
-                    string newPulloutID = MyUtility.GetValue.Lookup($@"SELECT ID FROM Pullout WHERE PulloutDate='{Convert.ToDateTime(dr["PulloutDate"]).ToString("d")}' 
-                                            AND  ID <>'{oldPulloutID}'");
-
-                    if (MyUtility.Check.Empty(dr["PulloutDate"]))
-                    {
-                        updateCmds.Add(string.Format("update PackingList set PulloutDate = null where ID = '{0}';", MyUtility.Convert.GetString(dr["PackingListID"])));
-                    }
-                    else
-                    {
-                        updateCmds.Add(string.Format(
-                            "update PackingList set PulloutDate = '{0}' {2} where ID = '{1}';",
-                            Convert.ToDateTime(dr["PulloutDate"]).ToString("d"),
-                            MyUtility.Convert.GetString(dr["PackingListID"]),
-                            newPulloutID == string.Empty ? string.Empty : $", PulloutID='{newPulloutID}'"));
-                    }
+                    updateCmds.Add(string.Format("update PackingList set PulloutDate = null where ID = '{0}';", MyUtility.Convert.GetString(dr["PackingListID"])));
+                }
+                else
+                {
+                    updateCmds.Add(string.Format("update PackingList set PulloutDate = '{0}' where ID = '{1}';", Convert.ToDateTime(dr["PulloutDate"]).ToString("d"), MyUtility.Convert.GetString(dr["PackingListID"])));
                 }
             }
 
