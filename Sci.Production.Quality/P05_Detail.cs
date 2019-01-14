@@ -1245,7 +1245,7 @@ SET IDENTITY_INSERT oven off";
                 for (int m = 0; m < 3; m++)
                 {
                     // 設定range 變數
-                    Microsoft.Office.Interop.Excel.Range rgSign = worksheet.Range[worksheet.Cells[8][14 + dr.Length + 3 + m], worksheet.Cells[10][14 + dr.Length + 3 + m]];
+                    Microsoft.Office.Interop.Excel.Range rgSign = worksheet.Range[worksheet.Cells[8][12 + dr.Length + 3 + m], worksheet.Cells[10][12 + dr.Length + 3 + m]]; // 14
                     // 設定邊框
                     rgSign.Borders.LineStyle = 1;
                     rgSign.Borders.Weight = 3;
@@ -1268,6 +1268,72 @@ SET IDENTITY_INSERT oven off";
                     }
                     rgSign.Merge();
                 }
+                #endregion
+
+                #region 畫Original After Test 固定框線格式
+
+
+                #region 判斷超過一頁則減少畫框數量
+                int cntFrame = 5;
+                if (dr.Length > 18 && dr.Length < 55)
+                {
+                    // 將會增長的dataRow -18 基礎數, 再除上固定畫框的7格 +1 
+                    cntFrame = 5 - ((dr.Length - 18) / 7 + 1);
+                }
+                #endregion
+
+                int rowcnt = 19 + dr.Length;
+                #region 畫Original After Test
+                if (cntFrame > 0)
+                {
+                    for (int t = 0; t < 2; t++)
+                    {
+                        Microsoft.Office.Interop.Excel.Range rgText = worksheet.Range[worksheet.Cells[2 + (t * 5)][rowcnt], worksheet.Cells[5 + (t * 5)][rowcnt]];
+                        // 置中
+                        rgText.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                        rgText.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                        rgText.Font.Bold = true;
+
+                        switch (t)
+                        {
+                            case 0:
+                                rgText.Cells[1, 1] = "Original";
+                                break;
+                            case 1:
+                                rgText.Cells[1, 1] = "After Test";
+                                break;
+                        }
+                        rgText.Merge();
+                    }
+                    rowcnt++;
+                }
+                #endregion
+
+                #region 畫固定外框
+                for (int o = 0; o < cntFrame; o++)
+                {
+                    // 畫一對框線
+                    for (int oo = 0; oo < 2; oo++)
+                    {
+                        // 設定range 變數
+                        Microsoft.Office.Interop.Excel.Range rf = worksheet.Range[worksheet.Cells[2 + (oo * 5)][rowcnt], worksheet.Cells[5 + (oo * 5)][rowcnt + 5]];
+                        // 設定邊框
+                        rf.BorderAround2(LineStyle: 1);
+
+                        // 畫固定格式小框
+                        if (oo == 0)
+                        {
+                            // 設定range 變數
+                            Microsoft.Office.Interop.Excel.Range rff = worksheet.Range[worksheet.Cells[2][rowcnt + 4], worksheet.Cells[2][rowcnt + 5]];
+                            // 設定邊框
+                            rff.BorderAround2(LineStyle: 1);
+                            rff.Cells[1, 1] = "Article#";
+                        }
+                    }
+                    rowcnt += 7;
+                }
+                #endregion
+
                 #endregion
                 nSheet++;
             }

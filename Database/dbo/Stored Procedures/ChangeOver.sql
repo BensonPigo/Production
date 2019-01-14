@@ -125,12 +125,12 @@ BEGIN
 
 	--填Category欄位值
 	update ChgOver set Category = c.Category
-	from (select ID, (case when b.ProductionType <> b.LastProdType and b.FabricType <> b.LastFabType then 'A'
+	from (select ID,iif(b.LastProdType <> '' and b.ProductionType <> '', (case when b.ProductionType <> b.LastProdType and b.FabricType <> b.LastFabType then 'A'
 						   when b.ProductionType <> b.LastProdType and b.FabricType = b.LastFabType then 'B'
 						   when b.ProductionType = b.LastProdType and b.FabricType <> b.LastFabType then 'C'
 						   when b.ProductionType = b.LastProdType and b.FabricType = b.LastFabType then 'D'
 						   else ''
-					  end) as Category
+					  end),'') as Category
 		  from (select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastProdType,
 					LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastFabType
 				from (select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
@@ -138,7 +138,7 @@ BEGIN
 						  isnull(case when co.ComboType = 'T' then cc.TopFabricType when co.ComboType = 'B' then cc.BottomFabricType when co.ComboType = 'I' then cc.InnerFabricType when co.ComboType = 'O' then cc.OuterFabricType else '' end,'') as FabricType
 					  from ChgOver co WITH (NOLOCK)
 					  left join CDCode_Content cc WITH (NOLOCK) on co.CDCodeID = cc.ID) a) b
-		  where b.LastProdType <> '') c
+		  ) c
 	where c.ID = ChgOver.ID
 
 
