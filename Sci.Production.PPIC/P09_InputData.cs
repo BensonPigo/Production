@@ -54,12 +54,23 @@ namespace Sci.Production.PPIC
                     return;
                 }
 
+                string[] seqSplit = this.txtSEQ.Text.Split(' ');
+
+                if (seqSplit.Length != 2)
+                {
+                    MyUtility.Msg.WarningBox("SEQ input format is wrong!!");
+                    return;
+                }
+
+                string seq1 = seqSplit[0];
+                string seq2 = seqSplit[1];
+
                 DataRow firData;
                 string sqlCmd = string.Format(
                     @"select a.Seq1,a.Seq2,isnull(psd.ColorID,'') as ColorID,isnull(psd.Refno,'') as Refno,
 isnull(psd.SCIRefno,'') as SCIRefno,iif(e.Eta is null, r.ETA, e.Eta) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(r.InvNo,'') as InvNo,isnull(sum(rd.ShipQty),0) as EstInQty, isnull(sum(rd.ActualQty),0) as ActInQty,
-dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0) as Description
+dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0) as DescriptionDetail
 from AIR a WITH (NOLOCK) 
 left join Receiving r WITH (NOLOCK) on a.ReceivingID = r.Id
 left join Receiving_Detail rd WITH (NOLOCK) on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
@@ -68,8 +79,8 @@ left join PO_Supp_Detail psd WITH (NOLOCK) on a.POID = psd.ID and a.Seq1 = psd.S
 where a.POID = '{0}' and a.Seq1 = '{1}' and a.Seq2 = '{2}' and a.Result = 'F'
 group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.ETA, e.Eta),r.ExportId,r.InvNo,dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0)",
                     MyUtility.Convert.GetString(this.masterData["POID"]),
-                    this.txtSEQ.Text.Length < 3 ? this.txtSEQ.Text : this.txtSEQ.Text.Substring(0, 3),
-                    this.txtSEQ.Text.Length < 5 ? this.txtSEQ.Text.Length < 4 ? string.Empty : this.txtSEQ.Text.ToString().Substring(3, 1) : this.txtSEQ.Text.ToString().Substring(3, 2));
+                    seq1,
+                    seq2);
 
                 if (MyUtility.Check.Seek(sqlCmd, out firData))
                 {
@@ -83,7 +94,7 @@ group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     this.CurrentData["INVNo"] = firData["InvNo"];
                     this.CurrentData["EstInQty"] = firData["EstInQty"];
                     this.CurrentData["ActInQty"] = firData["ActInQty"];
-                    this.CurrentData["Description"] = firData["Description"];
+                    this.CurrentData["DescriptionDetail"] = firData["DescriptionDetail"];
                     this.CurrentData["ExportID"] = firData["ExportId"];
                 }
                 else
@@ -91,7 +102,7 @@ group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     DataRow poData;
                     sqlCmd = string.Format(
                         @"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
-dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as Description 
+dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as DescriptionDetail 
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.Factory f on psd.FactoryID=f.ID
 , dbo.MDivisionPoDetail mpd WITH (NOLOCK) 
@@ -104,8 +115,8 @@ and mpd.Seq1 = psd.SEQ1
 and mpd.Seq2 = psd.SEQ2
 and mpd.InQty > 0",
                         MyUtility.Convert.GetString(this.masterData["POID"]),
-                        this.txtSEQ.Text.Length < 3 ? this.txtSEQ.Text : this.txtSEQ.Text.Substring(0, 3),
-                        this.txtSEQ.Text.Length < 5 ? this.txtSEQ.Text.Length < 4 ? string.Empty : this.txtSEQ.Text.ToString().Substring(3, 1) : this.txtSEQ.Text.ToString().Substring(3, 2),
+                        seq1,
+                        seq2,
                         Sci.Env.User.Keyword);
 
                     if (!MyUtility.Check.Seek(sqlCmd, out poData))
@@ -134,7 +145,7 @@ and mpd.InQty > 0",
                     this.CurrentData["Refno"] = poData["Refno"];
                     this.CurrentData["SCIRefno"] = poData["SCIRefno"];
                     this.CurrentData["ColorID"] = poData["ColorID"];
-                    this.CurrentData["Description"] = poData["Description"];
+                    this.CurrentData["DescriptionDetail"] = poData["DescriptionDetail"];
 
                     sqlCmd = string.Format(
                         @"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
