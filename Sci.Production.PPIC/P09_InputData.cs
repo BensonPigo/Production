@@ -70,7 +70,7 @@ namespace Sci.Production.PPIC
                     @"select a.Seq1,a.Seq2,isnull(psd.ColorID,'') as ColorID,isnull(psd.Refno,'') as Refno,
 isnull(psd.SCIRefno,'') as SCIRefno,iif(e.Eta is null, r.ETA, e.Eta) as ETA,isnull(r.ExportId,'') as ExportId,
 isnull(r.InvNo,'') as InvNo,isnull(sum(rd.ShipQty),0) as EstInQty, isnull(sum(rd.ActualQty),0) as ActInQty,
-dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0) as Description
+dbo.getmtldesc(a.POID,a.Seq1,a.Seq2,2,0) as DescriptionDetail
 from AIR a WITH (NOLOCK) 
 left join Receiving r WITH (NOLOCK) on a.ReceivingID = r.Id
 left join Receiving_Detail rd WITH (NOLOCK) on r.Id = rd.Id and a.Seq1 = rd.SEQ1 and a.Seq2 = rd.SEQ2
@@ -94,7 +94,7 @@ group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     this.CurrentData["INVNo"] = firData["InvNo"];
                     this.CurrentData["EstInQty"] = firData["EstInQty"];
                     this.CurrentData["ActInQty"] = firData["ActInQty"];
-                    this.CurrentData["Description"] = firData["Description"];
+                    this.CurrentData["DescriptionDetail"] = firData["DescriptionDetail"];
                     this.CurrentData["ExportID"] = firData["ExportId"];
                 }
                 else
@@ -102,7 +102,7 @@ group by a.Seq1,a.Seq2,psd.ColorID,psd.Refno,psd.SCIRefno,iif(e.Eta is null, r.E
                     DataRow poData;
                     sqlCmd = string.Format(
                         @"select psd.Refno,psd.SCIRefno,psd.seq1,psd.seq2,psd.FabricType,psd.ColorID, 
-dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as Description 
+dbo.getmtldesc(psd.ID,psd.SEQ1,psd.SEQ2,2,0) as DescriptionDetail 
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.Factory f on psd.FactoryID=f.ID
 , dbo.MDivisionPoDetail mpd WITH (NOLOCK) 
@@ -145,7 +145,7 @@ and mpd.InQty > 0",
                     this.CurrentData["Refno"] = poData["Refno"];
                     this.CurrentData["SCIRefno"] = poData["SCIRefno"];
                     this.CurrentData["ColorID"] = poData["ColorID"];
-                    this.CurrentData["Description"] = poData["Description"];
+                    this.CurrentData["DescriptionDetail"] = poData["DescriptionDetail"];
 
                     sqlCmd = string.Format(
                         @"select distinct r.InvNo,r.ExportId,iif(e.Eta is null, r.ETA,e.Eta) as ETA,
