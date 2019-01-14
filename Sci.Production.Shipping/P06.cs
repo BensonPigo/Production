@@ -1185,9 +1185,7 @@ with ShipPlanData as (
     where (p.Type = 'B' or p.Type = 'S')
           and s.Status = 'Confirmed'
           and p.MDivisionID = '{0}'
-          and p.FactoryID = '{3}'
           and p.PulloutDate = '{1}'
-          --and (  p.PulloutID = '' or p.PulloutID = '{2}') -- 20161220 willy 避免如果原本有資料,之後修改資料會清空shipQty問題
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode, o.Qty
           , oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest
 ),
@@ -1219,9 +1217,7 @@ FLPacking as (
     where   (p.Type = 'F' or p.Type = 'L')
             and p.Status = 'Confirmed'
             and p.MDivisionID = '{0}'
-            and p.FactoryID = '{3}'
             and p.PulloutDate = '{1}'
-            --and (p.PulloutID = '' or p.PulloutID='{2}')  -- 20170918 aaron 避免如果原本有資料,之後修改資料會清空shipQty問題
     group by pd.ID, p.Type, p.ShipModeID, pd.OrderID, pd.OrderShipmodeSeq, pd.Article, pd.SizeCode
              , o.Qty, oq.Qty, oqd.Qty, p.INVNo, o.StyleID, o.BrandID, o.Dest 
 ),
@@ -1272,9 +1268,7 @@ select  'S' as DataType
 from SummaryData",
                 Sci.Env.User.Keyword,
                 Convert.ToDateTime(this.CurrentMaintain["PulloutDate"]).ToString("d"),
-                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
-                 MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]));
-
+                MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? "XXXXXXXXXX" : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             #endregion
 
