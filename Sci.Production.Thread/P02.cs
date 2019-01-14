@@ -1266,7 +1266,7 @@ BEGIN
 	if @UseStockUseConeQty > 0 or @UseStockNewConeQty > 0 
 	begin
 		DECLARE ThreadStock_cur CURSOR FOR 
-		select NewCone,UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc --小於需求數量,從多的開始分配
+		select NewCone,UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc,NewCone desc --小於需求數量,從多的開始分配
 		OPEN ThreadStock_cur --開始run cursor                   
 		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
 		WHILE @@FETCH_STATUS = 0
@@ -1391,7 +1391,7 @@ BEGIN
 	if @UseStockUseConeQty > 0 or @UseStockNewConeQty > 0 
 	begin
 		DECLARE ThreadStock_cur CURSOR FOR 
-		select NewCone,UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc --小於需求數量,從多的開始分配
+		select NewCone,UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc,NewCone desc --小於需求數量,從多的開始分配
 		OPEN ThreadStock_cur --開始run cursor                   
 		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
 		WHILE @@FETCH_STATUS = 0
