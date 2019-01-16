@@ -122,7 +122,7 @@ SET
       ,a.PAIR	      =b.PAIR
       ,a.DV	      =b.DV
       ,a.Remarks	      =b.Remarks
-
+	  ,a.Location	      =b.Location
 from Production.dbo.Pattern_GL as a 
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
 inner join Trade_To_Pms.dbo.Pattern_GL as b ON a.id=b.id and a.Version=b.Version and a.SEQ=b.SEQ
@@ -139,7 +139,7 @@ INSERT INTO Production.dbo.Pattern_GL(
       ,PAIR
       ,DV
       ,Remarks
-
+	  ,Location
 )
 select 
        b.ID
@@ -153,7 +153,7 @@ select
       ,PAIR
       ,DV
       ,Remarks
-
+	  ,b.Location
 from Trade_To_Pms.dbo.Pattern_GL as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
 where not exists(select id from Production.dbo.Pattern_GL as a WITH (NOLOCK) where a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ)
 

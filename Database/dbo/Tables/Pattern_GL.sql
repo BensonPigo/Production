@@ -10,6 +10,7 @@
     [PAIR]        VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_PAIR] DEFAULT ('') NULL,
     [DV]          VARCHAR (2)    CONSTRAINT [DF_Pattern_GL_DV] DEFAULT ('') NULL,
     [Remarks]     NVARCHAR (30)  CONSTRAINT [DF_Pattern_GL_Remarks] DEFAULT ('') NULL,
+    [Location] VARCHAR NULL DEFAULT (''), 
     CONSTRAINT [PK_Pattern_GL] PRIMARY KEY CLUSTERED ([ID], [Version], [SEQ])
 );
 
