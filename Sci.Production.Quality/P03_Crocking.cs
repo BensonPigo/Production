@@ -768,6 +768,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
         private void btntoPDF_Click(object sender, EventArgs e)
         {
+            this.ShowWaitMessage("Data Loading...");
             DataTable dtt = (DataTable)gridbs.DataSource;
             if (dtt.Rows.Count == 0)
             {
@@ -827,7 +828,7 @@ order by fd.InspDate,oc.article
                 {
                     worksheet.Cells[4, 5] = ((DateTime)row["InspDate"]).ToString("yyyy") + "/" + ((DateTime)row["InspDate"]).ToString("MM") + "/" + ((DateTime)row["InspDate"]).ToString("dd");
                 }
-                
+
                 worksheet.Cells[6, 9] = row["article"];
                 worksheet.Cells[4, 7] = txtSP.Text;
                 worksheet.Cells[4, 10] = txtBrand.Text;
@@ -835,7 +836,7 @@ order by fd.InspDate,oc.article
                 worksheet.Cells[6, 6] = MyUtility.GetValue.Lookup($"select CustPONo from orders where id = '{txtSP.Text}'");
                 worksheet.Cells[7, 3] = MyUtility.GetValue.Lookup($@"select StyleName from Style s, orders o where o.id = '{txtSP.Text}' and  o.StyleUkey = s.ukey");
                 worksheet.Cells[7, 9] = txtArriveQty.Text;
-                worksheet.Cells[22, 8] = row["Name"];
+                worksheet.Cells[14, 8] = row["Name"];
 
                 string sqlcmd2 = $@"
 SELECT distinct fd.InspDate,oc.article,fd.DryScale,fd.ResultDry,fd.WetScale,fd.ResultWet,fd.Remark,fd.Inspector,fd.Roll,fd.Dyelot
@@ -869,10 +870,147 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                     worksheet.Cells[11 + k, 8] = row2["WetScale"];
                     worksheet.Cells[11 + k, 9] = row2["ResultWet"];
                     worksheet.Cells[11 + k, 10] = row2["Remark"];
+
+                    Microsoft.Office.Interop.Excel.Range rg = worksheet.Range[worksheet.Cells[11 + k, 2], worksheet.Cells[11 + k, 10]];
+                    // 加框線
+                    rg.Borders.LineStyle = 1;
+                    rg.Borders.Weight = 3;
+                    rg.WrapText = true; // 自動換列
+                    rg.Font.Bold = false;
+
+                    // 水平,垂直置中
+                    rg.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                    rg.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+
                     k++;
                 }
-                worksheet.get_Range("B10:J10").Font.Bold = true;
+                //worksheet.get_Range("B9:J9").Font.Bold = true;
                 worksheet.Cells.EntireColumn.AutoFit();
+
+                #region 開始畫格子
+
+                #region 框框數量計算
+
+                int detailCouunt = dt2.Rows.Count;
+                //超過36筆資料，PDF就會跳到下一頁
+                int onePageLimit = 36;
+                //框框數，最多只要顯示4個
+                int cubeCount = 0;
+
+                //每個框框共7個Row高度，因此每多7筆資料，框框就少一個
+                if (detailCouunt < 7)
+                    cubeCount = 4;
+                if (7 <= detailCouunt && detailCouunt < 14)
+                    cubeCount = 3;
+                if (14 <= detailCouunt && detailCouunt < 21)
+                    cubeCount = 2;
+                if (21 <= detailCouunt && detailCouunt < 28)
+                    cubeCount = 1;
+
+                //28~44筆資料，未達2頁，但又塞不下一個框框，因此為0
+
+                //若超過1頁，但未達3頁，還是要畫，第三頁開始不畫
+                
+                //第二頁上面沒有那一堆表格，因此是原本的4 + 表格的10 = 16
+                if (44 <= detailCouunt && detailCouunt < 60)
+                    cubeCount = 4;
+
+                if (60 <= detailCouunt && detailCouunt < 67)
+                    cubeCount = 3;
+
+                if (74 <= detailCouunt && detailCouunt < 81)
+                    cubeCount = 2;
+
+                if (81 <= detailCouunt && detailCouunt < 87)
+                    cubeCount = 1;
+
+                //超過兩頁，會出現第三頁
+                if (87 <= detailCouunt )
+                    cubeCount = 0;
+
+                #endregion
+                
+                //開始畫
+                if (cubeCount > 0)
+                {
+                    //作法：先畫第一個，若框框超過一個，就用複製的
+
+                    //第一個框框上的文字
+                    //16 = 11 + 5
+                    worksheet.Cells[16 + dt2.Rows.Count, 3] = "DRY";
+                    worksheet.Cells[16 + dt2.Rows.Count, 8] = "Wet";
+                    Microsoft.Office.Interop.Excel.Range rg1 = worksheet.Range[worksheet.Cells[16 + dt2.Rows.Count, 3], worksheet.Cells[16 + dt2.Rows.Count, 8]];
+                    //置中
+                    rg1.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+
+                    //畫框框
+                    //17 = 11 + 6
+                    //24 = 17 + 7
+                    rg1 = worksheet.Range[worksheet.Cells[17 + dt2.Rows.Count, 2], worksheet.Cells[24 + dt2.Rows.Count, 4]];
+                    //框線設定
+                    rg1.BorderAround2(LineStyle: 1);
+                    rg1 = worksheet.Range[worksheet.Cells[17 + dt2.Rows.Count, 7], worksheet.Cells[24 + dt2.Rows.Count, 9]];
+                    rg1.BorderAround2(LineStyle: 1);
+
+
+                    //框框旁邊的字 
+
+                    rg1 = worksheet.Range[worksheet.Cells[18 + dt2.Rows.Count, 5], worksheet.Cells[18 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[18 + dt2.Rows.Count, 5] = "Ref# : ___________________";
+
+                    rg1 = worksheet.Range[worksheet.Cells[19 + dt2.Rows.Count, 5], worksheet.Cells[19 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[19 + dt2.Rows.Count, 5] = "Color  : __________________";
+
+                    rg1 = worksheet.Range[worksheet.Cells[20 + dt2.Rows.Count, 5], worksheet.Cells[20 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[20 + dt2.Rows.Count, 5] = "Roll# : ___________________";
+
+                    rg1 = worksheet.Range[worksheet.Cells[21 + dt2.Rows.Count, 5], worksheet.Cells[21 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[21 + dt2.Rows.Count, 5] = "Dyelot# : _________________";
+
+                    rg1 = worksheet.Range[worksheet.Cells[24 + dt2.Rows.Count, 5], worksheet.Cells[24 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[24 + dt2.Rows.Count, 5] = "Grade : __________________";
+                    worksheet.Cells[24 + dt2.Rows.Count, 10] = "_______";
+
+                    // 選取要被複製的資料
+                    rg1 = worksheet.get_Range($"B{17 + dt2.Rows.Count}:J{24 + dt2.Rows.Count}").EntireRow;
+
+                    //根據框框數，資料筆數，決定貼在哪個座標
+                    switch (cubeCount)
+                    {
+                        case 2:
+                            Microsoft.Office.Interop.Excel.Range rgX = worksheet.get_Range($"B{17 + dt2.Rows.Count + 9}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgX.Insert(rg1.Copy(Type.Missing)); // 貼上
+                            break;
+                        case 3:
+                            rgX = worksheet.get_Range($"B{17 + dt2.Rows.Count + 9}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgX.Insert(rg1.Copy(Type.Missing)); // 貼上
+                            Microsoft.Office.Interop.Excel.Range rgY = worksheet.get_Range($"B{17 + dt2.Rows.Count + 18}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgY.Insert(rg1.Copy(Type.Missing)); // 貼上
+
+                            break;
+                        case 4:
+                            rgX = worksheet.get_Range($"B{17 + dt2.Rows.Count + 9}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgX.Insert(rg1.Copy(Type.Missing)); // 貼上
+                            rgY = worksheet.get_Range($"B{17 + dt2.Rows.Count + 18}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgY.Insert(rg1.Copy(Type.Missing)); // 貼上
+                            Microsoft.Office.Interop.Excel.Range rgZ = worksheet.get_Range($"B{17 + dt2.Rows.Count + 27}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgZ.Insert(rg1.Copy(Type.Missing)); // 貼上
+
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                }
+
+                #endregion
+
                 Marshal.ReleaseComObject(worksheet);
                 j++;
             }
@@ -892,6 +1030,8 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                 ProcessStartInfo startInfo = new ProcessStartInfo(strPDFFileName);
                 Process.Start(startInfo);
             }
+
+            this.HideWaitMessage();
         }
     }
 }
