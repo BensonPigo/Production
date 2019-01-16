@@ -853,7 +853,7 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                 DBProxy.Current.Select(null, sqlcmd2, out dt2);
                 for (int i = 1; i < dt2.Rows.Count; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A11:A11", Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A12:A12", Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
                 }
@@ -885,7 +885,7 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                     k++;
                 }
                 //worksheet.get_Range("B9:J9").Font.Bold = true;
-                worksheet.Cells.EntireColumn.AutoFit();
+                //worksheet.Cells.EntireColumn.AutoFit();
 
                 #region 開始畫格子
 
@@ -898,13 +898,13 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                 int cubeCount = 0;
 
                 //每個框框共7個Row高度，因此每多7筆資料，框框就少一個
-                if (detailCouunt < 7)
+                if (detailCouunt < 3)
                     cubeCount = 4;
-                if (7 <= detailCouunt && detailCouunt < 14)
+                if (3 <= detailCouunt && detailCouunt < 10)
                     cubeCount = 3;
-                if (14 <= detailCouunt && detailCouunt < 21)
+                if (10 <= detailCouunt && detailCouunt < 17)
                     cubeCount = 2;
-                if (21 <= detailCouunt && detailCouunt < 28)
+                if (17 <= detailCouunt && detailCouunt < 27)
                     cubeCount = 1;
 
                 //28~44筆資料，未達2頁，但又塞不下一個框框，因此為0
@@ -912,20 +912,20 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                 //若超過1頁，但未達3頁，還是要畫，第三頁開始不畫
                 
                 //第二頁上面沒有那一堆表格，因此是原本的4 + 表格的10 = 16
-                if (44 <= detailCouunt && detailCouunt < 60)
+                if (43 <= detailCouunt && detailCouunt < 50)
                     cubeCount = 4;
 
-                if (60 <= detailCouunt && detailCouunt < 67)
+                if (50 <= detailCouunt && detailCouunt < 61)
                     cubeCount = 3;
 
-                if (74 <= detailCouunt && detailCouunt < 81)
+                if (61 <= detailCouunt && detailCouunt < 72)
                     cubeCount = 2;
 
-                if (81 <= detailCouunt && detailCouunt < 87)
+                if (72 <= detailCouunt && detailCouunt < 83)
                     cubeCount = 1;
 
                 //超過兩頁，會出現第三頁
-                if (87 <= detailCouunt )
+                if (83 <= detailCouunt )
                     cubeCount = 0;
 
                 #endregion
@@ -938,7 +938,7 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                     //第一個框框上的文字
                     //16 = 11 + 5
                     worksheet.Cells[16 + dt2.Rows.Count, 3] = "DRY";
-                    worksheet.Cells[16 + dt2.Rows.Count, 8] = "Wet";
+                    worksheet.Cells[16 + dt2.Rows.Count, 8] = "WET";
                     Microsoft.Office.Interop.Excel.Range rg1 = worksheet.Range[worksheet.Cells[16 + dt2.Rows.Count, 3], worksheet.Cells[16 + dt2.Rows.Count, 8]];
                     //置中
                     rg1.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
@@ -957,24 +957,24 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
 
                     rg1 = worksheet.Range[worksheet.Cells[18 + dt2.Rows.Count, 5], worksheet.Cells[18 + dt2.Rows.Count, 6]];
                     rg1.Merge(true);
-                    worksheet.Cells[18 + dt2.Rows.Count, 5] = "Ref# : ___________________";
+                    worksheet.Cells[18 + dt2.Rows.Count, 5] = "Ref# : _________________";
 
                     rg1 = worksheet.Range[worksheet.Cells[19 + dt2.Rows.Count, 5], worksheet.Cells[19 + dt2.Rows.Count, 6]];
                     rg1.Merge(true);
-                    worksheet.Cells[19 + dt2.Rows.Count, 5] = "Color  : __________________";
+                    worksheet.Cells[19 + dt2.Rows.Count, 5] = "Color  : ________________";
 
                     rg1 = worksheet.Range[worksheet.Cells[20 + dt2.Rows.Count, 5], worksheet.Cells[20 + dt2.Rows.Count, 6]];
                     rg1.Merge(true);
-                    worksheet.Cells[20 + dt2.Rows.Count, 5] = "Roll# : ___________________";
+                    worksheet.Cells[20 + dt2.Rows.Count, 5] = "Roll# : _________________";
 
                     rg1 = worksheet.Range[worksheet.Cells[21 + dt2.Rows.Count, 5], worksheet.Cells[21 + dt2.Rows.Count, 6]];
                     rg1.Merge(true);
-                    worksheet.Cells[21 + dt2.Rows.Count, 5] = "Dyelot# : _________________";
+                    worksheet.Cells[21 + dt2.Rows.Count, 5] = "Dyelot# : _______________";
 
                     rg1 = worksheet.Range[worksheet.Cells[24 + dt2.Rows.Count, 5], worksheet.Cells[24 + dt2.Rows.Count, 6]];
                     rg1.Merge(true);
-                    worksheet.Cells[24 + dt2.Rows.Count, 5] = "Grade : __________________";
-                    worksheet.Cells[24 + dt2.Rows.Count, 10] = "_______";
+                    worksheet.Cells[24 + dt2.Rows.Count, 5] = "Grade : ________________";
+                    worksheet.Cells[24 + dt2.Rows.Count, 10] = "_____________";
 
                     // 選取要被複製的資料
                     rg1 = worksheet.get_Range($"B{17 + dt2.Rows.Count}:J{24 + dt2.Rows.Count}").EntireRow;
