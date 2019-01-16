@@ -35,7 +35,7 @@ namespace Sci.Production.Sewing
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Text("ReceivedBy", header: "Received By", width: Widths.Auto(), iseditingreadonly: false)
-            .Date("ReceiveDate", header: "Receive Date", width: Widths.Auto(), iseditingreadonly: false)
+            .DateTime("AddDate", header: "Receive Time", width: Widths.Auto(), iseditingreadonly: false)
             ;
         }
 
@@ -82,7 +82,7 @@ select
 	,o.BuyerDelivery
 	,o.SciDelivery
 	,ReceivedBy = dbo.getPass1(dr.AddName)
-    ,dr.ReceiveDate
+    ,dr.AddDate
 from DRYReceive dr with(nolock)
 left join orders o with(nolock) on dr.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
