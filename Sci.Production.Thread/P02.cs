@@ -1263,12 +1263,12 @@ BEGIN
 	end
 	drop table #tmpNewCone
 
-	if @UseStockUseConeQty > 0 or @UseStockNewConeQty > 0 
+	if @UseStockUseConeQty > 0
 	begin
 		DECLARE ThreadStock_cur CURSOR FOR 
-		select NewCone,UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc,NewCone desc --小於需求數量,從多的開始分配
+		select UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc--小於需求數量,從多的開始分配
 		OPEN ThreadStock_cur --開始run cursor                   
-		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+		FETCH NEXT FROM ThreadStock_cur INTO @UsedCone,@ThreadLocationID
 		WHILE @@FETCH_STATUS = 0
 		BEGIN		
 			if(@UsedCone > @UseStockUseConeQty)
@@ -1281,6 +1281,32 @@ BEGIN
 				set @UseStockUseConeQty = @UseStockUseConeQty - @UsedCone
 			end
 
+			if(@UsedCone > 0)      
+			begin
+					insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+					values( @Refno, @ThreadColorID, 0, @UsedCone, @ThreadLocationID)
+			end		
+
+			if(@UseStockUseConeQty = 0)
+			begin
+				break
+			end
+
+		FETCH NEXT FROM ThreadStock_cur INTO @UsedCone,@ThreadLocationID
+		END
+		CLOSE ThreadStock_cur
+		DEALLOCATE ThreadStock_cur
+	end
+	---------------------------------------------------------
+	
+	if  @UseStockNewConeQty > 0 
+	begin
+		DECLARE ThreadStock_cur CURSOR FOR 
+		select NewCone,ThreadLocationID from #Conetmp order by NewCone desc --小於需求數量,從多的開始分配
+		OPEN ThreadStock_cur --開始run cursor                   
+		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@ThreadLocationID
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
 			if(@NewCone > @UseStockNewConeQty)
 			begin
 				set @NewCone = @UseStockNewConeQty
@@ -1291,28 +1317,29 @@ BEGIN
 				set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
 			end
 
-			if(@NewCone > 0 or @UsedCone > 0)      
+			if(@NewCone > 0)      
 			begin
 					insert into #ThreadIssue_Detail(Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
-					values( @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
+					values( @Refno, @ThreadColorID, @NewCone, 0, @ThreadLocationID)
 			end		
 
-			if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
+			if(@UseStockNewConeQty = 0)
 			begin
 				break
 			end
 
-		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@ThreadLocationID
 		END
 		CLOSE ThreadStock_cur
 		DEALLOCATE ThreadStock_cur
 	end
-
+	---------------------------------------------------------
 	drop table #Conetmp
 FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
 END
 CLOSE ThreadRequisition_Detail_cur
 DEALLOCATE ThreadRequisition_Detail_cur
+
 
 select * from #ThreadIssue_Detail
 drop table #ThreadIssue_Detail
@@ -1388,12 +1415,12 @@ BEGIN
 	end
 	drop table #tmpNewCone
 	
-	if @UseStockUseConeQty > 0 or @UseStockNewConeQty > 0 
+	if @UseStockUseConeQty > 0
 	begin
 		DECLARE ThreadStock_cur CURSOR FOR 
-		select NewCone,UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc,NewCone desc --小於需求數量,從多的開始分配
+		select UsedCone,ThreadLocationID from #Conetmp order by UsedCone desc--小於需求數量,從多的開始分配
 		OPEN ThreadStock_cur --開始run cursor                   
-		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+		FETCH NEXT FROM ThreadStock_cur INTO @UsedCone,@ThreadLocationID
 		WHILE @@FETCH_STATUS = 0
 		BEGIN		
 			if(@UsedCone > @UseStockUseConeQty)
@@ -1406,23 +1433,13 @@ BEGIN
 				set @UseStockUseConeQty = @UseStockUseConeQty - @UsedCone
 			end
 
-			if(@NewCone > @UseStockNewConeQty)
-			begin
-				set @NewCone = @UseStockNewConeQty
-				set @UseStockNewConeQty = 0
-			end
-			else
-			begin
-				set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
-			end
-
-			if(@NewCone > 0 or @UsedCone > 0)      
+			if(@UsedCone > 0)      
 			begin
 					insert into #ThreadIssue_Detail(ID, Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
-					values('{issueID}', @Refno, @ThreadColorID, @NewCone, @UsedCone, @ThreadLocationID)
-			end		
+					values('{issueID}', @Refno, @ThreadColorID, 0, @UsedCone, @ThreadLocationID)
+			end
 
-			if(@UseStockUseConeQty = 0 and @UseStockNewConeQty = 0)
+			if(@UseStockUseConeQty = 0)
 			begin
 				break
 			end
@@ -1433,6 +1450,42 @@ BEGIN
 		DEALLOCATE ThreadStock_cur
 	end
 
+	---------------------------------------------------------
+	
+	if  @UseStockNewConeQty > 0 
+	begin
+		DECLARE ThreadStock_cur CURSOR FOR 
+		select NewCone,ThreadLocationID from #Conetmp order by NewCone desc --小於需求數量,從多的開始分配
+		OPEN ThreadStock_cur --開始run cursor                   
+		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@ThreadLocationID
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			if(@NewCone > @UseStockNewConeQty)
+			begin
+				set @NewCone = @UseStockNewConeQty
+				set @UseStockNewConeQty = 0
+			end
+			else
+			begin
+				set @UseStockNewConeQty = @UseStockNewConeQty - @NewCone
+			end
+
+			if(@NewCone > 0)      
+			begin
+					insert into #ThreadIssue_Detail(ID, Refno,ThreadColorID,NewCone,UsedCone,ThreadLocationID)
+					values('{issueID}', @Refno, @ThreadColorID, @NewCone, 0, @ThreadLocationID)
+			end		
+
+			if(@UseStockNewConeQty = 0)
+			begin
+				break
+			end
+
+		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@ThreadLocationID
+		END
+		CLOSE ThreadStock_cur
+		DEALLOCATE ThreadStock_cur
+	end
 	drop table #Conetmp
 FETCH NEXT FROM ThreadRequisition_Detail_cur INTO @Refno,@ThreadColorID,@UseStockNewConeQty,@UseStockUseConeQty
 END
