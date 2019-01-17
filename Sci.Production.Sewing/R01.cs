@@ -9,6 +9,9 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Net.Http;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace Sci.Production.Sewing
 {
@@ -24,7 +27,7 @@ namespace Sci.Production.Sewing
         private DataTable _printData;
         private DataTable _ttlData;
         private DataTable _subprocessData;
-
+        private APIData dataMode = new APIData();
         /// <summary>
         /// R01
         /// </summary>
@@ -841,6 +844,23 @@ order by ArtworkTypeID"),
                     }
                 }
             }
+            #region Direct Manpower(From PAMS)
+            if (Sci.Env.User.Keyword.EqualString("CM1") || 
+                Sci.Env.User.Keyword.EqualString("CM2") || 
+                Sci.Env.User.Keyword.EqualString("CM3"))
+            {
+                Microsoft.Office.Interop.Excel.Range range = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[insertRow];
+                range.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
+            }
+            else
+            {
+                this.dataMode = new APIData();
+                GetApiData.GetAPIData(this._factory, (DateTime)this.dateDate.Value, (DateTime)this.dateDate.Value, out this.dataMode);
+                worksheet.Cells[insertRow, 5] = this.dataMode.results[0].SewTtlManpower;
+                worksheet.Cells[insertRow, 7] = this.dataMode.results[0].SewTtlManhours;
+                insertRow++;
+            }
+            #endregion
 
             insertRow = insertRow + 2;
             foreach (DataRow dr in this._subprocessData.Rows)
