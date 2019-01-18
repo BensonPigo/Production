@@ -131,6 +131,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Resultdry = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Resultwet = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region grid MouseClickEvent
             Rollcell.EditingMouseDown += (s, e) =>
@@ -140,8 +141,72 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string sqlcmd = string.Format(@"Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    string selectedDyelot = dr["Dyelot"].ToString();
+
+                    string sqlcmd = string.Empty;
+
+                    if (MyUtility.Check.Empty(selectedDyelot))
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'";
+                    }
+                    else
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'
+                                                AND Dyelot='{selectedDyelot}'";
+                    }
+
                     SelectItem item = new SelectItem(sqlcmd, "15,12", dr["roll"].ToString(), false, ",");
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
+                    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
+                }
+            };
+
+            DyelotCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string selectedRoll = dr["Roll"].ToString();
+
+                    string sqlcmd = string.Empty;
+                    if (MyUtility.Check.Empty(selectedRoll))
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'";
+                    }
+                    else
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'
+                                                AND Roll='{selectedRoll}'";
+                    }
+
+                    SelectItem item = new SelectItem(sqlcmd, "15,12", dr["dyelot"].ToString(), false, ",");
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -263,10 +328,48 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 else
                 {
                     dr["Roll"] = "";
-                    dr["Dyelot"] = "";
+                    //dr["Dyelot"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
+                    return;
+                }
+            };
+
+            DyelotCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Dyelot"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return 
+                if (oldvalue.Equals(newvalue)) return;
+                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return;
+                }
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue) return;
+                }
+
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                DataRow roll_dr;
+                if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
+                {
+                    dr["Roll"] = roll_dr["Roll"];
+                    dr["Dyelot"] = roll_dr["Dyelot"];
+                    dr.EndEdit();
+                }
+                else
+                {
+                    //dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Dyelot: {0}> data not found!", e.FormattedValue));
                     return;
                 }
             };
@@ -359,7 +462,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), settings: DyelotCell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out ResultCell)
             .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell, iseditingreadonly: true)
             .Text("ResultDry", header: "Result(Dry)", width: Widths.AnsiChars(5), settings: Resultdry, iseditingreadonly: true)
@@ -370,6 +473,16 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), userNamePropertyName: "Name", iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
             .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
+
+
+            #region 可編輯欄位變色
+            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            #endregion
+
+
             return true;
         }
 
