@@ -1444,7 +1444,7 @@ BEGIN
 				break
 			end
 
-		FETCH NEXT FROM ThreadStock_cur INTO @NewCone,@UsedCone,@ThreadLocationID
+		FETCH NEXT FROM ThreadStock_cur INTO @UsedCone,@ThreadLocationID
 		END
 		CLOSE ThreadStock_cur
 		DEALLOCATE ThreadStock_cur
