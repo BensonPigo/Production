@@ -2307,6 +2307,16 @@
     <Build Include="dbo\Tables\Order_ECMNFailed.sql" />
     <Build Include="dbo\Functions\GetCMPDetail.sql" />
     <Build Include="dbo\Tables\SewingOutput_DailyUnlock.sql" />
+    <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData.sql" />
+    <Build Include="dbo\Tables\WorkOrder_SizeRatioRevisedMarkerOriginalData.sql" />
+    <Build Include="dbo\Tables\WorkOrder_PatternPanelRevisedMarkerOriginalData.sql" />
+    <Build Include="dbo\Tables\WorkOrder_DistributeRevisedMarkerOriginalData.sql" />
+    <Build Include="dbo\Tables\SpreadingTime.sql" />
+    <Build Include="dbo\Tables\CuttingTime.sql" />
+    <Build Include="dbo\Tables\CuttingMachine_detail.sql" />
+    <Build Include="dbo\Tables\CuttingMachine.sql" />
+    <Build Include="dbo\Functions\GetSpreadingTime.sql" />
+    <Build Include="dbo\Functions\GetCuttingTime.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
