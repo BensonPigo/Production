@@ -255,14 +255,19 @@ where a.ID='{0}'"
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) where Resign is null";
-                    SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["DryScale"].ToString());
+
+                    string sqlCmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Heat a WITH (NOLOCK) 
+                                         INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
+                                         where a.id ={maindr["id"]} 
+                                         ";
+                    SelectItem item1 = new SelectItem(sqlCmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
                         return;
                     }
-                    e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Name"] = item1.GetSelecteds()[0]["Name"];
                 }
             };
 
@@ -514,26 +519,25 @@ where a.ID='{0}'"
             LabTechCell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["inspector"].ToString();
-                string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
                 if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
-                if (oldvalue == newvalue) return;
-                string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID and b.Resign is null where a.id ='{0}'", maindr["id"]);
-                DataRow roll_dr;
-                if (MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
+                
+                string sqlCmd = $"SELECT ID,Name FROM Pass1 WHERE ID='{e.FormattedValue}'";
+                DataRow userDt;
+
+                if (!MyUtility.Check.Seek(sqlCmd, out userDt))
                 {
-                    dr["Inspector"] = roll_dr["Inspector"];
-                    dr.EndEdit();
+                    MyUtility.Msg.WarningBox(string.Format("<Lab Tech: {0}> data not found!", e.FormattedValue));
+
+                    dr["inspector"] = string.Empty;
+                    dr["Name"] = string.Empty;
+                    return;
                 }
                 else
                 {
-                    dr["Inspector"] = "";
-                    dr.EndEdit();
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!", e.FormattedValue));
-                    return;
+                    dr["inspector"] = userDt["ID"].ToString();
+                    dr["Name"] = userDt["Name"].ToString();
                 }
             };
             #endregion
@@ -556,7 +560,7 @@ where a.ID='{0}'"
               .Numeric("VerticalRate", header: "Vertical Shrinkage Rate", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true)
               .Date("InspDate", header: "Test Date", width: Widths.AnsiChars(10))
               .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
-              .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+              .Text("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
@@ -679,7 +683,7 @@ where a.ID='{0}'"
             }
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["inspector"])))
             {
-                MyUtility.Msg.WarningBox("<Inspector> can not be empty.");
+                MyUtility.Msg.WarningBox("<Lab Tech> can not be empty.");
                 return false;
             }
             #endregion
