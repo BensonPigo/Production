@@ -849,8 +849,8 @@ order by ArtworkTypeID"),
                 Sci.Env.User.Keyword.EqualString("CM2") || 
                 Sci.Env.User.Keyword.EqualString("CM3"))
             {
-                Microsoft.Office.Interop.Excel.Range range = (Microsoft.Office.Interop.Excel.Range)worksheet.Rows[insertRow];
-                range.Delete(Microsoft.Office.Interop.Excel.XlDirection.xlDown);
+                worksheet.Cells[insertRow, 5] = 0;
+                worksheet.Cells[insertRow, 7] = 0;
             }
             else
             {

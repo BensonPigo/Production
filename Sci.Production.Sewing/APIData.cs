@@ -12,13 +12,13 @@ namespace Sci.Production.Sewing
     {
         public DateTime Date { get; set; }
 
-        public string SewTtlManpower { get; set; }
+        public double SewTtlManpower { get; set; }
 
-        public string SewTtlManhours { get; set; }
+        public double SewTtlManhours { get; set; }
 
-        public string TtlManpower { get; set; }
+        public double TtlManpower { get; set; }
 
-        public string TtlManhours { get; set; }
+        public double TtlManhours { get; set; }
 
         public List<APIData> results;
     }
