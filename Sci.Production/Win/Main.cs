@@ -421,10 +421,80 @@ namespace Sci.Production
         }
         private void OpenForm(Sci.Win.Forms.Base form)
         {
-            form.MdiParent = this;
-            form.Show();
-            form.Focus();
+            // Check是否是最新版本
+            var isLaterstVersion = CheckAppIsNotLatestVersion();
+            if (isLaterstVersion == false)
+            {
+                form.Text += @"<<< NOT LATEST >>>";
+            }
+
+            if (form != null && form is Form)
+            {
+                form.MdiParent = this;
+                form.Show();
+                form.Focus();
+            }
+
+            if (isLaterstVersion == false)
+            {
+                this.AlertForNotLatestVersion();
+            }
         }
+
+        private bool AlertForNotLatestVersion()
+        {
+            System.Windows.Forms.Application.DoEvents();
+            MessageBox.Show(new Form() { TopMost = true }, @"warnning!!
+
+main menu is updated!!!
+
+please re-open main menu.
+
+thank you
+-----------------------------
+注意!!
+
+已經有新版本的主程式發布
+
+請將手邊事情告一段落後，重新開啟主選單
+
+謝謝您的配合", "Warnning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            return true;
+        }
+
+
+        internal static bool CheckAppIsNotLatestVersion()
+        {
+            if (((bool?)AppDomain.CurrentDomain.GetData("NewVerDetectionByLuncher")).GetValueOrDefault(false) == true)
+            {
+                var hasNewVersion = ((bool?)AppDomain.CurrentDomain.GetData("HasNewVersion")).GetValueOrDefault(false);
+                return !hasNewVersion;
+            }
+
+            var appDir = AppDomain.CurrentDomain.BaseDirectory;
+            var appDI = new DirectoryInfo(appDir); // v0215_1050 (Debug)
+            var parentDI = appDI.Parent; // MIS (x86)
+            var rePattern = @"Production_[0-9]{12}";
+
+            var m = System.Text.RegularExpressions.Regex.Match(appDI.Name, rePattern);
+            if (m.Success == true)
+            {
+                var maxVerDirName = parentDI.GetDirectories()
+                    .Select(childDI => System.Text.RegularExpressions.Regex.Match(childDI.Name, rePattern))
+                    .Where(r => r.Success == true)
+                    .Select(r => r.Value)
+                    .Max();
+                if (maxVerDirName != null && maxVerDirName != appDI.Name)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
         private ToolStripMenuItem AddMenu(ToolStripMenuItem owner, string text, EventHandler onclick = null)
         {
             var menuitem = new ToolStripMenuItem(text);
