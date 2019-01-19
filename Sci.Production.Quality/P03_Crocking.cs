@@ -260,14 +260,19 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) ";
+                    //string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) ";
+
+                    string scalecmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Crocking a WITH (NOLOCK) 
+                                         INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
+                                         ";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
                         return;
                     }
-                    dr["Inspector"] = item1.GetSelectedString();
+                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Name"] = item1.GetSelecteds()[0]["Name"];
                 }
             };
 
@@ -427,24 +432,24 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             LabTechCell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["inspector"].ToString();
-                string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
                 if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
-                if (dr.RowState != DataRowState.Added)
+                string sqlCmd = $"SELECT ID,Name FROM Pass1 WHERE ID='{e.FormattedValue}'";
+                DataRow userDt;
+
+                if (!MyUtility.Check.Seek(sqlCmd,out userDt))
                 {
-                    if (oldvalue == newvalue) return;
-                }
-                string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID and b.Resign is not null where a.id ='{0}'", maindr["id"]);
-                DataRow roll_dr;
-                if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
-                {
-                    dr["Inspector"] = "";
-                    dr.EndEdit();
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!", e.FormattedValue));
+                    MyUtility.Msg.WarningBox(string.Format("<Lab Tech: {0}> data not found!", e.FormattedValue));
+
+                    dr["inspector"] = string.Empty;
+                    dr["Name"] = string.Empty;
                     return;
+                }
+                else
+                {
+                    dr["inspector"] = userDt["ID"].ToString();
+                    dr["Name"] = userDt["Name"].ToString();
                 }
 
             };
@@ -452,7 +457,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             {
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    MyUtility.Msg.WarningBox("<inspdate> cannot be empty!");
+                    MyUtility.Msg.WarningBox("<Lab Tech> cannot be empty!");
                     e.Cancel = true;
                     return;
                 }
@@ -469,8 +474,8 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell, iseditingreadonly: true)
             .Text("ResultWet", header: "Result(Wet)", width: Widths.AnsiChars(5), settings: Resultwet, iseditingreadonly: true)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: InspDateCell)
-            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), iseditingreadonly: true, settings: LabTechCell)
-            .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), userNamePropertyName: "Name", iseditingreadonly: true)
+            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16),  settings: LabTechCell)
+            .Text("Name", header: "Name", width: Widths.AnsiChars(25),  iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
             .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
 
@@ -479,6 +484,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
             grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
             grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.Pink;
             grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
@@ -636,7 +642,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     update_cmd = @"update FIR_Laboratory_Crocking
                     set ID=@ID,roll=@roll,Dyelot=@Dyelot,DryScale=@DryScale,WetScale=@WetScale,Inspdate=@Inspdate,Inspector=@Inspector,
                         Result=@Result,Remark=@Remark,EditDate=@EditDate,EditName=@EditName,ResultDry=@ResultDry,ResultWet=@ResultWet
-                        where id=@id and roll=@rollbefore";
+                        where id=@id AND roll=@roll AND Dyelot=@Dyelot and roll=@rollbefore";
 
                     spamUpd.Add(new SqlParameter("@id", dr["ID"]));
                     spamUpd.Add(new SqlParameter("@roll", dr["roll"]));
