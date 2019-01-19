@@ -283,7 +283,6 @@ where a.ID='{0}'"
                     //string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) where Resign is null";
                     string sqlCmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Wash a WITH (NOLOCK) 
                                          INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
-                                         where a.id ={maindr["id"]} 
                                          ";
                     SelectItem item1 = new SelectItem(sqlCmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();

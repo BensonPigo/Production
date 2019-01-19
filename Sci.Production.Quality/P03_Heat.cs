@@ -258,7 +258,6 @@ where a.ID='{0}'"
 
                     string sqlCmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Heat a WITH (NOLOCK) 
                                          INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
-                                         where a.id ={maindr["id"]} 
                                          ";
                     SelectItem item1 = new SelectItem(sqlCmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();

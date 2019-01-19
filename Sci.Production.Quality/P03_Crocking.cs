@@ -264,7 +264,6 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
                     string scalecmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Crocking a WITH (NOLOCK) 
                                          INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
-                                         where a.id ={maindr["id"]} 
                                          ";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
