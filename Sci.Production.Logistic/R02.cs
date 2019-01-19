@@ -117,7 +117,7 @@ namespace Sci.Production.Logistic
             }
 
             sqlcmd.Append(@"
-select a.MDivisionID,a.FactoryID,a.OrderID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled
+select a.MDivisionID,a.FactoryID,a.OrderID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled,ActPulloutDate
 from(
 select 
 p.MDivisionID
@@ -130,6 +130,7 @@ p.MDivisionID
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,pd.id,pd.Seq,o.PulloutComplete 
+,[ActPulloutDate] = o.ActPulloutDate
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -153,6 +154,7 @@ p.MDivisionID
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
 ,pd.id,pd.Seq,o.PulloutComplete 
+,[ActPulloutDate] = o.ActPulloutDate
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -210,7 +212,7 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
 
             // 填內容值
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 9];
+            object[,] objArray = new object[1, 10];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
@@ -222,7 +224,8 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
                 objArray[0, 6] = dr["ClogLocationId"];
                 objArray[0, 7] = dr["BrandID"];
                 objArray[0, 8] = dr["Cancelled"];
-                worksheet.Range[string.Format("A{0}:I{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 9] = dr["ActPulloutDate"];
+                worksheet.Range[string.Format("A{0}:J{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
