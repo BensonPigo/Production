@@ -17,22 +17,14 @@ namespace Sci.Production.Subcon
 {
     public partial class R32 : Sci.Win.Tems.PrintForm
     {
-        string StartDate, EndDate, SubProcess, Factory;
+        string subProcess;
+        string factory;
         DataTable printData;
 
         public R32(ToolStripMenuItem menuitem)
             :base(menuitem)
         {
             InitializeComponent();
-            #region set ComboSubPress
-            DataTable dtSubPress;
-            DBProxy.Current.Select(null, @"
-select Id 
-from SubProcess 
-where IsRFIDProcess=1
-", out dtSubPress);
-            MyUtility.Tool.SetupCombox(comboSubProcess, 1, dtSubPress);
-            #endregion
             #region set ComboFactory
             DataTable dtFactory;
             DBProxy.Current.Select(null, @"
@@ -50,38 +42,70 @@ where Junk != 1", out dtFactory);
         protected override bool ValidateInput()
         {
             #region 判斷必輸條件
-            if (dateFarmOutDate.Value1.Empty() || dateFarmOutDate.Value2.Empty())
+            if (!this.dateFarmOutDate.HasValue &&
+                !this.dateBundleCdate.HasValue &&
+                !this.dateBundleScan.HasValue)
             {
-                MyUtility.Msg.InfoBox("Farm Out Date Can't be empty.");
+                MyUtility.Msg.InfoBox("[Farm Out Date],[Bundle CDate],[Bundle Scan Date] please input at least one");
                 return false;
             }
             #endregion
-            #region Set Value
-            StartDate = ((DateTime)dateFarmOutDate.Value1).ToString("yyyy-MM-dd");
-            EndDate = ((DateTime)dateFarmOutDate.Value2).ToString("yyyy-MM-dd");
-            SubProcess = comboSubProcess.Text;
-            Factory = comboFactory.Text;
-            #endregion 
+
+            this.factory = this.comboFactory.Text;
+            this.subProcess = this.txtsubprocess.Text;
+            
             return true;
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region SQl Parameters
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@StartDate", StartDate));
-            listSqlPar.Add(new SqlParameter("@EndDate", EndDate));
-            listSqlPar.Add(new SqlParameter("@SubProcess", SubProcess));
-            listSqlPar.Add(new SqlParameter("@Factory", Factory));
+            #region SQL first where
+            List<string> FirstWhere = new List<string>();
+
+            if (this.dateFarmOutDate.HasValue)
+            {
+                FirstWhere.Add($@"  and b.Id LIKE 'TB%' 
+		                            and b.IssueDate >= @dateFarmOutDateFrom 
+		                            and b.IssueDate <= @dateFarmOutDateTo ");
+                listSqlPar.Add(new SqlParameter("@dateFarmOutDateFrom", this.dateFarmOutDate.DateBox1.Value));
+                listSqlPar.Add(new SqlParameter("@dateFarmOutDateTo", this.dateFarmOutDate.DateBox2.Value));
+            }
+
+            if (this.dateBundleCdate.HasValue)
+            {
+                FirstWhere.Add($@" and exists (select 1 from Bundle bud with (nolock)
+							                    inner join Bundle_Detail budd with (nolock) on bud.ID = budd.Id
+							                    where budd.BundleNo = bd.BundleNo and bud.Cdate >= @dateBundleCdateFrom and bud.Cdate <= @dateBundleCdateTo) ");
+                listSqlPar.Add(new SqlParameter("@dateBundleCdateFrom", this.dateBundleCdate.DateBox1.Value));
+                listSqlPar.Add(new SqlParameter("@dateBundleCdateTo", this.dateBundleCdate.DateBox2.Value));
+            }
+
+            if (this.dateBundleScan.HasValue)
+            {
+                FirstWhere.Add($@"  and (	(b.Id LIKE 'TB%' and b.IssueDate >= @dateBundleScanFrom and b.IssueDate <= @dateBundleScanTo) or
+				                            (b.Id LIKE 'TC%' and bd.ReceiveDate >= @dateBundleScanFrom and bd.ReceiveDate <= @dateBundleScanTo)) ");
+                listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", this.dateBundleScan.DateBox1.Value));
+                listSqlPar.Add(new SqlParameter("@dateBundleScanTo", this.dateBundleScan.DateBox2.Value));
+            }
+            
             #endregion 
-            #region SQL Filte
-            List<string> filte = new List<string>();
-            if (!Factory.Empty())
-                filte.Add("	and O.FTYGroup = @Factory   --Factory");
+            #region SQL final where
+            List<string> finalWhere = new List<string>();
+            if (!factory.Empty())
+            {
+                finalWhere.Add("	and O.FTYGroup = @Factory   --Factory");
+                listSqlPar.Add(new SqlParameter("@Factory", factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.subProcess))
+            {
+                finalWhere.Add($@" and (s.id in ('{subProcess.Replace(",", "','")}') or '{subProcess}'='')");
+            }
+
             #endregion
             #region SQL CMD
-            string sqlCmd = string.Format(@"
-
+            string sqlCmd = $@"
 
 --筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
 
@@ -90,10 +114,7 @@ SELECT DISTINCT bd.BundleNo ,b.StartProcess
 INTO #Base
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
-WHERE   b.Id LIKE 'TB%' 
-		and b.IssueDate >= @StartDate 
-		and b.IssueDate <= @EndDate
-        and b.StartProcess = @SubProcess  
+WHERE   1 = 1 {FirstWhere.JoinToString("\r\n")}  
 
 --再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
 
@@ -116,23 +137,82 @@ WHERE   b.Id LIKE 'TC%'
 
 
 --取最大IssueDate和ReceiveDate用Outer apply排序做
-SELECT  o.FactoryID
-		,o.ID
+SELECT  base.BundleNo
+		,[EXCESS] = iif(b.IsEXCESS = 0,'','Y')
+		,b.CutRef
+		,b.Orderid
+		,b.POID
+		,b.MDivisionid
+		,o.FtyGroup
+		,o.Category
+		,o.ProgramID
 		,o.StyleID
-		,bd.SizeCode
+		,o.SeasonID
+		,o.BrandID
+		,b.PatternPanel
+		,b.Cutno
+		,b.FabricPanelCode
+		,b.Article
+		,b.Colorid
+		,b.Sewinglineid
+		,b.SewingCell
+		,bd.Patterncode
+		,bd.PatternDesc
 		,bd.BundleGroup
-		,base.BundleNo
-		,BodyCutNo=Concat(b.FabricPanelCode, ' ',b.Cutno)
+		,bd.SizeCode
+		,[Artwork] = sub.sub
 		,bd.Qty
-		,Color = Concat(b.Article, ' ', b.Colorid)
-		,[MaxOutDate]=FarmOut.IssueDate
-		,[MaxInDate]=FarmIn.ReceiveDate
+		,[SubProcess] =  s.Id
+		,b.Cdate
+		,[FarmOutDate]=FarmOut.IssueDate
+		,[FarmInDate]=FarmIn.ReceiveDate
+		,[AvgTime] = case  when s.InOutRule = 1 then iif(FarmIn.ReceiveDate is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(FarmIn.ReceiveDate,''))/24.0,2))
+					when s.InOutRule = 2 then iif(FarmOut.IssueDate is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(FarmOut.IssueDate,''))/24.0,2))
+					when s.InOutRule in (3,4) and FarmIn.ReceiveDate is null and FarmOut.IssueDate is null then null
+					when s.InOutRule = 3 then iif(FarmOut.IssueDate is null or FarmIn.ReceiveDate is null, null, round(Datediff(Hour,isnull(FarmIn.ReceiveDate,''),isnull(FarmOut.IssueDate,''))/24.0,2))
+					when s.InOutRule = 4 then iif(FarmOut.IssueDate is null or FarmIn.ReceiveDate is null, null, round(Datediff(Hour,isnull(FarmOut.IssueDate,''),isnull(FarmIn.ReceiveDate,''))/24.0,2))
+					end
+		,[TimeRangeFail] = case	when s.InOutRule = 1 and FarmIn.ReceiveDate is null then 'No Scan'
+						when s.InOutRule = 2 and FarmOut.IssueDate is null then 'No Scan'
+						when s.InOutRule in (3,4) and FarmOut.IssueDate is null and FarmIn.ReceiveDate is null then 'No Scan'
+						when s.InOutRule = 3 and (FarmOut.IssueDate is null or FarmIn.ReceiveDate is null) then 'Not Valid'
+						when s.InOutRule = 4 and (FarmOut.IssueDate is null or FarmIn.ReceiveDate is null) then 'Not Valid'
+						else '' end
+		,EstCut.EstCutDate
+		,EstCut.CuttingOutputDate
 		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
-		, '' remark  
+		, '' remark 
+into #result
 FROM #Base base
 LEFT JOIN Bundle_Detail bd ON bd.BundleNo=base.BundleNo
 LEFT JOIN Bundle b ON b.ID =bd.Id
 LEFT JOIN Orders o ON o.ID=b.Orderid
+OUTER APPLY(
+	SELECT	[EstCutDate] = MAX(w.EstCutDate),
+			[CuttingOutputDate] = MAX(co.cDate)
+	from WorkOrder w WITH (NOLOCK)
+	LEFT JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON w.Ukey = cod.WorkOrderUkey
+	LEFT JOIN CuttingOutput co WITH (NOLOCK) ON cod.ID = co.ID
+	where w.CutRef = b.CutRef and w.MDivisionId = b.MDivisionid
+)  EstCut
+outer apply(
+    select s.ID,s.InOutRule
+    from SubProcess s
+        where exists (
+                        select 1 from Bundle_Detail_Art bda
+                                where   bda.BundleNo = bd.BundleNo    and
+                                        bda.ID = b.ID   and
+                                        bda.SubProcessID = s.ID
+                        ) or s.IsRFIDDefault = 1
+) s
+outer apply(
+	    select sub= stuff((
+		    Select distinct concat('+', bda.SubprocessId)
+		    from Bundle_Detail_Art bda WITH (NOLOCK) 
+		    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+		    for xml path('')
+	    ),1,1,'')
+) as sub
 OUTER APPLY(
    SELECT TOP 1 EndSite,BundleNo,StartProcess,IssueDate
    FROm #FarmOutList  
@@ -146,12 +226,64 @@ OUTER APPLY(
    ORDER BY lastEditDate DESC
 )FarmIn
 INNER join LocalSupp ls on ls.id=FarmOut.EndSite
-WHERE 1=1 {0}
-ORDER BY base.BundleNo
+WHERE 1=1 {finalWhere.JoinToString("\r\n")}
 
-Drop Table #FarmOutList,#FarmInList,#Base
 
-", filte.JoinToString("\r\n"));
+select
+		BundleNo
+		,EXCESS
+		,CutRef
+		,Orderid
+		,POID
+		,MDivisionid
+		,FtyGroup
+		,Category
+		,ProgramID
+		,StyleID
+		,SeasonID
+		,BrandID
+		,PatternPanel
+		,Cutno
+		,FabricPanelCode
+		,Article
+		,Colorid
+		,Sewinglineid
+		,SewingCell
+		,Patterncode
+		,PatternDesc
+		,BundleGroup
+		,SizeCode
+		,Artwork
+		,Qty
+		,SubProcess
+		,Cdate
+		,FarmOutDate
+		,FarmInDate
+		,AvgTime
+		,[TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
+                        when AvgTime < 0 then 'Not Valid'
+						when AvgTime >= 0 and AvgTime < 1 then '<1'
+						when AvgTime >= 1 and AvgTime < 2 then '1-2'
+						when AvgTime >= 2 and AvgTime < 3 then '2-3'
+						when AvgTime >= 3 and AvgTime < 4 then '3-4'
+						when AvgTime >= 4 and AvgTime < 5 then '4-5'
+						when AvgTime >= 5 and AvgTime < 10 then '5-10'
+						when AvgTime >= 10 and AvgTime < 20 then '10-20'
+						when AvgTime >= 20 and AvgTime < 30 then '20-30'
+						when AvgTime >= 30 and AvgTime < 40 then '30-40'
+						when AvgTime >= 40 and AvgTime < 50 then '40-50'
+						when AvgTime >= 50 and AvgTime < 60 then '50-60'
+						else '>60' end
+		,EstCutDate
+		,CuttingOutputDate
+		,Subcon
+		,remark 
+from #result
+
+
+Drop Table #FarmOutList,#FarmInList,#Base,#result
+
+";
 
             #endregion
             #region Get Data
