@@ -2317,6 +2317,7 @@
     <Build Include="dbo\Tables\CuttingMachine.sql" />
     <Build Include="dbo\Functions\GetSpreadingTime.sql" />
     <Build Include="dbo\Functions\GetCuttingTime.sql" />
+    <Build Include="dbo\Functions\GetActualPerimeter.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
