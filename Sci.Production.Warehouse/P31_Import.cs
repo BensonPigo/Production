@@ -18,6 +18,9 @@ namespace Sci.Production.Warehouse
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
+
         protected DataTable dtBorrow;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
@@ -36,6 +39,7 @@ namespace Sci.Production.Warehouse
             StringBuilder strSQLCmd = new StringBuilder();
             String sp = this.txtToSP.Text.TrimEnd();
             String fromSP = this.txtBorrowFromSP.Text.TrimEnd();
+            int intNoLock = (this.chkNoLock.Checked) ? 1 : 0;
 
             if (string.IsNullOrWhiteSpace(sp) || txtSeq.checkSeq1Empty() 
                 || txtSeq.checkSeq2Empty() || string.IsNullOrWhiteSpace(fromSP))
@@ -78,7 +82,7 @@ where   po.id = '{0}'
                 #endregion
                 // 建立可以符合回傳的Cursor
 
-                strSQLCmd.Append(string.Format(@"
+                strSQLCmd.Append($@"
 select  selected = 0
         ,id = '' 
         ,FromRoll = c.Roll 
@@ -104,6 +108,7 @@ select  selected = 0
         ,toseq2 = b.seq2 
         ,toFactoryID = (select FactoryID from Orders where b.id = Orders.id)
         ,a.fabrictype
+        ,c.Lock
 from dbo.PO_Supp_Detail a WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
 inner join Orders on c.poid = Orders.id
@@ -118,19 +123,30 @@ outer apply(
 	    and Seq2 = b.seq2
         and Roll = c.Roll
 ) as toSP
-Where a.id = '{0}' and b.id = '{1}' and b.seq1 = '{2}' and b.seq2='{3}' and Factory.MDivisionID = '{4}'
-and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq.seq1, txtSeq.seq2, Sci.Env.User.Keyword)); // 
+Where a.id = '{fromSP}' and b.id = '{sp}' and b.seq1 = '{txtSeq.seq1}' 
+and b.seq2='{txtSeq.seq2}' and Factory.MDivisionID = '{Sci.Env.User.Keyword}'
+and c.inqty-c.outqty + c.adjustqty > 0 ");
 
                 this.ShowWaitMessage("Data Loading....");
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out dtBorrow))
                 {
                     if (dtBorrow.Rows.Count == 0)
-                    { MyUtility.Msg.WarningBox("Data not found!!"); }
-                    listControlBindingSource1.DataSource = dtBorrow;
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }   
+                    listControlBindingSource1.DataSource = dtBorrow;                 
+                    grid_Filter();
+                    if (this.gridImport.Rows.Count == 0)
+                    {
+                        this.chkNoLock.Checked = false;
+                        grid_Filter();
+                    }                    
                     dtBorrow.DefaultView.Sort = "fromseq1,fromseq2,location,fromdyelot,balance desc";
                 }
+                
                 else { ShowErr(strSQLCmd.ToString(), result); }
+                ChangeColor();
                 this.HideWaitMessage();
             }
         }
@@ -188,15 +204,12 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq.seq
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) //4
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true)      //5
                 .ComboBox("fromstocktype", header: "From" + Environment.NewLine + "Stock" + Environment.NewLine + "Type", iseditable: false).Get(out cbb_stocktype)    //6
-                .Numeric("balance", header: "Stock Qty", iseditable: true, decimal_places: 2, integer_places: 10) //7
+                .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //7
                 .Text("location", header: "From Location", iseditingreadonly: true)      //8
                 .Text("toseq", header: "To" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //9
-                .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)) //10
-                .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns)  //11
+                .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)).Get(out col_roll) //10
+                .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns).Get(out col_qty)  //11
                ;
-
-            this.gridImport.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
             cbb_stocktype.ValueMember = "Key";
@@ -313,6 +326,99 @@ and  c.lock = 0 and c.inqty-c.outqty + c.adjustqty > 0 ", fromSP, sp, txtSeq.seq
 //                }
 //            }
 
+        }
+
+        private void chkNoLock_CheckedChanged(object sender, EventArgs e)
+        {
+            grid_Filter();
+            ChangeColor();
+        }
+
+        private void grid_Filter()
+        {
+            string filter = string.Empty;
+            DataTable dt = (DataTable)listControlBindingSource1.DataSource;
+            if (dt != null || dt.Rows.Count > 0)
+            {
+                switch (this.chkNoLock.Checked)
+                {
+                    case true:
+                        filter = @"lock = 'False'";
+                        break;
+                    case false:
+                        filter = string.Empty;
+                        break;
+                }
+            ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+            }        
+        }
+
+        private void ChangeColor()
+        {
+            DataTable tmp_dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (tmp_dt == null || gridImport.Rows.Count < 1)
+            {
+                return;
+            }
+            
+            for (int i = 0; i < gridImport.Rows.Count; i++)            
+            {
+                DataRow dr = gridImport.GetDataRow(i);
+                if (gridImport.Rows.Count <= i || i <0)
+                {
+                    return;
+                }
+                
+                if (dr["Lock"].ToString() == "True")
+                {
+                    this.gridImport.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
+                }
+                else
+                {
+
+                    this.gridImport.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
+                    this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;    
+                }
+                // grid 欄位可否編輯
+                this.gridImport.RowEnter += this.Grid_RowEnter;
+            }
+        }
+
+        private void Grid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.gridImport.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(data["Lock"]))
+            {
+                col_chk.IsEditable = true;
+                col_roll.IsEditingReadOnly = false;
+                col_qty.IsEditingReadOnly = false;
+            }
+            else
+            {
+                col_chk.IsEditable = false;
+                col_roll.IsEditingReadOnly = true;
+                col_qty.IsEditingReadOnly = true;
+            }
+        }
+
+        private void gridImport_Validated(object sender, EventArgs e)
+        {
+            this.ChangeColor();
+        }
+
+        private void gridImport_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            this.ChangeColor();
         }
     }
 }
