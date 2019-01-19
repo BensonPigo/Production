@@ -18,6 +18,9 @@ namespace Sci.Production.Warehouse
         DataRow dr_master;
         DataTable dt_detail;
         Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_roll;
+
         protected DataTable dtBorrow;
         private Dictionary<string, string> di_stocktype = new Dictionary<string, string>();
 
@@ -204,8 +207,8 @@ and c.inqty-c.outqty + c.adjustqty > 0 ");
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) //7
                 .Text("location", header: "From Location", iseditingreadonly: true)      //8
                 .Text("toseq", header: "To" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //9
-                .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)) //10
-                .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns)  //11
+                .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)).Get(out col_roll) //10
+                .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns).Get(out col_qty)  //11
                ;
 
             cbb_stocktype.DataSource = new BindingSource(di_stocktype, null);
@@ -343,7 +346,7 @@ and c.inqty-c.outqty + c.adjustqty > 0 ");
                         filter = @"lock = 'False'";
                         break;
                     case false:
-                        filter = @"lock = 'True'";
+                        filter = string.Empty;
                         break;
                 }
             ((DataTable)listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
@@ -369,15 +372,42 @@ and c.inqty-c.outqty + c.adjustqty > 0 ");
                 if (dr["Lock"].ToString() == "True")
                 {
                     this.gridImport.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
-                    this.gridImport.IsEditingReadOnly = true;
                 }
                 else
                 {
 
                     this.gridImport.Columns["toroll"].DefaultCellStyle.BackColor = Color.Pink;
-                    this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
-                    this.gridImport.IsEditingReadOnly = false;
+                    this.gridImport.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;    
                 }
+                // grid 欄位可否編輯
+                this.gridImport.RowEnter += this.Grid_RowEnter;
+            }
+        }
+
+        private void Grid_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            var data = ((DataRowView)this.gridImport.Rows[e.RowIndex].DataBoundItem).Row;
+            if (data == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(data["Lock"]))
+            {
+                col_chk.IsEditable = true;
+                col_roll.IsEditingReadOnly = false;
+                col_qty.IsEditingReadOnly = false;
+            }
+            else
+            {
+                col_chk.IsEditable = false;
+                col_roll.IsEditingReadOnly = true;
+                col_qty.IsEditingReadOnly = true;
             }
         }
 
