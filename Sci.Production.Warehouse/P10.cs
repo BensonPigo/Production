@@ -424,7 +424,7 @@ outer apply(
                 }
                 if (GetSubDetailDatas(dr, out subDT))
                 {
-                    foreach (DataRow temp in subDT.ToList()) subDT.Rows.Remove(temp);
+                    foreach (DataRow temp in subDT.ToList()) temp.Delete();
 
                     foreach (DataRow dr2 in issued)
                     {
