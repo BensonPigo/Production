@@ -252,28 +252,43 @@ namespace Sci.Production.Subcon
                 ,x.ap_qty
                 ,[amount]=round(isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0),2) 
                 ,[ttl_price]= CASE WHEN  y.order_qty = 0 THEN NULL
-                                   ELSE round(isnull(x.ap_amt,0.0) / iif(y.order_qty=0,1,y.order_qty),3) + round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3)  --P3=P1+P2
+                                   ELSE round(isnull(x.ap_amt,0.0) / y.order_qty,3) + round(z.localap_amt / y.order_qty,3)  --P3=P1+P2
                                    END
                 ,[std_price]= CASE WHEN y.order_qty=0 THEN NULL
-                                   ELSE round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) 
+                                   ELSE round(y.order_amt/y.order_qty,3) 
                                    END               
                 ,[percentage]=CASE WHEN y.order_qty=0 OR y.order_amt=0 THEN NULL 
-                                   ELSE convert(varchar,round((round((isnull(x.ap_amt,0.0)+isnull(z.localap_amt,0.0)) / iif(y.order_qty=0,1,y.order_qty),3))/(round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3))*100,0))+'%'
+                                   ELSE convert(varchar,
+                                                        round(
+                                                            (
+                                                                round(
+                                                                        (isnull(x.ap_amt,0.0) + isnull(z.localap_amt,0.0)) 
+                                                                          / 
+                                                                         y.order_qty
+                                                                    ,3)) 
+                                                                / 
+                                                                (round( 
+                                                                        y.order_amt/y.order_qty
+                                                                        ,3)
+                                                            )*100
+                                                        ,0)
+
+                                                  )+'%'
                                    END
 
                 ,round(x.ap_amt,2)
                 ,[ap_price]= CASE WHEN  y.order_qty=0 THEN NULL
-                                   ELSE round(isnull(x.ap_amt,0.0) / iif(y.order_qty=0,1,y.order_qty),3)   --P1
+                                   ELSE round(isnull(x.ap_amt,0.0) / y.order_qty,3)   --P1
                                    END
                 ,[ap_percentage]= CASE WHEN y.order_amt=0 THEN NULL 
-                                   ELSE round(isnull(x.ap_amt,0.0) / iif(y.order_amt=0,1,y.order_amt),2) 
+                                   ELSE round(isnull(x.ap_amt,0.0) / y.order_amt,2) 
                                    END
                 ,[localap_amt]= round(z.localap_amt,2) 
                 ,[localap_price]= CASE WHEN y.order_qty=0 THEN NULL
-                                   ELSE round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3)   --P2
+                                   ELSE round(z.localap_amt / y.order_qty,3)   --P2
                                    END
                 ,[local_percentage]=CASE WHEN y.order_amt = 0 THEN NULL
-                                   ELSE round(z.localap_amt / iif(y.order_amt=0,1,y.order_amt),2) 
+                                   ELSE round(z.localap_amt / y.order_amt,2) 
                                    END
                 ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
                 
@@ -355,14 +370,19 @@ namespace Sci.Production.Subcon
                 ,x.ap_qty
                 ,[ap_amt]= round(x.ap_amt,2) 
                 ,[ap_price]= CASE WHEN y.order_qty=0 THEN NULL
-                             ELSE round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) 
+                             ELSE round(x.ap_amt / y.order_qty,3) 
                              END
                 ,[std_price]= CASE WHEN y.order_qty=0 THEN NULL
-                              ELSE round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) 
+                              ELSE round(y.order_amt / y.order_qty,3) 
                               END
-                ,[percentage]= CASE WHEN y.order_amt=0 or y.order_qty THEN NULL
-                               ELSE round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty) / iif(y.order_amt=0 or y.order_qty = 0,1,(y.order_amt/y.order_qty)),2) 
-                               ENS
+                ,[percentage]= CASE WHEN y.order_amt=0 or y.order_qty=0 THEN NULL
+                               ELSE round(
+                                            x.ap_amt 
+                                            / y.order_qty
+                                            / y.order_amt
+                                            / y.order_qty
+                                        ,2) 
+                               END
                 ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
 
                 from #cte
@@ -446,13 +466,14 @@ namespace Sci.Production.Subcon
                 if (artworktype.ToLower().TrimEnd() == "embroidery")
                 {
                     //價格異常的資料存在，卻沒有ReasonID
-                    sqlCmd.Append(string.Format(@"  AND round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) < round(isnull(x.ap_amt,0.0) / iif(y.order_qty=0,1,y.order_qty),3) + round(z.localap_amt / iif(y.order_qty=0,1,y.order_qty),3) "));
+                    sqlCmd.Append(string.Format(@" AND IIF(y.order_qty=0, NULL,round(y.order_amt/y.order_qty,3)) < "));
+                    sqlCmd.Append(string.Format(@" IIF(y.order_qty=0 OR (x.ap_amt=0 AND z.localap_amt=0),NULL, round(isnull(x.ap_amt,0.0) / y.order_qty,3) + round(z.localap_amt / y.order_qty,3)) "));
                     sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
                 }
                 else
                 {
                     //價格異常的資料存在，卻沒有ReasonID
-                    sqlCmd.Append(string.Format(@"  AND round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3) < round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3)  "));
+                    sqlCmd.Append(string.Format(@"  AND IIF (y.order_qty=0,NULL,round(y.order_amt/y.order_qty,3)) < IIF (y.order_qty=0,NULL,round(x.ap_amt /y.order_qty,3))  "));
                     sqlCmd.Append(string.Format(@"  AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='')  "));
                 }
             }
