@@ -178,6 +178,9 @@ Select
     ,EachconsMarkerNo = e.markerNo
     ,EachconsMarkerDownloadID = e.MarkerDownloadID 
     ,EachconsMarkerVersion = e.MarkerVersion
+    ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
+	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
+	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join dbo.order_Eachcons e WITH (NOLOCK) on e.Ukey = a.Order_EachconsUkey 
@@ -454,7 +457,34 @@ where WorkOrderUkey={0}", masterID);
                 Sci.Production.Cutting.P01_Cutpartchecksummary callNextForm = new Sci.Production.Cutting.P01_Cutpartchecksummary(CurrentMaintain["ID"].ToString());
                 callNextForm.ShowDialog(this);
             };
-            
+
+            #region ActCuttingPerimeter,StraightLength,CurvedLength 處理遮罩字串, 存檔字串要包含遮罩字元
+            DataGridViewGeneratorMaskedTextColumnSettings ActCuttingPerimeter = new DataGridViewGeneratorMaskedTextColumnSettings();
+            ActCuttingPerimeter.CellValidating += (s, e) =>
+            {
+                if (!EditMode) return;
+                if (e.RowIndex == -1) return;
+
+                setMaskString(e.FormattedValue.ToString().Replace(" ", "0"), "ActCuttingPerimeter");
+            };
+            DataGridViewGeneratorMaskedTextColumnSettings StraightLength = new DataGridViewGeneratorMaskedTextColumnSettings();
+            StraightLength.CellValidating += (s, e) =>
+            {
+                if (!EditMode) return;
+                if (e.RowIndex == -1) return;
+
+                setMaskString(e.FormattedValue.ToString().Replace(" ", "0"), "StraightLength");
+            };
+            DataGridViewGeneratorMaskedTextColumnSettings CurvedLength = new DataGridViewGeneratorMaskedTextColumnSettings();
+            CurvedLength.CellValidating += (s, e) =>
+            {
+                if (!EditMode) return;
+                if (e.RowIndex == -1) return;
+
+                setMaskString(e.FormattedValue.ToString().Replace(" ", "0"), "CurvedLength");
+            };
+            #endregion 
+
             #region set grid
             Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6)).Get(out col_cutref)
@@ -486,7 +516,11 @@ where WorkOrderUkey={0}", masterID);
                 .Text("MarkerDownloadID", header: "Download ID", width: Widths.AnsiChars(25), iseditingreadonly: true)
                 .Text("EachconsMarkerNo", header: "EachCons Apply #", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("EachconsMarkerVersion", header: "EachCons Apply ver", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("EachconsMarkerDownloadID", header: "EachCons Download ID", width: Widths.AnsiChars(25), iseditingreadonly: true);
+                .Text("EachconsMarkerDownloadID", header: "EachCons Download ID", width: Widths.AnsiChars(25), iseditingreadonly: true)
+                .MaskedText("ActCuttingPerimeterNew", "000Yd00\"00", "ActCutting Perimeter", width: Widths.AnsiChars(16), settings: ActCuttingPerimeter)
+                .MaskedText("StraightLengthNew", "000Yd00\"00", "StraightLength", width: Widths.AnsiChars(16), settings: StraightLength)
+                .MaskedText("CurvedLengthNew", "000Yd00\"00", "CurvedLength", width: Widths.AnsiChars(16), settings: CurvedLength)
+                ;
             
             Helper.Controls.Grid.Generator(this.gridSizeRatio)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(5)).Get(out col_sizeRatio_size)
@@ -509,6 +543,14 @@ where WorkOrderUkey={0}", masterID);
             #endregion
 
             changeeditable();
+        }
+
+        private void setMaskString(string eventString, string colName)
+        {
+            eventString = eventString.PadRight(7, '0');
+            eventString = eventString.Substring(0, 3) + "Yd" + eventString.Substring(3, 2) + "\"" + eventString.Substring(5, 2);
+            this.CurrentDetailData[colName] = eventString.TrimStart('0');
+            this.CurrentDetailData[colName+"New"] = eventString;
         }
 
         private void changeeditable()// Grid Cell 物件設定
