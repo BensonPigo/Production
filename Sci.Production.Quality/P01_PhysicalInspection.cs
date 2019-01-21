@@ -64,6 +64,9 @@ namespace Sci.Production.Quality
 
             this.save.Enabled = !MyUtility.Convert.GetBool(maindr["PhysicalEncode"]);
 
+            // SendMail 
+            this.btnSendMail.Enabled = MyUtility.Convert.GetBool(maindr["PhysicalEncode"]);
+
             string order_cmd = string.Format("Select * from orders WITH (NOLOCK) where id='{0}'", maindr["POID"]);
             DataRow order_dr;
             if (MyUtility.Check.Seek(order_cmd, out order_dr))
@@ -122,7 +125,7 @@ namespace Sci.Production.Quality
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
         }
 
-            DataTable datas2;
+        DataTable datas2;
 
         protected override void OnRequeryPost(DataTable datas)
         {
@@ -734,32 +737,7 @@ Where DetailUkey = {15};",
                 updatesql = string.Format(
                 @"Update Fir set PhysicalDate = '{7}',PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='{6}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], sumPoint, sumTotalYds, returnstr[1],Convert.ToDateTime(gridTb.Compute("Max(InspDate)", "")).ToString("yyyy/MM/dd"));
                 #endregion
-                #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
-                DataTable dt_Leader;
-                string cmd_leader = string.Format(@"
-select ToAddress = stuff ((select concat (';', tmp.email)
-						  from (
-							  select distinct email from pass1
-							  where id in (select Supervisor from pass1 where  id='{0}')
-							         or id in (select Manager from Pass1 where id = '{0}')
-						  ) tmp
-						  for xml path('')
-						 ), 1, 1, '')", Sci.Env.User.UserID);
-                DBProxy.Current.Select("", cmd_leader, out dt_Leader);
-                if (!MyUtility.Check.Empty(dt_Leader)
-                    && dt_Leader.Rows.Count > 0)
-                {
-                    string mailto = dt_Leader.Rows[0]["ToAddress"].ToString();
-                    string ccAddress = Env.User.MailAddress;
-                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
-                    string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text)
-                                     + Environment.NewLine
-                                     + "Please Approve and Check Fabric Inspection";
-                    ToExcel(true, "Regular");
-                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, false, true);
-                    email.ShowDialog(this);
-                }
-                #endregion
+                
                 maindr["Result"] = returnstr[0];
                 maindr["Status"] = returnstr[1];
             }
@@ -859,20 +837,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                     return;
                 }
             }
-            #region *****Send Excel Email 完成 需寄給Factory MC*****
-            if (this.btnApprove.Text.EqualString("Approve"))
-            {
-                string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID");
-                string mailto = strToAddress;
-                string mailCC = MyUtility.GetValue.Lookup("CCAddress", "007", "MailTo", "ID");
-                string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
-                string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
-
-                ToExcel(true, "Regular");
-                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, false, true);
-                email.ShowDialog(this);
-            }
-            #endregion
+            
             OnRequery();
         }
 
@@ -1324,6 +1289,51 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", textID.Text, dtGrid.Rows[row
             return true;
         }
 
-       
+        private void btnSendMail_Click(object sender, EventArgs e)
+        {
+            
+            if (MyUtility.Convert.GetBool(maindr["PhysicalEncode"]) && maindr["Status"].ToString() != "Approved")
+            {
+                // Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
+                DataRow dr;
+                string cmd_leader = $@"
+select ToAddress = stuff ((select concat (';', tmp.email)
+from (
+	select distinct email from pass1
+	where id in (select Supervisor from pass1 where  id='{Sci.Env.User.UserID}')
+			or id in (select Manager from Pass1 where id = '{Sci.Env.User.UserID}')
+) tmp
+for xml path('')
+), 1, 1, '')";
+              
+                if (MyUtility.Check.Seek(cmd_leader, out dr))
+                {
+                    string mailto = dr["ToAddress"].ToString();
+                    string ccAddress = Env.User.MailAddress;
+                    string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
+                    string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text)
+                                     + Environment.NewLine
+                                     + "Please Approve and Check Fabric Inspection";
+                    ToExcel(true, "Regular");
+                    var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, ccAddress, subject, excelFile, content, false, true);
+                    email.ShowDialog(this);
+                }
+            }
+
+            if (MyUtility.Convert.GetBool(maindr["PhysicalEncode"]) && maindr["Status"].ToString() == "Approved")
+            {
+                // *****Send Excel Email 完成 需寄給Factory MC*****
+                string strToAddress = MyUtility.GetValue.Lookup("ToAddress", "007", "MailTo", "ID");
+                string mailto = strToAddress;
+                string mailCC = MyUtility.GetValue.Lookup("CCAddress", "007", "MailTo", "ID");
+                string subject = string.Format(MyUtility.GetValue.Lookup("Subject", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
+                string content = string.Format(MyUtility.GetValue.Lookup("content", "007", "MailTo", "ID"), this.displaySP.Text, this.displayBrandRefno.Text, this.displayColor.Text);
+
+                ToExcel(true, "Regular");
+                var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailCC, subject, excelFile, content, false, true);
+                email.ShowDialog(this);
+
+            }
+        }
     }
 }

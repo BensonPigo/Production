@@ -65,6 +65,7 @@
             this.dateArriveWHDate = new Sci.Win.UI.DateBox();
             this.displaydescDetail = new Sci.Win.UI.DisplayBox();
             this.btnToExcel_defect = new Sci.Win.UI.Button();
+            this.btnSendMail = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -451,9 +452,20 @@
             this.btnToExcel_defect.UseVisualStyleBackColor = true;
             this.btnToExcel_defect.Click += new System.EventHandler(this.btnToExcel_defect_Click);
             // 
+            // btnSendMail
+            // 
+            this.btnSendMail.Location = new System.Drawing.Point(693, 160);
+            this.btnSendMail.Name = "btnSendMail";
+            this.btnSendMail.Size = new System.Drawing.Size(90, 30);
+            this.btnSendMail.TabIndex = 141;
+            this.btnSendMail.Text = "Send Mail";
+            this.btnSendMail.UseVisualStyleBackColor = true;
+            this.btnSendMail.Click += new System.EventHandler(this.btnSendMail_Click);
+            // 
             // P01_PhysicalInspection
             // 
             this.ClientSize = new System.Drawing.Size(1008, 733);
+            this.Controls.Add(this.btnSendMail);
             this.Controls.Add(this.displaydescDetail);
             this.Controls.Add(this.dateArriveWHDate);
             this.Controls.Add(this.dateLastInspectionDate);
@@ -534,6 +546,7 @@
             this.Controls.SetChildIndex(this.dateLastInspectionDate, 0);
             this.Controls.SetChildIndex(this.dateArriveWHDate, 0);
             this.Controls.SetChildIndex(this.displaydescDetail, 0);
+            this.Controls.SetChildIndex(this.btnSendMail, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -581,5 +594,6 @@
         private Win.UI.DateBox dateArriveWHDate;
         private Win.UI.DisplayBox displaydescDetail;
         private Win.UI.Button btnToExcel_defect;
+        private Win.UI.Button btnSendMail;
     }
 }

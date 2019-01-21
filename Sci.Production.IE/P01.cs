@@ -787,18 +787,25 @@ group by id.Location,M.ArtworkTypeID";
                     }
                 }
 
-                // Total Sewing Time重新計算過再來比
-                decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty));
-                decimal totalGSD = 0;
-                if (dtGSD_Summary.Rows.Count > 0)
-                {
-                    totalGSD = Convert.ToDecimal(dtGSD_Summary.Compute("sum(tms)", string.Empty));
-                }
+                bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
 
-                if (totalSewingTime > totalGSD)
+                // Local Style，才進行以下判斷
+                if (!isLocalStyle)
                 {
-                    MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD}) of Std.GSD.");
-                    return false;
+                    // Total Sewing Time重新計算過再來比
+                    decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty));
+                    decimal totalGSD = 0;
+
+                    if (dtGSD_Summary.Rows.Count > 0)
+                    {
+                        totalGSD = Convert.ToDecimal(dtGSD_Summary.Compute("sum(tms)", string.Empty));
+                    }
+
+                    if (totalSewingTime > totalGSD)
+                    {
+                        MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD}) of Std.GSD.");
+                        return false;
+                    }
                 }
 
             }

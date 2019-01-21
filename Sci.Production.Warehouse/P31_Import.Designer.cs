@@ -52,6 +52,7 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.chkNoLock = new Sci.Win.UI.CheckBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -108,7 +109,6 @@
             // 
             // labelToSP
             // 
-            this.labelToSP.Lines = 0;
             this.labelToSP.Location = new System.Drawing.Point(9, 19);
             this.labelToSP.Name = "labelToSP";
             this.labelToSP.Size = new System.Drawing.Size(95, 23);
@@ -117,6 +117,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.chkNoLock);
             this.groupBox2.Controls.Add(this.displayTotalQty);
             this.groupBox2.Controls.Add(this.labelTotalQty);
             this.groupBox2.Controls.Add(this.btnCancel);
@@ -139,7 +140,6 @@
             // 
             // labelTotalQty
             // 
-            this.labelTotalQty.Lines = 0;
             this.labelTotalQty.Location = new System.Drawing.Point(439, 22);
             this.labelTotalQty.Name = "labelTotalQty";
             this.labelTotalQty.Size = new System.Drawing.Size(95, 23);
@@ -190,7 +190,6 @@
             // 
             // labelColorID
             // 
-            this.labelColorID.Lines = 0;
             this.labelColorID.Location = new System.Drawing.Point(592, 51);
             this.labelColorID.Name = "labelColorID";
             this.labelColorID.Size = new System.Drawing.Size(95, 23);
@@ -208,7 +207,6 @@
             // 
             // labelRefno
             // 
-            this.labelRefno.Lines = 0;
             this.labelRefno.Location = new System.Drawing.Point(316, 51);
             this.labelRefno.Name = "labelRefno";
             this.labelRefno.Size = new System.Drawing.Size(95, 23);
@@ -226,7 +224,6 @@
             // 
             // labelSizeSpec
             // 
-            this.labelSizeSpec.Lines = 0;
             this.labelSizeSpec.Location = new System.Drawing.Point(9, 51);
             this.labelSizeSpec.Name = "labelSizeSpec";
             this.labelSizeSpec.Size = new System.Drawing.Size(95, 23);
@@ -245,7 +242,6 @@
             // 
             // labelBorrowFromSP
             // 
-            this.labelBorrowFromSP.Lines = 0;
             this.labelBorrowFromSP.Location = new System.Drawing.Point(316, 19);
             this.labelBorrowFromSP.Name = "labelBorrowFromSP";
             this.labelBorrowFromSP.Size = new System.Drawing.Size(126, 23);
@@ -254,7 +250,6 @@
             // 
             // labelDesc
             // 
-            this.labelDesc.Lines = 0;
             this.labelDesc.Location = new System.Drawing.Point(9, 83);
             this.labelDesc.Name = "labelDesc";
             this.labelDesc.Size = new System.Drawing.Size(95, 23);
@@ -302,9 +297,26 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(1008, 322);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
+            this.gridImport.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.gridImport_ColumnHeaderMouseClick);
+            this.gridImport.Validated += new System.EventHandler(this.gridImport_Validated);
+            // 
+            // chkNoLock
+            // 
+            this.chkNoLock.AutoSize = true;
+            this.chkNoLock.Checked = true;
+            this.chkNoLock.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkNoLock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkNoLock.Location = new System.Drawing.Point(9, 22);
+            this.chkNoLock.Name = "chkNoLock";
+            this.chkNoLock.Size = new System.Drawing.Size(192, 21);
+            this.chkNoLock.TabIndex = 15;
+            this.chkNoLock.Text = "only show no lock material";
+            this.chkNoLock.UseVisualStyleBackColor = true;
+            this.chkNoLock.CheckedChanged += new System.EventHandler(this.chkNoLock_CheckedChanged);
             // 
             // P31_Import
             // 
@@ -350,5 +362,6 @@
         private Win.UI.Label labelDesc;
         private Win.UI.EditBox editDesc;
         private Class.txtSeq txtSeq;
+        private Win.UI.CheckBox chkNoLock;
     }
 }

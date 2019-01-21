@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Ict;
 using Sci.Data;
 
 namespace Sci.Production.Basic
@@ -76,6 +77,49 @@ END
             if (returnResult = DBProxy.Current.Select(null, sqlCommand, out machineTable))
             {
                 this.editMachineID.Text = machineTable.Rows[0]["MatchTypeID"].ToString();
+            }
+
+            // 根據Code 第一碼決定顯示內容
+            string selectCommand = string.Format(
+                                    @"
+IF (SELECT COUNT( m.ArtworkTypeID)FROm MachineType m 
+	INNER JOIN ArtworkType a On m.ArtworkTypeID=a.ID
+	WHERE A.Seq LIKE '1%' AND m.ArtworkTypeID='{0}' ) 
+	> 0
+BEGIN
+        select m.ID,Description
+	    FROM MachineType m
+	    INNER JOIN ArtworkType a ON m.ArtworkTypeID=a.ID
+	    where  A.Seq LIKE '1%'AND m.ArtworkTypeID = '{0}' 
+END
+ELSE
+BEGIN
+    select ID,Description 
+    from MachineType MT WITH (NOLOCK) LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
+    where ATD.ArtworkTypeID = '{0}'
+END
+
+",
+                                    this.CurrentMaintain["ID"].ToString());
+
+            DataTable selectDataTable;
+            DualResult selectResult1 = DBProxy.Current.Select(null, selectCommand, out selectDataTable);
+
+            if (selectResult1)
+            {
+                if (selectDataTable.Rows.Count > 0)
+                {
+                    this.btnMachine.ForeColor = Color.Blue;
+                }
+                else
+                {
+                    this.btnMachine.ForeColor = Color.Black;
+                }
+
+            }
+            else
+            {
+                this.ShowErr(selectResult1);
             }
         }
 

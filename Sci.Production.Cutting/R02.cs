@@ -324,6 +324,8 @@ select	distinct
 	[Colorway] = woda.ac,
 	[Color] = Cutplan_Detail.ColorID,
 	[Cut Qty] = cq.SizeCode,
+    [OrderQty] = SizeQty.SizeCode,
+	[ExcessQty] = ExcessQty.SizeCode,
 	[Fab Cons.] = Cutplan_Detail.Cons,
 	[Fab Refno] = FabRefno.Refno,
 	[Remark] = Cutplan_Detail.Remark,
@@ -366,6 +368,30 @@ outer apply(
 		for xml path('')
 	 ),1,1,'')
 ) as sr
+outer apply(
+	select SizeCode = 
+	STUFF((
+		Select concat(',',(ws.SizeCode+'/'+Convert(varchar, sum(wd.Qty)))) 
+		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
+		left join Workorder_distribute wd on ws.WorkOrderUkey=wd.WorkOrderUkey and ws.SizeCode=wd.SizeCode
+		where ws.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		and wd.OrderID !='EXCESS'
+        group by ws.SizeCode
+		for xml path('')
+	 ),1,1,'')
+) as SizeQty
+outer apply(
+	select SizeCode = 
+	STUFF((
+		Select concat(',',(ws.SizeCode+'/'+Convert(varchar, sum(wd.Qty)))) 
+		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
+		left join Workorder_distribute wd on ws.WorkOrderUkey=wd.WorkOrderUkey and ws.SizeCode=wd.SizeCode
+		where ws.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		and wd.OrderID ='EXCESS'
+        group by ws.SizeCode
+		for xml path('')
+	 ),1,1,'')
+) as ExcessQty
 outer apply(
 	 select AC= 
 	 STUFF((
@@ -451,6 +477,8 @@ select
 	order by [Line#],[Fab ETA],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
     and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else [Color] end,
 [Cut Qty] = [Cut Qty],
+[OrderQty] = [OrderQty],
+[ExcessQty] = [ExcessQty],
 [Fab Cons.] = [Fab Cons.],
 [Fab Refno] = [Fab Refno],
 [Remark] = [Remark],
@@ -816,11 +844,11 @@ where 1 = 1
 
                         if (printData[i].Rows[j]["Ref#"].Empty())
                         {
-                            objSheets.get_Range("L" + (6 + j), "O" + (6 + j)).Font.Bold = true;//指定粗體
-                            objSheets.Cells[6 + j, 14] = "Total Cons.";
+                            objSheets.get_Range("L" + (6 + j), "Q" + (6 + j)).Font.Bold = true;//指定粗體
+                            objSheets.Cells[6 + j, 16] = "Total Cons.";
                         }
                     }
-                    objSheets.Columns["R"].Clear();
+                    objSheets.Columns["T"].Clear();
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
@@ -840,9 +868,11 @@ where 1 = 1
                     objSheets.get_Range("L1").ColumnWidth = 13.5;
                     objSheets.get_Range("M1").ColumnWidth = 8;
                     objSheets.get_Range("N1").ColumnWidth = 12.75;
-                    objSheets.get_Range("O1").ColumnWidth = 12;
-                    objSheets.get_Range("P1").ColumnWidth = 12.88;
-                    objSheets.get_Range("Q1").ColumnWidth = 41;
+                    objSheets.get_Range("O1").ColumnWidth = 12.75;
+                    objSheets.get_Range("P1").ColumnWidth = 12.75;
+                    objSheets.get_Range("Q1").ColumnWidth = 12;
+                    objSheets.get_Range("R1").ColumnWidth = 12.88;
+                    objSheets.get_Range("S1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
                     
                     Marshal.ReleaseComObject(objSheets); //釋放sheet                     
