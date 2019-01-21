@@ -343,39 +343,6 @@ outer apply(
                 return false;
             }
 
-
-            DataTable subDT;
-            foreach (DataRow dr in DetailDatas)
-            {
-                if (GetSubDetailDatas(dr, out subDT))
-                {
-                    DataTable tmp = subDT.Clone();
-                    foreach (DataRow dr2 in subDT.Rows)
-                    {
-                        if (dr2.RowState != DataRowState.Deleted)
-                        {
-                            dr2.AcceptChanges();
-                            dr2.SetAdded();
-                        }
-                        tmp.ImportRow(dr2);
-                    }
-
-                    subDT.Clear();
-                    foreach (DataRow dr2 in tmp.Rows)
-                    {
-                        if (dr2.RowState != DataRowState.Deleted)
-                        {
-                            dr2.AcceptChanges();
-                            dr2.SetAdded();
-                        }
-                        subDT.ImportRow(dr2);
-                    }
-                    sum_subDetail(dr, subDT);
-                }
-
-            }
-
-
             //取單號
             if (this.IsDetailInserting)
             {
@@ -416,11 +383,7 @@ outer apply(
             {
                 return resultBarcodeNo;
             }
-
-            //AutoPick 前清空資料，避免資料重複儲存
-            string sqlst = string.Format(@"delete Issue_Detail where id = '{0}'", CurrentMaintain["id"]);
-            DBProxy.Current.Execute(null, sqlst);
-
+            
             return base.ClickSaveBefore();
         }
 
@@ -461,7 +424,7 @@ outer apply(
                 }
                 if (GetSubDetailDatas(dr, out subDT))
                 {
-                    foreach (DataRow temp in subDT.ToList()) subDT.Rows.Remove(temp);
+                    foreach (DataRow temp in subDT.ToList()) temp.Delete();
 
                     foreach (DataRow dr2 in issued)
                     {
