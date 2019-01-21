@@ -62,36 +62,65 @@ where Junk != 1", out dtFactory);
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
             #region SQL first where
             List<string> FirstWhere = new List<string>();
+            List<string> finalWhere = new List<string>();
 
             if (this.dateFarmOutDate.HasValue)
             {
-                FirstWhere.Add($@"  and b.Id LIKE 'TB%' 
-		                            and b.IssueDate >= @dateFarmOutDateFrom 
-		                            and b.IssueDate <= @dateFarmOutDateTo ");
-                listSqlPar.Add(new SqlParameter("@dateFarmOutDateFrom", this.dateFarmOutDate.DateBox1.Value));
-                listSqlPar.Add(new SqlParameter("@dateFarmOutDateTo", this.dateFarmOutDate.DateBox2.Value));
+                FirstWhere.Add($@"  and b.Id LIKE 'TB%'");
+                if (this.dateFarmOutDate.Value1.Empty() == false)
+                {
+                    FirstWhere.Add(" and b.IssueDate >= @dateFarmOutDateFrom ");
+                    finalWhere.Add(" and FarmOut.IssueDate >= @dateFarmOutDateFrom");
+                    listSqlPar.Add(new SqlParameter("@dateFarmOutDateFrom", Convert.ToDateTime(this.dateFarmOutDate.DateBox1.Value)));
+                }
+
+                if (this.dateFarmOutDate.Value2.Empty() == false)
+                {
+                    FirstWhere.Add(" and b.IssueDate <= @dateFarmOutDateTo ");
+                    finalWhere.Add(" and FarmOut.IssueDate <= @dateFarmOutDateTo");
+                    listSqlPar.Add(new SqlParameter("@dateFarmOutDateTo", Convert.ToDateTime(this.dateFarmOutDate.DateBox2.Value)));
+                }
             }
 
             if (this.dateBundleCdate.HasValue)
             {
                 FirstWhere.Add($@" and exists (select 1 from Bundle bud with (nolock)
 							                    inner join Bundle_Detail budd with (nolock) on bud.ID = budd.Id
-							                    where budd.BundleNo = bd.BundleNo and bud.Cdate >= @dateBundleCdateFrom and bud.Cdate <= @dateBundleCdateTo) ");
-                listSqlPar.Add(new SqlParameter("@dateBundleCdateFrom", this.dateBundleCdate.DateBox1.Value));
-                listSqlPar.Add(new SqlParameter("@dateBundleCdateTo", this.dateBundleCdate.DateBox2.Value));
+                                                where budd.BundleNo = bd.BundleNo ");
+                if (this.dateBundleCdate.Value1.Empty() == false)
+                {
+                    FirstWhere.Add(" and bud.Cdate >= @dateBundleCdateFrom");
+                    listSqlPar.Add(new SqlParameter("@dateBundleCdateFrom", Convert.ToDateTime(this.dateBundleCdate.DateBox1.Value)));
+                }
+
+                if (this.dateBundleCdate.Value2.Empty() == false)
+                {
+                    FirstWhere.Add(" and bud.Cdate <= @dateBundleCdateTo");
+                    listSqlPar.Add(new SqlParameter("@dateBundleCdateTo", Convert.ToDateTime(this.dateBundleCdate.DateBox2.Value)));
+                }
+
+                FirstWhere.Add(")");
             }
 
             if (this.dateBundleScan.HasValue)
             {
-                FirstWhere.Add($@"  and (	(b.Id LIKE 'TB%' and b.IssueDate >= @dateBundleScanFrom and b.IssueDate <= @dateBundleScanTo) or
-				                            (b.Id LIKE 'TC%' and bd.ReceiveDate >= @dateBundleScanFrom and bd.ReceiveDate <= @dateBundleScanTo)) ");
-                listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", this.dateBundleScan.DateBox1.Value));
-                listSqlPar.Add(new SqlParameter("@dateBundleScanTo", this.dateBundleScan.DateBox2.Value));
+                if (dateBundleScan.Value1.Empty() == false)
+                {
+                    FirstWhere.Add(" and (b.Id LIKE 'TB%' and b.IssueDate >= @dateBundleScanFrom or b.Id LIKE 'TC%' and bd.ReceiveDate >= @dateBundleScanFrom)");
+                    finalWhere.Add(" and (FarmOut.IssueDate >= @dateBundleScanFrom or FarmIn.ReceiveDate >= @dateBundleScanFrom)");
+                    listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", Convert.ToDateTime(this.dateBundleScan.DateBox1.Value)));
+                }
+            
+                if (dateBundleScan.Value2.Empty() == false)
+                {
+                    FirstWhere.Add(" and (b.Id LIKE 'TB%' and b.IssueDate <= @dateBundleScanTo or b.Id LIKE 'TC%' and bd.ReceiveDate <= @dateBundleScanTo)");
+                    finalWhere.Add(" and (FarmOut.IssueDate <= @dateBundleScanTo or FarmIn.ReceiveDate <= @dateBundleScanTo)");
+                    listSqlPar.Add(new SqlParameter("@dateBundleScanTo", Convert.ToDateTime(this.dateBundleScan.DateBox2.Value)));
+                }
             }
             
             #endregion 
             #region SQL final where
-            List<string> finalWhere = new List<string>();
             if (!factory.Empty())
             {
                 finalWhere.Add("	and O.FTYGroup = @Factory   --Factory");
@@ -272,6 +301,8 @@ select
 		,Subcon
 		,remark 
 from #result
+order by [Bundleno],[CutRef],[Orderid],[StyleID],[SeasonID],[BrandID],[Article],[ColorID],[Sewinglineid],[SewingCell]
+        ,[Patterncode],[PatternDesc],[BundleGroup],[SizeCode],[FarmOutDate] desc,[FarmInDate] desc
 
 
 Drop Table #FarmOutList,#FarmInList,#Base,#result
