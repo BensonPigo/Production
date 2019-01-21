@@ -179,7 +179,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
 
             DataTable subDT = (DataTable)gridbs.DataSource;
 
-            foreach (DataRow temp in subDT.ToList()) subDT.Rows.Remove(temp);
+            foreach (DataRow temp in subDT.ToList()) temp.Delete();
                 
             //subDT.Clear();
             foreach (DataRow dr2 in issued)
