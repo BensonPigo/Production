@@ -184,6 +184,7 @@ where a.ID='{0}'"
             DataGridViewGeneratorNumericColumnSettings SkeTest2Cell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings SkeTest3Cell = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings SkeTest4Cell = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
             DataGridViewGeneratorTextColumnSettings LabTechCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ResultCell = Sci.Production.PublicPrg.Prgs.cellResult.GetGridCell();
@@ -191,11 +192,35 @@ where a.ID='{0}'"
             #region 設定GridMouse Click 事件
             Rollcell.EditingMouseDown += (s, e) =>
             {
+                if (e.RowIndex == -1) return;
                 if (this.EditMode == false) return;
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string sqlcmd = string.Format(@"Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    string selectedDyelot = dr["Dyelot"].ToString();
+
+                    string sqlcmd = string.Empty;
+
+                    if (MyUtility.Check.Empty(selectedDyelot))
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'";
+                    }
+                    else
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'
+                                                AND Dyelot='{selectedDyelot}'";
+                    }
+
                     SelectItem item = new SelectItem(sqlcmd, "15,12", dr["roll"].ToString(), false, ",");
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
@@ -206,6 +231,48 @@ where a.ID='{0}'"
                     dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
                 }
             };
+
+            DyelotCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string selectedRoll = dr["Roll"].ToString();
+
+                    string sqlcmd = string.Empty;
+                    if (MyUtility.Check.Empty(selectedRoll))
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'";
+                    }
+                    else
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'
+                                                AND Roll='{selectedRoll}'";
+                    }
+
+                    SelectItem item = new SelectItem(sqlcmd, "15,12", dr["dyelot"].ToString(), false, ",");
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
+                    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
+                }
+            };
+
             LabTechCell.EditingMouseDown += (s, e) =>
             {
                 if (e.RowIndex == -1) return;
@@ -213,14 +280,18 @@ where a.ID='{0}'"
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) where Resign is null";
-                    SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["INSPECTOR"].ToString());
+                    //string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) where Resign is null";
+                    string sqlCmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Wash a WITH (NOLOCK) 
+                                         INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
+                                         ";
+                    SelectItem item1 = new SelectItem(sqlCmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
                         return;
                     }
-                    e.EditingControl.Text = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Name"] = item1.GetSelecteds()[0]["Name"];
                 }
             };
 
@@ -228,19 +299,23 @@ where a.ID='{0}'"
             #region 設定Grid Valid事件
             Rollcell.CellValidating += (s, e) =>
             {
-                if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["Roll"].ToString();                
+                string oldvalue = dr["Roll"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
-                if (e.RowIndex == -1) return; //沒東西 return
+                if (e.RowIndex == -1) return; //沒東西 return 
+                if (oldvalue.Equals(newvalue)) return;
                 if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
                 {
                     dr["Roll"] = "";
                     dr["Dyelot"] = "";
                     return;
                 }
-                if (oldvalue == newvalue) return;
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue) return;
+                }
+
                 string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and roll='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
                 DataRow roll_dr;
                 if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
@@ -252,13 +327,52 @@ where a.ID='{0}'"
                 else
                 {
                     dr["Roll"] = "";
-                    dr["Dyelot"] = "";                    
+                    //dr["Dyelot"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
                     return;
                 }
             };
+
+            DyelotCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Dyelot"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return 
+                if (oldvalue.Equals(newvalue)) return;
+                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return;
+                }
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue) return;
+                }
+
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                DataRow roll_dr;
+                if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
+                {
+                    dr["Roll"] = roll_dr["Roll"];
+                    dr["Dyelot"] = roll_dr["Dyelot"];
+                    dr.EndEdit();
+                }
+                else
+                {
+                    //dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Dyelot: {0}> data not found!", e.FormattedValue));
+                    return;
+                }
+            };
+
             orlHorCell.CellValidating += (s, e) =>
             {
                 if (!EditMode) return;
@@ -525,33 +639,32 @@ where a.ID='{0}'"
             {
                 if (!EditMode) return;
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["inspector"].ToString();
-                string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
                 if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
-                if (oldvalue == newvalue) return;
-                string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID and b.Resign is null where a.id ='{0}'", maindr["id"]);
-                DataRow roll_dr;
-                if (MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
+
+                string sqlCmd = $"SELECT ID,Name FROM Pass1 WHERE ID='{e.FormattedValue}'";
+                DataRow userDt;
+
+                if (!MyUtility.Check.Seek(sqlCmd, out userDt))
                 {
-                    dr["Inspector"] = roll_dr["Inspector"];
-                    dr.EndEdit();
+                    MyUtility.Msg.WarningBox(string.Format("<Lab Tech: {0}> data not found!", e.FormattedValue));
+
+                    dr["inspector"] = string.Empty;
+                    dr["Name"] = string.Empty;
+                    return;
                 }
                 else
                 {
-                    dr["Inspector"] = "";
-                    dr.EndEdit();
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!", e.FormattedValue));
-                    return;
+                    dr["inspector"] = userDt["ID"].ToString();
+                    dr["Name"] = userDt["Name"].ToString();
                 }
             };
             #endregion
 
             Helper.Controls.Grid.Generator(this.grid)
               .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
-              .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
+              .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), settings: DyelotCell)
               .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlHorCell)
               .Numeric("VerticalOriginal", header: "Original Vertical", width: Widths.AnsiChars(4), integer_places: 2, decimal_places: 2, settings: orlVirCell)
               .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell, iseditingreadonly: true)
@@ -574,9 +687,36 @@ where a.ID='{0}'"
               .Numeric("SkewnessRate", header: "Skewness Rate", width: Widths.AnsiChars(6), integer_places: 4, decimal_places: 2, iseditingreadonly: true)
               .Date("InspDate", header: "Test Date", width: Widths.AnsiChars(10))
               .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), settings: LabTechCell)
-              .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
+              .Text("Name", header: "Name", width: Widths.AnsiChars(25), iseditingreadonly: true)
               .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
               .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
+
+
+            #region 可編輯欄位變色
+            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["HorizontalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["VerticalOriginal"].DefaultCellStyle.BackColor = Color.Pink;
+
+
+            grid.Columns["HorizontalTest1"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["HorizontalTest2"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["HorizontalTest3"].DefaultCellStyle.BackColor = Color.Pink;
+
+            grid.Columns["VerticalTest1"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["VerticalTest2"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["VerticalTest3"].DefaultCellStyle.BackColor = Color.Pink;
+
+            grid.Columns["SkewnessTest1"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["SkewnessTest2"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["SkewnessTest3"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["SkewnessTest4"].DefaultCellStyle.BackColor = Color.Pink;
+
+            grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            #endregion
+
             GridView_Visable();
             return true;
         }
@@ -638,10 +778,10 @@ where a.ID='{0}'"
             {
                 foreach (DataRow dr in afterDT.Rows)
                 {
-                    DataRow[] drArray = afterDT.Select(string.Format("Roll='{0}'", MyUtility.Convert.GetString(dr["Roll"])));
+                    DataRow[] drArray = afterDT.Select(string.Format("Roll='{0}' and Dyelot = '{1}'", MyUtility.Convert.GetString(dr["Roll"]), MyUtility.Convert.GetString(dr["Dyelot"])));
                     if (drArray.Length > 1)
                     {
-                        MyUtility.Msg.WarningBox("<Roll>" + MyUtility.Convert.GetString(dr["Roll"]) + " is already exist ! ");
+                        MyUtility.Msg.WarningBox("<Roll>" + MyUtility.Convert.GetString(dr["Roll"]) + ", <Dyelot> " + MyUtility.Convert.GetString(dr["Dyelot"]) + " is already exist ! ");
                         return false;
                     }
                 }
@@ -698,7 +838,7 @@ where a.ID='{0}'"
             }
             if (afterDT.AsEnumerable().Any(row => MyUtility.Check.Empty(row["inspector"])))
             {
-                MyUtility.Msg.WarningBox("<Inspector> can not be empty.");
+                MyUtility.Msg.WarningBox("<Lab Tech> can not be empty.");
                 return false;
             }
             #endregion

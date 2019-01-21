@@ -71,7 +71,8 @@ t.Junk= s.Junk,
 t.AddName= s.AddName,
 t.AddDate= s.AddDate,
 t.EditName= s.EditName,
-t.EditDate= s.EditDate
+t.EditDate= s.EditDate,
+t.DescriptionDetail = s.DescriptionDetail
 
 	when not matched by target and s.type='O' then 
 		insert ( ID
@@ -92,7 +93,8 @@ t.EditDate= s.EditDate
 ,AddName
 ,AddDate
 ,EditName
-,EditDate	)
+,EditDate
+,DescriptionDetail	)
 
 values(s.refno,
 s.Model,
@@ -112,7 +114,8 @@ s.Junk,
 s.AddName,
 s.AddDate,
 s.EditName,
-s.EditDate
+s.EditDate,
+s.DescriptionDetail
  );
 
  

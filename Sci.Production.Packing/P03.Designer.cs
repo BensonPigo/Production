@@ -225,6 +225,7 @@
             // 
             // refresh
             // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(912, 0);
             // 
             // detailgridcont
@@ -864,7 +865,6 @@
             this.ExpressQuery = true;
             this.GridAlias = "PackingList_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "ID,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;

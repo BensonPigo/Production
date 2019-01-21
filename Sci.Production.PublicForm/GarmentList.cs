@@ -89,12 +89,15 @@ select Ukey = isnull((
             }
             #endregion
             #region 建立Table
-            string tablecreatesql = "Select a.*,'' as F_CODE";
+            string tablecreatesql = "Select a.*, b.ID + '-' + b.Name as nLocation,'' as F_CODE";
             foreach (DataRow dr in headertb.Rows)
             {
                 tablecreatesql = tablecreatesql + string.Format(" ,'' as {0}", dr["ArticleGroup"]);
             }
-            tablecreatesql = tablecreatesql + string.Format(@" from Pattern_GL a WITH (NOLOCK) Where a.PatternUkey = '{0}'", patternukey);
+            tablecreatesql = tablecreatesql + string.Format(@" 
+                from Pattern_GL a WITH (NOLOCK) 
+                left join DropDownList b on b.Type='Location' and a.Location = b.ID
+                Where a.PatternUkey = '{0}'", patternukey);
             DataTable gridtb;
             DualResult tablecreateResult= DBProxy.Current.Select(null, tablecreatesql, out gridtb);
             if (!tablecreateResult)
@@ -131,6 +134,7 @@ select Ukey = isnull((
         {
             Helper.Controls.Grid.Generator(this.gridGarment)
                 .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(4), iseditingreadonly: true)
+                .Text("nLocation", header: "Location", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PatternCode", header: "Cutpart ID", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PatternDesc", header: "Cutpart Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(8), iseditingreadonly: true)

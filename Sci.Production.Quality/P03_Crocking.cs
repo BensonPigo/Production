@@ -131,6 +131,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             DataGridViewGeneratorTextColumnSettings InspectorCell = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Resultdry = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings Resultwet = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings DyelotCell = new DataGridViewGeneratorTextColumnSettings();
 
             #region grid MouseClickEvent
             Rollcell.EditingMouseDown += (s, e) =>
@@ -140,8 +141,72 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string sqlcmd = string.Format(@"Select roll,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"]);
+                    string selectedDyelot = dr["Dyelot"].ToString();
+
+                    string sqlcmd = string.Empty;
+
+                    if (MyUtility.Check.Empty(selectedDyelot))
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'";
+                    }
+                    else
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'
+                                                AND Dyelot='{selectedDyelot}'";
+                    }
+
                     SelectItem item = new SelectItem(sqlcmd, "15,12", dr["roll"].ToString(), false, ",");
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    dr["Roll"] = item.GetSelecteds()[0]["Roll"].ToString();
+                    dr["Dyelot"] = item.GetSelecteds()[0]["Dyelot"].ToString();
+                }
+            };
+
+            DyelotCell.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                if (this.EditMode == false) return;
+                if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    DataRow dr = grid.GetDataRow(e.RowIndex);
+                    string selectedRoll = dr["Roll"].ToString();
+
+                    string sqlcmd = string.Empty;
+                    if (MyUtility.Check.Empty(selectedRoll))
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'";
+                    }
+                    else
+                    {
+                        sqlcmd = $@" Select roll,dyelot 
+                                        from Receiving_Detail WITH (NOLOCK) 
+                                        Where id='{maindr["Receivingid"]}'
+                                                and poid ='{maindr["Poid"]}' 
+                                                and seq1 = '{maindr["seq1"]}' 
+                                                and seq2 ='{maindr["seq2"]}'
+                                                AND Roll='{selectedRoll}'";
+                    }
+
+                    SelectItem item = new SelectItem(sqlcmd, "15,12", dr["dyelot"].ToString(), false, ",");
                     DialogResult result = item.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
@@ -195,14 +260,19 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
-                    string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) ";
+                    //string scalecmd = @"select id,name from Pass1 WITH (NOLOCK) ";
+
+                    string scalecmd = $@"select DISTINCT Inspector,b.name from FIR_Laboratory_Crocking a WITH (NOLOCK) 
+                                         INNER join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID
+                                         ";
                     SelectItem item1 = new SelectItem(scalecmd, "15,15", dr["Inspector"].ToString());
                     DialogResult result = item1.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
                         return;
                     }
-                    dr["Inspector"] = item1.GetSelectedString();
+                    dr["Inspector"] = item1.GetSelectedString(); //將選取selectitem value帶入GridView
+                    dr["Name"] = item1.GetSelecteds()[0]["Name"];
                 }
             };
 
@@ -263,10 +333,48 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                 else
                 {
                     dr["Roll"] = "";
-                    dr["Dyelot"] = "";
+                    //dr["Dyelot"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Roll: {0}> data not found!", e.FormattedValue));
+                    return;
+                }
+            };
+
+            DyelotCell.CellValidating += (s, e) =>
+            {
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["Dyelot"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (!this.EditMode) return;//非編輯模式 
+                if (e.RowIndex == -1) return; //沒東西 return 
+                if (oldvalue.Equals(newvalue)) return;
+                if (MyUtility.Check.Empty(e.FormattedValue))//沒填入資料,清空dyelot
+                {
+                    dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    return;
+                }
+                if (dr.RowState != DataRowState.Added)
+                {
+                    if (oldvalue == newvalue) return;
+                }
+
+                string roll_cmd = string.Format("Select roll,Poid,seq1,seq2,dyelot from Receiving_Detail WITH (NOLOCK) Where id='{0}' and poid ='{1}' and seq1 = '{2}' and seq2 ='{3}' and Dyelot='{4}'", maindr["Receivingid"], maindr["Poid"], maindr["seq1"], maindr["seq2"], e.FormattedValue);
+                DataRow roll_dr;
+                if (MyUtility.Check.Seek(roll_cmd, out roll_dr))
+                {
+                    dr["Roll"] = roll_dr["Roll"];
+                    dr["Dyelot"] = roll_dr["Dyelot"];
+                    dr.EndEdit();
+                }
+                else
+                {
+                    //dr["Roll"] = "";
+                    dr["Dyelot"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<Dyelot: {0}> data not found!", e.FormattedValue));
                     return;
                 }
             };
@@ -324,24 +432,24 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             LabTechCell.CellValidating += (s, e) =>
             {
                 DataRow dr = grid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["inspector"].ToString();
-                string newvalue = e.FormattedValue.ToString();
                 if (!this.EditMode) return;//非編輯模式 
                 if (e.RowIndex == -1) return; //沒東西 return
                 if (MyUtility.Check.Empty(e.FormattedValue)) return; // 沒資料 return
-                if (dr.RowState != DataRowState.Added)
+                string sqlCmd = $"SELECT ID,Name FROM Pass1 WHERE ID='{e.FormattedValue}'";
+                DataRow userDt;
+
+                if (!MyUtility.Check.Seek(sqlCmd,out userDt))
                 {
-                    if (oldvalue == newvalue) return;
-                }
-                string dryScale_cmd = string.Format(@"select Inspector from FIR_Laboratory_Crocking a WITH (NOLOCK) left join Pass1 b WITH (NOLOCK) on a.Inspector=b.ID and b.Resign is not null where a.id ='{0}'", maindr["id"]);
-                DataRow roll_dr;
-                if (!MyUtility.Check.Seek(dryScale_cmd, out roll_dr))
-                {
-                    dr["Inspector"] = "";
-                    dr.EndEdit();
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("<Inspector: {0}> data not found!", e.FormattedValue));
+                    MyUtility.Msg.WarningBox(string.Format("<Lab Tech: {0}> data not found!", e.FormattedValue));
+
+                    dr["inspector"] = string.Empty;
+                    dr["Name"] = string.Empty;
                     return;
+                }
+                else
+                {
+                    dr["inspector"] = userDt["ID"].ToString();
+                    dr["Name"] = userDt["Name"].ToString();
                 }
 
             };
@@ -349,7 +457,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
             {
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    MyUtility.Msg.WarningBox("<inspdate> cannot be empty!");
+                    MyUtility.Msg.WarningBox("<Lab Tech> cannot be empty!");
                     e.Cancel = true;
                     return;
                 }
@@ -359,17 +467,28 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true)
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), settings: DyelotCell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out ResultCell)
             .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell, iseditingreadonly: true)
             .Text("ResultDry", header: "Result(Dry)", width: Widths.AnsiChars(5), settings: Resultdry, iseditingreadonly: true)
             .Text("WetScale", header: "Wet Scale", width: Widths.AnsiChars(5), settings: wetScaleCell, iseditingreadonly: true)
             .Text("ResultWet", header: "Result(Wet)", width: Widths.AnsiChars(5), settings: Resultwet, iseditingreadonly: true)
             .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10), settings: InspDateCell)
-            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16), iseditingreadonly: true, settings: LabTechCell)
-            .CellUser("Name", header: "Name", width: Widths.AnsiChars(25), userNamePropertyName: "Name", iseditingreadonly: true)
+            .Text("Inspector", header: "Lab Tech", width: Widths.AnsiChars(16),  settings: LabTechCell)
+            .Text("Name", header: "Name", width: Widths.AnsiChars(25),  iseditingreadonly: true)
             .Text("Remark", header: "Remark", width: Widths.AnsiChars(16))
             .Text("Last update", header: "Last update", width: Widths.AnsiChars(50), iseditingreadonly: true);
+
+
+            #region 可編輯欄位變色
+            grid.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.Pink;
+            grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            #endregion
+
+
             return true;
         }
 
@@ -523,7 +642,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                     update_cmd = @"update FIR_Laboratory_Crocking
                     set ID=@ID,roll=@roll,Dyelot=@Dyelot,DryScale=@DryScale,WetScale=@WetScale,Inspdate=@Inspdate,Inspector=@Inspector,
                         Result=@Result,Remark=@Remark,EditDate=@EditDate,EditName=@EditName,ResultDry=@ResultDry,ResultWet=@ResultWet
-                        where id=@id and roll=@rollbefore";
+                        where id=@id AND roll=@roll AND Dyelot=@Dyelot and roll=@rollbefore";
 
                     spamUpd.Add(new SqlParameter("@id", dr["ID"]));
                     spamUpd.Add(new SqlParameter("@roll", dr["roll"]));
@@ -768,6 +887,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
         private void btntoPDF_Click(object sender, EventArgs e)
         {
+            this.ShowWaitMessage("Data Loading...");
             DataTable dtt = (DataTable)gridbs.DataSource;
             if (dtt.Rows.Count == 0)
             {
@@ -827,7 +947,7 @@ order by fd.InspDate,oc.article
                 {
                     worksheet.Cells[4, 5] = ((DateTime)row["InspDate"]).ToString("yyyy") + "/" + ((DateTime)row["InspDate"]).ToString("MM") + "/" + ((DateTime)row["InspDate"]).ToString("dd");
                 }
-                
+
                 worksheet.Cells[6, 9] = row["article"];
                 worksheet.Cells[4, 7] = txtSP.Text;
                 worksheet.Cells[4, 10] = txtBrand.Text;
@@ -835,7 +955,7 @@ order by fd.InspDate,oc.article
                 worksheet.Cells[6, 6] = MyUtility.GetValue.Lookup($"select CustPONo from orders where id = '{txtSP.Text}'");
                 worksheet.Cells[7, 3] = MyUtility.GetValue.Lookup($@"select StyleName from Style s, orders o where o.id = '{txtSP.Text}' and  o.StyleUkey = s.ukey");
                 worksheet.Cells[7, 9] = txtArriveQty.Text;
-                worksheet.Cells[22, 8] = row["Name"];
+                worksheet.Cells[14, 8] = row["Name"];
 
                 string sqlcmd2 = $@"
 SELECT distinct fd.InspDate,oc.article,fd.DryScale,fd.ResultDry,fd.WetScale,fd.ResultWet,fd.Remark,fd.Inspector,fd.Roll,fd.Dyelot
@@ -852,7 +972,7 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                 DBProxy.Current.Select(null, sqlcmd2, out dt2);
                 for (int i = 1; i < dt2.Rows.Count; i++)
                 {
-                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A11:A11", Type.Missing).EntireRow;
+                    Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A12:A12", Type.Missing).EntireRow;
                     rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                     Marshal.ReleaseComObject(rngToInsert);
                 }
@@ -869,10 +989,147 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                     worksheet.Cells[11 + k, 8] = row2["WetScale"];
                     worksheet.Cells[11 + k, 9] = row2["ResultWet"];
                     worksheet.Cells[11 + k, 10] = row2["Remark"];
+
+                    Microsoft.Office.Interop.Excel.Range rg = worksheet.Range[worksheet.Cells[11 + k, 2], worksheet.Cells[11 + k, 10]];
+                    // 加框線
+                    rg.Borders.LineStyle = 1;
+                    rg.Borders.Weight = 3;
+                    rg.WrapText = true; // 自動換列
+                    rg.Font.Bold = false;
+
+                    // 水平,垂直置中
+                    rg.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+                    rg.VerticalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+
                     k++;
                 }
-                worksheet.get_Range("B10:J10").Font.Bold = true;
-                worksheet.Cells.EntireColumn.AutoFit();
+                //worksheet.get_Range("B9:J9").Font.Bold = true;
+                //worksheet.Cells.EntireColumn.AutoFit();
+
+                #region 開始畫格子
+
+                #region 框框數量計算
+
+                int detailCouunt = dt2.Rows.Count;
+                //超過36筆資料，PDF就會跳到下一頁
+                int onePageLimit = 36;
+                //框框數，最多只要顯示4個
+                int cubeCount = 0;
+
+                //每個框框共7個Row高度，因此每多7筆資料，框框就少一個
+                if (detailCouunt < 3)
+                    cubeCount = 4;
+                if (3 <= detailCouunt && detailCouunt < 10)
+                    cubeCount = 3;
+                if (10 <= detailCouunt && detailCouunt < 17)
+                    cubeCount = 2;
+                if (17 <= detailCouunt && detailCouunt < 27)
+                    cubeCount = 1;
+
+                //28~44筆資料，未達2頁，但又塞不下一個框框，因此為0
+
+                //若超過1頁，但未達3頁，還是要畫，第三頁開始不畫
+                
+                //第二頁上面沒有那一堆表格，因此是原本的4 + 表格的10 = 16
+                if (43 <= detailCouunt && detailCouunt < 50)
+                    cubeCount = 4;
+
+                if (50 <= detailCouunt && detailCouunt < 61)
+                    cubeCount = 3;
+
+                if (61 <= detailCouunt && detailCouunt < 72)
+                    cubeCount = 2;
+
+                if (72 <= detailCouunt && detailCouunt < 83)
+                    cubeCount = 1;
+
+                //超過兩頁，會出現第三頁
+                if (83 <= detailCouunt )
+                    cubeCount = 0;
+
+                #endregion
+                
+                //開始畫
+                if (cubeCount > 0)
+                {
+                    //作法：先畫第一個，若框框超過一個，就用複製的
+
+                    //第一個框框上的文字
+                    //16 = 11 + 5
+                    worksheet.Cells[16 + dt2.Rows.Count, 3] = "DRY";
+                    worksheet.Cells[16 + dt2.Rows.Count, 8] = "WET";
+                    Microsoft.Office.Interop.Excel.Range rg1 = worksheet.Range[worksheet.Cells[16 + dt2.Rows.Count, 3], worksheet.Cells[16 + dt2.Rows.Count, 8]];
+                    //置中
+                    rg1.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
+
+                    //畫框框
+                    //17 = 11 + 6
+                    //24 = 17 + 7
+                    rg1 = worksheet.Range[worksheet.Cells[17 + dt2.Rows.Count, 2], worksheet.Cells[24 + dt2.Rows.Count, 4]];
+                    //框線設定
+                    rg1.BorderAround2(LineStyle: 1);
+                    rg1 = worksheet.Range[worksheet.Cells[17 + dt2.Rows.Count, 7], worksheet.Cells[24 + dt2.Rows.Count, 9]];
+                    rg1.BorderAround2(LineStyle: 1);
+
+
+                    //框框旁邊的字 
+
+                    rg1 = worksheet.Range[worksheet.Cells[18 + dt2.Rows.Count, 5], worksheet.Cells[18 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[18 + dt2.Rows.Count, 5] = "Ref# : _________________";
+
+                    rg1 = worksheet.Range[worksheet.Cells[19 + dt2.Rows.Count, 5], worksheet.Cells[19 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[19 + dt2.Rows.Count, 5] = "Color  : ________________";
+
+                    rg1 = worksheet.Range[worksheet.Cells[20 + dt2.Rows.Count, 5], worksheet.Cells[20 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[20 + dt2.Rows.Count, 5] = "Roll# : _________________";
+
+                    rg1 = worksheet.Range[worksheet.Cells[21 + dt2.Rows.Count, 5], worksheet.Cells[21 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[21 + dt2.Rows.Count, 5] = "Dyelot# : _______________";
+
+                    rg1 = worksheet.Range[worksheet.Cells[24 + dt2.Rows.Count, 5], worksheet.Cells[24 + dt2.Rows.Count, 6]];
+                    rg1.Merge(true);
+                    worksheet.Cells[24 + dt2.Rows.Count, 5] = "Grade : ________________";
+                    worksheet.Cells[24 + dt2.Rows.Count, 10] = "_____________";
+
+                    // 選取要被複製的資料
+                    rg1 = worksheet.get_Range($"B{17 + dt2.Rows.Count}:J{24 + dt2.Rows.Count}").EntireRow;
+
+                    //根據框框數，資料筆數，決定貼在哪個座標
+                    switch (cubeCount)
+                    {
+                        case 2:
+                            Microsoft.Office.Interop.Excel.Range rgX = worksheet.get_Range($"B{17 + dt2.Rows.Count + 9}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgX.Insert(rg1.Copy(Type.Missing)); // 貼上
+                            break;
+                        case 3:
+                            rgX = worksheet.get_Range($"B{17 + dt2.Rows.Count + 9}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgX.Insert(rg1.Copy(Type.Missing)); // 貼上
+                            Microsoft.Office.Interop.Excel.Range rgY = worksheet.get_Range($"B{17 + dt2.Rows.Count + 18}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgY.Insert(rg1.Copy(Type.Missing)); // 貼上
+
+                            break;
+                        case 4:
+                            rgX = worksheet.get_Range($"B{17 + dt2.Rows.Count + 9}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgX.Insert(rg1.Copy(Type.Missing)); // 貼上
+                            rgY = worksheet.get_Range($"B{17 + dt2.Rows.Count + 18}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgY.Insert(rg1.Copy(Type.Missing)); // 貼上
+                            Microsoft.Office.Interop.Excel.Range rgZ = worksheet.get_Range($"B{17 + dt2.Rows.Count + 27}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rgZ.Insert(rg1.Copy(Type.Missing)); // 貼上
+
+                            break;
+                        default:
+                            break;
+                    }
+
+
+                }
+
+                #endregion
+
                 Marshal.ReleaseComObject(worksheet);
                 j++;
             }
@@ -892,6 +1149,8 @@ where bof.id='{maindr["POID"]}' and p.seq1='{maindr["seq1"]}' and p.seq2='{maind
                 ProcessStartInfo startInfo = new ProcessStartInfo(strPDFFileName);
                 Process.Start(startInfo);
             }
+
+            this.HideWaitMessage();
         }
     }
 }

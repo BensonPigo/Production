@@ -40,6 +40,10 @@
     [EditLocationName]   VARCHAR (10)   NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+go
+
+ALTER TABLE dbo.PackingList_Detail 
+	ADD CONSTRAINT UK_PackingList_Detail UNIQUE (ID,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode)
 
 
 

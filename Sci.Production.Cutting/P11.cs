@@ -1575,13 +1575,13 @@ Insert Into Bundle
  , Article        , PatternPanel, Cutno      , cDate    , OrderID
  , SewingLineid   , Item        , SewingCell , Ratio    , Startno
  , Qty            , AllPart     , CutRef     , AddName  , AddDate
- , FabricPanelCode) 
+ , FabricPanelCode, IsEXCESS) 
 values
 ('{0}'            , '{1}'       , '{2}'      , '{3}'    , '{4}'
  , '{5}'          , '{6}'       , {7}        , GetDate(), '{8}'
  , '{9}'          , '{10}'      , '{11}'     , '{12}'   , '{13}'
  , {14}           , {15}        , '{16}'     , '{17}'   , GetDate()
- , '{18}')",
+ , '{18}'         , {19})",
                 id_list[idcount],
                 artar["POID"],
                 keyWord,
@@ -1600,7 +1600,8 @@ values
                 artar["TotalParts"],
                 artar["Cutref"],
                 loginID,
-                artar["FabricPanelCode"]);
+                artar["FabricPanelCode"],
+                (artar["isEXCESS"].EqualString("Y") ? 1 : 0));
 
                 Insert_Bundle.Rows.Add(nBundle_dr);
                 #endregion

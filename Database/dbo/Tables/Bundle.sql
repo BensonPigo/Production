@@ -24,6 +24,7 @@
     [EditDate]     DATETIME      NULL,
     [oldid]        VARCHAR (13)  NULL,
     [FabricPanelCode]   VARCHAR (2)   NULL,
+    [IsEXCESS] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Bundle] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

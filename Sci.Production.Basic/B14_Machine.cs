@@ -32,11 +32,28 @@ namespace Sci.Production.Basic
         protected override void OnFormLoaded()
         {
             // 撈Grid資料
+
+            // 根據Code 第一碼決定顯示內容
             string selectCommand = string.Format(
                 @"
-select ID,Description 
-from MachineType MT WITH (NOLOCK) LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
-where ATD.ArtworkTypeID = '{0}'",
+
+IF (SELECT COUNT( m.ArtworkTypeID)FROm MachineType m 
+	INNER JOIN ArtworkType a On m.ArtworkTypeID=a.ID
+	WHERE A.Seq LIKE '1%' AND m.ArtworkTypeID='{0}' ) 
+	> 0
+BEGIN
+        select m.ID,Description
+	    FROM MachineType m
+	    INNER JOIN ArtworkType a ON m.ArtworkTypeID=a.ID
+	    where  A.Seq LIKE '1%'AND m.ArtworkTypeID = '{0}' 
+END
+ELSE
+BEGIN
+    select ID,Description 
+    from MachineType MT WITH (NOLOCK) LEFT JOIN Artworktype_Detail ATD WITH (NOLOCK) ON MT.ID=ATD.MachineTypeID
+    where ATD.ArtworkTypeID = '{0}'
+END
+",
                 this.motherData["ID"].ToString());
 
             DataTable selectDataTable;

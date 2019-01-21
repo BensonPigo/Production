@@ -76,6 +76,7 @@
             this.txtLineNo = new Sci.Win.UI.TextBox();
             this.labelFabPanelCode = new Sci.Win.UI.Label();
             this.txtFabricPanelCode = new Sci.Win.UI.TextBox();
+            this.ckIsEXCESS = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -92,6 +93,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.ckIsEXCESS);
             this.masterpanel.Controls.Add(this.txtFabricPanelCode);
             this.masterpanel.Controls.Add(this.labelFabPanelCode);
             this.masterpanel.Controls.Add(this.txtLineNo);
@@ -188,6 +190,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtLineNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFabPanelCode, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtFabricPanelCode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.ckIsEXCESS, 0);
             // 
             // detailpanel
             // 
@@ -758,6 +761,18 @@
             this.txtFabricPanelCode.Size = new System.Drawing.Size(53, 23);
             this.txtFabricPanelCode.TabIndex = 10;
             // 
+            // ckIsEXCESS
+            // 
+            this.ckIsEXCESS.AutoSize = true;
+            this.ckIsEXCESS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IsEXCESS", true));
+            this.ckIsEXCESS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.ckIsEXCESS.Location = new System.Drawing.Point(661, 185);
+            this.ckIsEXCESS.Name = "ckIsEXCESS";
+            this.ckIsEXCESS.Size = new System.Drawing.Size(91, 21);
+            this.ckIsEXCESS.TabIndex = 49;
+            this.ckIsEXCESS.Text = "IsEXCESS";
+            this.ckIsEXCESS.UseVisualStyleBackColor = true;
+            // 
             // P10
             // 
             this.ClientSize = new System.Drawing.Size(999, 564);
@@ -843,5 +858,6 @@
         private Win.UI.TextBox txtLineNo;
         private Win.UI.TextBox txtFabricPanelCode;
         private Win.UI.Label labelFabPanelCode;
+        private Win.UI.CheckBox ckIsEXCESS;
     }
 }
