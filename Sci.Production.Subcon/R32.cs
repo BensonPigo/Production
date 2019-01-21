@@ -118,7 +118,9 @@ WHERE   1 = 1 {FirstWhere.JoinToString("\r\n")}
 
 --再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
 
-SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,b.IssueDate, lastEditDate = iif (b.EditDate is null or b.AddDate > b.EditDate, b.AddDate, b.EditDate)
+SELECT distinct bd.BundleNo ,b.StartProcess ,
+		[IssueDate] = FIRST_VALUE(b.IssueDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc),
+		[EndSite] = FIRST_VALUE(b.EndSite) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc)
 INTO #FarmOutList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
@@ -127,7 +129,8 @@ WHERE   b.Id LIKE 'TB%'
 		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
 
 
-SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,bd.ReceiveDate ,lastEditDate = iif (b.EditDate is null or b.AddDate > b.EditDate, b.AddDate, b.EditDate)
+SELECT distinct bd.BundleNo ,b.StartProcess  ,
+		[ReceiveDate] = FIRST_VALUE(bd.ReceiveDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY bd.ReceiveDate desc)
 INTO #FarmInList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
@@ -213,19 +216,9 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 ) as sub
-OUTER APPLY(
-   SELECT TOP 1 EndSite,BundleNo,StartProcess,IssueDate
-   FROm #FarmOutList  
-   WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
-   ORDER BY lastEditDate DESC
-)FarmOut
-OUTER APPLY(
-   SELECT TOP 1 EndSite,BundleNo,StartProcess,ReceiveDate
-   FROm  #FarmInList    
-   WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
-   ORDER BY lastEditDate DESC
-)FarmIn
-INNER join LocalSupp ls on ls.id=FarmOut.EndSite
+left join #FarmOutList  FarmOut on FarmOut.BundleNo=base.BundleNo AND FarmOut.StartProcess= s.Id 
+left join #FarmInList  FarmIn on FarmIn.BundleNo=base.BundleNo AND FarmIn.StartProcess= s.Id
+left join LocalSupp ls on ls.id=FarmOut.EndSite
 WHERE 1=1 {finalWhere.JoinToString("\r\n")}
 
 
