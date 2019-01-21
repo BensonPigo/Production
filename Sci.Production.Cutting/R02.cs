@@ -371,22 +371,24 @@ outer apply(
 outer apply(
 	select SizeCode = 
 	STUFF((
-		Select concat(',',(ws.SizeCode+'/'+Convert(varchar,wd.Qty))) 
+		Select concat(',',(ws.SizeCode+'/'+Convert(varchar, sum(wd.Qty)))) 
 		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
 		left join Workorder_distribute wd on ws.WorkOrderUkey=wd.WorkOrderUkey and ws.SizeCode=wd.SizeCode
 		where ws.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		and wd.OrderID !='EXCESS'
+        group by ws.SizeCode
 		for xml path('')
 	 ),1,1,'')
 ) as SizeQty
 outer apply(
 	select SizeCode = 
 	STUFF((
-		Select concat(',',(ws.SizeCode+'/'+Convert(varchar,wd.Qty))) 
+		Select concat(',',(ws.SizeCode+'/'+Convert(varchar, sum(wd.Qty)))) 
 		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
 		left join Workorder_distribute wd on ws.WorkOrderUkey=wd.WorkOrderUkey and ws.SizeCode=wd.SizeCode
 		where ws.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
 		and wd.OrderID ='EXCESS'
+        group by ws.SizeCode
 		for xml path('')
 	 ),1,1,'')
 ) as ExcessQty
