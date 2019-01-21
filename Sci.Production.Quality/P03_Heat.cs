@@ -622,7 +622,7 @@ where a.ID='{0}'"
             {
                 foreach (DataRow dr in afterDT.Rows)
                 {                    
-                    DataRow[] drArray = afterDT.Select(string.Format("Roll='{0}'", MyUtility.Convert.GetString(dr["Roll"])));
+                    DataRow[] drArray = afterDT.Select(string.Format("Roll='{0}' and Dyelot = '{1}'", MyUtility.Convert.GetString(dr["Roll"]), MyUtility.Convert.GetString(dr["Dyelot"])));
                     if (drArray.Length > 1)
                     {
                         MyUtility.Msg.WarningBox("<Roll>" + MyUtility.Convert.GetString(dr["Roll"]) + ", <Dyelot> " + MyUtility.Convert.GetString(dr["Dyelot"]) + " is already exist ! ");
