@@ -799,15 +799,14 @@ group by id.Location,M.ArtworkTypeID";
                     if (dtGSD_Summary.Rows.Count > 0)
                     {
                         totalGSD = Convert.ToDecimal(dtGSD_Summary.Compute("sum(tms)", string.Empty));
-                    }
 
-                    if (totalSewingTime > totalGSD && totalGSD > 0)
-                    {
-                        MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD}) of Std.GSD.");
-                        return false;
+                        if (totalSewingTime > totalGSD)
+                        {
+                            MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD}) of Std.GSD.");
+                            return false;
+                        }
                     }
                 }
-
             }
             else
             {
