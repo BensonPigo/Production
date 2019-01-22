@@ -36,6 +36,7 @@
             this.editDescription = new Sci.Win.UI.EditBox();
             this.editLocalDesc = new Sci.Win.UI.EditBox();
             this.labLocalDesc = new Sci.Win.UI.Label();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -50,6 +51,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.editLocalDesc);
             this.detailcont.Controls.Add(this.labLocalDesc);
             this.detailcont.Controls.Add(this.editDescription);
@@ -166,6 +168,18 @@
             this.labLocalDesc.TabIndex = 9;
             this.labLocalDesc.Text = "Local Desc.";
             // 
+            // checkJunk
+            // 
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(300, 68);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 10;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
+            // 
             // B21
             // 
             this.ClientSize = new System.Drawing.Size(839, 457);
@@ -203,5 +217,6 @@
         private Win.UI.EditBox editDescription;
         private Win.UI.EditBox editLocalDesc;
         private Win.UI.Label labLocalDesc;
+        private Win.UI.CheckBox checkJunk;
     }
 }
