@@ -30,7 +30,7 @@ namespace Sci.Production.Quality
 
         private DataTable dt1;
         private DataTable dt2;
-        private string Filepath = @"TO-ALL\MMC\";
+        private string Filepath = @"MMC\";
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ApprovedSeason;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_FirstDyelot;
 
