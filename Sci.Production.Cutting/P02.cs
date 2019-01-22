@@ -2550,6 +2550,44 @@ END";
         }
         protected override DualResult ClickSavePost()
         {
+            #region 
+            #endregion
+            List<string> ukeylist = new List<string>();
+            string sqlInsertRevisedMarkerOriginalData = string.Empty;
+            foreach (DataRow dr in DetailDatas)
+            {
+                if (dr.RowState == DataRowState.Modified &&
+                    MyUtility.Convert.GetString(dr["MarkerName", DataRowVersion.Original]) != MyUtility.Convert.GetString(dr["MarkerName"]))
+                {
+                    //ukeylist.Add("'"+MyUtility.Convert.GetString(dr["Ukey"])+"'");
+
+                    sqlInsertRevisedMarkerOriginalData += $@"
+INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
+([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
+,[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo],[MarkerDownLoadId]
+,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID]
+,[WorkOrderUkey])
+
+select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid]
+,[MarkerLength],[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo]
+,[MarkerDownLoadId],[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength]
+,[CurvedLength],[SpreadingNoID],Ukey
+from WorkOrder where Ukey ={dr["ukey"]}
+
+declare @ID bigint = (select @@IDENTITY)
+
+INSERT INTO [dbo].[WorkOrder_DistributeRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
+select @ID,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
+
+INSERT INTO [dbo].[WorkOrder_PatternPanelRevisedMarkerOriginalData]([ID],[WorkOrderRevisedMarkerOriginalDataUkey],[PatternPanel],[FabricPanelCode])
+select [ID],@ID,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternPanel] where WorkOrderUkey = {dr["ukey"]}
+
+INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
+select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
+";
+                }
+            }
+            
             int ukey, newkey;
             DataRow[] dray;
             foreach (DataRow dr in DetailDatas)
@@ -2569,12 +2607,6 @@ END";
                     {
                         dr2["WorkOrderUkey"] = ukey;
                     }
-
-                    //dray = PatternPanelTb.Select(string.Format("newkey={0} and workorderUkey= 0", newkey)); //0表示新增
-                    //foreach (DataRow dr2 in dray)
-                    //{
-                    //    dr2["WorkOrderUkey"] = ukey;
-                    //}
                 }
             }
             string delsql = "", updatesql = "", insertsql = "";
@@ -2655,6 +2687,13 @@ END";
 
 
             DualResult upResult;
+            if (!MyUtility.Check.Empty(sqlInsertRevisedMarkerOriginalData))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, sqlInsertRevisedMarkerOriginalData)))
+                {
+                    return upResult;
+                }
+            }
             if (!MyUtility.Check.Empty(delsql))
             {
                 if (!(upResult = DBProxy.Current.Execute(null, delsql)))
