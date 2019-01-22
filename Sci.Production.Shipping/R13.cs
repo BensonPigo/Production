@@ -122,12 +122,21 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3)
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
-						(select Isnull(sum(ot.Price),0) 
-						from Order_TmsCost ot
-						inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-						where ot.ID = o.id and a.Classify = 'P')
-					,0),3)
-
+			( select isnull(sum(Price),0) Price
+			  from
+			  (
+			  	select f.ArtWorkID, ot.Price
+			  	from Order_TmsCost ot WITH (NOLOCK) 
+			  	inner join Orders od WITH (NOLOCK)  on ot.ID = od.ID
+			  	inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
+			  	left join FirstSaleCostSetting f on a.id = f.ArtWorkID 
+			  									and f.CostTypeID = 'Metial Cost' 
+			  									and f.isjunk = 0 
+			  									and od.BuyerDelivery between f.BeginDate and f.EndDate
+			  	where ot.ID = o.ID and a.Classify = 'P'
+			  	group by f.ArtWorkID, ot.Price
+			  ) a )
+		,0),3)
 From Orders o
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate

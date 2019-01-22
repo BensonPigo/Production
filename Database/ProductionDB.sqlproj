@@ -2307,6 +2307,7 @@
     <Build Include="dbo\Tables\Order_ECMNFailed.sql" />
     <Build Include="dbo\Functions\GetCMPDetail.sql" />
     <Build Include="dbo\Tables\SewingOutput_DailyUnlock.sql" />
+    <Build Include="dbo\Tables\FirstSaleCostSetting.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
