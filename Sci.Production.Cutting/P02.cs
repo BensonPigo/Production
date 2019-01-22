@@ -1513,7 +1513,7 @@ Do you want to continue? ");
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.DateBox)e.Control).ReadOnly = false;
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
 
             };
@@ -1538,7 +1538,7 @@ Do you want to continue? ");
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.DateBox)e.Control).ReadOnly = false;
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
 
             };
@@ -1563,7 +1563,7 @@ Do you want to continue? ");
             {
                 if (e.RowIndex == -1) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.DateBox)e.Control).ReadOnly = false;
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
                 else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
 
             };

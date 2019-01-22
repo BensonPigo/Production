@@ -34,6 +34,7 @@ namespace Sci.Production.Cutting
             txtCell1.MDivisionID = keyWord;
         }
 
+        Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNo;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
         public void setDetailGrid()
         {
@@ -53,10 +54,10 @@ namespace Sci.Production.Cutting
             .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(5), iseditingreadonly: true)
-
-            .Text("Cutcellid", header: "Org. Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
-            .Text("NewCutcellid", header: "New Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
-
+            .Text("SpreadingNoID", header: "Org.\nSpreading No", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("NewSpreadingNoID", header: "New\nSpreading No", width: Widths.AnsiChars(2)).Get(out col_SpreadingNo)
+            .Text("Cutcellid", header: "Org.\nCut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("NewCutcellid", header: "New\nCut Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
             .Text("CutReasonid", header: "Reason", width: Widths.AnsiChars(6), settings: col_cutreason)
             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -67,17 +68,23 @@ namespace Sci.Production.Cutting
             .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true);
             this.gridDetail.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["CutReasonid"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDetail.Columns["NewSpreadingNoID"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridDetail.Columns["NewCutcellid"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion
 
             col_estcutdate.CellValidating += (s, e) =>
             {
                 if (MyUtility.Check.Empty(e.FormattedValue)) return;
-                if (Convert.ToDateTime(e.FormattedValue) < DateTime.Today)
+                DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                if ((DateTime)e.FormattedValue < DateTime.Today)
                 {
                     MyUtility.Msg.WarningBox("<Est Cut Date> can not early today.");
-                    DataRow dr = gridDetail.GetDataRow(e.RowIndex);
-                    dr["newestcutdate"] = "";
+                    dr["newestcutdate"] = DBNull.Value;
+                    dr.EndEdit();
+                }
+                else
+                {
+                    dr["newestcutdate"] = (DateTime)e.FormattedValue;
                     dr.EndEdit();
                 }
             };
@@ -91,6 +98,50 @@ namespace Sci.Production.Cutting
 
         private void changeeditable()// Grid Cell 物件設定
         {
+            #region col_SpreadingNo
+            col_SpreadingNo.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    // Parent form 若是非編輯狀態就 return 
+                    DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+                    SelectItem sele;
+                    DataTable SpreadingNoTb;
+                    DBProxy.Current.Select(null, $"Select id from SpreadingNo WITH (NOLOCK) where mDivisionid = '{keyWord}' and junk=0", out SpreadingNoTb);
+                    sele = new SelectItem(SpreadingNoTb, "ID", "10@400,300", dr["NewSpreadingNoID"].ToString(), false, ",");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    dr["NewSpreadingNoID"] = sele.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+            col_SpreadingNo.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) { return; }
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridDetail.GetDataRow(e.RowIndex);
+
+                // 空白不檢查
+                if (e.FormattedValue.ToString().Empty()) return;
+                string oldvalue = dr["NewSpreadingNoID"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (oldvalue == newvalue) return;
+
+                DataRow SpreadingNodr;
+                string sqlSpreading = $"Select 1 from SpreadingNo WITH (NOLOCK) where mDivisionid = '{keyWord}' and  id = '{newvalue}' and junk=0";
+                if (!MyUtility.Check.Seek(sqlSpreading, out SpreadingNodr))
+                {
+                    dr["NewSpreadingNoID"] = "";
+                    dr.EndEdit();
+                    MyUtility.Msg.WarningBox(string.Format("<SpreadingNo> : {0} data not found!", newvalue));
+                    return;
+                }
+
+                dr["NewSpreadingNoID"] = newvalue;
+                
+                dr.EndEdit();
+            };
+            #endregion
             #region cutcell
             col_cutcell.EditingMouseDown += (s, e) =>
             {
@@ -129,14 +180,14 @@ namespace Sci.Production.Cutting
                 DataRow[] seledr = cellTb.Select(string.Format("ID='{0}'", newvalue));
                 if (seledr.Length == 0)
                 {
-                    dr["cutCellid"] = "";
+                    dr["NewCutcellid"] = "";
                     dr.EndEdit();
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox(string.Format("<Cell> : {0} data not found!", newvalue));
                     return;
                 }
 
-                dr["cutCellid"] = newvalue;
+                dr["NewCutcellid"] = newvalue;
                 dr.EndEdit();
             };
             #endregion
@@ -161,37 +212,38 @@ Select *
 From
 (
     Select a.*,
-    (
-        Select distinct Article+'/ ' 
-	    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-	    Where b.workorderukey = a.Ukey and b.article!=''
-        For XML path('')
-    ) as article,
-    (
-        Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-        From WorkOrder_SizeRatio c WITH (NOLOCK) 
-        Where c.WorkOrderUkey =a.Ukey 
-        For XML path('')
-    ) as SizeCode,
-    (
-        Select PatternPanel+'+ ' 
-        From WorkOrder_PatternPanel c WITH (NOLOCK) 
-        Where c.WorkOrderUkey =a.Ukey 
-        For XML path('')
-    ) as PatternPanel,
-    (
-	    Select  isnull(CONVERT (DATE, Min(sew.Inline),101),'')  as inline 
-	    From SewingSchedule sew WITH (NOLOCK) ,SewingSchedule_detail sew_b,WorkOrder_Distribute h WITH (NOLOCK) 
-	    Where h.WorkOrderUkey = a.ukey and sew.id=sew_b.id and h.orderid = sew_b.OrderID 
-			    and h.Article = sew_b.Article and h.SizeCode = h.SizeCode and h.orderid = sew.orderid
-    )  as Sewinline,
-    (
-	    Select isnull(Min(cut.cdate),'')
-	    From cuttingoutput cut WITH (NOLOCK) ,cuttingoutput_detail cut_b WITH (NOLOCK) 
-	    Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
-    )  as actcutdate,
-    '' as NewestcutDate, '' as cutreasonid ,0 as sel
-    ,NewCutcellid=''
+        (
+            Select distinct Article+'/ ' 
+	        From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
+	        Where b.workorderukey = a.Ukey and b.article!=''
+            For XML path('')
+        ) as article,
+        (
+            Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
+            From WorkOrder_SizeRatio c WITH (NOLOCK) 
+            Where c.WorkOrderUkey =a.Ukey 
+            For XML path('')
+        ) as SizeCode,
+        (
+            Select PatternPanel+'+ ' 
+            From WorkOrder_PatternPanel c WITH (NOLOCK) 
+            Where c.WorkOrderUkey =a.Ukey 
+            For XML path('')
+        ) as PatternPanel,
+        (
+	        Select  isnull(CONVERT (DATE, Min(sew.Inline),101),'')  as inline 
+	        From SewingSchedule sew WITH (NOLOCK) ,SewingSchedule_detail sew_b,WorkOrder_Distribute h WITH (NOLOCK) 
+	        Where h.WorkOrderUkey = a.ukey and sew.id=sew_b.id and h.orderid = sew_b.OrderID 
+			        and h.Article = sew_b.Article and h.SizeCode = h.SizeCode and h.orderid = sew.orderid
+        )  as Sewinline,
+        (
+	        Select isnull(Min(cut.cdate),'')
+	        From cuttingoutput cut WITH (NOLOCK) ,cuttingoutput_detail cut_b WITH (NOLOCK) 
+	        Where cut_b.workorderukey = a.Ukey and cut.id = cut_b.id
+        )  as actcutdate,
+        NewestcutDate = cast(null as date) , '' as cutreasonid ,0 as sel
+        ,NewCutcellid=''
+        ,NewSpreadingNoID=''
     from Workorder a";
             string where = string.Format(" Where cutplanid!='' and MDivisionId = '{0}'", keyWord);
             if (!MyUtility.Check.Empty(cutsp)) where = where + string.Format(" and id='{0}'",cutsp);
@@ -229,15 +281,23 @@ From
         {
             gridDetail.ValidateControl();
             if (detailTb == null) return;
-            string estcutdate = dateNewEstCutDate.Text;
             string reason = txtcutReason.TextBox1.Text;
+            string SpreadingNo = txtSpreadingNo1.Text;
             string cell = txtCell1.Text;
             foreach (DataRow dr in detailTb.Rows)
             {
                 if(dr["Sel"].ToString()=="1")
                 {
-                    dr["newestcutdate"] = estcutdate;
+                    if (MyUtility.Check.Empty(dateNewEstCutDate.Value))
+                    {
+                        dr["newestcutdate"] = DBNull.Value;
+                    }
+                    else
+                    {
+                        dr["newestcutdate"] = ((DateTime)dateNewEstCutDate.Value).ToShortDateString();
+                    }
                     dr["cutreasonid"] = reason;
+                    dr["NewSpreadingNoID"] = SpreadingNo;
                     dr["NewCutcellid"] = cell;
                 }
             }
@@ -258,7 +318,10 @@ From
             foreach (DataRow dr in detailTb.Rows)
             {
 
-                if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", "")))) || (dr["Cutcellid"] != dr["NewCutcellid"] && !MyUtility.Check.Empty(dr["NewCutcellid"])))
+                if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", "")))) || 
+                    (dr["Cutcellid"] != dr["NewCutcellid"] && !MyUtility.Check.Empty(dr["NewCutcellid"])) ||
+                    (dr["SpreadingNoID"] != dr["NewSpreadingNoID"] && !MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
+                    )
                 {
                     if (MyUtility.Check.Empty(dr["CutReasonid"]))
                     {
@@ -266,21 +329,26 @@ From
                         return;
                     }
 
-                    if (MyUtility.Check.Empty(dr["NewCutcellid"]))
+                    string newestcutdate = MyUtility.Check.Empty(dr["newestcutdate"]) ? "Null" : $"'{((DateTime)dr["newestcutdate"]).ToShortDateString()}'";
+                    string NewCutcellid = MyUtility.Check.Empty(dr["NewCutcellid"]) ? "Null" : $"'{dr["NewCutcellid"]}'";
+                    string NewSpreadingNoID = MyUtility.Check.Empty(dr["NewSpreadingNoID"]) ? "Null" : $"'{dr["NewSpreadingNoID"]}'";
+                    string orgEstCutDate =((DateTime)dr["EstCutDate"]).ToShortDateString();
+                    if (!MyUtility.Check.Empty(dr["newestcutdate"]))
                     {
-                        update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}' where Ukey = {dr["Ukey"]}; ";
-                        update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"]);
+                        update = update + $"Update Workorder Set estcutdate ='{((DateTime)dr["newestcutdate"]).ToShortDateString()}' where Ukey = {dr["Ukey"]}; ";
                     }
-                    else if (MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", ""))))
+                    if (!MyUtility.Check.Empty(dr["NewCutcellid"]))
                     {
                         update = update + $"Update Workorder Set CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
-                        update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,CutReasonid,ID,OrgCutCellid,NewCutCellid) Values({0},'{1}','{2}','{3}','{4}');", dr["Ukey"], dr["CutReasonid"], dr["ID"], dr["Cutcellid"], dr["NewCutcellid"]);
                     }
-                    else
+                    if (!MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
                     {
-                        update = update + $"Update Workorder Set estcutdate ='{dr["newestcutdate"]}',CutCellid = '{dr["NewCutcellid"]}' where Ukey = {dr["Ukey"]}; ";
-                        update = update + string.Format("Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate,NewEstCutDate,CutReasonid,ID,OrgCutCellid,NewCutCellid) Values({0},'{1}','{2}','{3}','{4}','{5}','{6}');", dr["Ukey"], Convert.ToDateTime(dr["EstCutDate"]).ToShortDateString(), dr["NewEstCutDate"], dr["CutReasonid"], dr["ID"], dr["Cutcellid"], dr["NewCutcellid"]);
-                    }                  
+                        update = update + $"Update Workorder Set SpreadingNoID='{dr["NewSpreadingNoID"]}' where Ukey = {dr["Ukey"]}; ";
+                    }
+
+                    update = update + $@"
+Insert into Workorder_EstCutdate(WorkOrderUkey,orgEstCutDate      ,NewEstCutDate  ,CutReasonid              ,ID             ,OrgCutCellid       ,NewCutCellid   ,OrgSpreadingNoID         ,NewSpreadingNoID) 
+Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}',{newestcutdate},'{dr["CutReasonid"]}','{dr["ID"]}','{dr["Cutcellid"]}',{NewCutcellid},'{dr["SpreadingNoID"]}',{NewSpreadingNoID});";
                 }
             }
 
