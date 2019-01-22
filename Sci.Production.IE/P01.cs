@@ -801,7 +801,7 @@ group by id.Location,M.ArtworkTypeID";
                         totalGSD = Convert.ToDecimal(dtGSD_Summary.Compute("sum(tms)", string.Empty));
                     }
 
-                    if (totalSewingTime > totalGSD)
+                    if (totalSewingTime > totalGSD && totalGSD > 0)
                     {
                         MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD}) of Std.GSD.");
                         return false;
