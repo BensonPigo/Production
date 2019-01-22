@@ -754,8 +754,12 @@ where WorkOrderUkey={0}", masterID);
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     DataTable poTb;
-                    string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
-                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}'", poid, dr["SCIRefno"]), out poTb);
+                    poTb = GetPoSuppDetail(dr["SciRefno"].ToString());
+                    if (poTb == null)
+                    {
+                        return;
+                    }
+
                     sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ1"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -804,9 +808,18 @@ Do you want to continue? ");
                 string oldvalue = dr["seq1"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
-                DataRow seledr;
-                string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
-                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}'", poid, newvalue)))
+
+                DataTable dtPoSuppDetail = GetPoSuppDetail(dr["SciRefno"].ToString());
+                if (dtPoSuppDetail == null)
+                {
+                    return;
+                }
+
+                var checkSeqSrource = dtPoSuppDetail.AsEnumerable();
+
+                bool isExistsSeq1 = checkSeqSrource.Where(srcDr => srcDr["Seq1"].ToString().Equals(newvalue)).Any();
+
+                if (!isExistsSeq1)
                 {
                     dr["SEQ1"] = "";
                     dr.EndEdit();
@@ -814,31 +827,33 @@ Do you want to continue? ");
                     MyUtility.Msg.WarningBox(string.Format("<SEQ1> : {0} data not found!", newvalue));
                     return;
                 }
-                else
-                {
 
-                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", poid, newvalue, CurrentDetailData["SEQ2"]), out seledr))
-                    {
-                        MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, CurrentDetailData["SEQ2"]));
-                        dr["SEQ2"] = "";
-                        dr["Colorid"] = "";
-                    }
-                    else
-                    {
-                        if (!MyUtility.Convert.GetString(seledr["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
-                        {
-                            DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {seledr["Colorid"]} now , 
+
+                List<DataRow> resultListDr = checkSeqSrource.Where(srcDr => srcDr["Seq2"].ToString().Equals(dr["Seq2"].ToString()) &&
+                                                                            srcDr["Seq1"].ToString().Equals(newvalue)).ToList();
+                if (resultListDr.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, CurrentDetailData["SEQ2"]));
+                    dr["SEQ1"] = "";
+                    dr["Colorid"] = "";
+                    return;
+                }
+
+                DataRow resultDr = resultListDr[0];
+
+                if (!MyUtility.Convert.GetString(resultDr["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
+                {
+                    DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {resultDr["Colorid"]} now , 
 Do you want to continue? ");
-                            if (DiaR == DialogResult.No)
-                            {
-                                dr["SEQ1"] = oldvalue;
-                                dr.EndEdit();
-                                return;
-                            }
-                        }
-                        dr["Colorid"] = seledr["Colorid"];
+                    if (DiaR == DialogResult.No)
+                    {
+                        dr["SEQ1"] = oldvalue;
+                        dr.EndEdit();
+                        return;
                     }
                 }
+                dr["Colorid"] = resultDr["Colorid"];
+                
                 dr["SEQ1"] = newvalue;
                 dr.EndEdit();
             };
@@ -854,8 +869,12 @@ Do you want to continue? ");
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     SelectItem sele;
                     DataTable poTb;
-                    string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
-                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}'", poid, dr["SCIRefno"]), out poTb);
+                    poTb = GetPoSuppDetail(dr["SciRefno"].ToString());
+                    if (poTb == null)
+                    {
+                        return;
+                    }
+
                     sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ2"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
@@ -906,9 +925,18 @@ Do you want to continue? ");
                 string oldvalue = dr["seq2"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
-                DataRow seledr;
-                string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
-                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq2 ='{1}'", poid, newvalue)))
+
+                DataTable dtPoSuppDetail = GetPoSuppDetail(dr["SciRefno"].ToString());
+                if (dtPoSuppDetail == null)
+                {
+                    return;
+                }
+
+                var checkSeqSrource = dtPoSuppDetail.AsEnumerable();
+
+                bool isExistsSeq2 = checkSeqSrource.Where(srcDr => srcDr["Seq2"].ToString().Equals(newvalue)).Any();
+
+                if (!isExistsSeq2)
                 {
                     dr["SEQ2"] = "";
                     dr.EndEdit();
@@ -916,31 +944,33 @@ Do you want to continue? ");
                     MyUtility.Msg.WarningBox(string.Format("<SEQ2> : {0} data not found!", newvalue));
                     return;
                 }
-                else
+
+
+                List<DataRow> resultListDr = checkSeqSrource.Where(srcDr =>   srcDr["Seq1"].ToString().Equals(dr["Seq1"].ToString()) && 
+                                                                            srcDr["Seq2"].ToString().Equals(newvalue)).ToList();
+                if (resultListDr.Count == 0)
                 {
-                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", poid, CurrentDetailData["SEQ1"], newvalue), out seledr))
-                    {
-                        MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, CurrentDetailData["SEQ1"]));
-                        dr["SEQ1"] = "";
-                        dr["Colorid"] = "";
-                    }
-                    else
-                    {
-                        if (!MyUtility.Convert.GetString(seledr["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
-                        {
-                            DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {seledr["Colorid"]} now , 
-Do you want to continue? ");
-                            if (DiaR == DialogResult.No)
-                            {
-                                dr["SEQ2"] = oldvalue;
-                                dr.EndEdit();
-                                return;
-                            }
-                        }
-                        dr["Colorid"] = seledr["Colorid"];
-                    }
+                    MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", CurrentDetailData["SEQ1"], newvalue));
+                    dr["SEQ2"] = "";
+                    dr["Colorid"] = "";
+                    return;
                 }
 
+                DataRow resultDr = resultListDr[0];
+
+                if (!MyUtility.Convert.GetString(resultDr["Colorid"]).EqualString(dr["Colorid"]) && !MyUtility.Check.Empty(dr["Colorid"].ToString()))
+                {
+                    DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Original assign colorID is {dr["Colorid"]}, but you locate colorID is {resultDr["Colorid"]} now , 
+Do you want to continue? ");
+                    if (DiaR == DialogResult.No)
+                    {
+                        dr["SEQ2"] = oldvalue;
+                        dr.EndEdit();
+                        return;
+                    }
+                }
+                dr["Colorid"] = resultDr["Colorid"];
+                
                 dr["SEQ2"] = newvalue;
                 dr.EndEdit();
             };
@@ -1447,6 +1477,27 @@ Do you want to continue? ");
                     }
                 }
             }
+        }
+
+        private DataTable GetPoSuppDetail(string sciRefno)
+        {
+            string poid = MyUtility.GetValue.Lookup(string.Format("Select poid from orders WITH (NOLOCK) where id ='{0}'", CurrentMaintain["ID"]));
+            DataTable dtPoSuppDetail;
+            DualResult result = DBProxy.Current.Select(null, $"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{poid}' and SCIRefno ='{sciRefno}' and Junk != 1 ", out dtPoSuppDetail);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return null;
+            }
+
+            if (dtPoSuppDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("No data found!");
+                return null;
+            }
+
+            return dtPoSuppDetail;
         }
 
         private void totalDisQty()
