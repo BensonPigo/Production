@@ -35,6 +35,7 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewTextBoxColumn col_seq1;
         Ict.Win.UI.DataGridViewTextBoxColumn col_seq2;
         Ict.Win.UI.DataGridViewTextBoxColumn col_cutcell;
+        Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_cutno;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_layer;
         Ict.Win.UI.DataGridViewDateBoxColumn col_estcutdate;
@@ -45,6 +46,9 @@ namespace Sci.Production.Cutting
         Ict.Win.UI.DataGridViewTextBoxColumn col_dist_article;
         Ict.Win.UI.DataGridViewTextBoxColumn col_dist_sp;
         Ict.Win.UI.DataGridViewNumericBoxColumn col_dist_qty;
+        Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_ActCuttingPerimeterNew;
+        Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_StraightLengthNew;
+        Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_CurvedLengthNew;
         #endregion
 
         public P02(ToolStripMenuItem menuitem, string history)
@@ -503,7 +507,8 @@ where WorkOrderUkey={0}", masterID);
                 .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), settings: EstCutDate).Get(out col_estcutdate)
                 .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
+                .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(2)).Get(out col_SpreadingNoID)
+                .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2)).Get(out col_cutcell)
                 .Text("Cutplanid", header: "Cutplan#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Date("actcutdate", header: "Act. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -517,9 +522,9 @@ where WorkOrderUkey={0}", masterID);
                 .Text("EachconsMarkerNo", header: "EachCons Apply #", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("EachconsMarkerVersion", header: "EachCons Apply ver", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("EachconsMarkerDownloadID", header: "EachCons Download ID", width: Widths.AnsiChars(25), iseditingreadonly: true)
-                .MaskedText("ActCuttingPerimeterNew", "000Yd00\"00", "ActCutting Perimeter", width: Widths.AnsiChars(16), settings: ActCuttingPerimeter)
-                .MaskedText("StraightLengthNew", "000Yd00\"00", "StraightLength", width: Widths.AnsiChars(16), settings: StraightLength)
-                .MaskedText("CurvedLengthNew", "000Yd00\"00", "CurvedLength", width: Widths.AnsiChars(16), settings: CurvedLength)
+                .MaskedText("ActCuttingPerimeterNew", "000Yd00\"00", "ActCutting Perimeter", width: Widths.AnsiChars(16), settings: ActCuttingPerimeter).Get(out col_ActCuttingPerimeterNew)
+                .MaskedText("StraightLengthNew", "000Yd00\"00", "StraightLength", width: Widths.AnsiChars(16), settings: StraightLength).Get(out col_StraightLengthNew)
+                .MaskedText("CurvedLengthNew", "000Yd00\"00", "CurvedLength", width: Widths.AnsiChars(16), settings: CurvedLength).Get(out col_CurvedLengthNew)
                 ;
             
             Helper.Controls.Grid.Generator(this.gridSizeRatio)
@@ -1099,6 +1104,97 @@ Do you want to continue? ");
                 dr.EndEdit();
             };
             #endregion
+            #region col_SpreadingNoID
+            col_SpreadingNoID.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+
+            };
+            col_SpreadingNoID.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            bool col_SpreadingNoIDchk = true;
+            col_SpreadingNoID.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!this.EditMode) { return; }
+                    DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                    // 若 cutref != empty 則不可編輯
+                    if (!MyUtility.Check.Empty(dr["Cutplanid"])) return;
+                    SelectItem sele;
+                    DataTable SpreadingNoIDTb;
+                    DBProxy.Current.Select(null, $"Select id,CutCell = CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{keyWord}' and junk=0", out SpreadingNoIDTb);
+
+                    sele = new SelectItem(SpreadingNoIDTb, "ID,CutCell", "10@400,300", dr["SpreadingNoID"].ToString(), false, ",");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    dr["SpreadingNoID"] = sele.GetSelectedString();
+                    if (!MyUtility.Check.Empty(sele.GetSelecteds()[0]["CutCell"]))
+                    {
+                        dr["cutCellid"] = sele.GetSelecteds()[0]["CutCell"];
+                        checkCuttingWidth(dr["cutCellid"].ToString(), dr["SCIRefno"].ToString());
+                    }
+                    dr.EndEdit();
+
+                    col_SpreadingNoIDchk = false;
+                }
+            };
+            col_SpreadingNoID.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return; 
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+
+                // 空白不檢查
+                if (e.FormattedValue.ToString().Empty()) return;
+                string oldvalue = dr["SpreadingNoID"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (oldvalue == newvalue) return;
+
+                DataRow SpreadingNodr;
+                string sqlSpreading = $"Select CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{keyWord}' and  id = '{newvalue}' and junk=0";
+                if (!MyUtility.Check.Seek(sqlSpreading, out SpreadingNodr))
+                {
+                    dr["SpreadingNoID"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SpreadingNo> : {0} data not found!", newvalue));
+                    return;
+                }
+
+                dr["SpreadingNoID"] = newvalue;
+
+                if (!MyUtility.Check.Empty(SpreadingNodr["CutCellID"]))
+                    dr["cutCellid"] = SpreadingNodr["CutCellID"];
+
+                if (!col_SpreadingNoIDchk)
+                {
+                    col_SpreadingNoIDchk = true;
+                }
+                else
+                {
+                    checkCuttingWidth(dr["cutCellid"].ToString(), dr["SCIRefno"].ToString());
+                }
+                dr.EndEdit();
+            };
+            #endregion
             #endregion
             #region SizeRatio
             col_sizeRatio_size.EditingMouseDown += (s, e) =>
@@ -1412,8 +1508,83 @@ Do you want to continue? ");
                 totalDisQty();
             };
             #endregion
+            #region col_ActCuttingPerimeterNew
+            col_ActCuttingPerimeterNew.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.DateBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
+
+            };
+            col_ActCuttingPerimeterNew.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            #endregion
+            #region col_StraightLengthNew
+            col_StraightLengthNew.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.DateBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
+
+            };
+            col_StraightLengthNew.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            #endregion
+            #region col_CurvedLengthNew
+            col_CurvedLengthNew.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.DateBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
+
+            };
+            col_CurvedLengthNew.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            #endregion
         }
-        
+
         //重組detailgrid的size
         private void redetailsize(int workorderukey, int newkey)
         {

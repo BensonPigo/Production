@@ -193,7 +193,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(6049, 561);
+            this.refresh.Location = new System.Drawing.Point(6161, 561);
             // 
             // detailgridcont
             // 
@@ -202,7 +202,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(630, 585);
+            this.detailgridcont.Size = new System.Drawing.Size(631, 583);
             // 
             // detail
             // 
