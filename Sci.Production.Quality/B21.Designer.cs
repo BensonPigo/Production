@@ -188,7 +188,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportLocate = false;
             this.IsSupportPrint = false;
             this.KeyPreview = true;
             this.Name = "B21";
