@@ -117,6 +117,12 @@
     <Compile Include="txtcdcode.Designer.cs">
       <DependentUpon>txtcdcode.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtCuttingMachineID.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCuttingMachineID.Designer.cs">
+      <DependentUpon>txtCuttingMachineID.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtSpreadingNo.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -83,13 +83,14 @@ namespace Sci.Production.Cutting
             
             this.displayCutplanNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "Cutplanid", true));
             this.displayTotalCutQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "CutQty", true));
+            this.displayTime.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "SandCTime", true));
             this.numMarkerLengthY.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthY", true));
             this.txtMarkerLengthE.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLengthE", true));
             this.txtMarkerLength.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerLength", true));
             this.txtPatternPanel.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "PatternPanel", true));
             this.lbshc.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "shc", true));
             this.txtBoxMarkerNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", bindingSource2, "MarkerNo", true));
-
+            
             sizeratioMenuStrip.Enabled = this.EditMode;
             distributeMenuStrip.Enabled = this.EditMode;
 
@@ -185,6 +186,9 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
+	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.MtlTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
+					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.MtlTypeID,a.cons),0)as float)
+	)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join dbo.order_Eachcons e WITH (NOLOCK) on e.Ukey = a.Order_EachconsUkey 
@@ -275,6 +279,13 @@ outer apply
 	left join Order_SizeCode c WITH (NOLOCK) on c.Id = b.ID and c.SizeCode = b.SizeCode
 	where b.WorkOrderUkey = a.Ukey
 ) as Order_SizeCode_Seq
+outer apply(
+	select avgInQty = avg(fi.InQty)
+	from PO_Supp_Detail psd with(nolock)
+	left join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
+	where psd.ID = a.id and psd.SCIRefno = a.SCIRefno
+	and fi.InQty is not null
+) as fi
 where a.id = '{0}'            
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -1700,17 +1711,6 @@ Do you want to continue? ");
             bindingSource2.SetRow(this.CurrentDetailData);
             DataRow fabdr;
 
-            //if (MyUtility.Check.Seek(string.Format("Select * from Fabric WITH (NOLOCK) Where SCIRefno ='{0}'", CurrentDetailData["SCIRefno"]), out fabdr))
-            //{
-            //    displayFabricType_Refno.Text = fabdr["MtlTypeid"].ToString();
-            //    editDescription.Text = fabdr["Description"].ToString();
-            //}
-            //else
-            //{
-            //    displayFabricType_Refno.Text = "";
-            //    editDescription.Text = "";
-            //}
-
             #region 根據左邊Grid Filter 右邊資訊
             if (!MyUtility.Check.Empty(CurrentDetailData["Ukey"]))
             {
@@ -1838,7 +1838,6 @@ Do you want to continue? ");
             #endregion
             totalDisQty();
 
-            
             this.gridSizeRatio.AutoResizeColumns();            
             this.gridQtyBreakdown.AutoResizeColumns();
             //抓到當前編輯的cell

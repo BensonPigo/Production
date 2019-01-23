@@ -102,6 +102,7 @@
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.displayTime = new Sci.Win.UI.DisplayBox();
             this.txtBoxMarkerNo = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.lbshc = new System.Windows.Forms.Label();
@@ -193,7 +194,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(6217, 561);
+            this.refresh.Location = new System.Drawing.Point(6497, 561);
             // 
             // detailgridcont
             // 
@@ -202,7 +203,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(630, 583);
+            this.detailgridcont.Size = new System.Drawing.Size(628, 587);
             // 
             // detail
             // 
@@ -687,7 +688,7 @@
             this.gridSizeRatio.RowTemplate.Height = 24;
             this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSizeRatio.ShowCellToolTips = false;
-            this.gridSizeRatio.Size = new System.Drawing.Size(137, 149);
+            this.gridSizeRatio.Size = new System.Drawing.Size(137, 164);
             this.gridSizeRatio.TabIndex = 44;
             this.gridSizeRatio.TabStop = false;
             // 
@@ -769,7 +770,7 @@
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
             this.gridDistributetoSPNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDistributetoSPNo.ShowCellToolTips = false;
-            this.gridDistributetoSPNo.Size = new System.Drawing.Size(377, 150);
+            this.gridDistributetoSPNo.Size = new System.Drawing.Size(377, 166);
             this.gridDistributetoSPNo.TabIndex = 48;
             this.gridDistributetoSPNo.TabStop = false;
             this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.distribute_grid_DataError);
@@ -827,7 +828,7 @@
             this.gridQtyBreakdown.RowTemplate.Height = 24;
             this.gridQtyBreakdown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakdown.ShowCellToolTips = false;
-            this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 124);
+            this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 93);
             this.gridQtyBreakdown.TabIndex = 49;
             this.gridQtyBreakdown.TabStop = false;
             // 
@@ -1047,7 +1048,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakdown);
             this.splitContainer1.Panel2MinSize = 1;
             this.splitContainer1.Size = new System.Drawing.Size(373, 678);
-            this.splitContainer1.SplitterDistance = 536;
+            this.splitContainer1.SplitterDistance = 567;
             this.splitContainer1.TabIndex = 61;
             // 
             // splitContainer2
@@ -1061,6 +1062,7 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.displayTime);
             this.splitContainer2.Panel1.Controls.Add(this.txtBoxMarkerNo);
             this.splitContainer2.Panel1.Controls.Add(this.gridSizeRatio);
             this.splitContainer2.Panel1.Controls.Add(this.labelSizeRatio);
@@ -1076,9 +1078,18 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.gridDistributetoSPNo);
             this.splitContainer2.Panel2.Controls.Add(this.labelDistributetoSPNo);
-            this.splitContainer2.Size = new System.Drawing.Size(377, 334);
-            this.splitContainer2.SplitterDistance = 162;
+            this.splitContainer2.Size = new System.Drawing.Size(377, 365);
+            this.splitContainer2.SplitterDistance = 177;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // displayTime
+            // 
+            this.displayTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTime.Location = new System.Drawing.Point(140, 151);
+            this.displayTime.Name = "displayTime";
+            this.displayTime.Size = new System.Drawing.Size(225, 23);
+            this.displayTime.TabIndex = 64;
             // 
             // txtBoxMarkerNo
             // 
@@ -1241,5 +1252,6 @@
         private Win.UI.Label label1;
         private Win.UI.TextBox txtBoxMarkerNo;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private Win.UI.DisplayBox displayTime;
     }
 }
