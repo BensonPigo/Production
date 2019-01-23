@@ -140,74 +140,7 @@ tmpOrderArtwork as (
 		select distinct ID
 		from tmpArtWork
 	) tmpArtWorkID
-),
-cte As(
-	select o.MDivisionID, o.FactoryID, OrderID = O.ID ,Oq.Qty, oq.Article,oq.SizeCode     
-	from dbo.Orders o WITH (NOLOCK) 
-	left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
-	where o.id IN (SELECT  ID FROM tmpOrderArtwork)
-),
-tmp as(
-		Select DISTINCT
-		[Bundleno] = bd.BundleNo,
-		[Cut Ref#] = b.CutRef,
-		[M] = b.MDivisionid,
-		[Factory] = o.FtyGroup,
-		[SP] = b.Orderid,
-		SubProcessId = s.Id,
-		b.article,
-		[Size] = bd.SizeCode,
-		[Comb] = b.PatternPanel,
-		b.FabricPanelCode,
-		bd.PatternCode,
-		bd.Qty,
-		bio.InComing,
-		bio.OutGoing
-	from Bundle b WITH (NOLOCK) 
-	inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
-	left join Bundle_Detail_Art bda WITH (NOLOCK) on bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
-	inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
-	inner join SubProcess s WITH (NOLOCK) on (s.IsRFIDDefault = 1 or s.Id = bda.SubprocessId) 
-	left join BundleInOut bio WITH (NOLOCK) on bio.Bundleno=bd.Bundleno and bio.SubProcessId = s.Id
-	inner join Order_EachCons oe WITH (NOLOCK) on oe.id = o.poid and oe.FabricPanelCode = b.FabricPanelCode
-	inner join Order_BOF bof WITH (NOLOCK) on bof.Id = oe.Id and bof.FabricCode = oe.FabricCode
-	where 1=1
-	AND EXISTS (SELECT 1 FROM cte WHERE OrderID= b.Orderid AND MDivisionID= b.MDivisionID AND FactoryID=o.FactoryID)
-	
-	and bof.kind != 0
-),
-tmp2 as(
-	select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode,accuQty = sum(iif(InComing is null ,0,Qty))
-	from tmp
-	group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,PatternCode
-),
-tmp3 AS(
-	select [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode,accuQty = min(accuQty)
-	from tmp2
-	group by [M],[Factory],[SP],[Subprocessid],article,[Size],[Comb],FabricPanelCode
-),
-tmp4 AS(
-	select [M],[Factory],[SP],[Subprocessid],article,[Size],accuQty = min(accuQty)
-	from tmp3
-	group by [M],[Factory],[SP],[Subprocessid],article,[Size]
-),
-LoadingOutput AS(
-	select [OrderID]=t.OrderID,[AccuInCome]=SUM(loading.[AccuInCome])
-	from cte t 
-	outer apply (
-		select [AccuInCome] = iif (AccuQty > t.Qty, t.Qty, AccuQty) 
-		from tmp4 
-		where tmp4.SP = t.OrderID 
-			  and tmp4.Factory = t.FactoryID
-			  and tmp4.SubProcessId = 'loading'
-			  and tmp4.Article = t.Article 
-			  and tmp4.Size = t.SizeCode
-	) loading
-	GROUP BY t.OrderID
 )
-
-
-
 select  SewingLineID
         , MDivisionID
         , FactoryID
@@ -219,7 +152,6 @@ select  SewingLineID
         , Qty
         , AlloQty
         , CutQty
-		, LoadingOutPut
         , SewingQty
         , ClogQty
         , InspDate
@@ -231,7 +163,7 @@ select  SewingLineID
         , PFRemark
         , MTLETA
         , MTLExport
-        , CutInLine
+        ,CutInLine
         , Inline
         , Offline
         , SciDelivery
@@ -264,7 +196,6 @@ from (
                                                     from SewingSchedule_Detail sd WITH (NOLOCK) 
                                                     where sd.ID = s.ID)
                      ) ,0) as CutQty
-			, [LoadingOutPut]=lo.AccuInCome
             , isnull((  select sum(sod.QAQty) 
                         from    SewingOutput so WITH (NOLOCK) 
                                 , SewingOutput_Detail sod WITH (NOLOCK) 
@@ -302,7 +233,7 @@ from (
                     ),'') as PFRemark
             , o.MTLETA
             , o.MTLExport
-            , O.CutInLine
+            ,O.CutInLine
             , s.Inline
             , s.Offline
             , o.SciDelivery
@@ -323,7 +254,6 @@ from (
    -- left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey
 	--											 and s.ComboType = sl.Location
     left join tmpOrderArtwork ta on ta.ID = s.OrderID
-	left join LoadingOutput lo on lo.OrderID = s.OrderID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) ol_rate
     outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
@@ -388,7 +318,9 @@ from (
 ) a
 order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
 
+            DBProxy.Current.DefaultTimeout = 900;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
+            DBProxy.Current.DefaultTimeout = 300;
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
