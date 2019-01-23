@@ -38,10 +38,9 @@ Window time*Window No";
                 numWindowTime.Value = 0;
                 numWindowLength.Value = 0;
             }
-//            createby.Text = MyUtility.GetValue.Lookup($@"select AddName = concat(AddName,'-'+(select name from Pass1 where id = s.AddName),' '+format(AddDate,'yyyy/MM/dd HH:mm:ss') )
-//from CuttingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
-//            editby.Text = MyUtility.GetValue.Lookup($@"select EditName = concat(EditName,'-'+(select name from Pass1 where id = s.EditName),' '+format(EditDate,'yyyy/MM/dd HH:mm:ss') )
-//from CuttingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
+            createby.Text = string.Empty;
+            editby.Text = MyUtility.GetValue.Lookup($@"select EditName = concat(EditName,'-'+(select name from Pass1 where id = s.EditName),' '+format(EditDate,'yyyy/MM/dd HH:mm:ss') )
+from CuttingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
         }
 
         protected override DualResult ClickSave()
@@ -60,11 +59,11 @@ when matched then update set
 	 [SetUpTime]		={numSetUpT.Value}
 	,[WindowTime]	={numWindowTime.Value}
 	,[WindowLength]			={numWindowLength.Value}
-	--,[EditName]				='{Sci.Env.User.UserID}'
-	--,[EditDate]				=getdate()
+	,[EditName]				='{Sci.Env.User.UserID}'
+	,[EditDate]				=getdate()
 when not matched by target then
-insert ([MtlTypeID],[SetUpTime],[WindowTime],[WindowLength])--,[AddName],[AddDate])
-values(s.MtlType,{numSetUpT.Value},{numWindowTime.Value},{numWindowLength.Value})--,'{Sci.Env.User.UserID}',getdate())
+insert ([MtlTypeID],[SetUpTime],[WindowTime],[WindowLength],[EditName],[EditDate])
+values(s.MtlType,{numSetUpT.Value},{numWindowTime.Value},{numWindowLength.Value},'{Sci.Env.User.UserID}',getdate())
 ;
 drop table #tmp
 ";

@@ -46,8 +46,7 @@ No. of Roll + Set up time + (Machine Spreading Time*Marker Length*Layer) +
                 numSpreadingTime.Value = 0;
                 numForwardTime.Value = 0;
             }
-            createby.Text = MyUtility.GetValue.Lookup($@"select AddName = concat(AddName,'-'+(select name from Pass1 where id = s.AddName),' '+format(AddDate,'yyyy/MM/dd HH:mm:ss') )
-from SpreadingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
+            createby.Text = string.Empty;
             editby.Text = MyUtility.GetValue.Lookup($@"select EditName = concat(EditName,'-'+(select name from Pass1 where id = s.EditName),' '+format(EditDate,'yyyy/MM/dd HH:mm:ss') )
 from SpreadingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
         }
@@ -75,7 +74,7 @@ when matched then update set
 	,[EditName]				='{Sci.Env.User.UserID}'
 	,[EditDate]				=getdate()
 when not matched by target then
-insert ([MtlTypeID],[PreparationTime],[ChangeOverRollTime],[ChangeOverUnRollTime],[SetupTime],[SeparatorTime],[SpreadingTime],[ForwardTime],[AddName],[AddDate])
+insert ([MtlTypeID],[PreparationTime],[ChangeOverRollTime],[ChangeOverUnRollTime],[SetupTime],[SeparatorTime],[SpreadingTime],[ForwardTime],[EditName],[EditDate])
 values(s.MtlType,{numPreparationTime.Value},{numChangeOverRollTime.Value},{numChangeOverUnRollTime.Value},{numSetupTime.Value},
 {numSeparatorTime.Value},{numSpreadingTime.Value},{numForwardTime.Value},'{Sci.Env.User.UserID}',getdate())
 ;
