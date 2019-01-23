@@ -217,8 +217,9 @@ BEGIN
 			inner join OrderComparisonList c on c.OrderID = a.id
 			where b.id is null
 			and a.FactoryID not in (select ID from Production.dbo.Factory)
+			and c.UpdateDate = @dToDay
 		) as s
-		on t.OrderID = s.OrderID and t.FactoryID = s.FactoryID and t.UpdateDate = @dToDay
+		on t.OrderID = s.OrderID and t.FactoryID = s.FactoryID and t.UpdateDate = s.UpdateDate
 		when matched then 
 		update set
 			t.DeleteOrder				= 1
