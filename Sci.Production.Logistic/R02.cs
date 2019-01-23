@@ -117,19 +117,21 @@ namespace Sci.Production.Logistic
             }
 
             sqlcmd.Append(@"
-select a.MDivisionID,a.FactoryID,a.OrderID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled,ActPulloutDate
+select a.MDivisionID,a.FactoryID,a.OrderID,a.PackingID,a.CTNStartNo,a.ReceiveDate,a.CustPONo,a.ClogLocationId,a.BrandID,a.Cancelled,a.PulloutComplete,ActPulloutDate
 from(
 select 
 p.MDivisionID
 ,o.FactoryID
 ,pd.OrderID
+,[PackingID] = p.id
 ,pd.CTNStartNo
 ,pd.ReceiveDate
 ,o.CustPONo
 ,pd.ClogLocationId
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
-,pd.id,pd.Seq,o.PulloutComplete 
+,pd.id,pd.Seq
+,[PulloutComplete] = iif(o.PulloutComplete=1,'Y','N')
 ,[ActPulloutDate] = o.ActPulloutDate
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
@@ -147,13 +149,15 @@ select
 p.MDivisionID
 ,o.FactoryID
 ,pd.OrderID
+,[PackingID] = p.id
 ,pd.CTNStartNo
 ,pd.ReceiveDate
 ,o.CustPONo
 ,pd.ClogLocationId
 ,p.BrandID
 ,Cancelled = iif(o.junk=1,'Y','N')
-,pd.id,pd.Seq,o.PulloutComplete 
+,pd.id,pd.Seq
+,[PulloutComplete] = iif(o.PulloutComplete=1,'Y','N')
 ,[ActPulloutDate] = o.ActPulloutDate
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
@@ -207,25 +211,27 @@ order by PulloutComplete desc,ClogLocationId, MDivisionID, FactoryID, OrderID, I
             worksheet.Cells[2, 2] = this.po1 + " ~ " + this.po2;
             worksheet.Cells[3, 2] = this.sp1 + " ~ " + this.sp2;
             worksheet.Cells[4, 2] = this.location1 + " ~ " + this.location2;
-            worksheet.Cells[2, 8] = this.brand;
-            worksheet.Cells[3, 8] = this.mDivision;
+            worksheet.Cells[2, 9] = this.brand;
+            worksheet.Cells[3, 9] = this.mDivision;
 
             // 填內容值
             int intRowsStart = 6;
-            object[,] objArray = new object[1, 10];
+            object[,] objArray = new object[1, 12];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr["MDivisionID"];
                 objArray[0, 1] = dr["FactoryID"];
                 objArray[0, 2] = dr["OrderID"];
-                objArray[0, 3] = dr["CTNStartNo"];
-                objArray[0, 4] = dr["ReceiveDate"];
-                objArray[0, 5] = dr["CustPONo"];
-                objArray[0, 6] = dr["ClogLocationId"];
-                objArray[0, 7] = dr["BrandID"];
-                objArray[0, 8] = dr["Cancelled"];
-                objArray[0, 9] = dr["ActPulloutDate"];
-                worksheet.Range[string.Format("A{0}:J{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 3] = dr["PackingID"];
+                objArray[0, 4] = dr["CTNStartNo"];
+                objArray[0, 5] = dr["ReceiveDate"];
+                objArray[0, 6] = dr["CustPONo"];
+                objArray[0, 7] = dr["ClogLocationId"];
+                objArray[0, 8] = dr["BrandID"];
+                objArray[0, 9] = dr["Cancelled"];
+                objArray[0, 10] = dr["PulloutComplete"];
+                objArray[0, 11] = dr["ActPulloutDate"];
+                worksheet.Range[string.Format("A{0}:L{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
