@@ -66,6 +66,8 @@
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
             this.labelTotalQty = new Sci.Win.UI.Label();
             this.numTotalqty = new Sci.Win.UI.NumericBox();
+            this.lbExVoucherID = new Sci.Win.UI.Label();
+            this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -82,6 +84,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disExVoucherID);
+            this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.numTotalqty);
             this.masterpanel.Controls.Add(this.labelTotalQty);
             this.masterpanel.Controls.Add(this.txtmfactory);
@@ -161,6 +165,8 @@
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelTotalQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTotalqty, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbExVoucherID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disExVoucherID, 0);
             // 
             // detailpanel
             // 
@@ -655,6 +661,23 @@
             0,
             0});
             // 
+            // lbExVoucherID
+            // 
+            this.lbExVoucherID.Location = new System.Drawing.Point(8, 224);
+            this.lbExVoucherID.Name = "lbExVoucherID";
+            this.lbExVoucherID.Size = new System.Drawing.Size(103, 23);
+            this.lbExVoucherID.TabIndex = 54;
+            this.lbExVoucherID.Text = "Ex Voucher No.";
+            // 
+            // disExVoucherID
+            // 
+            this.disExVoucherID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disExVoucherID.Location = new System.Drawing.Point(114, 224);
+            this.disExVoucherID.Name = "disExVoucherID";
+            this.disExVoucherID.Size = new System.Drawing.Size(317, 23);
+            this.disExVoucherID.TabIndex = 55;
+            // 
             // P35
             // 
             this.ApvChkValue = "New";
@@ -735,5 +758,7 @@
         private Win.UI.DateBox dateApvDate;
         private Win.UI.NumericBox numTotalqty;
         private Win.UI.Label labelTotalQty;
+        private Win.UI.DisplayBox disExVoucherID;
+        private Win.UI.Label lbExVoucherID;
     }
 }
