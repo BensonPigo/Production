@@ -40,6 +40,7 @@ BEGIN
 	DECLARE @cols NVARCHAR(MAX)= N''
 	SELECT @cols = @cols + iif(@cols = N'',QUOTENAME(sizecode),N',' + QUOTENAME(sizecode))
 	from #tmp
+	order by Seq asc
 	drop table #tmp
 
 	DECLARE @sql NVARCHAR(MAX)
