@@ -2830,7 +2830,13 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             };
         }
 
-        
+        private void displayTime_DoubleClick(object sender, EventArgs e)
+        {
+            if (CurrentDetailData == null) return;
+            var frm = new Sci.Production.Cutting.P02_OriginalData(CurrentDetailData);
+            frm.ShowDialog(this);
+        }
+
         //Quantity Breakdown
         private void Qtybreak_Click(object sender, EventArgs e)
         {
@@ -2843,10 +2849,6 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
         //PatternPanel
         private void btnPatternPanel_Click(object sender, EventArgs e)
         {
-            //var dr = this.CurrentDetailData; if (null == dr) return;
-            //var frm = new Sci.Production.Cutting.P02_PatternPanel(this.EditMode && MyUtility.Check.Empty(CurrentDetailData["Cutplanid"]), dr["Ukey"].ToString(), null, null, layersTb);
-            //frm.ShowDialog(this);
-            
             OpenSubDetailPage();
         }
 

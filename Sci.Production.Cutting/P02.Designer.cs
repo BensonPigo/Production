@@ -194,7 +194,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(6497, 561);
+            this.refresh.Location = new System.Drawing.Point(6609, 561);
             // 
             // detailgridcont
             // 
@@ -203,7 +203,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(628, 587);
+            this.detailgridcont.Size = new System.Drawing.Size(630, 583);
             // 
             // detail
             // 
@@ -1090,6 +1090,7 @@
             this.displayTime.Name = "displayTime";
             this.displayTime.Size = new System.Drawing.Size(225, 23);
             this.displayTime.TabIndex = 64;
+            this.displayTime.DoubleClick += new System.EventHandler(this.displayTime_DoubleClick);
             // 
             // txtBoxMarkerNo
             // 
