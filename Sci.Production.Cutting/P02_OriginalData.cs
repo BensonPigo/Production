@@ -557,9 +557,6 @@ where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
 
             displayTime.DataBindings.Add("Text", listControlBindingSource1, "SandCTime", true, DataSourceUpdateMode.OnPropertyChanged);
             #endregion
-
-
-            // displayTime
         }
     }
 }
