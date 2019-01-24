@@ -1014,7 +1014,7 @@ where s.Type = 'EXPORT'");
                 range = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("C2", "C" + (this.printData.Rows.Count + 1));
                 range.EntireColumn.NumberFormat = "yyyy/MM/dd";
                 Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM();
-                object[,] arrayValues = com.Transfer_2_Array(tb_onBoardDate);
+                object[,] arrayValues = tb_onBoardDate.ToArray2D();
                 range.Value2 = arrayValues;
             }
 
