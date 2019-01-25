@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[FirstSaleCostSetting](
 	[CountryID] [varchar](2) NOT NULL CONSTRAINT [DF_FirstSaleCostSetting_CountryID]  DEFAULT (''),
 	[ArtWorkID] [varchar](20) NOT NULL CONSTRAINT [DF_FirstSaleCostSetting_ArtWorkID]  DEFAULT (''),
-	[CostTypeID] [varchar](11) NOT NULL CONSTRAINT [DF_FirstSaleCostSetting_CostTypeID]  DEFAULT (''),
+	[CostTypeID] [varchar](13) NOT NULL CONSTRAINT [DF_FirstSaleCostSetting_CostTypeID]  DEFAULT (''),
 	[BeginDate] [date] NOT NULL,
 	[EndDate] [date] NOT NULL,
 	[IsJunk] [bit] NULL CONSTRAINT [DF_FirstSaleCostSetting_IsJunk]  DEFAULT ((0)),

@@ -120,7 +120,7 @@ order by ot.Seq", this.orderData["ID"].ToString());
 	                        inner join Orders o WITH (NOLOCK)  on ot.ID = o.ID
 	                        inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
 	                        left join FirstSaleCostSetting f on a.id = f.ArtWorkID 
-									                        and f.CostTypeID = 'Metial Cost' 
+									                        and f.CostTypeID = 'Material Cost' 
 									                        and f.isjunk = 0 
 									                        and o.BuyerDelivery between f.BeginDate and f.EndDate  
 	                        where 1=1
