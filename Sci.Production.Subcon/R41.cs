@@ -17,7 +17,7 @@ namespace Sci.Production.Subcon
     {
         DataTable printData;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
-        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2;
+        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -53,6 +53,8 @@ namespace Sci.Production.Subcon
             dateBundle2 = this.dateBundleCDate.Value2;
             dateBundleScanDate1 = this.dateBundleScanDate.Value1;
             dateBundleScanDate2 = this.dateBundleScanDate.Value2;
+            dateEstCutDate1 = this.dateEstCutDate.Value1;
+            dateEstCutDate2 = this.dateEstCutDate.Value2;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
                 MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
@@ -122,6 +124,15 @@ namespace Sci.Production.Subcon
             if (!MyUtility.Check.Empty(Factory))
             {
                 sqlWhere.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+            }
+
+            if (!MyUtility.Check.Empty(dateEstCutDate1))
+            {
+                sqlWhere.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateEstCutDate2))
+            {
+                sqlWhere.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
             }
             #endregion
 
@@ -194,6 +205,7 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 ) as sub
+left join Workorder w on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid
 where 1=1 {sqlWhere}";
 
             string sqlResult = $@"
