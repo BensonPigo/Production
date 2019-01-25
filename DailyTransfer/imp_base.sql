@@ -3204,3 +3204,20 @@ insert into SeasonSCI
 select * from Trade_To_Pms.dbo.SeasonSCI
 
 
+------FirstSaleCostSetting---------------
+Merge Production.dbo.FirstSaleCostSetting as sr
+Using Trade_To_Pms.dbo.FirstSaleCostSetting as tsr 
+on sr.CountryID = tsr.CountryID AND sr.ArtWorkID=tsr.ArtWorkID AND sr.CostTypeID=tsr.CostTypeID AND sr.BeginDate=tsr.BeginDate
+when matched then
+      update set 
+       sr.EndDate = tsr.EndDate, 
+	   sr.IsJunk = tsr.IsJunk, 
+	   sr.AddDate = tsr.AddDate, 
+	   sr.AddName = tsr.AddName, 
+	   sr.EditDate = tsr.EditDate, 
+	   sr.EditName = tsr.EditName
+when not matched by target then
+      insert (CountryID, ArtWorkID, CostTypeID, BeginDate, EndDate, IsJunk, AddDate, AddName, EditDate, EditName) 
+	  values (tsr.CountryID, tsr.ArtWorkID, tsr.CostTypeID, tsr.BeginDate, tsr.EndDate, tsr.IsJunk, tsr.AddDate, tsr.AddName, tsr.EditDate,tsr.EditName)
+when not matched by source then 
+      delete;

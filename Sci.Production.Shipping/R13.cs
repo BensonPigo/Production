@@ -20,6 +20,8 @@ namespace Sci.Production.Shipping
     {
         private DateTime? buyerDlv1;
         private DateTime? buyerDlv2;
+        private DateTime? sciDlv1;
+        private DateTime? sciDlv2;
         private string brand;
         private string Shipper;
         private string factory;
@@ -62,6 +64,8 @@ namespace Sci.Production.Shipping
 
             this.buyerDlv1 = this.dateBuyerDelivery.Value1;
             this.buyerDlv2 = this.dateBuyerDelivery.Value2;
+            this.sciDlv1 = this.dateSCIDelivery.Value1;
+            this.sciDlv2 = this.dateSCIDelivery.Value2;
             this.brand = this.txtbrand.Text;
             this.Shipper = this.comboShipper.Text.ToString().Trim();
             this.factory = this.comboFactory.Text;
@@ -156,6 +160,16 @@ Where o.LocalOrder = 0 ");
             if (!MyUtility.Check.Empty(this.buyerDlv2))
             {
                 sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDlv1))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDlv1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDlv2))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDlv2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
