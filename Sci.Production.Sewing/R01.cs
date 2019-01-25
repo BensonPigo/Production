@@ -845,8 +845,8 @@ order by ArtworkTypeID"),
                 }
             }
             #region Direct Manpower(From PAMS)
-            if (Sci.Env.User.Keyword.EqualString("CM1") || 
-                Sci.Env.User.Keyword.EqualString("CM2") || 
+            if (Sci.Env.User.Keyword.EqualString("CM1") ||
+                Sci.Env.User.Keyword.EqualString("CM2") ||
                 Sci.Env.User.Keyword.EqualString("CM3"))
             {
                 worksheet.Cells[insertRow, 5] = 0;
@@ -855,7 +855,7 @@ order by ArtworkTypeID"),
             else
             {
                 this.dataMode = new APIData();
-                GetApiData.GetAPIData(this._factory, (DateTime)this.dateDate.Value, (DateTime)this.dateDate.Value, out this.dataMode);
+                GetApiData.GetAPIData(string.Empty,this._factory, (DateTime)this.dateDate.Value, (DateTime)this.dateDate.Value, out this.dataMode);
                 worksheet.Cells[insertRow, 5] = this.dataMode.results[0].SewTtlManpower;
                 worksheet.Cells[insertRow, 7] = this.dataMode.results[0].SewTtlManhours;
                 insertRow++;

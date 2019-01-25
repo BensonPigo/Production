@@ -39,6 +39,7 @@ namespace Sci.Production.Sewing
         private DataTable subprocessSubconOutData;
         private DataTable subconData;
         private DataTable vphData;
+        private APIData dataMode = new APIData();
 
         /// <summary>
         /// R08
@@ -646,7 +647,7 @@ order by Type,iif(Company = 'Other','Z','A'),Company
                 @"
 select f.id
 	   , m.ActiveManpower
-	   , SumA = SUM(m.ActiveManpower) over() 
+	   , SumActiveManpower = SUM(m.ActiveManpower) over() 
 from Factory f
 left join Manpower m on m.FactoryID = f.ID 
 		  				and m.Year = {0} 
@@ -717,8 +718,20 @@ where f.Junk = 0",
 
             worksheet.Cells[4, 3] = "Total CPU Included Subcon-In";
 
+            #region Direct Manpower(From PAMS)
+            List<APIData> pams = new List<APIData>();
+            if (!(Sci.Env.User.Keyword.EqualString("CM1") ||
+                Sci.Env.User.Keyword.EqualString("CM2") ||
+                Sci.Env.User.Keyword.EqualString("CM3")))
+            {
+                this.dataMode = new APIData();
+                GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);
+                pams = this.dataMode.results.ToList();
+            }
+            #endregion
+
             int insertRow = 5;
-            object[,] objArray = new object[1, 11];
+            object[,] objArray = new object[1, 15];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr[0];
@@ -731,8 +744,21 @@ where f.Junk = 0",
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
                 objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
-                objArray[0, 10] = string.Empty;
-                worksheet.Range[string.Format("A{0}:K{0}", insertRow)].Value2 = objArray;
+                if (pams.Count > 0)
+                {
+                    objArray[0, 11] = pams.Sum(w => w.SewTtlManpower);
+                    objArray[0, 12] = pams.Sum(w => w.SewTtlManhours);
+                }
+                else
+                {
+                    objArray[0, 11] = 0;
+                    objArray[0, 12] = 0;
+                }
+
+                objArray[0, 10] = MyUtility.Convert.GetDouble(objArray[0, 11]) == 0 ? 0 : MyUtility.Convert.GetDouble(objArray[0, 12]) / MyUtility.Convert.GetDouble(objArray[0, 11]);
+                objArray[0, 13] = string.Format("=IF(M{0}=0,0,ROUND((C{0}/(M{0}*3600/1400))*100,1))", insertRow);
+                objArray[0, 14] = string.Empty;
+                worksheet.Range[string.Format("A{0}:O{0}", insertRow)].Value2 = objArray;
                 insertRow++;
 
                 // 插入一筆Record
@@ -754,6 +780,10 @@ where f.Junk = 0",
             worksheet.Cells[insertRow, 8] = string.Format("=SUM(H5:H{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)", insertRow);
+            worksheet.Cells[insertRow, 11] = string.Format("=ROUND(M{0}/L{0},2)", MyUtility.Convert.GetString(insertRow));
+            worksheet.Cells[insertRow, 12] = string.Format("=SUM(L5:L{0})", MyUtility.Convert.GetString(insertRow - 1));
+            worksheet.Cells[insertRow, 13] = string.Format("=SUM(M5:M{0})", MyUtility.Convert.GetString(insertRow - 1));
+            worksheet.Cells[insertRow, 14] = string.Format("=ROUND(C{0}/(M{0}*60*60/1400)*100,1)", insertRow);
             insertRow++;
 
             // Excluded non sister Subcon In
@@ -812,15 +842,6 @@ where f.Junk = 0",
 
             this.DeleteExcelRow(2, insertRow, excel);
 
-            // insertRow
-
-            // Borders.LineStyle 儲存格邊框線
-            // Microsoft.Office.Interop.Excel.Range excelRange
-            //    = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing);
-            // excelRange.Borders.LineStyle = 3;
-            // excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle
-            //    = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
-
             // Subprocess
             insertRow = insertRow + 2;
             int insertRec = 0;
@@ -846,37 +867,77 @@ where f.Junk = 0",
             }
 
             insertRow = insertRow + 3;
-            decimal ttlm = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManPower)", string.Empty));
-            decimal c = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty)) / MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManHour)", string.Empty));
-            worksheet.Cells[insertRow, 1] = "VPH";
 
-            // [VPH]:(Total Total Manhours / Total work day * Total CPU/Sewer/HR)-->四捨五入到小數點後兩位 ，再除[Factory active ManPower])-->四捨五入到小數點後兩位。
-            c = Sci.MyUtility.Math.Round(c, 2);
-
-            // WorkDay =>
-            int intWorkDay;
-            DataTable dtWorkDay;
-            string strWorkDay = @"
-select Distinct OutputDate
-from #tmp
-where LastShift <> 'O'";
-            DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
-            if (failResult == false)
+            #region 當查詢條件為  (1)工廠為Sample (2) by M 才顯示[VPH]、[Factory Active Manpower]、[Total Work Day]
+            if (MyUtility.Check.Seek($"select 1 from Factory where IsSCI = 1 and Type = 'S' and id = '{this.factory}'") ||
+                MyUtility.Check.Empty(this.factory))
             {
-                MyUtility.Msg.WarningBox(failResult.ToString());
-                intWorkDay = 0;
-            }
-            else
-            {
-                intWorkDay = dtWorkDay.Rows.Count;
-            }
+                if (!(Sci.Env.User.Keyword.EqualString("CM1") ||
+                    Sci.Env.User.Keyword.EqualString("CM2") ||
+                    Sci.Env.User.Keyword.EqualString("CM3")))
+                {
+                    decimal vph = 0;
+                    decimal factoryActiveManPower = 0;
 
-            worksheet.Cells[insertRow, 3] = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(ttlm * c / intWorkDay, 2) / MyUtility.Convert.GetDecimal(this.vphData.Rows[0]["SumA"]), 2);
+                    int ttlWorkDay = this.SewOutPutData.Select("LastShift <> 'O'").Length;
+                    decimal sumManPower = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManPower)", string.Empty));
+                    decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
+                    decimal sumManHour = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManHour)", string.Empty));
+                    decimal c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
+                    int sumActiveManpower = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
+                    vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
 
-            worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
-            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumA"]);
-            worksheet.Cells[insertRow, 9] = "/Total work day:";
-            worksheet.Cells[insertRow, 11] = intWorkDay;
+                    if (ttlWorkDay == 0)
+                    {
+                        vph = 0;
+                    }
+                    else
+                    {
+                        vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                    }
+
+                    factoryActiveManPower = sumActiveManpower;
+
+                    worksheet.Cells[insertRow, 1] = "VPH";
+                    worksheet.Cells[insertRow, 3] = vph;
+                    worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
+                    worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
+                    worksheet.Cells[insertRow, 9] = "/Total work day:";
+                    worksheet.Cells[insertRow, 11] = ttlWorkDay;
+                }
+                else
+                {
+                    decimal vph = 0;
+                    decimal factoryActiveManPower = 0;
+
+                    int ttlWorkDay = pams.Count;
+                    decimal sumManPower = pams.Sum(s => s.SewTtlManpower);
+                    decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
+                    decimal sumManHour = pams.Sum(s => s.SewTtlManhours);
+                    decimal c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
+                    int sumActiveManpower = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
+                    vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+
+                    if (ttlWorkDay == 0)
+                    {
+                        vph = 0;
+                    }
+                    else
+                    {
+                        vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                    }
+
+                    factoryActiveManPower = sumActiveManpower;
+
+                    worksheet.Cells[insertRow, 1] = "VPH";
+                    worksheet.Cells[insertRow, 3] = vph;
+                    worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
+                    worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
+                    worksheet.Cells[insertRow, 9] = "/Total work day:";
+                    worksheet.Cells[insertRow, 11] = ttlWorkDay;
+                }
+            }
+            #endregion
 
             // Subcon
             int RevenueStartRow = 0;
