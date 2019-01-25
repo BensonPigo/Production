@@ -129,16 +129,21 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 			( select isnull(sum(Price),0) Price
 			  from
 			  (
-			  	select f.ArtWorkID, ot.Price
+				select a.id, ot.Price
 			  	from Order_TmsCost ot WITH (NOLOCK) 
 			  	inner join Orders od WITH (NOLOCK)  on ot.ID = od.ID
-			  	inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
-			  	left join FirstSaleCostSetting f on a.id = f.ArtWorkID 
-			  									and f.CostTypeID = 'Material Cost' 
-			  									and f.isjunk = 0 
-			  									and od.BuyerDelivery between f.BeginDate and f.EndDate
-			  	where ot.ID = o.ID and a.Classify = 'P'
-			  	group by f.ArtWorkID, ot.Price
+			  	inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID 
+			  	where ot.ID = o.ID  
+				and a.Classify = 'P'
+				and exists (
+						select 1
+						from FirstSaleCostSetting f
+						where a.id = f.ArtWorkID 
+						and o.BuyerDelivery between f.BeginDate and f.EndDate 
+						and f.isjunk = 0 
+						and not CostTypeID != 'Factory CMT'
+				) 
+			  	group by a.id, ot.Price
 			  ) a )
 		,0),3)
 From Orders o

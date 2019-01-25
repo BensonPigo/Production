@@ -103,18 +103,22 @@ o.FactoryID
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
 			 (select isnull(sum(Price),0) Price
 			  from
-			  (
-			  	select f.ArtWorkID, ot.Price
+			  ( select a.id, ot.Price
 			  	from Order_TmsCost ot WITH (NOLOCK) 
 			  	inner join Orders o WITH (NOLOCK)  on ot.ID = o.ID
-			  	inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
-			  	left join FirstSaleCostSetting f on a.id = f.ArtWorkID 
-			  									and f.CostTypeID = 'Material Cost' 
-			  									and f.isjunk = 0 
-			  									and o.BuyerDelivery between f.BeginDate and f.EndDate
-			  	where ot.ID = pd.OrderID and a.Classify = 'P'
-			  	group by f.ArtWorkID, ot.Price
-			  )ot )
+			  	inner join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID 
+			  	where ot.ID = pd.OrderID 
+				and a.Classify = 'P'
+				and exists (
+						select 1
+						from FirstSaleCostSetting f
+						where a.id = f.ArtWorkID 
+						and o.BuyerDelivery between f.BeginDate and f.EndDate 
+						and f.isjunk = 0 
+						and not CostTypeID != 'Factory CMT'
+				) 
+			  	group by a.id, ot.Price
+			  ) ot)
 		   ,0),3)
 From GMTBooking g
 Left join PackingList p on g.ID = p.InvNo
