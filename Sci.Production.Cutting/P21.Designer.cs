@@ -51,13 +51,13 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(814, 48);
+            this.panelTop.Size = new System.Drawing.Size(915, 48);
             this.panelTop.TabIndex = 1;
             // 
             // gridIcon1
             // 
             this.gridIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridIcon1.Location = new System.Drawing.Point(682, 9);
+            this.gridIcon1.Location = new System.Drawing.Point(783, 9);
             this.gridIcon1.Name = "gridIcon1";
             this.gridIcon1.Size = new System.Drawing.Size(100, 32);
             this.gridIcon1.TabIndex = 2;
@@ -69,7 +69,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(566, 9);
+            this.btnSave.Location = new System.Drawing.Point(667, 9);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(95, 30);
             this.btnSave.TabIndex = 1;
@@ -93,7 +93,7 @@
             this.panelFill.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelFill.Location = new System.Drawing.Point(0, 48);
             this.panelFill.Name = "panelFill";
-            this.panelFill.Size = new System.Drawing.Size(814, 481);
+            this.panelFill.Size = new System.Drawing.Size(915, 395);
             this.panelFill.TabIndex = 2;
             // 
             // gridP21
@@ -125,7 +125,7 @@
             this.gridP21.RowTemplate.Height = 24;
             this.gridP21.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridP21.ShowCellToolTips = false;
-            this.gridP21.Size = new System.Drawing.Size(814, 481);
+            this.gridP21.Size = new System.Drawing.Size(915, 395);
             this.gridP21.TabIndex = 0;
             this.gridP21.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.gridP21_EditingKeyProcessing);
             // 
@@ -133,7 +133,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(814, 529);
+            this.ClientSize = new System.Drawing.Size(915, 443);
             this.Controls.Add(this.panelFill);
             this.Controls.Add(this.panelTop);
             this.IsSupportClip = false;

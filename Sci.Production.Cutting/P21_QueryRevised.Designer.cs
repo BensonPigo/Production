@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panelTop = new Sci.Win.UI.Panel();
             this.txtfactory = new Sci.Production.Class.txtfactory();
             this.btnDelete = new Sci.Win.UI.Button();
@@ -80,7 +80,7 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(810, 121);
+            this.panelTop.Size = new System.Drawing.Size(1217, 121);
             this.panelTop.TabIndex = 1;
             // 
             // txtfactory
@@ -97,7 +97,7 @@
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.Location = new System.Drawing.Point(718, 80);
+            this.btnDelete.Location = new System.Drawing.Point(1125, 80);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(80, 30);
             this.btnDelete.TabIndex = 16;
@@ -108,7 +108,7 @@
             // btnUpdate
             // 
             this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(718, 45);
+            this.btnUpdate.Location = new System.Drawing.Point(1125, 45);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(80, 30);
             this.btnUpdate.TabIndex = 15;
@@ -119,7 +119,7 @@
             // btnQuery
             // 
             this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnQuery.Location = new System.Drawing.Point(718, 9);
+            this.btnQuery.Location = new System.Drawing.Point(1125, 9);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
             this.btnQuery.TabIndex = 14;
@@ -206,6 +206,7 @@
             this.dateCutOutput.DateBox2.Name = "";
             this.dateCutOutput.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateCutOutput.DateBox2.TabIndex = 1;
+            this.dateCutOutput.IsRequired = false;
             this.dateCutOutput.Location = new System.Drawing.Point(147, 9);
             this.dateCutOutput.Name = "dateCutOutput";
             this.dateCutOutput.Size = new System.Drawing.Size(280, 23);
@@ -256,7 +257,7 @@
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelBottom.Location = new System.Drawing.Point(0, 528);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(810, 2);
+            this.panelBottom.Size = new System.Drawing.Size(1217, 2);
             this.panelBottom.TabIndex = 2;
             // 
             // panelFill
@@ -265,7 +266,7 @@
             this.panelFill.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelFill.Location = new System.Drawing.Point(0, 121);
             this.panelFill.Name = "panelFill";
-            this.panelFill.Size = new System.Drawing.Size(810, 407);
+            this.panelFill.Size = new System.Drawing.Size(1217, 407);
             this.panelFill.TabIndex = 3;
             // 
             // gridP21Query
@@ -283,27 +284,27 @@
             this.gridP21Query.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridP21Query.Location = new System.Drawing.Point(0, 0);
             this.gridP21Query.Name = "gridP21Query";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridP21Query.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridP21Query.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridP21Query.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridP21Query.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridP21Query.RowTemplate.Height = 24;
             this.gridP21Query.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridP21Query.ShowCellToolTips = false;
-            this.gridP21Query.Size = new System.Drawing.Size(810, 407);
+            this.gridP21Query.Size = new System.Drawing.Size(1217, 407);
             this.gridP21Query.TabIndex = 0;
             // 
             // P21_QueryRevised
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(810, 530);
+            this.ClientSize = new System.Drawing.Size(1217, 530);
             this.Controls.Add(this.panelFill);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.panelTop);

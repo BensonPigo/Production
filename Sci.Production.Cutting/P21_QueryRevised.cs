@@ -54,14 +54,14 @@ namespace Sci.Production.Cutting
                     selectedRow["Seq"] = string.Empty;
                     selectedRow["Roll"] = string.Empty;
                     selectedRow["Dyelot"] = string.Empty;
-                    selectedRow["Yardage"] = 0;
+                    selectedRow["Yardage"] = DBNull.Value;
                 }
                 else
                 {
                     //異動or不存在：清空Roll#欄位、Dyelot、Yardage資料
                     selectedRow["Roll"] = string.Empty;
                     selectedRow["Dyelot"] = string.Empty;
-                    selectedRow["Yardage"] = 0;
+                    selectedRow["Yardage"] = DBNull.Value;
 
                     //判斷存在與否，不存在要另外提示訊息
                     string[] seq = newValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -133,8 +133,8 @@ namespace Sci.Production.Cutting
 
                 if (!exists)
                 {
-                    e.Cancel = true;
-                    selectedRow["Roll"] = oldValue;
+                    selectedRow["Roll"] = string.Empty;
+                    selectedRow.AcceptChanges();
                     MyUtility.Msg.WarningBox($"< POID : {CuttingSpNO}, SEQ : {arrSeq[0] + " " + arrSeq[1]}, Roll : {newValue} , Dyelot : {dyelot}> not found! ");
                     return;
                 }
@@ -180,8 +180,8 @@ namespace Sci.Production.Cutting
 
                 if (!exists)
                 {
-                    e.Cancel = true;
-                    selectedRow["Dyelot"] = oldValue;
+                    selectedRow["Dyelot"] = string.Empty;
+                    selectedRow.AcceptChanges();
                     MyUtility.Msg.WarningBox($"< POID : {CuttingSpNO}, SEQ : {arrSeq[0] + " " + arrSeq[1]}, Roll : {Roll} , Dyelot : {newValue}> not found! ");
                     return;
                 }
@@ -202,12 +202,12 @@ namespace Sci.Production.Cutting
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), settings: setRoll).Get(out cbb_Roll)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(7), settings: setDyelot).Get(out cbb_Dyelot)
                 .Numeric("Yardage", header: "Yardage", decimal_places: 2, integer_places: 11, width: Widths.AnsiChars(7))
-                .Text("EstCutDate", header: "Est.CutDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
-                .Text("ActCutDate", header: "Act.CutDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .Date("EstCutDate", header: "Est.CutDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .Date("ActCutDate", header: "Act.CutDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("AddName", header: "AddName", iseditingreadonly: true, width: Widths.AnsiChars(15))
-                .Text("AddDate", header: "AddDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .DateTime("AddDate", header: "AddDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("EditName", header: "EditName", iseditingreadonly: true, width: Widths.AnsiChars(15))
-                .Text("EditDate", header: "EditDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
+                .DateTime("EditDate", header: "EditDate", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 ;
 
             //MaxLength 設定
@@ -270,7 +270,7 @@ namespace Sci.Production.Cutting
         
             if (errorArr.Length > 0)
             {
-                MyUtility.Msg.WarningBox("<Seq>, <Roll>, <Dyelot>, <Yardage> can not be empty or 0 ! ");
+                MyUtility.Msg.WarningBox("<Seq>, <Roll#>, <Dyelot>, <Yardage> can not be empty or 0 ! ");
                 return;
             }
             #endregion
@@ -395,26 +395,7 @@ namespace Sci.Production.Cutting
             #endregion
 
 
-            if (!MyUtility.Check.Empty(cutRefNo_s))//
-            {
-                //sqlCmd.Append(Environment.NewLine + $" And W.CutCellID >= '{cutRefNo_s}'");
-                outerApplyWhere += $" And CutCellID >= '{cutRefNo_s}'";
-            }
-            if (!MyUtility.Check.Empty(cutRefNo_e))//
-            {
-                //sqlCmd.Append(Environment.NewLine + $" And W.CutCellID <= '{cutRefNo_e}'");
-                outerApplyWhere += $" And CutCellID <= '{cutRefNo_e}'";
-            }
-            if (!MyUtility.Check.Empty(factory))//
-            {
-                //sqlCmd.Append(Environment.NewLine + $" And W.FactoryID = '{factory}'");
-                outerApplyWhere += $" And FactoryID = '{factory}'";
-            }
-            if (!MyUtility.Check.Empty(spNo))
-            {
-                //sqlCmd.Append(Environment.NewLine + $" And W.ID <= '{spNo}'");
-                outerApplyWhere += $" And ID = '{spNo}'";
-            }
+
 
             #region 組SQL
 
@@ -469,11 +450,27 @@ namespace Sci.Production.Cutting
             }
             if (!MyUtility.Check.Empty(cutCell_s))
             {
-                sqlCmd.Append(Environment.NewLine + $" And COFR.CutRef >= '{cutCell_s}'");
+                sqlCmd.Append(Environment.NewLine + $" And w.CutCellid >= '{cutCell_s}'");
             }
             if (!MyUtility.Check.Empty(cutCell_e))
             {
-                sqlCmd.Append(Environment.NewLine + $" And COFR.CutRef <= '{cutCell_e}'");
+                sqlCmd.Append(Environment.NewLine + $" And w.CutCellid <= '{cutCell_e}'");
+            }
+            if (!MyUtility.Check.Empty(cutRefNo_s))
+            {
+                sqlCmd.Append(Environment.NewLine + $" And cofr.CutRef >= '{cutRefNo_s}'");
+            }
+            if (!MyUtility.Check.Empty(cutRefNo_e))
+            {
+                sqlCmd.Append(Environment.NewLine + $" And cofr.CutRef <= '{cutRefNo_e}'");
+            }
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlCmd.Append(Environment.NewLine + $" And W.FactoryID = '{factory}'");
+            }
+            if (!MyUtility.Check.Empty(spNo))
+            {
+                sqlCmd.Append(Environment.NewLine + $" And W.ID = '{spNo}'");
             }
             #endregion
 
@@ -491,13 +488,13 @@ namespace Sci.Production.Cutting
                 return;
             }
             this.HideWaitMessage();
+
+            listControlBindingSource1.DataSource = dt;
             if (dt == null || dt.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found!!");
-                return;
             }
 
-            listControlBindingSource1.DataSource = dt;
         }
         
     }
