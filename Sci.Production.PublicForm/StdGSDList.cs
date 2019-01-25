@@ -39,11 +39,12 @@ select
         ,id.Annotation
         ,id.Frequency
         ,isnull(id.MtlFactorID,'') as MtlFactorID
-        ,isnull(o.SMV,0) as SMV
-        ,isnull(o.SMV,0) * id.Frequency as newSMV
+        ,[SMV] = isnull(o.SMV,0) as SMV
+        ,[newSMV] = isnull(o.SMV,0) * id.Frequency  * (1 + (id.MtlFactorRate / 100))
         ,isnull(o.SeamLength,0) as SeamLength
         ,iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type
         ,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength
+        ,[MtlFactorRate] = id.MtlFactorRate 
 
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
@@ -146,6 +147,7 @@ Group by mt.ID,mt.Description,mt.DescCH,mt.RPM,mt.Stitches,ies.location", styleU
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
                 .Numeric("Frequency", header: "Freq.", decimal_places: 2)
                 .Text("MtlFactorID", header: "Fac.", width: Widths.AnsiChars(3))
+                .Numeric("MtlFactorRate", header: "Fac%",decimal_places:2, width: Widths.AnsiChars(3))
                 .Numeric("SMV", header: "Ori. SMV", decimal_places: 4)
                 .Numeric("newSMV", header: "S.M.V", decimal_places: 4)
                 .Numeric("SeamLength", header: "Seam length", decimal_places: 2)
