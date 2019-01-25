@@ -188,6 +188,7 @@
     <Compile Include="P02_Print.Designer.cs">
       <DependentUpon>P02_Print.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02_PublicFunction.cs" />
     <Compile Include="P04.cs">
       <SubType>Form</SubType>
     </Compile>

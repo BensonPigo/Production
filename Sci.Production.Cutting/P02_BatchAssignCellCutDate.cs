@@ -124,24 +124,8 @@ namespace Sci.Production.Cutting
 
             #region Seq1
             col_Seq1.EditingMouseDown += (s, e) =>
-            {   
-                if (e.Button == MouseButtons.Right)
-                {
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!this.EditMode) { return; }
-                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                    if (!MyUtility.Check.Empty(dr["Cutplanid"])) return;
-                    SelectItem sele;
-                    DataTable poTb;
-                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}' and junk=0 ", Poid, dr["SCIRefno"]), out poTb);
-                    sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ1"].ToString(), false, ",");
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-
-                    dr["SEQ2"] = sele.GetSelecteds()[0]["SEQ2"];
-                    dr["Colorid"] = sele.GetSelecteds()[0]["Colorid"];
-                    e.EditingControl.Text = sele.GetSelectedString();
-                }
+            {
+                P02_PublicFunction.Seq1EditingMouseDown(s, e, this, this.gridBatchAssignCellEstCutDate, this.Poid);
             };
             col_Seq1.EditingControlShowing += (s, e) =>
             {
@@ -167,61 +151,14 @@ namespace Sci.Production.Cutting
             };
             col_Seq1.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) { return; }
-                // 右鍵彈出功能
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                string oldvalue = dr["seq1"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue) return;
-                DataRow seledr;
-                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}'", Poid, newvalue)))
-                {
-                    dr["SEQ1"] = "";
-                    dr.EndEdit();
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("<SEQ1> : {0} data not found!", newvalue));
-                    return;
-                }
-                else
-                {
-                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", Poid, newvalue, dr["SEQ2"]), out seledr))
-                    {
-                        MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, dr["SEQ2"]));
-                        dr["SEQ2"] = "";
-                        dr["Colorid"] = "";
-                    }
-                    else
-                    {
-                        dr["Colorid"] = seledr["Colorid"];
-                    }
-                }
-                dr["SEQ1"] = newvalue;
-                dr.EndEdit();
+                P02_PublicFunction.Seq1CellValidating(s, e, this, this.gridBatchAssignCellEstCutDate, this.Poid);
             };
             #endregion
 
             #region Seq2
             col_Seq2.EditingMouseDown += (s, e) =>
-            {   
-                if (e.Button == MouseButtons.Right)
-                {
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!this.EditMode) { return; }
-                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                    if (!MyUtility.Check.Empty(dr["Cutplanid"])) return;
-                    SelectItem sele;
-                    DataTable poTb;
-                    DBProxy.Current.Select(null, string.Format("Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{0}' and SCIRefno ='{1}' and junk=0", Poid, dr["SCIRefno"]), out poTb);
-                    sele = new SelectItem(poTb, "SEQ1,SEQ2,Colorid", "3,2,8@350,300", dr["SEQ2"].ToString(), false, ",");
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-
-                    dr["SEQ1"] = sele.GetSelecteds()[0]["SEQ1"];
-                    dr["Colorid"] = sele.GetSelecteds()[0]["Colorid"];
-                    e.EditingControl.Text = sele.GetSelectedString();
-
-                }
+            {
+                P02_PublicFunction.Seq2EditingMouseDown(s, e, this, this.gridBatchAssignCellEstCutDate, this.Poid);
             };
             col_Seq2.EditingControlShowing += (s, e) =>
             {
@@ -248,38 +185,7 @@ namespace Sci.Production.Cutting
             };
             col_Seq2.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) { return; }
-                // 右鍵彈出功能
-                if (e.RowIndex == -1) return;
-                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                string oldvalue = dr["seq2"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                if (oldvalue == newvalue) return;
-                DataRow seledr;
-                if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq2 ='{1}'", Poid, newvalue)))
-                {
-                    dr["SEQ2"] = "";
-                    dr.EndEdit();
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("<SEQ2> : {0} data not found!", newvalue));
-                    return;
-                }
-                else
-                {
-                    if (!MyUtility.Check.Seek(string.Format("Select * from po_Supp_Detail WITH (NOLOCK) where id='{0}' and seq1 ='{1}' and seq2 ='{2}'", Poid, dr["SEQ1"], newvalue), out seledr))
-                    {
-                        MyUtility.Msg.WarningBox(string.Format("<SEQ1>:{0},<SEQ2>:{1} data not found!", newvalue, dr["SEQ1"]));
-                        dr["SEQ1"] = "";
-                        dr["Colorid"] = "";
-                    }
-                    else
-                    {
-                        dr["Colorid"] = seledr["Colorid"];
-                    }
-                }
-
-                dr["SEQ2"] = newvalue;
-                dr.EndEdit();
+                P02_PublicFunction.Seq2CellValidating(s, e, this, this.gridBatchAssignCellEstCutDate, this.Poid);
             };
             #endregion
 
