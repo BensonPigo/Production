@@ -467,7 +467,7 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
 
             Helper.Controls.Grid.Generator(this.grid)
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), settings: DyelotCell)
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: DyelotCell)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true).Get(out ResultCell)
             .Text("DryScale", header: "Dry Scale", width: Widths.AnsiChars(5), settings: dryScaleCell, iseditingreadonly: true)
             .Text("ResultDry", header: "Result(Dry)", width: Widths.AnsiChars(5), settings: Resultdry, iseditingreadonly: true)

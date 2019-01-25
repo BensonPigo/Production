@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
                   .Text("seq2", header: "Seq2", width: Widths.AnsiChars(2), iseditingreadonly: true)
                   .Text("FabricType", header: "Material Type", width: Widths.AnsiChars(8), iseditingreadonly: true)
                   .Text("roll", header: "Roll#", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(4), iseditingreadonly: true,settings: ns)
+                  .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true,settings: ns)
                   .Text("status", header: "Status", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out columnStatus)
                   .Date("WhseArrival", header: "Material ATA ", width: Widths.AnsiChars(10), iseditingreadonly: true)
                   .DateTime("lockdate", header: "Lock/Unlock" + Environment.NewLine + "Date", width: Widths.AnsiChars(10), iseditingreadonly: true)

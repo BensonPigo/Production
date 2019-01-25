@@ -543,7 +543,7 @@ where a.ID='{0}'"
 
             Helper.Controls.Grid.Generator(this.grid)
               .Text("Roll", header: "Roll#", width: Widths.AnsiChars(8), settings: Rollcell)
-              .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(4), settings: DyelotCell)
+              .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), settings: DyelotCell)
               .Numeric("HorizontalOriginal", header: "Original Horizontal", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings: orlHorCell)
               .Numeric("VerticalOriginal", header: "Original Vertical", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, settings:orlVirCell)
               .Text("Result", header: "Result", width: Widths.AnsiChars(5), settings: ResultCell,iseditingreadonly:true)

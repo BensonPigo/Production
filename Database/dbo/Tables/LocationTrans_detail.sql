@@ -6,12 +6,12 @@
     [Seq1]             VARCHAR (3)     CONSTRAINT [DF_LocationTrans_detail_Seq] DEFAULT ('') NOT NULL,
     [Seq2]             VARCHAR (2)     NOT NULL,
     [Roll]             VARCHAR (8)     CONSTRAINT [DF_LocationTrans_detail_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]           VARCHAR (4)     CONSTRAINT [DF_LocationTrans_detail_Dyelot] DEFAULT ('') NOT NULL,
-    [FromLocation]     VARCHAR (200)    CONSTRAINT [DF_LocationTrans_detail_FromLocation] DEFAULT ('') NULL,
-    [ToLocation]       VARCHAR (200)    CONSTRAINT [DF_LocationTrans_detail_ToLocation] DEFAULT ('') NOT NULL,
+    [Dyelot]           VARCHAR (8)     CONSTRAINT [DF_LocationTrans_detail_Dyelot] DEFAULT ('') NOT NULL,
+    [FromLocation]     VARCHAR (200)   CONSTRAINT [DF_LocationTrans_detail_FromLocation] DEFAULT ('') NULL,
+    [ToLocation]       VARCHAR (200)   CONSTRAINT [DF_LocationTrans_detail_ToLocation] DEFAULT ('') NOT NULL,
     [Qty]              NUMERIC (11, 2) CONSTRAINT [DF_LocationTrans_detail_Qty] DEFAULT ((0)) NOT NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
-	[StockType]        VARCHAR (1)   CONSTRAINT [DF_LocationTrans_detail_StockType] DEFAULT ('') NOT NULL,
+    [StockType]        VARCHAR (1)     CONSTRAINT [DF_LocationTrans_detail_StockType] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_LocationTrans_detail_1] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
