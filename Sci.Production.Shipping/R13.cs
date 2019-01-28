@@ -125,7 +125,7 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3)
-,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,select dbo.GetLocalPurchaseStdCost(o.ID),0),3)
+,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
 From Orders o
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
