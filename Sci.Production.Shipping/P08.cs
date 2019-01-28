@@ -198,7 +198,6 @@ where sd.ID = '{0}'", masterID);
             this.btnAcctApprove.ForeColor = status ? Color.Blue : Color.Black;
             this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
             this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
-
             // Reason description
             this.txtReasonDesc.Text = MyUtility.GetValue.Lookup($@"
 select Description from ShippingReason where id='{this.CurrentMaintain["Reason"]}' 
