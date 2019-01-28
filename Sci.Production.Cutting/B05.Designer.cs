@@ -33,10 +33,10 @@
             this.labelDescription = new Sci.Win.UI.Label();
             this.txtID = new Sci.Win.UI.TextBox();
             this.labelID = new Sci.Win.UI.Label();
-            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtCell1 = new Sci.Production.Class.txtCell();
             this.label2 = new Sci.Win.UI.Label();
+            this.txtCell1 = new Sci.Production.Class.txtCell();
+            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -136,16 +136,6 @@
             this.labelID.TabIndex = 8;
             this.labelID.Text = "ID";
             // 
-            // txtMdivision1
-            // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionid", true));
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(116, 56);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision1.TabIndex = 2;
-            // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(20, 56);
@@ -153,6 +143,14 @@
             this.label1.Size = new System.Drawing.Size(89, 23);
             this.label1.TabIndex = 16;
             this.label1.Text = "M";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(20, 132);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 23);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "Cut Cell";
             // 
             // txtCell1
             // 
@@ -165,13 +163,17 @@
             this.txtCell1.Size = new System.Drawing.Size(30, 23);
             this.txtCell1.TabIndex = 17;
             // 
-            // label2
+            // txtMdivision1
             // 
-            this.label2.Location = new System.Drawing.Point(20, 132);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
-            this.label2.TabIndex = 18;
-            this.label2.Text = "Cut Cell";
+            this.txtMdivision1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtMdivision1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionid", true));
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtMdivision1.IsSupportEditMode = false;
+            this.txtMdivision1.Location = new System.Drawing.Point(116, 56);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.ReadOnly = true;
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.TabIndex = 2;
             // 
             // B05
             // 

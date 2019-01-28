@@ -1206,6 +1206,81 @@ Do you want to continue? ");
                 dr.EndEdit();
             };
             #endregion
+            #region col_ActCuttingPerimeterNew
+            col_ActCuttingPerimeterNew.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = true;
+
+            };
+            col_ActCuttingPerimeterNew.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            #endregion
+            #region col_StraightLengthNew
+            col_StraightLengthNew.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = true;
+
+            };
+            col_StraightLengthNew.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            #endregion
+            #region col_CurvedLengthNew
+            col_CurvedLengthNew.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
+                else ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = true;
+
+            };
+            col_CurvedLengthNew.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            #endregion
             #endregion
             #region SizeRatio
             col_sizeRatio_size.EditingMouseDown += (s, e) =>
@@ -1517,81 +1592,6 @@ Do you want to continue? ");
                 updateExcess(Convert.ToInt32(CurrentDetailData["Ukey"]), Convert.ToInt32(CurrentDetailData["NewKey"]), dr["SizeCode"].ToString());
                 //計算完EXCESS正確後再Total計算
                 totalDisQty();
-            };
-            #endregion
-            #region col_ActCuttingPerimeterNew
-            col_ActCuttingPerimeterNew.EditingControlShowing += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
-                else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
-
-            };
-            col_ActCuttingPerimeterNew.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                    e.CellStyle.ForeColor = Color.Red;
-                }
-            };
-            #endregion
-            #region col_StraightLengthNew
-            col_StraightLengthNew.EditingControlShowing += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
-                else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
-
-            };
-            col_StraightLengthNew.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                    e.CellStyle.ForeColor = Color.Red;
-                }
-            };
-            #endregion
-            #region col_CurvedLengthNew
-            col_CurvedLengthNew.EditingControlShowing += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode) ((Ict.Win.UI.MaskedTextBox)e.Control).ReadOnly = false;
-                else ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
-
-            };
-            col_CurvedLengthNew.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1) return;
-                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                    e.CellStyle.ForeColor = Color.Red;
-                }
             };
             #endregion
         }

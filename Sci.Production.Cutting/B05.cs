@@ -14,6 +14,8 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             InitializeComponent();
+            this.DefaultFilter = $" MDivisionid = '{Sci.Env.User.Keyword}' ";
+            this.txtCell1.MDivisionID = Sci.Env.User.Keyword;
         }
 
         protected override void ClickEditAfter()
@@ -22,5 +24,10 @@ namespace Sci.Production.Cutting
             txtID.ReadOnly = true;
         }
 
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["MDivisionid"] = Sci.Env.User.Keyword;
+        }
     }
 }
