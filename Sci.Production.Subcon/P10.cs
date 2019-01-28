@@ -309,6 +309,8 @@ where a.id='{0}'
             txtpayterm_ftyTerms.Enabled =  !this.EditMode || IsDetailInserting;
             txtmfactory.Enabled = !this.EditMode || IsDetailInserting;
             dateApprovedDate.ReadOnly = true;
+
+            this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
             #endregion
