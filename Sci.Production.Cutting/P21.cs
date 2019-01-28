@@ -338,7 +338,9 @@ namespace Sci.Production.Cutting
             this.gridP21.IsEditingReadOnly = false;
             this.gridP21.DataSource = this.listControlBindingSource1;
 
-            #endregion            
+            #endregion
+
+            foreach (DataGridViewColumn index in gridP21.Columns) { index.SortMode = DataGridViewColumnSortMode.NotSortable; }
 
             #region 透過SQL取得DB的結構，就不用寫死
             string cmd = @"
