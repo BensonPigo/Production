@@ -50,9 +50,10 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
+            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2)
+                && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
-                MyUtility.Msg.WarningBox("Buyer Delivery can't all empty!!");
+                MyUtility.Msg.WarningBox("Buyer Delivery and SCI Delivery cannot all empty!!");
                 return false;
             }
 
