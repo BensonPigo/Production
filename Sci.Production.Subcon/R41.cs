@@ -78,6 +78,7 @@ namespace Sci.Production.Subcon
 
             #region Append畫面上的條件
             StringBuilder sqlWhere = new StringBuilder();
+            StringBuilder sqlWhereWorkOrder = new StringBuilder();
             if (!MyUtility.Check.Empty(SubProcess))
             {
                 sqlWhere.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
@@ -129,15 +130,30 @@ namespace Sci.Production.Subcon
             if (!MyUtility.Check.Empty(dateEstCutDate1))
             {
                 sqlWhere.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
+                sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
             }
             if (!MyUtility.Check.Empty(dateEstCutDate2))
             {
                 sqlWhere.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
+                sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
             }
             #endregion
 
             #region sqlcmd
-            string sqlCmd = $@"
+            string sqlCmd = string.Empty;
+            if (sqlWhereWorkOrder.Length > 0)
+            {
+                sqlCmd += $@"
+select CutRef,MDivisionId,EstCutDate
+into #tmp_Workorder
+from Workorder w
+where 1=1
+{sqlWhereWorkOrder}
+group by  CutRef,MDivisionId,EstCutDate
+";
+            }
+
+            sqlCmd += $@" 
 Select 
     [Bundleno] = bd.BundleNo,
     [EXCESS] = iif(b.IsEXCESS = 0, '','Y'),
@@ -184,8 +200,8 @@ Select
 	s.InOutRule
 into #result
 from Bundle b WITH (NOLOCK) 
-inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 outer apply(
     select s.ID,s.InOutRule
     from SubProcess s
@@ -204,9 +220,14 @@ outer apply(
 		    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
 		    for xml path('')
 	    ),1,1,'')
-) as sub
-left join Workorder w on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid
-where 1=1 {sqlWhere}";
+) as sub 
+";
+            if (sqlWhereWorkOrder.Length > 0)
+            {
+                sqlCmd += " left join #tmp_Workorder w on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+            }
+
+            sqlCmd += $@" where 1=1 {sqlWhere} ";
 
             string sqlResult = $@"
 {sqlCmd}
