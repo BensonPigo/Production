@@ -140,6 +140,12 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.comboM.Text))
+            {
+                MyUtility.Msg.WarningBox("M can't empty!!");
+                return false;
+            }
+
             if (this.comboReportType.SelectedIndex == 1)
             {
                 if (this.comboFactory.SelectedIndex == -1 || this.comboFactory.SelectedIndex == 0)
@@ -1057,7 +1063,10 @@ where f.Junk = 0",
             {
                 this.dataMode = new APIData();
                 GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);
-                pams = this.dataMode.results.ToList();
+                if (this.dataMode != null)
+                {
+                    pams = this.dataMode.results.ToList();
+                }
             }
             #endregion
 
@@ -1166,7 +1175,7 @@ where f.Junk = 0",
 
                 worksheet.Range[string.Format("A{0}:D{0}", insertRow)].Value2 = objArray;
                 insertRow++;
-                 rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToInsert);
             }
@@ -1203,9 +1212,9 @@ where f.Junk = 0",
             if (MyUtility.Check.Seek($"select 1 from Factory where IsSCI = 1 and Type = 'S' and id = '{this.factory}'") ||
                 MyUtility.Check.Empty(this.factory))
             {
-                if (!(Sci.Env.User.Keyword.EqualString("CM1") ||
+                if (Sci.Env.User.Keyword.EqualString("CM1") ||
                     Sci.Env.User.Keyword.EqualString("CM2") ||
-                    Sci.Env.User.Keyword.EqualString("CM3")))
+                    Sci.Env.User.Keyword.EqualString("CM3"))
                 {
                     decimal vph = 0;
                     decimal factoryActiveManPower = 0;
@@ -1245,9 +1254,13 @@ where f.Junk = 0",
                     decimal sumManPower = pams.Sum(s => s.SewTtlManpower);
                     decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
                     decimal sumManHour = pams.Sum(s => s.SewTtlManhours);
-                    decimal c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
-                    int sumActiveManpower = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
-                    vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                    decimal c = 0;
+                    if (sumManHour != 0)
+                    {
+                        c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
+                    }
+
+                    int sumActiveManpower = 0;
 
                     if (ttlWorkDay == 0)
                     {
@@ -1255,7 +1268,11 @@ where f.Junk = 0",
                     }
                     else
                     {
-                        vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                        sumActiveManpower = MyUtility.Convert.GetInt(Sci.MyUtility.Math.Round(pams.Where(w => w.TtlManpower != 0).Average(s => s.TtlManpower), 0));
+                        if (sumActiveManpower != 0)
+                        {
+                            vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                        }
                     }
 
                     factoryActiveManPower = sumActiveManpower;
@@ -1263,7 +1280,7 @@ where f.Junk = 0",
                     worksheet.Cells[insertRow, 1] = "VPH";
                     worksheet.Cells[insertRow, 3] = vph;
                     worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
-                    worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
+                    worksheet.Cells[insertRow, 8] = factoryActiveManPower;
                     worksheet.Cells[insertRow, 9] = "/Total work day:";
                     worksheet.Cells[insertRow, 11] = ttlWorkDay;
                 }
@@ -1338,7 +1355,7 @@ where f.Junk = 0",
                             rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
 
                             // 插入一筆Record
-                            rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow+1)), Type.Missing).EntireRow;
+                            rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                             rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                             Marshal.ReleaseComObject(rngToInsert);
                         }

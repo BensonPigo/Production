@@ -119,6 +119,12 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 return false;
             }
 
+            if (MyUtility.Check.Empty(this.comboM.Text))
+            {
+                MyUtility.Msg.WarningBox("M can't empty!!");
+                return false;
+            }
+
             this.date1 = this.dateDateStart.Value;
             this.date2 = this.dateDateEnd.Value;
             this.line1 = this.txtSewingLineStart.Text;
@@ -872,9 +878,9 @@ where f.Junk = 0",
             if (MyUtility.Check.Seek($"select 1 from Factory where IsSCI = 1 and Type = 'S' and id = '{this.factory}'") ||
                 MyUtility.Check.Empty(this.factory))
             {
-                if (!(Sci.Env.User.Keyword.EqualString("CM1") ||
+                if (Sci.Env.User.Keyword.EqualString("CM1") ||
                     Sci.Env.User.Keyword.EqualString("CM2") ||
-                    Sci.Env.User.Keyword.EqualString("CM3")))
+                    Sci.Env.User.Keyword.EqualString("CM3"))
                 {
                     decimal vph = 0;
                     decimal factoryActiveManPower = 0;
@@ -883,9 +889,13 @@ where f.Junk = 0",
                     decimal sumManPower = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManPower)", string.Empty));
                     decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
                     decimal sumManHour = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManHour)", string.Empty));
-                    decimal c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
-                    int sumActiveManpower = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
-                    vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                    decimal c = 0;
+                    if (sumManHour != 0)
+                    {
+                        c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
+                    }
+
+                    int sumActiveManpower = 0;
 
                     if (ttlWorkDay == 0)
                     {
@@ -893,7 +903,11 @@ where f.Junk = 0",
                     }
                     else
                     {
-                        vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                        sumActiveManpower = MyUtility.Convert.GetInt(Sci.MyUtility.Math.Round(pams.Where(w => w.TtlManpower != 0).Average(s => s.TtlManpower), 0));
+                        if (sumActiveManpower != 0)
+                        {
+                            vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                        }
                     }
 
                     factoryActiveManPower = sumActiveManpower;
@@ -915,8 +929,7 @@ where f.Junk = 0",
                     decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
                     decimal sumManHour = pams.Sum(s => s.SewTtlManhours);
                     decimal c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
-                    int sumActiveManpower = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
-                    vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                    int sumActiveManpower = 0;
 
                     if (ttlWorkDay == 0)
                     {
@@ -924,6 +937,7 @@ where f.Junk = 0",
                     }
                     else
                     {
+                        sumActiveManpower = MyUtility.Convert.GetInt(Sci.MyUtility.Math.Round(pams.Where(w => w.TtlManpower != 0).Average(s => s.TtlManpower), 0));
                         vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
                     }
 
@@ -932,7 +946,7 @@ where f.Junk = 0",
                     worksheet.Cells[insertRow, 1] = "VPH";
                     worksheet.Cells[insertRow, 3] = vph;
                     worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
-                    worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
+                    worksheet.Cells[insertRow, 8] = sumActiveManpower;
                     worksheet.Cells[insertRow, 9] = "/Total work day:";
                     worksheet.Cells[insertRow, 11] = ttlWorkDay;
                 }

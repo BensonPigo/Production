@@ -6,6 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Windows.Forms;
+using Sci.Data;
 
 namespace Sci.Production.Sewing
 {
@@ -43,8 +46,11 @@ namespace Sci.Production.Sewing
                         apiParemeter = $"?i_M={i_M}&i_factory=&i_start_date={i_start_date.ToString("yyyy/MM/dd")}&i_end_date={i_end_date.ToString("yyyy/MM/dd")}";
                     }
 
-                    client.Encoding = Encoding.UTF8;
-                    Uri uri = new Uri(ConfigurationManager.AppSettings["PamsAPIuri"].ToString() + apiParemeter);
+                    XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
+                    string nowConnection = DBProxy.Current.DefaultModuleName;
+                    string connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.EqualString(nowConnection)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("PamsAPIuri")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+
+                    Uri uri = new Uri(connections + apiParemeter);
                     var json = client.DownloadString(uri);
 
                     // List<aaa> dataModel = JsonConvert.DeserializeObject<List<aaa>>(json);
