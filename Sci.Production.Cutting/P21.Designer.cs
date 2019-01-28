@@ -81,7 +81,7 @@
             // 
             this.btnQuery.Location = new System.Drawing.Point(10, 9);
             this.btnQuery.Name = "btnQuery";
-            this.btnQuery.Size = new System.Drawing.Size(149, 30);
+            this.btnQuery.Size = new System.Drawing.Size(202, 30);
             this.btnQuery.TabIndex = 0;
             this.btnQuery.Text = "Query/Revised Old Data";
             this.btnQuery.UseVisualStyleBackColor = true;
