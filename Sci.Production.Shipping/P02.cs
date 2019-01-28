@@ -1510,6 +1510,12 @@ select * from DeleteCtn", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]
                 return;
             }
 
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["SendDate"]))
+            {
+                MyUtility.Msg.WarningBox("Can not unconfirm because this reocrd is already send to Taipei!");
+                return;
+            }
+
             DialogResult buttonResult = MyUtility.Msg.WarningBox("Are you sure you want to < Unapprove > this data?", "Warning", MessageBoxButtons.YesNo);
             if (buttonResult == System.Windows.Forms.DialogResult.No)
             {
