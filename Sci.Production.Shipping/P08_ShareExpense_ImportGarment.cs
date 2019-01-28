@@ -82,7 +82,7 @@ with GB as
 (
     select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
     '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
-    '' as ShareBase, 0 as FtyWK 
+    '' as ShareBase, 0 as FtyWK ,p.OrderID
     from GMTBooking g  WITH (NOLOCK) 
     left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
     left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
@@ -142,7 +142,7 @@ with GB as
 (
     select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
     '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-    '' as ShareBase, 0 as FtyWK 
+    '' as ShareBase, 0 as FtyWK ,'' as OrderID
     from GMTBooking WITH (NOLOCK) where 1=0 
 ), ");
             }
@@ -156,7 +156,7 @@ PL as
 (
     select 0 as Selected,'' as InvNo,'' as ShipModeID,0 as GW, 0 as CBM, 
     '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-    '' as ShareBase, 0 as FtyWK 
+    '' as ShareBase, 0 as FtyWK ,'' as OrderID
     from PackingList WITH (NOLOCK) where 1=0 
 ) ");
             }
@@ -167,7 +167,7 @@ PL as
 (
     select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, 
     '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount, 
-    '' as ShareBase, 0 as FtyWK 
+    '' as ShareBase, 0 as FtyWK ,OrderID
     from PackingList WITH (NOLOCK) 
 where ");
                 if (MyUtility.Check.Empty(this.comboDatafrom.SelectedValue))
@@ -255,8 +255,22 @@ select * from PL");
                 DataRow[] dr = this.gridData.Select("Selected = 1");
                 if (dr.Length > 0)
                 {
+                     string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.detailData.Rows[0]["ShippingAPID"])));
                     foreach (DataRow currentRow in dr)
                     {
+                        string strSqlcmd = $@"
+select 1 from AirPP where OrderID = '{currentRow["OrderID"]}'";
+                        if (!MyUtility.Check.Seek(strSqlcmd) &&
+                                (currentRow["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
+                                 currentRow["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
+                                 currentRow["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
+                                 (accNo.Substring(0, 4).CompareTo("6105") == 0
+                                    || accNo.Substring(0, 4).CompareTo("5912") == 0))
+                        {
+                            MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
+                            return;
+                        }
+
                         DataRow[] findrow = this.detailData.Select(string.Format("BLNo = '{0}' and WKNo = '{1}' and InvNo = '{2}'", MyUtility.Convert.GetString(currentRow["BLNo"]), MyUtility.Convert.GetString(currentRow["WKNo"]), MyUtility.Convert.GetString(currentRow["InvNo"])));
                         if (findrow.Length == 0)
                         {
