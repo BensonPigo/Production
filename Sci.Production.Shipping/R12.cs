@@ -113,9 +113,9 @@ o.FactoryID
 						select 1
 						from FirstSaleCostSetting f
 						where a.id = f.ArtWorkID 
-						and o.BuyerDelivery between f.BeginDate and f.EndDate 
+						and o.OrigBuyerDelivery between f.BeginDate and f.EndDate 
 						and f.isjunk = 0 
-						and not CostTypeID != 'Factory CMT'
+						and not CostTypeID != 'FactoryCMT'
 				) 
 			  	group by a.id, ot.Price
 			  ) ot)
