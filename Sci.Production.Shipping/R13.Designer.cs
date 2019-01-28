@@ -39,6 +39,8 @@
             this.comboShipper = new Sci.Win.UI.ComboBox();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
+            this.lbSCIDelivery = new Sci.Win.UI.Label();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -64,7 +66,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(13, 48);
+            this.labelBrand.Location = new System.Drawing.Point(13, 84);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(95, 23);
             this.labelBrand.TabIndex = 97;
@@ -72,7 +74,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 123);
+            this.labelFactory.Location = new System.Drawing.Point(13, 159);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(95, 23);
             this.labelFactory.TabIndex = 100;
@@ -80,7 +82,7 @@
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(13, 159);
+            this.labelCategory.Location = new System.Drawing.Point(13, 195);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(95, 23);
             this.labelCategory.TabIndex = 101;
@@ -114,14 +116,15 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(112, 123);
+            this.comboFactory.Location = new System.Drawing.Point(112, 159);
             this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(74, 24);
             this.comboFactory.TabIndex = 108;
             // 
             // labelShipper
             // 
-            this.labelShipper.Location = new System.Drawing.Point(13, 84);
+            this.labelShipper.Location = new System.Drawing.Point(13, 120);
             this.labelShipper.Name = "labelShipper";
             this.labelShipper.Size = new System.Drawing.Size(95, 23);
             this.labelShipper.TabIndex = 98;
@@ -133,8 +136,9 @@
             this.comboShipper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboShipper.FormattingEnabled = true;
             this.comboShipper.IsSupportUnselect = true;
-            this.comboShipper.Location = new System.Drawing.Point(112, 83);
+            this.comboShipper.Location = new System.Drawing.Point(112, 119);
             this.comboShipper.Name = "comboShipper";
+            this.comboShipper.OldText = "";
             this.comboShipper.Size = new System.Drawing.Size(74, 24);
             this.comboShipper.TabIndex = 112;
             // 
@@ -142,7 +146,7 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(112, 48);
+            this.txtbrand.Location = new System.Drawing.Point(112, 84);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(84, 23);
             this.txtbrand.TabIndex = 105;
@@ -153,15 +157,48 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(112, 158);
+            this.comboCategory.Location = new System.Drawing.Point(112, 194);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(238, 24);
             this.comboCategory.TabIndex = 142;
             this.comboCategory.Type = "Pms_RepGMTForecast";
             // 
+            // lbSCIDelivery
+            // 
+            this.lbSCIDelivery.Location = new System.Drawing.Point(13, 48);
+            this.lbSCIDelivery.Name = "lbSCIDelivery";
+            this.lbSCIDelivery.Size = new System.Drawing.Size(95, 23);
+            this.lbSCIDelivery.TabIndex = 143;
+            this.lbSCIDelivery.Text = "SCI Delivery";
+            // 
+            // dateSCIDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
+            this.dateSCIDelivery.IsRequired = false;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(112, 48);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 144;
+            // 
             // R13
             // 
-            this.ClientSize = new System.Drawing.Size(526, 225);
+            this.ClientSize = new System.Drawing.Size(526, 271);
+            this.Controls.Add(this.dateSCIDelivery);
+            this.Controls.Add(this.lbSCIDelivery);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.comboShipper);
             this.Controls.Add(this.comboFactory);
@@ -188,6 +225,8 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.comboShipper, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
+            this.Controls.SetChildIndex(this.lbSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -205,5 +244,7 @@
         private Win.UI.Label labelShipper;
         private Win.UI.ComboBox comboShipper;
         private Class.comboDropDownList comboCategory;
+        private Win.UI.Label lbSCIDelivery;
+        private Win.UI.DateRange dateSCIDelivery;
     }
 }

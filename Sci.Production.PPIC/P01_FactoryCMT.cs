@@ -36,6 +36,8 @@ namespace Sci.Production.PPIC
         {
             base.OnFormLoaded();
             DataTable gridData;
+            this.Init();
+
             string sqlCmd = string.Format(
                 @"
 select ot.Seq,ot.ArtworkTypeID,ot.Qty,ot.ArtworkUnit,ot.TMS,ot.Price,iif(a.IsTtlTMS = 1,'Y','N') as ttlTMS,a.Classify
@@ -63,41 +65,57 @@ order by ot.Seq", this.orderData["ID"].ToString());
                 .Text("ttlTMS", header: "Ttl TMS", width: Widths.AnsiChars(1));
 
             this.numCPU.Value = MyUtility.Convert.GetDecimal(this.orderData["CPU"]);
+            this.CalculatedCPUcost();
+            this.numSubProcess.Value = MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'A'"));
+            this.CalculatedLocalCMT();
+            this.numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal((this.numCPU.Value * this.numCPUCost.Value) + this.numSubProcess.Value + this.numLocalPurchase.Value), 2);
+        }
 
-            #region [CPU cost]計算
-            if (MyUtility.Check.Empty(this.orderData["OrigBuyerDelivery"]))
+        private void Init()
+        {
+            this.numCPUCost.Value = 0;
+            this.numSubProcess.Value = 0;
+            this.numLocalPurchase.Value = 0;
+            this.numStdFtyCMP.Value = 0;
+        }
+
+        // [CPU cost]計算
+        private void CalculatedCPUcost()
+        {
+            string sql;
+            if (!MyUtility.Check.Empty(this.orderData["OrigBuyerDelivery"]))
             {
-                this.numCPUCost.Value = 0;
-            }
-            else
-            {
-                string sql = string.Format(
+                sql = string.Format(
                     @"select fd.CpuCost
-                    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-                    where fsd.BrandID = '{0}'
-                    and fsd.FactoryID = '{1}'
-                    and '{2}' between fsd.BeginDate and fsd.EndDate
-                    and fsd.ShipperID = fd.ShipperID
-                    and '{2}' between fd.BeginDate and fd.EndDate",
+                                    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+                                    where fsd.BrandID = '{0}'
+                                    and fsd.FactoryID = '{1}'
+                                    and '{2}' between fsd.BeginDate and fsd.EndDate
+                                    and fsd.ShipperID = fd.ShipperID
+                                    and '{2}' between fd.BeginDate and fd.EndDate",
                     this.orderData["BrandID"].ToString(),
                     this.orderData["FactoryID"].ToString(),
                     Convert.ToDateTime(this.orderData["OrigBuyerDelivery"]).ToString("d"));
 
                 this.numCPUCost.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql));
             }
-            #endregion
+        }
 
-            this.numSubProcess.Value = MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'A'"));
-            if (MyUtility.GetValue.Lookup(string.Format("select LocalCMT from Factory WITH (NOLOCK) where ID = '{0}'", this.orderData["FactoryID"].ToString())).ToUpper() == "TRUE")
-            {
-                this.numLocalPurchase.Value = MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'P'"));
-            }
-            else
-            {
-                this.numLocalPurchase.Value = 0;
-            }
+        // [Local CMT]計算
+        private void CalculatedLocalCMT()
+        {
+            string sql;
+            bool bolLocalCMT = false;
 
-            this.numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal((this.numCPU.Value * this.numCPUCost.Value) + this.numSubProcess.Value + this.numLocalPurchase.Value), 2);
+            bolLocalCMT = MyUtility.GetValue.Lookup(string.Format("select LocalCMT from Factory WITH (NOLOCK) where ID = '{0}'", this.orderData["FactoryID"].ToString())).ToUpper() == "TRUE";
+            if (bolLocalCMT)
+            {
+                sql = string.Format(
+                    " select dbo.GetLocalPurchaseStdCost('{0}')",
+                    this.orderData["ID"].ToString());
+
+                this.numLocalPurchase.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql));
+            }
         }
     }
 }
