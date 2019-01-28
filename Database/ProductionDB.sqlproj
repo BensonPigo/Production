@@ -2308,6 +2308,7 @@
     <Build Include="dbo\Functions\GetCMPDetail.sql" />
     <Build Include="dbo\Tables\SewingOutput_DailyUnlock.sql" />
     <Build Include="dbo\Tables\FirstSaleCostSetting.sql" />
+    <Build Include="dbo\Functions\GetLocalPurchaseStdCost.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
