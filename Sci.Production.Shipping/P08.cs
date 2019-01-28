@@ -198,6 +198,10 @@ where sd.ID = '{0}'", masterID);
             this.btnAcctApprove.ForeColor = status ? Color.Blue : Color.Black;
             this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
             this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
+            // Reason description
+            this.txtReasonDesc.Text = MyUtility.GetValue.Lookup($@"
+select Description from ShippingReason where id='{this.CurrentMaintain["Reason"]}' 
+and type='AP' and junk=0");
         }
 
         /// <inheritdoc/>
@@ -473,6 +477,18 @@ where sd.ID = '{0}'", masterID);
             }
             #endregion
 
+            // BLNO 重覆下, Reason 不可為空
+            if (!MyUtility.Check.Empty(this.txtBLNo.Text))
+            {
+                string strSQLcmd = $@"select 1 from ShippingAP where BLNo='{this.txtBLNo.Text}'";
+                if (MyUtility.Check.Seek(strSQLcmd) && MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
+                {
+                    MyUtility.Msg.WarningBox(@"<Reason> can not be empty becuase this <B/L No.> is already exists in other AP.");
+                    this.txtReason.Focus();
+                    return false;
+                }
+            }
+             
             // InvNo + B/L No不可以重複建立
             if (!MyUtility.Check.Empty(this.CurrentMaintain["InvNo"]))
             {
@@ -850,12 +866,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
         private void ComboType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.comboType.SelectedValue == null)
-            {
-                return;
-            }
-
-            if (!this.EditMode)
+            if (this.comboType.SelectedValue == null || !this.EditMode)
             {
                 return;
             }
@@ -867,28 +878,108 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                     // comboxbs2_1.Position = 0;
                     this.comboType2.DataSource = this.subType_1;
 
-                    // CurrentMaintain["SubType"] = temp;
                     break;
                 case "EXPORT":
                     // comboxbs2_2.Position = 0;
                     this.comboType2.DataSource = this.subType_2;
-
-                    // CurrentMaintain["SubType"] = temp;
                     break;
                 default:
                     // comboxbs2_1.Position = 0;
                     this.comboType2.DataSource = this.subType_1;
-
-                    // CurrentMaintain["SubType"] = temp;
                     break;
             }
-
-            // CurrentMaintain["SubType"] = "";
+            
             this.comboType2.SelectedIndex = -1;
         }
 
-        private void Masterpanel_Paint(object sender, PaintEventArgs e)
+        private void txtReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            string strsqlcmd = $@"select ID,Description from ShippingReason where type='AP' and junk=0";
+            Sci.Win.Tools.SelectItem item = new Win.Tools.SelectItem(strsqlcmd, "8,20", this.txtReason.Text);
+            item.Size = new System.Drawing.Size(410, 666);
+            DialogResult returnResult = item.ShowDialog();
+            if (returnResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtReason.Text = item.GetSelectedString();
+            this.txtReasonDesc.Text = item.GetSelecteds()[0]["Description"].ToString();
+
+        }
+
+        private void txtReason_Validating(object sender, CancelEventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.txtReason.Text))
+            {
+                this.txtReasonDesc.Text = string.Empty;
+                return;
+            }
+
+            string strsqlcmd = $@"select ID,Description from ShippingReason where type='AP' and junk=0 and id ='{this.txtReason.Text}'";
+
+            if (!MyUtility.Check.Seek(strsqlcmd))
+            {
+                MyUtility.Msg.WarningBox($@"Reason: {this.txtReason.Text} is not found!");
+                this.txtReason.Text = string.Empty;
+                this.txtReason.Focus();
+            }
+
+            this.CurrentMaintain["Reason"] = this.txtReason.Text;
+        }
+
+        private void comboType2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboType.SelectedValue == null || this.comboType2.SelectedValue == null || !this.EditMode)
+            {
+                return;
+            }
+
+            switch (this.comboType.SelectedValue.ToString())
+            {
+                case "IMPORT":
+                    if (string.Compare(this.comboType2.SelectedValue.ToString(), "Other", true) == 0)
+                    {
+                        MyUtility.Msg.InfoBox(@"
+Please be sure this Account Payable is for the following items, otherwise, please choose corresponding Export Type and complete Share Expense, Thank You.
+      Annual Fee, 
+      Purchaser C/O Form, 
+      Machine Export, 
+      Shred/Scrap Export,
+      CN Fabric for testing, 
+      Non SP# Sample/Mock-up
+");
+                    }
+
+                    break;
+                case "EXPORT":
+                    if (string.Compare(this.comboType2.SelectedValue.ToString(), "Other", true) == 0)
+                    {
+                        MyUtility.Msg.InfoBox(@"
+Please be sure this Account Payable is for the following items, otherwise, please choose corresponding Import Type and complete Share Expense, Thank You.
+Annual Fee, 
+Purchase Form for Import purpose, 
+Machine Import, 
+Shred/Scrap Import.
+Non SP# Sample/Mock-up
+");
+                    }
+
+                    break;
+                default:
+                    this.comboType2.DataSource = this.subType_1;
+                    break;
+            }
         }
     }
 }

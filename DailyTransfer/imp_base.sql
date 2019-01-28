@@ -3193,6 +3193,8 @@ SET
       ,a.ETA       =b.ETA 
       ,a.InvDate   =b.InvDate 
       ,a.FCRDate   =b.FCRDate 
+	  ,a.BLNo	   =b.BLNo
+	  ,a.BL2No	   =b.BL2No
 
 from Production.dbo.GMTBooking as a inner join Trade_To_Pms.dbo.GarmentInvoice as b ON a.id=b.id
 where b.InvDate is not null
