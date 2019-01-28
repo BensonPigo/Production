@@ -197,6 +197,7 @@ where sd.ID = '{0}'", masterID);
             this.btnAcctApprove.Text = status ? "Acct. Approve" : "Acct. Unapprove";
             this.btnAcctApprove.ForeColor = status ? Color.Blue : Color.Black;
             this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
+            this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
         }
 
         /// <inheritdoc/>

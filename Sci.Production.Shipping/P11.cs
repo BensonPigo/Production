@@ -40,6 +40,14 @@ namespace Sci.Production.Shipping
         }
 
         /// <inheritdoc/>
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
             if (this.DetailDatas.Count == 0)

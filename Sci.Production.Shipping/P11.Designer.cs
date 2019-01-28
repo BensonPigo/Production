@@ -36,6 +36,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.txtbrand = new Sci.Production.Class.txtbrand();
+            this.lbExVoucherID = new Sci.Win.UI.Label();
+            this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -53,30 +55,34 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disExVoucherID);
+            this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.txtbrand);
             this.masterpanel.Controls.Add(this.btnimport);
             this.masterpanel.Controls.Add(this.txtInvSerial);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 69);
+            this.masterpanel.Size = new System.Drawing.Size(779, 99);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtInvSerial, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnimport, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtbrand, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbExVoucherID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disExVoucherID, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Controls.Add(this.panel4);
-            this.detailpanel.Location = new System.Drawing.Point(0, 69);
-            this.detailpanel.Size = new System.Drawing.Size(892, 280);
+            this.detailpanel.Location = new System.Drawing.Point(0, 99);
+            this.detailpanel.Size = new System.Drawing.Size(779, 387);
             this.detailpanel.Controls.SetChildIndex(this.panel4, 0);
             this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(430, 33);
+            this.gridicon.Location = new System.Drawing.Point(430, 63);
             this.gridicon.TabIndex = 1;
             // 
             // refresh
@@ -85,7 +91,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 280);
+            this.detailgridcont.Size = new System.Drawing.Size(779, 387);
             // 
             // detail2
             // 
@@ -101,16 +107,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(779, 524);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(779, 486);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 486);
+            this.detailbtm.Size = new System.Drawing.Size(779, 38);
             // 
             // browse
             // 
@@ -138,12 +144,12 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(0, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(892, 280);
+            this.panel4.Size = new System.Drawing.Size(779, 387);
             this.panel4.TabIndex = 5;
             // 
             // btnimport
             // 
-            this.btnimport.Location = new System.Drawing.Point(284, 35);
+            this.btnimport.Location = new System.Drawing.Point(284, 63);
             this.btnimport.Name = "btnimport";
             this.btnimport.Size = new System.Drawing.Size(80, 30);
             this.btnimport.TabIndex = 9;
@@ -186,6 +192,23 @@
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 11;
+            // 
+            // lbExVoucherID
+            // 
+            this.lbExVoucherID.Location = new System.Drawing.Point(14, 70);
+            this.lbExVoucherID.Name = "lbExVoucherID";
+            this.lbExVoucherID.Size = new System.Drawing.Size(107, 23);
+            this.lbExVoucherID.TabIndex = 12;
+            this.lbExVoucherID.Text = "Ex Voucher No.";
+            // 
+            // disExVoucherID
+            // 
+            this.disExVoucherID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disExVoucherID.Location = new System.Drawing.Point(124, 70);
+            this.disExVoucherID.Name = "disExVoucherID";
+            this.disExVoucherID.Size = new System.Drawing.Size(153, 23);
+            this.disExVoucherID.TabIndex = 13;
             // 
             // P11
             // 
@@ -230,5 +253,7 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Class.txtbrand txtbrand;
+        private Win.UI.DisplayBox disExVoucherID;
+        private Win.UI.Label lbExVoucherID;
     }
 }
