@@ -179,10 +179,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(996, 668);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.labelShipLeader);
@@ -318,7 +314,7 @@
             this.detailcont.Controls.Add(this.labelAirNo);
             this.detailcont.Controls.Add(this.shapeContainer1);
             this.detailcont.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.detailcont.Size = new System.Drawing.Size(996, 620);
+            this.detailcont.Size = new System.Drawing.Size(897, 347);
             // 
             // detailbtm
             // 
@@ -327,8 +323,8 @@
             this.detailbtm.Controls.Add(this.labelUpdTPEDate);
             this.detailbtm.Controls.Add(this.labelTPEEditDate);
             this.detailbtm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.detailbtm.Location = new System.Drawing.Point(0, 620);
-            this.detailbtm.Size = new System.Drawing.Size(996, 48);
+            this.detailbtm.Location = new System.Drawing.Point(0, 347);
+            this.detailbtm.Size = new System.Drawing.Size(897, 48);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
@@ -1457,7 +1453,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(996, 620);
+            this.shapeContainer1.Size = new System.Drawing.Size(993, 620);
             this.shapeContainer1.TabIndex = 93;
             this.shapeContainer1.TabStop = false;
             // 
@@ -2038,9 +2034,11 @@
             this.IsSupportDelete = false;
             this.IsSupportJunk = true;
             this.IsSupportUncheck = true;
+            this.IsSupportUnconfirm = true;
             this.JunkChkValue = "New";
             this.Name = "P01";
             this.Text = "P01. Air Pre-Paid";
+            this.UnApvChkValue = "Approved";
             this.UncheckChkValue = "Checked";
             this.UniqueExpress = "ID";
             this.WorkAlias = "AirPP";
