@@ -67,8 +67,7 @@ select  s.OutputDate
 		, s.SubConOutContractNumber
 		, sod.UnitPrice
 		, sod.Vat
-		, [CPUPrice] = case when att.ProductionUnit = 'QTY' and att.ID = 'SEWING' then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) * iif(s.Category = 'M', mo.CPUFactor, o.CPUFactor), 4)
-							when att.ProductionUnit = 'TMS' and att.ID = 'SEWING' then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) * iif(s.Category = 'M', mo.CPUFactor, o.CPUFactor), 3)
+		, [CPUPrice] = case when att.ID = 'SEWING' then Sum(sd.QAQty * iif(s.Category = 'M', mo.CPUFactor * mo.CPU, o.CPUFactor * O.CPU  * a.Rate))
 							when att.ProductionUnit = 'QTY'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 4)
 							when att.ProductionUnit = 'TMS'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 3)
 							else 0 end
@@ -114,9 +113,6 @@ group by  s.OutputDate
 		, sod.UnitPrice
 		, sod.Vat
 		,att.ProductionUnit
-		,mo.CPUFactor
-		,o.CPUFactor
-		,s.Category
 order by 
 		s.OutputDate
 		, sd.OrderId
