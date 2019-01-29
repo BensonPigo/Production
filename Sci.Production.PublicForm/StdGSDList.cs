@@ -39,7 +39,7 @@ select
         ,id.Annotation
         ,id.Frequency
         ,isnull(id.MtlFactorID,'') as MtlFactorID
-        ,[SMV] = isnull(o.SMV,0) as SMV
+        ,[SMV] = isnull(o.SMV,0)
         ,[newSMV] = isnull(o.SMV,0) * id.Frequency  * (1 + (id.MtlFactorRate / 100))
         ,isnull(o.SeamLength,0) as SeamLength
         ,iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type
