@@ -33,8 +33,8 @@ namespace Sci.Production.Cutting
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            DataGridViewGeneratorTextColumnSettings mtlTypeID = new DataGridViewGeneratorTextColumnSettings();
-            mtlTypeID.EditingMouseDown += (s, e) =>
+            DataGridViewGeneratorTextColumnSettings WeaveTypeID = new DataGridViewGeneratorTextColumnSettings();
+            WeaveTypeID.EditingMouseDown += (s, e) =>
             {
                 if (e.Button == MouseButtons.Right)
                 {
@@ -44,35 +44,35 @@ namespace Sci.Production.Cutting
 
                     DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                     DataTable dt;
-                    DBProxy.Current.Select(null, $"Select id from MtlType WITH (NOLOCK) where junk=0", out dt);
-                    SelectItem sele = new SelectItem(dt, "ID", "10@300,300", dr["MtlTypeID"].ToString());
+                    DBProxy.Current.Select(null, $"Select id from WeaveType WITH (NOLOCK) where junk=0", out dt);
+                    SelectItem sele = new SelectItem(dt, "ID", "10@300,300", dr["WeaveTypeID"].ToString());
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) return; 
-                    dr["MtlTypeID"] = sele.GetSelectedString();
+                    dr["WeaveTypeID"] = sele.GetSelectedString();
                     dr.EndEdit();
                 }
             };
 
-            mtlTypeID.CellValidating += (s, e) =>
+            WeaveTypeID.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) return;
                 if (e.RowIndex == -1) return;
                 if (this.CurrentDetailData == null) return;
                 if (MyUtility.Check.Empty(e.FormattedValue)) return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Seek($"Select id from MtlType WITH (NOLOCK) where junk=0 and id = '{e.FormattedValue}'"))
+                if (!MyUtility.Check.Seek($"Select id from WeaveType WITH (NOLOCK) where junk=0 and id = '{e.FormattedValue}'"))
                 {
-                    MyUtility.Msg.WarningBox("MtlType not exists!");
-                    dr["MtlTypeID"] = string.Empty;
+                    MyUtility.Msg.WarningBox("WeaveType not exists!");
+                    dr["WeaveTypeID"] = string.Empty;
                 }
                 else
                 {
-                    dr["MtlTypeID"] = e.FormattedValue;
+                    dr["WeaveTypeID"] = e.FormattedValue;
                 }
                 dr.EndEdit();
             };
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("MtlTypeID", header: "MtlType", width: Widths.AnsiChars(20), settings: mtlTypeID)
+            .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(20), settings: WeaveTypeID)
             .Numeric("LayerLowerBound", header: "LayerLowerBound", width: Widths.AnsiChars(8))
             .Numeric("LayerUpperBound", header: "LayerUpperBound", width: Widths.AnsiChars(8))
             .Numeric("ActualSpeed", header: "ActualSpeed\n(1000m/min)", width: Widths.AnsiChars(8), decimal_places: 3)
@@ -88,13 +88,13 @@ namespace Sci.Production.Cutting
 
         protected override bool ClickSaveBefore()
         {
-            #region MtlTypeID,LayerLowerBound,LayerUpperBound,ActualSpeed必輸入,不能是0 .. LayerLowerBound不能大於LayerUpperBound
+            #region WeaveTypeID,LayerLowerBound,LayerUpperBound,ActualSpeed必輸入,不能是0 .. LayerLowerBound不能大於LayerUpperBound
             foreach (DataRow dr in DetailDatas.Where(r => r.RowState != DataRowState.Deleted))
             {
-                if (MyUtility.Check.Empty(dr["MtlTypeID"]) || MyUtility.Check.Empty(dr["LayerLowerBound"]) ||
+                if (MyUtility.Check.Empty(dr["WeaveTypeID"]) || MyUtility.Check.Empty(dr["LayerLowerBound"]) ||
                     MyUtility.Check.Empty(dr["LayerUpperBound"]) || MyUtility.Check.Empty(dr["ActualSpeed"]))
                 {
-                    MyUtility.Msg.WarningBox("MtlType, LayerLowerBound, LayerUpperBound, ActualSpeed can not empty!");
+                    MyUtility.Msg.WarningBox("WeaveType, LayerLowerBound, LayerUpperBound, ActualSpeed can not empty!");
                     return false;
                 }
 
@@ -106,21 +106,21 @@ namespace Sci.Production.Cutting
             }
             #endregion
 
-            #region 同mtlTypeID有多筆時, LayerUpperBound(數字加1)與下一筆LayerLowerBound要連續 
-            string oldMtlTypeID = string.Empty;
+            #region 同WeaveTypeID有多筆時, LayerUpperBound(數字加1)與下一筆LayerLowerBound要連續 
+            string oldWeaveTypeID = string.Empty;
             int oldLayerUpperBound = -1;
             foreach (DataRow dr in DetailDatas.Where(r => r.RowState != DataRowState.Deleted)
-                .OrderBy(o => o["LayerUpperBound"]).OrderBy(o => o["LayerLowerBound"]).OrderBy(o => o["MtlTypeID"]))
+                .OrderBy(o => o["LayerUpperBound"]).OrderBy(o => o["LayerLowerBound"]).OrderBy(o => o["WeaveTypeID"]))
             {
-                if (oldMtlTypeID == MyUtility.Convert.GetString(dr["MtlTypeID"]) &&
+                if (oldWeaveTypeID == MyUtility.Convert.GetString(dr["WeaveTypeID"]) &&
                     oldLayerUpperBound + 1 != MyUtility.Convert.GetInt(dr["LayerLowerBound"]))
                 {
-                    MyUtility.Msg.WarningBox("Layers of the same MtlType must be consecutive.");
+                    MyUtility.Msg.WarningBox("Layers of the same WeaveType must be consecutive.");
                     return false;
                 }
 
                 oldLayerUpperBound = MyUtility.Convert.GetInt(dr["LayerUpperBound"]);
-                oldMtlTypeID = MyUtility.Convert.GetString(dr["MtlTypeID"]);
+                oldWeaveTypeID = MyUtility.Convert.GetString(dr["WeaveTypeID"]);
             }
             #endregion
 

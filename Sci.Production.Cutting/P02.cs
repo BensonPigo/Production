@@ -172,8 +172,8 @@ Select
 	,multisize.multisize
 	,Order_SizeCode_Seq.Order_SizeCode_Seq
 	,SORT_NUM =0
-    ,c.MtlTypeID
-    ,MtlTypeID_SCIRefno = concat(c.MtlTypeID, ' / ' , a.SCIRefno)
+    ,c.WeaveTypeID
+    ,MtlTypeID_SCIRefno = concat(c.WeaveTypeID, ' / ' , a.SCIRefno)
 	,c.DescDetail
     ,c.Description
 	,newkey = 0
@@ -186,8 +186,8 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.MtlTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
-					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.MtlTypeID,a.cons),0)as float)
+	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
+					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.WeaveTypeID,a.cons),0)as float)
 	)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
@@ -2177,12 +2177,18 @@ END";
                 newRow["multisize"] = OldRow["multisize"];
                 newRow["Order_SizeCode_Seq"] = OldRow["Order_SizeCode_Seq"];
                 newRow["SORT_NUM"] = OldRow["SORT_NUM"];
-                newRow["MtlTypeID"] = OldRow["MtlTypeID"];
+                newRow["WeaveTypeID"] = OldRow["WeaveTypeID"];
                 newRow["DescDetail"] = OldRow["DescDetail"];
                 newRow["MarkerLengthY"] = OldRow["MarkerLengthY"];
                 newRow["MarkerLengthE"] = OldRow["MarkerLengthE"];
                 newRow["MtlTypeID_SCIRefno"] = OldRow["MtlTypeID_SCIRefno"];
                 newRow["Description"] = OldRow["Description"];
+                newRow["ActCuttingPerimeterNew"] = OldRow["ActCuttingPerimeterNew"];
+                newRow["StraightLengthNew"] = OldRow["StraightLengthNew"];
+                newRow["CurvedLengthNew"] = OldRow["CurvedLengthNew"];
+                newRow["ActCuttingPerimeter"] = OldRow["ActCuttingPerimeterNew"];
+                newRow["StraightLength"] = OldRow["StraightLengthNew"];
+                newRow["CurvedLength"] = OldRow["CurvedLengthNew"];
                 if (index == -1) index = TEMP;
                 OldRow.Table.Rows.InsertAt(newRow, index);
                 DataRow[] drTEMPS = sizeratioTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
@@ -2808,7 +2814,7 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
         {
             DataRow dr;
             string new_FabricPanelCode = txtFabricPanelCode.Text;
-            string sqlcmd = string.Format(@"select ob.SCIRefno,f.Description ,f.MtlTypeID
+            string sqlcmd = string.Format(@"select ob.SCIRefno,f.Description ,f.WeaveTypeID
                             from Order_BoF ob 
                             left join Fabric f on ob.SCIRefno = f.SCIRefno
                              where 
@@ -2818,7 +2824,7 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             if (MyUtility.Check.Seek(sqlcmd, out dr))
             {
                 CurrentDetailData["SCIRefno"] = dr["SCIRefno"].ToString();
-                CurrentDetailData["MtlTypeID_SCIRefno"] = dr["MtlTypeID"].ToString() + " / " + dr["SCIRefno"].ToString();
+                CurrentDetailData["MtlTypeID_SCIRefno"] = dr["WeaveTypeID"].ToString() + " / " + dr["SCIRefno"].ToString();
                 CurrentDetailData["Description"] = dr["Description"].ToString();
                 CurrentDetailData["FabricPanelCode"] = new_FabricPanelCode;
             }

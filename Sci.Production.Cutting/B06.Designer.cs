@@ -43,7 +43,7 @@
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
             this.labelID = new Sci.Win.UI.Label();
-            this.txtMtlTypeID = new Sci.Win.UI.TextBox();
+            this.txtWeaveTypeID = new Sci.Win.UI.TextBox();
             this.displayBox1 = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -74,7 +74,7 @@
             this.detailcont.Controls.Add(this.numChangeOverRollTime);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.numPreparationTime);
-            this.detailcont.Controls.Add(this.txtMtlTypeID);
+            this.detailcont.Controls.Add(this.txtWeaveTypeID);
             this.detailcont.Controls.Add(this.labelID);
             this.detailcont.Size = new System.Drawing.Size(828, 373);
             // 
@@ -85,7 +85,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(828, 400);
+            this.browse.Size = new System.Drawing.Size(828, 411);
             // 
             // tabs
             // 
@@ -313,19 +313,19 @@
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(163, 23);
             this.labelID.TabIndex = 8;
-            this.labelID.Text = "MtlTypeID";
+            this.labelID.Text = "WeaveTypeID";
             // 
-            // txtMtlTypeID
+            // txtWeaveTypeID
             // 
-            this.txtMtlTypeID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtMtlTypeID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
-            this.txtMtlTypeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtMtlTypeID.IsSupportEditMode = false;
-            this.txtMtlTypeID.Location = new System.Drawing.Point(187, 18);
-            this.txtMtlTypeID.Name = "txtMtlTypeID";
-            this.txtMtlTypeID.ReadOnly = true;
-            this.txtMtlTypeID.Size = new System.Drawing.Size(199, 23);
-            this.txtMtlTypeID.TabIndex = 0;
+            this.txtWeaveTypeID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtWeaveTypeID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ID", true));
+            this.txtWeaveTypeID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtWeaveTypeID.IsSupportEditMode = false;
+            this.txtWeaveTypeID.Location = new System.Drawing.Point(187, 18);
+            this.txtWeaveTypeID.Name = "txtWeaveTypeID";
+            this.txtWeaveTypeID.ReadOnly = true;
+            this.txtWeaveTypeID.Size = new System.Drawing.Size(199, 23);
+            this.txtWeaveTypeID.TabIndex = 0;
             // 
             // displayBox1
             // 
@@ -348,7 +348,7 @@
             this.IsSupportPrint = false;
             this.Name = "B06";
             this.Text = "B06 Spreading Time";
-            this.WorkAlias = "MtlType";
+            this.WorkAlias = "WeaveType";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -377,7 +377,7 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
-        private Win.UI.TextBox txtMtlTypeID;
+        private Win.UI.TextBox txtWeaveTypeID;
         private Win.UI.Label labelID;
         private Win.UI.DisplayBox displayBox1;
     }

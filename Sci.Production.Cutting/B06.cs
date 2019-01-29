@@ -24,7 +24,7 @@ No. of Roll + Set up time + (Machine Spreading Time*Marker Length*Layer) +
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            string sqlcmd = $@"select * from SpreadingTime where MtlTypeID = '{this.CurrentMaintain["ID"]}'";
+            string sqlcmd = $@"select * from SpreadingTime where WeaveTypeID = '{this.CurrentMaintain["ID"]}'";
             DataRow dr;
             if (MyUtility.Check.Seek(sqlcmd,out dr))
             {
@@ -48,7 +48,7 @@ No. of Roll + Set up time + (Machine Spreading Time*Marker Length*Layer) +
             }
             createby.Text = string.Empty;
             editby.Text = MyUtility.GetValue.Lookup($@"select EditName = concat(EditName,'-'+(select name from Pass1 where id = s.EditName),' '+format(EditDate,'yyyy/MM/dd HH:mm:ss') )
-from SpreadingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
+from SpreadingTime s where WeaveTypeID = '{this.CurrentMaintain["ID"]}'");
         }
 
         protected override DualResult ClickSave()
@@ -60,9 +60,9 @@ from SpreadingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
             dtSchema.IsSupportEditName = false;
 
             string insertupdate = $@"
-select MtlType = '{this.CurrentMaintain["ID"]}' into #tmp
+select WeaveType = '{this.CurrentMaintain["ID"]}' into #tmp
 merge SpreadingTime
-using #tmp s ON s.MtlType = dbo.SpreadingTime.MtlTypeID
+using #tmp s ON s.WeaveType = dbo.SpreadingTime.WeaveTypeID
 when matched then update set
 	 [PreparationTime]		={numPreparationTime.Value}
 	,[ChangeOverRollTime]	={numChangeOverRollTime.Value}
@@ -74,8 +74,8 @@ when matched then update set
 	,[EditName]				='{Sci.Env.User.UserID}'
 	,[EditDate]				=getdate()
 when not matched by target then
-insert ([MtlTypeID],[PreparationTime],[ChangeOverRollTime],[ChangeOverUnRollTime],[SetupTime],[SeparatorTime],[SpreadingTime],[ForwardTime],[EditName],[EditDate])
-values(s.MtlType,{numPreparationTime.Value},{numChangeOverRollTime.Value},{numChangeOverUnRollTime.Value},{numSetupTime.Value},
+insert ([WeaveTypeID],[PreparationTime],[ChangeOverRollTime],[ChangeOverUnRollTime],[SetupTime],[SeparatorTime],[SpreadingTime],[ForwardTime],[EditName],[EditDate])
+values(s.WeaveType,{numPreparationTime.Value},{numChangeOverRollTime.Value},{numChangeOverUnRollTime.Value},{numSetupTime.Value},
 {numSeparatorTime.Value},{numSpreadingTime.Value},{numForwardTime.Value},'{Sci.Env.User.UserID}',getdate())
 ;
 drop table #tmp

@@ -24,7 +24,7 @@ Window time*Window No";
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            string sqlcmd = $@"select * from CuttingTime where MtlTypeID = '{this.CurrentMaintain["ID"]}'";
+            string sqlcmd = $@"select * from CuttingTime where WeaveTypeID = '{this.CurrentMaintain["ID"]}'";
             DataRow dr;
             if (MyUtility.Check.Seek(sqlcmd,out dr))
             {
@@ -40,7 +40,7 @@ Window time*Window No";
             }
             createby.Text = string.Empty;
             editby.Text = MyUtility.GetValue.Lookup($@"select EditName = concat(EditName,'-'+(select name from Pass1 where id = s.EditName),' '+format(EditDate,'yyyy/MM/dd HH:mm:ss') )
-from CuttingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
+from CuttingTime s where WeaveTypeID = '{this.CurrentMaintain["ID"]}'");
         }
 
         protected override DualResult ClickSave()
@@ -52,9 +52,9 @@ from CuttingTime s where MtlTypeID = '{this.CurrentMaintain["ID"]}'");
             dtSchema.IsSupportEditName = false;
 
             string insertupdate = $@"
-select MtlType = '{this.CurrentMaintain["ID"]}' into #tmp
+select WeaveType = '{this.CurrentMaintain["ID"]}' into #tmp
 merge CuttingTime
-using #tmp s ON s.MtlType = dbo.CuttingTime.MtlTypeID
+using #tmp s ON s.WeaveType = dbo.CuttingTime.WeaveTypeID
 when matched then update set
 	 [SetUpTime]		={numSetUpT.Value}
 	,[WindowTime]	={numWindowTime.Value}
@@ -62,8 +62,8 @@ when matched then update set
 	,[EditName]				='{Sci.Env.User.UserID}'
 	,[EditDate]				=getdate()
 when not matched by target then
-insert ([MtlTypeID],[SetUpTime],[WindowTime],[WindowLength],[EditName],[EditDate])
-values(s.MtlType,{numSetUpT.Value},{numWindowTime.Value},{numWindowLength.Value},'{Sci.Env.User.UserID}',getdate())
+insert ([WeaveTypeID],[SetUpTime],[WindowTime],[WindowLength],[EditName],[EditDate])
+values(s.WeaveType,{numSetUpT.Value},{numWindowTime.Value},{numWindowLength.Value},'{Sci.Env.User.UserID}',getdate())
 ;
 drop table #tmp
 ";
