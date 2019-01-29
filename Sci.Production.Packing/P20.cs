@@ -131,6 +131,10 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
             {
                 this.dtPackErrTransfer.ImportRow(checkPackResult.DrResult);
             }
+            else
+            {
+                MyUtility.Msg.WarningBox(checkPackResult.ErrMsg);
+            }
 
             e.Cancel = true;
         }
@@ -142,7 +146,6 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string importFileName = openFileDialog.FileName;
-                List<DataRow> listNewRow = new List<DataRow>();
                 using (StreamReader reader = new StreamReader(importFileName, System.Text.Encoding.UTF8))
                 {
                     this.ShowWaitMessage("Processing....");
@@ -176,21 +179,9 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
 
                            if (checkPackResult.IsOK)
                             {
+                                checkPackResult.DrResult["selected"] = 1;
                                 this.dtPackErrTransfer.ImportRow(checkPackResult.DrResult);
                             }
-                            else
-                            {
-                                this.HideWaitMessage();
-                                return;
-                            }
-
-                            checkPackResult.DrResult["selected"] = 1;
-                            listNewRow.Add(checkPackResult.DrResult);
-                        }
-
-                        foreach (DataRow dr in listNewRow)
-                        {
-                            this.dtPackErrTransfer.Rows.Add(dr);
                         }
                     }
                     catch (Exception ex)
@@ -206,14 +197,16 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
         private void BtnSave_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Save Processing....");
+
             // 檢查資料
             var drSelected = this.dtPackErrTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1).ToList();
 
             foreach (DataRow dr in drSelected)
             {
-                bool isOkPackData = this.CheckPackID(dr["ID"].ToString(), dr["CTNStartNo"].ToString()).IsOK;
-                if (!isOkPackData)
+                CheckPackResult checkPackResult = this.CheckPackID(dr["ID"].ToString(), dr["CTNStartNo"].ToString());
+                if (!checkPackResult.IsOK)
                 {
+                    MyUtility.Msg.WarningBox(checkPackResult.ErrMsg);
                     return;
                 }
             }
@@ -355,21 +348,21 @@ where	pd.CTNStartNo <> ''
 
             if (!result)
             {
-                MyUtility.Msg.WarningBox($"<CTN#:{packID + cartonStartNo}> does not exist!");
+                checkPackResult.ErrMsg = $"<CTN#:{packID + cartonStartNo}> does not exist!";
                 checkPackResult.IsOK = false;
                 return checkPackResult;
             }
 
             if (drPackResult["PackErrTransferDate"] == DBNull.Value)
             {
-                MyUtility.Msg.WarningBox($"<CTN#:{packID + cartonStartNo}> This CTN# Packing Error not yet transferred.");
+                checkPackResult.ErrMsg = $"<CTN#:{packID + cartonStartNo}> This CTN# Packing Error not yet transferred.";
                 checkPackResult.IsOK = false;
                 return checkPackResult;
             }
 
             if (drPackResult["Status"].Equals("Confirmed") || drPackResult["Status"].Equals("Locked"))
             {
-                MyUtility.Msg.WarningBox($"<CTN#:{packID + cartonStartNo}> Already pullout!");
+                checkPackResult.ErrMsg = $"<CTN#:{packID + cartonStartNo}> Already pullout!";
                 checkPackResult.IsOK = false;
                 return checkPackResult;
             }
@@ -384,6 +377,7 @@ where	pd.CTNStartNo <> ''
         {
             private bool isOK;
             private DataRow drResult;
+            private string errMsg;
 
             public bool IsOK
             {
@@ -408,6 +402,19 @@ where	pd.CTNStartNo <> ''
                 set
                 {
                     this.drResult = value;
+                }
+            }
+
+            public string ErrMsg
+            {
+                get
+                {
+                    return this.errMsg;
+                }
+
+                set
+                {
+                    this.errMsg = value;
                 }
             }
         }
