@@ -57,10 +57,11 @@ namespace Sci.Production.Subcon
             dateEstCutDate2 = this.dateEstCutDate.Value2;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
+                MyUtility.Check.Empty(dateEstCutDate.Value1) && MyUtility.Check.Empty(dateEstCutDate.Value2) &&
                 MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
                 MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2))
             {
-                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Bundle CDate][Bundle Scan Date] cannot all empty !!");
+                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date] cannot all empty !!");
                 return false;
             }
             return base.ValidateInput();
