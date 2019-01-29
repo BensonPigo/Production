@@ -19,7 +19,7 @@ namespace Sci.Production.PublicForm
         {
             InitializeComponent();
             styleUkey = StyleUKey;
-            MyUtility.Tool.SetupCombox(comboTypeFilter,2,1,"A,All,T,Top,B,Bottom,I,Inner,O,Outer");
+            MyUtility.Tool.SetupCombox(comboTypeFilter, 2, 1, "A,All,T,Top,B,Bottom,I,Inner,O,Outer");
         }
 
         protected override void OnFormLoaded()
@@ -28,11 +28,24 @@ namespace Sci.Production.PublicForm
             #region 撈Grid資料
 
             #region Std. GSD
-            string sqlCmd = string.Format(@"select id.SEQ,id.Location,id.OperationID,isnull(m.Description,'') as MachineDesc,id.Mold,isnull(o.DescEN,'') as OperationDescEN,id.Annotation,id.Frequency,
-isnull(id.MtlFactorID,'') as MtlFactorID,isnull(o.SMV,0) as SMV,isnull(o.SeamLength,0) as SeamLength,
-iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-isnull(id.SMV,0) as newSMV,
-isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength
+            string sqlCmd = string.Format(@"
+select 
+        id.SEQ
+        ,id.Location
+        ,id.OperationID
+        ,isnull(m.Description,'') as MachineDesc
+        ,id.Mold
+        ,isnull(o.DescEN,'') as OperationDescEN
+        ,id.Annotation
+        ,id.Frequency
+        ,isnull(id.MtlFactorID,'') as MtlFactorID
+        ,[SMV] = isnull(o.SMV,0)
+        ,[newSMV] = isnull(o.SMV,0) * id.Frequency  * (1 + (id.MtlFactorRate / 100))
+        ,isnull(o.SeamLength,0) as SeamLength
+        ,iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type
+        ,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength
+        ,[MtlFactorRate] = id.MtlFactorRate 
+
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
@@ -49,7 +62,7 @@ where s.Ukey = {0} order by id.SEQ", styleUkey);
             #endregion
 
             #region Summary by artwork
-            sqlCmd =$@"
+            sqlCmd = $@"
 select  i.Location, i.ArtworkTypeID,
 	type = iif(i.Location = 'T','Top',iif(i.Location = 'B','Bottom',iif(i.Location = 'I','Inner',iif(i.Location = 'O','Outer','')))),
 	tms = CEILING(sum(i.ProSMV) * 60)
@@ -134,6 +147,7 @@ Group by mt.ID,mt.Description,mt.DescCH,mt.RPM,mt.Stitches,ies.location", styleU
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
                 .Numeric("Frequency", header: "Freq.", decimal_places: 2)
                 .Text("MtlFactorID", header: "Fac.", width: Widths.AnsiChars(3))
+                .Numeric("MtlFactorRate", header: "Fac%",decimal_places:2, width: Widths.AnsiChars(3))
                 .Numeric("SMV", header: "Ori. SMV", decimal_places: 4)
                 .Numeric("newSMV", header: "S.M.V", decimal_places: 4)
                 .Numeric("SeamLength", header: "Seam length", decimal_places: 2)
@@ -227,7 +241,7 @@ where s.Ukey = {styleUkey}
             }
             sqlTTLCpuTms += " group by s.ID,s.SeasonID,i.ActFinDate,i.ID,i.Version ";
             DataRow dr;
-            if (MyUtility.Check.Seek(sqlTTLCpuTms,out dr))
+            if (MyUtility.Check.Seek(sqlTTLCpuTms, out dr))
             {
                 numTotalCPUTMS.Value = MyUtility.Convert.GetDecimal(dr["ProductionCpuTms"]);
                 numTotalSMV.Value = MyUtility.Convert.GetDecimal(dr["ProductionSMV"]);
@@ -235,7 +249,7 @@ where s.Ukey = {styleUkey}
             else
             {
                 numTotalCPUTMS.Value = 0;
-                numTotalSMV.Value =0;
+                numTotalSMV.Value = 0;
             }
             #endregion
 
@@ -265,7 +279,7 @@ where s.Ukey = {styleUkey}
         //To Excel
         private void btnToExcel_Click(object sender, EventArgs e)
         {
-           
+
             DataTable ExcelTable;
             try
             {
@@ -340,18 +354,18 @@ order by seq
 
             //if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
             //{
-             
+
             // Open document
-         
-                bool result = MyUtility.Excel.CopyToXls(ExcelTable,"", "PPIC_P01_StdGSDList.xltx",headerRow:1);
-                if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
-           // }
+
+            bool result = MyUtility.Excel.CopyToXls(ExcelTable, "", "PPIC_P01_StdGSDList.xltx", headerRow: 1);
+            if (!result) { MyUtility.Msg.WarningBox(result.ToString(), "Warning"); }
+            // }
             //else
             //{
-                return;
+            return;
             //}
         }
-       
+
 
     }
 }
