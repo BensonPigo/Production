@@ -651,6 +651,16 @@ group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipMode
                             haveSea = haveSea || MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                             noExistNotSea = noExistNotSea && MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                         }
+
+                        if (MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT")
+                        {
+                            bool bolNoImportCharges = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format("select NoImportCharges from Export where id = '{0}'", MyUtility.Convert.GetString(dr["WKno"]))));
+                            if (bolNoImportCharges)
+                            {
+                                MyUtility.Msg.WarningBox("No Import Charge");
+                                return;
+                            }
+                        }
                     }
                 }
 

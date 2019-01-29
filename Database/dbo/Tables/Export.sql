@@ -63,6 +63,7 @@
     [NoImportCharges] BIT             CONSTRAINT [DF_Export_NoImportCharges] DEFAULT ((0)) NULL,
     [Replacement] BIT NOT NULL, 
     [Delay] BIT NOT NULL, 
+    [PrepaidFtyImportFee] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -308,3 +309,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Export', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'台北代墊工廠進口費用',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Export',
+    @level2type = N'COLUMN',
+    @level2name = N'PrepaidFtyImportFee'
