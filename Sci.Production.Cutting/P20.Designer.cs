@@ -245,11 +245,6 @@
             this.numManPower.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "manpower", true));
             this.numManPower.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numManPower.Location = new System.Drawing.Point(327, 74);
-            this.numManPower.Maximum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
             this.numManPower.Minimum = new decimal(new int[] {
             0,
             0,
