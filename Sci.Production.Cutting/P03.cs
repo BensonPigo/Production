@@ -421,17 +421,17 @@ and CutRef = '{item.CutRef}'
                 foreach (DataRow dr in chkdt.Rows)
                 {
                     bool isNotsame = false;
-                    if (!MyUtility.Check.Empty(dr["newestcutdate"]) &&
-                        MyUtility.Convert.GetDate(dr["estcutdate"]) != (MyUtility.Convert.GetDate(chkdrs[0]["NewEstcutdate"])))
+                    if (!MyUtility.Check.Empty(chkdrs[0]["NewEstcutdate"]) &&
+                        MyUtility.Convert.GetDate(dr["estcutdate"]) != MyUtility.Convert.GetDate(chkdrs[0]["NewEstcutdate"]))
                     {
                         isNotsame = true;
                     }
-                    if (!MyUtility.Check.Empty(dr["NewCutcellid"]) &&
+                    if (!MyUtility.Check.Empty(chkdrs[0]["NewCutcellid"]) &&
                         !MyUtility.Convert.GetString(dr["Cutcellid"]).EqualString(MyUtility.Convert.GetString(chkdrs[0]["NewCutcellid"])))
                     {
                         isNotsame = true;
                     }
-                    if (!MyUtility.Check.Empty(dr["NewSpreadingNoID"]) &&
+                    if (!MyUtility.Check.Empty(chkdrs[0]["NewSpreadingNoID"]) &&
                         !MyUtility.Convert.GetString(dr["SpreadingNoID"]).EqualString(MyUtility.Convert.GetString(chkdrs[0]["NewSpreadingNoID"])))
                     {
                         isNotsame = true;
