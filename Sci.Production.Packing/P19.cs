@@ -175,7 +175,16 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
                             string packID = splitResult[2].Substring(0, 13).TrimEnd();
                             string cartonStartNo = splitResult[2].Substring(13).TrimEnd();
 
-                            CheckPackResult checkPackResult = this.CheckPackID(packID, cartonStartNo);
+                            CheckPackResult checkPackResult = this.CheckPackID(packID, cartonStartNo, false);
+
+                            if (checkPackResult.IsOK)
+                            {
+                                checkPackResult.DrResult["selected"] = 1;
+                                this.dtPackErrTransfer.ImportRow(checkPackResult.DrResult);
+                                continue;
+                            }
+
+                            checkPackResult = this.CheckPackID(packID, cartonStartNo, true);
 
                             if (checkPackResult.IsOK)
                             {
@@ -322,23 +331,39 @@ order by pd.ID,pd.Seq
             }
         }
 
-        private CheckPackResult CheckPackID(string packID, string cartonStartNo)
+        private CheckPackResult CheckPackID(string packID, string cartonStartNo, bool fromCustCTN = false)
         {
             CheckPackResult checkPackResult = new CheckPackResult() { IsOK = true };
             DataRow drPackResult;
-            List<SqlParameter> listPar = new List<SqlParameter>()
+            string keyWhere = string.Empty;
+            List<SqlParameter> listPar;
+
+            if (fromCustCTN == true)
             {
-                new SqlParameter("@ID", packID),
-                new SqlParameter("@CTNStartNo", cartonStartNo)
-            };
+                keyWhere = $"   and pd.CustCTN = @CustCTN";
+                listPar = new List<SqlParameter>()
+                                            {
+                                                new SqlParameter("@CustCTN", packID + cartonStartNo)
+                                            };
+            }
+            else
+            {
+                keyWhere = @"   and pd.ID = @ID
+                                and pd.CTNStartNo = @CTNStartNo";
+                listPar = new List<SqlParameter>()
+                                            {
+                                                new SqlParameter("@ID", packID),
+                                                new SqlParameter("@CTNStartNo", cartonStartNo)
+                                            };
+            }
+
             string checkPackSql = $@"
 {this.mainPackQuerySql}
 where	pd.CTNStartNo <> '' 
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
         and pd.CTNQty = 1
-        and pd.ID = @ID
-        and pd.CTNStartNo = @CTNStartNo
+        {keyWhere}
 ";
             bool result = MyUtility.Check.Seek(checkPackSql, listPar, out drPackResult);
 
