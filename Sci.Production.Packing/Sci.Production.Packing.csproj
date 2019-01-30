@@ -199,6 +199,18 @@
     <Compile Include="P03_UPCSticker.Designer.cs">
       <DependentUpon>P03_UPCSticker.cs</DependentUpon>
     </Compile>
+    <Compile Include="P22.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P22.Designer.cs">
+      <DependentUpon>P22.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P21.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P21.Designer.cs">
+      <DependentUpon>P21.cs</DependentUpon>
+    </Compile>
     <Compile Include="P09_DllInvoke.cs" />
     <Compile Include="P09_IDX_CTRL.cs" />
     <Compile Include="P16.cs">
@@ -383,6 +395,18 @@
     <Compile Include="P18_Message.Designer.cs">
       <DependentUpon>P18_Message.cs</DependentUpon>
     </Compile>
+    <Compile Include="P20.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P20.Designer.cs">
+      <DependentUpon>P20.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P19.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P19.Designer.cs">
+      <DependentUpon>P19.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -431,6 +455,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_UPCSticker.resx">
       <DependentUpon>P03_UPCSticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P22.resx">
+      <DependentUpon>P22.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P21.resx">
+      <DependentUpon>P21.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P16.resx">
       <DependentUpon>P16.cs</DependentUpon>
@@ -527,6 +557,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P18_Message.resx">
       <DependentUpon>P18_Message.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P20.resx">
+      <DependentUpon>P20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P19.resx">
+      <DependentUpon>P19.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
