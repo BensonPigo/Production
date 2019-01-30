@@ -235,7 +235,7 @@
             this.dateIssueDate.Location = new System.Drawing.Point(283, 13);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.Size = new System.Drawing.Size(100, 23);
-            this.dateIssueDate.TabIndex = 0;
+            this.dateIssueDate.TabIndex = 1;
             // 
             // btnImport
             // 
@@ -245,6 +245,7 @@
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 3;
+            this.btnImport.TabStop = false;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
@@ -275,6 +276,7 @@
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 6;
+            this.btnFind.TabStop = false;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
@@ -287,7 +289,7 @@
             this.txtLocateForSP.Location = new System.Drawing.Point(128, 148);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
-            this.txtLocateForSP.TabIndex = 5;
+            this.txtLocateForSP.TabIndex = 7;
             // 
             // labelLocateForSP
             // 
@@ -304,6 +306,7 @@
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
             this.btnClearQtyIsEmpty.TabIndex = 7;
+            this.btnClearQtyIsEmpty.TabStop = false;
             this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
             this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
             this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
@@ -325,7 +328,7 @@
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(707, 51);
-            this.editRemark.TabIndex = 2;
+            this.editRemark.TabIndex = 6;
             // 
             // btnAccumulatedQty
             // 
@@ -335,6 +338,7 @@
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 4;
+            this.btnAccumulatedQty.TabStop = false;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
             this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
@@ -345,7 +349,7 @@
             this.dateEstReturnDate.Location = new System.Drawing.Point(497, 13);
             this.dateEstReturnDate.Name = "dateEstReturnDate";
             this.dateEstReturnDate.Size = new System.Drawing.Size(100, 23);
-            this.dateEstReturnDate.TabIndex = 1;
+            this.dateEstReturnDate.TabIndex = 2;
             // 
             // labelEstReturnDate
             // 
@@ -372,6 +376,7 @@
             this.dateActReturnDate.ReadOnly = true;
             this.dateActReturnDate.Size = new System.Drawing.Size(100, 23);
             this.dateActReturnDate.TabIndex = 70;
+            this.dateActReturnDate.TabStop = false;
             // 
             // label1
             // 
@@ -413,7 +418,7 @@
             this.txtShift.Location = new System.Drawing.Point(711, 43);
             this.txtShift.Name = "txtShift";
             this.txtShift.Size = new System.Drawing.Size(100, 23);
-            this.txtShift.TabIndex = 78;
+            this.txtShift.TabIndex = 5;
             this.txtShift.Type = "SewingOutput_Shift";
             // 
             // txtsewingline
@@ -425,19 +430,22 @@
             this.txtsewingline.Location = new System.Drawing.Point(497, 43);
             this.txtsewingline.Name = "txtsewingline";
             this.txtsewingline.Size = new System.Drawing.Size(100, 23);
-            this.txtsewingline.TabIndex = 77;
+            this.txtsewingline.TabIndex = 4;
             // 
             // txtFactory
             // 
-            this.txtFactory.BackColor = System.Drawing.Color.White;
+            this.txtFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtFactory.FilteMDivision = false;
-            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtFactory.IsSupportEditMode = false;
             this.txtFactory.IssupportJunk = false;
             this.txtFactory.Location = new System.Drawing.Point(80, 43);
             this.txtFactory.Name = "txtFactory";
+            this.txtFactory.ReadOnly = true;
             this.txtFactory.Size = new System.Drawing.Size(120, 23);
-            this.txtFactory.TabIndex = 75;
+            this.txtFactory.TabIndex = 99;
+            this.txtFactory.TabStop = false;
             // 
             // txtdepartment
             // 
@@ -447,7 +455,7 @@
             this.txtdepartment.Location = new System.Drawing.Point(283, 43);
             this.txtdepartment.Name = "txtdepartment";
             this.txtdepartment.Size = new System.Drawing.Size(100, 23);
-            this.txtdepartment.TabIndex = 76;
+            this.txtdepartment.TabIndex = 3;
             // 
             // P31
             // 
