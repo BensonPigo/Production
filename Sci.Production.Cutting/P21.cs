@@ -79,8 +79,8 @@ namespace Sci.Production.Cutting
                     DualResult resultCheck = DBProxy.Current.Select(null,$@"
                                     select TOP 1 w.ID ,CutCellid ,w.FactoryID ,[EstCutDate]=MAX(EstCutDate) ,[ActCutDate]=Max(c.cDate)
                                     from WorkOrder W 
-                                    INNER JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
-                                    INNER JOIN CuttingOutput C on CD.ID=C.ID
+                                    Left JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
+                                    Left JOIN CuttingOutput C on CD.ID=C.ID
                                     where w.CutRef = '{newValue}' AND w.MDivisionId='{Sci.Env.User.Keyword}'
                                     GROUP BY w.ID,CutCellid,w.FactoryID
                                     ", out dt_CutRef);
