@@ -50,7 +50,11 @@ cfaCTN = (
 DRYCTN = (
     select ISNULL(sum(b.CTNQty),0)
     from PackingList a, PackingList_Detail b 
-    where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DRYReceiveDate is not null)
+    where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DRYReceiveDate is not null),
+PackErrCTN = (
+    select ISNULL(sum(b.CTNQty),0)
+    from PackingList a, PackingList_Detail b 
+    where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.PackErrTransferDate is not null)
 where ID = '{0}'"
 , orderID);
             DualResult result = DBProxy.Current.Execute(null, sqlCmd);
@@ -98,7 +102,11 @@ cfaCTN = (
 DRYCTN = (
     select ISNULL(sum(b.CTNQty),0)
     from PackingList a, PackingList_Detail b 
-    where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DRYReceiveDate is not null)
+    where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.DRYReceiveDate is not null),
+PackErrCTN = (
+    select ISNULL(sum(b.CTNQty),0)
+    from PackingList a, PackingList_Detail b 
+    where a.id = b.id and (a.Type = 'B' or a.Type = 'L') and b.OrderID = '{0}' and b.PackErrTransferDate is not null)
 where ID = '{0}'"
 , dr["OrderID"].ToString()));
             }

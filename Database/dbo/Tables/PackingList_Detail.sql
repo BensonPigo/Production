@@ -38,6 +38,7 @@
     [EditLocationDate]   DATETIME       NULL,
     [ActCTNWeight]       NUMERIC (7, 3) NULL,
     [EditLocationName]   VARCHAR (10)   NULL,
+    [PackErrTransferDate] DATE NULL, 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 go

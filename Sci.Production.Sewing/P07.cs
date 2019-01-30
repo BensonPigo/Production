@@ -359,7 +359,7 @@ where	pd.CTNStartNo != '' and
             // 檢查資料
             PackDataResult packDataResult = new PackDataResult();
             string updSql = string.Empty;
-            var checkData = this.dtTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1);
+            var checkData = this.dtTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1).ToList();
             foreach (var item in checkData)
             {
                 packDataResult = this.GetPackData(item["ID"].ToString() + item["CTNStartNo"].ToString());
@@ -398,7 +398,7 @@ insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNSt
                 Prgs.UpdateOrdersCTN(item["OrderID"].ToString());
             }
 
-            foreach (DataRow item in this.dtTransfer.Select("selected = 1"))
+            foreach (DataRow item in checkData)
             {
                 this.dtTransfer.Rows.Remove(item);
             }
@@ -409,7 +409,7 @@ insert into DRYTransfer(TransferDate, MDivisionID, OrderID, PackingListID, CTNSt
 
         private void BtnUpdateAll_Click(object sender, EventArgs e)
         {
-            DataRow[] selectDr = this.dtTransfer.Select(" selected = 1");
+            var selectDr = this.dtTransfer.AsEnumerable().Where(s => (int)s["selected"] == 1).ToList();
             foreach (DataRow item in selectDr)
             {
                 item["TransferTo"] = this.comboTransferTo.SelectedValue;

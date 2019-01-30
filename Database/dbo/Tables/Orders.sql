@@ -148,6 +148,7 @@
     [GFR]                  BIT            CONSTRAINT [DF__Orders__GFR__6D2DF9DC] DEFAULT ((0)) NULL,
     [CfaCTN] INT NOT NULL DEFAULT ((0)), 
     [DRCTN] INT CONSTRAINT [DF_Orders_DRCTN] DEFAULT ((0))  NOT NULL, 
+    [PackErrCTN] INT CONSTRAINT [DF_Orders_PackErrCTN] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
