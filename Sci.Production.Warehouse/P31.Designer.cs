@@ -47,6 +47,14 @@
             this.labelEstReturnDate = new Sci.Win.UI.Label();
             this.labelActReturnDate = new Sci.Win.UI.Label();
             this.dateActReturnDate = new Sci.Win.UI.DateBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtShift = new Sci.Production.Class.txtDropDownList();
+            this.txtsewingline = new Sci.Production.Class.txtsewingline();
+            this.txtFactory = new Sci.Production.Class.txtfactory();
+            this.txtdepartment = new Sci.Production.Class.txtdepartment();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -63,6 +71,14 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtShift);
+            this.masterpanel.Controls.Add(this.txtsewingline);
+            this.masterpanel.Controls.Add(this.txtdepartment);
+            this.masterpanel.Controls.Add(this.txtFactory);
+            this.masterpanel.Controls.Add(this.label4);
+            this.masterpanel.Controls.Add(this.label3);
+            this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.labelActReturnDate);
             this.masterpanel.Controls.Add(this.labelEstReturnDate);
             this.masterpanel.Controls.Add(this.btnAccumulatedQty);
@@ -87,7 +103,6 @@
             this.masterpanel.Controls.SetChildIndex(this.labelIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label25, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEstReturnDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateActReturnDate, 0);
@@ -101,6 +116,15 @@
             this.masterpanel.Controls.SetChildIndex(this.btnAccumulatedQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelEstReturnDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelActReturnDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label3, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtFactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtdepartment, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtShift, 0);
             // 
             // detailpanel
             // 
@@ -172,15 +196,15 @@
             // 
             this.labelID.Location = new System.Drawing.Point(16, 13);
             this.labelID.Name = "labelID";
-            this.labelID.Size = new System.Drawing.Size(108, 23);
+            this.labelID.Size = new System.Drawing.Size(61, 23);
             this.labelID.TabIndex = 1;
             this.labelID.Text = "ID";
             // 
             // labelIssueDate
             // 
-            this.labelIssueDate.Location = new System.Drawing.Point(291, 13);
+            this.labelIssueDate.Location = new System.Drawing.Point(205, 13);
             this.labelIssueDate.Name = "labelIssueDate";
-            this.labelIssueDate.Size = new System.Drawing.Size(108, 23);
+            this.labelIssueDate.Size = new System.Drawing.Size(75, 23);
             this.labelIssueDate.TabIndex = 11;
             this.labelIssueDate.Text = "Issue Date";
             // 
@@ -200,7 +224,7 @@
             this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayID.Location = new System.Drawing.Point(129, 13);
+            this.displayID.Location = new System.Drawing.Point(80, 13);
             this.displayID.Name = "displayID";
             this.displayID.Size = new System.Drawing.Size(120, 23);
             this.displayID.TabIndex = 0;
@@ -208,10 +232,10 @@
             // dateIssueDate
             // 
             this.dateIssueDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IssueDate", true));
-            this.dateIssueDate.Location = new System.Drawing.Point(402, 13);
+            this.dateIssueDate.Location = new System.Drawing.Point(283, 13);
             this.dateIssueDate.Name = "dateIssueDate";
-            this.dateIssueDate.Size = new System.Drawing.Size(130, 23);
-            this.dateIssueDate.TabIndex = 0;
+            this.dateIssueDate.Size = new System.Drawing.Size(100, 23);
+            this.dateIssueDate.TabIndex = 1;
             // 
             // btnImport
             // 
@@ -221,6 +245,7 @@
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(89, 31);
             this.btnImport.TabIndex = 3;
+            this.btnImport.TabStop = false;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
@@ -251,6 +276,7 @@
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 30);
             this.btnFind.TabIndex = 6;
+            this.btnFind.TabStop = false;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
             this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
@@ -263,7 +289,7 @@
             this.txtLocateForSP.Location = new System.Drawing.Point(128, 148);
             this.txtLocateForSP.Name = "txtLocateForSP";
             this.txtLocateForSP.Size = new System.Drawing.Size(145, 23);
-            this.txtLocateForSP.TabIndex = 5;
+            this.txtLocateForSP.TabIndex = 7;
             // 
             // labelLocateForSP
             // 
@@ -280,6 +306,7 @@
             this.btnClearQtyIsEmpty.Name = "btnClearQtyIsEmpty";
             this.btnClearQtyIsEmpty.Size = new System.Drawing.Size(148, 30);
             this.btnClearQtyIsEmpty.TabIndex = 7;
+            this.btnClearQtyIsEmpty.TabStop = false;
             this.btnClearQtyIsEmpty.Text = "Clear Qty is empty";
             this.btnClearQtyIsEmpty.UseVisualStyleBackColor = true;
             this.btnClearQtyIsEmpty.Click += new System.EventHandler(this.btnClearQtyIsEmpty_Click);
@@ -288,7 +315,7 @@
             // 
             this.labelRemark.Location = new System.Drawing.Point(16, 78);
             this.labelRemark.Name = "labelRemark";
-            this.labelRemark.Size = new System.Drawing.Size(108, 23);
+            this.labelRemark.Size = new System.Drawing.Size(61, 23);
             this.labelRemark.TabIndex = 59;
             this.labelRemark.Text = "Remark";
             // 
@@ -297,11 +324,11 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(129, 78);
+            this.editRemark.Location = new System.Drawing.Point(80, 78);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(658, 51);
-            this.editRemark.TabIndex = 2;
+            this.editRemark.Size = new System.Drawing.Size(707, 51);
+            this.editRemark.TabIndex = 6;
             // 
             // btnAccumulatedQty
             // 
@@ -311,6 +338,7 @@
             this.btnAccumulatedQty.Name = "btnAccumulatedQty";
             this.btnAccumulatedQty.Size = new System.Drawing.Size(145, 31);
             this.btnAccumulatedQty.TabIndex = 4;
+            this.btnAccumulatedQty.TabStop = false;
             this.btnAccumulatedQty.Text = "Accumulated Qty";
             this.btnAccumulatedQty.UseVisualStyleBackColor = true;
             this.btnAccumulatedQty.Click += new System.EventHandler(this.btnAccumulatedQty_Click);
@@ -318,14 +346,14 @@
             // dateEstReturnDate
             // 
             this.dateEstReturnDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estbackdate", true));
-            this.dateEstReturnDate.Location = new System.Drawing.Point(129, 43);
+            this.dateEstReturnDate.Location = new System.Drawing.Point(497, 13);
             this.dateEstReturnDate.Name = "dateEstReturnDate";
-            this.dateEstReturnDate.Size = new System.Drawing.Size(130, 23);
-            this.dateEstReturnDate.TabIndex = 1;
+            this.dateEstReturnDate.Size = new System.Drawing.Size(100, 23);
+            this.dateEstReturnDate.TabIndex = 2;
             // 
             // labelEstReturnDate
             // 
-            this.labelEstReturnDate.Location = new System.Drawing.Point(16, 43);
+            this.labelEstReturnDate.Location = new System.Drawing.Point(386, 13);
             this.labelEstReturnDate.Name = "labelEstReturnDate";
             this.labelEstReturnDate.Size = new System.Drawing.Size(108, 23);
             this.labelEstReturnDate.TabIndex = 68;
@@ -333,7 +361,7 @@
             // 
             // labelActReturnDate
             // 
-            this.labelActReturnDate.Location = new System.Drawing.Point(291, 43);
+            this.labelActReturnDate.Location = new System.Drawing.Point(600, 13);
             this.labelActReturnDate.Name = "labelActReturnDate";
             this.labelActReturnDate.Size = new System.Drawing.Size(108, 23);
             this.labelActReturnDate.TabIndex = 69;
@@ -343,11 +371,91 @@
             // 
             this.dateActReturnDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "backdate", true));
             this.dateActReturnDate.IsSupportEditMode = false;
-            this.dateActReturnDate.Location = new System.Drawing.Point(402, 43);
+            this.dateActReturnDate.Location = new System.Drawing.Point(711, 13);
             this.dateActReturnDate.Name = "dateActReturnDate";
             this.dateActReturnDate.ReadOnly = true;
-            this.dateActReturnDate.Size = new System.Drawing.Size(130, 23);
+            this.dateActReturnDate.Size = new System.Drawing.Size(100, 23);
             this.dateActReturnDate.TabIndex = 70;
+            this.dateActReturnDate.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(16, 43);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(61, 23);
+            this.label1.TabIndex = 71;
+            this.label1.Text = "Factory";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(205, 43);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 72;
+            this.label2.Text = "Dept.";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(386, 43);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(108, 23);
+            this.label3.TabIndex = 73;
+            this.label3.Text = "Line#";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(600, 43);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(108, 23);
+            this.label4.TabIndex = 74;
+            this.label4.Text = "Shift";
+            // 
+            // txtShift
+            // 
+            this.txtShift.BackColor = System.Drawing.Color.White;
+            this.txtShift.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Shift", true));
+            this.txtShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShift.Location = new System.Drawing.Point(711, 43);
+            this.txtShift.Name = "txtShift";
+            this.txtShift.Size = new System.Drawing.Size(100, 23);
+            this.txtShift.TabIndex = 5;
+            this.txtShift.Type = "SewingOutput_Shift";
+            // 
+            // txtsewingline
+            // 
+            this.txtsewingline.BackColor = System.Drawing.Color.White;
+            this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtsewingline.factoryobjectName = this.txtFactory;
+            this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewingline.Location = new System.Drawing.Point(497, 43);
+            this.txtsewingline.Name = "txtsewingline";
+            this.txtsewingline.Size = new System.Drawing.Size(100, 23);
+            this.txtsewingline.TabIndex = 4;
+            // 
+            // txtFactory
+            // 
+            this.txtFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtFactory.IsSupportEditMode = false;
+            this.txtFactory.IssupportJunk = false;
+            this.txtFactory.Location = new System.Drawing.Point(80, 43);
+            this.txtFactory.Name = "txtFactory";
+            this.txtFactory.ReadOnly = true;
+            this.txtFactory.Size = new System.Drawing.Size(120, 23);
+            this.txtFactory.TabIndex = 99;
+            this.txtFactory.TabStop = false;
+            // 
+            // txtdepartment
+            // 
+            this.txtdepartment.BackColor = System.Drawing.Color.White;
+            this.txtdepartment.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "DepartmentID", true));
+            this.txtdepartment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtdepartment.Location = new System.Drawing.Point(283, 43);
+            this.txtdepartment.Name = "txtdepartment";
+            this.txtdepartment.Size = new System.Drawing.Size(100, 23);
+            this.txtdepartment.TabIndex = 3;
             // 
             // P31
             // 
@@ -412,5 +520,13 @@
         private Win.UI.Label labelActReturnDate;
         private Win.UI.Label labelEstReturnDate;
         private Win.UI.DateBox dateEstReturnDate;
+        private Class.txtfactory txtFactory;
+        private Win.UI.Label label4;
+        private Win.UI.Label label3;
+        private Win.UI.Label label2;
+        private Win.UI.Label label1;
+        private Class.txtDropDownList txtShift;
+        private Class.txtsewingline txtsewingline;
+        private Class.txtdepartment txtdepartment;
     }
 }
