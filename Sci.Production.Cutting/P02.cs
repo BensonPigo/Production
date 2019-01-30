@@ -145,7 +145,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             };
         }           
 
-        protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             #region 主Table 左邊grid
             string masterID = (e.Master == null) ? "" : e.Master["id"].ToString();
@@ -186,9 +186,11 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
-					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.WeaveTypeID,a.cons),0)as float)
-	)
+	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(sc.Cons/fi.avgInQty,0)),sl.Layer,sc.Cons,1),0)as float),','
+					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,sl.Layer,c.WeaveTypeID,sc.cons),0)as float)
+	)--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
+    ,isbyAdditionalRevisedMarker = cast(0 as int)
+    ,fromukey = a.ukey
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join dbo.order_Eachcons e WITH (NOLOCK) on e.Ukey = a.Order_EachconsUkey 
@@ -286,6 +288,8 @@ outer apply(
 	where psd.ID = a.id and psd.SCIRefno = a.SCIRefno
 	and fi.InQty is not null
 ) as fi
+outer apply(select Layer = sum(a.Layer)over(partition by a.CutRef))sl
+outer apply(select Cons = sum(a.Cons)over(partition by a.CutRef))sc
 where a.id = '{0}'            
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -2077,6 +2081,7 @@ END";
 
         //grid新增一筆的btn
         bool flag = false;
+        bool isAdditionalrevisedmarker = false;
         protected override void OnDetailGridAppendClick()
         {
             flag = true;
@@ -2090,6 +2095,7 @@ END";
             DataTable table = (DataTable)this.detailgridbs.DataSource;
             DataRow newRow = table.NewRow();
             DataRow OldRow = CurrentDetailData == null ? newRow : CurrentDetailData;  //將游標停駐處的該筆資料複製起來
+            if (CurrentDetailData != null) CurrentDetailData["isbyAdditionalRevisedMarker"] = 1;
             //base.OnDetailGridInsert(index); //先給一個NewKey
             int maxkey;
             object comput = ((DataTable)detailgridbs.DataSource).Compute("Max(newkey)", "");
@@ -2109,6 +2115,8 @@ END";
             newRow["SCIRefno"] = OldRow["SCIRefno"];
             newRow["FabricCombo"] = OldRow["FabricCombo"];
             newRow["FabricPanelCode"] = OldRow["FabricPanelCode"];
+            if (isAdditionalrevisedmarker) newRow["isbyAdditionalRevisedMarker"] = 2;
+            else newRow["isbyAdditionalRevisedMarker"] = 0;
 
             //因按下新增也會進來這,但新增的btn不要複製全部
             if (flag || ((DataTable)this.detailgridbs.DataSource).Rows.Count <= 0)
@@ -2125,7 +2133,6 @@ END";
                 if (index == -1) index = TEMP;
 
                 // add PatternPanel 第三層資料
-
                 PatternPanelTb_Copy.Clear();
                 DataRow drNEW = PatternPanelTb_Copy.NewRow();
                 drNEW["id"] = CurrentMaintain["ID"];
@@ -2189,6 +2196,7 @@ END";
                 newRow["ActCuttingPerimeter"] = OldRow["ActCuttingPerimeterNew"];
                 newRow["StraightLength"] = OldRow["StraightLengthNew"];
                 newRow["CurvedLength"] = OldRow["CurvedLengthNew"];
+                newRow["fromukey"] = OldRow["fromukey"];
                 if (index == -1) index = TEMP;
                 OldRow.Table.Rows.InsertAt(newRow, index);
                 DataRow[] drTEMPS = sizeratioTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
@@ -2217,9 +2225,9 @@ END";
                     distqtyTb.Rows.Add(drNEW);
                 }
                 DataRow[] drTEMPPP = PatternPanelTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
+                PatternPanelTb_Copy.Clear();
                 foreach (DataRow drTEMP in drTEMPPP)
                 {
-                    PatternPanelTb_Copy.Clear();
                     DataRow drNEW = PatternPanelTb_Copy.NewRow();
                     drNEW["id"] = CurrentMaintain["ID"];
                     drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
@@ -2227,9 +2235,7 @@ END";
                     drNEW["FabricPanelCode"] = drTEMP["FabricPanelCode"];
                     PatternPanelTb_Copy.Rows.Add(drNEW);
                 }
-
             }
-
 
             if (flag)
             {
@@ -2239,57 +2245,7 @@ END";
             {
                 CreateSubDetailDatas(this.detailgrid.GetDataRow(this.detailgridbs.Position-1));
             }            
-            #region 使用AutoUpdator 建立WorkOrder.Ukey 並新增至WordOrder_PattenPanel
-            //using (var helper = new AutoUpdator())
-            //{
-            //    //第二層Table
-            //    var dt = helper.LoadTable(@"
-            //    Select * from WorkOrder 
-            //    where id=@id 
-            //    and Factoryid=@fty
-            //    and MdivisionID = @mdi
-            //    and seq1=@seq1
-            //    and seq2=@seq2"
-            //    , "id", this.CurrentMaintain["ID"].ToString()
-            //    , "fty", Sci.Env.User.Factory
-            //    , "mdi", Sci.Env.User.Keyword
-            //    , "seq1", OldRow["SEQ1"]
-            //    , "seq2", OldRow["SEQ2"]
-            //    );
-            //    var dt_detail = helper.LoadTable("select * from WorkOrder_PatternPanel where 1=2");
 
-            //    var newRowPanel = dt.NewRow();
-            //    newRowPanel["id"]= this.CurrentMaintain["id"];
-            //    newRowPanel["Factoryid"]= Sci.Env.User.Factory;
-            //    newRowPanel["MdivisionID"]= Sci.Env.User.Keyword;
-            //    newRowPanel["seq1"] = OldRow["SEQ1"];
-            //    newRowPanel["seq2"] = OldRow["SEQ2"];
-            //    dt.Rows.Add(newRowPanel);
-            //    ModifyRecords(newRowPanel);
-
-            //    DataRow[] drTEMPPP = PatternPanelTb.Select(string.Format("WorkOrderUkey='{0}'", OldRow["ukey"].ToString()));
-            //    foreach (DataRow drTEMP in drTEMPPP)
-            //    {
-            //        var newRowPanel2 = dt_detail.NewRow();
-            //        //drNEW["WorkOrderUkey"] = 0;  //新增WorkOrderUkey塞0
-            //        newRowPanel2["PatternPanel"] = drTEMP["PatternPanel"];
-            //        newRowPanel2["FabricPanelCode"] = drTEMP["FabricPanelCode"];
-
-            //        dt_detail.Rows.Add(newRowPanel2);
-            //        helper.AppendUkeyRelation(newRowPanel, "WorkOrderUkey", newRowPanel2);
-            //    }
-            //    try
-            //    {
-            //        helper.UpdateAllTable();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        base.ShowErr(ex);
-            //        return ; 
-            //    } 
-
-            //}
-            #endregion
             flag = false;
         }     
 
@@ -2555,18 +2511,20 @@ END";
         }
         protected override DualResult ClickSavePost()
         {
-            #region 
-            #endregion
-            List<string> ukeylist = new List<string>();
+            #region RevisedMarkerOriginalData 非AdditionalRevisedMarker功能增加的資料 isbyAdditionalRevisedMarker == 0
             string sqlInsertRevisedMarkerOriginalData = string.Empty;
             foreach (DataRow dr in DetailDatas)
             {
-                if (dr.RowState == DataRowState.Modified &&
-                    MyUtility.Convert.GetString(dr["MarkerName", DataRowVersion.Original]) != MyUtility.Convert.GetString(dr["MarkerName"]))
+                if (dr.RowState == DataRowState.Modified && 
+                    MyUtility.Convert.GetString(dr["MarkerName", DataRowVersion.Original]) != MyUtility.Convert.GetString(dr["MarkerName"]) &&
+                    MyUtility.Convert.GetInt(CurrentDetailData["isbyAdditionalRevisedMarker"]) == 0
+                    )
                 {
-                    //ukeylist.Add("'"+MyUtility.Convert.GetString(dr["Ukey"])+"'");
-
-                    sqlInsertRevisedMarkerOriginalData += $@"
+                    // 已經寫過則不再寫入
+                    string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData where WorkOrderUkey like ('%{dr["ukey"]}%')  ";
+                    if (!MyUtility.Check.Seek(sqlchk))
+                    {
+                        sqlInsertRevisedMarkerOriginalData += $@"
 INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
 ([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
 ,[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo],[MarkerDownLoadId]
@@ -2590,9 +2548,47 @@ select [ID],@ID,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternPa
 INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
 select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
 ";
+                    }
                 }
             }
-            
+            #endregion
+            #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 原本那筆 isbyAdditionalRevisedMarker = 1, 增加的那筆 = 2
+            foreach (DataRow dr in DetailDatas.Where(w=>w.RowState == DataRowState.Modified && 
+                        MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
+            {
+                string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData where WorkOrderUkey like ('%{dr["ukey"]}%')  ";
+                if (!MyUtility.Check.Seek(sqlchk))
+                {
+                    var ukeylist = DetailDatas.Where(w => MyUtility.Convert.GetString(w["fromukey"]) == MyUtility.Convert.GetString(dr["fromukey"])).Select(s => s["ukey"]).ToList();
+                    string ukeys = string.Join(",", ukeylist);
+
+                    sqlInsertRevisedMarkerOriginalData += $@"
+INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
+([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
+,[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo],[MarkerDownLoadId]
+,[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength],[CurvedLength],[SpreadingNoID]
+,[WorkOrderUkey])
+
+select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid]
+,[MarkerLength],[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo]
+,[MarkerDownLoadId],[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength]
+,[CurvedLength],[SpreadingNoID],'{ukeys}'
+from WorkOrder where Ukey ={dr["ukey"]}
+
+declare @ID bigint = (select @@IDENTITY)
+
+INSERT INTO [dbo].[WorkOrder_DistributeRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
+select @ID,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
+
+INSERT INTO [dbo].[WorkOrder_PatternPanelRevisedMarkerOriginalData]([ID],[WorkOrderRevisedMarkerOriginalDataUkey],[PatternPanel],[FabricPanelCode])
+select [ID],@ID,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternPanel] where WorkOrderUkey = {dr["ukey"]}
+
+INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
+select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
+";
+                }
+            }
+            #endregion
             int ukey, newkey;
             DataRow[] dray;
             foreach (DataRow dr in DetailDatas)
@@ -2723,7 +2719,6 @@ select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrde
             return base.ClickSavePost();
         }
 
-
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -2841,6 +2836,13 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             if (CurrentDetailData == null) return;
             var frm = new Sci.Production.Cutting.P02_OriginalData(CurrentDetailData);
             frm.ShowDialog(this);
+        }
+
+        private void btnAdditionalrevisedmarker_Click(object sender, EventArgs e)
+        {
+            isAdditionalrevisedmarker = true;
+            this.OnDetailGridInsert(-1);
+            isAdditionalrevisedmarker = false;
         }
 
         //Quantity Breakdown

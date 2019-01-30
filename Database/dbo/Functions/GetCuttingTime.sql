@@ -1,10 +1,11 @@
 ﻿
+--Function CuttingTime
 CREATE FUNCTION [dbo].[GetCuttingTime]
 (
 	@TotalCuttingPerimeter numeric(20,4),--(單位：公尺)、
 	@CutCell varchar(2),--裁桌+
 	@Layer int,--層數+
-	@MtlTypeID varchar(20),--(用以抓取Actual Speed)、
+	@WeaveTypeID varchar(20),--(用以抓取Actual Speed)、
 	@cons numeric(20,4)
 	
 )
@@ -24,14 +25,14 @@ BEGIN
 	inner join CutCell cc on cc.CuttingMachineID = cmd.id
 	where cc.id = @CutCell 
 	and @layer between cmd.LayerLowerBound and cmd.LayerUpperBound
-	and cmd.MtlTypeID = @MtlTypeID 
+	and cmd.WeaveTypeID = @WeaveTypeID 
 
 	select
 		@Setuptime = Setuptime,
 		@Windowtime = WindowTime,
 		@WindowNo = @MarkerLength/WindowLength
 	from CuttingTime
-	where MtlTypeID = @MtlTypeID
+	where WeaveTypeID = @WeaveTypeID
 
 	DECLARE @CuttingTime numeric(20,4)
 	set @CuttingTime = @Setuptime + iif(@ActualSpeed=0,0,@TotalCuttingPerimeter/@ActualSpeed) + @Windowtime * @WindowNo

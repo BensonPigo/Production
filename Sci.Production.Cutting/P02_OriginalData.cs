@@ -196,6 +196,7 @@ Select
 	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
 					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.WeaveTypeID,a.cons),0)as float)
 	)
+    ,workorderukey
 from WorkOrderRevisedMarkerOriginalData a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
 left join dbo.order_Eachcons e WITH (NOLOCK) on e.Ukey = a.Order_EachconsUkey 
@@ -293,7 +294,7 @@ outer apply(
 	where psd.ID = a.id and psd.SCIRefno = a.SCIRefno
 	and fi.InQty is not null
 ) as fi
-where a.workorderukey = '{this.CurrDataRow["ukey"]}'            
+where a.workorderukey like '%{this.CurrDataRow["ukey"]}%'
 ";
             result = DBProxy.Current.Select(null, sqlcmd, out wdtO);
             if (!result)
@@ -303,6 +304,7 @@ where a.workorderukey = '{this.CurrDataRow["ukey"]}'
             this.listControlBindingSource1.DataSource = wdtO;
             #endregion
             #region WorkOrder Now
+            string inUkey = "'" + string.Join("','", MyUtility.Convert.GetString(wdtO.Rows[0]["workorderukey"]).Split(',')) + "'";
             sqlcmd = $@"
 Select
 	a.*
@@ -440,7 +442,7 @@ outer apply(
 	where psd.ID = a.id and psd.SCIRefno = a.SCIRefno
 	and fi.InQty is not null
 ) as fi
-where a.ukey = '{this.CurrDataRow["ukey"]}'            
+where a.ukey in ({inUkey})
 ";
             result = DBProxy.Current.Select(null, sqlcmd, out wdtN);
             if (!result)
@@ -455,7 +457,7 @@ where a.ukey = '{this.CurrDataRow["ukey"]}'
             sqlcmd = $@"
 select p.* from WorkOrder_PatternPanelRevisedMarkerOriginalData p  WITH (NOLOCK)
 inner join WorkOrderRevisedMarkerOriginalData w WITH (NOLOCK) on w.ukey = p.WorkOrderRevisedMarkerOriginalDataUkey
-where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
+where w.workorderukey like '%{this.CurrDataRow["ukey"]}%' ";
             result = DBProxy.Current.Select(null, sqlcmd, out pdtO);
             if (!result)
             {
@@ -465,7 +467,7 @@ where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
 
             sqlcmd = $@"
 select * from WorkOrder_PatternPanel  WITH (NOLOCK)
-where WorkOrderUkey= '{this.CurrDataRow["ukey"]}' ";
+where WorkOrderUkey in ({inUkey}) ";
             result = DBProxy.Current.Select(null, sqlcmd, out pdtN);
             if (!result)
             {
@@ -479,7 +481,7 @@ where WorkOrderUkey= '{this.CurrDataRow["ukey"]}' ";
 Select * 
 from WorkOrder_SizeRatioRevisedMarkerOriginalData s WITH (NOLOCK) 
 inner join WorkOrderRevisedMarkerOriginalData w WITH (NOLOCK) on w.ukey = s.WorkOrderRevisedMarkerOriginalDataUkey
-where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
+where w.workorderukey like '%{this.CurrDataRow["ukey"]}%' ";
             result = DBProxy.Current.Select(null, sqlcmd, out sdtO);
             if (!result)
             {
@@ -487,7 +489,7 @@ where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
             }
             this.listControlBindingSource5.DataSource = sdtO;
 
-            sqlcmd = $@"Select * from Workorder_SizeRatio WITH (NOLOCK) where WorkOrderUkey= '{this.CurrDataRow["ukey"]}' ";
+            sqlcmd = $@"Select * from Workorder_SizeRatio WITH (NOLOCK) where WorkOrderUkey in ({inUkey})";
             result = DBProxy.Current.Select(null, sqlcmd, out sdtN);
             if (!result)
             {
@@ -501,7 +503,7 @@ where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
 Select * 
 from WorkOrder_DistributeRevisedMarkerOriginalData d WITH (NOLOCK) 
 inner join WorkOrderRevisedMarkerOriginalData w WITH (NOLOCK) on w.ukey = d.WorkOrderRevisedMarkerOriginalDataUkey
-where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
+where w.workorderukey like '%{this.CurrDataRow["ukey"]}%'";
             result = DBProxy.Current.Select(null, sqlcmd, out ddtO);
             if (!result)
             {
@@ -509,7 +511,7 @@ where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
             }
             this.listControlBindingSource7.DataSource = ddtO;
 
-            sqlcmd = $@"Select * From Workorder_distribute WITH (NOLOCK) where WorkOrderUkey= '{this.CurrDataRow["ukey"]}' ";
+            sqlcmd = $@"Select * From Workorder_distribute WITH (NOLOCK) where WorkOrderUkey in ({inUkey}) ";
             result = DBProxy.Current.Select(null, sqlcmd, out ddtN);
             if (!result)
             {
@@ -520,42 +522,42 @@ where w.workorderukey= '{this.CurrDataRow["ukey"]}' ";
 
             #region Relations
             DataSet dataSet = new DataSet("All");
-            wdtO.TableName = "Master";
-            pdtO.TableName = "P";
-            sdtO.TableName = "S";
-            ddtO.TableName = "D";
-            dataSet.Tables.Add(wdtO);
-            dataSet.Tables.Add(pdtO);
-            dataSet.Tables.Add(sdtO);
-            dataSet.Tables.Add(ddtO);
+            wdtN.TableName = "Master";
+            pdtN.TableName = "P";
+            sdtN.TableName = "S";
+            ddtN.TableName = "D";
+            dataSet.Tables.Add(wdtN);
+            dataSet.Tables.Add(pdtN);
+            dataSet.Tables.Add(sdtN);
+            dataSet.Tables.Add(ddtN);
             DataRelation relation = new DataRelation("rel1"
-                , new DataColumn[] { wdtO.Columns["ukey"] }
-                , new DataColumn[] { pdtO.Columns["WorkOrderRevisedMarkerOriginalDataUkey"] }
+                , new DataColumn[] { wdtN.Columns["ukey"] }
+                , new DataColumn[] { pdtN.Columns["WorkOrderUkey"] }
             );
             dataSet.Relations.Add(relation);
 
             DataRelation relation2 = new DataRelation("rel2"
-                , new DataColumn[] { wdtO.Columns["ukey"] }
-                , new DataColumn[] { sdtO.Columns["WorkOrderRevisedMarkerOriginalDataUkey"] }
+                , new DataColumn[] { wdtN.Columns["ukey"] }
+                , new DataColumn[] { sdtN.Columns["WorkOrderUkey"] }
             );
             dataSet.Relations.Add(relation2);
 
             DataRelation relation3 = new DataRelation("rel3"
-                , new DataColumn[] { wdtO.Columns["ukey"] }
-                , new DataColumn[] { ddtO.Columns["WorkOrderRevisedMarkerOriginalDataUkey"] }
+                , new DataColumn[] { wdtN.Columns["ukey"] }
+                , new DataColumn[] { ddtN.Columns["WorkOrderUkey"] }
             );
             dataSet.Relations.Add(relation3);
 
-            listControlBindingSource1.DataSource = dataSet;
-            listControlBindingSource1.DataMember = "Master";
-            listControlBindingSource3.DataSource = listControlBindingSource1;
-            listControlBindingSource3.DataMember = "rel1";
-            listControlBindingSource5.DataSource = listControlBindingSource1;
-            listControlBindingSource5.DataMember = "rel2";
-            listControlBindingSource7.DataSource = listControlBindingSource1;
-            listControlBindingSource7.DataMember = "rel3";
+            listControlBindingSource2.DataSource = dataSet;
+            listControlBindingSource2.DataMember = "Master";
+            listControlBindingSource4.DataSource = listControlBindingSource2;
+            listControlBindingSource4.DataMember = "rel1";
+            listControlBindingSource6.DataSource = listControlBindingSource2;
+            listControlBindingSource6.DataMember = "rel2";
+            listControlBindingSource8.DataSource = listControlBindingSource2;
+            listControlBindingSource8.DataMember = "rel3";
 
-            displayTime.DataBindings.Add("Text", listControlBindingSource1, "SandCTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            displayTime.DataBindings.Add("Text", listControlBindingSource2, "SandCTime", true, DataSourceUpdateMode.OnPropertyChanged);
             #endregion
         }
     }

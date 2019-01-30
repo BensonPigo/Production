@@ -101,6 +101,7 @@
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.btn_Refresh = new Sci.Win.UI.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnAdditionalrevisedmarker = new Sci.Win.UI.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.displayTime = new Sci.Win.UI.DisplayBox();
             this.txtBoxMarkerNo = new Sci.Win.UI.TextBox();
@@ -194,7 +195,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.refresh.Location = new System.Drawing.Point(6609, 561);
+            this.refresh.Location = new System.Drawing.Point(6833, 561);
             // 
             // detailgridcont
             // 
@@ -203,7 +204,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
             this.detailgridcont.Location = new System.Drawing.Point(0, 93);
-            this.detailgridcont.Size = new System.Drawing.Size(630, 583);
+            this.detailgridcont.Size = new System.Drawing.Size(631, 587);
             // 
             // detail
             // 
@@ -688,7 +689,7 @@
             this.gridSizeRatio.RowTemplate.Height = 24;
             this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSizeRatio.ShowCellToolTips = false;
-            this.gridSizeRatio.Size = new System.Drawing.Size(137, 164);
+            this.gridSizeRatio.Size = new System.Drawing.Size(137, 156);
             this.gridSizeRatio.TabIndex = 44;
             this.gridSizeRatio.TabStop = false;
             // 
@@ -770,7 +771,7 @@
             this.gridDistributetoSPNo.RowTemplate.Height = 24;
             this.gridDistributetoSPNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDistributetoSPNo.ShowCellToolTips = false;
-            this.gridDistributetoSPNo.Size = new System.Drawing.Size(377, 166);
+            this.gridDistributetoSPNo.Size = new System.Drawing.Size(373, 160);
             this.gridDistributetoSPNo.TabIndex = 48;
             this.gridDistributetoSPNo.TabStop = false;
             this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.distribute_grid_DataError);
@@ -1016,6 +1017,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnAdditionalrevisedmarker);
             this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel1.Controls.Add(this.lbshc);
             this.splitContainer1.Panel1.Controls.Add(this.labelCutCell);
@@ -1051,12 +1053,24 @@
             this.splitContainer1.SplitterDistance = 567;
             this.splitContainer1.TabIndex = 61;
             // 
+            // btnAdditionalrevisedmarker
+            // 
+            this.btnAdditionalrevisedmarker.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnAdditionalrevisedmarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAdditionalrevisedmarker.Location = new System.Drawing.Point(3, 156);
+            this.btnAdditionalrevisedmarker.Name = "btnAdditionalrevisedmarker";
+            this.btnAdditionalrevisedmarker.Size = new System.Drawing.Size(97, 40);
+            this.btnAdditionalrevisedmarker.TabIndex = 61;
+            this.btnAdditionalrevisedmarker.Text = "Additional revised marker";
+            this.btnAdditionalrevisedmarker.UseVisualStyleBackColor = true;
+            this.btnAdditionalrevisedmarker.Click += new System.EventHandler(this.btnAdditionalrevisedmarker_Click);
+            // 
             // splitContainer2
             // 
             this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(0, 202);
+            this.splitContainer2.Location = new System.Drawing.Point(0, 215);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -1078,8 +1092,8 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.gridDistributetoSPNo);
             this.splitContainer2.Panel2.Controls.Add(this.labelDistributetoSPNo);
-            this.splitContainer2.Size = new System.Drawing.Size(377, 365);
-            this.splitContainer2.SplitterDistance = 177;
+            this.splitContainer2.Size = new System.Drawing.Size(377, 352);
+            this.splitContainer2.SplitterDistance = 169;
             this.splitContainer2.TabIndex = 0;
             // 
             // displayTime
@@ -1116,10 +1130,11 @@
             this.lbshc.AutoSize = true;
             this.lbshc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
             this.lbshc.ForeColor = System.Drawing.Color.Red;
-            this.lbshc.Location = new System.Drawing.Point(5, 189);
+            this.lbshc.Location = new System.Drawing.Point(2, 199);
             this.lbshc.Name = "lbshc";
-            this.lbshc.Size = new System.Drawing.Size(0, 13);
+            this.lbshc.Size = new System.Drawing.Size(199, 13);
             this.lbshc.TabIndex = 60;
+            this.lbshc.Text = "WWWWWWWWWWWWWWWW";
             // 
             // P02
             // 
@@ -1254,5 +1269,6 @@
         private Win.UI.TextBox txtBoxMarkerNo;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private Win.UI.DisplayBox displayTime;
+        private Win.UI.Button btnAdditionalrevisedmarker;
     }
 }

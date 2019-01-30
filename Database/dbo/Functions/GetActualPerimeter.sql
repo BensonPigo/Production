@@ -1,4 +1,5 @@
 ﻿
+--Function ActualPerimeter
 CREATE FUNCTION [dbo].[GetActualPerimeter]
 (
 	@ActualPerimeterYD VarChar(15)
@@ -8,14 +9,14 @@ AS
 BEGIN
 	Declare @ActualPerimeter float
 
-	Declare @yd float = (SELECT data FROM SplitString(@ActualPerimeterYD,'Y') where no = 1)
+	Declare @yd float = (SELECT data FROM SplitString(@ActualPerimeterYD,'Yd') where no = 1)
 	Declare @in float, @inn float
-	if(SELECT count(1) FROM SplitString(@ActualPerimeterYD,'Y'))>1
+	if(SELECT count(1) FROM SplitString(@ActualPerimeterYD,'Yd'))>1
 	begin
-		select @in = Data from SplitString((SELECT Data FROM SplitString(@ActualPerimeterYD,'Y') where no = 2),'"') where no = 1
-		if (select count(1) from SplitString((SELECT Data FROM SplitString(@ActualPerimeterYD,'Y') where no = 2),'"') )>1
+		select @in = Data from SplitString((SELECT Data FROM SplitString(@ActualPerimeterYD,'Yd') where no = 2),'"') where no = 1
+		if (select count(1) from SplitString((SELECT Data FROM SplitString(@ActualPerimeterYD,'Yd') where no = 2),'"') )>1
 		begin
-			select @inn = data from SplitString((SELECT Data FROM SplitString(@ActualPerimeterYD,'Y') where no = 2),'"') where no = 2
+			select @inn = data from SplitString((SELECT Data FROM SplitString(@ActualPerimeterYD,'Yd') where no = 2),'"') where no = 2
 		end
 	end
 

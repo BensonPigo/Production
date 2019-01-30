@@ -314,10 +314,9 @@ From
             string update = "";
             if (MyUtility.Check.Empty(detailTb))return;
             if (detailTb.Rows.Count == 0) return;
-
+            
             foreach (DataRow dr in detailTb.Rows)
             {
-
                 if ((dr["EstCutDate"] != dr["NewEstCutDate"] && !MyUtility.Check.Empty((dr["NewEstCutDate"].ToString().Replace("/", "")))) || 
                     (dr["Cutcellid"] != dr["NewCutcellid"] && !MyUtility.Check.Empty(dr["NewCutcellid"])) ||
                     (dr["SpreadingNoID"] != dr["NewSpreadingNoID"] && !MyUtility.Check.Empty(dr["NewSpreadingNoID"]))
@@ -355,7 +354,8 @@ Values                                       ({dr["Ukey"]}    ,'{orgEstCutDate}'
             var distnct_id = detailTb.AsEnumerable().
                 Where(w => w.Field<int>("Sel") == 1 && w.Field<object>("EstCutDate") != w.Field<object>("NewEstCutDate") && !MyUtility.Check.Empty(w.Field < object >("NewEstCutDate"))).
                 Select(row => row.Field<string>("ID")).Distinct();
-            foreach (string tmp_id in distnct_id) {
+            foreach (string tmp_id in distnct_id)
+            {
                 // Mantis_9252 連帶更新Cutting資料表的CutInLine及CutOffLine,CutInLine-->MIN(Workorder.estcutdate),CutOffLine-->MAX(Workorder.estcutdate)
                 update = update + string.Format(@"update cutting set CutInLine =  wk.Min_Wk_estcutdate,CutOffLine = wk.Max_Wk_estcutdate
 from dbo.cutting WITH (NOLOCK)
@@ -363,15 +363,87 @@ left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = m
 			from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = cutting.ID
 where cutting.ID = '{0}';", tmp_id);
 
-                //orders.CutInLine及CutOffLine也要連帶更新_Wk_estcutdate
-                                               
+                //orders.CutInLine及CutOffLine也要連帶更新_Wk_estcutdate                                               
                 update = update + string.Format(@"update orders set CutInLine =  wk.Min_Wk_estcutdate, CutOffLine = wk.Max_Wk_estcutdate 
                                                  from dbo.orders WITH (NOLOCK)
                                                 left join (select id,Min_Wk_estcutdate =  min(estcutdate), Max_Wk_estcutdate = max(estcutdate) 
 			                                                from dbo.WorkOrder  WITH (NOLOCK) where id = '{0}' group by id) wk on wk.id = orders.POID
                                                 where orders.POID = '{0}';", tmp_id);
-
             }
+
+            #region 檢查相同M、CutRef#，spreading No、Cut Cell、Est.CutDate, 更新必須都一樣
+            var distnct_List = detailTb.AsEnumerable().
+                Select(m => new
+                {
+                    MDivisionId = m.Field<string>("MDivisionId"),                    
+                    CutRef = m.Field<string>("CutRef")
+                }).Distinct();
+            string inUkey = "'" + string.Join("','", detailTb.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ukey"]))) + "'";
+
+            foreach (var item in distnct_List)
+            {
+                // 檢查已撈出資料
+                DataRow[] chkdrs = detailTb.Select($@" MDivisionId = '{item.MDivisionId}' and CutRef = '{item.CutRef}'");
+
+                if (chkdrs.Length > 1)
+                {
+                    var chksame = chkdrs.Select(m => new
+                    {
+                        NewSpreadingNoID = m.Field<string>("NewSpreadingNoID"),
+                        NewCutcellid = m.Field<string>("NewCutcellid"),
+                        NewEstcutdate = m.Field<DateTime?>("NewEstcutdate"),
+                        CutReasonid = m.Field<string>("CutReasonid")
+                    }).Distinct().ToList();
+                    // 更新的欄位不能合併表示不一樣
+                    if (chksame.Count> 1)
+                    {
+                        MyUtility.Msg.WarningBox("You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [reason] in same M and CutRef#");
+                        return;
+                    }
+                }
+
+                // 檢查DB(不包含撈出資料)有沒有同裁次, 若有則要檢查此次更新的欄位是否與DB內相同
+                string csqlhk = $@"select MDivisionId,CutRef,SpreadingNoID,Cutcellid,estcutdate
+from workOrder w with(nolock) 
+where ukey not in ({inUkey})
+and MDivisionId = '{item.MDivisionId}'
+and CutRef = '{item.CutRef}'
+";
+                DataTable chkdt;
+                DualResult result;
+                result = DBProxy.Current.Select(null, csqlhk, out chkdt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                foreach (DataRow dr in chkdt.Rows)
+                {
+                    bool isNotsame = false;
+                    if (!MyUtility.Check.Empty(dr["newestcutdate"]) &&
+                        MyUtility.Convert.GetDate(dr["estcutdate"]) != (MyUtility.Convert.GetDate(chkdrs[0]["NewEstcutdate"])))
+                    {
+                        isNotsame = true;
+                    }
+                    if (!MyUtility.Check.Empty(dr["NewCutcellid"]) &&
+                        !MyUtility.Convert.GetString(dr["Cutcellid"]).EqualString(MyUtility.Convert.GetString(chkdrs[0]["NewCutcellid"])))
+                    {
+                        isNotsame = true;
+                    }
+                    if (!MyUtility.Check.Empty(dr["NewSpreadingNoID"]) &&
+                        !MyUtility.Convert.GetString(dr["SpreadingNoID"]).EqualString(MyUtility.Convert.GetString(chkdrs[0]["NewSpreadingNoID"])))
+                    {
+                        isNotsame = true;
+                    }
+                    if (isNotsame)
+                    {
+                        MyUtility.Msg.WarningBox("You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [reason] in same M and CutRef#");
+                        return;
+                    }
+                }
+            }
+            #endregion
 
             if (update == "") return;
             DualResult upResult;

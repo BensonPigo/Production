@@ -1,11 +1,11 @@
-﻿
+﻿--Function SpreadingTime 
 Create FUNCTION [dbo].[GetSpreadingTime] 
 (
-	@MtlTypeID varchar(20),
+	@WeaveTypeID varchar(20),
 	@Refno varchar(20), --(用以判斷Roll/UnRoll)、
-	@MarkerLength numeric(20,4),--(單位：碼YDS), WorkOrder.[ConsPC] 是已經轉換過的MarkerLength
 	@NoOfRoll int,
 	@Layer int,
+	@Cons numeric(20,4),
 	@Dyelot numeric(20,4)
 )
 RETURNS  numeric(20,4)
@@ -18,14 +18,15 @@ BEGIN
 	@Setuptime numeric(20,4),
 	@MachineSpreadingTime numeric(20,4),
 	@NoOfbSeparator numeric(20,4),
-	@ForwardTime numeric(20,4)
-
-	set @isRoll = (
+	@ForwardTime numeric(20,4),
+	@MarkerLength float = @cons/@Layer
+	
+	set @isRoll = isnull((
 			select fr.IsRoll
 			from ManufacturingExecution.dbo.RefnoRelaxtime rr 
 			inner join ManufacturingExecution.dbo.FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
 			where rr.Refno = @Refno
-		)
+		),0)
 
 	select 
 		@PreparationTime=PreparationTime,
@@ -35,14 +36,14 @@ BEGIN
 		@NoOfbSeparator=SeparatorTime,
 		@ForwardTime = ForwardTime
 	from SpreadingTime 
-	where MtlTypeID=@MtlTypeID
+	where WeaveTypeID=@WeaveTypeID
 
 
 	DECLARE @SpreadingTime numeric(20,4)
 	set @SpreadingTime = @PreparationTime * @MarkerLength + 
 						 @Changeovertime * @NoofRoll +
 						 @Setuptime +
-						 @MachineSpreadingTime * @MarkerLength * @Layer +
+						 @MachineSpreadingTime * @cons +
 						 (@NoofbSeparator * @Dyelot -1) +
 						 @ForwardTime
 
