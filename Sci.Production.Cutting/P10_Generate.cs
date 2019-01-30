@@ -183,7 +183,7 @@ group by sizeCode"
             displayPatternPanel.Text = maindr["PatternPanel"].ToString();
         }
         //第一次產生時需全部重新撈值
-        public void noexist_Table_Query() 
+        public void noexist_Table_Query()
         {
             //找出相同PatternPanel 的subprocessid
             int npart = 0; //allpart 數量
@@ -224,13 +224,14 @@ group by sizeCode"
                             if (dr["DV"].ToString() != "0" || dr["Pair"].ToString() != "0")
                             {
                                 int count = Convert.ToInt32(dr["DV"]) * 2 + Convert.ToInt32(dr["Pair"]) * 2;
-                                for (int i = 0; i < count; i++) { 
+                                for (int i = 0; i < count; i++)
+                                {
                                     DataRow ndr2 = patternTb.NewRow();
                                     ndr2["PatternCode"] = dr["PatternCode"];
                                     ndr2["PatternDesc"] = dr["PatternDesc"];
                                     ndr2["Parts"] = 1;
                                     ndr2["art"] = art;
-                                    ndr2["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"])==1;
+                                    ndr2["IsPair"] = MyUtility.Convert.GetInt(dr["PAIR"]) == 1;
                                     patternTb.Rows.Add(ndr2);
                                 }
                             }
@@ -297,7 +298,7 @@ group by sizeCode"
             string BundleGroup = detailAccept.Rows[0]["BundleGroup"].ToString();
             MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,PatternDesc,parts,subProcessid,BundleGroup,isPair", string.Format(@"
 Select  PatternCode,PatternDesc,Parts,subProcessid,BundleGroup ,isPair
-from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
+from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             //需要使用上一層表身的值,不可重DB撈不然新增的資料就不會存回DB
             MyUtility.Tool.ProcessWithDatatable(detailTb, "PatternCode,SubProcessid", "Select distinct PatternCode,SubProcessid from #tmp WHERE PatternCode<>'ALLPARTS'", out artTb);
             //foreach (DataRow dr in tmp.Select("BundleNO<>''"))
@@ -375,8 +376,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
             NoCell.CellValidating += (s, e) =>
             {
                 if (MyUtility.Convert.GetInt(numNoOfBundle.Text) < MyUtility.Convert.GetInt(e.FormattedValue))
-                {                                    
-                    MyUtility.Msg.WarningBox(string.Format("<No: {0} >  can't greater than <No of Bundle>", e.FormattedValue));                    
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<No: {0} >  can't greater than <No of Bundle>", e.FormattedValue));
                     return;
                 }
             };
@@ -549,7 +550,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                     dr["Parts"] = 0;
                 }
             };
-            
+
             partsCell2.CellValidating += (s, e) =>
             {
                 DataRow dr = grid_allpart.GetDataRow(e.RowIndex);
@@ -560,7 +561,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 calAllPart();
                 caltotalpart();
             };
-            
+
             #endregion
 
             //左上
@@ -614,7 +615,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 grid_qty.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
         }
-        
+
         private void numNoOfBundle_Validated(object sender, EventArgs e)
         {
             int newvalue = (int)numNoOfBundle.Value;
@@ -713,7 +714,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
             }
         }
         //分配Qty
-        public void calQty() 
+        public void calQty()
         {
             foreach (DataRow dr in sizeTb.Rows)
             {
@@ -793,7 +794,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
             grid_allpart.ValidateControl();
             grid_art.ValidateControl();
             grid_qty.ValidateControl();
-            if (MyUtility.Check.Empty(grid_art.DataSource)|| grid_art.Rows.Count == 0) return;            
+            if (MyUtility.Check.Empty(grid_art.DataSource) || grid_art.Rows.Count == 0) return;
             DataRow selectartDr = ((DataRowView)grid_art.GetSelecteds(SelectedSort.Index)[0]).Row;
             string pattern = selectartDr["PatternCode"].ToString();
             if (pattern == "ALLPARTS") return;
@@ -887,7 +888,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
 
         public void caltotalpart() //計算total part
         {
-            if (patternTb.Rows.Count > 0) numTotalParts.Value = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", ""));           
+            if (patternTb.Rows.Count > 0) numTotalParts.Value = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", ""));
         }
 
         public void calAllPart() //計算all part
@@ -899,7 +900,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                    .Where(row => row.RowState != DataRowState.Deleted)
                    .Sum(row => row["Parts"] == null || row["Parts"] == DBNull.Value ? 0 : Convert.ToInt32(row["Parts"]));
             }
-               
+
             DataRow[] dr = patternTb.Select("PatternCode='ALLPARTS'");
             if (dr.Length > 0)
             {
@@ -913,7 +914,8 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 drAll["parts"] = allpart;
                 patternTb.Rows.Add(drAll);
 
-            }        }
+            }
+        }
 
         private void insertIntoRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -993,7 +995,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         if (dr2["PatternCode"].ToString() != "ALLPARTS")
                         {
                             nDetail["subprocessid"] = dr2["art"].ToString();
-                        }                       
+                        }
                         ukey++;
 
                         bundle_detail_tmp.Rows.Add(nDetail);
@@ -1035,6 +1037,11 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                                 foreach (DataRow aldr in allpartTb.Rows)
                                 {
                                     if (aldr.RowState == DataRowState.Deleted)
+                                    {
+                                        continue;
+                                    }
+
+                                    if (aldr["Parts"] == DBNull.Value)
                                     {
                                         continue;
                                     }
@@ -1108,6 +1115,12 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                                 {
                                     continue;
                                 }
+
+                                if (aldr["Parts"] == DBNull.Value)
+                                {
+                                    continue;
+                                }
+
                                 if (Convert.ToInt32(aldr["Parts"]) == 0)
                                 {
                                     continue;
@@ -1155,7 +1168,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 DataRow[] AllPart = detailTb.Select("PatternCode='ALLPARTS'");
                 if (!MyUtility.Check.Empty(Parts))
                 {
-                    if (AllPart.Length == 0)                   
+                    if (AllPart.Length == 0)
                     {
                         DataTable dtAllPart;
                         DataTable dtMax = detailTb.Copy();
@@ -1217,7 +1230,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
 
             this.Close();
         }
-        
+
         private void btnGarment_Click(object sender, EventArgs e)
         {
             string ukey = MyUtility.GetValue.Lookup("Styleukey", maindatarow["poid"].ToString(), "Orders", "ID");
