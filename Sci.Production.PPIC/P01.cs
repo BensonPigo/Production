@@ -33,7 +33,7 @@ namespace Sci.Production.PPIC
     public partial class P01 : Sci.Win.Tems.Input1
     {
         private string dataType;
-
+        private bool muustEmpty = false;
         /// <summary>
         /// P01
         /// </summary>
@@ -321,13 +321,17 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 this.btnEachCons.ForeColor = Color.Black;
             }
             string sqkchkEMNF = $@"select 1 From Order_ECMNFailed f Left Join Orders o on f.id	= o.ID Where (o.ID = '{this.CurrentMaintain["ID"]}' And f.Type = 'EC')or (o.POID = '{this.CurrentMaintain["POID"]}'  And f.Type = 'MN')";
-            if (MyUtility.Check.Seek(sqkchkEMNF))
+
+            if (MyUtility.Check.Seek(sqkchkEMNF) && (MyUtility.Check.Empty(this.CurrentMaintain["EachConsApv"]) && MyUtility.Check.Empty(this.CurrentMaintain["MnorderApv"])))
             {
+                // 只要 Each Cons.Apv. & M.Notice Apv.有核准的日期 Econs / MN Failed 不用改變文字顏色
                 this.btnEConsMNFailed.ForeColor = Color.Blue;
+                this.muustEmpty = true;
             }
             else
             {
                 this.btnEConsMNFailed.ForeColor = Color.Black;
+                this.muustEmpty = false;
             }
 
             // SciDelivery OrigBuyerDelivery
@@ -1551,7 +1555,7 @@ where POID = @poid group by POID,b.spno";
         {
             if (!MyUtility.Check.Empty(this.CurrentMaintain["ID"]) && !MyUtility.Check.Empty(this.CurrentMaintain["POID"]))
             {
-                var dlg = new P01_EConsMNoticeFailed(false, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString(), null);
+                var dlg = new P01_EConsMNoticeFailed(false, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["POID"].ToString(), null, this.muustEmpty);
                 dlg.ShowDialog();
 
                 this.RenewData();
