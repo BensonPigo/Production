@@ -6,16 +6,18 @@
     [Seq2]                  VARCHAR (2)     CONSTRAINT [DF_FtyInventory_Seq2] DEFAULT ('') NOT NULL,
     [Roll]                  VARCHAR (8)     CONSTRAINT [DF_FtyInventory_Roll] DEFAULT ('') NULL,
     [StockType]             CHAR (1)        CONSTRAINT [DF_FtyInventory_StockType] DEFAULT ('') NOT NULL,
-    [Dyelot]                VARCHAR (4)     CONSTRAINT [DF_FtyInventory_Dyelot] DEFAULT ('') NULL,
+    [Dyelot]                VARCHAR (8)     CONSTRAINT [DF_FtyInventory_Dyelot] DEFAULT ('') NULL,
     [InQty]                 NUMERIC (11, 2) CONSTRAINT [DF_FtyInventory_InQty] DEFAULT ((0)) NULL,
     [OutQty]                NUMERIC (11, 2) CONSTRAINT [DF_FtyInventory_OutQty] DEFAULT ((0)) NULL,
     [AdjustQty]             NUMERIC (11, 2) CONSTRAINT [DF_FtyInventory_AdjustQty] DEFAULT ((0)) NULL,
     [LockName]              VARCHAR (10)    CONSTRAINT [DF_FtyInventory_LockName] DEFAULT ('') NULL,
     [LockDate]              DATETIME        NULL,
     [Lock]                  BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
-    [Remark ] NVARCHAR(500) NOT NULL DEFAULT (''), 
+    [Remark]                NVARCHAR (500)  CONSTRAINT [DF_FtyInventory_Remark] DEFAULT ('') NULL,
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -110,4 +112,9 @@ CREATE NONCLUSTERED INDEX [MdID_POSeq]
 
 
 
+
+
+GO
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20180413-173045]
+    ON [dbo].[FtyInventory]([MDivisionPoDetailUkey] ASC);
 

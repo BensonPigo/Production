@@ -708,7 +708,7 @@ namespace Sci.Production.Quality
                 .Text("ColorFastnessGroup", "Body", width: Widths.AnsiChars(5), settings: groupCell)
                 .MaskedText("SEQ", "CCC-CC", "SEQ#", width: Widths.AnsiChars(7), settings: seqMskCell)  
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(10), settings: rollCell)
-                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("SCIRefno", header: "SCI Refno", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)

@@ -93,7 +93,7 @@ namespace Sci.Production.Warehouse
             this.gridRoll.DataSource = bindingSource3;
             Helper.Controls.Grid.Generator(this.gridRoll)
                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(9))
-                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(5))
+                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
                  .Numeric("inqty", header: "Arrived Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("outQty", header: "Released Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("Adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)

@@ -172,7 +172,7 @@ for xml path('')),1,1,'')
             this.grid_detail.DataSource = bindingSource2;
             Helper.Controls.Grid.Generator(this.grid_detail)
                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(8))
-                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(5))                 
+                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8))                 
                  .Numeric("InQty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("OutQty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("adjustQty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)

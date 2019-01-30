@@ -219,7 +219,7 @@ WHERE   StockType='{0}'
             .Text("frompoid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  
             .Text("fromseq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  
             .Text("fromroll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true)  
-            .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  
+            .Text("fromdyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)  
             .EditText("Description", header: "Description", width: Widths.AnsiChars(30), iseditingreadonly: true) 
             .Text("fabrictype", header: "Type", iseditingreadonly: true, width: Widths.AnsiChars(8))    
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)   

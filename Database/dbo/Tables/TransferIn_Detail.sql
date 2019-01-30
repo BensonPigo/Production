@@ -5,15 +5,17 @@
     [Seq1]        VARCHAR (3)     CONSTRAINT [DF_TransferIn_Detail_Seq1] DEFAULT ('') NOT NULL,
     [Seq2]        VARCHAR (2)     CONSTRAINT [DF_TransferIn_Detail_Seq2] DEFAULT ('') NOT NULL,
     [Roll]        VARCHAR (8)     CONSTRAINT [DF_TransferIn_Detail_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]      VARCHAR (4)     CONSTRAINT [DF_TransferIn_Detail_Dyelot] DEFAULT ('') NOT NULL,
+    [Dyelot]      VARCHAR (8)     CONSTRAINT [DF_TransferIn_Detail_Dyelot] DEFAULT ('') NOT NULL,
     [StockType]   VARCHAR (1)     CONSTRAINT [DF_TransferIn_Detail_StockType] DEFAULT ('') NOT NULL,
     [Location]    VARCHAR (60)    CONSTRAINT [DF_TransferIn_Detail_Location] DEFAULT ('') NULL,
     [Qty]         NUMERIC (10, 2) CONSTRAINT [DF_TransferIn_Detail_Qty] DEFAULT ((0)) NULL,
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
-	[Weight]      numeric(7, 2)   NOT NULL DEFAULT 0,
-	[Remark]	  nvarchar(100)   NOT NULL DEFAULT(''),
+    [Weight]      NUMERIC (7, 2)  DEFAULT ((0)) NOT NULL,
+    [Remark]      NVARCHAR (100)  DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_TransferIn_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
