@@ -39,7 +39,7 @@ namespace Sci.Production.Sewing
         private DataTable subprocessSubconOutData;
         private DataTable subconData;
         private DataTable vphData;
-        private APIData dataMode = new APIData();
+        private List<APIData> dataMode = new List<APIData>();
 
         /// <summary>
         /// R02
@@ -1061,11 +1061,11 @@ where f.Junk = 0",
                 Sci.Env.User.Keyword.EqualString("CM2") ||
                 Sci.Env.User.Keyword.EqualString("CM3")))
             {
-                this.dataMode = new APIData();
+                this.dataMode = new List<APIData>();
                 GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);
                 if (this.dataMode != null)
                 {
-                    pams = this.dataMode.results.ToList();
+                    pams = this.dataMode.ToList();
                 }
             }
             #endregion
@@ -1084,7 +1084,7 @@ where f.Junk = 0",
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
                 objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
-                if (pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).Count() > 0)
+                if (pams != null && pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).Count() > 0)
                 {
                     objArray[0, 11] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManpower;
                     objArray[0, 12] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManhours;
@@ -1223,9 +1223,13 @@ where f.Junk = 0",
                     decimal sumManPower = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManPower)", string.Empty));
                     decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
                     decimal sumManHour = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManHour)", string.Empty));
-                    decimal c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
+                    decimal c = 0;
+                    if (sumManHour != 0)
+                    {
+                        c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
+                    }
+
                     int sumActiveManpower = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
-                    vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
 
                     if (ttlWorkDay == 0)
                     {
@@ -1247,42 +1251,45 @@ where f.Junk = 0",
                 }
                 else
                 {
-                    decimal vph = 0;
-                    decimal factoryActiveManPower = 0;
-
-                    int ttlWorkDay = pams.Count;
-                    decimal sumManPower = pams.Sum(s => s.SewTtlManpower);
-                    decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
-                    decimal sumManHour = pams.Sum(s => s.SewTtlManhours);
-                    decimal c = 0;
-                    if (sumManHour != 0)
+                    if (pams != null)
                     {
-                        c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
-                    }
+                        decimal vph = 0;
+                        decimal factoryActiveManPower = 0;
 
-                    int sumActiveManpower = 0;
-
-                    if (ttlWorkDay == 0)
-                    {
-                        vph = 0;
-                    }
-                    else
-                    {
-                        sumActiveManpower = MyUtility.Convert.GetInt(Sci.MyUtility.Math.Round(pams.Where(w => w.TtlManpower != 0).Average(s => s.TtlManpower), 0));
-                        if (sumActiveManpower != 0)
+                        int ttlWorkDay = pams.Count;
+                        decimal sumManPower = pams.Sum(s => s.SewTtlManpower);
+                        decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
+                        decimal sumManHour = pams.Sum(s => s.SewTtlManhours);
+                        decimal c = 0;
+                        if (sumManHour != 0)
                         {
-                            vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                            c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
                         }
+
+                        int sumActiveManpower = 0;
+
+                        if (ttlWorkDay == 0)
+                        {
+                            vph = 0;
+                        }
+                        else
+                        {
+                            sumActiveManpower = MyUtility.Convert.GetInt(Sci.MyUtility.Math.Round(pams.Where(w => w.TtlManpower != 0).Average(s => s.TtlManpower), 0));
+                            if (sumActiveManpower != 0)
+                            {
+                                vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
+                            }
+                        }
+
+                        factoryActiveManPower = sumActiveManpower;
+
+                        worksheet.Cells[insertRow, 1] = "VPH";
+                        worksheet.Cells[insertRow, 3] = vph;
+                        worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
+                        worksheet.Cells[insertRow, 8] = factoryActiveManPower;
+                        worksheet.Cells[insertRow, 9] = "/Total work day:";
+                        worksheet.Cells[insertRow, 11] = ttlWorkDay;
                     }
-
-                    factoryActiveManPower = sumActiveManpower;
-
-                    worksheet.Cells[insertRow, 1] = "VPH";
-                    worksheet.Cells[insertRow, 3] = vph;
-                    worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
-                    worksheet.Cells[insertRow, 8] = factoryActiveManPower;
-                    worksheet.Cells[insertRow, 9] = "/Total work day:";
-                    worksheet.Cells[insertRow, 11] = ttlWorkDay;
                 }
             }
             #endregion

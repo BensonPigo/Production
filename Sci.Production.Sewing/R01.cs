@@ -27,7 +27,7 @@ namespace Sci.Production.Sewing
         private DataTable _printData;
         private DataTable _ttlData;
         private DataTable _subprocessData;
-        private APIData dataMode = new APIData();
+        private List<APIData> dataMode = new List<APIData>();
         /// <summary>
         /// R01
         /// </summary>
@@ -854,10 +854,14 @@ order by ArtworkTypeID"),
             }
             else
             {
-                this.dataMode = new APIData();
+                this.dataMode = new List<APIData>();
                 GetApiData.GetAPIData(string.Empty,this._factory, (DateTime)this.dateDate.Value, (DateTime)this.dateDate.Value, out this.dataMode);
-                worksheet.Cells[insertRow, 5] = this.dataMode.results[0].SewTtlManpower;
-                worksheet.Cells[insertRow, 7] = this.dataMode.results[0].SewTtlManhours;
+                if (this.dataMode != null)
+                {
+                    worksheet.Cells[insertRow, 5] = this.dataMode[0].SewTtlManpower;
+                    worksheet.Cells[insertRow, 7] = this.dataMode[0].SewTtlManhours;
+                }
+
                 insertRow++;
             }
             #endregion

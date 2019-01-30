@@ -29,7 +29,7 @@ namespace Sci.Production.Sewing
 
     public static partial class GetApiData
     {
-        public static bool GetAPIData(string i_M,string i_factory, DateTime i_start_date, DateTime i_end_date, out APIData dataMode)
+        public static bool GetAPIData(string i_M,string i_factory, DateTime i_start_date, DateTime i_end_date, out List<APIData> dataMode)
         {
             try
             {
@@ -39,11 +39,11 @@ namespace Sci.Production.Sewing
                     string apiParemeter = string.Empty;
                     if (!MyUtility.Check.Empty(i_factory))
                     {
-                        apiParemeter = $"?i_M=&i_factory={i_factory}&i_start_date={i_start_date.ToString("yyyy/MM/dd")}&i_end_date={i_end_date.ToString("yyyy/MM/dd")}";
+                        apiParemeter = $"?i_M=0&i_factory={i_factory}&i_start_date={i_start_date.ToString("yyyy/MM/dd")}&i_end_date={i_end_date.ToString("yyyy/MM/dd")}";
                     }
                     else
                     {
-                        apiParemeter = $"?i_M={i_M}&i_factory=&i_start_date={i_start_date.ToString("yyyy/MM/dd")}&i_end_date={i_end_date.ToString("yyyy/MM/dd")}";
+                        apiParemeter = $"?i_M={i_M}&i_factory=0&i_start_date={i_start_date.ToString("yyyy/MM/dd")}&i_end_date={i_end_date.ToString("yyyy/MM/dd")}";
                     }
 
                     XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
@@ -53,8 +53,8 @@ namespace Sci.Production.Sewing
                     Uri uri = new Uri(connections + apiParemeter);
                     var json = client.DownloadString(uri);
 
-                    // List<aaa> dataModel = JsonConvert.DeserializeObject<List<aaa>>(json);
-                    dataMode = JsonConvert.DeserializeObject<APIData>(json);
+                    dataMode = JsonConvert.DeserializeObject<List<APIData>>(json);
+                    //dataMode = JsonConvert.DeserializeObject<APIData>(json);
                 }
             }
             catch (Exception ex)
