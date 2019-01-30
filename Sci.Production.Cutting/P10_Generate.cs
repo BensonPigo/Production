@@ -166,8 +166,15 @@ group by sizeCode"
             //計算左上TotalQty
             calsumQty();
             //if (detailTb.Rows.Coun!= 0 && maindatarow.RowState!=DataRowState.Added) 
-            if (detailTb.Rows.Count != 0 ) exist_Table_Query();
-            else noexist_Table_Query();
+            int detailTbCnt = detailTb.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).Count();
+            if (detailTbCnt > 0)
+            {
+                exist_Table_Query();
+            }
+            else
+            {
+                noexist_Table_Query();
+            }
 
             grid_setup();
             calAllPart();
@@ -551,8 +558,9 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 dr["Parts"] = newvalue;
                 dr.EndEdit();
                 calAllPart();
-                caltotalpart();                
+                caltotalpart();
             };
+            
             #endregion
 
             //左上
@@ -578,7 +586,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
             grid_art.Columns["PatternDesc"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["art"].DefaultCellStyle.BackColor = Color.Pink;
             grid_art.Columns["Parts"].DefaultCellStyle.BackColor = Color.Pink;
-
             //右下
             grid_allpart.DataSource = allpartTb;
             this.grid_allpart.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
@@ -887,9 +894,12 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
         {
             int allpart = 0;
             if (allpartTb.AsEnumerable().Count(row => row.RowState != DataRowState.Deleted) > 0)
+            {
                 allpart = allpartTb.AsEnumerable()
-                    .Where(row => row.RowState != DataRowState.Deleted)
-                    .Sum(row => Convert.ToInt32(row["Parts"]));
+                   .Where(row => row.RowState != DataRowState.Deleted)
+                   .Sum(row => row["Parts"] == null || row["Parts"] == DBNull.Value ? 0 : Convert.ToInt32(row["Parts"]));
+            }
+               
             DataRow[] dr = patternTb.Select("PatternCode='ALLPARTS'");
             if (dr.Length > 0)
             {
@@ -903,18 +913,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                 drAll["parts"] = allpart;
                 patternTb.Rows.Add(drAll);
 
-            }
-
-            //將AllPart Parts=0給刪除
-            for (int i = 0; i < patternTb.Rows.Count; i++)
-            {
-                if (MyUtility.Check.Empty(patternTb.Rows[i]["Parts"]))
-                {
-                    patternTb.Rows[i].Delete();
-                }
-            }           
-            
-        }
+            }        }
 
         private void insertIntoRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -924,6 +923,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
 
         private void deleteRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (grid_art.Rows.Count == 0)
+            {
+                return;
+            }
             DataRow selectartDr = ((DataRowView)grid_art.GetSelecteds(SelectedSort.Index)[0]).Row;
             if (selectartDr["PatternCode"].ToString() == "ALLPARTS")
             {
@@ -942,6 +945,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
 
         private void allpart_delete_Click(object sender, EventArgs e)
         {
+            if (grid_allpart.Rows.Count == 0)
+            {
+                return;
+            }
             DataRow selectartDr = ((DataRowView)grid_allpart.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectartDr.Delete();
             calAllPart();
@@ -1027,16 +1034,23 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                             {
                                 foreach (DataRow aldr in allpartTb.Rows)
                                 {
-                                    if (aldr.RowState != DataRowState.Deleted)
+                                    if (aldr.RowState == DataRowState.Deleted)
                                     {
-                                        DataRow allpart_ndr = alltmpTb.NewRow();
-                                        allpart_ndr["PatternCode"] = aldr["PatternCode"];
-                                        allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                                        allpart_ndr["Parts"] = aldr["Parts"];
-                                        allpart_ndr["ukey1"] = dr["ukey1"];
-                                        allpart_ndr["ispair"] = aldr["ispair"];
-                                        alltmpTb.Rows.Add(allpart_ndr);
+                                        continue;
                                     }
+
+                                    if (Convert.ToInt32(aldr["Parts"]) == 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    DataRow allpart_ndr = alltmpTb.NewRow();
+                                    allpart_ndr["PatternCode"] = aldr["PatternCode"];
+                                    allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                                    allpart_ndr["Parts"] = aldr["Parts"];
+                                    allpart_ndr["ukey1"] = dr["ukey1"];
+                                    allpart_ndr["ispair"] = aldr["ispair"];
+                                    alltmpTb.Rows.Add(allpart_ndr);
                                 }
                             }
                             #endregion
@@ -1090,17 +1104,23 @@ from #tmp where BundleGroup='{0}'", BundleGroup) , out tmp);
                         {
                             foreach (DataRow aldr in allpartTb.Rows)
                             {
-                                if (aldr.RowState != DataRowState.Deleted)
+                                if (aldr.RowState == DataRowState.Deleted)
                                 {
-                                    DataRow allpart_ndr = alltmpTb.NewRow();
-
-                                    allpart_ndr["PatternCode"] = aldr["PatternCode"];
-                                    allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                                    allpart_ndr["Parts"] = aldr["Parts"];
-                                    allpart_ndr["ukey1"] = tmpdr["ukey1"];
-                                    allpart_ndr["isPair"] = aldr["isPair"];
-                                    alltmpTb.Rows.Add(allpart_ndr);
+                                    continue;
                                 }
+                                if (Convert.ToInt32(aldr["Parts"]) == 0)
+                                {
+                                    continue;
+                                }
+
+                                DataRow allpart_ndr = alltmpTb.NewRow();
+
+                                allpart_ndr["PatternCode"] = aldr["PatternCode"];
+                                allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                                allpart_ndr["Parts"] = aldr["Parts"];
+                                allpart_ndr["ukey1"] = tmpdr["ukey1"];
+                                allpart_ndr["isPair"] = aldr["isPair"];
+                                alltmpTb.Rows.Add(allpart_ndr);
                             }
                         }
                         #endregion

@@ -1290,9 +1290,14 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
 
         private void allpart_delete_Click(object sender, EventArgs e)//刪除右下
         {
+            if (this.gridAllPart.Rows.Count == 0)
+            {
+                return;
+            }
             gridvalid();
             DataRow selectDr = ((DataRowView)gridAllPart.GetSelecteds(SelectedSort.Index)[0]).Row;
             selectDr.Delete();
+            calpart();
         }
 
         private void btnGarmentList_Click(object sender, EventArgs e)
@@ -1612,6 +1617,13 @@ values
                 DataRow[] QtyAry = qtyTb.Select(string.Format("iden={0}", artar["iden"]));
                 DataRow[] PatternAry = patternTb.Select(string.Format("iden={0} and parts<>0", artar["iden"]));  //1404: CUTTING_P11_Batch Create Bundle Card，[Batch create]會出現錯誤訊息。
                 DataRow[] AllPartArt = allpartTb.Select(string.Format("iden={0}", artar["iden"]));
+
+                if (PatternAry.Length == 0)
+                {
+                    MyUtility.Msg.WarningBox("Bundle Card info cannot be empty.");
+                    return;
+                }
+
                 foreach (DataRow rowqty in QtyAry)
                 {
                     #region Bundle_Detail_Qty
@@ -1663,6 +1675,11 @@ values
                             {
                                 foreach (DataRow rowall in AllPartArt)
                                 {
+                                    if (MyUtility.Check.Empty(rowall["Parts"]))
+                                    {
+                                        continue;
+                                    }
+
                                     DataRow nBundleDetailAllPart_dr = Insert_Bundle_Detail_AllPart.NewRow();
                                     nBundleDetailAllPart_dr["Insert"] = string.Format(@"Insert Into Bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair) Values('{0}','{1}','{2}','{3}','{4}')",
                                          id_list[idcount], rowall["PatternCode"], rowall["PatternDesc"], rowall["Parts"], rowall["isPair"]);
