@@ -372,7 +372,23 @@ select
 from Trade_To_Pms.dbo.Country as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Country as a WITH (NOLOCK) where a.id = b.id)
 
-
+--WeaveType
+merge Production.dbo.WeaveType t 
+using Trade_To_Pms.dbo.WeaveType s
+on t.id = s.id
+when matched then update set
+	 t.isFabricLoss=s.isFabricLoss
+	,t.Junk		   =s.Junk
+	,t.AddName	   =s.AddName
+	,t.AddDate	   =s.AddDate
+	,t.EditName	   =s.EditName
+	,t.EditDate	   =s.EditDate
+when not matched by target then
+	insert(id,isFabricLoss,Junk,AddName,AddDate,EditName,EditDate)
+	values(s.id,s.isFabricLoss,s.Junk,s.AddName,s.AddDate,s.EditName,s.EditDate)
+when not matched by source then
+	delete
+;
 --Mtltype Mtltype  
 --AMtltype
 ----------------------刪除主TABLE多的資料

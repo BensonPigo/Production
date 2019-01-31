@@ -36,7 +36,8 @@ Select MixedSizeMarker,	oe.id,	[FactoryID] = @FactoryID,	[MDivisionid] = @MDivis
 	-----------------------------
 	oec.Orderqty,	[ThisMarkerColor_Layer] = oec.Layer,
 	[ThisMarkerColor_MaxLayer]=iif(isnull(L.CuttingLayer,0)=0,100,L.CuttingLayer)
-	,IDENTITY(int,1,1) as Rowid 
+	,IDENTITY(int,1,1) as Rowid ,
+	oe.ActCuttingPerimeter,oe.StraightLength,oe.CurvedLength
 inTo #WorkOrderMix 
 From Order_EachCons oe WITH (NOLOCK)
 inner join Order_Eachcons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = oe.Ukey
@@ -89,12 +90,13 @@ Declare @MixedSizeMarker varchar(2),@id varchar(13),@SizeCode varchar(8),@FirstS
 @Seq1 varchar(3),@Seq2 varchar(3),@MarkerName varchar(20),@MarkerLength varchar(15),@ConsPC numeric(6,4),@Refno varchar(20),@SCIRefno varchar(30),
 @MarkerNo varchar(10),@MarkerVersion varchar(3),@type int,@AddDate datetime,
 @MarkerDownloadID varchar(25),@FabricCombo varchar(2),@FabricCode varchar(3),@FabricPanelCode varchar(2),@Order_EachConsUkey bigint,
-@Orderqty int,@ThisMarkerColor_Layer int,@ThisMarkerColor_MaxLayer int,@rowid int,@FirstRatio int,@SizeRatio int, @tmpUkey int = 0, @tmpUkey2 int = 0
+@Orderqty int,@ThisMarkerColor_Layer int,@ThisMarkerColor_MaxLayer int,@rowid int,@FirstRatio int,@SizeRatio int, @tmpUkey int = 0, @tmpUkey2 int = 0,
+@ActCuttingPerimeter nvarchar(15),@StraightLength varchar(15),@CurvedLength varchar(15)
 --主要資料迴圈
 DECLARE CURSOR_WorkOrder CURSOR FOR select * from #WorkOrderMix order by Rowid
 OPEN CURSOR_WorkOrder
 FETCH NEXT FROM CURSOR_WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Refno,@SCIRefno,@MarkerNo,@MarkerVersion,@type,@username,@AddDate,
-@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid
+@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid,@ActCuttingPerimeter,@StraightLength,@CurvedLength
 While @@FETCH_STATUS = 0
 Begin	
 	select oes.SizeCode,qty ,IDENTITY(int,1,1) as Rowid 
@@ -330,9 +332,9 @@ Begin
 		where sizecode = @FirstSizeCode and Order_EachConsUkey = @Order_EachConsUkey and colorid = @colorid and newkey = @tmpUkey2 order by orderid
 		set @Cons = @FLayer * @FirstRatio * @ConsPC
 		Insert Into #tmp_Workorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,
-		Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
+		Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength)
 		values(@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@orderid,@FLayer,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,
-		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey)
+		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey,@ActCuttingPerimeter,@StraightLength,@CurvedLength)
 		--SizeRatio
 		DECLARE Size CURSOR FOR Select SizeCode,qty	From Order_EachCons_SizeQty WITH (NOLOCK) Where Order_EachConsUkey = @Order_EachConsUkey order by Qty desc	
 		OPEN Size
@@ -368,7 +370,7 @@ Begin
 	DEALLOCATE insertWorkorder
 
 FETCH NEXT FROM CURSOR_WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Refno,@SCIRefno,@MarkerNo,@MarkerVersion,@type,@username,@AddDate,
-@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid
+@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid,@ActCuttingPerimeter,@StraightLength,@CurvedLength
 End
 CLOSE CURSOR_WorkOrder
 DEALLOCATE CURSOR_WorkOrder
@@ -391,10 +393,10 @@ While @@FETCH_STATUS = 0
 Begin
 	insert into WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 					EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-					AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode)
+					AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode,ActCuttingPerimeter,StraightLength,CurvedLength)
 	Select id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 	EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-	AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode 
+	AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode ,ActCuttingPerimeter,StraightLength,CurvedLength
 	From #tmp_Workorder Where newkey = @insertRow
 	select @iden = @@IDENTITY 
 	--------將撈出的Ident 寫入----------
