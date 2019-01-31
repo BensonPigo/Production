@@ -18,7 +18,7 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             displayBox1.Text = @"**If perimeter is provided, the formula will be:
 Cutting Time = Set up time + Total Cutting Perimeter/Actual Speed+ 
-Window time*Window No";
+Window time*Marker Length/Window Length";
         }
 
         protected override void OnDetailEntered()

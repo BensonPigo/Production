@@ -17,7 +17,7 @@ BEGIN
 	@ActualSpeed numeric(20,4),
 	@Windowtime numeric(20,4),
 	@WindowNo numeric(20,4),
-	@MarkerLength float = @cons/@Layer * 0.9144-- = Cons/Layer (單位：碼YDS)*0.9144 轉公尺 (一層Layer上的總長)
+	@MarkerLength float = iif(isnull(@Layer,0)=0,0,@cons/@Layer*0.9144)--=Cons/Layer(單位：碼YDS)*0.9144轉公尺(一層Layer上的總長)
 	--Window No.(計算方式：Marker Length(單位：碼YDS)/[WindowLength]
 
 	select @ActualSpeed = ActualSpeed
@@ -35,7 +35,9 @@ BEGIN
 	where WeaveTypeID = @WeaveTypeID
 
 	DECLARE @CuttingTime numeric(20,4)
-	set @CuttingTime = @Setuptime + iif(@ActualSpeed=0,0,@TotalCuttingPerimeter/@ActualSpeed) + @Windowtime * @WindowNo
+	set @CuttingTime = isnull(@Setuptime,0) + 
+					   iif(isnull(@ActualSpeed,0)=0,0,isnull(@TotalCuttingPerimeter,0)/@ActualSpeed) + 
+					   isnull(@Windowtime * @WindowNo,0)
 
 	RETURN @CuttingTime
 END

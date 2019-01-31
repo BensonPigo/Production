@@ -159,7 +159,7 @@
             this.numChangeOverUnRollTime.BackColor = System.Drawing.Color.White;
             this.numChangeOverUnRollTime.DecimalPlaces = 3;
             this.numChangeOverUnRollTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numChangeOverUnRollTime.Location = new System.Drawing.Point(490, 100);
+            this.numChangeOverUnRollTime.Location = new System.Drawing.Point(519, 100);
             this.numChangeOverUnRollTime.MaxLength = 99999;
             this.numChangeOverUnRollTime.Name = "numChangeOverUnRollTime";
             this.numChangeOverUnRollTime.NullValue = new decimal(new int[] {
@@ -265,15 +265,15 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(182, 23);
             this.label2.TabIndex = 17;
-            this.label2.Text = "ChangeOverRollTime";
+            this.label2.Text = "ChangeOverRollTime(sec)";
             // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(324, 100);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(163, 23);
+            this.label3.Size = new System.Drawing.Size(192, 23);
             this.label3.TabIndex = 18;
-            this.label3.Text = "ChangeOverUnRollTime";
+            this.label3.Text = "ChangeOverUnRollTime(sec)";
             // 
             // label4
             // 
@@ -281,7 +281,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(182, 23);
             this.label4.TabIndex = 19;
-            this.label4.Text = "SetupTime";
+            this.label4.Text = "SetupTime(sec)";
             // 
             // label5
             // 
@@ -305,7 +305,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(182, 23);
             this.label7.TabIndex = 22;
-            this.label7.Text = "ForwardTime";
+            this.label7.Text = "ForwardTime(sec)";
             // 
             // labelID
             // 

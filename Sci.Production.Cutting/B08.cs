@@ -75,9 +75,14 @@ namespace Sci.Production.Cutting
             .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(20), settings: WeaveTypeID)
             .Numeric("LayerLowerBound", header: "LayerLowerBound", width: Widths.AnsiChars(8))
             .Numeric("LayerUpperBound", header: "LayerUpperBound", width: Widths.AnsiChars(8))
-            .Numeric("ActualSpeed", header: "ActualSpeed\n(1000m/min)", width: Widths.AnsiChars(8), decimal_places: 3)
+            .Numeric("ActualSpeed", header: "ActualSpeed\n(M/Min)", width: Widths.AnsiChars(8),integer_places: 5, decimal_places: 3)
             .Text("remark", header: "remark", width: Widths.AnsiChars(15))
             ;
+
+            for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+            {
+                this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         protected override bool ClickEdit()

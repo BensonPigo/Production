@@ -304,7 +304,15 @@ where a.workorderukey like '%{this.CurrDataRow["ukey"]}%'
             this.listControlBindingSource1.DataSource = wdtO;
             #endregion
             #region WorkOrder Now
-            string inUkey = "'" + string.Join("','", MyUtility.Convert.GetString(wdtO.Rows[0]["workorderukey"]).Split(',')) + "'";
+            string inUkey = "''";
+            if (wdtO.Rows.Count > 0)
+            {
+                inUkey = "'" + string.Join("','", MyUtility.Convert.GetString(wdtO.Rows[0]["workorderukey"]).Split(',')) + "'";
+            }
+            else
+            {
+                inUkey = $"'{this.CurrDataRow["ukey"]}'";
+            }
             sqlcmd = $@"
 Select
 	a.*
@@ -450,7 +458,10 @@ where a.ukey in ({inUkey})
                 this.ShowErr(result);
             }
             this.listControlBindingSource2.DataSource = wdtN;
-            displayTimeN.Text = MyUtility.Convert.GetString(wdtN.Rows[0]["SandCTime"]);            
+            if (wdtN.Rows.Count>0)
+            {
+                displayTimeN.Text = MyUtility.Convert.GetString(wdtN.Rows[0]["SandCTime"]);
+            }   
             #endregion
 
             #region PatternPanel

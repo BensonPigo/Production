@@ -45,6 +45,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(828, 411);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.displayBox1);
@@ -56,6 +60,12 @@
             this.detailcont.Controls.Add(this.numSetUpT);
             this.detailcont.Controls.Add(this.txtWeaveTypeID);
             this.detailcont.Controls.Add(this.labelID);
+            this.detailcont.Size = new System.Drawing.Size(828, 373);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 373);
+            this.detailbtm.Size = new System.Drawing.Size(828, 38);
             // 
             // browse
             // 
@@ -163,7 +173,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(182, 23);
             this.label4.TabIndex = 19;
-            this.label4.Text = "WindowLength";
+            this.label4.Text = "WindowLength(M)";
             // 
             // labelID
             // 

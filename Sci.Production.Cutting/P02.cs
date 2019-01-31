@@ -186,8 +186,9 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(sc.Cons/fi.avgInQty,0)),sl.Layer,sc.Cons,1),0)as float),','
-					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,sl.Layer,c.WeaveTypeID,sc.cons),0)as float)
+	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(isnull(fi.avgInQty,0)=0,0,round(sc.Cons/fi.avgInQty,0)),sl.Layer,sc.Cons,1),0)as float),','
+				,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(iif(a.ActCuttingPerimeter not like '%yd%','0',a.ActCuttingPerimeter)),4),
+				a.CutCellid,sl.Layer,c.WeaveTypeID,sc.cons),0)as float)
 	)--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
     ,isbyAdditionalRevisedMarker = cast(0 as int)
     ,fromukey = a.ukey
@@ -2396,13 +2397,14 @@ END";
             CurrentMaintain["CutOffLine"] = ((DataTable)detailgridbs.DataSource).Compute("MAX(estcutdate)", null);
             return base.ClickSaveBefore();
         }
-        protected override DualResult ClickSavePost()
+
+        protected override DualResult ClickSave()
         {
             #region RevisedMarkerOriginalData 非AdditionalRevisedMarker功能增加的資料 isbyAdditionalRevisedMarker == 0
             string sqlInsertRevisedMarkerOriginalData = string.Empty;
             foreach (DataRow dr in DetailDatas)
             {
-                if (dr.RowState == DataRowState.Modified && 
+                if (dr.RowState == DataRowState.Modified &&
                     MyUtility.Convert.GetString(dr["MarkerName", DataRowVersion.Original]) != MyUtility.Convert.GetString(dr["MarkerName"]) &&
                     MyUtility.Convert.GetInt(CurrentDetailData["isbyAdditionalRevisedMarker"]) == 0
                     )
@@ -2440,14 +2442,14 @@ select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrde
             }
             #endregion
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 原本那筆 isbyAdditionalRevisedMarker = 1, 增加的那筆 = 2
-            foreach (DataRow dr in DetailDatas.Where(w=>w.RowState == DataRowState.Modified && 
+            foreach (DataRow dr in DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
                         MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
             {
                 string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData where WorkOrderUkey like ('%{dr["ukey"]}%')  ";
                 if (!MyUtility.Check.Seek(sqlchk))
                 {
-                    var ukeylist = DetailDatas.Where(w => MyUtility.Convert.GetString(w["fromukey"]) == MyUtility.Convert.GetString(dr["fromukey"])).Select(s => s["ukey"]).ToList();
-                    string ukeys = string.Join(",", ukeylist);
+                    //var ukeylist = DetailDatas.Where(w => MyUtility.Convert.GetString(w["fromukey"]) == MyUtility.Convert.GetString(dr["fromukey"])).Select(s => s["ukey"]).ToList();
+                    //string ukeys = string.Join(",", ukeylist);
 
                     sqlInsertRevisedMarkerOriginalData += $@"
 INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
@@ -2459,7 +2461,7 @@ INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
 select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid]
 ,[MarkerLength],[ConsPC],[Cons],[Refno],[SCIRefno],[MarkerNo],[MarkerVersion],[Type],[AddName],[AddDate],[EditName],[EditDate],[FabricCombo]
 ,[MarkerDownLoadId],[FabricCode],[FabricPanelCode],[Order_EachconsUkey],[OldFabricUkey],[OldFabricVer],[ActCuttingPerimeter],[StraightLength]
-,[CurvedLength],[SpreadingNoID],'{ukeys}'
+,[CurvedLength],[SpreadingNoID],{dr["ukey"]}
 from WorkOrder where Ukey ={dr["ukey"]}
 
 declare @ID bigint = (select @@IDENTITY)
@@ -2474,6 +2476,33 @@ INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevis
 select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
 ";
                 }
+            }
+            #endregion
+
+            DualResult upResult;
+            if (!MyUtility.Check.Empty(sqlInsertRevisedMarkerOriginalData))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, sqlInsertRevisedMarkerOriginalData)))
+                {
+                    return upResult;
+                }
+            }
+            return base.ClickSave();
+        }
+
+        protected override DualResult ClickSavePost()
+        {
+            #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 在此取拆出來資料的ukey
+            string sqlUpdateRevisedMarkerOriginalData = string.Empty;
+            foreach (DataRow dr in DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
+                        MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
+            {
+                var ukeylist = DetailDatas.Where(w => MyUtility.Convert.GetString(w["fromukey"]) == MyUtility.Convert.GetString(dr["fromukey"])).Select(s => s["ukey"]).ToList();
+                string ukeys = string.Join(",", ukeylist);
+                sqlUpdateRevisedMarkerOriginalData += $@"
+update WorkOrderRevisedMarkerOriginalData set WorkOrderUkey = '{ukeys}'
+where WorkOrderUkey = '{dr["ukey"]}'
+";
             }
             #endregion
             int ukey, newkey;
@@ -2575,9 +2604,9 @@ select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrde
 
 
             DualResult upResult;
-            if (!MyUtility.Check.Empty(sqlInsertRevisedMarkerOriginalData))
+            if (!MyUtility.Check.Empty(sqlUpdateRevisedMarkerOriginalData))
             {
-                if (!(upResult = DBProxy.Current.Execute(null, sqlInsertRevisedMarkerOriginalData)))
+                if (!(upResult = DBProxy.Current.Execute(null, sqlUpdateRevisedMarkerOriginalData)))
                 {
                     return upResult;
                 }

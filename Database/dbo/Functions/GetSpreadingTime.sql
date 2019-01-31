@@ -1,5 +1,5 @@
 ﻿--Function SpreadingTime 
-Create FUNCTION [dbo].[GetSpreadingTime] 
+CREATE FUNCTION [dbo].[GetSpreadingTime] 
 (
 	@WeaveTypeID varchar(20),
 	@Refno varchar(20), --(用以判斷Roll/UnRoll)、
@@ -19,7 +19,7 @@ BEGIN
 	@MachineSpreadingTime numeric(20,4),
 	@NoOfbSeparator numeric(20,4),
 	@ForwardTime numeric(20,4),
-	@MarkerLength float = @cons/@Layer
+	@MarkerLength float = iif(@Layer=0,0,@cons/@Layer)
 	
 	set @isRoll = isnull((
 			select fr.IsRoll
@@ -30,7 +30,7 @@ BEGIN
 
 	select 
 		@PreparationTime=PreparationTime,
-		@Changeovertime=iif(@isRoll = 0,ChangeOverRollTime,ChangeOverUnRollTime),
+		@Changeovertime=iif(@isRoll = 0,ChangeOverUnRollTime,ChangeOverRollTime),
 		@Setuptime=Setuptime,
 		@MachineSpreadingTime=SpreadingTime,
 		@NoOfbSeparator=SeparatorTime,
@@ -40,12 +40,12 @@ BEGIN
 
 
 	DECLARE @SpreadingTime numeric(20,4)
-	set @SpreadingTime = @PreparationTime * @MarkerLength + 
-						 @Changeovertime * @NoofRoll +
-						 @Setuptime +
-						 @MachineSpreadingTime * @cons +
-						 (@NoofbSeparator * @Dyelot -1) +
-						 @ForwardTime
+	set @SpreadingTime = isnull(@PreparationTime * @MarkerLength,0) + 
+						 isnull(@Changeovertime * @NoofRoll,0) +
+						 isnull(@Setuptime,0) +
+						 isnull(@MachineSpreadingTime * @cons,0) +
+						 isnull((@NoofbSeparator * @Dyelot -1),0) +
+						 isnull(@ForwardTime,0)
 
 	RETURN @SpreadingTime
 
