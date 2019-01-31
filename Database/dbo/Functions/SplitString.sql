@@ -23,7 +23,7 @@ Set @Count = 1
 				 Data = ltrim(rtrim(Substring(@SplitStr,1,Charindex(@SplitChar,@SplitStr)-1)))
 				,no = @Count
 
-			Set @SplitStr = Substring(@SplitStr,Charindex(@SplitChar,@SplitStr)+1,len(@SplitStr))
+			Set @SplitStr = Substring(@SplitStr,Charindex(@SplitChar,@SplitStr)+ iif(len(@SplitChar) = 0, 1, len(@SplitChar)),len(@SplitStr))
 			Set @Count += 1
 		End
 
