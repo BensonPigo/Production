@@ -127,7 +127,7 @@ inner join (
 		and a.Category  in ('B','S')", dr["artworktypeid"]);
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and ((a.category='B' and c.isArtwork=0)  or (a.category !='B')) and a.ID = '{0}'", orderID); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and a.poid = '{0}'", poid); }
-                 if (poType.Equals("O")) { strSQLCmd += $" and c.IsSubprocess = 1 and c.isArtwork = 0 and c.Classify = 'O'"; }
+                 if (poType.Equals("O")) { strSQLCmd += $" and (( a.category = 'B' and c.IsSubprocess = 1 and c.isArtwork = 0 and c.Classify = 'O') or (a.category !='B'))"; }
                 strSQLCmd +=" EXCEPT"+
 	             "     select b1.orderid,a1.ArtworkTypeID, b1.ArtworkId,b1.PatternCode "+
                  "     from artworkpo a1 WITH (NOLOCK) ,ArtworkPO_Detail b1 WITH (NOLOCK) ";
