@@ -52,7 +52,6 @@ namespace Sci.Production.Cutting
                     dr.EndEdit();
                 }
             };
-
             WeaveTypeID.CellValidating += (s, e) =>
             {
                 if (!this.EditMode) return;
@@ -71,13 +70,14 @@ namespace Sci.Production.Cutting
                 }
                 dr.EndEdit();
             };
+
             Helper.Controls.Grid.Generator(this.detailgrid)
-            .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(20), settings: WeaveTypeID)
-            .Numeric("LayerLowerBound", header: "LayerLowerBound", width: Widths.AnsiChars(8))
-            .Numeric("LayerUpperBound", header: "LayerUpperBound", width: Widths.AnsiChars(8))
-            .Numeric("ActualSpeed", header: "ActualSpeed\n(M/Min)", width: Widths.AnsiChars(8),integer_places: 5, decimal_places: 3)
-            .Text("remark", header: "remark", width: Widths.AnsiChars(15))
-            ;
+           .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(20), settings: WeaveTypeID)
+           .Numeric("LayerLowerBound", header: "LayerLowerBound", width: Widths.AnsiChars(8))
+           .Numeric("LayerUpperBound", header: "LayerUpperBound", width: Widths.AnsiChars(8))
+           .Numeric("ActualSpeed", header: "ActualSpeed\n(M/Min)", width: Widths.AnsiChars(8), integer_places: 2, decimal_places: 3, maximum: 99.999M, minimum: 0)
+           .Text("remark", header: "remark", width: Widths.AnsiChars(15))
+           ;
 
             for (int i = 0; i < this.detailgrid.ColumnCount; i++)
             {
