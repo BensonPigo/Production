@@ -888,7 +888,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
 
         public void caltotalpart() //計算total part
         {
-            if (patternTb.Rows.Count > 0) numTotalParts.Value = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", ""));
+            if (patternTb.Rows.Count > 0) numTotalParts.Value = Convert.ToDecimal(patternTb.Compute("Sum(Parts)", "Parts IS NOT NULL"));
         }
 
         public void calAllPart() //計算all part
