@@ -39,11 +39,11 @@ namespace Sci.Production.Sewing
                     string apiParemeter = string.Empty;
                     if (!MyUtility.Check.Empty(i_factory))
                     {
-                        apiParemeter = $"?i_M=0&i_factory={i_factory}&i_start_date={i_start_date.ToString("yyyy/MM/dd")}&i_end_date={i_end_date.ToString("yyyy/MM/dd")}";
+                        apiParemeter = $"?M=0&factory={i_factory}&startDate={i_start_date.ToString("yyyy/MM/dd")}&endDate={i_end_date.ToString("yyyy/MM/dd")}";
                     }
                     else
                     {
-                        apiParemeter = $"?i_M={i_M}&i_factory=0&i_start_date={i_start_date.ToString("yyyy/MM/dd")}&i_end_date={i_end_date.ToString("yyyy/MM/dd")}";
+                        apiParemeter = $"?M={i_M}&factory=0&startDate={i_start_date.ToString("yyyy/MM/dd")}&endDate={i_end_date.ToString("yyyy/MM/dd")}";
                     }
 
                     XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
