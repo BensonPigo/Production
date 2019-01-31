@@ -980,6 +980,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 {
                     foreach (DataRow dr2 in patternTb.Rows)
                     {
+                        if (dr2["Parts"] == DBNull.Value) continue;
                         if (Convert.ToInt32(dr2["Parts"]) == 0) continue;  //若Parts=0，則不需產生資料至Bundle card明細
                         DataRow nDetail = bundle_detail_tmp.NewRow();
                         nDetail["PatternCode"] = dr2["PatternCode"];
