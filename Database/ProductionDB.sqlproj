@@ -2309,6 +2309,8 @@
     <Build Include="dbo\Tables\SewingOutput_DailyUnlock.sql" />
     <Build Include="dbo\Tables\FirstSaleCostSetting.sql" />
     <Build Include="dbo\Functions\GetLocalPurchaseStdCost.sql" />
+    <Build Include="dbo\Tables\PackErrTransfer.sql" />
+    <Build Include="dbo\Tables\PackErrCFM.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

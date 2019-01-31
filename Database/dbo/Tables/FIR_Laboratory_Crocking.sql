@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[FIR_Laboratory_Crocking] (
     [ID]        BIGINT         CONSTRAINT [DF_FIR_Laboratory_Crocking_ID] DEFAULT ((0)) NOT NULL,
     [Roll]      VARCHAR (8)    CONSTRAINT [DF_FIR_Laboratory_Crocking_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]    VARCHAR (4)    CONSTRAINT [DF_FIR_Laboratory_Crocking_Dyelot] DEFAULT ('') NOT NULL,
+    [Dyelot]    VARCHAR (8)    CONSTRAINT [DF_FIR_Laboratory_Crocking_Dyelot] DEFAULT ('') NOT NULL,
     [DryScale]  VARCHAR (5)    CONSTRAINT [DF_FIR_Laboratory_Crocking_DryScale] DEFAULT ('') NULL,
     [WetScale]  VARCHAR (5)    CONSTRAINT [DF_FIR_Laboratory_Crocking_WetScale] DEFAULT ('') NULL,
     [Inspdate]  DATE           NULL,
@@ -12,8 +12,12 @@
     [AddDate]   DATETIME       NULL,
     [EditName]  VARCHAR (10)   CONSTRAINT [DF_FIR_Laboratory_Crocking_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME       NULL,
+    [ResultDry] VARCHAR (5)    NULL,
+    [ResultWet] VARCHAR (5)    NULL,
     CONSTRAINT [PK_FIR_Laboratory_Crocking] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 

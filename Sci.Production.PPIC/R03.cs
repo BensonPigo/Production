@@ -218,6 +218,7 @@ with tmpOrders as (
             , o.DoxType
             , o.TotalCTN
             , DryCTN=isnull(o.DryCTN,0)
+            , PackErrorCtn = isnull(o.PackErrCTN,0)
             , o.FtyCTN
             , o.ClogCTN
             , CFACTN=isnull(o.CFACTN,0)
@@ -494,6 +495,7 @@ tmpFilterZone as (
             , o.DoxType
             , o.TotalCTN
             , DryCTN=isnull(o.DryCTN,0)
+            , PackErrorCtn = isnull(o.PackErrCTN,0)
             , o.FtyCTN
             , o.ClogCTN
             , CFACTN=isnull(o.CFACTN,0)
@@ -636,6 +638,7 @@ tmpFilterZone as (
 			, pdm.ClogCTN as  ClogCTN1
 			, pdm.ClogRcvDate
             , t.DryCTN
+            , t.PackErrorCtn
             , t.CFACTN
     into #tmpFilterSeperate
     from #tmpListPoCombo t
@@ -1475,23 +1478,24 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 objArray[intRowsStart, 100] = dr["PackingCTN"];
                 objArray[intRowsStart, 101] = dr["TotalCTN1"];
                 objArray[intRowsStart, 102] = dr["DryCTN"];
-                objArray[intRowsStart, 103] = dr["FtyCtn1"];
-                objArray[intRowsStart, 104] = dr["ClogCTN1"];
-                objArray[intRowsStart, 105] = dr["CFACTN"];
-                objArray[intRowsStart, 106] = dr["ClogRcvDate"];
-                objArray[intRowsStart, 107] = dr["InspDate"];
-                objArray[intRowsStart, 108] = dr["InspResult"];
-                objArray[intRowsStart, 109] = dr["InspHandle"];
-                objArray[intRowsStart, 110] = dr["SewLine"];
-                objArray[intRowsStart, 111] = dr["ShipModeList"];
-                objArray[intRowsStart, 112] = dr["Article"];
-                objArray[intRowsStart, 113] = dr["SpecialMarkName"];
-                objArray[intRowsStart, 114] = dr["FTYRemark"];
-                objArray[intRowsStart, 115] = dr["SampleReasonName"];
-                objArray[intRowsStart, 116] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 117] = dr["CuttingSP"];
-                objArray[intRowsStart, 118] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
-                objArray[intRowsStart, 119] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
+                objArray[intRowsStart, 103] = dr["PackErrorCtn"];
+                objArray[intRowsStart, 104] = dr["FtyCtn1"];
+                objArray[intRowsStart, 105] = dr["ClogCTN1"];
+                objArray[intRowsStart, 106] = dr["CFACTN"];
+                objArray[intRowsStart, 107] = dr["ClogRcvDate"];
+                objArray[intRowsStart, 108] = dr["InspDate"];
+                objArray[intRowsStart, 109] = dr["InspResult"];
+                objArray[intRowsStart, 110] = dr["InspHandle"];
+                objArray[intRowsStart, 111] = dr["SewLine"];
+                objArray[intRowsStart, 112] = dr["ShipModeList"];
+                objArray[intRowsStart, 113] = dr["Article"];
+                objArray[intRowsStart, 114] = dr["SpecialMarkName"];
+                objArray[intRowsStart, 115] = dr["FTYRemark"];
+                objArray[intRowsStart, 116] = dr["SampleReasonName"];
+                objArray[intRowsStart, 117] = MyUtility.Convert.GetString(dr["IsMixMarker"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 118] = dr["CuttingSP"];
+                objArray[intRowsStart, 119] = MyUtility.Convert.GetString(dr["RainwearTestPassed"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+                objArray[intRowsStart, 120] = MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 #endregion
 
                 if (this.artwork || this.pap)

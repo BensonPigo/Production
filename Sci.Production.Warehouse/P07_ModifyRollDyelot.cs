@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out col_roll)    //3
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: false).Get(out col_dyelot)   //4
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out col_dyelot)   //4
             .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(11), iseditingreadonly: false, decimal_places: 2, integer_places: 10, maximum: 999999999.99M, minimum: 0, settings: actqty).Get(out col_ActQty)    //5
             .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //6
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //7

@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[FIR_Laboratory_Heat] (
     [ID]                 BIGINT         CONSTRAINT [DF_FIR_Laboratory_Heat_ID] DEFAULT ((0)) NOT NULL,
     [Roll]               VARCHAR (8)    CONSTRAINT [DF_FIR_Laboratory_Heat_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]             VARCHAR (4)    CONSTRAINT [DF_FIR_Laboratory_Heat_Dyelot] DEFAULT ('') NOT NULL,
+    [Dyelot]             VARCHAR (8)    CONSTRAINT [DF_FIR_Laboratory_Heat_Dyelot] DEFAULT ('') NOT NULL,
     [Inspdate]           DATE           NULL,
     [Inspector]          VARCHAR (10)   CONSTRAINT [DF_FIR_Laboratory_Heat_Inspector] DEFAULT ('') NULL,
     [Result]             VARCHAR (5)    CONSTRAINT [DF_FIR_Laboratory_Heat_Result] DEFAULT ('') NULL,
@@ -22,6 +22,8 @@
     [VerticalTest3]      NUMERIC (4, 2) CONSTRAINT [DF_FIR_Laboratory_Heat_VerticalTest3] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Laboratory_Heat] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 
