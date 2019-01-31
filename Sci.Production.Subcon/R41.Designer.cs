@@ -45,6 +45,8 @@
             this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
             this.lbBundleScanDate = new Sci.Win.UI.Label();
             this.dateBundleScanDate = new Sci.Win.UI.DateRange();
+            this.lbEstCuttingDate = new Sci.Win.UI.Label();
+            this.dateEstCutDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -81,7 +83,7 @@
             // 
             // labelBundleCDate
             // 
-            this.labelBundleCDate.Location = new System.Drawing.Point(27, 77);
+            this.labelBundleCDate.Location = new System.Drawing.Point(27, 106);
             this.labelBundleCDate.Name = "labelBundleCDate";
             this.labelBundleCDate.Size = new System.Drawing.Size(116, 23);
             this.labelBundleCDate.TabIndex = 96;
@@ -89,7 +91,7 @@
             // 
             // labelSubProcess
             // 
-            this.labelSubProcess.Location = new System.Drawing.Point(27, 135);
+            this.labelSubProcess.Location = new System.Drawing.Point(27, 164);
             this.labelSubProcess.Name = "labelSubProcess";
             this.labelSubProcess.Size = new System.Drawing.Size(116, 23);
             this.labelSubProcess.TabIndex = 97;
@@ -97,7 +99,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(27, 164);
+            this.labelM.Location = new System.Drawing.Point(27, 193);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(116, 23);
             this.labelM.TabIndex = 98;
@@ -129,7 +131,7 @@
             this.dateBundleCDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateBundleCDate.DateBox2.TabIndex = 1;
             this.dateBundleCDate.IsRequired = false;
-            this.dateBundleCDate.Location = new System.Drawing.Point(146, 77);
+            this.dateBundleCDate.Location = new System.Drawing.Point(146, 106);
             this.dateBundleCDate.Name = "dateBundleCDate";
             this.dateBundleCDate.Size = new System.Drawing.Size(280, 23);
             this.dateBundleCDate.TabIndex = 3;
@@ -140,7 +142,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(146, 164);
+            this.comboM.Location = new System.Drawing.Point(146, 193);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(121, 24);
@@ -175,7 +177,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(27, 193);
+            this.labelFactory.Location = new System.Drawing.Point(27, 222);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(116, 23);
             this.labelFactory.TabIndex = 98;
@@ -189,7 +191,7 @@
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IssupportJunk = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(146, 194);
+            this.comboFactory.Location = new System.Drawing.Point(146, 222);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
@@ -200,7 +202,7 @@
             this.txtsubprocess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtsubprocess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtsubprocess.IsSupportEditMode = false;
-            this.txtsubprocess.Location = new System.Drawing.Point(146, 135);
+            this.txtsubprocess.Location = new System.Drawing.Point(146, 164);
             this.txtsubprocess.Name = "txtsubprocess";
             this.txtsubprocess.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtsubprocess.ReadOnly = true;
@@ -209,7 +211,7 @@
             // 
             // lbBundleScanDate
             // 
-            this.lbBundleScanDate.Location = new System.Drawing.Point(27, 106);
+            this.lbBundleScanDate.Location = new System.Drawing.Point(27, 135);
             this.lbBundleScanDate.Name = "lbBundleScanDate";
             this.lbBundleScanDate.Size = new System.Drawing.Size(116, 23);
             this.lbBundleScanDate.TabIndex = 109;
@@ -232,14 +234,46 @@
             this.dateBundleScanDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateBundleScanDate.DateBox2.TabIndex = 1;
             this.dateBundleScanDate.IsRequired = false;
-            this.dateBundleScanDate.Location = new System.Drawing.Point(146, 106);
+            this.dateBundleScanDate.Location = new System.Drawing.Point(146, 135);
             this.dateBundleScanDate.Name = "dateBundleScanDate";
             this.dateBundleScanDate.Size = new System.Drawing.Size(280, 23);
             this.dateBundleScanDate.TabIndex = 110;
             // 
+            // lbEstCuttingDate
+            // 
+            this.lbEstCuttingDate.Location = new System.Drawing.Point(27, 77);
+            this.lbEstCuttingDate.Name = "lbEstCuttingDate";
+            this.lbEstCuttingDate.Size = new System.Drawing.Size(116, 23);
+            this.lbEstCuttingDate.TabIndex = 111;
+            this.lbEstCuttingDate.Text = "Est. Cutting Date";
+            // 
+            // dateEstCutDate
+            // 
+            // 
+            // 
+            // 
+            this.dateEstCutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateEstCutDate.DateBox1.Name = "";
+            this.dateEstCutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateEstCutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateEstCutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateEstCutDate.DateBox2.Name = "";
+            this.dateEstCutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateEstCutDate.DateBox2.TabIndex = 1;
+            this.dateEstCutDate.IsRequired = false;
+            this.dateEstCutDate.Location = new System.Drawing.Point(146, 77);
+            this.dateEstCutDate.Name = "dateEstCutDate";
+            this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
+            this.dateEstCutDate.TabIndex = 112;
+            // 
             // R41
             // 
-            this.ClientSize = new System.Drawing.Size(532, 246);
+            this.ClientSize = new System.Drawing.Size(532, 277);
+            this.Controls.Add(this.dateEstCutDate);
+            this.Controls.Add(this.lbEstCuttingDate);
             this.Controls.Add(this.dateBundleScanDate);
             this.Controls.Add(this.lbBundleScanDate);
             this.Controls.Add(this.txtsubprocess);
@@ -279,6 +313,8 @@
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.lbBundleScanDate, 0);
             this.Controls.SetChildIndex(this.dateBundleScanDate, 0);
+            this.Controls.SetChildIndex(this.lbEstCuttingDate, 0);
+            this.Controls.SetChildIndex(this.dateEstCutDate, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -302,5 +338,7 @@
         private Class.txtsubprocess txtsubprocess;
         private Win.UI.Label lbBundleScanDate;
         private Win.UI.DateRange dateBundleScanDate;
+        private Win.UI.Label lbEstCuttingDate;
+        private Win.UI.DateRange dateEstCutDate;
     }
 }

@@ -444,7 +444,7 @@ where ReportNo = '{this.reportNo}';";
             }
             string mailto = MyUtility.GetValue.Lookup("Email",this.txtMR.TextBox1.Text,"Pass1","ID");
             string mailcc = Env.User.MailAddress;
-            string subject = "Mockup Oven Test – ReportNo:" + this.reportNo;
+            string subject = "Mockup Oven Test – ReportNo:" + this.reportNo + @" – Style#: " + this.masterDr["StyleID"].ToString();             
             string content = "Attachment is Mockup Oven Test– ReportNo:" + this.reportNo + " detail data";
             var email = new MailTo(Sci.Env.Cfg.MailFrom, mailto, mailcc, subject, pdf_path, content.ToString(), false, true);
             email.ShowDialog(this);
