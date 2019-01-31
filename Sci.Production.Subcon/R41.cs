@@ -17,7 +17,7 @@ namespace Sci.Production.Subcon
     {
         DataTable printData;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
-        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2;
+        DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
@@ -53,12 +53,15 @@ namespace Sci.Production.Subcon
             dateBundle2 = this.dateBundleCDate.Value2;
             dateBundleScanDate1 = this.dateBundleScanDate.Value1;
             dateBundleScanDate2 = this.dateBundleScanDate.Value2;
+            dateEstCutDate1 = this.dateEstCutDate.Value1;
+            dateEstCutDate2 = this.dateEstCutDate.Value2;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
+                MyUtility.Check.Empty(dateEstCutDate.Value1) && MyUtility.Check.Empty(dateEstCutDate.Value2) &&
                 MyUtility.Check.Empty(dateBundleCDate.Value1) && MyUtility.Check.Empty(dateBundleCDate.Value2) &&
                 MyUtility.Check.Empty(dateBundleScanDate.Value1) && MyUtility.Check.Empty(dateBundleScanDate.Value2))
             {
-                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Bundle CDate][Bundle Scan Date] cannot all empty !!");
+                MyUtility.Msg.WarningBox("[Cut Ref#][SP#][Est. Cutting Date][Bundle CDate][Bundle Scan Date] cannot all empty !!");
                 return false;
             }
             return base.ValidateInput();
@@ -76,6 +79,7 @@ namespace Sci.Production.Subcon
 
             #region Append畫面上的條件
             StringBuilder sqlWhere = new StringBuilder();
+            StringBuilder sqlWhereWorkOrder = new StringBuilder();
             if (!MyUtility.Check.Empty(SubProcess))
             {
                 sqlWhere.Append($@" and (s.id in ('{SubProcess.Replace(",", "','")}') or '{SubProcess}'='')");
@@ -123,10 +127,34 @@ namespace Sci.Production.Subcon
             {
                 sqlWhere.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
             }
+
+            if (!MyUtility.Check.Empty(dateEstCutDate1))
+            {
+                sqlWhere.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
+                sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(dateEstCutDate2))
+            {
+                sqlWhere.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
+                sqlWhereWorkOrder.Append(string.Format(@" and w.EstCutDate <= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate2).ToString("d")));
+            }
             #endregion
 
             #region sqlcmd
-            string sqlCmd = $@"
+            string sqlCmd = string.Empty;
+            if (sqlWhereWorkOrder.Length > 0)
+            {
+                sqlCmd += $@"
+select CutRef,MDivisionId,EstCutDate
+into #tmp_Workorder
+from Workorder w
+where 1=1
+{sqlWhereWorkOrder}
+group by  CutRef,MDivisionId,EstCutDate
+";
+            }
+
+            sqlCmd += $@" 
 Select 
     [Bundleno] = bd.BundleNo,
     [EXCESS] = iif(b.IsEXCESS = 0, '','Y'),
@@ -173,8 +201,8 @@ Select
 	s.InOutRule
 into #result
 from Bundle b WITH (NOLOCK) 
-inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
+inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 outer apply(
     select s.ID,s.InOutRule
     from SubProcess s
@@ -193,8 +221,14 @@ outer apply(
 		    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
 		    for xml path('')
 	    ),1,1,'')
-) as sub
-where 1=1 {sqlWhere}";
+) as sub 
+";
+            if (sqlWhereWorkOrder.Length > 0)
+            {
+                sqlCmd += " left join #tmp_Workorder w on b.CutRef = w.CutRef and w.MDivisionId = b.MDivisionid ";
+            }
+
+            sqlCmd += $@" where 1=1 {sqlWhere} ";
 
             string sqlResult = $@"
 {sqlCmd}
