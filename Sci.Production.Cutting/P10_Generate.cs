@@ -968,6 +968,15 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 return;
             }
             #endregion
+            #region 判斷Pattern的CutPart  不可為空
+            bool isEmptyCutPart = patternTb.AsEnumerable().Where(s => MyUtility.Check.Empty(s["PatternCode"])).Any();
+            if (isEmptyCutPart)
+            {
+                MyUtility.Msg.WarningBox("<CutPart> can not be empty!");
+                return;
+            }
+            #endregion
+
 
             DataTable bundle_detail_tmp;
             DBProxy.Current.Select(null, "Select *,0 as ukey1,'' as subprocessid from bundle_Detail WITH (NOLOCK) where 1=0", out bundle_detail_tmp);
