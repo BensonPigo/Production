@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[FIR_Shadebone] (
     [ID]        BIGINT         CONSTRAINT [DF_FIR_Shadebone_ID] DEFAULT ((0)) NOT NULL,
     [Roll]      VARCHAR (8)    CONSTRAINT [DF_FIR_Shadebone_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]    VARCHAR (4)    CONSTRAINT [DF_FIR_Shadebone_Dyelot] DEFAULT ('') NOT NULL,
+    [Dyelot]    VARCHAR (8)    CONSTRAINT [DF_FIR_Shadebone_Dyelot] DEFAULT ('') NOT NULL,
     [Scale]     VARCHAR (5)    CONSTRAINT [DF_FIR_Shadebone_Scale] DEFAULT ('') NULL,
     [Inspdate]  DATE           NULL,
     [Inspector] VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_Inspector] DEFAULT ('') NULL,
@@ -11,9 +11,11 @@
     [AddDate]   DATETIME       NULL,
     [EditName]  VARCHAR (10)   CONSTRAINT [DF_FIR_Shadebone_EditName] DEFAULT ('') NULL,
     [EditDate]  DATETIME       NULL,
-    [TicketYds] NUMERIC (8, 2) CONSTRAINT [DF_FIR_Shadebone_TicketYds] DEFAULT ((0)) NULL,
+    [TicketYds] NUMERIC (8, 2) DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Shadebone] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 

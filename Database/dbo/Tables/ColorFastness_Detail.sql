@@ -4,17 +4,22 @@
     [SEQ1]               VARCHAR (3)  CONSTRAINT [DF_ColorFastness_Detail_SEQ] DEFAULT ('') NOT NULL,
     [SEQ2]               VARCHAR (2)  CONSTRAINT [DF_ColorFastness_Detail_SEQ2] DEFAULT ('') NOT NULL,
     [Roll]               VARCHAR (8)  CONSTRAINT [DF_ColorFastness_Detail_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]             VARCHAR (4)  CONSTRAINT [DF_ColorFastness_Detail_Dyelot] DEFAULT ('') NULL,
+    [Dyelot]             VARCHAR (8)  CONSTRAINT [DF_ColorFastness_Detail_Dyelot] DEFAULT ('') NULL,
     [Result]             VARCHAR (4)  CONSTRAINT [DF_ColorFastness_Detail_Result] DEFAULT ('') NULL,
     [changeScale]        VARCHAR (8)  CONSTRAINT [DF_ColorFastness_Detail_changeScale] DEFAULT ('') NULL,
     [StainingScale]      VARCHAR (8)  CONSTRAINT [DF_ColorFastness_Detail_StainingScale] DEFAULT ('') NULL,
-    [Remark]             VARCHAR(60)   CONSTRAINT [DF_ColorFastness_Detail_Remark] DEFAULT ('') NULL,
+    [Remark]             NCHAR (60)   CONSTRAINT [DF_ColorFastness_Detail_Remark] DEFAULT ('') NULL,
     [AddName]            VARCHAR (10) CONSTRAINT [DF_ColorFastness_Detail_AddName] DEFAULT ('') NULL,
     [AddDate]            DATETIME     NULL,
     [EditName]           VARCHAR (10) CONSTRAINT [DF_ColorFastness_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]           DATETIME     NULL,
+    [SubmitDate]         DATE         NULL,
+    [ResultChange]       VARCHAR (5)  NULL,
+    [ResultStain]        VARCHAR (5)  NULL,
     CONSTRAINT [PK_ColorFastness_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [ColorFastnessGroup] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
+
+
 
 
 

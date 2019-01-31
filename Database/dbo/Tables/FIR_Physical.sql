@@ -1,7 +1,7 @@
-CREATE TABLE [dbo].[FIR_Physical] (
+﻿CREATE TABLE [dbo].[FIR_Physical] (
     [ID]          BIGINT         CONSTRAINT [DF_FIR_Physical_ID] DEFAULT ((0)) NOT NULL,
     [Roll]        VARCHAR (8)    CONSTRAINT [DF_FIR_Physical_Roll] DEFAULT ('') NULL,
-    [Dyelot]      VARCHAR (4)    CONSTRAINT [DF_FIR_Physical_Dyelot] DEFAULT ('') NULL,
+    [Dyelot]      VARCHAR (8)    CONSTRAINT [DF_FIR_Physical_Dyelot] DEFAULT ('') NULL,
     [TicketYds]   NUMERIC (8, 2) CONSTRAINT [DF_FIR_Physical_TicketYds] DEFAULT ((0)) NOT NULL,
     [ActualYds]   NUMERIC (8, 2) CONSTRAINT [DF_FIR_Physical_ActualYds] DEFAULT ((0)) NOT NULL,
     [FullWidth]   NUMERIC (5, 2) CONSTRAINT [DF_FIR_Physical_FullWidth] DEFAULT ((0)) NOT NULL,
@@ -23,6 +23,8 @@ CREATE TABLE [dbo].[FIR_Physical] (
     [QCStopQty]   TINYINT        CONSTRAINT [DF_FIR_Physical_QCStopQty] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
+
+
 
 
 
@@ -129,7 +131,5 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'QC驗布時
 
 
 GO
-CREATE NONCLUSTERED INDEX [index_WH_P07]
-    ON [dbo].[FIR_Physical]([Roll] ASC, [Dyelot] ASC)
-    INCLUDE([ID], [InspDate]);
+
 

@@ -17,22 +17,14 @@ namespace Sci.Production.Subcon
 {
     public partial class R32 : Sci.Win.Tems.PrintForm
     {
-        string StartDate, EndDate, SubProcess, Factory;
+        string subProcess;
+        string factory;
         DataTable printData;
 
         public R32(ToolStripMenuItem menuitem)
             :base(menuitem)
         {
             InitializeComponent();
-            #region set ComboSubPress
-            DataTable dtSubPress;
-            DBProxy.Current.Select(null, @"
-select Id 
-from SubProcess 
-where IsRFIDProcess=1
-", out dtSubPress);
-            MyUtility.Tool.SetupCombox(comboSubProcess, 1, dtSubPress);
-            #endregion
             #region set ComboFactory
             DataTable dtFactory;
             DBProxy.Current.Select(null, @"
@@ -50,38 +42,99 @@ where Junk != 1", out dtFactory);
         protected override bool ValidateInput()
         {
             #region 判斷必輸條件
-            if (dateFarmOutDate.Value1.Empty() || dateFarmOutDate.Value2.Empty())
+            if (!this.dateFarmOutDate.HasValue &&
+                !this.dateBundleCdate.HasValue &&
+                !this.dateBundleScan.HasValue)
             {
-                MyUtility.Msg.InfoBox("Farm Out Date Can't be empty.");
+                MyUtility.Msg.InfoBox("[Farm Out Date],[Bundle CDate],[Bundle Scan Date] please input at least one");
                 return false;
             }
             #endregion
-            #region Set Value
-            StartDate = ((DateTime)dateFarmOutDate.Value1).ToString("yyyy-MM-dd");
-            EndDate = ((DateTime)dateFarmOutDate.Value2).ToString("yyyy-MM-dd");
-            SubProcess = comboSubProcess.Text;
-            Factory = comboFactory.Text;
-            #endregion 
+
+            this.factory = this.comboFactory.Text;
+            this.subProcess = this.txtsubprocess.Text;
+            
             return true;
         }
 
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region SQl Parameters
             List<SqlParameter> listSqlPar = new List<SqlParameter>();
-            listSqlPar.Add(new SqlParameter("@StartDate", StartDate));
-            listSqlPar.Add(new SqlParameter("@EndDate", EndDate));
-            listSqlPar.Add(new SqlParameter("@SubProcess", SubProcess));
-            listSqlPar.Add(new SqlParameter("@Factory", Factory));
+            #region SQL first where
+            List<string> FirstWhere = new List<string>();
+            List<string> finalWhere = new List<string>();
+
+            if (this.dateFarmOutDate.HasValue)
+            {
+                FirstWhere.Add($@"  and b.Id LIKE 'TB%'");
+                if (this.dateFarmOutDate.Value1.Empty() == false)
+                {
+                    FirstWhere.Add(" and b.IssueDate >= @dateFarmOutDateFrom ");
+                    finalWhere.Add(" and FarmOut.IssueDate >= @dateFarmOutDateFrom");
+                    listSqlPar.Add(new SqlParameter("@dateFarmOutDateFrom", Convert.ToDateTime(this.dateFarmOutDate.DateBox1.Value)));
+                }
+
+                if (this.dateFarmOutDate.Value2.Empty() == false)
+                {
+                    FirstWhere.Add(" and b.IssueDate <= @dateFarmOutDateTo ");
+                    finalWhere.Add(" and FarmOut.IssueDate <= @dateFarmOutDateTo");
+                    listSqlPar.Add(new SqlParameter("@dateFarmOutDateTo", Convert.ToDateTime(this.dateFarmOutDate.DateBox2.Value)));
+                }
+            }
+
+            if (this.dateBundleCdate.HasValue)
+            {
+                FirstWhere.Add($@" and exists (select 1 from Bundle bud with (nolock)
+							                    inner join Bundle_Detail budd with (nolock) on bud.ID = budd.Id
+                                                where budd.BundleNo = bd.BundleNo ");
+                if (this.dateBundleCdate.Value1.Empty() == false)
+                {
+                    FirstWhere.Add(" and bud.Cdate >= @dateBundleCdateFrom");
+                    listSqlPar.Add(new SqlParameter("@dateBundleCdateFrom", Convert.ToDateTime(this.dateBundleCdate.DateBox1.Value)));
+                }
+
+                if (this.dateBundleCdate.Value2.Empty() == false)
+                {
+                    FirstWhere.Add(" and bud.Cdate <= @dateBundleCdateTo");
+                    listSqlPar.Add(new SqlParameter("@dateBundleCdateTo", Convert.ToDateTime(this.dateBundleCdate.DateBox2.Value)));
+                }
+
+                FirstWhere.Add(")");
+            }
+
+            if (this.dateBundleScan.HasValue)
+            {
+                if (dateBundleScan.Value1.Empty() == false)
+                {
+                    FirstWhere.Add(" and (b.Id LIKE 'TB%' and b.IssueDate >= @dateBundleScanFrom or b.Id LIKE 'TC%' and bd.ReceiveDate >= @dateBundleScanFrom)");
+                    finalWhere.Add(" and (FarmOut.IssueDate >= @dateBundleScanFrom or FarmIn.ReceiveDate >= @dateBundleScanFrom)");
+                    listSqlPar.Add(new SqlParameter("@dateBundleScanFrom", Convert.ToDateTime(this.dateBundleScan.DateBox1.Value)));
+                }
+            
+                if (dateBundleScan.Value2.Empty() == false)
+                {
+                    FirstWhere.Add(" and (b.Id LIKE 'TB%' and b.IssueDate <= @dateBundleScanTo or b.Id LIKE 'TC%' and bd.ReceiveDate <= @dateBundleScanTo)");
+                    finalWhere.Add(" and (FarmOut.IssueDate <= @dateBundleScanTo or FarmIn.ReceiveDate <= @dateBundleScanTo)");
+                    listSqlPar.Add(new SqlParameter("@dateBundleScanTo", Convert.ToDateTime(this.dateBundleScan.DateBox2.Value)));
+                }
+            }
+            
             #endregion 
-            #region SQL Filte
-            List<string> filte = new List<string>();
-            if (!Factory.Empty())
-                filte.Add("	and O.FTYGroup = @Factory   --Factory");
+            #region SQL final where
+            if (!factory.Empty())
+            {
+                finalWhere.Add("	and O.FTYGroup = @Factory   --Factory");
+                listSqlPar.Add(new SqlParameter("@Factory", factory));
+            }
+
+            if (!MyUtility.Check.Empty(this.subProcess))
+            {
+                finalWhere.Add($@" and (s.id in ('{subProcess.Replace(",", "','")}') or '{subProcess}'='')");
+            }
+
             #endregion
             #region SQL CMD
-            string sqlCmd = string.Format(@"
-
+            string sqlCmd = $@"
 
 --筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
 
@@ -90,14 +143,13 @@ SELECT DISTINCT bd.BundleNo ,b.StartProcess
 INTO #Base
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
-WHERE   b.Id LIKE 'TB%' 
-		and b.IssueDate >= @StartDate 
-		and b.IssueDate <= @EndDate
-        and b.StartProcess = @SubProcess  
+WHERE   1 = 1 {FirstWhere.JoinToString("\r\n")}  
 
 --再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
 
-SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,b.IssueDate, lastEditDate = iif (b.EditDate is null or b.AddDate > b.EditDate, b.AddDate, b.EditDate)
+SELECT distinct bd.BundleNo ,b.StartProcess ,
+		[IssueDate] = FIRST_VALUE(b.IssueDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc),
+		[EndSite] = FIRST_VALUE(b.EndSite) over (partition by bd.BundleNo ,b.StartProcess ORDER BY b.IssueDate desc)
 INTO #FarmOutList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
@@ -106,7 +158,8 @@ WHERE   b.Id LIKE 'TB%'
 		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
 
 
-SELECT b.EndSite ,bd.BundleNo ,b.StartProcess ,bd.ReceiveDate ,lastEditDate = iif (b.EditDate is null or b.AddDate > b.EditDate, b.AddDate, b.EditDate)
+SELECT distinct bd.BundleNo ,b.StartProcess  ,
+		[ReceiveDate] = FIRST_VALUE(bd.ReceiveDate) over (partition by bd.BundleNo ,b.StartProcess ORDER BY bd.ReceiveDate desc)
 INTO #FarmInList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
@@ -116,42 +169,118 @@ WHERE   b.Id LIKE 'TC%'
 
 
 --取最大IssueDate和ReceiveDate用Outer apply排序做
-SELECT  o.FactoryID
-		,o.ID
+SELECT  base.BundleNo
+		,[EXCESS] = iif(b.IsEXCESS = 0,'','Y')
+		,b.CutRef
+		,b.Orderid
+		,b.POID
+		,b.MDivisionid
+		,o.FtyGroup
+		,o.Category
+		,o.ProgramID
 		,o.StyleID
-		,bd.SizeCode
+		,o.SeasonID
+		,o.BrandID
+		,b.PatternPanel
+		,b.Cutno
+		,b.FabricPanelCode
+		,b.Article
+		,b.Colorid
+		,b.Sewinglineid
+		,b.SewingCell
+		,bd.Patterncode
+		,bd.PatternDesc
 		,bd.BundleGroup
-		,base.BundleNo
-		,BodyCutNo=Concat(b.FabricPanelCode, ' ',b.Cutno)
+		,bd.SizeCode
+		,[Artwork] = sub.sub
 		,bd.Qty
-		,Color = Concat(b.Article, ' ', b.Colorid)
-		,[MaxOutDate]=FarmOut.IssueDate
-		,[MaxInDate]=FarmIn.ReceiveDate
+		,[SubProcess] =  s.Id
+		,b.Cdate
+		,[FarmOutDate]=FarmOut.IssueDate
+		,[FarmInDate]=FarmIn.ReceiveDate
+		,EstCut.EstCutDate
+		,EstCut.CuttingOutputDate
 		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
-		, '' remark  
+		, '' remark 
+into #result
 FROM #Base base
 LEFT JOIN Bundle_Detail bd ON bd.BundleNo=base.BundleNo
 LEFT JOIN Bundle b ON b.ID =bd.Id
 LEFT JOIN Orders o ON o.ID=b.Orderid
 OUTER APPLY(
-   SELECT TOP 1 EndSite,BundleNo,StartProcess,IssueDate
-   FROm #FarmOutList  
-   WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
-   ORDER BY lastEditDate DESC
-)FarmOut
-OUTER APPLY(
-   SELECT TOP 1 EndSite,BundleNo,StartProcess,ReceiveDate
-   FROm  #FarmInList    
-   WHERE BundleNo=base.BundleNo AND StartProcess=base.StartProcess
-   ORDER BY lastEditDate DESC
-)FarmIn
-INNER join LocalSupp ls on ls.id=FarmOut.EndSite
-WHERE 1=1 {0}
-ORDER BY base.BundleNo
+	SELECT	[EstCutDate] = MAX(w.EstCutDate),
+			[CuttingOutputDate] = MAX(co.cDate)
+	from WorkOrder w WITH (NOLOCK)
+	LEFT JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON w.Ukey = cod.WorkOrderUkey
+	LEFT JOIN CuttingOutput co WITH (NOLOCK) ON cod.ID = co.ID
+	where w.CutRef = b.CutRef and w.MDivisionId = b.MDivisionid
+)  EstCut
+outer apply(
+    select s.ID,s.InOutRule
+    from SubProcess s
+        where exists (
+                        select 1 from Bundle_Detail_Art bda
+                                where   bda.BundleNo = bd.BundleNo    and
+                                        bda.ID = b.ID   and
+                                        bda.SubProcessID = s.ID
+                        ) or s.IsRFIDDefault = 1
+) s
+outer apply(
+	    select sub= stuff((
+		    Select distinct concat('+', bda.SubprocessId)
+		    from Bundle_Detail_Art bda WITH (NOLOCK) 
+		    where bda.Id = bd.Id and bda.Bundleno = bd.Bundleno
+		    for xml path('')
+	    ),1,1,'')
+) as sub
+left join #FarmOutList  FarmOut on FarmOut.BundleNo=base.BundleNo AND FarmOut.StartProcess= s.Id 
+left join #FarmInList  FarmIn on FarmIn.BundleNo=base.BundleNo AND FarmIn.StartProcess= s.Id
+left join LocalSupp ls on ls.id=FarmOut.EndSite
+WHERE 1=1 {finalWhere.JoinToString("\r\n")}
 
-Drop Table #FarmOutList,#FarmInList,#Base
 
-", filte.JoinToString("\r\n"));
+select
+		BundleNo
+		,EXCESS
+		,CutRef
+		,Orderid
+		,POID
+		,MDivisionid
+		,FtyGroup
+		,Category
+		,ProgramID
+		,StyleID
+		,SeasonID
+		,BrandID
+		,PatternPanel
+		,Cutno
+		,FabricPanelCode
+		,Article
+		,Colorid
+		,Sewinglineid
+		,SewingCell
+		,Patterncode
+		,PatternDesc
+		,BundleGroup
+		,SizeCode
+		,Artwork
+		,Qty
+		,SubProcess
+		,Cdate
+		,FarmOutDate
+		,FarmInDate
+		,EstCutDate
+		,CuttingOutputDate
+		,Subcon
+		,remark 
+from #result
+order by [Bundleno],[CutRef],[Orderid],[StyleID],[SeasonID],[BrandID],[Article],[ColorID],[Sewinglineid],[SewingCell]
+        ,[Patterncode],[PatternDesc],[BundleGroup],[SizeCode],[FarmOutDate] desc,[FarmInDate] desc
+
+
+Drop Table #FarmOutList,#FarmInList,#Base,#result
+
+";
 
             #endregion
             #region Get Data

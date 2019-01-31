@@ -136,11 +136,11 @@ namespace Sci.Production.Warehouse
                         errormsgDir[errorkey] += Environment.NewLine + "<Roll> length can't be more than 8 Characters.";
                 //listRowErrMsg.Add("<Roll> length can't be more than 8 Characters.");
 
-                // Dyelot varchar(4)
+                // Dyelot varchar(8)
                 byte[] DyelotTemp = System.Text.Encoding.Default.GetBytes(row["Dyelot"].ToString());
-                if (DyelotTemp.Length > 4)
-                    if (!errormsgDir[errorkey].Contains("<Dyelot> length can't be more than 4 Characters."))
-                        errormsgDir[errorkey] += Environment.NewLine + "<Dyelot> length can't be more than 4 Characters.";
+                if (DyelotTemp.Length > 8)
+                    if (!errormsgDir[errorkey].Contains("<Dyelot> length can't be more than 8 Characters."))
+                        errormsgDir[errorkey] += Environment.NewLine + "<Dyelot> length can't be more than 8 Characters.";
                 //listRowErrMsg.Add("<Dyelot> length can't be more than 4 Characters.");
 
                 // ShipQty  numeric(11, 2)
@@ -762,7 +762,7 @@ WHERE   StockType='{0}'
             .Numeric("weight", header: "G.W(kg)", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 7)    //4
             .Numeric("actualweight", header: "Act.(kg)", width: Widths.AnsiChars(7), decimal_places: 2, integer_places: 7).Get(out Col_ActualW)    //5
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7)).Get(out cbb_Roll)    //6
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5)).Get(out cbb_Dyelot)    //7
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8)).Get(out cbb_Dyelot)    //7
             .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 10, settings: ns2).Get(out Col_ActualQty)    //8
             .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //9
             .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //10
@@ -772,7 +772,7 @@ WHERE   StockType='{0}'
             .Text("remark", header: "Remark")    //14
             ;     //
             cbb_Roll.MaxLength = 8;
-            cbb_Dyelot.MaxLength = 4;
+            cbb_Dyelot.MaxLength = 8;
             cbb_Seq.MaxLength = 6;
             cbb_poid.MaxLength = 13;
             #endregion 欄位設定

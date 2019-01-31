@@ -142,7 +142,7 @@ from TMP"
             this.gridInventoryStatus.DataSource = bindingSource1;
             Helper.Controls.Grid.Generator(this.gridInventoryStatus)
                  .Text("roll", header: "Roll#", width: Widths.AnsiChars(8))
-                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(4))
+                 .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8))
                  .Numeric("receiving", header: "Rcv.", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("A2B", header: "A to B", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)
                  .Numeric("C2B", header: "C to B", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2)

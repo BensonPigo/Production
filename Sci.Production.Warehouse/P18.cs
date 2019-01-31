@@ -730,7 +730,7 @@ select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and Factory
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), settings: ts3)  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
             .Text("roll", header: "Roll", width: Widths.AnsiChars(6)).Get(out cbb_Roll)  //2
-            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(6)).Get(out cbb_Dyelot)  //3
+            .Text("dyelot", header: "Dyelot", width: Widths.AnsiChars(8)).Get(out cbb_Dyelot)  //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //5
             .Numeric("qty", header: "In Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10)    //6
@@ -744,7 +744,7 @@ select id from Invtrans where InventoryPOID = '{0}' and type = '3'   and Factory
             cbb_stocktype.ValueMember = "Key";
             cbb_stocktype.DisplayMember = "Value";
             cbb_Roll.MaxLength = 8;
-            cbb_Dyelot.MaxLength = 4;
+            cbb_Dyelot.MaxLength = 8;
 
             detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             detailgrid.Columns["Weight"].DefaultCellStyle.BackColor = Color.Pink;

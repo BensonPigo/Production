@@ -70,6 +70,8 @@
             this.txtUserHandle = new Sci.Production.Class.txtuser();
             this.txtpayterm_ftyTerms = new Sci.Production.Class.txtpayterm_fty();
             this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.lbExVoucherID = new Sci.Win.UI.Label();
+            this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -86,6 +88,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disExVoucherID);
+            this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.comboFactory1);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnAcctApprove);
@@ -171,6 +175,8 @@
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboFactory1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbExVoucherID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disExVoucherID, 0);
             // 
             // detailpanel
             // 
@@ -674,6 +680,23 @@
             this.txtSubconSupplier.TabIndex = 2;
             this.txtSubconSupplier.TextBox1Binding = "";
             // 
+            // lbExVoucherID
+            // 
+            this.lbExVoucherID.Location = new System.Drawing.Point(615, 122);
+            this.lbExVoucherID.Name = "lbExVoucherID";
+            this.lbExVoucherID.Size = new System.Drawing.Size(102, 23);
+            this.lbExVoucherID.TabIndex = 42;
+            this.lbExVoucherID.Text = "Ex Voucher No.";
+            // 
+            // disExVoucherID
+            // 
+            this.disExVoucherID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disExVoucherID.Location = new System.Drawing.Point(717, 122);
+            this.disExVoucherID.Name = "disExVoucherID";
+            this.disExVoucherID.Size = new System.Drawing.Size(148, 23);
+            this.disExVoucherID.TabIndex = 43;
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1014, 529);
@@ -753,5 +776,7 @@
         private Win.UI.Label labelM;
         private Class.comboFactory comboFactory1;
         private Win.UI.Label label1;
+        private Win.UI.DisplayBox disExVoucherID;
+        private Win.UI.Label lbExVoucherID;
     }
 }

@@ -20,6 +20,8 @@ namespace Sci.Production.Shipping
     {
         private DateTime? buyerDlv1;
         private DateTime? buyerDlv2;
+        private DateTime? sciDlv1;
+        private DateTime? sciDlv2;
         private string brand;
         private string Shipper;
         private string factory;
@@ -48,9 +50,10 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
+            if (MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) && MyUtility.Check.Empty(this.dateBuyerDelivery.Value2)
+                && MyUtility.Check.Empty(this.dateSCIDelivery.Value1) && MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
             {
-                MyUtility.Msg.WarningBox("Buyer Delivery can't all empty!!");
+                MyUtility.Msg.WarningBox("Buyer Delivery and SCI Delivery cannot all empty!!");
                 return false;
             }
 
@@ -62,6 +65,8 @@ namespace Sci.Production.Shipping
 
             this.buyerDlv1 = this.dateBuyerDelivery.Value1;
             this.buyerDlv2 = this.dateBuyerDelivery.Value2;
+            this.sciDlv1 = this.dateSCIDelivery.Value1;
+            this.sciDlv2 = this.dateSCIDelivery.Value2;
             this.brand = this.txtbrand.Text;
             this.Shipper = this.comboShipper.Text.ToString().Trim();
             this.factory = this.comboFactory.Text;
@@ -121,13 +126,7 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3)
-,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, 
-						(select Isnull(sum(ot.Price),0) 
-						from Order_TmsCost ot
-						inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-						where ot.ID = o.id and a.Classify = 'P')
-					,0),3)
-
+,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
 From Orders o
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join FtyShipper_Detail fd on o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
@@ -147,6 +146,16 @@ Where o.LocalOrder = 0 ");
             if (!MyUtility.Check.Empty(this.buyerDlv2))
             {
                 sqlCmd.Append(string.Format(" and o.BuyerDelivery <= '{0}'", Convert.ToDateTime(this.buyerDlv2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDlv1))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery >= '{0}'", Convert.ToDateTime(this.sciDlv1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sciDlv2))
+            {
+                sqlCmd.Append(string.Format(" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDlv2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.brand))

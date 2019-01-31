@@ -159,7 +159,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportLocate = false;
             this.IsSupportPrint = false;
             this.Name = "B20";
             this.Text = "B20. Defect type for RFT/CFA(Garment)";

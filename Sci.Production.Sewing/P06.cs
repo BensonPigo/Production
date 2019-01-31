@@ -129,6 +129,7 @@ where	pd.CTNStartNo != '' and
 		p.Type in ('B','L') and
 		pd.TransferDate  is null and
 		pd.DRYReceiveDate  is null and 
+        pd.PackErrTransferDate  is null and 
 		(pu.Status = 'New' or pu.Status is null)
 " + addWhere;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, sqlPar, out this.dtReceive);
@@ -345,7 +346,7 @@ where	pd.CTNStartNo != '' and
             // 檢查資料
             PackDataResult packDataResult = new PackDataResult();
             string updSql = string.Empty;
-            var checkData = this.dtReceive.AsEnumerable().Where(s => (int)s["selected"] == 1);
+            var checkData = this.dtReceive.AsEnumerable().Where(s => (int)s["selected"] == 1).ToList();
             foreach (var item in checkData)
             {
                 packDataResult = this.GetPackData(item["ID"].ToString() + item["CTNStartNo"].ToString());
@@ -377,7 +378,7 @@ insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStar
                 Prgs.UpdateOrdersCTN(item["OrderID"].ToString());
             }
 
-            foreach (DataRow item in this.dtReceive.Select("selected = 1"))
+            foreach (DataRow item in checkData)
             {
                 this.dtReceive.Rows.Remove(item);
             }

@@ -138,7 +138,7 @@ left join cte2 on cte2.ToPoid = cte1.FromPoId and cte2.ToSeq1 = cte1.FromSeq1 an
                 .Text("frompoid", header: "From" + Environment.NewLine + "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //1
                 .Text("fromseq", header: "From" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
                 .Text("FromRoll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //3
-                .Text("FromDyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
+                .Text("FromDyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //4
                 .Text("location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(10)) //5
                 .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25)) //6
                 .Text("StockUnit", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(4))      //7

@@ -4,7 +4,7 @@
     [SEQ1]          VARCHAR (3)   CONSTRAINT [DF_Oven_Detail_SEQ] DEFAULT ('') NOT NULL,
     [SEQ2]          VARCHAR (2)   CONSTRAINT [DF_Oven_Detail_SEQ2] DEFAULT ('') NOT NULL,
     [Roll]          VARCHAR (8)   CONSTRAINT [DF_Oven_Detail_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]        VARCHAR (4)   CONSTRAINT [DF_Oven_Detail_Dyelot] DEFAULT ('') NULL,
+    [Dyelot]        VARCHAR (8)   CONSTRAINT [DF_Oven_Detail_Dyelot] DEFAULT ('') NOT NULL,
     [Result]        VARCHAR (4)   CONSTRAINT [DF_Oven_Detail_Result] DEFAULT ('') NULL,
     [changeScale]   VARCHAR (8)   CONSTRAINT [DF_Oven_Detail_changeScale] DEFAULT ('') NULL,
     [StainingScale] VARCHAR (8)   CONSTRAINT [DF_Oven_Detail_StainingScale] DEFAULT ('') NULL,
@@ -13,6 +13,9 @@
     [AddDate]       DATETIME      NULL,
     [EditName]      VARCHAR (10)  CONSTRAINT [DF_Oven_Detail_EditName] DEFAULT ('') NULL,
     [EditDate]      DATETIME      NULL,
+    [ResultChange]  VARCHAR (5)   NULL,
+    [ResultStain]   VARCHAR (5)   NULL,
+    [SubmitDate]    DATE          NULL,
     CONSTRAINT [PK_Oven_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [OvenGroup] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 

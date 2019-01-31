@@ -66,7 +66,7 @@ namespace Sci.Production.Warehouse
                 .Text("seq2", header: "Seq2", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
                 .ComboBox("fabrictype", header: "Fabric" + Environment.NewLine + "Type", width: Widths.AnsiChars(10), iseditable: false).Get(out cbb_fabrictype)  //3
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: true)    //4
-                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: true) //5
+                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true) //5
                 .Numeric("shipqty", header: "Ship Qty", width: Widths.AnsiChars(13), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
                 .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)    //7
                 .Numeric("weight", header: "G.W(kg)", width: Widths.AnsiChars(9), decimal_places: 2, integer_places: 7, iseditingreadonly: true)    //8

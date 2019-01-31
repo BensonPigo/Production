@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[FIR_Laboratory_Wash] (
     [ID]                 BIGINT         CONSTRAINT [DF_FIR_Laboratory_Wash_ID] DEFAULT ((0)) NOT NULL,
     [Roll]               VARCHAR (8)    CONSTRAINT [DF_FIR_Laboratory_Wash_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]             VARCHAR (4)    CONSTRAINT [DF_FIR_Laboratory_Wash_Dyelot] DEFAULT ('') NOT NULL,
+    [Dyelot]             VARCHAR (8)    CONSTRAINT [DF_FIR_Laboratory_Wash_Dyelot] DEFAULT ('') NOT NULL,
     [Inspdate]           DATE           NULL,
     [Inspector]          VARCHAR (10)   CONSTRAINT [DF_FIR_Laboratory_Wash_Inspector] DEFAULT ('') NULL,
     [Result]             VARCHAR (5)    CONSTRAINT [DF_FIR_Laboratory_Wash_Result] DEFAULT ('') NULL,
@@ -27,6 +27,8 @@
     [SkewnessRate]       NUMERIC (6, 2) CONSTRAINT [DF_FIR_Laboratory_Wash_SkewnessRate] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_FIR_Laboratory_Wash] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 

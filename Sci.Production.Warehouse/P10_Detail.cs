@@ -136,7 +136,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
             .Text("seq1", header: "seq1", width: Widths.AnsiChars(4), iseditingreadonly: true)  //2
             .Text("seq2", header: "seq2", width: Widths.AnsiChars(3), iseditingreadonly: true)  //3
             .Text("roll", header: "roll", width: Widths.AnsiChars(10), iseditingreadonly: true)  //4
-            .Text("dyelot", header: "dyelot", width: Widths.AnsiChars(6), iseditingreadonly: true)  //5
+            .Text("dyelot", header: "dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)  //5
             .Numeric("qty", header: "Issue Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, settings: ns)    //6
             .Text("location", header: "Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(10), iseditingreadonly: true)  //7
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 8, iseditingreadonly: true)    //8
@@ -179,7 +179,7 @@ order by GroupQty desc, t.dyelot, balanceqty desc", out dtFtyinventory, "#tmp"))
 
             DataTable subDT = (DataTable)gridbs.DataSource;
 
-            foreach (DataRow temp in subDT.ToList()) subDT.Rows.Remove(temp);
+            foreach (DataRow temp in subDT.ToList()) temp.Delete();
                 
             //subDT.Clear();
             foreach (DataRow dr2 in issued)

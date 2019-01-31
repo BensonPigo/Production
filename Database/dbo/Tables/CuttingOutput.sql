@@ -2,7 +2,7 @@
     [ID]          VARCHAR (13)    CONSTRAINT [DF_CuttingOutput_ID] DEFAULT ('') NOT NULL,
     [cDate]       DATE            NULL,
     [MDivisionid] VARCHAR (8)     CONSTRAINT [DF_CuttingOutput_Factoryid] DEFAULT ('') NULL,
-    [Manpower]    NUMERIC (3)     CONSTRAINT [DF_CuttingOutput_Manpower] DEFAULT ((0)) NULL,
+    [Manpower]    INT     CONSTRAINT [DF_CuttingOutput_Manpower] DEFAULT ((0)) NULL,
     [Manhours]    NUMERIC (5, 1)  CONSTRAINT [DF_CuttingOutput_Manhours] DEFAULT ((0)) NULL,
     [Actoutput]   NUMERIC (7)     CONSTRAINT [DF_CuttingOutput_Actoutput] DEFAULT ((0)) NULL,
     [ActGarment]  INT     CONSTRAINT [DF_CuttingOutput_ActGarment] DEFAULT ((0)) NULL,

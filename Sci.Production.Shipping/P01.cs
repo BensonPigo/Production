@@ -214,20 +214,6 @@ where o.Id = '{0}'",
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["PPICMgr"]))
-            {
-                this.txtUserPPICmgr.TextBox1.Focus();
-                MyUtility.Msg.WarningBox("PPIC mgr can't empty!!");
-                return false;
-            }
-
-            if (MyUtility.Check.Empty(this.CurrentMaintain["FtyMgr"]))
-            {
-                this.txtUserFactorymgr.TextBox1.Focus();
-                MyUtility.Msg.WarningBox("Factory mgr can't empty!!");
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["ShipLeader"]))
             {
                 this.txtuserShipLeader.TextBox1.Focus();
@@ -1045,7 +1031,7 @@ values ('{0}','Status','New','Checked','{1}',GetDate())",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                 Sci.Env.User.UserID);
 
-            string updateCmd = string.Format(@"update AirPP set Status = 'Checked', PPICMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(@"update AirPP set Status = 'Checked',PPICMgr = '{0}',PPICMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
@@ -1095,7 +1081,7 @@ values ('{0}','Status','Checked','New','{1}','{2}','{3}',GetDate())",
                     callReason.ReturnRemark,
                     Sci.Env.User.UserID);
 
-                string updateCmd = string.Format(@"update AirPP set Status = 'New', PPICMgrApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                string updateCmd = string.Format(@"update AirPP set Status = 'New', PPICMgr = '',PPICMgrApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
                 using (TransactionScope transactionScope = new TransactionScope())
                 {
@@ -1147,7 +1133,7 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())",
                 MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
                 Sci.Env.User.UserID);
 
-            string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+            string updateCmd = string.Format(@"update AirPP set Status = 'Approved', FtyMgr = '{0}', FtyMgrApvDate = GetDate(), EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
@@ -1176,6 +1162,57 @@ values ('{0}','Status','Checked','Approved','{1}',GetDate())",
             }
 
             this.SendMail(false);
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickUnconfirm()
+        {
+            if (!Prgs.GetAuthority(MyUtility.Convert.GetString(this.CurrentMaintain["FtyMgr"])))
+            {
+                MyUtility.Msg.WarningBox("Sorry, you don't have permission to unconfirm this data. ");
+                return;
+            }
+
+            Sci.Win.UI.SelectReason callReason = new Sci.Win.UI.SelectReason("Air_Prepaid_unApprove");
+            DialogResult dResult = callReason.ShowDialog(this);
+            if (dResult == System.Windows.Forms.DialogResult.OK)
+            {
+                string insertCmd = string.Format(
+                    @"insert into AirPP_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
+values ('{0}','Status','Approved','Checked','{1}','{2}','{3}',GetDate())",
+                    MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
+                    callReason.ReturnReason,
+                    callReason.ReturnRemark,
+                    Sci.Env.User.UserID);
+
+                string updateCmd = string.Format(@"update AirPP set Status = 'Checked', FtyMgr = '',FtyMgrApvDate = null, EditName = '{0}', EditDate = GetDate() where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+
+                using (TransactionScope transactionScope = new TransactionScope())
+                {
+                    try
+                    {
+                        DualResult result = DBProxy.Current.Execute(null, insertCmd);
+                        DualResult result2 = DBProxy.Current.Execute(null, updateCmd);
+
+                        if (result && result2)
+                        {
+                            transactionScope.Complete();
+                        }
+                        else
+                        {
+                            transactionScope.Dispose();
+                            MyUtility.Msg.WarningBox("UnConfirm failed, Pleaes re-try");
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        transactionScope.Dispose();
+                        this.ShowErr("Commit transaction error.", ex);
+                        return;
+                    }
+                }
+            }
         }
 
         // Status update history

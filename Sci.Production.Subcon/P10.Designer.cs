@@ -64,6 +64,8 @@
             this.txtuserHandle = new Sci.Production.Class.txtuser();
             this.txtartworktype_ftyArtworkType = new Sci.Production.Class.txtartworktype_fty();
             this.txtsubconSupplier = new Sci.Production.Class.txtsubcon();
+            this.lbExVoucherID = new Sci.Win.UI.Label();
+            this.disExVoucherID = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -80,6 +82,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disExVoucherID);
+            this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.txtmfactory);
             this.masterpanel.Controls.Add(this.displayTransferAC);
             this.masterpanel.Controls.Add(this.labelTransferAC);
@@ -154,6 +158,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labelTransferAC, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayTransferAC, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtmfactory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbExVoucherID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disExVoucherID, 0);
             // 
             // detailpanel
             // 
@@ -616,6 +622,23 @@
             this.txtsubconSupplier.TabIndex = 1;
             this.txtsubconSupplier.TextBox1Binding = "";
             // 
+            // lbExVoucherID
+            // 
+            this.lbExVoucherID.Location = new System.Drawing.Point(5, 224);
+            this.lbExVoucherID.Name = "lbExVoucherID";
+            this.lbExVoucherID.Size = new System.Drawing.Size(107, 23);
+            this.lbExVoucherID.TabIndex = 52;
+            this.lbExVoucherID.Text = "Ex Voucher No.";
+            // 
+            // disExVoucherID
+            // 
+            this.disExVoucherID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disExVoucherID.Location = new System.Drawing.Point(115, 224);
+            this.disExVoucherID.Name = "disExVoucherID";
+            this.disExVoucherID.Size = new System.Drawing.Size(313, 23);
+            this.disExVoucherID.TabIndex = 53;
+            // 
             // P10
             // 
             this.ApvChkValue = "New";
@@ -692,5 +715,7 @@
         private Win.UI.Label labelTerms;
         private Class.txtfactory txtmfactory;
         private Win.UI.DateBox dateApprovedDate;
+        private Win.UI.DisplayBox disExVoucherID;
+        private Win.UI.Label lbExVoucherID;
     }
 }

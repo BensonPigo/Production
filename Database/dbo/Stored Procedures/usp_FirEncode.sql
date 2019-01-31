@@ -11,7 +11,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @Result varchar(15);
-	DECLARE @dyelot varchar(4);
+	DECLARE @dyelot varchar(8);
 	DECLARE @err_msg nvarchar(2000);
 
 	BEGIN TRY
@@ -53,7 +53,7 @@ BEGIN
 		END
 		BEGIN TRANSACTION
 
-		Update Fir set PhysicalDate = (select top 1 max(InspDate) from Fir_Physical where id=@FirID)
+		Update Fir set PhysicalDate = GetDate()
 						,PhysicalEncode=1
 						,EditName=@Login
 						,EditDate = GetDate()

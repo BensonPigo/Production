@@ -67,8 +67,9 @@ select  s.OutputDate
 		, s.SubConOutContractNumber
 		, sod.UnitPrice
 		, sod.Vat
-		, [CPUPrice] = case when att.ProductionUnit = 'QTY' then ROUND(Sum(sd.QAQty * ot.Price * a.Rate), 4)
-							when att.ProductionUnit = 'TMS' then ROUND(Sum(sd.QAQty * ot.Price * a.Rate), 3)
+		, [CPUPrice] = case when att.ID = 'SEWING' then Sum(sd.QAQty * iif(s.Category = 'M', mo.CPUFactor * mo.CPU, o.CPUFactor * O.CPU  * a.Rate))
+							when att.ProductionUnit = 'QTY'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 4)
+							when att.ProductionUnit = 'TMS'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 3)
 							else 0 end
 		, [Qty] = Sum(sd.QAQty)
 from SewingOutput s WITH (NOLOCK) 
@@ -83,7 +84,7 @@ left join SubconOutContract_Detail sod WITH (NOLOCK) on sod.SubConOutFty = s.Sub
 														sod.ComboType = sd.ComboType and 
 														sod.Article = sd.Article
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
-left join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and 
+inner join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and 
 											att.Classify in ('I','A','P') and 
 											-- Sewing need include data
 											(att.IsTtlTMS = 0 or att.Seq = 1010 ) and 
