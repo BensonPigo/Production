@@ -36,7 +36,7 @@ BEGIN
 
 	DECLARE @CuttingTime numeric(20,4)
 	set @CuttingTime = isnull(@Setuptime,0) + 
-					   iif(isnull(@ActualSpeed,0)=0,0,isnull(@TotalCuttingPerimeter,0)/@ActualSpeed) + 
+					   iif(isnull(@ActualSpeed,0)=0,0,isnull(@TotalCuttingPerimeter,0)/@ActualSpeed)*60 + 
 					   isnull(@Windowtime * @WindowNo,0)
 
 	RETURN @CuttingTime
