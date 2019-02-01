@@ -641,6 +641,10 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                 bool haveSea = false, noExistNotSea = true;
                 DataTable duplicData;
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
+
+                // 取得AccountNo
+                  string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
+
                 StringBuilder msg = new StringBuilder();
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).ToList<DataRow>())
                 {
@@ -701,6 +705,20 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                             haveSea = haveSea || MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                             noExistNotSea = noExistNotSea && MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                         }
+
+                        string strSqlcmd = $@"select 1 from AirPP where OrderID = '{dr["OrderID"]}'";
+
+                        if (!MyUtility.Check.Seek(strSqlcmd) &&
+                            (dr["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
+                             dr["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
+                             dr["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
+                             (accNo.Substring(0, 4).CompareTo("6105") == 0 ||
+                              accNo.Substring(0, 4).CompareTo("5912") == 0))
+                        {
+                            MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
+                            return;
+                        }
+
                     }
                 }
 
@@ -719,8 +737,6 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                 #region 將資料寫入Table
                 IList<string> deleteCmds = new List<string>();
                 IList<string> addCmds = new List<string>();
-
-                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
 
                 // Junk實體資料
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
