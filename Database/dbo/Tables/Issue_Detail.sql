@@ -8,13 +8,16 @@
     [Seq1]              VARCHAR (3)     CONSTRAINT [DF_Issue_Detail_Seq1] DEFAULT ('') NULL,
     [Seq2]              VARCHAR (2)     CONSTRAINT [DF_Issue_Detail_Seq2] DEFAULT ('') NULL,
     [Roll]              VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Roll] DEFAULT ('') NULL,
-    [Dyelot]            VARCHAR (4)     CONSTRAINT [DF_Issue_Detail_Dyelot] DEFAULT ('') NULL,
+    [Dyelot]            VARCHAR (8)     CONSTRAINT [DF_Issue_Detail_Dyelot] DEFAULT ('') NULL,
     [StockType]         CHAR (1)        CONSTRAINT [DF_Issue_Detail_StockType] DEFAULT ('') NULL,
     [ukey]              BIGINT          IDENTITY (1, 1) NOT NULL,
-    [BarcodeNo] VARCHAR(13) NOT NULL CONSTRAINT [UK_Issue_Detail_BarcodeNo] unique, 
+    [BarcodeNo]         VARCHAR (13)    NOT NULL,
     CONSTRAINT [PK_Issue_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC),
-    CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey])
+    CONSTRAINT [FK_Issue_Detail_Issue_Detail] FOREIGN KEY ([ukey]) REFERENCES [dbo].[Issue_Detail] ([ukey]),
+    CONSTRAINT [UK_Issue_Detail_BarcodeNo] UNIQUE NONCLUSTERED ([BarcodeNo] ASC)
 );
+
+
 
 
 
@@ -84,4 +87,9 @@ GO
 CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
     ON [dbo].[Issue_Detail]([FtyInventoryUkey] ASC)
     INCLUDE([Id], [Qty]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20180413-155915]
+    ON [dbo].[Issue_Detail]([Issue_SummaryUkey] ASC);
 

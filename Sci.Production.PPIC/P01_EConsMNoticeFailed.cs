@@ -19,12 +19,14 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class P01_EConsMNoticeFailed : Sci.Win.Subs.Input4
     {
+        private bool _mustEmpty;
         /// <inheritdoc/>
-        public P01_EConsMNoticeFailed(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3)
+        public P01_EConsMNoticeFailed(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, bool mustEmpty = false)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
             this.GridPopUp = false;
+            this._mustEmpty = mustEmpty;
         }
 
         /// <inheritdoc/>
@@ -99,7 +101,7 @@ Left Join Orders o on f.id	= o.ID
 Outer Apply(Select GMTLT = dbo.GetStyleGMTLT(o.BrandID,o.StyleID,o.SeasonID,o.FactoryID)) as GetGMTLT
 Left join GetName as GetSMR on GetSMR.ID = o.SMR
 Left join GetName as GetMR on GetMR.ID = o.MRHandle
-Where 1 = 1
+Where 1 = 1 {(this._mustEmpty ? "AND 1=0" : string.Empty)}
 {where}
 ";
             var result = DBProxy.Current.Select(null, sqlCmd, para, out datas);

@@ -7,7 +7,7 @@
     [Seq1]             VARCHAR (3)     CONSTRAINT [DF_IssueLack_Detail_Seq1] DEFAULT ('') NULL,
     [Seq2]             VARCHAR (2)     CONSTRAINT [DF_IssueLack_Detail_Seq2] DEFAULT ('') NULL,
     [Roll]             VARCHAR (8)     CONSTRAINT [DF_IssueLack_Detail_Roll] DEFAULT ('') NULL,
-    [Dyelot]           VARCHAR (4)     CONSTRAINT [DF_IssueLack_Detail_Dyelot] DEFAULT ('') NULL,
+    [Dyelot]           VARCHAR (8)     CONSTRAINT [DF_IssueLack_Detail_Dyelot] DEFAULT ('') NULL,
     [StockType]        CHAR (1)        CONSTRAINT [DF_IssueLack_Detail_StockType] DEFAULT ('') NULL,
     [Ukey]             BIGINT          IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_IssueLack_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)

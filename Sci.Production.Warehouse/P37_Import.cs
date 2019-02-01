@@ -242,7 +242,7 @@ where   f.InQty - f.OutQty + f.AdjustQty > 0
                 .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(13)) //3
                 .Text("seq", header: "SEQ", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
                 .Text("roll", header: "Roll#", iseditingreadonly: true, width: Widths.AnsiChars(8)) //5
-                .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //6
+                .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //6
                 .Text("stocktype", header: "stocktype", iseditingreadonly: true, width: Widths.AnsiChars(6), settings: ns2) //7
                 .Numeric("balance", header: "Balance" + Environment.NewLine + "Qty", iseditable: false, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //8
                 .Numeric("Qty", header: "Return" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns, width: Widths.AnsiChars(6))  //9

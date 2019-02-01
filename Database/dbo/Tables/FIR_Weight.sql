@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[FIR_Weight] (
     [ID]              BIGINT         CONSTRAINT [DF_FIR_Weight_ID] DEFAULT ((0)) NOT NULL,
     [Roll]            VARCHAR (8)    CONSTRAINT [DF_FIR_Weight_Roll] DEFAULT ('') NOT NULL,
-    [Dyelot]          VARCHAR (4)    CONSTRAINT [DF_FIR_Weight_Dyelot] DEFAULT ('') NOT NULL,
+    [Dyelot]          VARCHAR (8)    CONSTRAINT [DF_FIR_Weight_Dyelot] DEFAULT ('') NOT NULL,
     [WeightM2]        NUMERIC (4, 1) CONSTRAINT [DF_FIR_Weight_WeightM2] DEFAULT ((0)) NOT NULL,
     [AverageWeightM2] NUMERIC (4, 1) CONSTRAINT [DF_FIR_Weight_AverageWeightM2] DEFAULT ((0)) NOT NULL,
     [Difference]      NUMERIC (5, 2) CONSTRAINT [DF_FIR_Weight_Difference] DEFAULT ((0)) NOT NULL,
@@ -13,8 +13,11 @@
     [AddDate]         DATETIME       NULL,
     [EditName]        VARCHAR (10)   CONSTRAINT [DF_FIR_Weight_EditName] DEFAULT ('') NULL,
     [EditDate]        DATETIME       NULL,
+    [SubmitDate]      DATE           NULL,
     CONSTRAINT [PK_FIR_Weight] PRIMARY KEY CLUSTERED ([ID] ASC, [Roll] ASC, [Dyelot] ASC)
 );
+
+
 
 
 

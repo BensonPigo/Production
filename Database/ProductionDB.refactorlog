@@ -308,4 +308,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Style_SizeTol" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="1724dd6a-e870-4952-87fc-40dc6375369b" ChangeDateTime="01/23/2019 07:22:50">
+    <Property Name="ElementName" Value="[dbo].[PackErrTransfer].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PackErrTransfer]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0f4a3bfc-17d4-4806-9b6d-d1a1afab948d" ChangeDateTime="01/25/2019 08:34:46">
+    <Property Name="ElementName" Value="[dbo].[PackErrTransfer].[TransferDate]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PackErrTransfer]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CFMDate" />
+  </Operation>
 </Operations>

@@ -241,7 +241,7 @@ and ReasonTypeID='Stock_Remove' AND junk = 0", e.FormattedValue), out dr, null))
             .Text("poid", header: "SP#", iseditingreadonly: true, width: Widths.AnsiChars(14)) //1
             .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //2
             .Text("roll", header: "Roll", iseditingreadonly: true, width: Widths.AnsiChars(6)) //4
-            .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(6)) //5
+            .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) //5
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
             .EditText("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(20)) //3
             .Numeric("QtyBefore", header: "Original Qty", iseditable: true, decimal_places: 2, integer_places: 10, width: Widths.AnsiChars(6)) //6

@@ -303,9 +303,9 @@ namespace Sci.Production.Warehouse
                                 if (Encoding.Default.GetBytes(newRow["Roll"].ToString()).Length > 8)
                                     listColumnLengthErrMsg.Add("<C/No> length can't be more than 8 Characters.");
 
-                                // Dyelot varchar(4)
-                                if (Encoding.Default.GetBytes(newRow["Dyelot"].ToString()).Length > 4)
-                                    listColumnLengthErrMsg.Add("<LOT NO.> length can't be more than 4 Characters.");
+                                // Dyelot varchar(8)
+                                if (Encoding.Default.GetBytes(newRow["Dyelot"].ToString()).Length > 8)
+                                    listColumnLengthErrMsg.Add("<LOT NO.> length can't be more than 8 Characters.");
 
                                 // qty + foc  numeric (11, 2)
                                 if (decimal.Parse(newRow["qty"].ToString()) + decimal.Parse(newRow["foc"].ToString()) > 999999999)
