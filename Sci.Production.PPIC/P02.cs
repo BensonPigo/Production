@@ -116,7 +116,7 @@ and UpdateDate = (select max(UpdateDate) from OrderComparisonList WITH (NOLOCK) 
         private void QueryDate()
         {
             string factoryID = (string)this.comboFactory.SelectedValue;
-            DateTime updateDate = (DateTime) this.dateUpdatedDate.Value;
+            DateTime? updateDate = (DateTime?) this.dateUpdatedDate.Value;
 
             string sqlwhere = string.Empty;
             sqlwhere += MyUtility.Check.Empty(factoryID) ? $@" and MDivisionID = '{Sci.Env.User.Keyword}'" : $@" and FactoryID = '{factoryID}'";
@@ -215,7 +215,7 @@ order by FactoryID,OrderId";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_P02.xltx");
             MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P02.xltx", 3, false, string.Empty, objApp);
             objApp.Cells[2, 3] = "Last Date " + this.dateLastDate.Value.Value.ToShortDateString();
-            objApp.Cells[2, 9] = "Update Date " + this.dateUpdatedDate.Value.Value.ToShortDateString();
+            objApp.Cells[2, 9] = "Update Date " + (this.dateUpdatedDate.Value.HasValue ? this.dateUpdatedDate.Value.Value.ToShortDateString() : null);
             int number = 3;
             for (int j = 0; j < excelTable.Rows.Count; j++)
             {
