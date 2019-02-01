@@ -415,9 +415,7 @@ where a.id in (select id from @T)) as s
 				t.RefNo = ISNULL(s.RefNo,'')
 		when not matched by target then
 		insert  (ID,Seq1,Seq2,MasterGroupID,MachineGroupID,MachineBrandID,Model,Description,Qty,FOC,Price,Remark,MachineReqID,Junk,RefNo)
-		values	(s.ID,s.Seq1,s.Seq2,s.MasterGroupID,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk,ISNULL(s.RefNo,''))
-		when not matched by source and t.id in (select id from @T) then
-		delete ;
+		values	(s.ID,s.Seq1,s.Seq2,s.MasterGroupID,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk,ISNULL(s.RefNo,''));
 
 	--------------Partunit-------------------------------
 		Merge [Machine].[dbo].[MMSUnit] as t
