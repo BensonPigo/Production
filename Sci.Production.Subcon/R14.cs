@@ -124,10 +124,14 @@ namespace Sci.Production.Subcon
 
             #region -- Sql Command --
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select t.*,ArtworkType.ID artworktypeid
-                            into #cte
-                            from dbo.ArtworkType WITH (NOLOCK) ,(select distinct (select orders.poid from orders WITH (NOLOCK) where id=b.OrderId) orderid 
-                            from dbo.ArtworkAP a WITH (NOLOCK) inner join dbo.ArtworkAP_Detail b WITH (NOLOCK) on b.id = a.id ");
+            sqlCmd.Append(
+                @"
+                    select distinct c.POID, a.IssueDate ,a.ArtworkTypeID
+                    into #tmp1
+                    from ArtworkAP a WITH (NOLOCK) 
+                    inner join ArtworkAP_Detail b WITH (NOLOCK) on b.id = a.id  
+                    inner join Orders c WITH (NOLOCK) on b.OrderID = c.ID
+                ");
 
             #region -- 條件組合 --
             switch (statusindex)
@@ -227,8 +231,14 @@ namespace Sci.Production.Subcon
 
             #endregion
 
-            sqlCmd.Append(@")t
-	where Artworktype.IsSubprocess=1 ");
+            sqlCmd.Append(@"
+
+                    select POID,ArtworkTypeID
+                    into #tmp
+                    from #tmp1
+                    group by POID,ArtworkTypeID
+
+                ");
 
             // 指定繡花條件時，有多撈取繡花線的成本
             if (artworktype.ToLower().TrimEnd() == "embroidery")
@@ -241,7 +251,7 @@ namespace Sci.Production.Subcon
                 sqlCmd.Append(string.Format(@"
 
                 select aa.FactoryID
-                ,#cte.artworktypeid
+                ,t.artworktypeid
                 ,aa.POID
                 ,aa.StyleID
                 ,cc.BuyerID
@@ -292,9 +302,9 @@ namespace Sci.Production.Subcon
                                    END
                 ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
                 
-                from #cte
-                left join orders aa on aa.id = #cte.orderid
-                left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = #cte.artworktypeid
+                from #tmp as t
+                left join orders aa on aa.id = t.POID
+                left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
                 left join Brand cc on aa.BrandID=cc.id
                 outer apply (
 	                select isnull(sum(t.ap_amt),0.00) ap_amt
@@ -308,7 +318,7 @@ namespace Sci.Production.Subcon
 	                from ArtworkAP ap WITH (NOLOCK) 
                     inner join ArtworkAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
                     inner join orders WITH (NOLOCK) ON orders.id = apd.orderid
-		                where ap.ArtworkTypeID = #cte.artworktypeid and orders.POId = aa.POID AND ap.Status = 'Approved') t
+		                where ap.ArtworkTypeID = t.artworktypeid and orders.POId = aa.POID AND ap.Status = 'Approved') t
 		                ) x
                 outer apply(
 	                select orders.POID
@@ -316,7 +326,7 @@ namespace Sci.Production.Subcon
 	                ,sum(orders.qty*Price) order_amt 
 	                from orders WITH (NOLOCK) 
 	                inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	                where poid= aa.POID and ArtworkTypeID= #cte.artworktypeid
+	                where poid= aa.POID and ArtworkTypeID= t.artworktypeid
 	                group by orders.poid,ArtworkTypeID) y
                 outer apply (
 	                select isnull(sum(tt.localap_amt),0.00) localap_amt,isnull(sum(tt.localap_qty),0) localap_qty 
@@ -344,7 +354,7 @@ namespace Sci.Production.Subcon
 					FROM ArtworkPO_IrregularPrice al
 					LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
 	                LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
-					WHERE al.POId = aa.POID AND al.ArtworkTypeId=#cte.ArtworkTypeId
+					WHERE al.POId = aa.POID AND al.ArtworkTypeId=t.ArtworkTypeId
 				)IrregularPrice 
                 where ap_qty > 0
                 ", ratetype,ordertype));
@@ -359,13 +369,13 @@ namespace Sci.Production.Subcon
 
                 sqlCmd.Append(string.Format(@"
                 select aa.FactoryID
-                ,#cte.artworktypeid
+                ,t.artworktypeid
                 ,aa.POID
                 ,aa.StyleID
                 ,cc.BuyerID
                 ,aa.BrandID
                 ,[SMR]= dbo.getTPEPass1(aa.SMR) 
-                ,[PCS]= iif(#cte.artworktypeid ='EMBROIDERY',xx.PCS,yy.PCS) 
+                ,[PCS]= iif(t.artworktypeid ='EMBROIDERY',xx.PCS,yy.PCS) 
                 ,y.order_qty
                 ,x.ap_qty
                 ,[ap_amt]= round(x.ap_amt,2) 
@@ -377,17 +387,14 @@ namespace Sci.Production.Subcon
                               END
                 ,[percentage]= CASE WHEN y.order_amt=0 or y.order_qty=0 THEN NULL
                                ELSE round(
-                                            x.ap_amt 
-                                            / y.order_qty
-                                            / y.order_amt
-                                            / y.order_qty
+                                           (x.ap_amt / y.order_qty) / (y.order_amt / y.order_qty)
                                         ,2) 
                                END
                 ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,'')) 
 
-                from #cte
-                left join orders aa WITH (NOLOCK) on aa.id = #cte.orderid
-                left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = #cte.artworktypeid
+                from #tmp as t
+                left join orders aa on aa.id = t.POID
+                left join Order_TmsCost bb on bb.id = aa.ID and bb.ArtworkTypeID = t.artworktypeid
                 left join Brand cc on aa.BrandID=cc.id
                 outer apply (
 	                select isnull(sum(t.ap_amt),0.00) ap_amt
@@ -400,7 +407,7 @@ namespace Sci.Production.Subcon
 	                from ArtworkAP ap WITH (NOLOCK) 
                     inner join ArtworkAP_Detail apd WITH (NOLOCK) on apd.id = ap.Id 
                     inner join orders WITH (NOLOCK) on orders.id = apd.orderid
-		                where ap.ArtworkTypeID = #cte.artworktypeid and orders.POId = aa.POID AND ap.Status = 'Approved') t
+		                where ap.ArtworkTypeID = t.artworktypeid and orders.POId = aa.POID AND ap.Status = 'Approved') t
 		                ) x		
                 outer apply(
 	                select orders.POID
@@ -408,7 +415,7 @@ namespace Sci.Production.Subcon
 	                ,sum(orders.qty*Price) order_amt 
 	                from orders WITH (NOLOCK) 
 	                inner join Order_TmsCost WITH (NOLOCK) on Order_TmsCost.id = orders.ID 
-	                where poid= aa.POID and ArtworkTypeID= #cte.artworktypeid
+	                where poid= aa.POID and ArtworkTypeID= t.artworktypeid
 	                group by orders.poid,ArtworkTypeID) y
                 outer apply(
                      select count(1) as PCS
@@ -429,7 +436,7 @@ namespace Sci.Production.Subcon
 					FROM ArtworkPO_IrregularPrice al
 					LEFT JOIN SubconReason sr ON al.SubconReasonID=sr.ID AND sr.Type='IP'
 	                LEFT JOIN DropDownList  d ON d.type = 'Pms_PoIr_Responsible' AND d.ID=sr.Responsible
-					WHERE al.POId = aa.POID AND al.ArtworkTypeId=#cte.ArtworkTypeId
+					WHERE al.POId = aa.POID AND al.ArtworkTypeId=t.ArtworkTypeId
 				)IrregularPrice 
                 where ap_qty > 0
                 ", ratetype,ordertype));
@@ -486,7 +493,7 @@ namespace Sci.Production.Subcon
             }
 
             //ORDER BY
-            sqlCmd.Append(" ORDER BY aa.FactoryID, #cte.artworktypeid, aa.POID ");
+            sqlCmd.Append(" ORDER BY aa.FactoryID, t.artworktypeid, aa.POID ");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(),cmds, out printData);
             if (!result)
