@@ -91,11 +91,11 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.disExVoucherID);
-            this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.txtReasonDesc);
             this.masterpanel.Controls.Add(this.txtReason);
             this.masterpanel.Controls.Add(this.labReason);
+            this.masterpanel.Controls.Add(this.disExVoucherID);
+            this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.comboFactory1);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnAcctApprove);
@@ -694,9 +694,9 @@
             // 
             // lbExVoucherID
             // 
-            this.lbExVoucherID.Location = new System.Drawing.Point(615, 122);
+            this.lbExVoucherID.Location = new System.Drawing.Point(621, 122);
             this.lbExVoucherID.Name = "lbExVoucherID";
-            this.lbExVoucherID.Size = new System.Drawing.Size(102, 23);
+            this.lbExVoucherID.Size = new System.Drawing.Size(51, 23);
             this.lbExVoucherID.TabIndex = 42;
             this.lbExVoucherID.Text = "Ex Voucher No.";
             // 
@@ -708,6 +708,7 @@
             this.disExVoucherID.Name = "disExVoucherID";
             this.disExVoucherID.Size = new System.Drawing.Size(148, 23);
             this.disExVoucherID.TabIndex = 43;
+            // 
             // labReason
             // 
             this.labReason.Location = new System.Drawing.Point(621, 122);

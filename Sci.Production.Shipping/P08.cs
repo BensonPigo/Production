@@ -940,7 +940,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
         private void comboType2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.comboType.SelectedValue == null || this.comboType2.SelectedValue == null || !this.EditMode)
+            if (this.comboType.SelectedValue == null || this.comboType2.SelectedValue == null || !this.EditMode || !this.IsDetailInserting)
             {
                 return;
             }

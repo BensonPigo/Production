@@ -486,13 +486,20 @@ select  ShippingAPID
         , FtyWK
         , isnull(sum(Amount),0) as Amount 
         , '' as SubTypeRule
+	    , pl.OrderID
 from ShareExpense se WITH (NOLOCK) 
 outer apply(
 	SELECT BLNo,Type,SubType FROM ShippingAP WITH (NOLOCK) WHERE ID= '{0}' 
 )ap
+outer apply(
+	select distinct pld.OrderID from PackingList pl
+	inner join PackingList_Detail pld on pl.id=pld.ID
+	 where INVNo=se.InvNo
+)pl
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
-group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,ap.BLNo,ap.SubType,ap.Type", MyUtility.Convert.GetString(this.apData["ID"]));
+group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,ap.BLNo,ap.SubType,ap.Type,pl.OrderID
+", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)
             {
@@ -637,8 +644,9 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             }
             else
             {
+                this.gridBLNo.ValidateControl();                
                 bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(this.apData["ID"])));
-                bool haveSea = false, noExistNotSea = true;
+                bool haveSea = false, noExistNotSea = true, noAirpp = false;
                 DataTable duplicData;
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
 
@@ -706,7 +714,14 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                             noExistNotSea = noExistNotSea && MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                         }
 
-                        string strSqlcmd = $@"select 1 from AirPP where OrderID = '{dr["OrderID"]}'";
+                        // Account Name含Air-Prepaid (6105/5912) 時, GB上的Ship Mode必須為A/P或E/P或 E/P-C,且該GB項下的SP須有APP No.
+                        string strSqlcmd = $@"
+select 1 from AirPP
+where exists(	select 1 
+from PackingList pl
+	inner join PackingList_Detail pld on pl.id=pld.ID
+	 where INVNo='{dr["InvNo"]}'
+	 and pld.OrderID=AirPP.OrderID)";
 
                         if (!MyUtility.Check.Seek(strSqlcmd) &&
                             (dr["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
@@ -715,10 +730,8 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                              (accNo.Substring(0, 4).CompareTo("6105") == 0 ||
                               accNo.Substring(0, 4).CompareTo("5912") == 0))
                         {
-                            MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
-                            return;
+                            noAirpp = true;
                         }
-
                     }
                 }
 
@@ -731,6 +744,12 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                 if (haveSea && !noExistNotSea)
                 {
                     MyUtility.Msg.WarningBox("Shipping Mode is inconsistent, can't be save.");
+                    return;
+                }
+
+                if (noAirpp)
+                {
+                    MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
                     return;
                 }
 
