@@ -137,7 +137,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(1006, 185);
+            this.masterpanel.Size = new System.Drawing.Size(1006, 211);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
@@ -188,12 +188,12 @@
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 185);
-            this.detailpanel.Size = new System.Drawing.Size(1006, 244);
+            this.detailpanel.Location = new System.Drawing.Point(0, 211);
+            this.detailpanel.Size = new System.Drawing.Size(1006, 218);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(770, 150);
+            this.gridicon.Location = new System.Drawing.Point(770, 176);
             this.gridicon.TabIndex = 11;
             // 
             // refresh
@@ -202,7 +202,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1006, 244);
+            this.detailgridcont.Size = new System.Drawing.Size(1006, 218);
             // 
             // detail2
             // 
@@ -414,7 +414,7 @@
             // 
             // labelBLNo
             // 
-            this.labelBLNo.Location = new System.Drawing.Point(471, 151);
+            this.labelBLNo.Location = new System.Drawing.Point(471, 177);
             this.labelBLNo.Name = "labelBLNo";
             this.labelBLNo.Size = new System.Drawing.Size(60, 23);
             this.labelBLNo.TabIndex = 23;
@@ -532,14 +532,14 @@
             this.txtBLNo.BackColor = System.Drawing.Color.White;
             this.txtBLNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BLNo", true));
             this.txtBLNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBLNo.Location = new System.Drawing.Point(532, 151);
+            this.txtBLNo.Location = new System.Drawing.Point(532, 177);
             this.txtBLNo.Name = "txtBLNo";
             this.txtBLNo.Size = new System.Drawing.Size(185, 23);
             this.txtBLNo.TabIndex = 8;
             // 
             // labelHandle
             // 
-            this.labelHandle.Location = new System.Drawing.Point(621, 6);
+            this.labelHandle.Location = new System.Drawing.Point(617, 6);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(80, 23);
             this.labelHandle.TabIndex = 30;
@@ -547,7 +547,7 @@
             // 
             // labelAccountant
             // 
-            this.labelAccountant.Location = new System.Drawing.Point(621, 35);
+            this.labelAccountant.Location = new System.Drawing.Point(617, 35);
             this.labelAccountant.Name = "labelAccountant";
             this.labelAccountant.Size = new System.Drawing.Size(80, 23);
             this.labelAccountant.TabIndex = 31;
@@ -555,7 +555,7 @@
             // 
             // labelApvDate
             // 
-            this.labelApvDate.Location = new System.Drawing.Point(621, 64);
+            this.labelApvDate.Location = new System.Drawing.Point(617, 64);
             this.labelApvDate.Name = "labelApvDate";
             this.labelApvDate.Size = new System.Drawing.Size(80, 23);
             this.labelApvDate.TabIndex = 32;
@@ -563,7 +563,7 @@
             // 
             // labelVoucherNo
             // 
-            this.labelVoucherNo.Location = new System.Drawing.Point(621, 93);
+            this.labelVoucherNo.Location = new System.Drawing.Point(617, 93);
             this.labelVoucherNo.Name = "labelVoucherNo";
             this.labelVoucherNo.Size = new System.Drawing.Size(80, 23);
             this.labelVoucherNo.TabIndex = 33;
@@ -573,7 +573,7 @@
             // 
             this.dateApvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApvDate", true));
             this.dateApvDate.IsSupportEditMode = false;
-            this.dateApvDate.Location = new System.Drawing.Point(703, 64);
+            this.dateApvDate.Location = new System.Drawing.Point(700, 64);
             this.dateApvDate.Name = "dateApvDate";
             this.dateApvDate.ReadOnly = true;
             this.dateApvDate.Size = new System.Drawing.Size(130, 23);
@@ -584,9 +584,9 @@
             this.displayVoucherNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayVoucherNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherID", true));
             this.displayVoucherNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayVoucherNo.Location = new System.Drawing.Point(703, 93);
+            this.displayVoucherNo.Location = new System.Drawing.Point(700, 93);
             this.displayVoucherNo.Name = "displayVoucherNo";
-            this.displayVoucherNo.Size = new System.Drawing.Size(167, 23);
+            this.displayVoucherNo.Size = new System.Drawing.Size(174, 23);
             this.displayVoucherNo.TabIndex = 37;
             // 
             // btnShareExpense
@@ -655,7 +655,7 @@
             // 
             this.txtSserAccountant.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Accountant", true));
             this.txtSserAccountant.DisplayBox1Binding = "";
-            this.txtSserAccountant.Location = new System.Drawing.Point(703, 35);
+            this.txtSserAccountant.Location = new System.Drawing.Point(700, 35);
             this.txtSserAccountant.Name = "txtSserAccountant";
             this.txtSserAccountant.Size = new System.Drawing.Size(295, 23);
             this.txtSserAccountant.TabIndex = 10;
@@ -665,7 +665,7 @@
             // 
             this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
             this.txtUserHandle.DisplayBox1Binding = "";
-            this.txtUserHandle.Location = new System.Drawing.Point(703, 6);
+            this.txtUserHandle.Location = new System.Drawing.Point(700, 6);
             this.txtUserHandle.Name = "txtUserHandle";
             this.txtUserHandle.Size = new System.Drawing.Size(295, 23);
             this.txtUserHandle.TabIndex = 9;
@@ -694,9 +694,9 @@
             // 
             // lbExVoucherID
             // 
-            this.lbExVoucherID.Location = new System.Drawing.Point(621, 122);
+            this.lbExVoucherID.Location = new System.Drawing.Point(617, 122);
             this.lbExVoucherID.Name = "lbExVoucherID";
-            this.lbExVoucherID.Size = new System.Drawing.Size(51, 23);
+            this.lbExVoucherID.Size = new System.Drawing.Size(106, 23);
             this.lbExVoucherID.TabIndex = 42;
             this.lbExVoucherID.Text = "Ex Voucher No.";
             // 
@@ -704,16 +704,16 @@
             // 
             this.disExVoucherID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disExVoucherID.Location = new System.Drawing.Point(717, 122);
+            this.disExVoucherID.Location = new System.Drawing.Point(726, 122);
             this.disExVoucherID.Name = "disExVoucherID";
             this.disExVoucherID.Size = new System.Drawing.Size(148, 23);
             this.disExVoucherID.TabIndex = 43;
             // 
             // labReason
             // 
-            this.labReason.Location = new System.Drawing.Point(621, 122);
+            this.labReason.Location = new System.Drawing.Point(471, 149);
             this.labReason.Name = "labReason";
-            this.labReason.Size = new System.Drawing.Size(53, 23);
+            this.labReason.Size = new System.Drawing.Size(60, 23);
             this.labReason.TabIndex = 42;
             this.labReason.Text = "Reason";
             // 
@@ -722,9 +722,9 @@
             this.txtReason.BackColor = System.Drawing.Color.White;
             this.txtReason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Reason", true));
             this.txtReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReason.Location = new System.Drawing.Point(675, 122);
+            this.txtReason.Location = new System.Drawing.Point(532, 149);
             this.txtReason.Name = "txtReason";
-            this.txtReason.Size = new System.Drawing.Size(42, 23);
+            this.txtReason.Size = new System.Drawing.Size(75, 23);
             this.txtReason.TabIndex = 43;
             this.txtReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtReason_PopUp);
             this.txtReason.Validating += new System.ComponentModel.CancelEventHandler(this.txtReason_Validating);
@@ -734,10 +734,10 @@
             this.txtReasonDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtReasonDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtReasonDesc.IsSupportEditMode = false;
-            this.txtReasonDesc.Location = new System.Drawing.Point(718, 122);
+            this.txtReasonDesc.Location = new System.Drawing.Point(608, 149);
             this.txtReasonDesc.Name = "txtReasonDesc";
             this.txtReasonDesc.ReadOnly = true;
-            this.txtReasonDesc.Size = new System.Drawing.Size(152, 23);
+            this.txtReasonDesc.Size = new System.Drawing.Size(217, 23);
             this.txtReasonDesc.TabIndex = 44;
             // 
             // P08
