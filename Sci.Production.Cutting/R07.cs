@@ -342,7 +342,7 @@ DROP TABLE  #tmp
             string totalWorkingDays = ts.TotalDays.ToString();
             string downloadDateTime = DateTime.Now.ToShortTimeString();
 
-            if (printDatas.Length == 0 || printDatas[0]==null)
+            if (printDatas.Length == 0 || printDatas[0].Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -548,7 +548,7 @@ DROP TABLE  #tmp
                 signleDataLabel.Position = Excel.XlDataLabelPosition.xlLabelPositionAbove;
             }
 
-
+            chartSheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
             #endregion
 
             ///////////////////////////////////
