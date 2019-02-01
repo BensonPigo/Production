@@ -734,7 +734,15 @@ where f.Junk = 0",
                 GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);
                 if (this.dataMode != null)
                 {
-                    pams = this.dataMode.ToList();
+                    pams = this.dataMode.ToList().GroupBy(g => new { g.Date.Year, g.Date.Month }).
+                        Select(s => new APIData
+                        {
+                            yyyyMM = s.First().Date.ToString("yyyy/MM"),
+                            SewTtlManpower = s.Sum(c => c.SewTtlManpower),
+                            SewTtlManhours = s.Sum(c => c.SewTtlManhours),
+                            TtlManpower = s.Sum(c => c.TtlManpower),
+                            TtlManhours = s.Sum(c => c.TtlManhours),
+                        }).ToList();
                 }
             }
             #endregion
@@ -753,10 +761,10 @@ where f.Junk = 0",
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
                 objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
-                if (pams != null && pams.Count > 0)
+                if (pams != null && pams.Where(w => w.yyyyMM.EqualString(dr["OutputMM"])).Count() > 0)
                 {
-                    objArray[0, 11] = pams.Sum(w => w.SewTtlManpower);
-                    objArray[0, 12] = pams.Sum(w => w.SewTtlManhours);
+                    objArray[0, 11] = pams.Where(w => w.yyyyMM.EqualString(dr["OutputMM"])).FirstOrDefault().SewTtlManpower;
+                    objArray[0, 12] = pams.Where(w => w.yyyyMM.EqualString(dr["OutputMM"])).FirstOrDefault().SewTtlManhours;
                 }
                 else
                 {
@@ -925,7 +933,7 @@ where f.Junk = 0",
                         decimal vph = 0;
                         decimal factoryActiveManPower = 0;
 
-                        int ttlWorkDay = pams.Count;
+                        int ttlWorkDay = this.dataMode.Where(w => w.SewTtlManpower != 0).Count();
                         decimal sumManPower = pams.Sum(s => s.SewTtlManpower);
                         decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
                         decimal sumManHour = pams.Sum(s => s.SewTtlManhours);

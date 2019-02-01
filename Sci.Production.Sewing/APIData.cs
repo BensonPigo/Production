@@ -24,6 +24,8 @@ namespace Sci.Production.Sewing
 
         public decimal TtlManhours { get; set; }
 
+        public string yyyyMM { get; set; }
+
         public List<APIData> results;
     }
 

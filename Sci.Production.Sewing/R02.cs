@@ -1256,7 +1256,7 @@ where f.Junk = 0",
                         decimal vph = 0;
                         decimal factoryActiveManPower = 0;
 
-                        int ttlWorkDay = pams.Count;
+                        int ttlWorkDay = pams.Where(w => w.SewTtlManpower != 0).Count();
                         decimal sumManPower = pams.Sum(s => s.SewTtlManpower);
                         decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
                         decimal sumManHour = pams.Sum(s => s.SewTtlManhours);
