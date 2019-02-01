@@ -396,8 +396,7 @@ update t
 ------------------MachinePO_Detail Type='M'----------------------
 
 	Merge Machine.[dbo].[MachinePO_Detail] as t
-	using (select * from Trade_To_PMS.dbo.MachinePO_Detail a WITH (NOLOCK)
-where a.id in (select id from @T)) as s
+	using (select * from Trade_To_PMS.dbo.MachinePO_Detail a WITH (NOLOCK)) as s
 	on t.id=s.id and t.seq1=s.seq1 and t.seq2=s.seq2
 	when matched then 
 				update set
