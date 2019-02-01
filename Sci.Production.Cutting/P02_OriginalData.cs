@@ -302,6 +302,10 @@ where a.workorderukey like '%{this.CurrDataRow["ukey"]}%'
                 this.ShowErr(result);
             }
             this.listControlBindingSource1.DataSource = wdtO;
+            if (wdtO.Rows.Count > 0)
+            {
+                displayTime.Text = MyUtility.Convert.GetString(wdtO.Rows[0]["SandCTime"]);
+            }
             #endregion
             #region WorkOrder Now
             string inUkey = "''";
@@ -458,10 +462,6 @@ where a.ukey in ({inUkey})
                 this.ShowErr(result);
             }
             this.listControlBindingSource2.DataSource = wdtN;
-            if (wdtN.Rows.Count>0)
-            {
-                displayTimeN.Text = MyUtility.Convert.GetString(wdtN.Rows[0]["SandCTime"]);
-            }   
             #endregion
 
             #region PatternPanel

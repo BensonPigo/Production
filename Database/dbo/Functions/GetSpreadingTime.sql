@@ -44,7 +44,7 @@ BEGIN
 						 isnull(@Changeovertime * @NoofRoll,0) +
 						 isnull(@Setuptime,0) +
 						 isnull(@MachineSpreadingTime * @cons,0) +
-						 isnull((@NoofbSeparator * @Dyelot -1),0) +
+						 isnull(@NoofbSeparator * (@Dyelot -1),0) +
 						 isnull(@ForwardTime,0)
 
 	RETURN @SpreadingTime

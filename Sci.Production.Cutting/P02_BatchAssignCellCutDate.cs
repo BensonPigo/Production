@@ -130,9 +130,8 @@ namespace Sci.Production.Cutting
                     S = new SelectItem(DT, "ID,CutCell", string.Empty, DT.Columns["id"].ToString(), false, ",");
                     DialogResult result = S.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
-                    e.EditingControl.Text = S.GetSelectedString();
-
                     DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                    dr["SpreadingNoID"]= S.GetSelectedString();
                     if (!MyUtility.Check.Empty(S.GetSelecteds()[0]["CutCell"]))
                     {
                         dr["Cutcellid"] = S.GetSelecteds()[0]["CutCell"];

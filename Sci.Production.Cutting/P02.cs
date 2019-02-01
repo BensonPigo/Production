@@ -186,7 +186,7 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(isnull(fi.avgInQty,0)=0,0,round(sc.Cons/fi.avgInQty,0)),sl.Layer,sc.Cons,1),0)as float),','
+	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,n.NoofRoll,sl.Layer,sc.Cons,1),0)as float),','
 				,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(iif(a.ActCuttingPerimeter not like '%yd%','0',a.ActCuttingPerimeter)),4),
 				a.CutCellid,sl.Layer,c.WeaveTypeID,sc.cons),0)as float)
 	)--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
@@ -291,6 +291,7 @@ outer apply(
 ) as fi
 outer apply(select Layer = sum(a.Layer)over(partition by a.CutRef))sl
 outer apply(select Cons = sum(a.Cons)over(partition by a.CutRef))sc
+outer apply(select NoofRoll = iif(isnull(round(sc.Cons/fi.avgInQty,0),0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
 where a.id = '{0}'            
             ", masterID);
             this.DetailSelectCommand = cmdsql;
