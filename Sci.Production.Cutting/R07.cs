@@ -41,10 +41,33 @@ namespace Sci.Production.Cutting
             if (MyUtility.Check.Empty(dateEstCutDate.Value1) || MyUtility.Check.Empty(dateEstCutDate.Value2))
             {
 
-                MyUtility.Msg.WarningBox("Est Cut Date Can not be empty!");
+                MyUtility.Msg.WarningBox("<Est Cut Date> Can not be empty!");
                 return false;
             }
 
+
+            if (MyUtility.Check.Empty(comboM.Text))
+            {
+
+                MyUtility.Msg.WarningBox("<M> Can not be empty!");
+                return false;
+            }
+
+
+            if (MyUtility.Check.Empty(comboFactory.Text))
+            {
+
+                MyUtility.Msg.WarningBox("<Factory> Can not be empty!");
+                return false;
+            }
+
+
+            if (MyUtility.Check.Empty(comboFactory.Text))
+            {
+
+                MyUtility.Msg.WarningBox("<Factory> Can not be empty!");
+                return false;
+            }
             Mdivision = comboM.Text;
             Factory = comboFactory.Text;
             return base.ValidateInput();
@@ -54,13 +77,62 @@ namespace Sci.Production.Cutting
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            TimeSpan ts = new TimeSpan(estCutDate_e.Ticks - estCutDate_s.Ticks);
+            string totalWorkingDays = (ts.TotalDays + 1).ToString();
 
             #region 組SQL
 
             sqlCmd.Append($@"
 
+SELECT DISTINCT a.Ukey, b.OrderID
+INTO #tmp_OrderList
+FROM WorkOrder a
+INNER JOIN WorkOrder_Distribute b ON a.Ukey=b.WorkOrderUkey
+WHERE 1=1 ");
 
-SELECT 
+            #region 條件
+            if (!MyUtility.Check.Empty(Mdivision))
+            {
+                sqlCmd.Append($" AND a.MDivisionID = '{Mdivision}'");
+            }
+            if (!MyUtility.Check.Empty(Factory))
+            {
+                sqlCmd.Append($" AND a.FactoryID = '{Factory}'");
+            }
+            if (!MyUtility.Check.Empty(dateEstCutDate.Value1.Value))
+            {
+                estCutDate_s = dateEstCutDate.Value1.Value;
+                sqlCmd.Append($" AND a.EstCutDate >= '{dateEstCutDate.Value1.Value.ToShortDateString()}'");
+            }
+            if (!MyUtility.Check.Empty(dateEstCutDate.Value2.Value))
+            {
+                estCutDate_e = dateEstCutDate.Value2.Value;
+                sqlCmd.Append($" AND a.EstCutDate <= '{dateEstCutDate.Value2.Value.ToShortDateString()}'");
+            }
+            if (!MyUtility.Check.Empty(txtSpreadingNo_s.Text))
+            {
+                sqlCmd.Append($" AND a.SpreadingNoID >= '{txtSpreadingNo_s.Text}' ");
+            }
+            if (!MyUtility.Check.Empty(txtSpreadingNo_e.Text))
+            {
+                sqlCmd.Append($" AND a.SpreadingNoID >='{txtSpreadingNo_e.Text}' ");
+            }
+            if (!MyUtility.Check.Empty(txtCutCell_s.Text))
+            {
+                sqlCmd.Append($" AND a.CutCellId >= '{txtCutCell_s.Text}' ");
+            }
+            if (!MyUtility.Check.Empty(txtCutCell_e.Text))
+            {
+                sqlCmd.Append($" AND a.CutCellId <= '{txtCutCell_e.Text}' ");
+            }
+            if (!MyUtility.Check.Empty(txtCuttingSp.Text))
+            {
+                sqlCmd.Append($" AND b.OrderID = '{txtCuttingSp.Text}'");
+            }
+            #endregion
+
+            sqlCmd.Append($@"
+SELECT  
          wo.FactoryID
         ,wo.EstCutDate
         ,wo.CutCellid
@@ -68,9 +140,9 @@ SELECT
         ,wo.CutplanID
         ,wo.CutRef
         ,wo.ID
-        ,wod.OrderID
+        ,[OrderID]=OrderID.value--wod.OrderID
         ,o.StyleID
-        ,wod.SizeCode
+        ,[Size]=Size.value--wod.SizeCode
         ,[Order Qty]= OrderQty.SumValue--Excess不需計算
         ,f.Description
         ,f.MtlTypeID
@@ -78,10 +150,10 @@ SELECT
         ,[MarkerLength(yard)] = sc.Cons/sl.Layer
         ,[Perimeter (m)]= ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4)
         ,wo.Layer
-        ,[Ratio] = SizeCode.SizeCode
+        ,[Ratio] = Ratio.value
         ,[Total Fabric Cons.(yard)]=wo.Cons
         ,[Excess Fabirc Comb. Qty]= ExcessFabircCombQty.SumValue --只需計算Excess數量
-        ,[No.ofRoll] = IIF(fi.avgInQty=0    ,0    ,ROUND(sc.Cons/fi.avgInQty,0))
+        ,[No.ofRoll] = IIF(fi.avgInQty=0    ,0    ,ROUND(fi.avgInQty/sc.Cons,0))
         ,[No.ofWindow]=sc.Cons / sl.Layer * 0.9114 / 1.4  --Marker length  /1.4 (m) (原本是碼，要轉成公尺，所以*0.9114)
         ,[Cutting Speed (m/min)]=ActualSpeed.ActualSpeed
 
@@ -109,17 +181,16 @@ SELECT
 									        * sc.Cons/sl.Layer --Marker Length
 									        * sl.Layer         --其實可以直接*Cons，因為Layer會被抵銷掉
 								          )
-								        + (
+								        + 
 									        st.SeparatorTime  --No. of Separator
-									        * 1   --Dyelot  先通通帶1
-									        - 1
-								          )
+									        * (1   --Dyelot  先通通帶1
+									           - 1
+								               )
 								        + st.ForwardTime
         ----這個是Cutting
         ,[Total Cutting Time (min.)]=ct.SetUpTime 
 							        + IIF (ActualSpeed.ActualSpeed=0  ,0  , round(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4) / ActualSpeed.ActualSpeed)
 							        --同裁次週長若不一樣就是有問題
-
 INTO #tmp
 FROM WorkOrder wo WITH (NOLOCK) 
 INNER JOIN WorkOrder_Distribute wod WITH (NOLOCK)  ON wod.WorkOrderUkey=wo.Ukey
@@ -128,48 +199,62 @@ LEFT JOIN Fabric f WITH (NOLOCK) ON  wo.SciRefno = f.SciRefno
 LEFT JOIN SpreadingTime st ON f.WeaveTypeID=st.WeaveTypeID
 LEFT JOIN CuttingTime ct ON f.WeaveTypeID=ct.WeaveTypeID
 OUTER APPLY(
-	SELECT SizeCode = stuff(
+	SELECT value = stuff(
 	(
 		SELECT concat(', ' , c.SizeCode, '/ ', c.Qty)
 		FROM WorkOrder_SizeRatio c WITH (NOLOCK) 
 		WHERE c.WorkOrderUkey =wo.Ukey 
 		FOR XML PATH('')
 	),1,1,'')
-) AS SizeCode
+) AS Ratio
+OUTER APPLY(
+	SELECT value = stuff(
+	(
+		SELECT concat(',' ,a.OrderID)
+		FROM ( 			
+			SELECT DISTINCT c.OrderID
+			FROM WorkOrder_Distribute c WITH (NOLOCK) 
+			WHERE c.WorkOrderUkey =wo.Ukey 
+				  AND c.OrderID =wod.OrderID 
+		)a
+		FOR XML PATH('')
+	),1,1,'')
+) AS OrderID
+OUTER APPLY(
+	SELECT value = stuff(
+	(
+		SELECT concat(',' ,a.SizeCode)
+		FROM ( 			
+			SELECT DISTINCT c.SizeCode
+			FROM WorkOrder_Distribute c WITH (NOLOCK) 
+			WHERE --c.WorkOrderUkey =wo.Ukey AND
+			c.OrderID =wod.OrderID
+		)a
+		FOR XML PATH('')
+	),1,1,'')
+) AS Size
 
 OUTER APPLY(
-	select avgInQty = avg(fi.InQty)
-	from PO_Supp_Detail psd with(nolock)
-	left join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
-	where psd.ID = wo.id and psd.SCIRefno = wo.SCIRefno
-	and fi.InQty is not null
+	SELECT avgInQty = avg(fi.InQty)
+	FROM PO_Supp_Detail psd WITH (NOLOCK) 
+	INNER JOIN FtyInventory fi WITH (NOLOCK)  ON fi.POID = psd.ID AND fi.Seq1 = psd.SEQ1 AND fi.Seq2 = psd.SEQ2
+	WHERE psd.ID = wo.id AND psd.SCIRefno = wo.SCIRefno
+	AND fi.InQty IS NOT NULL
 ) AS fi
 
 OUTER APPLY(select Layer = sum(wo.Layer)over(partition by wo.CutRef))sl
 OUTER APPLY(select Cons = sum(wo.Cons)over(partition by wo.CutRef))sc
 
-OUTER APPLY(
-	SELECT [SumValue]=IIF(OrderID ='EXCESS' ,NULL,SUM(Qty) )
+OUTER APPLY(--不包含OrderID=Excess 數量
+	SELECT [SumValue]=SUM(Qty)
 	FROM WorkOrder_Distribute 
-	WHERE WorkOrderUkey = wo.Ukey 
-			AND OrderID=wod.OrderID 
-			AND Article=wod.Article 
-			AND SizeCode=wod.SizeCode
-	GROUP BY OrderID
-
+	WHERE OrderID=wod.OrderID --AND WorkOrderUkey =wo.Ukey 
 )OrderQty
-
-
-OUTER APPLY(
-	SELECT [SumValue]=IIF(OrderID ='EXCESS' , Sum(Qty) ,NULL)
+OUTER APPLY(--只需計算Excess數量
+	SELECT [SumValue]=Sum(Qty)
 	FROM WorkOrder_Distribute 
-	WHERE WorkOrderUkey = wo.Ukey 
-			AND OrderID=wod.OrderID 
-			AND Article=wod.Article 
-			AND SizeCode=wod.SizeCode
-	GROUP BY OrderID
+	WHERE OrderID='EXCESS'
 )ExcessFabircCombQty
-
 
 OUTER APPLY(
 	select ActualSpeed
@@ -186,77 +271,34 @@ OUTER APPLY(
 		inner join ManufacturingExecution.dbo.FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
 		where rr.Refno = wo.Refno
 )IsRoll
-
-WHERE 1=1
-
-
+WHERE 1=1 
+AND EXISTS (SELECT OrderID  FROM #tmp_OrderList WHERE OrderID=wod.OrderID AND Ukey=wo.Ukey)
 
 ");
             #endregion
 
-            #region 條件
-            if (!MyUtility.Check.Empty(Mdivision))
-            {
-                sqlCmd.Append($" AND wo.MDivisionID = '{Mdivision}'");
-            }
-            if (!MyUtility.Check.Empty(Factory))
-            {
-                sqlCmd.Append($" AND wo.FactoryID = '{Factory}'");
-            }
-            if (!MyUtility.Check.Empty(dateEstCutDate.Value1.Value))
-            {
-                estCutDate_s = dateEstCutDate.Value1.Value;
-                sqlCmd.Append($" AND wo.EstCutDate >= '{dateEstCutDate.Value1.Value.ToShortDateString()}'");
-            }
-            if (!MyUtility.Check.Empty(dateEstCutDate.Value2.Value))
-            {
-                estCutDate_e = dateEstCutDate.Value2.Value;
-                sqlCmd.Append($" AND wo.EstCutDate <= '{dateEstCutDate.Value2.Value.ToShortDateString()}'");
-            }
-            if (!MyUtility.Check.Empty(txtSpreadingNo_s.Text))
-            {
-                sqlCmd.Append($" AND wo.SpreadingNoID >= '{txtSpreadingNo_s.Text}' ");
-            }
-            if (!MyUtility.Check.Empty(txtSpreadingNo_e.Text))
-            {
-                sqlCmd.Append($" AND wo.SpreadingNoID >='{txtSpreadingNo_e.Text}' ");
-            }
-            if (!MyUtility.Check.Empty(txtCutCell_s.Text))
-            {
-                sqlCmd.Append($" AND wo.CutCellId >= '{txtCutCell_s.Text}' ");
-            }
-            if (!MyUtility.Check.Empty(txtCutCell_e.Text))
-            {
-                sqlCmd.Append($" AND wo.CutCellId <= '{txtCutCell_e.Text}' ");
-            }
-            if (!MyUtility.Check.Empty(txtCuttingSp.Text))
-            {
-                sqlCmd.Append($" AND wod.OrderID = '{txtCuttingSp.Text}'");
-            }
-            #endregion
 
             #region 組SQL Part 2
-            sqlCmd.Append(@"
-
+            sqlCmd.Append($@"
 
 SELECT * FROM #tmp
 
 --Spreading Capacity Forecast
 SELECT 
-[Spreading Table No.]=SpreadingTable
+[Spreading Table No.]= SpreadingTable
 , [Work Hours/Day]=''
-, [Total Available Spreading Time (hrs)]=SpreadingTable *6 *0.8 --* TotalWorkingDays  * AvgEfficiency  B6
+, [Total Available Spreading Time (hrs)]=SpreadingTable * {totalWorkingDays} *0.8 -- B6=(B4*Total Working Days)*C2 0.8是預設的!!
 , [Total Spreading Yardage]=[Total Fabric Cons.(yard)]
 , [Total Spreading Marker Qty]= COUNT(SpreadingTable)
-, [Total Spreading Time (hrs.)]= [Total Spreading Time (min.)] / 60--Total Spreading Time (hrs.) 換算小時  B9
+, [Total Spreading Time (hrs.)]= [Total Spreading Time (min.)] / 60   --Total Spreading Time (hrs.) 換算小時  B9
 , [Spreading Capacity Fulfill Rate%]=  --B10=(B9/B6)*100
-	IIF(SpreadingTable *6 *0.8  = 0   
+	IIF(SpreadingTable * {totalWorkingDays} *0.8  = 0   
 		, 0  
-		, [Total Spreading Time (min.)] / 60  --B9
-		  / SpreadingTable *6 *0.8         --B6
+		, ([Total Spreading Time (min.)] / 60)  --B9
+		  / SpreadingTable * {totalWorkingDays} *0.8         --B6
 		  *100
 		)
-,[Capacity (hrs)]= [Total Spreading Time (min.)] / 60 - SpreadingTable *6 *0.8 
+,[Capacity (hrs)]= [Total Spreading Time (min.)] / 60 - SpreadingTable * {totalWorkingDays} *0.8 
 FROM #tmp
 GROUP BY SpreadingTable,[Total Fabric Cons.(yard)],[Total Spreading Time (min.)]
 
@@ -269,15 +311,15 @@ SELECT DISTINCT
 [Cut cell (Morgan No.)]= CutCellid   --B15
 ,[Cutting Mach. Description]='Next 70'  
 ,[Work Hours/Day]=''    --manual input
-,[Total Available Cutting Time (hrs)]=CutCellid * 6 * 0.8   --B18   = (B15*Total Working Days)*C2
+,[Total Available Cutting Time (hrs)]= CutCellid * {totalWorkingDays} * 0.8   --B18   = (B15*Total Working Days)*C2   0.8是預設的!!
 ,[Avg. Cut Speed (m/min.)]=''   --manual input
 ,[Total Cutting Perimeter (m)]=[Perimeter (m)]
 ,[Total Cut Marker Qty]=CutCell.count
 ,[Total Cut Fabric Yardage]=[Total Fabric Cons.(yard)]
-,[Total Cutting Time (hrs.)]=[Total Cutting Time (min.)]  --B23
-,[Cutting Capacity Fulfill Rate%]=IIF(CutCellid * 6 * 0.8  = 0 , 0  
-									, [Total Cutting Time (min.)] / CutCellid * 6 * 0.8   )   --(B23/B18)*100
-,['+/- Capacity (hrs)]=[Total Cutting Time (min.)]- CutCellid * 6 * 0.8    --B23-B18
+,[Total Cutting Time (hrs.)]=[Total Cutting Time (min.)] / 60  --B23 換算成小時
+,[Cutting Capacity Fulfill Rate%]=IIF(CutCellid * {totalWorkingDays} * 0.8  = 0 , 0  
+									, ([Total Cutting Time (min.)] /60) / CutCellid * {totalWorkingDays} * 0.8 *100  )   --(B23/B18)*100
+,['+/- Capacity (hrs)]=  [Total Cutting Time (min.)]/60 - CutCellid * {totalWorkingDays} * 0.8    --B23-B18
 
 FROM #tmp
 OUTER APPLY(
@@ -285,36 +327,22 @@ SELECT [count]=COUNT(CutCellid) FROM #tmp
 )CutCell
 
 
-
+--用來塞圖表
 SELECT 
-
-[Row]='S'+ CAST (ROW_NUMBER() OVER(ORDER BY ID ASC)  as varchar)
+[SpreadingTable]
 ,[Total Spreading Marker Qty]= COUNT(SpreadingTable)
-,[Capacity (hrs)]= [Total Spreading Time (min.)] / 60 - SpreadingTable *6 *0.8 
+,[Capacity (hrs)]= [Total Spreading Time (min.)] / 60 - SpreadingTable * {totalWorkingDays} * 0.8  -- 0.8是預設的!!
 FROM #tmp
-GROUP BY ID,SpreadingTable,[Total Fabric Cons.(yard)],[Total Spreading Time (min.)]
-
-
+GROUP BY ID ,SpreadingTable,[Total Fabric Cons.(yard)] ,[Total Spreading Time (min.)]
 
 --Cutting Capacity Forecast
 
 UNION ALL
-
-SELECT 
-[Row]='C'+ CAST (ROW_NUMBER() OVER(ORDER BY ID ASC)  as varchar)
-,[Total Cut Fabric Yardage]
-,[Capacity]
-FROM (
-	SELECT DISTINCT
-	iD
-	,[Total Cut Fabric Yardage]=[Total Fabric Cons.(yard)]
-	,[Capacity]=[Total Cutting Time (min.)]- CutCellid * 6 * 0.8    --B23-B18
-
-	FROM #tmp
-	OUTER APPLY(
-	SELECT [count]=COUNT(CutCellid) FROM #tmp
-	)CutCell
-) a
+SELECT DISTINCT
+CutCellid
+,[Total Cut Fabric Yardage]=[Total Fabric Cons.(yard)]
+,[Capacity]=  [Total Cutting Time (min.)]- CutCellid * {totalWorkingDays} * 0.8    --B23-B18
+FROM #tmp
 
 
 DROP TABLE  #tmp
@@ -339,7 +367,7 @@ DROP TABLE  #tmp
             DataTable newDt = new DataTable();
             DataTable newDt2 = new DataTable();
             TimeSpan ts = new TimeSpan(estCutDate_e.Ticks - estCutDate_s.Ticks);
-            string totalWorkingDays = ts.TotalDays.ToString();
+            string totalWorkingDays = (ts.TotalDays+1).ToString();
             string downloadDateTime = DateTime.Now.ToShortTimeString();
 
             if (printDatas.Length == 0 || printDatas[0].Rows.Count == 0)
@@ -382,31 +410,6 @@ DROP TABLE  #tmp
             }
 
             #endregion
-
-            #region 這方式保留
-
-            //Sci.Utility.Excel.SaveXltReportCls xl = new Utility.Excel.SaveXltReportCls("Cutting_R07.xltx");
-            //SaveXltReportCls.XltRptTable dt_All = new SaveXltReportCls.XltRptTable(printDatas[0]);
-            //SaveXltReportCls.XltRptTable dt_Summary1 = new SaveXltReportCls.XltRptTable(newDt);
-            ////SaveXltReportCls.XltRptTable dt_Summary2 = new SaveXltReportCls.XltRptTable(newDt2);
-
-            //dt_All.ShowHeader = false;
-            //dt_Summary1.ShowHeader = false;
-            //xl.DicDatas.Add("##DATA", dt_All);
-            //xl.DicDatas.Add("##DATA1", dt_Summary1);
-            ////xl.DicDatas.Add("##DATA2", dt_Summary2);
-
-
-            //xl.DicDatas.Add("##Factory ", Factory);
-            //xl.DicDatas.Add("##DownloadDateTime", downloadDateTime);
-            //xl.DicDatas.Add("##ForecastPeriod", this.dateEstCutDate.Value1.Value.ToShortDateString() + " ~ " + this.dateEstCutDate.Value2.Value.ToShortDateString());
-            //xl.DicDatas.Add("##TotalWorkingDays", totalWorkingDays);
-
-
-
-            //xl.Save();
-            #endregion
-
 
             //打開範本，寫入資料
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R07.xltx"); 
@@ -505,7 +508,7 @@ DROP TABLE  #tmp
             #endregion
 
             #region Step.4 開始細項的動態設定，模擬人用滑鼠點擊設定的動作
-
+            
             objSheets2.Activate();
 
             //Item 1=長條圖，  2 =折線圖，取決於在Step.2 時先New哪一個Series
@@ -550,6 +553,55 @@ DROP TABLE  #tmp
 
             chartSheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
             #endregion
+            
+            #region Step.5 連動設定
+
+            int sheet2_StartPoint = 2;//Sheet2 填寫資料的起點 座標為，[B,4]  [B,15]
+            int sheet3_StartPoint = 2;//Sheet3 起點 [B,1]
+
+            //先處理S開頭的資料
+            for (int i = 0; i <= printDatas[1].Rows.Count-1; i++)
+            {
+                //說明：因為圖表綁定的資料表在Sheet3，因次Sheet3的欄位要根據Sheet2的資料連動，讓User異動Sheet2表格，圖表跟著動
+
+                //Sheet3第一筆資料的第一個欄位，是[A,2]開始（[A,2]=[1,2]），依序是[B,2]  [[C,2]
+                //對應sheet2的儲存格座標，是從B4開始，B=2，用底層把 2 + 資料筆數轉換成英文字母的座標
+                //其他欄位以此類推
+                string sheet2CellHead = MyUtility.Excel.ConvertNumericToExcelColumn(sheet2_StartPoint + i);
+                objSheets3.Cells[sheet3_StartPoint + i, 1] = $@"=CONCATENATE(""S"", 'Capacity Forecast Summary'!{sheet2CellHead}4)";   //Row欄位
+                objSheets3.Cells[sheet3_StartPoint + i, 2] = $"='Capacity Forecast Summary'!{sheet2CellHead}8";    //Count欄位
+                objSheets3.Cells[sheet3_StartPoint + i, 3] = $"='Capacity Forecast Summary'!{sheet2CellHead}11";   //Capacity (hrs)欄位
+
+                //其他連動
+                objSheets2.Cells[6, sheet2_StartPoint + i] = $"={sheet2CellHead}4 * F2 * C2";
+                objSheets2.Cells[10, sheet2_StartPoint + i] = $"={sheet2CellHead}6 / {sheet2CellHead}9 *100";
+                objSheets2.Cells[11, sheet2_StartPoint + i] = $"={sheet2CellHead}9-{sheet2CellHead}6";
+            }
+
+            //處理C開頭的資料
+            //X軸一樣是A B C，Y軸視S開頭資料數量決定
+            int cuttingColumn_Y_Start = sheet3_StartPoint + printDatas[1].Rows.Count;
+
+            for (int i = 0; i <= printDatas[2].Rows.Count - 1; i++)
+            {
+                //A、B、C固定的
+                string sheet2CellHead = MyUtility.Excel.ConvertNumericToExcelColumn(sheet2_StartPoint + i);
+                objSheets3.Cells[cuttingColumn_Y_Start + i, 1] = $@"=CONCATENATE(""C"", 'Capacity Forecast Summary'!{sheet2CellHead}15)";  //Row欄位
+                objSheets3.Cells[cuttingColumn_Y_Start + i, 2] = $"='Capacity Forecast Summary'!{sheet2CellHead}22";    //Count欄位
+                objSheets3.Cells[cuttingColumn_Y_Start + i, 3] = $"='Capacity Forecast Summary'!{sheet2CellHead}25";   //Capacity (hrs)欄位
+
+
+                //其他連動
+                objSheets2.Cells[18, sheet2_StartPoint + i] = $"={sheet2CellHead}15 * F2 * C2";
+                objSheets2.Cells[24, sheet2_StartPoint + i] = $"={sheet2CellHead}23 / {sheet2CellHead}18 *100";
+                objSheets2.Cells[25, sheet2_StartPoint + i] = $"={sheet2CellHead}23-{sheet2CellHead}18";
+            }
+
+            #endregion
+
+
+
+            objSheets.Activate();
 
             ///////////////////////////////////
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R07");
