@@ -568,7 +568,7 @@ where w.workorderukey like '%{this.CurrDataRow["ukey"]}%'";
             listControlBindingSource8.DataSource = listControlBindingSource2;
             listControlBindingSource8.DataMember = "rel3";
 
-            displayTime.DataBindings.Add("Text", listControlBindingSource2, "SandCTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            displayTimeN.DataBindings.Add("Text", listControlBindingSource2, "SandCTime", true, DataSourceUpdateMode.OnPropertyChanged);
             #endregion
         }
     }

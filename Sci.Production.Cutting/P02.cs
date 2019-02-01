@@ -1983,7 +1983,7 @@ END";
             DataTable table = (DataTable)this.detailgridbs.DataSource;
             DataRow newRow = table.NewRow();
             DataRow OldRow = CurrentDetailData == null ? newRow : CurrentDetailData;  //將游標停駐處的該筆資料複製起來
-            if (CurrentDetailData != null) CurrentDetailData["isbyAdditionalRevisedMarker"] = 1;
+            if (isAdditionalrevisedmarker) CurrentDetailData["isbyAdditionalRevisedMarker"] = 1;
             //base.OnDetailGridInsert(index); //先給一個NewKey
             int maxkey;
             object comput = ((DataTable)detailgridbs.DataSource).Compute("Max(newkey)", "");
@@ -2402,11 +2402,12 @@ END";
         {
             #region RevisedMarkerOriginalData 非AdditionalRevisedMarker功能增加的資料 isbyAdditionalRevisedMarker == 0
             string sqlInsertRevisedMarkerOriginalData = string.Empty;
+            sqlInsertRevisedMarkerOriginalData += "declare @ID bigint";
             foreach (DataRow dr in DetailDatas)
             {
                 if (dr.RowState == DataRowState.Modified &&
                     MyUtility.Convert.GetString(dr["MarkerName", DataRowVersion.Original]) != MyUtility.Convert.GetString(dr["MarkerName"]) &&
-                    MyUtility.Convert.GetInt(CurrentDetailData["isbyAdditionalRevisedMarker"]) == 0
+                    MyUtility.Convert.GetInt(dr["isbyAdditionalRevisedMarker"]) == 0
                     )
                 {
                     // 已經寫過則不再寫入
@@ -2426,7 +2427,7 @@ select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanI
 ,[CurvedLength],[SpreadingNoID],Ukey
 from WorkOrder where Ukey ={dr["ukey"]}
 
-declare @ID bigint = (select @@IDENTITY)
+set @ID = (select @@IDENTITY)
 
 INSERT INTO [dbo].[WorkOrder_DistributeRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
 select @ID,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
@@ -2442,15 +2443,13 @@ select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrde
             }
             #endregion
             #region RevisedMarkerOriginalData AdditionalRevisedMarker功能處理的資料, 原本那筆 isbyAdditionalRevisedMarker = 1, 增加的那筆 = 2
+            sqlInsertRevisedMarkerOriginalData += " declare @ID2 bigint";
             foreach (DataRow dr in DetailDatas.Where(w => w.RowState == DataRowState.Modified &&
                         MyUtility.Convert.GetInt(w["isbyAdditionalRevisedMarker"]) == 1))
             {
                 string sqlchk = $@"select 1 from WorkOrderRevisedMarkerOriginalData where WorkOrderUkey like ('%{dr["ukey"]}%')  ";
                 if (!MyUtility.Check.Seek(sqlchk))
                 {
-                    //var ukeylist = DetailDatas.Where(w => MyUtility.Convert.GetString(w["fromukey"]) == MyUtility.Convert.GetString(dr["fromukey"])).Select(s => s["ukey"]).ToList();
-                    //string ukeys = string.Join(",", ukeylist);
-
                     sqlInsertRevisedMarkerOriginalData += $@"
 INSERT INTO [dbo].[WorkOrderRevisedMarkerOriginalData]
 ([ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanID],[Cutno],[Layer],[Colorid],[Markername],[EstCutDate],[CutCellid],[MarkerLength]
@@ -2464,28 +2463,25 @@ select [ID],[FactoryID],[MDivisionId],[SEQ1],[SEQ2],[CutRef],[OrderID],[CutplanI
 ,[CurvedLength],[SpreadingNoID],{dr["ukey"]}
 from WorkOrder where Ukey ={dr["ukey"]}
 
-declare @ID bigint = (select @@IDENTITY)
+set @ID2 = (select @@IDENTITY)
 
 INSERT INTO [dbo].[WorkOrder_DistributeRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[OrderID],[Article],[SizeCode],[Qty])
-select @ID,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
+select @ID2,[ID],[OrderID],[Article],[SizeCode],[Qty] from WorkOrder_Distribute where WorkOrderUkey = {dr["ukey"]}
 
 INSERT INTO [dbo].[WorkOrder_PatternPanelRevisedMarkerOriginalData]([ID],[WorkOrderRevisedMarkerOriginalDataUkey],[PatternPanel],[FabricPanelCode])
-select [ID],@ID,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternPanel] where WorkOrderUkey = {dr["ukey"]}
+select [ID],@ID2,[PatternPanel],[FabricPanelCode] from [dbo].[WorkOrder_PatternPanel] where WorkOrderUkey = {dr["ukey"]}
 
 INSERT INTO [dbo].[WorkOrder_SizeRatioRevisedMarkerOriginalData]([WorkOrderRevisedMarkerOriginalDataUkey],[ID],[SizeCode],[Qty])
-select @ID,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
+select @ID2,[ID],[SizeCode],[Qty] from [dbo].[WorkOrder_SizeRatio] where WorkOrderUkey = {dr["ukey"]}
 ";
                 }
             }
             #endregion
 
             DualResult upResult;
-            if (!MyUtility.Check.Empty(sqlInsertRevisedMarkerOriginalData))
+            if (!(upResult = DBProxy.Current.Execute(null, sqlInsertRevisedMarkerOriginalData)))
             {
-                if (!(upResult = DBProxy.Current.Execute(null, sqlInsertRevisedMarkerOriginalData)))
-                {
-                    return upResult;
-                }
+                return upResult;
             }
             return base.ClickSave();
         }
