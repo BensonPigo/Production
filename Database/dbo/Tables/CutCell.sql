@@ -1,15 +1,18 @@
 ﻿CREATE TABLE [dbo].[CutCell] (
-    [ID]           VARCHAR (2)   CONSTRAINT [DF_CutCell_ID] DEFAULT ('') NOT NULL,
-    [MDivisionid]  VARCHAR (8)   CONSTRAINT [DF_CutCell_FactoryID] DEFAULT ('') NOT NULL,
-    [Description]  NVARCHAR (60) CONSTRAINT [DF_CutCell_Description] DEFAULT ('') NULL,
-    [Junk]         BIT           CONSTRAINT [DF_CutCell_Junk] DEFAULT ((0)) NULL,
-    [AddName]      VARCHAR (10)  CONSTRAINT [DF_CutCell_AddName] DEFAULT ('') NULL,
-    [AddDate]      DATETIME      NULL,
-    [EditName]     VARCHAR (10)  CONSTRAINT [DF_CutCell_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME      NULL,
-    [CuttingWidth] INT           CONSTRAINT [DF_CutCell_CuttingWidth] DEFAULT ((0)) NULL,
+    [ID]               VARCHAR (2)   CONSTRAINT [DF_CutCell_ID] DEFAULT ('') NOT NULL,
+    [MDivisionid]      VARCHAR (8)   CONSTRAINT [DF_CutCell_FactoryID] DEFAULT ('') NOT NULL,
+    [Description]      NVARCHAR (60) CONSTRAINT [DF_CutCell_Description] DEFAULT ('') NULL,
+    [Junk]             BIT           CONSTRAINT [DF_CutCell_Junk] DEFAULT ((0)) NULL,
+    [AddName]          VARCHAR (10)  CONSTRAINT [DF_CutCell_AddName] DEFAULT ('') NULL,
+    [AddDate]          DATETIME      NULL,
+    [EditName]         VARCHAR (10)  CONSTRAINT [DF_CutCell_EditName] DEFAULT ('') NULL,
+    [EditDate]         DATETIME      NULL,
+    [CuttingWidth]     INT           CONSTRAINT [DF_CutCell_CuttingWidth] DEFAULT ((0)) NULL,
+    [CuttingMachineID] VARCHAR (10)  NULL,
     CONSTRAINT [PK_CutCell] PRIMARY KEY CLUSTERED ([ID] ASC, [MDivisionid] ASC)
 );
+
+
 
 
 
