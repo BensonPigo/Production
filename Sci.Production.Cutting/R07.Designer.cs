@@ -245,6 +245,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(534, 303);
             this.Controls.Add(this.panel1);
+            this.IsSupportPrint = false;
             this.Name = "R07";
             this.Text = "R07.Spreading & Cutting Forecast Report";
             this.Controls.SetChildIndex(this.print, 0);
