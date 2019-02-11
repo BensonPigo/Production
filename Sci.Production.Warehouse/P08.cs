@@ -358,7 +358,7 @@ WHERE   StockType='{0}'
             .CellPOIDWithSeqRollDyelot("poid", header: "SP#", width: Widths.AnsiChars(13))  //0
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), settings: ts)  //1
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9)).Get(out cbb_Roll)    //2
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5)).Get(out cbb_Dyelot)    //3
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8)).Get(out cbb_Dyelot)    //3
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true) //4
             .Text("stockunit", header: "Stock" + Environment.NewLine + "Unit", iseditingreadonly: true)    //5
             .Numeric("useqty", header: "Use Qty", width: Widths.AnsiChars(11), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
@@ -367,7 +367,7 @@ WHERE   StockType='{0}'
             ;     //
 
             cbb_Roll.MaxLength = 8;
-            cbb_Dyelot.MaxLength = 4;
+            cbb_Dyelot.MaxLength = 8;
             #endregion 欄位設定
         }
 

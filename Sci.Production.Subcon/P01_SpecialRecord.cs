@@ -107,8 +107,6 @@ Select  0 as Selected
         , 0.0000 as pricegmt
         , ccc.id as artworktypeid
         , rtrim(ccc.id) as artworkid
-        , patterncode = isnull((select distinct PatternCode from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID),'')
-        , patterndesc = isnull((select distinct PatternDesc from view_order_artworks v where aaa.ID = v.id and ccc.ID = v.ArtworkTypeID),'')
         , aaa.StyleID
         , sewinline = aaa.Sewinline
         , scidelivery = aaa.Scidelivery
@@ -129,6 +127,7 @@ inner join (
 		and a.Category  in ('B','S')", dr["artworktypeid"]);
 	             if (!string.IsNullOrWhiteSpace(orderID)) { strSQLCmd += string.Format(" and ((a.category='B' and c.isArtwork=0)  or (a.category !='B')) and a.ID = '{0}'", orderID); }
                  if (!string.IsNullOrWhiteSpace(poid)) { strSQLCmd += string.Format(" and a.poid = '{0}'", poid); }
+                 if (poType.Equals("O")) { strSQLCmd += $" and (( a.category = 'B' and c.IsSubprocess = 1 and c.isArtwork = 0 and c.Classify = 'O') or (a.category !='B'))"; }
                 strSQLCmd +=" EXCEPT"+
 	             "     select b1.orderid,a1.ArtworkTypeID, b1.ArtworkId,b1.PatternCode "+
                  "     from artworkpo a1 WITH (NOLOCK) ,ArtworkPO_Detail b1 WITH (NOLOCK) ";
@@ -181,7 +180,7 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc
             {
                 foreach (DataRow tmp in dr2)//dtGridBS1.Rows
                 {
-                    DataRow[] findrow = dt_artworkpo_detail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' and patterncode = '{2}'", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString(), tmp["patterncode"].ToString()));
+                    DataRow[] findrow = dt_artworkpo_detail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' ", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString()));
 
                     if (findrow.Length > 0)
                     {
@@ -233,14 +232,34 @@ group by bbb.id, ccc.id, aaa.id, aaa.StyleID, aaa.Sewinline, aaa.Scidelivery,ccc
                 return;
             }
 
-            string cat = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where ID = '{0}' ", ((Sci.Win.UI.TextBox)sender).Text), null);
-            string isArtwork = MyUtility.GetValue.Lookup(string.Format("select isArtwork from artworktype WITH (NOLOCK) where id='{0}'", dr["artworktypeid"]), null);
+            string category = MyUtility.GetValue.Lookup(string.Format("select category from orders WITH (NOLOCK) where ID = '{0}' ", ((Sci.Win.UI.TextBox)sender).Text), null);
+            string sqlCheckArtwork = string.Empty;
+            if (poType.Equals("O"))
+            {
+                sqlCheckArtwork = $@"select id from artworktype WITH (NOLOCK) 
+                                        where id = '{dr["artworktypeid"]}'
+                                        EXCEPT select ID from artworktype WITH (NOLOCK) 
+                                                where IsSubprocess = 1 and isArtwork = 0 and Classify = 'O'";
+            }
+            else
+            {
+                sqlCheckArtwork = $"select 1 from artworktype WITH (NOLOCK) where id='{dr["artworktypeid"]}' and isArtwork = 1";
+            }
 
-            if (cat != "S" && isArtwork.ToUpper() == "TRUE")
+            bool isArtworkCheckNG = MyUtility.Check.Seek(sqlCheckArtwork);
+            if (category != "S" && isArtworkCheckNG)
             {
                 ((Sci.Win.UI.TextBox)sender).Text = "";
                 e.Cancel = true;
-                MyUtility.Msg.WarningBox("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
+                if (poType.Equals("O"))
+                {
+                    MyUtility.Msg.WarningBox("Bulk orders only allow Artwork which like RECOAT Garment ....!!", "Warning");
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Bulk orders only allow Artwork is like Bonding,GMT Wash, ....!!", "Warning");
+                }
+                
                 return;
             }
         }

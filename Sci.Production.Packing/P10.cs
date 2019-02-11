@@ -97,7 +97,7 @@ from (
     where b.OrderId = c.Id 
     and a.Id = b.Id 
     and b.CTNStartNo != '' 
-    and ((b.ReturnDate is null and TransferDate is null and b.DRYReceiveDate is null) or b.ReturnDate is not null) 
+    and ((b.ReturnDate is null and b.TransferDate is null and b.DRYReceiveDate is null and b.PackErrTransferDate is null) or b.ReturnDate is not null) 
     and c.Dest = d.ID 
     and a.MDivisionID = '{0}' 
     and (a.Type = 'B' or a.Type = 'L') 

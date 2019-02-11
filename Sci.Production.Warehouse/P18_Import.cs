@@ -203,7 +203,7 @@ WHERE   StockType='{0}'
             .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)  //1
             .Text("seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true)  //2
             .Text("Roll", header: "Roll#", width: Widths.AnsiChars(9), iseditingreadonly: false).Get(out txt_roll)    //3
-            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(5), iseditingreadonly: false).Get(out txt_dyelot)    //4
+            .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false).Get(out txt_dyelot)    //4
             .EditText("Description", header: "Description", width: Widths.AnsiChars(20), iseditingreadonly: true)    //5
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)    //6
             .ComboBox("stocktype", header: "Stock Type", iseditable: true, settings : sk).Get(out cbb_stocktype)//7
