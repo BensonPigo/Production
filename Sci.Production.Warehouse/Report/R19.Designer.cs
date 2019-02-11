@@ -48,18 +48,18 @@
             // 
             this.print.Enabled = false;
             this.print.Location = new System.Drawing.Point(484, 5);
-            this.print.TabIndex = 4;
+            this.print.TabIndex = 70;
             this.print.Visible = false;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(484, 41);
-            this.toexcel.TabIndex = 5;
+            this.toexcel.TabIndex = 80;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(484, 77);
-            this.close.TabIndex = 6;
+            this.close.TabIndex = 90;
             // 
             // txtBorrowSPNo
             // 
@@ -69,7 +69,7 @@
             this.txtBorrowSPNo.MaxLength = 13;
             this.txtBorrowSPNo.Name = "txtBorrowSPNo";
             this.txtBorrowSPNo.Size = new System.Drawing.Size(118, 23);
-            this.txtBorrowSPNo.TabIndex = 1;
+            this.txtBorrowSPNo.TabIndex = 40;
             // 
             // comboCategoryAlreadyReturn
             // 
@@ -85,7 +85,7 @@
             this.comboCategoryAlreadyReturn.Name = "comboCategoryAlreadyReturn";
             this.comboCategoryAlreadyReturn.OldText = "";
             this.comboCategoryAlreadyReturn.Size = new System.Drawing.Size(121, 24);
-            this.comboCategoryAlreadyReturn.TabIndex = 3;
+            this.comboCategoryAlreadyReturn.TabIndex = 60;
             // 
             // labelAlreadyReturn
             // 
@@ -169,7 +169,7 @@
             this.dateRangeBorrowDate.Location = new System.Drawing.Point(127, 42);
             this.dateRangeBorrowDate.Name = "dateRangeBorrowDate";
             this.dateRangeBorrowDate.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeBorrowDate.TabIndex = 118;
+            this.dateRangeBorrowDate.TabIndex = 10;
             // 
             // labBuyerDlv
             // 
@@ -199,7 +199,7 @@
             this.dateRangeBuyerDlv.Location = new System.Drawing.Point(127, 72);
             this.dateRangeBuyerDlv.Name = "dateRangeBuyerDlv";
             this.dateRangeBuyerDlv.Size = new System.Drawing.Size(280, 23);
-            this.dateRangeBuyerDlv.TabIndex = 120;
+            this.dateRangeBuyerDlv.TabIndex = 20;
             // 
             // labFactory
             // 
@@ -218,7 +218,7 @@
             this.txtfactory.Location = new System.Drawing.Point(127, 102);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 123;
+            this.txtfactory.TabIndex = 30;
             // 
             // txtSeq
             // 
@@ -228,7 +228,7 @@
             this.txtSeq.seq1 = "";
             this.txtSeq.seq2 = "";
             this.txtSeq.Size = new System.Drawing.Size(61, 23);
-            this.txtSeq.TabIndex = 2;
+            this.txtSeq.TabIndex = 50;
             // 
             // R19
             // 
