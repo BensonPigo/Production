@@ -408,8 +408,37 @@ namespace Sci.Production.Cutting
 
                 if (dr["Sel"].ToString() == "True")
                 {
+                    string chk = $@"
+select 1 from (
+	Select ID,SEQ1,SEQ2,Colorid 
+	From PO_Supp_Detail WITH (NOLOCK) 
+	Where id='{Poid}' 
+	and SCIRefno ='{dr["SciRefno"]}' 
+	and Junk != 1 
+    and seq1 not like '7%'
 
-                    if (MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq1='{Seq1}' and Seq2='{Seq2}' and Scirefno='{dr["SciRefno"]}' and Junk=0"))
+	union all
+	select psd1.ID,SEQ1,SEQ2,ColorID
+	from PO_Supp_Detail psd1
+	inner join Fabric f with (nolock) on psd1.SCIRefno = f.SCIRefno
+	inner join Brand b with (nolock) on b.id = f.BrandID
+	where exists (
+		select 1
+		from PO_Supp_Detail psd
+		inner join Fabric with (nolock) on psd.SCIRefno = Fabric.SCIRefno
+		inner join Brand with (nolock) on Brand.id = Fabric.BrandID
+		where psd.SCIRefno = '{dr["SciRefno"]}'
+			and psd.ID = psd1.ID
+			and psd.Junk != 1
+			and f.Refno = Fabric.Refno
+			and b.BrandGroup = Brand.BrandGroup)
+	and psd1.ID = '{Poid}'
+	and psd1.Junk != 1
+	and psd1.seq1 like '7%'
+)a
+where Seq1='{Seq1}' and Seq2='{Seq2}' 
+";
+                    if (MyUtility.Check.Seek(chk))
                     {
                         dr["Seq1"] = Seq1;
                         dr["Seq2"] = Seq2;
