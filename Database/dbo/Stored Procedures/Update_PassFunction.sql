@@ -64,26 +64,8 @@ Begin
 		  ,[MenuName]
 		  ,[FKMenu]
 		  ,[BarPrompt]
-		  ,[Used]
-		  ,[CanNew]
-		  ,[CanEdit]
-		  ,[CanDelete]
-		  ,[CanPrint]
-		  ,[CanConfirm]
-		  ,[CanUnConfirm]
-		  ,[CanSend]
-		  ,[CanRecall]
-		  ,[CanCheck]
-		  ,[CanUnCheck]
-		  ,[CanClose]
-		  ,[CanUnClose]
-		  ,[CanReceive]
-		  ,[CanReturn]
-		  ,[CanJunk])
-	SELECT pass0.PKey,Menu.MenuName,
-	MenuDetail.PKey,MenuDetail.BarPrompt,'',MenuDetail.CanNew,MenuDetail.CanEdit,MenuDetail.CanDelete,MenuDetail.CanPrint,
-	MenuDetail.CanConfirm,MenuDetail.CanUnConfirm,MenuDetail.CanSend,MenuDetail.CanRecall,MenuDetail.CanCheck,MenuDetail.CanUnCheck,
-	MenuDetail.CanClose,MenuDetail.CanUnClose,MenuDetail.CanReceive,MenuDetail.CanReturn,MenuDetail.CanJunk
+		  ,[Used])
+	SELECT pass0.PKey,Menu.MenuName,MenuDetail.PKey,MenuDetail.BarPrompt,'' Used
 	FROM pass0,Menu, MenuDetail
 	WHERE Menu.PKey = MenuDetail.UKey AND MenuDetail.ForMISOnly = 0 AND MenuDetail.ObjectCode = 0
 	and not exists (select 1 from Pass2 where FKMenu=MenuDetail.PKey)

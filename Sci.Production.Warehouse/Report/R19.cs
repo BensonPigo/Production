@@ -24,6 +24,7 @@ namespace Sci.Production.Warehouse
             InitializeComponent();
             this.EditMode = true;
             comboCategoryAlreadyReturn.SelectedIndex = 0;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         protected override bool ValidateInput()
@@ -51,6 +52,11 @@ namespace Sci.Production.Warehouse
             //return base.OnAsyncDataLoad(e);
             DateTime? returnDate1 = dateEstReturnDate.Value1;
             DateTime? returnDate2 = dateEstReturnDate.Value2;
+            DateTime? borrowDate1 = dateRangeBorrowDate.Value1;
+            DateTime? borrowDate2 = dateRangeBorrowDate.Value2;
+            DateTime? buyDeliveryDate1 = dateRangeBuyerDlv.Value1;
+            DateTime? buyDeliveryDate2 = dateRangeBuyerDlv.Value2;
+            string factory = txtfactory.Text;
             String spno = txtBorrowSPNo.Text.TrimEnd();
 
             DualResult result = Result.True;
@@ -58,17 +64,35 @@ namespace Sci.Production.Warehouse
             #region sql command
             sqlcmd.Append(@"
 with cte as (
-    Select  a.id
+      Select  a.id
+			, a.FactoryID
+			, a.DepartmentID
+			, a.SewingLineID
+			, a.Shift
             , frompoid
             , fromseq1
             , FromSeq2
+			, b.FromRoll
+			, b.FromDyelot
             , FromStockType
-            , sum(qty) qty
+            , sum(b.qty) qty
             , issuedate
             , estbackdate
             , backdate
+            , o.MCHandle
+            , [ReturnRoll] = rt.[Return Roll#]
+			, [ReturnDyelot] = rt.[Return Dyelot]
     from borrowback a WITH (NOLOCK) 
     inner join borrowback_detail b WITH (NOLOCK) on b.id = a.id 
+    left join Orders o WITH (NOLOCK)  on b.FromPOID=o.ID
+	outer apply(
+		SELECT BBD.FromRoll AS [Return Roll#] 
+		,BBD.FromDyelot AS [Return Dyelot] 
+		from BorrowBack ABB
+		LEFT JOIN BorrowBack BBB ON BBB.BorrowId = ABB.ID
+		LEFT JOIN BorrowBack_Detail BBD ON BBB.ID = BBD.ID
+		WHERE ABB.ID =a.Id                              
+	)rt
     Where   a.type='A'
             and a.Status = 'Confirmed'");
             if (!MyUtility.Check.Empty(returnDate1) || !MyUtility.Check.Empty(returnDate2))
@@ -79,6 +103,29 @@ with cte as (
                 if (!MyUtility.Check.Empty(returnDate2))
                     sqlcmd.Append(string.Format(@" 
             and a.estbackdate <= '{0}'", Convert.ToDateTime(returnDate2).ToString("d")));
+            }
+            if (!MyUtility.Check.Empty(borrowDate1) || !MyUtility.Check.Empty(borrowDate2))
+            {
+                if (!MyUtility.Check.Empty(borrowDate1))
+                    sqlcmd.Append($@"
+            and '{Convert.ToDateTime(borrowDate1).ToString("d")}' <= a.issuedate");
+                if (!MyUtility.Check.Empty(borrowDate2))
+                    sqlcmd.Append($@" 
+            and a.issuedate <= '{Convert.ToDateTime(borrowDate2).ToString("d")}'" );
+            }
+            if (!MyUtility.Check.Empty(buyDeliveryDate1) || !MyUtility.Check.Empty(buyDeliveryDate2))
+            {
+                if (!MyUtility.Check.Empty(buyDeliveryDate1))
+                    sqlcmd.Append($@"
+            and '{Convert.ToDateTime(buyDeliveryDate1).ToString("d")}' <= o.BuyerDelivery");
+                if (!MyUtility.Check.Empty(buyDeliveryDate2))
+                    sqlcmd.Append($@" 
+            and o.BuyerDelivery <= '{Convert.ToDateTime(buyDeliveryDate2).ToString("d")}'");
+            }
+            if (!MyUtility.Check.Empty(factory))
+            {
+                sqlcmd.Append(string.Format(@"
+            And a.FactoryID = '{0}'", factory));
             }
             if (!MyUtility.Check.Empty(spno))
             {
@@ -112,13 +159,29 @@ with cte as (
             }
 
             sqlcmd.Append(string.Format(@" 
-    Group by a.id, frompoid, FromSeq1, FromSeq2, FromStockType
-             , a.IssueDate, estbackdate, backdate
+     Group by a.id, a.FactoryID, a.DepartmentID, a.SewingLineID
+			, a.Shift, frompoid, fromseq1, FromSeq2
+			, b.FromRoll, b.FromDyelot, FromStockType
+            , issuedate, estbackdate, backdate, o.MCHandle
+            , rt.[Return Dyelot],rt.[Return Roll#]
 )
 select  cte.id
-        , cte.FromPOID
+		, cte.FactoryID
+		, cte.DepartmentID
+		, cte.SewingLineID
+		, cte.Shift
+		, cte.FromPOID
+		, [OrderIdList] = stuff((select concat('/',tmp.OrderID) 
+		                                    from (
+			                                    select orderID from po_supp_Detail_orderList e
+			                                    where e.ID = cte.FromPOID and e.SEQ1 =cte.FromSeq1 and e.SEQ2 = cte.FromSeq2
+		                                    ) tmp for xml path(''))
+                                    ,1,1,'')
+        
         , cte.FromSeq1
         , cte.FromSeq2
+		, cte.FromRoll
+		, cte.FromDyelot
         , stocktype = case cte.FromStockType 
                         when 'B' then 'Bulk' 
                         when 'I' then 'Inventory' 
@@ -148,8 +211,11 @@ select  cte.id
                                                 and y.ToStockType = cte.FromStockType)
                                     ,0.00)
         , cte.IssueDate
-        , cte.EstBackDate
+        , cte.EstBackDate 
         , cte.BackDate
+		, [ReturnRoll] = cte.ReturnRoll
+		, [ReturnDyelot] = cte.ReturnDyelot
+		, [McHandle] = dbo.getPass1_ExtNo(cte.MCHandle)
 from cte"));
 
             #endregion
@@ -166,16 +232,6 @@ from cte"));
                 throw ex;
             }
             return result;
-        }
-
-        private void toexcel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void R18_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }
