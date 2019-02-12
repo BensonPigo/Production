@@ -24,6 +24,7 @@ From PO_Supp_Detail WITH (NOLOCK)
 Where id='{poid}' 
 and SCIRefno ='{sciRefno}' 
 and Junk != 1 
+and seq1 not like '7%'
 union all
 select SEQ1,SEQ2,ColorID
 from PO_Supp_Detail psd1

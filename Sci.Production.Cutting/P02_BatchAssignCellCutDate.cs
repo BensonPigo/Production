@@ -339,6 +339,7 @@ select 1 from (
 	Where id='{Poid}' 
 	and SCIRefno ='{dr["SciRefno"]}' 
 	and Junk != 1 
+    and seq1 not like '7%'
 
 	union all
 	select psd1.ID,SEQ1,SEQ2,ColorID
