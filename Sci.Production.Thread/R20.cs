@@ -167,6 +167,7 @@ select t.FactoryID
        , ROUND(td.ConsumptionQty / tdc.OrderQty, 3)
        , td.Refno
        , td.ThreadColorID
+	   , tc.ThreadColorGroupID
        , [color_desc] = (select c.Description 
        					 from dbo.ThreadColor c WITH (NOLOCK) 
        					 where c.id = td.ThreadColorID) 
@@ -184,7 +185,7 @@ inner join dbo.ThreadRequisition_Detail td WITH (NOLOCK) on td.orderid = t.Order
 left join dbo.orders o WITH (NOLOCK) on o.id = t.OrderID
 outer apply(
 	select Allowance
-	from ThreadAllowanceScale  tas
+	from ThreadAllowanceScale  tas WITH (NOLOCK)
 	where tas.LowerBound <= td.TotalQty
 	and td.TotalQty <= tas.UpperBound
 )est
@@ -193,7 +194,7 @@ Outer apply
   select cast(sum(tdc.OrderQty)as float) as OrderQty
   from(
   select Article,OrderQty
-  from [Production].[dbo].[ThreadRequisition_Detail_Cons]
+  from [Production].[dbo].[ThreadRequisition_Detail_Cons] WITH (NOLOCK)
   where ThreadRequisition_DetailUkey=td.Ukey
   group by Article,OrderQty
   ) as tdc
@@ -201,9 +202,13 @@ Outer apply
 outer apply
 (
 	select sum(NewCone) NewCone,sum(UsedCone)UsedCone 
-	from ThreadStock
+	from ThreadStock WITH (NOLOCK)
 	where Refno=td.Refno and ThreadColorID=td.ThreadColorID
 )ts
+outer apply(
+	select ThreadColorGroupID from ThreadColor tc WITH (NOLOCK)
+	where tc.id=td.ThreadColorID
+)tc
 {sqlWhere}
 {order}";
 

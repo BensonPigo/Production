@@ -231,34 +231,44 @@ isnull((select SUM(c.Qty)
 
             // 撈Sewing Data
             sqlCmd = string.Format(
-                @"with SewQty
-as (
-select oq.Article,oq.SizeCode,oq.Qty,sdd.ComboType,isnull(sum(sdd.QAQty),0) as QAQty
-from Orders o WITH (NOLOCK) 
-inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
-left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID and sdd.Article = oq.Article and sdd.SizeCode = oq.SizeCode
-where o.ID = '{0}'
-group by oq.Article,oq.SizeCode,oq.Qty,sdd.ComboType
+                @"
+with SewQty as (
+	select	oq.Article
+			, oq.SizeCode
+			, oq.Qty
+			, ComboType = sl.Location
+			, QAQty = isnull(sum(sdd.QAQty),0)
+	from Orders o WITH (NOLOCK) 
+	inner join Style_Location sl WITH (NOLOCK) on o.StyleUkey = sl.StyleUkey
+	inner join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID
+	left join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = o.ID 
+															  and sdd.Article = oq.Article 
+															  and sdd.SizeCode = oq.SizeCode 
+															  and sdd.ComboType = sl.Location
+	where o.ID = '{0}'
+	group by oq.Article,oq.SizeCode,oq.Qty,sl.Location
+), 
+minSewQty as (
+	select	Article
+			, SizeCode
+			, QAQty = MIN(QAQty)
+	from SewQty
+	group by Article,SizeCode
 ),
-minSewQty
-as (
-select Article,SizeCode,MIN(QAQty) as QAQty
-from SewQty
-group by Article,SizeCode
-),
-PivotData
-as (
-select *
-from SewQty
-PIVOT (SUM(QAQty)
-FOR ComboType IN ([T],[B],[I],[O])) a
+PivotData as (
+	select *
+	from SewQty
+	PIVOT (SUM(QAQty)
+	FOR ComboType IN ([T],[B],[I],[O])) a
 )
-select p.*,m.QAQty as SewQty,LAG(p.Article,1,null) OVER (Order by oa.Seq,os.Seq) as LastArticle
+select	p.*
+		, SewQty = m.QAQty 
+		, LastArticle = LAG(p.Article,1,null) OVER (Order by oa.Seq,os.Seq)
 from PivotData p
 left join minSewQty m on m.Article = p.Article and m.SizeCode = p.SizeCode
 left join Order_Article oa WITH (NOLOCK) on oa.ID = '{1}' and oa.Article = p.Article
 left join Order_SizeCode os WITH (NOLOCK) on os.ID = '{1}' and os.SizeCode = p.SizeCode
-order by oa.Seq,os.Seq",
+order by oa.Seq,os.Seq;",
                 MyUtility.Convert.GetString(this.masterData["ID"]),
                 MyUtility.Convert.GetString(this.masterData["POID"]));
 

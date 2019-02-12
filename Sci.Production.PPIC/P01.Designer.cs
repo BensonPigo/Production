@@ -147,10 +147,10 @@
             this.lineShape7 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape6 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape5 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
-            this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
             this.txttpeuser3 = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser5 = new Sci.Production.Class.txttpeuser();
             this.PcHandleText = new Sci.Production.Class.txttpeuser();
+            this.txttpeuser4 = new Sci.Production.Class.txttpeuser();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.labelBuyer = new Sci.Win.UI.Label();
@@ -619,6 +619,17 @@
             this.btnPFHistory.Text = "PF";
             this.btnPFHistory.UseVisualStyleBackColor = true;
             this.btnPFHistory.Click += new System.EventHandler(this.btnPFHistory_Click);
+            // 
+            // btnEConsMNFailed
+            // 
+            this.btnEConsMNFailed.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnEConsMNFailed.Location = new System.Drawing.Point(797, 628);
+            this.btnEConsMNFailed.Name = "btnEConsMNFailed";
+            this.btnEConsMNFailed.Size = new System.Drawing.Size(194, 27);
+            this.btnEConsMNFailed.TabIndex = 193;
+            this.btnEConsMNFailed.Text = "Econs/MN Failed";
+            this.btnEConsMNFailed.UseVisualStyleBackColor = true;
+            this.btnEConsMNFailed.Click += new System.EventHandler(this.BtnEConsMNFailed_Click);
             // 
             // btnPoRemark
             // 
@@ -1193,7 +1204,7 @@
             this.labelMNtoiceApv.Name = "labelMNtoiceApv";
             this.labelMNtoiceApv.Size = new System.Drawing.Size(82, 21);
             this.labelMNtoiceApv.TabIndex = 58;
-            this.labelMNtoiceApv.Text = "M.Ntoice Apv.";
+            this.labelMNtoiceApv.Text = "M.Notice Apv.";
             // 
             // dateEachConsApv
             // 
@@ -1749,14 +1760,14 @@
             this.lineShape5.Y1 = 53;
             this.lineShape5.Y2 = 53;
             // 
-            // txttpeuser4
+            // txttpeuser3
             // 
-            this.txttpeuser4.DisplayBox1Binding = "";
-            this.txttpeuser4.DisplayBox2Binding = "";
-            this.txttpeuser4.Location = new System.Drawing.Point(279, 31);
-            this.txttpeuser4.Name = "txttpeuser4";
-            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser4.TabIndex = 7;
+            this.txttpeuser3.DisplayBox1Binding = "";
+            this.txttpeuser3.DisplayBox2Binding = "";
+            this.txttpeuser3.Location = new System.Drawing.Point(279, 4);
+            this.txttpeuser3.Name = "txttpeuser3";
+            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser3.TabIndex = 6;
             // 
             // txttpeuser5
             // 
@@ -1768,15 +1779,6 @@
             this.txttpeuser5.Size = new System.Drawing.Size(302, 23);
             this.txttpeuser5.TabIndex = 70;
             // 
-            // txttpeuser3
-            // 
-            this.txttpeuser3.DisplayBox1Binding = "";
-            this.txttpeuser3.DisplayBox2Binding = "";
-            this.txttpeuser3.Location = new System.Drawing.Point(279, 4);
-            this.txttpeuser3.Name = "txttpeuser3";
-            this.txttpeuser3.Size = new System.Drawing.Size(302, 23);
-            this.txttpeuser3.TabIndex = 6;
-            // 
             // PcHandleText
             // 
             this.PcHandleText.DisplayBox1Binding = "";
@@ -1785,6 +1787,15 @@
             this.PcHandleText.Name = "PcHandleText";
             this.PcHandleText.Size = new System.Drawing.Size(302, 23);
             this.PcHandleText.TabIndex = 191;
+            // 
+            // txttpeuser4
+            // 
+            this.txttpeuser4.DisplayBox1Binding = "";
+            this.txttpeuser4.DisplayBox2Binding = "";
+            this.txttpeuser4.Location = new System.Drawing.Point(279, 31);
+            this.txttpeuser4.Name = "txttpeuser4";
+            this.txttpeuser4.Size = new System.Drawing.Size(302, 23);
+            this.txttpeuser4.TabIndex = 7;
             // 
             // lineShape10
             // 
@@ -3305,17 +3316,6 @@
             this.btnExpectionFormRemark.Text = "R";
             this.btnExpectionFormRemark.UseVisualStyleBackColor = true;
             this.btnExpectionFormRemark.Click += new System.EventHandler(this.btnExpectionFormRemark_Click);
-            // 
-            // btnEConsMNFailed
-            // 
-            this.btnEConsMNFailed.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnEConsMNFailed.Location = new System.Drawing.Point(797, 628);
-            this.btnEConsMNFailed.Name = "btnEConsMNFailed";
-            this.btnEConsMNFailed.Size = new System.Drawing.Size(194, 27);
-            this.btnEConsMNFailed.TabIndex = 193;
-            this.btnEConsMNFailed.Text = "Econs/MN Failed";
-            this.btnEConsMNFailed.UseVisualStyleBackColor = true;
-            this.btnEConsMNFailed.Click += new System.EventHandler(this.BtnEConsMNFailed_Click);
             // 
             // P01
             // 
