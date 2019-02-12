@@ -66,7 +66,8 @@ order by ot.Seq", this.orderData["ID"].ToString());
 
             this.numCPU.Value = MyUtility.Convert.GetDecimal(this.orderData["CPU"]);
             this.CalculatedCPUcost();
-            this.numSubProcess.Value = MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'A'"));
+            decimal price = MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'A'"));
+            this.numSubProcess.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(price * this.numCPUCost.Value), 3);
             this.CalculatedLocalCMT();
             this.numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal((this.numCPU.Value * this.numCPUCost.Value) + this.numSubProcess.Value + this.numLocalPurchase.Value), 2);
         }
