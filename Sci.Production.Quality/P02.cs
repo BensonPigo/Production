@@ -22,6 +22,7 @@ namespace Sci.Production.Quality
         ToolStripMenuItem edit;
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
+        private bool boolFromP02;
         string find = "";
         int index;
         DataRow[] find_dr;
@@ -30,7 +31,7 @@ namespace Sci.Production.Quality
         {
             InitializeComponent();
             detailgrid.ContextMenuStrip = detailgridmenus;
-
+            boolFromP02 = false;
         }
 
         public P02(string POID)
@@ -40,6 +41,7 @@ namespace Sci.Production.Quality
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
             detailgrid.ContextMenuStrip = detailgridmenus;
+            boolFromP02 = true;
         }
 
         //表身額外的資料來源
@@ -150,10 +152,33 @@ namespace Sci.Production.Quality
 
         protected override void OnFormLoaded()
         {
-
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("ModifyDetail", onclick: (s, e) => ModifyDetail()).Get(out edit);
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data:");
+            if (boolFromP02)
+            {
+                this.ExpressQuery = false;
+            }
+            else
+            {
+                queryfors.SelectedIndex = 1;
+                this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                this.ExpressQuery = true;
+            }
             base.OnFormLoaded();
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    case 1:
+                        this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         protected override void OnDetailEntered()

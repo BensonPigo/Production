@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.dateTargetLeadTime);
             this.masterpanel.Controls.Add(this.dateEarliestSCIDel);
             this.masterpanel.Controls.Add(this.dateEarliestEstCutDate);
-            this.masterpanel.Size = new System.Drawing.Size(917, 203);
+            this.masterpanel.Size = new System.Drawing.Size(892, 203);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEarliestEstCutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEarliestSCIDel, 0);
@@ -140,7 +140,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 203);
-            this.detailpanel.Size = new System.Drawing.Size(917, 411);
+            this.detailpanel.Size = new System.Drawing.Size(892, 146);
             // 
             // gridicon
             // 
@@ -152,7 +152,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(917, 411);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 146);
             // 
             // detail2
             // 
@@ -168,16 +168,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(917, 652);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(917, 614);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 614);
-            this.detailbtm.Size = new System.Drawing.Size(917, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -495,6 +495,7 @@
             this.DefaultControlForEdit = "txtLocateforWK";
             this.DefaultDetailOrder = "SEQ1,exportid";
             this.DefaultOrder = "id";
+            this.ExpressQuery = true;
             this.GridAlias = "AIR";
             this.GridNew = 0;
             this.GridUniqueKey = "seq1,seq2,receivingid";

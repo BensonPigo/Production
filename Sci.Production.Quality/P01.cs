@@ -21,6 +21,7 @@ namespace Sci.Production.Quality
     {     
         private string loginID = Sci.Env.User.UserID;
         private string keyWord = Sci.Env.User.Keyword;
+        private bool boolFromP01;
        
         int index;
         string find = "";
@@ -41,6 +42,7 @@ namespace Sci.Production.Quality
                 this.modifyOdorTestToolStripMenuItem  });
             //關閉表身Grid DoubleClick 會新增row的問題
             InsertDetailGridOnDoubleClick = false;
+            boolFromP01 = false;
         }
 
         public P01(string Poid) //for Form直接call form
@@ -49,6 +51,38 @@ namespace Sci.Production.Quality
             DefaultFilter = string.Format("ID = '{0}'", Poid);
             InsertDetailGridOnDoubleClick = false;
             IsSupportEdit = false;
+            boolFromP01 = true;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data:");
+            if (boolFromP01)
+            {
+                this.ExpressQuery = false;
+            }
+            else
+            {
+                queryfors.SelectedIndex = 1;
+                this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                this.ExpressQuery = true;
+            }
+
+            base.OnFormLoaded();
+
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    case 1:
+                        this.DefaultWhere = " AddDate >= DATEADD(YY,-2,GETDATE()) OR EditDate >= DATEADD(YY,-2,GETDATE())";
+                        break;
+                }
+                this.ReloadDatas();
+            };
         }
 
         protected override Ict.DualResult OnDetailSelectCommandPrepare(Win.Tems.InputMasterDetail.PrepareDetailSelectCommandEventArgs e)
