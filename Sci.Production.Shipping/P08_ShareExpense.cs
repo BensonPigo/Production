@@ -246,22 +246,20 @@ select * from Expt", e.FormattedValue.ToString());
 with GB as 
 (select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
  '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
- '' as ShareBase, 0 as FtyWK ,p.OrderID
+ '' as ShareBase, 0 as FtyWK 
  from GMTBooking g  WITH (NOLOCK) 
  left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
  left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
  where 1=1  and g.id='{0}' ), 
 PL as 
 (select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,
-'' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK ,OrderID
+'' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK 
  from PackingList WITH (NOLOCK) 
  where  (Type = 'F' or Type = 'L')  and id='{0}' ) ,
 FTY AS
 (select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno,
 '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
-,p.OrderID
 from FtyExport fe WITH (NOLOCK) 
- left Join PackingList p WITH (NOLOCK) on p.INVNo = fe.INVNO
  where fe.Type = 3  and fe.id='{0}')
 select * from GB 
 union all 
@@ -284,8 +282,14 @@ SELECT * FROM FTY
                             for (int i = 0; i < dtExp.Rows.Count; i++)
                             {
                                 string strSqlcmd = $@"
-select 1 from AirPP where OrderID = '{dtExp.Rows[i]["OrderID"]}'
-";
+ select 1 from AirPP a WITH (NOLOCK) 
+ where exists (
+	select 1 from PackingList p WITH (NOLOCK) 
+	inner join PackingList_Detail pl WITH (NOLOCK)  on p.ID= pl.ID
+	where pl.OrderID= a.OrderID
+	and p.INVNo='{dtExp.Rows[i]["InvNo"]}'
+ )";
+
                                 if (!MyUtility.Check.Seek(strSqlcmd) &&
                                 (dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
                                     dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
@@ -315,18 +319,15 @@ with
 ExportData as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
-,p.OrderID
- from Export WITH (NOLOCK) 
- left Join PackingList p WITH (NOLOCK) on p.INVNo = Export.INVNO
+ from Export WITH (NOLOCK)  
  where 1 = 1 and id='{0}' )
 ,
 FtyExportData as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
-,p.OrderID
  from FtyExport WITH (NOLOCK) 
-left Join PackingList p WITH (NOLOCK) on p.INVNo = Export.INVNO
- where Type <> 3  and id='{0}') select * from ExportData 
+ where Type <> 3  and id='{0}') 
+select * from ExportData 
 union all 
 select * from FtyExportData ", e.FormattedValue.ToString());
                         DataTable dtImp;
@@ -349,8 +350,13 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                             for (int i = 0; i < dtImp.Rows.Count; i++)
                             {
                                 string strSqlcmd = $@"
-select 1 from AirPP where OrderID = '{dtImp.Rows[i]["OrderID"]}'
-";
+ select 1 from AirPP a WITH (NOLOCK) 
+ where exists (
+	select 1 from PackingList p WITH (NOLOCK) 
+	inner join PackingList_Detail pl WITH (NOLOCK)  on p.ID= pl.ID
+	where pl.OrderID= a.OrderID
+	and p.INVNo='{dtImp.Rows[i]["InvNo"]}'
+ )";
                                 if (!MyUtility.Check.Seek(strSqlcmd) &&
                                 (dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
                                     dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
@@ -411,7 +417,65 @@ select 1 from AirPP where OrderID = '{dtImp.Rows[i]["OrderID"]}'
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(30))
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
                 .Text("ShareRule", header: "Share by", width: Widths.AnsiChars(22));
+
+            string strCheckSql = $@"select 1 from ShareExpense WITH (NOLOCK)  where ShippingAPID = '{this.apData["ID"]}' and (Junk=0 or junk is null)";
+
+            if (
+                this.apData["SubType"].ToString().ToUpper() == "GARMENT" &&
+                this.apData["Type"].ToString().ToUpper() == "EXPORT" &&
+                !MyUtility.Check.Seek(strCheckSql))
+            {
+                this.AppendData();
+            }
+
             this.QueryData();
+
+        }
+
+        private void AppendData()
+        {
+            string strSqlCmd = $@"
+merge ShareExpense t
+using (
+	select top 1
+[ShippingAPID] = '{this.apData["ID"]}'
+,[BLNo] = BLNo
+,[WKNo] = ''
+,[InvNo] = id
+,[Type] = '{this.apData["SubType"]}'
+,[GW] = TotalGW
+,[CBM] = TotalCBM
+,[CurrencyID] = '{this.apData["CurrencyID"]}'
+,[ShipModeID] = ShipModeID
+,[FtyWK] = 0
+,[AccountID] = (
+	select top 1 se.AccountID from ShippingAP_Detail sd WITH(NOLOCK) , ShipExpense se WITH(NOLOCK)
+   where sd.ID = '{this.apData["ID"]}' and sd.ShipExpenseID = se.ID and se.AccountID != '')
+,[Junk] = 0
+from GMTBooking g WITH (NOLOCK) 
+where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
+on	t.ShippingAPID = s.ShippingAPID 
+	and t.BLNO = s.BLNO
+	and t.WKNO = s.WKNO
+	and t.InvNo = s.InvNo
+when not matched then 
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk) ;";
+
+            DualResult result;
+
+            if (!(result = DBProxy.Current.Execute(string.Empty, strSqlCmd)))
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            // 重新計算
+            bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]));
+            if (!returnValue)
+            {
+                MyUtility.Msg.WarningBox("Calcute share expense failed.");
+            }
         }
 
         private void QueryData()
@@ -439,11 +503,7 @@ from (
 
             sqlCmd = string.Format(
                 @"
-select  sh.Junk,sh.ShippingAPID,sh.WKNo,sh.InvNo,sh.Type,sh.GW,sh.CBM,sh.Amount,sh.ShipModeID
-		, [BLNo] =
-            case when ap.Type='EXPORT' and ap.SubType='GARMENT'
-		    then ap.BLNo
-		    else sh.BLNo end
+select  sh.Junk,sh.ShippingAPID,sh.WKNo,sh.InvNo,sh.Type,sh.GW,sh.CBM,sh.Amount,sh.ShipModeID,sh.BLNO
         ,sh.AccountID
         , an.Name as AccountName
         , case 
@@ -453,9 +513,6 @@ select  sh.Junk,sh.ShippingAPID,sh.WKNo,sh.InvNo,sh.Type,sh.GW,sh.CBM,sh.Amount,
           end as ShareRule 
 from ShareExpense sh WITH (NOLOCK) 
 left join [FinanceEN].dbo.AccountNo an on an.ID = sh.AccountID
-outer apply(
-	SELECT BLNo,Type,SubType FROM ShippingAP WITH (NOLOCK) WHERE ID= '{0}' 
-)ap
 where   sh.ShippingAPID = '{0}' 
         and (sh.Junk = 0 or sh.Junk is null)
 order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
@@ -471,10 +528,7 @@ order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
             sqlCmd = string.Format(
                 @"
 select  ShippingAPID
-        , [BLNo] =
-            case when ap.Type='EXPORT' and ap.SubType='GARMENT'
-		    then ap.BLNo
-		    else se.BLNo end
+        , se.Blno
         , WKNo
         , InvNo
         , se.Type
@@ -486,19 +540,10 @@ select  ShippingAPID
         , FtyWK
         , isnull(sum(Amount),0) as Amount 
         , '' as SubTypeRule
-	    , pl.OrderID
 from ShareExpense se WITH (NOLOCK) 
-outer apply(
-	SELECT BLNo,Type,SubType FROM ShippingAP WITH (NOLOCK) WHERE ID= '{0}' 
-)ap
-outer apply(
-	select distinct pld.OrderID from PackingList pl
-	inner join PackingList_Detail pld on pl.id=pld.ID
-	 where INVNo=se.InvNo
-)pl
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
-group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK,ap.BLNo,ap.SubType,ap.Type,pl.OrderID
+group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK
 ", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)

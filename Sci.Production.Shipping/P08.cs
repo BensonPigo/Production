@@ -947,7 +947,7 @@ where sd.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
 
             switch (this.comboType.SelectedValue.ToString())
             {
-                case "IMPORT":
+                case "EXPORT":
                     if (string.Compare(this.comboType2.SelectedValue.ToString(), "Other", true) == 0)
                     {
                         MyUtility.Msg.InfoBox(@"
@@ -962,7 +962,7 @@ Please be sure this Account Payable is for the following items, otherwise, pleas
                     }
 
                     break;
-                case "EXPORT":
+                case "IMPORT":
                     if (string.Compare(this.comboType2.SelectedValue.ToString(), "Other", true) == 0)
                     {
                         MyUtility.Msg.InfoBox(@"
