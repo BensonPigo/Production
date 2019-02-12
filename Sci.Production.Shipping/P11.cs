@@ -197,7 +197,7 @@ select
 	H=round(o.PoPrice,2),
 	I=sum(pd.ShipQty)*round(o.PoPrice,2),
 	L=round((o.CPU*isnull(f.CpuCost,0))+(isnull(s1.Price,0)+isnull(s2.Price,0))+isnull(s3.Price,0),2),
-	M=sum(pd.ShipQty)*round((o.CPU*isnull(f.CpuCost,0))+(isnull(s1.Price,0)+isnull(s2.Price,0))+isnull(s3.Price,0),2)
+	M=sum(pd.ShipQty)*round((o.CPU*isnull(f.CpuCost,0))+ round((isnull(s1.Price,0)+isnull(s2.Price,0))* isnull(f.CpuCost,0),3)+isnull(s3.Price,0),3)
 from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
 inner join PackingList p with(nolock) on p.id = pd.id
@@ -225,10 +225,7 @@ outer apply(
 	where ot.ID = o.id and a.Classify = 'A'
 )s2
 outer apply(
-	select Price = Round(sum(ot.Price),3,1)
-	from Order_TmsCost ot WITH (NOLOCK) 
-	left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
-	where ot.ID = o.id and a.Classify = 'P'
+	select dbo.GetLocalPurchaseStdCost(o.id) price
 )s3
 where p.INVNo in({string.Join(",", ids)})
 group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,
