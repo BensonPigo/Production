@@ -334,6 +334,12 @@
     <Compile Include="P29.Designer.cs">
       <DependentUpon>P29.cs</DependentUpon>
     </Compile>
+    <Compile Include="P30.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P30.Designer.cs">
+      <DependentUpon>P30.cs</DependentUpon>
+    </Compile>
     <Compile Include="P31_PrintData.cs" />
     <Compile Include="P32_PrintData.cs" />
     <Compile Include="P45_Import.cs">
@@ -1345,6 +1351,9 @@
       <DependentUpon>P23_FabricSticker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P23_FabricSticker_Print.rdlc" />
+    <EmbeddedResource Include="P30.resx">
+      <DependentUpon>P30.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P45_Import.resx">
       <DependentUpon>P45_Import.cs</DependentUpon>
       <SubType>Designer</SubType>
