@@ -96,7 +96,7 @@ o.FactoryID
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = pd.OrderID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0))
                     +
-                    (Select Isnull(sum(ot.Price)*cpucost.cpucost,0) 
+                    (Select Isnull(sum(ot.Price),0) 
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = pd.OrderID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3) * isnull(cpucost.cpucost,0),3)
