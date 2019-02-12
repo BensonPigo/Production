@@ -56,7 +56,7 @@ namespace Sci.Production.Quality
 
         protected override void OnFormLoaded()
         {
-            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data:");
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data");
             if (boolFromP01)
             {
                 this.ExpressQuery = false;

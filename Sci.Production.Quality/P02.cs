@@ -154,7 +154,7 @@ namespace Sci.Production.Quality
         {
             this.detailgridmenus.Items.Clear(); // 清空原有的Menu Item
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("ModifyDetail", onclick: (s, e) => ModifyDetail()).Get(out edit);
-            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data:");
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, 1, ",last two years data");
             if (boolFromP02)
             {
                 this.ExpressQuery = false;
