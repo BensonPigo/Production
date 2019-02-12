@@ -312,9 +312,10 @@ where p.INVNo in ({string.Join(",", ids)})
             }
 
             worksheet.Cells[65, 9] = sumI;
-            worksheet.Cells[67, 9] = sumM + sumI;
+            worksheet.Cells[67, 9] = sumI - sumM;
             worksheet.Cells[69, 9] = sumM;
             worksheet.Cells[62, 2] = sumF;
+            worksheet.Cells[79, 1] = $@"InvSerial: {this.CurrentMaintain["InvSerial"]}";
             #endregion
 
             #region 內容
