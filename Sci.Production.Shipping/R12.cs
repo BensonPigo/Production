@@ -91,7 +91,7 @@ o.FactoryID
 ,g.FCRDate
 ,ROUND(o.CPU,3) as CPU
 ,isnull(cpucost.cpucost,0) as cpucost
-,SubPSCost=         ROUND((Select Isnull(sum(ot.Price),0) 
+,SubPSCost=         ROUND(ROUND((Select Isnull(sum(ot.Price),0) 
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
 					where ot.ID = pd.OrderID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0))
@@ -99,7 +99,7 @@ o.FactoryID
                     (Select Isnull(sum(ot.Price)*cpucost.cpucost,0) 
 					from Order_TmsCost ot
 					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = pd.OrderID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3)
+					where ot.ID = pd.OrderID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3) * isnull(cpucost.cpucost,0),3)
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, dbo.GetLocalPurchaseStdCost(pd.OrderID) ,0),3)
 From GMTBooking g
 Left join PackingList p on g.ID = p.InvNo
