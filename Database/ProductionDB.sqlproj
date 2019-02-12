@@ -2323,6 +2323,7 @@
     <Build Include="dbo\Functions\GetCuttingTime.sql" />
     <Build Include="dbo\Functions\GetActualPerimeter.sql" />
     <Build Include="dbo\Tables\SpreadingNo.sql" />
+    <Build Include="dbo\Tables\VNImportDeclaration_Detail_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
