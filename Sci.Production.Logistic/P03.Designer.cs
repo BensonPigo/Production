@@ -64,6 +64,9 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.label3 = new Sci.Win.UI.Label();
+            this.dateReqDate = new Sci.Win.UI.DateRange();
+            this.chkOnlyReqCarton = new Sci.Win.UI.CheckBox();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -74,9 +77,9 @@
             // 
             this.panel5.Controls.Add(this.gridReceiveDate);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(10, 159);
+            this.panel5.Location = new System.Drawing.Point(10, 187);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(692, 343);
+            this.panel5.Size = new System.Drawing.Size(692, 348);
             this.panel5.TabIndex = 21;
             // 
             // gridReceiveDate
@@ -100,7 +103,7 @@
             this.gridReceiveDate.RowTemplate.Height = 24;
             this.gridReceiveDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridReceiveDate.ShowCellToolTips = false;
-            this.gridReceiveDate.Size = new System.Drawing.Size(692, 343);
+            this.gridReceiveDate.Size = new System.Drawing.Size(692, 348);
             this.gridReceiveDate.TabIndex = 10;
             this.gridReceiveDate.TabStop = false;
             this.gridReceiveDate.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.GridReceiveDate_ColumnHeaderMouseClick);
@@ -170,15 +173,15 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(702, 159);
+            this.panel2.Location = new System.Drawing.Point(702, 187);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 343);
+            this.panel2.Size = new System.Drawing.Size(10, 348);
             this.panel2.TabIndex = 18;
             // 
             // btnSave
             // 
             this.btnSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSave.Location = new System.Drawing.Point(539, 123);
+            this.btnSave.Location = new System.Drawing.Point(539, 151);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 8;
@@ -190,7 +193,7 @@
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnClose.Location = new System.Drawing.Point(625, 123);
+            this.btnClose.Location = new System.Drawing.Point(625, 151);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 9;
@@ -201,15 +204,15 @@
             // panel1
             // 
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel1.Location = new System.Drawing.Point(0, 159);
+            this.panel1.Location = new System.Drawing.Point(0, 187);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(10, 343);
+            this.panel1.Size = new System.Drawing.Size(10, 348);
             this.panel1.TabIndex = 17;
             // 
             // btnImportFromBarcode
             // 
             this.btnImportFromBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromBarcode.Location = new System.Drawing.Point(527, 83);
+            this.btnImportFromBarcode.Location = new System.Drawing.Point(527, 111);
             this.btnImportFromBarcode.Name = "btnImportFromBarcode";
             this.btnImportFromBarcode.Size = new System.Drawing.Size(176, 30);
             this.btnImportFromBarcode.TabIndex = 7;
@@ -220,7 +223,7 @@
             // panel4
             // 
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(0, 502);
+            this.panel4.Location = new System.Drawing.Point(0, 535);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(712, 10);
             this.panel4.TabIndex = 20;
@@ -231,6 +234,9 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.chkOnlyReqCarton);
+            this.panel3.Controls.Add(this.dateReqDate);
+            this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.numTotalCTNQty);
             this.panel3.Controls.Add(this.numSelectedCTNQty);
             this.panel3.Controls.Add(this.lbTotalCTNQty);
@@ -255,7 +261,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(712, 159);
+            this.panel3.Size = new System.Drawing.Size(712, 187);
             this.panel3.TabIndex = 19;
             // 
             // numTotalCTNQty
@@ -263,7 +269,7 @@
             this.numTotalCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numTotalCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numTotalCTNQty.IsSupportEditMode = false;
-            this.numTotalCTNQty.Location = new System.Drawing.Point(488, 127);
+            this.numTotalCTNQty.Location = new System.Drawing.Point(488, 155);
             this.numTotalCTNQty.Name = "numTotalCTNQty";
             this.numTotalCTNQty.NullValue = new decimal(new int[] {
             0,
@@ -284,7 +290,7 @@
             this.numSelectedCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numSelectedCTNQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numSelectedCTNQty.IsSupportEditMode = false;
-            this.numSelectedCTNQty.Location = new System.Drawing.Point(329, 127);
+            this.numSelectedCTNQty.Location = new System.Drawing.Point(329, 155);
             this.numSelectedCTNQty.Name = "numSelectedCTNQty";
             this.numSelectedCTNQty.NullValue = new decimal(new int[] {
             0,
@@ -302,7 +308,7 @@
             // 
             // lbTotalCTNQty
             // 
-            this.lbTotalCTNQty.Location = new System.Drawing.Point(385, 127);
+            this.lbTotalCTNQty.Location = new System.Drawing.Point(385, 155);
             this.lbTotalCTNQty.Name = "lbTotalCTNQty";
             this.lbTotalCTNQty.Size = new System.Drawing.Size(100, 23);
             this.lbTotalCTNQty.TabIndex = 47;
@@ -310,7 +316,7 @@
             // 
             // lbSelectedCTNQty
             // 
-            this.lbSelectedCTNQty.Location = new System.Drawing.Point(206, 127);
+            this.lbSelectedCTNQty.Location = new System.Drawing.Point(206, 155);
             this.lbSelectedCTNQty.Name = "lbSelectedCTNQty";
             this.lbSelectedCTNQty.Size = new System.Drawing.Size(120, 23);
             this.lbSelectedCTNQty.TabIndex = 46;
@@ -381,7 +387,7 @@
             this.lineShape3,
             this.lineShape2,
             this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(712, 159);
+            this.shapeContainer2.Size = new System.Drawing.Size(712, 187);
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
@@ -434,9 +440,50 @@
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
             // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(12, 76);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(92, 23);
+            this.label3.TabIndex = 50;
+            this.label3.Text = "Request Date";
+            // 
+            // dateReqDate
+            // 
+            // 
+            // 
+            // 
+            this.dateReqDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateReqDate.DateBox1.Name = "";
+            this.dateReqDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateReqDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateReqDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateReqDate.DateBox2.Name = "";
+            this.dateReqDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateReqDate.DateBox2.TabIndex = 1;
+            this.dateReqDate.Location = new System.Drawing.Point(107, 76);
+            this.dateReqDate.Name = "dateReqDate";
+            this.dateReqDate.Size = new System.Drawing.Size(280, 23);
+            this.dateReqDate.TabIndex = 51;
+            // 
+            // chkOnlyReqCarton
+            // 
+            this.chkOnlyReqCarton.AutoSize = true;
+            this.chkOnlyReqCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkOnlyReqCarton.Location = new System.Drawing.Point(12, 117);
+            this.chkOnlyReqCarton.Name = "chkOnlyReqCarton";
+            this.chkOnlyReqCarton.Size = new System.Drawing.Size(252, 21);
+            this.chkOnlyReqCarton.TabIndex = 52;
+            this.chkOnlyReqCarton.Text = "Only Show Factory Request Carton ";
+            this.chkOnlyReqCarton.UseVisualStyleBackColor = true;
+            this.chkOnlyReqCarton.CheckedChanged += new System.EventHandler(this.ChkOnlyReqCarton_CheckedChanged);
+            // 
             // P03
             // 
-            this.ClientSize = new System.Drawing.Size(712, 512);
+            this.ClientSize = new System.Drawing.Size(712, 545);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -496,5 +543,8 @@
         private Win.UI.Label lbTotalCTNQty;
         private Win.UI.Label lbSelectedCTNQty;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
+        private Win.UI.CheckBox chkOnlyReqCarton;
+        private Win.UI.DateRange dateReqDate;
+        private Win.UI.Label label3;
     }
 }

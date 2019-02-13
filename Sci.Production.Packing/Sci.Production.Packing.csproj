@@ -199,6 +199,7 @@
     <Compile Include="P03_UPCSticker.Designer.cs">
       <DependentUpon>P03_UPCSticker.cs</DependentUpon>
     </Compile>
+    <Compile Include="P23_PrintData.cs" />
     <Compile Include="P22.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -462,6 +463,7 @@
     <EmbeddedResource Include="P03_UPCSticker.resx">
       <DependentUpon>P03_UPCSticker.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P23_Print.rdlc" />
     <EmbeddedResource Include="P22.resx">
       <DependentUpon>P22.cs</DependentUpon>
     </EmbeddedResource>
@@ -570,6 +572,9 @@
     <EmbeddedResource Include="P19.resx">
       <DependentUpon>P19.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P23.resx">
+      <DependentUpon>P23.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
@@ -602,14 +607,15 @@
     <None Include="Packing.xss">
       <DependentUpon>Packing.xsd</DependentUpon>
     </None>
-    <None Include="Properties\DataSources\P14_Print.datasource" />
-    <None Include="Properties\DataSources\P14_PrintData.datasource" />
-    <None Include="Properties\DataSources\P14_PrintData_SLIP.datasource" />
+    <None Include="Properties\DataSources\P23_PrintData.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Sci.Production.Packing.ruleset" />
+    <None Include="stylecop.json" />
+    <None Include="stylecop1.json" />
+    <None Include="stylecop2.json" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

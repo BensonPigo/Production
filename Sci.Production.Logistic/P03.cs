@@ -73,6 +73,7 @@ namespace Sci.Production.Logistic
             this.Helper.Controls.Grid.Generator(this.gridReceiveDate)
             .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0, settings: col_chk)
             .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Date("FtyReqReturnDate", header: "Request Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PackingListID", header: "PackId", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("FtyGroup", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -121,9 +122,9 @@ namespace Sci.Production.Logistic
 
         private void Find()
         {
-            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.dateTimePicker1.Text) && MyUtility.Check.Empty(this.dateTimePicker2.Text))
+            if (MyUtility.Check.Empty(this.txtSPNo.Text) && MyUtility.Check.Empty(this.txtPONo.Text) && MyUtility.Check.Empty(this.txtPackID.Text) && MyUtility.Check.Empty(this.dateTimePicker1.Text) && MyUtility.Check.Empty(this.dateTimePicker2.Text) && !this.dateReqDate.HasValue1 && !this.dateReqDate.HasValue2)
             {
-                MyUtility.Msg.WarningBox("< SP# > or < PO# > or < PackID > or <Receive Date> can not be empty!");
+                MyUtility.Msg.WarningBox("< SP# > or < PO# > or < PackID > or <Receive Date> or <Request Date> can not be empty!");
                 return;
             }
 
@@ -137,6 +138,7 @@ select ID
         , selected
         , ReceiveDate
         , PackingListID
+        , FtyReqReturnDate
         , FtyGroup
         , OrderID
         , CTNStartNo
@@ -157,6 +159,7 @@ from (
     Select  distinct '' as ID
             , 1 as selected
             , b.ReceiveDate
+            , b.FtyReqReturnDate
             , a.Id as PackingListID
             , c.FtyGroup
             , b.OrderID
@@ -227,6 +230,16 @@ from (
             if (!MyUtility.Check.Empty(this.txtfactory.Text))
             {
                 sqlCmd.Append(string.Format(@" and c.FtyGroup = '{0}'", this.txtfactory.Text.Trim()));
+            }
+
+            if (this.dateReqDate.HasValue1)
+            {
+                sqlCmd.Append(string.Format(@" and b.FtyReqReturnDate >= '{0}'", this.dateReqDate.Value1.Value.ToShortDateString()));
+            }
+
+            if (this.dateReqDate.HasValue2)
+            {
+                sqlCmd.Append(string.Format(@" and b.FtyReqReturnDate <= '{0}'", this.dateReqDate.Value2.Value.ToShortDateString()));
             }
 
             sqlCmd.Append(@"
@@ -553,7 +566,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                 return;
             }
 
-            DataRow[] selectedData = dt.Select("Selected = 1");
+            DataRow[] selectedData = this.chkOnlyReqCarton.Checked ? dt.Select("Selected = 1 AND FtyReqReturnDate IS NOT NULL") : dt.Select("Selected = 1");
             if (selectedData.Length == 0)
             {
                 MyUtility.Msg.WarningBox("No data need to import!");
@@ -684,12 +697,50 @@ where ID = '{0}' and CTNStartNo = '{1}'; ",
         {
             this.gridReceiveDate.ValidateControl();
             DataGridViewColumn column = this.gridReceiveDate.Columns["Selected"];
-            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+            if (!MyUtility.Check.Empty(column) && !MyUtility.Check.Empty(this.listControlBindingSource1.DataSource))
             {
                 int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
                 this.numSelectedCTNQty.Value = sint;
                 this.numTotalCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Rows.Count;
             }
         }
+
+        private void ChkOnlyReqCarton_CheckedChanged(object sender, EventArgs e)
+        {
+            this.Grid_Filter();
+        }
+
+        private void Grid_Filter()
+        {
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+
+            if (!MyUtility.Check.Empty(dt) && dt.Rows.Count > 0)
+            {
+                string filter = string.Empty;
+                switch (this.chkOnlyReqCarton.Checked)
+                {
+                    case false:
+                        if (MyUtility.Check.Empty(this.gridReceiveDate))
+                        {
+                            break;
+                        }
+
+                        filter = string.Empty;
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case true:
+                        if (MyUtility.Check.Empty(this.gridReceiveDate))
+                        {
+                            break;
+                        }
+
+                        filter = " FtyReqReturnDate IS NOT NULL ";
+                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        break;
+                }
+            }
+        }
+
     }
 }

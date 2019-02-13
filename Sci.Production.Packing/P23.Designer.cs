@@ -29,12 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.btnFind = new Sci.Win.UI.Button();
-            this.btnSave = new Sci.Win.UI.Button();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
-            this.btnColse = new Sci.Win.UI.Button();
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
@@ -42,6 +40,8 @@
             this.txtPoNo = new Sci.Win.UI.TextBox();
             this.dateRangeSCIDelivery = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
+            this.btnSave = new Sci.Win.UI.Button();
+            this.btnColse = new Sci.Win.UI.Button();
             this.btnPrint = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -79,17 +79,7 @@
             this.btnFind.TabIndex = 4;
             this.btnFind.Text = "Find";
             this.btnFind.UseVisualStyleBackColor = true;
-            this.btnFind.Click += new System.EventHandler(this.btnFind_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(548, 97);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(80, 30);
-            this.btnSave.TabIndex = 5;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // labelSCIDelivery
             // 
@@ -98,16 +88,6 @@
             this.labelSCIDelivery.Size = new System.Drawing.Size(82, 23);
             this.labelSCIDelivery.TabIndex = 10;
             this.labelSCIDelivery.Text = "SCI Delivery";
-            // 
-            // btnColse
-            // 
-            this.btnColse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnColse.Location = new System.Drawing.Point(634, 97);
-            this.btnColse.Name = "btnColse";
-            this.btnColse.Size = new System.Drawing.Size(80, 30);
-            this.btnColse.TabIndex = 6;
-            this.btnColse.Text = "Close";
-            this.btnColse.UseVisualStyleBackColor = true;
             // 
             // txtPackID
             // 
@@ -185,6 +165,28 @@
             this.label1.TabIndex = 8;
             this.label1.Text = "PO#";
             // 
+            // btnSave
+            // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(548, 97);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 30);
+            this.btnSave.TabIndex = 5;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
+            // 
+            // btnColse
+            // 
+            this.btnColse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnColse.Location = new System.Drawing.Point(634, 97);
+            this.btnColse.Name = "btnColse";
+            this.btnColse.Size = new System.Drawing.Size(80, 30);
+            this.btnColse.TabIndex = 6;
+            this.btnColse.Text = "Close";
+            this.btnColse.UseVisualStyleBackColor = true;
+            this.btnColse.Click += new System.EventHandler(this.BtnColse_Click);
+            // 
             // btnPrint
             // 
             this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -194,6 +196,7 @@
             this.btnPrint.TabIndex = 7;
             this.btnPrint.Text = "Print";
             this.btnPrint.UseVisualStyleBackColor = true;
+            this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
             // grid
             // 
@@ -206,20 +209,21 @@
             this.grid.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid.DataSource = this.listControlBindingSource;
             this.grid.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(7, 133);
             this.grid.Name = "grid";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
