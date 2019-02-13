@@ -977,7 +977,11 @@ and pd.Article = '{this.selecedPK.Article}'
         private void updateLackingStatus()
         {
             DualResult sql_result;
-
+            DataTable dt = (DataTable)this.scanDetailBS.DataSource;
+            if (MyUtility.Check.Empty(dt) || dt.Rows.Count == 0)
+            {
+                return;
+            }
             // 計算scanQty
             this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
 
