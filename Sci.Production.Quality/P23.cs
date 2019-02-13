@@ -228,7 +228,7 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                             DataRow dr = selectDataTable.NewRow();
 
                             // PackingID+CTN# 是連起來的ex: MA2PG180105821 前13碼是PackID 13碼後都是CTN#
-                            if (sl[1].Length >= 13)
+                            if (sl[2].Length >= 13)
                             {
                                 string sqlCmd = $@"
 
@@ -265,8 +265,8 @@ and p1.Type in ('B','L')
 and p2.CFAReceiveDate  is null
 and p2.TransferCFADate is not null
 and (po.Status ='New' or po.Status is null)
-and p2.id='{sl[1].Substring(0, 13)}'
-and p2.CTNStartNo='{sl[1].Substring(13, sl[1].Length - 13)}'
+and p2.id='{sl[2].Substring(0, 13)}'
+and p2.CTNStartNo='{sl[2].Substring(13, sl[2].Length - 13)}'
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -321,7 +321,7 @@ and p1.Type in ('B','L')
 and p2.CFAReceiveDate  is null
 and p2.TransferCFADate is not null
 and (po.Status ='New' or po.Status is null)
-and p2.CustCTN='{sl[1]}'
+and p2.CustCTN='{sl[2]}'
 order by p2.ID,p2.CTNStartNo
 ";
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -382,7 +382,7 @@ and p1.Type in ('B','L')
 and p2.CFAReceiveDate  is null
 and p2.TransferCFADate is not null
 and (po.Status ='New' or po.Status is null)
-and p2.CustCTN='{sl[1]}'
+and p2.CustCTN='{sl[2]}'
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
