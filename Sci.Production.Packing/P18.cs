@@ -551,7 +551,8 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                 if (scanQty >= qtyPerCTN)
                 {
                     // 此barcode已足夠,或超過 送回
-                    if (this.UseAutoScanPack) this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
+                    if (this.UseAutoScanPack)
+                        this.IDX.IdxCall(254, "a:" + this.txtScanEAN.Text.Trim(), ("a:" + this.txtScanEAN.Text.Trim()).Length);
                     AutoClosingMessageBox.Show($"This Size scan is complete,can not scan again!!", "Warning", 3000);
                     this.txtScanEAN.Text = string.Empty;
                     e.Cancel = true;
@@ -584,8 +585,15 @@ and PackingList_Detail.CTNStartNo = '{this.selecedPK.CTNStartNo}'
                     }
                 }
 
-                string upd_sql = $@"update PackingList_Detail set ScanQty = QtyPerCTN , ScanEditDate = GETDATE(), ScanName = '{Env.User.UserID}' 
-                                    where id = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'";
+                string upd_sql = $@"
+update PackingList_Detail 
+set ScanQty = QtyPerCTN 
+, ScanEditDate = GETDATE()
+, ScanName = '{Env.User.UserID}'   
+, Lacking = 0
+where id = '{this.selecedPK.ID}' 
+and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
+and Article = '{this.selecedPK.Article}'";
                 if (sql_result = DBProxy.Current.Execute(null, upd_sql))
                 {
                     // 回壓DataTable
@@ -960,5 +968,101 @@ and pd.Article = '{this.selecedPK.Article}'
                 }
             }
         }
+
+        private void btnLacking_Click(object sender, EventArgs e)
+        {
+            updateLackingStatus();
+        }
+
+        private void updateLackingStatus()
+        {
+            DualResult sql_result;
+
+            // 計算scanQty
+            this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
+
+            this.txtScanEAN.Text = string.Empty;
+
+            // 如果掃描數量> 0,則 update PackingList_Detail
+            if (this.numBoxScanQty.Value > 0)
+            {
+                string upd_sql = $@"
+update PackingList_Detail 
+set   ScanQty = {this.numBoxScanQty.Value} 
+    , Lacking = 1
+where id = '{this.selecedPK.ID}' 
+and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
+and Article = '{this.selecedPK.Article}'";
+                if (sql_result = DBProxy.Current.Execute(null, upd_sql))
+                {
+                    // 回壓DataTable
+                    DataRow drPassName;
+                    string passName = string.Empty;
+                    string sql = $@"
+select isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+from PackingList_Detail pd
+left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
+where pd.id = '{this.selecedPK.ID}' 
+and pd.CTNStartNo = '{this.selecedPK.CTNStartNo}'
+and pd.Article = '{this.selecedPK.Article}'
+";
+                    if (MyUtility.Check.Seek(sql, out drPassName))
+                    {
+                        passName = MyUtility.Convert.GetString(drPassName["PassName"]);
+                    }
+
+                    DataRow[] dt_scanDetailrow = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
+                    foreach (DataRow dr in dt_scanDetailrow)
+                    {
+                        dr["PassName"] = passName;
+                    }
+
+                    // 檢查下方carton列表是否都掃完
+                    int carton_complete = this.dt_scanDetail.AsEnumerable().Where(s => (short)s["ScanQty"] != (int)s["QtyPerCTN"]).Count();
+                    if (carton_complete == 0)
+                    {
+                        this.ClearAll("ALL");
+                    }
+                    else
+                    {
+                        this.ClearAll("SCAN");
+                        this.LoadSelectCarton();
+                    }
+                }
+                else
+                {
+                    this.ShowErr(sql_result);
+                    return;
+                }
+
+                MyUtility.Msg.InfoBox("Lacking successfully!!");
+            }
+            else
+            {
+                // 讓遊標停留在原地
+                this.txtScanEAN.Select();
+            }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (this.numBoxScanQty.Value != this.numBoxScanTtlQty.Value &&
+                this.numBoxScanQty.Value > 0)
+            {
+                P18_MessageBox questionBox = new P18_MessageBox();
+                DialogResult resultLacking = questionBox.ShowDialog();
+                if (resultLacking == DialogResult.Yes)
+                {
+                    updateLackingStatus();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+
+            base.OnFormClosing(e);
+        }
+        
     }
 }

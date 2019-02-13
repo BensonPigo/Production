@@ -199,6 +199,12 @@
     <Compile Include="P03_UPCSticker.Designer.cs">
       <DependentUpon>P03_UPCSticker.cs</DependentUpon>
     </Compile>
+    <Compile Include="P18_MessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P18_MessageBox.Designer.cs">
+      <DependentUpon>P18_MessageBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="P22.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -455,6 +461,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P03_UPCSticker.resx">
       <DependentUpon>P03_UPCSticker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P18_MessageBox.resx">
+      <DependentUpon>P18_MessageBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P22.resx">
       <DependentUpon>P22.cs</DependentUpon>
