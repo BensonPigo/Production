@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Reflection;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -246,6 +247,7 @@ WHERE pd.CTNStartNo<>''
      AND pd.ReceiveDate is not null
      AND pd.TransferCFADate is null
      AND (po.Status ='New' or po.Status IS NULL)
+     AND pd.CTNQty=1
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
 
 order by pd.ID,pd.Seq";
@@ -469,13 +471,21 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' ;
 
         private void BtnPrint_Click(object sender, EventArgs e)
         {
+            ClickPrint();
+
+        }
+
+        protected override bool ClickPrint()
+        {
+
             if (this.listControlBindingSource.DataSource == null)
             {
-                return;
+                return false;
             }
 
             #region 宣告
             DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
+            DualResult result;
             #endregion
 
             this.ShowWaitMessage("Data Processing ...");
@@ -487,7 +497,7 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' ;
             {
                 MyUtility.Msg.WarningBox($"Please choose request return cartons and click save first!!");
                 this.HideWaitMessage();
-                return;
+                return false;
             }
 
             #region 比對DB和Form的資料，檢驗是否有異動 且 沒存檔
@@ -506,41 +516,82 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
             {
                 MyUtility.Msg.WarningBox($"Please click save first!!");
                 this.HideWaitMessage();
-                return;
+                return false;
             }
             #endregion
 
             List<P23_PrintData> reportDatas = new List<P23_PrintData>();
+            List<string> orderidList = new List<string>();
 
             // 將Form的資料整理成報表需要的樣子
-            foreach (DataRow dr in selectData.Rows)
+
+            //1. OrderID 清單
+            foreach (DataRow dr in selectedRows)
             {
                 string[] arry_Orderid = dr["OrderID"].ToString().Split(',');
 
 
                 for (int i = 0; i <= arry_Orderid.Length - 1; i++)
                 {
-                    P23_PrintData oneData = new P23_PrintData();
+                    if (!orderidList.Contains(arry_Orderid[i]))
+                    {
+                        orderidList.Add(arry_Orderid[i]);
+                    }
+                    //P23_PrintData oneData = new P23_PrintData();
 
-                    oneData.ControlNo = MyUtility.GetValue.Lookup($"SELECT MAX(RequestID)FROM FtyReqReturnClog WHERE OrderID='{arry_Orderid[i]}'");
-                    oneData.SP = arry_Orderid[i];
-                    //DataTable dd;
-                    //DBProxy.Current.Select(null, $"SELECT SewLine,BuyerDelivery,CustPONo,StyleID,TotalCTN FROM Orders WHERE ID='{arry_Orderid[i]}'", out dd);
-                    //DataRow order = dd.Rows[0];
-                    oneData.Line = MyUtility.GetValue.Lookup($"SELECT SewLine FROM Orders WHERE ID='{arry_Orderid[i]}'");
-                    oneData.DeliveryDate = dr["BuyerDelivery"].ToString();
-                    oneData.Name = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{Sci.Env.User.UserID}')");
-                    oneData.Date = DateTime.Now.ToString("yyyy/mm/dd");
-                    oneData.Factory = MyUtility.GetValue.Lookup($"SELECT FtyGroup FROM Orders WHERE ID='{arry_Orderid[i]}'");
-                    oneData.Total = MyUtility.GetValue.Lookup($"SELECT count(FtyReqReturnDate) FROM PackingList_Detail where FtyReqReturnDate is not null and CTNQty=1");
-                    oneData.PO = dr["CustPONo"].ToString();
-                    oneData.Style = dr["StyleID"].ToString();
-                    oneData.Boxof = MyUtility.GetValue.Lookup($"SELECT TotalCTN FROM Orders WHERE ID='{arry_Orderid[i]}'");
-                    oneData.Destination = dr["Alias"].ToString();
+                    //oneData.ControlNo = MyUtility.GetValue.Lookup($"SELECT MAX(RequestID)FROM FtyReqReturnClog WHERE OrderID='{arry_Orderid[i]}'");
+                    //oneData.SP = arry_Orderid[i];
+                    ////DataTable dd;
+                    ////DBProxy.Current.Select(null, $"SELECT SewLine,BuyerDelivery,CustPONo,StyleID,TotalCTN FROM Orders WHERE ID='{arry_Orderid[i]}'", out dd);
+                    ////DataRow order = dd.Rows[0];
+                    //oneData.Line = MyUtility.GetValue.Lookup($"SELECT SewLine FROM Orders WHERE ID='{arry_Orderid[i]}'");
+                    //oneData.DeliveryDate = dr["BuyerDelivery"].ToString();
+                    //oneData.Name = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{Sci.Env.User.UserID}')");
+                    //oneData.Date = DateTime.Now.ToString("yyyy/mm/dd");
+                    //oneData.Factory = MyUtility.GetValue.Lookup($"SELECT FtyGroup FROM Orders WHERE ID='{arry_Orderid[i]}'");
+                    //oneData.Total = MyUtility.GetValue.Lookup($"SELECT count(FtyReqReturnDate) FROM PackingList_Detail where FtyReqReturnDate is not null and CTNQty=1");
+                    //oneData.PO = dr["CustPONo"].ToString();
+                    //oneData.Style = dr["StyleID"].ToString();
+                    //oneData.Boxof = MyUtility.GetValue.Lookup($"SELECT TotalCTN FROM Orders WHERE ID='{arry_Orderid[i]}'");
+                    //oneData.Destination = dr["Alias"].ToString();
 
-                    reportDatas.Add(oneData);
+                    //reportDatas.Add(oneData);
                 }
             }
+
+            //2. 根據OrderId 塞對應的資料
+            foreach (var orderId in orderidList)
+            {
+                P23_PrintData oneData = new P23_PrintData();
+                //selectedRows.cas
+                DataTable sameOrderIdRow = selectedRows.CopyToDataTable().AsEnumerable().Where(o => o["OrderId"].ToString() == orderId).CopyToDataTable();
+                int cntCount = sameOrderIdRow.Rows.Count;
+                oneData.ControlNo = MyUtility.GetValue.Lookup($"SELECT MAX(RequestID)FROM FtyReqReturnClog WHERE OrderID='{orderId}'");
+                oneData.SP = orderId;
+                ////DataTable dd;
+                ////DBProxy.Current.Select(null, $"SELECT SewLine,BuyerDelivery,CustPONo,StyleID,TotalCTN FROM Orders WHERE ID='{arry_Orderid[i]}'", out dd);
+                ////DataRow order = dd.Rows[0];
+                List<string> CTNStartNo = new List<string>();
+                for (int i = 0; i <= cntCount - 1; i++)
+                {
+                    CTNStartNo.Add(sameOrderIdRow.Rows[i]["CTNStartNo"].ToString());
+                }
+                oneData.CTNStartNo = CTNStartNo;
+
+                oneData.Line = MyUtility.GetValue.Lookup($"SELECT SewLine FROM Orders WHERE ID='{orderId}'");
+                oneData.DeliveryDate = sameOrderIdRow.Rows[0]["BuyerDelivery"].ToString();
+                oneData.Name = MyUtility.GetValue.Lookup($"SELECT dbo.getPass1_ExtNo('{Sci.Env.User.UserID}')");
+                oneData.Date = DateTime.Now.ToString("yyyy/mm/dd");
+                oneData.Factory = sameOrderIdRow.Rows[0]["BuyerDelivery"].ToString();
+                oneData.Total = MyUtility.GetValue.Lookup($"SELECT count(FtyReqReturnDate) FROM PackingList_Detail where FtyReqReturnDate is not null and CTNQty=1");
+                oneData.PO = sameOrderIdRow.Rows[0]["CustPONo"].ToString();
+                oneData.Style = sameOrderIdRow.Rows[0]["StyleID"].ToString();
+                oneData.Boxof = MyUtility.GetValue.Lookup($"SELECT TotalCTN FROM Orders WHERE ID='{orderId}'");
+                oneData.Destination = sameOrderIdRow.Rows[0]["Alias"].ToString();
+
+                reportDatas.Add(oneData);
+            }
+
 
             //之後塞報表
 
@@ -549,31 +600,54 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
 
             //string strLoginM = MyUtility.GetValue.Lookup(string.Format("select NameEN from MDivision where ID = '{0}'", Sci.Env.User.Keyword));
 
-            
-            //ReportDefinition report = new ReportDefinition();
+
+            ReportDefinition report = new ReportDefinition();
             //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ControlNo", strLoginM));
             //report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("SP", strLoginM));
             ////report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("TransferDate", this.date1 + " ~ " + this.date2));
             //Type reportResourceNamespace;
 
-           // List<P23_PrintData> data = dt.AsEnumerable()
-           //.Select(row1 => new P23_PrintData()
-           //{
-           //    ControlNo = ((DateTime)row1["TransferDate"]).ToString("yyyy/MM/dd").Trim(),
-           //    SP = row1["TransferSlipNo"].ToString().Trim(),
-           //    PackingListID = row1["PackingListID"].ToString().Trim(),
-           //    OrderID = row1["OrderID"].ToString().Trim(),
-           //    CTNStartNo = row1["CTNStartNo"].ToString().Trim(),
-           //    StyleID = row1["StyleID"].ToString().Trim(),
-           //    BrandID = row1["BrandID"].ToString().Trim(),
-           //    Customize1 = row1["Customize1"].ToString().Trim(),
-           //    CustPONo = row1["CustPONo"].ToString().Trim(),
-           //    Dest = row1["Dest"].ToString().Trim(),
-           //    Factory = row1["FactoryID"].ToString().Trim(),
-           //    BuyerDelivery = row1["BuyerDelivery"].ToString().Trim(),
-           //    AddDate = ((DateTime)row1["AddDate"]).ToString("yyyy/MM/dd").Trim()
-           //}).ToList();
+            // List<P23_PrintData> data = dt.AsEnumerable()
+            //.Select(row1 => new P23_PrintData()
+            //{
+            //    ControlNo = ((DateTime)row1["TransferDate"]).ToString("yyyy/MM/dd").Trim(),
+            //    SP = row1["TransferSlipNo"].ToString().Trim(),
+            //    PackingListID = row1["PackingListID"].ToString().Trim(),
+            //    OrderID = row1["OrderID"].ToString().Trim(),
+            //    CTNStartNo = row1["CTNStartNo"].ToString().Trim(),
+            //    StyleID = row1["StyleID"].ToString().Trim(),
+            //    BrandID = row1["BrandID"].ToString().Trim(),
+            //    Customize1 = row1["Customize1"].ToString().Trim(),
+            //    CustPONo = row1["CustPONo"].ToString().Trim(),
+            //    Dest = row1["Dest"].ToString().Trim(),
+            //    Factory = row1["FactoryID"].ToString().Trim(),
+            //    BuyerDelivery = row1["BuyerDelivery"].ToString().Trim(),
+            //    AddDate = ((DateTime)row1["AddDate"]).ToString("yyyy/MM/dd").Trim()
+            //}).ToList();
 
+
+            //report.ReportDataSources = reportDatas;
+            report.ReportDataSources.Add(new System.Collections.Generic.KeyValuePair<string, object>("DataSet2", reportDatas));
+            Type ReportResourceNamespace = typeof(P23_PrintData);
+            Assembly ReportResourceAssembly = ReportResourceNamespace.Assembly;
+            string ReportResourceName = "P23_Print.rdlc";
+
+
+            IReportResource reportresource;
+            if (!(result = ReportResources.ByEmbeddedResource(ReportResourceAssembly, ReportResourceNamespace, ReportResourceName, out reportresource)))
+            {
+                this.ShowException(result);
+                return false;
+            }
+
+
+            report.ReportResource = reportresource;
+            // 開啟 report view
+            var frm = new Sci.Win.Subs.ReportView(report);
+            frm.MdiParent = this.MdiParent;
+            frm.Show();
+
+            return true;
         }
 
         private void BtnColse_Click(object sender, EventArgs e)

@@ -463,7 +463,9 @@
     <EmbeddedResource Include="P03_UPCSticker.resx">
       <DependentUpon>P03_UPCSticker.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P23_Print.rdlc" />
+    <EmbeddedResource Include="P23_Print.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="P22.resx">
       <DependentUpon>P22.cs</DependentUpon>
     </EmbeddedResource>

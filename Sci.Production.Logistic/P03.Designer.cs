@@ -47,6 +47,9 @@
             this.panel4 = new Sci.Win.UI.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.chkOnlyReqCarton = new Sci.Win.UI.CheckBox();
+            this.dateReqDate = new Sci.Win.UI.DateRange();
+            this.label3 = new Sci.Win.UI.Label();
             this.numTotalCTNQty = new Sci.Win.UI.NumericBox();
             this.numSelectedCTNQty = new Sci.Win.UI.NumericBox();
             this.lbTotalCTNQty = new Sci.Win.UI.Label();
@@ -64,9 +67,6 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.label3 = new Sci.Win.UI.Label();
-            this.dateReqDate = new Sci.Win.UI.DateRange();
-            this.chkOnlyReqCarton = new Sci.Win.UI.CheckBox();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridReceiveDate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -264,6 +264,47 @@
             this.panel3.Size = new System.Drawing.Size(712, 187);
             this.panel3.TabIndex = 19;
             // 
+            // chkOnlyReqCarton
+            // 
+            this.chkOnlyReqCarton.AutoSize = true;
+            this.chkOnlyReqCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkOnlyReqCarton.Location = new System.Drawing.Point(12, 117);
+            this.chkOnlyReqCarton.Name = "chkOnlyReqCarton";
+            this.chkOnlyReqCarton.Size = new System.Drawing.Size(252, 21);
+            this.chkOnlyReqCarton.TabIndex = 52;
+            this.chkOnlyReqCarton.Text = "Only Show Factory Request Carton ";
+            this.chkOnlyReqCarton.UseVisualStyleBackColor = true;
+            this.chkOnlyReqCarton.CheckedChanged += new System.EventHandler(this.ChkOnlyReqCarton_CheckedChanged);
+            // 
+            // dateReqDate
+            // 
+            // 
+            // 
+            // 
+            this.dateReqDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateReqDate.DateBox1.Name = "";
+            this.dateReqDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateReqDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateReqDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateReqDate.DateBox2.Name = "";
+            this.dateReqDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateReqDate.DateBox2.TabIndex = 1;
+            this.dateReqDate.Location = new System.Drawing.Point(107, 76);
+            this.dateReqDate.Name = "dateReqDate";
+            this.dateReqDate.Size = new System.Drawing.Size(280, 23);
+            this.dateReqDate.TabIndex = 51;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(12, 76);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(92, 23);
+            this.label3.TabIndex = 50;
+            this.label3.Text = "Request Date";
+            // 
             // numTotalCTNQty
             // 
             this.numTotalCTNQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -439,47 +480,6 @@
             this.shapeContainer1.Size = new System.Drawing.Size(877, 152);
             this.shapeContainer1.TabIndex = 0;
             this.shapeContainer1.TabStop = false;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(12, 76);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(92, 23);
-            this.label3.TabIndex = 50;
-            this.label3.Text = "Request Date";
-            // 
-            // dateReqDate
-            // 
-            // 
-            // 
-            // 
-            this.dateReqDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateReqDate.DateBox1.Name = "";
-            this.dateReqDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateReqDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateReqDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateReqDate.DateBox2.Name = "";
-            this.dateReqDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateReqDate.DateBox2.TabIndex = 1;
-            this.dateReqDate.Location = new System.Drawing.Point(107, 76);
-            this.dateReqDate.Name = "dateReqDate";
-            this.dateReqDate.Size = new System.Drawing.Size(280, 23);
-            this.dateReqDate.TabIndex = 51;
-            // 
-            // chkOnlyReqCarton
-            // 
-            this.chkOnlyReqCarton.AutoSize = true;
-            this.chkOnlyReqCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkOnlyReqCarton.Location = new System.Drawing.Point(12, 117);
-            this.chkOnlyReqCarton.Name = "chkOnlyReqCarton";
-            this.chkOnlyReqCarton.Size = new System.Drawing.Size(252, 21);
-            this.chkOnlyReqCarton.TabIndex = 52;
-            this.chkOnlyReqCarton.Text = "Only Show Factory Request Carton ";
-            this.chkOnlyReqCarton.UseVisualStyleBackColor = true;
-            this.chkOnlyReqCarton.CheckedChanged += new System.EventHandler(this.ChkOnlyReqCarton_CheckedChanged);
             // 
             // P03
             // 
