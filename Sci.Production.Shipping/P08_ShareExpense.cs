@@ -439,7 +439,7 @@ merge ShareExpense t
 using (
 	select top 1
 [ShippingAPID] = '{this.apData["ID"]}'
-,[BLNo] = BLNo
+,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
 ,[WKNo] = ''
 ,[InvNo] = id
 ,[Type] = '{this.apData["SubType"]}'
@@ -689,7 +689,7 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
             }
             else
             {
-                this.gridBLNo.ValidateControl();                
+                this.gridBLNo.ValidateControl();
                 bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(this.apData["ID"])));
                 bool haveSea = false, noExistNotSea = true, noAirpp = false;
                 DataTable duplicData;
