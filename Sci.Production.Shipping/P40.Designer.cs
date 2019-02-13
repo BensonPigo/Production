@@ -167,7 +167,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(9, 7);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(88, 23);
@@ -176,7 +175,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(9, 37);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(88, 23);
@@ -185,7 +183,6 @@
             // 
             // labelContractNo
             // 
-            this.labelContractNo.Lines = 0;
             this.labelContractNo.Location = new System.Drawing.Point(9, 67);
             this.labelContractNo.Name = "labelContractNo";
             this.labelContractNo.Size = new System.Drawing.Size(88, 23);
@@ -194,7 +191,6 @@
             // 
             // labelBLNO
             // 
-            this.labelBLNO.Lines = 0;
             this.labelBLNO.Location = new System.Drawing.Point(9, 97);
             this.labelBLNO.Name = "labelBLNO";
             this.labelBLNO.Size = new System.Drawing.Size(88, 23);
@@ -245,7 +241,6 @@
             // 
             // labelShipby
             // 
-            this.labelShipby.Lines = 0;
             this.labelShipby.Location = new System.Drawing.Point(356, 7);
             this.labelShipby.Name = "labelShipby";
             this.labelShipby.Size = new System.Drawing.Size(124, 23);
@@ -254,7 +249,6 @@
             // 
             // labelCountryfrom
             // 
-            this.labelCountryfrom.Lines = 0;
             this.labelCountryfrom.Location = new System.Drawing.Point(356, 37);
             this.labelCountryfrom.Name = "labelCountryfrom";
             this.labelCountryfrom.Size = new System.Drawing.Size(124, 23);
@@ -263,7 +257,6 @@
             // 
             // labelCustomdeclareno
             // 
-            this.labelCustomdeclareno.Lines = 0;
             this.labelCustomdeclareno.Location = new System.Drawing.Point(356, 67);
             this.labelCustomdeclareno.Name = "labelCustomdeclareno";
             this.labelCustomdeclareno.Size = new System.Drawing.Size(124, 23);
@@ -279,6 +272,7 @@
             this.txtshipmodeShipby.IsSupportUnselect = true;
             this.txtshipmodeShipby.Location = new System.Drawing.Point(484, 6);
             this.txtshipmodeShipby.Name = "txtshipmodeShipby";
+            this.txtshipmodeShipby.OldText = "";
             this.txtshipmodeShipby.Size = new System.Drawing.Size(80, 24);
             this.txtshipmodeShipby.TabIndex = 2;
             this.txtshipmodeShipby.UseFunction = null;
@@ -323,7 +317,6 @@
             // 
             this.label8.BackColor = System.Drawing.Color.Transparent;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Lines = 0;
             this.label8.Location = new System.Drawing.Point(155, 123);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(480, 23);
@@ -337,7 +330,6 @@
             // 
             // labelWKNo
             // 
-            this.labelWKNo.Lines = 0;
             this.labelWKNo.Location = new System.Drawing.Point(356, 94);
             this.labelWKNo.Name = "labelWKNo";
             this.labelWKNo.Size = new System.Drawing.Size(124, 23);
@@ -363,8 +355,8 @@
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "dateDate";
             this.DefaultOrder = "ID";
-            this.GridAlias = "VNImportDeclaration_Detail";
-            this.GridUniqueKey = "NLCode";
+            this.GridAlias = "VNImportDeclaration_Detail_Detail";
+            this.GridUniqueKey = "Refno";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;

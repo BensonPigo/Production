@@ -113,7 +113,13 @@ namespace Sci.Production.Shipping
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
-            this.DetailSelectCommand = string.Format(@"select v.id,v.HSCode,v.NLCode,Qty = Round(v.Qty,2),v.UnitID,v.Remark,v.Price from VNImportDeclaration_Detail v WITH (NOLOCK) where ID = '{0}' order by CONVERT(int,SUBSTRING(NLCode,3,3))", masterID);
+            this.DetailSelectCommand = $@"
+select vdd.ID,vdd.Refno,vdd.FabricType,vdd.NLCode,Qty = Round(vdd.Qty,2),vdd.Remark,vd.HSCode,vd.UnitID,vd.Price
+from VNImportDeclaration_Detail_Detail vdd with(nolock)
+inner join VNImportDeclaration_Detail vd with(nolock) on vd.id = vdd.ID and vd.NLCode = vdd.NLCode
+where vdd.id = '{masterID}'
+order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
+";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -181,9 +187,10 @@ namespace Sci.Production.Shipping
                 base.OnDetailGridSetup();
                 this.Helper.Controls.Grid.Generator(this.detailgrid)
                     .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
-                    .Numeric("Qty", header: "Stock Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
-                    .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                    .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
+                    .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
                     .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
         }
 
@@ -282,6 +289,61 @@ namespace Sci.Production.Shipping
             }
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            string insertuUdataDetail = $@"
+select ID,HSCode,NLCode,UnitID,a.Remark,Qty = sum(Qty),Price = Sum(Price)
+into #tmps
+from #tmp t
+outer apply(select Remark=stuff((
+		select concat(',',Remark)
+		from #tmp t2
+		where t.ID = t2.ID and t.NLCode = t2.NLCode
+		for xml path(''))
+	,1,1,'')
+)a
+group by ID,HSCode,NLCode,UnitID,a.Remark
+
+merge VNImportDeclaration_Detail t
+using #tmps s
+on t.ID = s.ID and t.NLCode = s.NLCode
+when matched then update set
+	t.HSCode = s.HSCode,
+	t.UnitID = s.UnitID,
+	t.Remark = s.Remark,
+	t.Qty = s.Qty,
+	t.Price = s.Price
+when not matched by target then
+	insert(ID,HSCode,NLCode,UnitID,Remark,Qty,Price)
+	values(s.ID,s.HSCode,s.NLCode,s.UnitID,s.Remark,s.Qty,s.Price)
+when not matched by source and t.id in(select id from #tmps) then
+	delete
+;
+";
+            DataTable dt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, insertuUdataDetail, out dt);
+            if (!result)
+            {
+                return Result.F(result.ToString());
+            }
+
+            return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickDelete()
+        {
+            string sqldelete = $@"Delete VNImportDeclaration_Detail where id = '{this.CurrentMaintain["ID"]}' ";
+            DualResult reslut = DBProxy.Current.Execute(null, sqldelete);
+            if (!reslut)
+            {
+                return Result.F(reslut.ToString());
+            }
+
+            return base.ClickDelete();
         }
 
         /// <inheritdoc/>
@@ -903,6 +965,7 @@ with ExportDetail as (
 	   						      from Unit_Rate WITH (NOLOCK) 
 	   						      where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
 	   						  		    and UnitTo = 'M'),'')
+            , ed.RefNo 
     from FtyExport e WITH (NOLOCK) 
     inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
     left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo 
@@ -947,6 +1010,7 @@ with ExportDetail as (
 	   						      from Unit_Rate WITH (NOLOCK) 
 	   						      where UnitFrom = ed.UnitId 
 	   						  		    and UnitTo = 'M'),'') 
+            , f.RefNo 
     from FtyExport e WITH (NOLOCK) 
     inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
@@ -994,6 +1058,7 @@ with ExportDetail as (
 	   						      from Unit_Rate WITH (NOLOCK) 
 	   						      where UnitFrom = ed.UnitId 
 	   						  		    and UnitTo = 'M'), '') 
+            , f.RefNo 
     from Export e WITH (NOLOCK) 
     inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
@@ -1024,6 +1089,7 @@ NotInPo as (
            , RateValue = RateValue.value
            , M2UnitRate = M2UnitRate.value
            , UnitRate = UnitRate.value
+           , f.RefNo
 	from #tmp
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = #tmp.POID 
 											    and psd.SEQ1 = #tmp.Seq1 
@@ -1059,6 +1125,8 @@ NotInPo as (
 select NLCode
 	   , HSCode
 	   , CustomsUnit
+       , RefNo
+       , Type
 	   , sum(NewQty) as NewQty
 	   , sum(NewQty * Price) as Price 
 from (
@@ -1066,6 +1134,8 @@ from (
 	       , HSCode
 	       , CustomsUnit
            , Price
+           , RefNo
+           , Type
 		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate))
     from ExportDetail WITH (NOLOCK) 
     where NoDeclare = 0
@@ -1080,10 +1150,12 @@ from (
 	       , HSCode
 	       , CustomsUnit
            , Price
+           , RefNo
+           , Type
 		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate))
     from NotInPo WITH (NOLOCK) 
 ) a
-group by NLCode, HSCode, CustomsUnit");
+group by NLCode, HSCode, CustomsUnit, RefNo,Type");
 
             DataTable selectedData;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.NotInPO, null, sqlCmd.ToString(), out selectedData);
@@ -1099,12 +1171,14 @@ group by NLCode, HSCode, CustomsUnit");
             // 將資料做排序
             result = MyUtility.Tool.ProcessWithDatatable(
                     selectedData,
-                    @"NLCode,HSCode,CustomsUnit,NewQty,Price",
+                    @"NLCode,HSCode,CustomsUnit,NewQty,Price,RefNo,Type",
                     string.Format(@"
 select NLCode
 	   , HSCode
 	   , CustomsUnit
 	   , NewQty
+       , RefNo
+       , Type
 	   , Price = iif(NewQty=0,0,Price / NewQty)
 from #tmp
 order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
@@ -1126,6 +1200,8 @@ order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
             {
                 DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
                 newRow["ID"] = string.Empty;
+                newRow["Refno"] = dr["Refno"];
+                newRow["FabricType"] = dr["Type"];
                 newRow["NLCode"] = dr["NLCode"];
                 newRow["HSCode"] = dr["HSCode"];
                 newRow["Qty"] = dr["NewQty"];
