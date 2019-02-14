@@ -86,6 +86,7 @@
             this.checkOnly.TabIndex = 3;
             this.checkOnly.Text = "Only show data of complete inventory location";
             this.checkOnly.UseVisualStyleBackColor = true;
+            this.checkOnly.CheckedChanged += new System.EventHandler(this.checkOnly_CheckedChanged);
             // 
             // btnClose
             // 
@@ -97,6 +98,7 @@
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Visible = false;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnCreate
             // 
@@ -107,6 +109,7 @@
             this.btnCreate.TabIndex = 1;
             this.btnCreate.Text = "Create && Confirm";
             this.btnCreate.UseVisualStyleBackColor = true;
+            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
             // btnExcel
             // 
@@ -160,6 +163,7 @@
             this.btnAutoPick.TabIndex = 8;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
+            this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
             // 
             // txtSP
             // 
@@ -304,6 +308,7 @@
             this.gridComplete.Size = new System.Drawing.Size(571, 458);
             this.gridComplete.TabIndex = 0;
             this.gridComplete.TabStop = false;
+            this.gridComplete.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridComplete_RowEnter);
             // 
             // gridRel
             // 

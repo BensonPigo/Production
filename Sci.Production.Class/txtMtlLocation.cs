@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Ict;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
@@ -95,4 +98,89 @@ ORDER BY ID, StockType", dicSQLFilte["StockType"]);
             this.Text = item.GetSelectedString();
         }
     }
+
+    public class cellMtlLocation : Ict.Win.DataGridViewGeneratorTextColumnSettings
+    {
+        public static Ict.Win.DataGridViewGeneratorTextColumnSettings GetGridCell(string stockTypeFilte)
+        {
+            cellMtlLocation ts = new cellMtlLocation();
+            string strstockTypeFilte = stockTypeFilte;
+
+            #region SQL Filte
+            Dictionary<string, string> dicSQLFilte = new Dictionary<string, string>();
+            string strStockType = strstockTypeFilte.Split(',').Where(row => !row.Empty()).Select(row => row = string.Format("'{0}'", row)).JoinToString(",");
+            dicSQLFilte.Add("StockType", (strStockType.Empty()) ? "" : $@"and StockType in ('{strStockType}')");
+            #endregion
+
+            ts.EditingMouseDown += (s, e) =>
+            {
+                // 右鍵彈出功能
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                    {
+                        return;
+                    }
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    SelectItem sele;
+                    sele = new SelectItem($@"
+SELECT ID
+       , StockType
+FROM MtlLocation
+WHERE Junk = 0
+      -- StockType--
+
+      {dicSQLFilte["StockType"]}
+ORDER BY ID, StockType", "15,5", row["tolocation"].ToString(), false, ",");
+
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                    e.EditingControl.Text = sele.GetSelectedString();
+                }
+            };
+
+            // 正確性檢查
+            ts.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                // Parent form 若是非編輯狀態就 return 
+                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode)
+                {
+                    return;
+                }
+                // 右鍵彈出功能
+                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                String oldValue = row["tolocation"].ToString();
+                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
+                //
+                List<SqlParameter> listSQLPara = new List<SqlParameter>();
+                listSQLPara.Add(new SqlParameter("@checkLocation", newValue));
+                string strSQLCmd = string.Format(@"
+SELECT ID
+	   , StockType 
+FROM MtlLocation 
+WHERE Junk = 0 
+      -- StockType --
+	  {0}
+      and ID = @checkLocation", dicSQLFilte["StockType"]);
+                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
+                {
+                    if (!MyUtility.Check.Seek(strSQLCmd, listSQLPara))
+                    {
+                        MyUtility.Msg.InfoBox("Data not found.");
+                        e.Cancel = true;
+                    }
+                }
+            };
+            return ts;
+        }
+
+    }
+
 }
