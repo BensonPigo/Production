@@ -361,7 +361,8 @@ namespace Sci.Production.Cutting
         [AddDate]= cofr.AddDate,
         [EditName]=  editInfo.IdAndName,
         [EditDate]= cofr.EditDate,
-        [Ukey]=cofr.Ukey
+        [Ukey]=cofr.Ukey,
+        [MDivisionId]=''
 FROM CuttingOutputFabricRecord cofr
 INNER JOIN WorkOrder W on cofr.CutRef=W.CutRef
 LEFT JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
@@ -427,7 +428,10 @@ WHERE 1=0
 
             //取tableSchema
             returnResult = DBProxy.Current.GetTableSchema(null, "CuttingOutputFabricRecord", out tableSchema);
-
+            foreach (DataRow dr in noEmptyData)
+            {
+                dr["MDivisionId"] = Sci.Env.User.Keyword;
+            }
             //開始UPDATE
             using (TransactionScope _transactionscope = new TransactionScope())
             {
