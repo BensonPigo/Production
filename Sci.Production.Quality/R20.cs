@@ -22,7 +22,7 @@ namespace Sci.Production.Quality
         {
             DataTable factory;
             InitializeComponent();
-            DBProxy.Current.Select(null, "select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
+            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK)  ", out factory);
             MyUtility.Tool.SetupCombox(ComboFactory, 1, factory);
             ComboFactory.Text = Sci.Env.User.Keyword;            
         }
