@@ -455,12 +455,13 @@ using (
 from GMTBooking g WITH (NOLOCK) 
 where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
 on	t.ShippingAPID = s.ShippingAPID 
-	and t.BLNO = s.BLNO
-	and t.WKNO = s.WKNO
-	and t.InvNo = s.InvNo
-when not matched then 
+	and t.BLNO = s.BLNO and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
+when matched AND t.junk=1 then
+	update set
+	t.junk=0
+when not matched by target then 
 	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
-	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk) ;";
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
 
             DualResult result;
 
@@ -838,7 +839,7 @@ on	t.ShippingAPID = s.ShippingAPID
 	and t.InvNo = s.InvNo
 when matched then
 	update set t.Junk = 0
-    ,ShipModeID = '{8}'
+    , ShipModeID = '{8}'
     , GW = {5}
     , CBM = {6} 
 when not matched then 
