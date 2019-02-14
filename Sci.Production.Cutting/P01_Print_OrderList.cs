@@ -1057,7 +1057,6 @@ select distinct sizecode,Seq
                     dt.BoFreezePanes = true;
                     dt.IntFreezeColumn = 3;
                     dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2) { ColumnWidth = (decimal)5.88 });
-                    sxr.DicDatas.Add(sxr.VPrefix + "Now", DateTime.Now);
                     sxr.DicDatas.Add(sxr.VPrefix + "SizeGroup" + idxStr, SizeGroup);
 
                     Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
