@@ -2421,15 +2421,19 @@ where b.poid = '{0}'
 
         private void txtBoxMarkerNo_Validating(object sender, CancelEventArgs e)
         {
+
+            string old_MarkerNo = CurrentDetailData["MarkerNo"].ToString();
             if (this.EditMode)
             {
+
                 if (!MyUtility.Check.Seek(string.Format(@"
-select 1 from Order_EachCons a
-inner join orders b on a.id = b.ID
-where b.poid = '{0}' and a.MarkerNo='{1}'
-", CurrentMaintain["ID"], this.txtBoxMarkerNo.Text)))
+    select 1 from Order_EachCons a
+    inner join orders b on a.id = b.ID
+    where b.poid = '{0}' and a.MarkerNo='{1}'
+    ", CurrentMaintain["ID"], this.txtBoxMarkerNo.Text)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("<MarkerNO: {0} > is not found!", this.txtBoxMarkerNo.Text));
+                    CurrentDetailData["MarkerNo"] = old_MarkerNo;
                     e.Cancel = true;
                     return;
                 }
@@ -2437,15 +2441,18 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             if (MyUtility.Check.Empty(txtBoxMarkerNo.Text))
             {
                 MyUtility.Msg.WarningBox(string.Format("<MarkerNO > cannot be null"));
+                CurrentDetailData["MarkerNo"] = old_MarkerNo;
                 e.Cancel = true;
-                return;
+                return ;
             }
+            return;
         }
-
+        
         private void txtFabricPanelCode_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
             string new_FabricPanelCode = txtFabricPanelCode.Text;
+            string old_FabricPanelCode = CurrentDetailData["FabricPanelCode"].ToString();
             string sqlcmd = string.Format(@"select ob.SCIRefno,f.Description ,f.MtlTypeID
                             from Order_BoF ob 
                             left join Fabric f on ob.SCIRefno = f.SCIRefno
@@ -2463,12 +2470,12 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             else
             {
                 MyUtility.Msg.WarningBox(string.Format("This FabricPanelCode<{0}> is wrong", txtFabricPanelCode.Text));
+                CurrentDetailData["FabricPanelCode"] = old_FabricPanelCode;
                 e.Cancel = true;
                 return;
             };
         }
-
-
+        
         //Quantity Breakdown
         private void Qtybreak_Click(object sender, EventArgs e)
         {
@@ -2502,13 +2509,6 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
 
         protected override void ClickUndo()
         {
-            //foreach (DataRow dr in DetailDatas)
-            //{
-            //    if (dr.RowState==DataRowState.Added)
-            //    {
-            //        MyUtility.Msg.InfoBox("add row !");
-            //    }
-            //}
             base.ClickUndo();
             RenewData();
             OnDetailEntered();
