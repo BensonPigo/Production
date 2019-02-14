@@ -1,5 +1,11 @@
-﻿CREATE FUNCTION [dbo].[GetLocalPurchaseStdCost]
+﻿-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date, ,>
+-- Description:	計算Local Purchase Std. Cost
+-- =============================================
+CREATE FUNCTION [dbo].[GetLocalPurchaseStdCost]
 (
+	-- Add the parameters for the function here
 	@id as varchar(13)
 )
 RETURNS decimal(10,3)
@@ -18,14 +24,25 @@ BEGIN
 		where 1=1
 		and ot.ID = @id
 		and a.Classify = 'P' 
-		and exists (
+		and (
+			-- OrigBuyerDelivery 在設定的日期範圍內，有包含非 FactoryCMT 的採購項
+			exists (
 				select 1
 				from FirstSaleCostSetting f
 				where a.id = f.ArtWorkID 
 				and o.OrigBuyerDelivery between f.BeginDate and f.EndDate 
 				and f.isjunk = 0 
 				and not CostTypeID != 'FactoryCMT'
-		) 
+			)
+			or 
+			-- OrigBuyerDelivery 沒有在設定的日期範圍內
+			not exists (
+				select 1
+				from FirstSaleCostSetting f
+				where a.id = f.ArtWorkID 
+				and o.OrigBuyerDelivery between f.BeginDate and f.EndDate 
+			)
+		)
 		group by a.id, ot.Price
 	) as ot
 
