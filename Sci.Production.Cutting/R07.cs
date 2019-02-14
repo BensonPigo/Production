@@ -280,40 +280,32 @@ SELECT * FROM #tmp
 --Spreading Capacity Forecast
 SELECT 
 [Spreading Table No.]= SpreadingTable
-, [Work Hours/Day]=''
-, [Total Available Spreading Time (hrs)]=SpreadingTable * {totalWorkingDays} *0.8 -- B6=(B4*Total Working Days)*C2 0.8是預設的!!
+, [Work Hours/Day]=''                                                     -- 給User手動輸入
+, [Total Available Spreading Time (hrs)]=0                                -- =(Work Hours/Day   *   Total Working Days) *  Avg. Efficiency %  0.8是預設的!!  Work Hours/Day 等被輸入  所以都是0，後面相關欄位也是
 , [Total Spreading Yardage]=[Total Fabric Cons.(yard)]
 , [Total Spreading Marker Qty]= COUNT(SpreadingTable)
-, [Total Spreading Time (hrs.)]= [Total Spreading Time (min.)] / 60   --Total Spreading Time (hrs.) 換算小時  B9
-, [Spreading Capacity Fulfill Rate%]=  --B10=(B9/B6)*100
-	IIF(SpreadingTable * {totalWorkingDays} *0.8  = 0   
-		, 0  
-		, ([Total Spreading Time (min.)] / 60)  --B9
-		  / SpreadingTable * {totalWorkingDays} *0.8         --B6
-		  *100
-		)
-,[Capacity (hrs)]= [Total Spreading Time (min.)] / 60 - SpreadingTable * {totalWorkingDays} *0.8 
+, [Total Spreading Time (hrs.)]= [Total Spreading Time (min.)] / 60       -- Total Spreading Time (hrs.) 換算小時  B9
+, [Spreading Capacity Fulfill Rate%]= 0                                   -- =Total Spreading Time (hrs.)   /   Total Available Spreading Time (hrs)  *100
+, [Capacity (hrs)]= 0                                                     -- =Total Spreading Time (hrs.)   -   Total Available Spreading Time (hrs)
 FROM #tmp
 GROUP BY SpreadingTable,[Total Fabric Cons.(yard)],[Total Spreading Time (min.)]
-
 
 
 --Cutting Capacity Forecast
 
 
 SELECT DISTINCT
-[Cut cell (Morgan No.)]= CutCellid   --B15
+[Cut cell (Morgan No.)]= CutCellid   
 ,[Cutting Mach. Description]='Next 70'  
-,[Work Hours/Day]=''    --manual input
-,[Total Available Cutting Time (hrs)]= CutCellid * {totalWorkingDays} * 0.8   --B18   = (B15*Total Working Days)*C2   0.8是預設的!!
-,[Avg. Cut Speed (m/min.)]=''   --manual input
+,[Work Hours/Day]=''                                          -- 給User手動輸入
+,[Total Available Cutting Time (hrs)]= 0                      -- = (Work Hours/Day  *  Total Working Days) *  Avg. Efficiency %   0.8是預設的!!  Work Hours/Day 等被輸入  所以都是0，後面相關欄位也是
+,[Avg. Cut Speed (m/min.)]=''                                 -- 給User手動輸入
 ,[Total Cutting Perimeter (m)]=[Perimeter (m)]
 ,[Total Cut Marker Qty]=CutCell.count
 ,[Total Cut Fabric Yardage]=[Total Fabric Cons.(yard)]
-,[Total Cutting Time (hrs.)]=[Total Cutting Time (min.)] / 60  --B23 換算成小時
-,[Cutting Capacity Fulfill Rate%]=IIF(CutCellid * {totalWorkingDays} * 0.8  = 0 , 0  
-									, ([Total Cutting Time (min.)] /60) / CutCellid * {totalWorkingDays} * 0.8 *100  )   --(B23/B18)*100
-,['+/- Capacity (hrs)]=  [Total Cutting Time (min.)]/60 - CutCellid * {totalWorkingDays} * 0.8    --B23-B18
+,[Total Cutting Time (hrs.)]=[Total Cutting Time (min.)] / 60  --  換算成小時
+,[Cutting Capacity Fulfill Rate%]=0                            -- =Total Cutting Time (hrs.)   /    Total Available Cutting Time (hrs)  *100
+,['+/- Capacity (hrs)]=  0                                     -- =Total Cutting Time (hrs.)   -    Total Available Cutting Time (hrs)
 
 FROM #tmp
 OUTER APPLY(
@@ -565,7 +557,7 @@ DROP TABLE #tmp,#tmp_OrderList
             //int sheet3_StartPoint = 2;//Sheet3 起點 [B,1]
 
             ////先處理S開頭的資料
-            //for (int i = 0; i <= printDatas[1].Rows.Count-1; i++)
+            //for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
             //{
             //    //說明：因為圖表綁定的資料表在Sheet3，因次Sheet3的欄位要根據Sheet2的資料連動，讓User異動Sheet2表格，圖表跟著動
 
@@ -614,11 +606,11 @@ DROP TABLE #tmp,#tmp_OrderList
             Excel.ChartObjects xlsCharts_2 = (Excel.ChartObjects)objSheets2.ChartObjects(Type.Missing);
             Excel.ChartObjects xlsCharts_3 = (Excel.ChartObjects)objSheets3.ChartObjects(Type.Missing);
             //圖表大小位置設定
-            Excel.ChartObject myChart = xlsCharts_2.Add(1350, 20,250+ printDatas[1].Rows.Count * 30, 300);
+            Excel.ChartObject myChart = xlsCharts_2.Add(1350, 20,250+ printDatas[1].Rows.Count * 30, 800);
             Excel.Chart chartPage = myChart.Chart;
 
 
-            Excel.ChartObject myChart_3 = xlsCharts_3.Add(1600, 20, 250 + printDatas[2].Rows.Count * 30, 300);
+            Excel.ChartObject myChart_3 = xlsCharts_3.Add(1600, 20, 250 + printDatas[2].Rows.Count * 30, 800);
             Excel.Chart chartPage_3 = myChart_3.Chart;
 
             //建立一個Series集合：SeriesCollection
@@ -741,10 +733,59 @@ DROP TABLE #tmp,#tmp_OrderList
 
             #endregion
 
+            #region Step.5 設定欄位的連動
+
+
+            // Sheet 2起始的X軸位置
+            objSheets2.Activate();
+            int sheet2Start_x = 5;
+            //(Work Hours/Day   *   Total Working Days) *  Avg. Efficiency %  0.8
+            objSheets2.Cells[sheet2Start_x, 3] = $"=B{sheet2Start_x} * H$2 *D$2";
+            //Total Spreading Time (hrs.)   /   Total Available Spreading Time (hrs)  *100
+            objSheets2.Cells[sheet2Start_x, 7] = $"=(F{sheet2Start_x} / B{sheet2Start_x}  * H$2 * D$2) * 100";
+            //Total Spreading Time (hrs.)   -   Total Available Spreading Time (hrs)
+            objSheets2.Cells[sheet2Start_x, 8] = $"=F{sheet2Start_x} - (B{sheet2Start_x}  * H$2 * D$2)";
+
+            objSheets2.get_Range($"C{sheet2Start_x}:C{sheet2Start_x}").Copy();
+            Excel.Range to = objSheets2.get_Range($"C{sheet2Start_x + 1}:C{printDatas[1].Rows.Count + sheet2Start_x -1}");
+            to.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+
+            objSheets2.get_Range($"G{sheet2Start_x}:G{sheet2Start_x}").Copy();
+            Excel.Range to2 = objSheets2.get_Range($"G{sheet2Start_x + 1}:G{printDatas[1].Rows.Count + sheet2Start_x - 1}");
+            to2.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+
+            objSheets2.get_Range($"H{sheet2Start_x}:H{sheet2Start_x}").Copy();
+            Excel.Range to3 = objSheets2.get_Range($"H{sheet2Start_x + 1}:H{printDatas[1].Rows.Count + sheet2Start_x - 1}");
+            to3.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+
+
+            objSheets3.Activate();
+            int sheet3Start_x = 5;
+            //(Work Hours/Day  *  Total Working Days) *  Avg. Efficiency %  
+            objSheets3.Cells[sheet3Start_x, 4] = $"= C{sheet3Start_x} * H$2 *D$2";
+            //Total Cutting Time(hrs.) / Total Available Cutting Time(hrs) * 100
+            objSheets3.Cells[sheet3Start_x, 10] = $"=(I{sheet3Start_x} / C{sheet3Start_x}  * H$2 * D$2) * 100";
+            //Total Cutting Time (hrs.)   -    Total Available Cutting Time (hrs)
+            objSheets3.Cells[sheet3Start_x, 11] = $"=I{sheet3Start_x} - (C{sheet3Start_x}  * H$2 * D$2)";
+
+            objSheets3.get_Range($"D{sheet3Start_x}:D{sheet3Start_x}").Copy();
+            Excel.Range to4 = objSheets3.get_Range($"D{sheet3Start_x + 1}:D{printDatas[2].Rows.Count + sheet3Start_x - 1}");
+            to4.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+
+            objSheets3.get_Range($"J{sheet3Start_x}:J{sheet3Start_x}").Copy();
+            Excel.Range to5 = objSheets3.get_Range($"J{sheet3Start_x + 1}:J{printDatas[2].Rows.Count + sheet3Start_x - 1}");
+            to5.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+
+            objSheets3.get_Range($"K{sheet3Start_x}:K{sheet3Start_x}").Copy();
+            Excel.Range to6 = objSheets3.get_Range($"K{sheet3Start_x + 1}:K{printDatas[2].Rows.Count + sheet3Start_x - 1}");
+            to6.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+
+            #endregion
+
+
 
             objSheets.Activate();
-
-            ///////////////////////////////////
+            
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R07");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
