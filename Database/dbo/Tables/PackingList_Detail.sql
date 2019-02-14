@@ -37,14 +37,18 @@
     [DRYReceiveDate]     DATE           NULL,
     [EditLocationDate]   DATETIME       NULL,
     [ActCTNWeight]       NUMERIC (7, 3) NULL,
-    [EditLocationName]   VARCHAR (10)   NULL,
-    [PackErrTransferDate] DATE NULL, 
-    CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+    [EditLocationName]   VARCHAR (10)   DEFAULT ('') NULL,
+    [FtyReqReturnDate]   DATE           NULL,
+    [FtyReqReturnReason] VARCHAR (5)    DEFAULT ('') NOT NULL,
+    [Lacking]            BIT            CONSTRAINT [DF_PackingList_Detail_Lacking] DEFAULT ((0)) NULL,
+    CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
+    CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
+
+
 go
 
-ALTER TABLE dbo.PackingList_Detail 
-	ADD CONSTRAINT UK_PackingList_Detail UNIQUE (ID,OrderID,OrderShipmodeSeq,CTNStartNo,Article,SizeCode)
+
 
 
 
@@ -209,7 +213,9 @@ GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'CFA�ݭn���窺�c�l', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'CFANeedInsp';
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'除溼室收箱日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'DRYReceiveDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���ëǦ��c��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'DRYReceiveDate';
+
+
 
 
 GO
@@ -239,9 +245,19 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'��ڽc�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後更新Location人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditLocationName';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�̫��sLocation�H��', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditLocationName';
+
+
 
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ץ�location�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditLocationDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否缺件', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'Lacking';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠要求退回日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'FtyReqReturnReason';
 
