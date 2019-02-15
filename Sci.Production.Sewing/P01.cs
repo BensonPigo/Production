@@ -2290,8 +2290,20 @@ WHERE sewqty < (packqty + adjQty)",
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
-                string toAddress = MyUtility.GetValue.Lookup($@"select p.EMail from Factory f inner join pass1 p on p.id = f.Manager where f.id = '{this.CurrentMaintain["FactoryID"]}'");
-                string ccAddress = "";
+                string toAddress = MyUtility.GetValue.Lookup($@"
+SELECT CONCAT(p1.EMail,';')
+FROM Factory f
+INNER JOIN Pass1 p1 ON p1.id = f.Manager
+INNER JOIN Pass0 p0 ON p0.PKey=p1.FKPass0
+INNER JOIN Pass2 p2 ON p2.PKey=p0.PKey
+WHERE  f.ID = '{this.CurrentMaintain["FactoryID"]}'  
+    AND p1.Factory LIKE ('%{this.CurrentMaintain["FactoryID"]}%')
+    AND p0.PKey IN ( SELECT FKPass0 FROM Pass2 WHERE MenuName = 'Sewing' AND BarPrompt='P01. Sewing daily output' AND CanRecall = 1)  --有 P02 Recall 權限
+    AND p1.ID <> 'SCIMIS' 
+FOR XML PATH('')
+");
+
+                string ccAddress = string.Empty;
                 string subject = "Request Unlock Sewing";
 
                 string od = string.Empty;
@@ -2389,13 +2401,15 @@ update SewingOutput set Status='New', LockDate = null where ID = '{this.CurrentM
             }
 
             string sqlcmd = $@"
-update SewingOutput 
-set LockDate = CONVERT(date, GETDATE())
-    , Status='Send'
+UPDATE  s 
+SET s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
+FROM SewingOutput s
+INNER JOIN SewingOutput_Detail sd ON s.ID = s.ID
+INNER JOIN Orders o ON o.ID = sd.OrderId
 where 1=1
-    and OutputDate < = dateadd(day,-1,getdate())
-    and LockDate is null 
-    and FactoryID  = '{Sci.Env.User.Factory}'
+    and s.OutputDate < = CAST (GETDATE() AS DATE) 
+    and s.LockDate is null 
+    and s.FactoryID  = '{Sci.Env.User.Factory}'
 ";
 
             using (TransactionScope scope = new TransactionScope())
