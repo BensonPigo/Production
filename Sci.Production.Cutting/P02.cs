@@ -2120,15 +2120,18 @@ END";
         #region Save Before Post After
         protected override bool ClickSaveBefore()
         {
-            gridValid();            
+            gridValid();
 
+            int index = 0;
             foreach (DataRow item in DetailDatas)
             {
                 if (MyUtility.Check.Empty(item["MarkerNo"].ToString()) || MyUtility.Check.Empty(item["FabricPanelCode"].ToString()))
                 {
-                    MyUtility.Msg.WarningBox("Marker No and Fab_Panel Code cannot be empty, please check to below Cut# list.");
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox("Marker No and Fab_Panel Code cannot be empty.");
                     return false;
                 }
+                index++;
             }
 
             DataTable Dg = ((DataTable)detailgridbs.DataSource);
@@ -2470,7 +2473,7 @@ where b.poid = '{0}'
                 CurrentDetailData["SCIRefno"] = dr["SCIRefno"].ToString();
                 CurrentDetailData["MtlTypeID_SCIRefno"] = dr["MtlTypeID"].ToString() + " / " + dr["SCIRefno"].ToString();
                 CurrentDetailData["Description"] = dr["Description"].ToString();
-                CurrentDetailData["FabricPanelCode"] = string.Empty;
+                CurrentDetailData["FabricPanelCode"] = new_FabricPanelCode;
             }
             else
             {
