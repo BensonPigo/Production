@@ -2296,6 +2296,24 @@ END";
         {
             gridValid();
 
+            int index = 0;
+            foreach (DataRow item in DetailDatas)
+            {
+                if (MyUtility.Check.Empty(item["MarkerNo"].ToString()))
+                {
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox("Marker No cannot be empty.");
+                    return false;
+                }
+                else if (MyUtility.Check.Empty(item["FabricPanelCode"].ToString()))
+                {
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox("Fab_Panel Code cannot be empty.");
+                    return false;
+                }
+                index++;
+            }
+
             DataTable Dg = ((DataTable)detailgridbs.DataSource);
             for (int i = Dg.Rows.Count; i > 0; i--)
             {
@@ -2696,16 +2714,17 @@ where b.poid = '{0}'
         }
 
         private void txtBoxMarkerNo_Validating(object sender, CancelEventArgs e)
-        {
+        {                       
             if (this.EditMode)
             {
                 if (!MyUtility.Check.Seek(string.Format(@"
-select 1 from Order_EachCons a
-inner join orders b on a.id = b.ID
-where b.poid = '{0}' and a.MarkerNo='{1}'
-", CurrentMaintain["ID"], this.txtBoxMarkerNo.Text)))
+    select 1 from Order_EachCons a
+    inner join orders b on a.id = b.ID
+    where b.poid = '{0}' and a.MarkerNo='{1}'
+    ", CurrentMaintain["ID"], this.txtBoxMarkerNo.Text)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("<MarkerNO: {0} > is not found!", this.txtBoxMarkerNo.Text));
+                    CurrentDetailData["MarkerNo"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
@@ -2713,11 +2732,13 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             if (MyUtility.Check.Empty(txtBoxMarkerNo.Text))
             {
                 MyUtility.Msg.WarningBox(string.Format("<MarkerNO > cannot be null"));
+                CurrentDetailData["MarkerNo"] = string.Empty;
                 e.Cancel = true;
-                return;
+                return ;
             }
+            return;
         }
-
+        
         private void txtFabricPanelCode_Validating(object sender, CancelEventArgs e)
         {
             DataRow dr;
@@ -2739,6 +2760,7 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
             else
             {
                 MyUtility.Msg.WarningBox(string.Format("This FabricPanelCode<{0}> is wrong", txtFabricPanelCode.Text));
+                CurrentDetailData["FabricPanelCode"] = string.Empty;
                 e.Cancel = true;
                 return;
             };
@@ -2787,13 +2809,6 @@ where b.poid = '{0}' and a.MarkerNo='{1}'
 
         protected override void ClickUndo()
         {
-            //foreach (DataRow dr in DetailDatas)
-            //{
-            //    if (dr.RowState==DataRowState.Added)
-            //    {
-            //        MyUtility.Msg.InfoBox("add row !");
-            //    }
-            //}
             base.ClickUndo();
             RenewData();
             OnDetailEntered();
