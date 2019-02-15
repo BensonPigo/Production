@@ -27,7 +27,16 @@ namespace Sci.Production.Packing
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
+
+            DataTable packingReason;
+
+            DBProxy.Current.Select(null, "SELECT Reason FROM  (SELECT [Reason]='' ,[ID]=''UNION ALL SELECT [Reason]=ID+'-'+Description  ,[ID]='' FROM PackingReason WHERE Type='FG' AND Junk=0 )A ORDEr BY ID ", out packingReason);
+            //DBProxy.Current.Select(null, "SELECT [Reason]=ID+'-'+Description FROM PackingReason WHERE Type='FG' AND Junk=0 ORDEr BY ID ", out packingReason);
+            MyUtility.Tool.SetupCombox(this.comboReason, 1, packingReason);
+            this.comboReason.SelectedIndex = 1;
+
             DataGridViewGeneratorTextColumnSettings reasonSetting = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings reasonNameSetting = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings selectSetting = new DataGridViewGeneratorCheckBoxColumnSettings();
 
             selectSetting.CellValidating += (s, e) =>
@@ -36,6 +45,7 @@ namespace Sci.Production.Packing
                 if ((bool)e.FormattedValue == false)
                 {
                     dr["FtyReqReturnReason"] = null;
+                    dr["ReasonName"] = null;
                 }
                 dr["selected"] = e.FormattedValue;
             };
@@ -61,6 +71,7 @@ namespace Sci.Production.Packing
                 }
 
                 dr["FtyReqReturnReason"] = item.GetSelectedString();
+                dr["ReasonName"] = MyUtility.GetValue.Lookup($"SELECT Description FROM PackingReason WHERE Type='FG' AND Junk=0 AND ID ='{item.GetSelectedString()}'");
 
             };
             reasonSetting.CellValidating += (s, e) =>
@@ -89,9 +100,11 @@ namespace Sci.Production.Packing
                  else
                  {
                      dr["FtyReqReturnReason"] = newvalue;
+                     dr["ReasonName"] = MyUtility.GetValue.Lookup($"SELECT Description FROM PackingReason WHERE Type='FG' AND Junk=0 AND ID ='{newvalue}'");
                  }
              };
             #endregion
+
 
             base.OnFormLoaded();
             this.grid.IsEditingReadOnly = false;
@@ -109,15 +122,23 @@ namespace Sci.Production.Packing
                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("Alias", header: "Destination", width: Widths.AnsiChars(7), iseditingreadonly: true)
+               .Date("SciDelivery", header: "SCI Delivery", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("ClogLocationID", header: "Location No", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("Remark", header: "Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Text("FtyReqReturnReason", header: "Reason", width: Widths.AnsiChars(15), settings: reasonSetting)
+               .Text("ReasonName", header: "Reason Name", width: Widths.AnsiChars(15))
                .Date("FtyReqReturnDate", header: "Request Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(13), iseditingreadonly: true);
-
+            
             this.grid.Columns["FtyReqReturnReason"].DefaultCellStyle.BackColor = Color.Pink;
+
+            for (int i = 0; i < this.grid.Columns.Count; i++)
+            {
+                this.grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
+
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
@@ -185,9 +206,11 @@ SELECT
 	,pd.ClogLocationID
 	,pd.Remark
 	,pd.FtyReqReturnReason
+    ,[ReasonName]=''
 	,pd.FtyReqReturnDate
 	,pd.ReceiveDate
 	,pd.ReturnDate
+    ,o.SciDelivery
     ,pd.Ukey
 
 FROM PackingList_Detail pd
@@ -636,6 +659,47 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
         private void BtnColse_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void btnUpdateAllReason_Click(object sender, EventArgs e)
+        {
+
+            if (this.listControlBindingSource.DataSource == null)
+            {
+                return;
+            }
+
+            #region 宣告
+            DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
+            DualResult result;
+            string reasonId = string.Empty;
+            string reasonName = string.Empty;
+            #endregion
+
+            // 確認有打勾的選項
+            DataRow[] selectedRows = dt.Select("selected=1");
+
+            if (selectedRows.Length == 0)
+            {
+                MyUtility.Msg.WarningBox($"Please select data first!");
+                return;
+            }
+            if (!MyUtility.Check.Empty(this.comboReason.Text))
+            {
+                reasonId = this.comboReason.Text.Split('-')[0];
+                reasonName = this.comboReason.Text.Split('-')[1];
+            }
+
+            foreach (DataRow row in dt.Rows)
+            {
+                if (row["selected"].ToString() == "1")
+                {
+                    row["FtyReqReturnReason"] = reasonId;
+                    row["ReasonName"] = reasonName;
+                }
+            }
+
+            this.listControlBindingSource.DataSource = dt;
         }
     }
 }

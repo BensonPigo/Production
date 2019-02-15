@@ -437,16 +437,16 @@
             this.lineShape5.Name = "lineShape5";
             this.lineShape5.X1 = 8;
             this.lineShape5.X2 = 707;
-            this.lineShape5.Y1 = 119;
-            this.lineShape5.Y2 = 119;
+            this.lineShape5.Y1 = 144;
+            this.lineShape5.Y2 = 144;
             // 
             // lineShape4
             // 
             this.lineShape4.Name = "lineShape4";
             this.lineShape4.X1 = 7;
             this.lineShape4.X2 = 706;
-            this.lineShape4.Y1 = 79;
-            this.lineShape4.Y2 = 79;
+            this.lineShape4.Y1 = 104;
+            this.lineShape4.Y2 = 104;
             // 
             // lineShape3
             // 
@@ -454,7 +454,7 @@
             this.lineShape3.X1 = 706;
             this.lineShape3.X2 = 706;
             this.lineShape3.Y1 = 7;
-            this.lineShape3.Y2 = 118;
+            this.lineShape3.Y2 = 143;
             // 
             // lineShape2
             // 
@@ -462,7 +462,7 @@
             this.lineShape2.X1 = 6;
             this.lineShape2.X2 = 7;
             this.lineShape2.Y1 = 7;
-            this.lineShape2.Y2 = 117;
+            this.lineShape2.Y2 = 142;
             // 
             // lineShape1
             // 

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.btnFind = new Sci.Win.UI.Button();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
@@ -45,6 +45,9 @@
             this.btnPrint = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label3 = new Sci.Win.UI.Label();
+            this.btnUpdateAllReason = new Sci.Win.UI.Button();
+            this.comboReason = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
@@ -53,6 +56,9 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.Border3DStyle.Bump;
+            this.panel1.Controls.Add(this.comboReason);
+            this.panel1.Controls.Add(this.btnUpdateAllReason);
+            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.btnFind);
             this.panel1.Controls.Add(this.labelSCIDelivery);
             this.panel1.Controls.Add(this.txtPackID);
@@ -68,7 +74,7 @@
             this.panel1.RectStyle.BorderWidths.Left = 1F;
             this.panel1.RectStyle.BorderWidths.Right = 1F;
             this.panel1.RectStyle.BorderWidths.Top = 1F;
-            this.panel1.Size = new System.Drawing.Size(725, 79);
+            this.panel1.Size = new System.Drawing.Size(725, 106);
             this.panel1.TabIndex = 1;
             // 
             // btnFind
@@ -168,7 +174,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(548, 97);
+            this.btnSave.Location = new System.Drawing.Point(548, 124);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 5;
@@ -179,7 +185,7 @@
             // btnColse
             // 
             this.btnColse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnColse.Location = new System.Drawing.Point(634, 97);
+            this.btnColse.Location = new System.Drawing.Point(634, 124);
             this.btnColse.Name = "btnColse";
             this.btnColse.Size = new System.Drawing.Size(80, 30);
             this.btnColse.TabIndex = 6;
@@ -190,7 +196,7 @@
             // btnPrint
             // 
             this.btnPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPrint.Location = new System.Drawing.Point(462, 97);
+            this.btnPrint.Location = new System.Drawing.Point(462, 124);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(80, 30);
             this.btnPrint.TabIndex = 7;
@@ -214,29 +220,59 @@
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid.Location = new System.Drawing.Point(7, 133);
+            this.grid.Location = new System.Drawing.Point(7, 160);
             this.grid.Name = "grid";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(725, 443);
+            this.grid.Size = new System.Drawing.Size(725, 465);
             this.grid.TabIndex = 8;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(16, 76);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(82, 23);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Reason";
+            // 
+            // btnUpdateAllReason
+            // 
+            this.btnUpdateAllReason.Location = new System.Drawing.Point(364, 73);
+            this.btnUpdateAllReason.Name = "btnUpdateAllReason";
+            this.btnUpdateAllReason.Size = new System.Drawing.Size(156, 30);
+            this.btnUpdateAllReason.TabIndex = 13;
+            this.btnUpdateAllReason.Text = "Update All Reason";
+            this.btnUpdateAllReason.UseVisualStyleBackColor = true;
+            this.btnUpdateAllReason.Click += new System.EventHandler(this.btnUpdateAllReason_Click);
+            // 
+            // comboReason
+            // 
+            this.comboReason.BackColor = System.Drawing.Color.White;
+            this.comboReason.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReason.FormattingEnabled = true;
+            this.comboReason.Location = new System.Drawing.Point(101, 75);
+            this.comboReason.Name = "comboReason";
+            this.comboReason.OldText = "";
+            this.comboReason.Size = new System.Drawing.Size(257, 24);
+            this.comboReason.TabIndex = 14;
             // 
             // P23
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(744, 588);
+            this.ClientSize = new System.Drawing.Size(744, 637);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.panel1);
@@ -274,5 +310,8 @@
         private Win.UI.Button btnPrint;
         private Win.UI.Grid grid;
         private Win.UI.ListControlBindingSource listControlBindingSource;
+        private Win.UI.Button btnUpdateAllReason;
+        private Win.UI.Label label3;
+        private Win.UI.ComboBox comboReason;
     }
 }
