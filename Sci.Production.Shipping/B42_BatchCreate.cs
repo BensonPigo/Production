@@ -1393,7 +1393,7 @@ Insert into VNConsumption_Detail_Detail (
 	ID 			, NLCode 	, SCIRefno 	, RefNo 	, Qty, SystemQty
 	, LocalItem , UserCreate, StockQty  , StockUnit ,HSCode, UnitID, FabricBrandID, FabricType
 ) Values (
-	'{0}' 		, '{1}' 	, '{2}' 	, '{3}' 	, 0, {4}
+	'{0}' 		, '{1}' 	, '{2}' 	, '{3}' 	, {4}, {4}
 	,{5}        , 0, {6}  , '{7}', '{8}', '{9}', '{10}', '{11}'
 );",
                                         newID,
