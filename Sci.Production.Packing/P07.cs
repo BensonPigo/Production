@@ -94,6 +94,16 @@ and p.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("d")));
             }
 
+            if (!MyUtility.Check.Empty(this.txtSP_s.Text))
+            {
+                sqlCmd.Append(string.Format(" and pd.Orderid >= '{0}'", this.txtSP_s.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSP_e.Text))
+            {
+                sqlCmd.Append(string.Format(" and pd.Orderid <= '{0}'", this.txtSP_e.Text));
+            }
+
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
             {
                 sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.txtbrand.Text));
@@ -104,7 +114,7 @@ MultipleOrder
 as (
 select ID,COUNT(ID) as cnt from tmpPackingData group by ID having COUNT(ID) > 1
 )
-select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from MultipleOrder where ID = tmpPackingData.ID) order by ID");
+select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from MultipleOrder where ID = tmpPackingData.ID) order by ID");
 
             // 排除多SP#在同一張PL的資料
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);

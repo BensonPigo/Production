@@ -53,6 +53,10 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSP_e = new Sci.Win.UI.TextBox();
+            this.txtSP_s = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             this.radioGroup2.SuspendLayout();
             this.radioPanel1.SuspendLayout();
@@ -68,7 +72,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(10, 521);
+            this.panel1.Size = new System.Drawing.Size(10, 580);
             this.panel1.TabIndex = 1;
             // 
             // panel2
@@ -76,7 +80,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(898, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(10, 521);
+            this.panel2.Size = new System.Drawing.Size(10, 580);
             this.panel2.TabIndex = 2;
             // 
             // panel3
@@ -86,7 +90,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(10, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(888, 150);
+            this.panel3.Size = new System.Drawing.Size(888, 201);
             this.panel3.TabIndex = 3;
             // 
             // radioGroup2
@@ -95,7 +99,7 @@
             this.radioGroup2.Controls.Add(this.radioPanel1);
             this.radioGroup2.Location = new System.Drawing.Point(526, 4);
             this.radioGroup2.Name = "radioGroup2";
-            this.radioGroup2.Size = new System.Drawing.Size(357, 140);
+            this.radioGroup2.Size = new System.Drawing.Size(357, 191);
             this.radioGroup2.TabIndex = 1;
             this.radioGroup2.TabStop = false;
             // 
@@ -144,6 +148,10 @@
             // 
             // radioGroup1
             // 
+            this.radioGroup1.Controls.Add(this.label1);
+            this.radioGroup1.Controls.Add(this.txtSP_e);
+            this.radioGroup1.Controls.Add(this.txtSP_s);
+            this.radioGroup1.Controls.Add(this.label2);
             this.radioGroup1.Controls.Add(this.btnQuery);
             this.radioGroup1.Controls.Add(this.txtbrand);
             this.radioGroup1.Controls.Add(this.dateFCRDate);
@@ -155,7 +163,7 @@
             this.radioGroup1.Controls.Add(this.labelGarmentBooking);
             this.radioGroup1.Location = new System.Drawing.Point(6, 4);
             this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(501, 140);
+            this.radioGroup1.Size = new System.Drawing.Size(501, 191);
             this.radioGroup1.TabIndex = 0;
             this.radioGroup1.TabStop = false;
             // 
@@ -173,15 +181,29 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(131, 109);
+            this.txtbrand.Location = new System.Drawing.Point(131, 162);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
             this.txtbrand.TabIndex = 7;
             // 
             // dateFCRDate
             // 
+            // 
+            // 
+            // 
+            this.dateFCRDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateFCRDate.DateBox1.Name = "";
+            this.dateFCRDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFCRDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateFCRDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateFCRDate.DateBox2.Name = "";
+            this.dateFCRDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFCRDate.DateBox2.TabIndex = 1;
             this.dateFCRDate.IsRequired = false;
-            this.dateFCRDate.Location = new System.Drawing.Point(131, 76);
+            this.dateFCRDate.Location = new System.Drawing.Point(131, 129);
             this.dateFCRDate.Name = "dateFCRDate";
             this.dateFCRDate.Size = new System.Drawing.Size(280, 23);
             this.dateFCRDate.TabIndex = 6;
@@ -189,7 +211,6 @@
             // label4
             // 
             this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(319, 15);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(20, 23);
@@ -220,8 +241,7 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
-            this.labelBrand.Location = new System.Drawing.Point(7, 109);
+            this.labelBrand.Location = new System.Drawing.Point(7, 162);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(120, 23);
             this.labelBrand.TabIndex = 2;
@@ -229,8 +249,7 @@
             // 
             // labelFCRDate
             // 
-            this.labelFCRDate.Lines = 0;
-            this.labelFCRDate.Location = new System.Drawing.Point(7, 76);
+            this.labelFCRDate.Location = new System.Drawing.Point(7, 129);
             this.labelFCRDate.Name = "labelFCRDate";
             this.labelFCRDate.Size = new System.Drawing.Size(120, 23);
             this.labelFCRDate.TabIndex = 1;
@@ -238,7 +257,6 @@
             // 
             // labelGarmentBooking
             // 
-            this.labelGarmentBooking.Lines = 0;
             this.labelGarmentBooking.Location = new System.Drawing.Point(7, 15);
             this.labelGarmentBooking.Name = "labelGarmentBooking";
             this.labelGarmentBooking.Size = new System.Drawing.Size(120, 23);
@@ -249,7 +267,7 @@
             // 
             this.panel4.Controls.Add(this.btnClose);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(10, 479);
+            this.panel4.Location = new System.Drawing.Point(10, 538);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(888, 42);
             this.panel4.TabIndex = 4;
@@ -270,9 +288,9 @@
             // 
             this.panel5.Controls.Add(this.gridDetail);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(10, 150);
+            this.panel5.Location = new System.Drawing.Point(10, 201);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(888, 329);
+            this.panel5.Size = new System.Drawing.Size(888, 337);
             this.panel5.TabIndex = 5;
             // 
             // gridDetail
@@ -303,13 +321,53 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDetail.Size = new System.Drawing.Size(888, 329);
+            this.gridDetail.ShowCellToolTips = false;
+            this.gridDetail.Size = new System.Drawing.Size(888, 337);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Location = new System.Drawing.Point(319, 73);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(20, 23);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "～";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // txtSP_e
+            // 
+            this.txtSP_e.BackColor = System.Drawing.Color.White;
+            this.txtSP_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP_e.Location = new System.Drawing.Point(131, 102);
+            this.txtSP_e.Name = "txtSP_e";
+            this.txtSP_e.Size = new System.Drawing.Size(186, 23);
+            this.txtSP_e.TabIndex = 11;
+            // 
+            // txtSP_s
+            // 
+            this.txtSP_s.BackColor = System.Drawing.Color.White;
+            this.txtSP_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP_s.Location = new System.Drawing.Point(131, 73);
+            this.txtSP_s.Name = "txtSP_s";
+            this.txtSP_s.Size = new System.Drawing.Size(186, 23);
+            this.txtSP_s.TabIndex = 10;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(7, 73);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(120, 23);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "SP#";
+            // 
             // P07
             // 
-            this.ClientSize = new System.Drawing.Size(908, 521);
+            this.ClientSize = new System.Drawing.Size(908, 580);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -362,5 +420,9 @@
         private Win.UI.Label label4;
         private Win.UI.TextBox txtGarmentBookingEnd;
         private Win.UI.Button btnClose;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSP_e;
+        private Win.UI.TextBox txtSP_s;
+        private Win.UI.Label label2;
     }
 }
