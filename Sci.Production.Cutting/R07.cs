@@ -367,266 +367,71 @@ DROP TABLE #tmp,#tmp_OrderList
             SetCount(printDatas[0].Rows.Count);
 
             //往下看之前，請先打開xltx範本檔搭配看
-
-            #region 將資料轉向，以符合Sheet 2 （Capacity Forecast Summary） 符合Issue ISP20190092範本需求的寫法，但效能太差，先保留
-
-            ////轉向
-            ////先設定Column，有幾筆資料就有幾個Column，Spreading Table No.的值當作欄位名稱
-            //foreach (DataRow dr in printDatas[1].Rows)
-            //{
-            //    newDt.ColumnsStringAdd(dr["Spreading Table No."].ToString());
-            //}
-
-            //foreach (DataRow dr in printDatas[1].Rows)
-            //{
-            //    //縱向，先塞空的
-            //    for (int i = 0; i <= printDatas[1].Columns.Count - 1; i++)
-            //    {
-            //        DataRow item = newDt.NewRow();
-            //        newDt.Rows.Add(item);
-            //    }
-            //}
-
-            //for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
-            //{
-            //    for (int u = 0; u <= printDatas[1].Columns.Count - 1; u++)
-            //    {
-            //        DataRow item = newDt.NewRow();
-            //        newDt.Rows.Add(item);
-            //    }
-            //}
-
-            //for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
-            //{
-            //    for (int y = 0; y <= printDatas[1].Columns.Count - 1; y++)
-            //    {
-
-            //        newDt.Rows[y][i] = printDatas[1].Rows[i][y];
-            //    }
-            //}
-
-            #endregion
-
+            
             //打開範本，寫入資料
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R07_Backup - 複製1.xltx");
-            //第一個細項大表
-            //MyUtility.Excel.CopyToXls(printDatas[0], "", "Cutting_R07.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);
-            ////第三個，對應圖表用的隱藏表
-            //MyUtility.Excel.CopyToXls(printDatas[3], "", "Cutting_R07.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[3]);   
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R07.xltx");
 
-            MyUtility.Excel.CopyToXls(printDatas[0], "", "Cutting_R07_Backup - 複製1.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);
-            //MyUtility.Excel.CopyToXls(printDatas[1], "", "Cutting_R07.xltx", 4, false, null, objApp, wSheet: objApp.Sheets[2]);   
-            //MyUtility.Excel.CopyToXls(printDatas[2], "", "Cutting_R07.xltx", 4, false, null, objApp, wSheet: objApp.Sheets[3]);   
+
+            MyUtility.Excel.CopyToXls(printDatas[0], "", "Cutting_R07.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             Microsoft.Office.Interop.Excel.Worksheet objSheets2 = objApp.ActiveWorkbook.Worksheets[2];   
             Microsoft.Office.Interop.Excel.Worksheet objSheets3 = objApp.ActiveWorkbook.Worksheets[3];
 
+            int spreadingData_Count = printDatas[1].Rows.Count;
+            int cuttingData_Count = printDatas[2].Rows.Count;
 
-            for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
+
+            #region Step.1 資料轉向，填入表格
+
+            for (int i = 0; i <= spreadingData_Count - 1; i++)
             {
                 for (int u = 0; u <= printDatas[1].Columns.Count - 1; u++)
                 {
                     DataRow item = newDt.NewRow();
-                    objSheets2.Cells[2+i, 4 + u] = printDatas[1].Rows[i].ItemArray[u].ToString();
+                    objSheets2.Cells[4+u, 2+i] = printDatas[1].Rows[i].ItemArray[u].ToString();
                 }
             }
+            //設定框線
+            Excel.Range to = objSheets2.get_Range((Excel.Range)objSheets2.Cells[4, 2], (Excel.Range)objSheets2.Cells[4 + printDatas[1].Columns.Count - 1, 2 + spreadingData_Count - 1]);
+            to.Borders.Weight = 2;
+            //合併儲存格
+            to = objSheets2.get_Range((Excel.Range)objSheets2.Cells[3,1], (Excel.Range)objSheets2.Cells[3, 2 + spreadingData_Count - 1]);
+            to.MergeCells = true;
 
-            for (int i = 0; i <= printDatas[2].Rows.Count - 1; i++)
+            for (int i = 0; i <= cuttingData_Count - 1; i++)
             {
                 for (int u = 0; u <= printDatas[2].Columns.Count - 1; u++)
                 {
                     DataRow item = newDt.NewRow();
-                    objSheets3.Cells[2+i, 4 + u] = printDatas[2].Rows[i].ItemArray[u].ToString();
+                    objSheets3.Cells[4 + u, 2 + i] = printDatas[2].Rows[i].ItemArray[u].ToString();
                 }
             }
 
-            //固定欄位寫入
+            to = objSheets3.get_Range((Excel.Range)objSheets3.Cells[4, 2], (Excel.Range)objSheets3.Cells[4 + printDatas[2].Columns.Count - 1, 2 + cuttingData_Count - 1]);
+            to.Borders.Weight = 2;
+
+            to = objSheets3.get_Range((Excel.Range)objSheets3.Cells[3, 1], (Excel.Range)objSheets3.Cells[3, 2 + cuttingData_Count - 1]);
+            to.MergeCells = true;
+
+            #endregion
+
+            #region 固定欄位寫入
             objSheets2.Cells[1, 2] = Factory;
             objSheets2.Cells[2, 2] = downloadDateTime;
-            objSheets2.Cells[1, 8] = this.dateEstCutDate.Value1.Value.ToShortDateString() + " ~ " + this.dateEstCutDate.Value2.Value.ToShortDateString();
-            objSheets2.Cells[2, 8] = totalWorkingDays;
+            objSheets2.Cells[1, 6] = this.dateEstCutDate.Value1.Value.ToShortDateString() + " ~ " + this.dateEstCutDate.Value2.Value.ToShortDateString();
+            objSheets2.Cells[2, 6] = totalWorkingDays;
 
             objSheets3.Cells[1, 2] = Factory;
             objSheets3.Cells[2, 2] = downloadDateTime;
-            objSheets3.Cells[1, 8] = this.dateEstCutDate.Value1.Value.ToShortDateString() + " ~ " + this.dateEstCutDate.Value2.Value.ToShortDateString();
-            objSheets3.Cells[2, 8] = totalWorkingDays;
-
-            #region 效能太差，暫時保留
-            //寫入隱藏Sheet
-            //for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
-            //{
-            //    for (int y = 0; y <= printDatas[1].Columns.Count - 1; y++)
-            //    {
-            //        objSheets2.Cells[4 + y, 2 + i] = printDatas[1].Rows[i][y].ToString();
-            //    }
-            //}
-            //for (int i = 0; i <= printDatas[2].Rows.Count - 1; i++)
-            //{
-            //    for (int y = 0; y <= printDatas[2].Columns.Count - 1; y++)
-            //    {
-            //        objSheets2.Cells[15 + y, 2 + i] = printDatas[2].Rows[i][y].ToString();
-            //    }
-            //}
-
-            ///////////////////////////////////
-
-            //要對應的資料擺在chartSheet
-            //Microsoft.Office.Interop.Excel.Worksheet chartSheet = objSheets3;
-
-            ////新增一個Chart
-            //object misValue = System.Reflection.Missing.Value;
-            ////注意這裡的Sheet，是要放「圖表所在的位置」
-            //Excel.ChartObjects xlsCharts = (Excel.ChartObjects)objSheets2.ChartObjects(Type.Missing);
-            ////圖表大小位置設定
-            //Excel.ChartObject myChart = xlsCharts.Add(10, 500, 850, 300);
-            //Excel.Chart chartPage = myChart.Chart;
-
-            ////建立一個Series集合：SeriesCollection
-            //Excel.SeriesCollection seriesCollection = chartPage.SeriesCollection();
-
-
-            //#region Step.2 圖表加入
-
-            ////長方圖
-
-            ////集合裡面加一筆新的Serires
-            //Microsoft.Office.Interop.Excel.Series series = seriesCollection.NewSeries();
-
-            ////選取資料範圍
-            //series.Values = chartSheet.get_Range("B2", string.Format("B{0}", 2 + printDatas[3].Rows.Count - 1));
-            //series.XValues = chartSheet.get_Range("A2", string.Format("A{0}", 2 + printDatas[3].Rows.Count - 1)); 
-
-            //series.Name = "No. Of Marker";
-            //series.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlColumnClustered;//選擇Chart種類
-
-            ////折線圖 作法同上
-            //Microsoft.Office.Interop.Excel.Series series1 = seriesCollection.NewSeries();
-            //series1.Values = chartSheet.get_Range("C2", string.Format("C{0}", 2 + printDatas[3].Rows.Count - 1));
-            //series1.XValues = chartSheet.get_Range("A2", string.Format("A{0}", 2 + printDatas[3].Rows.Count - 1));
-
-            //series1.Name = "% Capacity Fulfillment";
-            //series1.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
-
-            //#endregion
-
-            //#region Step.3 圖表版面配置
-
-
-            ////版面配置，選擇第9種，還有其他種，可自行嘗試
-            //chartPage.ApplyLayout(9);
-            ////設定圖表標題，注意，不先Select會爆炸
-            //chartPage.ChartTitle.Select();
-            //chartPage.ChartTitle.Text = "Spreading & Cutting Balance (Forecast)";
-
-
-            ////開啟運算列表（不知道運算列表是什麼的話，在Excel裡面點選一個圖表，看版面配置→運算列表）
-            //chartPage.SetElement(Microsoft.Office.Core.MsoChartElementType.msoElementDataTableWithLegendKeys);
-            //chartPage.SetElement(Microsoft.Office.Core.MsoChartElementType.msoElementLegendNone);
-            //chartPage.SetElement(Microsoft.Office.Core.MsoChartElementType.msoElementPrimaryCategoryAxisTitleNone);
-            //chartPage.SetElement(Microsoft.Office.Core.MsoChartElementType.msoElementPrimaryValueAxisTitleNone);
-
-            ////開啟資料標籤位置（也就是長條圖折線圖旁邊的數字，看版面配置→資料標籤）
-            //chartPage.ApplyDataLabels(Microsoft.Office.Interop.Excel.XlDataLabelsType.xlDataLabelsShowValue, false
-            //    , false, false, false, false, true, false, false, false);
-
-            //#endregion
-
-            //#region Step.4 開始細項的動態設定，模擬人用滑鼠點擊設定的動作
-
-            //objSheets2.Activate();
-
-            ////Item 1=長條圖，  2 =折線圖，取決於在Step.2 時先New哪一個Series
-
-            ////將S開頭的資料，的長條圖變成綠色
-            //for (int i = 1; i <= printDatas[1].Rows.Count; i++)
-            //{
-            //    //一定要先選取到那個Item，因為S開頭資料放在前面，所以用迴圈跑
-
-            //    //Series集合，Item從1開始，1代表長條圖的圖表物件
-            //    seriesCollection.Item(1).Select();
-            //    //Point 1  代表第一個長條圖
-            //    Excel.Point singleChart = seriesCollection.Item(1).Points(i);
-
-            //    singleChart.Select();
-            //    //顏色用 ForeColor，不要用BackColor
-            //    singleChart.Format.Fill.ForeColor.ObjectThemeColor = MsoThemeColorIndex.msoThemeColorAccent3;
-
-            //}
-            ////長條圖的資料標籤 設定
-            //for (int i = 1; i <= printDatas[1].Rows.Count + printDatas[2].Rows.Count; i++)
-            //{
-            //    //一定要先選取到那個Item，因為S開頭資料放在前面，所以用迴圈跑
-
-            //    //Series集合，Item從1開始，1代表長條圖的圖表物件
-            //    seriesCollection.Item(1).Select();
-            //    Excel.Series aa = seriesCollection.Item(1);
-            //    Excel.DataLabel signleDataLabel = aa.DataLabels(i);
-            //    signleDataLabel.Position = Excel.XlDataLabelPosition.xlLabelPositionInsideBase;
-            //}
-            ////折線圖的資料標籤 設定
-            //for (int i = 1; i <= printDatas[1].Rows.Count + printDatas[2].Rows.Count; i++)
-            //{
-            //    //一定要先選取到那個Item，因為S開頭資料放在前面，所以用迴圈跑
-
-            //    //Series集合，Item從1開始，1代表長條圖的圖表物件
-            //    seriesCollection.Item(2).Select();
-            //    Excel.Series aa = seriesCollection.Item(2);
-            //    Excel.DataLabel signleDataLabel = aa.DataLabels(i);
-            //    signleDataLabel.Position = Excel.XlDataLabelPosition.xlLabelPositionAbove;
-            //}
-
-            //chartSheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
-            //#endregion
-
-            //#region Step.5 連動設定
-
-            //int sheet2_StartPoint = 2;//Sheet2 填寫資料的起點 座標為，[B,4]  [B,15]
-            //int sheet3_StartPoint = 2;//Sheet3 起點 [B,1]
-
-            ////先處理S開頭的資料
-            //for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
-            //{
-            //    //說明：因為圖表綁定的資料表在Sheet3，因次Sheet3的欄位要根據Sheet2的資料連動，讓User異動Sheet2表格，圖表跟著動
-
-            //    //Sheet3第一筆資料的第一個欄位，是[A,2]開始（[A,2]=[1,2]），依序是[B,2]  [[C,2]
-            //    //對應sheet2的儲存格座標，是從B4開始，B=2，用底層把 2 + 資料筆數轉換成英文字母的座標
-            //    //其他欄位以此類推
-            //    string sheet2CellHead = MyUtility.Excel.ConvertNumericToExcelColumn(sheet2_StartPoint + i);
-            //    objSheets3.Cells[sheet3_StartPoint + i, 1] = $@"=CONCATENATE(""S"", 'Capacity Forecast Summary'!{sheet2CellHead}4)";   //Row欄位
-            //    objSheets3.Cells[sheet3_StartPoint + i, 2] = $"='Capacity Forecast Summary'!{sheet2CellHead}8";    //Count欄位
-            //    objSheets3.Cells[sheet3_StartPoint + i, 3] = $"='Capacity Forecast Summary'!{sheet2CellHead}11";   //Capacity (hrs)欄位
-
-            //    //其他連動
-            //    objSheets2.Cells[6, sheet2_StartPoint + i] = $"={sheet2CellHead}4 * F2 * C2";
-            //    objSheets2.Cells[10, sheet2_StartPoint + i] = $"={sheet2CellHead}6 / {sheet2CellHead}9 *100";
-            //    objSheets2.Cells[11, sheet2_StartPoint + i] = $"={sheet2CellHead}9-{sheet2CellHead}6";
-            //}
-
-            ////處理C開頭的資料
-            ////X軸一樣是A B C，Y軸視S開頭資料數量決定
-            //int cuttingColumn_Y_Start = sheet3_StartPoint + printDatas[1].Rows.Count;
-
-            //for (int i = 0; i <= printDatas[2].Rows.Count - 1; i++)
-            //{
-            //    //A、B、C固定的
-            //    string sheet2CellHead = MyUtility.Excel.ConvertNumericToExcelColumn(sheet2_StartPoint + i);
-            //    objSheets3.Cells[cuttingColumn_Y_Start + i, 1] = $@"=CONCATENATE(""C"", 'Capacity Forecast Summary'!{sheet2CellHead}15)";  //Row欄位
-            //    objSheets3.Cells[cuttingColumn_Y_Start + i, 2] = $"='Capacity Forecast Summary'!{sheet2CellHead}22";    //Count欄位
-            //    objSheets3.Cells[cuttingColumn_Y_Start + i, 3] = $"='Capacity Forecast Summary'!{sheet2CellHead}25";   //Capacity (hrs)欄位
-
-
-            //    //其他連動
-            //    objSheets2.Cells[18, sheet2_StartPoint + i] = $"={sheet2CellHead}15 * F2 * C2";
-            //    objSheets2.Cells[24, sheet2_StartPoint + i] = $"={sheet2CellHead}23 / {sheet2CellHead}18 *100";
-            //    objSheets2.Cells[25, sheet2_StartPoint + i] = $"={sheet2CellHead}23-{sheet2CellHead}18";
-            //}
-
-            //#endregion
+            objSheets3.Cells[1, 6] = this.dateEstCutDate.Value1.Value.ToShortDateString() + " ~ " + this.dateEstCutDate.Value2.Value.ToShortDateString();
+            objSheets3.Cells[2, 6] = totalWorkingDays;
             #endregion
-
+            
             Microsoft.Office.Interop.Excel.Worksheet speading_chartSheet = objSheets2;
             Microsoft.Office.Interop.Excel.Worksheet cutting_chartSheet = objSheets3;
+
+            #region Step.2 圖表加入
 
             //新增一個Chart
             object misValue = System.Reflection.Missing.Value;
@@ -634,39 +439,38 @@ DROP TABLE #tmp,#tmp_OrderList
             Excel.ChartObjects xlsCharts_2 = (Excel.ChartObjects)objSheets2.ChartObjects(Type.Missing);
             Excel.ChartObjects xlsCharts_3 = (Excel.ChartObjects)objSheets3.ChartObjects(Type.Missing);
             //圖表大小位置設定
-            Excel.ChartObject myChart = xlsCharts_2.Add(1350, 20,250+ printDatas[1].Rows.Count * 30, 800);
+            Excel.ChartObject myChart = xlsCharts_2.Add(20, 240, 250 + spreadingData_Count * 110, 300);
             Excel.Chart chartPage = myChart.Chart;
 
 
-            Excel.ChartObject myChart_3 = xlsCharts_3.Add(1600, 20, 250 + printDatas[2].Rows.Count * 30, 800);
+            Excel.ChartObject myChart_3 = xlsCharts_3.Add(20, 300, 250 + cuttingData_Count * 110, 300);
             Excel.Chart chartPage_3 = myChart_3.Chart;
 
             //建立一個Series集合：SeriesCollection
-            Excel.SeriesCollection seriesCollection = chartPage.SeriesCollection();
-            Excel.SeriesCollection seriesCollection_3 = chartPage_3.SeriesCollection();
+            Excel.SeriesCollection seriesCollection_Spreading = chartPage.SeriesCollection();
+            Excel.SeriesCollection seriesCollection_Cutting = chartPage_3.SeriesCollection();
 
-
-            #region Step.2 圖表加入
-            
             //Spreading
 
             //長方圖---
 
             //集合裡面加一筆新的Serires
-            Microsoft.Office.Interop.Excel.Series series1 = seriesCollection.NewSeries();
+            Microsoft.Office.Interop.Excel.Series series1 = seriesCollection_Spreading.NewSeries();
 
+            string columnHead=MyUtility.Excel.ConvertNumericToExcelColumn(1 + spreadingData_Count);
             //選取資料範圍
-            series1.Values = speading_chartSheet.get_Range("C5", string.Format("C{0}", 5 + printDatas[1].Rows.Count - 1));
-            series1.XValues = speading_chartSheet.get_Range("A5", string.Format("A{0}", 5 + printDatas[1].Rows.Count - 1));
+            series1.Values = speading_chartSheet.get_Range("B6", string.Format("{0}6", columnHead));
+            series1.XValues = speading_chartSheet.get_Range("B4", string.Format("{0}4", columnHead));
 
             series1.Name = "No. Of Marker";
             series1.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlColumnClustered;//選擇Chart種類
             series1.HasDataLabels = true;
             series1.ApplyDataLabels(Excel.XlDataLabelsType.xlDataLabelsShowValue);
+
             //折線圖 作法同上
-            Microsoft.Office.Interop.Excel.Series series2 = seriesCollection.NewSeries();
-            series2.Values = speading_chartSheet.get_Range("H5", string.Format("H{0}", 5 + printDatas[1].Rows.Count - 1));
-            series2.XValues = speading_chartSheet.get_Range("A5", string.Format("A{0}", 5 + printDatas[1].Rows.Count - 1));
+            Microsoft.Office.Interop.Excel.Series series2 = seriesCollection_Spreading.NewSeries();
+            series2.Values = speading_chartSheet.get_Range("B11", string.Format("{0}11", columnHead));
+            series2.XValues = speading_chartSheet.get_Range("B4", string.Format("{0}4", columnHead));
 
             series2.Name = "% Capacity Fulfillment";
             series2.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
@@ -676,19 +480,20 @@ DROP TABLE #tmp,#tmp_OrderList
 
             //長方圖
             //集合裡面加一筆新的Serires
-            Microsoft.Office.Interop.Excel.Series series3 = seriesCollection_3.NewSeries();
+            Microsoft.Office.Interop.Excel.Series series3 = seriesCollection_Cutting.NewSeries();
 
+            columnHead = MyUtility.Excel.ConvertNumericToExcelColumn(1 + cuttingData_Count);
             //選取資料範圍
-            series3.Values = cutting_chartSheet.get_Range("H5", string.Format("H{0}", 5 + printDatas[2].Rows.Count - 1));
-            series3.XValues = cutting_chartSheet.get_Range("A5", string.Format("A{0}", 5 + printDatas[2].Rows.Count - 1));
+            series3.Values = cutting_chartSheet.get_Range("B7", string.Format("{0}7", columnHead));
+            series3.XValues = cutting_chartSheet.get_Range("B4", string.Format("{0}4", columnHead));
 
             series3.Name = "No. Of Marker";
             series3.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlColumnClustered;//選擇Chart種類
 
             //折線圖 作法同上
-            Microsoft.Office.Interop.Excel.Series series4 = seriesCollection_3.NewSeries();
-            series4.Values = cutting_chartSheet.get_Range("K5", string.Format("K{0}", 5 + printDatas[2].Rows.Count - 1));
-            series4.XValues = cutting_chartSheet.get_Range("A5", string.Format("A{0}", 5 + printDatas[2].Rows.Count - 1));
+            Microsoft.Office.Interop.Excel.Series series4 = seriesCollection_Cutting.NewSeries();
+            series4.Values = cutting_chartSheet.get_Range("B14", string.Format("{0}14", columnHead));
+            series4.XValues = cutting_chartSheet.get_Range("B4", string.Format("{0}4", columnHead));
 
             series4.Name = "% Capacity Fulfillment";
             series4.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
@@ -766,51 +571,54 @@ DROP TABLE #tmp,#tmp_OrderList
 
             // Sheet 2起始的X軸位置
             objSheets2.Activate();
-            int sheet2Start_x = 5;
-            //(Work Hours/Day   *   Total Working Days) *  Avg. Efficiency %  0.8
-            objSheets2.Cells[sheet2Start_x, 3] = $"=B{sheet2Start_x} * H$2 *D$2";
-            //Total Spreading Time (hrs.)   /   Total Available Spreading Time (hrs)  *100
-            objSheets2.Cells[sheet2Start_x, 7] = $"=(F{sheet2Start_x} / B{sheet2Start_x}  * H$2 * D$2) * 100";
-            //Total Spreading Time (hrs.)   -   Total Available Spreading Time (hrs)
-            objSheets2.Cells[sheet2Start_x, 8] = $"=F{sheet2Start_x} - (B{sheet2Start_x}  * H$2 * D$2)";
+            int sheet2Start_x = 2;   //B開始往右
 
-            objSheets2.get_Range($"C{sheet2Start_x}:C{sheet2Start_x}").Copy();
-            Excel.Range to = objSheets2.get_Range($"C{sheet2Start_x + 1}:C{printDatas[1].Rows.Count + sheet2Start_x -1}");
-            to.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+            columnHead = MyUtility.Excel.ConvertNumericToExcelColumn(sheet2Start_x);
+            //設定Total Available Spreading Time (hrs)：     (Work Hours/Day   *   Total Working Days) *  Avg. Efficiency %  0.8
+            objSheets2.Cells[6, sheet2Start_x] = $"={columnHead}5 * $C$2 * $F$2";
+            //設定Spreading Capacity Fulfill Rate%    ：     Total Spreading Time (hrs.)   /   Total Available Spreading Time (hrs)  *100
+            objSheets2.Cells[10, sheet2Start_x] = $"=({columnHead}9 / {columnHead}5  * $C$2 * $F$2) * 100";
+            //設定+/- Capacity (hrs)                  ：     Total Spreading Time (hrs.)   -   Total Available Spreading Time (hrs)
+            objSheets2.Cells[11, sheet2Start_x] = $"={columnHead}9 - ({columnHead}5 * $C$2 *$F$2)";
+            
+            objSheets2.get_Range($"{columnHead}6:{columnHead}6").Copy();
+            Excel.Range to1 = objSheets2.get_Range($"{columnHead}6:{MyUtility.Excel.ConvertNumericToExcelColumn(spreadingData_Count + sheet2Start_x - 1)}6");
+            to1.PasteSpecial(Excel.XlPasteType.xlPasteAll);
 
-            objSheets2.get_Range($"G{sheet2Start_x}:G{sheet2Start_x}").Copy();
-            Excel.Range to2 = objSheets2.get_Range($"G{sheet2Start_x + 1}:G{printDatas[1].Rows.Count + sheet2Start_x - 1}");
+            objSheets2.get_Range($"{columnHead}10:{columnHead}10").Copy();
+            Excel.Range to2 = objSheets2.get_Range($"{columnHead}10:{MyUtility.Excel.ConvertNumericToExcelColumn(spreadingData_Count + sheet2Start_x - 1)}10");
+
             to2.PasteSpecial(Excel.XlPasteType.xlPasteAll);
 
-            objSheets2.get_Range($"H{sheet2Start_x}:H{sheet2Start_x}").Copy();
-            Excel.Range to3 = objSheets2.get_Range($"H{sheet2Start_x + 1}:H{printDatas[1].Rows.Count + sheet2Start_x - 1}");
+            objSheets2.get_Range($"{columnHead}11:{columnHead}11").Copy();
+            Excel.Range to3 = objSheets2.get_Range($"{columnHead}11:{MyUtility.Excel.ConvertNumericToExcelColumn(spreadingData_Count + sheet2Start_x - 1)}11");
             to3.PasteSpecial(Excel.XlPasteType.xlPasteAll);
 
 
             objSheets3.Activate();
-            int sheet3Start_x = 5;
-            //(Work Hours/Day  *  Total Working Days) *  Avg. Efficiency %  
-            objSheets3.Cells[sheet3Start_x, 4] = $"= C{sheet3Start_x} * H$2 *D$2";
-            //Total Cutting Time(hrs.) / Total Available Cutting Time(hrs) * 100
-            objSheets3.Cells[sheet3Start_x, 10] = $"=(I{sheet3Start_x} / C{sheet3Start_x}  * H$2 * D$2) * 100";
-            //Total Cutting Time (hrs.)   -    Total Available Cutting Time (hrs)
-            objSheets3.Cells[sheet3Start_x, 11] = $"=I{sheet3Start_x} - (C{sheet3Start_x}  * H$2 * D$2)";
+            int sheet3Start_x = 2;
+            columnHead = MyUtility.Excel.ConvertNumericToExcelColumn(sheet3Start_x);
 
-            objSheets3.get_Range($"D{sheet3Start_x}:D{sheet3Start_x}").Copy();
-            Excel.Range to4 = objSheets3.get_Range($"D{sheet3Start_x + 1}:D{printDatas[2].Rows.Count + sheet3Start_x - 1}");
+            //設定 Total Available Cutting Time (hrs)      ：(Work Hours/Day  *  Total Working Days) *  Avg. Efficiency %  
+            objSheets3.Cells[7, sheet3Start_x] = $"= {columnHead}6 * $C$2 * $F$2";
+            //設定Cutting Capacity Fulfill Rate%           ：Total Cutting Time(hrs.) / Total Available Cutting Time(hrs) * 100
+            objSheets3.Cells[13, sheet3Start_x] = $"=({columnHead}12 / {columnHead}6 * $C$2 * $F$2) * 100";
+            //設定+/- Capacity (hrs)                       ：Total Cutting Time (hrs.)   -    Total Available Cutting Time (hrs)
+            objSheets3.Cells[14, sheet3Start_x] = $"={columnHead}12 - ({columnHead}6 * $C$2 * $F$2)";
+
+            objSheets3.get_Range($"{columnHead}7:{columnHead}7").Copy();
+            Excel.Range to4 = objSheets3.get_Range($"{columnHead}7:{MyUtility.Excel.ConvertNumericToExcelColumn(cuttingData_Count + sheet3Start_x - 1)}7");
             to4.PasteSpecial(Excel.XlPasteType.xlPasteAll);
 
-            objSheets3.get_Range($"J{sheet3Start_x}:J{sheet3Start_x}").Copy();
-            Excel.Range to5 = objSheets3.get_Range($"J{sheet3Start_x + 1}:J{printDatas[2].Rows.Count + sheet3Start_x - 1}");
+            objSheets3.get_Range($"{columnHead}13:{columnHead}13").Copy();
+            Excel.Range to5 = objSheets3.get_Range($"{columnHead}13:{MyUtility.Excel.ConvertNumericToExcelColumn(cuttingData_Count + sheet3Start_x - 1)}13");
             to5.PasteSpecial(Excel.XlPasteType.xlPasteAll);
 
-            objSheets3.get_Range($"K{sheet3Start_x}:K{sheet3Start_x}").Copy();
-            Excel.Range to6 = objSheets3.get_Range($"K{sheet3Start_x + 1}:K{printDatas[2].Rows.Count + sheet3Start_x - 1}");
+            objSheets3.get_Range($"{columnHead}14:{columnHead}14").Copy();
+            Excel.Range to6 = objSheets3.get_Range($"{columnHead}14:{MyUtility.Excel.ConvertNumericToExcelColumn(cuttingData_Count + sheet3Start_x - 1)}14");
             to6.PasteSpecial(Excel.XlPasteType.xlPasteAll);
 
             #endregion
-
-
 
             objSheets.Activate();
             
