@@ -94,38 +94,10 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,fd.ShipperID
 ,ROUND(o.CPU,3) as cpu
 ,ROUND(isnull(cpucost.cpucost,0),3) as cpucost
-,[Sub_Process_CPU]= ROUND((Select Isnull(sum(ot.Price),0) 
-					from Order_TmsCost ot
-					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0)
-					and a.ProductionUnit='TMS')					
-                    +
-                    (Select Isnull(sum(ot.Price),0) 
-					from Order_TmsCost ot
-					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)
-					and a.ProductionUnit='TMS'),3)
+,[Sub_Process_CPU]= ROUND(Isnull(sub_Process_CPU.Value,0),3)
 ,[Sub_Process_Cost]=ROUND(isnull(cpucost.cpucost,0),3)
-,[sub_Process_AMT]= ROUND((Select Isnull(sum(ot.Price),0) 
-					from Order_TmsCost ot
-					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0)
-					and a.ProductionUnit='Qty')					
-                    +
-                    (Select Isnull(sum(ot.Price),0) 
-					from Order_TmsCost ot
-					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)
-					and a.ProductionUnit='Qty'),3)
-,SubPSCost=         ROUND(ROUND((Select Isnull(sum(ot.Price),0) 
-					from Order_TmsCost ot
-					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = o.ID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0))
-                    +
-                    (Select Isnull(sum(ot.Price),0) 
-					from Order_TmsCost ot
-					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = o.ID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3) * ROUND(isnull(cpucost.cpucost,0),3),3)
+,[sub_Process_AMT]= ROUND(Isnull(sub_Process_AMT.Value,0),3)
+,SubPSCost= ROUND(Isnull(sub_Process_CPU.Value,0) * isnull(cpucost.cpucost,0) + Isnull(sub_Process_AMT.Value,0),3)
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
 From Orders o
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
@@ -136,6 +108,8 @@ outer apply
     from dbo.FSRCpuCost_Detail fcd 
     where fcd.ShipperID=fd.ShipperID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate	
 ) cpucost
+outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')   ) sub_Process_AMT
+outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')   ) sub_Process_CPU
 Where o.LocalOrder = 0 ");
 
             if (!MyUtility.Check.Empty(this.buyerDlv1))

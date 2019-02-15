@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Data.SqlClient;
 
 namespace Sci.Production.PPIC
 {
@@ -47,6 +48,7 @@ where ot.ID = '{0}'
 and (a.Classify = 'I' or a.Classify = 'A' or a.Classify = 'P')
 order by ot.Seq", this.orderData["ID"].ToString());
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out gridData);
+
             if (!result)
             {
                 MyUtility.Msg.ErrorBox("Query order tmscost data fail!!" + result.ToString());
@@ -66,8 +68,27 @@ order by ot.Seq", this.orderData["ID"].ToString());
 
             this.numCPU.Value = MyUtility.Convert.GetDecimal(this.orderData["CPU"]);
             this.CalculatedCPUcost();
-            decimal price = MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'I' and ttlTMS = 'N'")) + MyUtility.Convert.GetDecimal(gridData.Compute("sum(Price)", "Classify = 'A'"));
-            this.numSubProcess.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(price * this.numCPUCost.Value), 3);
+            #region 取得 Sub Process Std. Cost
+            string sqlGetStdCost = @"
+declare @cpuCost numeric(6,3) = @inputCPUCost
+declare @orderid varchar(13) = @inputOrderID
+declare @subProcessAMT numeric(16,4)
+declare @subProcessCPU numeric(16,4)
+
+select @subProcessAMT = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(@orderid,'AMT') 
+select @subProcessCPU = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(@orderid,'CPU')
+
+select [SubProcessStdCost] = round(isnull(@subProcessCPU,0) * isnull(@cpuCost,0) + isnull(@subProcessAMT,0),3)";
+
+            List<SqlParameter> parGetStdCost = new List<SqlParameter>()
+            {
+                new SqlParameter("@inputCPUCost", this.numCPUCost.Value),
+                new SqlParameter("@inputOrderID", this.orderData["ID"].ToString())
+            };
+
+            string subProcessStdCost = MyUtility.GetValue.Lookup(sqlGetStdCost, parGetStdCost);
+            #endregion
+            this.numSubProcess.Value = MyUtility.Convert.GetDecimal(subProcessStdCost);
             this.CalculatedLocalCMT();
             this.numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal((this.numCPU.Value * this.numCPUCost.Value) + this.numSubProcess.Value + this.numLocalPurchase.Value), 2);
         }
