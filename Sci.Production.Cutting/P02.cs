@@ -2125,10 +2125,16 @@ END";
             int index = 0;
             foreach (DataRow item in DetailDatas)
             {
-                if (MyUtility.Check.Empty(item["MarkerNo"].ToString()) || MyUtility.Check.Empty(item["FabricPanelCode"].ToString()))
+                if (MyUtility.Check.Empty(item["MarkerNo"].ToString()))
                 {
                     this.detailgrid.SelectRowTo(index);
-                    MyUtility.Msg.WarningBox("Marker No and Fab_Panel Code cannot be empty.");
+                    MyUtility.Msg.WarningBox("Marker No cannot be empty.");
+                    return false;
+                }
+                else if (MyUtility.Check.Empty(item["FabricPanelCode"].ToString()))
+                {
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox("Fab_Panel Code cannot be empty.");
                     return false;
                 }
                 index++;
