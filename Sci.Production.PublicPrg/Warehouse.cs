@@ -756,7 +756,7 @@ where   a.lock = 0
         and p.seq1 = '{2}' 
         and p.seq2 = '{3}'", Sci.Env.User.Keyword, materials["poid"], materials["seq1"], materials["seq2"], stocktype);
             }
-            else//P29 Auto Pick
+            else//P29,P30 Auto Pick
             {
                 request = decimal.Parse(materials["requestqty"].ToString());
                 sqlcmd = string.Format(@"
@@ -1709,6 +1709,322 @@ when matched then
                     }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    return new DualResult(false, "Commit transaction error.", ex);
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+            return result;
+        }
+
+        public static DualResult P24confirm(string SubTransfer_ID)
+        {
+            string upd_MD_16T = "";
+            string upd_MD_8T = "";
+            string upd_MD_4T = "";
+            string upd_MD_0F = "";
+            String upd_Fty_4T = "";
+            String upd_Fty_2T = "";
+
+            StringBuilder sqlupd2 = new StringBuilder();
+            String sqlcmd = "", sqlupd3 = "", ids = "";
+            DualResult result, result2;
+            DataTable datacheck;
+
+            #region -- 檢查庫存項lock --
+            bool MtlAutoLock = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("select MtlAutoLock from system"));
+            if (!MtlAutoLock)
+            {
+                sqlcmd = string.Format(@"
+Select 	d.frompoid
+		,d.fromseq1
+		,d.fromseq2
+		,d.fromRoll
+		,d.Qty
+		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) 
+        ,f.Dyelot
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+inner join FtyInventory f WITH (NOLOCK) 
+    on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
+       and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
+where f.lock=1 and d.Id = '{0}'", SubTransfer_ID);
+                if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+                {   
+                    return result2;
+                }
+                else
+                {
+                    if (datacheck.Rows.Count > 0)
+                    {
+                        foreach (DataRow tmp in datacheck.Rows)
+                        {
+                            ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {4} is locked!!" + Environment.NewLine
+                                , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["Dyelot"]);
+                        }
+                        return new DualResult(false, "Material Locked!!" + Environment.NewLine + ids);
+                    }
+                }
+            }
+            #endregion
+
+            #region -- 檢查負數庫存 --
+
+            sqlcmd = string.Format(@"
+Select 	d.frompoid
+		,d.fromseq1
+		,d.fromseq2
+		,d.fromRoll
+		,d.Qty
+		,balanceQty = isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0)
+        , f.Dyelot
+from dbo.SubTransfer_Detail d WITH (NOLOCK) 
+left join FtyInventory f WITH (NOLOCK) 
+	on d.FromPOID = f.POID  AND D.FromStockType = F.StockType
+	   and d.FromRoll = f.Roll and d.FromSeq1 =f.Seq1 and d.FromSeq2 = f.Seq2 and d.FromDyelot = f.Dyelot
+where (isnull(f.InQty,0)-isnull(f.OutQty,0)+isnull(f.AdjustQty,0) - d.Qty < 0) and d.Id = '{0}'", SubTransfer_ID);
+            if (!(result2 = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
+            {   
+                return result2;
+            }
+            else
+            {
+                if (datacheck.Rows.Count > 0)
+                {
+                    foreach (DataRow tmp in datacheck.Rows)
+                    {
+                        ids += string.Format("SP#: {0} Seq#: {1}-{2} Roll#: {3} Dyelot: {6}'s balance: {4} is less than qty: {5}" + Environment.NewLine
+                            , tmp["frompoid"], tmp["fromseq1"], tmp["fromseq2"], tmp["fromroll"], tmp["balanceqty"], tmp["qty"], tmp["Dyelot"]);
+                    }
+                    return new DualResult(false, "Balacne Qty is not enough!!" + Environment.NewLine + ids);
+                }
+            }
+
+            #endregion -- 檢查負數庫存 --
+
+            #region -- 更新表頭狀態資料 --
+
+            sqlupd3 = string.Format(@"update SubTransfer set status='Confirmed', editname = '{0}' , editdate = GETDATE()
+                                where id = '{1}'", Env.User.UserID, SubTransfer_ID);
+
+            #endregion 更新表頭狀態資料
+
+            // 撈出明細資料
+            DataTable dtSubTransfer_Detail;
+            string sqlSubTransfer_Detail = $@"
+select 
+    a.id
+    ,a.FromFtyinventoryUkey
+    ,a.FromPoId
+    ,a.FromSeq1
+    ,a.FromSeq2
+    ,FromSeq = concat(Ltrim(Rtrim(a.FromSeq1)), ' ', a.FromSeq2)
+    ,FabricType = Case p1.FabricType WHEN 'F' THEN 'Fabric' WHEN 'A' THEN 'Accessory' ELSE 'Other'  END 
+    ,p1.stockunit
+    ,description = dbo.getmtldesc(a.FromPoId,a.FromSeq1,a.FromSeq2,2,0)
+    ,a.FromRoll
+    ,a.FromDyelot
+    ,a.FromStockType
+    ,a.Qty
+    ,a.ToPoId
+    ,a.ToSeq1
+    ,a.ToSeq2
+    ,a.ToDyelot
+    ,a.ToRoll
+    ,a.ToStockType
+    ,dbo.Getlocation(f.Ukey)  as Fromlocation
+    ,a.ukey
+    ,a.tolocation
+from dbo.SubTransfer_Detail a WITH (NOLOCK) 
+left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.FromPoId and p1.seq1 = a.FromSeq1 and p1.SEQ2 = a.FromSeq2
+left join FtyInventory f WITH (NOLOCK) on a.FromPOID=f.POID and a.FromSeq1=f.Seq1 and a.FromSeq2=f.Seq2 and a.FromRoll=f.Roll and a.FromDyelot=f.Dyelot and a.FromStockType=f.StockType
+Where a.id = '{SubTransfer_ID}'";
+            
+            result = DBProxy.Current.Select(null, sqlSubTransfer_Detail, out dtSubTransfer_Detail);
+            if (!result)
+            {
+                return result;
+            }
+
+            #region -- 更新mdivisionpodetail Inventory 數 --
+            var data_MD_4T = (from b in dtSubTransfer_Detail.AsEnumerable()
+                   group b by new
+                   {
+                       poid = b.Field<string>("frompoid"),
+                       seq1 = b.Field<string>("fromseq1"),
+                       seq2 = b.Field<string>("fromseq2"),
+                       stocktype = b.Field<string>("fromstocktype")
+                   } into m
+                       select new Prgs_POSuppDetailData
+                   {
+                       poid = m.First().Field<string>("frompoid"),
+                       seq1 = m.First().Field<string>("fromseq1"),
+                       seq2 = m.First().Field<string>("fromseq2"),
+                       stocktype = m.First().Field<string>("fromstocktype"),
+                       qty = m.Sum(w => w.Field<decimal>("qty"))
+                   }).ToList();
+
+            var data_MD_8T = data_MD_4T.Select(data => new Prgs_POSuppDetailData
+            {
+                poid = data.poid,
+                seq1 = data.seq1,
+                seq2 = data.seq2,
+                stocktype = data.stocktype,
+                qty = - (data.qty)
+            }).ToList();
+
+            var data_MD_0F = data_MD_4T.Select(data => new Prgs_POSuppDetailData
+            {
+                poid = data.poid,
+                seq1 = data.seq1,
+                seq2 = data.seq2,
+                stocktype = data.stocktype,
+                qty = 0
+            }).ToList();
+
+            #endregion 
+            #region -- 更新mdivisionpodetail Scrap數 --
+            var data_MD_16T = (from b in dtSubTransfer_Detail.AsEnumerable()
+                       group b by new
+                       {
+                           poid = b.Field<string>("topoid"),
+                           seq1 = b.Field<string>("toseq1"),
+                           seq2 = b.Field<string>("toseq2"),
+                           stocktype = b.Field<string>("tostocktype")
+                       } into m
+                       select new
+                       {
+                           poid = m.First().Field<string>("topoid"),
+                           seq1 = m.First().Field<string>("toseq1"),
+                           seq2 = m.First().Field<string>("toseq2"),
+                           stocktype = m.First().Field<string>("tostocktype"),
+                           qty = m.Sum(w => w.Field<decimal>("qty"))
+                       }).ToList();
+
+            #endregion
+            #region -- 更新庫存數量  ftyinventory --
+            var data_Fty_4T = (from m in dtSubTransfer_Detail.AsEnumerable()
+                         select new
+                         {
+                             poid = m.Field<string>("frompoid"),
+                             seq1 = m.Field<string>("fromseq1"),
+                             seq2 = m.Field<string>("fromseq2"),
+                             stocktype = m.Field<string>("fromstocktype"),
+                             qty = m.Field<decimal>("qty"),
+                             location = m.Field<string>("tolocation"),
+                             roll = m.Field<string>("fromroll"),
+                             dyelot = m.Field<string>("fromdyelot"),
+                         }).ToList();
+
+            DataTable newDt = dtSubTransfer_Detail.Clone();
+            foreach (DataRow dtr in dtSubTransfer_Detail.Rows)
+            {
+                string[] dtrLocation = dtr["ToLocation"].ToString().Split(',');
+                dtrLocation = dtrLocation.Distinct().ToArray();
+
+                if (dtrLocation.Length == 1)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = dtr.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = dtr.ItemArray;
+                        newDr["ToLocation"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
+
+            var data_Fty_2T = (from m in newDt.AsEnumerable()
+                           select new
+                           {
+                               poid = m.Field<string>("topoid"),
+                               seq1 = m.Field<string>("toseq1"),
+                               seq2 = m.Field<string>("toseq2"),
+                               stocktype = m.Field<string>("tostocktype"),
+                               qty = m.Field<decimal>("qty"),
+                               location = m.Field<string>("tolocation"),
+                               roll = m.Field<string>("toroll"),
+                               dyelot = m.Field<string>("todyelot"),
+                           }).ToList();
+            upd_Fty_4T = Prgs.UpdateFtyInventory_IO(4, null, true);
+            upd_Fty_2T = Prgs.UpdateFtyInventory_IO(2, null, true);
+            #endregion 更新庫存數量  ftyinventory
+
+            TransactionScope _transactionscope = new TransactionScope();
+            SqlConnection sqlConn = null;
+            DBProxy.Current.OpenConnection(null, out sqlConn);
+
+            using (_transactionscope)
+            using (sqlConn)
+            {
+                try
+                {
+                    /*
+                     * 先更新 FtyInventory 後更新 MDivisionPoDetail
+                     * 所有 MDivisionPoDetail 資料都在 Transaction 中更新，
+                     * 因為要在同一 SqlConnection 之下執行
+                     */
+                    DataTable resulttb;
+                    #region FtyInventory
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_4T, "", upd_Fty_4T, out resulttb, "#TmpSource", conn: sqlConn)))
+                    {
+                        _transactionscope.Dispose();
+                        return result;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_Fty_2T, "", upd_Fty_2T, out resulttb, "#TmpSource", conn: sqlConn)))
+                    {
+                        _transactionscope.Dispose();
+                        return result;
+                    }
+                    #endregion
+
+                    #region MDivisionPoDetail
+                    upd_MD_4T = (Prgs.UpdateMPoDetail(4, data_MD_4T, true, sqlConn: sqlConn));
+                    upd_MD_8T = (Prgs.UpdateMPoDetail(8, null, true, sqlConn: sqlConn));
+                    upd_MD_16T = Prgs.UpdateMPoDetail(16, null, true, sqlConn: sqlConn);
+                    upd_MD_0F = Prgs.UpdateMPoDetail(0, data_MD_0F, true, sqlConn: sqlConn);
+
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_8T, "", upd_MD_8T.ToString(), out resulttb
+                        , "#TmpSource", conn: sqlConn)))
+                    {
+                        _transactionscope.Dispose();
+                        return result;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_4T, "", upd_MD_4T.ToString(), out resulttb
+                        , "#TmpSource", conn: sqlConn)))
+                    {
+                        _transactionscope.Dispose();
+                        return result;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_16T, "", upd_MD_16T, out resulttb, "#TmpSource", conn: sqlConn)))
+                    {
+                        _transactionscope.Dispose();
+                        return result;
+                    }
+                    if (!(result = MyUtility.Tool.ProcessWithObject(data_MD_0F, "", upd_MD_0F, out resulttb, "#TmpSource", conn: sqlConn)))
+                    {
+                        _transactionscope.Dispose();
+                        return result;
+                    }
+                    #endregion 
+
+                    if (!(result = DBProxy.Current.Execute(null, sqlupd3)))
+                    {
+                        _transactionscope.Dispose();
+                        return result;
+                    }
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                    //MyUtility.Msg.InfoBox("Confirmed successful");
                 }
                 catch (Exception ex)
                 {

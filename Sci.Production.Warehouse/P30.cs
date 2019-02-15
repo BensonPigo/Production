@@ -8,9 +8,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -52,6 +54,10 @@ namespace Sci.Production.Warehouse
             #endregion
             col_chk.CellClick += (s, e) =>
           {
+              if (MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+              {
+                  return;
+              }
               DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
               if (null == thisRow)
               {
@@ -86,6 +92,10 @@ namespace Sci.Production.Warehouse
             ns.IsSupportNegative = true;
             ns.CellValidating += (s, e) =>
             {
+                if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)|| MyUtility.Check.Empty(listControlBindingSource2.DataSource))
+                {
+                    return;
+                }
                 if (this.EditMode && e.FormattedValue != null)
                 {
                     DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
@@ -108,33 +118,35 @@ namespace Sci.Production.Warehouse
             };
             #endregion
             Ict.Win.DataGridViewGeneratorTextColumnSettings ts2 = Production.Class.cellMtlLocation.GetGridCell("O");
+            this.gridRel.CellValueChanged += (s, e) =>
+{
+    if (MyUtility.Check.Empty(listControlBindingSource1.DataSource)||MyUtility.Check.Empty(listControlBindingSource2.DataSource))
+    {
+        return;
+    }
+    if (gridRel.Columns[e.ColumnIndex].Name == col_chk2.Name)
+    {
+        DataRow dr = gridRel.GetDataRow(e.RowIndex);
+        if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
+        {
+            dr["qty"] = dr["balanceQty"];
+        }
+        else if (Convert.ToBoolean(dr["selected"]) == false)
+        {
+            dr["qty"] = 0;
+        }
+        dr.EndEdit();
+
+        DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
+        DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
+        DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
+        currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
+        currentrow.EndEdit();
+    }
+};
             #region -- Grid2 設定 --
             this.gridRel.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridRel.DataSource = listControlBindingSource2;
-
-            this.gridRel.CellValueChanged += (s, e) =>
-            {
-                if (gridRel.Columns[e.ColumnIndex].Name == col_chk2.Name)
-                {
-                    DataRow dr = gridRel.GetDataRow(e.RowIndex);
-                    if (Convert.ToBoolean(dr["selected"]) == true && Convert.ToDecimal(dr["qty"].ToString()) == 0)
-                    {
-                        dr["qty"] = dr["balanceQty"];
-                    }
-                    else if (Convert.ToBoolean(dr["selected"]) == false)
-                    {
-                        dr["qty"] = 0;
-                    }
-                    dr.EndEdit();
-
-                    DataRow thisRow = this.gridComplete.GetDataRow(this.listControlBindingSource1.Position);
-                    DataRow[] curentgridrowChild = thisRow.GetChildRows("rel1");
-                    DataRow currentrow = gridRel.GetDataRow(gridRel.GetSelectedRowIndex());
-                    currentrow.GetParentRow("rel1")["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
-                    currentrow.EndEdit();
-                }
-            };
-
             Helper.Controls.Grid.Generator(this.gridRel)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
                  .Text("fromroll", header: "Roll#", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -142,7 +154,7 @@ namespace Sci.Production.Warehouse
                  .Numeric("balanceQty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                  .Numeric("qty", header: "Trans. Qty", width: Widths.AnsiChars(8), integer_places: 8, decimal_places: 2, settings: ns).Get(out col_Qty)
                   .Text("fromlocation", header: "From Inventory" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: true)
-                  .Text("tolocation", header: "To Bulk" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
+                  .Text("tolocation", header: "To Scarp" + Environment.NewLine + "Location", width: Widths.AnsiChars(16), iseditingreadonly: false, settings: ts2).Get(out col_tolocation)
                   ;
             col_Qty.DefaultCellStyle.BackColor = Color.Pink;
             col_tolocation.DefaultCellStyle.BackColor = Color.Pink;
@@ -152,6 +164,10 @@ namespace Sci.Production.Warehouse
 
         private void chp()
         {
+            if (MyUtility.Check.Empty(listControlBindingSource2.DataSource))
+            {
+                return;
+            }
             #region selected
             col_chk2.CellClick += (s, e) =>
             {
@@ -166,7 +182,6 @@ namespace Sci.Production.Warehouse
                     {
                         // 原本沒selected , 會變selected , 就直接勾選parentRow
                         thisRow.GetParentRow("rel1")["selected"] = true;
-
                     }
                 }
                 else
@@ -187,7 +202,6 @@ namespace Sci.Production.Warehouse
                             if (selected.Count <= 1)
                             {
                                 thisRow.GetParentRow("rel1")["selected"] = false;
-                                //thisRow.GetParentRow("rel1")["total_qty"] = temp.Sum(row => (decimal)row["qty"]);
                                 thisRow.GetParentRow("rel1")["total_qty"] = DBNull.Value;
                             }
                             else
@@ -251,6 +265,9 @@ namespace Sci.Production.Warehouse
             , o.FactoryID 
             , pd.seq1
             , pd.seq2
+            , pd.StockPOID
+            , pd.StockSeq1
+            , pd.StockSeq2
             ,ROUND(dbo.GetUnitQty(pd.POUnit,pd.StockUnit,x.taipei_qty), 2) N'PoQty'
             , pd.POUnit
             , pd.StockUnit
@@ -409,7 +426,6 @@ drop table #tmp
 
             detail = dataSet.Tables[1];
             detail.TableName = "Detail";
-            //dataSet.Tables[1].DefaultView.Sort = "fromdyelot,balanceQty";
 
             DataRelation relation = new DataRelation("rel1"
                     , new DataColumn[] { master.Columns["poid"], master.Columns["seq1"], master.Columns["seq2"] }
@@ -417,10 +433,9 @@ drop table #tmp
                     );
 
             dataSet.Relations.Add(relation);
-
-            //master.Columns.Add("total_qty", typeof(decimal), "sum(child.qty)");
-            master.Columns.Add("requestqty", typeof(decimal), "poqty - inqty - sum(child.qty)");
+            
             master.Columns.Add("total_qty", typeof(decimal));
+            master.Columns.Add("requestqty", typeof(decimal), "poqty - inqty - sum(child.qty)");
 
             listControlBindingSource1.DataSource = dataSet;
             listControlBindingSource1.DataMember = "Master";
@@ -437,6 +452,11 @@ drop table #tmp
 
         private void checkOnly_CheckedChanged(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(listControlBindingSource1.DataSource))
+            {
+                return;
+            }
+
             if (checkOnly.Checked)
             {
                 listControlBindingSource1.Filter = "complete = 'Y'";
@@ -474,7 +494,6 @@ drop table #tmp
                         temp["qty"] = 0.00;
                         temp["selected"] = false;
                     }
-                    //dr["total_qty"] = curentgridrowChild.Sum(row => (decimal)row["qty"]);
                     dr["total_qty"] = 0.00;
                 }
 
@@ -589,14 +608,14 @@ from #tmp";
                 DataRow drNewMaster = dtMaster.NewRow();
                 drNewMaster["poid"] = listPoid[i].ToString();
                 drNewMaster["id"] = tmpId[i].ToString();
-                drNewMaster["type"] = "";
+                drNewMaster["type"] = "E";
                 drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
                 drNewMaster["mdivisionid"] = Env.User.Keyword;
                 drNewMaster["FactoryID"] = Sci.Env.User.Factory;
                 drNewMaster["status"] = "New";
                 drNewMaster["addname"] = Env.User.UserID;
                 drNewMaster["adddate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
-                drNewMaster["remark"] = "Batch create by P29";
+                drNewMaster["remark"] = "Batch create by P30";
                 dtMaster.Rows.Add(drNewMaster);
             }
 
@@ -659,12 +678,12 @@ from #tmp";
             }
             _transactionscope = null;
 
-            #region confirm save成功的P23單子
+            #region confirm save成功的P24單子
             List<string> success_list = new List<string>();
             List<string> fail_list = new List<string>();
             foreach (DataRow dr in dtMaster.Rows)
             {
-                if (Prgs.P23confirm(dr["ID"].ToString()))
+                if (Prgs.P24confirm(dr["ID"].ToString()))
                 {
                     success_list.Add(dr["ID"].ToString());
                 }
@@ -676,7 +695,7 @@ from #tmp";
 
             string msg = string.Empty;
             msg += success_list.Count > 0 ? "Trans. ID" + Environment.NewLine + success_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!! and Confirm Success!!" + Environment.NewLine : string.Empty;
-            msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P23 manual Confirm" : string.Empty;
+            msg += fail_list.Count > 0 ? "Trans. ID" + Environment.NewLine + fail_list.JoinToString(Environment.NewLine) + Environment.NewLine + "be created!!, Confirm fail, please go to P24 manual Confirm" : string.Empty;
             this.p30_msg.Show(msg);
             #endregion
 
@@ -695,6 +714,47 @@ from #tmp";
             btnCreate.Enabled = false;
             this.gridRel.ValidateControl();
             this.gridComplete.ValidateControl();
+        }
+
+        private void btnExcel_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(master))
+            {
+                MyUtility.Msg.WarningBox("Did not finish Inventory To Scarp");
+                return;
+            }
+            if (!master.Columns.Contains("TransID"))
+            {
+                MyUtility.Msg.WarningBox("Did not finish Inventory To Scarp");
+                return;
+            }
+            master.DefaultView.RowFilter = "TransID<>''";
+            if (MyUtility.Check.Empty(master))
+            {
+                return;
+            }
+            DataTable Exceldt = master.DefaultView.ToTable();
+            if (Exceldt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Did not finish Inventory To Scarp");
+                return;
+            }
+            // 篩選報表所顯示的欄位
+            Exceldt.Columns.Remove("selected");
+            Exceldt.Columns.Remove("CutInLine");
+            Exceldt.Columns.Remove("ProjectID");
+            Exceldt.Columns.Remove("FactoryID");
+            Exceldt.Columns.Remove("stockpoid");
+            Exceldt.Columns.Remove("stockseq1");
+            Exceldt.Columns.Remove("stockseq2");
+            Exceldt.Columns.Remove("qty");
+
+
+
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Warehouse_P30.xltx"); //預先開啟excel app
+            MyUtility.Excel.CopyToXls(Exceldt, "", "Warehouse_P30.xltx", 2, showExcel: true, showSaveMsg: true, excelApp: excelApp);      // 將datatable copy to excel
+            Marshal.ReleaseComObject(excelApp);
+            
         }
     }
 }

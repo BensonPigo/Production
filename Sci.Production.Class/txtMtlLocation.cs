@@ -109,7 +109,7 @@ ORDER BY ID, StockType", dicSQLFilte["StockType"]);
             #region SQL Filte
             Dictionary<string, string> dicSQLFilte = new Dictionary<string, string>();
             string strStockType = strstockTypeFilte.Split(',').Where(row => !row.Empty()).Select(row => row = string.Format("'{0}'", row)).JoinToString(",");
-            dicSQLFilte.Add("StockType", (strStockType.Empty()) ? "" : $@"and StockType in ('{strStockType}')");
+            dicSQLFilte.Add("StockType", (strStockType.Empty()) ? "" : $@"and StockType in ({strStockType})");
             #endregion
 
             ts.EditingMouseDown += (s, e) =>
@@ -158,7 +158,7 @@ ORDER BY ID, StockType", "15,5", row["tolocation"].ToString(), false, ",");
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                 String oldValue = row["tolocation"].ToString();
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
-                //
+                
                 List<SqlParameter> listSQLPara = new List<SqlParameter>();
                 listSQLPara.Add(new SqlParameter("@checkLocation", newValue));
                 string strSQLCmd = string.Format(@"

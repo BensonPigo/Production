@@ -120,6 +120,7 @@
             this.btnExcel.TabIndex = 0;
             this.btnExcel.Text = "Excel";
             this.btnExcel.UseVisualStyleBackColor = true;
+            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
             // 
             // labelSP
             // 
