@@ -2120,7 +2120,16 @@ END";
         #region Save Before Post After
         protected override bool ClickSaveBefore()
         {
-            gridValid();
+            gridValid();            
+
+            foreach (DataRow item in DetailDatas)
+            {
+                if (MyUtility.Check.Empty(item["MarkerNo"].ToString()) || MyUtility.Check.Empty(item["FabricPanelCode"].ToString()))
+                {
+                    MyUtility.Msg.WarningBox("Marker No and Fab_Panel Code cannot be empty, please check to below Cut# list.");
+                    return false;
+                }
+            }
 
             DataTable Dg = ((DataTable)detailgridbs.DataSource);
             for (int i = Dg.Rows.Count; i > 0; i--)
@@ -2420,12 +2429,9 @@ where b.poid = '{0}'
         }
 
         private void txtBoxMarkerNo_Validating(object sender, CancelEventArgs e)
-        {
-
-            string old_MarkerNo = CurrentDetailData["MarkerNo"].ToString();
+        {                       
             if (this.EditMode)
             {
-
                 if (!MyUtility.Check.Seek(string.Format(@"
     select 1 from Order_EachCons a
     inner join orders b on a.id = b.ID
@@ -2433,7 +2439,7 @@ where b.poid = '{0}'
     ", CurrentMaintain["ID"], this.txtBoxMarkerNo.Text)))
                 {
                     MyUtility.Msg.WarningBox(string.Format("<MarkerNO: {0} > is not found!", this.txtBoxMarkerNo.Text));
-                    CurrentDetailData["MarkerNo"] = old_MarkerNo;
+                    CurrentDetailData["MarkerNo"] = string.Empty;
                     e.Cancel = true;
                     return;
                 }
@@ -2441,7 +2447,7 @@ where b.poid = '{0}'
             if (MyUtility.Check.Empty(txtBoxMarkerNo.Text))
             {
                 MyUtility.Msg.WarningBox(string.Format("<MarkerNO > cannot be null"));
-                CurrentDetailData["MarkerNo"] = old_MarkerNo;
+                CurrentDetailData["MarkerNo"] = string.Empty;
                 e.Cancel = true;
                 return ;
             }
@@ -2452,7 +2458,6 @@ where b.poid = '{0}'
         {
             DataRow dr;
             string new_FabricPanelCode = txtFabricPanelCode.Text;
-            string old_FabricPanelCode = CurrentDetailData["FabricPanelCode"].ToString();
             string sqlcmd = string.Format(@"select ob.SCIRefno,f.Description ,f.MtlTypeID
                             from Order_BoF ob 
                             left join Fabric f on ob.SCIRefno = f.SCIRefno
@@ -2465,12 +2470,12 @@ where b.poid = '{0}'
                 CurrentDetailData["SCIRefno"] = dr["SCIRefno"].ToString();
                 CurrentDetailData["MtlTypeID_SCIRefno"] = dr["MtlTypeID"].ToString() + " / " + dr["SCIRefno"].ToString();
                 CurrentDetailData["Description"] = dr["Description"].ToString();
-                CurrentDetailData["FabricPanelCode"] = new_FabricPanelCode;
+                CurrentDetailData["FabricPanelCode"] = string.Empty;
             }
             else
             {
                 MyUtility.Msg.WarningBox(string.Format("This FabricPanelCode<{0}> is wrong", txtFabricPanelCode.Text));
-                CurrentDetailData["FabricPanelCode"] = old_FabricPanelCode;
+                CurrentDetailData["FabricPanelCode"] = string.Empty;
                 e.Cancel = true;
                 return;
             };
