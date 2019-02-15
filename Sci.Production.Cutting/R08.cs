@@ -224,7 +224,7 @@ select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,St
 						 isnull(Changeovertime * nNoofRoll,0) +
 						 isnull(SpreadingSetupTime,0) +
 						 isnull(SpreadingTime * scCons,0) +
-						 isnull(SeparatorTime * (1 -1),0) +
+						 isnull(SeparatorTime * (DyeLot -1),0) +
 						 isnull(ForwardTime,0))
 						 /60.0,
 	[TotalCuttingTime_min] = (isnull(CuttingSetUpTime,0) + 
