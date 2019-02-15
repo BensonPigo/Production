@@ -389,6 +389,15 @@ DROP TABLE #tmp,#tmp_OrderList
 
             //for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
             //{
+            //    for (int u = 0; u <= printDatas[1].Columns.Count - 1; u++)
+            //    {
+            //        DataRow item = newDt.NewRow();
+            //        newDt.Rows.Add(item);
+            //    }
+            //}
+
+            //for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
+            //{
             //    for (int y = 0; y <= printDatas[1].Columns.Count - 1; y++)
             //    {
 
@@ -399,20 +408,39 @@ DROP TABLE #tmp,#tmp_OrderList
             #endregion
 
             //打開範本，寫入資料
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R07.xltx");
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Cutting_R07_Backup - 複製1.xltx");
             //第一個細項大表
             //MyUtility.Excel.CopyToXls(printDatas[0], "", "Cutting_R07.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);
             ////第三個，對應圖表用的隱藏表
             //MyUtility.Excel.CopyToXls(printDatas[3], "", "Cutting_R07.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[3]);   
 
-            MyUtility.Excel.CopyToXls(printDatas[0], "", "Cutting_R07.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);
-            MyUtility.Excel.CopyToXls(printDatas[1], "", "Cutting_R07.xltx", 4, false, null, objApp, wSheet: objApp.Sheets[2]);   
-            MyUtility.Excel.CopyToXls(printDatas[2], "", "Cutting_R07.xltx", 4, false, null, objApp, wSheet: objApp.Sheets[3]);   
+            MyUtility.Excel.CopyToXls(printDatas[0], "", "Cutting_R07_Backup - 複製1.xltx", 1, false, null, objApp, wSheet: objApp.Sheets[1]);
+            //MyUtility.Excel.CopyToXls(printDatas[1], "", "Cutting_R07.xltx", 4, false, null, objApp, wSheet: objApp.Sheets[2]);   
+            //MyUtility.Excel.CopyToXls(printDatas[2], "", "Cutting_R07.xltx", 4, false, null, objApp, wSheet: objApp.Sheets[3]);   
 
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             Microsoft.Office.Interop.Excel.Worksheet objSheets2 = objApp.ActiveWorkbook.Worksheets[2];   
-            Microsoft.Office.Interop.Excel.Worksheet objSheets3 = objApp.ActiveWorkbook.Worksheets[3];   
-            
+            Microsoft.Office.Interop.Excel.Worksheet objSheets3 = objApp.ActiveWorkbook.Worksheets[3];
+
+
+            for (int i = 0; i <= printDatas[1].Rows.Count - 1; i++)
+            {
+                for (int u = 0; u <= printDatas[1].Columns.Count - 1; u++)
+                {
+                    DataRow item = newDt.NewRow();
+                    objSheets2.Cells[2+i, 4 + u] = printDatas[1].Rows[i].ItemArray[u].ToString();
+                }
+            }
+
+            for (int i = 0; i <= printDatas[2].Rows.Count - 1; i++)
+            {
+                for (int u = 0; u <= printDatas[2].Columns.Count - 1; u++)
+                {
+                    DataRow item = newDt.NewRow();
+                    objSheets3.Cells[2+i, 4 + u] = printDatas[2].Rows[i].ItemArray[u].ToString();
+                }
+            }
+
             //固定欄位寫入
             objSheets2.Cells[1, 2] = Factory;
             objSheets2.Cells[2, 2] = downloadDateTime;
