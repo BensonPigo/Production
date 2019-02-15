@@ -9,7 +9,8 @@
     [AddDate]     DATETIME        NULL,
     [EditName]    VARCHAR (10)    CONSTRAINT [DF_FixedDeclareItem_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME        NULL,
-    CONSTRAINT [PK_FixedDeclareItem] PRIMARY KEY CLUSTERED ([NLCode] ASC)
+	[Refno]      VARCHAR (21)     CONSTRAINT [DF_FixedDeclareItem_Refno] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_FixedDeclareItem] PRIMARY KEY CLUSTERED ([NLCode],[Refno] ASC)
 );
 
 

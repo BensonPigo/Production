@@ -8,6 +8,7 @@ using Sci.Data;
 using Sci;
 using Ict;
 using Ict.Win;
+using System.Data.SqlClient;
 
 namespace Sci.Production.PublicPrg
 {
@@ -218,5 +219,128 @@ where ID = '{0}'", expressID);
 
         }
         #endregion
+
+        #region GetNLCodeDataByRefno
+        public static DataRow GetNLCodeDataByRefno(string refno, string stockQty, string styleUkey, string category)
+        {
+            string sqlGetNLCode = string.Empty;
+            DataRow drNLCode = null;
+            string inputStockQty = MyUtility.Check.Empty(stockQty) ? "0" : stockQty;
+            List<SqlParameter> parGetNLCode  = new List<SqlParameter>() { new SqlParameter("@Refno", refno),
+                                                                                new SqlParameter("@inputStockQty", stockQty) };
+            List<SqlParameter> parGetFabricType = new List<SqlParameter>() { new SqlParameter("@inputRefno", refno),
+                                                                                new SqlParameter("@inputStyleUkey", styleUkey),
+                                                                                new SqlParameter("@inputCategory", category) };
+            string fabricType = string.Empty;
+
+            // 沒有傳入type則依refno判斷,並檢查此refno是否存在傳入style下的材料
+            string sqlGetFabricType = $@"
+declare @refno varchar(20) = @inputRefno
+declare @styleUkey bigint = @inputStyleUkey
+declare @category varchar(1) = @inputCategory
+declare @type varchar(1) = ''
+
+select @type = 'F'
+        from Style_BOF sb
+        left join Fabric f WITH (NOLOCK) on sb.SCIRefno = f.SCIRefno
+        where sb.StyleUkey = @styleUkey and sb.Refno = @refno and (sb.SuppIDBulk <> 'FTY' or sb.SuppIDBulk <> 'FTY-C') and f.NoDeclare = 0
+
+if(@type = '')
+begin
+    select @type = 'A' from Style_BOA where StyleUkey = @styleUkey and Refno = @refno and IsCustCD <> 2 and SuppIDBulk <> 'FTY' and SuppIDBulk <> 'FTY-C'
+end
+
+if(@type = '')
+begin
+    select @type = 'L' from LocalPO_Detail where OrderId = (select TOP 1 ID 
+                                                            from Orders WITH (NOLOCK) 
+                                                            where   StyleUkey = @styleUkey 
+                                                                    and Category = @category 
+                                                            order by BuyerDelivery, ID) and Refno = @refno
+end
+
+select @type
+";
+            fabricType = MyUtility.GetValue.Lookup(sqlGetFabricType, parGetFabricType);
+            if (MyUtility.Check.Empty(fabricType))
+            {
+                return null;
+            }
+
+            if (fabricType == "F")
+            {
+                sqlGetNLCode = $@"
+Declare @StockQty numeric(12,4) = @inputStockQty
+select  NLCode ,
+        [StockUnit] = 'YDS',
+        [SCIRefno] = f.SCIRefno,
+        [FabricBrandID] = f.BrandID,
+        [HSCode] = f.HSCode,
+        [UnitID] = f.CustomsUnit,
+        [FabricType] = 'F',
+        [LocalItem] = 0,
+        [Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,@StockQty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+from Fabric f with (nolock)
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit) Rate
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
+ where f.Refno = @Refno
+";
+            }
+            else if (fabricType == "A")
+            {
+                sqlGetNLCode = $@"
+Declare @StockQty numeric(12,4) = @inputStockQty
+select  NLCode ,
+        [StockUnit] = f.UsageUnit,
+        [SCIRefno] = f.SCIRefno,
+        [FabricBrandID] = f.BrandID,
+        [HSCode] = f.HSCode,
+        [UnitID] = f.CustomsUnit,
+        [FabricType] = 'A',
+        [LocalItem] = 0,
+        [Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,@StockQty,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+from Fabric f with (nolock)
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = f.CustomsUnit) Rate
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
+ where f.Refno = @Refno
+";
+            }
+            else if (fabricType == "L")
+            {
+                sqlGetNLCode = $@"
+Declare @StockQty numeric(12,4) = @inputStockQty
+select  li.NLCode,
+        [StockUnit] = li.UnitID,
+        [SCIRefno] = @Refno,
+        [FabricBrandID] = '',
+        [HSCode] =li.HSCode,
+        [UnitID] = li.CustomsUnit,
+        [FabricType] = 'L',
+        [LocalItem] = 1,
+        [Qty] = [dbo].getVNUnitTransfer('',li.UnitID,isnull(li.CustomsUnit,''),@StockQty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2RateValue,RateValue),IIF(li.CustomsUnit = 'M2',M2UnitRate,UnitRate))
+from LocalItem li with (nolock) 
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = li.CustomsUnit) Rate
+outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = 'M') M2Rate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = li.CustomsUnit) UnitRate
+outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = 'M') M2UnitRate
+where li.Refno = @Refno";
+            }
+            bool isNLCodeExists = MyUtility.Check.Seek(sqlGetNLCode, parGetNLCode, out drNLCode);
+            if (isNLCodeExists)
+            {
+                return drNLCode;
+            }
+            else
+            {
+                return null;
+            }
+            
+        }
+        #endregion
+
     }
 }

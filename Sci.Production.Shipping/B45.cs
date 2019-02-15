@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -55,67 +57,48 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
-        // NL Code
-        private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(
-                @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-order by NLCode",
-                "5,11,8",
-                this.Text,
-                false,
-                ",",
-                headercaptions: "Customs Code, HSCode, Unit");
+            string sqlRefnoList = "select Refno,NLCode,HSCode,CustomsUnit from LocalItem with (nolock) where junk = 0 order by Refno";
+            SelectItem selectItem = new SelectItem(sqlRefnoList, "20,10,10,8", null, headercaptions: "Ref No.");
+            DialogResult dialogResult = selectItem.ShowDialog();
 
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
+            if (dialogResult == DialogResult.OK)
+            {
+                IList<DataRow> popResult = selectItem.GetSelecteds();
+                this.CurrentMaintain["Refno"] = popResult[0]["Refno"];
+                this.CurrentMaintain["NLCode"] = popResult[0]["NLCode"];
+                this.CurrentMaintain["HSCode"] = popResult[0]["HSCode"];
+                this.CurrentMaintain["UnitID"] = popResult[0]["CustomsUnit"];
+            }
+        }
+
+        private void TxtRefno_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtRefno.Text))
             {
                 return;
             }
 
-            IList<DataRow> selectedData = item.GetSelecteds();
-            this.CurrentMaintain["NLCode"] = item.GetSelectedString();
-            this.CurrentMaintain["HSCode"] = selectedData[0]["HSCode"];
-            this.CurrentMaintain["UnitID"] = selectedData[0]["UnitID"];
-        }
-
-        // NL Code
-        private void TxtNLCode_Validating(object sender, CancelEventArgs e)
-        {
-            if (this.EditMode && this.txtNLCode.OldValue != this.txtNLCode.Text)
+            string sqlCheckRefno = "select NLCode,HSCode,CustomsUnit from LocalItem with (nolock) where Refno = @refno and junk = 0";
+            DataRow drResult;
+            List<SqlParameter> parCheckRefno = new List<SqlParameter>() { new SqlParameter("@refno", this.txtRefno.Text) };
+            bool isRefnoExists = MyUtility.Check.Seek(sqlCheckRefno, parCheckRefno, out drResult);
+            if (isRefnoExists)
             {
-                if (MyUtility.Check.Empty(this.txtNLCode.Text))
-                {
-                    this.CurrentMaintain["NLCode"] = string.Empty;
-                    this.CurrentMaintain["HSCode"] = string.Empty;
-                    this.CurrentMaintain["UnitID"] = string.Empty;
-                }
-                else
-                {
-                    DataRow nLCodeDate;
-                    if (MyUtility.Check.Seek(
-                        string.Format(
-                        @"select NLCode,HSCode,UnitID
-from VNContract_Detail WITH (NOLOCK) 
-where ID in (select ID from VNContract WITH (NOLOCK) WHERE StartDate = (select MAX(StartDate) as MaxDate from VNContract WITH (NOLOCK) where Status = 'Confirmed') )
-and NLCode = '{0}'", this.txtNLCode.Text), out nLCodeDate))
-                    {
-                        this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
-                        this.CurrentMaintain["HSCode"] = nLCodeDate["HSCode"];
-                        this.CurrentMaintain["UnitID"] = nLCodeDate["UnitID"];
-                    }
-                    else
-                    {
-                        this.CurrentMaintain["NLCode"] = string.Empty;
-                        this.CurrentMaintain["HSCode"] = string.Empty;
-                        this.CurrentMaintain["UnitID"] = string.Empty;
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("The Customs Code is not in the Contract!!");
-                        return;
-                    }
-                }
+                this.CurrentMaintain["Refno"] = this.txtRefno.Text;
+                this.CurrentMaintain["NLCode"] = drResult["NLCode"];
+                this.CurrentMaintain["HSCode"] = drResult["HSCode"];
+                this.CurrentMaintain["UnitID"] = drResult["CustomsUnit"];
+            }
+            else
+            {
+                this.CurrentMaintain["NLCode"] = string.Empty;
+                this.CurrentMaintain["HSCode"] = string.Empty;
+                this.CurrentMaintain["UnitID"] = string.Empty;
+                MyUtility.Msg.WarningBox($"<Ref No.>{this.txtRefno.Text} not found");
+                e.Cancel = true;
+                return;
             }
         }
     }

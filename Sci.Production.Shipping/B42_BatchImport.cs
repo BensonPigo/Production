@@ -9,6 +9,10 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Transactions;
+using Sci;
+using System.Data.SqlClient;
+using System.Linq;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -17,7 +21,7 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class B42_BatchImport : Sci.Win.Subs.Base
     {
-        private DataTable dt;
+        private DataTable dtBatchImport;
 
         /// <summary>
         /// B42_BatchImport
@@ -31,7 +35,32 @@ namespace Sci.Production.Shipping
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            DBProxy.Current.Select(null, "select CustomSP,VNContractID,ID,StyleID,SeasonID,SizeCode,NLCode='',Qty=0.0000,Remark='' ,checkS=0 from VNConsumption where 1=0", out this.dt);
+            string sqlBatchImportColumn =
+                @"
+select  CustomSP,
+        VNContractID,
+        ID,
+        StyleID,
+        SeasonID,
+        SizeCode,
+        [SCIRefno] = '',
+        [Refno] = '',
+        [Type] = '',
+        [NLCode]='',
+        [LocalItem]= 0,
+        [FabricBrandID]='',
+        [Qty]=0.0000,
+        [UserCreate]='',
+        [StockQty]=0.0000,
+        [StockUnit]='',
+        [HSCode]='',
+        [UnitID]='',
+        Remark='' ,
+        checks=0 
+from VNConsumption where 1=0";
+
+            DBProxy.Current.Select(null, sqlBatchImportColumn, out this.dtBatchImport);
+
             this.Helper.Controls.Grid.Generator(this.gridBatchImport)
                 .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("VNContractID", header: "Contract Id", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -39,10 +68,12 @@ namespace Sci.Production.Shipping
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Text("NLCode", header: "NLCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(9), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true);
-            this.listControlBindingSource1.DataSource = this.dt;
+                .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(16), iseditingreadonly: true)
+                .Text("Type", header: "Type", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Numeric("StockQty", header: "Qty", width: Widths.AnsiChars(9), integer_places: 12, decimal_places: 4, iseditingreadonly: true)
+                .EditText("Remark", header: "Remark", width: Widths.AnsiChars(100), iseditingreadonly: true);
+            this.listControlBindingSource1.DataSource = this.dtBatchImport;
         }
 
         private void Btnselectfile_Click(object sender, EventArgs e)
@@ -54,9 +85,9 @@ namespace Sci.Production.Shipping
             }
 
             // 刪除表身Grid資料
-            if (this.dt != null && this.dt.Rows.Count > 0)
+            if (this.dtBatchImport != null && this.dtBatchImport.Rows.Count > 0)
             {
-                this.dt.Clear();
+                this.dtBatchImport.Clear();
             }
 
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
@@ -82,50 +113,76 @@ namespace Sci.Production.Shipping
             {
                 intRowsRead++;
 
-                range = worksheet.Range[string.Format("A{0}:F{0}", intRowsRead)];
+                range = worksheet.Range[string.Format("A{0}:E{0}", intRowsRead)];
                 objCellArray = range.Value;
 
-                DataRow newRow = this.dt.NewRow();
-                string nLCode = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"));
-                string contractID = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C"));
-                string b43check = string.Format("select 1 from VNContract_Detail with(nolock) where id = '{0}' and NLCode = '{1}'", contractID, nLCode);
-                string remark = string.Empty;
-                if (!MyUtility.Check.Seek(b43check))
-                {
-                    remark = "NLCode not found in Contract. ";
-                }
-
+                DataRow newRow = this.dtBatchImport.NewRow();
+                string refno = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"));
+                string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
+                string stockQty = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N"));
                 string customSP = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C"));
-                string b42check = string.Format(@"select * from VNConsumption  with(nolock) where VNContractID = '{0}' and CustomSP = '{1}'", contractID, customSP);
+                string contractID = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C"));
+                string remark = string.Empty;
+
+                string b42checkSQL = string.Format(@"select * from VNConsumption  with(nolock) where VNContractID = '{0}' and CustomSP = '{1}'", contractID, customSP);
                 DataRow drc;
-                if (!MyUtility.Check.Seek(b42check, out drc))
-                {
-                    remark += "Custom SP & Contract not found.";
-                }
-                else
+                bool isExistsB42 = MyUtility.Check.Seek(b42checkSQL, out drc);
+                if (isExistsB42)
                 {
                     newRow["ID"] = drc["ID"].ToString().Trim();
                     newRow["StyleID"] = drc["StyleID"].ToString().Trim();
                     newRow["SeasonID"] = drc["SeasonID"].ToString().Trim();
                     newRow["SizeCode"] = drc["SizeCode"].ToString().Trim();
                 }
+                else
+                {
+                    remark += "Custom SP & Contract not found." + Environment.NewLine;
+                }
+
+                DataRow drNLCode;
+
+                if (type != "F" && type != "A" && type != "L")
+                {
+                    remark += "Type is wrong." + Environment.NewLine;
+                }
+                else
+                {
+                    drNLCode = Prgs.GetNLCodeDataByRefno(refno, stockQty, drc["StyleUkey"].ToString(), drc["Category"].ToString());
+
+                    if (drNLCode == null)
+                    {
+                        remark += "Refno not found." + Environment.NewLine;
+                    }
+                    else
+                    {
+                        newRow["NLCode"] = drNLCode["NLCode"];
+                        newRow["Qty"] = drNLCode["Qty"];
+                        newRow["SCIRefno"] = drNLCode["SCIRefno"];
+                        newRow["HSCode"] = drNLCode["HSCode"];
+                        newRow["UnitID"] = drNLCode["UnitID"];
+                        newRow["StockUnit"] = drNLCode["StockUnit"];
+                        newRow["FabricBrandID"] = drNLCode["FabricBrandID"];
+                    }
+                }
 
                 newRow["remark"] = remark;
                 newRow["CustomSP"] = customSP.ToString().Trim();
                 newRow["VNContractID"] = contractID.ToString().Trim();
-                newRow["NLCode"] = nLCode.ToString().Trim();
-                newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "N");
+                newRow["Type"] = type;
+                newRow["Refno"] = refno;
+                newRow["StockQty"] = stockQty;
+                newRow["checks"] = 0;
 
-                this.dt.Rows.Add(newRow);
+                this.dtBatchImport.Rows.Add(newRow);
             }
 
             excel.Workbooks.Close();
             excel.Quit();
             excel = null;
 
-            DataTable distinctCustomSP = this.dt.DefaultView.ToTable(true, new string[] { "CustomSP" });
+            DataTable distinctCustomSP = this.dtBatchImport.DefaultView.ToTable(true, new string[] { "CustomSP" });
             this.numericttlsp.Value = distinctCustomSP.Rows.Count;
-            this.numericdetailrecord.Value = this.dt.Rows.Count;
+            this.numericdetailrecord.Value = this.dtBatchImport.Rows.Count;
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Import Complete!!");
@@ -133,46 +190,52 @@ namespace Sci.Production.Shipping
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
-            DataRow[] drs = this.dt.Select("remark = ''");
-            DualResult drt;
+            DataRow[] drImportList = this.dtBatchImport.Select("remark = ''");
+            DualResult drResult;
             string datetime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
             StringBuilder idu = new StringBuilder();
-            foreach (DataRow dr in drs)
+            foreach (DataRow dr in drImportList)
             {
                 string customSP = MyUtility.Convert.GetString(dr["CustomSP"]);
                 string vnContractID = MyUtility.Convert.GetString(dr["VNContractID"]);
+                string id = MyUtility.Convert.GetString(dr["ID"]);
                 string nLCode = MyUtility.Convert.GetString(dr["NLCode"]);
-                string chk = string.Format("select 1 from VNConsumption v inner join VNConsumption_Detail vd on v.id = vd.id where v.CustomSP = '{0}' and v.VNContractID = '{1}' and vd.NLCode = '{2}'", customSP, vnContractID, nLCode);
-                if (!MyUtility.Check.Seek(chk))
+                string sCIRefno = MyUtility.Convert.GetString(dr["SCIRefno"]);
+                string refno = MyUtility.Convert.GetString(dr["Refno"]);
+                string localItem = dr["Type"].Equals("L") ? "1" : "0";
+                string fabricBrandID = MyUtility.Convert.GetString(dr["FabricBrandID"]);
+                string fabricType = MyUtility.Convert.GetString(dr["Type"]);
+                string qty = MyUtility.Convert.GetString(dr["Qty"]);
+                string stockQty = MyUtility.Convert.GetString(dr["StockQty"]);
+                string stockUnit = MyUtility.Convert.GetString(dr["StockUnit"]);
+                string hSCode = MyUtility.Convert.GetString(dr["HSCode"]);
+                string unitID = MyUtility.Convert.GetString(dr["UnitID"]);
+
+                string chk = $@"
+select 1    from VNConsumption v 
+            inner join VNConsumption_Detail_Detail vdd on v.id = vdd.id 
+            where v.CustomSP = '{customSP}' and v.VNContractID = '{vnContractID}' and vdd.Refno = '{refno}' and vdd.SCIRefno = '{sCIRefno}' and vdd.NLCode = '{nLCode}'";
+
+                bool isExistsVNConsumption = MyUtility.Check.Seek(chk);
+                if (!isExistsVNConsumption)
                 {
-                    idu.Append(string.Format(
-                        @"
-insert into VNConsumption_Detail(ID,NLCode,HSCode,UnitID,Qty,UserCreate,SystemQty,Waste)
-select '{2}','{1}',a.HSCode,a.UnitID,'{3}',1,'{3}',
-Waste = (select Waste = (select MAX( [dbo].[getWaste]( v.StyleID,v.BrandID,v.SeasonID,v.VNContractID, '{1}')))
-		from VNConsumption v  WITH (NOLOCK)
-		where v.ID	   = '{2}')
-from VNContract_Detail a WITH (NOLOCK)
-where a.ID = '{0}' and a.NLCode = '{1}';",
-                        vnContractID,
-                        nLCode,
-                        dr["id"].ToString(),
-                        dr["Qty"].ToString()));
+                    idu.Append(
+                        $@"
+insert into VNConsumption_Detail_Detail(ID,NLCode,SCIRefno,Refno,Qty,LocalItem,FabricBrandID,FabricType,SystemQty,UserCreate,StockQty,StockUnit,HSCode,UnitID)
+                values('{id}','{nLCode}','{sCIRefno}','{refno}',{qty},{localItem},'{fabricBrandID}','{fabricType}',0,1,{stockQty},'{stockUnit}','{hSCode}','{unitID}');");
 
                     dr["checkS"] = 1;
                 }
                 else
                 {
-                    idu.Append(string.Format(
-                        @"
-update VNConsumption_Detail 
-set qty = '{0}'
+                    idu.Append(
+                        $@"
+update VNConsumption_Detail_Detail 
+set 
+StockQty = {stockQty}
+,Qty = {qty}
 ,UserCreate = 1
-where id = '{1}' and NLCode = '{2}';",
-                        dr["Qty"].ToString(),
-                        dr["id"].ToString(),
-                        dr["NLCode"].ToString(),
-                        customSP));
+where id = '{id}' and Refno = '{refno}';");
 
                     idu.Append(string.Format(
                         @"update VNConsumption set EditName = '{0}',EditDate = '{1}' where CustomSP = '{2}' and VNContractID = '{3}' ;",
@@ -185,50 +248,45 @@ where id = '{1}' and NLCode = '{2}';",
                 }
             }
 
-            DataTable distinct = this.dt.DefaultView.ToTable(true, new string[] { "CustomSP", "VNContractID" });
+            // 刪除VNConsumption_Detail_Detail不存在於本次import的資料
+            DataTable distinct = this.dtBatchImport.DefaultView.ToTable(true, new string[] { "CustomSP", "VNContractID" });
+            var srcCheckBatchImport = this.dtBatchImport.AsEnumerable();
             foreach (DataRow dr in distinct.Rows)
             {
-                string d = string.Format(
-                    @"select vd.NLCode 
-from VNConsumption v,VNConsumption_Detail vd
-where v.id = vd.id
+                string sqlGetVNConsumption_Detail_Detail = string.Format(
+                    @"select v.ID, vdd.Refno,vdd.SCIRefno,vdd.NLCode
+from VNConsumption v,VNConsumption_Detail_Detail vdd
+where v.id = vdd.id
 and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                     dr["VNContractID"].ToString(),
                     dr["CustomSP"].ToString());
 
-                DataTable dlt;
+                DataTable dtVNConsumption_Detail_Detail;
 
                 // 根據VNContractID,CustomSP去找DB內detail有的NLCode
-                drt = DBProxy.Current.Select(null, d, out dlt);
-                if (!drt)
+                drResult = DBProxy.Current.Select(null, sqlGetVNConsumption_Detail_Detail, out dtVNConsumption_Detail_Detail);
+                if (!drResult)
                 {
-                    MyUtility.Msg.ErrorBox("Insert/Update datas error!");
+                    this.ShowErr(drResult);
                     return;
                 }
 
                 // 找Excel匯入資料有沒有這NLCode
-                foreach (DataRow dn in dlt.Rows)
+                foreach (DataRow dn in dtVNConsumption_Detail_Detail.Rows)
                 {
-                    DataRow[] drN = this.dt.Select(string.Format(
-                        "remark = ''and VNContractID = '{0}' and CustomSP = '{1}' and NLCode = '{2}'",
-                        dr["VNContractID"].ToString(),
-                        dr["CustomSP"].ToString(),
-                        dn["NLCode"].ToString()));
+                    bool isExistsImportData = srcCheckBatchImport.Where(s => s["ID"].Equals(dn["ID"]) &&
+                                                                             s["Refno"].Equals(dn["Refno"]) &&
+                                                                             s["SCIRefno"].Equals(dn["SCIRefno"]) &&
+                                                                             s["NLCode"].Equals(dn["NLCode"]) &&
+                                                                             MyUtility.Check.Empty(s["remark"])).Any();
 
-                    if (drN.Length == 0)
+                    if (!isExistsImportData)
                     {
-                        DataRow[] dra = this.dt.Select(string.Format(
-                            "remark = '' and VNContractID = '{0}' and CustomSP = '{1}'",
-                            dr["VNContractID"].ToString(),
-                            dr["CustomSP"].ToString()));
 
-                        if (dra.Length != 0)
-                        {
-                            idu.Append(string.Format(
-                                "delete VNConsumption_Detail where id = '{0}' and NLCode ='{1}';",
-                                dra[0]["ID"].ToString(),
-                                dn["NLCode"].ToString()));
-                        }
+                        idu.Append(string.Format(
+                            "delete VNConsumption_Detail_Detail where id = '{0}' and Refno ='{1}';",
+                            dn["ID"].ToString(),
+                            dn["Refno"].ToString()));
                     }
                 }
             }
@@ -236,16 +294,23 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
             // 如果沒資料update/insert 就不進去
             if (!MyUtility.Check.Empty(idu.ToString()))
             {
-                drt = DBProxy.Current.Execute(null, idu.ToString());
-                if (!drt)
+                // 產生VNConsumption_Detail的資料 呼叫CreateVNConsumption_Detail
+                string[] distinctID = this.dtBatchImport.AsEnumerable().Where(s => (int)s["checks"] == 1).Select(s => s["ID"].ToString()).Distinct().ToArray();
+                foreach (string id in distinctID)
+                {
+                    idu.Append($"exec CreateVNConsumption_Detail '{id}'");
+                }
+
+                drResult = DBProxy.Current.Execute(null, idu.ToString());
+                if (!drResult)
                 {
                     MyUtility.Msg.ErrorBox("Insert/Update datas error!");
                 }
                 else
                 {
-                    DataRow[] drsf = this.dt.Select("remark <> ''");
+                    DataRow[] drsf = this.dtBatchImport.Select("remark <> ''");
                     this.numericFail.Value = drsf.Length;
-                    DataTable distinctchk = this.dt.DefaultView.ToTable(true, new string[] { "CustomSP", "checkS" });
+                    DataTable distinctchk = this.dtBatchImport.DefaultView.ToTable(true, new string[] { "CustomSP", "checkS" });
                     DataRow[] drs2 = distinctchk.Select("checkS = 1");
                     this.numericSucessSP.Value = drs2.Length;
                     MyUtility.Msg.InfoBox("Complete!!");

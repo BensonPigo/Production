@@ -9,6 +9,8 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Data.SqlClient;
+using Sci.Win.Tems;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
@@ -17,10 +19,8 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class B42 : Sci.Win.Tems.Input6
     {
-        private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
         private DataTable tmpConsumptionArticle;
         private DataTable tmpConsumptionSizecode;
-        private DataTable VNConsumption_Detail_Detail;
 
         /// <summary>
         /// B42
@@ -63,6 +63,21 @@ namespace Sci.Production.Shipping
             btn2.Size = new Size(120, 30);
         }
 
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        {
+            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            this.DetailSelectCommand = string.Format(
+                @"
+select
+vdd.*,
+vd.Waste
+from VNConsumption_Detail_Detail vdd with (nolock)
+inner join VNConsumption_Detail vd with (nolock) on vd.ID = vdd.ID and vd.NLCode = vdd.NLCode
+where vdd.ID = '{0}'
+                ", masterID);
+            return base.OnDetailSelectCommandPrepare(e);
+        }
+
         private void Btn2_Click(object sender, EventArgs e)
         {
             Sci.Production.Shipping.B42_BatchImport callNextForm = new Sci.Production.Shipping.B42_BatchImport();
@@ -89,62 +104,16 @@ namespace Sci.Production.Shipping
             this.editColorway.Text = MyUtility.Check.Empty(colorWay) ? string.Empty : colorWay.Substring(0, colorWay.Length - 1);
             string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode WITH (NOLOCK) where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             this.editSizeGroup.Text = MyUtility.Check.Empty(sizeGroup) ? string.Empty : sizeGroup.Substring(0, sizeGroup.Length - 1);
-            DBProxy.Current.Select(null, string.Format("select * from VNConsumption_Detail_Detail WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])), out this.VNConsumption_Detail_Detail);
         }
 
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
-            #region Qty DBClick
-            this.qty.CellMouseDoubleClick += (s, e) =>
-            {
-                if (e.Button == System.Windows.Forms.MouseButtons.Left)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (MyUtility.Convert.GetString(dr["UserCreate"]).ToUpper() == "TRUE")
-                    {
-                        MyUtility.Msg.InfoBox("This Customs Code is not create by the system, so no more detail can be show.");
-                    }
-                    else
-                    {
-                        DataTable detail2s;
-                        try
-                        {
-                            MyUtility.Tool.ProcessWithDatatable(
-                                this.VNConsumption_Detail_Detail,
-                                "NLCode,SCIRefno,RefNo,Qty,LocalItem",
-                                string.Format(
-                                @"select a.RefNo,IIF(a.LocalItem = 1,a.Description,a.DescDetail) as Description,
-IIF(a.LocalItem = 1,a.LocalSuppid,'') as SuppID,
-IIF(a.LocalItem = 1,a.Category,IIF(a.Type = 'F','Fabric','Accessory')) as Type,
-IIF(a.LocalItem = 1,a.LUnit,a.FUnit) as UnitID,a.Qty
-from (
-select t.NLCode,t.SCIRefno,t.RefNo,t.Qty,t.LocalItem,f.DescDetail,f.Type,f.CustomsUnit as FUnit,l.Description,l.Category,l.LocalSuppid,l.CustomsUnit as LUnit
-from #tmp t
-left join Fabric f WITH (NOLOCK) on t.SCIRefno = f.SCIRefno
-left join LocalItem l WITH (NOLOCK) on t.RefNo = l.RefNo
-where t.NLCode = '{0}') a
-order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])),
-                                out detail2s);
-                        }
-                        catch (Exception ex)
-                        {
-                            MyUtility.Msg.ErrorBox("Query detail data fail!!\r\n" + ex.ToString());
-                            return;
-                        }
 
-                        Sci.Production.Shipping.B42_Detail callNextForm = new Sci.Production.Shipping.B42_Detail(detail2s);
-                        DialogResult result = callNextForm.ShowDialog(this);
-                        callNextForm.Dispose();
-                    }
-                }
-            };
-            #endregion
+            #region Refno
+            DataGridViewGeneratorTextColumnSettings refnoCol = new DataGridViewGeneratorTextColumnSettings();
 
-            #region NLCode
-            DataGridViewGeneratorTextColumnSettings nlcode = new DataGridViewGeneratorTextColumnSettings();
-
-            nlcode.CellEditable += (s, e) =>
+            refnoCol.CellEditable += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 if (!MyUtility.Convert.GetBool(dr["UserCreate"]))
@@ -153,7 +122,7 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])),
                 }
             };
 
-            nlcode.CellValidating += (s, e) =>
+            refnoCol.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
                 {
@@ -161,27 +130,88 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])),
                 }
 
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                DataRow drVD;
-                string oldvalue = MyUtility.Convert.GetString(dr["NLCode"]);
+                string oldvalue = MyUtility.Convert.GetString(dr["Refno"]);
                 string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
                 if (oldvalue == newvalue)
                 {
                     return;
                 }
 
-                if (!MyUtility.Check.Seek(string.Format("select * from VNContract_Detail where NLCode = '{0}' and id = '{1}'", newvalue, this.CurrentMaintain["VNContractID"].ToString()), out drVD))
+                if (MyUtility.Check.Empty(newvalue))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("NLCode:{0} not found!", newvalue));
                     dr["NLCode"] = string.Empty;
-                    dr["UnitID"] = string.Empty;
+                    dr["StockUnit"] = string.Empty;
+                    dr["SCIRefno"] = string.Empty;
+                    dr["FabricBrandID"] = string.Empty;
                     dr["HSCode"] = string.Empty;
+                    dr["UnitID"] = string.Empty;
+                    dr["Qty"] = 0;
+                    dr["UserCreate"] = 0;
+                    dr["FabricType"] = string.Empty;
+                    dr["LocalItem"] = 0;
+                    return;
+                }
+
+                DataRow drNLCode;
+                drNLCode = Prgs.GetNLCodeDataByRefno(newvalue, dr["StockQty"].ToString(), this.CurrentMaintain["StyleUkey"].ToString(), this.CurrentMaintain["Category"].ToString());
+
+                if (drNLCode == null)
+                {
+                    MyUtility.Msg.WarningBox("<Ref No> not found!");
+                    e.Cancel = true;
                 }
                 else
                 {
-                    dr["NLCode"] = drVD["NLCode"];
-                    dr["UnitID"] = drVD["UnitID"];
-                    dr["HSCode"] = drVD["HSCode"];
+                    dr["NLCode"] = drNLCode["NLCode"];
+                    dr["StockUnit"] = drNLCode["StockUnit"];
+                    dr["SCIRefno"] = drNLCode["SCIRefno"];
+                    dr["FabricBrandID"] = drNLCode["FabricBrandID"];
+                    dr["HSCode"] = drNLCode["HSCode"];
+                    dr["UnitID"] = drNLCode["UnitID"];
+                    dr["Qty"] = drNLCode["Qty"];
+                    dr["UserCreate"] = 1;
+                    dr["FabricType"] = drNLCode["FabricType"];
+                    dr["LocalItem"] = drNLCode["LocalItem"];
+                    dr["Refno"] = newvalue;
+                    dr["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
+                        @"select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')",
+                        MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]),
+                        MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                        MyUtility.Convert.GetString(dr["NLCode"]))));
                 }
+            };
+            #endregion
+            #region Stock Qty
+            DataGridViewGeneratorNumericColumnSettings stockQtyCol = new DataGridViewGeneratorNumericColumnSettings();
+            stockQtyCol.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                string oldvalue = MyUtility.Convert.GetString(dr["StockQty"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
+                DataRow drNLCode;
+                drNLCode = Prgs.GetNLCodeDataByRefno(dr["RefNo"].ToString(), newvalue, this.CurrentMaintain["StyleUkey"].ToString(), this.CurrentMaintain["Category"].ToString());
+                if (drNLCode == null)
+                {
+                    MyUtility.Msg.WarningBox("<Customs Qty> Transfer error");
+                }
+                else
+                {
+                    dr["Qty"] = drNLCode["Qty"];
+                    dr["StockQty"] = newvalue;
+                }
+
             };
             #endregion
 
@@ -189,10 +219,12 @@ order by RefNo", MyUtility.Convert.GetString(dr["NLCode"])),
             Ict.Win.UI.DataGridViewNumericBoxColumn systemQtyColumn;
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlcode)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("RefNo", header: "Ref No", width: Widths.AnsiChars(20), settings: refnoCol)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
-                .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(14), iseditingreadonly: true).Get(out systemQtyColumn)
-                .Numeric("Qty", header: "Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: this.qty).Get(out qtyColumn)
+                .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out systemQtyColumn)
+                .Numeric("StockQty", header: "Stock Qty", decimal_places: 6, width: Widths.AnsiChars(15), settings: stockQtyCol).Get(out qtyColumn)
+                .Numeric("Qty", header: "Customs Qty", decimal_places: 6, width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out qtyColumn)
                 .Numeric("Waste", header: "Waste", decimal_places: 6, iseditingreadonly: true)
                 .CheckBox("UserCreate", header: "Create by user", width: Widths.AnsiChars(3), iseditable: false, trueValue: 1, falseValue: 0);
 
@@ -269,7 +301,6 @@ from System WITH (NOLOCK) ");
             IList<string> deleteCmds = new List<string>();
             deleteCmds.Add(string.Format("delete VNConsumption_Article where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             deleteCmds.Add(string.Format("delete VNConsumption_SizeCode where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            deleteCmds.Add(string.Format("delete VNConsumption_Detail_Detail where ID = '{0}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
 
             return DBProxy.Current.Executes(null, deleteCmds);
         }
@@ -403,14 +434,6 @@ from System WITH (NOLOCK) ");
                 this.tmpConsumptionSizecode.Rows.Add(dr);
             }
 
-            foreach (DataRow dr in this.VNConsumption_Detail_Detail.Rows)
-            {
-                if (dr.RowState != DataRowState.Deleted)
-                {
-                    dr["ID"] = this.CurrentMaintain["ID"];
-                }
-            }
-
             #region 計算出 Qty(現有欄位)時, 將數值一併寫到 SystemQty 欄位
             foreach (DataRow dr in ((DataTable)((BindingSource)this.detailgrid.DataSource).DataSource).Rows)
             {
@@ -431,13 +454,7 @@ from System WITH (NOLOCK) ");
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            // 存VNConsumption_Detail_Detail, VNConsumption_Article, VNConsumption_SizeCode資料
-            if (!MyUtility.Tool.CursorUpdateTable(this.VNConsumption_Detail_Detail, "VNConsumption_Detail_Detail", "Production"))
-            {
-                DualResult failResult = new DualResult(false, "Save VNConsumption_Detail_Detail fail!!");
-                return failResult;
-            }
-
+            // 存 VNConsumption_Article, VNConsumption_SizeCode資料
             if (!MyUtility.Tool.CursorUpdateTable(this.tmpConsumptionArticle, "VNConsumption_Article", "Production"))
             {
                 DualResult failResult = new DualResult(false, "Save VNConsumption_Article fail!!");
@@ -448,6 +465,14 @@ from System WITH (NOLOCK) ");
             {
                 DualResult failResult = new DualResult(false, "Save VNConsumption_SizeCode fail!!");
                 return failResult;
+            }
+
+            // 回寫VNConsumption_Detail
+            string sqlCreateVNConsumption_Detail = $" exec CreateVNConsumption_Detail '{this.CurrentMaintain["ID"].ToString()}'";
+            DualResult isCreateVNConsumption_DetailOK = DBProxy.Current.Execute(null, sqlCreateVNConsumption_Detail);
+            if (!isCreateVNConsumption_DetailOK)
+            {
+                return isCreateVNConsumption_DetailOK;
             }
 
             return base.ClickSavePost();
@@ -491,28 +516,6 @@ select [dbo].[getWaste]( '{this.CurrentMaintain["StyleID"]}','{this.CurrentMaint
             base.OnDetailGridAppendClick();
             DataRow newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             newrow["UserCreate"] = 1;
-        }
-
-        /// <inheritdoc/>
-        protected override void OnDetailGridDelete()
-        {
-            if (this.CurrentDetailData != null)
-            {
-                // 紀錄要被刪除的NLCode
-                string nlCode = MyUtility.Convert.GetString(this.CurrentDetailData["NLCode"]);
-                string userCreate = MyUtility.Convert.GetString(this.CurrentDetailData["UserCreate"]).ToUpper();
-                base.OnDetailGridDelete();
-                if (userCreate == "FALSE")
-                {
-                    foreach (DataRow dr in this.VNConsumption_Detail_Detail.ToList())
-                    {
-                        if (dr.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(dr["NLCode"]) == nlCode)
-                        {
-                            dr.Delete();
-                        }
-                    }
-                }
-            }
         }
 
         /// <inheritdoc/>
@@ -701,14 +704,16 @@ where (t.SuppIDBulk <> 'FTY' or t.SuppIDBulk <> 'FTY-C')
 and f.NoDeclare = 0),
 tmpBOFNewQty
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,[StockUnit] = UsageUnit,[StockQty] = markerYDS/Qty,
 ([dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,markerYDS,Width,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)))/Qty as NewQty
 from tmpBOFRateData),
 tmpBOFData
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 0 as LocalItem
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 0 as LocalItem, StockUnit
+		, [StockQty] = sum(isnull(StockQty,0))
+        , [FabricType] = 'F'
 from tmpBOFNewQty
-group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit),
+group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StockUnit),
 tmpBOA
 as (
 select sb.StyleUkey,sb.Ukey,sb.Refno,sb.SCIRefno,sb.SuppIDBulk,sb.SizeItem,sb.PatternPanel,sb.BomTypeArticle,sb.BomTypeColor,sb.ConsPC,
@@ -732,15 +737,16 @@ where (t.BomTypeArticle = 0 and t.BomTypeColor = 0) or ((t.BomTypeArticle = 1 or
 ),
 tmpBOANewQty
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit, [StockUnit] = UsageUnit, [StockQty] = SizeSpec,
 [dbo].getVNUnitTransfer(Type,UsageUnit,CustomsUnit,SizeSpec,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
 from tmpBOAPrepareData
 ),
 tmpBOAData
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 0 as LocalItem
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 0 as LocalItem, StockUnit
+		, [StockQty] = sum(isnull(StockQty,0)) , [FabricType] = 'A'
 from tmpBOANewQty
-group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit),
+group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StockUnit),
 tmpLocalPO
 as (
 select ld.Refno,ld.Qty,ld.UnitId,li.MeterToCone,li.NLCode,li.HSCode,li.CustomsUnit,li.PcsWidth,li.PcsLength,li.PcsKg,o.Qty as OrderQty
@@ -767,24 +773,26 @@ isnull((select Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = UnitId and Uni
 from tmpConeToM),
 tmpLocalNewQty
 as (
-select Refno as SCIRefno,Refno,'' as BrandID,NLCode,HSCode,CustomsUnit,Waste,
+select Refno as SCIRefno,Refno,'' as BrandID,NLCode,HSCode,CustomsUnit,Waste, [StockUnit] = UnitId, [StockQty] = Qty,
 [dbo].getVNUnitTransfer('',UnitId,CustomsUnit,Qty,0,PcsWidth,PcsLength,PcsKg,IIF(CustomsUnit = 'M2',M2RateValue,RateValue),IIF(CustomsUnit = 'M2',M2UnitRate,UnitRate)) as NewQty
 from tmpPrepareRate
 ),
 tmpLocalData
 as (
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 1 as LocalItem
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(isnull(NewQty,0)) as Qty, 1 as LocalItem, StockUnit
+		, [StockQty] = sum(isnull(StockQty,0))
+        , [FabricType] = 'L' 
 from tmpLocalNewQty
-group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit)
+group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,StockUnit)
 
-select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(Qty) as Qty,LocalItem
+select SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,sum(Qty) as Qty,LocalItem,StockUnit,FabricType,[StockQty] = sum(StockQty)
 from (
 select * from tmpBOFData
 union all
 select * from tmpBOAData
 union all
 select * from tmpLocalData) a
-group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem",
+group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem,StockUnit,FabricType",
                 MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),
                 MyUtility.Convert.GetString(this.CurrentMaintain["SizeCode"]),
                 colorway[0],
@@ -798,31 +806,21 @@ group by SCIRefno,Refno,BrandID,NLCode,HSCode,CustomsUnit,LocalItem",
                 return;
             }
 
-            #region 整理出Detail Data
-            try
-            {
-                MyUtility.Tool.ProcessWithDatatable(queryDetail2Data, "NLCode,HSCode,CustomsUnit,Qty", "select NLCode,HSCode,CustomsUnit,SUM(Qty) as Qty from #tmp group by NLCode,HSCode,CustomsUnit", out queryDetailData);
-            }
-            catch (Exception ex)
-            {
-                MyUtility.Msg.ErrorBox("Query detail data fail!!\r\n" + ex.ToString());
-                return;
-            }
-            #endregion
-
             sqlCmd.Clear();
+
             #region 組撈FixDeclare的資料
             sqlCmd.Append(string.Format(
-                @"with tmpFixDeclare
-as (
-select vfd.* ,sa.TissuePaper as ArticleTissuePaper,isnull(s.CTNQty,0) as CTNQty
-from VNFixedDeclareItem vfd WITH (NOLOCK) 
-left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = {0} and sa.Article = '{1}'
-left join Style s WITH (NOLOCK) on s.Ukey = {0}
-)
-select NLCode,HSCode,UnitID as CustomsUnit,IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty
-from tmpFixDeclare
-where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)",
+                @"
+with tmpFixDeclare
+            as (
+            select vfd.* ,sa.TissuePaper as ArticleTissuePaper,isnull(s.CTNQty,0) as CTNQty
+            from VNFixedDeclareItem vfd WITH (NOLOCK) 
+            left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = {0} and sa.Article = '{1}'
+            left join Style s WITH (NOLOCK) on s.Ukey = {0}
+            )
+            select [SCIRefno] = '',Refno,[BrandID] = '',NLCode,HSCode,UnitID as CustomsUnit,IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty,[LocalItem] = 1,[StockUnit] = '', [FabricType] = 'L', [StockQty] = 0
+            from tmpFixDeclare
+            where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)",
                 MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),
                 colorway[0]));
             #endregion
@@ -836,17 +834,9 @@ where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)",
             #region 將FixDeclare資料整合進Detail Data
             foreach (DataRow dr in fixDeclareData.Rows)
             {
-                DataRow[] findrow = queryDetailData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
-                if (findrow.Length == 0)
-                {
-                    dr.AcceptChanges();
-                    dr.SetAdded();
-                    queryDetailData.ImportRow(dr);
-                }
-                else
-                {
-                    findrow[0]["Qty"] = MyUtility.Convert.GetDouble(dr["Qty"]);
-                }
+                dr.AcceptChanges();
+                dr.SetAdded();
+                queryDetail2Data.ImportRow(dr);
             }
             #endregion
 
@@ -862,7 +852,7 @@ where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)",
 
             foreach (DataRow dr in necessaryItem.Rows)
             {
-                DataRow[] findrow = queryDetailData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
+                DataRow[] findrow = queryDetail2Data.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
                 if (findrow.Length == 0)
                 {
                     needItem.Append(string.Format("{0},", MyUtility.Convert.GetString(dr["NLCode"])));
@@ -1013,15 +1003,6 @@ order by DataType,SCIRefno,UsageUnit",
             #region 刪除VNConsumption_Detail與VNConsumption_Detail_Detail資料
             foreach (DataRow dr in this.DetailDatas)
             {
-                DataRow[] queryData = queryDetailData.Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
-                if (queryData.Length <= 0)
-                {
-                    dr.Delete();
-                }
-            }
-
-            foreach (DataRow dr in this.VNConsumption_Detail_Detail.ToList())
-            {
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     DataRow[] queryData = queryDetail2Data.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
@@ -1034,18 +1015,30 @@ order by DataType,SCIRefno,UsageUnit",
 
             #endregion
 
-            #region 塞資料進VNConsumption_Detail與VNConsumption_Detail_Detail
-            foreach (DataRow dr in queryDetailData.Rows)
+            #region 塞資料進VNConsumption_Detail_Detail
+            foreach (DataRow dr in queryDetail2Data.Rows)
             {
-                DataRow[] queryData = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("NLCode = '{0}'", MyUtility.Convert.GetString(dr["NLCode"])));
+                string strWhere = string.Format(
+                    "SCIRefNo = '{0}' and Refno = '{1}' and NLCode = '{2}'",
+                    MyUtility.Convert.GetString(dr["SCIRefNo"]),
+                    MyUtility.Convert.GetString(dr["Refno"]),
+                    MyUtility.Convert.GetString(dr["NLCode"]));
+                DataRow[] queryData = ((DataTable)this.detailgridbs.DataSource).Select(strWhere);
                 if (queryData.Length <= 0)
                 {
                     DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
                     newRow["NLCode"] = dr["NLCode"];
+                    newRow["SCIRefno"] = dr["SCIRefno"];
+                    newRow["RefNo"] = dr["RefNo"];
+                    newRow["LocalItem"] = dr["LocalItem"];
+                    newRow["FabricBrandID"] = dr["BrandID"];
+                    newRow["FabricType"] = dr["FabricType"];
+                    newRow["SystemQty"] = dr["Qty"];
+                    newRow["Qty"] = dr["Qty"];
+                    newRow["StockQty"] = dr["StockQty"];
+                    newRow["StockUnit"] = dr["StockUnit"];
                     newRow["HSCode"] = dr["HSCode"];
                     newRow["UnitID"] = dr["CustomsUnit"];
-                    newRow["Qty"] = dr["Qty"];
-                    newRow["SystemQty"] = dr["Qty"];
                     newRow["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
                         @"select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')",
                         MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]),
@@ -1058,40 +1051,13 @@ order by DataType,SCIRefno,UsageUnit",
                 }
                 else
                 {
-                    queryData[0]["HSCode"] = dr["HSCode"];
-                    queryData[0]["UnitID"] = dr["CustomsUnit"];
+                    queryData[0]["SystemQty"] = dr["Qty"];
                     queryData[0]["Qty"] = dr["Qty"];
-                    queryData[0]["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
-                        @"select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')",
-                        MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
-                        MyUtility.Convert.GetString(dr["NLCode"]))));
+                    queryData[0]["StockQty"] = dr["StockQty"];
                     queryData[0]["UserCreate"] = 0;
                 }
             }
 
-            foreach (DataRow dr in queryDetail2Data.Rows)
-            {
-                DataRow[] queryData = this.VNConsumption_Detail_Detail.Select(string.Format("NLCode = '{0}' and SCIRefNo = '{1}'", MyUtility.Convert.GetString(dr["NLCode"]), MyUtility.Convert.GetString(dr["SCIRefNo"])));
-                if (queryData.Length <= 0)
-                {
-                    DataRow newRow = this.VNConsumption_Detail_Detail.NewRow();
-                    newRow["NLCode"] = dr["NLCode"];
-                    newRow["SCIRefno"] = dr["SCIRefno"];
-                    newRow["RefNo"] = dr["RefNo"];
-                    newRow["Qty"] = MyUtility.Check.Empty(dr["Qty"]) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
-                    newRow["LocalItem"] = dr["LocalItem"];
-                    this.VNConsumption_Detail_Detail.Rows.Add(newRow);
-                }
-                else
-                {
-                    queryData[0]["RefNo"] = dr["RefNo"];
-                    queryData[0]["Qty"] = MyUtility.Check.Empty(dr["Qty"]) ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
-                    queryData[0]["LocalItem"] = dr["LocalItem"];
-                }
-            }
             #endregion
 
             #region 組要顯示的訊息
