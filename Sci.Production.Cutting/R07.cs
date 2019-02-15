@@ -127,7 +127,7 @@ WHERE 1=1 ");
 
             sqlCmd.Append($@"
 
-SELECT  
+SELECT  DISTINCT
          wo.FactoryID
         ,wo.EstCutDate
         ,wo.CutCellid
@@ -282,54 +282,37 @@ SELECT
 [Spreading Table No.]= SpreadingTable
 , [Work Hours/Day]=''                                                     -- 給User手動輸入
 , [Total Available Spreading Time (hrs)]=0                                -- =(Work Hours/Day   *   Total Working Days) *  Avg. Efficiency %  0.8是預設的!!  Work Hours/Day 等被輸入  所以都是0，後面相關欄位也是
-, [Total Spreading Yardage]=[Total Fabric Cons.(yard)]
-, [Total Spreading Marker Qty]= COUNT(SpreadingTable)
-, [Total Spreading Time (hrs.)]= [Total Spreading Time (min.)] / 60       -- Total Spreading Time (hrs.) 換算小時  B9
+, [Total Spreading Yardage]=SUM([Total Fabric Cons.(yard)])
+, [Total Spreading Marker Qty]= SpreadingTable.count
+, [Total Spreading Time (hrs.)]= SUM([Total Spreading Time (min.)] / 60)       -- Total Spreading Time (hrs.) 換算小時  B9
 , [Spreading Capacity Fulfill Rate%]= 0                                   -- =Total Spreading Time (hrs.)   /   Total Available Spreading Time (hrs)  *100
 , [Capacity (hrs)]= 0                                                     -- =Total Spreading Time (hrs.)   -   Total Available Spreading Time (hrs)
-FROM #tmp
-GROUP BY SpreadingTable,[Total Fabric Cons.(yard)],[Total Spreading Time (min.)]
+FROM #tmp t
+OUTER APPLY(
+	SELECT [count]=COUNT(CutCellid) FROM #tmp WHERE SpreadingTable = t.SpreadingTable
+)SpreadingTable
+GROUP BY SpreadingTable,SpreadingTable.count
 
 
 --Cutting Capacity Forecast
-
-
-SELECT DISTINCT
+SELECT 
 [Cut cell (Morgan No.)]= CutCellid   
 ,[Cutting Mach. Description]='Next 70'  
 ,[Work Hours/Day]=''                                          -- 給User手動輸入
 ,[Total Available Cutting Time (hrs)]= 0                      -- = (Work Hours/Day  *  Total Working Days) *  Avg. Efficiency %   0.8是預設的!!  Work Hours/Day 等被輸入  所以都是0，後面相關欄位也是
 ,[Avg. Cut Speed (m/min.)]=''                                 -- 給User手動輸入
-,[Total Cutting Perimeter (m)]=[Perimeter (m)]
+,[Total Cutting Perimeter (m)]=SUM([Perimeter (m)])
 ,[Total Cut Marker Qty]=CutCell.count
-,[Total Cut Fabric Yardage]=[Total Fabric Cons.(yard)]
-,[Total Cutting Time (hrs.)]=[Total Cutting Time (min.)] / 60  --  換算成小時
+,[Total Cut Fabric Yardage]=SUM([Total Fabric Cons.(yard)])
+,[Total Cutting Time (hrs.)]=SUM([Total Cutting Time (min.)] / 60)  --  換算成小時
 ,[Cutting Capacity Fulfill Rate%]=0                            -- =Total Cutting Time (hrs.)   /    Total Available Cutting Time (hrs)  *100
 ,['+/- Capacity (hrs)]=  0                                     -- =Total Cutting Time (hrs.)   -    Total Available Cutting Time (hrs)
 
-FROM #tmp
+FROM #tmp t
 OUTER APPLY(
-SELECT [count]=COUNT(CutCellid) FROM #tmp
+	SELECT [count]=COUNT(CutCellid) FROM #tmp WHERE CutCellid=t.CutCellid
 )CutCell
-
-
---用來塞圖表
---SELECT 
---[SpreadingTable]
---,[Total Spreading Marker Qty]= COUNT(SpreadingTable)
---,[Capacity (hrs)]= [Total Spreading Time (min.)] / 60 - SpreadingTable * {totalWorkingDays} * 0.8  -- 0.8是預設的!!
---FROM #tmp
---GROUP BY ID ,SpreadingTable,[Total Fabric Cons.(yard)] ,[Total Spreading Time (min.)]
-
---Cutting Capacity Forecast
-
---UNION ALL
---SELECT DISTINCT
---CutCellid
---,[Total Cut Fabric Yardage]=[Total Fabric Cons.(yard)]
---,[Capacity]=  [Total Cutting Time (min.)]- CutCellid * {totalWorkingDays} * 0.8    --B23-B18
---FROM #tmp
-
+GROUP BY CutCellid,CutCell.count
 
 DROP TABLE #tmp,#tmp_OrderList
 
