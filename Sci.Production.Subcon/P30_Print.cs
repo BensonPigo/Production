@@ -90,7 +90,7 @@ select
         ,a.UnitId [Unit]
         ,format(Cast(a.Price*a.Qty as decimal(20,2)),'#,###,###,##0.00') [Amount]
 		,SortRefno = ROW_NUMBER() Over (Partition By Refno Order By a.Delivery, a.Refno)
-		,b.Category,b.apvname
+		,b.Category,b.apvname,b.Lockname
 --into #tmp
 from dbo.LocalPO_Detail a WITH (NOLOCK) 
 left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
@@ -151,12 +151,12 @@ select
 		,[Unit] = a.UnitId 
         ,[UPrice] = a.Price 
         ,[Amount] = format(Cast(sum(a.Price*a.Qty) as decimal(20,4)),'#,###,###,##0.0000') 
-        ,b.apvname
+        ,b.apvname,b.Lockname
 into #temp
 from dbo.LocalPO_Detail a WITH (NOLOCK) 
 left join dbo.LocalPO b WITH (NOLOCK) on  a.id=b.id
 where a.id=@ID
-group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery,b.apvname
+group by a.refno,b.Category,a.Price ,a.UnitId,a.delivery,b.apvname,b.Lockname
 
 select Sort = ROW_NUMBER() Over (Partition By Delivery Order By Delivery),* 
 from #temp
@@ -259,9 +259,11 @@ order by orderid,a.refno,threadcolorid", currentID);
                         UPrice = row1["UPrice"].ToString().Trim(),
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
-                        Amount = Convert.ToDecimal(row1["Amount"]),
-                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),207,83)
+                        Amount = Convert.ToDecimal(row1["Amount"])                        
                     }).ToList();
+
+                data[0].ApvName = Production.Class.UserESignature.getUserESignature(dtBody.Rows[0]["apvname"].ToString(), 207, 83);
+                data[0].Lockname = Production.Class.UserESignature.getUserESignature(dtBody.Rows[0]["LockName"].ToString(), 207, 83);
 
                 report.ReportDataSource = data;
                 #endregion
@@ -311,9 +313,11 @@ order by orderid,a.refno,threadcolorid", currentID);
                         UPrice = row1["UPrice"].ToString().Trim(),
                         Order_Qty = Convert.ToDecimal(row1["Order_Qty"]),
                         Unit = row1["Unit"].ToString().Trim(),
-                        Amount = Convert.ToDecimal(row1["Amount"]),
-                        ApvName = Production.Class.UserESignature.getUserESignature(row1["apvname"].ToString(),207,83)
+                        Amount = Convert.ToDecimal(row1["Amount"])
                     }).ToList();
+
+                data[0].ApvName = Production.Class.UserESignature.getUserESignature(dtBody.Rows[0]["apvname"].ToString(), 207, 83);
+                data[0].Lockname = Production.Class.UserESignature.getUserESignature(dtBody.Rows[0]["LockName"].ToString(), 127, 83);
 
                 report.ReportDataSource = data;
                 #endregion
@@ -338,7 +342,9 @@ order by orderid,a.refno,threadcolorid", currentID);
             // 開啟 report view
             var frm = new Sci.Win.Subs.ReportView(report);
             frm.MdiParent = MdiParent;
+            frm.TopMost = true;
             frm.Show();
+            this.HideWaitMessage();
 
             return true;
         }
