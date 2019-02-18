@@ -143,7 +143,7 @@ SELECT  DISTINCT
         ,f.MtlTypeID
         ,wo.FabricCombo
         ,[MarkerLength(yard)] = sc.Cons/sl.Layer
-        ,[Perimeter (m)]= ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4)
+        ,[Perimeter (m)]= IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4))
         ,wo.Layer
         ,[Ratio] = Ratio.value
         ,[Total Fabric Cons.(yard)]=wo.Cons
@@ -163,7 +163,7 @@ SELECT  DISTINCT
         --這個是Cutting
         ,[Cutting Setup Time (min.)]=ct.SetUpTime
         --這個是Cutting
-        ,[Mach. Cutting Time (min.)]= ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4) / ActualSpeed.ActualSpeed
+        ,[Mach. Cutting Time (min.)]=  IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4)) / ActualSpeed.ActualSpeed
 
         --這些是Spreading
         ,[Total Spreading Time (min.)]= st.PreparationTime 
@@ -184,7 +184,7 @@ SELECT  DISTINCT
 								        + st.ForwardTime
         ----這個是Cutting
         ,[Total Cutting Time (min.)]=ct.SetUpTime 
-							        + IIF (ActualSpeed.ActualSpeed=0  ,0  , round(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4) / ActualSpeed.ActualSpeed)
+							        + IIF (ActualSpeed.ActualSpeed=0  ,0  , IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4))  / ActualSpeed.ActualSpeed)
 							        --同裁次週長若不一樣就是有問題
 INTO #tmp
 FROM WorkOrder wo WITH (NOLOCK) 
