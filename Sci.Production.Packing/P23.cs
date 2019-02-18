@@ -549,8 +549,7 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
                 return false;
             }
             #endregion
-
-            List<P23_PrintData> reportDatas = new List<P23_PrintData>();
+            
             List<string> orderidList = new List<string>();
 
             // 將Form的資料整理成報表需要的樣子
@@ -582,7 +581,6 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
             foreach (var orderId in orderidList)
             {
                 string indexStr = index.ToString();
-                P23_PrintData oneData = new P23_PrintData();
 
                 DataTable sameOrderIdRow = selectedRows.CopyToDataTable().AsEnumerable().Where(o => o["OrderId"].ToString() == orderId).CopyToDataTable();
 
