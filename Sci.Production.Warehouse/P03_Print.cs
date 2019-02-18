@@ -97,7 +97,22 @@ namespace Sci.Production.Warehouse
 		                                           ,a.Refno [Ref#]
                                                    ,dbo.getMtlDesc(a.id,a.SEQ1,a.SEQ2,2,0) [Description]
 			                                       ,iif(e.AbbCH is null, j.AbbCH, e.AbbCH) [Chinese Abb]
-			                                       ,f.HsCode [HS Code]
+			                                       --,f.HsCode [HS Code]
+                                                    ,[HS Code]= IIF(  --Export.ECFA 和 Fabric_Supp.IsECFA 都true 才是ECFA訂單
+                                                        (
+	                                                        SELECT et.ECFA FROM Export et
+	                                                        INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
+	                                                        WHERE g.PoID = a.id
+	                                                        AND g.SEQ1 = a.seq1
+	                                                        AND g.SEQ2 =a.seq2
+                                                        ) =1
+                                                        AND e.IsECFA=1
+                                                        ,f.HScode   --是ECFA，抓Fabric_HsCode.HScode
+                                                        ,(          
+                                                            --不是ECFA，還要判斷該Fabric_Supp有沒有HSType2，有的話抓 HSCodeT2，沒有則抓HScode
+	                                                        IIF ( NOT EXISTS(SELECT 1 FROM Fabric_HsCode WHERE SCIRefno=f.SCIRefno AND SuppID=f.SuppID  AND Year=f.Year AND HsType=2),f.HScode,f.HSCodeT2 )
+													    )
+                                                    )
 			                                       ,case a.FabricType 
 			                                             when 'F' then 'Fabric'
 			                                             when 'A'then 'Accessory'
@@ -212,7 +227,21 @@ namespace Sci.Production.Warehouse
                                                   when 'A' THEN 'Accessory'
                                                   Else a.FabricType
                                                   end Material_Type
-                                              ,Hs_code=e.HsCode
+                                              --,Hs_code=e.HsCode
+                                                ,[HS Code]= IIF(
+                                                    (
+	                                                    SELECT et.ECFA FROM Export et
+	                                                    INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
+	                                                    WHERE g.PoID = a.id
+	                                                    AND g.SEQ1 = a.seq1
+	                                                    AND g.SEQ2 =a.seq2
+                                                    ) =1
+                                                    AND d.IsECFA=1
+                                                    ,e.HScode--是ECFA
+                                                    ,(      ---不是ECFA
+	                                                    IIF ( NOT EXISTS(SELECT 1 FROM Fabric_HsCode WHERE SCIRefno=e.SCIRefno AND SuppID=e.SuppID  AND Year=e.Year AND HsType=2),e.HScode,e.HSCodeT2 )
+													)
+                                                )
                                               ,supp=c.SuppID
                                               ,Supp_Name=f.AbbEN
                                               ,Currency=f.Currencyid
