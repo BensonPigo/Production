@@ -838,7 +838,7 @@ INSERT INTO Production.dbo.Fabric_HsCode(
       ,EditDate
       ,OldSys_Ukey
       ,OldSys_Ver
-
+	  ,HSType
 )
 select
        SCIRefno
@@ -855,7 +855,7 @@ select
       ,EditDate
       ,OldSys_Ukey
       ,OldSys_Ver
-
+	  ,HSType
 from Trade_To_Pms.dbo.Fabric_HsCode as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType)
 
