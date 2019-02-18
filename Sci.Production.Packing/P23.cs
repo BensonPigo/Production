@@ -30,10 +30,10 @@ namespace Sci.Production.Packing
 
             DataTable packingReason;
 
-            DBProxy.Current.Select(null, "SELECT Reason FROM  (SELECT [Reason]='' ,[ID]=''UNION ALL SELECT [Reason]=ID+'-'+Description  ,[ID]='' FROM PackingReason WHERE Type='FG' AND Junk=0 )A ORDEr BY ID ", out packingReason);
-            //DBProxy.Current.Select(null, "SELECT [Reason]=ID+'-'+Description FROM PackingReason WHERE Type='FG' AND Junk=0 ORDEr BY ID ", out packingReason);
+            DBProxy.Current.Select(null, "SELECT [Reason]=ID+'-'+Description  ,[ID]='' FROM PackingReason WHERE Type='FG' AND Junk=0  ORDEr BY ID ", out packingReason);
+
             MyUtility.Tool.SetupCombox(this.comboReason, 1, packingReason);
-            this.comboReason.SelectedIndex = 1;
+            this.comboReason.SelectedIndex = 0;
 
             DataGridViewGeneratorTextColumnSettings reasonSetting = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings reasonNameSetting = new DataGridViewGeneratorTextColumnSettings();
