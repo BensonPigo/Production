@@ -820,6 +820,7 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.OldSys_Ukey	      =b.OldSys_Ukey	
       ,a.OldSys_Ver	      =b.OldSys_Ver	
+	  ,a.HSCodeT2         =ISNULL(b.HSCodeT2,'')
 
 from Production.dbo.Fabric_HsCode as a inner join Trade_To_Pms.dbo.Fabric_HsCode as b ON a.SCIRefno=b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType
 -------------------------- INSERT INTO §ì
@@ -838,7 +839,8 @@ INSERT INTO Production.dbo.Fabric_HsCode(
       ,EditDate
       ,OldSys_Ukey
       ,OldSys_Ver
-	  ,HSType
+	  ,HSType	  
+	  ,HSCodeT2
 )
 select
        SCIRefno
@@ -856,6 +858,7 @@ select
       ,OldSys_Ukey
       ,OldSys_Ver
 	  ,HSType
+	  ,ISNULL(HSCodeT2,'')
 from Trade_To_Pms.dbo.Fabric_HsCode as b WITH (NOLOCK)
 where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType)
 
