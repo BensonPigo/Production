@@ -86,20 +86,12 @@ o.FactoryID
 			where PackingList.INVNo=g.ID and PackingList_Detail.OrderID=pd.OrderID)
 ,o.PoPrice
 ,g.CustCDID
-,g.Shipper
+,g.Shipper 
 ,g.Dest
 ,g.FCRDate
 ,ROUND(o.CPU,3) as CPU
 ,isnull(cpucost.cpucost,0) as cpucost
-,SubPSCost=         ROUND(ROUND((Select Isnull(sum(ot.Price),0) 
-					from Order_TmsCost ot
-					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = pd.OrderID and (a.Classify = 'A' or ( a.Classify = 'I' and a.IsTtlTMS = 0) and a.IsTMS=0))
-                    +
-                    (Select Isnull(sum(ot.Price),0) 
-					from Order_TmsCost ot
-					inner join ArtworkType a on ot.ArtworkTypeID = a.ID
-					where ot.ID = pd.OrderID and ((a.Classify = 'A' or a.Classify = 'I') and a.IsTtlTMS = 0 and a.IsTMS=1)),3) * isnull(cpucost.cpucost,0),3)
+,SubPSCost=   ROUND(Isnull(sub_Process_CPU.Value,0) * isnull(cpucost.cpucost,0) + Isnull(sub_Process_AMT.Value,0),3) 
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, dbo.GetLocalPurchaseStdCost(pd.OrderID) ,0),3)
 From GMTBooking g
 Left join PackingList p on g.ID = p.InvNo
@@ -114,6 +106,8 @@ outer apply
 	inner join FSRCpuCost_Detail fcd on fd.ShipperID = fcd.ShipperID 
 	where fd.BrandID=g.BrandID and fd.FactoryID=o.FactoryID and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate 
 ) cpucost
+outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'AMT')   ) sub_Process_AMT
+outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'CPU')   ) sub_Process_CPU
 Where 1=1 ");
 
             if (!MyUtility.Check.Empty(this.FCR_date1))
