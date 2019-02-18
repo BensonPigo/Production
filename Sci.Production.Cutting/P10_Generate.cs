@@ -536,9 +536,6 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     dr["PatternCode"] = (gemdr[0]["PatternCode"]).ToString();
                     dr["Annotation"] = (gemdr[0]["Annotation"]).ToString();
                     dr["parts"] = 1;
-                    dr.EndEdit();
-                    calAllPart();
-                    caltotalpart();
                 }
                 else
                 {
@@ -549,6 +546,10 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     dr["Annotation"] = "";
                     dr["Parts"] = 0;
                 }
+
+                dr.EndEdit();
+                calAllPart();
+                caltotalpart();
             };
 
             partsCell2.CellValidating += (s, e) =>
@@ -961,7 +962,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
         {
             DataTable at = artTb.Copy();
             #region 判斷Pattern的Artwork  不可為空
-            DataRow[] findr = patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", "");
+            DataRow[] findr = this.patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", "");
             if (findr.Length > 0)
             {
                 MyUtility.Msg.WarningBox("<Art> can not be empty!");
@@ -969,10 +970,30 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             }
             #endregion
             #region 判斷Pattern的CutPart  不可為空
-            bool isEmptyCutPart = patternTb.AsEnumerable().Where(s => MyUtility.Check.Empty(s["PatternCode"])).Any();
+            bool isEmptyCutPart = this.patternTb.AsEnumerable().Where(s => MyUtility.Check.Empty(s["PatternCode"])).Any();
             if (isEmptyCutPart)
             {
                 MyUtility.Msg.WarningBox("<CutPart> can not be empty!");
+                return;
+            }
+            #endregion
+
+            #region 判斷AllPartDetail的CutPart  不可為空
+            bool isEmptyAllPartDetailCutPart = this.allpartTb.AsEnumerable()
+                                                .Where(s =>
+                                                {
+                                                    if (s.RowState == DataRowState.Deleted)
+                                                    {
+                                                        return false;
+                                                    }
+                                                    else
+                                                    {
+                                                        return MyUtility.Check.Empty(s["PatternCode"]);
+                                                    }
+                                                }).Any();
+            if (isEmptyAllPartDetailCutPart)
+            {
+                MyUtility.Msg.WarningBox("All Parts Detail <CutPart> can not be empty!");
                 return;
             }
             #endregion
@@ -1089,14 +1110,13 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             //判斷當前表身的筆數(排除掉已刪除的Row)
             DataTable dtCount = detailTb.Copy();
             dtCount.AcceptChanges();
-            if (tmpRow < dtCount.Rows.Count) //當舊的比較多就要刪除
+            int detailrow = detailTb.Rows.Count;
+            int deleteCnt = dtCount.Rows.Count - tmpRow;
+            for (int i = 1; i <= deleteCnt; i++)
             {
-                int detailrow = detailTb.Rows.Count;
-                for (int i = detailrow - 1; i >= tmpRow; i--) //因為delete時Rowcount 會改變所以要重後面往前刪
-                {
-                    detailTb.Rows[i].Delete();
-                }
+                detailTb.Rows[detailrow - i].Delete();
             }
+
             if (tmpRow > j) //表示新增的比較多需要Insert
             {
                 for (int i = 0; i < tmpRow - j; i++)

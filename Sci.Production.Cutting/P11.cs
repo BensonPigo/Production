@@ -317,6 +317,11 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             };
             charticle.CellValidating += (s, e) =>
             {
+                if (this.ArticleSizeTb == null)
+                {
+                    return;
+                }
+
                 DataRow dr = gridArticleSize.GetDataRow(e.RowIndex);
                 int newvalue = Convert.ToInt16(e.FormattedValue);
                 dr["sel"] = newvalue;
@@ -384,10 +389,10 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             #region 右上一Grid
 
 
-             this.gridArticleSize.IsEditingReadOnly = false;
+            this.gridArticleSize.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(gridArticleSize)
            .CheckBox("Sel", header: "", width: Widths.AnsiChars(2), iseditable: true, trueValue: 1, falseValue: 0, settings: charticle)
-           .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly:true, settings: selectExcess)
+           .Text("OrderID", header: "Sub-SP#", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: selectExcess)
            .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: selectExcess)
            .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: selectExcess)
            .Text("SizeCode", header: "Size", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: selectExcess)
@@ -652,7 +657,7 @@ Where   a.ukey = b.workorderukey
             {
                 query_cmd = query_cmd + string.Format(" and ord.FtyGroup='{0}'", factory);
                 distru_cmd = distru_cmd + string.Format(" and ord.FtyGroup='{0}'", factory);
-                distru_cmd_Excess += string.Format(" and ord.FtyGroup='{0}'", factory); 
+                distru_cmd_Excess += string.Format(" and ord.FtyGroup='{0}'", factory);
                 Excess_cmd = Excess_cmd + string.Format(" and  ord.FtyGroup='{0}'", factory);
                 SizeRatio.Append(string.Format(" and ord.FtyGroup='{0}'", factory));
             }
@@ -671,6 +676,11 @@ Where   a.ukey = b.workorderukey
             {
                 MyUtility.Msg.WarningBox("No Data Found!");
                 this.HideWaitMessage();
+                gridCutpart.DataSource = null;
+                gridAllPart.DataSource = null;
+                gridQty.DataSource = null;
+                gridArticleSize.DataSource = null;
+                gridCutRef.DataSource = null;
                 return;
             }
 
@@ -833,7 +843,7 @@ Select distinct ArticleGroup
 from Pattern_GL_LectraCode WITH (NOLOCK) 
 where PatternUkey = '{0}' 
 order by ArticleGroup", patternukey);
-            
+
             DualResult headerResult = DBProxy.Current.Select(null, headercodesql, out headertb);
             if (!headerResult)
             {
@@ -1109,7 +1119,7 @@ order by ArticleGroup", patternukey);
                             modqty--;
                         }
                         else dr2.Delete();
-                    }                    
+                    }
                 }
             }
         }
@@ -1285,6 +1295,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow ndr = allpartTb.NewRow();
             ndr["iden"] = selectDr["iden"];
+            ndr["cutref"] = selectDr["cutref"];
             allpartTb.Rows.Add(ndr);
         }
 
@@ -1624,6 +1635,7 @@ values
                     return;
                 }
 
+                bool notYetInsertAllPart = true;
                 foreach (DataRow rowqty in QtyAry)
                 {
                     #region Bundle_Detail_Qty
@@ -1638,6 +1650,12 @@ values
 
                     foreach (DataRow rowPat in PatternAry)
                     {
+                        if (MyUtility.Check.Empty(rowPat["PatternCode"]))
+                        {
+                            MyUtility.Msg.WarningBox("CutPart cannot be empty.");
+                            return;
+                        }
+
                         #region Bundle_Detail
                         DataRow nBundleDetail_dr = Insert_Bundle_Detail.NewRow();
                         nBundleDetail_dr["Insert"] = string.Format(
@@ -1667,27 +1685,28 @@ values
                             #endregion
                         }
                         #region Bundle allPart
-                        if (rowPat["PatternCode"].ToString() == "ALLPARTS")
+                        if (rowPat["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
                         {
-
-                            #region 讓Bundle_Detail_Allpart只產生一份資料
-                            if (allpartTb.Rows.Count > Insert_Bundle_Detail_AllPart.Rows.Count)
+                            foreach (DataRow rowall in AllPartArt)
                             {
-                                foreach (DataRow rowall in AllPartArt)
+                                if (MyUtility.Check.Empty(rowall["Parts"]))
                                 {
-                                    if (MyUtility.Check.Empty(rowall["Parts"]))
-                                    {
-                                        continue;
-                                    }
-
-                                    DataRow nBundleDetailAllPart_dr = Insert_Bundle_Detail_AllPart.NewRow();
-                                    nBundleDetailAllPart_dr["Insert"] = string.Format(@"Insert Into Bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair) Values('{0}','{1}','{2}','{3}','{4}')",
-                                         id_list[idcount], rowall["PatternCode"], rowall["PatternDesc"], rowall["Parts"], rowall["isPair"]);
-                                    Insert_Bundle_Detail_AllPart.Rows.Add(nBundleDetailAllPart_dr);
+                                    continue;
                                 }
-                            }
-                            #endregion
 
+                                if (MyUtility.Check.Empty(rowall["PatternCode"]))
+                                {
+                                    MyUtility.Msg.WarningBox("All Parts Detail CutPart cannot be empty.");
+                                    return;
+                                }
+
+                                DataRow nBundleDetailAllPart_dr = Insert_Bundle_Detail_AllPart.NewRow();
+                                nBundleDetailAllPart_dr["Insert"] = string.Format(@"Insert Into Bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair) Values('{0}','{1}','{2}','{3}','{4}')",
+                                     id_list[idcount], rowall["PatternCode"], rowall["PatternDesc"], rowall["Parts"], rowall["isPair"]);
+                                Insert_Bundle_Detail_AllPart.Rows.Add(nBundleDetailAllPart_dr);
+                            }
+
+                            notYetInsertAllPart = false;
                         }
                         #endregion
                         bundlenocount++; //每一筆Bundleno 都不同
