@@ -30,6 +30,8 @@ namespace Sci.Production.PPIC
             this.Text = "Factory CMT (" + this.orderData["ID"].ToString() + ")";
             this.label3.Text = "Sub Process\r\nStd. Cost";
             this.label4.Text = "Local Purchase\r\nStd. Cost";
+            this.label15.Text = "Sewing\r\nCPU";
+            this.label1.Text = "Sub Process\r\nCPU";
         }
 
         /// <inheritdoc/>
@@ -66,7 +68,7 @@ order by ot.Seq", this.orderData["ID"].ToString());
                 .Numeric("Price", header: "Price", decimal_places: 3, width: Widths.AnsiChars(6))
                 .Text("ttlTMS", header: "Ttl TMS", width: Widths.AnsiChars(1));
 
-            this.numCPU.Value = MyUtility.Convert.GetDecimal(this.orderData["CPU"]);
+            this.numSewingCPU.Value = MyUtility.Convert.GetDecimal(this.orderData["CPU"]);
             this.CalculatedCPUcost();
             #region 取得 Sub Process Std. Cost
             string sqlGetStdCost = @"
@@ -78,7 +80,8 @@ declare @subProcessCPU numeric(16,4)
 select @subProcessAMT = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(@orderid,'AMT') 
 select @subProcessCPU = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(@orderid,'CPU')
 
-select [SubProcessStdCost] = round(isnull(@subProcessCPU,0) * isnull(@cpuCost,0) + isnull(@subProcessAMT,0),3)";
+select  [SubProcessCPU] = @subProcessCPU,
+        [SubProcessAMT] = @subProcessAMT";
 
             List<SqlParameter> parGetStdCost = new List<SqlParameter>()
             {
@@ -86,17 +89,19 @@ select [SubProcessStdCost] = round(isnull(@subProcessCPU,0) * isnull(@cpuCost,0)
                 new SqlParameter("@inputOrderID", this.orderData["ID"].ToString())
             };
 
-            string subProcessStdCost = MyUtility.GetValue.Lookup(sqlGetStdCost, parGetStdCost);
+            DataRow drSubprocessCost;
+            MyUtility.Check.Seek(sqlGetStdCost, parGetStdCost, out drSubprocessCost);
             #endregion
-            this.numSubProcess.Value = MyUtility.Convert.GetDecimal(subProcessStdCost);
+            this.numSubProcessAMT.Value = MyUtility.Convert.GetDecimal(drSubprocessCost["SubProcessAMT"]);
+            this.numSubProcessCPU.Value = MyUtility.Convert.GetDecimal(drSubprocessCost["SubProcessCPU"]);
             this.CalculatedLocalCMT();
-            this.numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal((this.numCPU.Value * this.numCPUCost.Value) + this.numSubProcess.Value + this.numLocalPurchase.Value), 2);
+            this.numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(((this.numSewingCPU.Value + this.numSubProcessCPU.Value) * this.numCPUCost.Value) + this.numSubProcessAMT.Value + this.numLocalPurchase.Value), 3);
         }
 
         private void Init()
         {
             this.numCPUCost.Value = 0;
-            this.numSubProcess.Value = 0;
+            this.numSubProcessAMT.Value = 0;
             this.numLocalPurchase.Value = 0;
             this.numStdFtyCMP.Value = 0;
         }
