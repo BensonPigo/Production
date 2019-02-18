@@ -2324,6 +2324,7 @@
     <Build Include="dbo\Functions\GetActualPerimeter.sql" />
     <Build Include="dbo\Tables\SpreadingNo.sql" />
     <Build Include="dbo\Tables\CuttingOutputFabricRecord.sql" />
+    <Build Include="dbo\Functions\GetSubProcessDetailByOrderID.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
