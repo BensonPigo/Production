@@ -17,16 +17,20 @@ namespace Sci.Production.Cutting
 {
     public partial class R08 : Sci.Win.Tems.PrintForm
     {
-        private DataTable printData;
+        private DataTable[] printData;
         private string Mdivision;
         private string Factory;
         private DateTime? EstCutDate1;
         private DateTime? EstCutDate2;
+        private DateTime? ActCutDate1;
+        private DateTime? ActCutDate2;
         private string SpreadingNo1;
         private string SpreadingNo2;
         private string CutCell1;
         private string CutCell2;
         private string CuttingSP;
+        private decimal? Speed;
+
 
         public R08(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -40,17 +44,22 @@ namespace Sci.Production.Cutting
             this.Factory = txtfactory1.Text;
             this.EstCutDate1 = dateEstCutDate.Value1;
             this.EstCutDate2 = dateEstCutDate.Value2;
+            this.ActCutDate1 = dateActCutDate.Value1;
+            this.ActCutDate2 = dateActCutDate.Value2;
             this.SpreadingNo1 = txtSpreadingNo1.Text;
             this.SpreadingNo2 = txtSpreadingNo2.Text;
             this.CutCell1 = txtCell1.Text;
             this.CutCell2 = txtCell2.Text;
             this.CuttingSP = txtCuttingSp.Text;
+            this.Speed = numSpeed.Value;
+
             return base.ValidateInput();
         }
-        
+
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             string sqlcmd = string.Empty;
+            #region where
             string where = string.Empty;
             if (!MyUtility.Check.Empty(this.Mdivision))
             {
@@ -67,6 +76,14 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(this.EstCutDate2))
             {
                 where += $" and w.EstCutDate <=  '{((DateTime)this.EstCutDate2).ToString("yyyy/MM/dd")}' ";
+            }
+            if (!MyUtility.Check.Empty(this.ActCutDate1))
+            {
+                where += $" and co.cDate >= '{((DateTime)this.ActCutDate1).ToString("yyyy/MM/dd")}' ";
+            }
+            if (!MyUtility.Check.Empty(this.ActCutDate2))
+            {
+                where += $" and co.cDate <=  '{((DateTime)this.ActCutDate2).ToString("yyyy/MM/dd")}' ";
             }
             if (!MyUtility.Check.Empty(this.SpreadingNo1))
             {
@@ -88,9 +105,29 @@ namespace Sci.Production.Cutting
             {
                 where += $" and w.ID = '{this.CuttingSP}' ";
             }
-
+            #endregion
             sqlcmd = $@"
-select
+select w.CutRef,w.MDivisionId,ActCutDate=max(co.cDate)
+into #tmp1
+from WorkOrder w with(nolock) 
+left join CuttingOutput_Detail cod with(nolock) on cod.WorkOrderUkey = w.Ukey
+left join CuttingOutput co with(nolock) on co.id = cod.id
+where 1=1
+{where}
+group by w.CutRef,w.MDivisionID
+
+select t.CutRef,t.MDivisionId,t.ActCutDate ,
+	Layer=sum(w.Layer),
+	Cons=sum(w.Cons),
+	noEXCESSqty=sum(iif(wd.OrderID <> 'EXCESS',wd.Qty,0)),
+	EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
+into #tmp2
+from #tmp1 t
+inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
+inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
+group by t.CutRef,t.MDivisionId,t.ActCutDate 
+
+select distinct
 	w.FactoryID,
 	w.EstCutDate,
 	w.CutCellid,
@@ -101,19 +138,19 @@ select
 	subSp.SubSP,
 	o.StyleID,
 	size.Size,
-	sumWdQty=sumWdQty.qty,
+	t.noEXCESSqty,
 	f.Description,
 	f.MtlTypeID,
 	w.FabricCombo,
 	MarkerLength=iif(w.Layer=0,0,w.cons/w.Layer),
-	PerimeterM=iif(w.ActCuttingPerimeter not like '%yd%',w.ActCuttingPerimeter,dbo.GetActualPerimeter(w.ActCuttingPerimeter)),
-	w.Layer,
+	PerimeterM=iif(w.ActCuttingPerimeter not like '%yd%',w.ActCuttingPerimeter,cast(dbo.GetActualPerimeter(w.ActCuttingPerimeter) as nvarchar)),
+	t.Layer,
 	SizeCode.SizeCode,
-	w.Cons,
-	sumWdQtyE=sumWdQtyE.qty,
+	t.Cons,
+	t.EXCESSqty,
 	NoofRoll.NoofRoll,
 	DyeLot=isnull(DyeLot.DyeLot,0),
-	NoofWindow=w.Cons/w.Layer/1.4,
+	NoofWindow=t.Cons/t.Layer/1.4,
 	ActSpd.ActualSpeed,
 	st.PreparationTime,
 	[ChangeoverTime] = iif(fr.isRoll = 0,st.ChangeOverUnRollTime,st.ChangeOverRollTime),
@@ -123,51 +160,42 @@ select
 	st.ForwardTime,
 	CuttingSetUpTime=ct.SetUpTime,
 	ct.WindowTime,
-	f.WeaveTypeID,w.Refno,[nNoofRoll]=n.NoofRoll,[slLayer]=sl.Layer,[scCons]=sc.Cons,ct.WindowLength
-into #tmp
-from WorkOrder w with(nolock)
+	f.WeaveTypeID,w.Refno,ct.WindowLength
+into #tmp3
+from #tmp2 t
+inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
 inner join orders o with(nolock) on o.id = w.ID
 left join Fabric f with(nolock) on f.SCIRefno = w.SCIRefno
 left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
 left join ManufacturingExecution.dbo.RefnoRelaxtime rr WITH (NOLOCK) on rr.Refno = w.Refno
 left join ManufacturingExecution.dbo.FabricRelaxation fr WITH (NOLOCK) on rr.FabricRelaxationID = fr.ID
 left join CuttingTime ct WITH (NOLOCK) on ct.WeaveTypeID = f.WeaveTypeID
---outer apply(select TotalCuttingPerimeter = dbo.GetActualPerimeter(w.ActCuttingPerimeter))pm
 outer apply(
 	select SubSP = stuff((
 		select distinct concat(',',wd.OrderID)
-		from WorkOrder_Distribute wd with(nolock)
-		where wd.WorkOrderUkey = w.Ukey
+		from WorkOrder w2 with(nolock)
+		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
+		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
 		For XML path('')
 	),1,1,'')
 )subSp
 outer apply(
 	select Size = stuff((
 		select distinct concat(',',wd.SizeCode)
-		from WorkOrder_Distribute wd with(nolock)
-		where wd.WorkOrderUkey = w.Ukey
+		from WorkOrder w2 with(nolock)
+		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
+		where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
 		For XML path('')
 	),1,1,'')
 )size
-outer apply(
-	select qty=sum(wd.qty)
-	from WorkOrder_Distribute wd with(nolock)
-	where wd.WorkOrderUkey = w.Ukey
-	and wd.OrderID <> 'EXCESS'	
-)sumWdQty
-outer apply(
-	select qty=sum(wd.qty)
-	from WorkOrder_Distribute wd with(nolock)
-	where wd.WorkOrderUkey = w.Ukey
-	and wd.OrderID = 'EXCESS'	
-)sumWdQtyE
 outer apply
 (
 	select SizeCode = stuff(
 	(
 		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
-		From WorkOrder_SizeRatio wd WITH (NOLOCK) 
-		Where wd.WorkOrderUkey = w.Ukey 
+		From WorkOrder w2 with(nolock)
+		inner join WorkOrder_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderUkey = w2.Ukey
+		Where w2.CutRef = t.CutRef and w2.MDivisionId = t.MDivisionId
 		For XML path('')
 	),1,1,'')
 )SizeCode
@@ -192,25 +220,12 @@ outer apply(
 	from CuttingMachine_detail cmd WITH (NOLOCK) 
 	inner join CutCell cc WITH (NOLOCK) on cc.CuttingMachineID = cmd.id
 	where cc.id = w.CutCellid 
-	and w.Layer between cmd.LayerLowerBound and cmd.LayerUpperBound
+	and t.Layer between cmd.LayerLowerBound and cmd.LayerUpperBound
 	and cmd.WeaveTypeID = f.WeaveTypeID 
 )ActSpd
-outer apply(
-	select avgInQty = avg(fi.InQty)
-	from PO_Supp_Detail psd with(nolock)
-	left join FtyInventory fi with(nolock) on fi.POID = psd.ID and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
-	where psd.ID = w.id and psd.SCIRefno = w.SCIRefno
-	and fi.InQty is not null
-) as fi
-outer apply(select Layer = sum(w.Layer)over(partition by w.CutRef,w.MDivisionId))sl
-outer apply(select Cons = sum(w.Cons)over(partition by w.CutRef,w.MDivisionId))sc
-outer apply(select NoofRoll = iif(isnull(round(sc.Cons/fi.avgInQty,0),0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
 
-where 1=1
-{where}
-
-select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,sumWdQty,Description,MtlTypeID,FabricCombo,
-	MarkerLength,PerimeterM,Layer,SizeCode,Cons,sumWdQtyE,NoofRoll,DyeLot,NoofWindow,ActualSpeed,
+select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,MtlTypeID,FabricCombo,
+	MarkerLength,PerimeterM,Layer,SizeCode,Cons,EXCESSqty,NoofRoll,DyeLot,NoofWindow,ActualSpeed,
 	[PreparationTime_min] = PreparationTime/60.0,
 	[ChangeoverTime_min] = ChangeoverTime/60.0,
 	[SpreadingSetupTime_min] = SpreadingSetupTime/60.0,
@@ -220,27 +235,55 @@ select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,St
 	[CuttingSetupTime_min] = CuttingSetUpTime/60.0,
 	MachCuttingTime_min,
 	[WindowTime_min] = WindowTime/60.0,
-	[TotalSpreadingTime_min] = (isnull(PreparationTime * iif(slLayer=0,0,scCons/slLayer),0) + 
-						 isnull(Changeovertime * nNoofRoll,0) +
+	[TotalSpreadingTime_min] = (isnull(PreparationTime * iif(Layer=0,0,Cons/Layer),0) + 
+						 isnull(Changeovertime * NoofRoll,0) +
 						 isnull(SpreadingSetupTime,0) +
-						 isnull(SpreadingTime * scCons,0) +
+						 isnull(SpreadingTime * Cons,0) +
 						 isnull(SeparatorTime * (DyeLot -1),0) +
 						 isnull(ForwardTime,0))
 						 /60.0,
 	[TotalCuttingTime_min] = (isnull(CuttingSetUpTime,0) + 
 					   iif(isnull(ActualSpeed,0)=0,0,isnull(p.PerimeterM_num,0)/ActualSpeed)*60 + 
-					   isnull(Windowtime * iif(isnull(slLayer,0)=0,0,scCons/slLayer*0.9144)/WindowLength,0))
+					   isnull(Windowtime * iif(isnull(Layer,0)=0,0,Cons/Layer*0.9144)/WindowLength,0))
 					   /60.0
-from #tmp
+into #detail
+from #tmp3
 outer apply(select PerimeterM_num=isnumeric(PerimeterM))p
 outer apply(select MachCuttingTime_min = iif(isnull(ActualSpeed,0)=0,0,p.PerimeterM_num/ActualSpeed))a
 
-drop table #tmp
+select * from #detail order by FactoryID,EstCutDate,CutCellid
 
+select MDivisionId=stuff((select distinct concat(',',MDivisionId) from #tmp1 for xml path('')),1,1,'')
+select ForecastPeriod=concat(format(min(ActCutDate),'MM/dd'),'-',format(max(ActCutDate),'MM/dd')) from #tmp1
+select TotalWorkingDays=count(1) from(select distinct ActCutDate from #tmp1)a
+--
+select 
+	d.SpreadingNoID,
+	TotalSpreadingYardage = Sum(d.Cons),
+	TotalSpreadingMarkerQty = count(1),
+	TotalSpreadingTime_hr=sum(d.TotalSpreadingTime_min)/60.0
+from #detail d
+where isnull(d.SpreadingNoID,'') <>''
+group by d.SpreadingNoID
+--
+select 
+	d.CutCellid,
+	CuttingMachDescription = cm.Description,
+	TotalCuttingPerimeter = sum(isnumeric(d.PerimeterM)),
+	TotalCutMarkerQty = count(1),
+	TotalCutFabricYardage = Sum(d.Cons),
+	TotalAvailableCuttingTime_hrs = sum(d.CuttingSetupTime_min)/60.0
+from #detail d
+inner join CutCell cc with(nolock)on cc.ID = d.CutCellid
+left join CuttingMachine cm with(nolock)on cm.ID = cc.CuttingMachineID
+where isnull(d.CutCellid,'') <>''
+group by d.CutCellid, cm.Description
+
+drop table #tmp1,#tmp2,#tmp3,#detail
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out printData);
             if (!result)
-            {                
+            {
                 return Result.F(result.ToString());
             }
             return Result.True;
@@ -249,8 +292,8 @@ drop table #tmp
         protected override bool OnToExcel(ReportDefinition report)
         {
             this.ShowWaitMessage("Excel Processing...");
-            SetCount(printData.Rows.Count);
-            if (printData.Rows.Count <= 0)
+            SetCount(printData[0].Rows.Count);
+            if (printData[0].Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
@@ -258,8 +301,82 @@ drop table #tmp
             string excelName = "Cutting_R08";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
 
-            MyUtility.Excel.CopyToXls(printData, "", $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);// 將datatable copy to excel
+            MyUtility.Excel.CopyToXls(printData[0], "", $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
 
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表       
+            DataTable sodt = printData[4];
+            DataTable codt = printData[5];
+            int s = sodt.Rows.Count;
+
+            worksheet.Cells[1, 2] = printData[1].Rows[0][0];
+            worksheet.Cells[2, 2] = DateTime.Now;
+            worksheet.Cells[1, 6] = printData[2].Rows[0][0];
+            worksheet.Cells[2, 6] = printData[3].Rows[0][0];
+            string sCol = MyUtility.Excel.ConvertNumericToExcelColumn(s + 1);
+            string cCol = MyUtility.Excel.ConvertNumericToExcelColumn(codt.Rows.Count + 1);
+            worksheet.Cells[2, 3] = $"=AVERAGE(B13:{sCol}13)";
+            worksheet.Cells[2, 4] = $"=AVERAGE(B29:{cCol}29)";
+            worksheet.Range[$"B4:{sCol}13"].Borders.Weight = 2; // 設定全框線
+            worksheet.Range[$"B17:{cCol}29"].Borders.Weight = 2; // 設定全框線
+            #region Spreading Output
+            for (int i = 0; i < s; i++)
+            {
+                worksheet.Cells[4, i + 2] = sodt.Rows[i]["SpreadingNoID"];
+                string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                worksheet.Cells[6, i + 2] = $"={col}5*F$2";
+                worksheet.Cells[7, i + 2] = sodt.Rows[i]["TotalSpreadingYardage"];
+                worksheet.Cells[8, i + 2] = sodt.Rows[i]["TotalSpreadingMarkerQty"];
+                worksheet.Cells[9, i + 2] = sodt.Rows[i]["TotalSpreadingTime_hr"];
+                worksheet.Cells[10, i + 2] = $"=({col}9/{col}6)*100";
+                worksheet.Cells[11, i + 2] = $"={col}9-{col}6";
+                worksheet.Cells[12, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2)),\" | \",IF({col}5=0,0,Round({col}6/{col}5,2)),\" | \")";
+                worksheet.Cells[13, i + 2] = $"=IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2))*IF({col}5=0,0,Round({col}6/{col}5,2))";
+            }
+
+
+            #endregion
+            #region Cutting Output
+            for (int i = 0; i < codt.Rows.Count; i++)
+            {
+                worksheet.Cells[17, i + 2] = codt.Rows[i]["CutCellid"];
+                worksheet.Cells[18, i + 2] = codt.Rows[i]["CuttingMachDescription"];
+                string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                worksheet.Cells[20, i + 2] = $"={col}19*F$2";
+                worksheet.Cells[22, i + 2] = codt.Rows[i]["TotalCuttingPerimeter"];
+                worksheet.Cells[23, i + 2] = codt.Rows[i]["TotalCutMarkerQty"];
+                worksheet.Cells[24, i + 2] = codt.Rows[i]["TotalCutFabricYardage"];
+                worksheet.Cells[25, i + 2] = codt.Rows[i]["TotalAvailableCuttingTime_hrs"];
+                worksheet.Cells[26, i + 2] = $"=({col}25/{col}20)*100";
+                worksheet.Cells[27, i + 2] = $"={col}26-{col}20";
+                worksheet.Cells[28, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2)),\" | \",IF({col}19=0,0,Round({col}25/{col}19,2)),\" | \")";
+                worksheet.Cells[29, i + 2] = $"=IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2))*IF({col}19=0,0,Round({col}25/{col}19,2))";
+            }
+            #endregion
+            #region sheet Balancing Chart
+            worksheet = excelApp.ActiveWorkbook.Worksheets[3]; // 取得工作表            
+
+            for (int i = 0; i < s + codt.Rows.Count - 2; i++)
+            {
+                worksheet.Rows[i + 3, Type.Missing].Insert(Excel.XlDirection.xlDown);
+            }
+            for (int i = 0; i < s; i++)
+            {
+                string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                worksheet.Cells[i + 2, 1] = $"='Actual Output Summary'!{col}4";
+                worksheet.Cells[i + 2, 2] = $"='Actual Output Summary'!{col}8";
+                worksheet.Cells[i + 2, 4] = $"='Actual Output Summary'!{col}10";
+            }
+            for (int i = 0; i < codt.Rows.Count; i++)
+            {
+                string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                worksheet.Cells[i + s + 2, 1] = $"='Actual Output Summary'!{col}17";
+                worksheet.Cells[i + s + 2, 3] = $"='Actual Output Summary'!{col}23";
+                worksheet.Cells[i + s + 2, 4] = $"='Actual Output Summary'!{col}26";
+            }
+
+            worksheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden; // 隱藏第3頁sheet
+
+            #endregion
             #region 釋放上面開啟過excel物件
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
@@ -267,9 +384,10 @@ drop table #tmp
             workbook.Close();
             excelApp.Quit();
 
+            if (worksheet != null) Marshal.FinalReleaseComObject(worksheet);
             if (excelApp != null) Marshal.FinalReleaseComObject(excelApp);
             #endregion
-            
+
             this.HideWaitMessage();
             strExcelName.OpenFile();
             return true;

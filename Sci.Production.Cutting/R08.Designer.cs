@@ -45,6 +45,10 @@
             this.labelM = new Sci.Win.UI.Label();
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
+            this.label6 = new Sci.Win.UI.Label();
+            this.dateActCutDate = new Sci.Win.UI.DateRange();
+            this.label7 = new Sci.Win.UI.Label();
+            this.numSpeed = new Sci.Win.UI.NumericBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,6 +67,10 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.numSpeed);
+            this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.dateActCutDate);
             this.panel1.Controls.Add(this.txtfactory1);
             this.panel1.Controls.Add(this.txtMdivision1);
             this.panel1.Controls.Add(this.txtSpreadingNo2);
@@ -81,7 +89,7 @@
             this.panel1.Controls.Add(this.dateEstCutDate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(410, 252);
+            this.panel1.Size = new System.Drawing.Size(410, 247);
             this.panel1.TabIndex = 94;
             // 
             // txtfactory1
@@ -90,7 +98,7 @@
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(112, 48);
+            this.txtfactory1.Location = new System.Drawing.Point(112, 41);
             this.txtfactory1.Name = "txtfactory1";
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtfactory1.TabIndex = 116;
@@ -108,7 +116,7 @@
             // 
             this.txtSpreadingNo2.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo2.Location = new System.Drawing.Point(184, 125);
+            this.txtSpreadingNo2.Location = new System.Drawing.Point(185, 128);
             this.txtSpreadingNo2.MDivisionID = "";
             this.txtSpreadingNo2.Name = "txtSpreadingNo2";
             this.txtSpreadingNo2.Size = new System.Drawing.Size(45, 23);
@@ -118,7 +126,7 @@
             // 
             this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo1.Location = new System.Drawing.Point(111, 125);
+            this.txtSpreadingNo1.Location = new System.Drawing.Point(112, 128);
             this.txtSpreadingNo1.MDivisionID = "";
             this.txtSpreadingNo1.Name = "txtSpreadingNo1";
             this.txtSpreadingNo1.Size = new System.Drawing.Size(45, 23);
@@ -128,7 +136,7 @@
             // 
             this.txtCell2.BackColor = System.Drawing.Color.White;
             this.txtCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell2.Location = new System.Drawing.Point(161, 163);
+            this.txtCell2.Location = new System.Drawing.Point(162, 157);
             this.txtCell2.MDivisionID = "";
             this.txtCell2.Name = "txtCell2";
             this.txtCell2.Size = new System.Drawing.Size(30, 23);
@@ -138,7 +146,7 @@
             // 
             this.txtCell1.BackColor = System.Drawing.Color.White;
             this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell1.Location = new System.Drawing.Point(111, 163);
+            this.txtCell1.Location = new System.Drawing.Point(112, 157);
             this.txtCell1.MDivisionID = "";
             this.txtCell1.Name = "txtCell1";
             this.txtCell1.Size = new System.Drawing.Size(30, 23);
@@ -147,7 +155,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(144, 169);
+            this.label5.Location = new System.Drawing.Point(145, 163);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(16, 17);
             this.label5.TabIndex = 108;
@@ -156,7 +164,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(162, 131);
+            this.label4.Location = new System.Drawing.Point(163, 134);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(16, 17);
             this.label4.TabIndex = 107;
@@ -166,14 +174,14 @@
             // 
             this.txtCuttingSp.BackColor = System.Drawing.Color.White;
             this.txtCuttingSp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCuttingSp.Location = new System.Drawing.Point(111, 200);
+            this.txtCuttingSp.Location = new System.Drawing.Point(112, 186);
             this.txtCuttingSp.Name = "txtCuttingSp";
             this.txtCuttingSp.Size = new System.Drawing.Size(126, 23);
             this.txtCuttingSp.TabIndex = 106;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(13, 200);
+            this.label3.Location = new System.Drawing.Point(13, 186);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(94, 23);
             this.label3.TabIndex = 101;
@@ -181,7 +189,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(13, 163);
+            this.label2.Location = new System.Drawing.Point(13, 157);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(94, 23);
             this.label2.TabIndex = 100;
@@ -189,7 +197,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(13, 125);
+            this.label1.Location = new System.Drawing.Point(12, 128);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(94, 23);
             this.label1.TabIndex = 99;
@@ -197,7 +205,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(12, 48);
+            this.labelFactory.Location = new System.Drawing.Point(12, 41);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(95, 23);
             this.labelFactory.TabIndex = 98;
@@ -213,7 +221,7 @@
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Location = new System.Drawing.Point(12, 89);
+            this.labelEstCutDate.Location = new System.Drawing.Point(12, 70);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(94, 23);
             this.labelEstCutDate.TabIndex = 3;
@@ -235,16 +243,72 @@
             this.dateEstCutDate.DateBox2.Name = "";
             this.dateEstCutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateEstCutDate.DateBox2.TabIndex = 1;
-            this.dateEstCutDate.Location = new System.Drawing.Point(111, 89);
+            this.dateEstCutDate.Location = new System.Drawing.Point(112, 70);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
             this.dateEstCutDate.TabIndex = 0;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(12, 99);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(94, 23);
+            this.label6.TabIndex = 118;
+            this.label6.Text = "Act. Cut Date ";
+            // 
+            // dateActCutDate
+            // 
+            // 
+            // 
+            // 
+            this.dateActCutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateActCutDate.DateBox1.Name = "";
+            this.dateActCutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateActCutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateActCutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateActCutDate.DateBox2.Name = "";
+            this.dateActCutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateActCutDate.DateBox2.TabIndex = 1;
+            this.dateActCutDate.Location = new System.Drawing.Point(112, 99);
+            this.dateActCutDate.Name = "dateActCutDate";
+            this.dateActCutDate.Size = new System.Drawing.Size(280, 23);
+            this.dateActCutDate.TabIndex = 117;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(13, 215);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(166, 23);
+            this.label7.TabIndex = 119;
+            this.label7.Text = "Factory Max speed m/sec";
+            // 
+            // numSpeed
+            // 
+            this.numSpeed.BackColor = System.Drawing.Color.White;
+            this.numSpeed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numSpeed.Location = new System.Drawing.Point(185, 215);
+            this.numSpeed.Name = "numSpeed";
+            this.numSpeed.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numSpeed.Size = new System.Drawing.Size(53, 23);
+            this.numSpeed.TabIndex = 120;
+            this.numSpeed.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             // 
             // R08
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(534, 303);
+            this.ClientSize = new System.Drawing.Size(534, 284);
             this.Controls.Add(this.panel1);
             this.IsSupportPrint = false;
             this.Name = "R08";
@@ -279,5 +343,9 @@
         private Class.txtCell txtCell1;
         private Class.txtfactory txtfactory1;
         private Class.txtMdivision txtMdivision1;
+        private Win.UI.Label label6;
+        private Win.UI.DateRange dateActCutDate;
+        private Win.UI.NumericBox numSpeed;
+        private Win.UI.Label label7;
     }
 }
