@@ -25,6 +25,7 @@ namespace Sci.Production.PPIC
         private string line1;
         private string line2;
         private string brand;
+        private string type;
         private DateTime? inline;
         private DateTime? offline;
         private DateTime? buyerDelivery1;
@@ -49,6 +50,10 @@ namespace Sci.Production.PPIC
 
             // comboBox2.SelectedIndex = 0;
             this.comboFactory.Text = Sci.Env.User.Factory;
+
+            this.comboSummaryBy.Add("SP#", "SP#");
+            this.comboSummaryBy.Add("Article / Size", "Article / Size");
+            this.comboSummaryBy.SelectedIndex = 0;
         }
 
         // Sewing Line
@@ -93,6 +98,8 @@ namespace Sci.Production.PPIC
             this.sciDelivery1 = this.dateSCIDelivery.Value1;
             this.sciDelivery2 = this.dateSCIDelivery.Value2;
             this.brand = this.txtbrand.Text;
+
+            this.type = this.comboSummaryBy.SelectedValue2.ToString();
 
             return base.ValidateInput();
         }
@@ -145,8 +152,18 @@ select  SewingLineID
         , MDivisionID
         , FactoryID
         , OrderID
-        , ComboType
-        , IIF(Article = '','',SUBSTRING(Article,1,LEN(Article)-1)) as Article
+        , ComboType");
+            if (this.type == "SP#")
+            {
+                sqlCmd.Append(", IIF(Article = '','',SUBSTRING(Article,1,LEN(Article)-1)) as Article");
+            }
+            else
+            {
+                sqlCmd.Append(", Article ");
+            }
+
+        sqlCmd.Append(@"
+        , SizeCode
         , CdCodeID
         , StyleID
         , Qty
@@ -174,8 +191,11 @@ select  SewingLineID
         , Alias
         , ArtWork
         , IIF(Remark = '','',SUBSTRING(Remark,1,LEN(Remark)-1)) as Remark
-from (
-    select  s.SewingLineID
+from (");
+            if (this.type == "SP#")
+            {
+                sqlCmd.Append(@"
+select  s.SewingLineID
             , s.MDivisionID
             , o.FactoryID
             , s.OrderID
@@ -185,6 +205,7 @@ from (
                         from SewingSchedule_Detail sd WITH (NOLOCK) 
                         where sd.ID = s.ID
                 ) a for xml path('')) as Article
+            , [SizeCode] = ''
             , o.CdCodeID
             , o.StyleID
             , o.Qty
@@ -257,8 +278,98 @@ from (
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
     outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) ol_rate
     outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
+    where 1 = 1 ");
+            }
+            else
+            {
+                sqlCmd.Append($@"
+select  s.SewingLineID
+            , s.MDivisionID
+            , o.FactoryID
+            , s.OrderID
+            , s.ComboType
+            , [Article] = sd.Article
+			, sd.SizeCode
+            , o.CdCodeID
+            , o.StyleID
+            , [Qty] = orderQty.qty
+            , [AlloQty] = ISNULL( AlloQty.qty,0)
+            , [CutQty] = ISNULL( co.Qty,0)
+            , [SewingQty] = ISNULL( seo.qty,0)
+            , [ClogQty] = ISNULL( pkd.qty,0)
+            , o.InspDate
+            , s.StandardOutput
+            , ( select IIF(ctn = 0, 0, Hours/ctn) 
+                from (  Select  isnull(sum(w.Hours),0) as Hours
+                                , Count(w.Date) as ctn 
+                        from WorkHour w WITH (NOLOCK) 
+                        where   FactoryID = s.FactoryID 
+                                and w.SewingLineID = s.SewingLineID 
+                                and w.Date between Convert(Date,s.Inline) 
+                                and Convert(Date,s.Offline) 
+                                and w.Hours > 0
+                ) a
+              ) as WorkHour
+            , s.MaxEff
+            , o.KPILETA
+            , isnull((  Select top 1 op.Remark 
+                        from Order_PFHis op WITH (NOLOCK) 
+                        where   op.ID = s.OrderID 
+                                and op.AddDate = (  Select Max(AddDate) 
+                                                    from Order_PFHis WITH (NOLOCK) 
+                                                    where ID = s.OrderID)
+                    ),'') as PFRemark
+            , o.MTLETA
+            , o.MTLExport
+            ,O.CutInLine
+            , s.Inline
+            , s.Offline
+            , o.SciDelivery
+            , o.BuyerDelivery
+            , o.CPU * o.CPUFactor * ( isnull(isnull(ol_rate.value,sl_rate.value), 100) / 100) as CPU
+            , IIF(o.VasShas=1, 'Y', '') as VasShas
+            , o.ShipModeList,isnull(c.Alias, '') as Alias
+            , isnull(SUBSTRING(ta.Artwork, 1, LEN(ta.Artwork) - 1), '') as ArtWork
+            , isnull((  select CONCAT(Remark, ', ') 
+                        from (  select s1.SewingLineID+'('+s1.ComboType+'):'+CONVERT(varchar,s1.AlloQty) as Remark 
+                                from SewingSchedule s1 WITH (NOLOCK) 
+                                where   s1.OrderID = s.OrderID 
+                                        and s1.ID != s.ID
+                        ) a for xml path('')
+                    ), '') as Remark
+    from SewingSchedule s WITH (NOLOCK) 
+	inner join SewingSchedule_Detail sd WITH (NOLOCK) on s.ID=sd.ID
+    inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
+    left join tmpOrderArtwork ta on ta.ID = s.OrderID
+    left join Country c WITH (NOLOCK) on o.Dest = c.ID
+	outer apply(
+		select sum(qty) qty from Order_Qty oq
+		where oq.ID=o.ID and oq.Article=sd.Article and oq.SizeCode=sd.SizeCode
+	)orderQty
+	outer apply(
+		select sum(AlloQty) qty from SewingSchedule_Detail s2
+		where s2.ID=sd.ID and s2.ComboType=sd.ComboType and s2.Article=sd.Article
+		and s2.SizeCode=sd.SizeCode
+	)AlloQty
+	outer apply(
+		select qty from CuttingOutput_WIP cow
+		where cow.OrderID=sd.OrderID and cow.Article=sd.Article and cow.Size=sd.SizeCode
+	)co
+	outer apply(
+		select sum(QAQty)qty from SewingOutput_Detail_Detail sdd
+		where sdd.OrderId=sd.OrderID and sdd.ComboType=sd.ComboType and sdd.Article=sd.Article
+		and sdd.SizeCode=sd.SizeCode
+	)seo
+	outer apply(
+		select sum(ShipQty) qty from PackingList_Detail pkd
+		where pkd.OrderId=sd.OrderID and pkd.Article=sd.Article	and pkd.SizeCode=sd.SizeCode
+	)pkd
+    outer apply(select value = dbo.GetOrderLocation_Rate(o.id,s.ComboType) ) ol_rate
+    outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
     where 1 = 1 
 ");
+            }
+
             if (!MyUtility.Check.Empty(this.mDivision))
             {
                 sqlCmd.Append(string.Format(" and s.MDivisionID = '{0}'", this.mDivision));
@@ -368,6 +479,11 @@ order by SewingLineID,MDivisionID,FactoryID,Inline,StyleID");
                 this.ShowWaitMessage("Excel Processing...");
                 worksheet = objApp.Sheets[1];
 
+                // Summary By = SP# 則刪除欄位Size
+                if (this.type == "SP#")
+                {
+                    worksheet.get_Range("F:F").EntireColumn.Delete();
+                }
                 #region Set Excel Title
                 string factoryName = MyUtility.GetValue.Lookup(
                     string.Format(
@@ -413,12 +529,38 @@ where id = '{0}'", Env.User.Factory), null);
             else
             {
                 #region PPIC_R01_SewingLineScheduleReport
-                result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1);
+                Excel.Application objApp = null;
+                Excel.Worksheet worksheet = null;
+                objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\PPIC_R01_SewingLineScheduleReport.xltx"); // 預先開啟excel app
+                result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: "PPIC_R01_SewingLineScheduleReport.xltx", headerRow: 1, showExcel: false, excelApp: objApp);
+
                 if (!result)
                 {
                     MyUtility.Msg.WarningBox(result.ToString(), "Warning");
                     return false;
                 }
+
+                worksheet = objApp.Sheets[1];
+
+                // Summary By = SP# 則刪除欄位Size
+                if (this.type == "SP#")
+                {
+                    worksheet.get_Range("G:G").EntireColumn.Delete();
+                }
+
+                #region Save & Show Excel
+                string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R01_SewingLineScheduleReport");
+                Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                objApp.Quit();
+                Marshal.ReleaseComObject(objApp);
+                Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(workbook);
+
+                strExcelName.OpenFile();
+                #endregion
+
                 #endregion
             }
 

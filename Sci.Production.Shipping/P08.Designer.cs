@@ -72,6 +72,9 @@
             this.txtSubconSupplier = new Sci.Production.Class.txtsubcon();
             this.lbExVoucherID = new Sci.Win.UI.Label();
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
+            this.labReason = new Sci.Win.UI.Label();
+            this.txtReason = new Sci.Win.UI.TextBox();
+            this.txtReasonDesc = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -88,6 +91,9 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtReasonDesc);
+            this.masterpanel.Controls.Add(this.txtReason);
+            this.masterpanel.Controls.Add(this.labReason);
             this.masterpanel.Controls.Add(this.disExVoucherID);
             this.masterpanel.Controls.Add(this.lbExVoucherID);
             this.masterpanel.Controls.Add(this.comboFactory1);
@@ -131,8 +137,7 @@
             this.masterpanel.Controls.Add(this.labelNo);
             this.masterpanel.Controls.Add(this.dateApvDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(1006, 183);
-            this.masterpanel.Paint += new System.Windows.Forms.PaintEventHandler(this.Masterpanel_Paint);
+            this.masterpanel.Size = new System.Drawing.Size(1006, 211);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateApvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelNo, 0);
@@ -177,15 +182,18 @@
             this.masterpanel.Controls.SetChildIndex(this.comboFactory1, 0);
             this.masterpanel.Controls.SetChildIndex(this.lbExVoucherID, 0);
             this.masterpanel.Controls.SetChildIndex(this.disExVoucherID, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtReasonDesc, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 183);
-            this.detailpanel.Size = new System.Drawing.Size(1006, 246);
+            this.detailpanel.Location = new System.Drawing.Point(0, 211);
+            this.detailpanel.Size = new System.Drawing.Size(1006, 218);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(770, 148);
+            this.gridicon.Location = new System.Drawing.Point(770, 176);
             this.gridicon.TabIndex = 11;
             // 
             // refresh
@@ -194,7 +202,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1006, 246);
+            this.detailgridcont.Size = new System.Drawing.Size(1006, 218);
             // 
             // detail2
             // 
@@ -223,7 +231,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(990, 467);
+            this.browse.Size = new System.Drawing.Size(1006, 467);
             // 
             // tabs
             // 
@@ -325,6 +333,7 @@
             this.comboType.IsSupportUnselect = true;
             this.comboType.Location = new System.Drawing.Point(64, 33);
             this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(100, 24);
             this.comboType.TabIndex = 0;
             this.comboType.SelectedIndexChanged += new System.EventHandler(this.ComboType_SelectedIndexChanged);
@@ -337,8 +346,10 @@
             this.comboType2.IsSupportUnselect = true;
             this.comboType2.Location = new System.Drawing.Point(169, 33);
             this.comboType2.Name = "comboType2";
+            this.comboType2.OldText = "";
             this.comboType2.Size = new System.Drawing.Size(203, 24);
             this.comboType2.TabIndex = 1;
+            this.comboType2.SelectedIndexChanged += new System.EventHandler(this.comboType2_SelectedIndexChanged);
             // 
             // txtRemark
             // 
@@ -403,7 +414,7 @@
             // 
             // labelBLNo
             // 
-            this.labelBLNo.Location = new System.Drawing.Point(471, 151);
+            this.labelBLNo.Location = new System.Drawing.Point(471, 177);
             this.labelBLNo.Name = "labelBLNo";
             this.labelBLNo.Size = new System.Drawing.Size(60, 23);
             this.labelBLNo.TabIndex = 23;
@@ -521,14 +532,14 @@
             this.txtBLNo.BackColor = System.Drawing.Color.White;
             this.txtBLNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "BLNo", true));
             this.txtBLNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBLNo.Location = new System.Drawing.Point(532, 151);
+            this.txtBLNo.Location = new System.Drawing.Point(532, 177);
             this.txtBLNo.Name = "txtBLNo";
             this.txtBLNo.Size = new System.Drawing.Size(185, 23);
             this.txtBLNo.TabIndex = 8;
             // 
             // labelHandle
             // 
-            this.labelHandle.Location = new System.Drawing.Point(635, 6);
+            this.labelHandle.Location = new System.Drawing.Point(617, 6);
             this.labelHandle.Name = "labelHandle";
             this.labelHandle.Size = new System.Drawing.Size(80, 23);
             this.labelHandle.TabIndex = 30;
@@ -536,7 +547,7 @@
             // 
             // labelAccountant
             // 
-            this.labelAccountant.Location = new System.Drawing.Point(635, 35);
+            this.labelAccountant.Location = new System.Drawing.Point(617, 35);
             this.labelAccountant.Name = "labelAccountant";
             this.labelAccountant.Size = new System.Drawing.Size(80, 23);
             this.labelAccountant.TabIndex = 31;
@@ -544,7 +555,7 @@
             // 
             // labelApvDate
             // 
-            this.labelApvDate.Location = new System.Drawing.Point(635, 64);
+            this.labelApvDate.Location = new System.Drawing.Point(617, 64);
             this.labelApvDate.Name = "labelApvDate";
             this.labelApvDate.Size = new System.Drawing.Size(80, 23);
             this.labelApvDate.TabIndex = 32;
@@ -552,7 +563,7 @@
             // 
             // labelVoucherNo
             // 
-            this.labelVoucherNo.Location = new System.Drawing.Point(635, 93);
+            this.labelVoucherNo.Location = new System.Drawing.Point(617, 93);
             this.labelVoucherNo.Name = "labelVoucherNo";
             this.labelVoucherNo.Size = new System.Drawing.Size(80, 23);
             this.labelVoucherNo.TabIndex = 33;
@@ -562,7 +573,7 @@
             // 
             this.dateApvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ApvDate", true));
             this.dateApvDate.IsSupportEditMode = false;
-            this.dateApvDate.Location = new System.Drawing.Point(717, 64);
+            this.dateApvDate.Location = new System.Drawing.Point(700, 64);
             this.dateApvDate.Name = "dateApvDate";
             this.dateApvDate.ReadOnly = true;
             this.dateApvDate.Size = new System.Drawing.Size(130, 23);
@@ -573,9 +584,9 @@
             this.displayVoucherNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayVoucherNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherID", true));
             this.displayVoucherNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayVoucherNo.Location = new System.Drawing.Point(717, 93);
+            this.displayVoucherNo.Location = new System.Drawing.Point(700, 93);
             this.displayVoucherNo.Name = "displayVoucherNo";
-            this.displayVoucherNo.Size = new System.Drawing.Size(148, 23);
+            this.displayVoucherNo.Size = new System.Drawing.Size(174, 23);
             this.displayVoucherNo.TabIndex = 37;
             // 
             // btnShareExpense
@@ -636,6 +647,7 @@
             this.comboFactory1.IsSupportUnselect = true;
             this.comboFactory1.Location = new System.Drawing.Point(242, 6);
             this.comboFactory1.Name = "comboFactory1";
+            this.comboFactory1.OldText = "";
             this.comboFactory1.Size = new System.Drawing.Size(66, 24);
             this.comboFactory1.TabIndex = 41;
             // 
@@ -643,9 +655,9 @@
             // 
             this.txtSserAccountant.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Accountant", true));
             this.txtSserAccountant.DisplayBox1Binding = "";
-            this.txtSserAccountant.Location = new System.Drawing.Point(717, 35);
+            this.txtSserAccountant.Location = new System.Drawing.Point(700, 35);
             this.txtSserAccountant.Name = "txtSserAccountant";
-            this.txtSserAccountant.Size = new System.Drawing.Size(285, 23);
+            this.txtSserAccountant.Size = new System.Drawing.Size(295, 23);
             this.txtSserAccountant.TabIndex = 10;
             this.txtSserAccountant.TextBox1Binding = "";
             // 
@@ -653,9 +665,9 @@
             // 
             this.txtUserHandle.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Handle", true));
             this.txtUserHandle.DisplayBox1Binding = "";
-            this.txtUserHandle.Location = new System.Drawing.Point(717, 6);
+            this.txtUserHandle.Location = new System.Drawing.Point(700, 6);
             this.txtUserHandle.Name = "txtUserHandle";
-            this.txtUserHandle.Size = new System.Drawing.Size(285, 23);
+            this.txtUserHandle.Size = new System.Drawing.Size(295, 23);
             this.txtUserHandle.TabIndex = 9;
             this.txtUserHandle.TextBox1Binding = "";
             // 
@@ -682,9 +694,9 @@
             // 
             // lbExVoucherID
             // 
-            this.lbExVoucherID.Location = new System.Drawing.Point(615, 122);
+            this.lbExVoucherID.Location = new System.Drawing.Point(617, 122);
             this.lbExVoucherID.Name = "lbExVoucherID";
-            this.lbExVoucherID.Size = new System.Drawing.Size(102, 23);
+            this.lbExVoucherID.Size = new System.Drawing.Size(106, 23);
             this.lbExVoucherID.TabIndex = 42;
             this.lbExVoucherID.Text = "Ex Voucher No.";
             // 
@@ -692,10 +704,41 @@
             // 
             this.disExVoucherID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disExVoucherID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disExVoucherID.Location = new System.Drawing.Point(717, 122);
+            this.disExVoucherID.Location = new System.Drawing.Point(726, 122);
             this.disExVoucherID.Name = "disExVoucherID";
             this.disExVoucherID.Size = new System.Drawing.Size(148, 23);
             this.disExVoucherID.TabIndex = 43;
+            // 
+            // labReason
+            // 
+            this.labReason.Location = new System.Drawing.Point(471, 149);
+            this.labReason.Name = "labReason";
+            this.labReason.Size = new System.Drawing.Size(60, 23);
+            this.labReason.TabIndex = 42;
+            this.labReason.Text = "Reason";
+            // 
+            // txtReason
+            // 
+            this.txtReason.BackColor = System.Drawing.Color.White;
+            this.txtReason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Reason", true));
+            this.txtReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtReason.Location = new System.Drawing.Point(532, 149);
+            this.txtReason.Name = "txtReason";
+            this.txtReason.Size = new System.Drawing.Size(75, 23);
+            this.txtReason.TabIndex = 43;
+            this.txtReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtReason_PopUp);
+            this.txtReason.Validating += new System.ComponentModel.CancelEventHandler(this.txtReason_Validating);
+            // 
+            // txtReasonDesc
+            // 
+            this.txtReasonDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtReasonDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtReasonDesc.IsSupportEditMode = false;
+            this.txtReasonDesc.Location = new System.Drawing.Point(608, 149);
+            this.txtReasonDesc.Name = "txtReasonDesc";
+            this.txtReasonDesc.ReadOnly = true;
+            this.txtReasonDesc.Size = new System.Drawing.Size(217, 23);
+            this.txtReasonDesc.TabIndex = 44;
             // 
             // P08
             // 
@@ -778,5 +821,8 @@
         private Win.UI.Label label1;
         private Win.UI.DisplayBox disExVoucherID;
         private Win.UI.Label lbExVoucherID;
+        private Win.UI.Label labReason;
+        private Win.UI.TextBox txtReasonDesc;
+        private Win.UI.TextBox txtReason;
     }
 }

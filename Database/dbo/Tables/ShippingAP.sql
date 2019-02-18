@@ -22,9 +22,13 @@
     [AddDate]     DATETIME        NULL,
     [EditName]    VARCHAR (10)    CONSTRAINT [DF_ShippingAP_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME        NULL,
-    [FactoryID] VARCHAR(8) NULL, 
+    [FactoryID]   VARCHAR (8)     DEFAULT ('') NOT NULL,
+    [ExVoucherID] VARCHAR (16)    DEFAULT ('') NULL,
+    [Reason]      VARCHAR (5)     DEFAULT ('') NULL,
     CONSTRAINT [PK_ShippingAP] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -135,4 +139,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠別',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'傳票編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'VoucherID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'Reason';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�~�b�ǲ�ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShippingAP', @level2type = N'COLUMN', @level2name = N'ExVoucherID';
 

@@ -19,12 +19,13 @@ namespace Sci.Production.Cutting
         private DataTable detailTb;
         private DataTable sp;
         private string Poid;
+        private string KeyWord = Sci.Env.User.Keyword;
 
         public P02_BatchAssignCellCutDate(DataTable cursor)
         {
             InitializeComponent();
-            txtCutCell.MDivisionID = Sci.Env.User.Keyword;
-            txtCell2.MDivisionID = Sci.Env.User.Keyword;
+            txtCutCell.MDivisionID = this.KeyWord;
+            txtCell2.MDivisionID = this.KeyWord;
             detailTb = cursor;
             curTb = cursor.Copy();
             curTb.Columns.Add("Sel", typeof(bool));
@@ -41,19 +42,20 @@ namespace Sci.Production.Cutting
         private void gridsetup()
         {
             DataGridViewGeneratorTextColumnSettings Cell = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings SpreadingNo = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_Seq1 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings col_Seq2 = new DataGridViewGeneratorTextColumnSettings();
-            this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
+            #region Cell
             bool cellchk = true;
             Cell.EditingMouseDown += (s, e) =>
             {
                 DualResult DR; DataTable DT; SelectItem S;
                 if (e.Button == MouseButtons.Right)
                 {
-                    string keyWord = Sci.Env.User.Keyword;
                     // Parent form 若是非編輯狀態就 return 
                     if (!this.EditMode) { return; }
-                    string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord);
+                    string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.KeyWord);
                     DR = DBProxy.Current.Select(null, CUTCELL, out DT);
                     S = new SelectItem(DT, "ID", "10", DT.Columns["id"].ToString(), false, ",");
                     DialogResult result = S.ShowDialog();
@@ -70,8 +72,7 @@ namespace Sci.Production.Cutting
             Cell.CellValidating += (s, e) =>
             {
                 DualResult DR; DataTable DT;
-
-                string keyWord = Sci.Env.User.Keyword;
+                
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
@@ -83,7 +84,7 @@ namespace Sci.Production.Cutting
                 string oldvalue = dr["Cutcellid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
                 if (oldvalue == newvalue) return;
-                string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", keyWord);
+                string CUTCELL = string.Format("Select id from Cutcell WITH (NOLOCK) where mDivisionid = '{0}' and junk=0", this.KeyWord);
                 DR = DBProxy.Current.Select(null, CUTCELL, out DT);
 
                 DataRow[] seledr = DT.Select(string.Format("ID='{0}'", newvalue));
@@ -107,7 +108,78 @@ namespace Sci.Production.Cutting
                 }
                 dr.EndEdit();
             };
-            DataGridViewGeneratorDateColumnSettings EstCutDate = new DataGridViewGeneratorDateColumnSettings();
+            #endregion
+            #region Cell
+            bool col_SpreadingNoIDchk = true;
+            SpreadingNo.EditingMouseDown += (s, e) =>
+            {
+                DualResult Result;
+                DataTable DT;
+                SelectItem S;
+                if (e.Button == MouseButtons.Right)
+                {
+                    // Parent form 若是非編輯狀態就 return 
+                    if (!this.EditMode) { return; }
+                    string sqlSpreadingNo = $"Select id,CutCell=CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.KeyWord}' and junk=0";
+                    Result = DBProxy.Current.Select(null, sqlSpreadingNo, out DT);
+                    if (!Result)
+                    {
+                        this.ShowErr(Result);
+                        return;
+                    }
+                    S = new SelectItem(DT, "ID,CutCell", string.Empty, DT.Columns["id"].ToString(), false, ",");
+                    DialogResult result = S.ShowDialog();
+                    if (result == DialogResult.Cancel) { return; }
+                    DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+                    dr["SpreadingNoID"]= S.GetSelectedString();
+                    if (!MyUtility.Check.Empty(S.GetSelecteds()[0]["CutCell"]))
+                    {
+                        dr["Cutcellid"] = S.GetSelecteds()[0]["CutCell"];
+                        showMsgCheckCuttingWidth(MyUtility.Convert.GetString(S.GetSelecteds()[0]["CutCell"]), dr["SciRefno"].ToString());
+                    }
+                    dr.EndEdit();
+                    col_SpreadingNoIDchk = false;
+                }
+            };
+            SpreadingNo.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode) return; 
+                if (e.RowIndex == -1) return;
+                DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+
+                // 空白不檢查
+                if (e.FormattedValue.ToString().Empty()) return;
+                string oldvalue = dr["SpreadingNoID"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (oldvalue == newvalue) return;
+
+                DataRow SpreadingNodr;
+                string sqlSpreading = $"Select CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.KeyWord}' and  id = '{newvalue}' and junk=0";
+                if (!MyUtility.Check.Seek(sqlSpreading, out SpreadingNodr))
+                {
+                    dr["SpreadingNoID"] = "";
+                    dr.EndEdit();
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox(string.Format("<SpreadingNo> : {0} data not found!", newvalue));
+                    return;
+                }
+                
+                dr["SpreadingNoID"] = newvalue;
+
+                if (!MyUtility.Check.Empty(SpreadingNodr["CutCellID"]))
+                    dr["cutCellid"] = SpreadingNodr["CutCellID"];
+                if (!col_SpreadingNoIDchk)
+                {
+                    col_SpreadingNoIDchk = true;
+                }
+                else
+                {
+                    checkCuttingWidth(dr["cutCellid"].ToString(), dr["SCIRefno"].ToString());
+                }
+                dr.EndEdit();
+            };
+            #endregion
+
             EstCutDate.CellValidating += (s, e) =>
             {
                 if (!(MyUtility.Check.Empty(e.FormattedValue)))
@@ -190,6 +262,7 @@ namespace Sci.Production.Cutting
             #endregion
 
 
+            this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
              .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
              .Text("Cutref", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -197,6 +270,7 @@ namespace Sci.Production.Cutting
              .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5), iseditingreadonly: true)
              .Text("Fabriccombo", header: "Fabric Combo", width: Widths.AnsiChars(2), iseditingreadonly: true)
              .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.AnsiChars(2), iseditingreadonly: true)
+             .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(3), settings: SpreadingNo, iseditingreadonly: false)
              .Text("Cutcellid", header: "Cell", width: Widths.AnsiChars(2), settings: Cell, iseditingreadonly: false)
              .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -211,6 +285,8 @@ namespace Sci.Production.Cutting
              .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             this.gridBatchAssignCellEstCutDate.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["SpreadingNoID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridBatchAssignCellEstCutDate.Columns["SpreadingNoID"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["Cutcellid"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridBatchAssignCellEstCutDate.Columns["Cutcellid"].DefaultCellStyle.ForeColor = Color.Red;
             this.gridBatchAssignCellEstCutDate.Columns["estcutdate"].DefaultCellStyle.BackColor = Color.Pink;
@@ -375,7 +451,9 @@ where Seq1='{Seq1}' and Seq2='{Seq2}'
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             this.gridBatchAssignCellEstCutDate.ValidateControl();
-            string cell = txtCell2.Text; string cdate = "";
+            string SpreadingNo = txtSpreadingNo.Text;
+            string cell = txtCell2.Text;
+            string cdate = "";
             string Seq1 = txtSeq1.Text;
             string Seq2 = txtSeq2.Text;
             if (!MyUtility.Check.Empty(txtBatchUpdateEstCutDate.Value))
@@ -387,57 +465,12 @@ where Seq1='{Seq1}' and Seq2='{Seq2}'
                 if (dr["Sel"].ToString() == "True")
                 {
                     DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
-                    if (cell != "")
-                    {
-                        detaildr[0]["Cutcellid"] = cell;
-                        dr["Cutcellid"] = cell;
-                    }
 
-                    if (dr["Cutcellid"].ToString() != "")
-                    {
-                        string CUTCELL = dr["Cutcellid"].ToString();
-                        detaildr[0]["Cutcellid"] = CUTCELL;
-                    }
-                    else
-                    {
-                        detaildr[0]["Cutcellid"] = DBNull.Value;
-                        dr["Cutcellid"] = DBNull.Value;
-                    }
-
-                    if (cdate != "")
-                    {
-                        detaildr[0]["estcutdate"] = cdate;
-                        dr["estcutdate"] = cdate;
-                    }
-
-                    if (dr["estcutdate"].ToString() != "")
-                    {
-                        string ESTDATE = dr["estcutdate"].ToString();
-                        detaildr[0]["estcutdate"] = ESTDATE;
-                    }
-                    else
-                    {
-                        detaildr[0]["estcutdate"] = DBNull.Value;
-                        dr["estcutdate"] = DBNull.Value;
-                    }
-
-                    if (!MyUtility.Check.Empty(dr["Seq1"]))
-                    {
-                        detaildr[0]["Seq1"] = dr["Seq1"];
-                    }
-                    else
-                    {
-                        detaildr[0]["Seq1"] = string.Empty;
-                    }
-
-                    if (!MyUtility.Check.Empty(dr["Seq2"]))
-                    {
-                        detaildr[0]["Seq2"] = dr["Seq2"];
-                    }
-                    else
-                    {
-                        detaildr[0]["Seq2"] = string.Empty;
-                    }
+                    detaildr[0]["SpreadingNoID"] = dr["SpreadingNoID"];
+                    detaildr[0]["Cutcellid"] = dr["Cutcellid"];
+                    detaildr[0]["estcutdate"] = dr["estcutdate"];
+                    detaildr[0]["Seq1"] = dr["Seq1"];
+                    detaildr[0]["Seq2"] = dr["Seq2"];
                 }
             }
             Close();
@@ -482,7 +515,7 @@ where SCIRefno = '{0}'", strSCIRefno));
 select cuttingWidth = isnull (cuttingWidth, 0) 
 from CutCell 
 where   id = '{0}'
-        and MDivisionID = '{1}'", strCutCellID, Sci.Env.User.Keyword));
+        and MDivisionID = '{1}'", strCutCellID, this.KeyWord));
             if (!chkwidth.Empty() && !strCuttingWidth.Empty())
             {
                 decimal width_CM = decimal.Parse(chkwidth);
@@ -566,6 +599,54 @@ where   id = '{0}'
             if (result == DialogResult.Cancel) { return; }
             txtSeq1.Text = item.GetSelecteds()[0]["Seq1"].ToString();
             txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
+        }
+
+        private void btnBatchUpdateSpreadingNo_Click(object sender, EventArgs e)
+        {
+            this.gridBatchAssignCellEstCutDate.ValidateControl();
+            List<string> warningMsg = new List<string>();
+            // 不可輸入空白
+            if (MyUtility.Check.Empty(txtSpreadingNo.Text))
+            {
+                MyUtility.Msg.WarningBox("SpreadingNo can't be empty.");
+                return;
+            }
+            string SpreadingNoID = txtSpreadingNo.Text;
+            string cell = MyUtility.GetValue.Lookup($"Select CutCellID from SpreadingNo WITH (NOLOCK) where mDivisionid = '{this.KeyWord}' and  id = '{SpreadingNoID}' and junk=0");
+            foreach (DataRow dr in curTb.Rows)
+            {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
+
+                if (dr["Sel"].ToString() == "True")
+                {
+                    dr["SpreadingNoID"] = SpreadingNoID;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(cell))
+            {
+                foreach (DataRow dr in curTb.Rows)
+                {
+                    if (dr.RowState == DataRowState.Deleted)
+                        continue;
+
+                    if (dr["Sel"].ToString() == "True")
+                    {
+                        dr["Cutcellid"] = cell;
+                        dr.EndEdit();
+                        string strMsg = checkCuttingWidth(dr["Cutcellid"].ToString(), dr["SciRefno"].ToString());
+                        if (!strMsg.Empty())
+                        {
+                            warningMsg.Add(strMsg);
+                        }
+                    }
+                }
+                if (warningMsg.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox(warningMsg.Select(x => x).Distinct().ToList().JoinToString("\n"));
+                }
+            }
         }
     }
 }

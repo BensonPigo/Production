@@ -160,10 +160,11 @@ order by ID", masterData["LocalSuppID"]);
                         QtyGMT = row1["Qtygarment"].ToString(),
                         Amount = row1["Amount"].ToString(),
                         CutParts = row1["PatternDesc"].ToString(),
-                        ID = row1["ID"].ToString(),
-                        ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(),207,83)
+                        ID = row1["ID"].ToString()
                     }).ToList();
 
+                data[0].ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(), 207, 83);
+                data[0].LockName = Production.Class.UserESignature.getUserESignature(masterData["LockName"].ToString(), 207, 83);
                 report.ReportDataSource = data;
                 #endregion
 
@@ -237,10 +238,11 @@ order by ID", masterData["LocalSuppID"]);
                         PCS = row1["Stitch"].ToString(),
                         Unitprice = row1["Unitprice"].ToString(),
                         QtyGMT = row1["Qtygarment"].ToString(),
-                        Amount = row1["Amount"].ToString(),
-                        ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(),207,83)
+                        Amount = row1["Amount"].ToString()                        
                     }).ToList();
 
+                data[0].ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(), 207, 83);
+                data[0].LockName = Production.Class.UserESignature.getUserESignature(masterData["LockName"].ToString(), 185, 83);
                 report.ReportDataSource = data;
                 #endregion
 

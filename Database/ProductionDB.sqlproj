@@ -2311,6 +2311,19 @@
     <Build Include="dbo\Functions\GetLocalPurchaseStdCost.sql" />
     <Build Include="dbo\Tables\PackErrTransfer.sql" />
     <Build Include="dbo\Tables\PackErrCFM.sql" />
+    <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData.sql" />
+    <Build Include="dbo\Tables\WorkOrder_SizeRatioRevisedMarkerOriginalData.sql" />
+    <Build Include="dbo\Tables\WorkOrder_PatternPanelRevisedMarkerOriginalData.sql" />
+    <Build Include="dbo\Tables\WorkOrder_DistributeRevisedMarkerOriginalData.sql" />
+    <Build Include="dbo\Tables\SpreadingTime.sql" />
+    <Build Include="dbo\Tables\CuttingTime.sql" />
+    <Build Include="dbo\Tables\CuttingMachine_detail.sql" />
+    <Build Include="dbo\Tables\CuttingMachine.sql" />
+    <Build Include="dbo\Functions\GetSpreadingTime.sql" />
+    <Build Include="dbo\Functions\GetCuttingTime.sql" />
+    <Build Include="dbo\Functions\GetActualPerimeter.sql" />
+    <Build Include="dbo\Tables\SpreadingNo.sql" />
+    <Build Include="dbo\Tables\CuttingOutputFabricRecord.sql" />
     <Build Include="dbo\Functions\GetSubProcessDetailByOrderID.sql" />
   </ItemGroup>
   <ItemGroup>

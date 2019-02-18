@@ -20,5 +20,6 @@ namespace Sci.Production.Subcon
         public string Unit { get; set; }
         public decimal Amount { get; set; }
         public byte[] ApvName { get; set; }
+        public byte[] Lockname { get; set; }
     }
 }
