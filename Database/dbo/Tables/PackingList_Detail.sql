@@ -39,6 +39,8 @@
     [ActCTNWeight]       NUMERIC (7, 3) NULL,
     [EditLocationName]   VARCHAR (10)   NULL,
     [PackErrTransferDate] DATE NULL, 
+    [FtyReqReturnDate] DATE NULL, 
+    [FtyReqReturnReason] VARCHAR(5) NOT NULL, 
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 go

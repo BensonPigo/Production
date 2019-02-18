@@ -254,7 +254,7 @@
             this.btnUpdateAllReason.TabIndex = 13;
             this.btnUpdateAllReason.Text = "Update All Reason";
             this.btnUpdateAllReason.UseVisualStyleBackColor = true;
-            this.btnUpdateAllReason.Click += new System.EventHandler(this.btnUpdateAllReason_Click);
+            this.btnUpdateAllReason.Click += new System.EventHandler(this.BtnUpdateAllReason_Click);
             // 
             // comboReason
             // 

@@ -2311,6 +2311,7 @@
     <Build Include="dbo\Functions\GetLocalPurchaseStdCost.sql" />
     <Build Include="dbo\Tables\PackErrTransfer.sql" />
     <Build Include="dbo\Tables\PackErrCFM.sql" />
+    <Build Include="dbo\Tables\FtyReqReturnClog.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -206,7 +206,7 @@ SELECT
 	,pd.ClogLocationID
 	,pd.Remark
 	,pd.FtyReqReturnReason
-    ,[ReasonName]=''
+    ,[ReasonName]=pr.Description
 	,pd.FtyReqReturnDate
 	,pd.ReceiveDate
 	,pd.ReturnDate
@@ -218,6 +218,7 @@ INNER JOIN PackingList p WITH (NOLOCK) on p.id=pd.id
 LEFT JOIN Pullout po WITH (NOLOCK) on po.ID=p.PulloutID
 LEFT JOIN Orders o ON o.ID= pd.OrderID
 INNER JOIN Country c ON c.ID=o.Dest 
+LEFT JOIN PackingReason pr ON pr.Type='FG' AND pr.ID=pd.FtyReqReturnReason
 ----------
 OUTER APPLY(
 	select OrderID = stuff((
@@ -306,6 +307,7 @@ order by pd.ID,pd.Seq";
             string updateSqlCmd = string.Empty;
             string insertLog = string.Empty;
             DualResult resule;
+
             // 用於寫入FtyReqReturnClog的清單
             List<string> orderIds = new List<string>();
             Dictionary<string, Dictionary<string, string>> ins_FtyReqReturnClog_List = new Dictionary<string, Dictionary<string, string>>();
@@ -340,7 +342,7 @@ FROM #tmp a
 INNER JOIN PackingList_Detail b ON a.Ukey=b.Ukey
 WHERE (b.FtyReqReturnDate IS NULL AND a.Selected = 1)   --若FtyReqReturnDate IS NULL，表示不應該勾選，但在FORM上的被勾選了   = 有異動
 OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS NOT NULL，表示應該勾選，但在FORM上的沒勾選了 = 有異動
---OR a.FtyReqReturnReason <> b.FtyReqReturnReason  --Reason異動
+OR a.FtyReqReturnReason <> b.FtyReqReturnReason  --Reason異動
 ", out selectData);
 
                 if (selectData.Rows.Count == 0)
@@ -494,8 +496,14 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' ;
 
         private void BtnPrint_Click(object sender, EventArgs e)
         {
-            ClickPrint();
-
+            try
+            {
+                this.ClickPrint();
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+            }
         }
 
         protected override bool ClickPrint()
@@ -508,7 +516,6 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' ;
 
             #region 宣告
             DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
-            DualResult result;
             #endregion
 
             this.ShowWaitMessage("Data Processing ...");
@@ -548,11 +555,10 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
 
             // 將Form的資料整理成報表需要的樣子
 
-            // 1.OrderID 清單
+            // 1.OrderID 清單，一個Order ID就會有一個Sheet
             foreach (DataRow dr in selectedRows)
             {
                 string[] arry_Orderid = dr["OrderID"].ToString().Split(',');
-
 
                 for (int i = 0; i <= arry_Orderid.Length - 1; i++)
                 {
@@ -563,10 +569,9 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
                 }
             }
 
-
             Sci.Utility.Excel.SaveXltReportCls x1 = new Sci.Utility.Excel.SaveXltReportCls("Packing_P23.xltx");
 
-            // 幾個OrderId就Copy幾次
+            // 幾個OrderId就Copy幾次Sheet
             x1.CopySheet.Add(1, orderidList.Count - 1);
 
             // 一個Sheet是做一個DataTable，ControlNo是Key值，因此 SheetName 跟著ControlNo變化
@@ -661,9 +666,8 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
             this.Close();
         }
 
-        private void btnUpdateAllReason_Click(object sender, EventArgs e)
+        private void BtnUpdateAllReason_Click(object sender, EventArgs e)
         {
-
             if (this.listControlBindingSource.DataSource == null)
             {
                 return;
@@ -676,30 +680,43 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
             string reasonName = string.Empty;
             #endregion
 
-            // 確認有打勾的選項
-            DataRow[] selectedRows = dt.Select("selected=1");
+            try
+            {
+                this.ShowWaitMessage("Data Processing ...");
+                // 確認有打勾的選項
+                DataRow[] selectedRows = dt.Select("selected=1");
 
-            if (selectedRows.Length == 0)
-            {
-                MyUtility.Msg.WarningBox($"Please select data first!");
-                return;
-            }
-            if (!MyUtility.Check.Empty(this.comboReason.Text))
-            {
-                reasonId = this.comboReason.Text.Split('-')[0];
-                reasonName = this.comboReason.Text.Split('-')[1];
-            }
-
-            foreach (DataRow row in dt.Rows)
-            {
-                if (row["selected"].ToString() == "1")
+                if (selectedRows.Length == 0)
                 {
-                    row["FtyReqReturnReason"] = reasonId;
-                    row["ReasonName"] = reasonName;
+                    MyUtility.Msg.WarningBox($"Please select data first!");
+                    return;
                 }
-            }
 
-            this.listControlBindingSource.DataSource = dt;
+                if (!MyUtility.Check.Empty(this.comboReason.Text))
+                {
+                    reasonId = this.comboReason.Text.Split('-')[0];
+                    reasonName = this.comboReason.Text.Split('-')[1];
+                }
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    if (row["selected"].ToString() == "1")
+                    {
+                        row["FtyReqReturnReason"] = reasonId;
+                        row["ReasonName"] = reasonName;
+                    }
+                }
+
+                this.listControlBindingSource.DataSource = dt;
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+            }
+            finally
+            {
+                this.HideWaitMessage();
+            }
         }
     }
 }
