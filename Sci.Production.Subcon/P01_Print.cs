@@ -242,7 +242,7 @@ order by ID", masterData["LocalSuppID"]);
                     }).ToList();
 
                 data[0].ApvName = Production.Class.UserESignature.getUserESignature(masterData["apvname"].ToString(), 207, 83);
-                data[0].LockName = Production.Class.UserESignature.getUserESignature(masterData["LockName"].ToString(), 207, 83);
+                data[0].LockName = Production.Class.UserESignature.getUserESignature(masterData["LockName"].ToString(), 185, 83);
                 report.ReportDataSource = data;
                 #endregion
 
