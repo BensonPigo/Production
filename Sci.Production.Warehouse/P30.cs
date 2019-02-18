@@ -283,7 +283,7 @@ namespace Sci.Production.Warehouse
 	    where   fi.POID = pd.ID 
                 and fi.Seq1 = pd.Seq1 
                 and fi.Seq2 = pd.Seq2 
-                and fi.StockType = 'O' 
+                and fi.StockType = 'I' 
 	            and fid.MtlLocationID is not null 
                 and fi.Lock = 0 
                 and fi.InQty - fi.OutQty + fi.AdjustQty > 0
