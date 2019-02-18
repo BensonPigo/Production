@@ -801,7 +801,7 @@ where not exists(select Ukey from Production.dbo.Fabric_Content as a WITH (NOLOC
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.Fabric_HsCode
 from Production.dbo.Fabric_HsCode as a left join Trade_To_Pms.dbo.Fabric_HsCode as b
-on a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year
+on a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType
 where b.SCIRefno is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -820,8 +820,8 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.OldSys_Ukey	      =b.OldSys_Ukey	
       ,a.OldSys_Ver	      =b.OldSys_Ver	
-	  ,a.HSType 	      =b.HSType 	
-from Production.dbo.Fabric_HsCode as a inner join Trade_To_Pms.dbo.Fabric_HsCode as b ON a.SCIRefno=b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year
+
+from Production.dbo.Fabric_HsCode as a inner join Trade_To_Pms.dbo.Fabric_HsCode as b ON a.SCIRefno=b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.Fabric_HsCode(
        SCIRefno
@@ -838,7 +838,7 @@ INSERT INTO Production.dbo.Fabric_HsCode(
       ,EditDate
       ,OldSys_Ukey
       ,OldSys_Ver
-	  ,HSType
+
 )
 select
        SCIRefno
@@ -855,9 +855,9 @@ select
       ,EditDate
       ,OldSys_Ukey
       ,OldSys_Ver
-	  ,HSType
+
 from Trade_To_Pms.dbo.Fabric_HsCode as b WITH (NOLOCK)
-where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year)
+where not exists(select SCIRefno from Production.dbo.Fabric_HsCode as a WITH (NOLOCK) where a.SCIRefno = b.SCIRefno and  a.SuppID=b.SuppID and a.Year =b.Year and a.HSType =b.HSType)
 
 --CuttingTape
 --CuttingTape_Detail
