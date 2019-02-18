@@ -480,6 +480,11 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             ExcessTb = null;
             SizeRatioTb = null;
             headertb = null;
+            this.gridCutpart.DataSource = null;
+            this.gridAllPart.DataSource = null;
+            this.gridQty.DataSource = null;
+            this.gridArticleSize.DataSource = null;
+            this.gridCutRef.DataSource = null;
             #endregion
             //判斷必須有一條件存在
             if (MyUtility.Check.Empty(cutref) && MyUtility.Check.Empty(cutdate) && MyUtility.Check.Empty(poid))
@@ -676,11 +681,6 @@ Where   a.ukey = b.workorderukey
             {
                 MyUtility.Msg.WarningBox("No Data Found!");
                 this.HideWaitMessage();
-                gridCutpart.DataSource = null;
-                gridAllPart.DataSource = null;
-                gridQty.DataSource = null;
-                gridArticleSize.DataSource = null;
-                gridCutRef.DataSource = null;
                 return;
             }
 
@@ -1014,6 +1014,12 @@ order by ArticleGroup", patternukey);
         {
             DataRow selectDr_Cutref;
             DataRow selectDr_Artsize;
+
+            if (CutRefTb == null)
+            {
+                return;
+            }
+
             if (CutRefTb.Rows.Count == 0)
             {
                 return;
@@ -1278,6 +1284,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
             DataRow ndr = patternTb.NewRow();
             ndr["iden"] = selectDr["iden"];
+            ndr["cutref"] = selectDr["cutref"];
             patternTb.Rows.Add(ndr);
         }
 
@@ -1411,6 +1418,13 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                 string copycutref = frm.copycutref;
                 DataRow selectDr = ((DataRowView)gridArticleSize.GetSelecteds(SelectedSort.Index)[0]).Row;
                 string cutref = selectDr["Cutref"].ToString();
+
+                if (cutref.Equals(frm.copycutref))
+                {
+                    MyUtility.Msg.WarningBox("<CutRef> can not input selected CutRef itself");
+                    return;
+                }
+
                 int iden = Convert.ToInt16(selectDr["iden"]);
                 DataRow[] ArtDrAy = ArticleSizeTb.Select(string.Format("Cutref='{0}'", copycutref));
                 DataRow[] oldPatternDr = patternTb.Select(string.Format("Cutref='{0}'", copycutref));
@@ -1441,7 +1455,10 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                         ndr["Parts"] = dr2["Parts"];
                         ndr["isPair"] = dr2["isPair"];
                         patternTb.Rows.Add(ndr);
-                        npart = npart + Convert.ToInt16(dr2["Parts"]);
+                        if (!MyUtility.Check.Empty(dr2["Parts"]))
+                        {
+                            npart = npart + Convert.ToInt16(dr2["Parts"]);
+                        }
                     }
                     foreach (DataRow dr2 in allpartDv.Rows)
                     {
