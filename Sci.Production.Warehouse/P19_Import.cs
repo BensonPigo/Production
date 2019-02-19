@@ -74,13 +74,13 @@ namespace Sci.Production.Warehouse
             sbSQLCmd.Append(string.Format(@"
 select  0 as selected 
         , '' id
-        , a.id as PoId
-        , a.Seq1
-        , a.Seq2
-        , concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as seq
+        , c.PoId
+        , c.Seq1
+        , c.Seq2
+        , concat(Ltrim(Rtrim(c.seq1)), ' ', c.Seq2) as seq
         , a.FabricType
         , a.stockunit
-        , dbo.getmtldesc(a.id,a.seq1,a.seq2,2,0) Description
+        , dbo.getmtldesc(c.POID,c.seq1,c.seq2,2,0) Description
         , c.Roll
         , c.Dyelot
         , 0.00 as Qty
@@ -88,14 +88,14 @@ select  0 as selected
         , c.ukey as ftyinventoryukey
         , dbo.Getlocation(c.ukey) location
         , c.inqty-c.outqty + c.adjustqty as stockqty
-from dbo.PO_Supp_Detail a WITH (NOLOCK) 
-inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-inner join dbo.Orders on c.POID = orders.id
-inner join dbo.Factory on orders.FactoryID = factory.ID
+from ftyinventory c WITH (NOLOCK) 
+left join dbo.PO_Supp_Detail a WITH (NOLOCK)   on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
+left join dbo.Orders WITH (NOLOCK)  on c.POID = orders.id
+left join dbo.Factory WITH (NOLOCK)  on orders.FactoryID = factory.ID
 Where   c.lock = 0 
 and factory.MDivisionID = '{0}' 
         and c.inqty-c.outqty + c.adjustqty > 0 
-        and a.id = @sp 
+        and c.Poid = @sp 
         and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
 
             sp_seq1.Value = txtSeq1.seq1;
@@ -105,11 +105,11 @@ and factory.MDivisionID = '{0}'
             if (!txtSeq1.checkSeq1Empty() && txtSeq1.checkSeq2Empty())
             {
                 sbSQLCmd.Append(@"
-        and a.seq1 = @seq1 ");
+        and c.seq1 = @seq1 ");
             }else if (!txtSeq1.checkEmpty(showErrMsg: false))
             {
                 sbSQLCmd.Append(@" 
-        and a.seq1 = @seq1 and a.seq2 = @seq2");
+        and c.seq1 = @seq1 and c.seq2 = @seq2");
                 sp_seq1.Value = txtSeq1.seq1;
                 sp_seq2.Value = txtSeq1.seq2;
 
