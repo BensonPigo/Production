@@ -788,6 +788,7 @@ from PackingList pl
                         {
                             noAirpp = true;
                         }
+                    }
                 }
 
                 if (msg.Length > 0)
