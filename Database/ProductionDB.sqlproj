@@ -2325,6 +2325,7 @@
     <Build Include="dbo\Tables\SpreadingNo.sql" />
     <Build Include="dbo\Tables\CuttingOutputFabricRecord.sql" />
     <Build Include="dbo\Functions\GetSubProcessDetailByOrderID.sql" />
+    <Build Include="dbo\Tables\VNContractQtyAdjust_Detail_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
