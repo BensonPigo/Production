@@ -324,7 +324,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 patternTb.Rows.Add(ndr);
             }
 
-            MyUtility.Tool.ProcessWithDatatable(alltmpTb, "sel,PatternCode,PatternDesc,parts,annotation,isPair", "Select distinct sel,PatternCode,PatternDesc,parts,annotation,isPair from #tmp", out allpartTb);
+            MyUtility.Tool.ProcessWithDatatable(alltmpTb, "sel,PatternCode,PatternDesc,parts,annotation,isPair", "Select sel,PatternCode,PatternDesc,parts,annotation,isPair from #tmp", out allpartTb);
             foreach (DataRow dr in allpartTb.Rows)
             {
                 DataRow[] adr = garmentTb.Select(string.Format("PatternCode='{0}'", dr["patternCode"]));
@@ -1041,6 +1041,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
             int j = 0;
             int detailRow = 0;
             int tmpRow = bundle_detail_tmp.Rows.Count;
+            bool notYetInsertAllPart = true;
             foreach (DataRow dr in detailTb.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
@@ -1059,39 +1060,35 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                         dr["ukey1"] = tmpdr["ukey1"];
                         dr["isPair"] = tmpdr["isPair"];
                         j++;
-                        if (tmpdr["PatternCode"].ToString() == "ALLPARTS")
+                        if (tmpdr["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
                         {
 
-                            #region 讓Bundle_Detail_Allpart只產生一份資料
-                            if (allpartTb.Rows.Count > alltmpTb.Rows.Count)
+                            foreach (DataRow aldr in allpartTb.Rows)
                             {
-                                foreach (DataRow aldr in allpartTb.Rows)
+                                if (aldr.RowState == DataRowState.Deleted)
                                 {
-                                    if (aldr.RowState == DataRowState.Deleted)
-                                    {
-                                        continue;
-                                    }
-
-                                    if (aldr["Parts"] == DBNull.Value)
-                                    {
-                                        continue;
-                                    }
-
-                                    if (Convert.ToInt32(aldr["Parts"]) == 0)
-                                    {
-                                        continue;
-                                    }
-
-                                    DataRow allpart_ndr = alltmpTb.NewRow();
-                                    allpart_ndr["PatternCode"] = aldr["PatternCode"];
-                                    allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                                    allpart_ndr["Parts"] = aldr["Parts"];
-                                    allpart_ndr["ukey1"] = dr["ukey1"];
-                                    allpart_ndr["ispair"] = aldr["ispair"];
-                                    alltmpTb.Rows.Add(allpart_ndr);
+                                    continue;
                                 }
+
+                                if (aldr["Parts"] == DBNull.Value)
+                                {
+                                    continue;
+                                }
+
+                                if (Convert.ToInt32(aldr["Parts"]) == 0)
+                                {
+                                    continue;
+                                }
+
+                                DataRow allpart_ndr = alltmpTb.NewRow();
+                                allpart_ndr["PatternCode"] = aldr["PatternCode"];
+                                allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                                allpart_ndr["Parts"] = aldr["Parts"];
+                                allpart_ndr["ukey1"] = dr["ukey1"];
+                                allpart_ndr["ispair"] = aldr["ispair"];
+                                alltmpTb.Rows.Add(allpart_ndr);
                             }
-                            #endregion
+                            notYetInsertAllPart = false;
 
                         }
                         else
@@ -1133,41 +1130,36 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                     ndr["ukey1"] = tmpdr["ukey1"];
                     ndr["isPair"] = tmpdr["isPair"];
                     detailTb.Rows.Add(ndr);
-                    if (tmpdr["PatternCode"].ToString() == "ALLPARTS")
+                    if (tmpdr["PatternCode"].ToString() == "ALLPARTS" && notYetInsertAllPart)
                     {
 
-                        #region 讓Bundle_Detail_Allpart只產生一份資料
-                        if (allpartTb.Rows.Count > alltmpTb.Rows.Count)
+                        foreach (DataRow aldr in allpartTb.Rows)
                         {
-                            foreach (DataRow aldr in allpartTb.Rows)
+                            if (aldr.RowState == DataRowState.Deleted)
                             {
-                                if (aldr.RowState == DataRowState.Deleted)
-                                {
-                                    continue;
-                                }
-
-                                if (aldr["Parts"] == DBNull.Value)
-                                {
-                                    continue;
-                                }
-
-                                if (Convert.ToInt32(aldr["Parts"]) == 0)
-                                {
-                                    continue;
-                                }
-
-                                DataRow allpart_ndr = alltmpTb.NewRow();
-
-                                allpart_ndr["PatternCode"] = aldr["PatternCode"];
-                                allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
-                                allpart_ndr["Parts"] = aldr["Parts"];
-                                allpart_ndr["ukey1"] = tmpdr["ukey1"];
-                                allpart_ndr["isPair"] = aldr["isPair"];
-                                alltmpTb.Rows.Add(allpart_ndr);
+                                continue;
                             }
-                        }
-                        #endregion
 
+                            if (aldr["Parts"] == DBNull.Value)
+                            {
+                                continue;
+                            }
+
+                            if (Convert.ToInt32(aldr["Parts"]) == 0)
+                            {
+                                continue;
+                            }
+
+                            DataRow allpart_ndr = alltmpTb.NewRow();
+
+                            allpart_ndr["PatternCode"] = aldr["PatternCode"];
+                            allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                            allpart_ndr["Parts"] = aldr["Parts"];
+                            allpart_ndr["ukey1"] = tmpdr["ukey1"];
+                            allpart_ndr["isPair"] = aldr["isPair"];
+                            alltmpTb.Rows.Add(allpart_ndr);
+                        }
+                        notYetInsertAllPart = false;
                     }
                     else
                     {
