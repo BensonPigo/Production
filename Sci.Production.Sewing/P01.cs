@@ -1543,7 +1543,7 @@ where not exists (select 1
 						and sodd.OrderId = sod.OrderId
 						and sodd.ComboType = sod.ComboType
 						and sodd.Article = sod.Article)
-      and sod.id = '{this.CurrentMaintain["ID"]}'";
+      and sod.id = '{this.CurrentMaintain["ID"]}' and sod.QAQty > 0";
             DataTable dtLoseSubDetail;
             DualResult result = DBProxy.Current.Select(null, sqlCheckSubDetail, out dtLoseSubDetail);
 
