@@ -32,7 +32,7 @@ BEGIN
 
 	--For Each Size Group
 	--select * into #SizeCodes from GetSizeCodeColumnByID(@OrderID,1) a where a.SizeCode in (select SizeCode from #tmp) order by Seq
-		select c.SizeCode,c.SizeGroup,ROW_NUMBER() over(order by  SizeGroup,seq) Seq Into #SizeCodes from (
+		select c.SizeCode,c.SizeGroup,ROW_NUMBER() over(order by  SizeGroup,SizeCode,seq) Seq Into #SizeCodes from (
 		select distinct a.SizeCode,sm.SizeGroup,o.Seq  from Order_EachCons_SizeQty a
 		left join Order_EachCons b on a.Order_EachConsUkey = b.Ukey
 		left join SMNotice sm on b.SMNoticeID = sm.ID
