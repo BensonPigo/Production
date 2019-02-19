@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtmulituser = new Sci.Production.Class.txtmulituser();
+            this.radioSummery = new Sci.Win.UI.RadioButton();
+            this.radioDetail = new Sci.Win.UI.RadioButton();
+            this.labReportType = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.labelBrand = new Sci.Win.UI.Label();
             this.dateInspectionDate = new Sci.Win.UI.DateRange();
             this.label9 = new Sci.Win.UI.Label();
@@ -38,11 +43,6 @@
             this.labelInspectionDate = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.labReportType = new Sci.Win.UI.Label();
-            this.radioDetail = new Sci.Win.UI.RadioButton();
-            this.radioSummery = new Sci.Win.UI.RadioButton();
-            this.txtmulituser = new Sci.Production.Class.txtmulituser();
-            this.txtbrand = new Sci.Production.Class.txtbrand();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,6 +78,56 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(426, 191);
             this.panel1.TabIndex = 94;
+            // 
+            // txtmulituser
+            // 
+            this.txtmulituser.DisplayBox1Binding = "";
+            this.txtmulituser.Location = new System.Drawing.Point(123, 42);
+            this.txtmulituser.Name = "txtmulituser";
+            this.txtmulituser.Size = new System.Drawing.Size(300, 23);
+            this.txtmulituser.TabIndex = 1;
+            this.txtmulituser.TextBox1Binding = "";
+            // 
+            // radioSummery
+            // 
+            this.radioSummery.AutoSize = true;
+            this.radioSummery.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioSummery.Location = new System.Drawing.Point(200, 149);
+            this.radioSummery.Name = "radioSummery";
+            this.radioSummery.Size = new System.Drawing.Size(85, 21);
+            this.radioSummery.TabIndex = 6;
+            this.radioSummery.Text = "Summery";
+            this.radioSummery.UseVisualStyleBackColor = true;
+            // 
+            // radioDetail
+            // 
+            this.radioDetail.AutoSize = true;
+            this.radioDetail.Checked = true;
+            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioDetail.Location = new System.Drawing.Point(132, 149);
+            this.radioDetail.Name = "radioDetail";
+            this.radioDetail.Size = new System.Drawing.Size(62, 21);
+            this.radioDetail.TabIndex = 5;
+            this.radioDetail.TabStop = true;
+            this.radioDetail.Text = "Detail";
+            this.radioDetail.UseVisualStyleBackColor = true;
+            // 
+            // labReportType
+            // 
+            this.labReportType.Location = new System.Drawing.Point(12, 149);
+            this.labReportType.Name = "labReportType";
+            this.labReportType.Size = new System.Drawing.Size(105, 23);
+            this.labReportType.TabIndex = 115;
+            this.labReportType.Text = "Report Type";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(120, 113);
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(94, 23);
+            this.txtbrand.TabIndex = 4;
             // 
             // labelBrand
             // 
@@ -173,56 +223,6 @@
             this.label10.Size = new System.Drawing.Size(92, 22);
             this.label10.TabIndex = 97;
             this.label10.Text = "Paper Size A4";
-            // 
-            // labReportType
-            // 
-            this.labReportType.Location = new System.Drawing.Point(12, 149);
-            this.labReportType.Name = "labReportType";
-            this.labReportType.Size = new System.Drawing.Size(105, 23);
-            this.labReportType.TabIndex = 115;
-            this.labReportType.Text = "Report Type";
-            // 
-            // radioDetail
-            // 
-            this.radioDetail.AutoSize = true;
-            this.radioDetail.Checked = true;
-            this.radioDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioDetail.Location = new System.Drawing.Point(132, 149);
-            this.radioDetail.Name = "radioDetail";
-            this.radioDetail.Size = new System.Drawing.Size(62, 21);
-            this.radioDetail.TabIndex = 116;
-            this.radioDetail.TabStop = true;
-            this.radioDetail.Text = "Detail";
-            this.radioDetail.UseVisualStyleBackColor = true;
-            // 
-            // radioSummery
-            // 
-            this.radioSummery.AutoSize = true;
-            this.radioSummery.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioSummery.Location = new System.Drawing.Point(200, 149);
-            this.radioSummery.Name = "radioSummery";
-            this.radioSummery.Size = new System.Drawing.Size(85, 21);
-            this.radioSummery.TabIndex = 117;
-            this.radioSummery.Text = "Summery";
-            this.radioSummery.UseVisualStyleBackColor = true;
-            // 
-            // txtmulituser
-            // 
-            this.txtmulituser.DisplayBox1Binding = "";
-            this.txtmulituser.Location = new System.Drawing.Point(123, 42);
-            this.txtmulituser.Name = "txtmulituser";
-            this.txtmulituser.Size = new System.Drawing.Size(300, 23);
-            this.txtmulituser.TabIndex = 98;
-            this.txtmulituser.TextBox1Binding = "";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(120, 113);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(94, 23);
-            this.txtbrand.TabIndex = 4;
             // 
             // R08
             // 
