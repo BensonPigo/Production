@@ -490,14 +490,7 @@ Cutplanid, str_PIVOT);
             worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
             worksheet.Cells[9, 2] = OrderDr["Styleid"];
             worksheet.Cells[10, 2] = OrderDr["Seasonid"];
-            worksheet.Cells[10, 13] = OrderDr["Sewline"];
-
-            for (int nColumn = 3; nColumn <= 21; nColumn += 3)
-            {
-                worksheet.Cells[40, nColumn] = OrderDr["Styleid"];
-                worksheet.Cells[41, nColumn] = detDr["ID"];
-            }
-
+            worksheet.Cells[10, 14] = OrderDr["Sewline"];
             #endregion
 
             int nSheet = 1;
@@ -526,8 +519,8 @@ Cutplanid, str_PIVOT);
                 worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
                 worksheet.Select();
                 worksheet.Name = Cutrefdr["Cutref"].ToString();
-                worksheet.Cells[3, 19] = Cutrefdr["Cutref"].ToString();
-                worksheet.Cells[9, 13] = ((DateTime)MyUtility.Convert.GetDate(Cutrefdr["Estcutdate"])).ToShortDateString();
+                worksheet.Cells[3, 24] = Cutrefdr["Cutref"].ToString();
+                worksheet.Cells[9, 14] = ((DateTime)MyUtility.Convert.GetDate(Cutrefdr["Estcutdate"])).ToShortDateString();
                 nSheet++;
             }
             nSheet = 1;
@@ -550,8 +543,8 @@ Cutplanid, str_PIVOT);
                 if (WorkorderArry.Length > 0)
                 {
                     pattern = "";
-                    worksheet.Cells[8, 13] = WorkorderArry[0]["MarkerDownLoadId"].ToString();
-                    worksheet.Cells[13, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
+                    worksheet.Cells[8, 14] = WorkorderArry[0]["MarkerDownLoadId"].ToString();
+                    worksheet.Cells[14, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
                     if (WorkorderPatternArry.Length > 0)
                     {
                         foreach (DataRow patDr in WorkorderPatternArry)
@@ -563,10 +556,10 @@ Cutplanid, str_PIVOT);
                         }
                     }
 
-                    worksheet.Cells[13, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
-                    worksheet.Cells[13, 5] = pattern;
+                    worksheet.Cells[14, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
+                    worksheet.Cells[14, 5] = pattern;
                     string fd = "#" + WorkorderArry[0]["SCIRefno"].ToString().Trim() + " " + WorkorderArry[0]["Description"].ToString();
-                    worksheet.Cells[13, 9] = fd;
+                    worksheet.Cells[14,10] = fd;
                     int fl = 48;
                     int fla = fd.Length / fl;
                     for (int i = 1; i <= fla; i++)
@@ -577,15 +570,7 @@ Cutplanid, str_PIVOT);
                             rangeRow13.RowHeight = 19.125 * (i + 1);
                         }
                     }        
-                    worksheet.Cells[13, 20] = WorkorderArry[0]["width"].ToString();
-                    #region 從後面開始寫 先寫Refno,Color
-
-                    for (int nColumn = 3; nColumn <= 22; nColumn += 3)
-                    {
-                        worksheet.Cells[37, nColumn] = WorkorderArry[0]["Refno"];
-                        worksheet.Cells[38, nColumn] = WorkorderArry[0]["Colorid"];
-                    }
-                    #endregion
+                    worksheet.Cells[14, 25] = WorkorderArry[0]["width"].ToString();
                 }
                 #region OrderSP List, Line List
                 if (WorkorderOrderIDArry.Length > 0)
@@ -616,12 +601,8 @@ Cutplanid, str_PIVOT);
                 }
                 #endregion
 
-
-
                 #region Markname
                 int nrow = 12;
-
-
                 if (SizeArry.Length > 0)
                 {
 
@@ -643,8 +624,8 @@ Cutplanid, str_PIVOT);
                     worksheet.Cells[12, 1] = WorkorderArry[0]["MarkerName"].ToString();
                     worksheet.Cells[12, 4] = WorkorderArry[0]["MarkerNo"].ToString();
                     worksheet.Cells[12, 6] = WorkorderArry[0]["MarkerLength"].ToString() + "\n" + WorkorderArry[0]["yds"].ToString() + "Y (" + unit + "M)" ;
-                    worksheet.Cells[12, 10] = size;
-                    worksheet.Cells[12, 12] = Ratio;
+                    worksheet.Cells[12, 11] = size;
+                    worksheet.Cells[12, 13] = Ratio;
                     int l = 11;
                     int la = size.Length / l;
                     int la2 = Ratio.Length / l;
@@ -663,7 +644,7 @@ Cutplanid, str_PIVOT);
                 #region Distribute to SP#
                 if (WorkorderDisArry.Length > 0)
                 {
-                    nrow = 16; //到Distribute ROW
+                    nrow = 17; //到Distribute ROW
                     nDisCount = WorkorderDisArry.Length;
                     disRow = Math.Ceiling(Convert.ToDouble(nDisCount) / 2); //每一個Row 有兩個可以用
                     int arrayrow = 0;
@@ -679,28 +660,25 @@ Cutplanid, str_PIVOT);
                         worksheet.Cells[nrow, 1] = WorkorderDisArry[arrayrow]["OrderID"].ToString();
                         worksheet.Cells[nrow, 4] = WorkorderDisArry[arrayrow]["Article"].ToString();
                         worksheet.Cells[nrow, 7] = WorkorderDisArry[arrayrow]["SizeCode"].ToString();
-                        worksheet.Cells[nrow, 9] = WorkorderDisArry[arrayrow]["Qty"].ToString();
+                        worksheet.Cells[nrow, 10] = WorkorderDisArry[arrayrow]["Qty"].ToString();
                         if (arrayrow + 1 < nDisCount)
                         {
-                            worksheet.Cells[nrow, 11] = WorkorderDisArry[arrayrow + 1]["OrderID"].ToString();
-                            worksheet.Cells[nrow, 14] = WorkorderDisArry[arrayrow + 1]["Article"].ToString();
-                            worksheet.Cells[nrow, 17] = WorkorderDisArry[arrayrow + 1]["SizeCode"].ToString();
-                            worksheet.Cells[nrow, 19] = WorkorderDisArry[arrayrow + 1]["Qty"].ToString();
+                            worksheet.Cells[nrow, 12] = WorkorderDisArry[arrayrow + 1]["OrderID"].ToString();
+                            worksheet.Cells[nrow, 19] = WorkorderDisArry[arrayrow + 1]["Article"].ToString();
+                            worksheet.Cells[nrow, 22] = WorkorderDisArry[arrayrow + 1]["SizeCode"].ToString();
+                            worksheet.Cells[nrow, 24] = WorkorderDisArry[arrayrow + 1]["Qty"].ToString();
                         }
                         else
                         {
                             worksheet.Cells[nrow, 11] = "";
-                            worksheet.Cells[nrow, 14] = "";
-                            worksheet.Cells[nrow, 17] = "";
                             worksheet.Cells[nrow, 19] = "";
+                            worksheet.Cells[nrow, 22] = "";
+                            worksheet.Cells[nrow, 24] = "";
                         }
                         nrow++;
                     }
-                    // nrow = nrow + Convert.ToInt16(disRow);
                 }
-
                 #endregion
-
 
                 string str_PIVOT = "";
                 nSizeColumn = 4;
@@ -714,27 +692,11 @@ Cutplanid, str_PIVOT);
                     nSizeColumn++;
                 }
                 str_PIVOT = str_PIVOT.Substring(0, str_PIVOT.Length - 1);
-
-                //if (_worktype == 2)
-                //{
+                
                     Pivot_cmd = string.Format(@"
 Select Cutno,Colorid,SizeCode,Cons,Layer,workorderukey,(Qty*Layer) as TotalQty from 
 #tmp
 Where Cutref = '{0}'", cutref);
-//                }
-//                else
-//                {                    
-//                    Pivot_cmd = string.Format(
-//@"Select * From
-//(
-//    Select Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
-//    #tmp
-//    Where Cutref = '{0}'
-//) as mTb
-//Pivot(Sum(TotalQty)
-//for SizeCode in ({1})) as pIvT 
-//order by Cutno,Colorid", cutref, str_PIVOT);
-//                }
 
                 if (CutQtyTb != null)
                 {
@@ -749,25 +711,6 @@ Where Cutref = '{0}'", cutref);
                 nrow = nrow + 2;
                 int copyrow = 0;
                 TotConsRowS = nrow; //第一個Cons
-                //foreach (DataRow cutqtydr in CutQtyTb.Rows)
-                //{
-                //    if (copyrow > 0)
-                //    {
-                //        Excel.Range r = worksheet.get_Range("A" + (nrow).ToString(), "A" + (nrow).ToString()).EntireRow;
-                //        r.Copy();
-                //        r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); //新增Row
-                //    }
-                //    worksheet.Cells[nrow, 1] = cutqtydr["Cutno"].ToString();
-                //    worksheet.Cells[nrow, 2] = cutqtydr["Colorid"].ToString();
-                //    worksheet.Cells[nrow, 3] = cutqtydr["Layer"].ToString();
-                //    worksheet.Cells[nrow, 20] = cutqtydr["Cons"].ToString();
-                //    for (int nSizeDetail = 0; nSizeDetail < SizeArry.Length; nSizeDetail++)
-                //    {
-                //        worksheet.Cells[nrow, nSizeDetail + 4] = cutqtydr[5].ToString(); //+4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
-                //    }
-                //    nrow++;
-                //    copyrow++;
-                //}
 
                 var distinct_CutQtyTb = from r1 in CutQtyTb.AsEnumerable()
                                         group r1 by new
@@ -798,21 +741,17 @@ Where Cutref = '{0}'", cutref);
                     worksheet.Cells[nrow, 1] = dis_dr.Cutno;
                     worksheet.Cells[nrow, 2] = dis_dr.Colorid;
                     worksheet.Cells[nrow, 3] = dis_dr.Layer;
-                    worksheet.Cells[nrow, 20] = dis_dr.Cons;
+                    worksheet.Cells[nrow, 25] = dis_dr.Cons;
 
                     foreach (DataRow dr in CutQtyTb.Select(string.Format("workorderukey = '{0}'", dis_dr.workorderukey)))
                     {
-
                         for (int i = 0; i < SizeArry.Length; i++)
                         {
                             if (SizeArry[i].Field<string>("SizeCode").Equals(dr["SizeCode"]))
                             {
                                 worksheet.Cells[nrow, i + 4] = dr["TotalQty"];
-
                             }
-
                         }
-
                     }
 
                     nrow++;
@@ -822,7 +761,7 @@ Where Cutref = '{0}'", cutref);
 
                 TotConsRowE = nrow - 1; //最後一個Cons
                 #region Total Cons
-                worksheet.Cells[nrow+1, 20] = string.Format("=SUM(T{0}:T{1})", TotConsRowS, TotConsRowE);
+                worksheet.Cells[nrow+1, 25] = string.Format("=SUM(T{0}:T{1})", TotConsRowS, TotConsRowE);
                 #endregion
                 nSheet++;
             }
@@ -834,13 +773,13 @@ Where Cutref = '{0}'", cutref);
                 worksheet.Select();
                 if (!MyUtility.Check.Empty(Cutrefdr["shc"]))
                 {
-                    Excel.Range r = worksheet.get_Range("A14", "A14").EntireRow;
+                    Excel.Range r = worksheet.get_Range("A15", "A15").EntireRow;
                     r.Insert(Excel.XlInsertShiftDirection.xlShiftDown); //新增Row
-                    Microsoft.Office.Interop.Excel.Range rng2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("I14:U14");
+                    Microsoft.Office.Interop.Excel.Range rng2 = (Microsoft.Office.Interop.Excel.Range)worksheet.get_Range("J15:Z15");
                     rng2.Merge();
                     rng2.Cells.Font.Color = Color.Red;
                     rng2.Cells.Font.Bold = true;
-                    worksheet.Cells[14, 9] = Cutrefdr["shc"];
+                    worksheet.Cells[15, 10] = Cutrefdr["shc"];
                 }
                 nSheet++;
             }
