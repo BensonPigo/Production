@@ -265,9 +265,9 @@ namespace Sci.Production.Warehouse
             , o.FactoryID 
             , pd.seq1
             , pd.seq2
-            , pd.StockPOID
-            , pd.StockSeq1
-            , pd.StockSeq2
+            , pd.ID AS StockPOID
+            , pd.SEQ1 AS StockSeq1
+            , pd.SEQ2 AS StockSeq2
             ,ROUND(dbo.GetUnitQty(pd.POUnit,pd.StockUnit,x.taipei_qty), 2) N'PoQty'
             , pd.POUnit
             , pd.StockUnit
@@ -499,7 +499,7 @@ drop table #tmp
 
                 if (dr["selected"].ToString() == "True" && !MyUtility.Check.Empty(dr["requestqty"]))
                 {
-                    var issued = PublicPrg.Prgs.autopick(dr, false, "O");
+                    var issued = PublicPrg.Prgs.autopick(dr, false, "I");
                     if (issued == null)
                         return;
 
