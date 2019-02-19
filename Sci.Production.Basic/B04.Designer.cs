@@ -386,11 +386,12 @@
             // 
             // B04
             // 
-            this.ClientSize = new System.Drawing.Size(832, 457);
+            this.ClientSize = new System.Drawing.Size(901, 469);
             this.DefaultControl = "txtCode";
             this.DefaultControlForEdit = "txtTel";
             this.DefaultOrder = "ID";
             this.EnableGridJunkColor = true;
+            this.ExpressQuery = true;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
@@ -398,6 +399,7 @@
             this.Text = "B04. Supplier/Sub Con (Local)";
             this.UniqueExpress = "ID";
             this.WorkAlias = "LocalSupp";
+            this.Load += new System.EventHandler(this.B04_FormLoaded);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
