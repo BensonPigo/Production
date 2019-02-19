@@ -859,8 +859,7 @@
             this.chkImportChange.Size = new System.Drawing.Size(138, 21);
             this.chkImportChange.TabIndex = 55;
             this.chkImportChange.Text = "No Import Charge";
-            this.chkImportChange.UseVisualStyleBackColor = true;
-            this.chkImportChange.CheckedChanged += new System.EventHandler(this.ChkImportChange_CheckedChanged);
+            this.chkImportChange.UseVisualStyleBackColor = true; 
             // 
             // txttpeuserHandle
             // 
