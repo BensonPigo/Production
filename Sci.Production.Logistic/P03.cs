@@ -63,7 +63,7 @@ namespace Sci.Production.Logistic
                 DataRow dr = this.gridReceiveDate.GetDataRow<DataRow>(e.RowIndex);
                 dr["selected"] = e.FormattedValue;
                 dr.EndEdit();
-                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Length;
+                int sint = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1"+ (this.chkOnlyReqCarton.Checked ? "AND FtyReqReturnDate IS NOT NULL" : string.Empty)).Length;
                 this.numSelectedCTNQty.Value = sint;
             };
 
@@ -269,6 +269,7 @@ order by rn ");
         private void BtnFind_Click(object sender, EventArgs e)
         {
             this.Find();
+            this.Grid_Filter();
         }
 
         // Import From Barcode
@@ -289,6 +290,7 @@ TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo'
 ,0 as rn
 ,0 as rn1
 , c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, c.Customize1, d.Alias, c.BuyerDelivery, b.ClogLocationId, '' as Remark, b.TransferCFADate ,b.CFAReturnClogDate  ,b.CustCTN
+,[FtyGroup]=a.FactoryID ,b.FtyReqReturnDate
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
 
                 DualResult selectResult;
@@ -325,8 +327,15 @@ from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c
                                 dr["CTNStartNo"] = MyUtility.Convert.GetInt(sl[1].Substring(13));
                                 string sqlCmd = string.Format(
                                     @"
-select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
+select 
+pd.OrderID
+,pd.OrderShipmodeSeq
+,pd.ReceiveDate
+,pd.FtyReqReturnDate
+,pd.ReturnDate
+,pd.ClogLocationId,p.MDivisionID
 ,pd.TransferCFADate ,pd.CFAReturnClogDate 
+,p.FactoryID
 from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                     dr["PackingListID"].ToString(),
@@ -364,6 +373,8 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                     dr["ReceiveDate"] = seekData["ReceiveDate"];
                                     dr["TransferCFADate"] = seekData["TransferCFADate"];
                                     dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
+                                    dr["FtyReqReturnDate"] = seekData["FtyReqReturnDate"];
+                                    dr["FtyGroup"] = seekData["FactoryID"];
                                     string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
                                     sqlCmd = string.Format(
                                         @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
@@ -390,7 +401,7 @@ where pd.ID = '{0}' and CTNStartNo = '{1}' and pd.CTNQty > 0",
                                     dr["CustCTN"] = sl[1];
                                     sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
-,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo
+,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID
 from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -428,6 +439,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                                         dr["ReceiveDate"] = seekData["ReceiveDate"];
                                         dr["TransferCFADate"] = seekData["TransferCFADate"];
                                         dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
+                                        dr["FtyReqReturnDate"] = seekData["FtyReqReturnDate"];
+                                        dr["FtyGroup"] = seekData["FactoryID"];
                                         string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
                                         sqlCmd = string.Format(
                                             @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
@@ -469,7 +482,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                                 dr["CustCTN"] = sl[1];
                                 string sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,pd.ReceiveDate,pd.ReturnDate,pd.ClogLocationId,p.MDivisionID
-,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo
+,pd.TransferCFADate ,pd.CFAReturnClogDate ,pd.id,pd.CTNStartNo ,pd.FtyReqReturnDate ,p.FactoryID
 from PackingList_Detail pd WITH (NOLOCK)  inner join PackingList p (NOLOCK) on pd.id = p.id
 where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -507,6 +520,8 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                                     dr["ReceiveDate"] = seekData["ReceiveDate"];
                                     dr["TransferCFADate"] = seekData["TransferCFADate"];
                                     dr["CFAReturnClogDate"] = seekData["CFAReturnClogDate"];
+                                    dr["FtyReqReturnDate"] = seekData["FtyReqReturnDate"];
+                                    dr["FtyGroup"] = seekData["FactoryID"];
                                     string seq = MyUtility.Convert.GetString(seekData["OrderShipmodeSeq"]).Trim();
                                     sqlCmd = string.Format(
                                         @"select a.StyleID,a.SeasonID,a.BrandID,a.Customize1,a.CustPONo,b.Alias,oq.BuyerDelivery 
@@ -550,6 +565,7 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
             }
 
             this.Countselectcount();
+            this.Grid_Filter();
         }
 
         // Save
@@ -727,6 +743,7 @@ where ID = '{0}' and CTNStartNo = '{1}'; ",
 
                         filter = string.Empty;
                         ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        this.numSelectedCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1").Count();
                         break;
 
                     case true:
@@ -737,8 +754,12 @@ where ID = '{0}' and CTNStartNo = '{1}'; ",
 
                         filter = " FtyReqReturnDate IS NOT NULL ";
                         ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+
+                        this.numSelectedCTNQty.Value = ((DataTable)this.listControlBindingSource1.DataSource).Select("selected = 1 AND FtyReqReturnDate IS NOT NULL ").Count();
                         break;
                 }
+
+
             }
         }
 

@@ -184,7 +184,7 @@
             this.btnSave.Location = new System.Drawing.Point(539, 151);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
-            this.btnSave.TabIndex = 8;
+            this.btnSave.TabIndex = 13;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
@@ -196,7 +196,7 @@
             this.btnClose.Location = new System.Drawing.Point(625, 151);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 9;
+            this.btnClose.TabIndex = 14;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
@@ -215,7 +215,7 @@
             this.btnImportFromBarcode.Location = new System.Drawing.Point(527, 111);
             this.btnImportFromBarcode.Name = "btnImportFromBarcode";
             this.btnImportFromBarcode.Size = new System.Drawing.Size(176, 30);
-            this.btnImportFromBarcode.TabIndex = 7;
+            this.btnImportFromBarcode.TabIndex = 12;
             this.btnImportFromBarcode.Text = "Import From Barcode";
             this.btnImportFromBarcode.UseVisualStyleBackColor = true;
             this.btnImportFromBarcode.Click += new System.EventHandler(this.BtnImportFromBarcode_Click);
@@ -271,7 +271,7 @@
             this.chkOnlyReqCarton.Location = new System.Drawing.Point(12, 117);
             this.chkOnlyReqCarton.Name = "chkOnlyReqCarton";
             this.chkOnlyReqCarton.Size = new System.Drawing.Size(252, 21);
-            this.chkOnlyReqCarton.TabIndex = 52;
+            this.chkOnlyReqCarton.TabIndex = 11;
             this.chkOnlyReqCarton.Text = "Only Show Factory Request Carton ";
             this.chkOnlyReqCarton.UseVisualStyleBackColor = true;
             this.chkOnlyReqCarton.CheckedChanged += new System.EventHandler(this.ChkOnlyReqCarton_CheckedChanged);
@@ -295,7 +295,7 @@
             this.dateReqDate.Location = new System.Drawing.Point(107, 76);
             this.dateReqDate.Name = "dateReqDate";
             this.dateReqDate.Size = new System.Drawing.Size(280, 23);
-            this.dateReqDate.TabIndex = 51;
+            this.dateReqDate.TabIndex = 10;
             // 
             // label3
             // 
@@ -372,7 +372,7 @@
             this.txtfactory.Location = new System.Drawing.Point(488, 47);
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 37;
+            this.txtfactory.TabIndex = 9;
             // 
             // lbFactory
             // 
@@ -388,7 +388,7 @@
             this.dateTimePicker2.Location = new System.Drawing.Point(279, 47);
             this.dateTimePicker2.Name = "dateTimePicker2";
             this.dateTimePicker2.Size = new System.Drawing.Size(146, 23);
-            this.dateTimePicker2.TabIndex = 33;
+            this.dateTimePicker2.TabIndex = 8;
             this.dateTimePicker2.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
             // label1
@@ -405,7 +405,7 @@
             this.dateTimePicker1.Location = new System.Drawing.Point(107, 46);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(146, 23);
-            this.dateTimePicker1.TabIndex = 32;
+            this.dateTimePicker1.TabIndex = 7;
             this.dateTimePicker1.Value = new System.DateTime(2017, 6, 1, 14, 42, 7, 0);
             // 
             // label2

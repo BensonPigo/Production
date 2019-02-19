@@ -31,6 +31,9 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.comboReason = new Sci.Win.UI.ComboBox();
+            this.btnUpdateAllReason = new Sci.Win.UI.Button();
+            this.label3 = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.txtPackID = new Sci.Win.UI.TextBox();
@@ -45,9 +48,6 @@
             this.btnPrint = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label3 = new Sci.Win.UI.Label();
-            this.btnUpdateAllReason = new Sci.Win.UI.Button();
-            this.comboReason = new Sci.Win.UI.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
@@ -76,6 +76,37 @@
             this.panel1.RectStyle.BorderWidths.Top = 1F;
             this.panel1.Size = new System.Drawing.Size(725, 106);
             this.panel1.TabIndex = 1;
+            // 
+            // comboReason
+            // 
+            this.comboReason.BackColor = System.Drawing.Color.White;
+            this.comboReason.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboReason.FormattingEnabled = true;
+            this.comboReason.IsSupportUnselect = true;
+            this.comboReason.Location = new System.Drawing.Point(101, 75);
+            this.comboReason.Name = "comboReason";
+            this.comboReason.OldText = "";
+            this.comboReason.Size = new System.Drawing.Size(257, 24);
+            this.comboReason.TabIndex = 14;
+            // 
+            // btnUpdateAllReason
+            // 
+            this.btnUpdateAllReason.Location = new System.Drawing.Point(364, 73);
+            this.btnUpdateAllReason.Name = "btnUpdateAllReason";
+            this.btnUpdateAllReason.Size = new System.Drawing.Size(156, 30);
+            this.btnUpdateAllReason.TabIndex = 13;
+            this.btnUpdateAllReason.Text = "Update All Reason";
+            this.btnUpdateAllReason.UseVisualStyleBackColor = true;
+            this.btnUpdateAllReason.Click += new System.EventHandler(this.BtnUpdateAllReason_Click);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(16, 76);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(82, 23);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Reason";
             // 
             // btnFind
             // 
@@ -237,36 +268,7 @@
             this.grid.ShowCellToolTips = false;
             this.grid.Size = new System.Drawing.Size(725, 465);
             this.grid.TabIndex = 8;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(16, 76);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(82, 23);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "Reason";
-            // 
-            // btnUpdateAllReason
-            // 
-            this.btnUpdateAllReason.Location = new System.Drawing.Point(364, 73);
-            this.btnUpdateAllReason.Name = "btnUpdateAllReason";
-            this.btnUpdateAllReason.Size = new System.Drawing.Size(156, 30);
-            this.btnUpdateAllReason.TabIndex = 13;
-            this.btnUpdateAllReason.Text = "Update All Reason";
-            this.btnUpdateAllReason.UseVisualStyleBackColor = true;
-            this.btnUpdateAllReason.Click += new System.EventHandler(this.BtnUpdateAllReason_Click);
-            // 
-            // comboReason
-            // 
-            this.comboReason.BackColor = System.Drawing.Color.White;
-            this.comboReason.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.comboReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboReason.FormattingEnabled = true;
-            this.comboReason.Location = new System.Drawing.Point(101, 75);
-            this.comboReason.Name = "comboReason";
-            this.comboReason.OldText = "";
-            this.comboReason.Size = new System.Drawing.Size(257, 24);
-            this.comboReason.TabIndex = 14;
+            this.grid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.grid_ColumnHeaderMouseClick);
             // 
             // P23
             // 

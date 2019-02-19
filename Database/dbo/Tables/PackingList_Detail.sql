@@ -246,4 +246,18 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後更�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'�ץ�location�ɶ�', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'EditLocationDate';
+GO
 
+EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', 
+	@value=N'工廠要求退回日' 
+	,@level0type=N'SCHEMA',@level0name=N'dbo'
+	,@level1type=N'TABLE',@level1name=N'PackingList_Detail'
+	,@level2type=N'COLUMN',@level2name=N'FtyReqReturnDate'
+GO
+
+EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', 
+	@value=N'要求退箱原因' 
+	,@level0type=N'SCHEMA',@level0name=N'dbo'
+	,@level1type=N'TABLE',@level1name=N'PackingList_Detail'
+	,@level2type=N'COLUMN',@level2name=N'FtyReqReturnReason'
+GO

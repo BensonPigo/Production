@@ -41,6 +41,10 @@ namespace Sci.Production.Packing
 
             selectSetting.CellValidating += (s, e) =>
             {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
                 DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
                 if ((bool)e.FormattedValue == false)
                 {
@@ -48,6 +52,7 @@ namespace Sci.Production.Packing
                     dr["ReasonName"] = null;
                 }
                 dr["selected"] = e.FormattedValue;
+                dr.EndEdit();
             };
 
             #region Reason事件
@@ -89,7 +94,17 @@ namespace Sci.Production.Packing
                      return;
                  }
 
-                 bool exists = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup($"SELECT ID FROM PackingReason WHERE Type='FG' AND Junk=0 AND ID='{newvalue}'"));
+                 if (MyUtility.Check.Empty(newvalue))
+                 {
+
+                     dr["FtyReqReturnReason"] = newvalue;
+                     dr["ReasonName"] = null;
+                     return;
+                 }
+                 List<SqlParameter> paras = new List<SqlParameter>();
+                 paras.Add(new SqlParameter("@ID", newvalue));
+                 bool exists = !MyUtility.Check.Empty(MyUtility.GetValue.Lookup($"SELECT ID FROM PackingReason WHERE Type='FG' AND Junk=0 AND ID=@ID", paras));
+
 
                  if (!exists)
                  {
@@ -131,7 +146,7 @@ namespace Sci.Production.Packing
                .Date("FtyReqReturnDate", header: "Request Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Date("ReceiveDate", header: "Receive Date", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Date("ReturnDate", header: "Return Date", width: Widths.AnsiChars(13), iseditingreadonly: true);
-            
+
             this.grid.Columns["FtyReqReturnReason"].DefaultCellStyle.BackColor = Color.Pink;
 
             for (int i = 0; i < this.grid.Columns.Count; i++)
@@ -715,6 +730,53 @@ OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS
             {
                 this.HideWaitMessage();
             }
+        }
+
+        private void grid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (this.listControlBindingSource.DataSource == null || e.ColumnIndex != 0)
+            {
+                return;
+            }
+
+            #region 宣告
+            DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
+            #endregion
+            DataRow[] selectedRows = dt.Select("selected=1 ");
+            DataRow[] selectedRows_withReason = dt.Select("selected=1 AND FtyReqReturnReason <>'' ");
+            if (selectedRows.Length > 0)
+            {
+                if (selectedRows_withReason.Length > 0)
+                {
+                    for (int i = 0; i <= dt.Rows.Count - 1; i++)
+                    {
+                        dt.Rows[i]["FtyReqReturnReason"] = null;
+                        dt.Rows[i]["ReasonName"] = null;
+                        dt.Rows[i]["selected"] = 0;
+                    }
+                }
+                //else
+                //{
+                //    for (int i = 0; i <= dt.Rows.Count - 1; i++)
+                //    {
+                //        dt.Rows[i]["FtyReqReturnReason"] = null;
+                //        dt.Rows[i]["ReasonName"] = null;
+                //        dt.Rows[i]["selected"] = 1;
+                //    }
+                //}
+            }
+            else
+            {
+                for (int i = 0; i <= dt.Rows.Count - 1; i++)
+                {
+                    dt.Rows[i]["FtyReqReturnReason"] = null;
+                    dt.Rows[i]["ReasonName"] = null;
+                    dt.Rows[i]["selected"] = 0;
+                }
+
+            }
+
+            this.grid.ValidateControl();
         }
     }
 }
