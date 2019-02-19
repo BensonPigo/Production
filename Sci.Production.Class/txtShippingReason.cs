@@ -26,7 +26,7 @@ namespace Sci.Production.Class
         }
 
         [Category("Custom Properties")]
-        [Description("填入Reason Type。例如：RC")]
+        [Description("填入Reason Type。例如：AQ")]
         public string Type { set; get ; }
 
 
@@ -60,7 +60,7 @@ namespace Sci.Production.Class
             string str = this.textBox1.Text;
             if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(Type + str, "CutReason", "type+ID"))
+                if (!MyUtility.Check.Seek(Type + str, "ShippingReason", "type+ID"))
                 {
                     this.textBox1.Text = "";
                     e.Cancel = true;
@@ -72,24 +72,24 @@ namespace Sci.Production.Class
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", Type + this.textBox1.Text.ToString(), "CutReason", "Type+ID");
+            this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", Type + this.textBox1.Text.ToString(), "ShippingReason", "Type+ID");
         }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem
-                (string.Format("Select Id, Description from  WITH (NOLOCK) where type='{0}' order by id", Type), "10,40", this.textBox1.Text);
+                (string.Format("Select Id, Description from ShippingReason WITH (NOLOCK) where type='{0}' order by id", Type), "10,40", this.textBox1.Text);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.Validate();
         }
     }
-    public class cellcutreason : DataGridViewGeneratorTextColumnSettings
+    public class cellShippingReason : DataGridViewGeneratorTextColumnSettings
     {
         public static DataGridViewGeneratorTextColumnSettings GetGridCell(string ctype)
         {
-            cellcutreason ts = new cellcutreason();
+            cellShippingReason ts = new cellShippingReason();
             // Factory右鍵彈出功能
             ts.EditingMouseDown += (s, e) =>
             {
@@ -99,7 +99,7 @@ namespace Sci.Production.Class
                     // Parent form 若是非編輯狀態就 return 
                     if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    SelectItem sele = new SelectItem(string.Format("Select ID,description From CutReason WITH (NOLOCK) Where Junk=0 and type = '{0}'", ctype), "10,40", row["cutreasonid"].ToString(), false, ",");
+                    SelectItem sele = new SelectItem(string.Format("Select ID,description From ShippingReason WITH (NOLOCK) Where Junk=0 and type = '{0}'", ctype), "10,40", row["ShippingReasonid"].ToString(), false, ",");
                     DialogResult result = sele.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     e.EditingControl.Text = sele.GetSelectedString();
@@ -113,14 +113,14 @@ namespace Sci.Production.Class
                 // Parent form 若是非編輯狀態就 return 
                 if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                String oldValue = row["cutreasonid"].ToString();
+                String oldValue = row["ShippingReasonid"].ToString();
                 String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
 
                 if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
                 {
-                    if (!MyUtility.Check.Seek(ctype+newValue, "cutreason", "Type+ID"))
+                    if (!MyUtility.Check.Seek(ctype+newValue, "ShippingReason", "Type+ID"))
                     {
-                        row["cutreasonid"] = "";
+                        row["ShippingReasonid"] = "";
                         row.EndEdit();
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< Cut Reason > : {0} not found!!!", newValue));

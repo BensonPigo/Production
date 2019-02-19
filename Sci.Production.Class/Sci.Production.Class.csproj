@@ -117,6 +117,12 @@
     <Compile Include="txtcdcode.Designer.cs">
       <DependentUpon>txtcdcode.cs</DependentUpon>
     </Compile>
+    <Compile Include="txtShippingReason.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="txtShippingReason.Designer.cs">
+      <DependentUpon>txtShippingReason.cs</DependentUpon>
+    </Compile>
     <Compile Include="txtCuttingMachineID.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -523,6 +529,9 @@
     <EmbeddedResource Include="txtcountry.resx">
       <DependentUpon>txtcountry.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="txtShippingReason.resx">
+      <DependentUpon>txtShippingReason.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="txtcutReason.resx">
       <DependentUpon>txtcutReason.cs</DependentUpon>
