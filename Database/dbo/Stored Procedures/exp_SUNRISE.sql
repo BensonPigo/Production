@@ -11,16 +11,17 @@ declare @StartDate1 datetime, @EndDate1 datetime
 select @ToAddress = ToAddress ,@CcAddress = CcAddress from MailTo where id = '016';
 select @RgCode = RgCode from system;
 set @StartDate1 = cast(convert(nvarchar(10),@StartDate,112) + ' 00:00:00'  as datetime)
-set @EndDate1 = cast(convert(nvarchar(10),@EndDate,112) + ' 00:00:00'  as datetime)
+set @EndDate1 = cast(convert(nvarchar(10),dateadd(dd,1,@EndDate),112) + ' 00:00:00'  as datetime)
 begin try
 --抓出時間區間內SewingSchedule的orderID
 select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.AddName,o.SCIDelivery
 into #SrcOrderID
 from dbo.SewingSchedule ss with (nolock)
 inner join orders o with (nolock) on  ss.OrderID = o.ID
-where inline between @StartDate1 and @EndDate1 or 
-	  Offline between @StartDate1 and @EndDate1 or
-	  (inline <= @StartDate1 and Offline >= @EndDate1)
+where (inline <= @StartDate1 and inline > @EndDate1) or 
+	  (Offline <= @StartDate1 and Offline > @EndDate1) or
+	  (inline <= @StartDate1 and Offline > @EndDate1)
+
 
 
 --tMODCS(制單顏色尺碼錶)
