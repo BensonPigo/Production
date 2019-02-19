@@ -377,7 +377,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
            .Numeric("ConsumptionQty", header: "Total\r\nCons.(M)", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: cons).Get(out this.col_cons)
            .Numeric("MeterToCone", header: "No. of Meters\r\nPer Cones", width: Ict.Win.Widths.AnsiChars(6), integer_places: 7, decimal_places: 1, iseditingreadonly: true)
            .Numeric("TotalQty", header: "No. of\r\nCones", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true, settings: poqty1)
-           .Numeric("AllowanceQty", header: "Allowance", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, settings: poqty2).Get(out this.col_Allowance)
+           .Numeric("AllowanceQty", header: "Allowance", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, maximum: 50, settings: poqty2).Get(out this.col_Allowance)
            .Numeric("CurNewCone", header: "Current Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
            .Numeric("CurUsedCone", header: "Current Stock\r\nUse Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6, iseditingreadonly: true)
            .Numeric("UseStockNewConeQty", header: "Use Stock\r\nNew Cone", width: Ict.Win.Widths.AnsiChars(2), integer_places: 6).Get(out this.col_NewCone)
@@ -627,6 +627,12 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                 if (MyUtility.Convert.GetDecimal(drs["useStockUseConeQty"]) > MyUtility.Convert.GetDecimal(drs["CurUsedCone"]))
                 {
                     MyUtility.Msg.WarningBox($"<Use Stock Use Cone>{drs["useStockUseConeQty"]} can't be more than <Current Stock Use Cone>{drs["CurUsedCone"]}");
+                    return false;
+                }
+
+                if (MyUtility.Convert.GetInt(drs["AllowanceQty"]) > 50 && MyUtility.Check.Empty(drs["Poid"]))
+                {
+                    MyUtility.Msg.WarningBox("<Allowance> must less than or equal to 50!");
                     return false;
                 }
             }
