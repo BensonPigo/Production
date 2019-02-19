@@ -554,6 +554,21 @@ tmpFilterZone as (
             if (this.seperate && p_type.Equals("ALL"))
             {
                 sqlCmd.Append(@"
+select pd.OrderID, pd.OrderShipmodeSeq, Sum( pd.CTNQty) PackingCTN ,
+	Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN,
+	Sum( case when p.Type in ('B', 'L') and pd.TransferDate is null then pd.CTNQty else 0 end) FtyCtn,
+	Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end) ClogCTN ,
+	Sum(case when p.Type <> 'F'  then pd.ShipQty else 0 end) PackingQty ,
+	Sum(case when p.Type = 'F'   then pd.ShipQty else 0 end) PackingFOCQty ,
+	Sum(case when p.Type in ('B', 'L') and p.INVNo <> ''  then pd.ShipQty else 0 end) BookingQty ,
+	Max (ReceiveDate) ClogRcvDate,
+	MAX(p.PulloutDate)  ActPulloutDate
+into #tmp_PLDetial
+from PackingList_Detail pd WITH (NOLOCK) 
+LEFT JOIN PackingList p on pd.ID = p.ID 
+inner join #tmpListPoCombo t on pd.OrderID = t.ID  and pd.OrderShipmodeSeq = t.Seq
+group by pd.OrderID, pd.OrderShipmodeSeq 
+
     select  t.ID
             , t.MDivisionID
             , t.FtyGroup
@@ -643,24 +658,81 @@ tmpFilterZone as (
     into #tmpFilterSeperate
     from #tmpListPoCombo t
     inner join Order_QtyShip oq WITH(NOLOCK) on t.ID = oq.Id and t.Seq = oq.Seq
-    outer apply( select Sum( pd.CTNQty) PackingCTN ,
-					Sum( case when p.Type in ('B', 'L') then pd.CTNQty else 0 end) TotalCTN,
-					Sum( case when p.Type in ('B', 'L') and pd.TransferDate is null then pd.CTNQty else 0 end) FtyCtn,
-					Sum(case when p.Type in ('B', 'L') and pd.ReceiveDate is not null then pd.CTNQty else 0 end) ClogCTN ,
-					Sum(case when p.Type <> 'F'  then pd.ShipQty else 0 end) PackingQty ,
-					Sum(case when p.Type = 'F'   then pd.ShipQty else 0 end) PackingFOCQty ,
-					Sum(case when p.Type in ('B', 'L') and p.INVNo <> ''  then pd.ShipQty else 0 end) BookingQty ,
-					Max (ReceiveDate) ClogRcvDate,
-					MAX(p.PulloutDate)  ActPulloutDate
-					from PackingList_Detail pd WITH (NOLOCK) 
-                             LEFT JOIN PackingList p on pd.ID = p.ID 
-                             where  pd.OrderID = t.ID 
-                                    and pd.OrderShipmodeSeq = t.Seq   )  pdm;
+    left join #tmp_PLDetial pdm on pdm.OrderID = t.ID  and pdm.OrderShipmodeSeq = t.Seq ;
 
 CREATE NONCLUSTERED INDEX index_tmpFilterSeperate ON #tmpFilterSeperate(	ID ASC,seq asc);
 CREATE NONCLUSTERED INDEX index_tmpFilterSeperate_POID ON #tmpFilterSeperate(	POID ASC);
 CREATE NONCLUSTERED INDEX index_tmpFilterSeperate_CuttingSP ON #tmpFilterSeperate(	CuttingSP ASC);
 CREATE NONCLUSTERED INDEX index_tmpFilterSeperate_StyleUkey ON #tmpFilterSeperate(	StyleUkey ASC);
+
+
+select sod.OrderId,Sum( case when sod.ComboType = 'T'  then sod.QAQty else 0 end) SewQtyTop, 
+	Sum( case when sod.ComboType = 'B'  then sod.QAQty else 0 end) SewQtyBottom, 
+	Sum( case when sod.ComboType = 'I'  then sod.QAQty else 0 end) SewQtyInner, 
+	Sum( case when sod.ComboType = 'O'  then sod.QAQty else 0 end) SewQtyOuter,
+	Min (so.OutputDate) FirstOutDate,
+	Max (so.OutputDate) LastOutDate
+into #tmp_sewDetial
+from SewingOutput so WITH (NOLOCK) 
+inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
+inner join #tmpFilterSeperate t on sod.OrderId = t.ID
+group by sod.OrderId
+
+select o.ID, o.Remark 
+into #tmp_PFRemark
+from Order_PFHis o WITH (NOLOCK) 
+inner join #tmpFilterSeperate t on o.ID = t.ID 
+where AddDate = (
+		select Max(o.AddDate) 
+		from Order_PFHis o WITH (NOLOCK) 
+		where ID = t.ID
+	)
+group by o.ID, o.Remark   
+
+select ed.POID,Max(e.WhseArrival) ArriveWHDate 
+into #tmp_ArriveWHDate
+from Export e WITH (NOLOCK) 
+inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+inner join #tmpFilterSeperate t on ed.POID = t.POID
+group by ed.POID 
+
+select StyleUkey ,dbo.GetSimilarStyleList(StyleUkey) GetStyleUkey
+into #tmp_StyleUkey
+from #tmpFilterSeperate 
+group by StyleUkey 
+
+select POID ,dbo.GetHaveDelaySupp(POID) MTLDelay
+into #tmp_MTLDelay
+from #tmpFilterSeperate 
+group by POID 
+
+select pod.OrderID,pod.OrderShipmodeSeq,Sum (pod.ShipQty) PulloutQty
+into #tmp_PulloutQty
+from Pullout_Detail pod WITH (NOLOCK) 
+inner join #tmpFilterSeperate t on pod.OrderID = t.ID and pod.OrderShipmodeSeq = t.Seq 
+group by pod.OrderID,pod.OrderShipmodeSeq
+                                     
+select pod.OrderID,Count (Distinct pod.ID) ActPulloutTime
+into #tmp_ActPulloutTime
+from Pullout_Detail pod WITH (NOLOCK) 
+inner join #tmpFilterSeperate t on pod.OrderID = t.ID 
+where pod.ShipQty > 0
+group by pod.OrderID
+
+select od.ID,od.Seq,od.Article 
+into #tmp_Article
+from Order_QtyShip_Detail od WITH (NOLOCK) 
+inner join #tmpFilterSeperate t on  od.ID = t.ID and od.Seq = t.Seq 
+group by od.ID,od.Seq,od.Article 
+
+
+CREATE NONCLUSTERED INDEX index_tmp_sewDetial ON #tmp_sewDetial(	OrderId ASC);
+CREATE NONCLUSTERED INDEX index_tmp_PFRemark ON #tmp_PFRemark(	ID ASC);
+CREATE NONCLUSTERED INDEX index_tmp_ArriveWHDate ON #tmp_ArriveWHDate(	PoID ASC);
+CREATE NONCLUSTERED INDEX index_tmp_StyleUkey ON #tmp_StyleUkey(	StyleUkey ASC);
+CREATE NONCLUSTERED INDEX index_tmp_MTLDelay ON #tmp_MTLDelay(	POID ASC);
+CREATE NONCLUSTERED INDEX index_tmp_PulloutQty ON #tmp_PulloutQty(	OrderID ASC, OrderShipmodeSeq);
+CREATE NONCLUSTERED INDEX index_tmp_ActPulloutTime ON #tmp_ActPulloutTime(	OrderID ASC);
 
 
 select  t.* 
@@ -683,13 +755,7 @@ select  t.*
                             from CuttingOutput_WIP WITH (NOLOCK) 
                             where OrderID = t.ID)
                           , 0)
-        , PFRemark = isnull ((select top 1 Remark 
-                              from Order_PFHis WITH (NOLOCK) 
-                              where ID = t.ID 
-                                    and AddDate = (select Max(AddDate) 
-                                                   from Order_PFHis WITH (NOLOCK) 
-                                                   where ID = t.ID))
-                            , '')
+        , PFRemark = isnull(pf.Remark,'')
         , EarliestSCIDlv =dbo.getMinSCIDelivery(t.POID,'')
         , KPIChangeReasonName = isnull ((select Name 
                                          from Reason WITH (NOLOCK) 
@@ -728,30 +794,19 @@ select  t.*
                                     , '') 
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
         , GMTLT = dbo.GetStyleGMTLT (t.BrandID, t.StyleID, t.SeasonID, t.FactoryID)
-        , SimilarStyle = dbo.GetSimilarStyleList (t.StyleUkey)
-        , MTLDelay = dbo.GetHaveDelaySupp (t.POID)
+        , SimilarStyle = su.GetStyleUkey         
+        , MTLDelay = isnull(mt.MTLDelay ,0)
         , InvoiceAdjQty = dbo.getInvAdjQty (t.ID, t.Seq) 
         , ct.LastCutDate
-        , ArriveWHDate = (select Max(e.WhseArrival) 
-                          from Export e WITH (NOLOCK) 
-                          inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-                          where ed.POID = t.POID)
+        , ArriveWHDate =　aw.ArriveWHDate
         , som.FirstOutDate
         , som.LastOutDate 
-        , PulloutQty = isnull ((select Sum (pod.ShipQty) 
-                                from Pullout_Detail pod WITH (NOLOCK) 
-                                where pod.OrderID = t.ID 
-                                      and pod.OrderShipmodeSeq = t.Seq)
-                              , 0)
-        , ActPulloutTime = (select Count (Distinct ID) 
-                            from Pullout_Detail WITH (NOLOCK) 
-                            where   OrderID = t.ID 
-                                    and ShipQty > 0) 
+        , PulloutQty = isnull(pu.PulloutQty,0)
+        , ActPulloutTime = isnull(apu.ActPulloutTime,0) 
         , Article = isnull ((select CONCAT(Article,',') 
-                             from (select distinct Article 
-                                   from Order_QtyShip_Detail WITH (NOLOCK) 
-                                   where ID = t.ID and Seq = t.Seq
-                             ) a for xml path(''))
+                             from #tmp_Article a 
+							 where a.ID = t.ID and a.Seq = t.Seq
+							 for xml path(''))
                            , '')
 , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
 , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
@@ -760,22 +815,79 @@ left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
 left join PO p WITH (NOLOCK) on p.ID = t.POID
 left join Country c WITH (NOLOCK) on c.ID = t.Dest
-outer apply(select Sum( case when sod.ComboType = 'T'  then sod.QAQty else 0 end) SewQtyTop, 
-				   Sum( case when sod.ComboType = 'B'  then sod.QAQty else 0 end) SewQtyBottom, 
-				   Sum( case when sod.ComboType = 'I'  then sod.QAQty else 0 end) SewQtyInner, 
-				   Sum( case when sod.ComboType = 'O'  then sod.QAQty else 0 end) SewQtyOuter,
-				   Min (so.OutputDate) FirstOutDate,
-				   Max (so.OutputDate) LastOutDate
-					from SewingOutput so WITH (NOLOCK) 
-                    inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-                    where sod.OrderID = t.ID) som
+left join #tmp_sewDetial som on som.OrderID = t.ID
+left join #tmp_PFRemark pf on pf.ID = t.ID
+left join #tmp_ArriveWHDate aw on aw.PoID = t.POID
+left join #tmp_StyleUkey su on su.StyleUkey = t.StyleUkey 
+left join #tmp_MTLDelay mt on mt.POID = t.POID
+left join #tmp_PulloutQty pu on pu.OrderID = t.ID and pu.OrderShipmodeSeq = t.Seq
+left join #tmp_ActPulloutTime apu on apu.OrderID = t.ID 
 order by t.ID;
 drop table #tmpListPoCombo;
-drop table #tmpFilterSeperate;");
+drop table #tmp_PLDetial,#tmpFilterSeperate,#tmp_sewDetial,#tmp_PFRemark,#tmp_ArriveWHDate,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_PulloutQty,#tmp_ActPulloutTime;");
             }
             else
             {
                 sqlCmd.Append(@"
+select o.ID, o.Remark 
+into #tmp_PFRemark
+from Order_PFHis o WITH (NOLOCK) 
+inner join #tmpListPoCombo t on o.ID = t.ID 
+where AddDate = (
+		select Max(o.AddDate) 
+		from Order_PFHis o WITH (NOLOCK) 
+		where ID = t.ID
+	)
+group by o.ID, o.Remark   
+
+select StyleUkey ,dbo.GetSimilarStyleList(StyleUkey) GetStyleUkey
+into #tmp_StyleUkey
+from #tmpListPoCombo
+group by StyleUkey 
+
+select POID ,dbo.GetHaveDelaySupp(POID) MTLDelay
+into #tmp_MTLDelay
+from #tmpListPoCombo
+group by POID 		    
+
+select pld.OrderID, SUM(pld.ShipQty) PackingQty
+into #tmp_PackingQty
+from PackingList pl WITH (NOLOCK) 
+inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
+inner join #tmpListPoCombo t on pld.OrderID = t.ID
+where  pl.Type <> 'F'  
+group by pld.OrderID  
+
+select pld.OrderID, SUM(pld.ShipQty) PackingFOCQty 
+into #tmp_PackingFOCQty
+from PackingList pl WITH (NOLOCK) 
+inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
+inner join #tmpListPoCombo t on pld.OrderID = t.ID
+where pl.Type = 'F' 
+group by pld.OrderID 
+
+select pld.OrderID, SUM(pld.ShipQty) BookingQty
+into #tmp_BookingQty
+from PackingList pl WITH (NOLOCK) 
+inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
+inner join #tmpListPoCombo t on pld.OrderID = t.ID
+where   (pl.Type = 'B' or pl.Type = 'S') 
+        and pl.INVNo <> ''  
+group by pld.OrderID 
+ 
+select o.ID, o.Article 
+into #tmp_Article
+from Order_Qty o WITH (NOLOCK) 
+inner join #tmpListPoCombo t on o.ID = t.ID
+group by o.ID,o.Article 
+
+CREATE NONCLUSTERED INDEX index_tmp_PFRemark ON #tmp_PFRemark(	ID ASC);
+CREATE NONCLUSTERED INDEX index_tmp_StyleUkey ON #tmp_StyleUkey(	StyleUkey ASC);
+CREATE NONCLUSTERED INDEX index_tmp_MTLDelay ON #tmp_MTLDelay(	POID ASC);
+CREATE NONCLUSTERED INDEX index_tmp_PackingQty ON #tmp_PackingQty(	OrderID ASC);
+CREATE NONCLUSTERED INDEX index_tmp_PackingFOCQty ON #tmp_PackingFOCQty(	OrderID ASC);
+CREATE NONCLUSTERED INDEX index_tmp_BookingQty ON #tmp_BookingQty(	OrderID ASC);
+
 select distinct t.*
         , ModularParent = isnull (s.ModularParent, '')  
         , CPUAdjusted = isnull(s.CPUAdjusted * 100, 0)  
@@ -812,13 +924,7 @@ select distinct t.*
                             from CuttingOutput_WIP WITH (NOLOCK) 
                             where OrderID = t.ID)
                           , 0)
-        , PFRemark = isnull ((select top 1 Remark 
-                              from Order_PFHis WITH (NOLOCK) 
-                              where ID = t.ID 
-                                    and AddDate = (select Max(AddDate) 
-                                                   from Order_PFHis WITH (NOLOCK) 
-                                                   where ID = t.ID))
-                            , '') 
+        , PFRemark1 = isnull(pf.Remark,'')
         , EarliestSCIDlv = dbo.getMinSCIDelivery (t.POID, '')
         , KPIChangeReasonName = isnull ((select Name 
                                          from Reason WITH (NOLOCK)  
@@ -857,27 +963,11 @@ select distinct t.*
                                    , '')
         , MTLExportTimes = isnull ([dbo].getMTLExport (t.POID, t.MTLExport), '')
         , GMTLT = dbo.GetStyleGMTLT (t.BrandID, t.StyleID, t.SeasonID, t.FactoryID)
-        , SimilarStyle = dbo.GetSimilarStyleList (t.StyleUkey)
-        , MTLDelay = dbo.GetHaveDelaySupp (t.POID)
-        , PackingQty = isnull ((select SUM(pld.ShipQty) 
-                                from PackingList pl WITH (NOLOCK) 
-                                inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-                                where  pl.Type <> 'F' 
-                                       and pld.OrderID = t.ID)
-                              , 0)
-        , PackingFOCQty = isnull ((select SUM(pld.ShipQty) 
-                                   from PackingList pl WITH (NOLOCK) 
-                                   inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-                                   where pl.Type = 'F' 
-                                         and pld.OrderID = t.ID)
-                                 , 0)
-        , BookingQty = isnull ((select SUM(pld.ShipQty) 
-                                from PackingList pl WITH (NOLOCK) 
-                                inner join PackingList_Detail pld WITH (NOLOCK) on pl.ID = pld.ID
-                                where   (pl.Type = 'B' or pl.Type = 'S') 
-                                        and pl.INVNo <> '' 
-                                        and pld.OrderID = t.ID)
-                              , 0)
+        , SimilarStyle = su.GetStyleUkey
+        , MTLDelay = isnull(mt.MTLDelay,0)
+        , PackingQty = isnull(pa.PackingQty ,0)
+        , PackingFOCQty = isnull(paf.PackingFOCQty,0)
+        , BookingQty = isnull(bo.BookingQty ,0)
         , InvoiceAdjQty = isnull ((select sum(iq.DiffQty) 
                                    from InvAdjust i WITH (NOLOCK) 
                                    inner join InvAdjust_Qty iq WITH (NOLOCK) on i.ID = iq.ID
@@ -912,11 +1002,10 @@ select distinct t.*
         , FtyCtn = isnull(t.TotalCTN,0) - isnull(t.FtyCTN,0)
         , ClogCTN = isnull(t.ClogCTN,0)
         , ClogRcvDate = t.ClogLastReceiveDate
-        , Article = isnull ((select CONCAT(Article, ',') 
-                             from (select distinct Article 
-                                   from Order_Qty WITH (NOLOCK) 
-                                   where ID = t.ID
-                             ) a for xml path(''))
+		, Article = isnull ((select CONCAT(a.Article, ',') 
+                             from #tmp_Article a 
+							 where a.ID = t.ID
+							 for xml path(''))
                            , '') 
 , [Fab_ETA]=(select max(FinalETA) F_ETA from PO_Supp_Detail where id=p.ID  and FabricType='F')
 , [Acc_ETA]=(select max(FinalETA) A_ETA from PO_Supp_Detail where id=p.ID  and FabricType='A')
@@ -925,8 +1014,15 @@ left join Cutting ct WITH (NOLOCK) on ct.ID = t.CuttingSP
 left join Style s WITH (NOLOCK) on s.Ukey = t.StyleUkey
 left join PO p WITH (NOLOCK) on p.ID = t.POID
 left join Country c WITH (NOLOCK) on c.ID = t.Dest
+left join #tmp_PFRemark pf on pf.ID = t.ID
+left join #tmp_StyleUkey su on su.StyleUkey = t.StyleUkey 
+left join #tmp_MTLDelay mt on mt.POID = t.POID
+left join #tmp_PackingQty pa on pa.OrderID = t.ID
+left join #tmp_PackingFOCQty paf on paf.OrderID = t.ID
+left join #tmp_BookingQty bo on bo.OrderID = t.ID
 order by t.ID;
-drop table #tmpListPoCombo;");
+
+drop table #tmpListPoCombo,#tmp_PFRemark,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_PackingQty,#tmp_PackingFOCQty,#tmp_BookingQty,#tmp_Article;");
             }
             #endregion
 
@@ -1306,7 +1402,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                 return false;
             }
 
-            int lastCol = lastColA;
+            int lastCol = this.lastColA;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
             worksheet.Name = "PPIC_Master_List";
             //excel.Visible = true;
@@ -1342,7 +1438,9 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
 
             // 填內容值
             int intRowsStart = 0;
-            object[,] objArray = new object[this.printData.Rows.Count, lastCol + 1];
+            int maxRow = 0;
+            int tRow = 10000;
+            object[,] objArray = new object[tRow + 1, lastCol + 1];
 
             string kPIChangeReasonName;  // CLOUMN[CC]:dr["KPIChangeReason"]+dr["KPIChangeReasonName"]
                                          // Dictionary<string, DataRow> tmp_a = orderArtworkData.AsEnumerable().ToDictionary<DataRow, string, DataRow>(r => r["ID"].ToString(),r => r);
@@ -1353,7 +1451,6 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
             }
 
             var lookupID = this.orderArtworkData.AsEnumerable().ToLookup(row => row["ID"].ToString());
-
             excel.Cells.EntireColumn.AutoFit(); // 所有列最適列高
             foreach (DataRow dr in this.printData.Rows)
             {
@@ -1567,7 +1664,38 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                     objArray[intRowsStart, ttlTMS - 1] = MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["CPU"]) * this.stdTMS;
                 }
 
+                // 每一萬筆資料就先塞入excel並清空array
+                switch (maxRow % tRow)
+                {
+                    case 0:
+                        if (maxRow == 0)
+                        {
+                            break;
+                        }
+
+                        // 空值給0
+                        if (this.artwork || this.pap)
+                        {
+                            for (int j = 0; j < intRowsStart; j++)
+                            {
+                                for (int i = this.lastColA; i < lastCol; i++)
+                                {
+                                    if (objArray[j, i] == null)
+                                    {
+                                        objArray[j, i] = 0;
+                                    }
+                                }
+                            }
+                        }
+
+                        worksheet.Range[string.Format("A{0}:{1}{2}", maxRow / tRow == 1 ? 2 : maxRow - tRow + 2, excelColEng, maxRow + 1)].Value2 = objArray;
+                        intRowsStart = 0;
+                        objArray = new object[tRow + 1, lastCol + 1];
+                        break;
+                }
+
                 intRowsStart++;
+                maxRow++;
             }
 
             if (intRowsStart == 0)
@@ -1600,11 +1728,11 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
 
             worksheet.Range[string.Format("A{0}:{1}{0}", 1, excelColEng)].AutoFilter(1); // 篩選
             worksheet.Range[string.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(191, 191, 191); // 底色
-            worksheet.Range[string.Format("A{0}:{1}{2}", 2, excelColEng, intRowsStart + 1)].Value2 = objArray;
+            worksheet.Range[string.Format("A{0}:{1}{2}", maxRow < tRow ? 2 : (maxRow / tRow * tRow) + 2 , excelColEng, maxRow + 1)].Value2 = objArray;
             this.Subtrue = 0;
 
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(intRowsStart);
+            this.SetCount(maxRow);
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("PPIC_R03_PPICMasterList");
