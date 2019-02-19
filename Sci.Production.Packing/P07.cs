@@ -55,9 +55,11 @@ namespace Sci.Production.Packing
         // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtGarmentBookingStart.Text) && MyUtility.Check.Empty(this.txtGarmentBookingEnd.Text) && MyUtility.Check.Empty(this.dateFCRDate.Value1) && MyUtility.Check.Empty(this.dateFCRDate.Value2))
+            if (MyUtility.Check.Empty(this.txtGarmentBookingStart.Text) && MyUtility.Check.Empty(this.txtGarmentBookingEnd.Text)
+                && MyUtility.Check.Empty(this.dateFCRDate.Value1) && MyUtility.Check.Empty(this.dateFCRDate.Value2)
+                && MyUtility.Check.Empty(this.txtSP_s.Text) && MyUtility.Check.Empty(this.txtSP_s.Text))
             {
-                MyUtility.Msg.WarningBox("< Garment Booking# > and < FCR Date > can't both empty!");
+                MyUtility.Msg.WarningBox("< Garment Booking# > or < SP# > or < FCR Date > can't be empty!");
                 return;
             }
 
