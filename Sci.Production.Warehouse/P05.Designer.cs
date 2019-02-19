@@ -214,7 +214,7 @@
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "P05";
-            this.Text = "P05";
+            this.Text = "P05. Query Transfer Orders Material";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
             this.Controls.SetChildIndex(this.panel3, 0);

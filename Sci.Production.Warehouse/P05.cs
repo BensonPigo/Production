@@ -153,13 +153,16 @@ WHERE p1.ID ='{Sci.Env.User.UserID}'
             #endregion
 
             Helper.Controls.Grid.Generator(this.grid)
-            .Text("ID", header: "WK#", width: Widths.AnsiChars(11), iseditingreadonly: true, settings:settingID)  //0
+            .Text("ID", header: "WK#", width: Widths.AnsiChars(11), iseditingreadonly: true, settings:settingID)
+            .Text("MDivisionID", header: "M", width: Widths.AnsiChars(9), iseditingreadonly: true)
+            .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(9), iseditingreadonly: true)
             .Text("POID", header: "SP#", width: Widths.AnsiChars(6), iseditingreadonly: true, settings: settingPOID)
             .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(9),iseditingreadonly:true)
-            .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(7), iseditingreadonly: true)    //3
-            .Text("Roll", header: "Roll", width: Widths.AnsiChars(7), iseditingreadonly: true)    //4
+            .Text("Seq2", header: "Seq2", width: Widths.AnsiChars(7), iseditingreadonly: true)    
+            .Text("Roll", header: "Roll", width: Widths.AnsiChars(7), iseditingreadonly: true)    
             .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(7), iseditingreadonly: true)
             .Numeric("BalanceQty", header: "Balance Qty", width: Widths.AnsiChars(7), iseditingreadonly: true)
+            .Text("StockType", header: "Stock Type", width: Widths.AnsiChars(7), iseditingreadonly: true)
             ;
 
             for (int i = 0; i <= this.grid.Columns.Count-1; i++)
@@ -211,12 +214,17 @@ SELECT
     ,f.Dyelot
     ,[BalanceQty]=f.InQty-f.OutQty+ f.AdjustQty
     ,[Location]=dbo.Getlocation(f.ukey)
-
+    ,fc.MDivisionID
+    ,e.FactoryID
+	,[StockType]=dd.Name
 FROM Export_Detail ed
 INNER JOIN FtyInventory f   ON f.POID= ed.POID
                             AND f.SEQ1= ed.SEQ1
                             AND f.SEQ2= ed.SEQ2
                             AND f.InQty- f.OutQty+ f.AdjustQty>0
+INNER JOIN Export e ON e.ID = ed.ID
+LEFT JOIN Factory fc ON fc.ID = e.FactoryID
+LEFT JOIN DropDownList dd ON dd.ID LIKE '%'+f.stockType+'%'  AND dd.Type='Pms_StockType'
 WHERE NOT EXISTS (SELECT 1 FROM Orders o WHERE o.POID=ed.PoID)
 AND ed.PoID!='' AND Len(ed.poid) <13
 {para_Wkno}
