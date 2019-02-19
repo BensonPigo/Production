@@ -760,6 +760,16 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                             noExistNotSea = noExistNotSea && MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                         }
 
+                        if (MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT")
+                        {
+                            bool bolNoImportCharges = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format("select NoImportCharges from Export where id = '{0}'", MyUtility.Convert.GetString(dr["WKno"]))));
+                            if (bolNoImportCharges)
+                            {
+                                MyUtility.Msg.WarningBox("No Import Charge");
+                                return;
+                            }
+                        }
+
                         // Account Name含Air-Prepaid (6105/5912) 時, GB上的Ship Mode必須為A/P或E/P或 E/P-C,且該GB項下的SP須有APP No.
                         string strSqlcmd = $@"
 select 1 from AirPP
@@ -778,7 +788,6 @@ from PackingList pl
                         {
                             noAirpp = true;
                         }
-                    }
                 }
 
                 if (msg.Length > 0)

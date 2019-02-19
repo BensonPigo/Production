@@ -225,5 +225,29 @@ where ed.ID = '{0}'", masterID);
             Sci.Win.Tools.EditMemo callNextForm = new Sci.Win.Tools.EditMemo(MyUtility.Convert.GetString(this.CurrentMaintain["ShipMarkDesc"]), "Shipping Mark", false, null);
             callNextForm.ShowDialog(this);
         }
+
+        // chkImportChange
+        private void ChkImportChange_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox chkImportChange = (CheckBox)sender;
+            int intPrepaidFtyImportFee = 0;
+            string sqlCmd = string.Empty;
+            bool bolShippingAPID = false;
+            if (chkImportChange.Checked)
+            {
+                intPrepaidFtyImportFee = MyUtility.Convert.GetInt(this.CurrentMaintain["PrepaidFtyImportFee"]);
+                sqlCmd = string.Format(
+                    @"select se.ShippingAPID
+                      from ShareExpense se WITH (NOLOCK)  
+                      where se.WKNo = '{0}' and se.junk=0", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
+                bolShippingAPID = MyUtility.Check.Seek(sqlCmd);
+                if (bolShippingAPID || intPrepaidFtyImportFee > 0)
+                {
+                    MyUtility.Msg.ErrorBox("Have A/P# already");
+                    chkImportChange.Checked = false;
+                    return;
+                }
+            }
+        }
     }
 }

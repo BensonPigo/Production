@@ -860,6 +860,7 @@
             this.chkImportChange.TabIndex = 55;
             this.chkImportChange.Text = "No Import Charge";
             this.chkImportChange.UseVisualStyleBackColor = true;
+            this.chkImportChange.CheckedChanged += new System.EventHandler(this.ChkImportChange_CheckedChanged);
             // 
             // txttpeuserHandle
             // 
