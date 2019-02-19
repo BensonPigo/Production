@@ -1531,6 +1531,36 @@ sd.Combotype = '{dr["ComboType"]}'
             return base.ClickSaveBefore();
         }
 
+        protected override DualResult ClickSavePost()
+        {
+            #region 檢查是否有SewingOutput_Detail_Detail沒存到
+            string sqlCheckSubDetail = $@"select OrderID
+from SewingOutput_Detail sod
+where not exists (select 1 
+				  from SewingOutput_Detail_Detail sodd
+				  where sodd.ID = sod.ID
+						and sodd.SewingOutput_DetailUKey = sod.UKey
+						and sodd.OrderId = sod.OrderId
+						and sodd.ComboType = sod.ComboType
+						and sodd.Article = sod.Article)
+      and sod.id = '{this.CurrentMaintain["ID"]}'";
+            DataTable dtLoseSubDetail;
+            DualResult result = DBProxy.Current.Select(null, sqlCheckSubDetail, out dtLoseSubDetail);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            if (dtLoseSubDetail.Rows.Count > 0)
+            {
+                string loseSubDetailOrderID = dtLoseSubDetail.AsEnumerable().Select(s => s["OrderID"].ToString()).JoinToString(",");
+                return new DualResult(false, $"SP# {loseSubDetailOrderID} <QA Output> can not be empty");
+            }
+            #endregion
+            return base.ClickSavePost();
+        }
+
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
