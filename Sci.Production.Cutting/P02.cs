@@ -291,7 +291,7 @@ outer apply(
 ) as fi
 outer apply(select Layer = sum(a.Layer)over(partition by a.CutRef))sl
 outer apply(select Cons = sum(a.Cons)over(partition by a.CutRef))sc
-outer apply(select NoofRoll = iif(isnull(round(sc.Cons/fi.avgInQty,0),0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
+outer apply(select NoofRoll = iif(isnull(fi.avgInQty,0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
 where a.id = '{0}'            
             ", masterID);
             this.DetailSelectCommand = cmdsql;
