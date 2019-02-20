@@ -102,7 +102,7 @@ order by bundlegroup"
             #region 先撈出底層其他Table
             if (!IsDetailInsertByCopy)
             {
-                string allPart_cmd = string.Format(@"Select sel = 0,b.*, ukey1 = 0, annotation = '' from Bundle_Detail a WITH (NOLOCK) inner join Bundle_Detail_Allpart b WITH (NOLOCK) on a.id = b.id Where a.id ='{0}'", masterID);
+                string allPart_cmd = string.Format(@"Select sel = 0,*, ukey1 = 0, annotation = '' from  Bundle_Detail_Allpart  WITH (NOLOCK)  Where id ='{0}'", masterID);
                 string art_cmd = string.Format(@"Select b.*, ukey1 = 0 from Bundle_Detail a WITH (NOLOCK) inner join Bundle_Detail_art b WITH (NOLOCK) on a.Bundleno = b.bundleno and a.id = b.id Where a.id ='{0}' ", masterID);
                 string qty_cmd = string.Format(@"Select No = 0, a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
                 DualResult dRes = null;
@@ -187,7 +187,7 @@ order by bundlegroup"
         public void queryTable()
         {
             string masterID = (CurrentMaintain == null) ? "" : CurrentMaintain["id"].ToString();
-            string allPart_cmd = string.Format(@"Select 0 as sel,b.*, 0 as ukey1,'' as annotation from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_Allpart b WITH (NOLOCK) Where a.id ='{0}' and a.id = b.id", masterID);
+            string allPart_cmd = string.Format(@"Select 0 as sel,*, 0 as ukey1,'' as annotation from Bundle_Detail_Allpart  WITH (NOLOCK) Where id ='{0}' ", masterID);
             string art_cmd = string.Format(@"Select b.*, 0 as ukey1 from Bundle_Detail a WITH (NOLOCK) ,Bundle_Detail_art b WITH (NOLOCK) Where a.id ='{0}' and a.Bundleno = b.bundleno and a.id = b.id", masterID);
             string qty_cmd = string.Format(@"Select 0 as No,a.* from Bundle_Detail_qty a WITH (NOLOCK) Where a.id ='{0}'", masterID);
             DualResult dRes = DBProxy.Current.Select(null, allPart_cmd, out bundle_Detail_allpart_Tb);
