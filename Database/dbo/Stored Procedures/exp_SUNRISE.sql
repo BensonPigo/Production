@@ -18,9 +18,9 @@ select distinct ss.OrderID,o.StyleID,o.SeasonID,o.BrandID,o.StyleUKey,o.Qty,o.Ad
 into #SrcOrderID
 from dbo.SewingSchedule ss with (nolock)
 inner join orders o with (nolock) on  ss.OrderID = o.ID
-where (inline <= @StartDate1 and inline > @EndDate1) or 
-	  (Offline <= @StartDate1 and Offline > @EndDate1) or
-	  (inline <= @StartDate1 and Offline > @EndDate1)
+where (inline >= @StartDate1 and inline < @EndDate1) 
+	  or (Offline >= @StartDate1 and Offline < @EndDate1) 
+	  or (inline <= @StartDate1 and Offline >= @EndDate1)
 
 
 
