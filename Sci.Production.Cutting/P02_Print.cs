@@ -670,7 +670,7 @@ Cutplanid, str_PIVOT);
                         }
                         else
                         {
-                            worksheet.Cells[nrow, 11] = "";
+                            worksheet.Cells[nrow, 12] = "";
                             worksheet.Cells[nrow, 19] = "";
                             worksheet.Cells[nrow, 22] = "";
                             worksheet.Cells[nrow, 24] = "";
