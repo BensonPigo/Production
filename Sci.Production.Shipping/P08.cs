@@ -477,13 +477,13 @@ and type='AP' and junk=0");
             }
             #endregion
 
-            // BLNO 重覆下, Reason 不可為空
+            // Supplier與B/L No 如果重複才需要填寫原因, Reason 不可為空
             if (!MyUtility.Check.Empty(this.txtBLNo.Text))
             {
-                string strSQLcmd = $@"select 1 from ShippingAP where BLNo='{this.txtBLNo.Text}'";
+                string strSQLcmd = $@"select 1 from ShippingAP where BLNo='{this.txtBLNo.Text}' AND LocalSuppID='{this.CurrentMaintain["LocalSuppID"].ToString()}' ";
                 if (MyUtility.Check.Seek(strSQLcmd) && MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
                 {
-                    MyUtility.Msg.WarningBox(@"<Reason> can not be empty becuase this <B/L No.> is already exists in other AP.");
+                    MyUtility.Msg.WarningBox(@"<Reason> cannot be empty becusae this <B/L No.> is already exists in other same supplier AP.");
                     this.txtReason.Focus();
                     return false;
                 }
