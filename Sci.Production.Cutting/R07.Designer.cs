@@ -51,6 +51,7 @@
             // print
             // 
             this.print.Location = new System.Drawing.Point(442, 12);
+            this.print.Visible = false;
             // 
             // toexcel
             // 
