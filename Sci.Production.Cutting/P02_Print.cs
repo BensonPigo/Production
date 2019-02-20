@@ -761,7 +761,7 @@ Where Cutref = '{0}'", cutref);
 
                 TotConsRowE = nrow - 1; //最後一個Cons
                 #region Total Cons
-                worksheet.Cells[nrow+1, 25] = string.Format("=SUM(T{0}:T{1})", TotConsRowS, TotConsRowE);
+                worksheet.Cells[nrow+1, 25] = string.Format("=SUM(Y{0}:Y{1})", TotConsRowS, TotConsRowE);
                 #endregion
                 nSheet++;
             }
