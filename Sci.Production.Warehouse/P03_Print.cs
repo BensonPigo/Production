@@ -100,7 +100,7 @@ namespace Sci.Production.Warehouse
 			                                       --,f.HsCode [HS Code]
                                                     ,[HS Code]= IIF(  --Export.ECFA 和 Fabric_Supp.IsECFA 都true 才是ECFA訂單
                                                         (
-	                                                        SELECT et.ECFA FROM Export et
+	                                                        SELECT TOP 1 et.ECFA FROM Export et
 	                                                        INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
 	                                                        WHERE g.PoID = a.id
 	                                                        AND g.SEQ1 = a.seq1
@@ -230,7 +230,7 @@ namespace Sci.Production.Warehouse
                                               --,Hs_code=e.HsCode
                                                 ,[HS Code]= IIF(
                                                     (
-	                                                    SELECT et.ECFA FROM Export et
+	                                                    SELECT TOP 1 et.ECFA FROM Export et
 	                                                    INNER JOIN Export_Detail g WITH (NOLOCK)  ON et.ID= g.id
 	                                                    WHERE g.PoID = a.id
 	                                                    AND g.SEQ1 = a.seq1
