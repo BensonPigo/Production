@@ -89,8 +89,12 @@ o.FactoryID
 ,g.Shipper 
 ,g.Dest
 ,g.FCRDate
-,ROUND(o.CPU,3) as CPU
-,isnull(cpucost.cpucost,0) as cpucost
+,[CPU]= ROUND(o.CPU,3)
+,[CPUCost]= isnull(cpucost.cpucost,0)
+,[StdSewingCost]= ROUND(o.CPU,3)  *   isnull(cpucost.cpucost,0)  --Std. Sewing Cost = CPU * CPU Cost
+,[SubProcessCPU]= ROUND(Isnull(sub_Process_CPU.Value,0),3)
+,[SubProcessCost]= ROUND(isnull(cpucost.cpucost,0),3)
+,[SubProcessAMT]= ROUND(Isnull(sub_Process_AMT.Value,0),3)
 ,SubPSCost=   ROUND(Isnull(sub_Process_CPU.Value,0) * isnull(cpucost.cpucost,0) + Isnull(sub_Process_AMT.Value,0),3) 
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1, dbo.GetLocalPurchaseStdCost(pd.OrderID) ,0),3)
 From GMTBooking g

@@ -94,6 +94,7 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,fd.ShipperID
 ,ROUND(o.CPU,3) as cpu
 ,ROUND(isnull(cpucost.cpucost,0),3) as cpucost
+,[StdSewingCost]= ROUND(o.CPU,3)  *   ROUND(isnull(cpucost.cpucost,0),3) --Std. Sewing Cost = CPU * CPU Cost
 ,[Sub_Process_CPU]= ROUND(Isnull(sub_Process_CPU.Value,0),3)
 ,[Sub_Process_Cost]=ROUND(isnull(cpucost.cpucost,0),3)
 ,[sub_Process_AMT]= ROUND(Isnull(sub_Process_AMT.Value,0),3)
