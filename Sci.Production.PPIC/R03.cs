@@ -566,7 +566,7 @@ select pd.OrderID, pd.OrderShipmodeSeq, Sum( pd.CTNQty) PackingCTN ,
 into #tmp_PLDetial
 from PackingList_Detail pd WITH (NOLOCK) 
 LEFT JOIN PackingList p on pd.ID = p.ID 
-inner join #tmpListPoCombo t on pd.OrderID = t.ID  and pd.OrderShipmodeSeq = t.Seq
+inner join (select distinct id, seq from #tmpListPoCombo) t on pd.OrderID = t.ID  and pd.OrderShipmodeSeq = t.Seq
 group by pd.OrderID, pd.OrderShipmodeSeq 
 
     select  t.ID
@@ -675,19 +675,24 @@ select sod.OrderId,Sum( case when sod.ComboType = 'T'  then sod.QAQty else 0 end
 into #tmp_sewDetial
 from SewingOutput so WITH (NOLOCK) 
 inner join SewingOutput_Detail sod WITH (NOLOCK) on so.ID = sod.ID
-inner join #tmpFilterSeperate t on sod.OrderId = t.ID
+inner join (select distinct ID from #tmpFilterSeperate) t on sod.OrderId = t.ID
 group by sod.OrderId
 
-select o.ID, o.Remark 
+select ID, Remark
 into #tmp_PFRemark
-from Order_PFHis o WITH (NOLOCK) 
-inner join #tmpFilterSeperate t on o.ID = t.ID 
-where AddDate = (
-		select Max(o.AddDate) 
-		from Order_PFHis o WITH (NOLOCK) 
-		where ID = t.ID
-	)
-group by o.ID, o.Remark   
+from (
+	select ROW_NUMBER() OVER (PARTITION BY o.ID ORDER BY o.addDate, o.Ukey) r_id
+		,o.ID, o.Remark
+	from Order_PFHis o WITH (NOLOCK) 
+	inner join #tmpFilterSeperate t on o.ID = t.ID 
+	where AddDate = (
+			select Max(o.AddDate) 
+			from Order_PFHis o WITH (NOLOCK) 
+			where ID = t.ID
+		)   
+	group by o.ID, o.Remark ,o.addDate, o.Ukey
+)a
+where r_id = '1' 
 
 select ed.POID,Max(e.WhseArrival) ArriveWHDate 
 into #tmp_ArriveWHDate
@@ -824,21 +829,26 @@ left join #tmp_PulloutQty pu on pu.OrderID = t.ID and pu.OrderShipmodeSeq = t.Se
 left join #tmp_ActPulloutTime apu on apu.OrderID = t.ID 
 order by t.ID;
 drop table #tmpListPoCombo;
-drop table #tmp_PLDetial,#tmpFilterSeperate,#tmp_sewDetial,#tmp_PFRemark,#tmp_ArriveWHDate,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_PulloutQty,#tmp_ActPulloutTime;");
+drop table #tmp_PLDetial,#tmpFilterSeperate,#tmp_sewDetial,#tmp_PFRemark,#tmp_ArriveWHDate,#tmp_StyleUkey,#tmp_MTLDelay,#tmp_PulloutQty,#tmp_ActPulloutTime,#tmp_Article;");
             }
             else
             {
                 sqlCmd.Append(@"
-select o.ID, o.Remark 
+select ID, Remark
 into #tmp_PFRemark
-from Order_PFHis o WITH (NOLOCK) 
-inner join #tmpListPoCombo t on o.ID = t.ID 
-where AddDate = (
-		select Max(o.AddDate) 
-		from Order_PFHis o WITH (NOLOCK) 
-		where ID = t.ID
-	)
-group by o.ID, o.Remark   
+from (
+	select ROW_NUMBER() OVER (PARTITION BY o.ID ORDER BY o.addDate, o.Ukey) r_id
+		,o.ID, o.Remark
+	from Order_PFHis o WITH (NOLOCK) 
+	inner join #tmpListPoCombo t on o.ID = t.ID 
+	where AddDate = (
+			select Max(o.AddDate) 
+			from Order_PFHis o WITH (NOLOCK) 
+			where ID = t.ID
+		)   
+	group by o.ID, o.Remark ,o.addDate, o.Ukey
+)a
+where r_id = '1'
 
 select StyleUkey ,dbo.GetSimilarStyleList(StyleUkey) GetStyleUkey
 into #tmp_StyleUkey
@@ -924,7 +934,7 @@ select distinct t.*
                             from CuttingOutput_WIP WITH (NOLOCK) 
                             where OrderID = t.ID)
                           , 0)
-        , PFRemark1 = isnull(pf.Remark,'')
+        , PFRemark = isnull(pf.Remark,'')
         , EarliestSCIDlv = dbo.getMinSCIDelivery (t.POID, '')
         , KPIChangeReasonName = isnull ((select Name 
                                          from Reason WITH (NOLOCK)  
@@ -1670,6 +1680,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                     case 0:
                         if (maxRow == 0)
                         {
+                            intRowsStart++;
                             break;
                         }
 
@@ -1688,17 +1699,18 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
                             }
                         }
 
-                        worksheet.Range[string.Format("A{0}:{1}{2}", maxRow / tRow == 1 ? 2 : maxRow - tRow + 2, excelColEng, maxRow + 1)].Value2 = objArray;
+                        worksheet.Range[string.Format("A{0}:{1}{2}", maxRow / tRow == 1 ? 2 : maxRow - tRow + 3, excelColEng, maxRow + 2)].Value2 = objArray;
                         intRowsStart = 0;
                         objArray = new object[tRow + 1, lastCol + 1];
                         break;
+                    default:
+                        intRowsStart++;
+                        break;
                 }
-
-                intRowsStart++;
                 maxRow++;
             }
 
-            if (intRowsStart == 0)
+            if (maxRow == 0)
             {
                 Microsoft.Office.Interop.Excel.Workbook workbook_close = excel.ActiveWorkbook;
                 workbook_close.Close(false, System.Reflection.Missing.Value, System.Reflection.Missing.Value);
@@ -1728,7 +1740,7 @@ left join ArtworkData a5 on a5.FakeID = 'T'+ot.Seq where exists (select id from 
 
             worksheet.Range[string.Format("A{0}:{1}{0}", 1, excelColEng)].AutoFilter(1); // 篩選
             worksheet.Range[string.Format("A{0}:{1}{0}", 1, excelColEng)].Interior.Color = Color.FromArgb(191, 191, 191); // 底色
-            worksheet.Range[string.Format("A{0}:{1}{2}", maxRow < tRow ? 2 : (maxRow / tRow * tRow) + 2 , excelColEng, maxRow + 1)].Value2 = objArray;
+            worksheet.Range[string.Format("A{0}:{1}{2}", maxRow < tRow ? 2 : (maxRow / tRow * tRow) + 3 , excelColEng, maxRow + 2)].Value2 = objArray;
             this.Subtrue = 0;
 
             // 顯示筆數於PrintForm上Count欄位
