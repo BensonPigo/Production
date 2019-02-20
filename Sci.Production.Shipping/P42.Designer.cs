@@ -40,7 +40,7 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.txtWKNo = new Sci.Win.UI.TextBox();
-            this.txtReason = new Sci.Win.UI.TextBox();
+            this.txtShippingReason1 = new Sci.Production.Class.txtShippingReason();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -57,7 +57,7 @@
             // 
             // masterpanel
             // 
-            this.masterpanel.Controls.Add(this.txtReason);
+            this.masterpanel.Controls.Add(this.txtShippingReason1);
             this.masterpanel.Controls.Add(this.txtWKNo);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
@@ -84,7 +84,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtWKNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtShippingReason1, 0);
             // 
             // detailpanel
             // 
@@ -238,7 +238,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 72);
+            this.label1.Location = new System.Drawing.Point(10, 72);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(81, 23);
             this.label1.TabIndex = 10;
@@ -261,16 +261,18 @@
             this.txtWKNo.Name = "txtWKNo";
             this.txtWKNo.Size = new System.Drawing.Size(168, 23);
             this.txtWKNo.TabIndex = 12;
+            this.txtWKNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtWKNo_Validating);
             // 
-            // txtReason
+            // txtShippingReason1
             // 
-            this.txtReason.BackColor = System.Drawing.Color.White;
-            this.txtReason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Reason", true));
-            this.txtReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReason.Location = new System.Drawing.Point(94, 72);
-            this.txtReason.Name = "txtReason";
-            this.txtReason.Size = new System.Drawing.Size(536, 23);
-            this.txtReason.TabIndex = 13;
+            this.txtShippingReason1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ReasonID", true));
+            this.txtShippingReason1.DisplayBox1Binding = "";
+            this.txtShippingReason1.Location = new System.Drawing.Point(94, 70);
+            this.txtShippingReason1.Name = "txtShippingReason1";
+            this.txtShippingReason1.Size = new System.Drawing.Size(467, 27);
+            this.txtShippingReason1.TabIndex = 13;
+            this.txtShippingReason1.TextBox1Binding = "";
+            this.txtShippingReason1.Type = "AQ";
             // 
             // P42
             // 
@@ -279,8 +281,8 @@
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "dateDate";
             this.DefaultOrder = "ID";
-            this.GridAlias = "VNContractQtyAdjust_Detail";
-            this.GridUniqueKey = "NLCode";
+            this.GridAlias = "VNContractQtyAdjust_Detail_Detail";
+            this.GridUniqueKey = "Refno";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
@@ -322,9 +324,9 @@
         private Win.UI.Label labelContractNo;
         private Win.UI.Label labelDate;
         private Win.UI.Button btnImportfromExcel;
-        private Win.UI.TextBox txtReason;
         private Win.UI.TextBox txtWKNo;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Class.txtShippingReason txtShippingReason1;
     }
 }

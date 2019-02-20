@@ -36,7 +36,7 @@
             // 
             this.displayBox1.Location = new System.Drawing.Point(73, 2);
             this.displayBox1.Name = "displayBox1";
-            this.displayBox1.Size = new System.Drawing.Size(158, 22);
+            this.displayBox1.Size = new System.Drawing.Size(391, 22);
             this.displayBox1.TabIndex = 3;
             // 
             // textBox1
@@ -55,7 +55,7 @@
             this.Controls.Add(this.displayBox1);
             this.Controls.Add(this.textBox1);
             this.Name = "txtShippingReason";
-            this.Size = new System.Drawing.Size(244, 27);
+            this.Size = new System.Drawing.Size(467, 27);
             this.ResumeLayout(false);
             this.PerformLayout();
 

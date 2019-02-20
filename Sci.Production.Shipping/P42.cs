@@ -54,7 +54,7 @@ namespace Sci.Production.Shipping
             this.DetailSelectCommand = string.Format(
                 @"select vd.*,c.HSCode,c.UnitID
 from VNContractQtyAdjust v WITH (NOLOCK) 
-inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID = vd.ID
+inner join VNContractQtyAdjust_Detail_Detail vd WITH (NOLOCK) on v.ID = vd.ID
 left join VNContract_Detail c WITH (NOLOCK) on c.ID = v.VNContractID and c.NLCode = vd.NLCode
 where {0}
 order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
@@ -201,6 +201,12 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             return base.ClickSaveBefore();
         }
 
+        protected override DualResult ClickSavePost()
+        {
+
+            return base.ClickSavePost();
+        }
+
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
@@ -275,12 +281,12 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             {
                 intRowsRead++;
 
-                range = worksheet.Range[string.Format("A{0}:D{0}", intRowsRead)];
+                range = worksheet.Range[string.Format("A{0}:E{0}", intRowsRead)];
                 objCellArray = range.Value;
 
                 if (!MyUtility.Check.Seek(
                     string.Format(
-                        "select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and NLCode = '{1}'",
+                        "select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and Refno = '{1}'",
                         MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
                         MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))),
                     out seekData))
@@ -291,8 +297,20 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 else
                 {
                     DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
-                    newRow["NLCode"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
-                    newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "N");
+                    newRow["Refno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
+                    string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
+                    string nlCode = string.Empty;
+                    if (type.EqualString("A") || type.EqualString("F"))
+                    {
+                        nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{newRow["Refno"]}'");
+                    }
+                    else if (type.EqualString("L"))
+                    {
+                        nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where refno = '{newRow["Refno"]}'");
+                    }
+
+                    newRow["NLCode"] = nlCode;
+                    newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N");
                     newRow["HSCode"] = seekData["HSCode"];
                     newRow["UnitID"] = seekData["UnitID"];
                     ((DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
@@ -309,6 +327,22 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             }
 
             MyUtility.Msg.InfoBox("Import Complete!!");
+        }
+
+        private void TxtWKNo_Validating(object sender, CancelEventArgs e)
+        {
+            string chksql;
+            chksql = $@"select 1 from Adjust where id = '{this.txtWKNo.Text}' and Type = 'R'";
+            if (MyUtility.Check.Seek(chksql))
+            {
+
+            }
+
+            chksql = $@"select 1 from FtyExport where id = '{this.txtWKNo.Text}' and Type = 3";
+            if (MyUtility.Check.Seek(chksql))
+            {
+
+            }
         }
     }
 }
