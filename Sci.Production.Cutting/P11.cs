@@ -1492,11 +1492,18 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
             }
             #region 判斷Pattern(Cutpart_grid)的Artwork  不可為空
             DataRow[] findr = patternTb.Select("PatternCode<>'ALLPARTS' and (art='' or art is null)", "");
-            if (findr.Length > 0)
+            var tmpArticleSizeTb = ArticleSizeTb.AsEnumerable();
+
+            foreach (DataRow dr in findr)
             {
-                MyUtility.Msg.WarningBox("<Art> can not be empty!");
-                return;
+                bool isArticleSizeSelected = tmpArticleSizeTb.Where(s => (int)s["iden"] == (int)dr["iden"] && (int)s["Sel"] == 1).Any();
+                if (isArticleSizeSelected)
+                {
+                    MyUtility.Msg.WarningBox("<Art> can not be empty!");
+                    return;
+                }
             }
+            
             gridCutRef.ValidateControl();
             gridArticleSize.ValidateControl();
             gridQty.ValidateControl();
