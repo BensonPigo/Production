@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Shipping
 {
@@ -52,9 +53,11 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? "1=0" : "v.ID = " + MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
-                @"select vd.*,c.HSCode,c.UnitID
+                @"
+select v.id,vdd.Refno,vdd.FabricType,vd.NLCode,vd.Qty,c.HSCode,c.UnitID
 from VNContractQtyAdjust v WITH (NOLOCK) 
-inner join VNContractQtyAdjust_Detail_Detail vd WITH (NOLOCK) on v.ID = vd.ID
+inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID = vd.ID
+left join VNContractQtyAdjust_Detail_Detail vdd WITH (NOLOCK) on v.ID = vdd.ID and vd.NLCode = vdd.NLCode
 left join VNContract_Detail c WITH (NOLOCK) on c.ID = v.VNContractID and c.NLCode = vd.NLCode
 where {0}
 order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
@@ -203,6 +206,31 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
 
         protected override DualResult ClickSavePost()
         {
+            string insertuUdataDetail = $@"
+select ID,NLCode,Qty = sum(Qty)
+into #tmps
+from #tmp t
+group by ID,NLCode
+
+merge VNContractQtyAdjust_Detail t
+using #tmps s
+on t.ID = s.ID and t.NLCode = s.NLCode
+when matched then update set
+	t.Qty = s.Qty
+when not matched by target then
+	insert(ID,NLCode,Qty)
+	values(s.ID,s.NLCode,s.Qty)
+when not matched by source and t.id in(select id from #tmps) then
+	delete
+;
+drop table #tmp,#tmps
+";
+            DataTable dt;
+            DualResult result = MyUtility.Tool.ProcessWithDatatable((DataTable)this.detailgridbs.DataSource, string.Empty, insertuUdataDetail, out dt);
+            if (!result)
+            {
+                return Result.F(result.ToString());
+            }
 
             return base.ClickSavePost();
         }
@@ -240,6 +268,59 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 MyUtility.Msg.WarningBox("Unconfirm fail!!\r\n" + result.ToString());
                 return;
             }
+        }
+
+        protected override bool ClickPrint()
+        {
+
+            //if (MyUtility.Check.Empty(this.CurrentDetailData))
+            //{
+            //    MyUtility.Msg.InfoBox("No any data.");
+            //    return false;
+            //}
+            #region
+            DataTable dt;
+            string sqlcmd = $@"
+select
+	[seq]=ROW_NUMBER()over(order by vaqd.NLCode,vd.HSCode),
+	vaqd.NLCode,
+	vcd.DescVI,
+	vd.HSCode,
+	ORIGIN=null,
+	vaqd.Qty,
+	vd.UnitID,
+	PRICE=null,
+	AMOUNT=null,
+	TAXFREECODE=null
+from VNContractQtyAdjust vaq
+inner join VNContractQtyAdjust_Detail vaqd with(nolock)on vaq.id = vaqd.id
+left join VNContract_Detail vd with(nolock)on vd.ID = vaq.VNContractID and vd.NLCode=vaqd.NLCode
+left join VNNLCodeDesc vcd with(nolock)on vcd.NLCode=vd.NLCode
+where vaq.id = '{this.CurrentMaintain["ID"]}'
+order by vaqd.NLCode,vd.HSCode
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+            #endregion
+            string excelFileName = "Shipping_P42";
+            Microsoft.Office.Interop.Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelFileName}.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(dt, string.Empty, $"{excelFileName}.xltx", 1, false, null, excelApp);
+            #region Save & Show Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName(excelFileName);
+            Microsoft.Office.Interop.Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excelApp.Quit();
+            Marshal.ReleaseComObject(excelApp);
+            Marshal.ReleaseComObject(workbook);
+            strExcelName.OpenFile();
+            #endregion 
+            return base.ClickPrint();
         }
 
         // Import from excel
