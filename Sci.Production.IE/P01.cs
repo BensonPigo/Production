@@ -1143,7 +1143,7 @@ where ID = {0}",
             #endregion
 
             DataTable ietmsData;
-            string sqlCmd = @"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,o.Annotation,
+            string sqlCmd = @"select id.SEQ,id.OperationID,o.DescEN as OperationDescEN,id.Annotation,
                             iif(round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
                             id.Frequency as Sewer,o.MachineTypeID,id.Frequency,
                             id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency as IETMSSMV,id.Mold,id.MtlFactorID,
