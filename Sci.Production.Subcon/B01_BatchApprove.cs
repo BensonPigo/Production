@@ -39,10 +39,10 @@ namespace Sci.Production.Subcon
                 .Text("Description", header: "Description", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("AccountIDN", header: "Account No", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("sLocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
-                .Text("NewSupp", header: "New Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("sNewSupp", header: "New Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("NewCurrency", header: "New Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("NewPrice", header: "New Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
                 ;
@@ -83,29 +83,43 @@ namespace Sci.Production.Subcon
 
             string sqlcmd;
             return sqlcmd = $@"
-select l.*,
-	NewSupp = case when ChooseSupp = 1 then localsuppid1
-				   when ChooseSupp = 2 then localsuppid2
-				   when ChooseSupp = 3 then localsuppid3
-				   when ChooseSupp = 4 then localsuppid4 end,
-	NewCurrency = case 
-				   when ChooseSupp = 1 then currencyid1
-				   when ChooseSupp = 2 then currencyid2
-				   when ChooseSupp = 3 then currencyid3
-				   when ChooseSupp = 4 then currencyid4 end,
-	NewPrice = case 
-				   when ChooseSupp = 1 then price1
-				   when ChooseSupp = 2 then price2
-				   when ChooseSupp = 3 then price3
-				   when ChooseSupp = 4 then price4 end,
-    Selected = 0,
-	lq.Ukey,
-	AccountIDN=concat(AccountID,' ',(select Name from  FinanceEN.dbo.AccountNo with (nolock) where junk = 0 and id = AccountID))
+select l.*
+	,iif(isnull(ls.Abb,'') = '',l.LocalSuppID ,l.LocalSuppID + '-' +ls.Abb) as sLocalSuppID
+	,iif(isnull(lsn.Abb,'') = '',l.NewSupp ,l.NewSupp + '-' +lsn.Abb) as sNewSupp
+from
+(
+	select l.Category
+			,l.Refno
+			,l.Description
+			,l.UnitID
+			,l.LocalSuppID
+			,l.CurrencyID
+			,l.Price
+		,NewSupp = case when ChooseSupp = 1 then localsuppid1
+					   when ChooseSupp = 2 then localsuppid2
+					   when ChooseSupp = 3 then localsuppid3
+					   when ChooseSupp = 4 then localsuppid4 end
+		,NewCurrency = case 
+					   when ChooseSupp = 1 then currencyid1
+					   when ChooseSupp = 2 then currencyid2
+					   when ChooseSupp = 3 then currencyid3
+					   when ChooseSupp = 4 then currencyid4 end
+		,NewPrice = case 
+					   when ChooseSupp = 1 then price1
+					   when ChooseSupp = 2 then price2
+					   when ChooseSupp = 3 then price3
+					   when ChooseSupp = 4 then price4 end
+		,Selected = 0
+		,lq.Ukey
+		,AccountIDN=concat(AccountID,' ',(select Name from  FinanceEN.dbo.AccountNo with (nolock) where junk = 0 and id = AccountID))
 	
-from LocalItem l
-inner join LocalItem_Quot lq on l.RefNo = lq.RefNo
-where lq.status <> 'Approved'
-{wheresql}
+	from LocalItem l
+	inner join LocalItem_Quot lq on l.RefNo = lq.RefNo
+	where lq.status <> 'Approved'
+	{wheresql}
+)l
+left join LocalSupp ls on l.LocalSuppID = ls.ID
+left join LocalSupp lsn on l.NewSupp = lsn.ID
 ";
         }
 
