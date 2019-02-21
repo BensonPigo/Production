@@ -95,6 +95,15 @@ select  p.GMTBookingLock
                                      ) a 
                                      for xml path('')
                                    ), 1, 1, '') 
+		,[PONo]=STUFF ((select CONCAT (',',a.CustPONo) 
+                            from (
+                                select distinct o.CustPONo
+                                from PackingList_Detail pd WITH (NOLOCK) 
+								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
+                                where pd.ID = p.id
+                            ) a 
+                            for xml path('')
+                          ), 1, 1, '') 
         , AirPPID = STUFF ((select CONCAT (',', cast (a.ID as nvarchar)) 
                             from (
                                 select ap.ID
@@ -243,6 +252,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("ID", header: "Packing #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("OrderShipmodeSeq", header: "Seq", width:Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("PONo", header: "PO No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
                 .Date("SDPDate", header: "SDP Date", iseditingreadonly: true)

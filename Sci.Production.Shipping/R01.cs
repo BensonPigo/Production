@@ -77,10 +77,30 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             if (this.reportType == "1")
             {
-                sqlCmd.Append(string.Format(@"select g.ID,g.Shipper,g.BrandID,g.InvDate,g.FCRDate,g.CustCDID,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,g.ShipModeID,g.ShipTermID,
-g.Handle,(g.Forwarder+' - '+isnull(ls.Abb,'')) as Forwarder,g.Vessel,g.ETD,g.ETA,g.SONo,g.SOCFMDate,g.TotalShipQty,g.TotalCTNQty,
-isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR WITH (NOLOCK) where ID = g.ID for xml path('')),'') as CTNTruck,
-g.TotalGW,g.TotalCBM,g.AddDate,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate,g.Remark
+                sqlCmd.Append(string.Format(@"select 
+g.ID
+,g.Shipper
+,g.BrandID
+,g.InvDate
+,g.FCRDate
+,g.CustCDID
+,(g.Dest+' - '+isnull(c.Alias,'')) as Dest
+,g.ShipModeID
+,g.ShipTermID
+,g.Handle,(g.Forwarder+' - '+isnull(ls.Abb,'')) as Forwarder
+,g.Vessel
+,g.ETD
+,g.ETA
+,g.SONo
+,g.SOCFMDate
+,g.TotalShipQty
+,g.TotalCTNQty
+,isnull((select CTNRNo+'/'+TruckNo+',' from GMTBooking_CTNR WITH (NOLOCK) where ID = g.ID for xml path('')),'') as CTNTruck
+,g.TotalGW
+,g.TotalCBM
+,g.AddDate
+,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+,g.Remark
 from GMTBooking g WITH (NOLOCK) 
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join LocalSupp ls WITH (NOLOCK) on ls.ID = g.Forwarder
@@ -88,19 +108,68 @@ where 1=1"));
             }
             else
             {
-                sqlCmd.Append(string.Format(@"select g.ID,g.Shipper,g.BrandID,g.InvDate,pl.MDivisionID,isnull(pl.ID,'') as PackID,pl.CargoReadyDate,pl.PulloutDate,
-isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty,isnull(pl.GW,0) as GW,isnull(pl.CBM,0) as CBM,g.CustCDID,
-(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate,
-g.AddName+' '+isnull(p.Name,'') as AddName,g.AddDate,g.Remark,
-isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID,
-(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery,
-(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
+                sqlCmd.Append(string.Format(@"
+select 
+
+g.ID
+,g.Shipper
+,g.BrandID
+,g.InvDate
+,pl.MDivisionID
+,isnull(pl.ID,'') as PackID
+,[POno]=STUFF ((select CONCAT (',',a.CustPONo) 
+                            from (
+                                select distinct o.CustPONo
+                                from PackingList_Detail pd WITH (NOLOCK) 
+								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
+                                where pd.ID = pl.id
+                            ) a 
+                            for xml path('')
+                          ), 1, 1, '') 
+,pl.PulloutDate
+
+--
+,[SoConfirmDate]=g.SOCFMDate
+--,[CutOffDate]=STUFF ((select CONCAT (',',a.SDPDate) 
+--                            from (
+--                                select distinct o.SDPDate
+--                                from PackingList_Detail pd WITH (NOLOCK) 
+--								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
+--                                where pd.ID = pl.id
+--                            ) a 
+--                            for xml path('')
+--                          ), 1, 1, '') 
+,[CutOffDate]= cutoffdate.Date
+,[PulloutReportConfirmDate]= ISNULL((SELECT TOP 1 AddDate FROM Pullout_Revise WHERE  ID=pl.PulloutID AND OrderID=pl.OrderID) , (SELECT SendToTPE FROM Pullout WHERE ID=pl.PulloutID) )
+,[PulloutID]=pl.PulloutID
+--
+,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
+,isnull(pl.GW,0) as GW
+,isnull(pl.CBM,0) as CBM
+,g.CustCDID
+,(g.Dest+' - '+isnull(c.Alias,'')) as Dest,IIF(g.Status = 'Confirmed',g.EditDate,null) as ConfirmDate
+,g.AddName+' '+isnull(p.Name,'') as AddName
+,g.AddDate
+,g.Remark
+,isnull((select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a for xml path('')),'') as OrderID
+,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
+, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
+,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
+
 from GMTBooking g WITH (NOLOCK) 
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
+OUTER APPLY(
+	select distinct [Date]=o.SDPDate
+	from PackingList_Detail pd WITH (NOLOCK) 
+	left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
+	where pd.ID = pl.id
+)CutOffDate
 where pl.ID<>'' and 1=1 "));
             }
+
+            #region Where 條件
 
             if (!MyUtility.Check.Empty(this.invdate1))
             {
@@ -155,6 +224,8 @@ where pl.ID<>'' and 1=1 "));
             {
                 sqlCmd.Append(" and g.Status <> 'Confirmed'");
             }
+
+            #endregion
 
             sqlCmd.Append(" order by g.ID");
 
@@ -228,7 +299,7 @@ where pl.ID<>'' and 1=1 "));
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 21];
+                object[,] objArray = new object[1, 25];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -238,21 +309,25 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 4] = dr["MDivisionID"];
                     objArray[0, 5] = dr["PackID"];
                     objArray[0, 6] = MyUtility.Check.Empty(dr["OrderID"]) ? dr["OrderID"] : MyUtility.Convert.GetString(dr["OrderID"]).Substring(0, MyUtility.Convert.GetString(dr["OrderID"]).Length - 1);
-                    objArray[0, 7] = dr["CargoReadyDate"];
+                    objArray[0, 7] = dr["POno"];
                     objArray[0, 8] = dr["BuyerDelivery"];
                     objArray[0, 9] = dr["SDPDate"];
                     objArray[0, 10] = dr["PulloutDate"];
-                    objArray[0, 11] = dr["ShipQty"];
-                    objArray[0, 12] = dr["CTNQty"];
-                    objArray[0, 13] = dr["GW"];
-                    objArray[0, 14] = dr["CBM"];
-                    objArray[0, 15] = dr["CustCDID"];
-                    objArray[0, 16] = dr["Dest"];
-                    objArray[0, 17] = dr["ConfirmDate"];
-                    objArray[0, 18] = dr["AddName"];
-                    objArray[0, 19] = dr["AddDate"];
-                    objArray[0, 20] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:U{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 11] = dr["SoConfirmDate"];
+                    objArray[0, 12] = dr["CutOffDate"];
+                    objArray[0, 13] = dr["PulloutReportConfirmDate"];
+                    objArray[0, 14] = dr["PulloutID"];
+                    objArray[0, 15] = dr["ShipQty"];
+                    objArray[0, 16] = dr["CTNQty"];
+                    objArray[0, 17] = dr["GW"];
+                    objArray[0, 18] = dr["CBM"];
+                    objArray[0, 19] = dr["CustCDID"];
+                    objArray[0, 20] = dr["Dest"];
+                    objArray[0, 21] = dr["ConfirmDate"];
+                    objArray[0, 22] = dr["AddName"];
+                    objArray[0, 23] = dr["AddDate"];
+                    objArray[0, 24] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
