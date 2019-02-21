@@ -102,6 +102,12 @@ namespace Sci.Production.Logistic
             {
                 listSQLFilter.Add("and p2.id= @PackID");
             }
+
+            int intChkUpdateOriLocation = 0;
+            if (this.chkUpdateOriLocation.Checked)
+            {
+                intChkUpdateOriLocation = 1;
+            }
             #endregion
 
             this.ShowWaitMessage("Data Loading....");
@@ -120,7 +126,7 @@ select distinct
 ,o.BrandID
 ,c.Alias
 ,o.BuyerDelivery
-,p2.ClogLocationID
+,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, p2.ClogLocationID)
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
@@ -137,6 +143,12 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 ) o1
+outer apply (
+	select top 1 OrigloactionID from TransferToCFA
+	where PackingListID=p2.ID
+	and CTNStartNo=p2.CTNStartNo
+	order by AddDate desc
+)ToCfa
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
@@ -486,7 +498,7 @@ where p2.id='{dr["id"].ToString().Trim()}' and p2.CTNStartNo='{dr["CTNStartNo"].
                         updateCmds.Add($@"
 update PackingList_Detail 
 set ClogReceiveCFADate = CONVERT(varchar(100), GETDATE(), 111)
-, CFAReturnClogDate = null
+, CFAReturnClogDate = null , ClogLocationID = '{dr["ClogLocationID"]}'
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 ");
 
@@ -602,6 +614,11 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             this.grid.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource1.Position = pos;
             this.grid.ResumeLayout();
+        }
+
+        private void chkUpdateOriLocation_CheckedChanged(object sender, EventArgs e)
+        {
+            Find();
         }
     }
 }
