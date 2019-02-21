@@ -49,10 +49,10 @@ namespace Sci.Production.Subcon
             
             Helper.Controls.Grid.Generator(this.grid2)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false).Get(out col_chk2)
-                .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
+                .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SuppAbb", header: "Supp Abb", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Numeric("Price", header: "Price", width: Widths.AnsiChars(8), decimal_places: 4, iseditingreadonly: true)
                 ;
 
             // 按Header沒有排序功能
@@ -251,7 +251,6 @@ drop table #bas
             listControlBindingSource2.DataMember = "rel1";
             this.grid1.AutoResizeColumns();
             this.grid1.Columns["Description"].Width = 100;
-            this.grid2.AutoResizeColumns();
             if (msg.Count > 0)
             {
                 MyUtility.Msg.WarningBox($@"Refno have more than one new quotation, please handle those individually.
