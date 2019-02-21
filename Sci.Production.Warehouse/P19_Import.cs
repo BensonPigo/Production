@@ -78,8 +78,8 @@ select  0 as selected
         , c.Seq1
         , c.Seq2
         , concat(Ltrim(Rtrim(c.seq1)), ' ', c.Seq2) as seq
-        , a.FabricType
-        , a.stockunit
+        , export.FabricType
+        , rd.stockunit
         , dbo.getmtldesc(c.POID,c.seq1,c.seq2,2,0) Description
         , c.Roll
         , c.Dyelot
@@ -89,11 +89,17 @@ select  0 as selected
         , dbo.Getlocation(c.ukey) location
         , c.inqty-c.outqty + c.adjustqty as stockqty
 from ftyinventory c WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail a WITH (NOLOCK)   on c.poid = a.id and c.seq1 = a.seq1 and c.seq2  = a.seq2 
-left join dbo.Orders WITH (NOLOCK)  on c.POID = orders.id
-left join dbo.Factory WITH (NOLOCK)  on orders.FactoryID = factory.ID
+left join Receiving_Detail rd WITH (NOLOCK) on c.POID=rd.PoId
+    and c.Seq1=rd.Seq1 and c.Seq2=rd.Seq2 and c.Roll=rd.Roll and c.Dyelot=rd.Dyelot
+outer apply(
+	select top 1 ed.FabricType,f.MDivisionID 
+    from Export e WITH (NOLOCK)
+	inner join Export_Detail ed WITH (NOLOCK) on e.ID=ed.ID
+	left join Factory f WITH (NOLOCK) on f.ID=e.FactoryID
+	where ed.PoID=c.POID and ed.Seq1=c.Seq1 and ed.Seq2=c.Seq2
+)export
 Where   c.lock = 0 
-and factory.MDivisionID = '{0}' 
+and export.MDivisionID = '{0}' 
         and c.inqty-c.outqty + c.adjustqty > 0 
         and c.Poid = @sp 
         and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
