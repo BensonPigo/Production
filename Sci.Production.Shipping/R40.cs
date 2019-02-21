@@ -29,6 +29,9 @@ namespace Sci.Production.Shipping
         private DataTable OnRoadProduction;
         private DataTable ScrapDetail;
         private DataTable Outstanding;
+        private DataTable WarehouseNotClose;
+        private DataTable AlreadySewingOutput;
+        private DataTable dtImportEcusData = new DataTable();
 
         /// <summary>
         /// R40
@@ -39,6 +42,8 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
             this.checkLiquidationDataOnly.Checked = true;
+            this.dtImportEcusData.Columns.Add("NLCode", typeof(string));
+            this.dtImportEcusData.Columns.Add("StockQty", typeof(decimal));
         }
 
         /// <inheritdoc/>
@@ -55,6 +60,67 @@ namespace Sci.Production.Shipping
             this.hscode = this.txtHSCode.Text;
             this.nlcode = this.txtNLCode.Text;
             this.liguidationonly = this.checkLiquidationDataOnly.Checked;
+
+            #region import Ecus Qty
+            DialogResult importResult = DialogResult.Cancel;
+
+            if (!this.liguidationonly)
+            {
+                importResult = new R40_SelectFileDialog().ShowDialog();
+            }
+
+            if (importResult == DialogResult.OK)
+            {
+                this.dtImportEcusData.Clear();
+                string excelFile = MyUtility.File.GetFile("Excel files|*.xls;*.xlsx");
+
+                if (MyUtility.Check.Empty(excelFile))
+                {
+                    return false;
+                }
+
+                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(excelFile);
+                if (excel == null)
+                {
+                    return false;
+                }
+
+                this.ShowWaitMessage("Starting Import EXCEL...");
+
+                excel.Visible = false;
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+                int intRowsCount = worksheet.UsedRange.Rows.Count + 6;
+                int intRowsStart = 8;
+                int intRowsRead = intRowsStart - 1;
+
+                Microsoft.Office.Interop.Excel.Range range;
+                object[,] objCellArray;
+
+                while (intRowsRead < intRowsCount)
+                {
+                    intRowsRead++;
+                    range = worksheet.Range[string.Format("A{0}:I{0}", intRowsRead)];
+                    objCellArray = range.Value;
+                    string nLCode = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
+                    var stockQty = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "N");
+                    if (MyUtility.Check.Empty(nLCode) || MyUtility.Check.Empty(stockQty))
+                    {
+                        continue;
+                    }
+
+                    DataRow drEcusData = this.dtImportEcusData.NewRow();
+                    drEcusData["NLCode"] = nLCode;
+                    drEcusData["StockQty"] = stockQty;
+                    this.dtImportEcusData.Rows.Add(drEcusData);
+                }
+
+                excel.Workbooks.Close();
+                excel.Quit();
+                excel = null;
+
+                this.HideWaitMessage();
+            }
+            #endregion
 
             return base.ValidateInput();
         }
@@ -163,6 +229,7 @@ drop table #tmpDeclare;");
                 sqlCmd.Append(
                     @"
 -- 1)在途物料(已報關但還在途)(On Road Material Qty新增報表)
+Declare @EtaRange date = GETDATE() - 31
 select * 
 into #tmpOnRoadMaterial
 from 
@@ -172,7 +239,8 @@ from
 	,[NLCode] = f.NLCode
 	,[PoID] = ed.PoID
 	,[Seq] = ed.Seq1+'-'+ed.Seq2
-	,[refno] = ed.refno
+	,[Refno] = ed.refno
+    ,[MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
 	,[Description] = ed.Description
 	,[Qty] =( dbo.getVNUnitTransfer(isnull(f.Type, '')
 		,dbo.getStockUnit(psd.SciRefno,ed.Suppid)
@@ -204,7 +272,7 @@ from
 	and not exists (select 1 from Receiving WITH (NOLOCK)
 		where exportID = e.id and status='Confirmed')
 	and vd.blno<>''
-
+    and e.Eta > @EtaRange
 union all
 	
 	select distinct
@@ -213,6 +281,7 @@ union all
 	,[POID] = fed.PoID
 	,[Seq] = fed.Seq1+'-'+fed.Seq2
 	,[RefNo] = fed.refno
+    ,[MaterialType] = dbo.GetMaterialTypeDesc(isnull(f.Type,li.Category))
 	,[Description] = isnull(isnull(f.Description, li.Description),'')
 	,[Qty] =( dbo.getVNUnitTransfer(isnull(li.Category, '')
 		,StockUnit.unit
@@ -254,6 +323,7 @@ union all
 		where InvNo = fe.InvNo and status='Confirmed')				
 	and not exists (select 1 from LocalReceiving WITH (NOLOCK)
 		where InvNo = fe.InvNo and status='Confirmed')
+    and fe.PortArrival > @EtaRange
 ) a
 -- end --
 				
@@ -275,6 +345,7 @@ from (
 	,[POID] = fi.POID
 	,[Seq] = (fi.Seq1+'-'+fi.Seq2)
 	,[Refno] = psd.Refno
+    ,[MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
 	,[Description] = f.Description
 	,[Roll] = fi.Roll
 	,[Dyelot] = fi.Dyelot
@@ -318,6 +389,7 @@ select distinct
 	,[POID] = l.OrderID
 	,[Seq] = ''
 	,[RefNo] = l.Refno
+    ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
 	,[Description] = li.Description
 	,[Roll] = '' 
 	,[Dyelot] = '' 
@@ -350,9 +422,9 @@ select distinct
 --撈已發料數量
 select distinct	o.ID
 		,o.MDivisionID
-		,o.StyleID
 		,o.BrandID
 		,o.StyleUKey
+        ,o.StyleID
 		,o.Category
 		,o.SeasonID
 		,o.POID 
@@ -393,10 +465,19 @@ from
 			(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = 'M')
 			,(select Rate from dbo.View_Unitrate where FROM_U = psd.StockUnit and TO_U = isnull(f.CustomsUnit,''))),''))
 		,0)
+    ,f.Refno
+    ,[MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
+    ,f.Description
+    ,[CustomsUnit] = f.CustomsUnit
+    ,[StockQty] = IIF((mdp.OutQty-mdp.LObQty) > 0,(mdp.OutQty-mdp.LObQty),0)
+    ,[StockUnit] = psd.StockUnit
+    ,[StyleID] = t.StyleID
+    ,[Color] = isnull(c.Name,'')
 	from #tmpWHNotClose t
 	inner join MDivisionPoDetail mdp WITH (NOLOCK) on mdp.POID = t.ID 
 	inner join PO_Supp_Detail psd WITH (NOLOCK) on mdp.POID = psd.ID and psd.SEQ1 = mdp.Seq1 and psd.SEQ2 = mdp.Seq2
 	left join Fabric f WITH (NOLOCK) on psd.SCIRefno = f.SCIRefno
+    left join Color c WITH (NOLOCK) on psd.BrandID = c.BrandID and psd.ColorID = c.ID
 
 union all
 
@@ -419,6 +500,14 @@ union all
 			(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = 'M')
 			,(select Rate from dbo.View_Unitrate where FROM_U = IIF(l.UnitId = 'CONE','M',l.UnitId) and TO_U = isnull(li.CustomsUnit,''))),''))
 		,0)
+    ,li.Refno
+    ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
+    ,li.Description
+    ,[CustomsUnit] = li.CustomsUnit
+    ,[StockQty] = IIF(l.OutQty > 0,l.OutQty*IIF(l.UnitId = 'CONE',isnull(li.MeterToCone,0),1),0)
+    ,[StockUnit] = li.UnitId
+    ,[StyleID] = t.StyleID
+    ,[Color] = ''
 	from #tmpWHNotClose t
 	inner join LocalInventory l WITH (NOLOCK) on t.ID = l.OrderID 
 	left join LocalItem li WITH (NOLOCK) on l.Refno = li.RefNo
@@ -458,6 +547,12 @@ select 	t.ID
 		,sum(isnull(a.Qty ,0)) as Qty
 		,isnull(a.CustomSP,'') as CustomSP
 		,t.POID
+        ,isnull(a.Refno,'') as Refno
+        ,isnull(a.MaterialType,'') as MaterialType
+        ,isnull(a.Description,'') as Description
+        ,isnull(a.CustomsUnit,'') as CustomsUnit
+        ,[StockQty] = sum(isnull(a.StockQty ,0))
+        ,isnull(a.StockUnit,'') as StockUnit
 into #tmpWHNotCloseSewingOutput
 from #tmpWHNotClose t 
 inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.ID
@@ -467,37 +562,58 @@ left join (
 			,sdd.Article
 			,sdd.SizeCode
 			,sdd.QAQty
-			,vd.HSCode
-			,vd.NLCode
-			,vd.UnitID
-			,(ol_rate.value/100*sdd.QAQty)* (vd.Qty * (1+vd.Waste)) as Qty
+			,vdd.HSCode
+			,vdd.NLCode
+			,vdd.UnitID
+			,[Qty] = (ol_rate.value/100*sdd.QAQty)* (vdd.Qty * (1+vd.Waste))
 			,v.CustomSP
+            ,vdd.Refno
+            ,[MaterialType] = dbo.GetMaterialTypeDesc(vdd.FabricType)
+            ,[Description] = case when vdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vdd.Refno)
+                                  else (select Description from Fabric with (nolock) where SCIRefno = vdd.SCIRefno) end
+            ,[CustomsUnit] = vdd.UnitID
+            ,[StockQty] = (ol_rate.value/100*sdd.QAQty)* (vdd.StockQty * (1+vd.Waste))
+            ,[StockUnit] = vdd.StockUnit
 	from #tmpWHNotClose t
 	inner join SewingOutput_Detail_Detail sdd WITH (NOLOCK) on sdd.OrderId = t.ID	    
 	inner join #tmpCustomSP v on v.StyleID = t.StyleID and v.BrandID = t.BrandID and v.Category = t.Category and v.seasonid=t.seasonid
 	inner join VNConsumption_Article va WITH (NOLOCK) on va.ID = v.ID and va.Article = sdd.Article
 	inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = v.ID and vs.SizeCode = sdd.SizeCode
-	inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = v.ID
+    inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = v.ID
+	inner join VNConsumption_Detail_Detail vdd WITH (NOLOCK) on vdd.ID = vd.ID and vdd.NLCode = vd.NLCode
 	outer apply(select value = dbo.GetOrderLocation_Rate(t.id,sdd.ComboType)) ol_rate		
 ) a on t.ID = a.OrderId and sdd.ComboType = a.ComboType and sdd.Article = a.Article and sdd.SizeCode = a.SizeCode
-group by t.ID, sdd.ComboType,sdd.Article,sdd.SizeCode,isnull(a.HSCode,''),isnull(a.NLCode,'')
-	,isnull(a.UnitID,''),isnull(a.CustomSP,''),t.POID
+group by t.ID, sdd.ComboType,sdd.Article,sdd.SizeCode,isnull(a.HSCode,''),
+         isnull(a.NLCode,''),isnull(a.MaterialType,''),isnull(a.Description,''),isnull(a.CustomsUnit,'')
+	,isnull(a.UnitID,''),isnull(a.CustomSP,''),t.POID,isnull(a.Refno,''),isnull(a.StockUnit,'')
 order by t.ID, sdd.ComboType,sdd.Article,sdd.SizeCode
 
 --組WIP明細
 select 	
- [ID] = IIF(ti.ID is null,tw.POID,ti.ID)
-,[HSCode] = IIF(ti.HSCode is null,tw.HSCode,ti.HSCode)
+[HSCode] = IIF(ti.HSCode is null,tw.HSCode,ti.HSCode)
 ,[NLCode] = IIF(ti.NLCode is null,tw.NLCode,ti.NLCode)
+,[ID] = IIF(ti.ID is null,tw.POID,ti.ID)
+,[Refno] = IIF(ti.Refno is null,tw.Refno,ti.Refno)   
+,[MaterialType] = IIF(ti.MaterialType is null,tw.MaterialType,ti.MaterialType)   
+,[Description] = IIF(ti.Description is null,tw.Description,ti.Description)   
 ,[Qty] = (isnull(ti.Qty,0)-isnull(tw.Qty,0)) 
+,[CustomsUnit] = IIF(ti.CustomsUnit is null,tw.CustomsUnit,ti.CustomsUnit)
+,[StockQty] = (isnull(ti.StockQty,0)-isnull(tw.StockQty,0)) 
+,[StockUnit] = IIF(ti.StockUnit is null,tw.StockUnit,ti.StockUnit)
 into #tmpWIPDetail
 from (
 	select 	ID
 			,HSCode
 			,NLCode
 			,SUM(Qty) as Qty 
+            ,Refno
+            ,MaterialType
+            ,Description
+            ,CustomsUnit
+            ,SUM(StockQty) as StockQty
+            ,StockUnit
 	from #tmpIssueQty 
-	group by ID,HSCode,NLCode
+	group by ID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit
 ) ti
 full outer 
 join (
@@ -505,10 +621,16 @@ join (
 			,HSCode
 			,NLCode
 			,SUM(Qty) as Qty 
+             ,Refno
+            ,MaterialType
+            ,Description
+            ,CustomsUnit
+            ,SUM(StockQty) as StockQty
+            ,StockUnit
 	from #tmpWHNotCloseSewingOutput 
     where CustomSP <>''
-	group by POID,HSCode,NLCode
-) tw on tw.POID = ti.ID and tw.NLCode = ti.NLCode
+	group by POID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit
+) tw on tw.POID = ti.ID and tw.NLCode = ti.NLCode and tw.Refno = ti.Refno
 order by IIF(ti.ID is null,tw.POID,ti.ID)
 
 --4) Production成品倉(Prod. Qty Detail)
@@ -562,17 +684,23 @@ and vn.VNContractID=@contract
 	)AdjustGMT	
 )
 select
- [SP#] = tpq.ID
+[HSCode] = vd.HSCode
+,[NLCode] = vd.NLCode
+,[SP#] = tpq.ID
+,[Refno] = vdd.Refno
+,[MaterialType] = dbo.GetMaterialTypeDesc(vdd.FabricType)
+,[Description] = case when vdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vdd.Refno)
+                                  else (select Description from Fabric with (nolock) where SCIRefno = vdd.SCIRefno) end
+,[Custom SP#] = tc.CustomSP
 ,[Article] = tpq.Article
 ,[SizeCode] = tpq.SizeCode
 ,[SewQty] = tpq.SewQty
 ,[PullOutQty] = tpq.PullQty
 ,[GMTAdjustQty] = tpq.GMTAdjustQty
-,[HSCode] = vd.HSCode
-,[NLCode] = vd.NLCode
+,[Qty]  = (tpq.SewQty-tpq.PullQty-tpq.GMTAdjustQty)*(vdd.Qty * (1+vd.Waste))
 ,[Customs Unit] = vd.UnitID	
-,[Qty]  = (tpq.SewQty-tpq.PullQty-tpq.GMTAdjustQty)*(vd.Qty * (1+vd.Waste))
-,[Custom SP#] = tc.CustomSP
+,[StockQty] = (tpq.SewQty-tpq.PullQty-tpq.GMTAdjustQty)*(vdd.StockQty * (1+vd.Waste))
+,[StockUnit] = vdd.StockUnit
 into #tmpProdQty
 from tmpPreProdQty tpq
 inner join #tmpCustomSP tc on tc.StyleID = tpq.StyleID 
@@ -581,6 +709,7 @@ inner join #tmpCustomSP tc on tc.StyleID = tpq.StyleID
 inner join VNConsumption_Article va WITH (NOLOCK) on va.ID = tc.ID and va.Article = tpq.Article
 inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = tc.ID and vs.SizeCode = tpq.SizeCode
 inner join VNConsumption_Detail vd WITH (NOLOCK) on tc.id=vd.id
+inner join VNConsumption_Detail_Detail vdd WITH (NOLOCK) on  vd.id = vdd.id and vd.NLCode = vdd.NLCode
 
 -- 5) 在途成品(已報關但還沒出貨) (On Road Product Qty)
 
@@ -609,13 +738,19 @@ group by vd.id,vc.sizecode
 
 select 
  [SP#] = vdd.OrderId
+,[Refno] = vcdd.Refno
+,[MaterialType] = dbo.GetMaterialTypeDesc(vcdd.FabricType)
+,[Description] = case when vcdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vcdd.Refno)
+                                  else (select Description from Fabric with (nolock) where SCIRefno = vcdd.SCIRefno) end
+,[CustomSP] = vdd.customsp
 ,[Article] = vdd.Article
 ,[SizeCode] = vdd.SizeCode
-,[HSCode] = vcd.HSCode
 ,[NLCode] = vcd.NlCode
-,[Unit] = vcd.UnitID
-,[Qty] = vdds.ExportQty * (vcd.Qty * (1+vcd.Waste))
-,[CustomSP] = vdd.customsp
+,[HSCode] = vcd.HSCode
+,[Qty] = vdds.ExportQty * (vcdd.Qty * (1+vcd.Waste))
+,[Unit] = vcdd.UnitID
+,[StockQty] =  vdds.ExportQty * (vcdd.StockQty * (1+vcd.Waste))
+,[StockUnit] = vcdd.StockUnit
 INTO #OnRoadProductQty
 from VNExportDeclaration vd WITH (NOLOCK)
 inner join VNExportDeclaration_Detail vdd WITH (NOLOCK) on vd.id=vdd.id
@@ -623,6 +758,7 @@ inner join VNConsumption vc on vc.StyleID = vdd.StyleID and vc.BrandID=vdd.Brand
 							and vc.SeasonID=vdd.SeasonID and vc.category=vdd.category 
 							and vc.sizecode=vdd.sizecode and vc.customsp=vdd.customsp
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID=vc.ID
+inner join VNConsumption_Detail_Detail vcdd WITH (NOLOCK) on vcd.ID= vcdd.ID and vcd.NLCode = vcdd.NLCode
 outer apply (
 	select sum(ExportQty) as ExportQty 
 	from VNExportDeclaration_Detail WITH (NOLOCK)
@@ -646,6 +782,7 @@ from (
 	,[POID] = ft.POID
 	,[Seq] = (ft.Seq1+'-'+ft.Seq2)
 	,[Refno] = psd.Refno	
+    ,[MaterialType] = dbo.GetMaterialTypeDesc(f.Type)
 	,[Description] = isnull(f.Description,'')
 	,[Roll] = ft.Roll
 	,[Dyelot] = ft.Dyelot
@@ -681,6 +818,7 @@ union all
 	,[POID] = l.OrderID
 	,[Seq] = ''
 	,[Refno] = l.Refno	
+    ,[MaterialType] = dbo.GetMaterialTypeDesc(li.Category)
 	,[Description] = isnull(li.Description,'')
 	,[Roll] = ''
 	,[Dyelot] = ''
@@ -728,7 +866,36 @@ into #tmpOutstanding
 from sp
 inner join orders o WITH (NOLOCK) on sp.id=o.id
 
+-- 8) 未WH關單
+select 
+StyleID,
+ID,
+Refno,
+Color,
+Description,
+[IssueDate] = '',
+NLCode,
+Qty,
+CustomsUnit,
+StockQty,
+StockUnit
+into #tmpWHNotCloseFinal
+from #tmpIssueQty
 
+-- 9) 已SewingOutput數量
+select
+HSCode,
+NLCode,
+ID,
+Refno,
+MaterialType,
+Description,
+Qty,
+CustomsUnit,
+StockQty,
+StockUnit
+into  #tmpSewingOutputFinal
+from #tmpWHNotCloseSewingOutput
 
 --整理出Summary
 select 
@@ -736,6 +903,7 @@ select
 ,[NLCode] =  a.NLCode
 ,[Description] = isnull(vcd.DescEN,'')
 ,[UnitID] = isnull(tc.UnitID,'')
+,[EcusQty] = isnull(cq.StockQty,0)
 ,[LiqQty] = isnull(tc.Qty,0) + isnull(td.Qty,0) --調整與勾選Liquidation data only相同
 ,[OnRoadMaterialQty] = isnull(orm.Qty,0)
 ,[WHQty] = isnull(tw.Qty,0)
@@ -743,6 +911,7 @@ select
 ,[ProdQty] = isnull(tp.Qty,0)
 ,[OnRoadProductQty] = isnull(orp.Qty,0)
 ,[ScrapQty] = isnull(ts.Qty,0)
+,[Total] = isnull(orm.Qty,0) + isnull(tw.Qty,0) + isnull(ti.Qty,0) + isnull(tp.Qty,0) - isnull(orp.Qty,0) + isnull(ts.Qty,0)
 from (
 	select 	NLCode 
 	from #tmpContract 
@@ -797,6 +966,7 @@ from (
 left join #tmpContract tc on a.NLCode = tc.NLCode
 left join VNNLCodeDesc vcd WITH (NOLOCK) on a.NLCode = vcd.NLCode
 left join #tmpDeclare td on a.NLCode = td.NLCode
+left join #CusQty cq on a.NLCode = cq.NLCode
 left join (
 	select 	NLCode
 			,SUM(Qty) as Qty 
@@ -875,31 +1045,41 @@ order by POID,Seq
 
 --7)Outstanding List 
 select * from #tmpOutstanding where QaQty > 0
-order by ID ", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
+order by ID 
+
+-- 8) 未WH關單
+select * from #tmpWHNotCloseFinal where Qty > 0  {0} {1} order by ID
+
+-- 9) 已SewingOutput數量
+select * from #tmpSewingOutputFinal where Qty > 0  {0} {1} order by ID
+
+", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format("and HSCode = '{0}'", this.hscode),
                                                                        MyUtility.Check.Empty(this.nlcode) ? string.Empty : string.Format("and NLCode = '{0}'", this.nlcode)));
                 #endregion
             }
             #endregion
 
-            DataSet allData;
+            DataTable[] allData;
 
-            if (!SQL.Selects(string.Empty, sqlCmd.ToString(), out allData))
+            DualResult queryResult = MyUtility.Tool.ProcessWithDatatable(this.dtImportEcusData, string.Empty, sqlCmd.ToString(), out allData, temptablename: "#CusQty");
+            if (!queryResult)
             {
-                DualResult failResult = new DualResult(false, "Query data fail");
-                return failResult;
+                return queryResult;
             }
 
-            this.Summary = allData.Tables[0];
+            this.Summary = allData[0];
 
             if (!this.liguidationonly)
             {
-                this.OnRoadMaterial = allData.Tables[1];
-                this.WHDetail = allData.Tables[2];
-                this.WIPDetail = allData.Tables[3];
-                this.ProdDetail = allData.Tables[4];
-                this.OnRoadProduction = allData.Tables[5];
-                this.ScrapDetail = allData.Tables[6];
-                this.Outstanding = allData.Tables[7];
+                this.OnRoadMaterial = allData[1];
+                this.WHDetail = allData[2];
+                this.WIPDetail = allData[3];
+                this.ProdDetail = allData[4];
+                this.OnRoadProduction = allData[5];
+                this.ScrapDetail = allData[6];
+                this.Outstanding = allData[7];
+                this.WarehouseNotClose = allData[8];
+                this.AlreadySewingOutput = allData[9];
             }
 
             return Result.True;
@@ -993,6 +1173,26 @@ order by ID ", MyUtility.Check.Empty(this.hscode) ? string.Empty : string.Format
                 {
                     this.ShowWaitMessage("Starting EXCEL...Outstanding");
                     result = MyUtility.Excel.CopyToXls(this.Outstanding, string.Empty, xltfile: "Shipping_R40_OutStanding.xltx", headerRow: 1);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
+                }
+
+                if (this.WarehouseNotClose.Rows.Count > 0)
+                {
+                    this.ShowWaitMessage("Starting EXCEL...Warehouse Not Close List");
+                    result = MyUtility.Excel.CopyToXls(this.WarehouseNotClose, string.Empty, xltfile: "Shipping_R40_WHNotClose.xltx", headerRow: 1);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+                    }
+                }
+
+                if (this.AlreadySewingOutput.Rows.Count > 0)
+                {
+                    this.ShowWaitMessage("Starting EXCEL...Already SewingOutput List");
+                    result = MyUtility.Excel.CopyToXls(this.AlreadySewingOutput, string.Empty, xltfile: "Shipping_R40_AlreadySewingOutput.xltx", headerRow: 1);
                     if (!result)
                     {
                         MyUtility.Msg.WarningBox(result.ToString(), "Warning");
