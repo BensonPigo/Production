@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.dateTargetLeadTime);
             this.masterpanel.Controls.Add(this.dateEarliestSCIDel);
             this.masterpanel.Controls.Add(this.dateEarliestEstCutDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 203);
+            this.masterpanel.Size = new System.Drawing.Size(917, 203);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEarliestEstCutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEarliestSCIDel, 0);
@@ -140,7 +140,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 203);
-            this.detailpanel.Size = new System.Drawing.Size(892, 146);
+            this.detailpanel.Size = new System.Drawing.Size(917, 411);
             // 
             // gridicon
             // 
@@ -148,11 +148,12 @@
             // 
             // refresh
             // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(827, 1);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 146);
+            this.detailgridcont.Size = new System.Drawing.Size(917, 411);
             // 
             // detail2
             // 
@@ -168,16 +169,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(917, 652);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(917, 614);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 614);
+            this.detailbtm.Size = new System.Drawing.Size(917, 38);
             // 
             // browse
             // 
@@ -244,6 +245,7 @@
             // displayofInspection
             // 
             this.displayofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AIRInspPercent", true));
             this.displayofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayofInspection.Location = new System.Drawing.Point(614, 17);
@@ -454,6 +456,7 @@
             // 
             // dateEarliestSCIDel
             // 
+            this.dateEarliestSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MinSciDelivery", true));
             this.dateEarliestSCIDel.IsSupportEditMode = false;
             this.dateEarliestSCIDel.Location = new System.Drawing.Point(359, 46);
             this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";

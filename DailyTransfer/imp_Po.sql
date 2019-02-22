@@ -100,6 +100,10 @@ SET
       ,a.EditName	      =b.EditName	
       ,a.EditDate	      =b.EditDate	
       ,a.MTLDelay	      =b.MtlDelay
+	  ,a.MinSciDelivery   = (select TOP 1 MinSciDelivery from [dbo].[Getsci](a.ID
+																	   ,(SELECT Category FROM Orders WHERE ID = a.ID)
+																	  )
+							)
 from Production.dbo.PO as a inner join #Trade_To_Pms_PO as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.PO(
@@ -134,7 +138,7 @@ INSERT INTO Production.dbo.PO(
       ,EditName
       ,EditDate
       ,MTLDelay
-
+	  ,MinSciDelivery
 )
 select 
        ID
@@ -167,8 +171,11 @@ select
       ,AddDate
       ,EditName
       ,EditDate
-      ,MTLDelay
-
+      ,MTLDelay	  
+	  ,MinSciDelivery   = (select TOP 1 MinSciDelivery from [dbo].[Getsci](b.ID
+																	   ,(SELECT Category FROM Orders WHERE ID = b.ID)
+																	  )
+							)
 from #Trade_To_Pms_PO as b WITH (NOLOCK)
 where not exists(
 select id from Production.dbo.PO as a WITH (NOLOCK) where a.id = b.id )

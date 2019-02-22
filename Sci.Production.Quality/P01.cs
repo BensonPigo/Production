@@ -377,12 +377,12 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
             }
             if (sciTb.Rows.Count > 0)
             {
-                if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
-                else dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                //if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
+                //else dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
             }
             else
             {
-                dateEarliestSCIDel.Text = "";
+                //dateEarliestSCIDel.Text = "";
                 dateEarliestEstCutDate.Text = "";
             }
             DateTime? targT;
@@ -420,7 +420,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                     }
                 }
             }
-            displayofInspection.Text = inspnum;
+            //displayofInspection.Text = inspnum;
             DateTime? completedate ,Physicalcompletedate , Weightcompletedate , ShadeBondcompletedate , Continuitycompletedate ;
             if (inspnum == "100")
             {
@@ -490,7 +490,14 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                         _transactionscope.Dispose();
                         return upResult;
                     }
-                    
+
+                    //更新PO.FIRInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{CurrentMaintain["ID"]}'")))
+                    {
+                        _transactionscope.Dispose();
+                        return upResult;
+                    }
+
                     _transactionscope.Complete();
                     _transactionscope.Dispose();                    
                     MyUtility.Msg.InfoBox("Successfully");
