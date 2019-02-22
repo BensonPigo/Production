@@ -400,6 +400,13 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                         _transactionscope.Dispose();
                         return;
                     }
+
+                    //更新PO.FIRInspPercent和AIRInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, "exec UpdateInspPercent 'FIR'; exec UpdateInspPercent 'AIR'")))
+                    {
+                        _transactionscope.Dispose();
+                        return;
+                    }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.WarningBox("Successfully");

@@ -207,16 +207,16 @@ namespace Sci.Production.Quality
             {
                 if (sciTb.Rows[0]["MinSciDelivery"]==DBNull.Value)
                 {
-                    dateEarliestSCIDel.Text = "";
+                    //dateEarliestSCIDel.Text = "";
                 }
                 else
                 {
-                    dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
+                    //dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
                 }
             }
             else
             {
-                dateEarliestSCIDel.Text = "";
+                //dateEarliestSCIDel.Text = "";
             }
             //找出Cutinline and MinSciDelivery 比較早的日期
             DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
@@ -267,7 +267,7 @@ namespace Sci.Production.Quality
                 }
             }
 
-            displayofInspection.Text = inspnum;
+            //displayofInspection.Text = inspnum;
             DateTime completedate;
             if (inspnum == "100")
             {
@@ -296,6 +296,12 @@ namespace Sci.Production.Quality
                 try
                 {
 
+                    if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd)))
+                    {
+                        _transactionscope.Dispose();
+                        return upResult;
+                    }
+                    
                     if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd)))
                     {
                         _transactionscope.Dispose();
