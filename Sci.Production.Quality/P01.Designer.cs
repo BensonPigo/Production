@@ -119,7 +119,7 @@
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelSP);
-            this.masterpanel.Size = new System.Drawing.Size(892, 188);
+            this.masterpanel.Size = new System.Drawing.Size(886, 188);
             this.masterpanel.Controls.SetChildIndex(this.labelSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
@@ -154,7 +154,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 188);
-            this.detailpanel.Size = new System.Drawing.Size(892, 161);
+            this.detailpanel.Size = new System.Drawing.Size(886, 442);
             // 
             // gridicon
             // 
@@ -162,11 +162,12 @@
             // 
             // refresh
             // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(747, 3);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 161);
+            this.detailgridcont.Size = new System.Drawing.Size(886, 442);
             // 
             // detail2
             // 
@@ -182,11 +183,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(886, 668);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(886, 630);
             // 
             // detailbtm
             // 
@@ -202,8 +203,8 @@
             this.detailbtm.Controls.Add(this.labelPhysicalInsp);
             this.detailbtm.Controls.Add(this.displayavailablemodified);
             this.detailbtm.Controls.Add(this.labelavailablemodified);
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 630);
+            this.detailbtm.Size = new System.Drawing.Size(886, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -425,6 +426,7 @@
             // displayofInspection
             // 
             this.displayofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FIRInspPercent", true));
             this.displayofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayofInspection.Location = new System.Drawing.Point(644, 15);
@@ -609,6 +611,7 @@
             // 
             // dateEarliestSCIDel
             // 
+            this.dateEarliestSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MinSciDelivery", true));
             this.dateEarliestSCIDel.IsSupportEditMode = false;
             this.dateEarliestSCIDel.Location = new System.Drawing.Point(386, 44);
             this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";

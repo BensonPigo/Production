@@ -402,7 +402,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                     }
 
                     //更新PO.FIRInspPercent和AIRInspPercent
-                    if (!(upResult = DBProxy.Current.Execute(null, "exec UpdateInspPercent 'FIR'; exec UpdateInspPercent 'AIR'")))
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{maindr["POID"].ToString()}'; exec UpdateInspPercent 'AIR','{maindr["POID"].ToString()}'")))
                     {
                         _transactionscope.Dispose();
                         return;

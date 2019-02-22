@@ -301,8 +301,10 @@ namespace Sci.Production.Quality
                         _transactionscope.Dispose();
                         return upResult;
                     }
-                    
-                    if (!(upResult = DBProxy.Current.Execute(null, save_po_cmd)))
+
+
+                    //更新PO.AIRInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{CurrentMaintain["ID"]}'")))
                     {
                         _transactionscope.Dispose();
                         return upResult;

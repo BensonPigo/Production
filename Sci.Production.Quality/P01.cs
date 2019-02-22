@@ -492,7 +492,7 @@ Where a.poid='{0}' order by a.seq1,a.seq2", masterID);
                     }
 
                     //更新PO.FIRInspPercent
-                    if (!(upResult = DBProxy.Current.Execute(null, "exec UpdateInspPercent 'FIR'")))
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{CurrentMaintain["ID"]}'")))
                     {
                         _transactionscope.Dispose();
                         return upResult;
