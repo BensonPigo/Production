@@ -118,49 +118,56 @@ group by w.CutRef,w.MDivisionID
 
 select t.CutRef,t.MDivisionId,t.ActCutDate ,
 	Layer=sum(w.Layer),
-	Cons=sum(w.Cons),
+	Cons=sum(w.Cons)
+into #tmp2a
+from #tmp1 t
+inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
+group by t.CutRef,t.MDivisionId,t.ActCutDate 
+
+select t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,
 	noEXCESSqty=sum(iif(wd.OrderID <> 'EXCESS',wd.Qty,0)),
 	EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
 into #tmp2
-from #tmp1 t
+from #tmp2a t
 inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
 inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
-group by t.CutRef,t.MDivisionId,t.ActCutDate 
+group by t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons
 
 select distinct
-	w.FactoryID,
+	FactoryID=isnull(w.FactoryID,''),
 	w.EstCutDate,
-	w.CutCellid,
-	w.SpreadingNoID,
-	w.CutplanID,
-	w.CutRef,
-	w.ID,
-	subSp.SubSP,
-	o.StyleID,
-	size.Size,
+	CutCellid=isnull(w.CutCellid,''),
+	SpreadingNoID=isnull(w.SpreadingNoID,''),
+	CutplanID=isnull(w.CutplanID,''),
+	CutRef=isnull(w.CutRef,''),
+	ID=isnull(w.ID,''),
+	SubSP=isnull(subSp.SubSP,''),
+	StyleID=isnull(o.StyleID,''),
+	Size=isnull(size.Size,''),
 	t.noEXCESSqty,
-	f.Description,
-	f.MtlTypeID,
-	w.FabricCombo,
+	Description=isnull(f.Description,''),
+	WeaveTypeID=isnull(f.WeaveTypeID,''),
+	FabricCombo=isnull(w.FabricCombo,''),
 	MarkerLength=iif(w.Layer=0,0,w.cons/w.Layer),
-	PerimeterM=iif(w.ActCuttingPerimeter not like '%yd%',w.ActCuttingPerimeter,cast(dbo.GetActualPerimeter(w.ActCuttingPerimeter) as nvarchar)),
+	PerimeterM=isnull(iif(w.ActCuttingPerimeter not like '%yd%',w.ActCuttingPerimeter,cast(dbo.GetActualPerimeter(w.ActCuttingPerimeter) as nvarchar)),''),
 	t.Layer,
-	SizeCode.SizeCode,
+	SizeCode=isnull(SizeCode.SizeCode,''),
 	t.Cons,
 	t.EXCESSqty,
-	NoofRoll.NoofRoll,
+	NoofRoll=isnull(NoofRoll.NoofRoll,0),
 	DyeLot=isnull(DyeLot.DyeLot,0),
-	NoofWindow=t.Cons/t.Layer/1.4,
-	ActSpd.ActualSpeed,
-	st.PreparationTime,
-	[ChangeoverTime] = iif(fr.isRoll = 0,st.ChangeOverUnRollTime,st.ChangeOverRollTime),
-	SpreadingSetupTime=st.SetupTime,
-	st.SpreadingTime,
-	st.SeparatorTime,
-	st.ForwardTime,
-	CuttingSetUpTime=ct.SetUpTime,
-	ct.WindowTime,
-	f.WeaveTypeID,w.Refno,ct.WindowLength
+	NoofWindow=isnull(t.Cons/t.Layer/1.4,0),
+	ActualSpeed=isnull(ActSpd.ActualSpeed,0),
+	PreparationTime=isnull(st.PreparationTime,0),
+	[ChangeoverTime] = iif(isnull(fr.isRoll,0) = 0,st.ChangeOverUnRollTime,st.ChangeOverRollTime),
+	SpreadingSetupTime=isnull(st.SetupTime,0),
+	SpreadingTime=isnull(st.SpreadingTime,0),
+	SeparatorTime=isnull(st.SeparatorTime,0),
+	ForwardTime=isnull(st.ForwardTime,0),
+	CuttingSetUpTime=isnull(ct.SetUpTime,0),
+	WindowTime=isnull(ct.WindowTime,0),
+	Refno=isnull(w.Refno,''),
+	WindowLength=isnull(ct.WindowLength,0)
 into #tmp3
 from #tmp2 t
 inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.MDivisionId = t.MDivisionId
@@ -224,7 +231,7 @@ outer apply(
 	and cmd.WeaveTypeID = f.WeaveTypeID 
 )ActSpd
 
-select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,MtlTypeID,FabricCombo,
+select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,
 	MarkerLength,PerimeterM,Layer,SizeCode,Cons,EXCESSqty,NoofRoll,DyeLot,NoofWindow,ActualSpeed,
 	[PreparationTime_min] = PreparationTime/60.0,
 	[ChangeoverTime_min] = ChangeoverTime/60.0,
@@ -235,20 +242,20 @@ select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,St
 	[CuttingSetupTime_min] = CuttingSetUpTime/60.0,
 	MachCuttingTime_min,
 	[WindowTime_min] = WindowTime/60.0,
-	[TotalSpreadingTime_min] = (isnull(PreparationTime * iif(Layer=0,0,Cons/Layer),0) + 
+	[TotalSpreadingTime_min] = round(isnull(PreparationTime * iif(Layer=0,0,Cons/Layer),0) + 
 						 isnull(Changeovertime * NoofRoll,0) +
 						 isnull(SpreadingSetupTime,0) +
 						 isnull(SpreadingTime * Cons,0) +
 						 isnull(SeparatorTime * (DyeLot -1),0) +
-						 isnull(ForwardTime,0))
-						 /60.0,
-	[TotalCuttingTime_min] = (isnull(CuttingSetUpTime,0) + 
+						 isnull(ForwardTime,0),2)
+						 ,
+	[TotalCuttingTime_min] = round(isnull(CuttingSetUpTime,0) + 
 					   iif(isnull(ActualSpeed,0)=0,0,isnull(p.PerimeterM_num,0)/ActualSpeed)*60 + 
-					   isnull(Windowtime * iif(isnull(Layer,0)=0,0,Cons/Layer*0.9144)/WindowLength,0))
-					   /60.0
+					   isnull(Windowtime * iif(isnull(Layer,0)=0,0,Cons/Layer*0.9144)/WindowLength,0),2)
+					   
 into #detail
 from #tmp3
-outer apply(select PerimeterM_num=isnumeric(PerimeterM))p
+outer apply(select PerimeterM_num=iif(isnumeric(PerimeterM)=1,cast(PerimeterM as numeric(20,4)),0))p
 outer apply(select MachCuttingTime_min = iif(isnull(ActualSpeed,0)=0,0,p.PerimeterM_num/ActualSpeed))a
 
 select * from #detail order by FactoryID,EstCutDate,CutCellid
@@ -269,7 +276,8 @@ group by d.SpreadingNoID
 select 
 	d.CutCellid,
 	CuttingMachDescription = cm.Description,
-	TotalCuttingPerimeter = sum(isnumeric(d.PerimeterM)),
+	AvgCutSpeedMperMin=avg(ActualSpeed),
+	TotalCuttingPerimeter = sum(iif(isnumeric(d.PerimeterM)=1,cast(d.PerimeterM as numeric(20,4)),0)),
 	TotalCutMarkerQty = count(1),
 	TotalCutFabricYardage = Sum(d.Cons),
 	TotalAvailableCuttingTime_hrs = sum(d.CuttingSetupTime_min)/60.0
@@ -279,7 +287,7 @@ left join CuttingMachine cm with(nolock)on cm.ID = cc.CuttingMachineID
 where isnull(d.CutCellid,'') <>''
 group by d.CutCellid, cm.Description
 
-drop table #tmp1,#tmp2,#tmp3,#detail
+drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out printData);
             if (!result)
@@ -330,7 +338,7 @@ drop table #tmp1,#tmp2,#tmp3,#detail
                 worksheet.Cells[10, i + 2] = $"=({col}9/{col}6)*100";
                 worksheet.Cells[11, i + 2] = $"={col}9-{col}6";
                 worksheet.Cells[12, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2)),\" | \",IF({col}5=0,0,Round({col}6/{col}5,2)),\" | \")";
-                worksheet.Cells[13, i + 2] = $"=IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2))*IF({col}5=0,0,Round({col}6/{col}5,2))";
+                worksheet.Cells[13, i + 2] = $"=IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2))*IF({col}5=0,0,Round({col}6/{col}5,2))/100";
             }
 
 
@@ -342,6 +350,7 @@ drop table #tmp1,#tmp2,#tmp3,#detail
                 worksheet.Cells[18, i + 2] = codt.Rows[i]["CuttingMachDescription"];
                 string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
                 worksheet.Cells[20, i + 2] = $"={col}19*F$2";
+                worksheet.Cells[21, i + 2] = codt.Rows[i]["AvgCutSpeedMperMin"];
                 worksheet.Cells[22, i + 2] = codt.Rows[i]["TotalCuttingPerimeter"];
                 worksheet.Cells[23, i + 2] = codt.Rows[i]["TotalCutMarkerQty"];
                 worksheet.Cells[24, i + 2] = codt.Rows[i]["TotalCutFabricYardage"];
@@ -349,7 +358,7 @@ drop table #tmp1,#tmp2,#tmp3,#detail
                 worksheet.Cells[26, i + 2] = $"=({col}25/{col}20)*100";
                 worksheet.Cells[27, i + 2] = $"={col}26-{col}20";
                 worksheet.Cells[28, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2)),\" | \",IF({col}19=0,0,Round({col}25/{col}19,2)),\" | \")";
-                worksheet.Cells[29, i + 2] = $"=IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2))*IF({col}19=0,0,Round({col}25/{col}19,2))";
+                worksheet.Cells[29, i + 2] = $"=IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2))*IF({col}19=0,0,Round({col}25/{col}19,2))/100";
             }
             #endregion
             #region sheet Balancing Chart
