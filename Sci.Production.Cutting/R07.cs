@@ -163,7 +163,7 @@ SELECT  DISTINCT
         ,[Forward Time (min.)]=st.ForwardTime  / 60
 
         --這個是Cutting
-        ,[Cutting Setup Time (min.)]=ct.SetUpTime / 60
+        ,[Cutting Setup Time (min.)]=ct.SetUpTime
         --這個是Cutting
         ,[Mach. Cutting Time (min.)]=  IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4)) / ActualSpeed.ActualSpeed  / 60
 
@@ -304,7 +304,7 @@ SELECT * FROM #tmp_Spreading ORDER BY [Spreading Table No.]
 
 --Cutting Capacity Forecast
 SELECT 
-[Cut cell (Morgan No.)]= CutCellid   
+[Cut cell]= CutCellid   
 ,[Cutting Mach. Description]='Next 70'  
 ,[Work Hours/Day]=''                                          -- 給User手動輸入
 ,[Total Available Cutting Time (hrs)]= 0                      -- = (Work Hours/Day  *  Total Working Days) *  Avg. Efficiency %   0.8是預設的!!  Work Hours/Day 等被輸入  所以都是0，後面相關欄位也是
@@ -324,7 +324,7 @@ OUTER APPLY(
 GROUP BY CutCellid,CutCell.count
 
 
-SELECT * FROM #tmp_Cutting ORDER BY [Cut cell (Morgan No.)]
+SELECT * FROM #tmp_Cutting ORDER BY [Cut cell]
 
 
 DROP TABLE #tmp,#tmp_OrderList ,#tmp_Spreading ,#tmp_Cutting
