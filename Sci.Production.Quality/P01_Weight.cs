@@ -412,7 +412,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                         _transactionscope.Dispose();
                         return;
                     }
-                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{maindr["POID"].ToString()}'; exec UpdateInspPercent 'AIR','{maindr["POID"].ToString()}'")))
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIR','{maindr["POID"].ToString()}'; ")))
                     {
                         _transactionscope.Dispose();
                         return;
