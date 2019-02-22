@@ -84,6 +84,7 @@ select  0 as selected
         , c.Roll
         , c.Dyelot
         , 0.00 as Qty
+        , c.inqty-c.outqty + c.adjustqty as Balance
         , c.StockType
         , c.ukey as ftyinventoryukey
         , dbo.Getlocation(c.ukey) location
@@ -126,11 +127,17 @@ and export.MDivisionID = '{0}'
             if (result = DBProxy.Current.Select(null, sbSQLCmd.ToString(),cmds, out dtImportData))
             {
                 if (dtImportData.Rows.Count == 0)
-                { MyUtility.Msg.WarningBox("Data not found!!"); }
+                {
+                    MyUtility.Msg.WarningBox("Data not found!!");
+                }
+                else
+                {
+                    //dtImportData.Columns.Add("Balance", typeof(decimal));
+                   // dtImportData.Columns["Balance"].Expression = "stockqty - qty";
+                    dtImportData.DefaultView.Sort = "poid,seq1,seq2,location,dyelot,roll";
+                }
                 listControlBindingSource1.DataSource = dtImportData;
-                dtImportData.DefaultView.Sort = "poid,seq1,seq2,location,dyelot,roll";
-                dtImportData.Columns.Add("Balance", typeof(decimal));
-                dtImportData.Columns["Balance"].Expression = "stockqty - qty";
+               
             }
             else { ShowErr(sbSQLCmd.ToString(), result); }
             this.HideWaitMessage();
@@ -151,8 +158,7 @@ and export.MDivisionID = '{0}'
             MyUtility.Tool.SetupCombox(comboStockType, 2, 1, "B,Bulk,I,Inventory");
             comboStockType.SelectedIndex = 0;
 
-            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
-            this.gridImport.DataSource = listControlBindingSource1;
+           
 
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns = new DataGridViewGeneratorNumericColumnSettings();
             ns.CellValidating += (s, e) =>
@@ -162,6 +168,10 @@ and export.MDivisionID = '{0}'
                     gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["qty"] = e.FormattedValue;
                     gridImport.GetDataRow(gridImport.GetSelectedRowIndex())["selected"] = true;
                     this.sum_checkedqty();
+
+                    DataRow dr = gridImport.GetDataRow(e.RowIndex);
+                    dr["Balance"] = (decimal)dr["stockqty"] - (decimal)e.FormattedValue;
+                    dr.EndEdit();
                 }
             };
 
@@ -186,7 +196,8 @@ and export.MDivisionID = '{0}'
                     this.sum_checkedqty();
                 }
             };
-
+            this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
+            this.gridImport.DataSource = listControlBindingSource1;
             Helper.Controls.Grid.Generator(this.gridImport)
                 .CheckBox("Selected", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out col_chk)   //0
                 .Text("seq", header: "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) //1
