@@ -185,8 +185,12 @@ SELECT  DISTINCT
 								               )
 								        + st.ForwardTime)  / 60
         ----這個是Cutting
+        ----這個是Cutting
         ,[Total Cutting Time (min.)]=(ct.SetUpTime 
 										+ IIF (ActualSpeed.ActualSpeed=0  ,0  , IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4))  / ActualSpeed.ActualSpeed)
+										+ ct.Windowtime
+										* (sc.Cons/sl.Layer) -- *Marker Length
+										/ct.WindowLength
 									 )  
 									 / 60
 							        --同裁次週長若不一樣就是有問題
