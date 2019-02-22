@@ -120,7 +120,7 @@ namespace Sci.Production.Warehouse
             String sp1 = this.txtSP.Text.TrimEnd() + '%';
             string strMtlLocation = string.Empty;
 
-            if (MyUtility.Check.Empty(txtSP.Text)&& MyUtility.Check.Empty(txtwkno.Text)&& MyUtility.Check.Empty(txtReceivingid.Text)
+            if (MyUtility.Check.Empty(txtSP.Text) && MyUtility.Check.Empty(txtwkno.Text) && MyUtility.Check.Empty(txtReceivingid.Text)
                 && this.dateATA.Value1.Empty() && this.dateATA.Value2.Empty())
             {
                 MyUtility.Msg.WarningBox("SP# and WK NO and Receiving ID and ATA can't be empty!!");
@@ -129,7 +129,7 @@ namespace Sci.Production.Warehouse
 
             if (!MyUtility.Check.Empty(this.txtMtlLocation.Text))
             {
-                strMtlLocation= @"outer apply(
+                strMtlLocation = @"outer apply(
 	select * from dbo.FtyInventory_Detail f2 WITH (NOLOCK)  
 	inner join dbo.MtlLocation mtl WITH (NOLOCK)  on mtl.ID=f2.MtlLocationID and mtl.StockType=fi.StockType
 	where fi.Ukey=Ukey 
@@ -145,7 +145,7 @@ select 0 as [selected]
         , fi.Roll
         , fi.Dyelot
         , iif(fi.Lock=0,'Unlocked','Locked') [status]
-        , r.WhseArrival
+        , WhseArrival = case when pd.FabricType = 'F' then r.WhseArrival when  pd.FabricType = 'A' then pd.RevisedETA end 
         , fi.InQty
         , fi.OutQty
         , fi.AdjustQty
@@ -165,37 +165,9 @@ select 0 as [selected]
         , o.BrandID
         , o.FactoryID
         , x.*
-        , fi.Remark,fi.ukey
-		,[FIR] = case when pd.FabricType='A' then iif(Air.Result ='','Blank',Air.Result)
-				when 
-				(FIR_Result1.ContinuityResult is null or 
-				FIR_Result1.PhyResult is null or
-				FIR_Result1.ShadeboneResult is null or
-				FIR_Result1.WeightResult is null or
-				FIR_Result1.OdorResult is null) 
-				then 
-					(case when 
-					FIR_Result2.ContinuityResult='Fail' or FIR_Result2.PhyResult='Fail' or
-					FIR_Result2.ShadeboneResult='Fail' or FIR_Result2.WeightResult='Fail' or FIR_Result2.OdorResult='Fail'
-					then 'Fail' 
-					when 
-					FIR_Result2.ContinuityResult is null and FIR_Result2.PhyResult is null and
-					FIR_Result2.ShadeboneResult is null and FIR_Result2.WeightResult is null and FIR_Result2.OdorResult is null
-					then 'Blank'
-					else 'Pass' end
-					)
-				else (case when 
-					FIR_Result1.ContinuityResult='Fail' or FIR_Result1.PhyResult='Fail' or
-					FIR_Result1.ShadeboneResult='Fail' or FIR_Result1.WeightResult='Fail' or FIR_Result1.OdorResult='Fail'
-					then 'Fail' else 'Pass' end
-					)
-				end
-		,[WashLab Report] = case when pd.FabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
-							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'
-								then 'Fail'
-							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
-								then 'Blank'
-							else 'Pass' end
+        , fi.Remark
+		, pd.FabricType sFabricType
+into #tmp_FtyInventory
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail pd WITH (NOLOCK) on pd.id = fi.POID and pd.seq1 = fi.seq1 and pd.seq2  = fi.Seq2
 left join dbo.orders o WITH (NOLOCK) on o.id = fi.POID
@@ -209,69 +181,6 @@ cross apply
 	from dbo.orders o1 WITH (NOLOCK) 
     where o1.POID = fi.POID and o1.Junk = 0
 ) x
-outer apply(
-	select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult, FO.Result AS OdorResult
-	from fir f
-	left join FIR_Physical fp on f.id=fp.ID AND F.PhysicalEncode=1
-	left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and fw.Dyelot=fp.Dyelot and fw.Roll=fp.Roll
-	left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fw.Dyelot=fs.Dyelot and fw.Roll=fs.Roll
-	left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and fs.Dyelot=fc.Dyelot and fs.Roll=fc.Roll
-	left join FIR_Odor fo on f.id=fo.ID AND F.OdorEncode=1 and fc.Dyelot=fo.Dyelot and fc.Roll=fo.Roll
-	where f.POID=fi.POID
-	and f.SEQ1 = fi.Seq1 and f.SEQ2 = fi.Seq2 and fp.Dyelot=fi.Dyelot AND FP.Roll=fi.Roll
-)FIR_Result1
-outer apply(
-	select 
-	PhyResult = case when PhyResult > 0 then 'Fail' when PhyResult is null then null else 'Pass' end
-	,WeightResult = case when WeightResult >0 then 'Fail' when WeightResult is null then null else 'Pass' end
-	,ShadeboneResult = case when ShadeboneResult >0 then 'Fail' when ShadeboneResult is null then null else 'Pass' end
-	,ContinuityResult = case when ContinuityResult >0 then 'Fail' when ContinuityResult is null then null else 'Pass' end
-	,OdorResult = case when OdorResult >0 then 'Fail' when OdorResult is null then null else 'Pass' end
-	from (
-		select round(convert(float, sum(iif(PhyResult = 'Fail',1,0))) / convert(float,(count(*))),2) PhyResult		
-		, round(convert(float, sum(iif(WeightResult = 'Fail',1,0))) / convert(float,(count(*))),2) WeightResult		
-		, round(convert(float, sum(iif(ShadeboneResult = 'Fail',1,0))) / convert(float,(count(*))),2) ShadeboneResult		
-		, round(convert(float, sum(iif(ContinuityResult = 'Fail',1,0))) / convert(float,(count(*))),2) ContinuityResult		
-		, round(convert(float, sum(iif(OdorResult = 'Fail',1,0))) / convert(float,(count(*))),2) OdorResult		
-		from (
-		select fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult, FO.Result AS OdorResult
-		from fir f
-		left join FIR_Physical fp on f.id=fp.ID AND F.PhysicalEncode=1
-		left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and fw.Dyelot=fp.Dyelot --and fw.Roll=fp.Roll
-		left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fw.Dyelot=fs.Dyelot --and fw.Roll=fs.Roll
-		left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and fs.Dyelot=fc.Dyelot --and fs.Roll=fc.Roll
-		left join FIR_Odor fo on f.id=fc.ID AND F.OdorEncode=1 and fs.Dyelot=fc.Dyelot --and fs.Roll=fc.Roll
-		where --f.POID like '18%'
-		f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 and fp.Dyelot= fi.Dyelot --AND FP.Roll='PSRIS1'
-		) a
-	)b	
-)FIR_Result2
-outer apply(
-	select 
-	FLResult = case when fl >0 then 'Fail' when fl is null then null else 'Pass' end
-	,ovenResult = case when oven>1 then 'Fail' when oven is null then null else 'Pass' end
-	,cfResult = case when cf>1 then 'Fail' when cf is null then null else 'Pass' end
-	from
-	(
-		select round(convert(float, sum(iif(fl = 'Fail',1,0))) / convert(float,(count(*))),2) fl
-			, round(convert(float, sum(iif(oven = 'Fail',1,0))) / convert(float,(count(*))),2) oven
-			, round(convert(float, sum(iif(cf = 'Fail',1,0))) / convert(float,(count(*))),2) cf
-		from (
-		SELECT FL.Result as fl ,O.Result as oven ,C.Result as cf
-		FROM fir f
-		left join FIR_Laboratory FL on f.POID= fl.POID and f.seq1= fl.SEQ1 and f.seq2= fl.SEQ2
-		LEFT JOIN Oven O ON O.POID = FL.POID AND O.Status= 'Confirmed'
-		LEFT JOIN ColorFastness C ON C.POID = FL.POID AND C.Status= 'Confirmed'
-		WHERE f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2
-		) a
-	)b
-)WashLab
-outer apply(
-	select Result from AIR where POID=fi.POID and Seq1=fi.Seq1 and Seq2=fi.Seq2 
-)Air
-outer apply(
-	select result from AIR_Laboratory where POID=fi.POID and Seq1=fi.Seq1 and Seq2=fi.Seq2
-) Air_Lab
 {strMtlLocation}
 where   f.MDivisionID = '{Sci.Env.User.Keyword}' 
         and fi.POID like @poid1 
@@ -353,7 +262,129 @@ and pd.FabricType in ({0})", comboDropDownList1.SelectedValue));
 and fi2.MtlLocationID ='{this.txtMtlLocation.Text}'");
             }
 
-         
+            strSQLCmd.Append($@"
+
+select f.POID,f.SEQ1,f.SEQ2,f.Dyelot,f.Roll
+	,max(fp.Result) as PhyResult, max(fw.Result) as WeightResult , max(FS.Result) AS ShadeboneResult, max(FC.Result) AS ContinuityResult, max(FO.Result) AS OdorResult
+into #tmp_FIR_Result1
+from 
+(
+	select distinct f.id,f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll,f.PhysicalEncode,f.WeightEncode,f.ShadebondEncode,f.ContinuityEncode,f.OdorEncode
+	from fir f
+	inner join #tmp_FtyInventory fi on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
+)f
+left join FIR_Physical fp on f.id=fp.ID AND F.PhysicalEncode=1 and f.Dyelot = fp.Dyelot and f.Roll=fp.Roll
+left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and f.Dyelot =fw.Dyelot and f.Roll=fw.Roll
+left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and f.Dyelot =fs.Dyelot and f.Roll=fs.Roll
+left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and f.Dyelot =fc.Dyelot and f.Roll=fc.Roll
+left join FIR_Odor fo on f.id=fo.ID AND F.OdorEncode=1 and fs.Dyelot=fo.Dyelot and f.Roll=fo.Roll 
+group by f.POID,f.SEQ1,f.SEQ2,f.Dyelot,f.Roll
+
+select distinct a.POID,a.SEQ1,a.SEQ2,a.Dyelot
+	,PhyResult = case when PhyResult > 0 then 'Fail' when PhyResult is null then null else 'Pass' end
+	,WeightResult = case when WeightResult >0 then 'Fail' when WeightResult is null then null else 'Pass' end
+	,ShadeboneResult = case when ShadeboneResult >0 then 'Fail' when ShadeboneResult is null then null else 'Pass' end
+	,ContinuityResult = case when ContinuityResult >0 then 'Fail' when ContinuityResult is null then null else 'Pass' end
+	,OdorResult = case when OdorResult >0 then 'Fail' when OdorResult is null then null else 'Pass' end
+into #tmp_FIR_Result2
+from (
+	select a.POID,a.SEQ1,a.SEQ2,a.Dyelot 
+	, sum(iif(PhyResult = 'Fail',1,0)) PhyResult		
+	, sum(iif(WeightResult = 'Fail',1,0)) WeightResult		
+	, sum(iif(ShadeboneResult = 'Fail',1,0))ShadeboneResult		
+	, sum(iif(ContinuityResult = 'Fail',1,0)) ContinuityResult		
+	, sum(iif(OdorResult = 'Fail',1,0))OdorResult			
+	from (
+		select f.*,fp.Result as PhyResult, fw.Result as WeightResult , FS.Result AS ShadeboneResult, FC.Result AS ContinuityResult, FO.Result AS OdorResult
+		from 
+		(
+			select distinct f.id,f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,f.PhysicalEncode,f.WeightEncode,f.ShadebondEncode,f.ContinuityEncode,f.OdorEncode
+			from fir f
+			inner join #tmp_FtyInventory fi on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
+		)f
+		left join FIR_Physical fp on f.id=fp.ID AND F.PhysicalEncode=1 and f.Dyelot = fp.Dyelot
+		left join FIR_Weight fw on f.id=fw.ID AND F.WeightEncode=1 and f.Dyelot =fw.Dyelot
+		left join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and f.Dyelot =fs.Dyelot
+		left join FIR_Continuity fc on f.id=fc.ID AND F.ContinuityEncode=1 and f.Dyelot =fc.Dyelot
+		left join FIR_Odor fo on f.id=fo.ID AND F.OdorEncode=1 and fs.Dyelot=fo.Dyelot
+	) a
+	group by  a.POID,a.SEQ1,a.SEQ2,a.Dyelot
+)a
+
+select distinct f.POID,f.SEQ1,f.SEQ2
+	,FLResult = case when fl >0 then 'Fail' when fl is null then null else 'Pass' end
+	,ovenResult = case when oven>1 then 'Fail' when oven is null then null else 'Pass' end
+	,cfResult = case when cf>1 then 'Fail' when cf is null then null else 'Pass' end
+into #tmp_WashLab
+from
+(
+	select f.POID,f.SEQ1,f.SEQ2
+		, round(convert(float, sum(iif(fl = 'Fail',1,0))) / convert(float,(count(*))),2) fl
+		, round(convert(float, sum(iif(oven = 'Fail',1,0))) / convert(float,(count(*))),2) oven
+		, round(convert(float, sum(iif(cf = 'Fail',1,0))) / convert(float,(count(*))),2) cf
+	from (
+		SELECT distinct f.POID,f.SEQ1,f.SEQ2,FL.Result as fl ,O.Result as oven ,C.Result as cf
+		FROM fir f
+		left join FIR_Laboratory FL on f.POID= fl.POID and f.seq1= fl.SEQ1 and f.seq2= fl.SEQ2
+		LEFT JOIN Oven O ON O.POID = FL.POID AND O.Status= 'Confirmed'
+		LEFT JOIN ColorFastness C ON C.POID = FL.POID AND C.Status= 'Confirmed' 
+		inner join #tmp_FtyInventory fi on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
+	) f
+	group by f.POID,f.SEQ1,f.SEQ2
+)f
+
+select distinct a.POID,a.SEQ1,a.SEQ2,a.Result
+into #tmp_Air
+from AIR a
+inner join #tmp_FtyInventory fi on a.POID= fi.POID	and a.SEQ1 =fi.Seq1 and a.SEQ2 = fi.Seq2  
+
+select distinct a.POID,a.SEQ1,a.SEQ2,a.Result
+into #tmp_Air_Lab
+from AIR_Laboratory a
+inner join #tmp_FtyInventory fi on a.POID= fi.POID	and a.SEQ1 =fi.Seq1 and a.SEQ2 = fi.Seq2  
+
+
+
+select distinct fi.*
+	 ,[FIR] = case when fi.sFabricType='A' then iif(Air.Result ='','Blank',Air.Result)
+				when 
+				(FIR_Result1.ContinuityResult is null or 
+				FIR_Result1.PhyResult is null or
+				FIR_Result1.ShadeboneResult is null or
+				FIR_Result1.WeightResult is null or
+				FIR_Result1.OdorResult is null) 
+				then 
+					(case when 
+					FIR_Result2.ContinuityResult='Fail' or FIR_Result2.PhyResult='Fail' or
+					FIR_Result2.ShadeboneResult='Fail' or FIR_Result2.WeightResult='Fail' or FIR_Result2.OdorResult='Fail'
+					then 'Fail' 
+					when 
+					FIR_Result2.ContinuityResult is null and FIR_Result2.PhyResult is null and
+					FIR_Result2.ShadeboneResult is null and FIR_Result2.WeightResult is null and FIR_Result2.OdorResult is null
+					then 'Blank'
+					else 'Pass' end
+					)
+				else (case when 
+					FIR_Result1.ContinuityResult='Fail' or FIR_Result1.PhyResult='Fail' or
+					FIR_Result1.ShadeboneResult='Fail' or FIR_Result1.WeightResult='Fail' or FIR_Result1.OdorResult='Fail'
+					then 'Fail' else 'Pass' end
+					)
+				end
+		,[WashLab Report] = case when fi.sFabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
+							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'
+								then 'Fail'
+							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
+								then 'Blank'
+							else 'Pass' end 
+from #tmp_FtyInventory fi
+left join #tmp_FIR_Result1 FIR_Result1 on FIR_Result1.POID=fi.POID	and FIR_Result1.SEQ1 = fi.Seq1 and FIR_Result1.SEQ2 = fi.Seq2 and FIR_Result1.Dyelot=fi.Dyelot AND FIR_Result1.Roll=fi.Roll
+left join #tmp_FIR_Result2 FIR_Result2 on FIR_Result2.POID=fi.POID	and FIR_Result2.SEQ1 = fi.Seq1 and FIR_Result2.SEQ2 = fi.Seq2 and FIR_Result2.Dyelot=fi.Dyelot 
+left join #tmp_WashLab WashLab on WashLab.POID= fi.POID	and WashLab.SEQ1 =fi.Seq1 and WashLab.SEQ2 = fi.Seq2 
+left join #tmp_Air Air on Air.POID= fi.POID	and Air.SEQ1 =fi.Seq1 and Air.SEQ2 = fi.Seq2  
+left join #tmp_Air_Lab Air_Lab on Air_Lab.POID= fi.POID	and Air_Lab.SEQ1 =fi.Seq1 and Air_Lab.SEQ2 = fi.Seq2  
+
+drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_FIR_Result2,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab
+");
 
             Ict.DualResult result;
             DataTable dtData;
