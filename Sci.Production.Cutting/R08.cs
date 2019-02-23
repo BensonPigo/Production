@@ -248,10 +248,12 @@ select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,St
 						 isnull(SpreadingTime * Cons,0) +
 						 isnull(SeparatorTime * (DyeLot -1),0) +
 						 isnull(ForwardTime,0),2)
+                        /60
 						 ,
 	[TotalCuttingTime_min] = round(isnull(CuttingSetUpTime,0) + 
 					   iif(isnull(ActualSpeed,0)=0,0,isnull(p.PerimeterM_num,0)/ActualSpeed)*60 + 
 					   isnull(Windowtime * iif(isnull(Layer,0)=0,0,Cons/Layer*0.9144)/WindowLength,0),2)
+                        /60
 					   
 into #detail
 from #tmp3
@@ -280,7 +282,7 @@ select
 	TotalCuttingPerimeter = sum(iif(isnumeric(d.PerimeterM)=1,cast(d.PerimeterM as numeric(20,4)),0)),
 	TotalCutMarkerQty = count(1),
 	TotalCutFabricYardage = Sum(d.Cons),
-	TotalAvailableCuttingTime_hrs = sum(d.CuttingSetupTime_min)/60.0
+	TotalCuttingTime_hrs = sum(d.TotalCuttingTime_min)/60.0
 from #detail d
 inner join CutCell cc with(nolock)on cc.ID = d.CutCellid
 left join CuttingMachine cm with(nolock)on cm.ID = cc.CuttingMachineID
@@ -327,20 +329,22 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             worksheet.Range[$"B4:{sCol}13"].Borders.Weight = 2; // 設定全框線
             worksheet.Range[$"B17:{cCol}29"].Borders.Weight = 2; // 設定全框線
             #region Spreading Output
+            string col = string.Empty;
             for (int i = 0; i < s; i++)
             {
                 worksheet.Cells[4, i + 2] = sodt.Rows[i]["SpreadingNoID"];
-                string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
                 worksheet.Cells[6, i + 2] = $"={col}5*F$2";
                 worksheet.Cells[7, i + 2] = sodt.Rows[i]["TotalSpreadingYardage"];
                 worksheet.Cells[8, i + 2] = sodt.Rows[i]["TotalSpreadingMarkerQty"];
                 worksheet.Cells[9, i + 2] = sodt.Rows[i]["TotalSpreadingTime_hr"];
                 worksheet.Cells[10, i + 2] = $"=({col}9/{col}6)*100";
                 worksheet.Cells[11, i + 2] = $"={col}9-{col}6";
-                worksheet.Cells[12, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2)),\" | \",IF({col}5=0,0,Round({col}6/{col}5,2)),\" | \")";
-                worksheet.Cells[13, i + 2] = $"=IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2))*IF({col}5=0,0,Round({col}6/{col}5,2))/100";
+                worksheet.Cells[12, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2)),\" | \",IF({col}6=0,0,Round({col}9/{col}6,2)),\" | \")";
+                worksheet.Cells[13, i + 2] = $"=IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2))*IF({col}6=0,0,Round({col}9/{col}6,2))/100";
             }
-
+            col = col.EqualString(string.Empty) ? "A" : col;
+            worksheet.get_Range("A3", col + "3").Merge(false);
 
             #endregion
             #region Cutting Output
@@ -348,18 +352,20 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             {
                 worksheet.Cells[17, i + 2] = codt.Rows[i]["CutCellid"];
                 worksheet.Cells[18, i + 2] = codt.Rows[i]["CuttingMachDescription"];
-                string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
                 worksheet.Cells[20, i + 2] = $"={col}19*F$2";
                 worksheet.Cells[21, i + 2] = codt.Rows[i]["AvgCutSpeedMperMin"];
                 worksheet.Cells[22, i + 2] = codt.Rows[i]["TotalCuttingPerimeter"];
                 worksheet.Cells[23, i + 2] = codt.Rows[i]["TotalCutMarkerQty"];
                 worksheet.Cells[24, i + 2] = codt.Rows[i]["TotalCutFabricYardage"];
-                worksheet.Cells[25, i + 2] = codt.Rows[i]["TotalAvailableCuttingTime_hrs"];
+                worksheet.Cells[25, i + 2] = codt.Rows[i]["TotalCuttingTime_hrs"];
                 worksheet.Cells[26, i + 2] = $"=({col}25/{col}20)*100";
                 worksheet.Cells[27, i + 2] = $"={col}26-{col}20";
-                worksheet.Cells[28, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2)),\" | \",IF({col}19=0,0,Round({col}25/{col}19,2)),\" | \")";
-                worksheet.Cells[29, i + 2] = $"=IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2))*IF({col}19=0,0,Round({col}25/{col}19,2))/100";
+                worksheet.Cells[28, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2)),\" | \",IF({col}20=0,0,Round({col}25/{col}20,2)),\" | \")";
+                worksheet.Cells[29, i + 2] = $"=IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2))*IF({col}20=0,0,Round({col}25/{col}20,2))/100";
             }
+            col = col.EqualString(string.Empty) ? "A" : col;
+            worksheet.get_Range("A16", col + "16").Merge(false);
             #endregion
             #region sheet Balancing Chart
             worksheet = excelApp.ActiveWorkbook.Worksheets[3]; // 取得工作表            
@@ -370,14 +376,14 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             }
             for (int i = 0; i < s; i++)
             {
-                string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
                 worksheet.Cells[i + 2, 1] = $"='Actual Output Summary'!{col}4";
                 worksheet.Cells[i + 2, 2] = $"='Actual Output Summary'!{col}8";
                 worksheet.Cells[i + 2, 4] = $"='Actual Output Summary'!{col}10";
             }
             for (int i = 0; i < codt.Rows.Count; i++)
             {
-                string col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
                 worksheet.Cells[i + s + 2, 1] = $"='Actual Output Summary'!{col}17";
                 worksheet.Cells[i + s + 2, 3] = $"='Actual Output Summary'!{col}23";
                 worksheet.Cells[i + s + 2, 4] = $"='Actual Output Summary'!{col}26";
