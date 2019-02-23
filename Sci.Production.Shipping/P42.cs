@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Shipping
 {
@@ -272,7 +273,6 @@ drop table #tmp,#tmps
 
         protected override bool ClickPrint()
         {
-
             if (MyUtility.Check.Empty(this.CurrentDetailData))
             {
                 MyUtility.Msg.InfoBox("No any data.");
@@ -286,7 +286,7 @@ select
 	vaqd.NLCode,
 	vcd.DescVI,
 	vd.HSCode,
-	ORIGIN=null,
+	ORIGIN=isnull(b.NameEN,'TAIWAN'),
 	vaqd.Qty,
 	vd.UnitID,
 	PRICE=null,
@@ -296,6 +296,14 @@ from VNContractQtyAdjust vaq
 inner join VNContractQtyAdjust_Detail vaqd with(nolock)on vaq.id = vaqd.id
 left join VNContract_Detail vd with(nolock)on vd.ID = vaq.VNContractID and vd.NLCode=vaqd.NLCode
 left join VNNLCodeDesc vcd with(nolock)on vcd.NLCode=vd.NLCode
+outer apply(
+	select top 1 FromSite
+	from VNImportDeclaration vid with(nolock)
+	where vid.VNContractID = vaq.VNContractID and vid.DeclareNo = vaq.DeclareNo
+)a
+outer apply(
+	select c.NameEn from Country c with(nolock)where c.id = a.FromSite
+)b
 where vaq.id = '{this.CurrentMaintain["ID"]}'
 order by vaqd.NLCode
 ";
@@ -365,31 +373,29 @@ order by vaqd.NLCode
                 range = worksheet.Range[string.Format("A{0}:E{0}", intRowsRead)];
                 objCellArray = range.Value;
 
-                if (!MyUtility.Check.Seek(
-                    string.Format(
-                        "select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{0}' and Refno = '{1}'",
-                        MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
-                        MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))),
-                    out seekData))
+                DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
+                string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
+                newRow["Refno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
+                string nlCode = string.Empty;
+                if (type.EqualString("A") || type.EqualString("F"))
+                {
+                    nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{newRow["Refno"]}'");
+                }
+                else if (type.EqualString("L"))
+                {
+                    nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where refno = '{newRow["Refno"]}'");
+                }
+
+                string chkVNContract_Detail = $@"
+select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{nlCode}'";
+
+                if (!MyUtility.Check.Seek(chkVNContract_Detail, out seekData))
                 {
                     errNLCode.Append(string.Format("Customs Code: {0}\r\n", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))));
                     continue;
                 }
                 else
                 {
-                    DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
-                    newRow["Refno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
-                    string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
-                    string nlCode = string.Empty;
-                    if (type.EqualString("A") || type.EqualString("F"))
-                    {
-                        nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{newRow["Refno"]}'");
-                    }
-                    else if (type.EqualString("L"))
-                    {
-                        nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where refno = '{newRow["Refno"]}'");
-                    }
-
                     newRow["NLCode"] = nlCode;
                     newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N");
                     newRow["HSCode"] = seekData["HSCode"];
@@ -412,17 +418,185 @@ order by vaqd.NLCode
 
         private void TxtWKNo_Validating(object sender, CancelEventArgs e)
         {
+            if (this.txtWKNo.Text.Empty())
+            {
+                ((DataTable)this.detailgridbs.DataSource).Clear();
+                return;
+            }
+
             string chksql;
+            string sqlcmd = string.Empty;
+            #region A F
             chksql = $@"select 1 from Adjust where id = '{this.txtWKNo.Text}' and Type = 'R'";
             if (MyUtility.Check.Seek(chksql))
             {
+                sqlcmd = $@"
+select distinct f.type,
+	HSCode = f.HSCode,
+	psd.Refno,
+	f.NLCode,
+	qty=ad.QtyAfter-ad.QtyBefore,
+	f.CustomsUnit,
+	ad.ukey --for distinct 因用refno串Fabric會展開
+into #tmp
+from Adjust a with(nolock)
+inner join Adjust_Detail ad with(nolock) on ad.ID=a.ID
+inner join PO_Supp_Detail psd with(nolock) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd .seq2 = ad. seq2
+left join Fabric f with(nolock) on f.Refno = psd.Refno
+where a.Type = 'R' and a.id = '{this.txtWKNo.Text}'
 
+select Type,HSCode,Refno,NLCode,CustomsUnit,qty = sum(qty)
+into #tmp2
+from #tmp 
+group by Type,HSCode,Refno,NLCode,CustomsUnit
+
+select distinct HSCode,Refno,NLCode,qty = case when type = 'A' then A.Qty when type = 'F' then F.Qty end,UnitID=t.CustomsUnit
+from #tmp2 t
+outer apply(
+	select  
+		[Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,t.qty,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+	from Fabric f with (nolock)
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = f.CustomsUnit) Rate
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
+	where f.Refno = t.Refno
+)A
+outer apply(
+	select  
+		[Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,t.qty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+	from Fabric f with (nolock)
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit) Rate
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
+	where f.Refno = t.Refno
+)F
+
+drop table #tmp,#tmp2
+";
             }
+            #endregion
 
+            #region only Local
+            chksql = $@"select 1 from AdjustLocal where id = '{this.txtWKNo.Text}' and Type = 'R'";
+            if (MyUtility.Check.Seek(chksql))
+            {
+                sqlcmd = $@"
+select
+	li.HSCode,
+	ald.Refno,
+	li.NLCode,
+	Qty=sum(ald.QtyAfter - ald.QtyBefore),
+	UnitID=li.CustomsUnit
+into #tmp
+from AdjustLocal al with(nolock)
+inner join AdjustLocal_Detail ald with(nolock)on ald.id = al.id
+left join LocalItem li with(nolock)on li.RefNo = ald.Refno
+where al.Type = 'R' and al.id = '{this.txtWKNo.Text}'
+group by li.HSCode,ald.Refno,li.NLCode,li.CustomsUnit
+
+select HSCode,Refno,NLCode,UnitID,L.Qty
+from #tmp t
+outer apply(
+	select  
+			[Qty] = [dbo].getVNUnitTransfer('',li.UnitID,isnull(li.CustomsUnit,''),t.Qty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(li.CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+	from LocalItem li with (nolock) 
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = li.CustomsUnit) Rate
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = 'M') M2Rate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = li.CustomsUnit) UnitRate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = 'M') M2UnitRate
+	where li.Refno = t.Refno
+)L
+
+drop table #tmp
+";
+            }
+            #endregion
+
+            #region 3
             chksql = $@"select 1 from FtyExport where id = '{this.txtWKNo.Text}' and Type = 3";
             if (MyUtility.Check.Seek(chksql))
             {
+                sqlcmd = $@"
+select
+	HSCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f.HSCode
+			        when fed.FabricType = '' then li.HSCode
+					end
+	,NLCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f.NLCode
+			         when fed.FabricType = '' then li.NLCode
+					 end
+	,RefNo = fed.refno
+	,Qty = case when fed.FabricType = 'A' then a.Qty
+			            when fed.FabricType = 'F' then FF.Qty
+			            when fed.FabricType = '' then L.Qty
+					end
+	,UnitID= case when fed.FabricType = 'A'or fed.FabricType = 'F' then f.CustomsUnit
+			         when fed.FabricType = '' then li.CustomsUnit
+					 end
+					 ,fe.id
+into #tmp
+from FtyExport fe WITH (NOLOCK)
+inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
+left join Fabric f WITH (NOLOCK) on f.SCIRefno=fed.SCIRefno			
+left join LocalItem li WITH (NOLOCK) on li.Refno = fed.RefNo
+outer apply(
+	select  
+		[Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,fed.qty,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+	from Fabric f with (nolock)
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = f.CustomsUnit) Rate
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
+	where f.Refno = fed.refno
+)A
+outer apply(
+	select  
+		[Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,fed.qty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+	from Fabric f with (nolock)
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit) Rate
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
+	where f.Refno = fed.refno
+)FF
+outer apply(
+	select  
+			[Qty] = [dbo].getVNUnitTransfer('',li.UnitID,isnull(li.CustomsUnit,''),fed.qty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(li.CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+	from LocalItem li with (nolock) 
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = li.CustomsUnit) Rate
+	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = 'M') M2Rate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = li.CustomsUnit) UnitRate
+	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = 'M') M2UnitRate
+	where li.Refno = fed.refno
+)L
+where fe.Type = 3 and fe.id='{this.txtWKNo.Text}'
 
+select HSCode,NLCode,RefNo,UnitID,qty=sum(qty)
+from #tmp
+group by HSCode,NLCode,RefNo,UnitID
+
+drop table #tmp
+";
+            }
+            #endregion
+            DataTable dt;
+            if (sqlcmd.Empty())
+            {
+                return;
+            }
+
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            ((DataTable)this.detailgridbs.DataSource).Clear();
+            foreach (DataRow dr in dt.Rows)
+            {
+                ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
             }
         }
     }
