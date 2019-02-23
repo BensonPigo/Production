@@ -64,7 +64,7 @@ select [Factory] = wo_Before.FactoryID
 ,[SubSP] = wo_Before.OrderID
 ,[Style] = o.StyleID
 ,[Size] = SizeCode.SizeCode
-,[OrderQty] = o.Qty
+,[OrderQty] = OrderQty_Before.qty
 ,[CutRefer#] = wo_Before.CutRef
 ,[RefNo_Desc] = wo_Before.SCIRefno
 ,[FabricType] = f.WeaveTypeID
@@ -104,6 +104,11 @@ select strLength = stuff(
 	),1,1,'')
 )MarkerLength_After
 outer apply(
+	select sum(Qty) qty from WorkOrder_DistributeRevisedMarkerOriginalData
+	where WorkOrderRevisedMarkerOriginalDataUkey = wo_Before.Ukey
+	and OrderID !='EXCESS'
+)OrderQty_Before
+outer apply(
 select strLayer = stuff(
 (
 	select concat(',', Layer)
@@ -134,16 +139,20 @@ outer apply
 (
 	select SizeCode = stuff(
 	(
-		Select concat(', ' , c.sizecode, '/ ', c.qty)
-		From WorkOrder_SizeRatio c WITH (NOLOCK) 
-		Where c.WorkOrderUkey =wo_Before.Ukey 
+		Select concat(', ' , SizeCode, '/ ', qty) from(
+		select c.SizeCode,sum(qty)qty
+		From WorkOrder_DistributeRevisedMarkerOriginalData c
+		where WorkOrderRevisedMarkerOriginalDataUkey = wo_Before.Ukey
+		and c.OrderID !='EXCESS'
+		group by c.SizeCode
+		)a
 		For XML path('')
 	),1,1,'')
 ) as SizeCode
 outer apply(
 	select sum(qty) qty 
-	from WorkOrder_SizeRatio ws	
-	where CONVERT(varchar(100), ws.WorkOrderUkey) = wo_Before.WorkOrderUkey
+	from WorkOrder_SizeRatioRevisedMarkerOriginalData ws	
+	where ws.WorkOrderRevisedMarkerOriginalDataUkey = wo_Before.Ukey
 )Ratio_Before
 outer apply(
 select strQty = stuff(
