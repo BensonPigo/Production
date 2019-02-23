@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using Ict;
 using Sci.Win;
 using Sci.Data;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Cutting
 {
@@ -52,7 +54,8 @@ namespace Sci.Production.Cutting
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             StringBuilder strSqlCmd = new StringBuilder();
-            strSqlCmd.Append($@"select [Factory] = wo_Before.FactoryID
+            strSqlCmd.Append($@"
+select [Factory] = wo_Before.FactoryID
 ,wo_Before.WorkOrderUkey
 ,[CutCell] = wo_Before.CutCellid
 ,[SpreadingNo] = wo_Before.SpreadingNoID
@@ -66,7 +69,7 @@ namespace Sci.Production.Cutting
 ,[RefNo_Desc] = wo_Before.SCIRefno
 ,[FabricType] = f.WeaveTypeID
 ,[FabricDesc] = f.Description
-,[Combination] = wo_Before.FabricCode
+,[Combination] = wo_Before.FabricCombo
 ,[MarkerLength_Before] = wo_Before.MarkerLength
 ,[MarkerLength_After] = MarkerLength_After.strLength
 ,[Layer_Before] = ISNULL(wo_Before.Layer,0)
@@ -76,8 +79,7 @@ namespace Sci.Production.Cutting
 ,[Cons_Before] = cast(round(ISNULL(sc.Cons,0),2) as float)
 ,[ExcessQty_Before] = isnull( Excess_Before.qty,0)
 ,[ExcessQty_After] = isnull( Excess_After.strQty,0)
-,[Roll] = FtyinvRoll.Roll
-,[Dyelot] = FtyinvDyelot.Dyelot
+,[Roll] = cast(n.NoofRoll as float)
 ,[NoOfWindow] = CONVERT(float,round((wo_Before.Cons/ wo_Before.Layer),2))
 ,[Perimeter_Before] = cast(ROUND(dbo.GetActualPerimeter(wo_before.ActCuttingPerimeter),2) as float)
 ,[Perimeter_After] = Perimeter_After.strPerimeter
@@ -204,8 +206,8 @@ outer apply(
 )ActSpeed_After
 outer apply(
 	select isnull(sum(qty),0) qty
-	from Workorder_distribute wod WITH (NOLOCK)
-	where CONVERT(varchar(100), wod.WorkOrderUkey) = wo_Before.WorkOrderUkey
+	from WorkOrder_DistributeRevisedMarkerOriginalData wod WITH (NOLOCK)
+	where CONVERT(varchar(100), wod.WorkOrderRevisedMarkerOriginalDataUkey) = wo_Before.ukey
 	and wod.OrderID='EXCESS'
 )Excess_Before
 outer apply(
@@ -231,6 +233,7 @@ outer apply(
 	and fi.InQty is not null
 ) as fi
 outer apply(select NoofRoll = iif(isnull(fi.avgInQty,0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
+where 1=1
 ");
 
             #region Filter 條件字串
@@ -286,24 +289,22 @@ select [Factory],[CutCell] ,[SpreadingNo] ,[CuttingPlanID]
 ,[Ratio_Before],[Ratio_After] 
 ,[Cons_Before] ,[Cons_After]  = Cons_After.strCons
 ,[ExcessQty_Before] ,[ExcessQty_After]
-,[Roll] ,[Dyelot] ,[NoOfWindow] 
+,[Roll] ,[NoOfWindow] 
 ,[Perimeter_Before] ,[Perimeter_After] 
 ,[CuttingSpeed_Before],[CuttingSpeed_After] 
 ,[SpreadingTime_Before],[SpreadingTime_After] = SpreadingTime_After.Time
 ,[CuttingTime_Before] ,[CuttingTime_After]  = Cutting_After.Time
-,[SpeadingTime]  = TotalSpreadingTime.Time
-,[CuttingTime] = TotalCutting.Time
-,[TotalFabricCons] = TotalCons.strCons
+,[SpeadingTime]  = TotalSpreadingTime.SpreadingTime
+,[CuttingTime] = TotalCutting.CuttingTime
+,[TotalFabricCons] = TotalCons.Cons
 from #tmp t
 outer apply(
-select strCons = stuff(
-(
-	select concat(',', convert(varchar(100), cast(round((sum(Cons)over(partition by cutref) - t.Cons_Before),2) as float)
-	))
-	from WorkOrder
-	where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
-	For XML path('')
-	),1,1,'')
+select Cons= cast(round((sum(cons) - t.Cons_Before),2) as float)  
+	from (
+		select cons= isnull(round((sum(Cons)over(partition by cutref) ),2) ,0)
+		from WorkOrder
+		where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
+	) a
 )TotalCons
 outer apply(
 select strCons = stuff(
@@ -315,11 +316,10 @@ select strCons = stuff(
 	),1,1,'')
 )Cons_After
 outer apply(
-select Time = stuff(
-(
-	select concat(',',SpreadingTime ) from 
+
+	select SpreadingTime = cast(round((sum(SpreadingTime) /60) - t.SpreadingTime_Before,2)as float)  from 
 	(
-		select SpreadingTime = cast(round((isnull(dbo.GetSpreadingTime(t.FabricType,Refno,n.NoofRoll,sl.Layer,sc.Cons,1),0))/60,2) - t.SpreadingTime_Before as float)
+		select SpreadingTime = cast(round((isnull(dbo.GetSpreadingTime(t.FabricType,Refno,n.NoofRoll,sl.Layer,sc.Cons,1),0)),2)  as float)
 		from WorkOrder a
 		outer apply(select Layer = sum(Layer)over(partition by CutRef))sl
 		outer apply(select Cons = sum(Cons)over(partition by CutRef))sc
@@ -332,9 +332,7 @@ select Time = stuff(
 		) as fi
 		outer apply(select NoofRoll = iif(isnull(fi.avgInQty,0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
 		where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
-		) a
-	For XML path('')
-	),1,1,'')
+	) a
 )TotalSpreadingTime
 outer apply(
 select Time = stuff(
@@ -359,20 +357,17 @@ select Time = stuff(
 	),1,1,'')
 )SpreadingTime_After
 outer apply(
-select Time = stuff(
-(
-	select concat(',',CuttingTime ) from 
+
+	select  CuttingTime = cast(round((sum(CuttingTime) /60) ,2)- t.CuttingTime_Before as float)  from 
 	(
-select CuttingTime = round(
-	( ISNULL(round(dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeter(ActCuttingPerimeter),4),CutCellid,sl.Layer,t.FabricType,sc.Cons),4)/60,0)
-),2)-t.CuttingTime_Before
+		select CuttingTime = 
+ ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeter(iif(ActCuttingPerimeter not like '%yd%','0',ActCuttingPerimeter)),2)
+ ,CutCellid,sl.Layer,t.FabricType,sc.Cons),0 )as Float) ,2)
 		from WorkOrder
 		outer apply(select Layer = sum(Layer)over(partition by CutRef))sl
 		outer apply(select Cons = sum(Cons)over(partition by CutRef))sc
 		where Ukey in (	select Data from dbo.SplitString(t.WorkOrderUkey,','))
 		) a
-	For XML path('')
-	),1,1,'')
 )TotalCutting
 outer apply(
 select Time = stuff(
@@ -415,7 +410,26 @@ drop table #tmp");
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
-            MyUtility.Excel.CopyToXls(printData,"", "Cutting_R09.xltx", 2, true, null, null);
+
+            Excel.Application objApp = new Excel.Application();
+            Sci.Utility.Report.ExcelCOM com = new Sci.Utility.Report.ExcelCOM(Sci.Env.Cfg.XltPathDir + "\\Cutting_R09.xltx", objApp);
+            Excel.Worksheet worksheet = objApp.Sheets[1];
+            com.WriteTable(this.printData, 3);
+            com.ExcelApp.ActiveWorkbook.Sheets[1].Select(Type.Missing);
+            objApp.Visible = true;
+            objApp.Columns.AutoFit();
+            // 調整欄寬
+            worksheet.Columns["O:O"].ColumnWidth = 14;
+            worksheet.Columns["P:P"].ColumnWidth = 25;
+            worksheet.Columns["Q:T"].ColumnWidth = 10;
+            worksheet.Columns["U:V"].ColumnWidth = 12;
+            worksheet.Columns["W:X"].ColumnWidth = 10;
+            worksheet.Columns["AA:AH"].ColumnWidth = 12;
+            objApp.Rows.AutoFit();
+            string Excelfile = Sci.Production.Class.MicrosoftFile.GetName("Cutting_R09");
+            objApp.ActiveWorkbook.SaveAs(Excelfile);
+            Marshal.ReleaseComObject(worksheet);
+            Marshal.ReleaseComObject(objApp);
             return true;
         }
     }
