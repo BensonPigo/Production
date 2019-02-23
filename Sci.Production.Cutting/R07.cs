@@ -131,8 +131,8 @@ WHERE 1=1 ");
 SELECT 
          wo.MDivisionId
         ,wo.CutRef		
-        ,[Cons]=SUM(wo.Cons)
-        ,[Layer]=SUM(wo.Layer)
+        ,[Cons]=SUM(ISNULL(wo.Cons,0))
+        ,[Layer]=SUM(ISNULL(wo.Layer,0))
         ,[Ratio] = Ratio.value
 		
 INTO #tmp_same_MandCutRef
@@ -184,39 +184,39 @@ SELECT DISTINCT
         ,tsm.Layer
         ,[Ratio] = tsm.Ratio
         ,[Total Fabric Cons.(yard)]=tsm.Cons
-        ,[Excess Fabirc Comb. Qty]= tq.EXCESSqty--ExcessFabircCombQty.SumValue --只需計算Excess數量
-        ,[No.ofRoll] = IIF(ISNULL(fi.avgInQty,0)=0    ,0    ,ROUND(fi.avgInQty/tsm.Cons,0))
+        ,[Excess Fabirc Comb. Qty]= tq.EXCESSqty   --只需計算Excess數量
+        ,[No.ofRoll] =ROUND( IIF(ISNULL(fi.avgInQty,0)=0    ,0    ,tsm.Cons/fi.avgInQty),0)
         ,[No.ofWindow]=tsm.Cons / tsm.Layer * 0.9114 / 1.4  --Marker length  /1.4 (m) (原本是碼，要轉成公尺，所以*0.9114)
-        ,[Cutting Speed (m/min)]=ActualSpeed.ActualSpeed
+        ,[Cutting Speed (m/min)]=ISNULL(ActualSpeed.ActualSpeed,0)
 
         --這些是Spreading
         ,[Preparation Time (min.)]=st.PreparationTime / 60
-        ,[Changeover Time (min.)]= IIF(IsRoll=1, st.ChangeOverRollTime  / 60, st.ChangeOverUnRollTime / 60)   
+		,[Changeover Time (min.)]=  IIF(ISNULL(IsRoll,0) = 0,st.ChangeOverUnRollTime,st.ChangeOverRollTime)/60
         ,[Spreading Setup Time (min.)]=st.SetupTime / 60
-        ,[Mach. Spreading Time (min.)]= st.SpreadingTime 
-										* tsm.Cons/tsm.Layer  --[MarkerLength(yard)]
-										*  tsm.Layer / 60
+        ,[Mach. Spreading Time (min.)]= ROUND(st.SpreadingTime 
+										* tsm.Cons/tsm.Layer 
+										*  tsm.Layer / 60 ,2)
         ,[Separator time (min.)]=st.SeparatorTime / 60
         ,[Forward Time (min.)]=st.ForwardTime  / 60
 
         --這個是Cutting
-        ,[Cutting Setup Time (min.)]=ct.SetUpTime
+        ,[Cutting Setup Time (min.)]=ct.SetUpTime/60
         --這個是Cutting
-        ,[Mach. Cutting Time (min.)]=  IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4)) / ActualSpeed.ActualSpeed  / 60
+        ,[Mach. Cutting Time (min.)]= ROUND( IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4)) / ActualSpeed.ActualSpeed  / 60 ,2)
 
         --這些是Spreading
         ,[Total Spreading Time (min.)]= ROUND(
 												 (ISNULL(st.PreparationTime ,0)
 												* IIF(tsm.Layer=0,0,tsm.Cons/tsm.Layer) --Marker Length
 												+ ISNULL( (
-														IIF(IsRoll=1, st.ChangeOverRollTime , st.ChangeOverUnRollTime)    --Changeover time
-														* IIF(ISNULL(fi.avgInQty,0)=0    ,0    ,ROUND(fi.avgInQty/tsm.Cons,0))      --No. of Roll
+														st.ChangeOverUnRollTime    --Changeover time
+														* ROUND( IIF(ISNULL(fi.avgInQty,0)=0    ,0    ,tsm.Cons/fi.avgInQty),0)    --No. of Roll
 												   ),0) 
 												+ ISNULL(st.SetupTime,0)--Set up time 
 												+ ISNULL((
 													st.SpreadingTime     --Machine Spreading Time 
-													* tsm.Cons/tsm.Layer --Marker Length
-													* tsm.Layer          --其實可以直接*Cons，因為Layer會被抵銷掉
+													* tsm.Cons--/tsm.Layer --Marker Length
+													--* tsm.Layer          --其實可以直接*Cons，因為Layer會被抵銷掉
 												  ),0)
 												+ ISNULL((
 													st.SeparatorTime  --No. of Separator
@@ -224,12 +224,13 @@ SELECT DISTINCT
 														- 1
 													   )
 													),0)
-												+ ISNULL(st.ForwardTime,0))  / 60
+												+ ISNULL(st.ForwardTime,0))  
+												/ 60
 											,2)
         ----這個是Cutting
         ,[Total Cutting Time (min.)]=ROUND(
 										(  ISNULL(ct.SetUpTime ,0)
-											+ IIF (ActualSpeed.ActualSpeed=0  ,0  , IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4))  / ActualSpeed.ActualSpeed * 60)
+											+ IIF (ISNULL(ActualSpeed.ActualSpeed,0)=0  ,0  , IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ISNULL(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4))  / ActualSpeed.ActualSpeed * 60)
 											+ ISNULL(ct.Windowtime 
 													* IIF(ISNULL(tsm.Layer,0)=0
 															,0
@@ -249,6 +250,7 @@ INNER JOIN Orders o ON o.ID=wod.OrderID
 LEFT JOIN Fabric f WITH (NOLOCK) ON  wo.SciRefno = f.SciRefno 
 LEFT JOIN SpreadingTime st ON f.WeaveTypeID=st.WeaveTypeID
 LEFT JOIN CuttingTime ct ON f.WeaveTypeID=ct.WeaveTypeID
+
 OUTER APPLY(
 	SELECT value = stuff(
 	(
@@ -284,14 +286,13 @@ OUTER APPLY(
 ) AS Size
 
 OUTER APPLY(
-	SELECT avgInQty = avg(fi.InQty)
-	FROM PO_Supp_Detail psd WITH (NOLOCK) 
+	SELECT avgInQty = avg(ISNULL(fi.InQty,0))
+	FROM PO_Supp_Detail psd WITH (NOLOCK)
 	INNER JOIN FtyInventory fi WITH (NOLOCK)  ON fi.POID = psd.ID AND fi.Seq1 = psd.SEQ1 AND fi.Seq2 = psd.SEQ2
 	WHERE psd.ID = wo.id AND psd.SCIRefno = wo.SCIRefno
-	AND fi.InQty IS NOT NULL
 ) AS fi
 OUTER APPLY(
-	select ActualSpeed
+	select [ActualSpeed]=ISNULL(ActualSpeed,0)
 	from CuttingMachine_detail cmd
 	inner join CutCell cc on cc.CuttingMachineID = cmd.id
 	where cc.id = wo.CutCellid 
@@ -305,7 +306,6 @@ OUTER APPLY(
 		inner join ManufacturingExecution.dbo.FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
 		where rr.Refno = wo.Refno
 )IsRoll
-
 WHERE 1=1 
 AND EXISTS (SELECT OrderID  FROM #tmp_OrderList WHERE OrderID=wod.OrderID AND Ukey=wo.Ukey)
 
@@ -317,6 +317,7 @@ SELECT * FROM #tmp
 
             #region 組SQL Part 2
             sqlCmd.Append($@"
+
 
 
 --Spreading Capacity Forecast
@@ -350,10 +351,10 @@ SELECT
 ,[Cutting Mach. Description]=cm.Description--'Next 70'  
 ,[Work Hours/Day]=''                                          -- 給User手動輸入
 ,[Total Available Cutting Time (hrs)]= 0                      -- = (Work Hours/Day  *  Total Working Days) *  Avg. Efficiency %   0.8是預設的!!  Work Hours/Day 等被輸入  所以都是0，後面相關欄位也是
-,[Avg. Cut Speed (m/min.)]=ROUND(AvgCutSpeedTime.Value ,2)                                       -- 給User手動輸入
+,[Avg. Cut Speed (m/min.)]=ROUND(AvgCutSpeedTime.Value ,2)                                       
 ,[Total Cutting Perimeter (m)]=SUM([Perimeter (m)])
 ,[Total Cut Marker Qty]=CutCell.count
-,[Total Cut Fabric Yardage]=ROUND( SUM([Perimeter (m)]) ,2)
+,[Total Cut Fabric Yardage]=ROUND( SUM(ISNULL([Total Fabric Cons.(yard)],0)) ,2)
 ,[Total Cutting Time (hrs.)]=ROUND( SUM( ISNULL([Total Cutting Time (min.)],0) / 60) ,2) --  換算成小時
 ,[Cutting Capacity Fulfill Rate%]=0                            -- =Total Cutting Time (hrs.)   /    Total Available Cutting Time (hrs)  *100
 ,['+/- Capacity (hrs)]=  0                                     -- =Total Cutting Time (hrs.)   -    Total Available Cutting Time (hrs)
@@ -366,15 +367,12 @@ OUTER APPLY(
 	SELECT [count]=COUNT(CutCellid) FROM #tmp WHERE CutCellid=t.CutCellid
 )CutCell
 OUTER APPLY(
-	SELECT [Value]=AVG([Total Cutting Time (min.)]) FROM #tmp WHERE CutCellid=t.CutCellid
+	SELECT [Value]=AVG([Cutting Speed (m/min)]) FROM #tmp WHERE CutCellid=t.CutCellid
 )AvgCutSpeedTime
 
 GROUP BY CutCellid ,cm.Description ,AvgCutSpeedTime.Value  ,CutCell.count
 
 SELECT * FROM #tmp_Cutting ORDER BY [Cut cell]
-
-
-DROP TABLE #tmp,#tmp_OrderList ,#tmp_same_MandCutRef ,#tmp_Qty ,#tmp_Spreading ,#tmp_Cutting
 
 
 ");
