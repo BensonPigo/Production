@@ -199,6 +199,7 @@ Select
 						when s.InOutRule = 4 and (bio.OutGoing is null or bio.InComing is null) then 'Not Valid'
 						else '' end,
 	s.InOutRule
+	,b.Item
 into #result
 from Bundle b WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
@@ -294,6 +295,7 @@ select
 						else '>60' end,
     gcd.EstCutDate,
     gcd.CuttingOutputDate
+	,r.Item
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc
