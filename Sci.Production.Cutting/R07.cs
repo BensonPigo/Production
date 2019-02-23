@@ -204,43 +204,24 @@ SELECT DISTINCT
         --這個是Cutting
         ,[Mach. Cutting Time (min.)]= ROUND( IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ROUND(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4)) / ActualSpeed.ActualSpeed  / 60 ,2)
 
-        --這些是Spreading
-        ,[Total Spreading Time (min.)]= ROUND(
-												 (ISNULL(st.PreparationTime ,0)
-												* IIF(tsm.Layer=0,0,tsm.Cons/tsm.Layer) --Marker Length
-												+ ISNULL( (
-														st.ChangeOverUnRollTime    --Changeover time
-														* ROUND( IIF(ISNULL(fi.avgInQty,0)=0    ,0    ,tsm.Cons/fi.avgInQty),0)    --No. of Roll
-												   ),0) 
-												+ ISNULL(st.SetupTime,0)--Set up time 
-												+ ISNULL((
-													st.SpreadingTime     --Machine Spreading Time 
-													* tsm.Cons--/tsm.Layer --Marker Length
-													--* tsm.Layer          --其實可以直接*Cons，因為Layer會被抵銷掉
-												  ),0)
-												+ ISNULL((
-													st.SeparatorTime  --No. of Separator
-													*  (1   --Dyelot  先通通帶1
-														- 1
-													   )
-													),0)
-												+ ISNULL(st.ForwardTime,0))  
-												/ 60
-											,2)
+        --這些是Spreading        
+        ,[Total Spreading Time (min.)]=ROUND ( cast(isnull(dbo.GetSpreadingTime(f.WeaveTypeID  
+									,wo.Refno 
+									,iif(isnull(fi.avgInQty,0)=0
+											,1
+											,ROUND( IIF(ISNULL(fi.avgInQty,0)=0    ,0    ,tsm.Cons/fi.avgInQty),0)  )
+									,tsm.Layer
+									,tsm.Cons
+									,1)
+					,0)as float) /60 ,2)
         ----這個是Cutting
-        ,[Total Cutting Time (min.)]=ROUND(
-										(  ISNULL(ct.SetUpTime ,0)
-											+ IIF (ISNULL(ActualSpeed.ActualSpeed,0)=0  ,0  , IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ISNULL(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4))  / ActualSpeed.ActualSpeed * 60)
-											+ ISNULL(ct.Windowtime 
-													* IIF(ISNULL(tsm.Layer,0)=0
-															,0
-															,tsm.Cons/tsm.Layer* 0.9144
-															)  -- *Marker Length
-													/ ct.WindowLength
-												,0)
-										 )  
-										 / 60
-									 ,2)
+		,[Total Cutting Time (min.)]=ROUND ( cast(isnull(dbo.GetCuttingTime(
+														IIF (ISNULL(ActualSpeed.ActualSpeed,0)=0  ,0  , IIF(wo.ActCuttingPerimeter NOT LIKE '%YD%',0, ISNULL(dbo.GetActualPerimeter(wo.ActCuttingPerimeter),4))  )
+														,wo.cutcellID 
+														,tsm.Layer
+														,f.WeaveTypeID 
+														,tsm.Cons)
+										,0)as float) /60 ,2)
 INTO #tmp
 FROM WorkOrder wo WITH (NOLOCK) 
 INNER JOIN WorkOrder_Distribute wod WITH (NOLOCK)  ON wod.WorkOrderUkey=wo.Ukey
@@ -375,6 +356,7 @@ GROUP BY CutCellid ,cm.Description ,AvgCutSpeedTime.Value  ,CutCell.count
 SELECT * FROM #tmp_Cutting ORDER BY [Cut cell]
 
 
+DROP TABLE #tmp,#tmp_OrderList ,#tmp_same_MandCutRef ,#tmp_Qty ,#tmp_Spreading ,#tmp_Cutting
 ");
             #endregion
 
