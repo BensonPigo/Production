@@ -397,15 +397,6 @@
     <None Include="packages.config" />
     <None Include="Resources\trffc15.bmp" />
     <None Include="Sci.Production.Logistic.ruleset" />
-    <None Include="stylecop.json" />
-    <None Include="stylecop1.json" />
-    <None Include="stylecop2.json" />
-    <None Include="stylecop3.json" />
-    <None Include="stylecop4.json" />
-    <None Include="stylecop5.json" />
-    <None Include="stylecop6.json" />
-    <None Include="stylecop7.json" />
-    <None Include="stylecop8.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
