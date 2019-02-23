@@ -273,16 +273,16 @@ drop table #tmp,#tmps
         protected override bool ClickPrint()
         {
 
-            //if (MyUtility.Check.Empty(this.CurrentDetailData))
-            //{
-            //    MyUtility.Msg.InfoBox("No any data.");
-            //    return false;
-            //}
+            if (MyUtility.Check.Empty(this.CurrentDetailData))
+            {
+                MyUtility.Msg.InfoBox("No any data.");
+                return false;
+            }
             #region
             DataTable dt;
             string sqlcmd = $@"
 select
-	[seq]=ROW_NUMBER()over(order by vaqd.NLCode,vd.HSCode),
+	[seq]=ROW_NUMBER()over(order by vaqd.NLCode),
 	vaqd.NLCode,
 	vcd.DescVI,
 	vd.HSCode,
@@ -297,7 +297,7 @@ inner join VNContractQtyAdjust_Detail vaqd with(nolock)on vaq.id = vaqd.id
 left join VNContract_Detail vd with(nolock)on vd.ID = vaq.VNContractID and vd.NLCode=vaqd.NLCode
 left join VNNLCodeDesc vcd with(nolock)on vcd.NLCode=vd.NLCode
 where vaq.id = '{this.CurrentMaintain["ID"]}'
-order by vaqd.NLCode,vd.HSCode
+order by vaqd.NLCode
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
 
