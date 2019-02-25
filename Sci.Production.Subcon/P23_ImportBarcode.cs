@@ -136,13 +136,14 @@ select distinct
 	,bd.PatternDesc
 	,ErrorMsg = CASE 
 		WHEN bda.SubprocessId is null THEN 'Can''t find in bundle card data'
-		WHEN BTD.ReceiveDate IS NULL and BTD.id is not null and BTD.id like 'TB%' THEN CONCAT('This bundle already transfer in slip#', BTD.Id,' which not received.')
+		WHEN bt.StartProcess = '{0}' and BTD.id is not null and BTD.id like 'TB%' THEN CONCAT('This bundle already transfer in slip#', BTD.Id,' which not received.')
 		ELSE ''
 		END
 into #tmp2
 from #tmp t
 left join Bundle_Detail bd WITH (NOLOCK) on bd.BundleNo = t.BundleNo
 left join BundleTrack_detail BTD WITH (NOLOCK) on BTD.BundleNo = t.BundleNo
+left join BundleTrack bt WITH (NOLOCK) on BTD.ID = bt.ID
 left join Bundle_Detail_art bda WITH (NOLOCK) on  bda.bundleno =bd.bundleno and bda.id = bd.id 
 left join Bundle b WITH (NOLOCK) on b.id = bd.id
 outer apply(
