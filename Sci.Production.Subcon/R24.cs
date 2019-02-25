@@ -303,7 +303,7 @@ select distinct t.FactoryID
 
     ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0   ,NULL                       ,round(x.ap_amt / totalSamePoidQty.value,3))
     ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  ,NULL											 ,round(y.order_amt/y.order_qty,3) )
-    ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL	 ,round(x.ap_amt / y.order_qty / y.order_amt/y.order_qty,2)  )
+    ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL	 ,round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty,2))  )
 
     ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))into #tmp_final
 from #tmp t
