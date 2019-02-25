@@ -56,6 +56,7 @@
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
@@ -65,7 +66,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid2);
             this.splitContainer1.Size = new System.Drawing.Size(1214, 441);
-            this.splitContainer1.SplitterDistance = 802;
+            this.splitContainer1.SplitterDistance = 285;
             this.splitContainer1.TabIndex = 5;
             // 
             // grid1
@@ -89,7 +90,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(802, 441);
+            this.grid1.Size = new System.Drawing.Size(1214, 285);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
@@ -114,7 +115,7 @@
             this.grid2.RowTemplate.Height = 24;
             this.grid2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid2.ShowCellToolTips = false;
-            this.grid2.Size = new System.Drawing.Size(408, 441);
+            this.grid2.Size = new System.Drawing.Size(1214, 152);
             this.grid2.TabIndex = 0;
             this.grid2.TabStop = false;
             // 
