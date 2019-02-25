@@ -55,7 +55,7 @@ namespace Sci.Production.Shipping
             string masterID = (e.Master == null) ? "1=0" : "v.ID = " + MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
-select v.id,vdd.Refno,vdd.FabricType,vd.NLCode,vd.Qty,c.HSCode,c.UnitID
+select v.id,vdd.Refno,vdd.FabricType,vd.NLCode,vd.Qty,c.HSCode,c.UnitID,vdd.BrandID
 from VNContractQtyAdjust v WITH (NOLOCK) 
 inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID = vd.ID
 left join VNContractQtyAdjust_Detail_Detail vdd WITH (NOLOCK) on v.ID = vdd.ID and vd.NLCode = vdd.NLCode
@@ -118,6 +118,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             base.OnDetailGridSetup();
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode)
@@ -437,6 +438,7 @@ select distinct f.type,
 	f.NLCode,
 	qty=ad.QtyAfter-ad.QtyBefore,
 	f.CustomsUnit,
+	psd.BrandId,
 	ad.ukey --for distinct 因用refno串Fabric會展開
 into #tmp
 from Adjust a with(nolock)
@@ -445,35 +447,40 @@ inner join PO_Supp_Detail psd with(nolock) on psd.id = ad.POID and psd.SEQ1 = ad
 left join Fabric f with(nolock) on f.Refno = psd.Refno
 where a.Type = 'R' and a.id = '{this.txtWKNo.Text}'
 
-select Type,HSCode,Refno,NLCode,CustomsUnit,qty = sum(qty)
+select Type,HSCode,Refno,NLCode,CustomsUnit,BrandId,qty = sum(qty)
 into #tmp2
 from #tmp 
-group by Type,HSCode,Refno,NLCode,CustomsUnit
+group by Type,HSCode,Refno,NLCode,CustomsUnit,BrandId
 
-select distinct HSCode,Refno,NLCode,qty = case when type = 'A' then A.Qty when type = 'F' then F.Qty end,UnitID=t.CustomsUnit
+select HSCode,Refno,NLCode,qty = case when type = 'A' then A.Qty when type = 'F' then F.Qty end,UnitID=t.CustomsUnit
+into #tmp3
 from #tmp2 t
 outer apply(
-	select  
-		[Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,t.qty,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+	select
+		[Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,t.qty,0,f.PcsWidth,f.PcsLength,f.PcsKg,
+		IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
 	from Fabric f with (nolock)
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = f.CustomsUnit) Rate
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
-	where f.Refno = t.Refno
+	where f.Refno = t.Refno and f.BrandId = t.BrandId
 )A
 outer apply(
-	select  
-		[Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,t.qty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+	select
+		[Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,t.qty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,
+		IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
 	from Fabric f with (nolock)
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit) Rate
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
-	where f.Refno = t.Refno
+	where f.Refno = t.Refno and f.BrandId = t.BrandId
 )F
 
-drop table #tmp,#tmp2
+select HSCode,Refno,NLCode,UnitID,qty = sum(qty) from #tmp3 group by HSCode,Refno,NLCode,UnitID
+
+drop table #tmp,#tmp2,#tmp3
 ";
             }
             #endregion
@@ -520,10 +527,10 @@ drop table #tmp
             {
                 sqlcmd = $@"
 select
-	HSCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f.HSCode
+	HSCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.HSCode
 			        when fed.FabricType = '' then li.HSCode
 					end
-	,NLCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f.NLCode
+	,NLCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.NLCode
 			         when fed.FabricType = '' then li.NLCode
 					 end
 	,RefNo = fed.refno
@@ -531,14 +538,14 @@ select
 			            when fed.FabricType = 'F' then FF.Qty
 			            when fed.FabricType = '' then L.Qty
 					end
-	,UnitID= case when fed.FabricType = 'A'or fed.FabricType = 'F' then f.CustomsUnit
+	,UnitID= case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.CustomsUnit
 			         when fed.FabricType = '' then li.CustomsUnit
 					 end
-					 ,fe.id
+	,fe.id,f1.BrandID
 into #tmp
 from FtyExport fe WITH (NOLOCK)
 inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
-left join Fabric f WITH (NOLOCK) on f.SCIRefno=fed.SCIRefno			
+left join Fabric f1 WITH (NOLOCK) on f1.Refno=fed.Refno			
 left join LocalItem li WITH (NOLOCK) on li.Refno = fed.RefNo
 outer apply(
 	select  
@@ -548,7 +555,7 @@ outer apply(
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
-	where f.Refno = fed.refno
+	where f.Refno = fed.refno and f.BrandID = f1.BrandID
 )A
 outer apply(
 	select  
@@ -558,7 +565,7 @@ outer apply(
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
-	where f.Refno = fed.refno
+	where f.Refno = fed.refno and f.BrandID = f1.BrandID
 )FF
 outer apply(
 	select  
