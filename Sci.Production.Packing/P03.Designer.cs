@@ -84,6 +84,8 @@
             this.btnUPCSticker = new Sci.Win.UI.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.checkCancelledOrder = new Sci.Win.UI.CheckBox();
+            this.lbClogCFMStatus = new Sci.Win.UI.Label();
+            this.disClogCFMStatus = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -100,6 +102,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disClogCFMStatus);
+            this.masterpanel.Controls.Add(this.lbClogCFMStatus);
             this.masterpanel.Controls.Add(this.checkCancelledOrder);
             this.masterpanel.Controls.Add(this.btnUPCSticker);
             this.masterpanel.Controls.Add(this.label2);
@@ -155,7 +159,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateCartonEstBooking);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 287);
+            this.masterpanel.Size = new System.Drawing.Size(1004, 313);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -212,25 +216,26 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnUPCSticker, 0);
             this.masterpanel.Controls.SetChildIndex(this.checkCancelledOrder, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbClogCFMStatus, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disClogCFMStatus, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 287);
-            this.detailpanel.Size = new System.Drawing.Size(892, 62);
+            this.detailpanel.Location = new System.Drawing.Point(0, 313);
+            this.detailpanel.Size = new System.Drawing.Size(1004, 336);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(894, 252);
+            this.gridicon.Location = new System.Drawing.Point(894, 278);
             this.gridicon.TabIndex = 8;
             // 
             // refresh
             // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(912, 0);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 62);
+            this.detailgridcont.Size = new System.Drawing.Size(1004, 336);
             // 
             // detail2
             // 
@@ -246,16 +251,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1004, 687);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1004, 649);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 649);
+            this.detailbtm.Size = new System.Drawing.Size(1004, 38);
             // 
             // browse
             // 
@@ -263,7 +268,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1012, 585);
+            this.tabs.Size = new System.Drawing.Size(1012, 716);
             // 
             // createby
             // 
@@ -296,7 +301,7 @@
             // 
             // labelSortby
             // 
-            this.labelSortby.Location = new System.Drawing.Point(5, 261);
+            this.labelSortby.Location = new System.Drawing.Point(5, 284);
             this.labelSortby.Name = "labelSortby";
             this.labelSortby.Size = new System.Drawing.Size(66, 23);
             this.labelSortby.TabIndex = 8;
@@ -319,7 +324,7 @@
             this.comboSortby.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboSortby.FormattingEnabled = true;
             this.comboSortby.IsSupportUnselect = true;
-            this.comboSortby.Location = new System.Drawing.Point(75, 260);
+            this.comboSortby.Location = new System.Drawing.Point(75, 283);
             this.comboSortby.Name = "comboSortby";
             this.comboSortby.OldText = "";
             this.comboSortby.Size = new System.Drawing.Size(121, 24);
@@ -553,7 +558,7 @@
             this.editRemark.Location = new System.Drawing.Point(83, 140);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(429, 96);
+            this.editRemark.Size = new System.Drawing.Size(435, 137);
             this.editRemark.TabIndex = 4;
             // 
             // btnCartonSummary
@@ -591,7 +596,7 @@
             // 
             // labelLocateforTransferClog
             // 
-            this.labelLocateforTransferClog.Location = new System.Drawing.Point(370, 261);
+            this.labelLocateforTransferClog.Location = new System.Drawing.Point(370, 284);
             this.labelLocateforTransferClog.Name = "labelLocateforTransferClog";
             this.labelLocateforTransferClog.Size = new System.Drawing.Size(156, 23);
             this.labelLocateforTransferClog.TabIndex = 51;
@@ -600,7 +605,7 @@
             // dateLocateforTransferClog
             // 
             this.dateLocateforTransferClog.IsSupportEditMode = false;
-            this.dateLocateforTransferClog.Location = new System.Drawing.Point(531, 261);
+            this.dateLocateforTransferClog.Location = new System.Drawing.Point(531, 284);
             this.dateLocateforTransferClog.Name = "dateLocateforTransferClog";
             this.dateLocateforTransferClog.Size = new System.Drawing.Size(130, 23);
             this.dateLocateforTransferClog.TabIndex = 52;
@@ -610,14 +615,14 @@
             this.txtLocateforTransferClog.BackColor = System.Drawing.Color.White;
             this.txtLocateforTransferClog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateforTransferClog.IsSupportEditMode = false;
-            this.txtLocateforTransferClog.Location = new System.Drawing.Point(531, 261);
+            this.txtLocateforTransferClog.Location = new System.Drawing.Point(531, 284);
             this.txtLocateforTransferClog.Name = "txtLocateforTransferClog";
             this.txtLocateforTransferClog.Size = new System.Drawing.Size(80, 23);
             this.txtLocateforTransferClog.TabIndex = 53;
             // 
             // btnFindNow
             // 
-            this.btnFindNow.Location = new System.Drawing.Point(673, 256);
+            this.btnFindNow.Location = new System.Drawing.Point(673, 279);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(80, 30);
             this.btnFindNow.TabIndex = 54;
@@ -846,7 +851,7 @@
             // 
             this.checkCancelledOrder.AutoSize = true;
             this.checkCancelledOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.checkCancelledOrder.Location = new System.Drawing.Point(204, 262);
+            this.checkCancelledOrder.Location = new System.Drawing.Point(204, 285);
             this.checkCancelledOrder.Name = "checkCancelledOrder";
             this.checkCancelledOrder.ReadOnly = true;
             this.checkCancelledOrder.Size = new System.Drawing.Size(160, 21);
@@ -854,10 +859,27 @@
             this.checkCancelledOrder.Text = "Include Cancel Order";
             this.checkCancelledOrder.UseVisualStyleBackColor = true;
             // 
+            // lbClogCFMStatus
+            // 
+            this.lbClogCFMStatus.Location = new System.Drawing.Point(520, 255);
+            this.lbClogCFMStatus.Name = "lbClogCFMStatus";
+            this.lbClogCFMStatus.Size = new System.Drawing.Size(126, 22);
+            this.lbClogCFMStatus.TabIndex = 69;
+            this.lbClogCFMStatus.Text = "Clog CFM Status";
+            // 
+            // disClogCFMStatus
+            // 
+            this.disClogCFMStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disClogCFMStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disClogCFMStatus.Location = new System.Drawing.Point(652, 255);
+            this.disClogCFMStatus.Name = "disClogCFMStatus";
+            this.disClogCFMStatus.Size = new System.Drawing.Size(27, 23);
+            this.disClogCFMStatus.TabIndex = 70;
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1012, 618);
+            this.ClientSize = new System.Drawing.Size(1012, 749);
             this.DefaultControl = "txtbrand";
             this.DefaultControlForEdit = "txtbrand";
             this.DefaultDetailOrder = "Seq";
@@ -953,5 +975,7 @@
         private Win.UI.Button btnUPCSticker;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private Win.UI.CheckBox checkCancelledOrder;
+        private Win.UI.DisplayBox disClogCFMStatus;
+        private Win.UI.Label lbClogCFMStatus;
     }
 }
