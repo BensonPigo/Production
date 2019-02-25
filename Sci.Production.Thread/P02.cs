@@ -629,6 +629,12 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
                     MyUtility.Msg.WarningBox($"<Use Stock Use Cone>{drs["useStockUseConeQty"]} can't be more than <Current Stock Use Cone>{drs["CurUsedCone"]}");
                     return false;
                 }
+
+                if (MyUtility.Convert.GetInt(drs["AllowanceQty"]) > 50 && MyUtility.Check.Empty(drs["Poid"]))
+                {
+                    MyUtility.Msg.WarningBox("<Allowance> must less than or equal to 50!");
+                    return false;
+                }
             }
 
             return base.ClickSaveBefore();
