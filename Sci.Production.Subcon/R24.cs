@@ -344,7 +344,7 @@ where 1=1
             if (chk_IrregularPriceReason.Checked)
             {
                 //價格異常的資料存在，卻沒有ReasonID
-                sqlCmd.Append(string.Format(@" AND (y.order_qty=0 OR x.ap_amt > y.order_amt) "));
+                sqlCmd.Append(string.Format(@" AND (y.order_qty=0 or x.ap_amt > isnull (y.order_amt, 0)) "));
                 sqlCmd.Append(string.Format(@" AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "));
 
             }
