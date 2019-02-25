@@ -55,7 +55,7 @@ namespace Sci.Production.Shipping
             string masterID = (e.Master == null) ? "1=0" : "v.ID = " + MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = string.Format(
                 @"
-select v.id,vdd.Refno,vdd.FabricType,vd.NLCode,vd.Qty,c.HSCode,c.UnitID,vdd.BrandID
+select v.id,vdd.Refno,vdd.FabricType,vdd.NLCode,vdd.Qty,c.HSCode,c.UnitID,vdd.BrandID
 from VNContractQtyAdjust v WITH (NOLOCK) 
 inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID = vd.ID
 left join VNContractQtyAdjust_Detail_Detail vdd WITH (NOLOCK) on v.ID = vdd.ID and vd.NLCode = vdd.NLCode
@@ -162,6 +162,18 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             }
 
             return base.ClickDeleteBefore();
+        }
+
+        protected override DualResult ClickDeletePost()
+        {
+            string sqldelete = $@"delete [VNContractQtyAdjust_Detail] where id = '{this.CurrentMaintain["id"]}'";
+            DualResult result = DBProxy.Current.Execute(null, sqldelete);
+            if (!result)
+            {
+                return Result.F(result.ToString());
+            }
+
+            return base.ClickDeletePost();
         }
 
         /// <inheritdoc/>
@@ -432,31 +444,28 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
             if (MyUtility.Check.Seek(chksql))
             {
                 sqlcmd = $@"
-select distinct f.type,
-	HSCode = f.HSCode,
+select
 	psd.Refno,
-	f.NLCode,
-	qty=ad.QtyAfter-ad.QtyBefore,
-	f.CustomsUnit,
-	psd.BrandId,
-	ad.ukey --for distinct 因用refno串Fabric會展開
+	FabricType=f1.type,
+	f1.NLCode,
+	f1.BrandId,
+	f1.HSCode,
+	UnitID=f1.CustomsUnit,
+	qty=sum(ad.QtyAfter-ad.QtyBefore)
 into #tmp
 from Adjust a with(nolock)
 inner join Adjust_Detail ad with(nolock) on ad.ID=a.ID
 inner join PO_Supp_Detail psd with(nolock) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd .seq2 = ad. seq2
-left join Fabric f with(nolock) on f.Refno = psd.Refno
+left join orders o with(nolock) on o.id = ad.POID
+left join brand b with(nolock) on b.id = o.BrandID
+outer apply(select top 1 * from Fabric f with(nolock) where f.Refno = psd.Refno and f.BrandID = b.BrandGroup order by f.NLCodeEditDate desc)f1
 where a.Type = 'R' and a.id = '{this.txtWKNo.Text}'
+group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit
 
-select Type,HSCode,Refno,NLCode,CustomsUnit,BrandId,qty = sum(qty)
-into #tmp2
-from #tmp 
-group by Type,HSCode,Refno,NLCode,CustomsUnit,BrandId
-
-select HSCode,Refno,NLCode,qty = case when type = 'A' then A.Qty when type = 'F' then F.Qty end,UnitID=t.CustomsUnit
-into #tmp3
-from #tmp2 t
+select Refno,FabricType,NLCode,BrandId,HSCode,UnitID,qty = case when FabricType = 'A' then A.Qty when FabricType = 'F' then F.Qty end
+from #tmp t
 outer apply(
-	select
+	select top 1
 		[Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,t.qty,0,f.PcsWidth,f.PcsLength,f.PcsKg,
 		IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
 	from Fabric f with (nolock)
@@ -464,10 +473,10 @@ outer apply(
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
-	where f.Refno = t.Refno and f.BrandId = t.BrandId
+	where f.Refno = t.Refno and f.BrandID = t.BrandId order by f.NLCodeEditDate desc
 )A
 outer apply(
-	select
+	select top 1
 		[Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,t.qty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,
 		IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
 	from Fabric f with (nolock)
@@ -475,12 +484,10 @@ outer apply(
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
-	where f.Refno = t.Refno and f.BrandId = t.BrandId
+	where f.Refno = t.Refno and f.BrandID = t.BrandId order by f.NLCodeEditDate desc
 )F
 
-select HSCode,Refno,NLCode,UnitID,qty = sum(qty) from #tmp3 group by HSCode,Refno,NLCode,UnitID
-
-drop table #tmp,#tmp2,#tmp3
+drop table #tmp
 ";
             }
             #endregion
@@ -491,23 +498,26 @@ drop table #tmp,#tmp2,#tmp3
             {
                 sqlcmd = $@"
 select
-	li.HSCode,
 	ald.Refno,
 	li.NLCode,
-	Qty=sum(ald.QtyAfter - ald.QtyBefore),
-	UnitID=li.CustomsUnit
+	BrandId=b.BrandGroup,
+	li.HSCode,
+	UnitID=li.CustomsUnit,
+	Qty=sum(ald.QtyAfter - ald.QtyBefore)
 into #tmp
 from AdjustLocal al with(nolock)
 inner join AdjustLocal_Detail ald with(nolock)on ald.id = al.id
 left join LocalItem li with(nolock)on li.RefNo = ald.Refno
+left join orders o with(nolock) on o.id = ald.POID
+left join brand b with(nolock) on b.id = o.BrandID
 where al.Type = 'R' and al.id = '{this.txtWKNo.Text}'
-group by li.HSCode,ald.Refno,li.NLCode,li.CustomsUnit
+group by ald.Refno,li.NLCode,b.BrandGroup,li.HSCode,li.CustomsUnit
 
-select HSCode,Refno,NLCode,UnitID,L.Qty
+select Refno,FabricType='L',NLCode,BrandId,HSCode,UnitID,L.Qty
 from #tmp t
 outer apply(
 	select  
-			[Qty] = [dbo].getVNUnitTransfer('',li.UnitID,isnull(li.CustomsUnit,''),t.Qty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(li.CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
+		[Qty] = [dbo].getVNUnitTransfer('',li.UnitID,isnull(li.CustomsUnit,''),t.Qty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(li.CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
 	from LocalItem li with (nolock) 
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = li.CustomsUnit) Rate
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = 'M') M2Rate
@@ -527,28 +537,31 @@ drop table #tmp
             {
                 sqlcmd = $@"
 select
+	fed.refno,
+	fed.FabricType,
+	NLCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.NLCode
+			    when fed.FabricType = '' then li.NLCode
+				end,
+	f1.BrandID,
 	HSCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.HSCode
 			        when fed.FabricType = '' then li.HSCode
-					end
-	,NLCode = case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.NLCode
-			         when fed.FabricType = '' then li.NLCode
-					 end
-	,RefNo = fed.refno
-	,Qty = case when fed.FabricType = 'A' then a.Qty
+					end,
+	UnitID= case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.CustomsUnit
+			         when fed.FabricType = '' then li.CustomsUnit
+					 end,
+	Qty = case when fed.FabricType = 'A' then a.Qty
 			            when fed.FabricType = 'F' then FF.Qty
 			            when fed.FabricType = '' then L.Qty
 					end
-	,UnitID= case when fed.FabricType = 'A'or fed.FabricType = 'F' then f1.CustomsUnit
-			         when fed.FabricType = '' then li.CustomsUnit
-					 end
-	,fe.id,f1.BrandID
 into #tmp
 from FtyExport fe WITH (NOLOCK)
 inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
-left join Fabric f1 WITH (NOLOCK) on f1.Refno=fed.Refno			
 left join LocalItem li WITH (NOLOCK) on li.Refno = fed.RefNo
+left join orders o with(nolock) on o.id = fed.POID
+left join brand b with(nolock) on b.id = o.BrandID
+outer apply(select top 1 * from Fabric f with(nolock) where f.Refno = fed.Refno and f.BrandID = b.BrandGroup order by f.NLCodeEditDate desc)f1
 outer apply(
-	select  
+	select top 1
 		[Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,fed.qty,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
 	from Fabric f with (nolock)
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = f.CustomsUnit) Rate
@@ -558,7 +571,7 @@ outer apply(
 	where f.Refno = fed.refno and f.BrandID = f1.BrandID
 )A
 outer apply(
-	select  
+	select top 1
 		[Qty] = [dbo].getVNUnitTransfer('F','YDS',f.CustomsUnit,fed.qty,f.Width,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(f.CustomsUnit = 'M2',M2Rate.value,isnull(Rate.value,1)),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
 	from Fabric f with (nolock)
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = f.CustomsUnit) Rate
@@ -568,7 +581,7 @@ outer apply(
 	where f.Refno = fed.refno and f.BrandID = f1.BrandID
 )FF
 outer apply(
-	select  
+	select
 			[Qty] = [dbo].getVNUnitTransfer('',li.UnitID,isnull(li.CustomsUnit,''),fed.qty,0,li.PcsWidth,li.PcsLength,li.PcsKg,IIF(li.CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(li.CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
 	from LocalItem li with (nolock) 
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = li.CustomsUnit) Rate
@@ -579,9 +592,9 @@ outer apply(
 )L
 where fe.Type = 3 and fe.id='{this.txtWKNo.Text}'
 
-select HSCode,NLCode,RefNo,UnitID,qty=sum(qty)
+select Refno,FabricType,NLCode,BrandId,HSCode,UnitID, qty = sum(qty)
 from #tmp
-group by HSCode,NLCode,RefNo,UnitID
+group by Refno,FabricType,NLCode,BrandId,HSCode,UnitID
 
 drop table #tmp
 ";
