@@ -302,8 +302,8 @@ select distinct t.FactoryID
     ,x.ap_amt
 
     ,[ap_price]=IIF(totalSamePoidQty.value IS NULL OR totalSamePoidQty.value=0   ,NULL                       ,round(x.ap_amt / totalSamePoidQty.value,3))
-    ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  ,NULL											 ,round(y.order_amt/y.order_qty,3) )
-    ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL	 ,round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty,2))  )
+    ,[std_price]=IIF(y.order_qty  IS NULL OR y.order_qty=0  ,NULL											 ,round(y.order_amt/y.order_qty,3) )    
+    ,[percentage]=IIF(y.order_qty  IS NULL OR y.order_qty=0 OR y.order_amt IS NULL OR y.order_amt =0 ,NULL	 ,round( (x.ap_amt / y.order_qty)   /   (y.order_amt/y.order_qty),2)  )
 
     ,[Responsible_Reason]=IIF(IrregularPrice.Responsible IS NULL OR IrregularPrice.Responsible = '' ,'',ISNULL(IrregularPrice.Responsible,'')+' - '+ ISNULL(IrregularPrice.Reason,''))into #tmp_final
 from #tmp t
@@ -344,7 +344,7 @@ where 1=1
             if (chk_IrregularPriceReason.Checked)
             {
                 //價格異常的資料存在，卻沒有ReasonID
-                sqlCmd.Append(string.Format(@" AND round(x.ap_amt / iif(y.order_qty=0,1,y.order_qty),3) > round(y.order_amt/iif(y.order_qty=0,1,y.order_qty),3)"));
+                sqlCmd.Append(string.Format(@" AND (y.order_qty=0 OR x.ap_amt > y.order_amt) "));
                 sqlCmd.Append(string.Format(@" AND (IrregularPrice.ReasonID IS NULL OR IrregularPrice.ReasonID ='') "));
 
             }
