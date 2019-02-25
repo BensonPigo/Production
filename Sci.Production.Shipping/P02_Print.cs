@@ -322,18 +322,26 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
                 object[,] objArray = new object[1, 12];
                 foreach (DataRow dr in this.detailData.Rows)
                 {
+                    string sSeq1 = MyUtility.Convert.GetString(dr["Seq1"]);
+                    string sSeq2 = MyUtility.Convert.GetString(dr["Seq2"]);
+                    int iCategory = MyUtility.Convert.GetInt(dr["Category"]);
+                    bool bQty = MyUtility.Check.Empty(dr["Qty"]);
+                    bool bPrice = MyUtility.Check.Empty(dr["Price"]);
+                    decimal decQty = bQty ? 0 : MyUtility.Convert.GetDecimal(dr["Qty"]);
+                    decimal decPrice = bPrice ? 0 : MyUtility.Convert.GetDecimal(dr["Price"]);
+
                     objArray[0, 0] = dr["CTNNo"];
-                    objArray[0, 1] = string.Format("{0}-{1}", MyUtility.Convert.GetString(dr["Seq1"]), MyUtility.Convert.GetString(dr["Seq2"]));
-                    objArray[0, 2] = dr["Category"];
+                    objArray[0, 1] = string.Format("{0}-{1}", sSeq1, sSeq2);
+                    objArray[0, 2] = this.CategoryName(iCategory);
                     objArray[0, 3] = dr["StyleID"];
                     objArray[0, 4] = dr["RefNo"];
-                    objArray[0, 5] = dr["Description"];
-                    objArray[0, 6] = MyUtility.Check.Empty(dr["Qty"]) ? string.Empty : dr["Qty"];
+                    objArray[0, 5] = iCategory == 4 || iCategory == 9 ? dr["MtlDesc"] : dr["Description"];
+                    objArray[0, 6] = bQty ? string.Empty : dr["Qty"];
                     objArray[0, 7] = dr["UnitID"];
                     objArray[0, 8] = "$";
-                    objArray[0, 9] = MyUtility.Check.Empty(dr["Price"]) ? string.Empty : dr["Price"];
+                    objArray[0, 9] = bPrice ? string.Empty : dr["Price"];
                     objArray[0, 10] = "$";
-                    objArray[0, 11] = MyUtility.Check.Empty(dr["Qty"]) || MyUtility.Check.Empty(dr["Price"]) ? string.Empty : MyUtility.Convert.GetString(MyUtility.Convert.GetDecimal(dr["Qty"]) * MyUtility.Convert.GetDecimal(dr["Price"]));
+                    objArray[0, 11] = bQty || bPrice ? string.Empty : MyUtility.Convert.GetString(decQty * decPrice);
                     worksheet.Range[string.Format("A{0}:L{0}", rownum)].Value2 = objArray;
                     rownum++;
                 }
@@ -402,6 +410,46 @@ group by UnitID", MyUtility.Convert.GetString(this.masterData["ID"]));
             }
 
             return true;
+        }
+
+        private string CategoryName(int iCategory)
+        {
+            string rtnStr = string.Empty;
+            switch (iCategory)
+            {
+                case 1:
+                    rtnStr = "Sample";
+                    break;
+                case 2:
+                    rtnStr = "SMS";
+                    break;
+                case 3:
+                    rtnStr = "Bulk";
+                    break;
+                case 4:
+                    rtnStr = "Material";
+                    break;
+                case 5:
+                    rtnStr = "Dox";
+                    break;
+                case 6:
+                    rtnStr = "Machine/Parts";
+                    break;
+                case 7:
+                    rtnStr = "Mock Up";
+                    break;
+                case 8:
+                    rtnStr = "Other Sample";
+                    break;
+                case 9:
+                    rtnStr = "Other Material";
+                    break;
+                default:
+                    rtnStr = string.Empty;
+                    break;
+            }
+
+            return rtnStr;
         }
     }
 }
