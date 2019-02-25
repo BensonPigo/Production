@@ -311,6 +311,16 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 }
             }
             #endregion
+
+            #region disClogCFMStatus
+            sqlcmdC = $@"select iif(count(pd.ID) = count(pd.ReceiveDate), 'Y','N') [ClogCFMStatus]
+                         from PackingList_Detail pd
+                         where pd.id = '{this.CurrentMaintain["ID"]}'";
+            if (MyUtility.Check.Seek(sqlcmdC, out cancelOrder))
+            {
+                this.disClogCFMStatus.Text = cancelOrder["ClogCFMStatus"].ToString();
+            }
+            #endregion
         }
 
         // 檢查OrderID+Seq不可以重複建立

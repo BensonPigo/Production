@@ -413,6 +413,12 @@
     <Compile Include="P19.Designer.cs">
       <DependentUpon>P19.cs</DependentUpon>
     </Compile>
+    <Compile Include="P23.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P23.Designer.cs">
+      <DependentUpon>P23.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -573,6 +579,9 @@
     <EmbeddedResource Include="P19.resx">
       <DependentUpon>P19.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P23.resx">
+      <DependentUpon>P23.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
     </EmbeddedResource>
@@ -605,9 +614,6 @@
     <None Include="Packing.xss">
       <DependentUpon>Packing.xsd</DependentUpon>
     </None>
-    <None Include="Properties\DataSources\P14_Print.datasource" />
-    <None Include="Properties\DataSources\P14_PrintData.datasource" />
-    <None Include="Properties\DataSources\P14_PrintData_SLIP.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -621,7 +627,9 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

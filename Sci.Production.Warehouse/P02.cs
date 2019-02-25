@@ -14,12 +14,42 @@ namespace Sci.Production.Warehouse
 {
     public partial class P02 : Sci.Win.Tems.Input2
     {
+        private string _wkNo;
+        private string _spNo;
+
         public P02(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
             InitializeComponent();
             detailgrid.AllowUserToOrderColumns = true;
         }
+        public P02(string wkNo,string spNo,ToolStripMenuItem menuitem)
+            : base(menuitem)
+        {
+            InitializeComponent();
+            detailgrid.AllowUserToOrderColumns = true;
+
+            this._wkNo = wkNo;
+            this._spNo = spNo;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+
+            if (!MyUtility.Check.Empty(this._wkNo))
+            {
+                this.DefaultWhere = $"ID='{_wkNo}'";
+                this.ReloadDatas();
+            }
+            if (!MyUtility.Check.Empty(this._spNo))
+            {
+                this.DefaultWhere = $"(exists( select 1 from Export_Detail where id = Export.Id and Export_Detail.PoID  =  '{_spNo}' ))";
+                this.ReloadDatas();
+            }
+
+        }
+
         protected override bool ClickEditBefore()
         {
             DataRow dr = grid.GetDataRow<DataRow>(grid.GetSelectedRowIndex());

@@ -107,6 +107,7 @@ namespace Sci.Production.Subcon
             [TransferDate] = CAST(TransferDate AS DATE),
             [TransferTime] = TransferDate,
             bt.LocationID
+            ,b.item
             --CAST ( bt.TransferDate AS DATE) AS TransferDate
             from BundleTransfer  bt WITH (NOLOCK)
             left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo

@@ -929,6 +929,7 @@
             this.DefaultControlForEdit = "txtartworktype_ftyCategory";
             this.DefaultOrder = "refno";
             this.EnableGridJunkColor = true;
+            this.ExpressQuery = true;
             this.IsSupportClose = true;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
@@ -938,6 +939,7 @@
             this.UncloseChkValue = "Locked";
             this.UniqueExpress = "refno";
             this.WorkAlias = "LocalItem";
+            this.FormLoaded += new System.EventHandler(this.B01_FormLoaded);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.B01_FormClosing);
             this.Controls.SetChildIndex(this.tabs, 0);
             this.Controls.SetChildIndex(this.btnBatchApprove, 0);

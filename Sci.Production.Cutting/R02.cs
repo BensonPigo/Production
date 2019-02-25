@@ -327,6 +327,8 @@ select	distinct
     [OrderQty] = SizeQty.SizeCode,
 	[ExcessQty] = ExcessQty.SizeCode,
 	[Fab Cons.] = Cutplan_Detail.Cons,
+    [Layer] = WorkOrder.Layer,
+    [Length] = Cutplan_Detail.Cons / WorkOrder.Layer,
 	[Fab Refno] = FabRefno.Refno,
 	[Remark] = Cutplan_Detail.Remark,
 	[SCI Delivery] = o.SciDelivery,
@@ -480,6 +482,8 @@ select
 [OrderQty] = [OrderQty],
 [ExcessQty] = [ExcessQty],
 [Fab Cons.] = [Fab Cons.],
+[Layer] = [Layer],
+[Length] = [Length],
 [Fab Refno] = [Fab Refno],
 [Remark] = [Remark],
 [SCI Delivery] = [SCI Delivery],
@@ -848,7 +852,7 @@ where 1 = 1
                             objSheets.Cells[6 + j, 16] = "Total Cons.";
                         }
                     }
-                    objSheets.Columns["T"].Clear();
+                    objSheets.Columns["V"].Clear();
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
@@ -871,8 +875,10 @@ where 1 = 1
                     objSheets.get_Range("O1").ColumnWidth = 12.75;
                     objSheets.get_Range("P1").ColumnWidth = 12.75;
                     objSheets.get_Range("Q1").ColumnWidth = 12;
-                    objSheets.get_Range("R1").ColumnWidth = 12.88;
-                    objSheets.get_Range("S1").ColumnWidth = 41;
+                    objSheets.get_Range("R1").ColumnWidth = 9.25;
+                    objSheets.get_Range("S1").ColumnWidth = 21.38;
+                    objSheets.get_Range("T1").ColumnWidth = 12.88;
+                    objSheets.get_Range("U1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
                     
                     Marshal.ReleaseComObject(objSheets); //釋放sheet                     

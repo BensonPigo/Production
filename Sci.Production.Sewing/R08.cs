@@ -655,6 +655,11 @@ where f.Junk = 0",
                 this.date1.Value.Year,
                 this.date1.Value.Month));
 
+            if (this.checkSampleFty.Checked)
+            {
+                sqlCmd.Append(" and f.type <> 'S' ");
+            }
+
             if (this.factory != string.Empty)
             {
                 sqlCmd.Append(string.Format(" and f.id= '{0}'", this.factory));
