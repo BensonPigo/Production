@@ -1213,7 +1213,20 @@ where f.Junk = 0",
                 Sci.Env.User.Keyword.EqualString("CM2") ||
                 Sci.Env.User.Keyword.EqualString("CM3"))
             {
-                int ttlWorkDay = this.SewOutPutData.Select("LastShift <> 'O'").Length;
+                int ttlWorkDay = 0;
+                string strWorkDay = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";
+                DataTable dtWorkDay;
+                DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
+                if (failResult == false)
+                {
+                    MyUtility.Msg.WarningBox(failResult.ToString());
+                    ttlWorkDay = 0;
+                }
+                else
+                {
+                    ttlWorkDay = dtWorkDay.Rows.Count;
+                }
+
                 worksheet.Cells[insertRow, 1] = "/Total work day:";
                 worksheet.Cells[insertRow, 3] = ttlWorkDay;
             }
