@@ -51,6 +51,7 @@
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.chkUpdateOriLocation = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chkUpdateOriLocation);
             this.panel1.Controls.Add(this.txtcloglocationLocationNo);
             this.panel1.Controls.Add(this.labelLocationNo);
             this.panel1.Controls.Add(this.panel6);
@@ -297,6 +299,18 @@
             this.shapeContainer2.TabIndex = 0;
             this.shapeContainer2.TabStop = false;
             // 
+            // chkUpdateOriLocation
+            // 
+            this.chkUpdateOriLocation.AutoSize = true;
+            this.chkUpdateOriLocation.ForeColor = System.Drawing.Color.Red;
+            this.chkUpdateOriLocation.Location = new System.Drawing.Point(417, 122);
+            this.chkUpdateOriLocation.Name = "chkUpdateOriLocation";
+            this.chkUpdateOriLocation.Size = new System.Drawing.Size(205, 21);
+            this.chkUpdateOriLocation.TabIndex = 139;
+            this.chkUpdateOriLocation.Text = "Update to original locationID";
+            this.chkUpdateOriLocation.UseVisualStyleBackColor = true;
+            this.chkUpdateOriLocation.CheckedChanged += new System.EventHandler(this.chkUpdateOriLocation_CheckedChanged);
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(839, 550);
@@ -342,5 +356,6 @@
         private Class.txtcloglocation txtcloglocationLocationNo;
         private Win.UI.Label labelLocationNo;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer2;
+        private System.Windows.Forms.CheckBox chkUpdateOriLocation;
     }
 }
