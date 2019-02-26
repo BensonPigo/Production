@@ -47,6 +47,8 @@
             this.dateBundleScanDate = new Sci.Win.UI.DateRange();
             this.lbEstCuttingDate = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
             this.SuspendLayout();
             // 
             // print
@@ -269,9 +271,32 @@
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
             this.dateEstCutDate.TabIndex = 112;
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(27, 249);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(116, 23);
+            this.label1.TabIndex = 113;
+            this.label1.Text = "Process Location";
+            // 
+            // comboRFIDProcessLocation
+            // 
+            this.comboRFIDProcessLocation.BackColor = System.Drawing.Color.White;
+            this.comboRFIDProcessLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboRFIDProcessLocation.FormattingEnabled = true;
+            this.comboRFIDProcessLocation.IncludeJunk = true;
+            this.comboRFIDProcessLocation.IsSupportUnselect = true;
+            this.comboRFIDProcessLocation.Location = new System.Drawing.Point(146, 248);
+            this.comboRFIDProcessLocation.Name = "comboRFIDProcessLocation";
+            this.comboRFIDProcessLocation.OldText = "";
+            this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
+            this.comboRFIDProcessLocation.TabIndex = 114;
+            // 
             // R41
             // 
-            this.ClientSize = new System.Drawing.Size(532, 277);
+            this.ClientSize = new System.Drawing.Size(532, 301);
+            this.Controls.Add(this.comboRFIDProcessLocation);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.dateEstCutDate);
             this.Controls.Add(this.lbEstCuttingDate);
             this.Controls.Add(this.dateBundleScanDate);
@@ -315,6 +340,8 @@
             this.Controls.SetChildIndex(this.dateBundleScanDate, 0);
             this.Controls.SetChildIndex(this.lbEstCuttingDate, 0);
             this.Controls.SetChildIndex(this.dateEstCutDate, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.comboRFIDProcessLocation, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -340,5 +367,7 @@
         private Win.UI.DateRange dateBundleScanDate;
         private Win.UI.Label lbEstCuttingDate;
         private Win.UI.DateRange dateEstCutDate;
+        private Win.UI.Label label1;
+        private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
     }
 }

@@ -7,7 +7,8 @@
     [BundleNo]     VARCHAR (10) CONSTRAINT [DF_BundleTransfer_BundleNo] DEFAULT ('') NULL,
     [TransferDate] DATETIME     NULL,
     [AddDate]      DATETIME     NULL, 
-    [LocationID] VARCHAR(10) NOT NULL DEFAULT ('')
+    [LocationID] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [RFIDProcessLocationID] VARCHAR(15) CONSTRAINT [DF_BundleTransfer_RFIDProcessLocationID] DEFAULT ('') NOT NULL
 );
 
 

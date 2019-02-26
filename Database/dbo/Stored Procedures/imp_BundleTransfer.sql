@@ -31,10 +31,11 @@ BEGIN
 	END
 
 	--Datas處理
-	declare @Cmd varchar(max)
+	declare @Cmd1 varchar(max)
+	declare @Cmd2 varchar(max)
 	declare @RaisError varchar(max)
 
-	Set @Cmd = N'
+	Set @Cmd1 = N'
 	Begin Try
 		Begin tran
 
@@ -44,9 +45,9 @@ BEGIN
 		select @MaxSid = max(Sid) from  #tmp
 
 			--add BundleTransfer	
-			INSERT INTO BundleTransfer
+			INSERT INTO BundleTransfer(Sid,RFIDReaderId,Type,SubProcessId,TagId,BundleNo,TransferDate,AddDate,LocationID,RFIDProcessLocationID)
 			SELECT RB.sid, RB.readerid, RR.type, RR.ProcessId, RB.tagid, RB.epcid, RB.transdate, GETDATE()
-			,[LocationID]=isnull (RB.LocationID, ' + '''''' + ')
+			,[LocationID]=isnull (RB.LocationID, ' + '''''' + '),RR.RFIDProcessLocationID
 			FROM  #tmp  RB
 			left join RFIDReader RR on RB.readerid  collate Chinese_Taiwan_Stroke_CI_AS  =RR.Id
 			
@@ -58,6 +59,7 @@ BEGIN
 						tmp.EpcId
 						, rd.processId
 						, rd.Type
+						, rd.RFIDProcessLocationID
 				from #tmp tmp				
 				inner join RFIDReader rd on tmp.ReaderId collate Chinese_Taiwan_Stroke_CI_AS = rd.Id
 			) disBundle
@@ -75,11 +77,11 @@ BEGIN
 						and disBundle.processId = rd.processId
 						and disBundle.Type = rd.Type
 				order by tmp.TransDate Desc
-			) getLastTrans
+			) getLastTrans '
 
 			--add update BundleInOut			
 			-- RFIDReader.Type=1
-			Merge Production.dbo.BundleInOut as t
+		set @Cmd2 =	N' Merge Production.dbo.BundleInOut as t
 			Using (
 				select *
 				from #disTmp
@@ -89,10 +91,10 @@ BEGIN
 				and s.type=1
 			when matched then 
 				update set
-				t.incoming = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID
+				t.incoming = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID
 			when not matched by target and s.type=1 then
-				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID, s.LocationID);
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate,s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID);
 
 			-- RFIDReader.Type=2
 			Merge Production.dbo.BundleInOut as t
@@ -105,10 +107,10 @@ BEGIN
 				and s.type=2 
 			when matched then 
 				update set
-				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID
+				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID
 			when not matched by target and s.type=2 then
-				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID, LocationID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID);
+				insert(BundleNo, SubProcessId, OutGoing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID);
 
 			-- RFIDReader.Type=3
 			Merge Production.dbo.BundleInOut as t
@@ -121,10 +123,10 @@ BEGIN
 				and s.type=3
 			when matched then 
 				update set
-				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID
+				t.OutGoing = s.TransDate, t.EditDate = s.AddDate, t.SewingLineID=s.SewingLineID, t.LocationID=s.LocationID, t.RFIDProcessLocationID = s.RFIDProcessLocationID
 			when not matched by target and s.type=3 then
-				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID)
-				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID);
+				insert(BundleNo, SubProcessId, InComing, AddDate, SewingLineID, LocationID, RFIDProcessLocationID)
+				values(s.BundleNo, s.SubProcessId, s.TransDate, s.AddDate, s.SewingLineID, s.LocationID, s.RFIDProcessLocationID);
 
 
 			Commit tran
@@ -145,7 +147,7 @@ BEGIN
 		RollBack Tran
 	End Catch	'
 
-	EXEC(@Cmd)
+	EXEC(@Cmd1 + @Cmd2)
 
 END
 ------------------------------------------------------------------------------------------------------------------------
