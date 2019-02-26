@@ -78,12 +78,22 @@ namespace Sci.Production.Packing
                 return;
             }
 
+            string oldValue = this.txtScanCartonSP.OldValue;
+
             // 檢查是否有正在掃packing未刷完
-            if (!MyUtility.Check.Empty(this.txtScanCartonSP.OldValue) && this.numBoxScanQty.Value > 0)
+            if (!MyUtility.Check.Empty(oldValue) && this.numBoxScanQty.Value > 0)
             {
                 if (MyUtility.Msg.InfoBox("Do you want to change CTN#?", buttons: MessageBoxButtons.YesNo) == DialogResult.No)
                 {
                     return;
+                }
+                else
+                {
+                    if (!this.LackingClose())
+                    {
+                        txtScanCartonSP.Text = oldValue;
+                        return;
+                    }
                 }
             }
 
@@ -519,7 +529,8 @@ where ID = '{tmp[0]["ID"]}' and CTNStartNo = '{tmp[0]["CTNStartNo"]}' and Articl
                         no_barcode_dr = no_barcode_dt.Rows[0];
                     }
 
-                    this.upd_sql_barcode += $@"update PackingList_Detail
+                    this.upd_sql_barcode += $@"
+update PackingList_Detail
 set BarCode = '{this.txtScanEAN.Text}'
 where PackingList_Detail.Article 
 =  '{no_barcode_dr["Article"]}'
@@ -894,12 +905,12 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 get
                 {
-                    return ttlScanQty;
+                    return this.ttlScanQty;
                 }
 
                 set
                 {
-                    ttlScanQty = value;
+                    this.ttlScanQty = value;
                 }
             }
 
@@ -907,12 +918,12 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 get
                 {
-                    return pKseq;
+                    return this.pKseq;
                 }
 
                 set
                 {
-                    pKseq = value;
+                    this.pKseq = value;
                 }
             }
 
@@ -920,12 +931,12 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 get
                 {
-                    return dest;
+                    return this.dest;
                 }
 
                 set
                 {
-                    dest = value;
+                    this.dest = value;
                 }
             }
 
@@ -933,12 +944,12 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 get
                 {
-                    return ttlQtyPerCTN;
+                    return this.ttlQtyPerCTN;
                 }
 
                 set
                 {
-                    ttlQtyPerCTN = value;
+                    this.ttlQtyPerCTN = value;
                 }
             }
 
@@ -946,12 +957,12 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 get
                 {
-                    return passName;
+                    return this.passName;
                 }
 
                 set
                 {
-                    passName = value;
+                    this.passName = value;
                 }
             }
 
@@ -959,19 +970,19 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 get
                 {
-                    return actCTNWeight;
+                    return this.actCTNWeight;
                 }
 
                 set
                 {
-                    actCTNWeight = value;
+                    this.actCTNWeight = value;
                 }
             }
         }
 
         private void btnLacking_Click(object sender, EventArgs e)
         {
-            updateLackingStatus();
+            this.updateLackingStatus();
         }
 
         private void updateLackingStatus()
@@ -982,6 +993,7 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 return;
             }
+
             // 計算scanQty
             this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
 
@@ -992,8 +1004,12 @@ and pd.Article = '{this.selecedPK.Article}'
             {
                 string upd_sql = $@"
 update PackingList_Detail 
-set   ScanQty = {this.numBoxScanQty.Value} 
-    , Lacking = 1
+set   
+ScanQty = {this.numBoxScanQty.Value} 
+, ScanEditDate = GETDATE()
+, ScanName = '{Env.User.UserID}'   
+, Lacking = 1
+, BarCode = '{this.txtScanEAN.Text}'
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 and Article = '{this.selecedPK.Article}'";
@@ -1050,6 +1066,16 @@ and pd.Article = '{this.selecedPK.Article}'
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            if (!this.LackingClose())
+            {
+                e.Cancel = true;
+            }
+
+            base.OnFormClosing(e);
+        }
+
+        private bool LackingClose()
+        {
             if (this.numBoxScanQty.Value != this.numBoxScanTtlQty.Value &&
                 this.numBoxScanQty.Value > 0)
             {
@@ -1057,16 +1083,16 @@ and pd.Article = '{this.selecedPK.Article}'
                 DialogResult resultLacking = questionBox.ShowDialog();
                 if (resultLacking == DialogResult.Yes)
                 {
-                    updateLackingStatus();
+                    this.updateLackingStatus();
+                    return true;
                 }
                 else
                 {
-                    e.Cancel = true;
+                    return false;
                 }
             }
 
-            base.OnFormClosing(e);
+            return true;
         }
-        
     }
 }

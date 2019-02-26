@@ -233,11 +233,11 @@ namespace Sci.Production.Packing
 
             if (this.rdbtnDetail.Checked)
             {
-                sqlwhere.Append(" and (pld.ScanEditDate !='' or pld.ScanEditDate is not null)");
+                sqlwhere.Append(" and (pld.ScanEditDate !='' or pld.ScanEditDate is not null) and pld.Lacking = 0");
             }
             else if (this.rdbtnSummary.Checked)
             {
-                sqlwhere.Append(" and (pld.ScanEditDate ='' or pld.ScanEditDate is null)");
+                sqlwhere.Append(" and (pld.ScanEditDate ='' or pld.ScanEditDate is null or pld.Lacking = 1)");
             }
             #endregion
 
@@ -283,7 +283,7 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],Customize1
 	,[Ref. Barcode] = c7.Barcode
 	,[Scan Date]
     ,[Scan Name]
-	,[Carton Status] = case when [Scan Date] !='' or  [Scan Date] is not null 
+	,[Carton Status] = case when ([Scan Date] !='' or  [Scan Date] is not null) and Lacking = 0
 					   then 'Complete' 
 					   else 'Not Complete' end
 	,[Lacking] = iif(lacking=1,'Y','N')
