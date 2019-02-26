@@ -740,8 +740,8 @@ where f.Junk = 0",
                             yyyyMM = s.First().Date.ToString("yyyy/MM"),
                             SewTtlManpower = s.Sum(c => c.SewTtlManpower),
                             SewTtlManhours = s.Sum(c => c.SewTtlManhours),
-                            TtlManpower = s.Sum(c => c.TtlManpower),
-                            TtlManhours = s.Sum(c => c.TtlManhours),
+                            //TtlManpower = s.Sum(c => c.TtlManpower),
+                            //TtlManhours = s.Sum(c => c.TtlManhours),
                         }).ToList();
                 }
             }
@@ -885,88 +885,22 @@ where f.Junk = 0",
 
             insertRow = insertRow + 3;
 
-            #region 當查詢條件為  (1)工廠為Sample (2) by M 才顯示[VPH]、[Factory Active Manpower]、[Total Work Day]
-            if (MyUtility.Check.Seek($"select 1 from Factory where IsSCI = 1 and Type = 'S' and id = '{this.factory}'") ||
-                MyUtility.Check.Empty(this.factory))
+            #region  中國工廠自抓/其它場Pams [Total Work Day]
+            if (Sci.Env.User.Keyword.EqualString("CM1") ||
+                Sci.Env.User.Keyword.EqualString("CM2") ||
+                Sci.Env.User.Keyword.EqualString("CM3"))
             {
-                if (Sci.Env.User.Keyword.EqualString("CM1") ||
-                    Sci.Env.User.Keyword.EqualString("CM2") ||
-                    Sci.Env.User.Keyword.EqualString("CM3"))
+                int ttlWorkDay = this.SewOutPutData.Select("LastShift <> 'O'").Length;
+                worksheet.Cells[insertRow, 1] = "/Total work day:";
+                worksheet.Cells[insertRow, 3] = ttlWorkDay;
+            }
+            else
+            {
+                if (pams != null)
                 {
-                    decimal vph = 0;
-                    decimal factoryActiveManPower = 0;
-
-                    int ttlWorkDay = this.SewOutPutData.Select("LastShift <> 'O'").Length;
-                    decimal sumManPower = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManPower)", string.Empty));
-                    decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
-                    decimal sumManHour = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManHour)", string.Empty));
-                    decimal c = 0;
-                    if (sumManHour != 0)
-                    {
-                        c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
-                    }
-
-                    int sumActiveManpower = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
-
-                    if (ttlWorkDay == 0)
-                    {
-                        vph = 0;
-                    }
-                    else
-                    {
-                        vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
-                    }
-
-                    factoryActiveManPower = sumActiveManpower;
-
-                    worksheet.Cells[insertRow, 1] = "VPH";
-                    worksheet.Cells[insertRow, 3] = vph;
-                    worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
-                    worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumActiveManpower"]);
-                    worksheet.Cells[insertRow, 9] = "/Total work day:";
-                    worksheet.Cells[insertRow, 11] = ttlWorkDay;
-                }
-                else
-                {
-                    if (pams != null)
-                    {
-                        decimal vph = 0;
-                        decimal factoryActiveManPower = 0;
-
-                        int ttlWorkDay = this.dataMode.Where(w => w.SewTtlManpower != 0).Count();
-                        decimal sumManPower = pams.Sum(s => s.SewTtlManpower);
-                        decimal sumTotalCPU = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty));
-                        decimal sumManHour = pams.Sum(s => s.SewTtlManhours);
-                        decimal c = 0;
-                        if (sumManHour != 0)
-                        {
-                            c = Sci.MyUtility.Math.Round(sumTotalCPU / sumManHour, 2);
-                        }
-
-                        int sumActiveManpower = 0;
-
-                        if (ttlWorkDay == 0)
-                        {
-                            vph = 0;
-                        }
-                        else
-                        {
-                            sumActiveManpower = MyUtility.Convert.GetInt(Sci.MyUtility.Math.Round(pams.Where(w => w.TtlManpower != 0).Average(s => s.TtlManpower), 0));
-                            if (sumActiveManpower != 0)
-                            {
-                                vph = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(sumManPower * c / ttlWorkDay, 2) / sumActiveManpower, 2);
-                            }
-                        }
-
-                        factoryActiveManPower = sumActiveManpower;
-
-                        worksheet.Cells[insertRow, 1] = "VPH";
-                        worksheet.Cells[insertRow, 3] = vph;
-                        worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
-                        worksheet.Cells[insertRow, 8] = factoryActiveManPower;
-                        worksheet.Cells[insertRow, 9] = "/Total work day:";
-                        worksheet.Cells[insertRow, 11] = ttlWorkDay;
-                    }
+                    int ttlWorkDay = this.dataMode.Where(w => w.SewTtlManhours != 0).Count();
+                    worksheet.Cells[insertRow, 1] = "/Total work day:";
+                    worksheet.Cells[insertRow, 3] = ttlWorkDay;
                 }
             }
             #endregion

@@ -20,10 +20,6 @@ namespace Sci.Production.Sewing
 
         public decimal SewTtlManhours { get; set; }
 
-        public decimal TtlManpower { get; set; }
-
-        public decimal TtlManhours { get; set; }
-
         public string yyyyMM { get; set; }
 
         public List<APIData> results;
