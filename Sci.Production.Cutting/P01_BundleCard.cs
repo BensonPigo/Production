@@ -25,10 +25,12 @@ namespace Sci.Production.Cutting
         private void requery()
         {
             string sqlcmd = String.Format(@"
-Select a.id,b.bundleno,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty,PrintDate
-from Bundle a WITH (NOLOCK) , Bundle_Detail b WITH (NOLOCK)
-Where a.id = b.id and a.POID = '{0}' order by BundleNo"
-                , cutid);
+                Select a.id,b.BundleNo,a.orderid,a.cdate,a.cutref,a.PatternPanel,a.cutno,b.sizecode,b.bundlegroup,b.Qty,b.PrintDate
+                from Bundle a WITH (NOLOCK)
+                inner join Bundle_Detail b WITH (NOLOCK) on a.id = b.Id
+                where a.POID = '{0}' 
+                order by b.BundleNo"
+            , cutid);
             DataTable gridtb;
             DualResult dr = DBProxy.Current.Select(null, sqlcmd, out gridtb);
             gridBundleCard.DataSource = gridtb;
