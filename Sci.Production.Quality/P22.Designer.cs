@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.dateRangeSCIDelivery = new Sci.Win.UI.DateRange();
@@ -39,12 +39,12 @@
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.checkCartonsInClog = new Sci.Win.UI.CheckBox();
             this.btnFind = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.btnColse = new Sci.Win.UI.Button();
             this.grid = new Sci.Win.UI.Grid();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.checkCartonsInClog = new Sci.Win.UI.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
@@ -158,6 +158,19 @@
             this.panel1.Size = new System.Drawing.Size(725, 79);
             this.panel1.TabIndex = 0;
             // 
+            // checkCartonsInClog
+            // 
+            this.checkCartonsInClog.AutoSize = true;
+            this.checkCartonsInClog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkCartonsInClog.IsSupportEditMode = false;
+            this.checkCartonsInClog.Location = new System.Drawing.Point(399, 49);
+            this.checkCartonsInClog.Name = "checkCartonsInClog";
+            this.checkCartonsInClog.Size = new System.Drawing.Size(123, 21);
+            this.checkCartonsInClog.TabIndex = 53;
+            this.checkCartonsInClog.Text = "Cartons in Clog";
+            this.checkCartonsInClog.UseVisualStyleBackColor = true;
+            this.checkCartonsInClog.CheckedChanged += new System.EventHandler(this.checkCartonsInClog_CheckedChanged);
+            // 
             // btnFind
             // 
             this.btnFind.Location = new System.Drawing.Point(622, 10);
@@ -208,14 +221,14 @@
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid.Location = new System.Drawing.Point(9, 91);
             this.grid.Name = "grid";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
@@ -223,18 +236,6 @@
             this.grid.ShowCellToolTips = false;
             this.grid.Size = new System.Drawing.Size(725, 452);
             this.grid.TabIndex = 0;
-            // 
-            // checkCartonsInClog
-            // 
-            this.checkCartonsInClog.AutoSize = true;
-            this.checkCartonsInClog.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkCartonsInClog.IsSupportEditMode = false;
-            this.checkCartonsInClog.Location = new System.Drawing.Point(399, 49);
-            this.checkCartonsInClog.Name = "checkCartonsInClog";
-            this.checkCartonsInClog.Size = new System.Drawing.Size(123, 21);
-            this.checkCartonsInClog.TabIndex = 53;
-            this.checkCartonsInClog.Text = "Cartons in Clog";
-            this.checkCartonsInClog.UseVisualStyleBackColor = true;
             // 
             // P22
             // 

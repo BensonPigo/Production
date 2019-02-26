@@ -81,10 +81,7 @@ namespace Sci.Production.Quality
             {
                 listSQLFilter.Add("and p2.id= @PackID");
             }
-            if (this.checkCartonsInClog.Checked)
-            {
-                listSQLFilter.Add("and p2.ReceiveDate is not null");
-            }
+            
             #endregion
 
           
@@ -181,6 +178,7 @@ order by p2.ID,p2.Seq";
             {
                 DataTable dt = dtDBSource.Copy();
                 this.listControlBindingSource.DataSource = dt;
+                Grid_Filter();
             }
         }
 
@@ -302,6 +300,43 @@ where CFANeedInsp = 1 ", out dtToExcel);
         private void btnColse_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void checkCartonsInClog_CheckedChanged(object sender, EventArgs e)
+        {
+            Grid_Filter();
+        }
+
+        private void Grid_Filter()
+        {
+            DataTable dt = (DataTable)this.listControlBindingSource.DataSource;
+
+            if (!MyUtility.Check.Empty(dt) && dt.Rows.Count > 0)
+            {
+                string filter = string.Empty;
+                switch (this.checkCartonsInClog.Checked)
+                {
+                    case false:
+                        if (MyUtility.Check.Empty(this.grid))
+                        {
+                            break;
+                        }
+
+                        filter = string.Empty;
+                        ((DataTable)this.listControlBindingSource.DataSource).DefaultView.RowFilter = filter;
+                        break;
+
+                    case true:
+                        if (MyUtility.Check.Empty(this.grid))
+                        {
+                            break;
+                        }
+
+                        filter = " ClogCFM is not null ";
+                        ((DataTable)this.listControlBindingSource.DataSource).DefaultView.RowFilter = filter;
+                        break;
+                }
+            }
         }
     }
 }
