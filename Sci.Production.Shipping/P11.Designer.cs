@@ -38,6 +38,7 @@
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.lbExVoucherID = new Sci.Win.UI.Label();
             this.disExVoucherID = new Sci.Win.UI.DisplayBox();
+            this.btnBatchApprove = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -210,21 +211,36 @@
             this.disExVoucherID.Size = new System.Drawing.Size(153, 23);
             this.disExVoucherID.TabIndex = 13;
             // 
+            // btnBatchApprove
+            // 
+            this.btnBatchApprove.Location = new System.Drawing.Point(631, 3);
+            this.btnBatchApprove.Name = "btnBatchApprove";
+            this.btnBatchApprove.Size = new System.Drawing.Size(144, 30);
+            this.btnBatchApprove.TabIndex = 3;
+            this.btnBatchApprove.Text = "Batch Approve";
+            this.btnBatchApprove.UseVisualStyleBackColor = true;
+            this.btnBatchApprove.Click += new System.EventHandler(this.BtnBatchApprove);
+            // 
             // P11
             // 
+            this.ApvChkValue = "New";
             this.ClientSize = new System.Drawing.Size(787, 586);
+            this.Controls.Add(this.btnBatchApprove);
             this.GridAlias = "GMTBooking";
             this.GridNew = 0;
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
+            this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.KeyField2 = "BIRID";
             this.Name = "P11";
             this.Text = "P11 .BIR Invoice (PH)";
+            this.UnApvChkValue = "Approved";
             this.UniqueExpress = "ID";
             this.WorkAlias = "BIRInvoice";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchApprove, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -255,5 +271,6 @@
         private Class.txtbrand txtbrand;
         private Win.UI.DisplayBox disExVoucherID;
         private Win.UI.Label lbExVoucherID;
+        private Win.UI.Button btnBatchApprove;
     }
 }

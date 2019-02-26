@@ -131,6 +131,37 @@ namespace Sci.Production.Shipping
             return base.ClickDelete();
         }
 
+        protected override void ClickConfirm()
+        {
+            string sqlupdate = $@"
+update BIRInvoice set Status='Approved', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+where id = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlupdate);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            base.ClickConfirm();
+        }
+
+        protected override void ClickUnconfirm()
+        {
+            string sqlupdate = $@"
+update BIRInvoice set Status='New', Approve='{Sci.Env.User.UserID}', ApproveDate=getdate(), EditName='{Sci.Env.User.UserID}', EditDate=getdate()
+where id = '{this.CurrentMaintain["ID"]}'
+";
+            DualResult result = DBProxy.Current.Execute(null, sqlupdate);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+            base.ClickUnconfirm();
+        }
+
         /// <inheritdoc/>
         private void Btnimport_Click(object sender, EventArgs e)
         {
@@ -196,8 +227,7 @@ select
 	G='PCS',
 	H=round(o.PoPrice,2),
 	I=sum(pd.ShipQty)*round(o.PoPrice,2),
-	L=round((o.CPU*isnull(f.CpuCost,0))+(isnull(s1.Price,0)+isnull(s2.Price,0))+isnull(s3.Price,0),2),
-	M=sum(pd.ShipQty)*round((o.CPU*isnull(f.CpuCost,0))+ round((isnull(s1.Price,0)+isnull(s2.Price,0))* isnull(f.CpuCost,0),3)+isnull(s3.Price,0),3)
+	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(f.CpuCost,0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3)
 from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
 inner join PackingList p with(nolock) on p.id = pd.id
@@ -230,6 +260,7 @@ outer apply(
 where p.INVNo in({string.Join(",", ids)})
 group by o.CustPONo,o.StyleID,s.Description,o.PoPrice,
 o.id,o.CPU,isnull(f.CpuCost,0),isnull(s1.Price,0)+isnull(s2.Price,0),isnull(s3.Price,0)
+,s1.Price,s2.Price,s3.price,f.CpuCost
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dt);
             if (!result)
@@ -372,6 +403,12 @@ where p.INVNo in ({string.Join(",", ids)})
             strExcelName.OpenFile();
             #endregion
             return base.ClickPrint();
+        }
+
+        private void BtnBatchApprove(object sender, EventArgs e)
+        {
+            Sci.Production.Shipping.P11_BatchApprove callNextForm = new P11_BatchApprove();
+            callNextForm.ShowDialog(this);
         }
     }
 }
