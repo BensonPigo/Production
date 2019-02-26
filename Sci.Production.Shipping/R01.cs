@@ -121,8 +121,8 @@ g.ID
                             from (
                                 select distinct o.CustPONo
                                 from PackingList_Detail pd WITH (NOLOCK) 
-								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
-                                where pd.ID = pl.id
+								left join orders o WITH (NOLOCK) on o.id = pd.OrderID
+                                where pd.ID = p.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
                             ) a 
                             for xml path('')
                           ), 1, 1, '') 

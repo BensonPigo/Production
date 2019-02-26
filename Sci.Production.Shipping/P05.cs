@@ -100,7 +100,7 @@ select  p.GMTBookingLock
                                 select distinct o.CustPONo
                                 from PackingList_Detail pd WITH (NOLOCK) 
 								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
-                                where pd.ID = p.id
+                                where pd.ID = p.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
                             ) a 
                             for xml path('')
                           ), 1, 1, '') 
@@ -112,7 +112,7 @@ select  p.GMTBookingLock
                                                                     and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
                                 where pd.ID = p.id
                                 group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
-                            ) a 
+                            ) a  WHERE a.ID IS NOT NULL
                             for xml path('')
                            ), 1, 1, '') 
         , p.CargoReadyDate
