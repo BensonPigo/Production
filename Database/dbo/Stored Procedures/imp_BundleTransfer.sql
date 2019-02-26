@@ -88,6 +88,7 @@ BEGIN
 			) as s
 			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
 				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS
+				and t.RFIDProcessLocationID = s.RFIDProcessLocationID collate Chinese_Taiwan_Stroke_CI_AS
 				and s.type=1
 			when matched then 
 				update set
@@ -104,6 +105,7 @@ BEGIN
 			) as s
 			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
 				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS 
+				and t.RFIDProcessLocationID = s.RFIDProcessLocationID collate Chinese_Taiwan_Stroke_CI_AS
 				and s.type=2 
 			when matched then 
 				update set
@@ -120,6 +122,7 @@ BEGIN
 			) as s
 			on t.BundleNo = s.BundleNo collate Chinese_Taiwan_Stroke_CI_AS 
 				and t.SubprocessId = s.SubProcessId collate Chinese_Taiwan_Stroke_CI_AS 
+				and t.RFIDProcessLocationID = s.RFIDProcessLocationID collate Chinese_Taiwan_Stroke_CI_AS
 				and s.type=3
 			when matched then 
 				update set
