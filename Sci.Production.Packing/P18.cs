@@ -198,6 +198,7 @@ namespace Sci.Production.Packing
 
                     DBProxy.Current.Execute(null, $"update PackingList_Detail set barcode = null where (ID + CTNStartNo) = '{this.txtScanCartonSP.Text}'");
                 }
+
                 DualResult result_load = this.LoadScanDetail(0);
                 if (!result_load)
                 {
@@ -248,6 +249,11 @@ namespace Sci.Production.Packing
             if (this.selecedPK != null && this.numBoxScanQty.Value > 0)
             {
                 if (dr.ID == this.selecedPK.ID && dr.CTNStartNo == this.selecedPK.CTNStartNo && dr.Article == this.selecedPK.Article)
+                {
+                    return result;
+                }
+
+                if (this.LackingClose())
                 {
                     return result;
                 }
