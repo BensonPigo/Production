@@ -218,8 +218,8 @@ outer apply(
                 #region SlipCheck
                 this.TransferSlipNo = MyUtility.GetValue.GetID(Sci.Env.User.Keyword + "TC", "TransferToClog", DateTime.Today, 2, "TransferSlipNo", null);
                 #region 存TransferSlipNo
-                DataTable a;
-                string update_TransferSlipNo = string.Format(
+                DataTable dtTransferSlipNo, dtTransferSlipNoDetail, dtFinal;
+                string sqlcmd = string.Format(
                     @"
 update t set TransferSlipNo = '{0}'
 from TransferToClog t
@@ -246,6 +246,7 @@ from (
             , convert(varchar, oq.BuyerDelivery, 111) as BuyerDelivery
             , t.AddDate
 			, tid = t.id
+            , o.SeasonID
     from TransferToClog t WITH (NOLOCK) 
     left join Orders o WITH (NOLOCK) on t.OrderID =  o.ID
     left join Country c WITH (NOLOCK) on o.Dest = c.ID
@@ -266,14 +267,15 @@ from (
 ",
                     this.TransferSlipNo,
                     Sci.Env.User.Keyword);
-                MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", update_TransferSlipNo, out a);
+                MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", sqlcmd, out dtTransferSlipNo);
                 #endregion
-                DataTable b;
-                string sqlcmd = @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid from #tmp";
+                sqlcmd = @"
+select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid,SeasonID
+from #tmp";
 
-                MyUtility.Tool.ProcessWithDatatable(a, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid", sqlcmd, out b);
+                MyUtility.Tool.ProcessWithDatatable(dtTransferSlipNo, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid,SeasonID", sqlcmd, out dtTransferSlipNoDetail);
 
-                var slip = (from p in b.AsEnumerable()
+                List<PackData> slip = (from p in dtTransferSlipNoDetail.AsEnumerable()
                             group p by new
                             {
                                 PackingListID = p["PackingListID"].ToString(),
@@ -281,7 +283,7 @@ from (
                                 TransferSlipNo = p["TransferSlipNo"].ToString()
                             }
 
-into m
+                            into m
                             select new PackData
                             {
                                 TTL_Qty = m.Count(r => !r["CTNStartNo"].Empty()).ToString(),
@@ -293,9 +295,11 @@ into m
                                 BuyerDelivery = m.First()["BuyerDelivery"].ToString(),
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
                                 TransferSlipNo = m.First()["TransferSlipNo"].ToString(),
-                                Customize1 = m.First()["Customize1"].ToString()
+                                Customize1 = m.First()["Customize1"].ToString(),
+                                SeasonID = m.First()["SeasonID"].ToString()
                             }).ToList();
-                string sql = @"
+
+                sqlcmd = @"
 select  t.TTL_Qty, 
         t.PackID, 
         t.OrderID, 
@@ -307,7 +311,8 @@ select  t.TTL_Qty,
         t.BuyerDelivery,
         t.CartonNum,
         t.TransferSlipNo,        
-        isnull(t.Customize1,'') as Customize1
+        isnull(t.Customize1,'') as Customize1,
+        t.SeasonID
 from  #Tmp t
 outer apply(
 	select ClogLocationId = stuff((
@@ -321,10 +326,9 @@ outer apply(
 	),1,1,'')
 )a
             ";
-                DataTable k;
-                MyUtility.Tool.ProcessWithObject(slip, string.Empty, sql, out k);
+                MyUtility.Tool.ProcessWithObject(slip, string.Empty, sqlcmd, out dtFinal);
 
-                List<P14_PrintData_SLIP> data = k.AsEnumerable()
+                List<P14_PrintData_SLIP> data = dtFinal.AsEnumerable()
               .Select(row1 => new P14_PrintData_SLIP()
               {
                   TTL_Qty = row1["TTL_Qty"].ToString().Trim(),
@@ -338,7 +342,8 @@ outer apply(
                   BuyerDelivery = row1["BuyerDelivery"].ToString().Trim(),
                   CartonNum = row1["CartonNum"].ToString().Trim(),
                   TransferSlipNo = row1["TransferSlipNo"].ToString().Trim(),
-                  Customize1 = row1["Customize1"].ToString().Trim()
+                  Customize1 = row1["Customize1"].ToString().Trim(),
+                  SeasonID = row1["SeasonID"].ToString().Trim(),
               }).ToList();
 
             report.ReportDataSource = data;
@@ -594,6 +599,11 @@ outer apply(
             /// Customize1
             /// </summary>
             public string Customize1 { get; set; }
+
+            /// <summary>
+            /// SeasonID
+            /// </summary>
+            public string SeasonID { get; set; }
         }
     }
 }
