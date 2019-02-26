@@ -20,5 +20,6 @@ namespace Sci.Production.Packing
         public string CartonNum { get; set; }
         public string TransferSlipNo { get; set; }
         public string Customize1 { get; set; }
+        public string SeasonID { get; set; }
     }
 }
