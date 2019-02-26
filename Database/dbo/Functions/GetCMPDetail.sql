@@ -57,7 +57,7 @@ select  s.OutputDate
 		, CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
 		, s.MDivisionID
 		, sea.SeasonSCIID
-		, att.ID
+		, iif(s.Category = 'M','SEWING',att.ID)
 		, [SubconType] = case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
 								else 'N' end
@@ -67,7 +67,8 @@ select  s.OutputDate
 		, s.SubConOutContractNumber
 		, sod.UnitPrice
 		, sod.Vat
-		, [CPUPrice] = case when att.ID = 'SEWING' then Sum(sd.QAQty * iif(s.Category = 'M', mo.CPUFactor * mo.CPU, o.CPUFactor * O.CPU  * a.Rate))
+		, [CPUPrice] = case when s.Category = 'M'  then Sum(sd.QAQty * mo.CPUFactor * mo.CPU)
+							when att.ID = 'SEWING' then Sum(sd.QAQty * o.CPUFactor * O.CPU  * a.Rate)
 							when att.ProductionUnit = 'QTY'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 4)
 							when att.ProductionUnit = 'TMS'  then ROUND(Sum(sd.QAQty * ot.Price * a.Rate) , 3)
 							else 0 end
@@ -84,7 +85,7 @@ left join SubconOutContract_Detail sod WITH (NOLOCK) on sod.SubConOutFty = s.Sub
 														sod.ComboType = sd.ComboType and 
 														sod.Article = sd.Article
 left join Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
-inner join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and 
+left join ArtworkType att WITH (NOLOCK) on	att.ID =	ot.ArtworkTypeID and 
 											att.Classify in ('I','A','P') and 
 											-- Sewing need include data
 											(att.IsTtlTMS = 0 or att.Seq = 1010 ) and 
@@ -102,7 +103,7 @@ group by  s.OutputDate
 		, CASE WHEN otype.IsDevSample =1 THEN 'Y' ELSE 'N' END
 		, s.MDivisionID
 		, sea.SeasonSCIID
-		, att.ID
+		, iif(s.Category = 'M','SEWING',att.ID)
 		, case	when s.Shift = 'O' then 'O'
 								when o.SubconInSisterFty = 1 then 'I'
 								else 'N' end
@@ -112,14 +113,16 @@ group by  s.OutputDate
 		, s.SubConOutContractNumber
 		, sod.UnitPrice
 		, sod.Vat
-		,att.ProductionUnit
+		, att.ProductionUnit
+		, s.Category
+		, att.ID
 order by 
 		s.OutputDate
 		, sd.OrderId
 		, s.FactoryID
 		, s.MDivisionID
 		, sea.SeasonSCIID
-		, att.ID
+		, iif(s.Category = 'M','SEWING',att.ID)
 	return
 end
 
