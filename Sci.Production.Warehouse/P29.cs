@@ -624,7 +624,7 @@ from #tmp";
                 DataRow drNewMaster = dtMaster.NewRow();
                 drNewMaster["poid"] = listPoid[i].ToString();
                 drNewMaster["id"] = tmpId[i].ToString();
-                drNewMaster["type"] = "E";
+                drNewMaster["type"] = "B";
                 drNewMaster["issuedate"] = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
                 drNewMaster["mdivisionid"] = Env.User.Keyword;
                 drNewMaster["FactoryID"] = Sci.Env.User.Factory;
