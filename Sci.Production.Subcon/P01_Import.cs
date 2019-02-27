@@ -75,9 +75,13 @@ namespace Sci.Production.Subcon
 
             else
             {
-                // 建立可以符合回傳的Cursor
 
-                string strSQLCmd = string.Format(@"
+                string strIsArtwork = MyUtility.GetValue.Lookup(string.Format("select isartwork from artworktype WITH (NOLOCK) where id = '{0}'", dr_artworkpo["artworktypeid"].ToString()), null);
+                string strSQLCmd = string.Empty;
+
+                if (strIsArtwork.EqualString("true"))
+                {
+                    strSQLCmd = string.Format(@"
 select  Selected = 0
         , ot.LocalSuppID
         , id = ''
@@ -116,23 +120,78 @@ and f.IsProduceFty=1
 and o.category  in ('B','S')
 ");
 
-                strSQLCmd += string.Format(" and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
-                if (poType == "O")
-                {
-                    strSQLCmd += @"     and ((o.Category = 'B' and  (ot.InhouseOSP='O' and ot.price > 0)  and 
+                    strSQLCmd += string.Format(" and o.MDivisionID='{0}' and oa.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
+                    if (poType == "O")
+                    {
+                        strSQLCmd += @"     and ((o.Category = 'B' and  (ot.InhouseOSP='O' and ot.price > 0)  and 
                                                                     ((at.isArtwork = 1) or 
                                                                     (at.isArtwork = 0 and ot.Price > 0))) 
                                         or (o.category !='B'))";
-                }
-                if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
-                if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
-                if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }
-                if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ApvDate <= '{0}' ", apvdate_e); }
-                if (!(dateInlineDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ArtworkInLine <= '{0}' ", Inline_b); }
-                if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
-                if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+                    }
+                    if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
+                    if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
+                    if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }
+                    if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ApvDate <= '{0}' ", apvdate_e); }
+                    if (!(dateInlineDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ArtworkInLine <= '{0}' ", Inline_b); }
+                    if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
+                    if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
 
-                strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc,IssueQty.IssueQty, o.StyleID,at.isArtwork,bb.Price";
+                    strSQLCmd += " group by q.id,ot.LocalSuppID,oa.ArtworkTypeID,oa.ArtworkID,oa.PatternCode,o.SewInLIne,o.SciDelivery,oa.qty,oa.Cost,oa.PatternDesc,IssueQty.IssueQty, o.StyleID,at.isArtwork,bb.Price";
+                }else
+                {
+                    strSQLCmd = @"
+select  Selected = 0
+        , ot.LocalSuppID
+        , id = ''
+        , orderid = o.id
+        , OrderQty = o.qty 
+        , IssueQty.IssueQty 
+        , poqty = iif (o.qty-IssueQty.IssueQty < 0, 0, o.qty-IssueQty.IssueQty)
+        , ot.ArtworkTypeID
+        , ArtworkID = ot.ArtworkTypeID
+        , PatternCode = ot.ArtworkTypeID
+        , o.SewInLIne
+        , o.SciDelivery
+        , coststitch = 1
+        , Stitch = 1 
+        , PatternDesc = ot.ArtworkTypeID
+        , qtygarment = isnull (ot.Qty, 1)
+        , Cost = ot.Price
+        , unitprice = ot.Price
+        , price = ot.Price * isnull (ot.Qty, 1)
+        , amount = (o.qty-IssueQty.IssueQty) * ot.Price * isnull (ot.Qty, 1)
+        , Style = o.StyleID
+from orders o WITH (NOLOCK) 
+inner join dbo.Order_TmsCost ot WITH (NOLOCK) on ot.ID = o.ID
+left join ArtworkType at WITH (NOLOCK) on at.id = ot.ArtworkTypeID
+inner join factory f WITH (NOLOCK) on o.factoryid=f.id
+outer apply (
+        select IssueQty = ISNULL(sum(PoQty),0)
+        from ArtworkPO_Detail AD, ArtworkPO A
+        where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= ot.ArtworkTypeID
+) IssueQty
+where   1=1 
+and f.IsProduceFty=1
+and o.category  in ('B','S')
+";
+
+                    strSQLCmd += string.Format(" and o.MDivisionID='{0}' and ot.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
+                    if (poType == "O")
+                    {
+                        strSQLCmd += @"     and ((o.Category = 'B' and  (ot.InhouseOSP='O' and ot.price > 0)  and 
+                                                                    ((at.isArtwork = 1) or 
+                                                                    (at.isArtwork = 0 and ot.Price > 0))) 
+                                        or (o.category !='B'))";
+                    }
+                    if (!(dateSCIDelivery.Value1 == null)) { strSQLCmd += string.Format(" and o.SciDelivery >= '{0}' ", sciDelivery_b); }
+                    if (!(dateSCIDelivery.Value2 == null)) { strSQLCmd += string.Format(" and o.SciDelivery <= '{0}' ", sciDelivery_e); }
+                    if (!(dateApproveDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ApvDate >= '{0}' ", apvdate_b); }
+                    if (!(dateApproveDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ApvDate <= '{0}' ", apvdate_e); }
+                    if (!(dateInlineDate.Value1 == null)) { strSQLCmd += string.Format(" and ot.ArtworkInLine <= '{0}' ", Inline_b); }
+                    if (!(dateInlineDate.Value2 == null)) { strSQLCmd += string.Format(" and ot.ArtworkOffLine >= '{0}' ", Inline_e); }
+                    if (!(string.IsNullOrWhiteSpace(sp_b))) { strSQLCmd += string.Format("     and o.ID between '{0}' and '{1}'", sp_b, sp_e); }
+                    
+                }
 
                 Ict.DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd, out dtArtwork))
