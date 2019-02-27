@@ -117,6 +117,7 @@ SELECT 	Selected = 0
 		, Order_TmsCost.artworkoffline
 		, Order_TmsCost.apvdate 
 		, message = '' 
+        , IsArtwork = 1
 FROM Order_TmsCost WITH (NOLOCK) 
 inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
@@ -185,6 +186,7 @@ SELECT 	Selected = 0
 		, Orders.SewInLine
 		, Order_TmsCost.ApvDate
 		, message = '' 
+        , IsArtwork = 0
 FROM Order_TmsCost WITH (NOLOCK) 
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
@@ -315,7 +317,7 @@ group by	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.Se
 
             if (poType == "O")  // 外發加工需核可且外發單價 > 0
             {
-                find = dt.Select("(unitprice = 0 or apvdate is null) and Selected = 1");
+                find = dt.Select("(unitprice = 0 or (apvdate is null and IsArtwork = 1)) and Selected = 1");
                 if (find.Length > 0)
                 {
                     foreach (DataRow dr in find)
@@ -535,9 +537,9 @@ group by	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.Se
                                     ,'{13}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
                                     , q2.coststitch, q2.stitch, q2.unitprice, q2.cost
                                     , 1
-                                    , q2.poqty
                                     , q2.unitprice * q2.QtyGarment
                                     , q2.poqty * q2.unitprice * q2.QtyGarment
+                                    , q2.poqty                                  
                                     , q2.ArtworkTypeID));
                                     #endregion
                                 }
@@ -577,9 +579,10 @@ group by	orders.FTYGroup, Order_TmsCost.ID, v.article, Orders.Styleid, Orders.Se
                                     ,{11}   
                                     ,{12}   
                                     ,'{13}')", id, q2.orderid, q2.artworkid, q2.PatternCode, q2.PatternDesc
-                                    , q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment, q2.poqty
-                                    , q2.unitprice * q2.QtyGarment, q2.poqty * q2.unitprice * q2.QtyGarment
-                                    , q2.ArtworkTypeID));
+                                    , q2.coststitch, q2.stitch, q2.unitprice, q2.cost, q2.QtyGarment
+                                    , q2.unitprice * q2.QtyGarment
+                                    , q2.poqty * q2.unitprice * q2.QtyGarment
+                                    , q2.poqty, q2.ArtworkTypeID));
                                     #endregion
                                 }                                
                             }
