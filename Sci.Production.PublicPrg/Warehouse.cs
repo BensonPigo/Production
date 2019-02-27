@@ -85,18 +85,21 @@ OUTER APPLY(
 )L
 ;drop Table #Tmp;";
                     MyUtility.Tool.ProcessWithObject(datas, "", sqlcmdforlocation, out TBattachlocation, "#Tmp", sqlConn);
-                    var newDatas = TBattachlocation.AsEnumerable().Select(w =>
-                            new Prgs_POSuppDetailData
-                            {
-                                poid = w.Field<string>("poid"),
-                                seq1 = w.Field<string>("seq1"),
-                                seq2 = w.Field<string>("seq2"),
-                                stocktype = w.Field<string>("stocktype"),
-                                qty = w.Field<decimal>("qty"),
-                                location = w.Field<string>("location"),
-                            }).ToList();
-                    datas.Clear();
-                    datas.AddRange(newDatas);
+                    if (TBattachlocation != null)
+                    {
+                        var newDatas = TBattachlocation.AsEnumerable().Select(w =>
+                                new Prgs_POSuppDetailData
+                                {
+                                    poid = w.Field<string>("poid"),
+                                    seq1 = w.Field<string>("seq1"),
+                                    seq2 = w.Field<string>("seq2"),
+                                    stocktype = w.Field<string>("stocktype"),
+                                    qty = w.Field<decimal>("qty"),
+                                    location = w.Field<string>("location"),
+                                }).ToList();
+                        datas.Clear();
+                        datas.AddRange(newDatas);
+                    }
                 }
             }
             #endregion
