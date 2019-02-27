@@ -992,8 +992,6 @@ and pd.Article = '{this.selecedPK.Article}'
             // 計算scanQty
             this.numBoxScanQty.Value = ((DataTable)this.scanDetailBS.DataSource).AsEnumerable().Sum(s => (short)s["ScanQty"]);
 
-            this.txtScanEAN.Text = string.Empty;
-
             // 如果掃描數量> 0,則 update PackingList_Detail
             if (this.numBoxScanQty.Value > 0)
             {
@@ -1004,7 +1002,7 @@ ScanQty = {this.numBoxScanQty.Value}
 , ScanEditDate = GETDATE()
 , ScanName = '{Env.User.UserID}'   
 , Lacking = 1
-, BarCode = '{this.txtScanEAN.Text}'
+, BarCode = '{dt.Rows[0]["Barcode"]}'
 where id = '{this.selecedPK.ID}' 
 and CTNStartNo = '{this.selecedPK.CTNStartNo}' 
 and Article = '{this.selecedPK.Article}'";
