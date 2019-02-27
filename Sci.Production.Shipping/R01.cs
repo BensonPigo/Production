@@ -75,6 +75,8 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            StringBuilder sqlCmd_where = new StringBuilder();
+
             if (this.reportType == "1")
             {
                 sqlCmd.Append(string.Format(@"select 
@@ -108,8 +110,97 @@ where 1=1"));
             }
             else
             {
+                #region 準備Tmp
+
+                sqlCmd.Append(@"
+SELECT [GBID]=g.ID,[PackingListID]=pl.ID,[PulloutID]=pl.PulloutID,[OrderID]=pld.OrderID
+INTO #tmp1
+from GMTBooking g WITH (NOLOCK) 
+INNER join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
+INNER join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+where pl.ID<>'' and 1=1 
+
+");
+
+                #region Where 條件
+
+                if (!MyUtility.Check.Empty(this.invdate1))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.invdate2))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipper))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
+                }
+
+                if (!MyUtility.Check.Empty(this.brand))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipmode))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipterm))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
+                }
+
+                if (!MyUtility.Check.Empty(this.dest))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+                }
+
+                if (!MyUtility.Check.Empty(this.etd1))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.etd2))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
+                }
+
+                if (this.status == "Confirmed")
+                {
+                    sqlCmd_where.Append(" and g.Status = 'Confirmed'");
+                }
+                else if (this.status == "UnConfirmed")
+                {
+                    sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
+                }
+
+                #endregion
+
+                sqlCmd.Append(sqlCmd_where.ToString());
+
+                sqlCmd.Append(@"
+
+SELECT t.GBID,t.PackingListID,t.PulloutID,t.OrderID,Pullout_Revise.AddDate
+INTO #tmp2
+FROm #tmp1  t
+OUTER APPLY(
+	SELECT TOP 1 AddDate
+	FROM Pullout_Revise 
+	WHERE  ID=t.PulloutID 
+	AND OrderID=t.OrderID
+	ORDER BY AddDate DESC
+)Pullout_Revise
+
+");
+
+                #endregion
+
                 sqlCmd.Append(string.Format(@"
-select 
+select DISTINCT
 
 g.ID
 ,g.Shipper
@@ -140,7 +231,7 @@ g.ID
 --                            for xml path('')
 --                          ), 1, 1, '') 
 ,[CutOffDate]= cutoffdate.Date
-,[PulloutReportConfirmDate]= ISNULL((SELECT TOP 1 AddDate FROM Pullout_Revise WHERE  ID=pl.PulloutID AND OrderID=pl.OrderID) , (SELECT SendToTPE FROM Pullout WHERE ID=pl.PulloutID) )
+,PulloutReportConfirmDate.PulloutReportConfirmDate
 ,[PulloutID]=pl.PulloutID
 --
 ,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
@@ -161,11 +252,33 @@ left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
 OUTER APPLY(
-	select distinct [Date]=o.SDPDate
-	from PackingList_Detail pd WITH (NOLOCK) 
-	left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
-	where pd.ID = pl.id
+			select distinct OrderID 
+			from PackingList_Detail pd 
+			WITH (NOLOCK)
+			where pd.ID = pl.ID
+)od
+OUTER APPLY(
+SELECT [Date]=STUFF ((
+		SELECT CONCAT (',',a.Date)  FROM(
+			select distinct [Date]=o.SDPDate
+			from PackingList_Detail pd WITH (NOLOCK) 
+			left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
+			where pd.ID = pl.id
+		)a WHERE a.Date IS NOT NULL for xml path('')
+	), 1, 1, '') 
 )CutOffDate
+OUTER APPLY(
+SELECT [PulloutReportConfirmDate]=STUFF ((
+		SELECT CONCAT (',',a.AddDate) FROM (
+			SELECT DISTINCT [AddDate]=convert(varchar, t.AddDate , 111)
+			FROM #tmp2 t
+			WHERE t.GBID=g.ID
+			AND t.PackingListID=pl.ID
+			AND t.PulloutID=pl.PulloutID
+			AND t.OrderID=od.OrderID
+		)a WHERE a.AddDate <> '' for xml path('')
+	),1,1,'')
+)PulloutReportConfirmDate
 where pl.ID<>'' and 1=1 "));
             }
 
@@ -174,60 +287,71 @@ where pl.ID<>'' and 1=1 "));
             if (!MyUtility.Check.Empty(this.invdate1))
             {
                 sqlCmd.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.invdate2))
             {
                 sqlCmd.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.shipper))
             {
                 sqlCmd.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
+                sqlCmd_where.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
             {
                 sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
             }
 
             if (!MyUtility.Check.Empty(this.shipmode))
             {
                 sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
+                sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
             }
 
             if (!MyUtility.Check.Empty(this.shipterm))
             {
                 sqlCmd.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
+                sqlCmd_where.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
             }
 
             if (!MyUtility.Check.Empty(this.dest))
             {
                 sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+                sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
             }
 
             if (!MyUtility.Check.Empty(this.etd1))
             {
                 sqlCmd.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
             }
 
             if (!MyUtility.Check.Empty(this.etd2))
             {
                 sqlCmd.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
             }
 
             if (this.status == "Confirmed")
             {
                 sqlCmd.Append(" and g.Status = 'Confirmed'");
+                sqlCmd_where.Append(" and g.Status = 'Confirmed'");
             }
             else if (this.status == "UnConfirmed")
             {
                 sqlCmd.Append(" and g.Status <> 'Confirmed'");
+                sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
             }
 
             #endregion
 
-            sqlCmd.Append(" order by g.ID");
+            sqlCmd.Append(" order by g.ID" + Environment.NewLine + " DROP TABLE #tmp1,#tmp2");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
