@@ -253,18 +253,7 @@ namespace Sci.Production.Packing
                     return result;
                 }
 
-                if (this.LackingClose())
-                {
-                    return result;
-                }
-
-                if (MyUtility.Msg.InfoBox("Do you want to change CTN#?", buttons: MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    DataRow[] cleardr = this.dt_scanDetail.Select($"ID = '{this.selecedPK.ID}' and CTNStartNo = '{this.selecedPK.CTNStartNo}' and Article = '{this.selecedPK.Article}'");
-                    this.ClearScanQty(cleardr, string.Empty);
-                    this.LoadSelectCarton();
-                }
-                else
+                if (!this.LackingClose())
                 {
                     return result;
                 }
