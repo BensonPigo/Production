@@ -113,13 +113,13 @@ where 1=1"));
                 #region 準備Tmp
 
                 sqlCmd.Append(@"
-SELECT [GBID]=g.ID,[PackingListID]=pl.ID,[PulloutID]=pl.PulloutID,[OrderID]=pld.OrderID
+
+SELECT DISTINCT [GBID]=g.ID,[PackingListID]=pl.ID,[PulloutID]=pl.PulloutID,[OrderID]=pld.OrderID
 INTO #tmp1
 from GMTBooking g WITH (NOLOCK) 
 INNER join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 INNER join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
 where pl.ID<>'' and 1=1 
-
 ");
 
                 #region Where 條件
@@ -180,7 +180,7 @@ where pl.ID<>'' and 1=1
 
                 #endregion
 
-                sqlCmd.Append(sqlCmd_where.ToString());
+                sqlCmd.Append(Environment.NewLine + sqlCmd_where.ToString());
 
                 sqlCmd.Append(@"
 
@@ -194,6 +194,7 @@ OUTER APPLY(
 	AND OrderID=t.OrderID
 	ORDER BY AddDate DESC
 )Pullout_Revise
+
 
 ");
 
@@ -221,15 +222,6 @@ g.ID
 
 --
 ,[SoConfirmDate]=g.SOCFMDate
---,[CutOffDate]=STUFF ((select CONCAT (',',a.SDPDate) 
---                            from (
---                                select distinct o.SDPDate
---                                from PackingList_Detail pd WITH (NOLOCK) 
---								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
---                                where pd.ID = pl.id
---                            ) a 
---                            for xml path('')
---                          ), 1, 1, '') 
 ,[CutOffDate]= cutoffdate.Date
 ,PulloutReportConfirmDate.PulloutReportConfirmDate
 ,[PulloutID]=pl.PulloutID
@@ -252,33 +244,27 @@ left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
 OUTER APPLY(
-			select distinct OrderID 
-			from PackingList_Detail pd 
-			WITH (NOLOCK)
-			where pd.ID = pl.ID
-)od
-OUTER APPLY(
 SELECT [Date]=STUFF ((
 		SELECT CONCAT (',',a.Date)  FROM(
-			select distinct [Date]=o.SDPDate
+			select DISTINCT [Date]=o.SDPDate,o.id
 			from PackingList_Detail pd WITH (NOLOCK) 
 			left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
-			where pd.ID = pl.id
+			where pd.ID = pl.id 
 		)a WHERE a.Date IS NOT NULL for xml path('')
 	), 1, 1, '') 
 )CutOffDate
 OUTER APPLY(
 SELECT [PulloutReportConfirmDate]=STUFF ((
 		SELECT CONCAT (',',a.AddDate) FROM (
-			SELECT DISTINCT [AddDate]=convert(varchar, t.AddDate , 111)
+			SELECT [AddDate]=convert(varchar, t.AddDate , 111)
 			FROM #tmp2 t
 			WHERE t.GBID=g.ID
 			AND t.PackingListID=pl.ID
 			AND t.PulloutID=pl.PulloutID
-			AND t.OrderID=od.OrderID
 		)a WHERE a.AddDate <> '' for xml path('')
 	),1,1,'')
 )PulloutReportConfirmDate
+
 where pl.ID<>'' and 1=1 "));
             }
 
