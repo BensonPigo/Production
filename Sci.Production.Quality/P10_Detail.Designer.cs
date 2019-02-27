@@ -198,7 +198,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1059, 420);
+            this.tabPage1.Size = new System.Drawing.Size(1134, 420);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Detail";
             // 
@@ -553,10 +553,10 @@
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.panel9);
-            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1134, 420);
+            this.tabPage2.Size = new System.Drawing.Size(1134, 423);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Shrinkage";
             // 
@@ -567,7 +567,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(3, 3);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(1128, 414);
+            this.panel9.Size = new System.Drawing.Size(1128, 417);
             this.panel9.TabIndex = 62;
             // 
             // gridShrinkage
@@ -600,7 +600,7 @@
             this.gridShrinkage.RowTemplate.Height = 24;
             this.gridShrinkage.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridShrinkage.ShowCellToolTips = false;
-            this.gridShrinkage.Size = new System.Drawing.Size(1128, 271);
+            this.gridShrinkage.Size = new System.Drawing.Size(1128, 274);
             this.gridShrinkage.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -610,7 +610,7 @@
             this.flowLayoutPanel1.Controls.Add(this.panel6);
             this.flowLayoutPanel1.Controls.Add(this.panel5);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 271);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 274);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(1128, 143);
             this.flowLayoutPanel1.TabIndex = 61;
@@ -1193,10 +1193,10 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.panel8);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1059, 423);
+            this.tabPage3.Size = new System.Drawing.Size(1134, 420);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "Appearance";
             // 
@@ -1206,7 +1206,7 @@
             this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel8.Location = new System.Drawing.Point(3, 3);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(1053, 417);
+            this.panel8.Size = new System.Drawing.Size(1128, 414);
             this.panel8.TabIndex = 0;
             // 
             // gridAppearance
@@ -1239,7 +1239,7 @@
             this.gridAppearance.RowTemplate.Height = 24;
             this.gridAppearance.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridAppearance.ShowCellToolTips = false;
-            this.gridAppearance.Size = new System.Drawing.Size(1053, 417);
+            this.gridAppearance.Size = new System.Drawing.Size(1128, 414);
             this.gridAppearance.TabIndex = 1;
             this.gridAppearance.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.gridAppearance_CellBeginEdit);
             // 

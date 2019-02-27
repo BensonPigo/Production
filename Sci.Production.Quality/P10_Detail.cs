@@ -448,10 +448,10 @@ order by LocationOrder ,seq";
             else
             {
                 gridAppearance.ForeColor = Color.Red;
-                gridAppearance.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
+                //gridAppearance.Columns[0].DefaultCellStyle.ForeColor = Color.Black;
 
-                //Seq=4的Row全部都可以編輯
-                gridAppearance.Rows[3].DefaultCellStyle.ForeColor = Color.Red;
+                ////Seq=4的Row全部都可以編輯
+                //gridAppearance.Rows[3].DefaultCellStyle.ForeColor = Color.Red;
 
                 btnEncode.Enabled = false;
                 btnAmend.Enabled = false;
@@ -1204,10 +1204,10 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
         private void gridAppearance_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
             // 非第 0 column 則取消編輯動作
-            if (e.ColumnIndex == 0 && e.RowIndex!=3)
-            {
-                e.Cancel = true;
-            }
+            //if (e.ColumnIndex == 0 && e.RowIndex!=3)
+            //{
+            //    e.Cancel = true;
+            //}
         }
 
         /// <summary>
