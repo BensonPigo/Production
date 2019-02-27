@@ -1232,7 +1232,7 @@ where f.Junk = 0",
                     ttlWorkDay = dtWorkDay.Rows.Count;
                 }
 
-                worksheet.Cells[insertRow, 1] = "/Total work day:";
+                worksheet.Cells[insertRow, 1] = "Total work day:";
                 worksheet.Cells[insertRow, 3] = ttlWorkDay;
             }
             else
@@ -1240,7 +1240,7 @@ where f.Junk = 0",
                 if (pams != null)
                 {
                     int ttlWorkDay = pams.Where(w => w.SewTtlManhours != 0).Count();
-                    worksheet.Cells[insertRow, 1] = "/Total work day:";
+                    worksheet.Cells[insertRow, 1] = "Total work day:";
                     worksheet.Cells[insertRow, 3] = ttlWorkDay;
                 }
             }
