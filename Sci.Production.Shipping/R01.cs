@@ -184,7 +184,14 @@ where pl.ID<>'' and 1=1
 
                 sqlCmd.Append(@"
 
-SELECT t.GBID,t.PackingListID,t.PulloutID,t.OrderID,Pullout_Revise.AddDate
+SELECT 
+t.GBID
+,t.PackingListID
+,t.PulloutID
+,t.OrderID
+,[AddDate]=CASE WHEN Pullout_Revise.AddDate IS NOT NULL THEN Pullout_Revise.AddDate
+		 ELSE  (SELECT TOP 1 SendToTPE FROM Pullout WHERE ID=t.PulloutID) 
+		 END
 INTO #tmp2
 FROm #tmp1  t
 OUTER APPLY(
@@ -194,7 +201,6 @@ OUTER APPLY(
 	AND OrderID=t.OrderID
 	ORDER BY AddDate DESC
 )Pullout_Revise
-
 
 ");
 
