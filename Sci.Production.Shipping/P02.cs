@@ -1256,7 +1256,8 @@ where c.ID = (select iif(@1st is null,(iif(@2nd is null,iif(@3rd is null,iif(@4t
             string sqlCmd = @"select c.ID,c.SuppID,isnull(s.AbbEN,isnull(ls.Abb,'')) as Abb,c.Account
 from Carrier c WITH (NOLOCK) 
 left join Supp s WITH (NOLOCK) on c.SuppID = s.ID
-left join Localsupp ls WITH (NOLOCK) on c.SuppID = ls.ID";
+left join Localsupp ls WITH (NOLOCK) on c.SuppID = ls.ID
+where c.Junk = 0";
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(sqlCmd, "5,8,20,20", this.txtCarrier.Text);
             DialogResult returnResult = item.ShowDialog();
             if (returnResult == DialogResult.Cancel)
