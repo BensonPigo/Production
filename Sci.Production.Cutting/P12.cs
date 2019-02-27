@@ -468,6 +468,7 @@ OPTION (OPTIMIZE FOR UNKNOWN)"
                 #endregion
             }
 
+            DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
             result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
             if (!result)
             {
