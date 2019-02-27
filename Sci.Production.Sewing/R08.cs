@@ -734,14 +734,13 @@ where f.Junk = 0",
                 GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);
                 if (this.dataMode != null)
                 {
-                    pams = this.dataMode.ToList().GroupBy(g => new { g.Date.Year, g.Date.Month }).
+                    var datelists = this.SewOutPutData.AsEnumerable().Select(s => ((DateTime)s["OutputDate"]).ToString("yyyy/MM/dd")).Distinct().ToList();
+                    pams = this.dataMode.ToList().Where(w => datelists.Contains(w.Date.ToString("yyyy/MM/dd"))).GroupBy(g => new { g.Date.Year, g.Date.Month }).
                         Select(s => new APIData
                         {
                             yyyyMM = s.First().Date.ToString("yyyy/MM"),
                             SewTtlManpower = s.Sum(c => c.SewTtlManpower),
                             SewTtlManhours = s.Sum(c => c.SewTtlManhours),
-                            //TtlManpower = s.Sum(c => c.TtlManpower),
-                            //TtlManhours = s.Sum(c => c.TtlManhours),
                         }).ToList();
                 }
             }
