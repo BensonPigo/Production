@@ -714,7 +714,9 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[61, 9] = "V";
             else
                 worksheet.Cells[61, 8] = tmpAR;
-            worksheet.Cells[61, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Comment"]);
+            string strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=1")[0]["Comment"]);
+            rowHeight(worksheet, 61, strComment);
+            worksheet.Cells[61, 10] = strComment;
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["wash1"]);
@@ -738,7 +740,10 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[62, 9] = "V";
             else
                 worksheet.Cells[62, 8] = tmpAR;
-            worksheet.Cells[62, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Comment"]);
+
+            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=2")[0]["Comment"]);
+            rowHeight(worksheet, 62, strComment);
+            worksheet.Cells[62, 10] = strComment;
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["wash1"]);
@@ -762,7 +767,9 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[63, 9] = "V";
             else
                 worksheet.Cells[63, 8] = tmpAR;
-            worksheet.Cells[63, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Comment"]);
+            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=3")[0]["Comment"]);
+            rowHeight(worksheet, 63, strComment);
+            worksheet.Cells[63, 10] = strComment;
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["wash1"]);
@@ -789,7 +796,9 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[64, 9] = "V";
             else
                 worksheet.Cells[64, 8] = tmpAR;
-            worksheet.Cells[64, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Comment"]);
+            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=4")[0]["Comment"]);
+            rowHeight(worksheet, 64, strComment);
+            worksheet.Cells[64, 10] = strComment;
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["wash1"]);
@@ -813,7 +822,9 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[65, 9] = "V";
             else
                 worksheet.Cells[65, 8] = tmpAR;
-            worksheet.Cells[65, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Comment"]);
+            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=5")[0]["Comment"]);
+            rowHeight(worksheet, 65, strComment);
+            worksheet.Cells[65, 10] = strComment;
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["wash1"]);
@@ -837,7 +848,9 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[66, 9] = "V";
             else
                 worksheet.Cells[66, 8] = tmpAR;
-            worksheet.Cells[66, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Comment"]);
+            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=6")[0]["Comment"]);
+            rowHeight(worksheet, 66, strComment);
+            worksheet.Cells[66, 10] = strComment;
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["wash1"]);
@@ -861,7 +874,9 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[67, 9] = "V";
             else
                 worksheet.Cells[67, 8] = tmpAR;
-            worksheet.Cells[67, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Comment"]);
+            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=7")[0]["Comment"]);
+            rowHeight(worksheet, 67, strComment);
+            worksheet.Cells[67, 10] = strComment;
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["wash1"]);
@@ -885,7 +900,9 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[68, 9] = "V";
             else
                 worksheet.Cells[68, 8] = tmpAR;
-            worksheet.Cells[68, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Comment"]);
+            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=8")[0]["Comment"]);
+            rowHeight(worksheet, 68, strComment);
+            worksheet.Cells[68, 10] = strComment;
 
             //
             tmpAR = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["wash1"]);
@@ -909,7 +926,9 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
                 worksheet.Cells[69, 9] = "V";
             else
                 worksheet.Cells[69, 8] = tmpAR;
-            worksheet.Cells[69, 10] = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["Comment"]);
+            strComment = MyUtility.Convert.GetString(dtApperance.Select("seq=9")[0]["Comment"]);
+            rowHeight(worksheet, 69, strComment);
+            worksheet.Cells[69, 10] = strComment;
             #endregion
 
             #region Streched Neck Opening is OK according to size spec?
@@ -1198,6 +1217,15 @@ select * from [SampleGarmentTest_Detail_Appearance]  where id = {this.Deatilrow[
             else
             {
                 btnenable();
+            }
+        }
+
+        private void rowHeight(Microsoft.Office.Interop.Excel.Worksheet worksheet, int row, string strComment)
+        {
+            if (strComment.Length > 15)
+            {
+                decimal n = Math.Ceiling(strComment.Length / (decimal)15.0) * (decimal)12.25;
+                worksheet.Range[$"A{row}", $"A{row}"].RowHeight = n;
             }
         }
 
