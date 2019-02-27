@@ -191,6 +191,11 @@ where sd.ID = '{0}'", masterID);
                     break;
             }
             #endregion
+            List<System.Data.SqlClient.SqlParameter> listPara = new List<System.Data.SqlClient.SqlParameter>()
+                {
+                    new System.Data.SqlClient.SqlParameter("@blno", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])),
+                    new System.Data.SqlClient.SqlParameter("@Reason", MyUtility.Convert.GetString(this.CurrentMaintain["Reason"]))
+                };
 
             bool status = MyUtility.Check.Empty(this.CurrentMaintain["Accountant"]);
             this.btnAcctApprove.Enabled = status ? !this.EditMode && Prgs.GetAuthority(Sci.Env.User.UserID, "P08. Account Payment - Shipping", "CanConfirm") : MyUtility.Check.Empty(this.CurrentMaintain["VoucherID"]) && Prgs.GetAuthority(this.CurrentMaintain["Accountant"].ToString(), "P08. Account Payment - Shipping", "CanUnConfirm");
@@ -199,9 +204,12 @@ where sd.ID = '{0}'", masterID);
             this.comboType2.SelectedValue = this.CurrentMaintain["SubType"].ToString();
             this.disExVoucherID.Text = this.CurrentMaintain["ExVoucherID"].ToString();
             // Reason description
-            this.txtReasonDesc.Text = MyUtility.GetValue.Lookup($@"
-select Description from ShippingReason where id='{this.CurrentMaintain["Reason"]}' 
-and type='AP' and junk=0");
+            this.txtReasonDesc.Text = MyUtility.GetValue.Lookup(
+                                $@"select Description from ShippingReason where id=@Reason 
+                                    and type='AP' and junk=0",
+                                listPara);
+            string sql = "select top 1 Vessel from Export where blno = @blno";
+            this.disVesselName.Text = this.CurrentMaintain["Type"].ToString().Equals("IMPORT") && !MyUtility.Check.Empty(this.CurrentMaintain["BLNo"]) ? MyUtility.GetValue.Lookup(sql, listPara) : string.Empty;
         }
 
         /// <inheritdoc/>
@@ -979,6 +987,27 @@ Non SP# Sample/Mock-up
                 default:
                     this.comboType2.DataSource = this.subType_1;
                     break;
+            }
+        }
+
+        // B/L NO. Change
+        private void TxtBLNo_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.comboType.SelectedValue == null || !this.EditMode || !this.IsDetailInserting)
+            {
+                return;
+            }
+
+            this.disVesselName.Text = string.Empty;
+            string sBLNo = this.txtBLNo.Text;
+            if (this.comboType.SelectedValue.ToString().Equals("IMPORT") && !MyUtility.Check.Empty(sBLNo))
+            {
+                List<System.Data.SqlClient.SqlParameter> listPara = new List<System.Data.SqlClient.SqlParameter>()
+                {
+                    new System.Data.SqlClient.SqlParameter("@blno", MyUtility.Convert.GetString(sBLNo))
+                };
+                string sql = "select top 1 Vessel from Export where blno = @blno";
+                this.disVesselName.Text = MyUtility.GetValue.Lookup(sql, listPara);
             }
         }
     }
