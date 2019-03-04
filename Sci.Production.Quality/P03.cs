@@ -83,22 +83,7 @@ namespace Sci.Production.Quality
                 ShowErr(query_cmd, dResult);
                 return;
             }
-            //Get scidelivery_box.Text  value
-            if (sciTb.Rows.Count > 0)
-            {
-                if (sciTb.Rows[0]["MinSciDelivery"] == DBNull.Value)
-                {
-                    dateEarliestSCIDel.Text = "";
-                }
-                else
-                {
-                    dateEarliestSCIDel.Text = Convert.ToDateTime(sciTb.Rows[0]["MinSciDelivery"]).ToShortDateString();
-                }
-            }
-            else
-            {
-                dateEarliestSCIDel.Text = "";
-            }
+
             //找出Cutinline and MinSciDelivery 比較早的日期
             DateTime? targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(MyUtility.Check.Empty(queryDr) ? "" : queryDr["CUTINLINE"], sciTb.Rows[0]["MinSciDelivery"]);
             if (targT != null)
@@ -139,7 +124,6 @@ namespace Sci.Production.Quality
                     }
                 }
             }
-            displayofInspection.Text = inspnum;
 
             DateTime completedate;
             if (inspnum == "100")
@@ -397,7 +381,6 @@ order by a.seq1,a.seq2,a.Refno "
                         _transactionscope.Dispose();
                         return upResult;
                     }
-
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -431,6 +414,38 @@ order by a.seq1,a.seq2,a.Refno "
 
             return Result.True;
         }
+
+        protected override void ClickSaveAfter()
+        {
+            DualResult upResult;
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    //更新PO.FIRLabInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{CurrentMaintain["ID"]}'")))
+                    {
+                        _transactionscope.Dispose();
+                        return ;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return ;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+            RenewData();
+            base.ClickSaveAfter();
+        }
+
 
         private void btnFind_Click(object sender, EventArgs e)
         {

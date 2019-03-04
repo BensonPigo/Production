@@ -30,14 +30,20 @@
     [EditName]                      VARCHAR (10)   CONSTRAINT [DF_PO_EditName] DEFAULT ('') NULL,
     [EditDate]                      DATETIME       NULL,
     [FIRRemark]                     VARCHAR (60)   CONSTRAINT [DF_PO_FIRRemark] DEFAULT ('') NULL,
-    [AIRRemark]                      VARCHAR (60)   CONSTRAINT [DF_PO_AIRemark] DEFAULT ('') NULL,
+    [AIRRemark]                     VARCHAR (60)   CONSTRAINT [DF_PO_AIRemark] DEFAULT ('') NULL,
     [FIRLaboratoryRemark]           VARCHAR (60)   CONSTRAINT [DF_PO_FIRLaboratoryRemark] DEFAULT ('') NULL,
     [AIRLaboratoryRemark]           VARCHAR (60)   CONSTRAINT [DF_PO_AIRLaboratoryRemark] DEFAULT ('') NULL,
     [OvenLaboratoryRemark]          VARCHAR (60)   CONSTRAINT [DF_PO_OvenLaboratoryRemark] DEFAULT ('') NULL,
     [ColorFastnessLaboratoryRemark] VARCHAR (60)   CONSTRAINT [DF_PO_ColorFastnessLaboratoryRemark] DEFAULT ('') NULL,
     [MTLDelay]                      DATE           NULL,
+    [MinSciDelivery]                DATE           NULL,
+    [FIRInspPercent]                NUMERIC (5, 2) DEFAULT ((0.00)) NOT NULL,
+    [AIRInspPercent]                NUMERIC (5, 2) DEFAULT ((0.00)) NOT NULL,
+    [FIRLabInspPercent]             NUMERIC (5, 2) CONSTRAINT [DF_PO_FIRLabInspPercent] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_PO] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
