@@ -2327,6 +2327,7 @@
     <Build Include="dbo\Functions\GetSubProcessDetailByOrderID.sql" />
     <Build Include="dbo\Tables\FtyReqReturnClog.sql" />
     <Build Include="dbo\Tables\RFIDProcessLocation.sql" />
+    <Build Include="dbo\Stored Procedures\UpdateInspPercent.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
