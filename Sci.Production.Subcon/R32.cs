@@ -234,8 +234,8 @@ outer apply(
 left join #FarmOutList  FarmOut on FarmOut.BundleNo=base.BundleNo AND FarmOut.StartProcess= s.Id 
 left join #FarmInList  FarmIn on FarmIn.BundleNo=base.BundleNo AND FarmIn.StartProcess= s.Id
 left join LocalSupp ls on ls.id=FarmOut.EndSite
-WHERE 1=1 	and O.FTYGroup = 'SPS'   --Factory
- and (s.id in ('PRT') or 'PRT'='')
+WHERE 1=1 {finalWhere.JoinToString("\r\n")}
+
  
 order by [Bundleno],[CutRef],[Orderid],[StyleID],[SeasonID],[BrandID],[Article],[ColorID],[Sewinglineid],[SewingCell]
         ,[Patterncode],[PatternDesc],[BundleGroup],[SizeCode],[FarmOutDate] desc,[FarmInDate] desc
