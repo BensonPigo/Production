@@ -253,6 +253,7 @@
             // numP
             // 
             this.numP.BackColor = System.Drawing.Color.White;
+            this.numP.DecimalPlaces = 1;
             this.numP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numP.Location = new System.Drawing.Point(221, 347);
             this.numP.Name = "numP";
