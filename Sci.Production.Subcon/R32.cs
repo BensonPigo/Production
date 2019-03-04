@@ -144,12 +144,7 @@ SELECT DISTINCT bd.BundleNo ,b.StartProcess
 INTO #Base
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
-WHERE   1 = 1  and exists (select 1 from Bundle bud with (nolock)
-							                    inner join Bundle_Detail budd with (nolock) on bud.ID = budd.Id
-                                                where budd.BundleNo = bd.BundleNo 
- and bud.Cdate >= '2019/02/01'
- and bud.Cdate <= '2019/02/14'
-)  
+WHERE   1 = 1 {FirstWhere.JoinToString("\r\n")}  
 
 --再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
 
