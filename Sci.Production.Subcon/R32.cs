@@ -135,6 +135,7 @@ where Junk != 1", out dtFactory);
             #endregion
             #region SQL CMD
             string sqlCmd = $@"
+set arithabort on
 
 --筆記：Farm Out=BundleTrack.IssueDate   、   Farm In = BundleTrack_Detail.ReceiveDate
 
@@ -143,7 +144,12 @@ SELECT DISTINCT bd.BundleNo ,b.StartProcess
 INTO #Base
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
-WHERE   1 = 1 {FirstWhere.JoinToString("\r\n")}  
+WHERE   1 = 1  and exists (select 1 from Bundle bud with (nolock)
+							                    inner join Bundle_Detail budd with (nolock) on bud.ID = budd.Id
+                                                where budd.BundleNo = bd.BundleNo 
+ and bud.Cdate >= '2019/02/01'
+ and bud.Cdate <= '2019/02/14'
+)  
 
 --再回頭，找全DB裡面相同BundleNo、StartProcess的Out和In資料，連同相關欄位一起找出來，lastEditDate 用於排序
 
@@ -154,8 +160,7 @@ INTO #FarmOutList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
 WHERE   b.Id LIKE 'TB%' 
-		AND bd.BundleNo IN (SELECT BundleNo FROM #Base)
-		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
+		AND exists (select 1 from #Base where BundleNo = bd.BundleNo and StartProcess=b.StartProcess)
 
 
 SELECT distinct bd.BundleNo ,b.StartProcess  ,
@@ -164,9 +169,8 @@ INTO #FarmInList
 FROM BundleTrack b
 INNER JOIN BundleTrack_detail bd ON b.ID = bd.id
 WHERE   b.Id LIKE 'TC%' 
-		AND bd.BundleNo IN (SELECT BundleNo FROM #Base)
-		AND b.StartProcess IN (SELECT StartProcess FROM #Base)
-
+		AND exists (SELECT 1 FROM #Base where BundleNo = bd.BundleNo and StartProcess=b.StartProcess)
+		
 
 --取最大IssueDate和ReceiveDate用Outer apply排序做
 SELECT  base.BundleNo
@@ -202,7 +206,6 @@ SELECT  base.BundleNo
 		,EstCut.CuttingOutputDate
 		,[Subcon] = FarmOut.EndSite + '-' + ls.Abb 
 		, '' remark 
-into #result
 FROM #Base base
 LEFT JOIN Bundle_Detail bd ON bd.BundleNo=base.BundleNo
 LEFT JOIN Bundle b ON b.ID =bd.Id
@@ -236,58 +239,23 @@ outer apply(
 left join #FarmOutList  FarmOut on FarmOut.BundleNo=base.BundleNo AND FarmOut.StartProcess= s.Id 
 left join #FarmInList  FarmIn on FarmIn.BundleNo=base.BundleNo AND FarmIn.StartProcess= s.Id
 left join LocalSupp ls on ls.id=FarmOut.EndSite
-WHERE 1=1 {finalWhere.JoinToString("\r\n")}
-
-
-select
-		BundleNo
-		,EXCESS
-		,CutRef
-		,Orderid
-		,POID
-		,MDivisionid
-		,FtyGroup
-		,Category
-		,ProgramID
-		,StyleID
-		,SeasonID
-		,BrandID
-		,PatternPanel
-		,Cutno
-		,FabricPanelCode
-		,Article
-		,Colorid
-		,Sewinglineid
-		,SewingCell
-		,Patterncode
-		,PatternDesc
-		,BundleGroup
-		,SizeCode
-		,Artwork
-		,Qty
-		,SubProcess
-		,Cdate
-		,FarmOutDate
-		,FarmInDate
-		,EstCutDate
-		,CuttingOutputDate
-		,Subcon
-		,remark 
-from #result
+WHERE 1=1 	and O.FTYGroup = 'SPS'   --Factory
+ and (s.id in ('PRT') or 'PRT'='')
+ 
 order by [Bundleno],[CutRef],[Orderid],[StyleID],[SeasonID],[BrandID],[Article],[ColorID],[Sewinglineid],[SewingCell]
         ,[Patterncode],[PatternDesc],[BundleGroup],[SizeCode],[FarmOutDate] desc,[FarmInDate] desc
-
-
-Drop Table #FarmOutList,#FarmInList,#Base,#result
-
+		
+Drop Table #FarmOutList,#FarmInList,#Base
 ";
 
             #endregion
             #region Get Data
+            DBProxy.Current.DefaultTimeout = 900;  //加長時間為15分鐘，避免timeout
             DualResult result;
-            if (result = DBProxy.Current.Select(null, sqlCmd, listSqlPar, out printData))
+            result = DBProxy.Current.Select(null, sqlCmd, listSqlPar, out printData);
+            if (!result)
             {
-                return result;
+                return Result.F(result.ToString());
             }            
             #endregion
             return Result.True;
@@ -296,7 +264,7 @@ Drop Table #FarmOutList,#FarmInList,#Base,#result
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check printData
-            if (printData == null || printData.Rows.Count == 0)
+            if (printData.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found.");
                 return false;
