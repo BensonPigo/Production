@@ -227,6 +227,7 @@ namespace Sci.Production.Cutting
 
                 DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
                 sqlcmd = string.Format(@"
+set arithabort on
 select 
     Convert(bit,0) as selected
     , a.PrintDate
@@ -328,7 +329,7 @@ outer apply
     )
 )as SubProcess
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
-OPTION (OPTIMIZE FOR UNKNOWN)
+OPTION (RECOMPILE)
 
 select  *
 from #tmp x
@@ -344,7 +345,7 @@ outer apply
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
 " + sb+ @"
-OPTION (OPTIMIZE FOR UNKNOWN)"
+OPTION (RECOMPILE)"
 );                
                 #endregion
             }
@@ -352,6 +353,7 @@ OPTION (OPTIMIZE FOR UNKNOWN)"
             {
                 #region SQL
                 sqlcmd = string.Format(@"
+set arithabort on
 select 
     Convert(bit,0) as selected
     , a.PrintDate
@@ -447,7 +449,7 @@ outer apply
 )as SubProcess 
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
-OPTION (OPTIMIZE FOR UNKNOWN)
+OPTION (RECOMPILE)
 
 select *
 from #tmp x
@@ -463,12 +465,11 @@ outer apply
 	and iif(mss.SizeCode is not null, mss.SizeCode, msso.SizeCode) = x.[Size]
 )cu
 " + sb+@"
-OPTION (OPTIMIZE FOR UNKNOWN)"
+OPTION (RECOMPILE)"
 );  
                 #endregion
             }
-
-            DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
+            
             result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
             if (!result)
             {
