@@ -143,7 +143,7 @@ select * from
 	,[Season] = SeasonID
 	,[Brand] = BrandID
 	,[Article] = a.Article
-	,[T1SubconName] = a.T1Subcon
+	,[T1SubconName] = (select Abb from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
 	,[T2SubconName] = ''
 	,[ReportNo] = c.ReportNo
 	,[SubmitDate] = b.SubmitDate
@@ -178,8 +178,8 @@ union all
 	,[Season] = SeasonID
 	,[Brand] = BrandID
 	,[Article] = a.Article
-	,[T1SubconName] = a.T1Subcon
-	,[T2SubconName] = a.T2Supplier
+	,[T1SubconName] = (select Abb from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
+	,[T2SubconName] = (select top 1 Abb from(select Abb from LocalSupp WITH (NOLOCK) where id = a.T2Supplier  union select [Abb] = AbbEN from Supp WITH (NOLOCK)where id = a.T2Supplier )a)
 	,[ReportNo] = c.ReportNo
 	,[SubmitDate] = b.SubmitDate
 	,[ReceivedDate] = b.ReceivedDate
@@ -213,8 +213,8 @@ union all
 	,[Season] = SeasonID
 	,[Brand] = BrandID
 	,[Article] = a.Article
-	,[T1SubconName] = a.T1Subcon
-	,[T2SubconName] = a.T2Supplier
+	,[T1SubconName] = (select Abb from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
+	,[T2SubconName] =  (select top 1 Abb from(select Abb from LocalSupp WITH (NOLOCK) where id = a.T2Supplier  union select [Abb] = AbbEN from Supp WITH (NOLOCK)where id = a.T2Supplier )a)
 	,[ReportNo] = c.ReportNo
 	,[SubmitDate] = b.SubmitDate
 	,[ReceivedDate] = b.ReceivedDate

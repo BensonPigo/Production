@@ -75,6 +75,8 @@
             this.labReason = new Sci.Win.UI.Label();
             this.txtReason = new Sci.Win.UI.TextBox();
             this.txtReasonDesc = new Sci.Win.UI.TextBox();
+            this.lbVesselName = new Sci.Win.UI.Label();
+            this.disVesselName = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -91,6 +93,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disVesselName);
+            this.masterpanel.Controls.Add(this.lbVesselName);
             this.masterpanel.Controls.Add(this.txtReasonDesc);
             this.masterpanel.Controls.Add(this.txtReason);
             this.masterpanel.Controls.Add(this.labReason);
@@ -185,6 +189,8 @@
             this.masterpanel.Controls.SetChildIndex(this.labReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtReason, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtReasonDesc, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbVesselName, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disVesselName, 0);
             // 
             // detailpanel
             // 
@@ -536,6 +542,7 @@
             this.txtBLNo.Name = "txtBLNo";
             this.txtBLNo.Size = new System.Drawing.Size(185, 23);
             this.txtBLNo.TabIndex = 8;
+            this.txtBLNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBLNo_Validating);
             // 
             // labelHandle
             // 
@@ -740,6 +747,24 @@
             this.txtReasonDesc.Size = new System.Drawing.Size(217, 23);
             this.txtReasonDesc.TabIndex = 44;
             // 
+            // lbVesselName
+            // 
+            this.lbVesselName.Location = new System.Drawing.Point(5, 180);
+            this.lbVesselName.Name = "lbVesselName";
+            this.lbVesselName.Size = new System.Drawing.Size(91, 23);
+            this.lbVesselName.TabIndex = 45;
+            this.lbVesselName.Text = "Vessel Name";
+            // 
+            // disVesselName
+            // 
+            this.disVesselName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disVesselName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VoucherID", true));
+            this.disVesselName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disVesselName.Location = new System.Drawing.Point(99, 180);
+            this.disVesselName.Name = "disVesselName";
+            this.disVesselName.Size = new System.Drawing.Size(174, 23);
+            this.disVesselName.TabIndex = 46;
+            // 
             // P08
             // 
             this.ClientSize = new System.Drawing.Size(1014, 529);
@@ -824,5 +849,7 @@
         private Win.UI.Label labReason;
         private Win.UI.TextBox txtReasonDesc;
         private Win.UI.TextBox txtReason;
+        private Win.UI.DisplayBox disVesselName;
+        private Win.UI.Label lbVesselName;
     }
 }

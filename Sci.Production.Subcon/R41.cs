@@ -326,7 +326,7 @@ select
 	,r.Item
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
-order by [Bundleno],[Sub-process],[RFIDProcessLocationID] desc
+order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
 
 drop table #result
 ";

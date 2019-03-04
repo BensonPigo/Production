@@ -102,6 +102,12 @@ namespace Sci.Production.Logistic
             {
                 listSQLFilter.Add("and p2.id= @PackID");
             }
+
+            int intChkUpdateOriLocation = 0;
+            if (this.chkUpdateOriLocation.Checked)
+            {
+                intChkUpdateOriLocation = 1;
+            }
             #endregion
 
             this.ShowWaitMessage("Data Loading....");
@@ -120,7 +126,7 @@ select distinct
 ,o.BrandID
 ,c.Alias
 ,o.BuyerDelivery
-,p2.ClogLocationID
+,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, p2.ClogLocationID)
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
@@ -137,6 +143,12 @@ outer apply(
 		for xml path('')
 	),1,1,'')
 ) o1
+outer apply (
+	select top 1 OrigloactionID from TransferToCFA
+	where PackingListID=p2.ID
+	and CTNStartNo=p2.CTNStartNo
+	order by AddDate desc
+)ToCfa
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
@@ -178,7 +190,11 @@ order by p2.ID,p2.CTNStartNo";
 Select distinct  0 as selected, b.ID , b.OrderID, 
 b.CTNStartNo, c.CustPONo, c.StyleID, c.SeasonID, c.BrandID, d.Alias, c.BuyerDelivery, b.ClogLocationID, b.Remark 
 from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) where 1=0";
-
+                int intChkUpdateOriLocation = 0;
+                if (this.chkUpdateOriLocation.Checked)
+                {
+                    intChkUpdateOriLocation = 1;
+                }
                 DualResult selectResult;
                 if (!(selectResult = DBProxy.Current.Select(null, selectCommand, out this.selectDataTable)))
                 {
@@ -224,12 +240,18 @@ select distinct
 ,o.BrandID
 ,c.Alias
 ,o.BuyerDelivery
-,[ClogLocationID] = cl.ID
+,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, cl.ID)
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
 outer apply (select ID from  ClogLocation WITH (NOLOCK) where ID = '{sl[1]}' and MDivisionID ='{Sci.Env.User.Keyword}') as cl
+outer apply (
+	select top 1 OrigloactionID from TransferToCFA
+	where PackingListID=p2.ID
+	and CTNStartNo=p2.CTNStartNo
+	order by AddDate desc
+)ToCfa
 inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
@@ -283,12 +305,18 @@ select distinct
 ,o.BrandID
 ,c.Alias
 ,o.BuyerDelivery
-,[ClogLocationID] = cl.ID
+,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, cl.ID)
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
 outer apply (select ID from  ClogLocation WITH (NOLOCK) where ID = '{sl[1]}' and MDivisionID ='{Sci.Env.User.Keyword}') as cl
+outer apply (
+	select top 1 OrigloactionID from TransferToCFA
+	where PackingListID=p2.ID
+	and CTNStartNo=p2.CTNStartNo
+	order by AddDate desc
+)ToCfa
 inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
@@ -347,12 +375,18 @@ select distinct
 ,o.BrandID
 ,c.Alias
 ,o.BuyerDelivery
-,[ClogLocationID] = cl.ID
+,[ClogLocationID] = iif(1= {intChkUpdateOriLocation},ToCfa.OrigloactionID, cl.ID)
 ,p2.remark
 from PackingList_Detail p2 WITH (NOLOCK)
 inner join PackingList p1 WITH (NOLOCK) on p2.id=p1.id
 left join Pullout po WITH (NOLOCK) on po.ID=p1.PulloutID
 outer apply (select ID from  ClogLocation WITH (NOLOCK) where ID = '{sl[1]}' and MDivisionID ='{Sci.Env.User.Keyword}') as cl
+outer apply (
+	select top 1 OrigloactionID from TransferToCFA
+	where PackingListID=p2.ID
+	and CTNStartNo=p2.CTNStartNo
+	order by AddDate desc
+)ToCfa
 inner join orders o WITH (NOLOCK) on o.id	= p2.orderid
 left join Country c WITH (NOLOCK) on c.id=o.dest
 outer apply(
@@ -486,7 +520,7 @@ where p2.id='{dr["id"].ToString().Trim()}' and p2.CTNStartNo='{dr["CTNStartNo"].
                         updateCmds.Add($@"
 update PackingList_Detail 
 set ClogReceiveCFADate = CONVERT(varchar(100), GETDATE(), 111)
-, CFAReturnClogDate = null
+, CFAReturnClogDate = null , ClogLocationID = '{dr["ClogLocationID"]}'
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 ");
 
@@ -602,6 +636,16 @@ values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["Orde
             this.grid.DataSource = this.listControlBindingSource1;
             this.listControlBindingSource1.Position = pos;
             this.grid.ResumeLayout();
+        }
+
+        private void chkUpdateOriLocation_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.grid.RowCount == 0 || this.grid == null)
+            {
+                return;
+            }
+
+            this.Find();
         }
     }
 }

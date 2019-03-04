@@ -507,8 +507,8 @@ set TransferCFADate = CONVERT(varchar(100), GETDATE(), 111), ClogReceiveCFADate 
 where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
 ");
                         insertCmds.Add($@"
-insert into TransferToCFA(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate)
-values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE())
+insert into TransferToCFA(TransferDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate,OrigloactionID)
+values(CONVERT(varchar(100), GETDATE(), 111),'{Sci.Env.User.Keyword}','{dr["OrderID"].ToString().Trim()}','{dr["ID"].ToString().Trim()}','{dr["CTNStartNo"].ToString().Trim()}','{Sci.Env.User.UserID}',GETDATE(),'{dr["ClogLocationId"]}')
 ");
                     }
                 }

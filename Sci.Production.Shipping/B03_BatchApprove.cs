@@ -43,10 +43,10 @@ namespace Sci.Production.Shipping
                 .Text("Description", header: "Description", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("AccountIDN", header: "Account No", width: Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("LocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("sLocalSuppID", header: "Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("Price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
-                .Text("NewSupp", header: "New Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("sNewSupp", header: "New Supp", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("NewCurrency", header: "New Currency", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Numeric("NewPrice", header: "New Price", width: Widths.AnsiChars(6), decimal_places: 4, iseditingreadonly: true)
                 ;
@@ -84,31 +84,44 @@ namespace Sci.Production.Shipping
 
             string sqlcmd;
             return sqlcmd = $@"
-select l.*,
-	NewSupp = case when ChooseSupp = 1 then localsuppid1
-				   when ChooseSupp = 2 then localsuppid2
-				   when ChooseSupp = 3 then localsuppid3
-				   when ChooseSupp = 4 then localsuppid4 end,
-	NewCurrency = case 
-				   when ChooseSupp = 1 then currencyid1
-				   when ChooseSupp = 2 then currencyid2
-				   when ChooseSupp = 3 then currencyid3
-				   when ChooseSupp = 4 then currencyid4 end,
-	NewPrice = case 
-				   when ChooseSupp = 1 then price1
-				   when ChooseSupp = 2 then price2
-				   when ChooseSupp = 3 then price3
-				   when ChooseSupp = 4 then price4 end,
-    Selected = 0,
-	lq.Ukey,
-	CanvassDate1=lq.AddDate,
-	AccountIDN=concat(AccountID,' ',(select Name from  FinanceEN.dbo.AccountNo with (nolock) where junk = 0 and id = AccountID))
-from ShipExpense l
-inner join ShipExpense_CanVass lq on l.ID = lq.ID
-where lq.status <> 'Confirmed'
-and l.junk = 0
-{wheresql}
-ORDER BY l.ID
+select l.*
+	,iif(isnull(ls.Abb,'') = '',l.LocalSuppID ,l.LocalSuppID + '-' +ls.Abb) as sLocalSuppID
+	,iif(isnull(lsn.Abb,'') = '',l.NewSupp ,l.NewSupp + '-' +lsn.Abb) as sNewSupp
+from(
+	select l.ID
+		,l.Description
+		,l.UnitID
+		,l.AccountID
+		,l.LocalSuppID
+		,l.CurrencyID
+		,l.Price
+		,NewSupp = case when ChooseSupp = 1 then localsuppid1
+					   when ChooseSupp = 2 then localsuppid2
+					   when ChooseSupp = 3 then localsuppid3
+					   when ChooseSupp = 4 then localsuppid4 end
+		,NewCurrency = case 
+					   when ChooseSupp = 1 then currencyid1
+					   when ChooseSupp = 2 then currencyid2
+					   when ChooseSupp = 3 then currencyid3
+					   when ChooseSupp = 4 then currencyid4 end
+		,NewPrice = case 
+					   when ChooseSupp = 1 then price1
+					   when ChooseSupp = 2 then price2
+					   when ChooseSupp = 3 then price3
+					   when ChooseSupp = 4 then price4 end
+		,Selected = 0
+		,lq.Ukey
+		,CanvassDate1=lq.AddDate
+		,AccountIDN=concat(AccountID,' ',(select Name from  FinanceEN.dbo.AccountNo with (nolock) where junk = 0 and id = AccountID))
+	from ShipExpense l
+	inner join ShipExpense_CanVass lq on l.ID = lq.ID
+	where lq.status <> 'Confirmed'
+	and l.junk = 0
+	{wheresql}
+)l
+left join LocalSupp ls on l.LocalSuppID = ls.ID
+left join LocalSupp lsn on l.NewSupp = lsn.ID
+ORDER BY l.ID 
 ";
         }
 
