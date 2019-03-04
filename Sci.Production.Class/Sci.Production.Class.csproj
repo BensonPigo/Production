@@ -71,6 +71,12 @@
     <Compile Include="comboMDivision.Designer.cs">
       <DependentUpon>comboMDivision.cs</DependentUpon>
     </Compile>
+    <Compile Include="comboRFIDProcessLocation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="comboRFIDProcessLocation.Designer.cs">
+      <DependentUpon>comboRFIDProcessLocation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Command\UserPrg.cs" />
     <Compile Include="MicrosoftFileName.cs">
       <Generator>r</Generator>

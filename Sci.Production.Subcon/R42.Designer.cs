@@ -45,6 +45,8 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Production.Class.comboFactory(this.components);
             this.txtsubprocess = new Sci.Production.Class.txtsubprocess();
+            this.comboRFIDProcessLocation = new Sci.Production.Class.comboRFIDProcessLocation();
+            this.label1 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -238,9 +240,32 @@
             this.txtsubprocess.Size = new System.Drawing.Size(280, 23);
             this.txtsubprocess.TabIndex = 119;
             // 
+            // comboRFIDProcessLocation
+            // 
+            this.comboRFIDProcessLocation.BackColor = System.Drawing.Color.White;
+            this.comboRFIDProcessLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboRFIDProcessLocation.FormattingEnabled = true;
+            this.comboRFIDProcessLocation.IncludeJunk = true;
+            this.comboRFIDProcessLocation.IsSupportUnselect = true;
+            this.comboRFIDProcessLocation.Location = new System.Drawing.Point(145, 216);
+            this.comboRFIDProcessLocation.Name = "comboRFIDProcessLocation";
+            this.comboRFIDProcessLocation.OldText = "";
+            this.comboRFIDProcessLocation.Size = new System.Drawing.Size(121, 24);
+            this.comboRFIDProcessLocation.TabIndex = 121;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(22, 217);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(120, 23);
+            this.label1.TabIndex = 120;
+            this.label1.Text = "Process Location";
+            // 
             // R42
             // 
-            this.ClientSize = new System.Drawing.Size(599, 241);
+            this.ClientSize = new System.Drawing.Size(599, 265);
+            this.Controls.Add(this.comboRFIDProcessLocation);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtsubprocess);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.txtCutRefEnd);
@@ -280,6 +305,8 @@
             this.Controls.SetChildIndex(this.txtCutRefEnd, 0);
             this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.txtsubprocess, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.comboRFIDProcessLocation, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -303,5 +330,7 @@
         private Win.UI.Label labelFactory;
         private Class.comboFactory comboFactory;
         private Class.txtsubprocess txtsubprocess;
+        private Class.comboRFIDProcessLocation comboRFIDProcessLocation;
+        private Win.UI.Label label1;
     }
 }

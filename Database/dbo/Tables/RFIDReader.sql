@@ -9,7 +9,8 @@
     [SewingLineID] VARCHAR (2)  NULL,
     [MDivisionID]  VARCHAR (8)  NULL,
     [FactoryID]    VARCHAR (8)  CONSTRAINT [DF_RFIDReader_FactoryID] DEFAULT ('') NOT NULL,
-    [Location]     VARCHAR (50) CONSTRAINT [DF_RFIDReader_Location] DEFAULT ('') NOT NULL,
+    [Location]     VARCHAR (50) CONSTRAINT [DF_RFIDReader_Location] DEFAULT ('') NOT NULL, 
+    [RFIDProcessLocationID] VARCHAR(15) CONSTRAINT [DF_RFIDReader_RFIDProcessLocationID] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_RFIDReader] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
