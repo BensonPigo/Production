@@ -19,6 +19,7 @@ BEGIN
 								 from FIR 
 								 where POID=@POID )
 			FROM [PO] p
+			where P.ID=@POID
 		END
 
 		IF @Type='AIR'
@@ -31,6 +32,7 @@ BEGIN
 								from AIR 
 								where POID=@POID) 
 			FROM [PO] p
+			where P.ID=@POID
 		END
 
 		IF @Type = 'FIRLab'
