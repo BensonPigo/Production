@@ -73,7 +73,6 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -248,6 +247,7 @@
             // displayofInspection
             // 
             this.displayofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FIRLabInspPercent", true));
             this.displayofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayofInspection.Location = new System.Drawing.Point(530, 18);
@@ -449,31 +449,27 @@
             // 
             // contextMenuStrip1
             // 
-            this.detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.modifyCroclingtestToolStripMenuItem,
-            this.modifyHeatTestToolStripMenuItem,
-            this.modifyWashTestToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(197, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // modifyCroclingtestToolStripMenuItem
             // 
             this.modifyCroclingtestToolStripMenuItem.Name = "modifyCroclingtestToolStripMenuItem";
-            this.modifyCroclingtestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.modifyCroclingtestToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.modifyCroclingtestToolStripMenuItem.Text = "Modify Crocking Test";
             this.modifyCroclingtestToolStripMenuItem.Click += new System.EventHandler(this.modifyToolStripMenuItem_Click);
             // 
             // modifyHeatTestToolStripMenuItem
             // 
             this.modifyHeatTestToolStripMenuItem.Name = "modifyHeatTestToolStripMenuItem";
-            this.modifyHeatTestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.modifyHeatTestToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.modifyHeatTestToolStripMenuItem.Text = "Modify Heat Test";
             this.modifyHeatTestToolStripMenuItem.Click += new System.EventHandler(this.modifyHeatTestToolStripMenuItem_Click);
             // 
             // modifyWashTestToolStripMenuItem
             // 
             this.modifyWashTestToolStripMenuItem.Name = "modifyWashTestToolStripMenuItem";
-            this.modifyWashTestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.modifyWashTestToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
             this.modifyWashTestToolStripMenuItem.Text = "Modify WashTest";
             this.modifyWashTestToolStripMenuItem.Click += new System.EventHandler(this.modifyWashTestToolStripMenuItem_Click);
             // 
@@ -488,6 +484,7 @@
             // 
             // dateEarliestSCIDel
             // 
+            this.dateEarliestSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MinSciDelivery", true));
             this.dateEarliestSCIDel.IsSupportEditMode = false;
             this.dateEarliestSCIDel.Location = new System.Drawing.Point(321, 43);
             this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";
@@ -549,7 +546,6 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

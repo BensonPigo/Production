@@ -741,6 +741,13 @@ left join Fabric g WITH (NOLOCK) on g.SCIRefno = a.SCIRefno
                         MyUtility.Msg.InfoBox("Error Message：" + upResult);
                         return;
                     }
+
+                    //更新PO.FIRLabInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{maindr["POID"]}'")))
+                    {
+                        _transactionscope.Dispose();
+                        return ;
+                    }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");

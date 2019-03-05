@@ -886,6 +886,13 @@ Each Dyelot must be tested!", d));
                         _transactionscope.Dispose();
                         return;
                     }
+
+                    //更新PO.FIRLabInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{maindr["POID"]}'")))
+                    {
+                        _transactionscope.Dispose();
+                        return;
+                    }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");

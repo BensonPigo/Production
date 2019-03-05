@@ -159,8 +159,22 @@ union all
 	, 0 as inqty,sum(b.Qty) outqty ,0 as adjust, a.remark ,'' location
 from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
 where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
-    --and a.MDivisionID='{3}' and a.type != 'L'  --新增MDivisionID條件，避免下面DataRelation出錯 1026新增排除Lacking
-group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot                                                               
+    and a.type != 'L'  --新增MDivisionID條件，避免下面DataRelation出錯 1026新增排除Lacking
+group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot                        
+
+
+
+union all
+
+	select b.roll,b.stocktype,b.dyelot,issuedate, a.id
+	,case FabricType when 'A' then 'P15. Issue Accessory Lacking & Replacement' 
+                              when 'F' then 'P16. Issue Fabric Lacking & Replacement' end as name
+	, 0 as inqty,0 outqty ,0 as adjust, a.remark ,'' location
+from IssueLack a WITH (NOLOCK) , IssueLack_Detail b WITH (NOLOCK) 
+where Status in ('Confirmed','Closed') and poid='{0}' and seq1 = '{1}'and seq2 = '{2}'  and a.id = b.id 
+and a.type = 'L'  --20190305 新增Type= Lacking,則OutQty = 0
+group by a.id, poid, seq1,Seq2, a.remark  ,a.IssueDate,a.FabricType,b.roll,b.stocktype,b.dyelot   
+                                       
 union all
 	select b.roll,b.stocktype,b.dyelot,issuedate, a.id,'P17. R/Mtl Return' name, 0 as inqty, sum(0.00 - b.Qty) released,0 as adjust, remark,'' location
 from IssueReturn a WITH (NOLOCK) , IssueReturn_Detail b WITH (NOLOCK) 
@@ -354,6 +368,33 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                 return;
             }
             this.comboStockType.Text = "ALL";
+            change_Color();
+        }
+
+        private void change_Color()
+        {   
+            for (int i = 0; i < gridTrans.Rows.Count; i++)
+            {
+                DataRow dr = gridTrans.GetDataRow(i);
+                if (gridTrans.Rows.Count <= i || i < 0)
+                {
+                    return;
+                }
+
+                if (dr["Name"].ToString() == "P16. Issue Fabric Lacking & Replacement")
+                {
+                    string sqlcmd = $@"select 1 from Issuelack where id='{dr["id"]}' and type='L'";
+                    if (MyUtility.Check.Seek(sqlcmd))
+                    {
+                        this.gridTrans.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
+                    }
+                    else
+                    {
+                        this.gridTrans.Rows[i].DefaultCellStyle.BackColor = Color.White;
+                    }
+                }
+            }
+
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -376,6 +417,11 @@ group by IssueDate,inqty,outqty,adjust,id,Remark,location,tmp.name,tmp.roll,tmp.
                     bindingSource1.Filter = "stocktype='Invertory'";
                     break;
             }
+        }
+
+        private void gridFtyinventory_SelectionChanged(object sender, EventArgs e)
+        {
+            change_Color();
         }
 
         private void bindingSource1_PositionChanged(object sender, EventArgs e)
