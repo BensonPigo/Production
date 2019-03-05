@@ -97,7 +97,7 @@ select  p.GMTBookingLock
                                    ), 1, 1, '') 
 		,[PONo]=STUFF ((select CONCAT (',',a.CustPONo) 
                             from (
-                                select distinct o.CustPONo
+                                select o.CustPONo
                                 from PackingList_Detail pd WITH (NOLOCK) 
 								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
                                 where pd.ID = p.id AND o.CustPONo<>'' AND o.CustPONo IS NOT NULL
