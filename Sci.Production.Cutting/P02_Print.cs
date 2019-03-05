@@ -493,10 +493,10 @@ Cutplanid, str_PIVOT);
             worksheet.Cells[9, 2] = OrderDr["Styleid"];
             worksheet.Cells[10, 2] = OrderDr["Seasonid"];
             worksheet.Cells[10, 14] = OrderDr["Sewline"];
-            for (int nColumn = 6; nColumn <= 24; nColumn += 3)
+            for (int nColumn = 3; nColumn <= 24; nColumn += 4)
             {
-                worksheet.Cells[48, nColumn] = OrderDr["Styleid"];
-                worksheet.Cells[49, nColumn] = detDr["ID"];
+                worksheet.Cells[52, nColumn] = OrderDr["Styleid"];
+                worksheet.Cells[53, nColumn] = detDr["ID"];
             }
 
 
@@ -556,10 +556,10 @@ Cutplanid, str_PIVOT);
                     worksheet.Cells[14, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
                     #region 從後面開始寫 先寫Refno,Color
 
-                    for (int nColumn = 6; nColumn <= 24; nColumn += 3)
+                    for (int nColumn = 3; nColumn <= 24; nColumn += 4)
                     {
-                        worksheet.Cells[45, nColumn] = WorkorderArry[0]["Refno"];
-                        worksheet.Cells[46, nColumn] = WorkorderArry[0]["Colorid"];
+                        worksheet.Cells[49, nColumn] = WorkorderArry[0]["Refno"];
+                        worksheet.Cells[50, nColumn] = WorkorderArry[0]["Colorid"];
                     }
                     #endregion
                     if (WorkorderPatternArry.Length > 0)
