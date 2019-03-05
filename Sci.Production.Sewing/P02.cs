@@ -717,16 +717,29 @@ values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GETDATE())",
             if (dResult == System.Windows.Forms.DialogResult.OK)
             {
                 string toAddress = MyUtility.GetValue.Lookup($@"
-SELECT CONCAT(p1.EMail,';')
-FROM Factory f
-INNER JOIN Pass1 p1 ON p1.id = f.Manager
-INNER JOIN Pass0 p0 ON p0.PKey=p1.FKPass0
-INNER JOIN Pass2 p2 ON p2.PKey=p0.PKey
-WHERE  f.ID = '{this.CurrentMaintain["FactoryID"]}'  
-    AND p1.Factory LIKE ('%{this.CurrentMaintain["FactoryID"]}%')
-    AND p0.PKey IN ( SELECT FKPass0 FROM Pass2 WHERE MenuName = 'Sewing' AND BarPrompt='P02. Mockup daily output' AND CanRecall = 1)  --有 P02 Recall 權限
-    AND p1.ID <> 'SCIMIS' 
+
+SELECT CONCAT(p1.EMail,';')  
+FROM Factory f  
+INNER JOIN Pass1 p1 ON p1.id = f.Manager  
+WHERE  f.ID = '{this.CurrentMaintain["FactoryID"]}' AND p1.EMail <>''
+
+UNION ALL
+
+SELECT TOP 2 CONCAT(p1.EMail,';')  
+FROM  Pass1 p1 
+INNER JOIN Pass0 p0 ON p0.PKey=p1.FKPass0  
+INNER JOIN Pass2 p2 ON p2.PKey=p0.PKey 
+WHERE p1.Factory LIKE ('%{this.CurrentMaintain["FactoryID"]}%') AND p1.ID <> 'SCIMIS' AND p1.EMail <>''
+AND p0.PKey IN ( 
+				SELECT FKPass0 
+				FROM Pass2 WHERE MenuName = 'Sewing' AND BarPrompt='P02. Mockup daily output' 
+				AND CanRecall = 1)  
 FOR XML PATH('')
+
+SELECT Factory,*
+FROM Pass1
+WHERE ID = 'SCIMIS'
+
 ");
 
                 #region 填寫Mail需要的資料
