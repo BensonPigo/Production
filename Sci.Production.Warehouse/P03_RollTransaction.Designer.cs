@@ -91,7 +91,6 @@
             // 
             // labelStockType
             // 
-            this.labelStockType.Lines = 0;
             this.labelStockType.Location = new System.Drawing.Point(9, 11);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(75, 23);
@@ -110,6 +109,7 @@
             "Inventory"});
             this.comboStockType.Location = new System.Drawing.Point(87, 11);
             this.comboStockType.Name = "comboStockType";
+            this.comboStockType.OldText = "";
             this.comboStockType.Size = new System.Drawing.Size(100, 24);
             this.comboStockType.TabIndex = 3;
             this.comboStockType.SelectedIndexChanged += new System.EventHandler(this.comboStockType_SelectedIndexChanged);
@@ -216,7 +216,6 @@
             // 
             // labelBalQtyBySeq
             // 
-            this.labelBalQtyBySeq.Lines = 0;
             this.labelBalQtyBySeq.Location = new System.Drawing.Point(556, 39);
             this.labelBalQtyBySeq.Name = "labelBalQtyBySeq";
             this.labelBalQtyBySeq.Size = new System.Drawing.Size(113, 23);
@@ -225,7 +224,6 @@
             // 
             // labelReleasedQtyBySeq
             // 
-            this.labelReleasedQtyBySeq.Lines = 0;
             this.labelReleasedQtyBySeq.Location = new System.Drawing.Point(276, 39);
             this.labelReleasedQtyBySeq.Name = "labelReleasedQtyBySeq";
             this.labelReleasedQtyBySeq.Size = new System.Drawing.Size(140, 23);
@@ -234,7 +232,6 @@
             // 
             // labelArrivedQtyBySeq
             // 
-            this.labelArrivedQtyBySeq.Lines = 0;
             this.labelArrivedQtyBySeq.Location = new System.Drawing.Point(9, 39);
             this.labelArrivedQtyBySeq.Name = "labelArrivedQtyBySeq";
             this.labelArrivedQtyBySeq.Size = new System.Drawing.Size(129, 23);
@@ -252,7 +249,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(199, 9);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(95, 23);
@@ -270,7 +266,6 @@
             // 
             // labelSeqNo
             // 
-            this.labelSeqNo.Lines = 0;
             this.labelSeqNo.Location = new System.Drawing.Point(9, 9);
             this.labelSeqNo.Name = "labelSeqNo";
             this.labelSeqNo.Size = new System.Drawing.Size(75, 23);
@@ -315,9 +310,11 @@
             this.gridFtyinventory.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridFtyinventory.RowTemplate.Height = 24;
             this.gridFtyinventory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridFtyinventory.ShowCellToolTips = false;
             this.gridFtyinventory.Size = new System.Drawing.Size(430, 440);
             this.gridFtyinventory.TabIndex = 1;
             this.gridFtyinventory.TabStop = false;
+            this.gridFtyinventory.SelectionChanged += new System.EventHandler(this.gridFtyinventory_SelectionChanged);
             // 
             // gridTrans
             // 
@@ -340,6 +337,7 @@
             this.gridTrans.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridTrans.RowTemplate.Height = 24;
             this.gridTrans.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridTrans.ShowCellToolTips = false;
             this.gridTrans.Size = new System.Drawing.Size(568, 245);
             this.gridTrans.TabIndex = 3;
             this.gridTrans.TabStop = false;
@@ -366,6 +364,7 @@
             this.gridSummary.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSummary.RowTemplate.Height = 24;
             this.gridSummary.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSummary.ShowCellToolTips = false;
             this.gridSummary.Size = new System.Drawing.Size(568, 183);
             this.gridSummary.TabIndex = 5;
             this.gridSummary.TabStop = false;
