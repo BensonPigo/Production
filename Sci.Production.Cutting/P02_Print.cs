@@ -485,12 +485,21 @@ Cutplanid, str_PIVOT);
             if (excel == null) return false;
             Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
+            
+
             #region 寫入共用欄位
             worksheet.Cells[1, 6] = OrderDr["factoryid"];
             worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
             worksheet.Cells[9, 2] = OrderDr["Styleid"];
             worksheet.Cells[10, 2] = OrderDr["Seasonid"];
             worksheet.Cells[10, 14] = OrderDr["Sewline"];
+            for (int nColumn = 3; nColumn <= 21; nColumn += 3)
+            {
+                worksheet.Cells[48, nColumn] = OrderDr["Styleid"];
+                worksheet.Cells[49, nColumn] = detDr["ID"];
+            }
+
+
             #endregion
 
             int nSheet = 1;
@@ -545,6 +554,14 @@ Cutplanid, str_PIVOT);
                     pattern = "";
                     worksheet.Cells[8, 14] = WorkorderArry[0]["MarkerDownLoadId"].ToString();
                     worksheet.Cells[14, 2] = WorkorderArry[0]["FabricPanelCode"].ToString();
+                    #region 從後面開始寫 先寫Refno,Color
+
+                    for (int nColumn = 3; nColumn <= 22; nColumn += 3)
+                    {
+                        worksheet.Cells[45, nColumn] = WorkorderArry[0]["Refno"];
+                        worksheet.Cells[46, nColumn] = WorkorderArry[0]["Colorid"];
+                    }
+                    #endregion
                     if (WorkorderPatternArry.Length > 0)
                     {
                         foreach (DataRow patDr in WorkorderPatternArry)
