@@ -1,9 +1,4 @@
-﻿-- =============================================
--- Author:		<JEFF S01952>
--- Create date: <2016/11/11>
--- Description:	<import BundleTransfer>
--- =============================================
-CREATE PROCEDURE [dbo].[imp_BundleTransfer]
+﻿CREATE PROCEDURE [dbo].[imp_BundleTransfer]
 @RFIDServerName varchar(50)='', @RFIDDatabaseName varchar(20)='', @RFIDloginId varchar(20)='', @RFIDLoginPwd varchar(20)='', @RFIDTable varchar(20)=''
 AS
 BEGIN
@@ -47,7 +42,7 @@ BEGIN
 			--add BundleTransfer	
 			INSERT INTO BundleTransfer(Sid,RFIDReaderId,Type,SubProcessId,TagId,BundleNo,TransferDate,AddDate,LocationID,RFIDProcessLocationID)
 			SELECT RB.sid, RB.readerid, RR.type, RR.ProcessId, RB.tagid, RB.epcid, RB.transdate, GETDATE()
-			,[LocationID]=isnull (RB.LocationID, ' + '''''' + '),RR.RFIDProcessLocationID
+			,[LocationID]=isnull (RB.LocationID, ' + '''''' + '),isnull (RR.RFIDProcessLocationID, '''')
 			FROM  #tmp  RB
 			left join RFIDReader RR on RB.readerid  collate Chinese_Taiwan_Stroke_CI_AS  =RR.Id
 			
@@ -153,4 +148,3 @@ BEGIN
 	EXEC(@Cmd1 + @Cmd2)
 
 END
-------------------------------------------------------------------------------------------------------------------------

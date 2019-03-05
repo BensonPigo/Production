@@ -2328,6 +2328,9 @@
     <Build Include="dbo\Tables\FtyReqReturnClog.sql" />
     <Build Include="dbo\Tables\RFIDProcessLocation.sql" />
     <Build Include="dbo\Stored Procedures\UpdateInspPercent.sql" />
+    <Build Include="dbo\Tables\UserActionLog.sql" />
+    <Build Include="dbo\Tables\LocalPO_IrregularPrice.sql" />
+    <Build Include="dbo\Tables\ArtworkPO_IrregularPrice.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
