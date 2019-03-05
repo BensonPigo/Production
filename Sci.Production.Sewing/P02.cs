@@ -46,6 +46,14 @@ namespace Sci.Production.Sewing
                 MyUtility.Msg.ErrorBox("Query System fail, pls contact Taipei MIS!!");
             }
         }
+        protected override void EnsureToolbarExt()
+        {
+            base.EnsureToolbarExt();
+            if (this.Perm.Send)
+            {
+                this.toolbar.cmdSend.Enabled = true;
+            }
+        }
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -565,6 +573,10 @@ where   mo.Junk = 0
 
         protected override void OnDetailEntered()
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain))
+            {
+                return;
+            }
             base.OnDetailEntered();
             this.oldttlqaqty = this.numQAOutput.Value;
             bool isSend = this.CurrentMaintain["Status"].ToString() == "Send";
@@ -776,11 +788,11 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
 
         protected override void ClickSend()
         {
-            base.ClickSend();
             if (MyUtility.Msg.QuestionBox("Lock sewing data?") == DialogResult.No)
             {
                 return;
             }
+            base.ClickSend();
 
             string sqlcmd = $@"
 update  s 
