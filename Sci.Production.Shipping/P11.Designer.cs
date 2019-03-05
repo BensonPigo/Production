@@ -62,7 +62,6 @@
             // masterpanel
             // 
             this.masterpanel.Controls.Add(this.label21);
-            this.masterpanel.Controls.Add(this.dateApprove);
             this.masterpanel.Controls.Add(this.txtApprove);
             this.masterpanel.Controls.Add(this.label4);
             this.masterpanel.Controls.Add(this.label3);
@@ -73,8 +72,10 @@
             this.masterpanel.Controls.Add(this.txtInvSerial);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.dateApprove);
             this.masterpanel.Size = new System.Drawing.Size(779, 99);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.dateApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtInvSerial, 0);
@@ -85,7 +86,6 @@
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
             this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtApprove, 0);
-            this.masterpanel.Controls.SetChildIndex(this.dateApprove, 0);
             this.masterpanel.Controls.SetChildIndex(this.label21, 0);
             // 
             // detailpanel

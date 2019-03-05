@@ -90,12 +90,12 @@ where b.Status = 'New'
 group by b.id,p.INVNo,p.gw,c.NameEN,o.CPU,s1.Price,s2.Price,s3.price,f.CpuCost
 
 
-select selected = 0,b.id,b.InvSerial,KGS=sum(t.KGS),qty=sum(t.F),t.NameEN,cmp=sum(t.M)
+select selected = 0,b.id,b.InvSerial,KGS=sum(t.KGS),qty=sum(t.F),t.NameEN,cmp=sum(t.M),b.brandid
 from BIRInvoice b with(nolock)
 inner join GMTBooking g with(nolock)on g.BIRID = b.id
 inner join #tmp t on t.id = b.id
 where b.Status = 'New'
-group by b.id,b.InvSerial,t.NameEN
+group by b.id,b.InvSerial,t.NameEN,b.brandid
 order by b.id
 drop table #tmp
 ";
@@ -123,6 +123,12 @@ drop table #tmp
         {
             this.grid1.ValidateControl();
             DataRow[] selectDrs = this.dt.Select("Selected=1");
+            if (selectDrs.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select record first! ");
+                return;
+            }
+
             List<string> ids = new List<string>();
             foreach (DataRow dr in selectDrs)
             {
