@@ -183,7 +183,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             }
 
             string sqlchk = $@"select 1 from BIRInvoice b where b.InvSerial = '{this.CurrentMaintain["InvSerial"]}' and b.BrandID = '{this.CurrentMaintain["BrandID"]}'";
-            if (!MyUtility.Check.Seek(sqlchk))
+            if (MyUtility.Check.Seek(sqlchk))
             {
                 MyUtility.Msg.WarningBox("Already has this reocrd!");
                 return;
