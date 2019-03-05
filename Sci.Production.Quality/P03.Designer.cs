@@ -73,6 +73,7 @@
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -449,20 +450,24 @@
             // 
             // contextMenuStrip1
             // 
+            this.detailgridmenus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.modifyCroclingtestToolStripMenuItem,
+            this.modifyHeatTestToolStripMenuItem,
+            this.modifyWashTestToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(197, 4);
             // 
             // modifyCroclingtestToolStripMenuItem
             // 
             this.modifyCroclingtestToolStripMenuItem.Name = "modifyCroclingtestToolStripMenuItem";
-            this.modifyCroclingtestToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.modifyCroclingtestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.modifyCroclingtestToolStripMenuItem.Text = "Modify Crocking Test";
             this.modifyCroclingtestToolStripMenuItem.Click += new System.EventHandler(this.modifyToolStripMenuItem_Click);
             // 
             // modifyHeatTestToolStripMenuItem
             // 
             this.modifyHeatTestToolStripMenuItem.Name = "modifyHeatTestToolStripMenuItem";
-            this.modifyHeatTestToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.modifyHeatTestToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
             this.modifyHeatTestToolStripMenuItem.Text = "Modify Heat Test";
             this.modifyHeatTestToolStripMenuItem.Click += new System.EventHandler(this.modifyHeatTestToolStripMenuItem_Click);
             // 
@@ -546,6 +551,7 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
