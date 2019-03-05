@@ -38,6 +38,8 @@
             this.labelCuttingWidth = new Sci.Win.UI.Label();
             this.textCuttingWidth = new Sci.Win.UI.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtCuttingMachineID1 = new Sci.Production.Class.txtCuttingMachineID();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -52,6 +54,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtCuttingMachineID1);
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.textCuttingWidth);
             this.detailcont.Controls.Add(this.txtDescription);
@@ -168,8 +172,8 @@
             // 
             // textCuttingWidth
             // 
-            this.textCuttingWidth.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CuttingWidth", true));
             this.textCuttingWidth.BackColor = System.Drawing.Color.White;
+            this.textCuttingWidth.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CuttingWidth", true));
             this.textCuttingWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textCuttingWidth.Location = new System.Drawing.Point(174, 217);
             this.textCuttingWidth.Name = "textCuttingWidth";
@@ -184,6 +188,24 @@
             this.label1.Size = new System.Drawing.Size(36, 17);
             this.label1.TabIndex = 9;
             this.label1.Text = "(cm)";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(70, 267);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(115, 23);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "CuttingMachineID";
+            // 
+            // txtCuttingMachineID1
+            // 
+            this.txtCuttingMachineID1.BackColor = System.Drawing.Color.White;
+            this.txtCuttingMachineID1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CuttingMachineID", true));
+            this.txtCuttingMachineID1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCuttingMachineID1.Location = new System.Drawing.Point(196, 267);
+            this.txtCuttingMachineID1.Name = "txtCuttingMachineID1";
+            this.txtCuttingMachineID1.Size = new System.Drawing.Size(150, 23);
+            this.txtCuttingMachineID1.TabIndex = 11;
             // 
             // B02
             // 
@@ -223,5 +245,7 @@
         private System.Windows.Forms.Label label1;
         private Win.UI.TextBox textCuttingWidth;
         private Win.UI.Label labelCuttingWidth;
+        private Win.UI.Label label2;
+        private Class.txtCuttingMachineID txtCuttingMachineID1;
     }
 }

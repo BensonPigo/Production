@@ -932,32 +932,19 @@ where s.Type = 'EXPORT'");
                         objArray[0, 23] = MyUtility.Check.Empty(dr[23]) ? 0 : dr[23];
                         objArray[0, 24] = Convert.ToDecimal(MyUtility.Check.Empty(dr[22]) ? 0 : dr[22]) + Convert.ToDecimal(MyUtility.Check.Empty(dr[23]) ? 0 : dr[23]);
                         objArray[0, 25] = MyUtility.Check.Empty(dr[24]) ? 0 : dr[24];
-
                         objArray[0, 26] = MyUtility.Check.Empty(dr[25]) ? 0 : dr[25];
                         objArray[0, 27] = MyUtility.Check.Empty(dr[26]) ? 0 : dr[26];
                         objArray[0, 28] = MyUtility.Check.Empty(dr[27]) ? 0 : dr[27];
 
-                        // 動態增加欄位會因來源沒資料沒有，先判斷來源資料數量後再塞
-                        if (this.printData.Columns.Count > 28)
+                        // 多增加的AccountID, 必須要動態的填入欄位值!
+                        if (counts > 0)
                         {
-                            objArray[0, 29] = MyUtility.Check.Empty(dr[28]) ? 0 : dr[28];
+                            for (int c = 1; c <= counts; c++)
+                            {
+                                objArray[0, 28 + c] = MyUtility.Check.Empty(dr[27 + c]) ? 0 : dr[27 + c];
+                            }
                         }
-
-                        // if (counts > 0)
-                        // {
-                        //    for (int t = 1; t <= counts; t++)
-                        //    {
-                        //        objArray[0, 27 + t] = MyUtility.Check.Empty(dr[27 + t]) ? 0 : dr[27 + t];
-                        //    }
-                        // }
                     }
-
-                    //i = 0;
-                    //foreach (DataRow ddr in this.accnoData.Rows)
-                    //{
-                    //    i++;
-                    //    objArray[0, allColumn - (1 + i)] = MyUtility.Check.Empty(dr[allColumn - (1 + i)]) ? 0 : dr[allColumn - (1 + i)];
-                    //}
 
                     objArray[0, allColumn + this.accnoData.Rows.Count] = string.Format("=SUM({2}{0}:{1}{0}) - {3}{0}", intRowsStart, excelSumCol, this.reportType == 1 ? "R" : "V", this.reportType == 1 ? "U" : "Y");
                     worksheet.Range[string.Format("A{0}:{1}{0}", intRowsStart, excelColumn)].Value2 = objArray;

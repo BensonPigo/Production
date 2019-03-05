@@ -478,5 +478,45 @@ namespace Sci.Production.Subcon
                 batchapprove.Dispose();
             }
         }
+
+        /// <summary>
+        /// B01_FormLoaded
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void B01_FormLoaded(object sender, EventArgs e)
+        {
+            MyUtility.Tool.SetupCombox(this.queryfors, 2, 1, "0,Exclude Junk,1,Include Junk");
+
+            // 預設查詢為 Exclude Junk
+            this.queryfors.SelectedIndex = 0;
+            this.DefaultWhere = "JUNK = 0";
+            this.ReloadDatas();
+        }
+
+        /// <summary>
+        /// OnFormLoaded
+        /// </summary>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                string hasJunk = MyUtility.Check.Empty(this.queryfors.SelectedValue) ? string.Empty : this.queryfors.SelectedValue.ToString();
+                switch (hasJunk)
+                {
+                    case "0":
+                        this.DefaultWhere = "JUNK = 0";
+                        break;
+                    case "1":
+                        this.DefaultWhere = "JUNK = 1";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Empty;
+                        break;
+                }
+                this.ReloadDatas();
+            };
+        }
     }
 }

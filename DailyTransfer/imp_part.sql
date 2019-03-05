@@ -411,10 +411,16 @@ update t
 				t.Remark= s.Remark,
 				t.MachineReqID= s.MmsReqID,
 				t.Junk= s.Junk,
-				t.RefNo = ISNULL(s.RefNo,'')
+				t.RefNo = ISNULL(s.RefNo,''),
+				t.DescriptionDetail = s.DescriptionDetail,
+				t.UnitID = s.UnitID,
+				t.Delivery = s.Delivery,
+				t.SuppEstETA = s.SuppEstETA
 		when not matched by target then
-		insert  (ID,Seq1,Seq2,MasterGroupID,MachineGroupID,MachineBrandID,Model,Description,Qty,FOC,Price,Remark,MachineReqID,Junk,RefNo)
-		values	(s.ID,s.Seq1,s.Seq2,s.MasterGroupID,s.MachineGroupID,s.MachineBrandID,s.Model,s.Description,s.Qty,s.FOC,s.Price,s.Remark,s.MmsReqID,s.Junk,ISNULL(s.RefNo,''));
+		insert  (ID ,Seq1 ,Seq2 ,MasterGroupID ,MachineGroupID ,MachineBrandID ,Model ,Description 
+				,Qty ,FOC ,Price ,Remark ,MachineReqID ,Junk ,RefNo ,DescriptionDetail ,UnitID ,Delivery ,SuppEstETA)
+		values	(s.ID ,s.Seq1 ,s.Seq2 ,s.MasterGroupID ,s.MachineGroupID ,s.MachineBrandID ,s.Model ,s.Description
+				 ,s.Qty ,s.FOC ,s.Price ,s.Remark ,s.MmsReqID ,s.Junk ,ISNULL(s.RefNo ,'') ,s.DescriptionDetail ,s.UnitID ,s.Delivery ,s.SuppEstETA);
 
 	--------------Partunit-------------------------------
 		Merge [Machine].[dbo].[MMSUnit] as t

@@ -1,40 +1,46 @@
 ﻿CREATE TABLE [dbo].[WorkOrder] (
-    [ID]                 VARCHAR (13)   CONSTRAINT [DF_WorkOrder_ID] DEFAULT ('') NOT NULL,
-    [FactoryID]          VARCHAR (8)    CONSTRAINT [DF_WorkOrder_FactoryID] DEFAULT ('') NOT NULL,
-    [MDivisionId]        VARCHAR (8)    CONSTRAINT [DF_WorkOrder_MDivisionId] DEFAULT ('') NOT NULL,
-    [SEQ1]               VARCHAR (3)    CONSTRAINT [DF_WorkOrder_SEQ] DEFAULT ('') NOT NULL,
-    [SEQ2]               VARCHAR (2)    NOT NULL,
-    [CutRef]             VARCHAR (6)    CONSTRAINT [DF_WorkOrder_CutRef] DEFAULT ('') NULL,
-    [OrderID]            VARCHAR (13)   CONSTRAINT [DF_WorkOrder_OrderID] DEFAULT ('') NULL,
-    [CutplanID]          VARCHAR (13)   CONSTRAINT [DF_WorkOrder_CutplanID] DEFAULT ('') NULL,
-    [Cutno]              NUMERIC (6)    CONSTRAINT [DF_WorkOrder_Cutno] DEFAULT ((0)) NULL,
-    [Layer]              NUMERIC (5)    CONSTRAINT [DF_WorkOrder_Layer] DEFAULT ((0)) NULL,
-    [Colorid]            VARCHAR (6)    CONSTRAINT [DF_WorkOrder_Colorid] DEFAULT ('') NULL,
-    [Markername]         VARCHAR (20)    CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
-    [EstCutDate]         DATE           NULL,
-    [CutCellid]          VARCHAR (2)    CONSTRAINT [DF_WorkOrder_Cell] DEFAULT ('') NULL,
-    [MarkerLength]       VARCHAR (15)   CONSTRAINT [DF_WorkOrder_MarkerLength] DEFAULT ('') NULL,
-    [ConsPC]             NUMERIC (6, 4) CONSTRAINT [DF_WorkOrder_ConsPC] DEFAULT ((0)) NULL,
-    [Cons]               NUMERIC (9, 4) CONSTRAINT [DF_WorkOrder_Cons] DEFAULT ((0)) NULL,
-    [Refno]              VARCHAR (20)   CONSTRAINT [DF_WorkOrder_Refno] DEFAULT ('') NULL,
-    [SCIRefno]           VARCHAR (30)   CONSTRAINT [DF_WorkOrder_SCIRefno] DEFAULT ('') NULL,
-    [MarkerNo]           VARCHAR (10)   CONSTRAINT [DF_WorkOrder_MarkerNo] DEFAULT ('') NULL,
-    [MarkerVersion]      VARCHAR (3)    CONSTRAINT [DF_WorkOrder_MarkerVersion] DEFAULT ('') NULL,
-    [Ukey]               BIGINT         IDENTITY (1, 1) NOT NULL,
-    [Type]               VARCHAR (1)    CONSTRAINT [DF_WorkOrder_Type] DEFAULT ('') NULL,
-    [AddName]            VARCHAR (10)   CONSTRAINT [DF_WorkOrder_AddName] DEFAULT ('') NULL,
-    [AddDate]            DATETIME       NULL,
-    [EditName]           VARCHAR (10)   CONSTRAINT [DF_WorkOrder_EditName] DEFAULT ('') NULL,
-    [EditDate]           DATETIME       NULL,
-    [FabricCombo]        VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricCombo] DEFAULT ('') NULL,
-    [MarkerDownLoadId]   VARCHAR (25)   CONSTRAINT [DF_WorkOrder_MarkerDownLoadId] DEFAULT ('') NULL,
-    [FabricCode]         VARCHAR (3)    CONSTRAINT [DF_WorkOrder_FabricCode] DEFAULT ('') NULL,
-    [FabricPanelCode]         VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricPanelCode] DEFAULT ('') NULL,
-    [Order_EachconsUkey] BIGINT         CONSTRAINT [DF_WorkOrder_Order_EachconsUkey] DEFAULT ((0)) NULL,
-    [OldFabricUkey] VARCHAR(10) NULL DEFAULT (''), 
-    [OldFabricVer] VARCHAR(2) NULL DEFAULT (''), 
+    [ID]                  VARCHAR (13)   CONSTRAINT [DF_WorkOrder_ID] DEFAULT ('') NOT NULL,
+    [FactoryID]           VARCHAR (8)    CONSTRAINT [DF_WorkOrder_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionId]         VARCHAR (8)    CONSTRAINT [DF_WorkOrder_MDivisionId] DEFAULT ('') NOT NULL,
+    [SEQ1]                VARCHAR (3)    CONSTRAINT [DF_WorkOrder_SEQ] DEFAULT ('') NOT NULL,
+    [SEQ2]                VARCHAR (2)    NOT NULL,
+    [CutRef]              VARCHAR (6)    CONSTRAINT [DF_WorkOrder_CutRef] DEFAULT ('') NULL,
+    [OrderID]             VARCHAR (13)   CONSTRAINT [DF_WorkOrder_OrderID] DEFAULT ('') NULL,
+    [CutplanID]           VARCHAR (13)   CONSTRAINT [DF_WorkOrder_CutplanID] DEFAULT ('') NULL,
+    [Cutno]               NUMERIC (6)    CONSTRAINT [DF_WorkOrder_Cutno] DEFAULT ((0)) NULL,
+    [Layer]               NUMERIC (5)    CONSTRAINT [DF_WorkOrder_Layer] DEFAULT ((0)) NULL,
+    [Colorid]             VARCHAR (6)    CONSTRAINT [DF_WorkOrder_Colorid] DEFAULT ('') NULL,
+    [Markername]          VARCHAR (20)   CONSTRAINT [DF_WorkOrder_Markername] DEFAULT ('') NULL,
+    [EstCutDate]          DATE           NULL,
+    [CutCellid]           VARCHAR (2)    CONSTRAINT [DF_WorkOrder_Cell] DEFAULT ('') NULL,
+    [MarkerLength]        VARCHAR (15)   CONSTRAINT [DF_WorkOrder_MarkerLength] DEFAULT ('') NULL,
+    [ConsPC]              NUMERIC (6, 4) CONSTRAINT [DF_WorkOrder_ConsPC] DEFAULT ((0)) NULL,
+    [Cons]                NUMERIC (9, 4) CONSTRAINT [DF_WorkOrder_Cons] DEFAULT ((0)) NULL,
+    [Refno]               VARCHAR (20)   CONSTRAINT [DF_WorkOrder_Refno] DEFAULT ('') NULL,
+    [SCIRefno]            VARCHAR (30)   CONSTRAINT [DF_WorkOrder_SCIRefno] DEFAULT ('') NULL,
+    [MarkerNo]            VARCHAR (10)   CONSTRAINT [DF_WorkOrder_MarkerNo] DEFAULT ('') NULL,
+    [MarkerVersion]       VARCHAR (3)    CONSTRAINT [DF_WorkOrder_MarkerVersion] DEFAULT ('') NULL,
+    [Ukey]                BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Type]                VARCHAR (1)    CONSTRAINT [DF_WorkOrder_Type] DEFAULT ('') NULL,
+    [AddName]             VARCHAR (10)   CONSTRAINT [DF_WorkOrder_AddName] DEFAULT ('') NULL,
+    [AddDate]             DATETIME       NULL,
+    [EditName]            VARCHAR (10)   CONSTRAINT [DF_WorkOrder_EditName] DEFAULT ('') NULL,
+    [EditDate]            DATETIME       NULL,
+    [FabricCombo]         VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricCombo] DEFAULT ('') NULL,
+    [MarkerDownLoadId]    VARCHAR (25)   CONSTRAINT [DF_WorkOrder_MarkerDownLoadId] DEFAULT ('') NULL,
+    [FabricCode]          VARCHAR (3)    CONSTRAINT [DF_WorkOrder_FabricCode] DEFAULT ('') NULL,
+    [FabricPanelCode]     VARCHAR (2)    CONSTRAINT [DF_WorkOrder_FabricPanelCode] DEFAULT ('') NULL,
+    [Order_EachconsUkey]  BIGINT         CONSTRAINT [DF_WorkOrder_Order_EachconsUkey] DEFAULT ((0)) NULL,
+    [OldFabricUkey]       VARCHAR (10)   CONSTRAINT [DF__WorkOrder__OldFa__0EB9D630] DEFAULT ('') NULL,
+    [OldFabricVer]        VARCHAR (2)    CONSTRAINT [DF__WorkOrder__OldFa__0FADFA69] DEFAULT ('') NULL,
+    [ActCuttingPerimeter] NVARCHAR (15)  NULL,
+    [StraightLength]      VARCHAR (15)   NULL,
+    [CurvedLength]        VARCHAR (15)   NULL,
+    [SpreadingNoID]       VARCHAR (3)    NULL,
     CONSTRAINT [PK_WorkOrder] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -190,4 +196,9 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname1,>]
 GO
 CREATE NONCLUSTERED INDEX [estcutdate]
     ON [dbo].[WorkOrder]([EstCutDate] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [CutRefNo]
+    ON [dbo].[WorkOrder]([CutRef] ASC);
 

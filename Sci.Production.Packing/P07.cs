@@ -55,9 +55,11 @@ namespace Sci.Production.Packing
         // Query
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtGarmentBookingStart.Text) && MyUtility.Check.Empty(this.txtGarmentBookingEnd.Text) && MyUtility.Check.Empty(this.dateFCRDate.Value1) && MyUtility.Check.Empty(this.dateFCRDate.Value2))
+            if (MyUtility.Check.Empty(this.txtGarmentBookingStart.Text) && MyUtility.Check.Empty(this.txtGarmentBookingEnd.Text)
+                && MyUtility.Check.Empty(this.dateFCRDate.Value1) && MyUtility.Check.Empty(this.dateFCRDate.Value2)
+                && MyUtility.Check.Empty(this.txtSP_s.Text) && MyUtility.Check.Empty(this.txtSP_s.Text))
             {
-                MyUtility.Msg.WarningBox("< Garment Booking# > and < FCR Date > can't both empty!");
+                MyUtility.Msg.WarningBox("< Garment Booking# > or < SP# > or < FCR Date > can't be empty!");
                 return;
             }
 
@@ -94,6 +96,16 @@ and p.MDivisionID = '{0}'", Sci.Env.User.Keyword));
                 sqlCmd.Append(string.Format(" and g.FCRDate <= '{0}'", Convert.ToDateTime(this.dateFCRDate.Value2).ToString("d")));
             }
 
+            if (!MyUtility.Check.Empty(this.txtSP_s.Text))
+            {
+                sqlCmd.Append(string.Format(" and pd.Orderid >= '{0}'", this.txtSP_s.Text));
+            }
+
+            if (!MyUtility.Check.Empty(this.txtSP_e.Text))
+            {
+                sqlCmd.Append(string.Format(" and pd.Orderid <= '{0}'", this.txtSP_e.Text));
+            }
+
             if (!MyUtility.Check.Empty(this.txtbrand.Text))
             {
                 sqlCmd.Append(string.Format(" and o.BrandID = '{0}'", this.txtbrand.Text));
@@ -104,7 +116,7 @@ MultipleOrder
 as (
 select ID,COUNT(ID) as cnt from tmpPackingData group by ID having COUNT(ID) > 1
 )
-select 0 as selected,* from tmpPackingData where NOT EXISTS (select 1 from MultipleOrder where ID = tmpPackingData.ID) order by ID");
+select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from MultipleOrder where ID = tmpPackingData.ID) order by ID");
 
             // 排除多SP#在同一張PL的資料
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);

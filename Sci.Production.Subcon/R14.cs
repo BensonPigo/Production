@@ -235,18 +235,17 @@ namespace Sci.Production.Subcon
 
                     select POID,ArtworkTypeID
                     into #tmp
-                    from #tmp1
-                    group by POID,ArtworkTypeID
-
+                    from #tmp1                                        
                 ");
+
+            if (!MyUtility.Check.Empty(artworktype))
+            {
+                sqlCmd.Append(" where #tmp1.ArtworkTypeID = @artworktype");
+            }
 
             // 指定繡花條件時，有多撈取繡花線的成本
             if (artworktype.ToLower().TrimEnd() == "embroidery")
-            {
-                if (!MyUtility.Check.Empty(artworktype))
-                {
-                    sqlCmd.Append(" and artworktype.id = @artworktype");
-                }
+            {                
 
                 sqlCmd.Append(string.Format(@"
 
@@ -362,11 +361,6 @@ namespace Sci.Production.Subcon
             }
             else
             {
-                if (!MyUtility.Check.Empty(artworktype))
-                {
-                    sqlCmd.Append(" and artworktype.id = @artworktype");
-                }
-
                 sqlCmd.Append(string.Format(@"
                 select aa.FactoryID
                 ,t.artworktypeid

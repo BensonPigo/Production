@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Transactions;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -341,7 +342,13 @@ order by g.ID", masterID);
                     this.updateCmds.Add(string.Format("update GMTBooking set ShipPlanID = '{0}' where ID = '{1}';", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(dr["ID"])));
 
                     // 根據GMTBooking.ID篩選出對應的PackingList，這些是預先存在Form裡面的，不是DB裡面最新的資料
-                    DataTable packingListDt_on_Form = packingList_List.AsEnumerable().Where(o => o["INVNo"].ToString() == MyUtility.Convert.GetString(dr["ID"])).CopyToDataTable();
+                    DataTable packingListDt_on_Form = null;
+                    var rows = packingList_List.AsEnumerable().Where(o => o["INVNo"].ToString() == MyUtility.Convert.GetString(dr["ID"]));
+
+                    if (rows.Any())
+                    {
+                        packingListDt_on_Form = rows.CopyToDataTable();
+                    }
 
                     // DB可能已經被修改，因此回DB撈出GMTBooking底下最新的PackingList
                     DataTable packingListDt_new;
@@ -353,7 +360,12 @@ order by g.ID", masterID);
                         {
                             // 因為User會修改InspDate、InspStatus、PulloutDate三個欄位，這些欄會在Form上面，因此要把Form上面的PackingList、DB裡的PackingList比對
                             // packingListDt_new是最新的PackingList清單，packingListDt_on_Form是User修改過的PackingList清單
-                            DataTable packingList_Merge = packingListDt_on_Form.AsEnumerable().Where(o => o["ID"].ToString() == pldatarow["ID"].ToString()).CopyToDataTable();
+                            DataTable packingList_Merge = null;
+                            var rows1 = packingListDt_on_Form.AsEnumerable().Where(o => o["ID"].ToString() == pldatarow["ID"].ToString());
+                            if (rows1.Any())
+                            {
+                                packingList_Merge = rows1.CopyToDataTable();
+                            }
 
                             // 如果該筆資料packingListDt_on_Form有，但不存在packingListDt_new，表示這筆PackingList是被Import到Form上面後，其他功能在DB裡面異動過
                             // 這類的PackingList就不UPDATE

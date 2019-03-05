@@ -257,10 +257,10 @@ PL as
  from PackingList WITH (NOLOCK) 
  where  (Type = 'F' or Type = 'L')  and id='{0}' ) ,
 FTY AS
-(select 0 as Selected,ID as WKNo,ShipModeID,WeightKg as GW, Cbm, '' as ShippingAPID, Blno,
+(select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno,
 '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
-from FtyExport WITH (NOLOCK) 
- where Type = 3  and id='{0}')
+from FtyExport fe WITH (NOLOCK) 
+ where fe.Type = 3  and fe.id='{0}')
 select * from GB 
 union all 
 select * from PL
@@ -278,8 +278,28 @@ SELECT * FROM FTY
                         }
                         else
                         {
+                             string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
                             for (int i = 0; i < dtExp.Rows.Count; i++)
                             {
+                                string strSqlcmd = $@"
+ select 1 from AirPP a WITH (NOLOCK) 
+ where exists (
+	select 1 from PackingList p WITH (NOLOCK) 
+	inner join PackingList_Detail pl WITH (NOLOCK)  on p.ID= pl.ID
+	where pl.OrderID= a.OrderID
+	and p.INVNo='{dtExp.Rows[i]["InvNo"]}'
+ )";
+
+                                if (!MyUtility.Check.Seek(strSqlcmd) &&
+                                (dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
+                                    dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
+                                    dtExp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
+                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0))
+                                {
+                                    MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
+                                    return;
+                                }
+
                                 drGrid["Blno"] = dtExp.Rows[i]["Blno"];
                                 drGrid["InvNo"] = dtExp.Rows[i]["InvNo"];
                                 drGrid["ShipModeID"] = dtExp.Rows[i]["ShipModeID"];
@@ -294,17 +314,20 @@ SELECT * FROM FTY
                     else
                     {
                         string chkImp = string.Format(
-                            @"with ExportData 
-as 
+                            @"
+with 
+ExportData as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 0 as FtyWK
- from Export WITH (NOLOCK) 
- where 1 = 1 and id='{0}' ), FtyExportData 
-as 
+ from Export WITH (NOLOCK)  
+ where 1 = 1 and id='{0}' )
+,
+FtyExportData as 
 (select 0 as Selected,ID as WKNo,Blno,ShipModeID,WeightKg as GW, Cbm, '' as InvNo, '' as ShippingAPID, 
  '' as Type, '' as CurrencyID, 0 as Amount, '' as ShareBase, 1 as FtyWK
  from FtyExport WITH (NOLOCK) 
- where Type <> 3  and id='{0}') select * from ExportData 
+ where Type <> 3  and id='{0}') 
+select * from ExportData 
 union all 
 select * from FtyExportData ", e.FormattedValue.ToString());
                         DataTable dtImp;
@@ -323,8 +346,27 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                         }
                         else
                         {
+                             string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
                             for (int i = 0; i < dtImp.Rows.Count; i++)
                             {
+                                string strSqlcmd = $@"
+ select 1 from AirPP a WITH (NOLOCK) 
+ where exists (
+	select 1 from PackingList p WITH (NOLOCK) 
+	inner join PackingList_Detail pl WITH (NOLOCK)  on p.ID= pl.ID
+	where pl.OrderID= a.OrderID
+	and p.INVNo='{dtImp.Rows[i]["InvNo"]}'
+ )";
+                                if (!MyUtility.Check.Seek(strSqlcmd) &&
+                                (dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
+                                    dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
+                                    dtImp.Rows[i]["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
+                                   (accNo.Substring(0, 4).CompareTo("6105") == 0 || accNo.Substring(0, 4).CompareTo("5912") == 0))
+                                {
+                                    MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
+                                    return;
+                                }
+
                                 drGrid["Blno"] = dtImp.Rows[i]["Blno"];
                                 drGrid["Wkno"] = dtImp.Rows[i]["Wkno"];
                                 drGrid["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
@@ -375,7 +417,66 @@ select * from FtyExportData ", e.FormattedValue.ToString());
                 .Text("AccountName", header: "Account Name", width: Widths.AnsiChars(30))
                 .Numeric("Amount", header: "Amount", decimal_places: 2)
                 .Text("ShareRule", header: "Share by", width: Widths.AnsiChars(22));
+
+            string strCheckSql = $@"select 1 from ShareExpense WITH (NOLOCK)  where ShippingAPID = '{this.apData["ID"]}' and (Junk=0 or junk is null)";
+
+            if (
+                this.apData["SubType"].ToString().ToUpper() == "GARMENT" &&
+                this.apData["Type"].ToString().ToUpper() == "EXPORT" &&
+                !MyUtility.Check.Seek(strCheckSql))
+            {
+                this.AppendData();
+            }
+
             this.QueryData();
+
+        }
+
+        private void AppendData()
+        {
+            string strSqlCmd = $@"
+merge ShareExpense t
+using (
+	select top 1
+[ShippingAPID] = '{this.apData["ID"]}'
+,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
+,[WKNo] = ''
+,[InvNo] = id
+,[Type] = '{this.apData["SubType"]}'
+,[GW] = TotalGW
+,[CBM] = TotalCBM
+,[CurrencyID] = '{this.apData["CurrencyID"]}'
+,[ShipModeID] = ShipModeID
+,[FtyWK] = 0
+,[AccountID] = (
+	select top 1 se.AccountID from ShippingAP_Detail sd WITH(NOLOCK) , ShipExpense se WITH(NOLOCK)
+   where sd.ID = '{this.apData["ID"]}' and sd.ShipExpenseID = se.ID and se.AccountID != '')
+,[Junk] = 0
+from GMTBooking g WITH (NOLOCK) 
+where BLNo='{this.apData["BLNO"]}' or BL2No='{this.apData["BLNO"]}' ) as s 
+on	t.ShippingAPID = s.ShippingAPID 
+	and t.BLNO = s.BLNO and t.WKNO = s.WKNO	and t.InvNo = s.InvNo
+when matched AND t.junk=1 then
+	update set
+	t.junk=0
+when not matched by target then 
+	insert (ShippingAPID, BLNo, WKNo, InvNo, Type, GW, CBM, CurrencyID, ShipModeID, FtyWK, AccountID, Junk)
+	values (s.ShippingAPID, s.BLNo, s.WKNo, s.InvNo, s.Type, s.GW, s.CBM, s.CurrencyID, s.ShipModeID, s.FtyWK, s.AccountID, s.Junk);";
+
+            DualResult result;
+
+            if (!(result = DBProxy.Current.Execute(string.Empty, strSqlCmd)))
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            // 重新計算
+            bool returnValue = Prgs.CalculateShareExpense(MyUtility.Convert.GetString(this.apData["ID"]));
+            if (!returnValue)
+            {
+                MyUtility.Msg.WarningBox("Calcute share expense failed.");
+            }
         }
 
         private void QueryData()
@@ -403,7 +504,8 @@ from (
 
             sqlCmd = string.Format(
                 @"
-select  sh.*
+select  sh.Junk,sh.ShippingAPID,sh.WKNo,sh.InvNo,sh.Type,sh.GW,sh.CBM,sh.Amount,sh.ShipModeID,sh.BLNO
+        ,sh.AccountID
         , an.Name as AccountName
         , case 
             when sh.ShareBase = 'G' then 'G.W.' 
@@ -427,10 +529,10 @@ order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
             sqlCmd = string.Format(
                 @"
 select  ShippingAPID
-        , BLNo
+        , se.Blno
         , WKNo
         , InvNo
-        , Type
+        , se.Type
         , ShipModeID
         , GW
         , CBM
@@ -439,10 +541,11 @@ select  ShippingAPID
         , FtyWK
         , isnull(sum(Amount),0) as Amount 
         , '' as SubTypeRule
-from ShareExpense WITH (NOLOCK) 
+from ShareExpense se WITH (NOLOCK) 
 where   ShippingAPID = '{0}' 
         and (Junk = 0 or Junk is null)
-group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK", MyUtility.Convert.GetString(this.apData["ID"]));
+group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,ShipModeID,FtyWK
+", MyUtility.Convert.GetString(this.apData["ID"]));
             result = DBProxy.Current.Select(null, sqlCmd, out this.SEGroupData);
             if (!result)
             {
@@ -587,10 +690,15 @@ group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipMode
             }
             else
             {
+                this.gridBLNo.ValidateControl();
                 bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(this.apData["ID"])));
-                bool haveSea = false, noExistNotSea = true;
+                bool haveSea = false, noExistNotSea = true, noAirpp = false;
                 DataTable duplicData;
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
+
+                // 取得AccountNo
+                  string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
+
                 StringBuilder msg = new StringBuilder();
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).ToList<DataRow>())
                 {
@@ -651,6 +759,25 @@ group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipMode
                             haveSea = haveSea || MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                             noExistNotSea = noExistNotSea && MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                         }
+
+                        // Account Name含Air-Prepaid (6105/5912) 時, GB上的Ship Mode必須為A/P或E/P或 E/P-C,且該GB項下的SP須有APP No.
+                        string strSqlcmd = $@"
+select 1 from AirPP
+where exists(	select 1 
+from PackingList pl
+	inner join PackingList_Detail pld on pl.id=pld.ID
+	 where INVNo='{dr["InvNo"]}'
+	 and pld.OrderID=AirPP.OrderID)";
+
+                        if (!MyUtility.Check.Seek(strSqlcmd) &&
+                            (dr["ShipModeID"].ToString().CompareTo("A/P") == 0 ||
+                             dr["ShipModeID"].ToString().CompareTo("E/P") == 0 ||
+                             dr["ShipModeID"].ToString().CompareTo("E/P-C") == 0) &&
+                             (accNo.Substring(0, 4).CompareTo("6105") == 0 ||
+                              accNo.Substring(0, 4).CompareTo("5912") == 0))
+                        {
+                            noAirpp = true;
+                        }
                     }
                 }
 
@@ -666,11 +793,15 @@ group by ShippingAPID,BLNo,WKNo,InvNo,Type,ShipModeID,GW,CBM,CurrencyID,ShipMode
                     return;
                 }
 
+                if (noAirpp)
+                {
+                    MyUtility.Msg.WarningBox(@"Please maintain [Shipping P01 Air Pre-Paid] first if [Shipping Mode] is A/P, E/P or E/P-C !!");
+                    return;
+                }
+
                 #region 將資料寫入Table
                 IList<string> deleteCmds = new List<string>();
                 IList<string> addCmds = new List<string>();
-
-                string accNo = MyUtility.GetValue.Lookup(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and se.AccountID != ''", MyUtility.Convert.GetString(this.apData["ID"])));
 
                 // Junk實體資料
                 foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
@@ -708,7 +839,7 @@ on	t.ShippingAPID = s.ShippingAPID
 	and t.InvNo = s.InvNo
 when matched then
 	update set t.Junk = 0
-    ,ShipModeID = '{8}'
+    , ShipModeID = '{8}'
     , GW = {5}
     , CBM = {6} 
 when not matched then 

@@ -24,7 +24,7 @@
     [TotalNW]                  NUMERIC (10, 3) CONSTRAINT [DF_GMTBooking_TotalNW] DEFAULT ((0)) NULL,
     [TotalGW]                  NUMERIC (10, 3) CONSTRAINT [DF_GMTBooking_TotalGW] DEFAULT ((0)) NULL,
     [TotalNNW]                 NUMERIC (10, 3) CONSTRAINT [DF_GMTBooking_TotalNNW] DEFAULT ((0)) NULL,
-    [TotalCBM]                 NUMERIC (10, 3) CONSTRAINT [DF_GMTBooking_TotalCBM] DEFAULT ((0)) NULL,
+    [TotalCBM]                 NUMERIC (11, 4) CONSTRAINT [DF_GMTBooking_TotalCBM] DEFAULT ((0)) NULL,
     [Status]                   VARCHAR (15)    CONSTRAINT [DF_GMTBooking_Status] DEFAULT ('') NULL,
     [Handle]                   VARCHAR (10)    CONSTRAINT [DF_GMTBooking_Handle] DEFAULT ('') NOT NULL,
     [Description]              NVARCHAR (80)   CONSTRAINT [DF_GMTBooking_Description] DEFAULT ('') NULL,
@@ -35,10 +35,14 @@
     [AddDate]                  DATETIME        NULL,
     [EditName]                 VARCHAR (10)    CONSTRAINT [DF_GMTBooking_EditName] DEFAULT ('') NULL,
     [EditDate]                 DATETIME        NULL,
-    [NoExportCharges]          BIT             CONSTRAINT [DF_GMTBooking_NoExportCharges] DEFAULT ((0)) NULL,
+    [NoExportCharges]          BIT             DEFAULT ((0)) NULL,
     [BIRID]                    INT             NULL,
+    [BL2No]                    VARCHAR (20)    DEFAULT ('') NULL,
+    [BLNo]                     VARCHAR (20)    DEFAULT ('') NULL,
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -204,4 +208,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'貨代倉�
 GO
 CREATE NONCLUSTERED INDEX [shipplanid]
     ON [dbo].[GMTBooking]([ShipPlanID] ASC);
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'提單號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'BLNo';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'提單號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'BL2No';
 

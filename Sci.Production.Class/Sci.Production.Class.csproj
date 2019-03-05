@@ -71,6 +71,12 @@
     <Compile Include="comboMDivision.Designer.cs">
       <DependentUpon>comboMDivision.cs</DependentUpon>
     </Compile>
+    <Compile Include="comboRFIDProcessLocation.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="comboRFIDProcessLocation.Designer.cs">
+      <DependentUpon>comboRFIDProcessLocation.cs</DependentUpon>
+    </Compile>
     <Compile Include="Command\UserPrg.cs" />
     <Compile Include="MicrosoftFileName.cs">
       <Generator>r</Generator>
@@ -116,6 +122,18 @@
     </Compile>
     <Compile Include="txtcdcode.Designer.cs">
       <DependentUpon>txtcdcode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtCuttingMachineID.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtCuttingMachineID.Designer.cs">
+      <DependentUpon>txtCuttingMachineID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="txtSpreadingNo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="txtSpreadingNo.Designer.cs">
+      <DependentUpon>txtSpreadingNo.cs</DependentUpon>
     </Compile>
     <Compile Include="txtcell.cs">
       <SubType>Component</SubType>

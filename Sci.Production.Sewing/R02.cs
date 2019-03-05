@@ -39,6 +39,7 @@ namespace Sci.Production.Sewing
         private DataTable subprocessSubconOutData;
         private DataTable subconData;
         private DataTable vphData;
+        private List<APIData> dataMode = new List<APIData>();
 
         /// <summary>
         /// R02
@@ -136,6 +137,12 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             if (this.comboReportType.SelectedIndex == -1)
             {
                 MyUtility.Msg.WarningBox("Report type can't empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.comboM.Text))
+            {
+                MyUtility.Msg.WarningBox("M can't empty!!");
                 return false;
             }
 
@@ -410,6 +417,7 @@ select aDate.OutputDate
 	   , ManPower = isnull (mp.ManPower, 0)
 	   , ManHour = isnull (q.ManHour, 0)
 	   , Eff = isnull (IIF(q.ManHour * q.StdTMS = 0, 0, Round(tc.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2)), 0)
+       , q.StdTMS
 from AllOutputDate aDate
 left join tmpQty q on aDate.OutputDate = q.OutputDate
 left join tmpTtlCPU tc on aDate.OutputDate = tc.OutputDate
@@ -973,7 +981,7 @@ order by Type,iif(Company = 'Other','Z','A'),Company"),
                 @"
 select f.id
 	   , m.ActiveManpower
-	   , SumA = SUM(m.ActiveManpower) over() 
+	   , SumActiveManpower = SUM(m.ActiveManpower) over() 
 from Factory f
 left join Manpower m on m.FactoryID = f.ID 
 		  				and m.Year = {0} 
@@ -981,6 +989,11 @@ left join Manpower m on m.FactoryID = f.ID
 where f.Junk = 0",
                 this.date1.Value.Year,
                 this.date1.Value.Month));
+
+            if (this.checkSampleFty.Checked)
+            {
+                sqlCmd.Append(" and f.type <> 'S' ");
+            }
 
             if (this.factory != string.Empty)
             {
@@ -1047,8 +1060,23 @@ where f.Junk = 0",
 
             worksheet.Cells[4, 3] = "Total CPU Included Subcon-In";
 
+            #region Direct Manpower(From PAMS)
+            List<APIData> pams = new List<APIData>();
+            if (!(Sci.Env.User.Keyword.EqualString("CM1") ||
+                Sci.Env.User.Keyword.EqualString("CM2") ||
+                Sci.Env.User.Keyword.EqualString("CM3")))
+            {
+                this.dataMode = new List<APIData>();
+                GetApiData.GetAPIData(this.mDivision, this.factory, (DateTime)this.date1.Value, (DateTime)this.date2.Value, out this.dataMode);
+                if (this.dataMode != null)
+                {
+                    pams = this.dataMode.ToList();
+                }
+            }
+            #endregion
+
             int insertRow = 5;
-            object[,] objArray = new object[1, 11];
+            object[,] objArray = new object[1, 15];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = dr[0];
@@ -1061,8 +1089,21 @@ where f.Junk = 0",
                 objArray[0, 7] = dr[7];
                 objArray[0, 8] = dr[8];
                 objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
-                objArray[0, 10] = string.Empty;
-                worksheet.Range[string.Format("A{0}:K{0}", insertRow)].Value2 = objArray;
+                if (pams != null && pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).Count() > 0)
+                {
+                    objArray[0, 11] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManpower;
+                    objArray[0, 12] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManhours;
+                }
+                else
+                {
+                    objArray[0, 11] = 0;
+                    objArray[0, 12] = 0;
+                }
+
+                objArray[0, 10] = MyUtility.Convert.GetDouble(objArray[0, 11]) == 0 ? 0 : MyUtility.Convert.GetDouble(objArray[0, 12]) / MyUtility.Convert.GetDouble(objArray[0, 11]);
+                objArray[0, 13] = string.Format("=IF(M{0}=0,0,ROUND((C{0}/(M{0}*3600/1400))*100,1))", insertRow);
+                objArray[0, 14] = string.Empty;
+                worksheet.Range[string.Format("A{0}:O{0}", insertRow)].Value2 = objArray;
                 insertRow++;
 
                 // 插入一筆Record
@@ -1084,6 +1125,10 @@ where f.Junk = 0",
             worksheet.Cells[insertRow, 8] = string.Format("=SUM(H5:H{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
             worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)", insertRow);
+            worksheet.Cells[insertRow, 11] = string.Format("=ROUND(M{0}/L{0},2)", MyUtility.Convert.GetString(insertRow));
+            worksheet.Cells[insertRow, 12] = string.Format("=SUM(L5:L{0})", MyUtility.Convert.GetString(insertRow - 1));
+            worksheet.Cells[insertRow, 13] = string.Format("=SUM(M5:M{0})", MyUtility.Convert.GetString(insertRow - 1));
+            worksheet.Cells[insertRow, 14] = string.Format("=ROUND(C{0}/(M{0}*60*60/1400)*100,1)", insertRow);
             insertRow++;
 
             // Excluded non sister Subcon In
@@ -1135,21 +1180,12 @@ where f.Junk = 0",
 
                 worksheet.Range[string.Format("A{0}:D{0}", insertRow)].Value2 = objArray;
                 insertRow++;
-                 rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
                 rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                 Marshal.ReleaseComObject(rngToInsert);
             }
 
             this.DeleteExcelRow(2, insertRow, excel);
-
-            // insertRow
-
-            // Borders.LineStyle 儲存格邊框線
-            // Microsoft.Office.Interop.Excel.Range excelRange
-            //    = worksheet.get_Range(string.Format("A{0}:K{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing);
-            // excelRange.Borders.LineStyle = 3;
-            // excelRange.Borders.get_Item(Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop).LineStyle
-            //    = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous;
 
             // Subprocess
             insertRow = insertRow + 2;
@@ -1176,37 +1212,39 @@ where f.Junk = 0",
             }
 
             insertRow = insertRow + 3;
-            decimal ttlm = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManPower)", string.Empty));
-            decimal c = MyUtility.Convert.GetDecimal(this.printData.Compute("sum(TotalCPU)", string.Empty)) / MyUtility.Convert.GetDecimal(this.printData.Compute("sum(ManHour)", string.Empty));
-            worksheet.Cells[insertRow, 1] = "VPH";
 
-            // [VPH]:(Total Total Manhours / Total work day * Total CPU/Sewer/HR)-->四捨五入到小數點後兩位 ，再除[Factory active ManPower])-->四捨五入到小數點後兩位。
-            c = Sci.MyUtility.Math.Round(c, 2);
-
-            // WorkDay =>
-            int intWorkDay;
-            DataTable dtWorkDay;
-            string strWorkDay = @"
-select Distinct OutputDate
-from #tmp
-where LastShift <> 'O'";
-            DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
-            if (failResult == false)
+            #region  中國工廠自抓/其它場Pams [Total Work Day]
+            if (Sci.Env.User.Keyword.EqualString("CM1") ||
+                Sci.Env.User.Keyword.EqualString("CM2") ||
+                Sci.Env.User.Keyword.EqualString("CM3"))
             {
-                MyUtility.Msg.WarningBox(failResult.ToString());
-                intWorkDay = 0;
+                int ttlWorkDay = 0;
+                string strWorkDay = @"select Distinct OutputDate from #tmp where LastShift <> 'O'";
+                DataTable dtWorkDay;
+                DualResult failResult = MyUtility.Tool.ProcessWithDatatable(this.SewOutPutData, null, strWorkDay, out dtWorkDay);
+                if (failResult == false)
+                {
+                    MyUtility.Msg.WarningBox(failResult.ToString());
+                    ttlWorkDay = 0;
+                }
+                else
+                {
+                    ttlWorkDay = dtWorkDay.Rows.Count;
+                }
+
+                worksheet.Cells[insertRow, 1] = "Total work day:";
+                worksheet.Cells[insertRow, 3] = ttlWorkDay;
             }
             else
             {
-                intWorkDay = dtWorkDay.Rows.Count;
+                if (pams != null)
+                {
+                    int ttlWorkDay = pams.Where(w => w.SewTtlManhours != 0).Count();
+                    worksheet.Cells[insertRow, 1] = "Total work day:";
+                    worksheet.Cells[insertRow, 3] = ttlWorkDay;
+                }
             }
-
-            worksheet.Cells[insertRow, 3] = Sci.MyUtility.Math.Round(Sci.MyUtility.Math.Round(ttlm * c / intWorkDay, 2) / MyUtility.Convert.GetDecimal(this.vphData.Rows[0]["SumA"]), 2);
-
-            worksheet.Cells[insertRow, 6] = "Factory active ManPower:";
-            worksheet.Cells[insertRow, 8] = MyUtility.Convert.GetInt(this.vphData.Rows[0]["SumA"]);
-            worksheet.Cells[insertRow, 9] = "/Total work day:";
-            worksheet.Cells[insertRow, 11] = intWorkDay;
+            #endregion
 
             // Subcon
             int RevenueStartRow = 0;
@@ -1276,7 +1314,7 @@ where LastShift <> 'O'";
                             rngBorders.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin;
 
                             // 插入一筆Record
-                            rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow+1)), Type.Missing).EntireRow;
+                            rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
                             rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
                             Marshal.ReleaseComObject(rngToInsert);
                         }

@@ -17,6 +17,7 @@ namespace Sci.Production.Subcon
     {
         DataTable printData;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
+        string processLocation;
         DateTime? dateBundle1, dateBundle2, dateBundleScanDate1, dateBundleScanDate2, dateEstCutDate1, dateEstCutDate2;
         public R41(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -24,6 +25,7 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             comboload();
             this.comboFactory.setDataSource();
+            this.comboRFIDProcessLocation.setDataSource();
         }
 
         private void comboload()
@@ -55,6 +57,7 @@ namespace Sci.Production.Subcon
             dateBundleScanDate2 = this.dateBundleScanDate.Value2;
             dateEstCutDate1 = this.dateEstCutDate.Value1;
             dateEstCutDate2 = this.dateEstCutDate.Value2;
+            this.processLocation = this.comboRFIDProcessLocation.Text;
             if (MyUtility.Check.Empty(CutRef1) && MyUtility.Check.Empty(CutRef2) &&
                 MyUtility.Check.Empty(SP) &&
                 MyUtility.Check.Empty(dateEstCutDate.Value1) && MyUtility.Check.Empty(dateEstCutDate.Value2) &&
@@ -128,6 +131,11 @@ namespace Sci.Production.Subcon
                 sqlWhere.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
             }
 
+            if (!MyUtility.Check.Empty(this.processLocation))
+            {
+                sqlWhere.Append(string.Format(@" and bio.RFIDProcessLocationID = '{0}'", this.processLocation));
+            }
+
             if (!MyUtility.Check.Empty(dateEstCutDate1))
             {
                 sqlWhere.Append(string.Format(@" and w.EstCutDate >= convert(date,'{0}')", Convert.ToDateTime(dateEstCutDate1).ToString("d")));
@@ -157,6 +165,7 @@ group by  CutRef,MDivisionId,EstCutDate
             sqlCmd += $@" 
 Select 
     [Bundleno] = bd.BundleNo,
+    [RFIDProcessLocationID] = isnull(bio.RFIDProcessLocationID,''),
     [EXCESS] = iif(b.IsEXCESS = 0, '','Y'),
     [Cut Ref#] = isnull(b.CutRef,''),
     [SP#] = b.Orderid,
@@ -186,6 +195,7 @@ Select
     b.Cdate,
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
+    [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
 	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
 					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,''))/24.0,2))
 					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
@@ -199,12 +209,13 @@ Select
 						when s.InOutRule = 4 and (bio.OutGoing is null or bio.InComing is null) then 'Not Valid'
 						else '' end,
 	s.InOutRule
+	,b.Item
 into #result
 from Bundle b WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.Id = b.OrderId
 inner join Bundle_Detail bd WITH (NOLOCK) on bd.Id = b.Id 
 outer apply(
-    select s.ID,s.InOutRule
+    select s.ID,s.InOutRule,s.ArtworkTypeId
     from SubProcess s
         where exists (
                         select 1 from Bundle_Detail_Art bda
@@ -222,6 +233,22 @@ outer apply(
 		    for xml path('')
 	    ),1,1,'')
 ) as sub 
+outer apply (
+select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' then Stuff((select distinct concat( ',',ls.Abb)
+	                                                            from ArtworkPO ap with (nolock)
+	                                                            inner join ArtworkPO_Detail apd with (nolock) on ap.ID = apd.ID
+	                                                            inner join LocalSupp ls with (nolock) on ap.LocalSuppID = ls.ID
+	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = b.OrderId FOR XML PATH('')),1,1,'')  
+                    else '' end
+) PoSuppFromOrderID
+outer apply (
+select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull(PoSuppFromOrderID.Value,'') = '' then Stuff((select distinct concat( ',',ls.Abb)
+	                                                            from ArtworkPO ap with (nolock)
+	                                                            inner join ArtworkPO_Detail apd with (nolock) on ap.ID = apd.ID
+	                                                            inner join LocalSupp ls with (nolock) on ap.LocalSuppID = ls.ID
+	                                                            where ap.POType = 'O' and ap.ArtworkTypeID = s.ArtworkTypeId and apd.OrderID = o.POID FOR XML PATH('')),1,1,'')  
+                    else '' end
+) PoSuppFromPOID
 ";
             if (sqlWhereWorkOrder.Length > 0)
             {
@@ -248,6 +275,7 @@ outer apply(
 )
 select
     r.[Bundleno] ,
+    r.[RFIDProcessLocationID],
 	r.[EXCESS],
     r.[Cut Ref#] ,
     r.[SP#],
@@ -277,6 +305,7 @@ select
     r.Cdate,
     r.[InComing],
     r.[Out (Time)],
+    r.[POSupplier],
 	r.AvgTime,
     [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
                         when AvgTime < 0 then 'Not Valid'
@@ -294,9 +323,10 @@ select
 						else '>60' end,
     gcd.EstCutDate,
     gcd.CuttingOutputDate
+	,r.Item
 from #result r
 left join GetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
-order by [Bundleno],[Cut Ref#],[SP#],[Style],[Season],[Brand],[Article],[Color],[Line],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Out (Time)] desc,[InComing] desc
+order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
 
 drop table #result
 ";

@@ -148,6 +148,7 @@
             // 
             // refresh
             // 
+            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(827, 1);
             // 
             // detailgridcont
@@ -244,6 +245,7 @@
             // displayofInspection
             // 
             this.displayofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AIRInspPercent", true));
             this.displayofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayofInspection.Location = new System.Drawing.Point(614, 17);
@@ -454,6 +456,7 @@
             // 
             // dateEarliestSCIDel
             // 
+            this.dateEarliestSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MinSciDelivery", true));
             this.dateEarliestSCIDel.IsSupportEditMode = false;
             this.dateEarliestSCIDel.Location = new System.Drawing.Point(359, 46);
             this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";
@@ -495,6 +498,7 @@
             this.DefaultControlForEdit = "txtLocateforWK";
             this.DefaultDetailOrder = "SEQ1,exportid";
             this.DefaultOrder = "id";
+            this.ExpressQuery = true;
             this.GridAlias = "AIR";
             this.GridNew = 0;
             this.GridUniqueKey = "seq1,seq2,receivingid";

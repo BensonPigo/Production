@@ -1,14 +1,18 @@
 ﻿CREATE TABLE [dbo].[WorkOrder_Estcutdate] (
-    [WorkOrderUkey] BIGINT       CONSTRAINT [DF_WorkOrder_Estcutdate_WorkOrderUkey] DEFAULT ((0)) NOT NULL,
-    [OrgEstCutDate] DATE         NULL,
-    [NewEstCutDate] DATE         NULL,
-    [CutReasonid]   VARCHAR (5)  CONSTRAINT [DF_WorkOrder_Estcutdate_Reason] DEFAULT ('') NULL,
-    [Ukey]          BIGINT       IDENTITY (1, 1) NOT NULL,
-    [ID]            VARCHAR (13) CONSTRAINT [DF_WorkOrder_Estcutdate_ID] DEFAULT ('') NULL,
-    [OrgCutCellid] VARCHAR(2) NULL, 
-    [NewCutCellid] VARCHAR(2) NULL, 
+    [WorkOrderUkey]    BIGINT       CONSTRAINT [DF_WorkOrder_Estcutdate_WorkOrderUkey] DEFAULT ((0)) NOT NULL,
+    [OrgEstCutDate]    DATE         NULL,
+    [NewEstCutDate]    DATE         NULL,
+    [CutReasonid]      VARCHAR (5)  CONSTRAINT [DF_WorkOrder_Estcutdate_Reason] DEFAULT ('') NULL,
+    [Ukey]             BIGINT       IDENTITY (1, 1) NOT NULL,
+    [ID]               VARCHAR (13) CONSTRAINT [DF_WorkOrder_Estcutdate_ID] DEFAULT ('') NULL,
+    [OrgCutCellid]     VARCHAR (2)  NULL,
+    [NewCutCellid]     VARCHAR (2)  NULL,
+    [OrgSpreadingNoID] VARCHAR (3)  NULL,
+    [NewSpreadingNoID] VARCHAR (3)  NULL,
     CONSTRAINT [PK_WorkOrder_Estcutdate] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 

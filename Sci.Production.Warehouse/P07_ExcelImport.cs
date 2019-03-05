@@ -11,6 +11,7 @@ using Sci.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Warehouse
 {
@@ -348,21 +349,25 @@ namespace Sci.Production.Warehouse
                                                                                                                              , newRow["seq1"]
                                                                                                                              , newRow["seq2"]));                                   
                                 }
-
+                                List<SqlParameter> sqlpar = new List<SqlParameter>();
+                                sqlpar.Add(new SqlParameter("@poid", newRow["poid"].ToString().Trim()));
+                                sqlpar.Add(new SqlParameter("@seq1", newRow["seq1"].ToString().Trim()));
+                                sqlpar.Add(new SqlParameter("@seq2", newRow["seq2"].ToString().Trim()));
+                                sqlpar.Add(new SqlParameter("@shipqty", newRow["shipqty"].ToString().Trim()));
                                 DataRow dr2;
-                                string sql = string.Format(@"
+                                string sql = @"
 select  pd.fabrictype
         , pd.POUnit
         , StockUnit = dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2)
-        , Round(dbo.GetUnitQty(pd.POUnit, dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2), {3}), 2) as stockqty 
+        , Round(dbo.GetUnitQty(pd.POUnit, dbo.GetStockUnitBySPSeq (pd.id, pd.seq1, pd.seq2), @shipqty), 2) as stockqty 
         , (select o.Category from Orders o WITH (NOLOCK) where o.id= pd.id) as category
 from dbo.PO_Supp_Detail pd WITH (NOLOCK) 
 inner join [dbo].[Fabric] ff WITH (NOLOCK) on pd.SCIRefno= ff.SCIRefno
 inner join [dbo].[MtlType] mm WITH (NOLOCK) on mm.ID = ff.MtlTypeID
 inner join [dbo].[Unit] uu WITH (NOLOCK) on ff.UsageUnit = uu.ID
-where pd.id='{0}' and pd.seq1 ='{1}' and pd.seq2 = '{2}'", newRow["poid"].ToString().Trim(), newRow["seq1"].ToString().Trim(), newRow["seq2"].ToString().Trim(), newRow["shipqty"].ToString().Trim());
+where pd.id=@poid and pd.seq1 =@seq1 and pd.seq2 = @seq2";
 
-                                if (MyUtility.Check.Seek(sql, out dr2))
+                                if (MyUtility.Check.Seek(sql,sqlpar, out dr2))
                                 {
                                     // 非主料清空roll & dyelot
                                     if ("F" != dr2["fabrictype"].ToString())

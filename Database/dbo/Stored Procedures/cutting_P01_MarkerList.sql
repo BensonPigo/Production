@@ -31,7 +31,14 @@ BEGIN
 
 
 	--For Each Size Group
-	select * into #SizeCodes from GetSizeCodeColumnByID(@OrderID,1) a where a.SizeCode in (select SizeCode from #tmp) order by Seq
+	--select * into #SizeCodes from GetSizeCodeColumnByID(@OrderID,1) a where a.SizeCode in (select SizeCode from #tmp) order by Seq
+		select c.SizeCode,c.SizeGroup,ROW_NUMBER() over(order by  SizeGroup,SizeCode,seq) Seq Into #SizeCodes from (
+		select distinct a.SizeCode,sm.SizeGroup,o.Seq  from Order_EachCons_SizeQty a
+		left join Order_EachCons b on a.Order_EachConsUkey = b.Ukey
+		left join SMNotice sm on b.SMNoticeID = sm.ID
+		outer apply (select seq from  Order_SizeCode os where os.SizeCode = a.SizeCode and os.SizeGroup = sm.SizeGroup and os.id = @OrderID) o
+		where a.id = @OrderID
+	) c
 
 	declare scode cursor for
 		select SizeGroup from #SizeCodes group by SizeGroup order by max(Seq)
@@ -48,9 +55,20 @@ BEGIN
 			select @colStr3= 'where ' + STUFF((SELECT ' ['+SizeCode+'] is not null or' from #SizeCodes a where a.SizeGroup = @SizeGroup order by Seq FOR XML PATH('')),1,1,'')
 			select @colStr3 = substring(@colStr3,1,len(@colStr3)-3)
 
-			declare @sql varchar(max) = 'SELECT SizeGroup='''+@SizeGroup+''',COMB,COMBdes,MarkerName,REMARK,'+@colStr+',MarkerLength as ''MAKER LEN.+1"'',ActCuttingPerimeter AS ''Cut Perimeter'' FROM (
+			declare @sql varchar(max) = '
+			SELECT 
+			SizeGroup='''+@SizeGroup+'''
+			,COMB
+			,COMBdes
+			,MarkerName
+			,REMARK
+			,'+@colStr+'
+			,MarkerLength as ''MAKER LEN.+1"''
+			,ActCuttingPerimeter AS ''Cut Perimeter''
+			 FROM (
 				select COMB,COMBdes,MarkerName,MarkerLength,ActCuttingPerimeter,REMARK,SizeCode,Qty,Seq from #tmp
-			) a pivot (max(Qty) for SizeCode in ('+@colStr+')) b '+@colStr3+'
+			) a 
+			pivot (max(Qty) for SizeCode in ('+@colStr+')) b '+@colStr3+'
 			order by Seq'
 
 			--print @sql

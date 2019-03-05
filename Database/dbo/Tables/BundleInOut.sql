@@ -6,7 +6,8 @@
     [AddDate]      DATETIME     NULL,
     [EditDate]     DATETIME     NULL,
 	[SewingLineID] varchar(2) NULL, 
-    [LocationID] VARCHAR(10) NOT NULL DEFAULT ('')
+    [LocationID] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [RFIDProcessLocationID] VARCHAR(15) CONSTRAINT [DF_BundleInOut_RFIDProcessLocationID] DEFAULT ('') NOT NULL
 );
 
 

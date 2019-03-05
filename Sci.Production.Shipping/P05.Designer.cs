@@ -98,6 +98,10 @@
             this.txtfactoryShipper = new Sci.Win.UI.TextBox();
             this.btnAirPPStatus = new Sci.Win.UI.Button();
             this.chkNoExportCharge = new Sci.Win.UI.CheckBox();
+            this.displayBoxBLNo = new Sci.Win.UI.DisplayBox();
+            this.labBlNo = new Sci.Win.UI.Label();
+            this.displayBoxBL2No = new Sci.Win.UI.DisplayBox();
+            this.labBL2No = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -114,6 +118,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayBoxBL2No);
+            this.masterpanel.Controls.Add(this.labBL2No);
+            this.masterpanel.Controls.Add(this.displayBoxBLNo);
+            this.masterpanel.Controls.Add(this.labBlNo);
             this.masterpanel.Controls.Add(this.chkNoExportCharge);
             this.masterpanel.Controls.Add(this.btnAirPPStatus);
             this.masterpanel.Controls.Add(this.btnImportfrompackinglist);
@@ -184,7 +192,7 @@
             this.masterpanel.Controls.Add(this.dateSendtoTPE);
             this.masterpanel.Controls.Add(this.dateFCRDate);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(990, 335);
+            this.masterpanel.Size = new System.Drawing.Size(990, 361);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateFCRDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateSendtoTPE, 0);
@@ -256,15 +264,19 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImportfrompackinglist, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnAirPPStatus, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkNoExportCharge, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labBlNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBoxBLNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labBL2No, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBoxBL2No, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 335);
-            this.detailpanel.Size = new System.Drawing.Size(990, 227);
+            this.detailpanel.Location = new System.Drawing.Point(0, 361);
+            this.detailpanel.Size = new System.Drawing.Size(990, 201);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(882, 297);
+            this.gridicon.Location = new System.Drawing.Point(882, 323);
             this.gridicon.TabIndex = 20;
             // 
             // refresh
@@ -273,7 +285,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(990, 227);
+            this.detailgridcont.Size = new System.Drawing.Size(990, 201);
             // 
             // detail2
             // 
@@ -781,9 +793,9 @@
             // labelSendtoTPE
             // 
             this.labelSendtoTPE.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSendtoTPE.Location = new System.Drawing.Point(560, 274);
+            this.labelSendtoTPE.Location = new System.Drawing.Point(560, 327);
             this.labelSendtoTPE.Name = "labelSendtoTPE";
-            this.labelSendtoTPE.Size = new System.Drawing.Size(74, 23);
+            this.labelSendtoTPE.Size = new System.Drawing.Size(94, 23);
             this.labelSendtoTPE.TabIndex = 49;
             this.labelSendtoTPE.Text = "Send to TPE";
             // 
@@ -839,7 +851,7 @@
             // 
             this.dateSendtoTPE.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SendToTPE", true));
             this.dateSendtoTPE.IsSupportEditMode = false;
-            this.dateSendtoTPE.Location = new System.Drawing.Point(636, 274);
+            this.dateSendtoTPE.Location = new System.Drawing.Point(658, 327);
             this.dateSendtoTPE.Name = "dateSendtoTPE";
             this.dateSendtoTPE.ReadOnly = true;
             this.dateSendtoTPE.Size = new System.Drawing.Size(130, 23);
@@ -915,9 +927,9 @@
             // 
             this.btnImportfrompackinglist.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportfrompackinglist.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnImportfrompackinglist.Location = new System.Drawing.Point(784, 296);
+            this.btnImportfrompackinglist.Location = new System.Drawing.Point(794, 321);
             this.btnImportfrompackinglist.Name = "btnImportfrompackinglist";
-            this.btnImportfrompackinglist.Size = new System.Drawing.Size(165, 33);
+            this.btnImportfrompackinglist.Size = new System.Drawing.Size(155, 33);
             this.btnImportfrompackinglist.TabIndex = 19;
             this.btnImportfrompackinglist.Text = "Import from packing list";
             this.btnImportfrompackinglist.UseVisualStyleBackColor = true;
@@ -1088,12 +1100,50 @@
             this.chkNoExportCharge.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoExportCharges", true));
             this.chkNoExportCharge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.chkNoExportCharge.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkNoExportCharge.Location = new System.Drawing.Point(560, 303);
+            this.chkNoExportCharge.Location = new System.Drawing.Point(408, 334);
             this.chkNoExportCharge.Name = "chkNoExportCharge";
             this.chkNoExportCharge.Size = new System.Drawing.Size(133, 20);
             this.chkNoExportCharge.TabIndex = 72;
             this.chkNoExportCharge.Text = "No Export Charge";
             this.chkNoExportCharge.UseVisualStyleBackColor = true;
+            // 
+            // displayBoxBLNo
+            // 
+            this.displayBoxBLNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxBLNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BLNo", true));
+            this.displayBoxBLNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxBLNo.Location = new System.Drawing.Point(658, 274);
+            this.displayBoxBLNo.Name = "displayBoxBLNo";
+            this.displayBoxBLNo.Size = new System.Drawing.Size(120, 23);
+            this.displayBoxBLNo.TabIndex = 74;
+            // 
+            // labBlNo
+            // 
+            this.labBlNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labBlNo.Location = new System.Drawing.Point(560, 274);
+            this.labBlNo.Name = "labBlNo";
+            this.labBlNo.Size = new System.Drawing.Size(94, 23);
+            this.labBlNo.TabIndex = 73;
+            this.labBlNo.Text = "BL/MAWB No.";
+            // 
+            // displayBoxBL2No
+            // 
+            this.displayBoxBL2No.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxBL2No.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BL2No", true));
+            this.displayBoxBL2No.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxBL2No.Location = new System.Drawing.Point(658, 301);
+            this.displayBoxBL2No.Name = "displayBoxBL2No";
+            this.displayBoxBL2No.Size = new System.Drawing.Size(120, 23);
+            this.displayBoxBL2No.TabIndex = 76;
+            // 
+            // labBL2No
+            // 
+            this.labBL2No.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.labBL2No.Location = new System.Drawing.Point(560, 301);
+            this.labBL2No.Name = "labBL2No";
+            this.labBL2No.Size = new System.Drawing.Size(94, 23);
+            this.labBL2No.TabIndex = 75;
+            this.labBL2No.Text = "FCR/BL/HAWB";
             // 
             // P05
             // 
@@ -1206,5 +1256,9 @@
         private Win.UI.TextBox txtfactoryShipper;
         private Win.UI.Button btnAirPPStatus;
         private Win.UI.CheckBox chkNoExportCharge;
+        private Win.UI.DisplayBox displayBoxBL2No;
+        private Win.UI.Label labBL2No;
+        private Win.UI.DisplayBox displayBoxBLNo;
+        private Win.UI.Label labBlNo;
     }
 }

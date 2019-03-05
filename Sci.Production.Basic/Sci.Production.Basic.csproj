@@ -405,32 +405,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Resources\Carton.bmp" />
     <None Include="Sci.Production.Basic.ruleset" />
-    <None Include="stylecop.json" />
-    <None Include="stylecop1.json" />
-    <None Include="stylecop10.json" />
-    <None Include="stylecop11.json" />
-    <None Include="stylecop12.json" />
-    <None Include="stylecop13.json" />
-    <None Include="stylecop14.json" />
-    <None Include="stylecop15.json" />
-    <None Include="stylecop16.json" />
-    <None Include="stylecop17.json" />
-    <None Include="stylecop18.json" />
-    <None Include="stylecop19.json" />
-    <None Include="stylecop2.json" />
-    <None Include="stylecop20.json" />
-    <None Include="stylecop21.json" />
-    <None Include="stylecop22.json" />
-    <None Include="stylecop3.json" />
-    <None Include="stylecop4.json" />
-    <None Include="stylecop5.json" />
-    <None Include="stylecop6.json" />
-    <None Include="stylecop7.json" />
-    <None Include="stylecop8.json" />
-    <None Include="stylecop9.json" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

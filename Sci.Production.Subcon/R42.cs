@@ -17,6 +17,7 @@ namespace Sci.Production.Subcon
         DataTable printData;
         StringBuilder sqlCmd;
         string SubProcess, SP, M, Factory, CutRef1, CutRef2;
+        string processLocation;
         DateTime? dateBundle1, dateBundle2, dateBundleTransDate1, dateBundleTransDate2;
         public R42(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -24,6 +25,7 @@ namespace Sci.Production.Subcon
             InitializeComponent();
             comboload();
             this.comboFactory.setDataSource();
+            this.comboRFIDProcessLocation.setDataSource();
         }
 
         //string date = "";
@@ -68,6 +70,7 @@ namespace Sci.Production.Subcon
             dateBundle2 = this.dateBundleCDate.Value2;
             dateBundleTransDate1 = this.dateBundleTransDate.Value1;
             dateBundleTransDate2 = this.dateBundleTransDate.Value2;
+            this.processLocation = this.comboRFIDProcessLocation.Text;
             return base.ValidateInput();
         }
 
@@ -78,6 +81,7 @@ namespace Sci.Production.Subcon
             this.sqlCmd = new StringBuilder();
             sqlCmd.Append(@"Select distinct
             [Bundle#] = bt.BundleNo,
+            [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
             [Cut Ref#] = b.CutRef,
             [SP#] = b.Orderid,
             [Master SP#] = b.POID,
@@ -107,6 +111,7 @@ namespace Sci.Production.Subcon
             [TransferDate] = CAST(TransferDate AS DATE),
             [TransferTime] = TransferDate,
             bt.LocationID
+            ,b.item
             --CAST ( bt.TransferDate AS DATE) AS TransferDate
             from BundleTransfer  bt WITH (NOLOCK)
             left join Bundle_Detail bd WITH (NOLOCK) on bt.BundleNo = bd.BundleNo
@@ -160,6 +165,10 @@ namespace Sci.Production.Subcon
             if (!MyUtility.Check.Empty(Factory))
             {
                 sqlCmd.Append(string.Format(@" and o.FtyGroup = '{0}'", Factory));
+            }
+            if (!MyUtility.Check.Empty(this.processLocation))
+            {
+                sqlCmd.Append(string.Format(@" and bt.RFIDProcessLocationID = '{0}'", this.processLocation));
             }
             #endregion
 

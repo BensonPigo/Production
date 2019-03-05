@@ -18,12 +18,14 @@
     [HTPlate]             INT            NULL,
     [HTFlim]              INT            NULL,
     [HTTime]              INT            NULL,
-    [HTPressure]          INT            NULL,
+    [HTPressure]          NUMERIC (3, 1) NULL,
     [HTPellOff]           VARCHAR (5)    NULL,
     [HT2ndPressnoreverse] INT            NULL,
     [HT2ndPressreversed]  INT            NULL,
     [HTCoolingTime]       INT            NULL,
     PRIMARY KEY CLUSTERED ([ReportNo] ASC)
 );
+
+
 
 

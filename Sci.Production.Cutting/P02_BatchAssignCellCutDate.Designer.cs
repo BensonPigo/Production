@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridBatchAssignCellEstCutDate = new Sci.Win.UI.Grid();
             this.btnClose = new Sci.Win.UI.Button();
             this.labelSPNo = new Sci.Win.UI.Label();
@@ -65,6 +65,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtSeq1 = new Sci.Win.UI.TextBox();
             this.txtSeq2 = new Sci.Win.UI.TextBox();
+            this.btnBatchUpdateSpreadingNo = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSpreadingNo = new Sci.Production.Class.txtSpreadingNo();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssignCellEstCutDate)).BeginInit();
             this.SuspendLayout();
             // 
@@ -83,22 +86,22 @@
             this.gridBatchAssignCellEstCutDate.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridBatchAssignCellEstCutDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridBatchAssignCellEstCutDate.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridBatchAssignCellEstCutDate.Location = new System.Drawing.Point(6, 123);
+            this.gridBatchAssignCellEstCutDate.Location = new System.Drawing.Point(6, 155);
             this.gridBatchAssignCellEstCutDate.Name = "gridBatchAssignCellEstCutDate";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridBatchAssignCellEstCutDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridBatchAssignCellEstCutDate.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBatchAssignCellEstCutDate.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBatchAssignCellEstCutDate.RowTemplate.Height = 24;
             this.gridBatchAssignCellEstCutDate.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBatchAssignCellEstCutDate.ShowCellToolTips = false;
-            this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(1052, 338);
+            this.gridBatchAssignCellEstCutDate.Size = new System.Drawing.Size(1052, 306);
             this.gridBatchAssignCellEstCutDate.TabIndex = 0;
             this.gridBatchAssignCellEstCutDate.TabStop = false;
             // 
@@ -393,7 +396,7 @@
             // 
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Name = "shapeContainer2";
             this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape1});
             this.shapeContainer2.Size = new System.Drawing.Size(1003, 503);
@@ -432,9 +435,40 @@
             this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSeq2_PopUp);
             this.txtSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeq2_Validating);
             // 
+            // btnBatchUpdateSpreadingNo
+            // 
+            this.btnBatchUpdateSpreadingNo.Location = new System.Drawing.Point(154, 119);
+            this.btnBatchUpdateSpreadingNo.Name = "btnBatchUpdateSpreadingNo";
+            this.btnBatchUpdateSpreadingNo.Size = new System.Drawing.Size(178, 30);
+            this.btnBatchUpdateSpreadingNo.TabIndex = 32;
+            this.btnBatchUpdateSpreadingNo.Text = "Batch update Spreading No";
+            this.btnBatchUpdateSpreadingNo.UseVisualStyleBackColor = true;
+            this.btnBatchUpdateSpreadingNo.Click += new System.EventHandler(this.btnBatchUpdateSpreadingNo_Click);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(8, 123);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 23);
+            this.label1.TabIndex = 33;
+            this.label1.Text = "Spreading No";
+            // 
+            // txtSpreadingNo
+            // 
+            this.txtSpreadingNo.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo.Location = new System.Drawing.Point(103, 123);
+            this.txtSpreadingNo.MDivisionID = "";
+            this.txtSpreadingNo.Name = "txtSpreadingNo";
+            this.txtSpreadingNo.Size = new System.Drawing.Size(45, 23);
+            this.txtSpreadingNo.TabIndex = 35;
+            // 
             // P02_BatchAssignCellCutDate
             // 
             this.ClientSize = new System.Drawing.Size(1072, 503);
+            this.Controls.Add(this.txtSpreadingNo);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnBatchUpdateSpreadingNo);
             this.Controls.Add(this.txtSeq2);
             this.Controls.Add(this.txtSeq1);
             this.Controls.Add(this.label2);
@@ -516,5 +550,8 @@
         private System.Windows.Forms.Label label2;
         private Win.UI.TextBox txtSeq1;
         private Win.UI.TextBox txtSeq2;
+        private Win.UI.Button btnBatchUpdateSpreadingNo;
+        private Win.UI.Label label1;
+        private Class.txtSpreadingNo txtSpreadingNo;
     }
 }

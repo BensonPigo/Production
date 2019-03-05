@@ -180,6 +180,9 @@ BEGIN
 	Declare @sizeQtyRowid_again int
 	Declare @sizeQtyRowCount_again int 
 	Declare @LongArticleCount int
+	Declare @ActCuttingPerimeter nvarchar(15)
+	Declare @StraightLength varchar(15)
+	Declare @CurvedLength varchar(15)
 	---	
 	Declare @ACtDisLayer int --實際分配的層數
 	Declare @actdistriqtyRowID int
@@ -233,8 +236,10 @@ BEGIN
 				   @Type = '1',
 				   @MarkerDownLoadId = MarkerDownloadID,
 				   @Order_EachConsUkey = Order_EachConsUkey,
-				   @Order_EachCons_ColorUkey = Order_EachCons_ColorUkey
-
+				   @Order_EachCons_ColorUkey = Order_EachCons_ColorUkey,
+				   @ActCuttingPerimeter = ActCuttingPerimeter,
+				   @StraightLength = StraightLength,
+				   @CurvedLength = CurvedLength
 			From #WorkOrderMix
 			Where RowID = @WorkOrderMixRowID;
 
@@ -316,8 +321,8 @@ BEGIN
 					SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 					if(@oldWorkerordernum != @newWorkerordernum)
 					Begin--byworkorder的Group與前一筆不一樣,則新增一筆
-						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
-						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey)
+						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength)
+						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@MarkerVerion,@Type,@username,GETDATE(),@MarkerDownLoadid,@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey,@ActCuttingPerimeter,@StraightLength,@CurvedLength)
 						SET @NewKey += 1--這邊就先加了,下面同筆insert的要減1才會對應到
 						set @oldWorkerordernum = @newWorkerordernum
 					End						
@@ -463,10 +468,10 @@ BEGIN
 	Begin
 		insert into WorkOrder(id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 						EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode)
+						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode,ActCuttingPerimeter,StraightLength,CurvedLength)
 						(Select id,factoryid,MDivisionId,SEQ1,SEQ2,CutRef,OrderID,CutplanID,Cutno,Layer,Colorid,Markername,
 						EstCutDate,CutCellid,MarkerLength,ConsPC,Cons,Refno,SCIRefno,MarkerNo,MarkerVersion,Type,Order_EachconsUkey,
-						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode 
+						AddName,AddDate,FabricCombo,MarkerDownLoadId,FabricCode,FabricPanelCode ,ActCuttingPerimeter,StraightLength,CurvedLength
 						From #NewWorkOrder Where newkey = @insertRow)
 		select @iden = @@IDENTITY 
 		--------將撈出的Ident 寫入----------

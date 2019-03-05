@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnUpdate = new Sci.Win.UI.Button();
             this.txtCutRefNo = new Sci.Win.UI.TextBox();
             this.txtSEQ = new Sci.Win.UI.TextBox();
@@ -49,6 +49,8 @@
             this.labelCuttingSPNo = new Sci.Win.UI.Label();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.txtCutplanID = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.txtfactoryByM = new Sci.Production.Class.txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
@@ -58,8 +60,8 @@
             this.btnSave = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.gridbs = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label3 = new Sci.Win.UI.Label();
-            this.txtCutplanID = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -227,14 +229,14 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(8, 121);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
@@ -265,6 +267,23 @@
             this.groupBox1.TabIndex = 37;
             this.groupBox1.TabStop = false;
             // 
+            // txtCutplanID
+            // 
+            this.txtCutplanID.BackColor = System.Drawing.Color.White;
+            this.txtCutplanID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCutplanID.Location = new System.Drawing.Point(98, 79);
+            this.txtCutplanID.Name = "txtCutplanID";
+            this.txtCutplanID.Size = new System.Drawing.Size(108, 23);
+            this.txtCutplanID.TabIndex = 30;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(6, 79);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(89, 23);
+            this.label3.TabIndex = 29;
+            this.label3.Text = "CutplanID";
+            // 
             // txtfactoryByM
             // 
             this.txtfactoryByM.BackColor = System.Drawing.Color.White;
@@ -286,6 +305,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txtSpreadingNo1);
+            this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.txtCell1);
             this.groupBox2.Controls.Add(this.txtcutReason);
             this.groupBox2.Controls.Add(this.labelReason);
@@ -322,7 +343,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 38;
-            this.label2.Text = "Cell";
+            this.label2.Text = "Cut Cell";
             // 
             // btnSave
             // 
@@ -346,22 +367,23 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // label3
+            // label4
             // 
-            this.label3.Location = new System.Drawing.Point(6, 79);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(89, 23);
-            this.label3.TabIndex = 29;
-            this.label3.Text = "CutplanID";
+            this.label4.Location = new System.Drawing.Point(146, 48);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(89, 23);
+            this.label4.TabIndex = 40;
+            this.label4.Text = "SpreadingNo";
             // 
-            // txtCutplanID
+            // txtSpreadingNo1
             // 
-            this.txtCutplanID.BackColor = System.Drawing.Color.White;
-            this.txtCutplanID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutplanID.Location = new System.Drawing.Point(98, 79);
-            this.txtCutplanID.Name = "txtCutplanID";
-            this.txtCutplanID.Size = new System.Drawing.Size(108, 23);
-            this.txtCutplanID.TabIndex = 30;
+            this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo1.Location = new System.Drawing.Point(238, 48);
+            this.txtSpreadingNo1.MDivisionID = "";
+            this.txtSpreadingNo1.Name = "txtSpreadingNo1";
+            this.txtSpreadingNo1.Size = new System.Drawing.Size(45, 23);
+            this.txtSpreadingNo1.TabIndex = 41;
             // 
             // P03
             // 
@@ -438,5 +460,7 @@
         private Class.txtCell txtCell1;
         private Win.UI.TextBox txtCutplanID;
         private Win.UI.Label label3;
+        private Win.UI.Label label4;
+        private Class.txtSpreadingNo txtSpreadingNo1;
     }
 }

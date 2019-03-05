@@ -49,6 +49,8 @@ Sci.Production.Centralized/bin
 Sci.Production.Centralized/obj
 Sci.Production.SubProcess/bin
 Sci.Production.SubProcess/obj
+.vs/Supercharger
+Database/.vs
 Database/ProductionDB.dbmdl
 Database/bin/Debug/
 Database/obj/Debug/
