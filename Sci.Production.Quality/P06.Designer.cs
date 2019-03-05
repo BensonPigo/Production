@@ -126,15 +126,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(914, 519);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(908, 473);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(908, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -173,6 +173,7 @@
             // displayArticleofInspection
             // 
             this.displayArticleofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayArticleofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LabColorFastnessPercent", true));
             this.displayArticleofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayArticleofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayArticleofInspection.Location = new System.Drawing.Point(704, 18);
@@ -222,7 +223,6 @@
             // 
             // labelArticleofInspection
             // 
-            this.labelArticleofInspection.Lines = 0;
             this.labelArticleofInspection.Location = new System.Drawing.Point(551, 16);
             this.labelArticleofInspection.Name = "labelArticleofInspection";
             this.labelArticleofInspection.Size = new System.Drawing.Size(150, 23);
@@ -231,7 +231,6 @@
             // 
             // labelEarliestEstCuttingDate
             // 
-            this.labelEarliestEstCuttingDate.Lines = 0;
             this.labelEarliestEstCuttingDate.Location = new System.Drawing.Point(242, 16);
             this.labelEarliestEstCuttingDate.Name = "labelEarliestEstCuttingDate";
             this.labelEarliestEstCuttingDate.Size = new System.Drawing.Size(165, 23);
@@ -240,7 +239,6 @@
             // 
             // labelEarliestSCIDel
             // 
-            this.labelEarliestSCIDel.Lines = 0;
             this.labelEarliestSCIDel.Location = new System.Drawing.Point(242, 44);
             this.labelEarliestSCIDel.Name = "labelEarliestSCIDel";
             this.labelEarliestSCIDel.Size = new System.Drawing.Size(165, 23);
@@ -249,7 +247,6 @@
             // 
             // labelTargetLeadtime
             // 
-            this.labelTargetLeadtime.Lines = 0;
             this.labelTargetLeadtime.Location = new System.Drawing.Point(242, 70);
             this.labelTargetLeadtime.Name = "labelTargetLeadtime";
             this.labelTargetLeadtime.Size = new System.Drawing.Size(165, 23);
@@ -258,7 +255,6 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(551, 44);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(150, 23);
@@ -267,7 +263,6 @@
             // 
             // labelCompletionDate
             // 
-            this.labelCompletionDate.Lines = 0;
             this.labelCompletionDate.Location = new System.Drawing.Point(242, 99);
             this.labelCompletionDate.Name = "labelCompletionDate";
             this.labelCompletionDate.Size = new System.Drawing.Size(165, 23);
@@ -276,7 +271,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(29, 44);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(63, 23);
@@ -285,7 +279,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(29, 72);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(63, 23);
@@ -294,7 +287,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(29, 99);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(63, 23);
@@ -303,7 +295,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(29, 16);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(63, 23);
@@ -330,6 +321,7 @@
             // 
             // dateEarliestSCIDel
             // 
+            this.dateEarliestSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MinSciDelivery", true));
             this.dateEarliestSCIDel.IsSupportEditMode = false;
             this.dateEarliestSCIDel.Location = new System.Drawing.Point(410, 44);
             this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";
