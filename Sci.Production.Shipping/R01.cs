@@ -252,7 +252,7 @@ left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
 OUTER APPLY(
 SELECT [Date]=STUFF ((
 		SELECT CONCAT (',',a.Date)  FROM(
-			select DISTINCT [Date]=o.SDPDate,o.id
+			select DISTINCT [Date]=convert(varchar, o.SDPDate, 111),o.id
 			from PackingList_Detail pd WITH (NOLOCK) 
 			left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
 			where pd.ID = pl.id 
