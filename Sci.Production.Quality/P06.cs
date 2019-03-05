@@ -57,14 +57,7 @@ namespace Sci.Production.Quality
                 if (drEarly["CutInLine"] == DBNull.Value) dateEarliestEstCuttingDate.Text = "";
                 else dateEarliestEstCuttingDate.Value = Convert.ToDateTime(drEarly["CutInLine"]);
             }
-            if (MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')", CurrentMaintain["id"].ToString()), out drSci))
-            {
-                if (!MyUtility.Check.Empty(drSci["MinSciDelivery"]))
-                {
-                    if (drSci["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
-                    else dateEarliestSCIDel.Value = Convert.ToDateTime(drSci["MinSciDelivery"]);
-                }
-            }
+            MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')", CurrentMaintain["id"].ToString()), out drSci);
 
             DateTime? targT = null;
             if (!MyUtility.Check.Empty(drEarly["CUTINLINE"]) && !MyUtility.Check.Empty(drSci["MinSciDelivery"]))
@@ -82,25 +75,7 @@ namespace Sci.Production.Quality
             decimal dRowCount = DetailDatas.Count;
             string inspnum = "0";
             DataTable articleDT = (DataTable)detailgridbs.DataSource;
-
-            if (articleDT.Rows.Count != 0)
-            {
-                DataRow[] articleAry = articleDT.Select("status='Confirmed'");
-                if (articleAry.Length > 0)
-                {
-                    inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
-                    displayArticleofInspection.Text = inspnum + "%";
-                }
-                else
-                {
-                    displayArticleofInspection.Text = "";
-                }
-            }
-            else
-            {
-                displayArticleofInspection.Text = "";
-            }
-
+            
             DateTime CompDate;
             if (inspnum == "100")
             {
@@ -228,7 +203,26 @@ namespace Sci.Production.Quality
             Helper.Controls.ContextMenu.Generator(this.detailgridmenus).Menu("Delete this Record's detail", onclick: (s, e) => DeleteThisDetail()).Get(out delete);          
             
             base.OnFormLoaded();
-        }     
+        }
+
+        protected override DualResult ClickSavePost()
+        {
+            string sqlcmd = string.Empty;
+            foreach (DataRow dr in DetailDatas)
+            {
+                sqlcmd += $@"exec UpdateInspPercent 'LabColorFastness','{dr["POID"]}' ";
+            }
+
+            if (!MyUtility.Check.Empty(sqlcmd))
+            {
+                DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+                if (!result)
+                {
+                    return Result.F(result.ToString());
+                }
+            }
+            return base.ClickSavePost();
+        }
 
         // Context Menu選擇Create New test
         private void CreateNewTest()

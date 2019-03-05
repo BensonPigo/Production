@@ -1,9 +1,11 @@
 ﻿
+
 --將根據傳入參數，更新 PO.FIRInspPercent 或 PO.AIRInspPercent
 CREATE PROCEDURE [dbo].[UpdateInspPercent] 
 (
-	@Type varchar(10) = '' --FIR , AIR , FIRLab
+	@Type varchar(10) = '' --FIR , AIR , FIRLab, LabColorFastness
 	,@POID varchar(20) = ''
+	
 )
 AS
 BEGIN
@@ -50,7 +52,18 @@ BEGIN
 			 )
 			from PO where PO.ID=@POID
 		END
-
+		
+		IF @Type='LabColorFastness'
+		BEGIN
+			UPDATE p
+			SET 
+			LabColorFastnessPercent= (   select 
+				cnt= isnull(convert(varchar,round(convert(float,sum(case when status='Confirmed' then 1 else 0 end))/convert(float,count(*)),4)*100),0)
+				from ColorFastness 
+				where POID=@POID )
+			FROM [PO] p
+			where P.ID=@POID
+		END
 	END TRY
 	BEGIN CATCH
 		EXEC usp_GetErrorInfo;

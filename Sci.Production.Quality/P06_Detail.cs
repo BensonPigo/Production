@@ -951,6 +951,18 @@ where id='{ID}'";
                     }
                 }
 
+                string sqlcmd = string.Empty;
+
+                sqlcmd += $@"exec UpdateInspPercent 'LabColorFastness','{PoID}' ";
+
+                if (!MyUtility.Check.Empty(sqlcmd))
+                {
+                    DualResult dresult = DBProxy.Current.Execute(null, sqlcmd);
+                    if (!dresult)
+                    {
+                        this.ShowErr(dresult);
+                    }
+                }
             }
             // Amend
             else
