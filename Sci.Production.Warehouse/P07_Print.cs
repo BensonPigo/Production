@@ -245,18 +245,19 @@ namespace Sci.Production.Warehouse
                 objSheets.Cells[3, 1] = Date1;
                 objSheets.Cells[4, 1] = "ETA:" + ETA;
                 objSheets.Cells[5, 1] = "Invoice#:" + Invoice + "   From FTY ID:" + FTYID;
-                objSheets.Cells[5, 5] = "WK#:" + Wk;
+                objSheets.Cells[5, 6] = "WK#:" + Wk;
                 foreach (DataRow dr in dt.Rows)
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
-                    objSheets.Cells[nRow, 2] = dr["PoId"].ToString();
-                    objSheets.Cells[nRow, 3] = dr["SEQ"].ToString();
-                    objSheets.Cells[nRow, 4] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 5] = dr["ShipQty"].ToString() + " " + dr["pounit"].ToString();
-                    objSheets.Cells[nRow, 6] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["ActualWeight"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["Vaniance"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
+                    objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
+                    objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
+                    objSheets.Cells[nRow, 5] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["ShipQty"].ToString() + " " + dr["pounit"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["ActualWeight"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["Vaniance"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["Remark"].ToString();
                     nRow++;
                 }
 
