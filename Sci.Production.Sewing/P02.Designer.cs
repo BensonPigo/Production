@@ -52,6 +52,8 @@
             this.btnShareWworkingHoursToSP = new Sci.Win.UI.Button();
             this.label12 = new Sci.Win.UI.Label();
             this.txtsewinglineLine = new Sci.Production.Class.txtsewingline();
+            this.btnReqUnlock = new Sci.Win.UI.Button();
+            this.btnBatchRecall = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -68,6 +70,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnReqUnlock);
             this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.btnShareWworkingHoursToSP);
             this.masterpanel.Controls.Add(this.numEFF);
@@ -92,7 +95,7 @@
             this.masterpanel.Controls.Add(this.labelLine);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(918, 115);
+            this.masterpanel.Size = new System.Drawing.Size(953, 145);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
@@ -118,15 +121,16 @@
             this.masterpanel.Controls.SetChildIndex(this.numEFF, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnShareWworkingHoursToSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.label12, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnReqUnlock, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 115);
-            this.detailpanel.Size = new System.Drawing.Size(918, 298);
+            this.detailpanel.Location = new System.Drawing.Point(0, 145);
+            this.detailpanel.Size = new System.Drawing.Size(953, 313);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(715, 80);
+            this.gridicon.Location = new System.Drawing.Point(715, 110);
             this.gridicon.TabIndex = 5;
             // 
             // refresh
@@ -135,7 +139,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(918, 298);
+            this.detailgridcont.Size = new System.Drawing.Size(953, 313);
             // 
             // detail2
             // 
@@ -151,25 +155,25 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(918, 451);
+            this.detail.Size = new System.Drawing.Size(953, 496);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(918, 413);
+            this.detailcont.Size = new System.Drawing.Size(953, 458);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 413);
-            this.detailbtm.Size = new System.Drawing.Size(918, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 458);
+            this.detailbtm.Size = new System.Drawing.Size(953, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(918, 451);
+            this.browse.Size = new System.Drawing.Size(953, 496);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(926, 480);
+            this.tabs.Size = new System.Drawing.Size(961, 525);
             // 
             // createby
             // 
@@ -499,7 +503,7 @@
             // btnShareWworkingHoursToSP
             // 
             this.btnShareWworkingHoursToSP.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnShareWworkingHoursToSP.Location = new System.Drawing.Point(679, 4);
+            this.btnShareWworkingHoursToSP.Location = new System.Drawing.Point(784, 47);
             this.btnShareWworkingHoursToSP.Name = "btnShareWworkingHoursToSP";
             this.btnShareWworkingHoursToSP.Size = new System.Drawing.Size(132, 50);
             this.btnShareWworkingHoursToSP.TabIndex = 4;
@@ -531,9 +535,30 @@
             this.txtsewinglineLine.Size = new System.Drawing.Size(60, 23);
             this.txtsewinglineLine.TabIndex = 1;
             // 
+            // btnReqUnlock
+            // 
+            this.btnReqUnlock.Location = new System.Drawing.Point(784, 6);
+            this.btnReqUnlock.Name = "btnReqUnlock";
+            this.btnReqUnlock.Size = new System.Drawing.Size(132, 34);
+            this.btnReqUnlock.TabIndex = 19;
+            this.btnReqUnlock.Text = "Request Unlock";
+            this.btnReqUnlock.UseVisualStyleBackColor = true;
+            this.btnReqUnlock.Click += new System.EventHandler(this.BtnReqUnlock_Click);
+            // 
+            // btnBatchRecall
+            // 
+            this.btnBatchRecall.Location = new System.Drawing.Point(788, 12);
+            this.btnBatchRecall.Name = "btnBatchRecall";
+            this.btnBatchRecall.Size = new System.Drawing.Size(132, 30);
+            this.btnBatchRecall.TabIndex = 36;
+            this.btnBatchRecall.Text = "Batch Recall";
+            this.btnBatchRecall.UseVisualStyleBackColor = true;
+            this.btnBatchRecall.Click += new System.EventHandler(this.BtnBatchRecall_Click);
+            // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(926, 513);
+            this.ClientSize = new System.Drawing.Size(961, 558);
+            this.Controls.Add(this.btnBatchRecall);
             this.DefaultControl = "dateDate";
             this.DefaultDetailOrder = "OrderID";
             this.DefaultOrder = "OutputDate";
@@ -541,6 +566,8 @@
             this.GridUniqueKey = "OrderID";
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;
+            this.IsSupportRecall = true;
+            this.IsSupportSend = true;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P02";
@@ -549,6 +576,7 @@
             this.UniqueExpress = "ID";
             this.WorkAlias = "SewingOutput";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchRecall, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -594,5 +622,7 @@
         private Win.UI.Label labelLine;
         private Win.UI.Label labelDate;
         private Win.UI.Label label12;
+        private Win.UI.Button btnReqUnlock;
+        private Win.UI.Button btnBatchRecall;
     }
 }
