@@ -245,7 +245,24 @@ g.ID
 ,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
 , Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
 ,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
-
+,[OrderShipmodeSeq] = 
+STUFF ((
+select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+    from (
+        select distinct pd.OrderShipmodeSeq 
+        from PackingList_Detail pd WITH (NOLOCK) 
+        left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+        and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+        where pd.ID = pl.id
+        group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+    ) a 
+    for xml path('')
+), 1, 1, '') 
+, g.SONo
+, g.ShipModeID
+, g.Vessel
+, g.BLNo
+, g.BL2No
 from GMTBooking g WITH (NOLOCK) 
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
@@ -406,7 +423,7 @@ where pl.ID<>'' and 1=1 "));
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 27];
+                object[,] objArray = new object[1, 33];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -416,27 +433,33 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 4] = dr["MDivisionID"];
                     objArray[0, 5] = dr["PackID"];
                     objArray[0, 6] = MyUtility.Check.Empty(dr["OrderID"]) ? dr["OrderID"] : MyUtility.Convert.GetString(dr["OrderID"]).Substring(0, MyUtility.Convert.GetString(dr["OrderID"]).Length - 1);
-                    objArray[0, 7] = dr["POno"];
-                    objArray[0, 8] = dr["BuyerDelivery"];
-                    objArray[0, 9] = dr["SDPDate"];
-                    objArray[0, 10] = dr["PulloutDate"];
-                    objArray[0, 11] = dr["CutOffDate"];
-                    objArray[0, 12] = dr["SoConfirmDate"];
-                    objArray[0, 13] = dr["ETD"];
-                    objArray[0, 14] = dr["ETA"];
+                    objArray[0, 7] = dr["OrderShipmodeSeq"];
+                    objArray[0, 8] = dr["POno"];
+                    objArray[0, 9] = dr["BuyerDelivery"];
+                    objArray[0, 10] = dr["SDPDate"];
+                    objArray[0, 11] = dr["PulloutDate"];
+                    objArray[0, 12] = dr["CutOffDate"];
+                    objArray[0, 13] = dr["SONo"];
+                    objArray[0, 14] = dr["SoConfirmDate"];
                     objArray[0, 15] = dr["PulloutReportConfirmDate"];
                     objArray[0, 16] = dr["PulloutID"];
-                    objArray[0, 17] = dr["ShipQty"];
-                    objArray[0, 18] = dr["CTNQty"];
-                    objArray[0, 19] = dr["GW"];
-                    objArray[0, 20] = dr["CBM"];
-                    objArray[0, 21] = dr["CustCDID"];
-                    objArray[0, 22] = dr["Dest"];
-                    objArray[0, 23] = dr["ConfirmDate"];
-                    objArray[0, 24] = dr["AddName"];
-                    objArray[0, 25] = dr["AddDate"];
-                    objArray[0, 26] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 17] = dr["ShipModeID"];
+                    objArray[0, 18] = dr["ShipQty"];
+                    objArray[0, 19] = dr["CTNQty"];
+                    objArray[0, 20] = dr["GW"];
+                    objArray[0, 21] = dr["CBM"];
+                    objArray[0, 22] = dr["CustCDID"];
+                    objArray[0, 23] = dr["Dest"];
+                    objArray[0, 24] = dr["ConfirmDate"];
+                    objArray[0, 25] = dr["AddName"];
+                    objArray[0, 26] = dr["AddDate"];
+                    objArray[0, 27] = dr["ETD"];
+                    objArray[0, 28] = dr["ETA"];
+                    objArray[0, 29] = dr["BLNo"];
+                    objArray[0, 30] = dr["BL2No"];
+                    objArray[0, 31] = dr["Vessel"];
+                    objArray[0, 32] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
