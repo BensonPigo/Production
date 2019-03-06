@@ -886,13 +886,6 @@ Each Dyelot must be tested!", d));
                         _transactionscope.Dispose();
                         return;
                     }
-
-                    //更新PO.FIRLabInspPercent
-                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{maindr["POID"]}'")))
-                    {
-                        _transactionscope.Dispose();
-                        return;
-                    }
                     _transactionscope.Complete();
                     _transactionscope.Dispose();
                     MyUtility.Msg.InfoBox("Successfully");
@@ -912,6 +905,12 @@ Each Dyelot must be tested!", d));
             spam.Add(new SqlParameter("@Result", returnstr[0]));
             spam.Add(new SqlParameter("@id", maindr["ID"]));
             DBProxy.Current.Execute(null, cmdResult, spam);
+            //更新PO.FIRLabInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'FIRLab','{maindr["POID"]}'")))
+            {
+                ShowErr(upResult);
+                return;
+            }
             #endregion
 
             OnRequery();
@@ -1058,6 +1057,6 @@ Each Dyelot must be tested!", d));
             }
             decimal newAvgValue = (((decimal)dr["VerticalTest1"] + (decimal)dr["VerticalTest2"] + (decimal)dr["VerticalTest3"]) / 3);
             dr["Vertical_Average"] = Math.Round(newAvgValue, 2);
-        }   
+        }
     }
 }
