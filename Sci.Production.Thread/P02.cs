@@ -706,7 +706,7 @@ where a.ThreadRequisition_DetailUkey = '{0}'", masterID);
             //    return;
             // }
             // 確認orders.id + 工廠有沒有這筆,沒有則return
-            if (!MyUtility.Check.Seek(string.Format("Select * from orders WITH (NOLOCK) inner join Factory on orders.FactoryID=Factory.ID where orders.id='{0}' and orders.FtyGroup = '{1}' and Factory.IsProduceFty=1", id, this.factory)))
+            if (!MyUtility.Check.Seek(string.Format("Select 1 from orders WITH (NOLOCK) inner join Factory on orders.FactoryID=Factory.ID where orders.id='{0}' and orders.FtyGroup = '{1}' and Factory.IsProduceFty=1", id, this.factory)))
             {
                 e.Cancel = true;
                 this.txtSP.Text = string.Empty;
@@ -781,12 +781,13 @@ where   c.Styleukey = (select o.Styleukey
             }
 
             StringBuilder warningmsg = new StringBuilder();
-            foreach (DataRow temp in pretb_cons.Rows)
+            var query = from q in pretb_cons.AsEnumerable()
+                        .Where(w => w.Field<decimal>("MeterToCone") == 0)
+                        select q;
+
+            foreach (var q in query)
             {
-                if (Convert.ToDecimal(temp["MeterToCone"].ToString()) == 0)
-                {
-                    warningmsg.Append(string.Format("Thread Refno:{0} <No. of Meters Per Cones> is 0 can't calculate <No. of Cones>", temp["Refno"].ToString()) + Environment.NewLine);
-                }
+                warningmsg.Append(string.Format("Thread Refno:{0} <No. of Meters Per Cones> is 0 can't calculate <No. of Cones>", q.Field<string>("Refno")) + Environment.NewLine);
             }
 
             if (warningmsg.ToString() != string.Empty)
@@ -924,52 +925,6 @@ OUTER APPLY
 
                 #endregion
                 detailtb.Rows.Add(newdr);
-            }
-
-            DataTable subtb, sqlsubtb;
-            foreach (DataRow dr in detailtb.Rows)
-            {
-                string sqlsub = string.Format(
-                    @"select * from #tmp a where a.refno = '{0}' and a.threadColorid='{1}'",
-                    dr["Refno"].ToString(),
-                    dr["threadColorid"].ToString());
-
-                this.GetSubDetailDatas(dr, out subtb);
-                if (subtb.Columns.Contains("Allowance") == false)
-                {
-                    subtb.Columns.Add("Allowance");
-                }
-
-                MyUtility.Tool.ProcessWithDatatable(pretb_cons, string.Empty, sqlsub, out sqlsubtb);
-
-                #region 新增第三層
-                foreach (DataRow ddr in sqlsubtb.Rows)
-                {
-                    decimal sL = Convert.ToDecimal(ddr["SeamLength"]);
-                    decimal uRN = Convert.ToDecimal(ddr["UseRatioNumeric"]);
-                    decimal aQ = Convert.ToDecimal(ddr["Allowance"]);
-                    decimal oQ = Convert.ToDecimal(ddr["OrderQty"]);
-
-                    DataRow newdr = subtb.NewRow();
-                    newdr["Orderid"] = id;
-                    newdr["Article"] = ddr["Article"];
-                    newdr["ThreadCombID"] = ddr["ThreadCombId"];
-                    newdr["Threadcombdesc"] = ddr["Threadcombdesc"];
-                    newdr["operationid"] = ddr["operationid"];
-                    newdr["SeamLength"] = ddr["SeamLength"];
-                    newdr["SEQ"] = ddr["SEQ"];
-                    newdr["ThreadLocationid"] = ddr["ThreadLocationid"];
-
-                    // newdr["UseRatio"] = "";//已不需要
-                    newdr["UseRatioNumeric"] = ddr["UseRatioNumeric"];
-                    newdr["UseLength"] = (sL * uRN) + aQ;
-                    newdr["TotalLength"] = ((sL * uRN) + aQ) * oQ;
-                    newdr["Machinetypeid"] = ddr["Machinetypeid"];
-                    newdr["OrderQty"] = ddr["OrderQty"];
-                    newdr["Allowance"] = ddr["Allowance"];
-                    subtb.Rows.Add(newdr);
-                }
-                #endregion
             }
 
             #region 確認此訂單所有 Article 是否有在 Thread P01 設定 Refno & Color
