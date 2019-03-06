@@ -71,8 +71,8 @@ select distinct p.ID,pd.OrderID,p.INVNo,g.FCRDate,o.BrandID,pd.OrderShipmodeSeq,
 p.CustCDID,p.ShipModeID,p.Remark,p.CTNQty
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
-inner join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
 inner join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
+left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
 left join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.Id and oq.Seq = pd.OrderShipmodeSeq
 where p.Type = 'B'
 and p.MDivisionID = '{0}'", Sci.Env.User.Keyword));
