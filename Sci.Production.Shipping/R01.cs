@@ -225,10 +225,11 @@ g.ID
                             for xml path('')
                           ), 1, 1, '') 
 ,pl.PulloutDate
-
 --
+,g.CutOffDate
 ,[SoConfirmDate]=g.SOCFMDate
-,[CutOffDate]= cutoffdate.Date
+,g.ETD
+,g.ETA
 ,PulloutReportConfirmDate.PulloutReportConfirmDate
 ,[PulloutID]=pl.PulloutID
 --
@@ -249,16 +250,6 @@ from GMTBooking g WITH (NOLOCK)
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
-OUTER APPLY(
-SELECT [Date]=STUFF ((
-		SELECT CONCAT (',',a.Date)  FROM(
-			select DISTINCT [Date]=convert(varchar, o.SDPDate, 111),o.id
-			from PackingList_Detail pd WITH (NOLOCK) 
-			left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
-			where pd.ID = pl.id 
-		)a WHERE a.Date IS NOT NULL for xml path('')
-	), 1, 1, '') 
-)CutOffDate
 OUTER APPLY(
 SELECT [PulloutReportConfirmDate]=STUFF ((
 		SELECT CONCAT (',',a.AddDate) FROM (
@@ -415,7 +406,7 @@ where pl.ID<>'' and 1=1 "));
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 25];
+                object[,] objArray = new object[1, 27];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -429,20 +420,22 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 8] = dr["BuyerDelivery"];
                     objArray[0, 9] = dr["SDPDate"];
                     objArray[0, 10] = dr["PulloutDate"];
-                    objArray[0, 11] = dr["SoConfirmDate"];
-                    objArray[0, 12] = dr["CutOffDate"];
-                    objArray[0, 13] = dr["PulloutReportConfirmDate"];
-                    objArray[0, 14] = dr["PulloutID"];
-                    objArray[0, 15] = dr["ShipQty"];
-                    objArray[0, 16] = dr["CTNQty"];
-                    objArray[0, 17] = dr["GW"];
-                    objArray[0, 18] = dr["CBM"];
-                    objArray[0, 19] = dr["CustCDID"];
-                    objArray[0, 20] = dr["Dest"];
-                    objArray[0, 21] = dr["ConfirmDate"];
-                    objArray[0, 22] = dr["AddName"];
-                    objArray[0, 23] = dr["AddDate"];
-                    objArray[0, 24] = dr["Remark"];
+                    objArray[0, 11] = dr["CutOffDate"];
+                    objArray[0, 12] = dr["SoConfirmDate"];
+                    objArray[0, 13] = dr["ETD"];
+                    objArray[0, 14] = dr["ETA"];
+                    objArray[0, 15] = dr["PulloutReportConfirmDate"];
+                    objArray[0, 16] = dr["PulloutID"];
+                    objArray[0, 17] = dr["ShipQty"];
+                    objArray[0, 18] = dr["CTNQty"];
+                    objArray[0, 19] = dr["GW"];
+                    objArray[0, 20] = dr["CBM"];
+                    objArray[0, 21] = dr["CustCDID"];
+                    objArray[0, 22] = dr["Dest"];
+                    objArray[0, 23] = dr["ConfirmDate"];
+                    objArray[0, 24] = dr["AddName"];
+                    objArray[0, 25] = dr["AddDate"];
+                    objArray[0, 26] = dr["Remark"];
                     worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
