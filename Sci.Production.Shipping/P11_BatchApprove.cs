@@ -17,14 +17,16 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class P11_BatchApprove : Sci.Win.Subs.Base
     {
+        Action reloadParant;
         private DataTable dt;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         /// <summary>
         /// P11_BatchImport
         /// </summary>
-        public P11_BatchApprove()
+        public P11_BatchApprove(Action ReloadParant)
         {
             this.InitializeComponent();
+            this.reloadParant = ReloadParant;
         }
 
         /// <inheritdoc/>
@@ -145,6 +147,9 @@ where id in({string.Join(",", ids)})
                 this.ShowErr(result);
                 return;
             }
+
+            this.Query();
+            this.reloadParant();
         }
 
         private void BtnExcel_Click(object sender, EventArgs e)

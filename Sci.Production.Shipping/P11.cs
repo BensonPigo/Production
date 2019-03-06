@@ -414,8 +414,14 @@ where p.INVNo in ({string.Join(",", ids)})
 
         private void BtnBatchApprove(object sender, EventArgs e)
         {
-            Sci.Production.Shipping.P11_BatchApprove callNextForm = new P11_BatchApprove();
+            Sci.Production.Shipping.P11_BatchApprove callNextForm = new P11_BatchApprove(this.Reload);
             callNextForm.ShowDialog(this);
+        }
+
+        public void Reload()
+        {
+            this.ReloadDatas();
+            this.RenewData();
         }
     }
 }
