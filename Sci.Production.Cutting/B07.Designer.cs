@@ -115,7 +115,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(182, 23);
             this.label1.TabIndex = 10;
-            this.label1.Text = "SetUpTime(secs/marker)";
+            this.label1.Text = "SetUpTime(sec/marker)";
             // 
             // numWindowTime
             // 
@@ -165,7 +165,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(182, 23);
             this.label2.TabIndex = 17;
-            this.label2.Text = "WindowTime (secs)";
+            this.label2.Text = "WindowTime (sec)";
             // 
             // label4
             // 

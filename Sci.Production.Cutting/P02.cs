@@ -186,10 +186,28 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(isnull(fi.avgInQty,0)=0,1,round(sum(a.Cons)over(partition by a.CutRef,a.MDivisionId)/fi.avgInQty,0)),sum(a.Layer)over(partition by a.CutRef,a.MDivisionId),sum(a.Cons)over(partition by a.CutRef,a.MDivisionId),1),0)as float),','
-				,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(iif(a.ActCuttingPerimeter not like '%yd%','0',a.ActCuttingPerimeter)),4),
-				a.CutCellid,sum(a.Layer)over(partition by a.CutRef,a.MDivisionId),c.WeaveTypeID,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId)),0)as float)
+	
+	,SandCTime = concat(
+		'Spr.:',cast(round(isnull(
+			dbo.GetSpreadingTime(
+					c.WeaveTypeID,
+					a.Refno,
+					iif(isnull(fi.avgInQty,0)=0,1,round(iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId))/fi.avgInQty,0)),
+					iif(isnull(a.CutRef,'')='',a.Layer,sum(a.Layer)over(partition by a.CutRef,a.MDivisionId)),
+					iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId)),
+					1
+				)/60.0,0),2)as float),' mins, '
+		
+		,'Cut:',cast(round(isnull(
+			dbo.GetCuttingTime(
+					round(dbo.GetActualPerimeter(iif(a.ActCuttingPerimeter not like '%yd%','0',a.ActCuttingPerimeter)),4),
+					a.CutCellid,
+					iif(isnull(a.CutRef,'')='',a.Layer,sum(a.Layer)over(partition by a.CutRef,a.MDivisionId)),
+					c.WeaveTypeID,
+					iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId))
+				)/60.0,0),2)as float),' mins'
 	)--同裁次若ActCuttingPerimeter週長若不一樣就是有問題, 所以ActCuttingPerimeter,直接用當前這筆
+
     ,isbyAdditionalRevisedMarker = cast(0 as int)
     ,fromukey = a.ukey
 from Workorder a WITH (NOLOCK)

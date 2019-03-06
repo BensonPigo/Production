@@ -30,6 +30,7 @@ namespace Sci.Production.Cutting
         private string CutCell2;
         private string CuttingSP;
         private decimal? Speed;
+        private decimal? WorkHoursDay ;
 
 
         public R08(ToolStripMenuItem menuitem)
@@ -52,7 +53,7 @@ namespace Sci.Production.Cutting
             this.CutCell2 = txtCell2.Text;
             this.CuttingSP = txtCuttingSp.Text;
             this.Speed = numSpeed.Value;
-
+            this.WorkHoursDay = numWorkHourDay.Value;
             return base.ValidateInput();
         }
 
@@ -150,6 +151,7 @@ select distinct
 	FabricCombo=isnull(w.FabricCombo,''),
 	MarkerLength=iif(w.Layer=0,0,w.cons/w.Layer),
 	PerimeterM=isnull(iif(w.ActCuttingPerimeter not like '%yd%',w.ActCuttingPerimeter,cast(dbo.GetActualPerimeter(w.ActCuttingPerimeter) as nvarchar)),''),
+	PerimeterYd=isnull(iif(w.ActCuttingPerimeter not like '%yd%',w.ActCuttingPerimeter,cast(dbo.GetActualPerimeterYd(w.ActCuttingPerimeter) as nvarchar)),''),
 	t.Layer,
 	SizeCode=isnull(SizeCode.SizeCode,''),
 	t.Cons,
@@ -232,33 +234,31 @@ outer apply(
 )ActSpd
 
 select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,
-	MarkerLength,PerimeterM,Layer,SizeCode,Cons,EXCESSqty,NoofRoll,DyeLot,NoofWindow,ActualSpeed,
-	[PreparationTime_min] = PreparationTime/60.0,
-	[ChangeoverTime_min] = ChangeoverTime/60.0,
-	[SpreadingSetupTime_min] = SpreadingSetupTime/60.0,
-	[MachineSpreadingTime_min]  =SpreadingTime/60.0,
-	[Separatortime_min] = SeparatorTime/60.0,
-	[ForwardTime_min] = ForwardTime/60.0,
-	[CuttingSetupTime_min] = CuttingSetUpTime/60.0,
-	MachCuttingTime_min,
-	[WindowTime_min] = WindowTime/60.0,
-	[TotalSpreadingTime_min] = round(isnull(PreparationTime * iif(Layer=0,0,Cons/Layer),0) + 
-						 isnull(Changeovertime * NoofRoll,0) +
-						 isnull(SpreadingSetupTime,0) +
-						 isnull(SpreadingTime * Cons,0) +
-						 isnull(SeparatorTime * (DyeLot -1),0) +
-						 isnull(ForwardTime,0),2)
-                        /60
-						 ,
-	[TotalCuttingTime_min] = round(isnull(CuttingSetUpTime,0) + 
-					   iif(isnull(ActualSpeed,0)=0,0,isnull(p.PerimeterM_num,0)/ActualSpeed)*60 + 
-					   isnull(Windowtime * iif(isnull(Layer,0)=0,0,Cons/Layer*0.9144)/WindowLength,0),2)
-                        /60
-					   
+	MarkerLength,PerimeterYd,Layer,SizeCode,Cons,EXCESSqty,NoofRoll,DyeLot,NoofWindow,ActualSpeed,
+	[PreparationTime_min],
+	[ChangeoverTime_min],
+	[SpreadingSetupTime_min],
+	[MachineSpreadingTime_min],
+	[Separatortime_min],
+	[ForwardTime_min],
+	[CuttingSetupTime_min],
+	[MachCuttingTime_min],
+	[WindowTime_min],
+	[TotalSpreadingTime_min] =isnull([PreparationTime_min],0)+isnull([ChangeoverTime_min],0)+isnull([SpreadingSetupTime_min],0)+
+							  isnull([MachineSpreadingTime_min],0)+isnull([Separatortime_min],0)+isnull([ForwardTime_min],0)						 ,
+	[TotalCuttingTime_min] = isnull([CuttingSetupTime_min],0)+isnull([MachCuttingTime_min],0)+isnull([WindowTime_min],0)					   
 into #detail
 from #tmp3
 outer apply(select PerimeterM_num=iif(isnumeric(PerimeterM)=1,cast(PerimeterM as numeric(20,4)),0))p
-outer apply(select MachCuttingTime_min = iif(isnull(ActualSpeed,0)=0,0,p.PerimeterM_num/ActualSpeed))a
+outer apply(select [PreparationTime_min]=Round(PreparationTime * iif(Layer=0,0,Cons/Layer)/60.0,2))cal1
+outer apply(select [ChangeoverTime_min]=Round(Changeovertime * NoofRoll/60.0,2))cal2
+outer apply(select [SpreadingSetupTime_min] = Round(SpreadingSetupTime/60.0,2))cal3
+outer apply(select [MachineSpreadingTime_min]  =Round(SpreadingTime * Cons/60.0,2))cal4
+outer apply(select [Separatortime_min] = Round(SeparatorTime * (DyeLot -1)/60.0,2))cal5
+outer apply(select [ForwardTime_min] = Round(ForwardTime/60.0,2))cal6
+outer apply(select [CuttingSetupTime_min]=Round(CuttingSetUpTime/60.0,2))cal7
+outer apply(select [MachCuttingTime_min]=Round(iif(isnull(ActualSpeed,0)=0,0,isnull(p.PerimeterM_num,0)/ActualSpeed),2))cal8
+outer apply(select [WindowTime_min]=Round(Windowtime * iif(isnull(Layer,0)=0 or isnull(WindowLength,0)=0,0,(Cons/Layer*0.9144)/WindowLength)/60,2))cal9
 
 select * from #detail order by FactoryID,EstCutDate,CutCellid
 
@@ -279,7 +279,7 @@ select
 	d.CutCellid,
 	CuttingMachDescription = cm.Description,
 	AvgCutSpeedMperMin=avg(ActualSpeed),
-	TotalCuttingPerimeter = sum(iif(isnumeric(d.PerimeterM)=1,cast(d.PerimeterM as numeric(20,4)),0)),
+	TotalCuttingPerimeter = sum(iif(isnumeric(d.PerimeterYd)=1,cast(d.PerimeterYd as numeric(20,4)),0)),
 	TotalCutMarkerQty = count(1),
 	TotalCutFabricYardage = Sum(d.Cons),
 	TotalCuttingTime_hrs = sum(d.TotalCuttingTime_min)/60.0
@@ -288,6 +288,7 @@ inner join CutCell cc with(nolock)on cc.ID = d.CutCellid
 left join CuttingMachine cm with(nolock)on cm.ID = cc.CuttingMachineID
 where isnull(d.CutCellid,'') <>''
 group by d.CutCellid, cm.Description
+order by d.CutCellid
 
 drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
 ";
@@ -334,11 +335,12 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             {
                 worksheet.Cells[4, i + 2] = sodt.Rows[i]["SpreadingNoID"];
                 col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                worksheet.Cells[5, i + 2] = this.WorkHoursDay;
                 worksheet.Cells[6, i + 2] = $"={col}5*F$2";
                 worksheet.Cells[7, i + 2] = sodt.Rows[i]["TotalSpreadingYardage"];
                 worksheet.Cells[8, i + 2] = sodt.Rows[i]["TotalSpreadingMarkerQty"];
                 worksheet.Cells[9, i + 2] = sodt.Rows[i]["TotalSpreadingTime_hr"];
-                worksheet.Cells[10, i + 2] = $"=({col}9/{col}6)*100";
+                worksheet.Cells[10, i + 2] = $"=({col}9/{col}6)";
                 worksheet.Cells[11, i + 2] = $"={col}9-{col}6";
                 worksheet.Cells[12, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2)),\" | \",IF({col}6=0,0,Round({col}9/{col}6,2)),\" | \")";
                 worksheet.Cells[13, i + 2] = $"=IF(({this.Speed}*{col}5)=0,0,Round({col}7/({this.Speed}*{col}5),2))*IF({col}6=0,0,Round({col}9/{col}6,2))/100";
@@ -353,13 +355,14 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
                 worksheet.Cells[17, i + 2] = codt.Rows[i]["CutCellid"];
                 worksheet.Cells[18, i + 2] = codt.Rows[i]["CuttingMachDescription"];
                 col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
+                worksheet.Cells[19, i + 2] = this.WorkHoursDay;
                 worksheet.Cells[20, i + 2] = $"={col}19*F$2";
                 worksheet.Cells[21, i + 2] = codt.Rows[i]["AvgCutSpeedMperMin"];
                 worksheet.Cells[22, i + 2] = codt.Rows[i]["TotalCuttingPerimeter"];
                 worksheet.Cells[23, i + 2] = codt.Rows[i]["TotalCutMarkerQty"];
                 worksheet.Cells[24, i + 2] = codt.Rows[i]["TotalCutFabricYardage"];
                 worksheet.Cells[25, i + 2] = codt.Rows[i]["TotalCuttingTime_hrs"];
-                worksheet.Cells[26, i + 2] = $"=({col}25/{col}20)*100";
+                worksheet.Cells[26, i + 2] = $"=({col}25/{col}20)";
                 worksheet.Cells[27, i + 2] = $"={col}26-{col}20";
                 worksheet.Cells[28, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2)),\" | \",IF({col}20=0,0,Round({col}25/{col}20,2)),\" | \")";
                 worksheet.Cells[29, i + 2] = $"=IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2))*IF({col}20=0,0,Round({col}25/{col}20,2))/100";

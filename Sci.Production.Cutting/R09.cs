@@ -81,12 +81,12 @@ select [Factory] = wo_Before.FactoryID
 ,[ExcessQty_After] = isnull( Excess_After.strQty,0)
 ,[Roll] = cast(n.NoofRoll as float)
 ,[NoOfWindow] = CONVERT(float,round((wo_Before.Cons/ wo_Before.Layer),2))
-,[Perimeter_Before] = cast(ROUND(dbo.GetActualPerimeter(wo_before.ActCuttingPerimeter),2) as float)
+,[Perimeter_Before] = cast(iif(wo_before.ActCuttingPerimeter not like '%yd%','0',ROUND(dbo.GetActualPerimeterYd(wo_before.ActCuttingPerimeter),2)) as float)
 ,[Perimeter_After] = Perimeter_After.strPerimeter
 ,[CuttingSpeed_Before] = ISNULL(  ActSpeed_Before.ActualSpeed,0)
 ,[CuttingSpeed_After] =ISNULL( ActSpeed_After.strActualSpeed,0)
 ,[SpreadingTime_Before] = isnull(cast(round(dbo.GetSpreadingTime(f.WeaveTypeID,wo_before.Refno,n.NoofRoll,sl.Layer,sc.Cons,1)/60,2)as float),0)
-,[CuttingTime_Before] = ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeter(iif(wo_before.ActCuttingPerimeter not like '%yd%','0',wo_before.ActCuttingPerimeter)),4),wo_Before.CutCellid,sl.Layer,f.WeaveTypeID,sc.Cons),0 )as Float) /60,2)
+,[CuttingTime_Before] = ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeterYd(iif(wo_before.ActCuttingPerimeter not like '%yd%','0',wo_before.ActCuttingPerimeter)),4),wo_Before.CutCellid,sl.Layer,f.WeaveTypeID,sc.Cons),0 )as Float) /60,2)
 into #tmp
 from WorkOrderRevisedMarkerOriginalData wo_Before
 left join orders o on o.ID=wo_Before.ID
@@ -129,7 +129,7 @@ select strCons = stuff(
 outer apply(
 select strPerimeter = stuff(
 (
-	select concat(',',isnull(convert(varchar(100),ROUND(dbo.GetActualPerimeter(ActCuttingPerimeter),2)),0))
+	select concat(',',isnull(convert(varchar(100),iif(ActCuttingPerimeter not like '%yd%','0',ROUND(dbo.GetActualPerimeterYd(ActCuttingPerimeter),2))),0))
 	from WorkOrder
 	where Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,','))
 	For XML path('')
@@ -370,7 +370,7 @@ outer apply(
 	select  CuttingTime = cast(round((sum(CuttingTime) /60) ,2)- t.CuttingTime_Before as float)  from 
 	(
 		select CuttingTime = 
- ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeter(iif(ActCuttingPerimeter not like '%yd%','0',ActCuttingPerimeter)),2)
+ ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeterYd(iif(ActCuttingPerimeter not like '%yd%','0',ActCuttingPerimeter)),2)
  ,CutCellid,sl.Layer,t.FabricType,sc.Cons),0 )as Float) ,2)
 		from WorkOrder
 		outer apply(select Layer = sum(Layer)over(partition by CutRef))sl
@@ -384,7 +384,7 @@ select Time = stuff(
 	select concat(',',CuttingTime ) from 
 	(
 select CuttingTime = 
- ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeter(iif(ActCuttingPerimeter not like '%yd%','0',ActCuttingPerimeter)),2)
+ ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeterYd(iif(ActCuttingPerimeter not like '%yd%','0',ActCuttingPerimeter)),2)
  ,CutCellid,sl.Layer,t.FabricType,sc.Cons),0 )as Float) /60,2)
 		from WorkOrder
 		outer apply(select Layer = sum(Layer)over(partition by CutRef))sl
