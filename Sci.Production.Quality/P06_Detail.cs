@@ -864,6 +864,13 @@ where id='{ID}'";
             {
                 ShowErr(upResult);                
             }
+
+            //更新PO.FIRLabInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabColorFastness','{PoID}'")))
+            {
+                this.ShowErr(upResult);
+            }
+
             return base.OnSave();
         }
 
@@ -970,7 +977,7 @@ where id='{ID}'";
             }
             //更新PO.FIRLabInspPercent
             DualResult result_check;
-            if (!(result_check = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabColorFastness','{maindr["POID"]}'")))
+            if (!(result_check = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabColorFastness','{PoID}'")))
             {
                 this.ShowErr(result_check);
             }
