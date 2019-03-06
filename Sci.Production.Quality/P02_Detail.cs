@@ -28,6 +28,7 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;        
         private bool canedit;
         private string id;
+        private string poid;
 
         public P02_Detail(bool CanEdit, string airID)
         {
@@ -42,10 +43,12 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Seek(air_cmd, out dr))
             {
                 txtSEQ.Text = dr["SEQ1"].ToString() + " - " + dr["SEQ2"].ToString();
+                poid = dr["Poid"].ToString();
             }
             else
             {
                 txtSEQ.Text = "";
+                poid = string.Empty;
             }
             
             Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
@@ -97,6 +100,7 @@ namespace Sci.Production.Quality
 
                                 return;
                             }
+
                             _transactionscope1.Complete();
                             _transactionscope1.Dispose();
                             btn_status(id);
@@ -166,6 +170,7 @@ namespace Sci.Production.Quality
 
                             return;
                         }
+                        
                         _transactionscope.Complete();
                         _transactionscope.Dispose();
                         MyUtility.Msg.InfoBox("Successfully");
@@ -183,6 +188,12 @@ namespace Sci.Production.Quality
                     }
                 }
                 #endregion
+            }
+            //更新PO.FIRInspPercent和AIRInspPercent
+            DualResult result;
+            if (!(result = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{poid}';")))
+            {
+                this.ShowErr(result);
             }
         }
 

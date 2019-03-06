@@ -953,8 +953,6 @@ where id='{ID}'";
 
                 string sqlcmd = string.Empty;
 
-                sqlcmd += $@"exec UpdateInspPercent 'LabColorFastness','{PoID}' ";
-
                 if (!MyUtility.Check.Empty(sqlcmd))
                 {
                     DualResult dresult = DBProxy.Current.Execute(null, sqlcmd);
@@ -968,6 +966,13 @@ where id='{ID}'";
             else
             {
                 DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='',status='New',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dt.Rows[0]["id"]));
+
+            }
+            //更新PO.FIRLabInspPercent
+            DualResult result_check;
+            if (!(result_check = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabColorFastness','{maindr["POID"]}'")))
+            {
+                this.ShowErr(result_check);
             }
             OnRequery();
         }

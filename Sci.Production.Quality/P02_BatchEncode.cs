@@ -262,6 +262,11 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
                 }
             }
 
+            //更新PO.FIRInspPercent和AIRInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIR','{masterID}';")))
+            {
+                ShowErr(upResult);
+            }
             this.QueryData();
         }
 
