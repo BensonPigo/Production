@@ -25,6 +25,7 @@ Where id='{poid}'
 and SCIRefno ='{sciRefno}' 
 and Junk != 1 
 and seq1 not like '7%'
+and Seq1 not like '5%'
 union all
 select SEQ1,SEQ2,ColorID
 from PO_Supp_Detail psd1
@@ -42,7 +43,7 @@ where exists (
 		and b.BrandGroup = Brand.BrandGroup)
 and psd1.ID = '{poid}'
 and psd1.Junk != 1
-and psd1.seq1 like '7%'
+and (psd1.seq1 like '7%' or psd1.seq1 like '5%')
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out dtPoSuppDetail);
 
