@@ -310,7 +310,7 @@ s.DescriptionDetail
 	ShipFoc=B.ShipFoc,
 	ShipETA=B.ShipETA
 	FROM Machine.DBO.PartPO_Detail A
-	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno and  a.SEQ2=b.Seq2 and a.id = b.MmsReqID and b.Junk=0
+	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno AND a.SEQ1=b.SEQ1 AND a.SEQ2=b.Seq2 and a.id = b.MmsReqID and b.Junk=0
 	INNER JOIN  Machine.DBO.PartPO C ON A.ID=C.ID
 	WHERE C.FactoryID in (select id from @Sayfty)
 
@@ -374,7 +374,7 @@ update t
 		t.ShipFoc=s.ShipFoc,
 		t.ShipETA=s.ShipETA
 		from  Machine.dbo.PartPO_Detail as  t
-		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID  and t.seq2=s.seq2 and s.Junk=0
+		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID AND t.Seq1=s.Seq1 and t.seq2=s.seq2 and s.Junk=0
 		inner join Machine.dbo.PartPO a on t.id=a.ID
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
 		where 1=1
