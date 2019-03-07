@@ -927,6 +927,46 @@ OUTER APPLY
                 detailtb.Rows.Add(newdr);
             }
 
+            DataTable subtb;
+            foreach (DataRow dr in detailtb.Rows)
+            {
+                var queryS = from p in pretb_cons.AsEnumerable()
+                             .Where(p => p.Field<string>("Refno") == dr["Refno"].ToString() && p.Field<string>("threadColorid") == dr["threadColorid"].ToString())
+                             select p;
+
+                this.GetSubDetailDatas(dr, out subtb);
+                if (subtb.Columns.Contains("Allowance") == false)
+                {
+                    subtb.Columns.Add("Allowance");
+                }
+                #region 新增第三層
+                foreach (var item in queryS)
+                {
+                    decimal sL = Convert.ToDecimal(item["SeamLength"]);
+                    decimal uRN = Convert.ToDecimal(item["UseRatioNumeric"]);
+                    decimal aQ = Convert.ToDecimal(item["Allowance"]);
+                    decimal oQ = Convert.ToDecimal(item["OrderQty"]);
+
+                    DataRow newdr = subtb.NewRow();
+                    newdr["Orderid"] = id;
+                    newdr["Article"] = item["Article"];
+                    newdr["ThreadCombID"] = item["ThreadCombId"];
+                    newdr["Threadcombdesc"] = item["Threadcombdesc"];
+                    newdr["operationid"] = item["operationid"];
+                    newdr["SeamLength"] = item["SeamLength"];
+                    newdr["SEQ"] = item["SEQ"];
+                    newdr["ThreadLocationid"] = item["ThreadLocationid"];
+                    newdr["UseRatioNumeric"] = item["UseRatioNumeric"];
+                    newdr["UseLength"] = (sL * uRN) + aQ;
+                    newdr["TotalLength"] = ((sL * uRN) + aQ) * oQ;
+                    newdr["Machinetypeid"] = item["Machinetypeid"];
+                    newdr["OrderQty"] = item["OrderQty"];
+                    newdr["Allowance"] = item["Allowance"];
+                    subtb.Rows.Add(newdr);
+                }
+                #endregion
+            }
+
             #region 確認此訂單所有 Article 是否有在 Thread P01 設定 Refno & Color
             string strCheckP01Detail = string.Format(
                 @"
