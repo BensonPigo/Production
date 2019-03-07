@@ -92,6 +92,7 @@ select  0 as selected
 from ftyinventory c WITH (NOLOCK) 
 left join Receiving_Detail rd WITH (NOLOCK) on c.POID=rd.PoId
     and c.Seq1=rd.Seq1 and c.Seq2=rd.Seq2 and c.Roll=rd.Roll and c.Dyelot=rd.Dyelot
+LEFT JOIN Orders o ON o.id =c.poid
 outer apply(
 	select top 1 ed.FabricType,f.MDivisionID 
     from Export e WITH (NOLOCK)
@@ -100,7 +101,7 @@ outer apply(
 	where ed.PoID=c.POID and ed.Seq1=c.Seq1 and ed.Seq2=c.Seq2
 )export
 Where   c.lock = 0 
-and export.MDivisionID = '{0}' 
+and ( export.MDivisionID = '{0}' OR o.MDivisionID= '{0}' )
         and c.inqty-c.outqty + c.adjustqty > 0 
         and c.Poid = @sp 
         and c.stocktype = '{1}'", Sci.Env.User.Keyword, stocktype));
