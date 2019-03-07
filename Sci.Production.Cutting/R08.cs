@@ -394,8 +394,9 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             }
 
             worksheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden; // 隱藏第3頁sheet
-
             #endregion
+            worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表   
+            worksheet.Columns.AutoFit();
             #region 釋放上面開啟過excel物件
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
