@@ -244,23 +244,29 @@ select * from Expt", e.FormattedValue.ToString());
                         string chkExp = string.Format(
                             @"
 with GB as 
-(select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
- '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
- '' as ShareBase, 0 as FtyWK 
- from GMTBooking g  WITH (NOLOCK) 
- left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
- left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
- where 1=1  and g.id='{0}' ), 
+(   
+    select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
+	'' as ShippingAPID, iif(g.BLNo is null or g.BLNo ='' , g.BL2No,g.BLNo) as BLNo
+	,  '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
+	'' as ShareBase, 0 as FtyWK 
+	from GMTBooking g  WITH (NOLOCK) 
+	left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
+	left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
+    where 1=1  and g.id='{0}' 
+), 
 PL as 
-(select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,
-'' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK 
- from PackingList WITH (NOLOCK) 
- where  (Type = 'F' or Type = 'L')  and id='{0}' ) ,
+(   select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,
+    '' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK 
+    from PackingList WITH (NOLOCK) 
+    where  (Type = 'F' or Type = 'L')  and id='{0}' 
+) ,
 FTY AS
-(select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno,
-'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
-from FtyExport fe WITH (NOLOCK) 
- where fe.Type = 3  and fe.id='{0}')
+(
+    select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno,
+    '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+    from FtyExport fe WITH (NOLOCK) 
+    where fe.Type = 3  and fe.id='{0}'
+)
 select * from GB 
 union all 
 select * from PL
