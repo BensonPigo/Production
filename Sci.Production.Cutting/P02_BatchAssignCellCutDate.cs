@@ -72,14 +72,14 @@ namespace Sci.Production.Cutting
             Cell.CellValidating += (s, e) =>
             {
                 DualResult DR; DataTable DT;
-                
+
                 if (!this.EditMode) { return; }
                 // 右鍵彈出功能
                 if (e.RowIndex == -1) return;
                 DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
 
                 // 空白不檢查
-                if (e.FormattedValue.ToString().Empty()) return; 
+                if (e.FormattedValue.ToString().Empty()) return;
 
                 string oldvalue = dr["Cutcellid"].ToString();
                 string newvalue = e.FormattedValue.ToString();
@@ -131,7 +131,7 @@ namespace Sci.Production.Cutting
                     DialogResult result = S.ShowDialog();
                     if (result == DialogResult.Cancel) { return; }
                     DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
-                    dr["SpreadingNoID"]= S.GetSelectedString();
+                    dr["SpreadingNoID"] = S.GetSelectedString();
                     if (!MyUtility.Check.Empty(S.GetSelecteds()[0]["CutCell"]))
                     {
                         dr["Cutcellid"] = S.GetSelecteds()[0]["CutCell"];
@@ -143,7 +143,7 @@ namespace Sci.Production.Cutting
             };
             SpreadingNo.CellValidating += (s, e) =>
             {
-                if (!this.EditMode) return; 
+                if (!this.EditMode) return;
                 if (e.RowIndex == -1) return;
                 DataRow dr = gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
 
@@ -163,7 +163,7 @@ namespace Sci.Production.Cutting
                     MyUtility.Msg.WarningBox(string.Format("<SpreadingNo> : {0} data not found!", newvalue));
                     return;
                 }
-                
+
                 dr["SpreadingNoID"] = newvalue;
 
                 if (!MyUtility.Check.Empty(SpreadingNodr["CutCellID"]))
@@ -279,7 +279,7 @@ namespace Sci.Production.Cutting
              .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
              .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3), settings: col_Seq1)
-             .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), settings:col_Seq2)
+             .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2), settings: col_Seq2)
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Date("estcutdate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: EstCutDate)
              .Date("sewinline", header: "Sewing inline", width: Widths.AnsiChars(10), iseditingreadonly: true);
@@ -321,7 +321,7 @@ namespace Sci.Production.Cutting
             string orderby = "SORT_NUM ASC,FabricCombo ASC,multisize DESC,Colorid ASC,Order_SizeCode_Seq DESC,MarkerName ASC,Ukey";
             curTb.DefaultView.RowFilter = filter;
             curTb.DefaultView.Sort = orderby;
-            gridBatchAssignCellEstCutDate.DataSource = curTb;        
+            gridBatchAssignCellEstCutDate.DataSource = curTb;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -360,7 +360,7 @@ namespace Sci.Production.Cutting
             if (warningMsg.Count > 0)
             {
                 MyUtility.Msg.WarningBox(warningMsg.Select(x => x).Distinct().ToList().JoinToString("\n"));
-            }                
+            }
         }
 
         private void btnBatchUpdateEstCutDate_Click(object sender, EventArgs e)
@@ -376,13 +376,13 @@ namespace Sci.Production.Cutting
                     continue;
 
                 if (dr["Sel"].ToString() == "True")
-                {   
+                {
                     if (cdate != "")
                     {
                         dr["estcutdate"] = cdate;
                     }
                     else
-                    {   
+                    {
                         dr["estcutdate"] = DBNull.Value;
                     }
                 }
@@ -390,9 +390,13 @@ namespace Sci.Production.Cutting
         }
 
         private void btnBatchUpdSeq_Click(object sender, EventArgs e)
-        {   
+        {
             string Seq1 = txtSeq1.Text;
             string Seq2 = txtSeq2.Text;
+            DataRow drCheckColor;
+            bool isColorMatch = true;
+            List<DataRow> listColorchangedDr = new List<DataRow>();
+            List<DataRow> listOriDr = new List<DataRow>();
 
             // 不可輸入空白
             if (MyUtility.Check.Empty(Seq1) || MyUtility.Check.Empty(Seq2))
@@ -409,14 +413,14 @@ namespace Sci.Production.Cutting
                 if (dr["Sel"].ToString() == "True")
                 {
                     string chk = $@"
-select 1 from (
+select Colorid from (
 	Select ID,SEQ1,SEQ2,Colorid 
 	From PO_Supp_Detail WITH (NOLOCK) 
 	Where id='{Poid}' 
 	and SCIRefno ='{dr["SciRefno"]}' 
 	and Junk != 1 
     and seq1 not like '7%'
-
+    and seq1 not like '5%'
 	union all
 	select psd1.ID,SEQ1,SEQ2,ColorID
 	from PO_Supp_Detail psd1
@@ -434,18 +438,43 @@ select 1 from (
 			and b.BrandGroup = Brand.BrandGroup)
 	and psd1.ID = '{Poid}'
 	and psd1.Junk != 1
-	and psd1.seq1 like '7%'
+	and (psd1.seq1 like '7%' or psd1.seq1 like '5%')
 )a
 where Seq1='{Seq1}' and Seq2='{Seq2}' 
 ";
-                    if (MyUtility.Check.Seek(chk))
+                    if (MyUtility.Check.Seek(chk, out drCheckColor))
                     {
+                        if (!drCheckColor["Colorid"].Equals(dr["Colorid"]))
+                        {
+                            DataRow OldDr = dr.Table.NewRow();
+                            dr.CopyTo(OldDr, "Seq1,Seq2,Colorid");
+                            listOriDr.Add(OldDr);
+                            isColorMatch = false;
+                            listColorchangedDr.Add(dr);
+                        }
                         dr["Seq1"] = Seq1;
                         dr["Seq2"] = Seq2;
+                        dr["Colorid"] = drCheckColor["Colorid"];
                     }
                     dr.EndEdit();
                 }
-            }         
+            }
+
+            if (!isColorMatch)
+            {
+                DialogResult DiaR = MyUtility.Msg.QuestionBox($@"Orignal assign colorID isn't same as locate colorID.
+Do you want to continue? ");
+                if (DiaR == DialogResult.No)
+                {
+                    for (int i = 0; i < listColorchangedDr.Count; i++)
+                    {
+                        listColorchangedDr[i]["Seq1"] = listOriDr[i]["Seq1"];
+                        listColorchangedDr[i]["Seq2"] = listOriDr[i]["Seq2"];
+                        listColorchangedDr[i]["Colorid"] = listOriDr[i]["Colorid"];
+                    }
+                    return;
+                }
+            }
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
@@ -528,7 +557,7 @@ where   id = '{0}'
                 if (width_CM > decCuttingWidth)
                 {
                     return string.Format("fab width greater than cutting cell {0}, please check it.", strCutCellID);
-                }                
+                }
             }
             return "";
         }
@@ -553,7 +582,7 @@ where   id = '{0}'
         {
             string Seq1 = txtSeq1.Text;
             if (!MyUtility.Check.Empty(Seq1))
-            {                
+            {
                 if (!MyUtility.Check.Seek($@"select 1 from po_Supp_Detail WITH (NOLOCK) where id='{Poid}' and Seq1='{Seq1}'  and Junk=0"))
                 {
                     MyUtility.Msg.WarningBox($@"Seq1: {Seq1} data not found!");
@@ -584,7 +613,7 @@ where   id = '{0}'
         }
 
         private void txtSeq1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {           
+        {
             SelectItem item = new SelectItem($@"Select SEQ1,SEQ2,Colorid From PO_Supp_Detail WITH (NOLOCK) Where id='{Poid}' and junk=0", "SEQ1,SEQ2,Colorid", txtSeq1.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel) { return; }
