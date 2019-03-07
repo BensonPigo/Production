@@ -135,6 +135,7 @@ inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
 group by t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons
 
 select distinct
+    MDivisionid=isnull(t.MDivisionid,''),
 	FactoryID=isnull(w.FactoryID,''),
 	w.EstCutDate,
 	CutCellid=isnull(w.CutCellid,''),
@@ -233,7 +234,7 @@ outer apply(
 	and cmd.WeaveTypeID = f.WeaveTypeID 
 )ActSpd
 
-select FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,
+select MDivisionID,FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,
 	MarkerLength,PerimeterYd,Layer,SizeCode,Cons,EXCESSqty,NoofRoll,DyeLot,NoofWindow,ActualSpeed,
 	[PreparationTime_min],
 	[ChangeoverTime_min],
@@ -284,7 +285,7 @@ select
 	TotalCutFabricYardage = Sum(d.Cons),
 	TotalCuttingTime_hrs = sum(d.TotalCuttingTime_min)/60.0
 from #detail d
-inner join CutCell cc with(nolock)on cc.ID = d.CutCellid
+inner join CutCell cc with(nolock)on cc.ID = d.CutCellid and cc.MDivisionid = d.MDivisionid
 left join CuttingMachine cm with(nolock)on cm.ID = cc.CuttingMachineID
 where isnull(d.CutCellid,'') <>''
 group by d.CutCellid, cm.Description
@@ -311,7 +312,7 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             }
             string excelName = "Cutting_R08";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
-
+            printData[0].Columns.Remove("MDivisionid");
             MyUtility.Excel.CopyToXls(printData[0], "", $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
 
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表       
@@ -363,7 +364,7 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
                 worksheet.Cells[24, i + 2] = codt.Rows[i]["TotalCutFabricYardage"];
                 worksheet.Cells[25, i + 2] = codt.Rows[i]["TotalCuttingTime_hrs"];
                 worksheet.Cells[26, i + 2] = $"=({col}25/{col}20)";
-                worksheet.Cells[27, i + 2] = $"={col}26-{col}20";
+                worksheet.Cells[27, i + 2] = $"={col}25-{col}20";
                 worksheet.Cells[28, i + 2] = $"=CONCATENATE(IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2)),\" | \",IF({col}20=0,0,Round({col}25/{col}20,2)),\" | \")";
                 worksheet.Cells[29, i + 2] = $"=IF(({this.Speed}*{col}19)=0,0,Round({col}22/({this.Speed}*{col}19),2))*IF({col}20=0,0,Round({col}25/{col}20,2))/100";
             }
