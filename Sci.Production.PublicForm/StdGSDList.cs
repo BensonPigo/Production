@@ -39,8 +39,8 @@ select
         ,id.Annotation
         ,id.Frequency
         ,isnull(id.MtlFactorID,'') as MtlFactorID
-        ,[SMV] = isnull(o.SMV,0)
-        ,[newSMV] = isnull(o.SMV,0) * id.Frequency  * (1 + (id.MtlFactorRate / 100))
+        ,[SMV] = isnull(id.SMV,0)
+        ,[newSMV] = isnull(id.SMV,0) * id.Frequency  * (1 + (id.MtlFactorRate / 100))
         ,isnull(o.SeamLength,0) as SeamLength
         ,iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type
         ,isnull(o.SeamLength,0)*id.Frequency as ttlSeamLength
@@ -80,7 +80,7 @@ group by i.Location,i.ArtworkTypeID
                 sqlCmd = $@"
 select id.Location,M.ArtworkTypeID,
 iif(id.Location = 'T','Top',iif(id.Location = 'B','Bottom',iif(id.Location = 'I','Inner',iif(id.Location = 'O','Outer','')))) as Type,
-round(sum(isnull(o.smv,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
+round(sum(isnull(id.SMV,0)*id.Frequency*(isnull(id.MtlFactorRate,0)/100+1)*60),0) as tms
 from Style s WITH (NOLOCK) 
 inner join IETMS i WITH (NOLOCK) on s.IETMSID = i.ID and s.IETMSVersion = i.Version
 inner join IETMS_Detail id WITH (NOLOCK) on i.Ukey = id.IETMSUkey
