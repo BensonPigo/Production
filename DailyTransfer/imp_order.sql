@@ -578,7 +578,7 @@ BEGIN
 			ID			, Article	, SizeCode		, Qty		,AddName 
 			, AddDate	, EditName	, EditDate		, OriQty 
 		) values (
-			s.ID		, s.Article	, s.SizeCode	, s.Qty		,s.AddName 
+			s.ID		, s.Article	, Rtrim(s.SizeCode)	, s.Qty		,s.AddName 
 			, s.AddDate	, s.EditName, s.EditDate	, s.OriQty 
 		)
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then
