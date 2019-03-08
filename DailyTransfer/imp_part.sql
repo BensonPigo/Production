@@ -8,6 +8,28 @@ AS
 BEGIN
 
 	---------- Parts, type='P'---------------------
+	--Step.1 Insert Table [PartFormula_History] if [Formula] is different
+SELECT 
+ [PartID]=ISNULL(t.ID,'')
+,[OldFormula]=ISNULL(t.Formula,0)
+,[NewFormula]=ISNULL(s.Formula,0)
+,[AddName]=t.EditName
+,[AddDate]=t.EditDate
+INTO #Formula_Change_Table
+FROM Machine.dbo.Part t
+INNER JOIN Trade_To_Pms.dbo.Part s
+ON t.id=s.Refno  AND s.Type='P'
+AND t.Formula<> s.Formula
+;
+IF EXISTS (SELECT 1 FROM #Formula_Change_Table)
+BEGIN
+	INSERT INTO [Machine].[dbo].[PartFormula_History]
+	SELECT * FROM #Formula_Change_Table
+END
+;
+DROP TABLE #Formula_Change_Table
+;
+	--Step.2. Merge
 Merge Machine.dbo.Part as t
 Using (
 	select * 
