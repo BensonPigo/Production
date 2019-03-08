@@ -433,7 +433,7 @@ Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID
 select a.*,b.AccountID,b.Amount 
 into #temp4
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo ");
+inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID");
                     }
                     else
                     {
@@ -468,7 +468,7 @@ Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,pac
 select a.*,b.AccountID,b.Amount 
 into #temp4
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo ");
+inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID");
                     }
 
                      queryAccount = string.Format(
