@@ -157,8 +157,8 @@ select distinct
 	SizeCode=isnull(SizeCode.SizeCode,''),
 	t.Cons,
 	t.EXCESSqty,
-	NoofRoll=isnull(NoofRoll.NoofRoll,0),
-	DyeLot=isnull(DyeLot.DyeLot,0),
+	NoofRoll=iif(isnull(NoofRoll.NoofRoll,0)<1,1,isnull(NoofRoll.NoofRoll,0)),
+	DyeLot=iif(isnull(DyeLot.DyeLot,0)<1,1,isnull(DyeLot.DyeLot,0)),
 	NoofWindow=isnull(t.Cons/t.Layer/1.4,0),
 	ActualSpeed=isnull(ActSpd.ActualSpeed,0),
 	PreparationTime=isnull(st.PreparationTime,0),
@@ -314,7 +314,7 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             printData[0].Columns.Remove("MDivisionid");
             MyUtility.Excel.CopyToXls(printData[0], "", $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
-
+            excelApp.DisplayAlerts = false;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表       
             DataTable sodt = printData[4];
             DataTable codt = printData[5];

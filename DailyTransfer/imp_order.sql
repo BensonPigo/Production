@@ -1246,7 +1246,7 @@ BEGIN
 				t.Seq					= s.Seq,
 				t.MarkerName			= s.MarkerName,
 				t.FabricCombo			= s.FabricCombo,
-				t.MarkerLength			= s.MarkerLength,
+				t.MarkerLength			= replace(s.MarkerLength,'¢ç','Y'),
 				t.FabricPanelCode		= s.FabricPanelCode,
 				t.ConsPC				= s.ConsPC,
 				t.CuttingPiece			= s.CuttingPiece,

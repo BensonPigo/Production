@@ -192,7 +192,9 @@ Select
 			dbo.GetSpreadingTime(
 					c.WeaveTypeID,
 					a.Refno,
-					iif(isnull(fi.avgInQty,0)=0,1,round(iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId))/fi.avgInQty,0)),
+					iif(iif(isnull(fi.avgInQty,0)=0,1,round(iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId))/fi.avgInQty,0))<1,1,
+                        iif(isnull(fi.avgInQty,0)=0,1,round(iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId))/fi.avgInQty,0))
+                        ),
 					iif(isnull(a.CutRef,'')='',a.Layer,sum(a.Layer)over(partition by a.CutRef,a.MDivisionId)),
 					iif(isnull(a.CutRef,'')='',a.Cons,sum(a.Cons)over(partition by a.CutRef,a.MDivisionId)),
 					1

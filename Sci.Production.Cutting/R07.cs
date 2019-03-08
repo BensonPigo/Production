@@ -133,7 +133,7 @@ select distinct
 	SizeCode=isnull(SizeCode.SizeCode,''),
 	t.Cons,
 	t.EXCESSqty,
-	NoofRoll= iif(isnull(fi.avgInQty,0)=0,1,round(t.Cons/fi.avgInQty,0)),
+	NoofRoll= iif(iif(isnull(fi.avgInQty,0)=0,1,round(t.Cons/fi.avgInQty,0))<1,1,iif(isnull(fi.avgInQty,0)=0,1,round(t.Cons/fi.avgInQty,0))),
 	DyeLot=1,
 	NoofWindow=isnull(t.Cons/t.Layer/1.4,0),
 	ActualSpeed=isnull(ActSpd.ActualSpeed,0),
@@ -281,7 +281,7 @@ drop table #tmp2a,#tmp2,#tmp3,#detail
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
             printData[0].Columns.Remove("MDivisionid");
             MyUtility.Excel.CopyToXls(printData[0], "", $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
-
+            excelApp.DisplayAlerts = false;
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表       
             DataTable sodt = printData[4];
             DataTable codt = printData[5];
@@ -342,16 +342,16 @@ drop table #tmp2a,#tmp2,#tmp3,#detail
             for (int i = 0; i < s; i++)
             {
                 col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
-                worksheet.Cells[i + 2, 1] = $"='Actual Output Summary'!{col}4";
-                worksheet.Cells[i + 2, 2] = $"='Actual Output Summary'!{col}8";
-                worksheet.Cells[i + 2, 4] = $"='Actual Output Summary'!{col}10";
+                worksheet.Cells[i + 2, 1] = $"='Capacity Forecast Summary'!{col}4";
+                worksheet.Cells[i + 2, 2] = $"='Capacity Forecast Summary'!{col}8";
+                worksheet.Cells[i + 2, 4] = $"='Capacity Forecast Summary'!{col}10";
             }
             for (int i = 0; i < codt.Rows.Count; i++)
             {
                 col = MyUtility.Excel.ConvertNumericToExcelColumn(i + 2);
-                worksheet.Cells[i + s + 2, 1] = $"='Actual Output Summary'!{col}15";
-                worksheet.Cells[i + s + 2, 3] = $"='Actual Output Summary'!{col}21";
-                worksheet.Cells[i + s + 2, 4] = $"='Actual Output Summary'!{col}24";
+                worksheet.Cells[i + s + 2, 1] = $"='Capacity Forecast Summary'!{col}15";
+                worksheet.Cells[i + s + 2, 3] = $"='Capacity Forecast Summary'!{col}21";
+                worksheet.Cells[i + s + 2, 4] = $"='Capacity Forecast Summary'!{col}24";
             }
 
             worksheet.Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden; // 隱藏第3頁sheet

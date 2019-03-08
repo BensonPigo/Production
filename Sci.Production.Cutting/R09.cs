@@ -79,13 +79,13 @@ select [Factory] = wo_Before.FactoryID
 ,[Cons_Before] = cast(round(ISNULL(sc.Cons,0),2) as float)
 ,[ExcessQty_Before] = isnull( Excess_Before.qty,0)
 ,[ExcessQty_After] = isnull( Excess_After.strQty,0)
-,[Roll] = cast(n.NoofRoll as float)
+,[Roll] = iif(isnull(n.NoofRoll,0)<1,1,n.NoofRoll)
 ,[NoOfWindow] = CONVERT(float,round((wo_Before.Cons/ wo_Before.Layer),2))
 ,[Perimeter_Before] = cast(iif(wo_before.ActCuttingPerimeter not like '%yd%','0',ROUND(dbo.GetActualPerimeterYd(wo_before.ActCuttingPerimeter),2)) as float)
 ,[Perimeter_After] = Perimeter_After.strPerimeter
 ,[CuttingSpeed_Before] = ISNULL(  ActSpeed_Before.ActualSpeed,0)
 ,[CuttingSpeed_After] =ISNULL( ActSpeed_After.strActualSpeed,0)
-,[SpreadingTime_Before] = isnull(cast(round(dbo.GetSpreadingTime(f.WeaveTypeID,wo_before.Refno,n.NoofRoll,sl.Layer,sc.Cons,1)/60,2)as float),0)
+,[SpreadingTime_Before] = isnull(cast(round(dbo.GetSpreadingTime(f.WeaveTypeID,wo_before.Refno,iif(isnull(n.NoofRoll,0)<1,1,n.NoofRoll),sl.Layer,sc.Cons,1)/60,2)as float),0)
 ,[CuttingTime_Before] = ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeterYd(iif(wo_before.ActCuttingPerimeter not like '%yd%','0',wo_before.ActCuttingPerimeter)),4),wo_Before.CutCellid,sl.Layer,f.WeaveTypeID,sc.Cons),0 )as Float) /60,2)
 into #tmp
 from WorkOrderRevisedMarkerOriginalData wo_Before
@@ -328,7 +328,7 @@ outer apply(
 
 	select SpreadingTime = cast(round((sum(SpreadingTime) /60) - t.SpreadingTime_Before,2)as float)  from 
 	(
-		select SpreadingTime = cast(round((isnull(dbo.GetSpreadingTime(t.FabricType,Refno,n.NoofRoll,sl.Layer,sc.Cons,1),0)),2)  as float)
+		select SpreadingTime = cast(round((isnull(dbo.GetSpreadingTime(t.FabricType,Refno,iif(isnull(n.NoofRoll,0)<1,1,n.NoofRoll),sl.Layer,sc.Cons,1),0)),2)  as float)
 		from WorkOrder a
 		outer apply(select Layer = sum(Layer)over(partition by CutRef))sl
 		outer apply(select Cons = sum(Cons)over(partition by CutRef))sc
@@ -348,7 +348,7 @@ select Time = stuff(
 (
 	select concat(',',SpreadingTime ) from 
 	(
-		select SpreadingTime = cast(round( (isnull(dbo.GetSpreadingTime(t.FabricType,Refno,n.NoofRoll,sl.Layer,sc.Cons,1),0))/60,2) as float)
+		select SpreadingTime = cast(round( (isnull(dbo.GetSpreadingTime(t.FabricType,Refno,iif(isnull(n.NoofRoll,0)<1,1,n.NoofRoll),sl.Layer,sc.Cons,1),0))/60,2) as float)
 		from WorkOrder a
 		outer apply(select Layer = sum(Layer)over(partition by CutRef))sl
 		outer apply(select Cons = sum(Cons)over(partition by CutRef))sc
