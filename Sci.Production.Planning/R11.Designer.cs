@@ -176,7 +176,7 @@
             this.comboCategory.Location = new System.Drawing.Point(114, 121);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
+            this.comboCategory.Size = new System.Drawing.Size(161, 24);
             this.comboCategory.TabIndex = 141;
             // 
             // R11

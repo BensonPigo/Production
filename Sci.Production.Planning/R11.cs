@@ -39,8 +39,15 @@ namespace Sci.Production.Planning
             this.txtfactory.Text = Sci.Env.User.Factory;
 
             string selectCommand = @"
-select ID = '''B''',Name = 'Bulk' union all select ID = '''S''',Name = 'Sample' union all select ID = '''B'',''S''',Name = 'Bulk+Sample'
-union all select ID = '''B'','' ''',Name = 'Bulk+Forecast'
+select ID = '''B''',Name = 'Bulk' 
+union all 
+    select ID = '''S''',Name = 'Sample' 
+union all 
+    select ID = '''B'',''S''',Name = 'Bulk+Sample'
+union all 
+    select ID = '''B'','' ''',Name = 'Bulk+Forecast'
+union all 
+    select ID = '''B'',''S'','' '''	,Name = 'Bulk+Forecast+Sample'
 ";
             Ict.DualResult returnResult;
             DataTable dropDownListTable = new DataTable();
