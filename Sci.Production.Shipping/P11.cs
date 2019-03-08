@@ -169,6 +169,18 @@ where id = '{this.CurrentMaintain["ID"]}'
             base.ClickUnconfirm();
         }
 
+        protected override bool ClickDeleteBefore()
+        {
+            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID is not null and id = '{this.CurrentMaintain["ID"]}' and status = 'Approved' ";
+            if (MyUtility.Check.Seek(sqlchk))
+            {
+                MyUtility.Msg.WarningBox("Already approved, cannot delete!");
+                return false;
+            }
+
+            return base.ClickDeleteBefore();
+        }
+
         /// <inheritdoc/>
         private void Btnimport_Click(object sender, EventArgs e)
         {
