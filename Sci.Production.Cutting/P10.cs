@@ -29,7 +29,9 @@ namespace Sci.Production.Cutting
             if (history == "0")
                 this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=0) and mDivisionid='{0}'", keyword);
             else
-                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);           
+                this.DefaultFilter = string.Format("Orderid in (Select id from orders WITH (NOLOCK) where finished=1) and mDivisionid='{0}'", keyword);    
+            
+            this.DefaultWhere = $@"(select O.FtyGroup from Orders O WITH (NOLOCK) Where O.ID = Bundle.Orderid)  = '{Sci.Env.User.Factory}'";       
         }
 
         protected override void OnFormLoaded()
@@ -45,7 +47,14 @@ from Factory WITH (NOLOCK)
 where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out queryDT);
             MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
-            queryfors.SelectedIndex = 0;
+            // 取得當前登入工廠index
+            for (int i = 0; i < queryDT.Rows.Count; i++)
+            {   
+                if (String.Compare(queryDT.Rows[i]["FTYGroup"].ToString(), Sci.Env.User.Factory) == 0)
+                {
+                    queryfors.SelectedIndex = i;
+                }
+            }
             queryfors.SelectedIndexChanged += (s, e) =>
             {
                 switch (queryfors.SelectedIndex)
