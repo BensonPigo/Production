@@ -202,3 +202,8 @@ GO
 CREATE NONCLUSTERED INDEX [CutRefNo]
     ON [dbo].[WorkOrder]([CutRef] ASC);
 
+
+GO
+CREATE NONCLUSTERED INDEX [BundleESCDate]
+    ON [dbo].[WorkOrder]([ID] ASC, [MDivisionId] ASC, [CutRef] ASC);
+
