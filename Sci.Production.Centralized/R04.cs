@@ -8,6 +8,10 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Xml.Linq;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Linq;
 
 namespace Sci.Production.Centralized
 {
@@ -17,6 +21,7 @@ namespace Sci.Production.Centralized
     public partial class R04 : Sci.Win.Tems.PrintForm
     {
         private DataTable printData;
+        private DataTable dtAllData;
         private DateTime? date1;
         private DateTime? date2;
         private string category;
@@ -25,6 +30,7 @@ namespace Sci.Production.Centralized
         private string brand;
         private string cdcode;
         private bool show_Accumulate_output;
+        private bool where_reason;
 
         /// <summary>
         /// R04
@@ -35,14 +41,22 @@ namespace Sci.Production.Centralized
         {
             this.InitializeComponent();
             MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, ",Bulk,Sample,Local Order,Garment,Mockup,Bulk+Sample,Bulk+Sample+Garment");
-            DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboCategory.SelectedIndex = 0;
             this.comboM.Text = Sci.Env.User.Keyword;
-            this.comboFactory.SelectedIndex = 0;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            #region load combobox Location M 預設顯示登入的M
+            this.comboM.SetDefalutIndex();
+            this.comboM.Text = Sci.Env.User.Keyword;
+            #endregion
+
+            #region load combobox Factory 預設顯示空白
+            this.comboFactory.SetDefalutIndex(string.Empty);
+            #endregion
+
+            base.OnFormLoaded();
         }
 
         /// <inheritdoc/>
@@ -56,16 +70,19 @@ namespace Sci.Production.Centralized
             this.brand = this.txtbrand.Text;
             this.cdcode = this.txtCDCode.Text;
             this.show_Accumulate_output = this.chk_Accumulate_output.Checked;
+            this.where_reason = this.chkSewingReasonID.Checked;
+
             return base.ValidateInput();
         }
 
         /// <inheritdoc/>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-         DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
+            DBProxy.Current.DefaultTimeout = 1800;  // timeout時間改為30分鐘
+            this.dtAllData = null;
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(string.Format(@"--根據條件撈基本資料
-select s.id,s.OutputDate,s.Category,s.Shift,s.CentralizedLineID,s.Team,s.MDivisionID,s.FactoryID
+select s.id,s.OutputDate,s.Category,s.Shift,s.SewingLineID,s.Team,s.MDivisionID,s.FactoryID
 	,sd.OrderId,sd.ComboType,ActManPower = IIF(sd.QAQty=0, s.Manpower, s.Manpower * sd.QAQty),sd.WorkHour,sd.QAQty,sd.InlineQty
 	,o.LocalOrder,o.CustPONo,OrderCategory = isnull(o.Category,''),OrderType = isnull(o.OrderTypeID,''), CASE WHEN ot.IsDevSample =1 THEN 'Y' ELSE 'N' END AS IsDevSample
 	,OrderBrandID = isnull(o.BrandID,'')    ,OrderCdCodeID = isnull(o.CdCodeID,'')
@@ -79,11 +96,11 @@ select s.id,s.OutputDate,s.Category,s.Shift,s.CentralizedLineID,s.Team,s.MDivisi
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
-    ,[CentralizedReasonDesc]=sr.CentralizedReasonDesc
+    ,[SewingReasonDesc]=sr.SewingReasonDesc
 	,sd.Remark
-into #tmpCentralizedDetail
-from System WITH (NOLOCK),CentralizedOutput s WITH (NOLOCK) 
-inner join CentralizedOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+into #tmpSewingDetail
+from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
+inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
@@ -92,14 +109,14 @@ outer apply
 (
     select top 1 InspectQty,RejectQty 
     from Rft r WITH (NOLOCK) 
-    where r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.CentralizedlineID = s.CentralizedLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
+    where r.OrderID = sd.OrderId and r.CDate = s.OutputDate and r.SewinglineID = s.SewingLineID and r.FactoryID = s.FactoryID and r.Shift = s.Shift and r.Team = s.Team
 ) r
 outer apply
 (
-	select [CentralizedReasonDesc]=stuff((
+	select [SewingReasonDesc]=stuff((
 		select concat(',',sr.ID+'-'+sr.Description)
-		from CentralizedReason sr
-		inner join CentralizedOutput_Detail sd2 WITH (NOLOCK) on sd2.CentralizedReasonID=sr.ID
+		from SewingReason sr
+		inner join SewingOutput_Detail sd2 WITH (NOLOCK) on sd2.SewingReasonID=sr.ID
 		where sr.Type='SO' and sd2.id = s.id
 		for xml path('')
 	),1,1,'')
@@ -131,8 +148,13 @@ where 1=1 "));
                 sqlCmd.Append(" and s.Category = 'M'");
             }
 
-            sqlCmd.Append(@"--By Centralized單號 & CentralizedDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
-select distinct OutputDate,Category,Shift,CentralizedLineID,Team,FactoryID,MDivisionID,OrderId,ComboType
+            if (this.where_reason)
+            {
+                sqlCmd.Append(" and sd.SewingReasonID <>'' ");
+            }
+
+            sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty
+select distinct OutputDate,Category,Shift,SewingLineID,Team,FactoryID,MDivisionID,OrderId,ComboType
 	,ActManPower = Sum(ActManPower)over(partition by id,OrderId,ComboType),WorkHour = sum(Round(WorkHour,3))over(partition by id,OrderId,ComboType)
 	,QAQty = sum(QAQty)over(partition by id,OrderId,ComboType),InlineQty = sum(InlineQty)over(partition by id,OrderId,ComboType)
 	,LocalOrder,CustPONo,OrderCategory,OrderType,IsDevSample
@@ -144,48 +166,48 @@ select distinct OutputDate,Category,Shift,CentralizedLineID,Team,FactoryID,MDivi
     ,SubconOutFty
     ,SubConOutContractNumber
     ,SubconInSisterFty
-    ,CentralizedReasonDesc
+    ,SewingReasonDesc
     ,Remark
-into #tmpCentralizedGroup
-from #tmpCentralizedDetail
+into #tmpSewingGroup
+from #tmpSewingDetail
 --↓計算累計天數 function table太慢直接寫在這
-select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.CentralizedLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.CentralizedReasonDesc
+select distinct scOutputDate = s.OutputDate ,style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
 into #stmp
-from #tmpCentralizedGroup t
-inner join CentralizedOutput s WITH (NOLOCK) on s.CentralizedLineID = t.CentralizedLineID and s.FactoryID = t.FactoryID
-inner join CentralizedOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID 
---INNER JOIN CentralizedReason sr ON sd.CentralizedReasonID=sr.ID AND sr.Type='SO'
+from #tmpSewingGroup t
+inner join SewingOutput s WITH (NOLOCK) on s.SewingLineID = t.SewingLineID and s.FactoryID = t.FactoryID
+inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID 
+--INNER JOIN SewingReason sr ON sd.SewingReasonID=sr.ID AND sr.Type='SO'
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where (o.StyleID = OrderStyle or mo.StyleID = MockupStyle)
 --
-select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.CentralizedLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.CentralizedReasonDesc
+select w.Hours, w.Date, style = IIF(t.Category <> 'M',OrderStyle,MockupStyle),t.SewingLineID,t.FactoryID,t.Shift,t.Team,t.OrderId,t.ComboType,t.SewingReasonDesc
 into #wtmp
-from #tmpCentralizedGroup t
-inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.CentralizedLineID = t.CentralizedLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate and isnull(w.Hours,0) != 0
+from #tmpSewingGroup t
+inner join  WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID and w.SewingLineID = t.SewingLineID and w.Date between dateadd(day,-90,t.OutputDate) and t.OutputDate and isnull(w.Hours,0) != 0
 --
-select s.scOutputDate,cumulate = IIF(Count(1)=0, 1, Count(1)over(partition by s.style,s.CentralizedLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType order by s.scOutputDate)),
-s.style,s.CentralizedLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
+select s.scOutputDate,cumulate = IIF(Count(1)=0, 1, Count(1)over(partition by s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType order by s.scOutputDate)),
+s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
 into #cl
 from #stmp s
 where s.scOutputDate >
 isnull((
 	select date = max(Date)
 	from #wtmp w 
-	left join #stmp s2 on s2.scOutputDate = w.Date and w.style = s2.style and w.CentralizedLineID = s2.CentralizedLineID and w.FactoryID = s2.FactoryID and w.Shift = s2.Shift and w.Team = s2.Team
+	left join #stmp s2 on s2.scOutputDate = w.Date and w.style = s2.style and w.SewingLineID = s2.SewingLineID and w.FactoryID = s2.FactoryID and w.Shift = s2.Shift and w.Team = s2.Team
 	and w.OrderId = s2.OrderId and w.ComboType = s2.ComboType
 	where s2.scOutputDate is null
-	and w.style = s.style and w.CentralizedLineID = s.CentralizedLineID and w.FactoryID = s.FactoryID and w.Shift = s.Shift and w.Team = s.Team and w.OrderId = s.OrderId 
+	and w.style = s.style and w.SewingLineID = s.SewingLineID and w.FactoryID = s.FactoryID and w.Shift = s.Shift and w.Team = s.Team and w.OrderId = s.OrderId 
 	and w.ComboType = s.ComboType
 ),'1900/01/01')
-group by s.scOutputDate,s.style,s.CentralizedLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
+group by s.scOutputDate,s.style,s.SewingLineID,s.FactoryID,s.Shift,s.Team,s.OrderId,s.ComboType
 --↑計算累計天數
 select t.*,IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,
 f.Type as FtyType,f.CountryID as FtyCountry
 ,CumulateDate=c.cumulate
 into #tmp1stFilter
-from #tmpCentralizedGroup t
-left join #cl c on c.style = IIF(t.Category <> 'M',OrderStyle,MockupStyle) and c.CentralizedLineID = t.CentralizedLineID and c.FactoryID = t.FactoryID 
+from #tmpSewingGroup t
+left join #cl c on c.style = IIF(t.Category <> 'M',OrderStyle,MockupStyle) and c.SewingLineID = t.SewingLineID and c.FactoryID = t.FactoryID 
 				and c.Shift = t.Shift and c.Team = t.Team and c.OrderId = t.OrderId and c.ComboType = t.ComboType and c.scOutputDate = t.OutputDate
 left join Factory f on t.FactoryID = f.ID
 where 1=1");
@@ -259,10 +281,10 @@ from(
 )b
 
 -----orderid & ArtworkTypeID & Seq
-select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS,t.QAQty,t.FactoryID,t.Team,t.OutputDate,t.CentralizedLineID,
+select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS,t.QAQty,t.FactoryID,t.Team,t.OutputDate,t.SewingLineID,
                 IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,t.Category,t.ComboType
 into #idat
-from #tmpCentralizedGroup t
+from #tmpSewingGroup t
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = t.OrderId
 inner join #AT A on A.ID = ot.ArtworkTypeID
 
@@ -270,19 +292,19 @@ declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,
 declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)')from #atall2 for xml path(''))
 
 declare @TTLZ nvarchar(max) = 
-(select concat(',[',ArtworkType_Unit,']=sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.CentralizedLineID,t.LastShift,t.Category,t.ComboType)'
-,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.CentralizedLineID,t.LastShift,t.Category,t.ComboType)'))
-,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.CentralizedLineID,t.LastShift,t.Category,t.ComboType),',iif(Unit='QTY','4','3'),')'
-,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.CentralizedLineID,t.LastShift,t.Category,t.ComboType),',iif(Unit='QTY','4','3'),')'))
+(select concat(',[',ArtworkType_Unit,']=sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType)'
+,iif(ArtworkType_CPU = '', '', concat(',[',ArtworkType_CPU,']=sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType)'))
+,',[TTL_',ArtworkType_Unit,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType),',iif(Unit='QTY','4','3'),')'
+,iif(ArtworkType_CPU = '', '', concat(',[TTL_',ArtworkType_CPU,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType),',iif(Unit='QTY','4','3'),')'))
 )from #atall for xml path(''))" : " ")}
 -----by orderid & all ArtworkTypeID
 declare @lastSql nvarchar(max) =N'
-{(this.chk_Include_Artwork.Checked ? @"select orderid,FactoryID,Team,OutputDate,CentralizedLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
+{(this.chk_Include_Artwork.Checked ? @"select orderid,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty '+@NameZ+N'
 into #oid_at
 from
 (
 	select orderid = i.ID,a.ArtworkType_Unit,i.qaqty,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,iif(a.Unit=''CPU'',i.Price,i.Qty))),
-           i.FactoryID,i.Team,i.OutputDate,i.CentralizedLineID,i.LastShift,i.Category,i.ComboType
+           i.FactoryID,i.Team,i.OutputDate,i.SewingLineID,i.LastShift,i.Category,i.ComboType
 	from #atall2 a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq
 )a
 PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
@@ -296,7 +318,7 @@ select * from(
 		,FtyType = iif(FtyType=''B'',''Bulk'',iif(FtyType=''S'',''Sample'',FtyType))
 		,FtyCountry
         ,t.OutputDate
-        ,t.CentralizedLineID
+        ,t.SewingLineID
 		,Shift =    CASE    WHEN t.LastShift=''D'' then ''Day''
                             WHEN t.LastShift=''N'' then ''Night''
                             WHEN t.LastShift=''O'' then ''Subcon-Out''
@@ -343,15 +365,15 @@ select * from(
             sqlCmd.Append($@",Diff = t.QAQty-InlineQty
 		,rate
         ,t.Remark
-        ,t.CentralizedReasonDesc
+        ,t.SewingReasonDesc
 		{(this.chk_Include_Artwork.Checked ? "'+@TTLZ+N'" : " ")}
     from #tmp1stFilter t");
             if (this.show_Accumulate_output == true)
             {
                 sqlCmd.Append(@"
                                     outer  apply(select value = Sum(SD.QAQty)
-                                             from CentralizedOutput_Detail SD
-                                             inner join CentralizedOutput S on SD.ID=S.ID
+                                             from SewingOutput_Detail SD
+                                             inner join SewingOutput S on SD.ID=S.ID
                                              where SD.ComboType=t.ComboType
                                                and SD.orderid=t.OrderId
                                                and S.OutputDate <= t.OutputDate) acc_output");
@@ -363,45 +385,86 @@ select * from(
                            o.FactoryID = t.FactoryID and
                            o.Team       = t.Team and
                            o.OutputDate           = t.OutputDate    and
-                           o.CentralizedLineID          = t.CentralizedLineID and
+                           o.SewingLineID          = t.SewingLineID and
                            o.LastShift          = t.LastShift       and
                            o.Category          = t.Category and
                            o.ComboType      =   t.ComboType");
             }
 
- sqlCmd.Append($@" )a
-order by MDivisionID,FactoryID,OutputDate,CentralizedLineID,Shift,Team,OrderId
+            sqlCmd.Append($@" )a
+order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId
 
-drop table #tmpCentralizedDetail,#tmp1stFilter,#tmpCentralizedGroup,#cl,#stmp,#wtmp
+drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup,#cl,#stmp,#wtmp
 {(this.chk_Include_Artwork.Checked ? "drop table #atall2,#AT,#atall,#idat,#oid_at" : " ")}
 '
 EXEC sp_executesql @lastSql
 ");
-            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
-            if (!result)
+
+            #region --由 appconfig 抓各個連線路徑
+            this.SetLoadingText("Load connections... ");
+            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
+            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
+            List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
+            foreach (string ss in strSevers)
             {
-                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
-                return failResult;
+                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                connectionString.Add(connections);
             }
 
-         DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
-         return Result.True;
+            if (connectionString == null || connectionString.Count == 0)
+            {
+                return new DualResult(false, "no connection loaded.");
+            }
+            #endregion
+
+            DualResult result = new DualResult(true);
+
+            foreach (string conString in connectionString)
+            {
+                SqlConnection conn;
+                using (conn = new SqlConnection(conString))
+                {
+                    conn.Open();
+                    result = DBProxy.Current.SelectByConn(conn, sqlCmd.ToString(), null, out this.printData);
+                    if (!result)
+                    {
+                        DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                        return failResult;
+                    }
+
+                    if (this.printData != null && this.printData.Rows.Count > 0)
+                    {
+                        if (this.dtAllData == null)
+                        {
+                            this.dtAllData = this.printData;
+                        }
+                        else
+                        {
+                            this.dtAllData.Merge(this.printData);
+                        }
+                    }
+                }
+            }
+
+            DBProxy.Current.DefaultTimeout = 300;  // timeout時間改回5分鐘
+            return Result.True;
         }
 
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
-            this.SetCount(this.printData.Rows.Count);
             int start_column;
-            if (this.printData.Rows.Count <= 0)
+            if (this.dtAllData == null || this.dtAllData.Rows.Count <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 
+            this.SetCount(this.dtAllData.Rows.Count);
+
             this.ShowWaitMessage("Starting EXCEL...");
-            string excelFile = "Centralized_R04_CentralizedDailyOutputList.xltx";
+            string excelFile = "Sewing_R04_SewingDailyOutputList.xltx";
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + excelFile); // 開excelapp
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
             if (this.show_Accumulate_output == true)
@@ -414,15 +477,15 @@ EXEC sp_executesql @lastSql
                 objSheets.get_Range("AK:AL").EntireColumn.Delete();
             }
 
-            for (int i = start_column; i < this.printData.Columns.Count; i++)
+            for (int i = start_column; i < this.dtAllData.Columns.Count; i++)
             {
-                objSheets.Cells[1, i + 1] = this.printData.Columns[i].ColumnName;
+                objSheets.Cells[1, i + 1] = this.dtAllData.Columns[i].ColumnName;
             }
 
-            string r = MyUtility.Excel.ConvertNumericToExcelColumn(this.printData.Columns.Count);
+            string r = MyUtility.Excel.ConvertNumericToExcelColumn(this.dtAllData.Columns.Count);
             objSheets.get_Range("A1", r + "1").Cells.Interior.Color = Color.LightGreen;
             objSheets.get_Range("A1", r + "1").AutoFilter(1);
-            bool result = MyUtility.Excel.CopyToXls(this.printData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
+            bool result = MyUtility.Excel.CopyToXls(this.dtAllData, string.Empty, xltfile: excelFile, headerRow: 1, excelApp: objApp);
 
             if (!result)
             {
