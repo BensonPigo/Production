@@ -18,7 +18,7 @@ namespace Sci.Production.Cutting
             InitializeComponent();
             displayBox1.Text = @"*Spreading Time = Preparation Time *Marker Length + Changeover time *
 No. of Roll + Set up time + (Machine Spreading Time*Marker Length*Layer) + 
-(No. of Separator * Dye lot -1) + Forward Time";
+Separator Time*(Dye Lot-1)  + Forward Time";
         }
 
         protected override void OnDetailEntered()
