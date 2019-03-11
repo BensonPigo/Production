@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -38,7 +39,7 @@
             this.numNewStyleBaseOn = new Sci.Win.UI.NumericUpDown();
             this.txtMdivision = new Sci.Production.Class.txtMdivision();
             this.txtfactory = new Sci.Production.Class.txtfactory();
-            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.comboCategory = new Sci.Production.Class.comboDropDownList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).BeginInit();
             this.SuspendLayout();
             // 
@@ -173,11 +174,12 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(114, 121);
+            this.comboCategory.Location = new System.Drawing.Point(115, 120);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
-            this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 141;
+            this.comboCategory.Size = new System.Drawing.Size(184, 24);
+            this.comboCategory.TabIndex = 142;
+            this.comboCategory.Type = "Pms_ReportForProdEff";
             // 
             // R11
             // 
@@ -230,6 +232,6 @@
         private Win.UI.Label labelNewStyleBaseOn;
         private Win.UI.Label labelmonth;
         private Win.UI.NumericUpDown numNewStyleBaseOn;
-        private Win.UI.ComboBox comboCategory;
+        private Class.comboDropDownList comboCategory;
     }
 }
