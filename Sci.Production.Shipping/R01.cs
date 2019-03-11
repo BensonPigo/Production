@@ -75,6 +75,8 @@ namespace Sci.Production.Shipping
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             StringBuilder sqlCmd = new StringBuilder();
+            StringBuilder sqlCmd_where = new StringBuilder();
+
             if (this.reportType == "1")
             {
                 sqlCmd.Append(string.Format(@"select 
@@ -108,8 +110,104 @@ where 1=1"));
             }
             else
             {
+                #region 準備Tmp
+
+                sqlCmd.Append(@"
+
+SELECT DISTINCT [GBID]=g.ID,[PackingListID]=pl.ID,[PulloutID]=pl.PulloutID,[OrderID]=pld.OrderID
+INTO #tmp1
+from GMTBooking g WITH (NOLOCK) 
+INNER join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
+INNER join PackingList_Detail pld WITH (NOLOCK) on pl.id = pld.id
+where pl.ID<>'' and 1=1 
+");
+
+                #region Where 條件
+
+                if (!MyUtility.Check.Empty(this.invdate1))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.invdate2))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipper))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
+                }
+
+                if (!MyUtility.Check.Empty(this.brand))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipmode))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                }
+
+                if (!MyUtility.Check.Empty(this.shipterm))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
+                }
+
+                if (!MyUtility.Check.Empty(this.dest))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+                }
+
+                if (!MyUtility.Check.Empty(this.etd1))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("d")));
+                }
+
+                if (!MyUtility.Check.Empty(this.etd2))
+                {
+                    sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
+                }
+
+                if (this.status == "Confirmed")
+                {
+                    sqlCmd_where.Append(" and g.Status = 'Confirmed'");
+                }
+                else if (this.status == "UnConfirmed")
+                {
+                    sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
+                }
+
+                #endregion
+
+                sqlCmd.Append(Environment.NewLine + sqlCmd_where.ToString());
+
+                sqlCmd.Append(@"
+
+SELECT 
+t.GBID
+,t.PackingListID
+,t.PulloutID
+,t.OrderID
+,[AddDate]=CASE WHEN Pullout_Revise.AddDate IS NOT NULL THEN Pullout_Revise.AddDate
+		 ELSE  (SELECT TOP 1 SendToTPE FROM Pullout WHERE ID=t.PulloutID) 
+		 END
+INTO #tmp2
+FROm #tmp1  t
+OUTER APPLY(
+	SELECT TOP 1 AddDate
+	FROM Pullout_Revise 
+	WHERE  ID=t.PulloutID 
+	AND OrderID=t.OrderID
+	ORDER BY AddDate DESC
+)Pullout_Revise
+
+");
+
+                #endregion
+
                 sqlCmd.Append(string.Format(@"
-select 
+select DISTINCT
 
 g.ID
 ,g.Shipper
@@ -127,20 +225,12 @@ g.ID
                             for xml path('')
                           ), 1, 1, '') 
 ,pl.PulloutDate
-
 --
+,g.CutOffDate
 ,[SoConfirmDate]=g.SOCFMDate
---,[CutOffDate]=STUFF ((select CONCAT (',',a.SDPDate) 
---                            from (
---                                select distinct o.SDPDate
---                                from PackingList_Detail pd WITH (NOLOCK) 
---								left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
---                                where pd.ID = pl.id
---                            ) a 
---                            for xml path('')
---                          ), 1, 1, '') 
-,[CutOffDate]= cutoffdate.Date
-,[PulloutReportConfirmDate]= ISNULL((SELECT TOP 1 AddDate FROM Pullout_Revise WHERE  ID=pl.PulloutID AND OrderID=pl.OrderID) , (SELECT SendToTPE FROM Pullout WHERE ID=pl.PulloutID) )
+,g.ETD
+,g.ETA
+,PulloutReportConfirmDate.PulloutReportConfirmDate
 ,[PulloutID]=pl.PulloutID
 --
 ,isnull(pl.ShipQty,0) as ShipQty,isnull(pl.CTNQty,0) as CTNQty
@@ -155,17 +245,40 @@ g.ID
 ,(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a
 , Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as BuyerDelivery
 ,(select oq.SDPDate from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = pl.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq) as SDPDate
-
+,[OrderShipmodeSeq] = 
+STUFF ((
+select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+    from (
+        select distinct pd.OrderShipmodeSeq 
+        from PackingList_Detail pd WITH (NOLOCK) 
+        left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+        and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+        where pd.ID = pl.id
+        group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+    ) a 
+    for xml path('')
+), 1, 1, '') 
+, g.SONo
+, g.ShipModeID
+, g.Vessel
+, g.BLNo
+, g.BL2No
 from GMTBooking g WITH (NOLOCK) 
 left join PackingList pl WITH (NOLOCK) on pl.INVNo = g.ID
 left join Country c WITH (NOLOCK) on c.ID = g.Dest
 left join Pass1 p WITH (NOLOCK) on p.ID = g.AddName
 OUTER APPLY(
-	select distinct [Date]=o.SDPDate
-	from PackingList_Detail pd WITH (NOLOCK) 
-	left join orders o WITH (NOLOCK) on o.id = pd.OrderID 
-	where pd.ID = pl.id
-)CutOffDate
+SELECT [PulloutReportConfirmDate]=STUFF ((
+		SELECT CONCAT (',',a.AddDate) FROM (
+			SELECT [AddDate]=convert(varchar, t.AddDate , 111)
+			FROM #tmp2 t
+			WHERE t.GBID=g.ID
+			AND t.PackingListID=pl.ID
+			AND t.PulloutID=pl.PulloutID
+		)a WHERE a.AddDate <> '' for xml path('')
+	),1,1,'')
+)PulloutReportConfirmDate
+
 where pl.ID<>'' and 1=1 "));
             }
 
@@ -174,60 +287,71 @@ where pl.ID<>'' and 1=1 "));
             if (!MyUtility.Check.Empty(this.invdate1))
             {
                 sqlCmd.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.InvDate >= '{0}' ", Convert.ToDateTime(this.invdate1).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.invdate2))
             {
                 sqlCmd.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.InvDate <= '{0}' ", Convert.ToDateTime(this.invdate2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.shipper))
             {
                 sqlCmd.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
+                sqlCmd_where.Append(string.Format(" and g.Shipper = '{0}'", this.shipper));
             }
 
             if (!MyUtility.Check.Empty(this.brand))
             {
                 sqlCmd.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
+                sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
             }
 
             if (!MyUtility.Check.Empty(this.shipmode))
             {
                 sqlCmd.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
+                sqlCmd_where.Append(string.Format(" and g.BrandID = '{0}'", this.brand));
             }
 
             if (!MyUtility.Check.Empty(this.shipterm))
             {
                 sqlCmd.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
+                sqlCmd_where.Append(string.Format(" and g.ShipTermID = '{0}'", this.shipterm));
             }
 
             if (!MyUtility.Check.Empty(this.dest))
             {
                 sqlCmd.Append(string.Format(" and g.Dest = '{0}'", this.dest));
+                sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
             }
 
             if (!MyUtility.Check.Empty(this.etd1))
             {
                 sqlCmd.Append(string.Format(" and g.ETD >= '{0}' ", Convert.ToDateTime(this.etd1).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.Dest = '{0}'", this.dest));
             }
 
             if (!MyUtility.Check.Empty(this.etd2))
             {
                 sqlCmd.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
+                sqlCmd_where.Append(string.Format(" and g.ETD <= '{0}' ", Convert.ToDateTime(this.etd2).ToString("d")));
             }
 
             if (this.status == "Confirmed")
             {
                 sqlCmd.Append(" and g.Status = 'Confirmed'");
+                sqlCmd_where.Append(" and g.Status = 'Confirmed'");
             }
             else if (this.status == "UnConfirmed")
             {
                 sqlCmd.Append(" and g.Status <> 'Confirmed'");
+                sqlCmd_where.Append(" and g.Status <> 'Confirmed'");
             }
 
             #endregion
 
-            sqlCmd.Append(" order by g.ID");
+            sqlCmd.Append(" order by g.ID" + Environment.NewLine + " DROP TABLE #tmp1,#tmp2");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.printData);
             if (!result)
@@ -299,7 +423,7 @@ where pl.ID<>'' and 1=1 "));
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 25];
+                object[,] objArray = new object[1, 33];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -309,25 +433,33 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 4] = dr["MDivisionID"];
                     objArray[0, 5] = dr["PackID"];
                     objArray[0, 6] = MyUtility.Check.Empty(dr["OrderID"]) ? dr["OrderID"] : MyUtility.Convert.GetString(dr["OrderID"]).Substring(0, MyUtility.Convert.GetString(dr["OrderID"]).Length - 1);
-                    objArray[0, 7] = dr["POno"];
-                    objArray[0, 8] = dr["BuyerDelivery"];
-                    objArray[0, 9] = dr["SDPDate"];
-                    objArray[0, 10] = dr["PulloutDate"];
-                    objArray[0, 11] = dr["SoConfirmDate"];
+                    objArray[0, 7] = dr["OrderShipmodeSeq"];
+                    objArray[0, 8] = dr["POno"];
+                    objArray[0, 9] = dr["BuyerDelivery"];
+                    objArray[0, 10] = dr["SDPDate"];
+                    objArray[0, 11] = dr["PulloutDate"];
                     objArray[0, 12] = dr["CutOffDate"];
-                    objArray[0, 13] = dr["PulloutReportConfirmDate"];
-                    objArray[0, 14] = dr["PulloutID"];
-                    objArray[0, 15] = dr["ShipQty"];
-                    objArray[0, 16] = dr["CTNQty"];
-                    objArray[0, 17] = dr["GW"];
-                    objArray[0, 18] = dr["CBM"];
-                    objArray[0, 19] = dr["CustCDID"];
-                    objArray[0, 20] = dr["Dest"];
-                    objArray[0, 21] = dr["ConfirmDate"];
-                    objArray[0, 22] = dr["AddName"];
-                    objArray[0, 23] = dr["AddDate"];
-                    objArray[0, 24] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 13] = dr["SONo"];
+                    objArray[0, 14] = dr["SoConfirmDate"];
+                    objArray[0, 15] = dr["PulloutReportConfirmDate"];
+                    objArray[0, 16] = dr["PulloutID"];
+                    objArray[0, 17] = dr["ShipModeID"];
+                    objArray[0, 18] = dr["ShipQty"];
+                    objArray[0, 19] = dr["CTNQty"];
+                    objArray[0, 20] = dr["GW"];
+                    objArray[0, 21] = dr["CBM"];
+                    objArray[0, 22] = dr["CustCDID"];
+                    objArray[0, 23] = dr["Dest"];
+                    objArray[0, 24] = dr["ConfirmDate"];
+                    objArray[0, 25] = dr["AddName"];
+                    objArray[0, 26] = dr["AddDate"];
+                    objArray[0, 27] = dr["ETD"];
+                    objArray[0, 28] = dr["ETA"];
+                    objArray[0, 29] = dr["BLNo"];
+                    objArray[0, 30] = dr["BL2No"];
+                    objArray[0, 31] = dr["Vessel"];
+                    objArray[0, 32] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }

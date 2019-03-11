@@ -169,6 +169,8 @@ select distinct
 	[Color] = Cutplan_Detail.ColorID,
 	[Cut Qty] = cq.SizeCode,
 	[Fab Cons.] = Cutplan_Detail.Cons,
+    [Layer] = WorkOrder.Layer,
+    [FabLength] = iif(WorkOrder.Layer = 0, '', STR(Cutplan_Detail.Cons / WorkOrder.Layer, 12, 2) ),
 	[Fab Desc] = [Production].dbo.getMtlDesc(Cutplan_Detail.POID, WorkOrder.Seq1, WorkOrder.Seq2,2,0),
 	[Remark] = Cutplan_Detail.Remark,
 	[SCI Delivery] = o.SciDelivery,
@@ -285,6 +287,8 @@ select
 	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Color] end,
 [Cut Qty] = [Cut Qty],
 [Fab Cons.] = [Fab Cons.],
+[Layer],
+[FabLength],
 [Fab Desc1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color],[Fab Desc]
 	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
 	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Fab Desc] end,
@@ -328,7 +332,7 @@ select	distinct
 	[ExcessQty] = ExcessQty.SizeCode,
 	[Fab Cons.] = Cutplan_Detail.Cons,
     [Layer] = WorkOrder.Layer,
-    [Length] = Cutplan_Detail.Cons / WorkOrder.Layer,
+    [Length] = iif(WorkOrder.Layer = 0, '', STR(Cutplan_Detail.Cons / WorkOrder.Layer, 12, 2) ),
 	[Fab Refno] = FabRefno.Refno,
 	[Remark] = Cutplan_Detail.Remark,
 	[SCI Delivery] = o.SciDelivery,
@@ -768,7 +772,7 @@ where 1 = 1
                             objSheets.Cells[6 + j, 14] = "Total Cons.";
                         }
                     }
-                    objSheets.Columns["R"].Clear();
+                    objSheets.Columns["T"].Clear();
                     objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
                     objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
@@ -789,8 +793,10 @@ where 1 = 1
                     objSheets.get_Range("M1").ColumnWidth = 8.13;
                     objSheets.get_Range("N1").ColumnWidth = 12.25;
                     objSheets.get_Range("O1").ColumnWidth = 12.13;
-                    objSheets.get_Range("P1").ColumnWidth = 50;
-                    objSheets.get_Range("Q1").ColumnWidth = 41;
+                    objSheets.get_Range("P1").ColumnWidth = 12.13;
+                    objSheets.get_Range("Q1").ColumnWidth = 20.3;
+                    objSheets.get_Range("R1").ColumnWidth = 50;
+                    objSheets.get_Range("S1").ColumnWidth = 41;
                     objSheets.Rows.AutoFit();
 
                     Marshal.ReleaseComObject(objSheets); //釋放sheet                    

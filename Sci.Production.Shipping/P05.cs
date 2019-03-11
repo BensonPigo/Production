@@ -1595,6 +1595,13 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
         {
             base.ClickUnconfirm();
 
+            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID is not null and id = '{this.CurrentMaintain["BIRID"]}'";
+            if (MyUtility.Check.Seek(sqlchk))
+            {
+                MyUtility.Msg.WarningBox("Cannot unconfirm because already created voucher no");
+                return;
+            }
+
             // Ship plan已經Confirm就不可以做Unconfirm
             if (MyUtility.GetValue.Lookup("Status", MyUtility.Convert.GetString(this.CurrentMaintain["ShipPlanID"]), "ShipPlan", "ID") == "Confirmed")
             {
