@@ -29,18 +29,20 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.numWorkHourDay = new Sci.Win.UI.NumericBox();
+            this.label8 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
+            this.txtSpreadingNo2 = new Sci.Production.Class.txtSpreadingNo();
+            this.txtSpreadingNo1 = new Sci.Production.Class.txtSpreadingNo();
+            this.txtCell2 = new Sci.Production.Class.txtCell();
+            this.txtCell1 = new Sci.Production.Class.txtCell();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtCuttingSp = new Sci.Win.UI.TextBox();
-            this.txtCutCell_e = new Sci.Win.UI.TextBox();
-            this.txtCutCell_s = new Sci.Win.UI.TextBox();
-            this.txtSpreadingNo_e = new Sci.Win.UI.TextBox();
-            this.txtSpreadingNo_s = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
-            this.comboM = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.labelEstCutDate = new Sci.Win.UI.Label();
@@ -63,31 +65,120 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.numWorkHourDay);
+            this.panel1.Controls.Add(this.label8);
+            this.panel1.Controls.Add(this.txtfactory1);
+            this.panel1.Controls.Add(this.txtMdivision1);
+            this.panel1.Controls.Add(this.txtSpreadingNo2);
+            this.panel1.Controls.Add(this.txtSpreadingNo1);
+            this.panel1.Controls.Add(this.txtCell2);
+            this.panel1.Controls.Add(this.txtCell1);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.txtCuttingSp);
-            this.panel1.Controls.Add(this.txtCutCell_e);
-            this.panel1.Controls.Add(this.txtCutCell_s);
-            this.panel1.Controls.Add(this.txtSpreadingNo_e);
-            this.panel1.Controls.Add(this.txtSpreadingNo_s);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.comboFactory);
-            this.panel1.Controls.Add(this.comboM);
             this.panel1.Controls.Add(this.labelFactory);
             this.panel1.Controls.Add(this.labelM);
             this.panel1.Controls.Add(this.labelEstCutDate);
             this.panel1.Controls.Add(this.dateEstCutDate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(410, 252);
+            this.panel1.Size = new System.Drawing.Size(410, 226);
             this.panel1.TabIndex = 94;
+            // 
+            // numWorkHourDay
+            // 
+            this.numWorkHourDay.BackColor = System.Drawing.Color.White;
+            this.numWorkHourDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numWorkHourDay.Location = new System.Drawing.Point(185, 186);
+            this.numWorkHourDay.Name = "numWorkHourDay";
+            this.numWorkHourDay.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numWorkHourDay.Size = new System.Drawing.Size(53, 23);
+            this.numWorkHourDay.TabIndex = 122;
+            this.numWorkHourDay.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(13, 186);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(166, 23);
+            this.label8.TabIndex = 121;
+            this.label8.Text = "Work Hour/Day";
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(112, 41);
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 116;
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(112, 12);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.TabIndex = 115;
+            // 
+            // txtSpreadingNo2
+            // 
+            this.txtSpreadingNo2.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo2.Location = new System.Drawing.Point(185, 99);
+            this.txtSpreadingNo2.MDivisionID = "";
+            this.txtSpreadingNo2.Name = "txtSpreadingNo2";
+            this.txtSpreadingNo2.Size = new System.Drawing.Size(45, 23);
+            this.txtSpreadingNo2.TabIndex = 114;
+            // 
+            // txtSpreadingNo1
+            // 
+            this.txtSpreadingNo1.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo1.Location = new System.Drawing.Point(112, 99);
+            this.txtSpreadingNo1.MDivisionID = "";
+            this.txtSpreadingNo1.Name = "txtSpreadingNo1";
+            this.txtSpreadingNo1.Size = new System.Drawing.Size(45, 23);
+            this.txtSpreadingNo1.TabIndex = 113;
+            // 
+            // txtCell2
+            // 
+            this.txtCell2.BackColor = System.Drawing.Color.White;
+            this.txtCell2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell2.Location = new System.Drawing.Point(162, 128);
+            this.txtCell2.MDivisionID = "";
+            this.txtCell2.Name = "txtCell2";
+            this.txtCell2.Size = new System.Drawing.Size(30, 23);
+            this.txtCell2.TabIndex = 112;
+            // 
+            // txtCell1
+            // 
+            this.txtCell1.BackColor = System.Drawing.Color.White;
+            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell1.Location = new System.Drawing.Point(112, 128);
+            this.txtCell1.MDivisionID = "";
+            this.txtCell1.Name = "txtCell1";
+            this.txtCell1.Size = new System.Drawing.Size(30, 23);
+            this.txtCell1.TabIndex = 111;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(166, 166);
+            this.label5.Location = new System.Drawing.Point(145, 134);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(16, 17);
             this.label5.TabIndex = 108;
@@ -96,7 +187,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(166, 131);
+            this.label4.Location = new System.Drawing.Point(163, 105);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(16, 17);
             this.label4.TabIndex = 107;
@@ -106,50 +197,14 @@
             // 
             this.txtCuttingSp.BackColor = System.Drawing.Color.White;
             this.txtCuttingSp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCuttingSp.Location = new System.Drawing.Point(111, 200);
+            this.txtCuttingSp.Location = new System.Drawing.Point(112, 157);
             this.txtCuttingSp.Name = "txtCuttingSp";
             this.txtCuttingSp.Size = new System.Drawing.Size(126, 23);
             this.txtCuttingSp.TabIndex = 106;
             // 
-            // txtCutCell_e
-            // 
-            this.txtCutCell_e.BackColor = System.Drawing.Color.White;
-            this.txtCutCell_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutCell_e.Location = new System.Drawing.Point(188, 166);
-            this.txtCutCell_e.Name = "txtCutCell_e";
-            this.txtCutCell_e.Size = new System.Drawing.Size(49, 23);
-            this.txtCutCell_e.TabIndex = 105;
-            // 
-            // txtCutCell_s
-            // 
-            this.txtCutCell_s.BackColor = System.Drawing.Color.White;
-            this.txtCutCell_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutCell_s.Location = new System.Drawing.Point(111, 163);
-            this.txtCutCell_s.Name = "txtCutCell_s";
-            this.txtCutCell_s.Size = new System.Drawing.Size(49, 23);
-            this.txtCutCell_s.TabIndex = 104;
-            // 
-            // txtSpreadingNo_e
-            // 
-            this.txtSpreadingNo_e.BackColor = System.Drawing.Color.White;
-            this.txtSpreadingNo_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo_e.Location = new System.Drawing.Point(188, 125);
-            this.txtSpreadingNo_e.Name = "txtSpreadingNo_e";
-            this.txtSpreadingNo_e.Size = new System.Drawing.Size(49, 23);
-            this.txtSpreadingNo_e.TabIndex = 103;
-            // 
-            // txtSpreadingNo_s
-            // 
-            this.txtSpreadingNo_s.BackColor = System.Drawing.Color.White;
-            this.txtSpreadingNo_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo_s.Location = new System.Drawing.Point(111, 125);
-            this.txtSpreadingNo_s.Name = "txtSpreadingNo_s";
-            this.txtSpreadingNo_s.Size = new System.Drawing.Size(49, 23);
-            this.txtSpreadingNo_s.TabIndex = 102;
-            // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(13, 200);
+            this.label3.Location = new System.Drawing.Point(13, 157);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(94, 23);
             this.label3.TabIndex = 101;
@@ -157,7 +212,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(13, 163);
+            this.label2.Location = new System.Drawing.Point(13, 128);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(94, 23);
             this.label2.TabIndex = 100;
@@ -165,39 +220,15 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(13, 125);
+            this.label1.Location = new System.Drawing.Point(12, 99);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(94, 23);
             this.label1.TabIndex = 99;
             this.label1.Text = "Spreading No";
             // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(109, 47);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(128, 24);
-            this.comboFactory.TabIndex = 2;
-            // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(109, 11);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(128, 24);
-            this.comboM.TabIndex = 1;
-            // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(12, 48);
+            this.labelFactory.Location = new System.Drawing.Point(12, 41);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(95, 23);
             this.labelFactory.TabIndex = 98;
@@ -213,7 +244,7 @@
             // 
             // labelEstCutDate
             // 
-            this.labelEstCutDate.Location = new System.Drawing.Point(12, 89);
+            this.labelEstCutDate.Location = new System.Drawing.Point(12, 70);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(94, 23);
             this.labelEstCutDate.TabIndex = 3;
@@ -235,7 +266,7 @@
             this.dateEstCutDate.DateBox2.Name = "";
             this.dateEstCutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateEstCutDate.DateBox2.TabIndex = 1;
-            this.dateEstCutDate.Location = new System.Drawing.Point(109, 89);
+            this.dateEstCutDate.Location = new System.Drawing.Point(112, 70);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
             this.dateEstCutDate.TabIndex = 0;
@@ -244,7 +275,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(534, 303);
+            this.ClientSize = new System.Drawing.Size(534, 274);
             this.Controls.Add(this.panel1);
             this.IsSupportPrint = false;
             this.Name = "R07";
@@ -263,8 +294,6 @@
         #endregion
 
         private Win.UI.Panel panel1;
-        private Win.UI.ComboBox comboFactory;
-        private Win.UI.ComboBox comboM;
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelM;
         private Win.UI.Label labelEstCutDate;
@@ -272,12 +301,16 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private Win.UI.TextBox txtCuttingSp;
-        private Win.UI.TextBox txtCutCell_e;
-        private Win.UI.TextBox txtCutCell_s;
-        private Win.UI.TextBox txtSpreadingNo_e;
-        private Win.UI.TextBox txtSpreadingNo_s;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Class.txtSpreadingNo txtSpreadingNo2;
+        private Class.txtSpreadingNo txtSpreadingNo1;
+        private Class.txtCell txtCell2;
+        private Class.txtCell txtCell1;
+        private Class.txtfactory txtfactory1;
+        private Class.txtMdivision txtMdivision1;
+        private Win.UI.NumericBox numWorkHourDay;
+        private Win.UI.Label label8;
     }
 }
