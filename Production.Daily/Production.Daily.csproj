@@ -88,8 +88,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="ObjectListView">
       <HintPath>..\_Dll\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="PostJobLog">
+      <HintPath>..\_Dll\PostJobLog.dll</HintPath>
     </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
