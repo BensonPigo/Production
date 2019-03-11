@@ -7,6 +7,7 @@ CREATE PROCEDURE [dbo].[usp_PMSUploadDataToAPS]
 
 AS
 BEGIN
+Set ARITHABORT ON
 declare @ServerName varchar(50)='', @DatabaseName varchar(20)='', @loginId varchar(20)='', @LoginPwd varchar(20)=''
 	--select出目標table所在位置
 	BEGIN
