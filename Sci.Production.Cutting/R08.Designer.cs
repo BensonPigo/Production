@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
+            this.numSpeed = new Sci.Win.UI.NumericBox();
+            this.label7 = new Sci.Win.UI.Label();
+            this.label6 = new Sci.Win.UI.Label();
+            this.dateActCutDate = new Sci.Win.UI.DateRange();
             this.txtfactory1 = new Sci.Production.Class.txtfactory();
             this.txtMdivision1 = new Sci.Production.Class.txtMdivision();
             this.txtSpreadingNo2 = new Sci.Production.Class.txtSpreadingNo();
@@ -45,10 +49,8 @@
             this.labelM = new Sci.Win.UI.Label();
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateRange();
-            this.label6 = new Sci.Win.UI.Label();
-            this.dateActCutDate = new Sci.Win.UI.DateRange();
-            this.label7 = new Sci.Win.UI.Label();
-            this.numSpeed = new Sci.Win.UI.NumericBox();
+            this.label8 = new Sci.Win.UI.Label();
+            this.numWorkHourDay = new Sci.Win.UI.NumericBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,6 +69,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.numWorkHourDay);
+            this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.numSpeed);
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.label6);
@@ -89,8 +93,64 @@
             this.panel1.Controls.Add(this.dateEstCutDate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(410, 247);
+            this.panel1.Size = new System.Drawing.Size(410, 274);
             this.panel1.TabIndex = 94;
+            // 
+            // numSpeed
+            // 
+            this.numSpeed.BackColor = System.Drawing.Color.White;
+            this.numSpeed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numSpeed.Location = new System.Drawing.Point(185, 215);
+            this.numSpeed.Name = "numSpeed";
+            this.numSpeed.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numSpeed.Size = new System.Drawing.Size(53, 23);
+            this.numSpeed.TabIndex = 120;
+            this.numSpeed.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(13, 215);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(166, 23);
+            this.label7.TabIndex = 119;
+            this.label7.Text = "Factory Max speed m/sec";
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(12, 99);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(94, 23);
+            this.label6.TabIndex = 118;
+            this.label6.Text = "Act. Cut Date ";
+            // 
+            // dateActCutDate
+            // 
+            // 
+            // 
+            // 
+            this.dateActCutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateActCutDate.DateBox1.Name = "";
+            this.dateActCutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateActCutDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateActCutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateActCutDate.DateBox2.Name = "";
+            this.dateActCutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateActCutDate.DateBox2.TabIndex = 1;
+            this.dateActCutDate.Location = new System.Drawing.Point(112, 99);
+            this.dateActCutDate.Name = "dateActCutDate";
+            this.dateActCutDate.Size = new System.Drawing.Size(280, 23);
+            this.dateActCutDate.TabIndex = 117;
             // 
             // txtfactory1
             // 
@@ -248,58 +308,29 @@
             this.dateEstCutDate.Size = new System.Drawing.Size(280, 23);
             this.dateEstCutDate.TabIndex = 0;
             // 
-            // label6
+            // label8
             // 
-            this.label6.Location = new System.Drawing.Point(12, 99);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(94, 23);
-            this.label6.TabIndex = 118;
-            this.label6.Text = "Act. Cut Date ";
+            this.label8.Location = new System.Drawing.Point(13, 244);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(166, 23);
+            this.label8.TabIndex = 121;
+            this.label8.Text = "Work Hour/Day";
             // 
-            // dateActCutDate
+            // numWorkHourDay
             // 
-            // 
-            // 
-            // 
-            this.dateActCutDate.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateActCutDate.DateBox1.Name = "";
-            this.dateActCutDate.DateBox1.Size = new System.Drawing.Size(129, 23);
-            this.dateActCutDate.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dateActCutDate.DateBox2.Location = new System.Drawing.Point(151, 0);
-            this.dateActCutDate.DateBox2.Name = "";
-            this.dateActCutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
-            this.dateActCutDate.DateBox2.TabIndex = 1;
-            this.dateActCutDate.Location = new System.Drawing.Point(112, 99);
-            this.dateActCutDate.Name = "dateActCutDate";
-            this.dateActCutDate.Size = new System.Drawing.Size(280, 23);
-            this.dateActCutDate.TabIndex = 117;
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(13, 215);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(166, 23);
-            this.label7.TabIndex = 119;
-            this.label7.Text = "Factory Max speed m/sec";
-            // 
-            // numSpeed
-            // 
-            this.numSpeed.BackColor = System.Drawing.Color.White;
-            this.numSpeed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numSpeed.Location = new System.Drawing.Point(185, 215);
-            this.numSpeed.Name = "numSpeed";
-            this.numSpeed.NullValue = new decimal(new int[] {
+            this.numWorkHourDay.BackColor = System.Drawing.Color.White;
+            this.numWorkHourDay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numWorkHourDay.Location = new System.Drawing.Point(185, 244);
+            this.numWorkHourDay.Name = "numWorkHourDay";
+            this.numWorkHourDay.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numSpeed.Size = new System.Drawing.Size(53, 23);
-            this.numSpeed.TabIndex = 120;
-            this.numSpeed.Value = new decimal(new int[] {
-            5,
+            this.numWorkHourDay.Size = new System.Drawing.Size(53, 23);
+            this.numWorkHourDay.TabIndex = 122;
+            this.numWorkHourDay.Value = new decimal(new int[] {
+            8,
             0,
             0,
             0});
@@ -308,7 +339,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(534, 284);
+            this.ClientSize = new System.Drawing.Size(534, 320);
             this.Controls.Add(this.panel1);
             this.IsSupportPrint = false;
             this.Name = "R08";
@@ -347,5 +378,7 @@
         private Win.UI.DateRange dateActCutDate;
         private Win.UI.NumericBox numSpeed;
         private Win.UI.Label label7;
+        private Win.UI.NumericBox numWorkHourDay;
+        private Win.UI.Label label8;
     }
 }
