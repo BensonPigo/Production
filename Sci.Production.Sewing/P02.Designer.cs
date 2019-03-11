@@ -54,6 +54,7 @@
             this.txtsewinglineLine = new Sci.Production.Class.txtsewingline();
             this.btnReqUnlock = new Sci.Win.UI.Button();
             this.btnBatchRecall = new Sci.Win.UI.Button();
+            this.lbstatus = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -70,6 +71,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.lbstatus);
             this.masterpanel.Controls.Add(this.btnReqUnlock);
             this.masterpanel.Controls.Add(this.label12);
             this.masterpanel.Controls.Add(this.btnShareWworkingHoursToSP);
@@ -122,6 +124,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnShareWworkingHoursToSP, 0);
             this.masterpanel.Controls.SetChildIndex(this.label12, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnReqUnlock, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lbstatus, 0);
             // 
             // detailpanel
             // 
@@ -555,6 +558,20 @@
             this.btnBatchRecall.UseVisualStyleBackColor = true;
             this.btnBatchRecall.Click += new System.EventHandler(this.BtnBatchRecall_Click);
             // 
+            // lbstatus
+            // 
+            this.lbstatus.AutoSize = true;
+            this.lbstatus.BackColor = System.Drawing.Color.Transparent;
+            this.lbstatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
+            this.lbstatus.Location = new System.Drawing.Point(647, 10);
+            this.lbstatus.Name = "lbstatus";
+            this.lbstatus.Size = new System.Drawing.Size(109, 23);
+            this.lbstatus.TabIndex = 35;
+            this.lbstatus.TextStyle.BorderColor = System.Drawing.Color.Fuchsia;
+            this.lbstatus.TextStyle.Color = System.Drawing.Color.Fuchsia;
+            this.lbstatus.TextStyle.ExtBorderColor = System.Drawing.Color.Fuchsia;
+            this.lbstatus.TextStyle.GradientColor = System.Drawing.Color.Fuchsia;
+            // 
             // P02
             // 
             this.ClientSize = new System.Drawing.Size(961, 558);
@@ -624,5 +641,6 @@
         private Win.UI.Label label12;
         private Win.UI.Button btnReqUnlock;
         private Win.UI.Button btnBatchRecall;
+        private Win.UI.Label lbstatus;
     }
 }

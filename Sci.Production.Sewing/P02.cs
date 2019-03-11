@@ -46,6 +46,8 @@ namespace Sci.Production.Sewing
                 MyUtility.Msg.ErrorBox("Query System fail, pls contact Taipei MIS!!");
             }
         }
+
+        /// <inheritdoc/>
         protected override void EnsureToolbarExt()
         {
             base.EnsureToolbarExt();
@@ -571,15 +573,30 @@ where   mo.Junk = 0
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             if (MyUtility.Check.Empty(this.CurrentMaintain))
             {
                 return;
             }
+
             base.OnDetailEntered();
             this.oldttlqaqty = this.numQAOutput.Value;
             bool isSend = this.CurrentMaintain["Status"].ToString() == "Send";
+
+            switch (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]))
+            {
+                case "Send":
+                    this.lbstatus.Text = "Daily Lock";
+                    break;
+                case "Locked":
+                    this.lbstatus.Text = "Monthly Lock";
+                    break;
+                default:
+                    this.lbstatus.Text = string.Empty;
+                    break;
+            }
 
             if (isSend)
             {
