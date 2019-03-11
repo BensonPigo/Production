@@ -93,7 +93,7 @@
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJunk.Location = new System.Drawing.Point(233, 18);
+            this.checkJunk.Location = new System.Drawing.Point(287, 18);
             this.checkJunk.Name = "checkJunk";
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 1;
@@ -105,7 +105,7 @@
             this.txtDescription.BackColor = System.Drawing.Color.White;
             this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(116, 94);
+            this.txtDescription.Location = new System.Drawing.Point(170, 94);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(379, 23);
             this.txtDescription.TabIndex = 3;
@@ -114,7 +114,7 @@
             // 
             this.labelDescription.Location = new System.Drawing.Point(20, 94);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(89, 23);
+            this.labelDescription.Size = new System.Drawing.Size(147, 23);
             this.labelDescription.TabIndex = 10;
             this.labelDescription.Text = "Description";
             // 
@@ -123,7 +123,7 @@
             this.txtID.BackColor = System.Drawing.Color.White;
             this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "id", true));
             this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtID.Location = new System.Drawing.Point(116, 18);
+            this.txtID.Location = new System.Drawing.Point(170, 18);
             this.txtID.Name = "txtID";
             this.txtID.Size = new System.Drawing.Size(100, 23);
             this.txtID.TabIndex = 0;
@@ -132,15 +132,15 @@
             // 
             this.labelID.Location = new System.Drawing.Point(21, 18);
             this.labelID.Name = "labelID";
-            this.labelID.Size = new System.Drawing.Size(88, 23);
+            this.labelID.Size = new System.Drawing.Size(146, 23);
             this.labelID.TabIndex = 8;
-            this.labelID.Text = "ID";
+            this.labelID.Text = "Spreading Table No.";
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(20, 56);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 23);
+            this.label1.Size = new System.Drawing.Size(147, 23);
             this.label1.TabIndex = 16;
             this.label1.Text = "M";
             // 
@@ -148,7 +148,7 @@
             // 
             this.label2.Location = new System.Drawing.Point(20, 132);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 23);
+            this.label2.Size = new System.Drawing.Size(147, 23);
             this.label2.TabIndex = 18;
             this.label2.Text = "Cut Cell";
             // 
@@ -157,7 +157,7 @@
             this.txtCell1.BackColor = System.Drawing.Color.White;
             this.txtCell1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutCellID", true));
             this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell1.Location = new System.Drawing.Point(116, 132);
+            this.txtCell1.Location = new System.Drawing.Point(170, 132);
             this.txtCell1.MDivisionID = "";
             this.txtCell1.Name = "txtCell1";
             this.txtCell1.Size = new System.Drawing.Size(30, 23);
@@ -169,7 +169,7 @@
             this.txtMdivision1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MDivisionid", true));
             this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtMdivision1.IsSupportEditMode = false;
-            this.txtMdivision1.Location = new System.Drawing.Point(116, 56);
+            this.txtMdivision1.Location = new System.Drawing.Point(170, 56);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.ReadOnly = true;
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);

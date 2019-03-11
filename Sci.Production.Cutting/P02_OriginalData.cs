@@ -193,8 +193,25 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
-					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.WeaveTypeID,a.cons),0)as float)
+	
+	,SandCTime = concat(
+		'Spr.:',cast(round(isnull(
+			dbo.GetSpreadingTime(
+					c.WeaveTypeID,
+					a.Refno,
+					iif(iif(isnull(fi.avgInQty,0)=0,1,round(a.Cons/fi.avgInQty,0))<1,1,iif(isnull(fi.avgInQty,0)=0,1,round(a.Cons/fi.avgInQty,0))),
+					a.Layer,
+					a.Cons,
+					1
+				)/60.0,0),2)as float),' mins,'
+		,'Cut:',cast(round(isnull(
+			dbo.GetCuttingTime(
+					round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),
+					a.CutCellid,
+					a.Layer,
+					c.WeaveTypeID,
+					a.cons
+				)/60.0,0),2)as float),' mins'
 	)
     ,workorderukey
 from WorkOrderRevisedMarkerOriginalData a WITH (NOLOCK)
@@ -354,8 +371,25 @@ Select
     ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',a.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + a.ActCuttingPerimeter, 10),a.ActCuttingPerimeter)
 	,StraightLengthNew = iif(CHARINDEX('Yd',a.StraightLength)<4,RIGHT(REPLICATE('0', 10) + a.StraightLength, 10),a.StraightLength)
 	,CurvedLengthNew = iif(CHARINDEX('Yd',a.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + a.CurvedLength, 10),a.CurvedLength)
-	,SandCTime = concat('Spr.Time:',cast(isnull(dbo.GetSpreadingTime(c.WeaveTypeID,a.Refno,iif(fi.avgInQty=0,0,round(a.Cons/fi.avgInQty,0)),a.Layer,a.Cons,1),0)as float),','
-					   ,'CutTime:',cast(isnull(dbo.GetCuttingTime(round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),a.CutCellid,a.Layer,c.WeaveTypeID,a.cons),0)as float)
+	
+	,SandCTime = concat(
+		'Spr.:',cast(round(isnull(
+			dbo.GetSpreadingTime(
+					c.WeaveTypeID,
+					a.Refno,
+					iif(iif(isnull(fi.avgInQty,0)=0,1,round(a.Cons/fi.avgInQty,0))<1,1,iif(isnull(fi.avgInQty,0)=0,1,round(a.Cons/fi.avgInQty,0))),
+					a.Layer,
+					a.Cons,
+					1
+				)/60.0,0),2)as float),' mins,'
+		,'Cut:',cast(round(isnull(
+			dbo.GetCuttingTime(
+					round(dbo.GetActualPerimeter(a.ActCuttingPerimeter),4),
+					a.CutCellid,
+					a.Layer,
+					c.WeaveTypeID,
+					a.cons
+				)/60.0,0),2)as float),' mins'
 	)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
