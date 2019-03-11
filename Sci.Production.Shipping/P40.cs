@@ -188,6 +188,7 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                 this.Helper.Controls.Grid.Generator(this.detailgrid)
                     .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("BrandId", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
                     .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
                     .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -272,6 +273,17 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
             {
                 MyUtility.Msg.WarningBox("Detail can't empty!!");
                 return false;
+            }
+            #endregion
+
+            #region 檢查畫面上的Refno在[Fabric], 是否能找到對應的[Fabric].NLCode
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (!MyUtility.Check.Seek($"select 1 from Fabric with(nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLcode"]}'"))
+                {
+                    MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
+                    return false;
+                }
             }
             #endregion
 
@@ -722,7 +734,7 @@ select e.ID
 	   , OriUnit = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID)
 	   , SCIRefno = ed.RefNo
 	   , ed.RefNo
-	   , BrandID = ''
+	   , BrandID = isnull(f.BrandID,'')
 	   , Type = ed.MtlTypeID
 	   , li.Description
 	   , DescDetail = ''
@@ -745,8 +757,11 @@ select e.ID
 	   , POSeq = '01'
 from FtyExport e WITH (NOLOCK) 
 inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo 
-										and li.LocalSuppid = ed.SuppID
+left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
+left join orders o with(nolock) on o.id = ed.POID
+left join brand b with(nolock) on b.id = o.BrandID
+outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
+
 where {0}", sqlWhere);
                 }
                 else
@@ -784,10 +799,10 @@ select e.ID
 	   , POSeq = isnull(psd.Seq1, '') 
 from FtyExport e WITH (NOLOCK) 
 inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
-										  	  and psd.SEQ1 = ed.Seq1 
-										  	  and psd.SEQ2 = ed.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+left join orders o with(nolock) on o.id = ed.POID
+left join brand b with(nolock) on b.id = o.BrandID
+outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
 where {0}", sqlWhere);
                 }
             }
@@ -827,7 +842,9 @@ select e.ID
 from Export e WITH (NOLOCK) 
 inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+left join orders o with(nolock) on o.id = ed.POID
+left join brand b with(nolock) on b.id = o.BrandID
+outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
 where {0}", sqlWhere);
             }
                 #endregion
@@ -860,6 +877,7 @@ where {0}", sqlWhere);
                     newRow["PcsKg"] = dr["PcsKg"];
                     newRow["NoDeclare"] = dr["NoDeclare"];
                     newRow["Price"] = dr["Price"];
+                    newRow["BrandID"] = dr["BrandID"];
                     this.NotInPO.Rows.Add(newRow);
                 }
                 else
@@ -966,10 +984,13 @@ with ExportDetail as (
 	   						      where UnitFrom = IIF(ed.UnitID = 'CONE', 'M', ed.UnitID) 
 	   						  		    and UnitTo = 'M'),'')
             , ed.RefNo 
+            , f.Brandid
     from FtyExport e WITH (NOLOCK) 
     inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-    left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo 
-										    and li.LocalSuppid = ed.SuppID
+    left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
+    left join orders o with(nolock) on o.id = ed.POID
+    left join brand b with(nolock) on b.id = o.BrandID
+    outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
     where {0}", sqlWhere));
                 }
                 else
@@ -1011,12 +1032,13 @@ with ExportDetail as (
 	   						      where UnitFrom = ed.UnitId 
 	   						  		    and UnitTo = 'M'),'') 
             , f.RefNo 
+            , f.BrandID
     from FtyExport e WITH (NOLOCK) 
     inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
-											      and psd.SEQ1 = ed.Seq1 
-											      and psd.SEQ2 = ed.Seq2
-    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+    left join orders o with(nolock) on o.id = ed.POID
+    left join brand b with(nolock) on b.id = o.BrandID
+    outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
     where {0}", sqlWhere));
                 }
             }
@@ -1059,12 +1081,14 @@ with ExportDetail as (
 	   						      where UnitFrom = ed.UnitId 
 	   						  		    and UnitTo = 'M'), '') 
             , f.RefNo 
+            , f.BrandID
     from Export e WITH (NOLOCK) 
     inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID 
-											      and psd.SEQ1 = ed.Seq1 
-											      and psd.SEQ2 = ed.Seq2
-    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
+    left join orders o with(nolock) on o.id = ed.POID
+    left join brand b with(nolock) on b.id = o.BrandID
+    outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
+
     where {0}", sqlWhere));
             }
             #endregion
@@ -1090,11 +1114,12 @@ NotInPo as (
            , M2UnitRate = M2UnitRate.value
            , UnitRate = UnitRate.value
            , f.RefNo
+           , f.BrandID
 	from #tmp
-    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = #tmp.POID 
-											    and psd.SEQ1 = #tmp.Seq1 
-											    and psd.SEQ2 = #tmp.Seq2
-    left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
+    left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = #tmp.POID and psd.SEQ1 = #tmp.Seq1 and psd.SEQ2 = #tmp.Seq2
+    left join orders o with(nolock) on o.id = psd.ID
+    left join brand b with(nolock) on b.id = o.BrandID
+    outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = psd.Refno and f1.BrandID = b.BrandGroup and f1.Type = psd.FabricType order by f1.NLCodeEditDate desc)f
     outer apply (
         select value = (select RateValue 
 	   					from dbo.View_Unitrate 
@@ -1127,6 +1152,7 @@ select NLCode
 	   , CustomsUnit
        , RefNo
        , Type
+       , BrandID
 	   , sum(NewQty) as NewQty
 	   , sum(NewQty * Price) as Price 
 from (
@@ -1136,6 +1162,7 @@ from (
            , Price
            , RefNo
            , Type
+           , BrandID
 		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate))
     from ExportDetail WITH (NOLOCK) 
     where NoDeclare = 0
@@ -1152,10 +1179,11 @@ from (
            , Price
            , RefNo
            , Type
+           , BrandID
 		   , NewQty = [dbo].getVNUnitTransfer(Type, OriUnit, CustomsUnit, OriImportQty, Width, PcsWidth, PcsLength, PcsKg, IIF(CustomsUnit = 'M2', M2RateValue, RateValue), IIF(CustomsUnit = 'M2', M2UnitRate, UnitRate))
     from NotInPo WITH (NOLOCK) 
 ) a
-group by NLCode, HSCode, CustomsUnit, RefNo,Type");
+group by NLCode, HSCode, CustomsUnit, RefNo,Type,BrandID");
 
             DataTable selectedData;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(this.NotInPO, null, sqlCmd.ToString(), out selectedData);
@@ -1171,7 +1199,7 @@ group by NLCode, HSCode, CustomsUnit, RefNo,Type");
             // 將資料做排序
             result = MyUtility.Tool.ProcessWithDatatable(
                     selectedData,
-                    @"NLCode,HSCode,CustomsUnit,NewQty,Price,RefNo,Type",
+                    @"NLCode,HSCode,CustomsUnit,NewQty,Price,RefNo,Type,BrandID",
                     string.Format(@"
 select NLCode
 	   , HSCode
@@ -1179,6 +1207,7 @@ select NLCode
 	   , NewQty
        , RefNo
        , Type
+       , BrandID = isnull(BrandID,'')
 	   , Price = iif(NewQty=0,0,Price / NewQty)
 from #tmp
 order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
@@ -1201,6 +1230,7 @@ order by CONVERT(int, SUBSTRING(NLCode, 3, 3))"),
                 DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
                 newRow["ID"] = string.Empty;
                 newRow["Refno"] = dr["Refno"];
+                newRow["BrandID"] = dr["BrandID"];
                 newRow["FabricType"] = dr["Type"];
                 newRow["NLCode"] = dr["NLCode"];
                 newRow["HSCode"] = dr["HSCode"];
