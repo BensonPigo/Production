@@ -85,6 +85,8 @@
             this.txttpeuserHandle = new Sci.Production.Class.txttpeuser();
             this.chkReplacement = new Sci.Win.UI.CheckBox();
             this.chkDelay = new Sci.Win.UI.CheckBox();
+            this.numTPEPaidUSD = new Sci.Win.UI.NumericBox();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -101,6 +103,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.label4);
+            this.masterpanel.Controls.Add(this.numTPEPaidUSD);
             this.masterpanel.Controls.Add(this.chkDelay);
             this.masterpanel.Controls.Add(this.chkReplacement);
             this.masterpanel.Controls.Add(this.chkImportChange);
@@ -217,6 +221,8 @@
             this.masterpanel.Controls.SetChildIndex(this.chkImportChange, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkReplacement, 0);
             this.masterpanel.Controls.SetChildIndex(this.chkDelay, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numTPEPaidUSD, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label4, 0);
             // 
             // detailpanel
             // 
@@ -854,12 +860,12 @@
             this.chkImportChange.AutoSize = true;
             this.chkImportChange.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "NoImportCharges", true));
             this.chkImportChange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkImportChange.Location = new System.Drawing.Point(577, 207);
+            this.chkImportChange.Location = new System.Drawing.Point(577, 224);
             this.chkImportChange.Name = "chkImportChange";
             this.chkImportChange.Size = new System.Drawing.Size(138, 21);
             this.chkImportChange.TabIndex = 55;
             this.chkImportChange.Text = "No Import Charge";
-            this.chkImportChange.UseVisualStyleBackColor = true; 
+            this.chkImportChange.UseVisualStyleBackColor = true;
             // 
             // txttpeuserHandle
             // 
@@ -877,7 +883,7 @@
             this.chkReplacement.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Replacement", true));
             this.chkReplacement.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkReplacement.IsSupportEditMode = false;
-            this.chkReplacement.Location = new System.Drawing.Point(577, 234);
+            this.chkReplacement.Location = new System.Drawing.Point(577, 251);
             this.chkReplacement.Name = "chkReplacement";
             this.chkReplacement.Size = new System.Drawing.Size(110, 21);
             this.chkReplacement.TabIndex = 56;
@@ -890,12 +896,44 @@
             this.chkDelay.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Delay", true));
             this.chkDelay.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkDelay.IsSupportEditMode = false;
-            this.chkDelay.Location = new System.Drawing.Point(577, 261);
+            this.chkDelay.Location = new System.Drawing.Point(577, 278);
             this.chkDelay.Name = "chkDelay";
             this.chkDelay.Size = new System.Drawing.Size(63, 21);
             this.chkDelay.TabIndex = 57;
             this.chkDelay.Text = "Delay";
             this.chkDelay.UseVisualStyleBackColor = true;
+            // 
+            // numTPEPaidUSD
+            // 
+            this.numTPEPaidUSD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTPEPaidUSD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TPEPaidUSD", true));
+            this.numTPEPaidUSD.DecimalPlaces = 2;
+            this.numTPEPaidUSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTPEPaidUSD.IsSupportEditMode = false;
+            this.numTPEPaidUSD.Location = new System.Drawing.Point(673, 195);
+            this.numTPEPaidUSD.Name = "numTPEPaidUSD";
+            this.numTPEPaidUSD.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTPEPaidUSD.ReadOnly = true;
+            this.numTPEPaidUSD.Size = new System.Drawing.Size(100, 23);
+            this.numTPEPaidUSD.TabIndex = 58;
+            this.numTPEPaidUSD.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.label4.Location = new System.Drawing.Point(577, 195);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(92, 23);
+            this.label4.TabIndex = 59;
+            this.label4.Text = "TPE Paid(USD)";
             // 
             // P03
             // 
@@ -995,5 +1033,7 @@
         private Win.UI.CheckBox chkImportChange;
         private Win.UI.CheckBox chkDelay;
         private Win.UI.CheckBox chkReplacement;
+        private Win.UI.Label label4;
+        private Win.UI.NumericBox numTPEPaidUSD;
     }
 }
