@@ -127,7 +127,6 @@ namespace Sci.Production.Quality
             #region Set_grid2 Columns
             this.grid2.IsEditingReadOnly = false;
             Helper.Controls.Grid.Generator(this.grid2)
-            .Text("Consignee", header: "Consignee", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -333,7 +332,7 @@ left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
+left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.FactoryGroup = Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 outer apply(
 	select T1InspectedYards=sum(fp.ActualYds)
@@ -578,7 +577,7 @@ left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.Consignee=Export.Consignee 
+left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.FactoryGroup = Export.Consignee 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where   ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
@@ -586,7 +585,7 @@ and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
 
 select 
-[Consignee] = iif(a.Consignee is null,b.Consignee,a.Consignee)
+[Consignee] = iif(a.Consignee is null,b.FactoryGroup,a.Consignee)
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
 ,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
 ,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
@@ -597,7 +596,7 @@ select
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
 ,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot)
 from #tmp a
-full join FirstDyelot b on a.consignee = b.consignee
+full join FirstDyelot b on a.consignee = b.FactoryGroup
 and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID 
 where 1=1 and 
 {sqlwhere}
@@ -647,13 +646,13 @@ merge FirstDyelot t
 using (select ConSignee,Suppid,Refno,ColorID,SeasonSCIID,max(convert(date,FirstDyelot)) as FirstDyelot 
 from #tmp
 group by  ConSignee,Suppid,Refno,ColorID,SeasonSCIID) s
-on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.Consignee = s.Consignee  and t.SeasonSCIID = s.SeasonSCIID
+on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.FactoryGroup = s.Consignee  and t.SeasonSCIID = s.SeasonSCIID
 when matched then update set 
 	FirstDyelot=s.FirstDyelot,
 	EditName = '{Sci.Env.User.UserID}',
 	EditDate = GETDATE()
 when not matched by target then 
-insert([Refno],[SuppID],[ColorID],Consignee,SeasonSCIID,[FirstDyelot],[EditName],[EditDate])
+insert([Refno],[SuppID],[ColorID],FactoryGroup,SeasonSCIID,[FirstDyelot],[EditName],[EditDate])
 VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.Consignee,SeasonSCIID,s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
 ;
 ";

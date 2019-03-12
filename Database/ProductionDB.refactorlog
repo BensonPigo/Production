@@ -343,4 +343,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Description" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4f19b508-4872-4db3-b22d-7a43a3e33675" ChangeDateTime="03/12/2019 03:03:41">
+    <Property Name="ElementName" Value="[dbo].[FirstDyelot].[Consignee]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[FirstDyelot]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FactoryGroup" />
+  </Operation>
 </Operations>
