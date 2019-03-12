@@ -1251,7 +1251,7 @@ BEGIN
 				t.ConsPC				= s.ConsPC,
 				t.CuttingPiece			= s.CuttingPiece,
 				t.ActCuttingPerimeter	= s.ActCuttingPerimeter,
-				t.StraightLength		= s.StraightLengt,
+				t.StraightLength		= s.StraightLength,
 				t.FabricCode			= s.FabricCode,
 				t.CurvedLength			= s.CurvedLength,
 				t.Efficiency			= s.Efficiency,
