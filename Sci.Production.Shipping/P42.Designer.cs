@@ -41,6 +41,7 @@
             this.label2 = new Sci.Win.UI.Label();
             this.txtWKNo = new Sci.Win.UI.TextBox();
             this.txtShippingReason1 = new Sci.Production.Class.txtShippingReason();
+            this.btnDownloadexcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -57,6 +58,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnDownloadexcel);
             this.masterpanel.Controls.Add(this.txtShippingReason1);
             this.masterpanel.Controls.Add(this.txtWKNo);
             this.masterpanel.Controls.Add(this.label2);
@@ -85,6 +87,7 @@
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtWKNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtShippingReason1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownloadexcel, 0);
             // 
             // detailpanel
             // 
@@ -274,6 +277,16 @@
             this.txtShippingReason1.TextBox1Binding = "";
             this.txtShippingReason1.Type = "AQ";
             // 
+            // btnDownloadexcel
+            // 
+            this.btnDownloadexcel.Location = new System.Drawing.Point(625, 49);
+            this.btnDownloadexcel.Name = "btnDownloadexcel";
+            this.btnDownloadexcel.Size = new System.Drawing.Size(142, 30);
+            this.btnDownloadexcel.TabIndex = 14;
+            this.btnDownloadexcel.Text = "Download excel";
+            this.btnDownloadexcel.UseVisualStyleBackColor = true;
+            this.btnDownloadexcel.Click += new System.EventHandler(this.BtnDownloadexcel);
+            // 
             // P42
             // 
             this.ApvChkValue = "New";
@@ -327,5 +340,6 @@
         private Win.UI.Label label2;
         private Win.UI.Label label1;
         private Class.txtShippingReason txtShippingReason1;
+        private Win.UI.Button btnDownloadexcel;
     }
 }

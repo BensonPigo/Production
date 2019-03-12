@@ -67,13 +67,18 @@ namespace Sci.Production.Class
                     MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
                     return;
                 }
+                DataRow temp;
+                if (MyUtility.Check.Seek(string.Format("Select Description from ShippingReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", str, Type), out temp))
+                    this.DisplayBox1.Text = temp[0].ToString();
+
+                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", Type + this.textBox1.Text.ToString(), "ShippingReason", "Type+ID");
-        }
+        //private void textBox1_TextChanged(object sender, EventArgs e)
+        //{
+        //    this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", Type + this.textBox1.Text.ToString(), "ShippingReason", "Type+ID");
+        //}
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {

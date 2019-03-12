@@ -19,6 +19,7 @@ namespace Sci.Production.Shipping
     public partial class P42 : Sci.Win.Tems.Input6
     {
         private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings brand = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// P42
@@ -112,15 +113,42 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                     }
                 };
             #endregion
+            #region brand的Validating
+            this.brand.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        if (MyUtility.Convert.GetString(dr["BrandID"]) != MyUtility.Convert.GetString(e.FormattedValue))
+                        {
+                            string sqlchk = $@"select 1 from Fabric with(nolock) where BrandID = '{e.FormattedValue}' ";
+                            if (!MyUtility.Check.Seek(sqlchk))
+                            {
+                                dr["BrandID"] = string.Empty;
+                                MyUtility.Msg.WarningBox("Brand  not found!!");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        dr["BrandID"] = string.Empty;
+                    }
+
+                    dr.EndEdit();
+                }
+            };
+            #endregion
             DataGridViewGeneratorNumericColumnSettings stockQtySetting = new DataGridViewGeneratorNumericColumnSettings();
             stockQtySetting.IsSupportNegative = true;
 
             base.OnDetailGridSetup();
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), settings: this.brand)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(10))
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode)
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: stockQtySetting)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true);
@@ -212,6 +240,18 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
             {
                 MyUtility.Msg.WarningBox("Detail can't empty!!");
                 return false;
+            }
+            #endregion
+
+            #region 檢查 Refno+NLCode是否存在[Fabric]
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string sqlchk = $@"select 1 from Fabric with(nolock) where refno = '{dr["refno"]}' and nlcode = '{dr["nlcode"]}'";
+                if (!MyUtility.Check.Seek(sqlchk))
+                {
+                    MyUtility.Msg.WarningBox($"Ref No. :{dr["refno"]} , Customs Code : {dr["nlcode"]} not exists!");
+                    return false;
+                }
             }
             #endregion
 
@@ -383,12 +423,12 @@ order by vaqd.NLCode
             {
                 intRowsRead++;
 
-                range = worksheet.Range[string.Format("A{0}:E{0}", intRowsRead)];
+                range = worksheet.Range[string.Format("A{0}:F{0}", intRowsRead)];
                 objCellArray = range.Value;
 
                 DataRow newRow = ((DataTable)this.detailgridbs.DataSource).NewRow();
-                string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"));
-                newRow["Refno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
+                string type = MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C"));
+                newRow["Refno"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C");
                 string nlCode = string.Empty;
                 if (type.EqualString("A") || type.EqualString("F"))
                 {
@@ -404,13 +444,14 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
 
                 if (!MyUtility.Check.Seek(chkVNContract_Detail, out seekData))
                 {
-                    errNLCode.Append(string.Format("Customs Code: {0}\r\n", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C"))));
+                    errNLCode.Append(string.Format("Customs Code: {0}\r\n", MyUtility.Convert.GetString(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 2], "C"))));
                     continue;
                 }
                 else
                 {
+                    newRow["BrandID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
                     newRow["NLCode"] = nlCode;
-                    newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "N");
+                    newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "N");
                     newRow["HSCode"] = seekData["HSCode"];
                     newRow["UnitID"] = seekData["UnitID"];
                     ((DataTable)this.detailgridbs.DataSource).Rows.Add(newRow);
@@ -451,7 +492,7 @@ select
 	f1.BrandId,
 	f1.HSCode,
 	UnitID=f1.CustomsUnit,
-	qty=sum(ad.QtyAfter-ad.QtyBefore)
+	qty=sum(ad.QtyBefore-ad.QtyAfter)
 into #tmp
 from Adjust a with(nolock)
 inner join Adjust_Detail ad with(nolock) on ad.ID=a.ID
@@ -503,7 +544,7 @@ select
 	BrandId=b.BrandGroup,
 	li.HSCode,
 	UnitID=li.CustomsUnit,
-	Qty=sum(ald.QtyAfter - ald.QtyBefore)
+	Qty=sum(ald.QtyBefore-ald.QtyAfter)
 into #tmp
 from AdjustLocal al with(nolock)
 inner join AdjustLocal_Detail ald with(nolock)on ald.id = al.id
@@ -618,6 +659,18 @@ drop table #tmp
             {
                 ((DataTable)this.detailgridbs.DataSource).ImportRow(dr);
             }
+        }
+
+        private void BtnDownloadexcel(object sender, EventArgs e)
+        {
+            string strXltName = Sci.Env.Cfg.XltPathDir + "\\Shipping_P42_ImportExcelFormat.xltx";
+            Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+            if (excel == null)
+            {
+                return;
+            }
+
+            excel.Visible = true;
         }
     }
 }
