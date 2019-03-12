@@ -236,7 +236,7 @@ order by SciDelivery,ID,Refno");
 
             if (excelTable == null || excelTable.Rows.Count <= 0)
             {
-                MyUtility.Msg.WarningBox("Please encode condition first!");
+                MyUtility.Msg.WarningBox("Please query data first!");
                 return;
             }
 
