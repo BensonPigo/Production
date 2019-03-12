@@ -601,12 +601,15 @@ order by fwd.WhseNo",
             #endregion
 
             #region 檢查Act FCR Date 不可晚於今日or早於一個月前
-            DateTime FBDate = (DateTime)CurrentMaintain["FBDate"];
-            if (DateTime.Compare(FBDate, DateTime.Now.AddMonths(-1)) < 0 ||
-                DateTime.Compare(FBDate, DateTime.Now) > 0)
+            if (!MyUtility.Check.Empty(CurrentMaintain["FBDate"]))
             {
-                MyUtility.Msg.WarningBox("<Forward Booking Date> cannot be later than today or one month earlier !");
-                return false;
+                DateTime FBDate = DateTime.Parse(this.CurrentMaintain["FBDate"].ToString());
+                if (DateTime.Compare(FBDate, DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd")).AddMonths(-1)) < 0 ||
+                    DateTime.Compare(FBDate, DateTime.Now) > 0)
+                {
+                    MyUtility.Msg.WarningBox("<Forward Booking Date> cannot be later than today or one month earlier !");
+                    return false;
+                }
             }
 
             #endregion

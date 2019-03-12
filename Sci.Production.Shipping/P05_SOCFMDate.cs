@@ -26,7 +26,7 @@ namespace Sci.Production.Shipping
         private void btnConfirm_Click(object sender, EventArgs e)
         {
             #region Confirm
-            if (MyUtility.Check.Empty(this.dateSOCfmDate))
+            if (MyUtility.Check.Empty(this.dateSOCfmDate.Value))
             {
                 MyUtility.Msg.WarningBox("S/O CFM Date cannot be empty!");
                 return;
