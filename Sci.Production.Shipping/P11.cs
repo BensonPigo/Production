@@ -211,7 +211,7 @@ where id = '{this.CurrentMaintain["ID"]}'
             string sqlcmd = $@"
 select *
 from GMTBooking with(nolock)
-where BIRID is null
+where isnull(BIRID,0) = 0
 and BrandID = '{this.CurrentMaintain["BrandID"]}'
 and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
         ";
@@ -220,6 +220,12 @@ and InvSerial like '{this.CurrentMaintain["InvSerial"]}%'
             if (!result)
             {
                 this.ShowErr(result);
+                return;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                this.ShowErr("Import error!");
                 return;
             }
 
