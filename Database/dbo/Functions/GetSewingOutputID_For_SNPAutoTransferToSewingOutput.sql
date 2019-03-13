@@ -1,7 +1,7 @@
 USE [Production]
 GO
 
-/****** Object:  UserDefinedFunction [dbo].[GetSewingOutputID_For_SNPAutoTransferToSewingOutput]    Script Date: 2019/03/12 ¤U¤È 05:36:44 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetSewingOutputID_For_SNPAutoTransferToSewingOutput]    Script Date: 3/13/2019 10:04:24 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -39,7 +39,7 @@ BEGIN
 		+ RIGHT('00' + CONVERT(NVARCHAR(2), DAY (@execuDatetime)), 2)
 	
 	SET @MaxID = (SELECT [ID]= MAX(ID)
-				 FROM SewingOutput 
+				 FROM SewingOutput WITH(NOLOCK)
 				 WHERE ID LIKE @ID_Key
 			 	 + RIGHT( CAST( YEAR(GETDATE()) AS VARCHAR),2)
 			 	 + RIGHT('00' + CONVERT(NVARCHAR(2), MONTH (@execuDatetime)), 2)

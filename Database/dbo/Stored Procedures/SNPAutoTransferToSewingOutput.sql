@@ -1,7 +1,7 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 2019/03/12 と 05:35:57 ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/13/2019 10:03:59 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -11,7 +11,7 @@ GO
 -- =============================================
 -- Author:		Benson
 -- Create date: 2019/03/11
--- Description:	Get Hanger Output Data and Insert into SewingOutputRFT 眔本╰参讽ら玻糶SewingOutputSewingOutputい
+-- Description:	Get Hanger Output Data and Insert into SewingOutputRFT 
 -- =============================================
 CREATE PROCEDURE [dbo].[SNPAutoTransferToSewingOutput]
 (	
@@ -21,7 +21,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	BEGIN TRANSACTION
+	BEGIN TRANSACTION [TRANSACTION]
 	BEGIN TRY
 
 			--Declare
@@ -67,13 +67,15 @@ BEGIN
 					AND r.[MDivisionID]=(SELECT TOP 1 ID FROM MDivision)
 					AND r.AddName='SCIMIS'
 
+
+			----------[SUNRISE Tmp Table]
 			--#tOutputTotal
 			SELECT a.* 
 			INTO #tOutputTotal
 			FROM
 			(
 				SELECT *
-				FROM [testing\ph2].SUNRISEEXCH.dbo.tOutputTotal
+				FROM [SUNRISE].SUNRISEEXCH.dbo.tOutputTotal
 				WHERE MONo LIKE '%-%' 
 			)a
 			WHERE LEN((SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)) >=10 --Must Same as PMS DB Datatype
@@ -83,8 +85,8 @@ BEGIN
 
 				SELECT 1 FROM #no_Sewing_Data WHERE 
 											OrderId=(SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)
-											AND SewingLineID=a.WorkLine
-											AND ComboType = (SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=2)
+											AND SewingLineID collate Chinese_Taiwan_Stroke_CI_AS =a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS 
+											AND ComboType collate Chinese_Taiwan_Stroke_CI_AS = (SELECT TOP 1 Data FROM SplitString(a.Mono collate Chinese_Taiwan_Stroke_CI_AS ,'-') WHERE No=2)
 											AND OutputDate = @DateStart
 			)
 
@@ -94,7 +96,7 @@ BEGIN
 			FROM
 			(
 				SELECT *
-				FROM [testing\ph2].SUNRISEEXCH.dbo.tReworkTotal
+				FROM [SUNRISE].SUNRISEEXCH.dbo.tReworkTotal
 				WHERE MONo LIKE '%-%' 
 			)a
 			WHERE LEN((SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)) >=10 --Must Same as PMS DB Datatype
@@ -104,9 +106,17 @@ BEGIN
 
 				SELECT 1 FROM #no_RFT_Data WHERE 
 											CDate = @DateStart
-											AND OrderId=(SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)
-											AND SewingLineID=a.WorkLine
+											AND OrderId collate Chinese_Taiwan_Stroke_CI_AS =(SELECT TOP 1 Data FROM SplitString(a.Mono collate Chinese_Taiwan_Stroke_CI_AS ,'-') WHERE No=1)
+											AND SewingLineID collate Chinese_Taiwan_Stroke_CI_AS =a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS 
 			)
+			
+			--#tReworkCount
+			SELECT *
+			INTO #tReworkCount
+			FROM [SUNRISE].SUNRISEEXCH.dbo.tReworkCount 
+			WHERE MoNo Like '%-%'AND dDate = @DateStart
+			----------
+
 
 			--Prepare SewingOutput_Detail_Detail	
 			SELECT 
@@ -139,9 +149,9 @@ BEGIN
 						ELSE ''--MONo
 						END
 			, WorkLine
-			, [ア毖Ω计] = count(*) 
+			, [FailCount] = count(*) 
 			into #tempFail
-			from [testing\ph2].SUNRISEEXCH.dbo.tReworkCount
+			from [SUNRISE].SUNRISEEXCH.dbo.tReworkCount
 			where dDate =@DateStart
 			group by MONo, WorkLine
 
@@ -153,8 +163,8 @@ BEGIN
 			, t3.ComboType
 			, Article
 			,[QAQty]= Sum(QAQty) 
-			,[InlineQty]= sum(ア毖Ω计) + Sum(QAQty) 
-			,[DefectQty]= (sum(ア毖Ω计) + Sum(QAQty)) - Sum(QAQty)  
+			,[InlineQty]= sum(FailCount) + Sum(QAQty) 
+			,[DefectQty]= (sum(FailCount) + Sum(QAQty)) - Sum(QAQty)  
 			into #tmp_Into_SewingOutput_Detail
 			from #tmp_Into_SewingOutput_Detail_Detail t3
 			left join #tempFail t on t.OrderId = t3.OrderId AND t.ComboType=t3.ComboType and t.WorkLine = t3.WorkLine
@@ -231,7 +241,7 @@ BEGIN
 			,[OrderId]
 			,[ComboType]
 			,[Article]
-			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID=a.OrderId)
+			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID collate Chinese_Taiwan_Stroke_CI_AS=a.OrderId collate Chinese_Taiwan_Stroke_CI_AS)
 			,[TMS]=0
 			,[HourlyStandardOutput]=NULL
 			,[WorkHour]=0
@@ -265,9 +275,9 @@ BEGIN
 			-------------Prepare RFT
 			select 
 			[OrderId] =	CASE WHEN MONo LIKE '%-%'
-					THEN SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
-					ELSE MONo
-					END
+						THEN SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
+						ELSE MONo
+						END
 			, [CDate] = dDate
 			, [SewingLineID] = WorkLine
 			, [FactoryID] = 'SNP'
@@ -278,17 +288,17 @@ BEGIN
 							SUBSTRING(tOT.MONo, 1, CHARINDEX('-', tOT.MONo) - 1)
 							= 
 							SUBSTRING(MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
-							AND tOT.dDate  = mainTable.dDate  AND tOT.WorkLine = mainTable.WorkLine
+							AND tOT.dDate  = mainTable.dDate  AND tOT.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = mainTable.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
 						)
 
 			, [RejectQty] = (
 							select count(*) 
-							from  [testing\ph2].SUNRISEEXCH.dbo.tReworkCount tRT
+							from  #tReworkCount tRT
 							where  
 							SUBSTRING(tRT.MONo, 1, CHARINDEX('-', tRT.MONo) - 1)
 							= 
 							SUBSTRING(MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
-							AND tRT.dDate=mainTable.dDate AND tRT.WorkLine=mainTable.WorkLine
+							AND tRT.dDate=mainTable.dDate AND tRT.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = mainTable.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
 						)
 			, [DefectQty] = sum(Qty)
 			, [Shift] = 'D'
@@ -346,26 +356,26 @@ BEGIN
 			SELECt * 
 			INTO #RFT_With_ID
 			FROM Production.dbo.RFT
-			WHERE OrderID IN ( SELECT OrderID FROM #RFT)
+			WHERE OrderID collate Chinese_Taiwan_Stroke_CI_AS IN ( SELECT OrderID FROM #RFT)
 			AND AddDate > @DateStart
 
 			SELECT 
 			[ID] = a.ID
-			, [GarmentDefectCodeID] = CASE WHEN  NOT EXISTS (select ID from Production.dbo.GarmentDefectCode  where ID = CAST(0 AS VARCHAR))
+			, [GarmentDefectCodeID] = CASE WHEN  NOT EXISTS (select ID from Production.dbo.GarmentDefectCode  where ID = CAST(FailCode  AS VARCHAR))
 									THEN '200'
-									ELSE FailCode
+									ELSE FailCode 
 									END
-			, [GarmentDefectTypeid] = CASE WHEN NOT EXISTS (select ID from Production.dbo.GarmentDefectCode  where ID = CAST(0 AS VARCHAR)) 
+			, [GarmentDefectTypeid] = CASE WHEN NOT EXISTS (select ID from Production.dbo.GarmentDefectCode  where ID  = CAST(FailCode  AS VARCHAR)) 
 									THEN '2'
-									ELSE  (select ID from Production.dbo.GarmentDefectCode where ID = CAST(FailCode AS VARCHAR))
+									ELSE  (select GarmentDefectTypeid from Production.dbo.GarmentDefectCode where ID  = CAST(FailCode  AS VARCHAR))
 									END
-			, [Qty] = Qty
+			, [Qty] = Qty 
 			INTO #tmp_2
 			FROm #RFT_With_ID a
 			INNER JOIN #tReworkTotal b
-			ON a.[OrderId]=SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
+			ON a.[OrderId] collate Chinese_Taiwan_Stroke_CI_AS = SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
 			   AND a.[CDate]=b.[dDate] 
-			   AND a.[SewingLineID]=b.workLine
+			   AND a.[SewingLineID] collate Chinese_Taiwan_Stroke_CI_AS = b.workLine collate Chinese_Taiwan_Stroke_CI_AS
 
 			--INSERT  RFT_Detail
 			INSERT INTO RFT_Detail
@@ -377,7 +387,7 @@ BEGIN
 			FROm #tmp_2
 			GROUP BY ID,[GarmentDefectCodeID],[GarmentDefectTypeid]
 		
-		COMMIT TRANSACTION;
+		COMMIT TRANSACTION [TRANSACTION];
 		
 		----------------------------Masil send----------------------------
 			SET @mailBody   =   'Transfer Date'+ Cast(@DateStart as varchar)
@@ -387,8 +397,8 @@ BEGIN
 								+CHAR(10) + 'Please do not reply this mail.';
 			EXEC msdb.dbo.sp_send_dbmail  
 				@profile_name = 'SUNRISEmailnotice',  
-				@recipients = 'pmshelp@sportscity.com.tw',
-				@copy_recipients= 'roger.lo@sportscity.com.vn',  
+				@recipients ='pmshelp@sportscity.com.tw',
+				@copy_recipients= 'roger.lo@sportscity.com.vn',
 				@body = @mailBody,  
 				@subject = 'Daily Hanger system data to PMS - Sewing Output & RFT'; 
 	END TRY
@@ -411,7 +421,7 @@ BEGIN
 							+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
 							+CHAR(10) + 'Please do not reply this mail.';
 
-		ROLLBACK TRANSACTION;
+		ROLLBACK TRANSACTION [TRANSACTION];
 				
 		----------------------------Masil send----------------------------
 		EXEC msdb.dbo.sp_send_dbmail  
