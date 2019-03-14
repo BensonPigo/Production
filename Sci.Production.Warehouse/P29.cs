@@ -263,14 +263,17 @@ WHERE   StockType='{0}'
 
             int selectindex = comboCategory.SelectedIndex;
             int selectindex2 = comboFabricType.SelectedIndex;
-            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e, SP, ProjectID, factory;
+            string CuttingInline_b, CuttingInline_e, OrderCfmDate_b, OrderCfmDate_e, SP1, SP2, StockSP1, StockSP2, ProjectID, factory;
             CuttingInline_b = null;
             CuttingInline_e = null;
             OrderCfmDate_b = null;
             OrderCfmDate_e = null;
-            SP = txtIssueSP.Text;
-            ProjectID = txtProjectID.Text;
-            factory = txtmfactory.Text;
+            SP1 = this.txtIssueSP1.Text;
+            SP2 = this.txtIssueSP2.Text;
+            StockSP1 = this.txtStockSP1.Text;
+            StockSP2 = this.txtStockSP2.Text;
+            ProjectID = this.txtProjectID.Text;
+            factory = this.txtmfactory.Text;
 
             if (dateCuttingInline.Value1 != null) CuttingInline_b = this.dateCuttingInline.Text1;
             if (dateCuttingInline.Value2 != null) { CuttingInline_e = this.dateCuttingInline.Text2; }
@@ -279,11 +282,11 @@ WHERE   StockType='{0}'
             if (dateOrderCfmDate.Value2 != null) { OrderCfmDate_e = this.dateOrderCfmDate.Text2; }
 
             if ((CuttingInline_b == null && CuttingInline_e == null) &&
-                MyUtility.Check.Empty(SP) && MyUtility.Check.Empty(ProjectID) &&
+                 MyUtility.Check.Empty(SP1) && MyUtility.Check.Empty(StockSP1) && MyUtility.Check.Empty(ProjectID) &&
                 (OrderCfmDate_b == null && OrderCfmDate_e == null))
             {
-                MyUtility.Msg.WarningBox("< Project ID > or < Cutting Inline > or < Order Confirm Date > or < Issue SP# > can't be empty!!");
-                txtIssueSP.Focus();
+                MyUtility.Msg.WarningBox("< Project ID >\r\n< Cutting Inline >\r\n< Order Confirm Date >\r\n< Issue SP# >\r\n< Stock SP# >\r\ncan't be empty!!");
+                txtIssueSP1.Focus();
                 return;
             }
 
@@ -388,9 +391,29 @@ WHERE   StockType='{0}'
                     break;
             }
 
-            if (!MyUtility.Check.Empty(SP)) 
-                sqlcmd.Append(string.Format(@" 
-            and pd.id = '{0}'", SP));
+            if (!MyUtility.Check.Empty(SP1))
+            {
+                if (!MyUtility.Check.Empty(SP2))
+                {
+                    sqlcmd.Append(string.Format(@"and pd.id between '{0}' and '{1}'", SP1, SP2));
+                }
+                else
+                {
+                    sqlcmd.Append(string.Format(@"and pd.id = '{0}'", SP1));
+                }
+            }
+
+            if (!MyUtility.Check.Empty(StockSP1))
+            {
+                if (!MyUtility.Check.Empty(StockSP2))
+                {
+                    sqlcmd.Append(string.Format(@"and pd.StockPOID between '{0}' and '{1}'", StockSP1, StockSP2));
+                }
+                else
+                {
+                    sqlcmd.Append(string.Format(@"and pd.StockPOID = '{0}'", StockSP1));
+                }
+            }                
 
             if (!MyUtility.Check.Empty(factory)) { 
                 sqlcmd.Append(string.Format(@" 
