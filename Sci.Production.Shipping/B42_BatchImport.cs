@@ -147,7 +147,7 @@ from VNConsumption where 1=0";
                 }
                 else
                 {
-                    drNLCode = Prgs.GetNLCodeDataByRefno(refno, stockQty, drc["StyleUkey"].ToString(), drc["Category"].ToString());
+                    drNLCode = Prgs.GetNLCodeDataByRefno(refno, stockQty, drc["BrandID"].ToString(), type);
 
                     if (drNLCode == null)
                     {
@@ -274,6 +274,13 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
                 // 找Excel匯入資料有沒有這NLCode
                 foreach (DataRow dn in dtVNConsumption_Detail_Detail.Rows)
                 {
+                    // fix Data 不刪除
+                    bool isFixData = MyUtility.Check.Seek($"select 1 from VNFixedDeclareItem where Refno = '{dn["Refno"].ToString()}'");
+                    if (MyUtility.Check.Empty(dn["SCIRefno"]) && isFixData)
+                    {
+                        continue;
+                    }
+
                     bool isExistsImportData = srcCheckBatchImport.Where(s => s["ID"].Equals(dn["ID"]) &&
                                                                              s["Refno"].Equals(dn["Refno"]) &&
                                                                              s["SCIRefno"].Equals(dn["SCIRefno"]) &&
@@ -282,7 +289,6 @@ and v.VNContractID = '{0}' and v.CustomSP = '{1}'",
 
                     if (!isExistsImportData)
                     {
-
                         idu.Append(string.Format(
                             "delete VNConsumption_Detail_Detail where id = '{0}' and Refno ='{1}';",
                             dn["ID"].ToString(),

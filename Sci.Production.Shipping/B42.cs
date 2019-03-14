@@ -11,6 +11,7 @@ using Sci.Data;
 using System.Data.SqlClient;
 using Sci.Win.Tems;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -106,9 +107,68 @@ where vdd.ID = '{0}'
             this.editSizeGroup.Text = MyUtility.Check.Empty(sizeGroup) ? string.Empty : sizeGroup.Substring(0, sizeGroup.Length - 1);
         }
 
+        private void ClearDetailDt(DataRow curDr)
+        {
+            curDr["NLCode"] = string.Empty;
+            curDr["Refno"] = string.Empty;
+            curDr["StockUnit"] = string.Empty;
+            curDr["SCIRefno"] = string.Empty;
+            curDr["FabricBrandID"] = string.Empty;
+            curDr["HSCode"] = string.Empty;
+            curDr["UnitID"] = string.Empty;
+            curDr["Qty"] = 0;
+            curDr["FabricType"] = string.Empty;
+            curDr["LocalItem"] = 0;
+            curDr["Waste"] = 0;
+        }
+
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
+            #region Type column set
+            DataGridViewGeneratorComboBoxColumnSettings typeCol = new DataGridViewGeneratorComboBoxColumnSettings();
+
+            Dictionary<string, string> ResultCombo = new Dictionary<string, string>();
+            ResultCombo.Add("A", "A");
+            ResultCombo.Add("F", "F");
+            ResultCombo.Add("L", "L");
+            typeCol.DataSource = new BindingSource(ResultCombo, null);
+            typeCol.ValueMember = "Key";
+            typeCol.DisplayMember = "Value";
+
+            typeCol.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Convert.GetBool(dr["UserCreate"]))
+                {
+                    e.IsEditable = false;
+                }
+            };
+
+            typeCol.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                string oldvalue = MyUtility.Convert.GetString(dr["FabricType"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+
+                if (MyUtility.Check.Empty(oldvalue))
+                {
+                    return;
+                }
+
+                if (oldvalue != newvalue)
+                {
+                    this.ClearDetailDt(dr);
+                    return;
+                }
+            };
+
+            #endregion
 
             #region Refno
             DataGridViewGeneratorTextColumnSettings refnoCol = new DataGridViewGeneratorTextColumnSettings();
@@ -139,21 +199,12 @@ where vdd.ID = '{0}'
 
                 if (MyUtility.Check.Empty(newvalue))
                 {
-                    dr["NLCode"] = string.Empty;
-                    dr["StockUnit"] = string.Empty;
-                    dr["SCIRefno"] = string.Empty;
-                    dr["FabricBrandID"] = string.Empty;
-                    dr["HSCode"] = string.Empty;
-                    dr["UnitID"] = string.Empty;
-                    dr["Qty"] = 0;
-                    dr["UserCreate"] = 0;
-                    dr["FabricType"] = string.Empty;
-                    dr["LocalItem"] = 0;
+                    this.ClearDetailDt(dr);
                     return;
                 }
 
                 DataRow drNLCode;
-                drNLCode = Prgs.GetNLCodeDataByRefno(newvalue, dr["StockQty"].ToString(), this.CurrentMaintain["StyleUkey"].ToString(), this.CurrentMaintain["Category"].ToString());
+                drNLCode = Prgs.GetNLCodeDataByRefno(newvalue, dr["StockQty"].ToString(), this.CurrentMaintain["BrandID"].ToString(), dr["FabricType"].ToString());
 
                 if (drNLCode == null)
                 {
@@ -185,6 +236,18 @@ where vdd.ID = '{0}'
             #endregion
             #region Stock Qty
             DataGridViewGeneratorNumericColumnSettings stockQtyCol = new DataGridViewGeneratorNumericColumnSettings();
+            stockQtyCol.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                bool isFixData = MyUtility.Check.Seek($"select 1 from VNFixedDeclareItem where Refno = '{dr["Refno"].ToString()}'");
+
+                if (MyUtility.Check.Empty(dr["SCIRefno"]) && isFixData)
+                {
+                    e.IsEditable = false;
+                }
+            };
+
             stockQtyCol.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
@@ -201,7 +264,7 @@ where vdd.ID = '{0}'
                 }
 
                 DataRow drNLCode;
-                drNLCode = Prgs.GetNLCodeDataByRefno(dr["RefNo"].ToString(), newvalue, this.CurrentMaintain["StyleUkey"].ToString(), this.CurrentMaintain["Category"].ToString());
+                drNLCode = Prgs.GetNLCodeDataByRefno(dr["RefNo"].ToString(), newvalue, this.CurrentMaintain["BrandID"].ToString(), dr["FabricType"].ToString(), dr["SciRefNo"].ToString());
                 if (drNLCode == null)
                 {
                     MyUtility.Msg.WarningBox("<Customs Qty> Transfer error");
@@ -220,6 +283,7 @@ where vdd.ID = '{0}'
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .ComboBox("FabricType", header: "Type", width: Widths.AnsiChars(3), settings: typeCol)
                 .Text("RefNo", header: "Ref No", width: Widths.AnsiChars(20), settings: refnoCol)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Numeric("SystemQty", header: "System Qty", decimal_places: 6, width: Widths.AnsiChars(15), iseditingreadonly: true).Get(out systemQtyColumn)
@@ -371,6 +435,7 @@ from System WITH (NOLOCK) ");
                 MyUtility.Msg.WarningBox("Size Group can't empty!!");
                 return false;
             }
+
             #endregion
 
             // 紀錄表身資料筆數
