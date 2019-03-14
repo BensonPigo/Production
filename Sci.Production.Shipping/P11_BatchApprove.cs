@@ -40,6 +40,9 @@ namespace Sci.Production.Shipping
             .Text("KGS", header: "TTL GRS WEIGHT (KGS)", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("qty", header: "TTL QTY", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("NameEN", header: "COUNTRY OF DESTINATION", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("BIRShipTo", header: "Ship To", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("fob", header: "FOB Value", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("material", header: "Material Value", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("cmp", header: "TTL CMP VALUE", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             this.Query();
@@ -54,7 +57,9 @@ select
 	KGS=p.gw,
 	F=sum(pd.ShipQty),
 	c.NameEN,
-	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(f.CpuCost,0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3)
+	I=sum(pd.ShipQty)*round(o.PoPrice,2),
+	M=sum(pd.ShipQty)*Round((((isnull(o.CPU,0) + isnull(s1.Price,0)) * isnull(f.CpuCost,0)) + isnull(s2.Price,0) + isnull(s3.Price,0)), 3),
+	BIRShipTo=SUBSTRING(ccd.BIRShipTo,0,CHARINDEX(char(13),ccd.BIRShipTo))
 into #tmp
 from orders o with(nolock)
 inner join PackingList_Detail pd with(nolock) on pd.OrderID = o.id
@@ -63,6 +68,7 @@ inner join GMTBooking g with(nolock) on p.INVNo =g.id
 inner join BIRInvoice b with(nolock)on g.BIRID = b.id
 left join Style s with(nolock) on s.Ukey = o.StyleUkey
 left join country c with(nolock) on c.id = o.Dest
+left join CustCD ccd with(nolock) on ccd.BrandID = o.BrandID and ccd.id = o.CustCDID
 outer apply(
 	select fd.CpuCost
 	from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
@@ -89,15 +95,15 @@ outer apply(
 	select dbo.GetLocalPurchaseStdCost(o.id) price
 )s3
 where b.Status = 'New'
-group by b.id,p.INVNo,p.gw,c.NameEN,o.CPU,s1.Price,s2.Price,s3.price,f.CpuCost
+group by b.id,p.INVNo,p.gw,c.NameEN,o.CPU,s1.Price,s2.Price,s3.price,f.CpuCost,ccd.BIRShipTo,o.PoPrice
 
 
-select selected = 0,b.id,b.InvSerial,KGS=sum(t.KGS),qty=sum(t.F),t.NameEN,cmp=sum(t.M),b.brandid
+select selected = 0,b.id,b.InvSerial,KGS=sum(t.KGS),qty=sum(t.F),t.NameEN,fob=sum(t.I),material=sum(t.I)-sum(t.M),cmp=sum(t.M),b.brandid,BIRShipTo
 from BIRInvoice b with(nolock)
 inner join GMTBooking g with(nolock)on g.BIRID = b.id
 inner join #tmp t on t.id = b.id
 where b.Status = 'New'
-group by b.id,b.InvSerial,t.NameEN,b.brandid
+group by b.id,b.InvSerial,t.NameEN,b.brandid,BIRShipTo
 order by b.id
 drop table #tmp
 ";
@@ -157,6 +163,9 @@ where id in({string.Join(",", ids)})
             DataTable dtex = this.dt.Copy();
             dtex.Columns.Remove("id");
             dtex.Columns.Remove("Selected");
+            dtex.Columns.Remove("BIRShipTo");
+            dtex.Columns.Remove("fob");
+            dtex.Columns.Remove("material");
             bool result;
             result = MyUtility.Excel.CopyToXls(dtex, string.Empty, xltfile: "Shipping_P02_BatchApprove.xltx", headerRow: 1, showSaveMsg: false);
             if (!result)
