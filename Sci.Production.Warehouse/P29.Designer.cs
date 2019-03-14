@@ -113,7 +113,7 @@
             this.txtmfactory.Location = new System.Drawing.Point(87, 75);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(117, 23);
-            this.txtmfactory.TabIndex = 5;
+            this.txtmfactory.TabIndex = 9;
             // 
             // comboCategory
             // 
@@ -130,7 +130,7 @@
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 11;
+            this.comboCategory.TabIndex = 8;
             // 
             // labelCategory
             // 
@@ -154,7 +154,7 @@
             this.comboFabricType.Name = "comboFabricType";
             this.comboFabricType.OldText = "";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
-            this.comboFabricType.TabIndex = 10;
+            this.comboFabricType.TabIndex = 4;
             // 
             // labelFabricType
             // 
@@ -183,7 +183,7 @@
             this.dateOrderCfmDate.Location = new System.Drawing.Point(475, 42);
             this.dateOrderCfmDate.Name = "dateOrderCfmDate";
             this.dateOrderCfmDate.Size = new System.Drawing.Size(280, 23);
-            this.dateOrderCfmDate.TabIndex = 8;
+            this.dateOrderCfmDate.TabIndex = 7;
             // 
             // dateCuttingInline
             // 
@@ -204,7 +204,7 @@
             this.dateCuttingInline.Location = new System.Drawing.Point(475, 9);
             this.dateCuttingInline.Name = "dateCuttingInline";
             this.dateCuttingInline.Size = new System.Drawing.Size(280, 23);
-            this.dateCuttingInline.TabIndex = 7;
+            this.dateCuttingInline.TabIndex = 3;
             // 
             // txtProjectID
             // 
@@ -213,7 +213,7 @@
             this.txtProjectID.Location = new System.Drawing.Point(475, 78);
             this.txtProjectID.Name = "txtProjectID";
             this.txtProjectID.Size = new System.Drawing.Size(117, 23);
-            this.txtProjectID.TabIndex = 9;
+            this.txtProjectID.TabIndex = 10;
             // 
             // txtIssueSP1
             // 
@@ -229,7 +229,7 @@
             this.btnAutoPick.Location = new System.Drawing.Point(989, 38);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
-            this.btnAutoPick.TabIndex = 18;
+            this.btnAutoPick.TabIndex = 12;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
@@ -239,7 +239,7 @@
             this.btnQuery.Location = new System.Drawing.Point(989, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 17;
+            this.btnQuery.TabIndex = 11;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -303,7 +303,7 @@
             this.checkOnly.Location = new System.Drawing.Point(12, 17);
             this.checkOnly.Name = "checkOnly";
             this.checkOnly.Size = new System.Drawing.Size(316, 21);
-            this.checkOnly.TabIndex = 3;
+            this.checkOnly.TabIndex = 13;
             this.checkOnly.Text = "Only show data of complete inventory location";
             this.checkOnly.UseVisualStyleBackColor = true;
             this.checkOnly.CheckedChanged += new System.EventHandler(this.checkOnly_CheckedChanged);
@@ -314,7 +314,7 @@
             this.btnClose.Location = new System.Drawing.Point(986, 11);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 21;
+            this.btnClose.TabIndex = 16;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Visible = false;
@@ -326,7 +326,7 @@
             this.btnCreate.Location = new System.Drawing.Point(833, 11);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(147, 30);
-            this.btnCreate.TabIndex = 20;
+            this.btnCreate.TabIndex = 15;
             this.btnCreate.Text = "Create && Confirm";
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
@@ -337,7 +337,7 @@
             this.btnExcel.Location = new System.Drawing.Point(747, 11);
             this.btnExcel.Name = "btnExcel";
             this.btnExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnExcel.TabIndex = 19;
+            this.btnExcel.TabIndex = 14;
             this.btnExcel.Text = "Excel";
             this.btnExcel.UseVisualStyleBackColor = true;
             this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
@@ -450,7 +450,7 @@
             this.txtStockSP2.Location = new System.Drawing.Point(232, 40);
             this.txtStockSP2.Name = "txtStockSP2";
             this.txtStockSP2.Size = new System.Drawing.Size(117, 23);
-            this.txtStockSP2.TabIndex = 4;
+            this.txtStockSP2.TabIndex = 6;
             // 
             // txtStockSP1
             // 
@@ -459,7 +459,7 @@
             this.txtStockSP1.Location = new System.Drawing.Point(87, 41);
             this.txtStockSP1.Name = "txtStockSP1";
             this.txtStockSP1.Size = new System.Drawing.Size(117, 23);
-            this.txtStockSP1.TabIndex = 3;
+            this.txtStockSP1.TabIndex = 5;
             // 
             // P29
             // 
