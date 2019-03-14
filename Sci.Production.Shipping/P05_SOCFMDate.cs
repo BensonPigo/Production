@@ -81,12 +81,12 @@ where INVNo = '{MyUtility.Convert.GetString(this.dr["ID"])}'";
         private void dateSOCfmDate_Validating(object sender, CancelEventArgs e)
         {
             if (MyUtility.Check.Empty(this.dateSOCfmDate.Value) ||
-                MyUtility.Check.Empty(this.dr["FBDate"]))
+                MyUtility.Check.Empty(this.dr["FCRDate"]))
             {
                 return;
             }
 
-            if (DateTime.Compare((DateTime)this.dr["FBDate"], (DateTime)this.dateSOCfmDate.Value) < 0)
+            if (DateTime.Compare((DateTime)this.dr["FCRDate"], (DateTime)this.dateSOCfmDate.Value) < 0)
             {
                 MyUtility.Msg.WarningBox("[S/O Cfm Date] can not later than FCR Date");
                 e.Cancel = true;
