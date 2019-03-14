@@ -25,6 +25,12 @@ namespace Sci.Production.Warehouse
 	,[SP#] = psd.id
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
+    ,[WK] = stuff((
+	            	select concat(char(10),ID)
+	            	from Export_Detail with (nolock) 
+	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	            	for xml path('')
+	            ),1,1,'')
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -61,6 +67,12 @@ namespace Sci.Production.Warehouse
 	,[SP#] = psd.id
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
+    ,[WK] = stuff((
+	            	select concat(char(10),ID)
+	            	from Export_Detail with (nolock) 
+	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	            	for xml path('')
+	            ),1,1,'')
 	,[Brand] = o.BrandID
 	,[Style] = o.StyleID
 	,[Season] = o.SeasonID
@@ -470,13 +482,14 @@ where 1=1
                 com.WriteTable(printData, 2);
                 #region Save & Show Excel
                 string strExcelName = Sci.Production.Class.MicrosoftFile.GetName((ReportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
-                objApp.ActiveWorkbook.SaveAs(strExcelName);
-
                 for (int f = 1; f <= objApp.Workbooks[1].Worksheets.Count; f++)
                 {
                     Excel.Worksheet sheet = objApp.Workbooks[1].Worksheets.Item[f];
+                    sheet.UsedRange.Rows.AutoFit();
                     if (sheet != null) Marshal.ReleaseComObject(sheet);
                 }
+
+                objApp.ActiveWorkbook.SaveAs(strExcelName);
                 objApp.Workbooks[1].Close();
                 objApp.Quit();
                 Marshal.ReleaseComObject(objApp);
