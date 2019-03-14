@@ -1,12 +1,14 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/13/2019 10:03:59 AM ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/14/2019 8:20:53 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 -- =============================================
 -- Author:		Benson
@@ -25,23 +27,18 @@ BEGIN
 	BEGIN TRY
 
 			--Declare
-			declare 
-			@DateStart date,		
-			@DateEnd date,
-
-			@SewingOutput_ID varchar(13),
-			@SewingOutput_Detail_Last_UKey bigint ,
-			@RFT_Last_ID bigint,
-			@SewingOutput_Count int,
+			Declare 
+			@DateStart date,
 		    @mailBody  As VARCHAR(1000)
 
 			set @DateStart = CAST (@execuDatetime AS DATE)
-			set @DateEnd =  CAST (@execuDatetime AS DATE)
 
 
 			--Get Data which is already in DB , must exclude it
+			
+			--#now_Sewing_Data
 			SELECT s.OutputDate,s.SewingLineID,sdd.OrderId,sdd.ComboType
-			INTO  #no_Sewing_Data
+			INTO  #now_Sewing_Data
 			FROM SewingOutput s
 			INNER JOIN SewingOutput_Detail sd ON s.ID=sd.ID
 			INNER JOIN SewingOutput_Detail_Detail sdd 
@@ -56,8 +53,9 @@ BEGIN
 					AND s.FactoryID='SNP'
 					AND s.[MDivisionID]=(SELECT TOP 1 ID FROM MDivision)
 
+			--#now_Sewing_Data
 			SELECt r.OrderID,r.CDate,r.SewinglineID
-			INTO #no_RFT_Data
+			INTO #now_RFT_Data
 			FROM RFT r
 			INNER JOIN Rft_Detail rd ON r.ID=rd.ID
 			WHERE CDate=@DateStart
@@ -69,6 +67,7 @@ BEGIN
 
 
 			----------[SUNRISE Tmp Table]
+
 			--#tOutputTotal
 			SELECT a.* 
 			INTO #tOutputTotal
@@ -83,7 +82,7 @@ BEGIN
 			AND dDate = @DateStart
 			AND NOT EXISTS (
 
-				SELECT 1 FROM #no_Sewing_Data WHERE 
+				SELECT 1 FROM #now_Sewing_Data WHERE 
 											OrderId=(SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)
 											AND SewingLineID collate Chinese_Taiwan_Stroke_CI_AS =a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS 
 											AND ComboType collate Chinese_Taiwan_Stroke_CI_AS = (SELECT TOP 1 Data FROM SplitString(a.Mono collate Chinese_Taiwan_Stroke_CI_AS ,'-') WHERE No=2)
@@ -104,7 +103,7 @@ BEGIN
 			AND dDate = @DateStart
 			AND NOT EXISTS (
 
-				SELECT 1 FROM #no_RFT_Data WHERE 
+				SELECT 1 FROM #now_RFT_Data WHERE 
 											CDate = @DateStart
 											AND OrderId collate Chinese_Taiwan_Stroke_CI_AS =(SELECT TOP 1 Data FROM SplitString(a.Mono collate Chinese_Taiwan_Stroke_CI_AS ,'-') WHERE No=1)
 											AND SewingLineID collate Chinese_Taiwan_Stroke_CI_AS =a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS 
@@ -120,8 +119,7 @@ BEGIN
 
 			--Prepare SewingOutput_Detail_Detail	
 			SELECT 
-				[RowNumber]=row_number()OVER (ORDER BY dDate)
-				,dDate
+				 dDate
 				,WorkLine
 				,[OrderId]= CASE WHEN MONo LIKE '%-%'
 							THEN SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
@@ -131,7 +129,8 @@ BEGIN
 								THEN  SUBSTRING(MONo, CHARINDEX('-', MONo) + 1, LEN(MONo) - CHARINDEX('-', MONo)) 
 								ELSE ''--MONo
 								END
-				,ColorName as Article, SizeName as SizeCode
+				,ColorName as Article
+				, SizeName as SizeCode
 				,[QAQty]=sum(OutputQty) 
 			into #tmp_Into_SewingOutput_Detail_Detail
 			from #tOutputTotal
@@ -150,33 +149,38 @@ BEGIN
 						END
 			, WorkLine
 			, [FailCount] = count(*) 
+			,[SizeCode]=SizeName
 			into #tempFail
-			from [SUNRISE].SUNRISEEXCH.dbo.tReworkCount
+			from #tReworkCount
 			where dDate =@DateStart
-			group by MONo, WorkLine
+			group by MONo, WorkLine ,SizeName
 
 			select 
-			t3.RowNumber
-			, dDate
+			  dDate
 			, t3.WorkLine
 			, t3.OrderId
 			, t3.ComboType
 			, Article
 			,[QAQty]= Sum(QAQty) 
 			,[InlineQty]= sum(FailCount) + Sum(QAQty) 
-			,[DefectQty]= (sum(FailCount) + Sum(QAQty)) - Sum(QAQty)  
+			,[DefectQty]= (sum(FailCount) + Sum(QAQty)) - Sum(QAQty) 
 			into #tmp_Into_SewingOutput_Detail
 			from #tmp_Into_SewingOutput_Detail_Detail t3
-			left join #tempFail t on t.OrderId = t3.OrderId AND t.ComboType=t3.ComboType and t.WorkLine = t3.WorkLine
-			group by t3.RowNumber,dDate,t3.WorkLine, t3.OrderId, t3.ComboType, Article
+			INNER join #tempFail t on t.OrderId = t3.OrderId collate Chinese_Taiwan_Stroke_CI_AS
+			AND t.ComboType=t3.ComboType collate Chinese_Taiwan_Stroke_CI_AS
+			and t.WorkLine = t3.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
+			and t.SizeCode = t3.SizeCode collate Chinese_Taiwan_Stroke_CI_AS
+			group by dDate,t3.WorkLine, t3.OrderId, t3.ComboType, Article 
+
+			
+			--Prepare SewingOutput
 
 			--Begin INSERT¡ASewingOutput first
 	
 			--insert SewingOutput
+
 			select 
-			[ID]= dbo.GetSewingOutputID_For_SNPAutoTransferToSewingOutput('SNPSM',RowNumber,@execuDatetime)
-			,RowNumber
-			, [OutputDate]=dDate 
+			[OutputDate]=dDate 
 			, [SewingLineID]=WorkLine 
 			, [QAQty]= Sum(QAQty) 
 			, [DefectQty]= sum(DefectQty) 
@@ -202,37 +206,48 @@ BEGIN
 			, [SubConOutContractNumber] = NULL
 			INTO #tmp_1
 			from #tmp_Into_SewingOutput_Detail
-			group by RowNumber,dDate,WorkLine	
+			group by dDate,WorkLine
+
+			SELECT [RowNumber]=row_number()OVER (ORDER BY OutputDate),*
+			INTO  #tmp_2
+			FROM  #tmp_1
+			
+			select 	
+				[ID]= dbo.GetSewingOutputID_For_SNPAutoTransferToSewingOutput('SNPSM',RowNumber,@execuDatetime)
+				,*
+			INTO #tmp_SewingOutput
+			FROM #tmp_2
+
+			--Begin Insert
 
 			INSERT INTO SewingOutput
-			select 
-			[ID]= dbo.GetSewingOutputID_For_SNPAutoTransferToSewingOutput('SNPSM',RowNumber,@execuDatetime)
-			, [OutputDate]=dDate 
-			, [SewingLineID]=WorkLine 
-			, [QAQty]= Sum(QAQty) 
-			, [DefectQty]= sum(DefectQty) 
-			, [InlineQty]= sum(InlineQty) 
+			select 	
+			  [ID]
+			, [OutputDate]=CAST([OutputDate] AS DATE)
+			, [SewingLineID]
+			, [QAQty]
+			, [DefectQty]
+			, [InlineQty]
 			, [TMS]=0
-			, [Manpower] = 0
-			, [Manhour] = 0
+			, [Manpower]=0
+			, [Manhour]=0
 			, [Efficiency]=0
-			, [Shift] = 'D'
-			, [Team] = 'A'
-			, [Status] = 'New' 
+			, [Shift]
+			, [Team]
+			, [Status] 
 			, [LockDate]=NULL
-			, [Workhour] = 0
-			, [FactoryID]='SNP'
-			, [MDivision]=(SELECT TOP 1 ID FROM MDivision)
-			, [Category]='O'
-			, [SFCData]=0
-			, [AddName] = 'SCIMIS' 
-			, [AddDate] = GetDate() 
-			, [EditName]= NULL
-			, [EditDate]= NULL
-			, [SubconOutFty]=NULL
-			, [SubConOutContractNumber] = NULL
-			from #tmp_Into_SewingOutput_Detail
-			group by RowNumber,dDate,WorkLine	
+			, [Workhour] 
+			, [FactoryID]
+			, [MDivision]
+			, [Category]
+			, [SFCData]
+			, [AddName] 
+			, [AddDate] 
+			, [EditName]=''
+			, [EditDate]=CAST([EditDate] AS DATETIME)
+			, [SubconOutFty]
+			, [SubConOutContractNumber]
+			FROM #tmp_SewingOutput
 		
 			--insert SewingOutput_Detail
 			INSERT INTO SewingOutput_Detail
@@ -253,24 +268,48 @@ BEGIN
 			,[SewingReasonID]=''
 			,[Remark]=NULL
 			FROM #tmp_Into_SewingOutput_Detail a
-			INNER JOIN #tmp_1 b ON a.RowNumber=b.RowNumber
+			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = b.SewingLineID 
 				
-			--Get SewingOutput_DetailUKey ID
-			SET @SewingOutput_Detail_Last_UKey =( SELECT IDENT_CURRENT( 'SewingOutput_Detail' )  )
+			
+			SELECT 
+			[ID]= b.ID
+			,[OrderId]
+			,[ComboType]
+			,[Article]
+			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID collate Chinese_Taiwan_Stroke_CI_AS=a.OrderId collate Chinese_Taiwan_Stroke_CI_AS)
+			,[TMS]=0
+			,[HourlyStandardOutput]=NULL
+			,[WorkHour]=0
+			,[QAQty]=a.QAQty
+			,[DefectQty]=a.DefectQty
+			,[InlineQty]=a.InlineQty
+			,[OldDetailKey]=NULL
+			,[AutoCreate]=0
+			,[SewingReasonID]=''
+			,[Remark]=NULL
+			INTO #tmp_SewingOutput_Detail
+			FROM #tmp_Into_SewingOutput_Detail a
+			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS =b.SewingLineID 
 		
 			--insert SewingOutput_Detail_Detail
 			INSERT INTO SewingOutput_Detail_Detail
 			SELECT 
 			[ID]= b.ID
-			,[SewingOutput_DetailUKey]= @SewingOutput_Detail_Last_UKey - (SELECT Count (*) FROM #tmp_Into_SewingOutput_Detail_Detail) +a.RowNumber
-			,[OrderId]
-			,[ComboType]
-			,[Article]
-			,[SizeCode]
+			, [SewingOutput_DetailUKey]=Now_SewingOutput_Detail.ukey
+			,a.[OrderId]
+			,a.[ComboType]
+			,a.[Article]
+			,a.[SizeCode]
 			,[QAQty] =a.QAQty
 			,[OldDetailKey]=NULL
 			FROM #tmp_Into_SewingOutput_Detail_Detail a
-			INNER JOIN #tmp_1 b ON a.RowNumber=b.RowNumber
+			INNER JOIN #tmp_SewingOutput_Detail b ON a.OrderID=b.OrderID AND a.ComboType=b.ComboType  AND a.Article=b.Article  
+			OUTER APPLY(
+			 SELECT Ukey FROM SewingOutput_Detail WHERE ID=b.ID 
+														AND b.OrderID= OrderID collate Chinese_Taiwan_Stroke_CI_AS 
+														AND ComboType=b.ComboType  collate Chinese_Taiwan_Stroke_CI_AS 
+														AND Article=b.Article  collate Chinese_Taiwan_Stroke_CI_AS 
+			)Now_SewingOutput_Detail	
 	
 			-------------Prepare RFT
 			select 
@@ -370,7 +409,7 @@ BEGIN
 									ELSE  (select GarmentDefectTypeid from Production.dbo.GarmentDefectCode where ID  = CAST(FailCode  AS VARCHAR))
 									END
 			, [Qty] = Qty 
-			INTO #tmp_2
+			INTO #tmp_4
 			FROm #RFT_With_ID a
 			INNER JOIN #tReworkTotal b
 			ON a.[OrderId] collate Chinese_Taiwan_Stroke_CI_AS = SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
@@ -384,7 +423,7 @@ BEGIN
 					, [GarmentDefectCodeID] 
 					, [GarmentDefectTypeid]
 					, [Qty] = Sum(Qty)
-			FROm #tmp_2
+			FROm #tmp_4
 			GROUP BY ID,[GarmentDefectCodeID],[GarmentDefectTypeid]
 		
 		COMMIT TRANSACTION [TRANSACTION];
@@ -435,6 +474,8 @@ BEGIN
 	END CATCH
 
 END
+
+
 
 GO
 
