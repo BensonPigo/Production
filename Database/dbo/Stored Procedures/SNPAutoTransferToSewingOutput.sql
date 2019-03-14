@@ -326,7 +326,7 @@ BEGIN
 							where 
 							SUBSTRING(tOT.MONo, 1, CHARINDEX('-', tOT.MONo) - 1)
 							= 
-							SUBSTRING(MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
+							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
 							AND tOT.dDate  = mainTable.dDate  AND tOT.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = mainTable.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
 						)
 
@@ -336,7 +336,7 @@ BEGIN
 							where  
 							SUBSTRING(tRT.MONo, 1, CHARINDEX('-', tRT.MONo) - 1)
 							= 
-							SUBSTRING(MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
+							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
 							AND tRT.dDate=mainTable.dDate AND tRT.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = mainTable.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
 						)
 			, [DefectQty] = sum(Qty)
