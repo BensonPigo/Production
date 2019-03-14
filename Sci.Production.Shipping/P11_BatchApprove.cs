@@ -37,13 +37,13 @@ namespace Sci.Production.Shipping
             this.Helper.Controls.Grid.Generator(this.grid1)
              .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
             .Text("InvSerial", header: "Invoice Serial", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("KGS", header: "TTL GRS WEIGHT (KGS)", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("qty", header: "TTL QTY", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("KGS", header: "TTL GRS WEIGHT (KGS)", width: Widths.AnsiChars(15), decimal_places:2, iseditingreadonly: true)
+            .Numeric("qty", header: "TTL QTY", width: Widths.AnsiChars(8), decimal_places: 2, iseditingreadonly: true)
             .Text("NameEN", header: "COUNTRY OF DESTINATION", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("BIRShipTo", header: "Ship To", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("fob", header: "FOB Value", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("material", header: "Material Value", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("cmp", header: "TTL CMP VALUE", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("fob", header: "FOB Value", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("material", header: "Material Value", width: Widths.AnsiChars(15), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("cmp", header: "TTL CMP VALUE", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
             ;
             this.Query();
         }
@@ -98,7 +98,7 @@ where b.Status = 'New'
 group by b.id,p.INVNo,p.gw,c.NameEN,o.CPU,s1.Price,s2.Price,s3.price,f.CpuCost,ccd.BIRShipTo,o.PoPrice
 
 
-select selected = 0,b.id,b.InvSerial,KGS=sum(t.KGS),qty=sum(t.F),t.NameEN,fob=sum(t.I),material=sum(t.I)-sum(t.M),cmp=sum(t.M),b.brandid,BIRShipTo
+select selected = 0,b.id,b.InvSerial,KGS=round(sum(t.KGS),2),qty=round(sum(t.F),2),t.NameEN,BIRShipTo,fob=round(sum(t.I),2),material=round(sum(t.I),2)-round(sum(t.M),2),cmp=round(sum(t.M),2),b.brandid
 from BIRInvoice b with(nolock)
 inner join GMTBooking g with(nolock)on g.BIRID = b.id
 inner join #tmp t on t.id = b.id
@@ -160,12 +160,11 @@ where id in({string.Join(",", ids)})
 
         private void BtnExcel_Click(object sender, EventArgs e)
         {
-            DataTable dtex = this.dt.Copy();
+            this.grid1.ValidateControl();
+            DataTable dtex = this.dt.Select("Selected=1").CopyToDataTable();
             dtex.Columns.Remove("id");
             dtex.Columns.Remove("Selected");
-            dtex.Columns.Remove("BIRShipTo");
-            dtex.Columns.Remove("fob");
-            dtex.Columns.Remove("material");
+            dtex.Columns.Remove("BrandID");
             bool result;
             result = MyUtility.Excel.CopyToXls(dtex, string.Empty, xltfile: "Shipping_P02_BatchApprove.xltx", headerRow: 1, showSaveMsg: false);
             if (!result)
