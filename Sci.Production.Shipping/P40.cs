@@ -760,8 +760,13 @@ inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
 left join orders o with(nolock) on o.id = ed.POID
 left join brand b with(nolock) on b.id = o.BrandID
-outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
-
+outer apply(
+    select top 1 f1.* 
+    from Fabric f1 with(nolock) 
+    inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+    where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+    order by f1.NLCodeEditDate desc
+)f
 where {0}", sqlWhere);
                 }
                 else
@@ -802,7 +807,13 @@ inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join orders o with(nolock) on o.id = ed.POID
 left join brand b with(nolock) on b.id = o.BrandID
-outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
+outer apply(
+    select top 1 f1.* 
+    from Fabric f1 with(nolock) 
+    inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+    where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+    order by f1.NLCodeEditDate desc
+)f
 where {0}", sqlWhere);
                 }
             }
@@ -844,7 +855,13 @@ inner join Export_Detail ed WITH (NOLOCK) on e.ID = ed.ID
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
 left join orders o with(nolock) on o.id = ed.POID
 left join brand b with(nolock) on b.id = o.BrandID
-outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
+outer apply(
+    select top 1 f1.* 
+    from Fabric f1 with(nolock) 
+    inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+    where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+    order by f1.NLCodeEditDate desc
+)f
 where {0}", sqlWhere);
             }
                 #endregion
@@ -877,7 +894,6 @@ where {0}", sqlWhere);
                     newRow["PcsKg"] = dr["PcsKg"];
                     newRow["NoDeclare"] = dr["NoDeclare"];
                     newRow["Price"] = dr["Price"];
-                    newRow["BrandID"] = dr["BrandID"];
                     this.NotInPO.Rows.Add(newRow);
                 }
                 else
@@ -990,7 +1006,13 @@ with ExportDetail as (
     left join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
     left join orders o with(nolock) on o.id = ed.POID
     left join brand b with(nolock) on b.id = o.BrandID
-    outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
+    outer apply(
+        select top 1 f1.* 
+        from Fabric f1 with(nolock) 
+        inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+        where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+        order by f1.NLCodeEditDate desc
+    )f
     where {0}", sqlWhere));
                 }
                 else
@@ -1038,7 +1060,13 @@ with ExportDetail as (
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
     left join orders o with(nolock) on o.id = ed.POID
     left join brand b with(nolock) on b.id = o.BrandID
-    outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
+    outer apply(
+        select top 1 f1.* 
+        from Fabric f1 with(nolock) 
+        inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+        where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+        order by f1.NLCodeEditDate desc
+    )f
     where {0}", sqlWhere));
                 }
             }
@@ -1087,7 +1115,13 @@ with ExportDetail as (
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = ed.PoID and psd.SEQ1 = ed.Seq1 and psd.SEQ2 = ed.Seq2
     left join orders o with(nolock) on o.id = ed.POID
     left join brand b with(nolock) on b.id = o.BrandID
-    outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = ed.Refno and f1.BrandID = b.BrandGroup and f1.Type = ed.FabricType order by f1.NLCodeEditDate desc)f
+    outer apply(
+        select top 1 f1.* 
+        from Fabric f1 with(nolock) 
+        inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+        where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+        order by f1.NLCodeEditDate desc
+    )f
 
     where {0}", sqlWhere));
             }
@@ -1119,7 +1153,13 @@ NotInPo as (
     left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = #tmp.POID and psd.SEQ1 = #tmp.Seq1 and psd.SEQ2 = #tmp.Seq2
     left join orders o with(nolock) on o.id = psd.ID
     left join brand b with(nolock) on b.id = o.BrandID
-    outer apply(select top 1 * from Fabric f1 with(nolock) where f1.Refno = psd.Refno and f1.BrandID = b.BrandGroup and f1.Type = psd.FabricType order by f1.NLCodeEditDate desc)f
+    outer apply(
+        select top 1 f1.* 
+        from Fabric f1 with(nolock) 
+        inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+        where f1.Refno = psd.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = psd.FabricType
+        order by f1.NLCodeEditDate desc
+    )f
     outer apply (
         select value = (select RateValue 
 	   					from dbo.View_Unitrate 
