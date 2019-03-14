@@ -123,7 +123,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                     {
                         if (MyUtility.Convert.GetString(dr["BrandID"]) != MyUtility.Convert.GetString(e.FormattedValue))
                         {
-                            string sqlchk = $@"select 1 from Fabric with(nolock) where BrandID = '{e.FormattedValue}' ";
+                            string sqlchk = $@"select 1 from Brand with(nolock) where ID = '{e.FormattedValue}' ";
                             if (!MyUtility.Check.Seek(sqlchk))
                             {
                                 dr["BrandID"] = string.Empty;
@@ -499,7 +499,13 @@ inner join Adjust_Detail ad with(nolock) on ad.ID=a.ID
 inner join PO_Supp_Detail psd with(nolock) on psd.id = ad.POID and psd.SEQ1 = ad.Seq1 and psd .seq2 = ad. seq2
 left join orders o with(nolock) on o.id = ad.POID
 left join brand b with(nolock) on b.id = o.BrandID
-outer apply(select top 1 * from Fabric f with(nolock) where f.Refno = psd.Refno and f.BrandID = b.BrandGroup order by f.NLCodeEditDate desc)f1
+outer apply(
+	select top 1 f.*
+	from Fabric f with(nolock)
+	inner join brand b2 with(nolock) on f.BrandID = b2.id 
+	where f.Refno = psd.Refno and b2.BrandGroup = b.BrandGroup
+	order by f.NLCodeEditDate desc
+)f1
 where a.Type = 'R' and a.id = '{this.txtWKNo.Text}'
 group by psd.Refno,f1.type,f1.NLCode,f1.BrandId,f1.HSCode,f1.CustomsUnit
 
@@ -541,7 +547,7 @@ drop table #tmp
 select
 	ald.Refno,
 	li.NLCode,
-	BrandId=b.BrandGroup,
+	BrandId=o.BrandID,
 	li.HSCode,
 	UnitID=li.CustomsUnit,
 	Qty=sum(ald.QtyBefore-ald.QtyAfter)
@@ -550,9 +556,8 @@ from AdjustLocal al with(nolock)
 inner join AdjustLocal_Detail ald with(nolock)on ald.id = al.id
 left join LocalItem li with(nolock)on li.RefNo = ald.Refno
 left join orders o with(nolock) on o.id = ald.POID
-left join brand b with(nolock) on b.id = o.BrandID
 where al.Type = 'R' and al.id = '{this.txtWKNo.Text}'
-group by ald.Refno,li.NLCode,b.BrandGroup,li.HSCode,li.CustomsUnit
+group by ald.Refno,li.NLCode,o.BrandID,li.HSCode,li.CustomsUnit
 
 select Refno,FabricType='L',NLCode,BrandId,HSCode,UnitID,L.Qty
 from #tmp t
@@ -600,7 +605,13 @@ inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id
 left join LocalItem li WITH (NOLOCK) on li.Refno = fed.RefNo
 left join orders o with(nolock) on o.id = fed.POID
 left join brand b with(nolock) on b.id = o.BrandID
-outer apply(select top 1 * from Fabric f with(nolock) where f.Refno = fed.Refno and f.BrandID = b.BrandGroup order by f.NLCodeEditDate desc)f1
+outer apply(
+	select top 1 f.*
+	from Fabric f with(nolock)
+	inner join brand b2 with(nolock) on f.BrandID = b2.id 
+	where f.Refno = psd.Refno and b2.BrandGroup = b.BrandGroup
+	order by f.NLCodeEditDate desc
+)f1
 outer apply(
 	select top 1
 		[Qty] = [dbo].getVNUnitTransfer(f.Type,f.UsageUnit,f.CustomsUnit,fed.qty,0,f.PcsWidth,f.PcsLength,f.PcsKg,IIF(CustomsUnit = 'M2',M2Rate.value,Rate.value),IIF(CustomsUnit = 'M2',M2UnitRate.value,UnitRate.value))
