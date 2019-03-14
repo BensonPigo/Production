@@ -95,6 +95,7 @@ namespace Sci.Production.Quality
             .Date("LastEta", header: "ETA", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("PoID", header: "SP#", width: Widths.AnsiChars(16), iseditingreadonly: true)
             .Text("seq", header: "Seq#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
@@ -324,7 +325,8 @@ select distinct
 	b.T1DefectPoints,
     ed.seq1,
     ed.seq2,
-	ed.Ukey
+	ed.Ukey,
+    o.BrandID
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID
