@@ -1,12 +1,13 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/14/2019 8:20:53 AM ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 2019/03/15 ¤U¤È 03:41:59 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -132,10 +133,17 @@ BEGIN
 				,ColorName as Article
 				, SizeName as SizeCode
 				,[QAQty]=sum(OutputQty) 
-			into #tmp_Into_SewingOutput_Detail_Detail
+			into #tmp_Into_SewingOutput_Detail_Detail_with0
 			from #tOutputTotal
 			where dDate = @DateStart
 			group by dDate,WorkLine,MONo,ColorName,SizeName
+
+			
+			SELECt *
+			INTO #tmp_Into_SewingOutput_Detail_Detail
+			FROM #tmp_Into_SewingOutput_Detail_Detail_with0
+			WHERE QAQty > 0
+
 
 			--Prepare SewingOutput_Detail	
 			select
@@ -162,14 +170,15 @@ BEGIN
 			, t3.ComboType
 			, Article
 			,[QAQty]= Sum(QAQty) 
-			,[InlineQty]= sum(FailCount) + Sum(QAQty) 
-			,[DefectQty]= (sum(FailCount) + Sum(QAQty)) - Sum(QAQty) 
+			,[InlineQty]= sum( ISNULL(FailCount,0) ) + Sum(QAQty) 
+			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
 			into #tmp_Into_SewingOutput_Detail
 			from #tmp_Into_SewingOutput_Detail_Detail t3
-			INNER join #tempFail t on t.OrderId = t3.OrderId collate Chinese_Taiwan_Stroke_CI_AS
+			LEFT join #tempFail t on t.OrderId = t3.OrderId collate Chinese_Taiwan_Stroke_CI_AS
 			AND t.ComboType=t3.ComboType collate Chinese_Taiwan_Stroke_CI_AS
 			and t.WorkLine = t3.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
 			and t.SizeCode = t3.SizeCode collate Chinese_Taiwan_Stroke_CI_AS
+			WHERE QAQty<>0
 			group by dDate,t3.WorkLine, t3.OrderId, t3.ComboType, Article 
 
 			
@@ -305,12 +314,16 @@ BEGIN
 			FROM #tmp_Into_SewingOutput_Detail_Detail a
 			INNER JOIN #tmp_SewingOutput_Detail b ON a.OrderID=b.OrderID AND a.ComboType=b.ComboType  AND a.Article=b.Article  
 			OUTER APPLY(
-			 SELECT Ukey FROM SewingOutput_Detail WHERE ID=b.ID 
-														AND b.OrderID= OrderID collate Chinese_Taiwan_Stroke_CI_AS 
-														AND ComboType=b.ComboType  collate Chinese_Taiwan_Stroke_CI_AS 
-														AND Article=b.Article  collate Chinese_Taiwan_Stroke_CI_AS 
+			 SELECT Ukey 
+			 FROM SewingOutput s
+			 INNER JOIN SewingOutput_Detail sd ON s.ID=sd.ID
+			 WHERE s.ID=b.ID 
+					AND sd.OrderID = b.OrderID collate Chinese_Taiwan_Stroke_CI_AS 
+					AND sd.ComboType=b.ComboType  collate Chinese_Taiwan_Stroke_CI_AS 
+					AND sd.Article=b.Article  collate Chinese_Taiwan_Stroke_CI_AS 
+					AND s.SewingLineID=a.WorkLine
 			)Now_SewingOutput_Detail	
-	
+			WHERE Now_SewingOutput_Detail.ukey IS NOT NULL	
 			-------------Prepare RFT
 			select 
 			[OrderId] =	CASE WHEN MONo LIKE '%-%'
@@ -326,7 +339,7 @@ BEGIN
 							where 
 							SUBSTRING(tOT.MONo, 1, CHARINDEX('-', tOT.MONo) - 1)
 							= 
-							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
+							SUBSTRING(MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
 							AND tOT.dDate  = mainTable.dDate  AND tOT.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = mainTable.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
 						)
 
@@ -336,7 +349,7 @@ BEGIN
 							where  
 							SUBSTRING(tRT.MONo, 1, CHARINDEX('-', tRT.MONo) - 1)
 							= 
-							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
+							SUBSTRING(MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
 							AND tRT.dDate=mainTable.dDate AND tRT.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = mainTable.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
 						)
 			, [DefectQty] = sum(Qty)
@@ -474,6 +487,7 @@ BEGIN
 	END CATCH
 
 END
+
 
 
 
