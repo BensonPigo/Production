@@ -20,6 +20,8 @@ namespace Sci.Production.Shipping
     {
         private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorTextColumnSettings brand = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings refno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings fabricType = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
 
         /// <summary>
         /// P42
@@ -129,6 +131,12 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                                 dr["BrandID"] = string.Empty;
                                 MyUtility.Msg.WarningBox("Brand  not found!!");
                             }
+                            else
+                            {
+                                dr["BrandID"] = e.FormattedValue;
+                                dr.EndEdit();
+                                this.BRT(dr, e);
+                            }
                         }
                     }
                     else
@@ -140,6 +148,36 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 }
             };
             #endregion
+            #region refno的Validating
+            this.refno.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["refno"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr, e);
+                    }
+                }
+            };
+            #endregion
+            #region fabricType的Validating
+            this.fabricType.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["fabricType"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr, e);
+                    }
+                }
+            };
+            #endregion
             DataGridViewGeneratorNumericColumnSettings stockQtySetting = new DataGridViewGeneratorNumericColumnSettings();
             stockQtySetting.IsSupportNegative = true;
 
@@ -147,11 +185,58 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), settings: this.brand)
+                .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(10), settings: this.refno)
+                .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
                 .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Refno", header: "Ref No.", width: Widths.AnsiChars(10))
                 .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode)
                 .Numeric("Qty", header: "Stock Qty", decimal_places: 3, width: Widths.AnsiChars(15), settings: stockQtySetting)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(8), iseditingreadonly: true);
+        }
+
+        private void BRT(DataRow dr, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]))
+            {
+                string type = MyUtility.Convert.GetString(dr["FabricType"]);
+                string nlCode = string.Empty;
+                if (type.EqualString("A") || type.EqualString("F"))
+                {
+                    nlCode = MyUtility.GetValue.Lookup($"select distinct NLCode from Fabric with(nolock) where refno = '{dr["Refno"]}'");
+                }
+                else if (type.EqualString("L"))
+                {
+                    nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where refno = '{dr["Refno"]}'");
+                }
+
+                StringBuilder errNLCode = new StringBuilder();
+                string chkVNContract_Detail = $@"
+select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{nlCode}'";
+                DataRow seekData;
+                if (!MyUtility.Check.Seek(chkVNContract_Detail, out seekData))
+                {
+                    dr["HSCode"] = string.Empty;
+                    dr["NLCode"] = string.Empty;
+                    dr["Qty"] = 0;
+                    dr["UnitID"] = string.Empty;
+                    MyUtility.Msg.WarningBox("Customs Code not found!!");
+                }
+                else
+                {
+                    dr["NLCode"] = nlCode;
+                    dr["HSCode"] = seekData["HSCode"];
+                    dr["UnitID"] = seekData["UnitID"];
+                }
+
+                dr.EndEdit();
+            }
+            else
+            {
+                dr["HSCode"] = string.Empty;
+                dr["NLCode"] = string.Empty;
+                dr["Qty"] = 0;
+                dr["UnitID"] = string.Empty;
+                dr.EndEdit();
+            }
         }
 
         /// <inheritdoc/>
