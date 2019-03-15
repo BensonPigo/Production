@@ -866,6 +866,9 @@
     <None Include="XLT\Sewing_R02_MonthlyReportByDate.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Sewing_R02_MonthlyReportBySewingLineByTeam.xltx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="XLT\Sewing_R02_MonthlyReportBySewingLine.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
