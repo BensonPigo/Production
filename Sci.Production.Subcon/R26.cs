@@ -276,7 +276,7 @@ select DISTINCT c.FactoryID
 			,[PRConfirmedDate]=CASE WHEN a.Category = 'CARTON' 
 									THEN (SELECT TOP 1 p.ApvToPurchaseDate 
 											FROM PackingList p
-											WHERE p.OrderID=b.RequestID)
+											WHERE p.ID=b.RequestID)
 									WHEN a.Category = 'SP_THREAD' 
 									THEN (SELECT TOP 1 t.EditDate
 											FROM ThreadRequisition t
