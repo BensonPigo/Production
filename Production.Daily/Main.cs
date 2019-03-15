@@ -204,6 +204,11 @@ namespace Production.Daily
             }
             //String toAddress = "willy.wei@sportscity.com.tw";
             //String ccAddress = "";
+            if (MyUtility.Check.Empty(toAddress))
+            {
+                return;
+            }
+
             if (String.IsNullOrEmpty(subject))
             {
                 subject = mailTo["Subject"].ToString();
