@@ -114,7 +114,7 @@ namespace Sci.Production.Shipping
         {
             string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
             this.DetailSelectCommand = $@"
-select vdd.ID,vdd.Refno,vdd.FabricType,vdd.NLCode,Qty = Round(vdd.Qty,2),vdd.Remark,vd.HSCode,vd.UnitID,vd.Price
+select vdd.ID,vdd.Refno,vdd.FabricType,vdd.NLCode,Qty = Round(vdd.Qty,2),vdd.Remark,vd.HSCode,vd.UnitID,vd.Price,vdd.BrandID
 from VNImportDeclaration_Detail_Detail vdd with(nolock)
 inner join VNImportDeclaration_Detail vd with(nolock) on vd.id = vdd.ID and vd.NLCode = vdd.NLCode
 where vdd.id = '{masterID}'
@@ -186,9 +186,10 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                 };
                 base.OnDetailGridSetup();
                 this.Helper.Controls.Grid.Generator(this.detailgrid)
-                    .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                    .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("BrandId", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
                     .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
                     .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
