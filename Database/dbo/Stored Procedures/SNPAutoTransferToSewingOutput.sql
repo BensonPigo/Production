@@ -1,12 +1,13 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 2019/03/15 ¤U¤È 03:41:59 ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/18/2019 8:51:59 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -40,9 +41,9 @@ BEGIN
 			--#now_Sewing_Data
 			SELECT s.OutputDate,s.SewingLineID,sdd.OrderId,sdd.ComboType
 			INTO  #now_Sewing_Data
-			FROM SewingOutput s
-			INNER JOIN SewingOutput_Detail sd ON s.ID=sd.ID
-			INNER JOIN SewingOutput_Detail_Detail sdd 
+			FROM SewingOutput s WITH(NOLOCK)
+			INNER JOIN SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
+			INNER JOIN SewingOutput_Detail_Detail sdd WITH(NOLOCK) 
 			ON sd.ID=sdd.ID 
 					AND sd.UKey=sdd.SewingOutput_DetailUKey
 					AND sd.OrderId=sdd.OrderId
@@ -57,8 +58,8 @@ BEGIN
 			--#now_Sewing_Data
 			SELECt r.OrderID,r.CDate,r.SewinglineID
 			INTO #now_RFT_Data
-			FROM RFT r
-			INNER JOIN Rft_Detail rd ON r.ID=rd.ID
+			FROM RFT r WITH(NOLOCK)
+			INNER JOIN Rft_Detail rd WITH(NOLOCK) ON r.ID=rd.ID
 			WHERE CDate=@DateStart
 					AND r.[Shift] = 'D'
 					AND r.[Team] = 'A'
@@ -315,13 +316,13 @@ BEGIN
 			INNER JOIN #tmp_SewingOutput_Detail b ON a.OrderID=b.OrderID AND a.ComboType=b.ComboType  AND a.Article=b.Article  
 			OUTER APPLY(
 			 SELECT Ukey 
-			 FROM SewingOutput s
-			 INNER JOIN SewingOutput_Detail sd ON s.ID=sd.ID
+			 FROM SewingOutput s WITH(NOLOCK)
+			 INNER JOIN SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
 			 WHERE s.ID=b.ID 
 					AND sd.OrderID = b.OrderID collate Chinese_Taiwan_Stroke_CI_AS 
 					AND sd.ComboType=b.ComboType  collate Chinese_Taiwan_Stroke_CI_AS 
 					AND sd.Article=b.Article  collate Chinese_Taiwan_Stroke_CI_AS 
-					AND s.SewingLineID=a.WorkLine
+					AND s.SewingLineID=a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
 			)Now_SewingOutput_Detail	
 			WHERE Now_SewingOutput_Detail.ukey IS NOT NULL	
 			-------------Prepare RFT
@@ -487,6 +488,7 @@ BEGIN
 	END CATCH
 
 END
+
 
 
 
