@@ -864,6 +864,13 @@ where id='{ID}'";
             {
                 ShowErr(upResult);                
             }
+
+            //更新PO.FIRLabInspPercent
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabColorFastness','{PoID}'")))
+            {
+                this.ShowErr(upResult);
+            }
+
             return base.OnSave();
         }
 
@@ -951,11 +958,28 @@ where id='{ID}'";
                     }
                 }
 
+                string sqlcmd = string.Empty;
+
+                if (!MyUtility.Check.Empty(sqlcmd))
+                {
+                    DualResult dresult = DBProxy.Current.Execute(null, sqlcmd);
+                    if (!dresult)
+                    {
+                        this.ShowErr(dresult);
+                    }
+                }
             }
             // Amend
             else
             {
                 DBProxy.Current.Execute(null, string.Format("update ColorFastness set result='',status='New',editname='{0}',editdate='{1}' where id='{2}'", loginID, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dt.Rows[0]["id"]));
+
+            }
+            //更新PO.FIRLabInspPercent
+            DualResult result_check;
+            if (!(result_check = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabColorFastness','{PoID}'")))
+            {
+                this.ShowErr(result_check);
             }
             OnRequery();
         }

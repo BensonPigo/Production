@@ -578,7 +578,7 @@ BEGIN
 			ID			, Article	, SizeCode		, Qty		,AddName 
 			, AddDate	, EditName	, EditDate		, OriQty 
 		) values (
-			s.ID		, s.Article	, s.SizeCode	, s.Qty		,s.AddName 
+			s.ID		, s.Article	, Rtrim(s.SizeCode)	, s.Qty		,s.AddName 
 			, s.AddDate	, s.EditName, s.EditDate	, s.OriQty 
 		)
 	when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then
@@ -1250,10 +1250,10 @@ BEGIN
 				t.FabricPanelCode		= s.FabricPanelCode,
 				t.ConsPC				= s.ConsPC,
 				t.CuttingPiece			= s.CuttingPiece,
-				t.ActCuttingPerimeter	= replace(s.ActCuttingPerimeter,'Yd','Y'),
-				t.StraightLength		= replace(s.StraightLength,'Yd','Y'),
+				t.ActCuttingPerimeter	= s.ActCuttingPerimeter,
+				t.StraightLength		= s.StraightLength,
 				t.FabricCode			= s.FabricCode,
-				t.CurvedLength			= replace(s.CurvedLength,'Yd','Y'),
+				t.CurvedLength			= s.CurvedLength,
 				t.Efficiency			= s.Efficiency,
 				t.Article				= s.Article,
 				t.Remark				= s.Remark,

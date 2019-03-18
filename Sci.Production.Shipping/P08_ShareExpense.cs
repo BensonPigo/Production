@@ -244,23 +244,29 @@ select * from Expt", e.FormattedValue.ToString());
                         string chkExp = string.Format(
                             @"
 with GB as 
-(select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
- '' as ShippingAPID, '' as BLNo, '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
- '' as ShareBase, 0 as FtyWK 
- from GMTBooking g  WITH (NOLOCK) 
- left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
- left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
- where 1=1  and g.id='{0}' ), 
+(   
+    select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
+	'' as ShippingAPID, iif(g.BLNo is null or g.BLNo ='' , g.BL2No,g.BLNo) as BLNo
+	,  '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
+	'' as ShareBase, 0 as FtyWK 
+	from GMTBooking g  WITH (NOLOCK) 
+	left join GMTBooking_CTNR gc WITH (NOLOCK) on gc.ID = g.ID 
+	left Join PackingList p WITH (NOLOCK) on p.INVNo = g.ID 
+    where 1=1  and g.id='{0}' 
+), 
 PL as 
-(select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,
-'' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK 
- from PackingList WITH (NOLOCK) 
- where  (Type = 'F' or Type = 'L')  and id='{0}' ) ,
+(   select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,
+    '' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK 
+    from PackingList WITH (NOLOCK) 
+    where  (Type = 'F' or Type = 'L')  and id='{0}' 
+) ,
 FTY AS
-(select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno,
-'' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
-from FtyExport fe WITH (NOLOCK) 
- where fe.Type = 3  and fe.id='{0}')
+(
+    select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno,
+    '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
+    from FtyExport fe WITH (NOLOCK) 
+    where fe.Type = 3  and fe.id='{0}'
+)
 select * from GB 
 union all 
 select * from PL
@@ -693,6 +699,8 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                 this.gridBLNo.ValidateControl();
                 bool forwarderFee = MyUtility.Check.Seek(string.Format("select se.AccountID from ShippingAP_Detail sd WITH (NOLOCK) , ShipExpense se WITH (NOLOCK) where sd.ID = '{0}' and sd.ShipExpenseID = se.ID and (se.AccountID = '61022001' or se.AccountID = '61012001')", MyUtility.Convert.GetString(this.apData["ID"])));
                 bool haveSea = false, noExistNotSea = true, noAirpp = false;
+                bool bolNoImportCharges = true;
+                string exportID = string.Empty;
                 DataTable duplicData;
                 DBProxy.Current.Select(null, "select BLNo,WKNo,InvNo from ShareExpense WITH (NOLOCK) where 1=0", out duplicData);
 
@@ -758,6 +766,14 @@ group by ShippingAPID,se.BLNo,WKNo,InvNo,se.Type,ShipModeID,GW,CBM,CurrencyID,Sh
                         {
                             haveSea = haveSea || MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
                             noExistNotSea = noExistNotSea && MyUtility.Convert.GetString(dr["ShipModeID"]) == "SEA";
+                        }
+
+                        exportID = MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? MyUtility.Convert.GetString(dr["WKno"]) : MyUtility.Convert.GetString(dr["InvNo"]);
+                        bolNoImportCharges = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(string.Format("select NoImportCharges from Export where id = '{0}'", exportID)));
+                        if (bolNoImportCharges)
+                        {
+                            MyUtility.Msg.WarningBox("No Import Charge");
+                            return;
                         }
 
                         // Account Name含Air-Prepaid (6105/5912) 時, GB上的Ship Mode必須為A/P或E/P或 E/P-C,且該GB項下的SP須有APP No.

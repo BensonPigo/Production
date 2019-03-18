@@ -16,6 +16,8 @@ using System.Net;
 using System.IO;
 using Sci;
 using System.Diagnostics;
+using PostJobLog;
+using System.Threading;
 
 namespace PMSUploadDataToAPS.Daily
 {
@@ -25,6 +27,7 @@ namespace PMSUploadDataToAPS.Daily
         DataRow mailTo;
         TransferPms transferPMS = new TransferPms();
         StringBuilder sqlmsg = new StringBuilder();
+        bool isTestJobLog = false;
 
         public Main()
         {
@@ -100,9 +103,13 @@ namespace PMSUploadDataToAPS.Daily
             {
                 desc = mailTo["Content"].ToString();
             }
-            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
 
-            mail.ShowDialog();
+            if (!MyUtility.Check.Empty(toAddress))
+            {
+                Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(sendFrom, toAddress, ccAddress, subject, "", desc, true, true);
+
+                mail.ShowDialog();
+            }
         }
         #endregion
 
@@ -156,14 +163,14 @@ namespace PMSUploadDataToAPS.Daily
             subject = mailTo["Subject"].ToString().TrimEnd() + " - [" + this.CurrentData["RgCode"].ToString() + "]";
             if (issucess)
             {
-                subject += " Sucess";
+                subject += " Success";
             }
             else
             {
                 subject += " Error!";
             }
-
             SendMail(subject, desc);
+            this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, issucess);
             #endregion
         }
         #endregion
@@ -186,5 +193,38 @@ namespace PMSUploadDataToAPS.Daily
             return Ict.Result.True;
         }
         #endregion
+
+        #region Call JobLog web api回傳執行結果
+        private void CallJobLogApi(string subject, string desc, string startDate, string endDate, bool isTest, bool succeeded)
+        {
+            JobLog jobLog = new JobLog()
+            {
+                GroupID = "P",
+                SystemID = "PMS",
+                Region = this.CurrentData["RgCode"].ToString(),
+                MDivisionID = string.Empty,
+                OperationName = subject,
+                StartTime = startDate,
+                EndTime = endDate,
+                Description = desc,
+                FileName = new List<string>(),
+                FilePath = string.Empty,
+                Succeeded = succeeded
+            };
+            CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(isTest);
+            callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
+        }
+
+        #endregion
+
+        private void btnTestWebAPI_Click(object sender, EventArgs e)
+        {
+          this.CallJobLogApi("APS upload Test", "APS upload Test", DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), true, true);
+        }
+
+        private void btnTestMail_Click(object sender, EventArgs e)
+        {
+            SendMail("APS Test", "APS Test");
+        }
     }
 }

@@ -65,6 +65,8 @@ RFID/RFID_Monitor_Board_Setup/RFID_Monitor_Board_Setup/obj
 RFID/RFIDmiddleware/RFIDmiddleware/bin
 RFID/RFIDmiddleware/RFIDmiddleware/obj
 *.user
+PMSUploadDataToAPS.Daily/obj
+PMSUploadDataToAPS.Daily/bin
 PMSUploadDataToAPS.Daily/obj/Debug/PMSUploadDataToAPS.Daily.csprojResolveAssemblyReference.cache
 PMSUploadDataToAPS.Daily/obj/Debug/PMSUploadDataToAPS.Daily.csproj.GenerateResource.Cache
 PMSUploadDataToAPS.Daily/obj/Debug/PMSUploadDataToAPS.Daily.csproj.FileListAbsolute.txt

@@ -169,7 +169,7 @@
             this.btnEncode.TabIndex = 182;
             this.btnEncode.Text = "Encode";
             this.btnEncode.UseVisualStyleBackColor = true;
-            this.btnEncode.Clicked += new System.EventHandler(this.btnEncode_Click);
+            this.btnEncode.Click += new System.EventHandler(this.btnEncode_Click);
             // 
             // txtResult
             // 
