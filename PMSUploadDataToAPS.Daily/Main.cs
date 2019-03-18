@@ -28,6 +28,7 @@ namespace PMSUploadDataToAPS.Daily
         TransferPms transferPMS = new TransferPms();
         StringBuilder sqlmsg = new StringBuilder();
         bool isTestJobLog = false;
+        string tpeMisMail = string.Empty;
 
         public Main()
         {
@@ -70,6 +71,8 @@ namespace PMSUploadDataToAPS.Daily
             if (!result) { ShowErr(result); return; }
 
             mailTo = _mailTo.Rows[0];
+
+            this.tpeMisMail = MyUtility.GetValue.Lookup("Select ToAddress From dbo.MailTo Where ID = '101'");
         }
 
         #region 接Sql Server 進度訊息用
@@ -85,7 +88,7 @@ namespace PMSUploadDataToAPS.Daily
         }
 
         #region Send Mail
-        private void SendMail(String subject = "", String desc = "")
+        private void SendMail(String subject = "", String desc = "", bool isFail = true)
         {
             String mailServer = this.CurrentData["MailServer"].ToString();
             String eMailID = this.CurrentData["EMailID"].ToString();
@@ -95,6 +98,12 @@ namespace PMSUploadDataToAPS.Daily
             String sendFrom = this.CurrentData["SendFrom"].ToString();
             String toAddress = mailTo["ToAddress"].ToString();
             String ccAddress = mailTo["CcAddress"].ToString();
+
+            if (isFail)
+            {
+                toAddress += MyUtility.Check.Empty(toAddress) ? this.tpeMisMail : ";" + this.tpeMisMail;
+            }
+
             if (String.IsNullOrEmpty(subject))
             {
                 subject = mailTo["Subject"].ToString();
@@ -169,7 +178,7 @@ namespace PMSUploadDataToAPS.Daily
             {
                 subject += " Error!";
             }
-            SendMail(subject, desc);
+            SendMail(subject, desc, !issucess);
             this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, issucess);
             #endregion
         }

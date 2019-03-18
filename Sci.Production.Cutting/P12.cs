@@ -184,7 +184,7 @@ namespace Sci.Production.Cutting
             {
                 sqlWheres.Add(" format(b.AddDate,'yyyy/MM/dd') = @AddDate");
                 //lis.Add(new SqlParameter("@AddDate", AddDate));
-                declare += $@" declare @AddDate varchar(8) = '{((DateTime)AddDate).ToString("yyyy/MM/dd")}' ";
+                declare += $@" declare @AddDate varchar(10) = '{((DateTime)AddDate).ToString("yyyy/MM/dd")}' ";
             }
             if (!MyUtility.Check.Empty(Cutno))
             {
@@ -237,19 +237,19 @@ namespace Sci.Production.Cutting
                 DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
-declare @Cut_Ref varchar(8) = '{Cut_Ref}'
-declare @Cut_Ref1 varchar(8) = '{Cut_Ref1}'
-declare @SP varchar(16) = '{SP}'
-declare @SP1 varchar(16) = '{SP1}'
-declare @POID varchar(16) = '{POID}'
+declare @Cut_Ref varchar(6) = '{Cut_Ref}'
+declare @Cut_Ref1 varchar(6) = '{Cut_Ref1}'
+declare @SP varchar(13) = '{SP}'
+declare @SP1 varchar(13) = '{SP1}'
+declare @POID varchar(13) = '{POID}'
 declare @Bundle varchar(13) = '{Bundle}'
 declare @Bundle1 varchar(13) = '{Bundle1}'
 declare @Cell varchar(3) = '{Cell}'
 declare @size varchar(8) = '{size}'
-declare @Addname varchar(8) = '{Addname}'
-declare @Cutno varchar(8) = '{Cutno}'
+declare @Addname varchar(10) = '{Addname}'
+declare @Cutno varchar(6) = '{Cutno}'
 declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
-declare @Comb varchar(8) = '{txtComb.Text}'
+declare @Comb varchar(2) = '{txtComb.Text}'
 {declare}
 set arithabort on
 select 
@@ -378,19 +378,19 @@ OPTION (RECOMPILE)"
                 #region SQL
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
-declare @Cut_Ref varchar(8) = '{Cut_Ref}'
-declare @Cut_Ref1 varchar(8) = '{Cut_Ref1}'
-declare @SP varchar(16) = '{SP}'
-declare @SP1 varchar(16) = '{SP1}'
-declare @POID varchar(16) = '{POID}'
+declare @Cut_Ref varchar(6) = '{Cut_Ref}'
+declare @Cut_Ref1 varchar(6) = '{Cut_Ref1}'
+declare @SP varchar(13) = '{SP}'
+declare @SP1 varchar(13) = '{SP1}'
+declare @POID varchar(13) = '{POID}'
 declare @Bundle varchar(13) = '{Bundle}'
 declare @Bundle1 varchar(13) = '{Bundle1}'
 declare @Cell varchar(3) = '{Cell}'
 declare @size varchar(8) = '{size}'
-declare @Addname varchar(8) = '{Addname}'
-declare @Cutno varchar(8) = '{Cutno}'
+declare @Addname varchar(10) = '{Addname}'
+declare @Cutno varchar(6) = '{Cutno}'
 declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
-declare @Comb varchar(8) = '{txtComb.Text}'
+declare @Comb varchar(2) = '{txtComb.Text}'
 {declare}
 set arithabort on
 select 
