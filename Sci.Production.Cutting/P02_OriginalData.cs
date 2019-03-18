@@ -211,7 +211,8 @@ Select
 					a.Layer,
 					c.WeaveTypeID,
 					a.cons
-				)/60.0,0),2)as float),' mins'
+				)/60.0,0),2)as float),' mins,'
+        ,'ActCuttingPerimeter: ' ,a.ActCuttingPerimeter
 	)
     ,workorderukey
 from WorkOrderRevisedMarkerOriginalData a WITH (NOLOCK)
@@ -389,7 +390,8 @@ Select
 					a.Layer,
 					c.WeaveTypeID,
 					a.cons
-				)/60.0,0),2)as float),' mins'
+				)/60.0,0),2)as float),' mins,'
+        ,'ActCuttingPerimeter: ',a.ActCuttingPerimeter
 	)
 from Workorder a WITH (NOLOCK)
 left join fabric c WITH (NOLOCK) on c.SCIRefno = a.SCIRefno
