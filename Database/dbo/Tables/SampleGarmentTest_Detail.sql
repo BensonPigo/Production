@@ -15,7 +15,7 @@
     [EditDate] DATETIME NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_SampleGarmentTest_Detail_EditName] DEFAULT ('') NULL,
 	[ReportDate] DATE NULL, 
-    [Colour] VARCHAR(20) NULL, 
+    [Colour] VARCHAR(100) NULL, 
     [SizeCode] VARCHAR(8) NULL, 
     [LineDry] BIT NOT NULL DEFAULT(0), 
     [Temperature] INT NOT NULL DEFAULT (0), 
