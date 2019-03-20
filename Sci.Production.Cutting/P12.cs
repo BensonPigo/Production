@@ -297,7 +297,7 @@ outer apply
         for xml path('')
     )
 )as SubProcess
-" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
+" + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
 
 union all
 
@@ -436,7 +436,7 @@ outer apply
         for xml path('')
     )
 )as SubProcess 
-" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
+" + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
                                         
 union all
 
