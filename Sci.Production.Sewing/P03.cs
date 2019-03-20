@@ -633,6 +633,9 @@ set sod.WorkHour = upd.workHour
 from SewingOutput_Detail sod
 inner join #updateChild upd on sod.UKey = upd.SewingOutput_DetailUKey
 
+--update SewingOutput.ReDailyTransferDate 讓更新資料傳回台北
+update SewingOutput set ReDailyTransferDate = GETDATE() where ID IN (SELECT SewingOutputID FROM #OrdersReceiveTmp)
+
 ---- 成功分配清單 ------------------------------------------------------
 select OrderID = ID
 	   , POID
