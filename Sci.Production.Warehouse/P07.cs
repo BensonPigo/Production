@@ -1076,8 +1076,13 @@ where id = '{1}'", Env.User.UserID, CurrentMaintain["exportid"], CurrentMaintain
             List<SqlParameter> Fir_Air_Proce = new List<SqlParameter>();
             Fir_Air_Proce.Add(new SqlParameter("@ID", CurrentMaintain["ID"]));
             Fir_Air_Proce.Add(new SqlParameter("@LoginID", UserID));
-
-            DBProxy.Current.ExecuteSP(null, "insert_Air_Fir", Fir_Air_Proce);
+            
+            if (!(result = DBProxy.Current.ExecuteSP("", "dbo.insert_Air_Fir", Fir_Air_Proce)))
+            { 
+                Exception ex = result.GetException();
+                MyUtility.Msg.InfoBox(ex.Message.Substring(ex.Message.IndexOf("Error Message:") + "Error Message:".Length));
+                return;
+            }
             #endregion
 
             TransactionScope _transactionscope = new TransactionScope();
