@@ -129,7 +129,6 @@ namespace Sci.Production.Cutting
             string sqlWhere = "";
             string sb = "";
             string declare = string.Empty;
-            string subQueryWhere = string.Empty;
             List<string> sqlWheres = new List<string>();
 
             sqlWheres.Add("b.MDivisionID=@Keyword");
@@ -172,7 +171,7 @@ namespace Sci.Production.Cutting
 
             if (!this.dateBox1.Value.Empty())
             {
-                subQueryWhere = "AND e.EstCutDate=@Est_CutDate";
+                sqlWheres.Add("WorkOrder.EstCutDate=@Est_CutDate");
                 //lis.Add(new SqlParameter("@Est_CutDate", Est_CutDate));
                 declare += $@" declare @Est_CutDate date = '{((DateTime)Est_CutDate).ToString("yyyy/MM/dd")}' ";
             }
@@ -300,7 +299,8 @@ outer apply
 OUTER APPLY(
 	SELECT TOP 1 
 		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
-	FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID AND e.EstCutDate=@Est_CutDate
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID
 )WorkOrder
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
 
@@ -359,7 +359,8 @@ outer apply
 OUTER APPLY(
 	SELECT TOP 1 
 		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
-	FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID AND e.EstCutDate=@Est_CutDate
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID
 )WorkOrder
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)
@@ -449,7 +450,8 @@ outer apply
 OUTER APPLY(
 	SELECT TOP 1 
 		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
-	FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID AND e.EstCutDate=@Est_CutDate
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID
 )WorkOrder
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
                                         
@@ -501,7 +503,8 @@ outer apply
 OUTER APPLY(
 	SELECT TOP 1 
 		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
-	FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID AND e.EstCutDate=@Est_CutDate
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID
 )WorkOrder
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
