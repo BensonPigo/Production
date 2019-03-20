@@ -280,7 +280,7 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID {subQueryWhere}) ,'')
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
@@ -297,6 +297,11 @@ outer apply
         for xml path('')
     )
 )as SubProcess
+OUTER APPLY(
+	SELECT TOP 1 
+		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
+	FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID AND e.EstCutDate=@Est_CutDate
+)WorkOrder
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
 
 union all
@@ -328,7 +333,7 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID {subQueryWhere}) ,'')
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
@@ -351,6 +356,11 @@ outer apply
         for xml path('')
     )
 )as SubProcess
+OUTER APPLY(
+	SELECT TOP 1 
+		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
+	FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID AND e.EstCutDate=@Est_CutDate
+)WorkOrder
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)
 
@@ -419,7 +429,7 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID {subQueryWhere}) ,'')
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
@@ -436,6 +446,11 @@ outer apply
         for xml path('')
     )
 )as SubProcess 
+OUTER APPLY(
+	SELECT TOP 1 
+		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
+	FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID AND e.EstCutDate=@Est_CutDate
+)WorkOrder
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
                                         
 union all
@@ -467,7 +482,7 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID {subQueryWhere}) ,'')
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
@@ -483,6 +498,11 @@ outer apply
         for xml path('')
     )
 )as SubProcess 
+OUTER APPLY(
+	SELECT TOP 1 
+		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
+	FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID AND e.EstCutDate=@Est_CutDate
+)WorkOrder
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)
