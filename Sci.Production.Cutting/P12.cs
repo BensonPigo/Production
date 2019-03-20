@@ -129,6 +129,7 @@ namespace Sci.Production.Cutting
             string sqlWhere = "";
             string sb = "";
             string declare = string.Empty;
+            string subQueryWhere = string.Empty;
             List<string> sqlWheres = new List<string>();
 
             sqlWheres.Add("b.MDivisionID=@Keyword");
@@ -171,7 +172,7 @@ namespace Sci.Production.Cutting
 
             if (!this.dateBox1.Value.Empty())
             {
-                sqlWheres.Add("e.EstCutDate=@Est_CutDate");
+                subQueryWhere = "AND e.EstCutDate=@Est_CutDate";
                 //lis.Add(new SqlParameter("@Est_CutDate", Est_CutDate));
                 declare += $@" declare @Est_CutDate date = '{((DateTime)Est_CutDate).ToString("yyyy/MM/dd")}' ";
             }
@@ -279,7 +280,7 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID ) ,'')
+    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID {subQueryWhere}) ,'')
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
@@ -327,7 +328,7 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID ) ,'')
+    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID {subQueryWhere}) ,'')
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
@@ -418,7 +419,7 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID ) ,'')
+    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID {subQueryWhere}) ,'')
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
@@ -466,7 +467,7 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID ) ,'')
+    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID {subQueryWhere}) ,'')
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
