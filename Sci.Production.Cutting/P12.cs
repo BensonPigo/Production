@@ -279,14 +279,13 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID ) ,'')
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -328,13 +327,12 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID ) ,'')
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
 	select distinct x.PatternCode,x.PatternDesc,x.Parts
@@ -420,14 +418,13 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID ) ,'')
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -469,13 +466,12 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=IIF(b.CutRef<>'', (SELECT TOP 1 MarkerNo FROM  dbo.WorkOrder e WITH (NOLOCK) WHERE b.CutRef=e.CutRef and e.ID=b.POID ) ,'')
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
