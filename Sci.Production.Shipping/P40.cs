@@ -280,11 +280,24 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
             #region 檢查畫面上的Refno在[Fabric], 是否能找到對應的[Fabric].NLCode
             foreach (DataRow dr in this.DetailDatas)
             {
-                if (!MyUtility.Check.Seek($"select 1 from Fabric with(nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLcode"]}'"))
+                string fabricType = MyUtility.Convert.GetString(dr["FabricType"]);
+                if (fabricType.EqualString("A") || fabricType.EqualString("F"))
                 {
-                    MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
-                    return false;
+                    if (!MyUtility.Check.Seek($"select 1 from Fabric with(nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLcode"]}'"))
+                    {
+                        MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
+                        return false;
+                    }
                 }
+                else
+                {
+                    if (!MyUtility.Check.Seek($"select 1 from LocalItem with(nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLcode"]}'"))
+                    {
+                        MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
+                        return false;
+                    }
+                }
+
             }
             #endregion
 
@@ -314,7 +327,7 @@ from #tmp t
 outer apply(select Remark=stuff((
 		select concat(',',Remark)
 		from #tmp t2
-		where t.ID = t2.ID and t.NLCode = t2.NLCode
+		where t.ID = t2.ID and t.NLCode = t2.NLCode and isnull(Remark,'') <> ''
 		for xml path(''))
 	,1,1,'')
 )a
