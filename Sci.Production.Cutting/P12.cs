@@ -298,9 +298,9 @@ outer apply
 )as SubProcess
 OUTER APPLY(
 	SELECT TOP 1 
-		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
+		MarkerNo  
         ,EstCutDate
-	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
 )WorkOrder
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
 
@@ -358,9 +358,9 @@ outer apply
 )as SubProcess
 OUTER APPLY(
 	SELECT TOP 1 
-		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
+		MarkerNo  
         ,EstCutDate
-	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
 )WorkOrder
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)
@@ -449,9 +449,9 @@ outer apply
 )as SubProcess 
 OUTER APPLY(
 	SELECT TOP 1 
-		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
+		MarkerNo  
         ,EstCutDate
-	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
 )WorkOrder
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
                                         
@@ -502,9 +502,9 @@ outer apply
 )as SubProcess 
 OUTER APPLY(
 	SELECT TOP 1 
-		[MarkerNo]=IIF(b.CutRef<>'',MarkerNo  ,'')
+		MarkerNo  
         ,EstCutDate
-	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
 )WorkOrder
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
