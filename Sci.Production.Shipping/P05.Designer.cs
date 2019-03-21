@@ -320,7 +320,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(990, 600);
+            this.browse.Size = new System.Drawing.Size(1000, 600);
             // 
             // tabs
             // 
@@ -1147,7 +1147,7 @@
             this.dateForward.Location = new System.Drawing.Point(659, 193);
             this.dateForward.Name = "dateForward";
             this.dateForward.Size = new System.Drawing.Size(130, 23);
-            this.dateForward.TabIndex = 78;
+            this.dateForward.TabIndex = 15;
             // 
             // labActFCRDate
             // 

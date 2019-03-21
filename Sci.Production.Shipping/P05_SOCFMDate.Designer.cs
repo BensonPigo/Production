@@ -37,7 +37,7 @@
             // labelSOCfmDate
             // 
             this.labelSOCfmDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSOCfmDate.Location = new System.Drawing.Point(27, 28);
+            this.labelSOCfmDate.Location = new System.Drawing.Point(9, 9);
             this.labelSOCfmDate.Name = "labelSOCfmDate";
             this.labelSOCfmDate.Size = new System.Drawing.Size(94, 23);
             this.labelSOCfmDate.TabIndex = 57;
@@ -45,7 +45,7 @@
             // 
             // dateSOCfmDate
             // 
-            this.dateSOCfmDate.Location = new System.Drawing.Point(124, 28);
+            this.dateSOCfmDate.Location = new System.Drawing.Point(106, 9);
             this.dateSOCfmDate.Name = "dateSOCfmDate";
             this.dateSOCfmDate.Size = new System.Drawing.Size(130, 23);
             this.dateSOCfmDate.TabIndex = 58;
@@ -54,9 +54,9 @@
             // btnConfirm
             // 
             this.btnConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnConfirm.Location = new System.Drawing.Point(27, 82);
+            this.btnConfirm.Location = new System.Drawing.Point(9, 38);
             this.btnConfirm.Name = "btnConfirm";
-            this.btnConfirm.Size = new System.Drawing.Size(99, 32);
+            this.btnConfirm.Size = new System.Drawing.Size(94, 32);
             this.btnConfirm.TabIndex = 59;
             this.btnConfirm.Text = "Confirm";
             this.btnConfirm.UseVisualStyleBackColor = true;
@@ -65,9 +65,9 @@
             // btnCancel
             // 
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(155, 82);
+            this.btnCancel.Location = new System.Drawing.Point(137, 38);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(99, 32);
+            this.btnCancel.Size = new System.Drawing.Size(94, 32);
             this.btnCancel.TabIndex = 60;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -77,7 +77,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 151);
+            this.ClientSize = new System.Drawing.Size(248, 88);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnConfirm);
             this.Controls.Add(this.dateSOCfmDate);
