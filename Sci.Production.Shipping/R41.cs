@@ -293,7 +293,7 @@ order by v.CDate", sqlCondition);
         {
             string sqlCmd = string.Format(
                 @"
-select v.ID,v.CDate,vdd.Refno,vdd.FabricType,v.VNContractID,v.DeclareNo,
+select v.ID,v.CDate,vdd.BrandID,vdd.Refno,vdd.FabricType,v.VNContractID,v.DeclareNo,
 	BLWK=IIF(v.BLNo='',v.WKNo,v.BLNo),vdd.NLCode,vd.HSCode,vdd.Qty,vd.UnitID,vd.Remark
 from VNImportDeclaration v WITH (NOLOCK) 
 inner join VNImportDeclaration_Detail vd WITH (NOLOCK) on v.ID = vd.ID
@@ -330,7 +330,8 @@ order by v.ID", sqlCondition);
         private Ict.DualResult QueryAdjustDetail(string sqlCondition)
         {
             string sqlCmd = string.Format(
-                @"select v.CDate,v.VNContractID,Reason =concat(v.ReasonID,'-',sr.Description),vdd.Refno,vdd.FabricType,
+                @"
+select v.CDate,v.VNContractID,vdd.BrandID,Reason =concat(v.ReasonID,'-',sr.Description),vdd.Refno,vdd.FabricType,
 	v.DeclareNo,vdd.NLCode,isnull(cd.HSCode,'') as HSCode,vdd.Qty,isnull(cd.UnitID,'') as UnitID,v.Remark
 from VNContractQtyAdjust v WITH (NOLOCK) 
 inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID =vd.ID
