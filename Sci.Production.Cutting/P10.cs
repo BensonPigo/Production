@@ -75,6 +75,7 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             Helper.Controls.Grid.Generator(this.detailgrid)
             .Numeric("BundleGroup", header: "Group", width: Widths.AnsiChars(4), integer_places: 5, iseditingreadonly: true)
             .Text("Bundleno", header: "Bundle No", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Location", header: "Location", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("PatternCode", header: "Cutpart", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("PatternDesc", header: "Cutpart name", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -373,8 +374,8 @@ order by bundlegroup"
                 if (dr.RowState != DataRowState.Deleted)
                 {
                     allpart_cmd = allpart_cmd + string.Format(
-                @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair) values('{0}','{1}','{2}','{3}','{4}');"
-                , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"], dr["isPair"]);
+                @"insert into bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair,Location) values('{0}','{1}','{2}','{3}','{4}','{5}');"
+                , CurrentMaintain["ID"], dr["PatternCode"], dr["PatternDesc"], dr["Parts"], dr["isPair"], dr["Location"]);
                 }
             }
             #endregion
