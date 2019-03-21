@@ -1,7 +1,7 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/18/2019 1:41:19 PM ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/18/2019 4:02:38 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -76,7 +76,7 @@ BEGIN
 			FROM
 			(
 				SELECT *
-				FROM [SUNRISE].SUNRISEEXCH.dbo.tOutputTotal
+				FROM View_tOutputTotal
 				WHERE MONo LIKE '%-%' 
 			)a
 			WHERE LEN((SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)) >=10 --Must Same as PMS DB Datatype
@@ -86,8 +86,8 @@ BEGIN
 
 				SELECT 1 FROM #now_Sewing_Data WHERE 
 											OrderId=(SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)
-											AND SewingLineID collate Chinese_Taiwan_Stroke_CI_AS =a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS 
-											AND ComboType collate Chinese_Taiwan_Stroke_CI_AS = (SELECT TOP 1 Data FROM SplitString(a.Mono collate Chinese_Taiwan_Stroke_CI_AS ,'-') WHERE No=2)
+											AND SewingLineID  =a.WorkLine  
+											AND ComboType  = (SELECT TOP 1 Data FROM SplitString(a.Mono  ,'-') WHERE No=2)
 											AND OutputDate = @DateStart
 			)
 
@@ -97,7 +97,7 @@ BEGIN
 			FROM
 			(
 				SELECT *
-				FROM [SUNRISE].SUNRISEEXCH.dbo.tReworkTotal
+				FROM View_tReworkTotal
 				WHERE MONo LIKE '%-%' 
 			)a
 			WHERE LEN((SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)) >=10 --Must Same as PMS DB Datatype
@@ -107,14 +107,14 @@ BEGIN
 
 				SELECT 1 FROM #now_RFT_Data WHERE 
 											CDate = @DateStart
-											AND OrderId collate Chinese_Taiwan_Stroke_CI_AS =(SELECT TOP 1 Data FROM SplitString(a.Mono collate Chinese_Taiwan_Stroke_CI_AS ,'-') WHERE No=1)
-											AND SewingLineID collate Chinese_Taiwan_Stroke_CI_AS =a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS 
+											AND OrderId  =(SELECT TOP 1 Data FROM SplitString(a.Mono  ,'-') WHERE No=1)
+											AND SewingLineID  =a.WorkLine  
 			)
 			
 			--#tReworkCount
 			SELECT *
 			INTO #tReworkCount
-			FROM [SUNRISE].SUNRISEEXCH.dbo.tReworkCount 
+			FROM View_tReworkCount 
 			WHERE MoNo Like '%-%'AND dDate = @DateStart
 			----------
 
@@ -175,10 +175,10 @@ BEGIN
 			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
 			into #tmp_Into_SewingOutput_Detail
 			from #tmp_Into_SewingOutput_Detail_Detail t3
-			LEFT join #tempFail t on t.OrderId = t3.OrderId collate Chinese_Taiwan_Stroke_CI_AS
-			AND t.ComboType=t3.ComboType collate Chinese_Taiwan_Stroke_CI_AS
-			and t.WorkLine = t3.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
-			and t.SizeCode = t3.SizeCode collate Chinese_Taiwan_Stroke_CI_AS
+			LEFT join #tempFail t on t.OrderId = t3.OrderId 
+			AND t.ComboType=t3.ComboType 
+			and t.WorkLine = t3.WorkLine 
+			and t.SizeCode = t3.SizeCode 
 			WHERE QAQty<>0
 			group by dDate,t3.WorkLine, t3.OrderId, t3.ComboType, Article 
 
@@ -266,7 +266,7 @@ BEGIN
 			,[OrderId]
 			,[ComboType]
 			,[Article]
-			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID collate Chinese_Taiwan_Stroke_CI_AS=a.OrderId collate Chinese_Taiwan_Stroke_CI_AS)
+			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID =a.OrderId )
 			,[TMS]=0
 			,[HourlyStandardOutput]=NULL
 			,[WorkHour]=0
@@ -278,7 +278,7 @@ BEGIN
 			,[SewingReasonID]=''
 			,[Remark]=NULL
 			FROM #tmp_Into_SewingOutput_Detail a
-			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = b.SewingLineID 
+			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine  = b.SewingLineID 
 				
 			
 			SELECT 
@@ -286,7 +286,7 @@ BEGIN
 			,[OrderId]
 			,[ComboType]
 			,[Article]
-			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID collate Chinese_Taiwan_Stroke_CI_AS=a.OrderId collate Chinese_Taiwan_Stroke_CI_AS)
+			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID =a.OrderId )
 			,[TMS]=0
 			,[HourlyStandardOutput]=NULL
 			,[WorkHour]=0
@@ -299,7 +299,7 @@ BEGIN
 			,[Remark]=NULL
 			INTO #tmp_SewingOutput_Detail
 			FROM #tmp_Into_SewingOutput_Detail a
-			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS =b.SewingLineID 
+			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine  =b.SewingLineID 
 		
 			--insert SewingOutput_Detail_Detail
 			INSERT INTO SewingOutput_Detail_Detail
@@ -319,10 +319,10 @@ BEGIN
 			 FROM SewingOutput s WITH(NOLOCK)
 			 INNER JOIN SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
 			 WHERE s.ID=b.ID 
-					AND sd.OrderID = b.OrderID collate Chinese_Taiwan_Stroke_CI_AS 
-					AND sd.ComboType=b.ComboType  collate Chinese_Taiwan_Stroke_CI_AS 
-					AND sd.Article=b.Article  collate Chinese_Taiwan_Stroke_CI_AS 
-					AND s.SewingLineID=a.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
+					AND sd.OrderID = b.OrderID  
+					AND sd.ComboType=b.ComboType   
+					AND sd.Article=b.Article   
+					AND s.SewingLineID=a.WorkLine 
 			)Now_SewingOutput_Detail	
 			WHERE Now_SewingOutput_Detail.ukey IS NOT NULL	
 			-------------Prepare RFT
@@ -341,7 +341,7 @@ BEGIN
 							SUBSTRING(tOT.MONo, 1, CHARINDEX('-', tOT.MONo) - 1)
 							= 
 							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
-							AND tOT.dDate  = mainTable.dDate  AND tOT.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = mainTable.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
+							AND tOT.dDate  = mainTable.dDate  AND tOT.WorkLine  = mainTable.WorkLine 
 						)
 
 			, [RejectQty] = (
@@ -351,7 +351,7 @@ BEGIN
 							SUBSTRING(tRT.MONo, 1, CHARINDEX('-', tRT.MONo) - 1)
 							= 
 							SUBSTRING(mainTable.MONo, 1, CHARINDEX('-', mainTable.MONo) - 1)
-							AND tRT.dDate=mainTable.dDate AND tRT.WorkLine collate Chinese_Taiwan_Stroke_CI_AS = mainTable.WorkLine collate Chinese_Taiwan_Stroke_CI_AS
+							AND tRT.dDate=mainTable.dDate AND tRT.WorkLine  = mainTable.WorkLine 
 						)
 			, [DefectQty] = sum(Qty)
 			, [Shift] = 'D'
@@ -409,7 +409,7 @@ BEGIN
 			SELECt * 
 			INTO #RFT_With_ID
 			FROM Production.dbo.RFT
-			WHERE OrderID collate Chinese_Taiwan_Stroke_CI_AS IN ( SELECT OrderID FROM #RFT)
+			WHERE OrderID  IN ( SELECT OrderID FROM #RFT)
 			AND AddDate > @DateStart
 
 			SELECT 
@@ -426,9 +426,9 @@ BEGIN
 			INTO #tmp_4
 			FROm #RFT_With_ID a
 			INNER JOIN #tReworkTotal b
-			ON a.[OrderId] collate Chinese_Taiwan_Stroke_CI_AS = SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
+			ON a.[OrderId]  = SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
 			   AND a.[CDate]=b.[dDate] 
-			   AND a.[SewingLineID] collate Chinese_Taiwan_Stroke_CI_AS = b.workLine collate Chinese_Taiwan_Stroke_CI_AS
+			   AND a.[SewingLineID]  = b.workLine 
 
 			--INSERT  RFT_Detail
 			INSERT INTO RFT_Detail
