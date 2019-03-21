@@ -133,36 +133,36 @@ from VNConsumption where 1=0";
                     newRow["StyleID"] = drc["StyleID"].ToString().Trim();
                     newRow["SeasonID"] = drc["SeasonID"].ToString().Trim();
                     newRow["SizeCode"] = drc["SizeCode"].ToString().Trim();
+
+                    DataRow drNLCode;
+
+                    if (type != "F" && type != "A" && type != "L")
+                    {
+                        remark += "Type is wrong." + Environment.NewLine;
+                    }
+                    else
+                    {
+                        drNLCode = Prgs.GetNLCodeDataByRefno(refno, stockQty, drc["BrandID"].ToString(), type);
+
+                        if (drNLCode == null)
+                        {
+                            remark += "Refno not found." + Environment.NewLine;
+                        }
+                        else
+                        {
+                            newRow["NLCode"] = drNLCode["NLCode"];
+                            newRow["Qty"] = drNLCode["Qty"];
+                            newRow["SCIRefno"] = drNLCode["SCIRefno"];
+                            newRow["HSCode"] = drNLCode["HSCode"];
+                            newRow["UnitID"] = drNLCode["UnitID"];
+                            newRow["StockUnit"] = drNLCode["StockUnit"];
+                            newRow["FabricBrandID"] = drNLCode["FabricBrandID"];
+                        }
+                    }
                 }
                 else
                 {
                     remark += "Custom SP & Contract not found." + Environment.NewLine;
-                }
-
-                DataRow drNLCode;
-
-                if (type != "F" && type != "A" && type != "L")
-                {
-                    remark += "Type is wrong." + Environment.NewLine;
-                }
-                else
-                {
-                    drNLCode = Prgs.GetNLCodeDataByRefno(refno, stockQty, drc["BrandID"].ToString(), type);
-
-                    if (drNLCode == null)
-                    {
-                        remark += "Refno not found." + Environment.NewLine;
-                    }
-                    else
-                    {
-                        newRow["NLCode"] = drNLCode["NLCode"];
-                        newRow["Qty"] = drNLCode["Qty"];
-                        newRow["SCIRefno"] = drNLCode["SCIRefno"];
-                        newRow["HSCode"] = drNLCode["HSCode"];
-                        newRow["UnitID"] = drNLCode["UnitID"];
-                        newRow["StockUnit"] = drNLCode["StockUnit"];
-                        newRow["FabricBrandID"] = drNLCode["FabricBrandID"];
-                    }
                 }
 
                 newRow["remark"] = remark;

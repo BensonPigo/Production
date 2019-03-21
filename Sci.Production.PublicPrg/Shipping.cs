@@ -221,16 +221,18 @@ where ID = '{0}'", expressID);
         #endregion
 
         #region GetNLCodeDataByRefno
-        public static DataRow GetNLCodeDataByRefno(string refno, string stockQty, string brandID, string type, string sciRefno = "")
+        public static DataRow GetNLCodeDataByRefno(string refno, string stockQty, string brandID, string type, string sciRefno = "", string nlCode = "")
         {
             string sqlGetNLCode = string.Empty;
             string whereSciRefno = MyUtility.Check.Empty(sciRefno) ? string.Empty : " and f.SciRefno = @SciRefno";
+            string whereNLCode = MyUtility.Check.Empty(nlCode) ? string.Empty : " and f.NLCode = @NLCode";
             DataRow drNLCode = null;
             string inputStockQty = MyUtility.Check.Empty(stockQty) ? "0" : stockQty;
             List<SqlParameter> parGetNLCode = new List<SqlParameter>() {    new SqlParameter("@Refno", refno),
                                                                             new SqlParameter("@inputStockQty", stockQty),
                                                                             new SqlParameter("@BrandID", brandID),
-                                                                            new SqlParameter("@SciRefno", sciRefno)};
+                                                                            new SqlParameter("@SciRefno", sciRefno),
+                                                                            new SqlParameter("@NLCode", nlCode)};
 
             string fabricType = type;
 
@@ -256,7 +258,7 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'Y
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = 'YDS' and TO_U = 'M') M2Rate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = 'YDS' and UnitTo = 'M') M2UnitRate
- where f.Refno = @Refno and f.Type = 'F' and f.Junk = 0 {whereSciRefno}
+ where f.Refno = @Refno and f.Type = 'F' and f.Junk = 0 {whereSciRefno} {whereNLCode}
 order by f.NLCode,f.EditDate desc
 ";
             }
@@ -280,7 +282,7 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = f.UsageUnit and TO_U = 'M') M2Rate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = f.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = f.UsageUnit and UnitTo = 'M') M2UnitRate
- where f.Refno = @Refno and f.Type = 'A' and f.Junk = 0 {whereSciRefno}
+ where f.Refno = @Refno and f.Type = 'A' and f.Junk = 0 {whereSciRefno} {whereNLCode}
 order by f.NLCode,f.EditDate desc
 ";
             }
@@ -302,7 +304,7 @@ outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li
 outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = 'M') M2Rate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = li.CustomsUnit) UnitRate
 outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = 'M') M2UnitRate
-where li.Refno = @Refno";
+where Ltrim(li.Refno) = @Refno";
             }
             bool isNLCodeExists = MyUtility.Check.Seek(sqlGetNLCode, parGetNLCode, out drNLCode);
             if (isNLCodeExists)

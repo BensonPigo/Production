@@ -122,6 +122,40 @@ where vdd.ID = '{0}'
             curDr["Waste"] = 0;
         }
 
+        private bool GetCustomRefnoInfo(DataRow drDetail, string refno, string nlCode)
+        {
+            DataRow drNLCode;
+            drNLCode = Prgs.GetNLCodeDataByRefno(refno, drDetail["StockQty"].ToString(), this.CurrentMaintain["BrandID"].ToString(), drDetail["FabricType"].ToString(), nlCode: nlCode);
+
+            if (drNLCode == null)
+            {
+                return false;
+            }
+            else
+            {
+                drDetail["NLCode"] = drNLCode["NLCode"];
+                drDetail["StockUnit"] = drNLCode["StockUnit"];
+                drDetail["SCIRefno"] = drNLCode["SCIRefno"];
+                drDetail["FabricBrandID"] = drNLCode["FabricBrandID"];
+                drDetail["HSCode"] = drNLCode["HSCode"];
+                drDetail["UnitID"] = drNLCode["UnitID"];
+                drDetail["Qty"] = drNLCode["Qty"];
+                drDetail["UserCreate"] = 1;
+                drDetail["FabricType"] = drNLCode["FabricType"];
+                drDetail["LocalItem"] = drNLCode["LocalItem"];
+                drDetail["Refno"] = refno;
+                drDetail["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
+                    @"select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')",
+                    MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]),
+                    MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
+                    MyUtility.Convert.GetString(drDetail["NLCode"]))));
+            }
+
+            return true;
+        }
+
         /// <inheritdoc/>
         protected override void OnDetailGridSetup()
         {
@@ -170,6 +204,48 @@ where vdd.ID = '{0}'
 
             #endregion
 
+            #region Customs Code
+            DataGridViewGeneratorTextColumnSettings nlCodeCol = new DataGridViewGeneratorTextColumnSettings();
+            nlCodeCol.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Convert.GetBool(dr["UserCreate"]))
+                {
+                    e.IsEditable = false;
+                }
+            };
+
+            nlCodeCol.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                string oldvalue = MyUtility.Convert.GetString(dr["NLCode"]);
+                string newvalue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(newvalue))
+                {
+                    this.ClearDetailDt(dr);
+                    return;
+                }
+
+                bool isExists = this.GetCustomRefnoInfo(dr, dr["Refno"].ToString(), newvalue);
+                if (!isExists)
+                {
+                    MyUtility.Msg.WarningBox("<Customs Code> not found!");
+                    e.Cancel = true;
+                }
+            };
+
+            #endregion
+
             #region Refno
             DataGridViewGeneratorTextColumnSettings refnoCol = new DataGridViewGeneratorTextColumnSettings();
 
@@ -203,34 +279,11 @@ where vdd.ID = '{0}'
                     return;
                 }
 
-                DataRow drNLCode;
-                drNLCode = Prgs.GetNLCodeDataByRefno(newvalue, dr["StockQty"].ToString(), this.CurrentMaintain["BrandID"].ToString(), dr["FabricType"].ToString());
-
-                if (drNLCode == null)
+                bool isExists = this.GetCustomRefnoInfo(dr, newvalue, string.Empty);
+                if (!isExists)
                 {
                     MyUtility.Msg.WarningBox("<Ref No> not found!");
                     e.Cancel = true;
-                }
-                else
-                {
-                    dr["NLCode"] = drNLCode["NLCode"];
-                    dr["StockUnit"] = drNLCode["StockUnit"];
-                    dr["SCIRefno"] = drNLCode["SCIRefno"];
-                    dr["FabricBrandID"] = drNLCode["FabricBrandID"];
-                    dr["HSCode"] = drNLCode["HSCode"];
-                    dr["UnitID"] = drNLCode["UnitID"];
-                    dr["Qty"] = drNLCode["Qty"];
-                    dr["UserCreate"] = 1;
-                    dr["FabricType"] = drNLCode["FabricType"];
-                    dr["LocalItem"] = drNLCode["LocalItem"];
-                    dr["Refno"] = newvalue;
-                    dr["Waste"] = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(string.Format(
-                        @"select [dbo].[getWaste]('{0}','{1}','{2}','{3}','{4}')",
-                        MyUtility.Convert.GetString(this.CurrentMaintain["StyleID"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["SeasonID"]),
-                        MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]),
-                        MyUtility.Convert.GetString(dr["NLCode"]))));
                 }
             };
             #endregion
@@ -282,7 +335,7 @@ where vdd.ID = '{0}'
             Ict.Win.UI.DataGridViewNumericBoxColumn systemQtyColumn;
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: nlCodeCol)
                 .ComboBox("FabricType", header: "Type", width: Widths.AnsiChars(3), settings: typeCol)
                 .Text("RefNo", header: "Ref No", width: Widths.AnsiChars(20), settings: refnoCol)
                 .Text("UnitID", header: "Unit", width: Widths.AnsiChars(7), iseditingreadonly: true)
@@ -434,6 +487,26 @@ from System WITH (NOLOCK) ");
                 this.editSizeGroup.Focus();
                 MyUtility.Msg.WarningBox("Size Group can't empty!!");
                 return false;
+            }
+
+            // 檢查Refno是否存在
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                bool isExists = false;
+                if (dr["FabricType"].Equals("L"))
+                {
+                    isExists = MyUtility.Check.Seek($"select 1 from LocalItem with (nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLCode"]}'");
+                }
+                else
+                {
+                    isExists = MyUtility.Check.Seek($"select 1 from Fabric with (nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLCode"]}'");
+                }
+
+                if (!isExists)
+                {
+                    MyUtility.Msg.WarningBox($"<Refno>{dr["Refno"]}, <Customs Code>{dr["NLCode"]} not found");
+                    return false;
+                }
             }
 
             #endregion

@@ -36,7 +36,6 @@ namespace Sci.Production.Shipping
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.txtNLCode.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -59,18 +58,12 @@ namespace Sci.Production.Shipping
 
         private void TxtRefno_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string sqlRefnoList = "select Refno,NLCode,HSCode,CustomsUnit from LocalItem with (nolock) where junk = 0 order by Refno";
-            SelectItem selectItem = new SelectItem(sqlRefnoList, "20,10,10,8", null, headercaptions: "Ref No.");
-            DialogResult dialogResult = selectItem.ShowDialog();
+            this.PopCustomRefno("Refno");
+        }
 
-            if (dialogResult == DialogResult.OK)
-            {
-                IList<DataRow> popResult = selectItem.GetSelecteds();
-                this.CurrentMaintain["Refno"] = popResult[0]["Refno"];
-                this.CurrentMaintain["NLCode"] = popResult[0]["NLCode"];
-                this.CurrentMaintain["HSCode"] = popResult[0]["HSCode"];
-                this.CurrentMaintain["UnitID"] = popResult[0]["CustomsUnit"];
-            }
+        private void TxtNLCode_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            this.PopCustomRefno("NLCode");
         }
 
         private void TxtRefno_Validating(object sender, CancelEventArgs e)
@@ -80,26 +73,98 @@ namespace Sci.Production.Shipping
                 return;
             }
 
-            string sqlCheckRefno = "select NLCode,HSCode,CustomsUnit from LocalItem with (nolock) where Refno = @refno and junk = 0";
-            DataRow drResult;
-            List<SqlParameter> parCheckRefno = new List<SqlParameter>() { new SqlParameter("@refno", this.txtRefno.Text) };
-            bool isRefnoExists = MyUtility.Check.Seek(sqlCheckRefno, parCheckRefno, out drResult);
-            if (isRefnoExists)
+            if (!this.IsExistsCustomRefno())
             {
-                this.CurrentMaintain["Refno"] = this.txtRefno.Text;
-                this.CurrentMaintain["NLCode"] = drResult["NLCode"];
-                this.CurrentMaintain["HSCode"] = drResult["HSCode"];
-                this.CurrentMaintain["UnitID"] = drResult["CustomsUnit"];
-            }
-            else
-            {
-                this.CurrentMaintain["NLCode"] = string.Empty;
-                this.CurrentMaintain["HSCode"] = string.Empty;
-                this.CurrentMaintain["UnitID"] = string.Empty;
-                MyUtility.Msg.WarningBox($"<Ref No.>{this.txtRefno.Text} not found");
+                MyUtility.Msg.WarningBox($"<Refno>{this.txtRefno.Text} not found");
                 e.Cancel = true;
                 return;
             }
         }
+
+        private void TxtNLCode_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtNLCode.Text))
+            {
+                return;
+            }
+
+            if (!this.IsExistsCustomRefno())
+            {
+                MyUtility.Msg.WarningBox($"<Customs Code>{this.txtNLCode.Text} not found");
+                e.Cancel = true;
+                return;
+            }
+
+            string sqlGetOtherInfo = "select top 1 HSCode,UnitID from VNContract_Detail with (nolock) where NLCode = @NLCode order by AddDate Desc ";
+            List<SqlParameter> parGetOtherInfo = new List<SqlParameter>() { new SqlParameter("@NLCode", this.txtNLCode.Text) };
+            DataRow drOtherInfo;
+            if (MyUtility.Check.Seek(sqlGetOtherInfo, parGetOtherInfo, out drOtherInfo))
+            {
+                this.CurrentMaintain["NLCode"] = this.txtNLCode.Text;
+                this.CurrentMaintain["HSCode"] = drOtherInfo["HSCode"];
+                this.CurrentMaintain["UnitID"] = drOtherInfo["UnitID"];
+            }
+        }
+
+        private bool IsExistsCustomRefno()
+        {
+            string sqlWhere = string.Empty;
+            if (!MyUtility.Check.Empty(this.txtRefno.Text))
+            {
+                sqlWhere += " and Refno = @refno";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtNLCode.Text))
+            {
+                sqlWhere += " and NLCode = @NLCode";
+            }
+
+            DataRow drResult;
+            List<SqlParameter> parCheckRefno = new List<SqlParameter>() { new SqlParameter("@refno", this.txtRefno.Text) };
+            parCheckRefno.Add(new SqlParameter("@NLCode", this.txtNLCode.Text));
+
+            string sqlCheckRefno = $@"select 1 from LocalItem with (nolock) where junk = 0 {sqlWhere}
+                                     union all
+                                     select 1 from fabric with (nolock) where junk = 0 {sqlWhere}";
+            bool isRefnoExists = MyUtility.Check.Seek(sqlCheckRefno, parCheckRefno, out drResult);
+            if (!isRefnoExists)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void PopCustomRefno(string popFrom)
+        {
+            string sqlWhere = string.Empty;
+            if (!MyUtility.Check.Empty(this.txtRefno.Text))
+            {
+                sqlWhere += " and Refno = @refno";
+            }
+
+            if (!MyUtility.Check.Empty(this.txtNLCode.Text))
+            {
+                sqlWhere += " and NLCode = @NLCode";
+            }
+
+            List<SqlParameter> parCheckRefno = new List<SqlParameter>() { new SqlParameter("@refno", this.txtRefno.Text) };
+            parCheckRefno.Add(new SqlParameter("@NLCode", this.txtNLCode.Text));
+
+            string sqlRefnoList = $@" select {popFrom} from
+                                        (select {popFrom} from LocalItem with (nolock) where junk = 0 {sqlWhere}
+                                        union
+                                        select distinct {popFrom} from Fabric with (nolock) where junk = 0 {sqlWhere}) a
+                                        order by {popFrom}";
+            SelectItem selectItem = new SelectItem(sqlRefnoList, parCheckRefno, "20,10,10,8", null, headercaptions: string.Empty);
+            DialogResult dialogResult = selectItem.ShowDialog();
+
+            if (dialogResult == DialogResult.OK)
+            {
+                IList<DataRow> popResult = selectItem.GetSelecteds();
+                this.CurrentMaintain[popFrom] = popResult[0][popFrom];
+            }
+        }
+
     }
 }
