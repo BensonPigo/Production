@@ -1,12 +1,13 @@
-USE [Production]
+ÔªøUSE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[insert_Air_Fir]    Script Date: 2018/12/18 §W§» 10:48:30 ******/
+/****** Object:  StoredProcedure [dbo].[insert_Air_Fir]    Script Date: 2019/03/20 ‰∏ãÂçà 05:42:28 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 CREATE PROCEDURE [dbo].[insert_Air_Fir]
@@ -17,6 +18,10 @@ CREATE PROCEDURE [dbo].[insert_Air_Fir]
 AS
 BEGIN
 			SET NOCOUNT ON;
+
+BEGIN TRANSACTION
+
+BEGIN TRY
 
 select 
 [ID] = a.id,
@@ -225,7 +230,7 @@ delete ;
 --------------FIR_Shadebone 
 RAISERROR('insert_Air_Fir - Starts',0,0)
 
---FabricType = F§~∞ı¶Ê•H§U¨q∏®
+--FabricType = FÔøΩ~ÔøΩÔøΩÔøΩÔøΩHÔøΩUÔøΩqÔøΩÔøΩ
 IF EXISTS(
 SELECT 1 
 FROM Receiving_Detail r
@@ -263,13 +268,22 @@ WHEN NOT MATCHED by TARGET THEN
 END
 
 ------
+	COMMIT TRANSACTION
 
+END TRY
 
-drop table #InspDeadLine
-drop table #tempTableAll
-drop table #tmp_Receiving
+--drop table #InspDeadLine
+--drop table #tempTableAll
+--drop table #tmp_Receiving
+
+BEGIN CATCH
+	ROLLBACK TRANSACTION;
+	
+	EXECUTE usp_GetErrorInfo;
+END CATCH
 
 END
+
 
 GO
 
