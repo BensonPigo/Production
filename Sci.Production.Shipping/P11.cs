@@ -75,6 +75,12 @@ namespace Sci.Production.Shipping
             return base.ClickSaveBefore();
         }
 
+        protected override void ClickNewAfter()
+        {
+            base.ClickNewAfter();
+            this.CurrentMaintain["Status"] = "New";
+        }
+
         /// <inheritdoc/>
         protected override DualResult OnSaveDetail(IList<DataRow> details, ITableSchema detailtableschema)
         {
@@ -149,7 +155,7 @@ where id = '{this.CurrentMaintain["ID"]}'
 
         protected override void ClickUnconfirm()
         {
-            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID is not null and id = '{this.CurrentMaintain["ID"]}'";
+            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID !='' and id = '{this.CurrentMaintain["ID"]}'";
             if (MyUtility.Check.Seek(sqlchk))
             {
                 MyUtility.Msg.WarningBox("Cannot unconfirm because already created voucher no");
@@ -355,7 +361,8 @@ where a.id = '{top1id}'
             decimal sumM = MyUtility.Convert.GetDecimal(dt.Compute("sum(M)", null));
             decimal sumF = MyUtility.Convert.GetDecimal(dt.Compute("sum(E)", null));
 
-            worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
+            //worksheet.Cells[48, 3] = MyUtility.Convert.USDMoney(sumI).Replace("AND CENTS", Environment.NewLine + "AND CENTS");
+            worksheet.Cells[57, 3] = MyUtility.Convert.USDMoney(sumI);
 
             string sumGW = $@"
 select sumGW = Sum (p.GW),sumNW=sum(p.NW),sumCBM=sum(p.CBM)
@@ -365,16 +372,16 @@ where p.INVNo in ({string.Join(",", ids)})
             DataRow drsum;
             if (MyUtility.Check.Seek(sumGW, out drsum))
             {
-                worksheet.Cells[55, 3] = drsum["sumGW"];
-                worksheet.Cells[56, 3] = drsum["sumNW"];
-                worksheet.Cells[57, 3] = drsum["sumCBM"];
+                worksheet.Cells[66, 3] = drsum["sumGW"];
+                worksheet.Cells[67, 3] = drsum["sumNW"];
+                worksheet.Cells[68, 3] = drsum["sumCBM"];
             }
 
-            worksheet.Cells[54, 10] = sumI;
-            worksheet.Cells[56, 10] = sumI - sumM;
-            worksheet.Cells[57, 10] = sumM;
-            worksheet.Cells[51, 2] = sumF;
-            worksheet.Cells[59, 1] = $@"InvSerial: {this.CurrentMaintain["InvSerial"]}";
+            worksheet.Cells[63, 10] = sumI;
+            worksheet.Cells[65, 10] = sumI - sumM;
+            worksheet.Cells[66, 10] = sumM;
+            worksheet.Cells[60, 2] = sumF;
+            worksheet.Cells[1, 10] = $@"InvSerial: {this.CurrentMaintain["InvSerial"]}";
             #endregion
 
             #region 內容
