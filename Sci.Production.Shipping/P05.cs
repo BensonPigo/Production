@@ -1595,7 +1595,7 @@ where ID = '{1}'", Sci.Env.User.UserID, MyUtility.Convert.GetString(this.Current
         {
             base.ClickUnconfirm();
 
-            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID is not null and id = '{this.CurrentMaintain["BIRID"]}'";
+            string sqlchk = $@"select 1 from BIRInvoice  where ExVoucherID <>'' and id = '{this.CurrentMaintain["BIRID"]}'";
             if (MyUtility.Check.Seek(sqlchk))
             {
                 MyUtility.Msg.WarningBox("Cannot unconfirm because already created voucher no");
