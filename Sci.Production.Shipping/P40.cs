@@ -17,6 +17,9 @@ namespace Sci.Production.Shipping
     public partial class P40 : Sci.Win.Tems.Input6
     {
         private Ict.Win.DataGridViewGeneratorTextColumnSettings nlcode = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings brand = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings refno = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+        private Ict.Win.DataGridViewGeneratorTextColumnSettings fabricType = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
         private Ict.Win.DataGridViewGeneratorNumericColumnSettings qty = new DataGridViewGeneratorNumericColumnSettings();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_nlcode;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
@@ -171,6 +174,51 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
             };
             #endregion
 
+            #region brand的Validating
+            this.brand.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["BrandID"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr);
+                    }
+                }
+            };
+            #endregion
+            #region refno的Validating
+            this.refno.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["refno"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr);
+                    }
+                }
+            };
+            #endregion
+            #region fabricType的Validating
+            this.fabricType.CellValidating += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    if (!MyUtility.Check.Empty(e.FormattedValue))
+                    {
+                        dr["fabricType"] = e.FormattedValue;
+                        dr.EndEdit();
+                        this.BRT(dr);
+                    }
+                }
+            };
+            #endregion
             this.qty.CellMouseDoubleClick += (s, e) =>
                 {
                     if (!this.EditMode)
