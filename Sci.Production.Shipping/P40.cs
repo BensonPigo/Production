@@ -234,9 +234,9 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                 };
                 base.OnDetailGridSetup();
                 this.Helper.Controls.Grid.Generator(this.detailgrid)
-                    .Text("BrandId", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                    .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                    .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("BrandId", header: "Brand", width: Widths.AnsiChars(10), settings: this.brand)
+                    .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), settings: this.refno)
+                    .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
                     .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
                     .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
                     .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
@@ -467,6 +467,107 @@ when not matched by source and t.id in(select id from #tmps) then
             Sci.Production.Shipping.P40_Print callPurchaseForm = new Sci.Production.Shipping.P40_Print(this.CurrentMaintain);
             callPurchaseForm.ShowDialog(this);
             return base.ClickPrint();
+        }
+
+        private void BRT(DataRow dr)
+        {
+            if (!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]))
+            {
+                string type = MyUtility.Convert.GetString(dr["FabricType"]);
+                if (type.EqualString("A") || type.EqualString("F"))
+                {
+                    string sql = $@"
+select f.HSCode,f.CustomsUnit,f.NLCode
+from brand b with(nolock)
+outer apply(
+	select top 1 f1.* 
+	from Fabric f1 with(nolock) 
+	inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+	where f1.Refno = '{dr["Refno"]}' and b2.BrandGroup = b.BrandGroup and f1.Type = '{dr["FabricType"]}' and f1.Junk = 0
+	order by f1.NLCodeEditDate desc
+)f
+where b.id = '{dr["BrandID"]}'
+";
+                    DataRow row;
+                    if (MyUtility.Check.Seek(sql, out row))
+                    {
+                        dr["NLCode"] = row["NLCode"];
+                        dr["HSCode"] = row["HSCode"];
+
+                        DataRow seekData;
+                        string sqlunit = $@"
+select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) 
+where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}'";
+                        if (!MyUtility.Check.Seek(sqlunit, out seekData))
+                        {
+                            dr["Qty"] = 0;
+                            dr["UnitID"] = string.Empty;
+                            MyUtility.Msg.WarningBox("Customs Code not found!!");
+                            return;
+                        }
+                        else
+                        {
+                            dr["UnitID"] = seekData["UnitID"];
+                        }
+                    }
+                    else
+                    {
+                        dr["HSCode"] = string.Empty;
+                        dr["NLCode"] = string.Empty;
+                        dr["Qty"] = 0;
+                        dr["UnitID"] = string.Empty;
+                    }
+                }
+                else if (type.EqualString("L"))
+                {
+                    string sql = $@"
+select f.HSCode,f.NLCode,f.CustomsUnit,f.NLCode
+from FtyExport e WITH (NOLOCK) 
+inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+inner join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
+inner join orders o with(nolock) on o.id = ed.POID
+inner join brand b with(nolock) on b.id = o.BrandID
+outer apply(
+    select top 1 f1.* 
+    from Fabric f1 with(nolock) 
+    inner join brand b2 with(nolock) on f1.BrandID = b2.id 
+    where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
+    order by f1.NLCodeEditDate desc
+)f
+where b.id = '{dr["BrandID"]}' and li.RefNo = '{dr["RefNo"]}' and iif(ed.FabricType = '','L',ed.FabricType)='{dr["FabricType"]}'
+";
+                    DataRow row;
+                    if (MyUtility.Check.Seek(sql, out row))
+                    {
+                        dr["NLCode"] = row["NLCode"];
+                        dr["HSCode"] = row["HSCode"];
+                        DataRow seekData;
+                        string sqlunit = $@"
+select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) 
+where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}'";
+                        if (!MyUtility.Check.Seek(sqlunit, out seekData))
+                        {
+                            dr["Qty"] = 0;
+                            dr["UnitID"] = string.Empty;
+                            MyUtility.Msg.WarningBox("Customs Code not found!!");
+                            return;
+                        }
+                        else
+                        {
+                            dr["UnitID"] = seekData["UnitID"];
+                        }
+                    }
+                    else
+                    {
+                        dr["HSCode"] = string.Empty;
+                        dr["NLCode"] = string.Empty;
+                        dr["Qty"] = 0;
+                        dr["UnitID"] = string.Empty;
+                    }
+                }
+
+                dr.EndEdit();
+            }
         }
 
         // Contract No.
