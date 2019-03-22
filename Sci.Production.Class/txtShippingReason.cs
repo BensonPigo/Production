@@ -56,29 +56,36 @@ namespace Sci.Production.Class
 
         private void textBox1_Validating(object sender, CancelEventArgs e)
         {
-          //  base.OnValidating(e);
-            string str = this.textBox1.Text;
-            if (!string.IsNullOrWhiteSpace(str) && str != this.textBox1.OldValue)
+            //  base.OnValidating(e);
+            string textValue = this.textBox1.Text.Trim();
+            if (textValue == this.textBox1.OldValue)
             {
-                if (!MyUtility.Check.Seek(Type + str, "ShippingReason", "type+ID"))
+                return;
+            }
+            if (!string.IsNullOrWhiteSpace(textValue))
+            {
+                string Sql = string.Format("Select 1 from ShippingReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", textValue, Type);
+                if (!MyUtility.Check.Seek(Sql, "Production"))
                 {
                     this.textBox1.Text = "";
                     e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", str));
+                    MyUtility.Msg.WarningBox(string.Format("< Reason: {0} > not found!!!", textValue));
                     return;
                 }
-                DataRow temp;
-                if (MyUtility.Check.Seek(string.Format("Select Description from ShippingReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", str, Type), out temp))
-                    this.DisplayBox1.Text = temp[0].ToString();
-
-                this.DataBindings.Cast<Binding>().ToList().ForEach(binding => binding.WriteValue());
+                else
+                {
+                    string sql_cmd = string.Format("Select Description from ShippingReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", textValue, Type);
+                    this.displayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
+                }
             }
+            this.ValidateControl();
         }
 
-        //private void textBox1_TextChanged(object sender, EventArgs e)
-        //{
-        //    this.displayBox1.Text = MyUtility.GetValue.Lookup("Description", Type + this.textBox1.Text.ToString(), "ShippingReason", "Type+ID");
-        //}
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            string sql_cmd = string.Format("Select Description from ShippingReason WITH (NOLOCK) where ID='{0}' and Type='{1}'", this.textBox1.Text, Type);
+            this.displayBox1.Text = MyUtility.GetValue.Lookup(sql_cmd, "Production");
+        }
 
         private void textBox1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
@@ -88,53 +95,6 @@ namespace Sci.Production.Class
             if (result == DialogResult.Cancel) { return; }
             this.textBox1.Text = item.GetSelectedString();
             this.Validate();
-        }
-    }
-    public class cellShippingReason : DataGridViewGeneratorTextColumnSettings
-    {
-        public static DataGridViewGeneratorTextColumnSettings GetGridCell(string ctype)
-        {
-            cellShippingReason ts = new cellShippingReason();
-            // Factory右鍵彈出功能
-            ts.EditingMouseDown += (s, e) =>
-            {
-                if (e.Button == MouseButtons.Right)
-                {
-                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                    // Parent form 若是非編輯狀態就 return 
-                    if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
-                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                    SelectItem sele = new SelectItem(string.Format("Select ID,description From ShippingReason WITH (NOLOCK) Where Junk=0 and type = '{0}'", ctype), "10,40", row["ShippingReasonid"].ToString(), false, ",");
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel) { return; }
-                    e.EditingControl.Text = sele.GetSelectedString();
-                }
-
-            };
-            // 正確性檢查
-            ts.CellValidating += (s, e) =>
-            {
-                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
-                // Parent form 若是非編輯狀態就 return 
-                if (!((Sci.Win.Forms.Base)grid.FindForm()).EditMode) { return; }
-                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
-                String oldValue = row["ShippingReasonid"].ToString();
-                String newValue = e.FormattedValue.ToString(); // user 編輯當下的value , 此值尚未存入DataRow
-
-                if (!MyUtility.Check.Empty(newValue) && oldValue != newValue)
-                {
-                    if (!MyUtility.Check.Seek(ctype+newValue, "ShippingReason", "Type+ID"))
-                    {
-                        row["ShippingReasonid"] = "";
-                        row.EndEdit();
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox(string.Format("< Cut Reason > : {0} not found!!!", newValue));
-                        return;
-                    }
-                }
-
-            };
-            return ts;
         }
     }
 }

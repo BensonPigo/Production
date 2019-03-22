@@ -128,8 +128,10 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                             string sqlchk = $@"select 1 from Brand with(nolock) where ID = '{e.FormattedValue}' ";
                             if (!MyUtility.Check.Seek(sqlchk))
                             {
-                                dr["BrandID"] = string.Empty;
-                                MyUtility.Msg.WarningBox("Brand  not found!!");
+                                dr["BrandID"] = DBNull.Value;
+                                MyUtility.Msg.WarningBox("Brand not found!!");
+                                dr.EndEdit();
+                                return;
                             }
                             else
                             {
@@ -307,6 +309,26 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
                 return false;
             }
             #endregion
+            #region
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (MyUtility.Check.Empty(dr["BrandID"]))
+                {
+                    MyUtility.Msg.WarningBox("Brand cannot be empty!");
+                    return false;
+                }
+                if (MyUtility.Check.Empty(dr["Refno"]))
+                {
+                    MyUtility.Msg.WarningBox("Ref No. cannot be empty!");
+                    return false;
+                }
+                if (MyUtility.Check.Empty(dr["FabricType"]))
+                {
+                    MyUtility.Msg.WarningBox("FabricType cannot be empty!");
+                    return false;
+                }
+            }
+            #endregion
 
             #region 刪除表身Qty為0的資料
             int recCount = 0;
@@ -331,11 +353,24 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
             #region 檢查 Refno+NLCode是否存在[Fabric]
             foreach (DataRow dr in this.DetailDatas)
             {
-                string sqlchk = $@"select 1 from Fabric with(nolock) where refno = '{dr["refno"]}' and nlcode = '{dr["nlcode"]}'";
-                if (!MyUtility.Check.Seek(sqlchk))
+                string fabricType = MyUtility.Convert.GetString(dr["fabricType"]);
+                if (fabricType.EqualString("A") || fabricType.EqualString("F"))
                 {
-                    MyUtility.Msg.WarningBox($"Ref No. :{dr["refno"]} , Customs Code : {dr["nlcode"]} not exists!");
-                    return false;
+                    string sqlchk = $@"select 1 from Fabric with(nolock) where refno = '{dr["refno"]}' and nlcode = '{dr["nlcode"]}'";
+                    if (!MyUtility.Check.Seek(sqlchk))
+                    {
+                        MyUtility.Msg.WarningBox($"Ref No. :{dr["refno"]} , Customs Code : {dr["nlcode"]} not exists!");
+                        return false;
+                    }
+                }
+                else if (fabricType.EqualString("L"))
+                {
+                    string sqlchk = $@"select 1 from LocalItem with(nolock) where refno = '{dr["refno"]}' and nlcode = '{dr["nlcode"]}'";
+                    if (!MyUtility.Check.Seek(sqlchk))
+                    {
+                        MyUtility.Msg.WarningBox($"Ref No. :{dr["refno"]} , Customs Code : {dr["nlcode"]} not exists!");
+                        return false;
+                    }
                 }
             }
             #endregion
@@ -535,6 +570,7 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
                 else
                 {
                     newRow["BrandID"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 1], "C");
+                    newRow["FabricType"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C");
                     newRow["NLCode"] = nlCode;
                     newRow["Qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "N");
                     newRow["HSCode"] = seekData["HSCode"];
@@ -694,7 +730,7 @@ outer apply(
 	select top 1 f.*
 	from Fabric f with(nolock)
 	inner join brand b2 with(nolock) on f.BrandID = b2.id 
-	where f.Refno = psd.Refno and b2.BrandGroup = b.BrandGroup
+	where f.Refno = fed.Refno and b2.BrandGroup = b.BrandGroup
 	order by f.NLCodeEditDate desc
 )f1
 outer apply(
