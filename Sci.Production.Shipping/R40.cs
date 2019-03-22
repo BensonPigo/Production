@@ -281,7 +281,7 @@ union all
 	,[POID] = fed.PoID
 	,[Seq] = fed.Seq1+'-'+fed.Seq2
 	,[RefNo] = fed.refno
-    ,[MaterialType] = dbo.GetMaterialTypeDesc(isnull(f.Type,li.Category))
+    ,[MaterialType] = iif(f.Type is null,li.Category,dbo.GetMaterialTypeDesc(f.Type))
 	,[Description] = isnull(isnull(f.Description, li.Description),'')
 	,[Qty] =( dbo.getVNUnitTransfer(isnull(li.Category, '')
 		,StockUnit.unit
@@ -568,7 +568,7 @@ left join (
 			,[Qty] = (ol_rate.value/100*sdd.QAQty)* (vdd.Qty * (1+vd.Waste))
 			,v.CustomSP
             ,vdd.Refno
-            ,[MaterialType] = dbo.GetMaterialTypeDesc(vdd.FabricType)
+            ,[MaterialType] = iif(vdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vdd.FabricType))
             ,[Description] = case when vdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vdd.Refno)
                                   else (select Description from Fabric with (nolock) where SCIRefno = vdd.SCIRefno) end
             ,[CustomsUnit] = vdd.UnitID
@@ -581,6 +581,7 @@ left join (
 	inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = v.ID and vs.SizeCode = sdd.SizeCode
     inner join VNConsumption_Detail vd WITH (NOLOCK) on vd.ID = v.ID
 	inner join VNConsumption_Detail_Detail vdd WITH (NOLOCK) on vdd.ID = vd.ID and vdd.NLCode = vd.NLCode
+    left join LocalItem li with (nolock) on li.RefNo = vdd.RefNo
 	outer apply(select value = dbo.GetOrderLocation_Rate(t.id,sdd.ComboType)) ol_rate		
 ) a on t.ID = a.OrderId and sdd.ComboType = a.ComboType and sdd.Article = a.Article and sdd.SizeCode = a.SizeCode
 group by t.ID, sdd.ComboType,sdd.Article,sdd.SizeCode,isnull(a.HSCode,''),
@@ -688,7 +689,7 @@ select
 ,[NLCode] = vd.NLCode
 ,[SP#] = tpq.ID
 ,[Refno] = vdd.Refno
-,[MaterialType] = dbo.GetMaterialTypeDesc(vdd.FabricType)
+,[MaterialType] = iif(vdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vdd.FabricType))
 ,[Description] = case when vdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vdd.Refno)
                                   else (select Description from Fabric with (nolock) where SCIRefno = vdd.SCIRefno) end
 ,[Custom SP#] = tc.CustomSP
@@ -710,6 +711,7 @@ inner join VNConsumption_Article va WITH (NOLOCK) on va.ID = tc.ID and va.Articl
 inner join VNConsumption_SizeCode vs WITH (NOLOCK) on vs.ID = tc.ID and vs.SizeCode = tpq.SizeCode
 inner join VNConsumption_Detail vd WITH (NOLOCK) on tc.id=vd.id
 inner join VNConsumption_Detail_Detail vdd WITH (NOLOCK) on  vd.id = vdd.id and vd.NLCode = vdd.NLCode
+left join LocalItem li with (nolock) on li.RefNo = vdd.RefNo
 
 -- 5) 在途成品(已報關但還沒出貨) (On Road Product Qty)
 
@@ -739,7 +741,7 @@ group by vd.id,vc.sizecode
 select 
  [SP#] = vdd.OrderId
 ,[Refno] = vcdd.Refno
-,[MaterialType] = dbo.GetMaterialTypeDesc(vcdd.FabricType)
+,[MaterialType] = iif(vcdd.FabricType = 'L', li.Category,dbo.GetMaterialTypeDesc(vcdd.FabricType))
 ,[Description] = case when vcdd.LocalItem = 1 then (select Description from LocalItem with (nolock) where Refno = vcdd.Refno)
                                   else (select Description from Fabric with (nolock) where SCIRefno = vcdd.SCIRefno) end
 ,[CustomSP] = vdd.customsp
@@ -759,6 +761,7 @@ inner join VNConsumption vc on vc.StyleID = vdd.StyleID and vc.BrandID=vdd.Brand
 							and vc.sizecode=vdd.sizecode and vc.customsp=vdd.customsp
 inner join VNConsumption_Detail vcd WITH (NOLOCK) on vcd.ID=vc.ID
 inner join VNConsumption_Detail_Detail vcdd WITH (NOLOCK) on vcd.ID= vcdd.ID and vcd.NLCode = vcdd.NLCode
+left join LocalItem li with (nolock) on li.RefNo = vcdd.RefNo
 outer apply (
 	select sum(ExportQty) as ExportQty 
 	from VNExportDeclaration_Detail WITH (NOLOCK)
@@ -906,7 +909,7 @@ select
 ,[LiqQty] = isnull(tc.Qty,0) + isnull(td.Qty,0) --調整與勾選Liquidation data only相同
 ,[OnRoadMaterialQty] = isnull(orm.Qty,0)
 ,[WHQty] = isnull(tw.Qty,0)
-,[WIPQty] = isnull(ti.Qty,0)
+,[WIPQty] = isnull(ti.Qty,0) - isnull(sof.Qty,0)
 ,[ProdQty] = isnull(tp.Qty,0)
 ,[OnRoadProductQty] = isnull(orp.Qty,0)
 ,[ScrapQty] = isnull(ts.Qty,0)
@@ -1003,6 +1006,12 @@ left join (
 	from #tmpScrapQty 
 	group by NLCode
 ) ts on a.NLCode = ts.NLCode
+left join (
+	select 	NLCode
+			,sum(Qty) as Qty 
+	from #tmpSewingOutputFinal 
+	group by NLCode
+) sof on a.NLCode = sof.NLCode
 where 1 = 1 ");
 
                 if (!MyUtility.Check.Empty(this.hscode))
