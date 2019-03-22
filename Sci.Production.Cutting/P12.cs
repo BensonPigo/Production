@@ -125,67 +125,71 @@ namespace Sci.Production.Cutting
             Cutno = txtCutno.Text;
             Comb = txtComb.Text;
 
-            List<SqlParameter> lis = new List<SqlParameter>();
-            string sqlWhere = ""; string sb = "";
+            //List<SqlParameter> lis = new List<SqlParameter>();
+            string sqlWhere = "";
+            string sb = "";
+            string declare = string.Empty;
             List<string> sqlWheres = new List<string>();
 
             sqlWheres.Add("b.MDivisionID=@Keyword");
-            lis.Add(new SqlParameter("@Keyword", Sci.Env.User.Keyword));
+            //lis.Add(new SqlParameter("@Keyword", Sci.Env.User.Keyword));
 
 
             if (!this.txtCutRefStart.Text.Empty() && !this.txtCutRefEnd.Text.Empty())
             {
                 sqlWheres.Add("b.CutRef between @Cut_Ref and @Cut_Ref1");
-                lis.Add(new SqlParameter("@Cut_Ref", Cut_Ref));
-                lis.Add(new SqlParameter("@Cut_Ref1", Cut_Ref1));
+                //lis.Add(new SqlParameter("@Cut_Ref", Cut_Ref));
+                //lis.Add(new SqlParameter("@Cut_Ref1", Cut_Ref1));
             }
             if (!this.txtSPNoStart.Text.Empty() && !this.txtSPNoEnd.Text.Empty())
             {
                 sqlWheres.Add("b.OrderID  between @SP and @SP1");
-                lis.Add(new SqlParameter("@SP", SP));
-                lis.Add(new SqlParameter("@SP1", SP1));
+                //lis.Add(new SqlParameter("@SP", SP));
+                //lis.Add(new SqlParameter("@SP1", SP1));
             }
             if (!this.txtPOID.Text.Empty())
             {
                 sqlWheres.Add("b.POID=@POID");
-                lis.Add(new SqlParameter("@POID", POID));
+                //lis.Add(new SqlParameter("@POID", POID));
             }
             if (!this.txtBundleStart.Text.Empty() && !this.txtBundleEnd.Text.Empty())
             {
                 sqlWheres.Add("a.BundleNo between @Bundle and @Bundle1");
-                lis.Add(new SqlParameter("@Bundle", Bundle));
-                lis.Add(new SqlParameter("@Bundle1", Bundle1));
+                //lis.Add(new SqlParameter("@Bundle", Bundle));
+                //lis.Add(new SqlParameter("@Bundle1", Bundle1));
             }
             if (!this.txtCell.Text.Empty())
             {
                 sqlWheres.Add("b.SewingCell =@Cell");
-                lis.Add(new SqlParameter("@Cell", Cell));
+                //lis.Add(new SqlParameter("@Cell", Cell));
             }
             if (!this.txtSize.Text.Empty())
             {
                 sqlWheres.Add("a.SizeCode =@Size");
-                lis.Add(new SqlParameter("@Size", size));
+                //lis.Add(new SqlParameter("@Size", size));
             }
 
             if (!this.dateBox1.Value.Empty())
             {
-                sqlWheres.Add("e.EstCutDate=@Est_CutDate");
-                lis.Add(new SqlParameter("@Est_CutDate", Est_CutDate));
+                sqlWheres.Add("WorkOrder.EstCutDate=@Est_CutDate");
+                //lis.Add(new SqlParameter("@Est_CutDate", Est_CutDate));
+                declare += $@" declare @Est_CutDate date = '{((DateTime)Est_CutDate).ToString("yyyy/MM/dd")}' ";
             }
             if (!MyUtility.Check.Empty(Addname))
             {
                 sqlWheres.Add(" b.AddName = @AddName");
-                lis.Add(new SqlParameter("@AddName", Addname));
+                //lis.Add(new SqlParameter("@AddName", Addname));
             }
             if (!this.dateBundlecreatedDate.Value.Empty())
             {
                 sqlWheres.Add(" format(b.AddDate,'yyyy/MM/dd') = @AddDate");
-                lis.Add(new SqlParameter("@AddDate", AddDate));
+                //lis.Add(new SqlParameter("@AddDate", AddDate));
+                declare += $@" declare @AddDate varchar(10) = '{((DateTime)AddDate).ToString("yyyy/MM/dd")}' ";
             }
             if (!MyUtility.Check.Empty(Cutno))
             {
                 sqlWheres.Add(" b.Cutno=@Cutno");
-                lis.Add(new SqlParameter("@Cutno", Cutno));
+                //lis.Add(new SqlParameter("@Cutno", Cutno));
             }
             if (this.comboSortBy.Text == "Bundle#")
             {
@@ -199,13 +203,13 @@ namespace Sci.Production.Cutting
             if (!this.txtfactoryByM.Text.Empty())
             {
                 sqlWheres.Add(" c.FtyGroup  = @FtyGroup ");
-                lis.Add(new SqlParameter("@FtyGroup ", txtfactoryByM.Text));
+                //lis.Add(new SqlParameter("@FtyGroup ", txtfactoryByM.Text));
             }
 
             if (!this.txtComb.Text.Empty())
             {
                 sqlWheres.Add(" b.PatternPanel  = @Comb ");
-                lis.Add(new SqlParameter("@Comb ", txtComb.Text));
+                //lis.Add(new SqlParameter("@Comb ", txtComb.Text));
             }
 
             sqlWhere = string.Join(" and ", sqlWheres);
@@ -215,9 +219,14 @@ namespace Sci.Production.Cutting
             }
 
             if (checkExtendAllParts.Checked)
-                lis.Add(new SqlParameter("@extend", "1"));
+            {
+                //lis.Add(new SqlParameter("@extend", "1"));
+            }
             else
-                lis.Add(new SqlParameter("@extend", "0"));
+            {
+                //lis.Add(new SqlParameter("@extend", "0"));
+                declare += $@" declare @extend bit = 0 ";
+            }
 
             string sqlcmd = string.Empty;
             
@@ -226,7 +235,22 @@ namespace Sci.Production.Cutting
                 #region SQL
 
                 DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
-                sqlcmd = string.Format(@"
+                sqlcmd = $@"
+declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
+declare @Cut_Ref varchar(6) = '{Cut_Ref}'
+declare @Cut_Ref1 varchar(6) = '{Cut_Ref1}'
+declare @SP varchar(13) = '{SP}'
+declare @SP1 varchar(13) = '{SP1}'
+declare @POID varchar(13) = '{POID}'
+declare @Bundle varchar(13) = '{Bundle}'
+declare @Bundle1 varchar(13) = '{Bundle1}'
+declare @Cell varchar(3) = '{Cell}'
+declare @size varchar(8) = '{size}'
+declare @Addname varchar(10) = '{Addname}'
+declare @Cutno varchar(6) = '{Cutno}'
+declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
+declare @Comb varchar(2) = '{txtComb.Text}'
+{declare}
 set arithabort on
 select 
     Convert(bit,0) as selected
@@ -255,14 +279,13 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -273,7 +296,13 @@ outer apply
         for xml path('')
     )
 )as SubProcess
-" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
+OUTER APPLY(
+	SELECT TOP 1 
+		MarkerNo  
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrder
+" + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
 
 union all
 
@@ -304,13 +333,12 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
 	select distinct x.PatternCode,x.PatternDesc,x.Parts
@@ -328,6 +356,12 @@ outer apply
         for xml path('')
     )
 )as SubProcess
+OUTER APPLY(
+	SELECT TOP 1 
+		MarkerNo  
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrder
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)
 
@@ -346,13 +380,28 @@ outer apply
 )cu
 " + sb+ @"
 OPTION (RECOMPILE)"
-);                
+;                
                 #endregion
             }
             else  //沒勾[Extend All Parts]
             {
                 #region SQL
-                sqlcmd = string.Format(@"
+                sqlcmd = $@"
+declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
+declare @Cut_Ref varchar(6) = '{Cut_Ref}'
+declare @Cut_Ref1 varchar(6) = '{Cut_Ref1}'
+declare @SP varchar(13) = '{SP}'
+declare @SP1 varchar(13) = '{SP1}'
+declare @POID varchar(13) = '{POID}'
+declare @Bundle varchar(13) = '{Bundle}'
+declare @Bundle1 varchar(13) = '{Bundle1}'
+declare @Cell varchar(3) = '{Cell}'
+declare @size varchar(8) = '{size}'
+declare @Addname varchar(10) = '{Addname}'
+declare @Cutno varchar(6) = '{Cutno}'
+declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
+declare @Comb varchar(2) = '{txtComb.Text}'
+{declare}
 set arithabort on
 select 
     Convert(bit,0) as selected
@@ -379,16 +428,15 @@ select
     , [SubProcess]= IIF(len(SubProcess.SubProcess)>43,substring(SubProcess.SubProcess,0,43),SubProcess.SubProcess)
     , a.Parts [Parts]
     , a.Qty [Qty]
-    ,  [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
+    , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -399,7 +447,13 @@ outer apply
         for xml path('')
     )
 )as SubProcess 
-" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
+OUTER APPLY(
+	SELECT TOP 1 
+		MarkerNo  
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrder
+" + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
                                         
 union all
 
@@ -430,13 +484,12 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -447,6 +500,12 @@ outer apply
         for xml path('')
     )
 )as SubProcess 
+OUTER APPLY(
+	SELECT TOP 1 
+		MarkerNo  
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrder
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)
@@ -466,14 +525,15 @@ outer apply
 )cu
 " + sb+@"
 OPTION (RECOMPILE)"
-);  
+;  
                 #endregion
             }
-            
-            result = DBProxy.Current.Select("", sqlcmd, lis, out dtt);
+
+            DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
+            result = DBProxy.Current.Select("", sqlcmd, out dtt);
             if (!result)
             {
-                ShowErr(sqlcmd, result);
+                ShowErr(result);
                 this.HideWaitMessage();
                 return;
             }
