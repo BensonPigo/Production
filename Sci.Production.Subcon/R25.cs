@@ -110,6 +110,7 @@ namespace Sci.Production.Subcon
             string sqlcmd = string.Format(@"
 select  lr.FactoryId [Factory] 
         ,lr.Id [ID]
+        ,c.Delivery[EstDelvieryDate]
         ,lr.IssueDate [Receive_Date]
         ,lr.LocalSuppID + ' - ' + LS.Abb [Supplier]
         ,lr.InvNo [Invoice]
