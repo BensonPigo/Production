@@ -618,9 +618,9 @@ select  StyleID
         , StyleUKey
         , '' as Description
         , '' as Type
-		, [StockUnit] = ''
+		, StockUnit
 		, [StockQty] = 0
-        , [FabricType] = 'L'
+        , FabricType
 into #tmpFinalFixDeclare
 from #tmpFixDeclare
 where   TissuePaper = 0 

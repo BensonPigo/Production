@@ -123,14 +123,17 @@ namespace Sci.Production.Shipping
             List<SqlParameter> parCheckRefno = new List<SqlParameter>() { new SqlParameter("@refno", this.txtRefno.Text) };
             parCheckRefno.Add(new SqlParameter("@NLCode", this.txtNLCode.Text));
 
-            string sqlCheckRefno = $@"select 1 from LocalItem with (nolock) where junk = 0 {sqlWhere}
+            string sqlCheckRefno = $@"select [Type] = 'L',UnitID from LocalItem with (nolock) where junk = 0 {sqlWhere}
                                      union all
-                                     select 1 from fabric with (nolock) where junk = 0 {sqlWhere}";
+                                     select Type,[UnitID] = UsageUnit from fabric with (nolock) where junk = 0 {sqlWhere}";
             bool isRefnoExists = MyUtility.Check.Seek(sqlCheckRefno, parCheckRefno, out drResult);
             if (!isRefnoExists)
             {
                 return false;
             }
+
+            this.CurrentMaintain["FabricType"] = drResult["Type"];
+            this.CurrentMaintain["StockUnit"] = drResult["UnitID"];
 
             return true;
         }

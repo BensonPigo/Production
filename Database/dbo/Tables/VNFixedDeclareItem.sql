@@ -10,6 +10,8 @@
     [EditName]    VARCHAR (10)    CONSTRAINT [DF_FixedDeclareItem_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME        NULL,
 	[Refno]      VARCHAR (21)     CONSTRAINT [DF_FixedDeclareItem_Refno] DEFAULT ('') NOT NULL,
+    [StockUnit] VARCHAR(8) CONSTRAINT [DF_FixedDeclareItem_StockUnit] DEFAULT ('') NULL,
+	[FabricType] VARCHAR (1)     CONSTRAINT [DF_FixedDeclareItem_FabricType] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FixedDeclareItem] PRIMARY KEY CLUSTERED ([NLCode],[Refno] ASC)
 );
 

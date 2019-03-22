@@ -956,7 +956,17 @@ with tmpFixDeclare
             left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = {0} and sa.Article = '{1}'
             left join Style s WITH (NOLOCK) on s.Ukey = {0}
             )
-            select [SCIRefno] = '',Refno,[BrandID] = '',NLCode,HSCode,UnitID as CustomsUnit,IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty,[LocalItem] = 1,[StockUnit] = '', [FabricType] = 'L', [StockQty] = 0
+            select 
+[SCIRefno] = '',
+Refno,[BrandID] = '',
+NLCode,
+HSCode,
+UnitID as CustomsUnit,
+IIF(Type = 1, Qty, IIF(CTNQty = 0,0,ROUND(Qty/CTNQty,3))) as Qty,
+[LocalItem] = 1,
+StockUnit, 
+FabricType, 
+[StockQty] = 0
             from tmpFixDeclare
             where TissuePaper = 0 or (TissuePaper = 1 and ArticleTissuePaper = 1)",
                 MyUtility.Convert.GetString(this.CurrentMaintain["StyleUKey"]),

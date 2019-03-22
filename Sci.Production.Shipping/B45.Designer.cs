@@ -42,6 +42,10 @@
             this.checkTissuepaper = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtRefno = new Sci.Win.UI.TextBox();
+            this.displayFabricType = new Sci.Win.UI.DisplayBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.displayStockUnit = new Sci.Win.UI.DisplayBox();
+            this.label3 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -57,6 +61,10 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayStockUnit);
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.displayFabricType);
+            this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.txtRefno);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.checkTissuepaper);
@@ -123,7 +131,7 @@
             // 
             // labelQty
             // 
-            this.labelQty.Location = new System.Drawing.Point(43, 167);
+            this.labelQty.Location = new System.Drawing.Point(43, 234);
             this.labelQty.Name = "labelQty";
             this.labelQty.Size = new System.Drawing.Size(99, 23);
             this.labelQty.TabIndex = 5;
@@ -168,7 +176,7 @@
             this.numQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
             this.numQty.DecimalPlaces = 3;
             this.numQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numQty.Location = new System.Drawing.Point(145, 167);
+            this.numQty.Location = new System.Drawing.Point(145, 234);
             this.numQty.Name = "numQty";
             this.numQty.NullValue = new decimal(new int[] {
             0,
@@ -188,7 +196,7 @@
             this.radioPanel1.Controls.Add(this.radioCalculate);
             this.radioPanel1.Controls.Add(this.radioFixedQty);
             this.radioPanel1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Type", true));
-            this.radioPanel1.Location = new System.Drawing.Point(230, 164);
+            this.radioPanel1.Location = new System.Drawing.Point(230, 231);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(217, 57);
             this.radioPanel1.TabIndex = 8;
@@ -251,6 +259,42 @@
             this.txtRefno.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRefno_PopUp);
             this.txtRefno.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRefno_Validating);
             // 
+            // displayFabricType
+            // 
+            this.displayFabricType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayFabricType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FabricType", true));
+            this.displayFabricType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayFabricType.Location = new System.Drawing.Point(145, 197);
+            this.displayFabricType.Name = "displayFabricType";
+            this.displayFabricType.Size = new System.Drawing.Size(80, 23);
+            this.displayFabricType.TabIndex = 101;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(43, 197);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(99, 23);
+            this.label2.TabIndex = 100;
+            this.label2.Text = "Fabric Type";
+            // 
+            // displayStockUnit
+            // 
+            this.displayStockUnit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayStockUnit.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "StockUnit", true));
+            this.displayStockUnit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayStockUnit.Location = new System.Drawing.Point(145, 164);
+            this.displayStockUnit.Name = "displayStockUnit";
+            this.displayStockUnit.Size = new System.Drawing.Size(80, 23);
+            this.displayStockUnit.TabIndex = 103;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(43, 164);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(99, 23);
+            this.label3.TabIndex = 102;
+            this.label3.Text = "Stock Unit";
+            // 
             // B45
             // 
             this.ClientSize = new System.Drawing.Size(836, 409);
@@ -292,5 +336,9 @@
         private Win.UI.Label labelNLCode;
         private Win.UI.TextBox txtRefno;
         private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayStockUnit;
+        private Win.UI.Label label3;
+        private Win.UI.DisplayBox displayFabricType;
+        private Win.UI.Label label2;
     }
 }
