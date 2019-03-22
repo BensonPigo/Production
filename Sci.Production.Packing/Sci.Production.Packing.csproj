@@ -437,6 +437,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="R03.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R03.Designer.cs">
+      <DependentUpon>R03.cs</DependentUpon>
+    </Compile>
     <Compile Include="R01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -581,6 +587,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P23.resx">
       <DependentUpon>P23.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R03.resx">
+      <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R01.resx">
       <DependentUpon>R01.cs</DependentUpon>
