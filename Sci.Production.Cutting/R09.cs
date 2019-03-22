@@ -59,13 +59,13 @@ select [Factory] = wo_Before.FactoryID
 ,wo_Before.WorkOrderUkey
 ,[CutCell] = wo_Before.CutCellid
 ,[SpreadingNo] = wo_Before.SpreadingNoID
-,[CuttingPlanID] = wo_Before.CutplanID
+,[CuttingPlanID] = CutplanID.CutplanID
 ,[SP] = wo_Before.ID
 ,[SubSP] = wo_Before.OrderID
 ,[Style] = o.StyleID
 ,[Size] = SizeCode.SizeCode
 ,[OrderQty] = OrderQty_Before.qty
-,[CutRefer#] = wo_Before.CutRef
+,[CutRefer#] = CutRefNo.CutRef
 ,[RefNo_Desc] = wo_Before.SCIRefno
 ,[FabricType] = f.WeaveTypeID
 ,[FabricDesc] = f.Description
@@ -242,6 +242,27 @@ outer apply(
 	and fi.InQty is not null
 ) as fi
 outer apply(select NoofRoll = iif(isnull(fi.avgInQty,0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
+
+
+outer apply(	
+	SELECT [CutplanID]=STUFF(
+	(
+		SELECT CONCAT(',',CutplanID )
+		FROM WorkOrder 
+		WHERE Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,',')) AND CutplanID <>'' AND CutplanID IS NOT NULL
+		For XML path('')
+	),1,1,'')
+)CutplanID
+outer apply(
+	SELECT [CutRef]=STUFF(
+	(
+		SELECT CONCAT(',',CutRef )
+		FROM WorkOrder 
+		WHERE Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,',')) AND CutRef <>'' AND CutRef IS NOT NULL
+		For XML path('')
+	),1,1,'')
+)CutRefNo
+
 where 1=1
 ");
 
