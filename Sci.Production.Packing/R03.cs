@@ -167,6 +167,7 @@ where 1=1
 group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,o.Junk,pl.Dest,
 o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
 pl.Status,o.Qty,pld.Refno,iif(isnull(pl.LocalPOID,'')='','N','Y'),pl.EstCTNBooking,pl.EstCTNArrive,pl.Remark
+order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this._printData);
