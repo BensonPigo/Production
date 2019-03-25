@@ -28,9 +28,12 @@ namespace Sci.Production.Quality
         private string loginID = Sci.Env.User.UserID;        
         private bool canedit;
         private string id;
+        private string receivingID;
         private string poid;
+        private string seq1;
+        private string seq2;
 
-        public P02_Detail(bool CanEdit, string airID)
+        public P02_Detail(bool CanEdit, string airID,string spNo)
         {
             InitializeComponent();
             id = airID;                          
@@ -43,11 +46,17 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Seek(air_cmd, out dr))
             {
                 txtSEQ.Text = dr["SEQ1"].ToString() + " - " + dr["SEQ2"].ToString();
+                this.seq1 = dr["SEQ1"].ToString();
+                this.seq2 = dr["SEQ2"].ToString();
+                this.receivingID = dr["ReceivingID"].ToString();
                 poid = dr["Poid"].ToString();
             }
             else
             {
                 txtSEQ.Text = "";
+                this.receivingID = string.Empty;
+                this.seq1 = string.Empty;
+                this.seq2 = string.Empty;
                 poid = string.Empty;
             }
             
@@ -72,6 +81,8 @@ namespace Sci.Production.Quality
         {
             string updatesql = "";
             string updatesql1 = "";
+            DualResult chkresult;
+            DataTable dt;
 
             if (this.btnAmend.Text == "Amend")
             {
@@ -158,6 +169,69 @@ namespace Sci.Production.Quality
                 updatesql = string.Format(
                 "Update Air set Status = 'Confirmed',EditDate=CONVERT(VARCHAR(20), GETDATE(), 120),EditName='{0}' where id ='{1}'",
                 loginID, id);
+
+                string strInspAutoLockAcc = MyUtility.GetValue.Lookup("SELECT InspAutoLockAcc FROM System");
+
+                if (MyUtility.Convert.GetBool(strInspAutoLockAcc))
+                {
+                    switch (this.comboResult.Text.ToString())
+                    {
+                        case "Fail":
+                            updatesql += Environment.NewLine + $@"
+UPDATE f SET 
+Lock = 1 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
+FROM FtyInventory f 
+INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
+WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
+                            break;
+
+                        case "Pass":
+
+                            chkresult = DBProxy.Current.Select(null, $@"
+SELECT DISTINCT  Result
+FROM AIR
+WHERE POID='{this.poid}' AND Seq1='{this.seq1} ' AND Seq2='{this.seq2}'
+AND ID<>'{this.id}' AND ReceivingID<>'{this.receivingID}'
+", out dt);
+                            if (!chkresult)
+                            {
+                                ShowErr("Commit transaction error.", chkresult);
+                                return;
+                            }
+
+                            bool isAllPass = false;
+
+
+                            //=1表示有相同POID Seq 1 2，且Result只有Pass一種結果
+                            if (dt.Rows.Count == 1)
+                            {
+                                if (dt.Rows[0]["Result"].ToString() == "Pass")
+                                {
+                                    isAllPass = true;
+                                }
+                            }
+                            //表示無相同POID Seq 1 2
+                            if (dt.Rows.Count == 0)
+                            {
+                                isAllPass = true;
+                            }
+
+                            if (isAllPass)
+                            {
+                                updatesql += Environment.NewLine + $@"
+UPDATE f SET 
+Lock = 0 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
+FROM FtyInventory f 
+INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
+WHERE f.POID='{this.poid}' AND f.Seq1='{this.seq1}' AND f.Seq2='{this.seq2}'";
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
                 DualResult upResult;
                 TransactionScope _transactionscope = new TransactionScope();
                 using (_transactionscope)
@@ -251,6 +325,7 @@ namespace Sci.Production.Quality
                         "Update Air set InspQty= '{0}',RejectQty='{1}',Inspdate = {2},Inspector = '{3}',Result= '{4}',Defect='{5}',Remark='{6}' where id ='{7}'",
                         this.txtInspectedQty.Text, this.txtRejectedQty.Text,
                         InspDate, txtInspector.TextBox1.Text, comboResult.Text, editDefect.Text, txtRemark.Text, id);
+
                         DualResult upResult;
                         TransactionScope _transactionscope = new TransactionScope();
                         using (_transactionscope)
@@ -444,6 +519,9 @@ namespace Sci.Production.Quality
             if (!MyUtility.Check.Empty(dt) || dt.Rows.Count > 0)
             {
                 txtSEQ.Text = dt.Rows[0]["SEQ1"].ToString() + " - " + dt.Rows[0]["SEQ2"].ToString();
+                this.receivingID = dt.Rows[0]["ReceivingID"].ToString();
+                this.seq1 = dt.Rows[0]["SEQ1"].ToString();
+                this.seq2 = dt.Rows[0]["SEQ2"].ToString();
                 if (dt.Rows[0]["Status"].ToString().Trim() == "Confirmed")
                 {
                     this.btnAmend.Text = "Amend";
@@ -456,6 +534,9 @@ namespace Sci.Production.Quality
             else
             {
                 txtSEQ.Text = "";
+                this.receivingID = string.Empty;
+                this.seq1 = string.Empty;
+                this.seq2 = string.Empty;
             }
             button_enable(canedit);
         }
