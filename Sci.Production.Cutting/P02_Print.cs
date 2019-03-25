@@ -138,6 +138,8 @@ outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) s
             #region 寫入共用欄位
             worksheet.Cells[1, 6] = OrderDr["factoryid"];
             worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
+            worksheet.Cells[3, 7] = detDr["SpreadingNoID"];
+            worksheet.Cells[3, 12] = detDr["CutCellid"];
             worksheet.Cells[9, 2] = OrderDr["Styleid"];
             worksheet.Cells[10, 2] = OrderDr["Seasonid"];
             worksheet.Cells[10, 13] = OrderDr["Sewline"];
@@ -488,6 +490,8 @@ Cutplanid, str_PIVOT);
             #region 寫入共用欄位
             worksheet.Cells[1, 6] = OrderDr["factoryid"];
             worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
+            worksheet.Cells[3, 7] = detDr["SpreadingNoID"];
+            worksheet.Cells[3, 12] = detDr["CutCellid"];
             worksheet.Cells[9, 2] = OrderDr["Styleid"];
             worksheet.Cells[10, 2] = OrderDr["Seasonid"];
             worksheet.Cells[10, 13] = OrderDr["Sewline"];

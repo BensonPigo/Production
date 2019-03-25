@@ -58,6 +58,7 @@
             this.dateTargetLeadTime = new Sci.Win.UI.DateBox();
             this.dateCompletionDate = new Sci.Win.UI.DateBox();
             this.btnBatchEncode = new Sci.Win.UI.Button();
+            this.chkInspAutoLockAcc = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -74,6 +75,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.chkInspAutoLockAcc);
             this.masterpanel.Controls.Add(this.btnBatchEncode);
             this.masterpanel.Controls.Add(this.txtSEQ1);
             this.masterpanel.Controls.Add(this.labelSEQ1);
@@ -104,7 +106,7 @@
             this.masterpanel.Controls.Add(this.dateTargetLeadTime);
             this.masterpanel.Controls.Add(this.dateEarliestSCIDel);
             this.masterpanel.Controls.Add(this.dateEarliestEstCutDate);
-            this.masterpanel.Size = new System.Drawing.Size(917, 203);
+            this.masterpanel.Size = new System.Drawing.Size(944, 203);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEarliestEstCutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateEarliestSCIDel, 0);
@@ -136,11 +138,12 @@
             this.masterpanel.Controls.SetChildIndex(this.labelSEQ1, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtSEQ1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchEncode, 0);
+            this.masterpanel.Controls.SetChildIndex(this.chkInspAutoLockAcc, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 203);
-            this.detailpanel.Size = new System.Drawing.Size(917, 411);
+            this.detailpanel.Size = new System.Drawing.Size(944, 411);
             // 
             // gridicon
             // 
@@ -148,12 +151,11 @@
             // 
             // refresh
             // 
-            this.refresh.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.refresh.Location = new System.Drawing.Point(827, 1);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(917, 411);
+            this.detailgridcont.Size = new System.Drawing.Size(944, 411);
             // 
             // detail2
             // 
@@ -169,16 +171,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(917, 652);
+            this.detail.Size = new System.Drawing.Size(944, 652);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(917, 614);
+            this.detailcont.Size = new System.Drawing.Size(944, 614);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 614);
-            this.detailbtm.Size = new System.Drawing.Size(917, 38);
+            this.detailbtm.Size = new System.Drawing.Size(944, 38);
             // 
             // browse
             // 
@@ -186,7 +188,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(925, 681);
+            this.tabs.Size = new System.Drawing.Size(952, 681);
             // 
             // createby
             // 
@@ -207,7 +209,7 @@
             this.txtSEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.txtSEQ1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSEQ1.IsSupportEditMode = false;
-            this.txtSEQ1.Location = new System.Drawing.Point(342, 162);
+            this.txtSEQ1.Location = new System.Drawing.Point(342, 165);
             this.txtSEQ1.Name = "txtSEQ1";
             this.txtSEQ1.Size = new System.Drawing.Size(49, 21);
             this.txtSEQ1.TabIndex = 1;
@@ -215,7 +217,7 @@
             // labelSEQ1
             // 
             this.labelSEQ1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ1.Location = new System.Drawing.Point(264, 162);
+            this.labelSEQ1.Location = new System.Drawing.Point(264, 165);
             this.labelSEQ1.Name = "labelSEQ1";
             this.labelSEQ1.Size = new System.Drawing.Size(75, 23);
             this.labelSEQ1.TabIndex = 57;
@@ -224,7 +226,7 @@
             // btnFind
             // 
             this.btnFind.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnFind.Location = new System.Drawing.Point(529, 158);
+            this.btnFind.Location = new System.Drawing.Point(529, 161);
             this.btnFind.Name = "btnFind";
             this.btnFind.Size = new System.Drawing.Size(70, 27);
             this.btnFind.TabIndex = 3;
@@ -239,7 +241,7 @@
             this.displayMTLCmlpt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayMTLCmlpt.Location = new System.Drawing.Point(614, 46);
             this.displayMTLCmlpt.Name = "displayMTLCmlpt";
-            this.displayMTLCmlpt.Size = new System.Drawing.Size(178, 21);
+            this.displayMTLCmlpt.Size = new System.Drawing.Size(63, 21);
             this.displayMTLCmlpt.TabIndex = 56;
             // 
             // displayofInspection
@@ -250,7 +252,7 @@
             this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayofInspection.Location = new System.Drawing.Point(614, 17);
             this.displayofInspection.Name = "displayofInspection";
-            this.displayofInspection.Size = new System.Drawing.Size(178, 21);
+            this.displayofInspection.Size = new System.Drawing.Size(63, 21);
             this.displayofInspection.TabIndex = 55;
             // 
             // editRemark
@@ -262,7 +264,7 @@
             this.editRemark.Location = new System.Drawing.Point(614, 79);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(178, 106);
+            this.editRemark.Size = new System.Drawing.Size(307, 73);
             this.editRemark.TabIndex = 4;
             // 
             // txtSEQ2
@@ -271,7 +273,7 @@
             this.txtSEQ2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.txtSEQ2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSEQ2.IsSupportEditMode = false;
-            this.txtSEQ2.Location = new System.Drawing.Point(478, 162);
+            this.txtSEQ2.Location = new System.Drawing.Point(478, 165);
             this.txtSEQ2.Name = "txtSEQ2";
             this.txtSEQ2.Size = new System.Drawing.Size(33, 21);
             this.txtSEQ2.TabIndex = 2;
@@ -323,7 +325,7 @@
             this.txtLocateforWK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.txtLocateforWK.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLocateforWK.IsSupportEditMode = false;
-            this.txtLocateforWK.Location = new System.Drawing.Point(121, 164);
+            this.txtLocateforWK.Location = new System.Drawing.Point(121, 167);
             this.txtLocateforWK.Name = "txtLocateforWK";
             this.txtLocateforWK.Size = new System.Drawing.Size(130, 21);
             this.txtLocateforWK.TabIndex = 0;
@@ -331,7 +333,7 @@
             // labelSEQ2
             // 
             this.labelSEQ2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelSEQ2.Location = new System.Drawing.Point(400, 162);
+            this.labelSEQ2.Location = new System.Drawing.Point(400, 165);
             this.labelSEQ2.Name = "labelSEQ2";
             this.labelSEQ2.Size = new System.Drawing.Size(75, 23);
             this.labelSEQ2.TabIndex = 46;
@@ -340,7 +342,7 @@
             // labelLocateforWK
             // 
             this.labelLocateforWK.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.labelLocateforWK.Location = new System.Drawing.Point(12, 164);
+            this.labelLocateforWK.Location = new System.Drawing.Point(12, 167);
             this.labelLocateforWK.Name = "labelLocateforWK";
             this.labelLocateforWK.Size = new System.Drawing.Size(106, 23);
             this.labelLocateforWK.TabIndex = 45;
@@ -484,7 +486,7 @@
             // 
             // btnBatchEncode
             // 
-            this.btnBatchEncode.Location = new System.Drawing.Point(798, 157);
+            this.btnBatchEncode.Location = new System.Drawing.Point(810, 158);
             this.btnBatchEncode.Name = "btnBatchEncode";
             this.btnBatchEncode.Size = new System.Drawing.Size(111, 30);
             this.btnBatchEncode.TabIndex = 161;
@@ -492,9 +494,22 @@
             this.btnBatchEncode.UseVisualStyleBackColor = true;
             this.btnBatchEncode.Click += new System.EventHandler(this.btnBatchEncode_Click);
             // 
+            // chkInspAutoLockAcc
+            // 
+            this.chkInspAutoLockAcc.AutoSize = true;
+            this.chkInspAutoLockAcc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkInspAutoLockAcc.IsSupportEditMode = false;
+            this.chkInspAutoLockAcc.Location = new System.Drawing.Point(701, 17);
+            this.chkInspAutoLockAcc.Name = "chkInspAutoLockAcc";
+            this.chkInspAutoLockAcc.ReadOnly = true;
+            this.chkInspAutoLockAcc.Size = new System.Drawing.Size(206, 21);
+            this.chkInspAutoLockAcc.TabIndex = 162;
+            this.chkInspAutoLockAcc.Text = "Auto Lock/Unlock Accessory";
+            this.chkInspAutoLockAcc.UseVisualStyleBackColor = true;
+            // 
             // P02
             // 
-            this.ClientSize = new System.Drawing.Size(925, 714);
+            this.ClientSize = new System.Drawing.Size(952, 714);
             this.DefaultControlForEdit = "txtLocateforWK";
             this.DefaultDetailOrder = "SEQ1,exportid";
             this.DefaultOrder = "id";
@@ -565,5 +580,6 @@
         private Win.UI.DateBox dateEarliestSCIDel;
         private Win.UI.DateBox dateEarliestEstCutDate;
         private Win.UI.Button btnBatchEncode;
+        private Win.UI.CheckBox chkInspAutoLockAcc;
     }
 }

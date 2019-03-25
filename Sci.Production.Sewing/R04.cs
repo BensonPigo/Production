@@ -87,6 +87,7 @@ inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
 --left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType 
 outer apply
 (
@@ -129,6 +130,11 @@ where 1=1 "));
             if (!MyUtility.Check.Empty(this.category) && this.category.ToUpper() == "MOCKUP")
             {
                 sqlCmd.Append(" and s.Category = 'M'");
+            }
+
+            if (this.chkExcludeSampleFty.Checked)
+            {
+                sqlCmd.Append($@" and f.Type != 'S'");
             }
 
             sqlCmd.Append(@"--By Sewing單號 & SewingDetail的Orderid,ComboType 作加總 ActManPower,WorkHour,QAQty,InlineQty

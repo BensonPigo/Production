@@ -40,7 +40,7 @@
             this.dateOrderCfmDate = new Sci.Win.UI.DateRange();
             this.dateCuttingInline = new Sci.Win.UI.DateRange();
             this.txtProjectID = new Sci.Win.UI.TextBox();
-            this.txtIssueSP = new Sci.Win.UI.TextBox();
+            this.txtIssueSP1 = new Sci.Win.UI.TextBox();
             this.btnAutoPick = new Sci.Win.UI.Button();
             this.btnQuery = new Sci.Win.UI.Button();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -56,6 +56,12 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.gridComplete = new Sci.Win.UI.Grid();
             this.gridRel = new Sci.Win.UI.Grid();
+            this.txtIssueSP2 = new Sci.Win.UI.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lbStockSP = new Sci.Win.UI.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtStockSP2 = new Sci.Win.UI.TextBox();
+            this.txtStockSP1 = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource2)).BeginInit();
             this.panel1.SuspendLayout();
@@ -70,6 +76,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.txtStockSP2);
+            this.panel1.Controls.Add(this.txtStockSP1);
+            this.panel1.Controls.Add(this.lbStockSP);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.txtIssueSP2);
             this.panel1.Controls.Add(this.txtmfactory);
             this.panel1.Controls.Add(this.comboCategory);
             this.panel1.Controls.Add(this.labelCategory);
@@ -78,7 +90,7 @@
             this.panel1.Controls.Add(this.dateOrderCfmDate);
             this.panel1.Controls.Add(this.dateCuttingInline);
             this.panel1.Controls.Add(this.txtProjectID);
-            this.panel1.Controls.Add(this.txtIssueSP);
+            this.panel1.Controls.Add(this.txtIssueSP1);
             this.panel1.Controls.Add(this.btnAutoPick);
             this.panel1.Controls.Add(this.btnQuery);
             this.panel1.Controls.Add(this.labelFactory);
@@ -89,7 +101,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 107);
+            this.panel1.Size = new System.Drawing.Size(1078, 107);
             this.panel1.TabIndex = 1;
             // 
             // txtmfactory
@@ -101,7 +113,7 @@
             this.txtmfactory.Location = new System.Drawing.Point(87, 75);
             this.txtmfactory.Name = "txtmfactory";
             this.txtmfactory.Size = new System.Drawing.Size(117, 23);
-            this.txtmfactory.TabIndex = 2;
+            this.txtmfactory.TabIndex = 9;
             // 
             // comboCategory
             // 
@@ -114,15 +126,15 @@
             "Sample",
             "Material",
             "All"});
-            this.comboCategory.Location = new System.Drawing.Point(729, 42);
+            this.comboCategory.Location = new System.Drawing.Point(860, 41);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(121, 24);
-            this.comboCategory.TabIndex = 6;
+            this.comboCategory.TabIndex = 8;
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(637, 42);
+            this.labelCategory.Location = new System.Drawing.Point(768, 41);
             this.labelCategory.Name = "labelCategory";
             this.labelCategory.Size = new System.Drawing.Size(89, 23);
             this.labelCategory.TabIndex = 15;
@@ -138,15 +150,15 @@
             "Fabric",
             "Accessory",
             "All"});
-            this.comboFabricType.Location = new System.Drawing.Point(729, 9);
+            this.comboFabricType.Location = new System.Drawing.Point(860, 8);
             this.comboFabricType.Name = "comboFabricType";
             this.comboFabricType.OldText = "";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
-            this.comboFabricType.TabIndex = 5;
+            this.comboFabricType.TabIndex = 4;
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Location = new System.Drawing.Point(637, 9);
+            this.labelFabricType.Location = new System.Drawing.Point(768, 8);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(89, 23);
             this.labelFabricType.TabIndex = 14;
@@ -168,10 +180,10 @@
             this.dateOrderCfmDate.DateBox2.Name = "";
             this.dateOrderCfmDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateOrderCfmDate.DateBox2.TabIndex = 1;
-            this.dateOrderCfmDate.Location = new System.Drawing.Point(334, 42);
+            this.dateOrderCfmDate.Location = new System.Drawing.Point(475, 42);
             this.dateOrderCfmDate.Name = "dateOrderCfmDate";
             this.dateOrderCfmDate.Size = new System.Drawing.Size(280, 23);
-            this.dateOrderCfmDate.TabIndex = 4;
+            this.dateOrderCfmDate.TabIndex = 7;
             // 
             // dateCuttingInline
             // 
@@ -189,7 +201,7 @@
             this.dateCuttingInline.DateBox2.Name = "";
             this.dateCuttingInline.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateCuttingInline.DateBox2.TabIndex = 1;
-            this.dateCuttingInline.Location = new System.Drawing.Point(334, 9);
+            this.dateCuttingInline.Location = new System.Drawing.Point(475, 9);
             this.dateCuttingInline.Name = "dateCuttingInline";
             this.dateCuttingInline.Size = new System.Drawing.Size(280, 23);
             this.dateCuttingInline.TabIndex = 3;
@@ -198,36 +210,36 @@
             // 
             this.txtProjectID.BackColor = System.Drawing.Color.White;
             this.txtProjectID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtProjectID.Location = new System.Drawing.Point(87, 42);
+            this.txtProjectID.Location = new System.Drawing.Point(475, 78);
             this.txtProjectID.Name = "txtProjectID";
             this.txtProjectID.Size = new System.Drawing.Size(117, 23);
-            this.txtProjectID.TabIndex = 1;
+            this.txtProjectID.TabIndex = 10;
             // 
-            // txtIssueSP
+            // txtIssueSP1
             // 
-            this.txtIssueSP.BackColor = System.Drawing.Color.White;
-            this.txtIssueSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtIssueSP.Location = new System.Drawing.Point(87, 9);
-            this.txtIssueSP.Name = "txtIssueSP";
-            this.txtIssueSP.Size = new System.Drawing.Size(117, 23);
-            this.txtIssueSP.TabIndex = 0;
+            this.txtIssueSP1.BackColor = System.Drawing.Color.White;
+            this.txtIssueSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtIssueSP1.Location = new System.Drawing.Point(87, 9);
+            this.txtIssueSP1.Name = "txtIssueSP1";
+            this.txtIssueSP1.Size = new System.Drawing.Size(117, 23);
+            this.txtIssueSP1.TabIndex = 0;
             // 
             // btnAutoPick
             // 
-            this.btnAutoPick.Location = new System.Drawing.Point(916, 42);
+            this.btnAutoPick.Location = new System.Drawing.Point(989, 38);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
-            this.btnAutoPick.TabIndex = 8;
+            this.btnAutoPick.TabIndex = 12;
             this.btnAutoPick.Text = "AutoPick";
             this.btnAutoPick.UseVisualStyleBackColor = true;
             this.btnAutoPick.Click += new System.EventHandler(this.btnAutoPick_Click);
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(916, 9);
+            this.btnQuery.Location = new System.Drawing.Point(989, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 7;
+            this.btnQuery.TabIndex = 11;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.btnQuery_Click);
@@ -242,7 +254,7 @@
             // 
             // labelOrderCfmDate
             // 
-            this.labelOrderCfmDate.Location = new System.Drawing.Point(218, 42);
+            this.labelOrderCfmDate.Location = new System.Drawing.Point(359, 42);
             this.labelOrderCfmDate.Name = "labelOrderCfmDate";
             this.labelOrderCfmDate.Size = new System.Drawing.Size(113, 23);
             this.labelOrderCfmDate.TabIndex = 13;
@@ -250,7 +262,7 @@
             // 
             // labelCuttingInline
             // 
-            this.labelCuttingInline.Location = new System.Drawing.Point(218, 9);
+            this.labelCuttingInline.Location = new System.Drawing.Point(359, 9);
             this.labelCuttingInline.Name = "labelCuttingInline";
             this.labelCuttingInline.Size = new System.Drawing.Size(113, 23);
             this.labelCuttingInline.TabIndex = 12;
@@ -258,9 +270,9 @@
             // 
             // labelProjectID
             // 
-            this.labelProjectID.Location = new System.Drawing.Point(9, 42);
+            this.labelProjectID.Location = new System.Drawing.Point(359, 75);
             this.labelProjectID.Name = "labelProjectID";
-            this.labelProjectID.Size = new System.Drawing.Size(75, 23);
+            this.labelProjectID.Size = new System.Drawing.Size(110, 23);
             this.labelProjectID.TabIndex = 10;
             this.labelProjectID.Text = "Project ID";
             // 
@@ -281,7 +293,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 548);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1008, 53);
+            this.panel2.Size = new System.Drawing.Size(1078, 53);
             this.panel2.TabIndex = 3;
             // 
             // checkOnly
@@ -291,7 +303,7 @@
             this.checkOnly.Location = new System.Drawing.Point(12, 17);
             this.checkOnly.Name = "checkOnly";
             this.checkOnly.Size = new System.Drawing.Size(316, 21);
-            this.checkOnly.TabIndex = 3;
+            this.checkOnly.TabIndex = 13;
             this.checkOnly.Text = "Only show data of complete inventory location";
             this.checkOnly.UseVisualStyleBackColor = true;
             this.checkOnly.CheckedChanged += new System.EventHandler(this.checkOnly_CheckedChanged);
@@ -299,10 +311,10 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(916, 11);
+            this.btnClose.Location = new System.Drawing.Point(986, 11);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 2;
+            this.btnClose.TabIndex = 16;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Visible = false;
@@ -311,10 +323,10 @@
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.Location = new System.Drawing.Point(763, 11);
+            this.btnCreate.Location = new System.Drawing.Point(833, 11);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(147, 30);
-            this.btnCreate.TabIndex = 1;
+            this.btnCreate.TabIndex = 15;
             this.btnCreate.Text = "Create && Confirm";
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
@@ -322,10 +334,10 @@
             // btnExcel
             // 
             this.btnExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExcel.Location = new System.Drawing.Point(677, 11);
+            this.btnExcel.Location = new System.Drawing.Point(747, 11);
             this.btnExcel.Name = "btnExcel";
             this.btnExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnExcel.TabIndex = 0;
+            this.btnExcel.TabIndex = 14;
             this.btnExcel.Text = "Excel";
             this.btnExcel.UseVisualStyleBackColor = true;
             this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
@@ -343,8 +355,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.gridRel);
-            this.splitContainer1.Size = new System.Drawing.Size(1008, 441);
-            this.splitContainer1.SplitterDistance = 571;
+            this.splitContainer1.Size = new System.Drawing.Size(1078, 441);
+            this.splitContainer1.SplitterDistance = 610;
             this.splitContainer1.TabIndex = 4;
             // 
             // gridComplete
@@ -367,7 +379,7 @@
             this.gridComplete.RowTemplate.Height = 24;
             this.gridComplete.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridComplete.ShowCellToolTips = false;
-            this.gridComplete.Size = new System.Drawing.Size(571, 441);
+            this.gridComplete.Size = new System.Drawing.Size(610, 441);
             this.gridComplete.TabIndex = 0;
             this.gridComplete.TabStop = false;
             this.gridComplete.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridComplete_RowEnter);
@@ -392,13 +404,66 @@
             this.gridRel.RowTemplate.Height = 24;
             this.gridRel.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridRel.ShowCellToolTips = false;
-            this.gridRel.Size = new System.Drawing.Size(433, 441);
+            this.gridRel.Size = new System.Drawing.Size(464, 441);
             this.gridRel.TabIndex = 0;
             this.gridRel.TabStop = false;
             // 
+            // txtIssueSP2
+            // 
+            this.txtIssueSP2.BackColor = System.Drawing.Color.White;
+            this.txtIssueSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtIssueSP2.Location = new System.Drawing.Point(232, 8);
+            this.txtIssueSP2.Name = "txtIssueSP2";
+            this.txtIssueSP2.Size = new System.Drawing.Size(117, 23);
+            this.txtIssueSP2.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(210, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(16, 17);
+            this.label1.TabIndex = 17;
+            this.label1.Text = "~";
+            // 
+            // lbStockSP
+            // 
+            this.lbStockSP.Location = new System.Drawing.Point(9, 41);
+            this.lbStockSP.Name = "lbStockSP";
+            this.lbStockSP.Size = new System.Drawing.Size(75, 23);
+            this.lbStockSP.TabIndex = 18;
+            this.lbStockSP.Text = "Stock SP#";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(210, 44);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(16, 17);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "~";
+            // 
+            // txtStockSP2
+            // 
+            this.txtStockSP2.BackColor = System.Drawing.Color.White;
+            this.txtStockSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStockSP2.Location = new System.Drawing.Point(232, 40);
+            this.txtStockSP2.Name = "txtStockSP2";
+            this.txtStockSP2.Size = new System.Drawing.Size(117, 23);
+            this.txtStockSP2.TabIndex = 6;
+            // 
+            // txtStockSP1
+            // 
+            this.txtStockSP1.BackColor = System.Drawing.Color.White;
+            this.txtStockSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStockSP1.Location = new System.Drawing.Point(87, 41);
+            this.txtStockSP1.Name = "txtStockSP1";
+            this.txtStockSP1.Size = new System.Drawing.Size(117, 23);
+            this.txtStockSP1.TabIndex = 5;
+            // 
             // P29
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 601);
+            this.ClientSize = new System.Drawing.Size(1078, 601);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
@@ -446,7 +511,7 @@
         private Win.UI.DateRange dateOrderCfmDate;
         private Win.UI.DateRange dateCuttingInline;
         private Win.UI.TextBox txtProjectID;
-        private Win.UI.TextBox txtIssueSP;
+        private Win.UI.TextBox txtIssueSP1;
         private Class.txtfactory txtmfactory;
         private Win.UI.ComboBox comboCategory;
         private Win.UI.Label labelCategory;
@@ -455,5 +520,11 @@
         private Win.UI.Grid gridComplete;
         private Win.UI.Grid gridRel;
         private Win.UI.CheckBox checkOnly;
+        private System.Windows.Forms.Label label2;
+        private Win.UI.TextBox txtStockSP2;
+        private Win.UI.TextBox txtStockSP1;
+        private Win.UI.Label lbStockSP;
+        private System.Windows.Forms.Label label1;
+        private Win.UI.TextBox txtIssueSP2;
     }
 }

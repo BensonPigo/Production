@@ -39,6 +39,8 @@
     [BIRID]                    INT             NULL,
     [BL2No]                    VARCHAR (20)    DEFAULT ('') NULL,
     [BLNo]                     VARCHAR (20)    DEFAULT ('') NULL,
+	[ActFCRDate] [date] NULL,
+	[FBDate] [date] NULL,
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

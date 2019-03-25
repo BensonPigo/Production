@@ -242,13 +242,11 @@ namespace Sci.Production.Shipping
                     case "0":
                         this.DefaultWhere = "JUNK = 0";
                         break;
-                    case "1":
-                        this.DefaultWhere = "JUNK = 1";
-                        break;
                     default:
                         this.DefaultWhere = string.Empty;
                         break;
                 }
+
                 this.ReloadDatas();
             };
         }

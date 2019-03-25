@@ -203,6 +203,10 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
         private void btnEncode_Click(object sender, EventArgs e)
         {
             DataTable gridDt = (DataTable)this.grid.DataSource;
+
+            DualResult chkresult;
+            DataTable dt;
+
             var selectedData = gridDt.AsEnumerable().Where(s => (int)s["select"] == 1);
 
             if (!selectedData.Any())
@@ -231,10 +235,72 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
                 return;
             }
 
+            string strInspAutoLockAcc = MyUtility.GetValue.Lookup("SELECT InspAutoLockAcc FROM System");
+
             string updSQL = string.Empty;
             foreach (var item in selectedData)
             {
                 updSQL += $" update AIR set Status = 'Confirmed',EditDate= GETDATE()  where ID = '{item["ID"]}'" + Environment.NewLine;
+
+                if (MyUtility.Convert.GetBool(strInspAutoLockAcc))
+                {
+                    switch (this.comboResult.Text.ToString())
+                    {
+                        case "Fail":
+                            updSQL += Environment.NewLine + $@"
+UPDATE f SET 
+Lock = 1 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
+FROM FtyInventory f 
+INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
+WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'";
+                            break;
+
+                        case "Pass":
+
+                            chkresult = DBProxy.Current.Select(null, $@"
+SELECT DISTINCT  Result
+FROM AIR
+WHERE POID='{item["POID"].ToString().Trim()}' AND Seq1='{item["Seq1"].ToString().Trim()} ' AND Seq2='{item["Seq2"].ToString().Trim()}'
+AND ID<>'{item["ID"].ToString().Trim()}' AND ReceivingID<>'{item["ReceivingID"].ToString().Trim()}'
+", out dt);
+                            if (!chkresult)
+                            {
+                                ShowErr("Commit transaction error.", chkresult);
+                                return;
+                            }
+
+                            bool isAllPass = false;
+
+
+                            //=1表示有相同POID Seq 1 2，且Result只有Pass一種結果
+                            if (dt.Rows.Count == 1)
+                            {
+                                if (dt.Rows[0]["Result"].ToString() == "Pass")
+                                {
+                                    isAllPass = true;
+                                }
+                            }
+                            //表示無相同POID Seq 1 2
+                            if (dt.Rows.Count == 0)
+                            {
+                                isAllPass = true;
+                            }
+
+                            if (isAllPass)
+                            {
+                                updSQL += Environment.NewLine + $@"
+UPDATE f SET 
+Lock = 0 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
+FROM FtyInventory f 
+INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
+WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'";
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
 
             DualResult upResult;
