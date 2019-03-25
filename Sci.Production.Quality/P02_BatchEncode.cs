@@ -249,7 +249,7 @@ Select [select] = 0,a.id,a.poid,SEQ1,SEQ2,Receivingid,Refno,SCIRefno,Suppid,C.ex
                         case "Fail":
                             updSQL += Environment.NewLine + $@"
 UPDATE f SET 
-Lock = 1 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE()
+Lock = 1 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto Lock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
 INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
 WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'";
@@ -290,7 +290,7 @@ AND ID<>'{item["ID"].ToString().Trim()}' AND ReceivingID<>'{item["ReceivingID"].
                             {
                                 updSQL += Environment.NewLine + $@"
 UPDATE f SET 
-Lock = 0 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE()
+Lock = 0 , LockName='{Sci.Env.User.UserID}' ,LockDate=GETDATE(), F.Remark='Auto unLock by QA_P02.Accessory Inspection'
 FROM FtyInventory f 
 INNER JOIN Receiving_Detail rd ON rd.PoId=f.POID AND rd.Seq1=f.seq1 AND rd.seq2=f.Seq2 AND rd.StockType=f.StockType 
 WHERE f.POID='{item["POID"].ToString().Trim()}' AND f.Seq1='{item["Seq1"].ToString().Trim()}' AND f.Seq2='{item["Seq2"].ToString().Trim()}'";
