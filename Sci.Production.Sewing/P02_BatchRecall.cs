@@ -143,6 +143,8 @@ FROM SewingOutput_DailyUnlock sod
 WHERE sod.SewingOutputID IN (select id from #tmp) AND sod.UnLockDate IS NULL
 
 UPDATE s SET Status='New', LockDate = null 
+, s.editname='{Sci.Env.User.UserID}' 
+, s.editdate=getdate()
 FROM SewingOutput s WHERE ID IN (SELECT ID FROM #tmp)
 ";
             DataTable dt2;

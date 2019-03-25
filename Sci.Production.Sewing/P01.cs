@@ -2393,14 +2393,17 @@ declare @ukey bigint
 select top 1 @ukey=ukey,@reasonID=reasonID,@remark=remark from SewingOutput_DailyUnlock where SewingOutputID = '{this.CurrentMaintain["ID"]}' order by Ukey desc
 
 insert into SewingOutput_History (ID,HisType,OldValue,NewValue,ReasonID,Remark,AddName,AddDate)
-values ('{this.CurrentMaintain["ID"]}','Status','Send','New',@reasonID,@remark,'{Sci.Env.User.UserID}',GETDATE())
+values ('{this.CurrentMaintain["ID"]}','Status','Send','New',isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}',GETDATE())
 
 Update SewingOutput_DailyUnlock set 
 	UnLockDate = getdate()
 	,UnLockName= '{Sci.Env.User.UserID}'
 where ukey=@ukey
 
-update SewingOutput set Status='New', LockDate = null where ID = '{this.CurrentMaintain["ID"]}' 
+update SewingOutput set Status='New', LockDate = null
+, editname='{Sci.Env.User.UserID}' 
+, editdate=getdate()
+where ID = '{this.CurrentMaintain["ID"]}' 
 ";
 
             using (TransactionScope scope = new TransactionScope())
@@ -2441,6 +2444,7 @@ update SewingOutput set Status='New', LockDate = null where ID = '{this.CurrentM
             string sqlcmd = $@"
 UPDATE  s 
 SET s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
+, s.editname='{Sci.Env.User.UserID}', s.editdate=getdate()
 FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = s.ID
 INNER JOIN Orders o ON o.ID = sd.OrderId
