@@ -262,7 +262,7 @@
             this.Controls.Add(this.txtSPNoStart);
             this.Controls.Add(this.labelSPNo);
             this.Name = "R03";
-            this.Text = "Scan & Pack List";
+            this.Text = "R03. Packing List Report";
             this.Controls.SetChildIndex(this.labelSPNo, 0);
             this.Controls.SetChildIndex(this.txtSPNoStart, 0);
             this.Controls.SetChildIndex(this.txtSPNoEnd, 0);
