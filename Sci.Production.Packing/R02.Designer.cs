@@ -44,6 +44,16 @@
             this.labelM = new Sci.Win.UI.Label();
             this.comboFactory = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.dateSCIDelivery = new Sci.Win.UI.DateRange();
+            this.dateOffline = new Sci.Win.UI.DateRange();
+            this.cmbPOcompletion = new Sci.Win.UI.ComboBox();
+            this.chkBulk = new Sci.Win.UI.CheckBox();
+            this.chkSample = new Sci.Win.UI.CheckBox();
+            this.chkGarment = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -62,7 +72,7 @@
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(243, 9);
+            this.label7.Location = new System.Drawing.Point(253, 9);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(19, 23);
             this.label7.TabIndex = 112;
@@ -76,7 +86,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(267, 9);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(277, 9);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(130, 23);
             this.txtSPNoEnd.TabIndex = 111;
@@ -85,7 +95,7 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(109, 9);
+            this.txtSPNoStart.Location = new System.Drawing.Point(119, 9);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(130, 23);
             this.txtSPNoStart.TabIndex = 110;
@@ -94,7 +104,7 @@
             // 
             this.labelSPNo.Location = new System.Drawing.Point(9, 9);
             this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.Size = new System.Drawing.Size(97, 23);
+            this.labelSPNo.Size = new System.Drawing.Size(107, 23);
             this.labelSPNo.TabIndex = 109;
             this.labelSPNo.Text = "SP No";
             // 
@@ -114,7 +124,7 @@
             this.dateBuyerDelivery.DateBox2.Name = "";
             this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateBuyerDelivery.DateBox2.TabIndex = 1;
-            this.dateBuyerDelivery.Location = new System.Drawing.Point(109, 67);
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(119, 67);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDelivery.TabIndex = 118;
@@ -123,14 +133,14 @@
             // 
             this.labelBuyerDelivery.Location = new System.Drawing.Point(9, 67);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
-            this.labelBuyerDelivery.Size = new System.Drawing.Size(97, 23);
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(107, 23);
             this.labelBuyerDelivery.TabIndex = 117;
             this.labelBuyerDelivery.Text = "Buyer Delivery";
             // 
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(243, 38);
+            this.label6.Location = new System.Drawing.Point(253, 38);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(19, 23);
             this.label6.TabIndex = 124;
@@ -144,7 +154,7 @@
             // 
             this.txtPONoEnd.BackColor = System.Drawing.Color.White;
             this.txtPONoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPONoEnd.Location = new System.Drawing.Point(267, 38);
+            this.txtPONoEnd.Location = new System.Drawing.Point(277, 38);
             this.txtPONoEnd.Name = "txtPONoEnd";
             this.txtPONoEnd.Size = new System.Drawing.Size(130, 23);
             this.txtPONoEnd.TabIndex = 123;
@@ -153,7 +163,7 @@
             // 
             this.txtPONoStart.BackColor = System.Drawing.Color.White;
             this.txtPONoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPONoStart.Location = new System.Drawing.Point(109, 38);
+            this.txtPONoStart.Location = new System.Drawing.Point(119, 38);
             this.txtPONoStart.Name = "txtPONoStart";
             this.txtPONoStart.Size = new System.Drawing.Size(130, 23);
             this.txtPONoStart.TabIndex = 122;
@@ -162,7 +172,7 @@
             // 
             this.labelPONo.Location = new System.Drawing.Point(9, 38);
             this.labelPONo.Name = "labelPONo";
-            this.labelPONo.Size = new System.Drawing.Size(97, 23);
+            this.labelPONo.Size = new System.Drawing.Size(107, 23);
             this.labelPONo.TabIndex = 121;
             this.labelPONo.Text = "PO#";
             // 
@@ -170,16 +180,16 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(109, 183);
+            this.txtbrand.Location = new System.Drawing.Point(119, 154);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(100, 23);
             this.txtbrand.TabIndex = 126;
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(9, 183);
+            this.labelBrand.Location = new System.Drawing.Point(9, 154);
             this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(97, 23);
+            this.labelBrand.Size = new System.Drawing.Size(107, 23);
             this.labelBrand.TabIndex = 125;
             this.labelBrand.Text = "Brand";
             // 
@@ -187,7 +197,7 @@
             // 
             this.txtMdivision1.BackColor = System.Drawing.Color.White;
             this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(109, 212);
+            this.txtMdivision1.Location = new System.Drawing.Point(119, 183);
             this.txtMdivision1.MaxLength = 8;
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(67, 23);
@@ -195,9 +205,9 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(9, 212);
+            this.labelM.Location = new System.Drawing.Point(9, 183);
             this.labelM.Name = "labelM";
-            this.labelM.Size = new System.Drawing.Size(97, 23);
+            this.labelM.Size = new System.Drawing.Size(107, 23);
             this.labelM.TabIndex = 128;
             this.labelM.Text = "M";
             // 
@@ -207,7 +217,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(109, 241);
+            this.comboFactory.Location = new System.Drawing.Point(119, 212);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
@@ -215,15 +225,144 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 241);
+            this.label2.Location = new System.Drawing.Point(9, 213);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(97, 23);
+            this.label2.Size = new System.Drawing.Size(107, 23);
             this.label2.TabIndex = 129;
             this.label2.Text = "Factory";
+            // 
+            // dateSCIDelivery
+            // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
+            this.dateSCIDelivery.Location = new System.Drawing.Point(119, 96);
+            this.dateSCIDelivery.Name = "dateSCIDelivery";
+            this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
+            this.dateSCIDelivery.TabIndex = 131;
+            // 
+            // dateOffline
+            // 
+            // 
+            // 
+            // 
+            this.dateOffline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateOffline.DateBox1.Name = "";
+            this.dateOffline.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateOffline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateOffline.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateOffline.DateBox2.Name = "";
+            this.dateOffline.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateOffline.DateBox2.TabIndex = 1;
+            this.dateOffline.Location = new System.Drawing.Point(119, 125);
+            this.dateOffline.Name = "dateOffline";
+            this.dateOffline.Size = new System.Drawing.Size(280, 23);
+            this.dateOffline.TabIndex = 132;
+            // 
+            // cmbPOcompletion
+            // 
+            this.cmbPOcompletion.BackColor = System.Drawing.Color.White;
+            this.cmbPOcompletion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbPOcompletion.FormattingEnabled = true;
+            this.cmbPOcompletion.IsSupportUnselect = true;
+            this.cmbPOcompletion.Location = new System.Drawing.Point(119, 242);
+            this.cmbPOcompletion.Name = "cmbPOcompletion";
+            this.cmbPOcompletion.OldText = "";
+            this.cmbPOcompletion.Size = new System.Drawing.Size(80, 24);
+            this.cmbPOcompletion.TabIndex = 133;
+            // 
+            // chkBulk
+            // 
+            this.chkBulk.AutoSize = true;
+            this.chkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkBulk.Location = new System.Drawing.Point(119, 272);
+            this.chkBulk.Name = "chkBulk";
+            this.chkBulk.Size = new System.Drawing.Size(54, 21);
+            this.chkBulk.TabIndex = 134;
+            this.chkBulk.Text = "Bulk";
+            this.chkBulk.UseVisualStyleBackColor = true;
+            // 
+            // chkSample
+            // 
+            this.chkSample.AutoSize = true;
+            this.chkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSample.Location = new System.Drawing.Point(179, 272);
+            this.chkSample.Name = "chkSample";
+            this.chkSample.Size = new System.Drawing.Size(74, 21);
+            this.chkSample.TabIndex = 135;
+            this.chkSample.Text = "Sample";
+            this.chkSample.UseVisualStyleBackColor = true;
+            // 
+            // chkGarment
+            // 
+            this.chkGarment.AutoSize = true;
+            this.chkGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkGarment.Location = new System.Drawing.Point(259, 272);
+            this.chkGarment.Name = "chkGarment";
+            this.chkGarment.Size = new System.Drawing.Size(82, 21);
+            this.chkGarment.TabIndex = 136;
+            this.chkGarment.Text = "Garment";
+            this.chkGarment.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 243);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(107, 23);
+            this.label1.TabIndex = 137;
+            this.label1.Text = "P.O. Completion";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(9, 272);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(107, 23);
+            this.label3.TabIndex = 138;
+            this.label3.Text = "Category";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(9, 96);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(107, 23);
+            this.label4.TabIndex = 139;
+            this.label4.Text = "SCI Delivery";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(9, 125);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(107, 23);
+            this.label5.TabIndex = 140;
+            this.label5.Text = "Offline Date";
             // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(506, 345);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.chkGarment);
+            this.Controls.Add(this.chkSample);
+            this.Controls.Add(this.chkBulk);
+            this.Controls.Add(this.cmbPOcompletion);
+            this.Controls.Add(this.dateOffline);
+            this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtMdivision1);
@@ -261,6 +400,16 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
+            this.Controls.SetChildIndex(this.dateOffline, 0);
+            this.Controls.SetChildIndex(this.cmbPOcompletion, 0);
+            this.Controls.SetChildIndex(this.chkBulk, 0);
+            this.Controls.SetChildIndex(this.chkSample, 0);
+            this.Controls.SetChildIndex(this.chkGarment, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label3, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -284,5 +433,15 @@
         private Win.UI.Label labelM;
         private Win.UI.ComboBox comboFactory;
         private Win.UI.Label label2;
+        private Win.UI.DateRange dateSCIDelivery;
+        private Win.UI.DateRange dateOffline;
+        private Win.UI.ComboBox cmbPOcompletion;
+        private Win.UI.CheckBox chkBulk;
+        private Win.UI.CheckBox chkSample;
+        private Win.UI.CheckBox chkGarment;
+        private Win.UI.Label label1;
+        private Win.UI.Label label3;
+        private Win.UI.Label label4;
+        private Win.UI.Label label5;
     }
 }

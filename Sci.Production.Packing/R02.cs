@@ -36,13 +36,20 @@ namespace Sci.Production.Packing
         private string _sp2;
         private string _po1;
         private string _po2;
-
+        private string _bdate1;
+        private string _bdate2;
+        private string _scidate1;
+        private string _scidate2;
+        private string _offdate1;
+        private string _offdate2;
         private string _brand;
         private string _mDivision;
         private string _factory;
-        private string _bdate1;
-        private string _bdate2;
-        private DataTable _printData;
+        private string _POCompletion;
+        private bool _bulk;
+        private bool _sample;
+        private bool _garment;
+        private DataTable[] _printData;
 
         /// <summary>
         /// ValidateInput
@@ -52,6 +59,8 @@ namespace Sci.Production.Packing
         {
             this._sp1 = this.txtSPNoStart.Text;
             this._sp2 = this.txtSPNoEnd.Text;
+            this._po1 = this.txtPONoStart.Text;
+            this._po2 = this.txtPONoEnd.Text;
 
             if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
             {
@@ -71,11 +80,49 @@ namespace Sci.Production.Packing
                 this._bdate2 = null;
             }
 
-            this._po1 = this.txtPONoStart.Text;
-            this._po2 = this.txtPONoEnd.Text;
+            if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value1))
+            {
+                this._scidate1 = Convert.ToDateTime(this.dateSCIDelivery.Value1).ToString("d");
+            }
+            else
+            {
+                this._scidate1 = null;
+            }
+
+            if (!MyUtility.Check.Empty(this.dateSCIDelivery.Value2))
+            {
+                this._scidate2 = Convert.ToDateTime(this.dateSCIDelivery.Value2).ToString("d");
+            }
+            else
+            {
+                this._scidate2 = null;
+            }
+
+            if (!MyUtility.Check.Empty(this.dateOffline.Value1))
+            {
+                this._offdate1 = Convert.ToDateTime(this.dateOffline.Value1).ToString("d");
+            }
+            else
+            {
+                this._offdate1 = null;
+            }
+
+            if (!MyUtility.Check.Empty(this.dateOffline.Value2))
+            {
+                this._offdate2 = Convert.ToDateTime(this.dateOffline.Value2).ToString("d");
+            }
+            else
+            {
+                this._offdate2 = null;
+            }
+
             this._brand = this.txtbrand.Text;
             this._mDivision = this.txtMdivision1.Text;
             this._factory = this.comboFactory.Text;
+            this._POCompletion = this.cmbPOcompletion.Text;
+            this._bulk = this.chkBulk.Checked;
+            this._sample = this.chkSample.Checked;
+            this._garment = this.chkGarment.Checked;
 
             return base.ValidateInput();
         }
@@ -87,7 +134,10 @@ namespace Sci.Production.Packing
         /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            string sqlcmd = $@"";
+            string sqlcmd = $@"
+
+
+";
 
             #region Get Data
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this._printData);
