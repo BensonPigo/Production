@@ -279,15 +279,21 @@
             this.cmbPOcompletion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbPOcompletion.FormattingEnabled = true;
             this.cmbPOcompletion.IsSupportUnselect = true;
+            this.cmbPOcompletion.Items.AddRange(new object[] {
+            "",
+            "Complete",
+            "InComplete"});
             this.cmbPOcompletion.Location = new System.Drawing.Point(119, 242);
             this.cmbPOcompletion.Name = "cmbPOcompletion";
             this.cmbPOcompletion.OldText = "";
-            this.cmbPOcompletion.Size = new System.Drawing.Size(80, 24);
+            this.cmbPOcompletion.Size = new System.Drawing.Size(130, 24);
             this.cmbPOcompletion.TabIndex = 133;
             // 
             // chkBulk
             // 
             this.chkBulk.AutoSize = true;
+            this.chkBulk.Checked = true;
+            this.chkBulk.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkBulk.Location = new System.Drawing.Point(119, 272);
             this.chkBulk.Name = "chkBulk";
@@ -299,6 +305,8 @@
             // chkSample
             // 
             this.chkSample.AutoSize = true;
+            this.chkSample.Checked = true;
+            this.chkSample.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkSample.Location = new System.Drawing.Point(179, 272);
             this.chkSample.Name = "chkSample";
@@ -310,6 +318,8 @@
             // chkGarment
             // 
             this.chkGarment.AutoSize = true;
+            this.chkGarment.Checked = true;
+            this.chkGarment.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkGarment.Location = new System.Drawing.Point(259, 272);
             this.chkGarment.Name = "chkGarment";

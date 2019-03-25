@@ -134,9 +134,141 @@ namespace Sci.Production.Packing
         /// <returns>DualResult</returns>
         protected override Ict.DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            #region where
+            string where = string.Empty;
+            if (!MyUtility.Check.Empty(this._sp1))
+            {
+                where += $" and  o.id>= '{this._sp1}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._sp2))
+            {
+                where += $" and  o.id <= '{this._sp2}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._po1))
+            {
+                where += $" and o.CustPONo >= '{this._po1}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._po2))
+            {
+                where += $" and  o.CustPONo <= '{this._po2}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._bdate1))
+            {
+                where += $" and  o.BuyerDelivery >= '{this._bdate1}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._bdate2))
+            {
+                where += $" and  o.BuyerDelivery <= '{this._bdate2}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._scidate1))
+            {
+                where += $" and  o.SciDelivery >= '{this._scidate1}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._scidate2))
+            {
+                where += $" and  o.SciDelivery <= '{this._scidate2}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._offdate1))
+            {
+                where += $" and  o.SewOffLine >= '{this._offdate1}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._offdate2))
+            {
+                where += $" and  o.SewOffLine <= '{this._offdate2}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._brand))
+            {
+                where += $" and  o.BrandID= '{this._brand}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._mDivision))
+            {
+                where += $" and o.MDivisionID = '{this._mDivision}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._factory))
+            {
+                where += $" and o.FactoryID = '{this._factory}' ";
+            }
+
+            string having = string.Empty;
+            if (this._POCompletion.EqualString("Complete"))
+            {
+                having += $"having iif(isnull(o.Qty,0)=0,0,sum(pld.ScanQty)/o.Qty) = 1 ";
+            }
+            else if (this._POCompletion.EqualString("InComplete"))
+            {
+                having += $"having iif(isnull(o.Qty,0)=0,0,sum(pld.ScanQty)/o.Qty) < 1 ";
+            }
+
+            List<string> category = new List<string>();
+            if (this._bulk)
+            {
+                category.Add("'B'");
+            }
+
+            if (this._sample)
+            {
+                category.Add("'S'");
+            }
+
+            if (this._garment)
+            {
+                category.Add("'G'");
+            }
+
+            if (category.Count > 0)
+            {
+                where += $" and o.Category in ({string.Join(",", category)})";
+            }
+            else
+            {
+                where += $" and o.Category not in  ('B','S','G')";
+            }
+            #endregion
+
             string sqlcmd = $@"
+select
+	o.MDivisionID,o.FactoryID,o.SewLine,o.CustPONo,o.ID,
+	Junk=iif(o.Junk = 0,'N','Y'),
+	o.StyleID,
+	o.Category,
+	VasShas=iif(o.VasShas = 0,'N','Y'),
+	o.SeasonID,o.ProgramID,o.CdCodeID,o.Qty,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
+	o.BuyerDelivery,
+	ScanQty=sum(pld.ScanQty),
+	BalanceQty=o.Qty-sum(pld.ScanQty),
+	POCompletion=iif(isnull(o.Qty,0)=0,0,sum(pld.ScanQty)/o.Qty)
+into #tmp
+from Orders o
+inner join PackingList_Detail pld on o.id = pld.OrderID
+where 1=1
+{where}
+group by o.MDivisionID,o.FactoryID,o.SewLine,o.CustPONo,o.ID,o.Junk,o.StyleID,o.Category,o.VasShas,
+o.SeasonID,o.ProgramID,o.CdCodeID,o.Qty,o.Dest,o.SewInLine,o.SewOffLine,o.ShipModeList,o.SciDelivery,
+o.BuyerDelivery
+{having}
+order by o.CustPONo
 
+select * from #tmp
 
+select 
+	o.CustPONo,o.id,pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,pld.Barcode,LackingQty=pld.ShipQty -pld.ScanQty
+from #tmp o
+inner join PackingList_Detail pld on o.id = pld.OrderID
+order by o.CustPONo
+
+drop table #tmp
 ";
 
             #region Get Data
@@ -158,37 +290,33 @@ namespace Sci.Production.Packing
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             #region check printData
-            if (this._printData.Rows.Count == 0)
+            if (this._printData[0].Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found.");
                 return false;
             }
             #endregion
 
-            this.SetCount(this._printData.Rows.Count);
+            this.SetCount(this._printData[1].Rows.Count);
             this.ShowWaitMessage("Excel Processing");
 
-            #region To Excel
-            string reportname = "Packing_R02.xltx";
-            Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\" + reportname);
-            Excel.Worksheet worksheet = objApp.Sheets[1];
-            MyUtility.Excel.CopyToXls(this._printData, string.Empty, reportname, 3, showExcel: false, excelApp: objApp);
+            string excelName = "Packing_R02";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
+            MyUtility.Excel.CopyToXls(this._printData[0], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
+            excelApp.DisplayAlerts = false;
+            MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]); // 將datatable copy to excel
+            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
             worksheet.Columns.AutoFit();
-
-            #region Save & Show Excel
-            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_R02");
-            Excel.Workbook workbook = objApp.ActiveWorkbook;
+            #region 釋放上面開啟過excel物件
+            string strExcelName = Class.MicrosoftFile.GetName(excelName);
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
-            objApp.Quit();
-            Marshal.ReleaseComObject(objApp);
-            Marshal.ReleaseComObject(worksheet);
-            Marshal.ReleaseComObject(workbook);
-
-            strExcelName.OpenFile();
-            #endregion
+            excelApp.Quit();
+            if (excelApp != null) Marshal.FinalReleaseComObject(excelApp);
             #endregion
             this.HideWaitMessage();
+            strExcelName.OpenFile();
             return true;
         }
     }
