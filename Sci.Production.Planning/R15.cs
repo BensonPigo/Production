@@ -33,6 +33,8 @@ namespace Sci.Production.Planning
         private DateTime? CutOffDate2;
         private DateTime? planDate1;
         private DateTime? planDate2;
+        private DateTime? sewingInline1;
+        private DateTime? sewingInline2;
         private DataTable printData;
         private DataTable dtArtworkType;
         private StringBuilder artworktypes = new StringBuilder();
@@ -67,12 +69,13 @@ namespace Sci.Production.Planning
         {
             if (MyUtility.Check.Empty(this.dateSCIDelivery.Value1) &&
                 MyUtility.Check.Empty(this.dateCustRQSDate.Value1) &&
+                MyUtility.Check.Empty(this.dateSewingInline.Value1) &&
                 MyUtility.Check.Empty(this.dateBuyerDelivery.Value1) &&
                 MyUtility.Check.Empty(this.dateCutOffDate.Value1) &&
                 MyUtility.Check.Empty(this.datePlanDate.Value1) &&
                 (MyUtility.Check.Empty(this.txtSPNoStart.Text) || MyUtility.Check.Empty(this.txtSPNoEnd.Text)))
             {
-                MyUtility.Msg.WarningBox("< Buyer Delivery > & < SCI Delivery > & < Cust RQS Date > & < Cut Off Date > & < Plan Date > & < SP# > can't be empty!!");
+                MyUtility.Msg.WarningBox("< SCI Delivery > \r\n< Buyer Delivery > \r\n< Sewing Inline > \r\n< Cut Off Date > \r\n< Cust RQS Date > \r\n< Plan Date > \r\n< SP# > \r\ncan't be empty!!");
                 return false;
             }
 
@@ -81,6 +84,8 @@ namespace Sci.Production.Planning
             this.sciDelivery2 = this.dateSCIDelivery.Value2;
             this.CustRqsDate1 = this.dateCustRQSDate.Value1;
             this.CustRqsDate2 = this.dateCustRQSDate.Value2;
+            this.sewingInline1 = this.dateSewingInline.Value1;
+            this.sewingInline2 = this.dateSewingInline.Value2;
             this.BuyerDelivery1 = this.dateBuyerDelivery.Value1;
             this.BuyerDelivery2 = this.dateBuyerDelivery.Value2;
             this.CutOffDate1 = this.dateCutOffDate.Value1;
@@ -339,6 +344,16 @@ namespace Sci.Production.Planning
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
                 sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sewingInline1))
+            {
+                sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sewingInline2))
+            {
+                sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))
@@ -989,6 +1004,16 @@ WHERE 1=1 "));
             if (!MyUtility.Check.Empty(this.sciDelivery2))
             {
                 sqlCmd.Append(string.Format(@" and o.SciDelivery <= '{0}'", Convert.ToDateTime(this.sciDelivery2).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sewingInline1))
+            {
+                sqlCmd.Append(string.Format(@" and o.SewInLine >= '{0}'", Convert.ToDateTime(this.sewingInline1).ToString("d")));
+            }
+
+            if (!MyUtility.Check.Empty(this.sewingInline2))
+            {
+                sqlCmd.Append(string.Format(@" and o.SewInLine <= '{0}'", Convert.ToDateTime(this.sewingInline2).ToString("d")));
             }
 
             if (!MyUtility.Check.Empty(this.BuyerDelivery1) && !MyUtility.Check.Empty(this.BuyerDelivery2))

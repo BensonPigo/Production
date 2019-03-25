@@ -272,7 +272,17 @@ select DISTINCT c.FactoryID
 	        ,[Supp] = a.LocalSuppID+'-'+d.Abb 
 	        ,b.Delivery
 	        ,b.Refno
-	        ,b.ThreadColorID + ' - ' + ThreadColor.Description
+	        ,b.ThreadColorID + ' - ' + ThreadColor.Description		
+			,[PRConfirmedDate]=CASE WHEN a.Category = 'CARTON' 
+									THEN (SELECT TOP 1 p.ApvToPurchaseDate 
+											FROM PackingList p
+											WHERE p.ID=b.RequestID)
+									WHEN a.Category = 'SP_THREAD' 
+									THEN (SELECT TOP 1 t.EditDate
+											FROM ThreadRequisition t
+											WHERE t.OrderID=b.RequestID )
+									ELSE NULL
+								END
 	        ,a.IssueDate
 	        ,[Description] = dbo.getItemDesc(a.Category,b.Refno) 
 	        ,b.qty

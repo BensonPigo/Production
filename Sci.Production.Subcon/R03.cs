@@ -61,6 +61,7 @@ namespace Sci.Production.Subcon
 a.mdivisionid
 ,a.FactoryId
 ,a.id
+,d.delivery
 ,a.IssueDate
 ,a.ArtworkTypeId
 ,b.ArtworkPoid
@@ -71,7 +72,6 @@ a.mdivisionid
 ,b.ArtworkID
 ,RTrim(b.PatternCode)+'-'+b.PatternDesc pattern
 ,b.Qty
-,d.delivery
 from farmin a WITH (NOLOCK) 
 inner join farmin_detail b WITH (NOLOCK) on b.ID = a.Id
 inner join Orders c WITH (NOLOCK) on c.ID = b.Orderid
