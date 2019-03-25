@@ -24,6 +24,7 @@
     [AddDate]      DATETIME       NULL,
     [EditName]     VARCHAR (10)   CONSTRAINT [DF_SewingOutput_EditName] DEFAULT ('') NULL,
     [EditDate]     DATETIME       NULL,
+    [ReDailyTransferDate] DATE NULL, 
     CONSTRAINT [PK_SewingOutput] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -150,3 +151,12 @@ GO
 CREATE NONCLUSTERED INDEX [IX_SewingOutput_OutputDate]
 	ON [dbo].[SewingOutput] ([OutputDate])
 	INCLUDE ([ID],[Shift],[FactoryID],[MDivisionID],[Category],[SubconOutFty],[SubConOutContractNumber])
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'需重新資料交換',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SewingOutput',
+    @level2type = N'COLUMN',
+    @level2name = N'ReDailyTransferDate'

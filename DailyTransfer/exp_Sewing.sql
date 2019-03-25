@@ -49,6 +49,7 @@ INTO SewingOutput
 FROM Production.dbo.SewingOutput a
 WHERE a.LockDate  BETWEEN (select DATEADD(DAY,1,SewLock) from Production.dbo.System)  AND CONVERT(date, GETDATE())
 OR a.LockDate is null
+or a.ReDailyTransferDate between cast(DATEADD(DAY,-7,GETDATE()) as date) and cast(GETDATE() as date)
 
 --SewingOutput_detail
 SELECT b.*
