@@ -293,7 +293,12 @@ order by v.CDate", sqlCondition);
         {
             string sqlCmd = string.Format(
                 @"
-select v.ID,v.CDate,vdd.BrandID,vdd.Refno,vdd.FabricType,v.VNContractID,v.DeclareNo,
+select v.ID,v.CDate,vdd.BrandID,vdd.Refno,
+	FabricType= case when vdd.FabricType = 'F' then 'Fabric'
+					 when vdd.FabricType = 'A' then 'Accessory' 
+					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where l.RefNo = vdd.Refno)
+					 end ,
+	v.VNContractID,v.DeclareNo,
 	BLWK=IIF(v.BLNo='',v.WKNo,v.BLNo),vdd.NLCode,vd.HSCode,vdd.Qty,vd.UnitID,vd.Remark
 from VNImportDeclaration v WITH (NOLOCK) 
 inner join VNImportDeclaration_Detail vd WITH (NOLOCK) on v.ID = vd.ID
@@ -309,7 +314,12 @@ order by v.ID", sqlCondition);
         {
             string sqlCmd = string.Format(
                 @"
-select v.ID,v.CDate,vdd.RefNo,vdd.FabricType,v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
+select v.ID,v.CDate,vdd.RefNo,
+	FabricType= case when vdd.FabricType = 'F' then 'Fabric'
+					 when vdd.FabricType = 'A' then 'Accessory' 
+					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where l.RefNo = vdd.Refno)
+					 end ,
+	v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
 	isnull(vd.NLCode,'') as NLCode,isnull(vd.HSCode,'') as HSCode,isnull(vdd.Qty,0) as Usage,
 	isnull(vd.UnitID,'') as UnitID,isnull(vd.Waste,0) as Waste,
 	Round(ed.ExportQty*isnull(vdd.Qty,0)*(1+isnull(vd.Waste,0)),3) as Total,
@@ -331,7 +341,11 @@ order by v.ID", sqlCondition);
         {
             string sqlCmd = string.Format(
                 @"
-select v.CDate,v.VNContractID,vdd.BrandID,Reason =concat(v.ReasonID,'-',sr.Description),vdd.Refno,vdd.FabricType,
+select v.CDate,v.VNContractID,vdd.BrandID,Reason =concat(v.ReasonID,'-',sr.Description),vdd.Refno,
+	FabricType= case when vdd.FabricType = 'F' then 'Fabric'
+					 when vdd.FabricType = 'A' then 'Accessory' 
+					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where l.RefNo = vdd.Refno)
+					 end ,
 	v.DeclareNo,vdd.NLCode,isnull(cd.HSCode,'') as HSCode,vdd.Qty,isnull(cd.UnitID,'') as UnitID,v.Remark
 from VNContractQtyAdjust v WITH (NOLOCK) 
 inner join VNContractQtyAdjust_Detail vd WITH (NOLOCK) on v.ID =vd.ID
