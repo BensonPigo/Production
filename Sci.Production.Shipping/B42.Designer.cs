@@ -104,7 +104,7 @@
             this.masterpanel.Controls.Add(this.labelPulloutQty);
             this.masterpanel.Controls.Add(this.txtCustomSPNo);
             this.masterpanel.Controls.Add(this.labelBalanceQty);
-            this.masterpanel.Size = new System.Drawing.Size(927, 212);
+            this.masterpanel.Size = new System.Drawing.Size(892, 212);
             this.masterpanel.Controls.SetChildIndex(this.labelBalanceQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPulloutQty, 0);
@@ -140,7 +140,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 212);
-            this.detailpanel.Size = new System.Drawing.Size(927, 218);
+            this.detailpanel.Size = new System.Drawing.Size(892, 137);
             // 
             // gridicon
             // 
@@ -153,7 +153,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(927, 218);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 137);
             // 
             // detail2
             // 
@@ -169,16 +169,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(927, 468);
+            this.detail.Size = new System.Drawing.Size(892, 387);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(927, 430);
+            this.detailcont.Size = new System.Drawing.Size(892, 349);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 430);
-            this.detailbtm.Size = new System.Drawing.Size(927, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 349);
+            this.detailbtm.Size = new System.Drawing.Size(892, 38);
             // 
             // browse
             // 
@@ -354,6 +354,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(92, 86);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(80, 24);
             this.comboCategory.TabIndex = 3;
             // 
@@ -538,9 +539,9 @@
             this.DefaultControl = "txtCustomSPNo";
             this.DefaultControlForEdit = "txtCustomSPNo";
             this.DefaultOrder = "VNContractID,CustomSP";
-            this.GridAlias = "VNConsumption_Detail";
+            this.GridAlias = "VNConsumption_Detail_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "NLCode";
+            this.GridUniqueKey = "Refno";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportUnconfirm = true;
