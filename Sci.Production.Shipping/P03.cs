@@ -260,5 +260,18 @@ where ed.ID = '{0}'", masterID);
 
             return rtnBol;
         }
+
+        private void btnBatchUpload_Click(object sender, EventArgs e)
+        {
+            if (!this.Perm.Edit)
+            {
+                MyUtility.Msg.WarningBox("You have no permission.");
+                return;
+            }
+
+            P03_BatchUpload callNextForm = new P03_BatchUpload();
+            callNextForm.ShowDialog(this);
+            this.ReloadDatas();
+        }
     }
 }
