@@ -1095,6 +1095,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                                 DataRow allpart_ndr = alltmpTb.NewRow();
                                 allpart_ndr["PatternCode"] = aldr["PatternCode"];
                                 allpart_ndr["PatternDesc"] = aldr["PatternDesc"];
+                                allpart_ndr["Location"] = aldr["Location"];
                                 allpart_ndr["Parts"] = aldr["Parts"];
                                 allpart_ndr["ukey1"] = dr["ukey1"];
                                 allpart_ndr["ispair"] = aldr["ispair"];
