@@ -922,6 +922,7 @@ from #tmp where BundleGroup='{0}'", BundleGroup), out tmp);
                 DataRow drAll = patternTb.NewRow();
                 drAll["PatternCode"] = "ALLPARTS";
                 drAll["PatternDesc"] = "All Parts";
+                drAll["Location"] = string.Empty;
                 drAll["parts"] = allpart;
                 patternTb.Rows.Add(drAll);
 
