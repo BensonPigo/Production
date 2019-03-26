@@ -1,12 +1,13 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/18/2019 4:02:38 PM ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/26/2019 8:49:54 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -25,7 +26,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	
-	BEGIN TRANSACTION [TRANSACTION]
+	BEGIN TRANSACTION 
 	BEGIN TRY
 
 			--Declare
@@ -230,7 +231,10 @@ BEGIN
 
 			--Begin Insert
 
-			INSERT INTO SewingOutput
+			INSERT INTO SewingOutput 
+			(ID ,OutputDate ,SewingLineID ,QAQty ,DefectQty ,InlineQty ,TMS ,Manpower ,ManHour ,Efficiency 
+			,Shift ,Team ,Status ,LockDate ,WorkHour ,FactoryID ,MDivisionID , [Category], [SFCData], [AddName] , [AddDate] , [EditName]
+			, [EditDate], [SubconOutFty], [SubConOutContractNumber])
 			select 	
 			  [ID]
 			, [OutputDate]=CAST([OutputDate] AS DATE)
@@ -261,6 +265,9 @@ BEGIN
 		
 			--insert SewingOutput_Detail
 			INSERT INTO SewingOutput_Detail
+				([ID],[OrderId],[ComboType],[Article],[Color],[TMS]
+				,[HourlyStandardOutput],[WorkHour],[QAQty],[DefectQty]
+				,[InlineQty],[OldDetailKey],[AutoCreate],[SewingReasonID],[Remark])
 			SELECT 
 			[ID]= b.ID
 			,[OrderId]
@@ -303,6 +310,7 @@ BEGIN
 		
 			--insert SewingOutput_Detail_Detail
 			INSERT INTO SewingOutput_Detail_Detail
+				([ID], [SewingOutput_DetailUKey],[OrderId],[ComboType],[Article],[SizeCode],[QAQty],[OldDetailKey])
 			SELECT 
 			[ID]= b.ID
 			, [SewingOutput_DetailUKey]=Now_SewingOutput_Detail.ukey
@@ -386,6 +394,8 @@ BEGIN
 			FROM #tmp_Into_RFT
 
 			INSERT INTO RFT
+				([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
+				,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[EditName],[EditDate],[MDivisionid])
 			SELECT 
 			[OrderID]
 			,[CDate]
@@ -432,6 +442,7 @@ BEGIN
 
 			--INSERT  RFT_Detail
 			INSERT INTO RFT_Detail
+				([ID], [GarmentDefectCodeID] , [GarmentDefectTypeid], [Qty])
 			SELECT 
 					  [ID]
 					, [GarmentDefectCodeID] 
@@ -439,8 +450,6 @@ BEGIN
 					, [Qty] = Sum(Qty)
 			FROm #tmp_4
 			GROUP BY ID,[GarmentDefectCodeID],[GarmentDefectTypeid]
-		
-		COMMIT TRANSACTION [TRANSACTION];
 		
 		----------------------------Masil send----------------------------
 			SET @mailBody   =   'Transfer Date¡G'+ Cast(@DateStart as varchar)
@@ -473,8 +482,8 @@ BEGIN
 							+CHAR(10) 
 							+CHAR(10) + 'This email is SUNRISEEXCH DB Transfer data to Production DB.'
 							+CHAR(10) + 'Please do not reply this mail.';
-
-		ROLLBACK TRANSACTION [TRANSACTION];
+		 IF @@TRANCOUNT > 0  
+        ROLLBACK TRANSACTION;
 				
 		----------------------------Masil send----------------------------
 		EXEC msdb.dbo.sp_send_dbmail  
@@ -487,7 +496,12 @@ BEGIN
 
 	END CATCH
 
+
+	IF @@TRANCOUNT > 0  
+		COMMIT TRANSACTION;  
+	
 END
+
 
 
 
