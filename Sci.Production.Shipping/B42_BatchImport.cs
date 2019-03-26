@@ -78,7 +78,7 @@ from VNConsumption where 1=0";
 
         private void Btnselectfile_Click(object sender, EventArgs e)
         {
-            string excelFile = MyUtility.File.GetFile("Excel files (*.xls)|*.xls");
+            string excelFile = MyUtility.File.GetFile("Excel files (*.xls,*.xlsx)|*.xls;*.xlsx");
             if (MyUtility.Check.Empty(excelFile))
             {
                 return;
