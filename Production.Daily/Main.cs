@@ -29,6 +29,7 @@ namespace Production.Daily
         public int groupID_BeforeTransfer = -99999999;
         public int groupID_AfterTransfer = 99999999;
         string region = string.Empty;
+        string tpeMisMail = string.Empty;
         bool isTestJobLog = false;
 
         public Main()
@@ -78,6 +79,8 @@ namespace Production.Daily
             if (!result) { ShowErr(result); return; }
 
             mailTo = _mailTo.Rows[0];
+
+            this.tpeMisMail = MyUtility.GetValue.Lookup("Select ToAddress From dbo.MailTo Where ID = '100'");
 
             editToAddress.Text = mailTo["ToAddress"].ToString();
             editCcAddress.Text = mailTo["CcAddress"].ToString();
@@ -184,7 +187,7 @@ namespace Production.Daily
         }
 
         #region Send Mail
-        private void SendMail(String subject = "", String desc = "")
+        private void SendMail(String subject = "", String desc = "", bool isFail = true)
         {
             String mailServer = this.CurrentData["MailServer"].ToString();
             String eMailID = this.CurrentData["EMailID"].ToString();
@@ -194,8 +197,18 @@ namespace Production.Daily
             String sendFrom = this.CurrentData["SendFrom"].ToString();
             String toAddress = mailTo["ToAddress"].ToString();
             String ccAddress = mailTo["CcAddress"].ToString();
+
+            if (isFail)
+            {
+                toAddress += MyUtility.Check.Empty(toAddress) ? this.tpeMisMail : ";" + this.tpeMisMail;
+            }
             //String toAddress = "willy.wei@sportscity.com.tw";
             //String ccAddress = "";
+            if (MyUtility.Check.Empty(toAddress))
+            {
+                return;
+            }
+
             if (String.IsNullOrEmpty(subject))
             {
                 subject = mailTo["Subject"].ToString();
@@ -327,7 +340,7 @@ namespace Production.Daily
             #region 執行前發送通知mail
             subject = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
             desc = "Logon to  Mail Server from " + this.CurrentData["RgCode"].ToString();
-            SendMail(subject, desc);
+            SendMail(subject, desc, false);
             this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
             #endregion
             #region CHECK THE FIRST NEED MAPPING A DISK,CAN'T USING \\ UNC
@@ -475,7 +488,7 @@ namespace Production.Daily
             subject = mailTo["Subject"].ToString().TrimEnd() +" "+ this.CurrentData["RgCode"].ToString();
 
             // 改call system job log api 將資料回傳至台北紀錄
-            SendMail(subject, desc);
+            SendMail(subject, desc, false);
             this.CallJobLogApi(subject, desc, startDate.ToString("yyyyMMdd HH:mm"), endDate.ToString("yyyyMMdd HH:mm"), isTestJobLog, true);
             #endregion
 
@@ -1093,7 +1106,7 @@ where p.PulloutDate <= @PullOutLock
                 }
 
                 #endregion
-                string subject = this.CurrentData["RgCode"].ToString().Trim() + " - Pullout should be lock data.";
+                string subject = "Pullout Report is pending Lock. - " + this.CurrentData["RgCode"].ToString().Trim();
                 string desc = "Attached is the data should be Lock but Pullout Report not yet encode.";
                 Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(this.CurrentData["SendFrom"].ToString(), "Pullout_Lock_Notice@sportscity.com.tw", "", subject, path + "\\" + fileName, desc, true, true);
                 mail.ShowDialog();

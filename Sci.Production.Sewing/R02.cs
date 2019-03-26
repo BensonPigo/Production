@@ -60,7 +60,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
 
             DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
             MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "By Date,By Sewing Line");
+            MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "By Date,By Sewing Line,By Sewing Line By Team");
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
             this.comboReportType.SelectedIndex = 0;
@@ -85,15 +85,15 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
         // Report Type
         private void ComboReportType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.comboReportType.SelectedIndex == 0)
+            this.labelOrderBy.Visible = true;
+            this.comboOrderBy.Visible = true;
+            switch (this.comboReportType.SelectedIndex)
             {
-                this.labelOrderBy.Visible = false;
-                this.comboOrderBy.Visible = false;
-            }
-            else
-            {
-                this.labelOrderBy.Visible = true;
-                this.comboOrderBy.Visible = true;
+                case 0:
+                case 2:
+                    this.labelOrderBy.Visible = false;
+                    this.comboOrderBy.Visible = false;
+                    break;
             }
         }
 
@@ -157,6 +157,15 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 if (this.comboOrderBy.SelectedIndex == -1)
                 {
                     MyUtility.Msg.WarningBox("Order by can't empty!!");
+                    return false;
+                }
+            }
+
+            if (this.comboReportType.SelectedIndex == 2)
+            {
+                if (this.comboFactory.SelectedIndex == -1 || this.comboFactory.SelectedIndex == 0)
+                {
+                    MyUtility.Msg.WarningBox("Factory can't empty!!");
                     return false;
                 }
             }
@@ -334,7 +343,7 @@ from #tmp2ndFilter");
             {
                 try
                 {
-                    #region 組SQL
+                    #region 組SQL By Date
                     failResult = MyUtility.Tool.ProcessWithDatatable(
                         this.SewOutPutData,
                         "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
@@ -404,6 +413,7 @@ tmpTtlManPower as (
 			  and m2.Team = a.Team 
 			  and m2.SewingLineID = a.SewingLineID	
 			  and a.OutputDate = m2.OutputDate
+			  and m2.FactoryID = a.FactoryID	
 	) d
 	group by OutputDate
 )
@@ -439,11 +449,11 @@ order by aDate.OutputDate"),
                     return failResult;
                 }
             }
-            else
+            else if (this.reportType == 1)
             {
                 try
                 {
-                    #region 組SQL
+                    #region 組SQL By Sewing Line
                     string sqlcommand = string.Format(
                         @"
 ;with AllSewingLine as (
@@ -532,6 +542,123 @@ left join tmpSubconOutCPU oc on aLine.SewingLineID = oc.SewingLineID
 left join tmpTtlManPower mp on aLine.SewingLineID = mp.SewingLineID
 order by {0}",
                         this.orderby == 0 ? "aLine.SewingLineID" : "CPUSewer");
+
+                    failResult = MyUtility.Tool.ProcessWithDatatable(
+                        this.SewOutPutData,
+                        "OutputDate,StdTMS,QAQty,WorkHour,ActManPower,LastShift,MockupCPU,MockupCPUFactor,OrderCPU,OrderCPUFactor,Rate,FactoryID,SewingLineID,Team,Category",
+                        sqlcommand,
+                        out this.printData);
+
+                    if (failResult == false)
+                    {
+                        return failResult;
+                    }
+                    #endregion
+                }
+                catch (Exception ex)
+                {
+                    failResult = new DualResult(false, "Query print data fail\r\n" + ex.ToString());
+                    return failResult;
+                }
+            }
+            else if (this.reportType == 2)
+            {
+                try
+                {
+                    #region 組SQL By Sewing Line By Team
+                    string sqlcommand = string.Format(
+                        @"
+;with AllSewingLine as (
+    select distinct SewingLineID ,Team
+	from #tmp
+),
+tmpQty as (
+	select SewingLineID
+		   , Team
+		   , StdTMS
+		   , QAQty = Sum(QAQty)
+		   , ManHour = ROUND(Sum(WorkHour * ActManPower), 2)
+	from #tmp
+	where LastShift <> 'O'
+	group by SewingLineID, Team, StdTMS
+),
+tmpTtlCPU as (
+	select SewingLineID
+		   , Team
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
+	from #tmp
+	where LastShift <> 'O'
+	group by SewingLineID, Team
+),
+tmpSubconInCPU as (
+	select SewingLineID
+		   , Team
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
+	from #tmp
+	where LastShift = 'I'
+	group by SewingLineID, Team
+),
+tmpSubconOutCPU as (
+	select SewingLineID
+		   , Team
+		   , TotalCPU = ROUND(Sum(QAQty * IIF(Category = 'M', MockupCPU * MockupCPUFactor, OrderCPU * OrderCPUFactor * Rate)), 3)
+	from #tmp
+	where LastShift = 'O'
+	group by SewingLineID, Team
+),
+tmpTtlManPower as (
+	select SewingLineID
+		   , Team
+		   , ManPower = Sum(a.Manpower) - sum(iif(LastShift = 'I', 0, isnull(d.ManPower, 0)))
+	from (
+		select OutputDate
+			   , FactoryID
+			   , SewingLineID
+			   , LastShift
+			   , Team
+			   , ManPower = Max(ActManPower)
+		from #tmp
+		where LastShift <> 'O'
+		group by OutputDate, FactoryID, SewingLineID, LastShift, Team
+	) a
+	outer apply(
+		select ManPower
+		from (
+			select OutputDate
+				   , FactoryID
+				   , SewingLineID
+				   , LastShift
+				   , Team
+				   , ManPower = Max(ActManPower)
+			from #tmp
+			where LastShift <> 'O'
+			group by OutputDate, FactoryID, SewingLineID, LastShift, Team
+		) m2
+		where m2.LastShift = 'I' 
+			  and m2.Team = a.Team 
+			  and m2.SewingLineID = a.SewingLineID	
+			  and a.OutputDate = m2.OutputDate
+	) d
+	group by SewingLineID, Team
+)
+select aLine.SewingLineID
+	   , aLine.Team
+	   , QAQty = isnull (q.QAQty, 0)
+ 	   , TotalCPU = isnull (tc.TotalCPU, 0)
+ 	   , SInCPU = isnull(ic.TotalCPU,0)
+ 	   , SoutCPU = isnull(oc.TotalCPU,0)
+ 	   , CPUSewer = isnull (IIF(q.ManHour = 0, 0, isnull(tc.TotalCPU,0) / q.ManHour), 0)
+ 	   , AvgWorkHour = isnull (IIF(isnull(mp.ManPower, 0) = 0, 0, Round(q.ManHour / mp.ManPower, 2)), 0)
+ 	   , ManPower = isnull (mp.ManPower, 0)
+ 	   , ManHour = isnull (q.ManHour, 0)
+ 	   , Eff = isnull (IIF(q.ManHour * q.StdTMS = 0, 0, Round(tc.TotalCPU / (q.ManHour * 3600 / q.StdTMS) * 100, 2)), 0)	   
+from AllSewingLine aLine
+left join tmpQty q on aLine.SewingLineID = q.SewingLineID and aLine.Team = q.Team
+left join tmpTtlCPU tc on aLine.SewingLineID = tc.SewingLineID and aLine.Team = tc.Team
+left join tmpSubconInCPU ic on aLine.SewingLineID = ic.SewingLineID and aLine.Team = ic.Team
+left join tmpSubconOutCPU oc on aLine.SewingLineID = oc.SewingLineID and aLine.Team = oc.Team
+left join tmpTtlManPower mp on aLine.SewingLineID = mp.SewingLineID and aLine.Team = mp.Team
+order by aLine.SewingLineID, aLine.Team");
 
                     failResult = MyUtility.Tool.ProcessWithDatatable(
                         this.SewOutPutData,
@@ -1032,6 +1159,7 @@ where f.Junk = 0",
         {
             Microsoft.Office.Interop.Excel.Range rngToInsert;
             Microsoft.Office.Interop.Excel.Range rngBorders;
+
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
 
@@ -1042,7 +1170,20 @@ where f.Junk = 0",
             }
 
             this.ShowWaitMessage("Starting EXCEL...");
-            string strXltName = Sci.Env.Cfg.XltPathDir + (this.reportType == 0 ? "\\Sewing_R02_MonthlyReportByDate.xltx" : "\\Sewing_R02_MonthlyReportBySewingLine.xltx");
+            string strXltName = Sci.Env.Cfg.XltPathDir;
+            switch (this.reportType)
+            {
+                case 0:
+                    strXltName += "\\Sewing_R02_MonthlyReportByDate.xltx";
+                    break;
+                case 1:
+                    strXltName += "\\Sewing_R02_MonthlyReportBySewingLine.xltx";
+                    break;
+                case 2:
+                    strXltName += "\\Sewing_R02_MonthlyReportBySewingLineByTeam.xltx";
+                    break;
+            }
+
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
             if (excel == null)
             {
@@ -1057,8 +1198,6 @@ where f.Junk = 0",
                 "All Factory Monthly CMP Report, MTH:{1}",
                 MyUtility.Check.Empty(this.factory) ? "All Factory" : this.factory,
                 Convert.ToDateTime(this.date1).ToString("yyyy/MM"));
-
-            worksheet.Cells[4, 3] = "Total CPU Included Subcon-In";
 
             #region Direct Manpower(From PAMS)
             List<APIData> pams = new List<APIData>();
@@ -1075,92 +1214,11 @@ where f.Junk = 0",
             }
             #endregion
 
-            int insertRow = 5;
+            int insertRow;
             object[,] objArray = new object[1, 15];
-            foreach (DataRow dr in this.printData.Rows)
-            {
-                objArray[0, 0] = dr[0];
-                objArray[0, 1] = dr[1];
-                objArray[0, 2] = dr[2];
-                objArray[0, 3] = dr[3];
-                objArray[0, 4] = dr[4];
-                objArray[0, 5] = dr[5];
-                objArray[0, 6] = dr[6];
-                objArray[0, 7] = dr[7];
-                objArray[0, 8] = dr[8];
-                objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
-                if (this.reportType == 0)
-                {
-                    if (pams != null && pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).Count() > 0)
-                    {
-                        objArray[0, 11] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManpower;
-                        objArray[0, 12] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManhours;
-                    }
-                    else
-                    {
-                        objArray[0, 11] = 0;
-                        objArray[0, 12] = 0;
-                    }
 
-                    objArray[0, 10] = MyUtility.Convert.GetDouble(objArray[0, 11]) == 0 ? 0 : MyUtility.Convert.GetDouble(objArray[0, 12]) / MyUtility.Convert.GetDouble(objArray[0, 11]);
-                    objArray[0, 13] = string.Format("=IF(M{0}=0,0,ROUND((C{0}/(M{0}*3600/1400))*100,1))", insertRow);
-                    objArray[0, 14] = string.Empty;
-                }
-
-                worksheet.Range[string.Format("A{0}:O{0}", insertRow)].Value2 = objArray;
-                insertRow++;
-
-                // 插入一筆Record
-                rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
-                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                Marshal.ReleaseComObject(rngToInsert);
-            }
-
-            // 將多出來的Record刪除
-            this.DeleteExcelRow(2, insertRow, excel);
-
-            // Total
-            worksheet.Cells[insertRow, 2] = string.Format("=SUM(B5:B{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 3] = string.Format("=SUM(C5:C{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 4] = string.Format("=SUM(D5:D{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 5] = string.Format("=SUM(E5:E{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 6] = string.Format("=ROUND(C{0}/I{0},2)", MyUtility.Convert.GetString(insertRow));
-            worksheet.Cells[insertRow, 7] = string.Format("=ROUND(I{0}/H{0},2)", MyUtility.Convert.GetString(insertRow));
-            worksheet.Cells[insertRow, 8] = string.Format("=SUM(H5:H{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
-            worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)", insertRow);
-            if (this.reportType == 0)
-            {
-                worksheet.Cells[insertRow, 11] = string.Format("=ROUND(M{0}/L{0},2)", MyUtility.Convert.GetString(insertRow));
-                worksheet.Cells[insertRow, 12] = string.Format("=SUM(L5:L{0})", MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 13] = string.Format("=SUM(M5:M{0})", MyUtility.Convert.GetString(insertRow - 1));
-                worksheet.Cells[insertRow, 14] = string.Format("=ROUND(C{0}/(M{0}*60*60/1400)*100,1)", insertRow);
-            }
-            insertRow++;
-
-            // Excluded non sister Subcon In
-            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["QAQty"]);
-            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["TotalCPU"]);
-            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["CPUSewer"]);
-            worksheet.Cells[insertRow, 7] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["AvgWorkHour"]);
-            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["ManHour"]);
-            worksheet.Cells[insertRow, 10] = (this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
-            insertRow++;
-
-            // non sister Subcon In
-            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["QAQty"]);
-            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["TotalCPU"]);
-            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["CPUSewer"]);
-            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["ManHour"]);
-            worksheet.Cells[insertRow, 10] = (this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
-            insertRow++;
-
-            // sister Subcon In
-            worksheet.Cells[insertRow, 2] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["QAQty"]);
-            worksheet.Cells[insertRow, 3] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["TotalCPU"]);
-            worksheet.Cells[insertRow, 6] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["CPUSewer"]);
-            worksheet.Cells[insertRow, 9] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["ManHour"]);
-            worksheet.Cells[insertRow, 10] = (this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
+            // Top Table建立
+            this.SetExcelTopTable(out insertRow, pams, worksheet, excel);
 
             // CPU Factor
             insertRow = insertRow + 2;
@@ -1436,6 +1494,134 @@ where f.Junk = 0",
                 // rng.Select();
                 rng.Delete();
             }
+        }
+
+        private void SetExcelTopTable(out int insertRow, List<APIData> pams, Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Application excel)
+        {
+            insertRow = 5;
+            Microsoft.Office.Interop.Excel.Range rngToInsert;
+            object[,] objArray = new object[1, 15];
+            int iQAQty = 2, iTotalCPU = 3, iCPUSewer = 6, iAvgWorkHour = 7, iManHour = 9, iEff = 10;
+            string sEff;
+            foreach (DataRow dr in this.printData.Rows)
+            {
+                objArray[0, 0] = dr[0];
+                objArray[0, 1] = dr[1];
+                objArray[0, 2] = dr[2];
+                objArray[0, 3] = dr[3];
+                objArray[0, 4] = dr[4];
+                objArray[0, 5] = dr[5];
+                objArray[0, 6] = dr[6];
+                objArray[0, 7] = dr[7];
+                objArray[0, 8] = dr[8];
+
+                if (this.reportType == 2)
+                {
+                    objArray[0, 9] = dr[9];
+                    objArray[0, 10] = string.Format("=IF(J{0}=0,0,ROUND((D{0}/(J{0}*3600/1400))*100,1))", insertRow);
+                }
+                else
+                {
+                    objArray[0, 9] = string.Format("=IF(I{0}=0,0,ROUND((C{0}/(I{0}*3600/1400))*100,1))", insertRow);
+
+                    if (this.reportType == 0)
+                    {
+                        if (pams != null && pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).Count() > 0)
+                        {
+                            objArray[0, 11] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManpower;
+                            objArray[0, 12] = pams.Where(w => w.Date.ToShortDateString().EqualString(((DateTime)dr["OutputDate"]).ToShortDateString())).FirstOrDefault().SewTtlManhours;
+                        }
+                        else
+                        {
+                            objArray[0, 11] = 0;
+                            objArray[0, 12] = 0;
+                        }
+
+                        objArray[0, 10] = MyUtility.Convert.GetDouble(objArray[0, 11]) == 0 ? 0 : MyUtility.Convert.GetDouble(objArray[0, 12]) / MyUtility.Convert.GetDouble(objArray[0, 11]);
+                        objArray[0, 13] = string.Format("=IF(M{0}=0,0,ROUND((C{0}/(M{0}*3600/1400))*100,1))", insertRow);
+                        objArray[0, 14] = string.Empty;
+                    }
+                }
+
+                worksheet.Range[string.Format("A{0}:O{0}", insertRow)].Value2 = objArray;
+                insertRow++;
+
+                // 插入一筆Record
+                rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
+                Marshal.ReleaseComObject(rngToInsert);
+            }
+
+            // 將多出來的Record刪除
+            this.DeleteExcelRow(2, insertRow, excel);
+
+            // Total
+            if (this.reportType == 2)
+            {
+                iQAQty = 3;
+                iTotalCPU = 4;
+                iCPUSewer = 7;
+                iAvgWorkHour = 8;
+                iManHour = 10;
+                iEff = 11;
+                worksheet.Cells[insertRow, 3] = string.Format("=SUM(C5:C{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 4] = string.Format("=SUM(D5:D{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 5] = string.Format("=SUM(E5:E{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 6] = string.Format("=SUM(F5:F{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 7] = string.Format("=ROUND(D{0}/J{0},2)", MyUtility.Convert.GetString(insertRow));
+                worksheet.Cells[insertRow, 8] = string.Format("=ROUND(J{0}/I{0},2)", MyUtility.Convert.GetString(insertRow));
+                worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 10] = string.Format("=SUM(J5:J{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 11] = string.Format("=ROUND(D{0}/(J{0}*60*60/1400)*100,1)", insertRow);
+            }
+            else
+            {
+                worksheet.Cells[insertRow, 2] = string.Format("=SUM(B5:B{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 3] = string.Format("=SUM(C5:C{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 4] = string.Format("=SUM(D5:D{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 5] = string.Format("=SUM(E5:E{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 6] = string.Format("=ROUND(C{0}/I{0},2)", MyUtility.Convert.GetString(insertRow));
+                worksheet.Cells[insertRow, 7] = string.Format("=ROUND(I{0}/H{0},2)", MyUtility.Convert.GetString(insertRow));
+                worksheet.Cells[insertRow, 8] = string.Format("=SUM(H5:H{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 9] = string.Format("=SUM(I5:I{0})", MyUtility.Convert.GetString(insertRow - 1));
+                worksheet.Cells[insertRow, 10] = string.Format("=ROUND(C{0}/(I{0}*60*60/1400)*100,1)", insertRow);
+                if (this.reportType == 0)
+                {
+                    worksheet.Cells[insertRow, 11] = string.Format("=ROUND(M{0}/L{0},2)", MyUtility.Convert.GetString(insertRow));
+                    worksheet.Cells[insertRow, 12] = string.Format("=SUM(L5:L{0})", MyUtility.Convert.GetString(insertRow - 1));
+                    worksheet.Cells[insertRow, 13] = string.Format("=SUM(M5:M{0})", MyUtility.Convert.GetString(insertRow - 1));
+                    worksheet.Cells[insertRow, 14] = string.Format("=ROUND(C{0}/(M{0}*60*60/1400)*100,1)", insertRow);
+                }
+            }
+
+            insertRow++;
+
+            // Excluded non sister Subcon In
+            sEff = this.reportType == 2 ? string.Format("=ROUND((D{0}/(J{0}*3600/1400))*100,1)", insertRow) : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
+            worksheet.Cells[insertRow, iQAQty] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["QAQty"]);
+            worksheet.Cells[insertRow, iTotalCPU] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["TotalCPU"]);
+            worksheet.Cells[insertRow, iCPUSewer] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["CPUSewer"]);
+            worksheet.Cells[insertRow, iAvgWorkHour] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["AvgWorkHour"]);
+            worksheet.Cells[insertRow, iManHour] = MyUtility.Convert.GetString((this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : this.excludeInOutTotal.Rows[0]["ManHour"]);
+            worksheet.Cells[insertRow, iEff] = (this.excludeInOutTotal == null || this.excludeInOutTotal.Rows.Count < 1) ? string.Empty : sEff;
+            insertRow++;
+
+            // non sister Subcon In
+            sEff = this.reportType == 2 ? string.Format("=ROUND((D{0}/(J{0}*3600/1400))*100,1)", insertRow) : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
+            worksheet.Cells[insertRow, iQAQty] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["QAQty"]);
+            worksheet.Cells[insertRow, iTotalCPU] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["TotalCPU"]);
+            worksheet.Cells[insertRow, iCPUSewer] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["CPUSewer"]);
+            worksheet.Cells[insertRow, iManHour] = MyUtility.Convert.GetString((this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : this.NonSisterInTotal.Rows[0]["ManHour"]);
+            worksheet.Cells[insertRow, iEff] = (this.NonSisterInTotal == null || this.NonSisterInTotal.Rows.Count < 1) ? string.Empty : sEff;
+            insertRow++;
+
+            // sister Subcon In
+            sEff = this.reportType == 2 ? string.Format("=ROUND((D{0}/(J{0}*3600/1400))*100,1)", insertRow) : string.Format("=ROUND((C{0}/(I{0}*3600/1400))*100,1)", insertRow);
+            worksheet.Cells[insertRow, iQAQty] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["QAQty"]);
+            worksheet.Cells[insertRow, iTotalCPU] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["TotalCPU"]);
+            worksheet.Cells[insertRow, iCPUSewer] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["CPUSewer"]);
+            worksheet.Cells[insertRow, iManHour] = MyUtility.Convert.GetString((this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : this.SisterInTotal.Rows[0]["ManHour"]);
+            worksheet.Cells[insertRow, iEff] = (this.SisterInTotal == null || this.SisterInTotal.Rows.Count < 1) ? string.Empty : sEff;
         }
     }
 }

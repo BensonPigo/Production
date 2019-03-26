@@ -17,8 +17,8 @@ namespace Sci.Production.Cutting
     {
         private string strM;
         private string strFty;
-        private DateTime? dateEstCut1;
-        private DateTime? dateEstCut2;
+        private string dateEstCut1;
+        private string dateEstCut2;
         private string strSpreadingNo1;
         private string strSpreadingNo2;
         private string strCutCell1;
@@ -39,8 +39,8 @@ namespace Sci.Production.Cutting
         {
             strM = this.txtMdivision.Text;
             strFty = this.txtfactory.Text;
-            dateEstCut1 = this.dateEstCutDate.Value1;
-            dateEstCut2 = this.dateEstCutDate.Value2;
+            dateEstCut1 = this.dateEstCutDate.HasValue1 ? this.dateEstCutDate.Value1.Value.ToShortDateString() : string.Empty;
+            dateEstCut2 = this.dateEstCutDate.HasValue2 ? this.dateEstCutDate.Value2.Value.ToShortDateString() : string.Empty;
             strSpreadingNo1 = this.txtSpreadingNo1.Text;
             strSpreadingNo2 = this.txtSpreadingNo2.Text;
             strCutCell1 = this.txtCutCell1.Text;
@@ -59,13 +59,13 @@ select [Factory] = wo_Before.FactoryID
 ,wo_Before.WorkOrderUkey
 ,[CutCell] = wo_Before.CutCellid
 ,[SpreadingNo] = wo_Before.SpreadingNoID
-,[CuttingPlanID] = wo_Before.CutplanID
+,[CuttingPlanID] = CutplanID.CutplanID
 ,[SP] = wo_Before.ID
 ,[SubSP] = wo_Before.OrderID
 ,[Style] = o.StyleID
 ,[Size] = SizeCode.SizeCode
 ,[OrderQty] = OrderQty_Before.qty
-,[CutRefer#] = wo_Before.CutRef
+,[CutRefer#] = CutRefNo.CutRef
 ,[RefNo_Desc] = wo_Before.SCIRefno
 ,[FabricType] = f.WeaveTypeID
 ,[FabricDesc] = f.Description
@@ -242,6 +242,27 @@ outer apply(
 	and fi.InQty is not null
 ) as fi
 outer apply(select NoofRoll = iif(isnull(fi.avgInQty,0)=0,1,round(sc.Cons/fi.avgInQty,0)))n
+
+
+outer apply(	
+	SELECT [CutplanID]=STUFF(
+	(
+		SELECT CONCAT(',',CutplanID )
+		FROM WorkOrder 
+		WHERE Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,',')) AND CutplanID <>'' AND CutplanID IS NOT NULL
+		For XML path('')
+	),1,1,'')
+)CutplanID
+outer apply(
+	SELECT [CutRef]=STUFF(
+	(
+		SELECT CONCAT(',',CutRef )
+		FROM WorkOrder 
+		WHERE Ukey in (	select Data from dbo.SplitString(wo_Before.WorkOrderUkey,',')) AND CutRef <>'' AND CutRef IS NOT NULL
+		For XML path('')
+	),1,1,'')
+)CutRefNo
+
 where 1=1
 ");
 
@@ -308,7 +329,7 @@ select [Factory],[CutCell] ,[SpreadingNo] ,[CuttingPlanID]
 ,[TotalFabricCons] = TotalCons.Cons
 from #tmp t
 outer apply(
-select Cons= cast(round((sum(cons) - t.Cons_Before),2) as float)  
+select Cons= cast(  t.Cons_Before - round((sum(cons)),2) as float)  
 	from (
 		select cons= isnull(round((sum(Cons)over(partition by cutref) ),2) ,0)
 		from WorkOrder
@@ -326,7 +347,7 @@ select strCons = stuff(
 )Cons_After
 outer apply(
 
-	select SpreadingTime = cast(round((sum(SpreadingTime) /60) - t.SpreadingTime_Before,2)as float)  from 
+	select SpreadingTime = cast(round(( t.SpreadingTime_Before - sum(SpreadingTime) /60) ,2)as float)  from 
 	(
 		select SpreadingTime = cast(round((isnull(dbo.GetSpreadingTime(t.FabricType,Refno,iif(isnull(n.NoofRoll,0)<1,1,n.NoofRoll),sl.Layer,sc.Cons,1),0)),2)  as float)
 		from WorkOrder a
@@ -367,7 +388,7 @@ select Time = stuff(
 )SpreadingTime_After
 outer apply(
 
-	select  CuttingTime = cast(round((sum(CuttingTime) /60) ,2)- t.CuttingTime_Before as float)  from 
+	select  CuttingTime = cast( t.CuttingTime_Before - round((sum(CuttingTime) /60) ,2) as float)  from 
 	(
 		select CuttingTime = 
  ROUND(cast( ISNULL( dbo.GetCuttingTime( ROUND(dbo.GetActualPerimeterYd(iif(ActCuttingPerimeter not like '%yd%','0',ActCuttingPerimeter)),2)

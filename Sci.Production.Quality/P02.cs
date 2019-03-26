@@ -95,7 +95,7 @@ namespace Sci.Production.Quality
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;
                 
-                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
+                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
                 DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                
                 DoForm.ShowDialog(this);
                 DoForm.Close();
@@ -105,7 +105,7 @@ namespace Sci.Production.Quality
             {
                 var dr = this.CurrentDetailData;
                 if (dr == null) return;                
-                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString());
+                P02_Detail DoForm = new P02_Detail(false, this.CurrentDetailData["ID"].ToString(), this.CurrentMaintain["ID"].ToString());
                 DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);                
                 DoForm.ShowDialog(this);
                 DoForm.Close();
@@ -281,6 +281,10 @@ namespace Sci.Production.Quality
 
             // 判斷Batch Encode是否可用
             this.btnBatchEncode.Enabled = this.EditMode ? false : detailTb.AsEnumerable().Where(s => !s["Status"].Equals("Confirmed")).Any();
+
+            string strInspAutoLockAcc=MyUtility.GetValue.Lookup("SELECT InspAutoLockAcc FROM System");
+            chkInspAutoLockAcc.Checked = MyUtility.Convert.GetBool(strInspAutoLockAcc);
+
         }
         
         protected override DualResult ClickSave()
@@ -389,7 +393,7 @@ namespace Sci.Production.Quality
             if (MyUtility.Check.Empty(CurrentDetailData["ID"].ToString())) return;
             string currentID = CurrentDetailData["ID"].ToString();
             var dr = this.CurrentDetailData; if (null == dr) return;
-            P02_Detail DoForm = new P02_Detail(IsSupportEdit, this.CurrentDetailData["ID"].ToString());
+            P02_Detail DoForm = new P02_Detail(IsSupportEdit, this.CurrentDetailData["ID"].ToString(),this.CurrentMaintain["ID"].ToString());
             DoForm.Set(false, this.DetailDatas, this.CurrentDetailData);
             DoForm.Text = "Accessory Inspection- SP+SEQ+Detail(Modify)";
             DoForm.ShowDialog(this);

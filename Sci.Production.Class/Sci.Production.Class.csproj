@@ -53,6 +53,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AutoClosingMessageBox.cs" />
+    <Compile Include="comboCentralizedFactory.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="comboCentralizedFactory.Designer.cs">
+      <DependentUpon>comboCentralizedFactory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="comboCentralizedM.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="comboCentralizedM.Designer.cs">
+      <DependentUpon>comboCentralizedM.cs</DependentUpon>
+    </Compile>
     <Compile Include="comboDropDownList.cs">
       <SubType>Component</SubType>
     </Compile>

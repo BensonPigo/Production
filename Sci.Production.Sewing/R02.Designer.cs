@@ -175,7 +175,7 @@
             this.comboReportType.Location = new System.Drawing.Point(97, 84);
             this.comboReportType.Name = "comboReportType";
             this.comboReportType.OldText = "";
-            this.comboReportType.Size = new System.Drawing.Size(121, 24);
+            this.comboReportType.Size = new System.Drawing.Size(168, 24);
             this.comboReportType.TabIndex = 6;
             this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.ComboReportType_SelectedIndexChanged);
             // 

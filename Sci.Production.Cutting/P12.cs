@@ -171,7 +171,7 @@ namespace Sci.Production.Cutting
 
             if (!this.dateBox1.Value.Empty())
             {
-                sqlWheres.Add("e.EstCutDate=@Est_CutDate");
+                sqlWheres.Add("WorkOrder.EstCutDate=@Est_CutDate");
                 //lis.Add(new SqlParameter("@Est_CutDate", Est_CutDate));
                 declare += $@" declare @Est_CutDate date = '{((DateTime)Est_CutDate).ToString("yyyy/MM/dd")}' ";
             }
@@ -184,7 +184,7 @@ namespace Sci.Production.Cutting
             {
                 sqlWheres.Add(" format(b.AddDate,'yyyy/MM/dd') = @AddDate");
                 //lis.Add(new SqlParameter("@AddDate", AddDate));
-                declare += $@" declare @AddDate varchar(8) = '{((DateTime)AddDate).ToString("yyyy/MM/dd")}' ";
+                declare += $@" declare @AddDate varchar(10) = '{((DateTime)AddDate).ToString("yyyy/MM/dd")}' ";
             }
             if (!MyUtility.Check.Empty(Cutno))
             {
@@ -237,19 +237,19 @@ namespace Sci.Production.Cutting
                 DBProxy.Current.DefaultTimeout = 1800;  //加長時間為30分鐘，避免timeout
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
-declare @Cut_Ref varchar(8) = '{Cut_Ref}'
-declare @Cut_Ref1 varchar(8) = '{Cut_Ref1}'
-declare @SP varchar(16) = '{SP}'
-declare @SP1 varchar(16) = '{SP1}'
-declare @POID varchar(16) = '{POID}'
+declare @Cut_Ref varchar(6) = '{Cut_Ref}'
+declare @Cut_Ref1 varchar(6) = '{Cut_Ref1}'
+declare @SP varchar(13) = '{SP}'
+declare @SP1 varchar(13) = '{SP1}'
+declare @POID varchar(13) = '{POID}'
 declare @Bundle varchar(13) = '{Bundle}'
 declare @Bundle1 varchar(13) = '{Bundle1}'
 declare @Cell varchar(3) = '{Cell}'
 declare @size varchar(8) = '{size}'
-declare @Addname varchar(8) = '{Addname}'
-declare @Cutno varchar(8) = '{Cutno}'
+declare @Addname varchar(10) = '{Addname}'
+declare @Cutno varchar(6) = '{Cutno}'
 declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
-declare @Comb varchar(8) = '{txtComb.Text}'
+declare @Comb varchar(2) = '{txtComb.Text}'
 {declare}
 set arithabort on
 select 
@@ -279,14 +279,13 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -297,7 +296,13 @@ outer apply
         for xml path('')
     )
 )as SubProcess
-" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
+OUTER APPLY(
+	SELECT TOP 1 
+		MarkerNo  
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrder
+" + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
 
 union all
 
@@ -328,13 +333,12 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
 	select distinct x.PatternCode,x.PatternDesc,x.Parts
@@ -352,6 +356,12 @@ outer apply
         for xml path('')
     )
 )as SubProcess
+OUTER APPLY(
+	SELECT TOP 1 
+		MarkerNo  
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrder
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)
 
@@ -378,19 +388,19 @@ OPTION (RECOMPILE)"
                 #region SQL
                 sqlcmd = $@"
 declare @Keyword varchar(8) = '{Sci.Env.User.Keyword}'
-declare @Cut_Ref varchar(8) = '{Cut_Ref}'
-declare @Cut_Ref1 varchar(8) = '{Cut_Ref1}'
-declare @SP varchar(16) = '{SP}'
-declare @SP1 varchar(16) = '{SP1}'
-declare @POID varchar(16) = '{POID}'
+declare @Cut_Ref varchar(6) = '{Cut_Ref}'
+declare @Cut_Ref1 varchar(6) = '{Cut_Ref1}'
+declare @SP varchar(13) = '{SP}'
+declare @SP1 varchar(13) = '{SP1}'
+declare @POID varchar(13) = '{POID}'
 declare @Bundle varchar(13) = '{Bundle}'
 declare @Bundle1 varchar(13) = '{Bundle1}'
 declare @Cell varchar(3) = '{Cell}'
 declare @size varchar(8) = '{size}'
-declare @Addname varchar(8) = '{Addname}'
-declare @Cutno varchar(8) = '{Cutno}'
+declare @Addname varchar(10) = '{Addname}'
+declare @Cutno varchar(6) = '{Cutno}'
 declare @FtyGroup varchar(8) = '{txtfactoryByM.Text}'
-declare @Comb varchar(8) = '{txtComb.Text}'
+declare @Comb varchar(2) = '{txtComb.Text}'
 {declare}
 set arithabort on
 select 
@@ -420,14 +430,13 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -438,7 +447,13 @@ outer apply
         for xml path('')
     )
 )as SubProcess 
-" + sqlWhere + @" and a.Patterncode != 'ALLPARTS' 
+OUTER APPLY(
+	SELECT TOP 1 
+		MarkerNo  
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrder
+" + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
                                         
 union all
 
@@ -469,13 +484,12 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , e.MarkerNo
+    , [MarkerNo]=WorkOrder.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 left join dbo.Orders c WITH (NOLOCK) on c.id=b.Orderid
-left join dbo.WorkOrder e WITH (NOLOCK) on b.CutRef<>'' and b.CutRef=e.CutRef and e.MDivisionid=b.MDivisionid
 outer apply
 (
     select SubProcess = 
@@ -486,6 +500,12 @@ outer apply
         for xml path('')
     )
 )as SubProcess 
+OUTER APPLY(
+	SELECT TOP 1 
+		MarkerNo  
+        ,EstCutDate
+	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrder
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)

@@ -42,6 +42,7 @@
             this.txtCDCode = new Sci.Production.Class.txtcdcode();
             this.chk_Accumulate_output = new Sci.Win.UI.CheckBox();
             this.chk_Include_Artwork = new Sci.Win.UI.CheckBox();
+            this.chkExcludeSampleFty = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
@@ -187,7 +188,7 @@
             // 
             this.chk_Accumulate_output.AutoSize = true;
             this.chk_Accumulate_output.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_Accumulate_output.Location = new System.Drawing.Point(320, 196);
+            this.chk_Accumulate_output.Location = new System.Drawing.Point(320, 160);
             this.chk_Accumulate_output.Name = "chk_Accumulate_output";
             this.chk_Accumulate_output.Size = new System.Drawing.Size(193, 21);
             this.chk_Accumulate_output.TabIndex = 100;
@@ -200,16 +201,28 @@
             this.chk_Include_Artwork.Checked = true;
             this.chk_Include_Artwork.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chk_Include_Artwork.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chk_Include_Artwork.Location = new System.Drawing.Point(320, 169);
+            this.chk_Include_Artwork.Location = new System.Drawing.Point(320, 133);
             this.chk_Include_Artwork.Name = "chk_Include_Artwork";
             this.chk_Include_Artwork.Size = new System.Drawing.Size(155, 21);
             this.chk_Include_Artwork.TabIndex = 101;
             this.chk_Include_Artwork.Text = "Include Artwork data";
             this.chk_Include_Artwork.UseVisualStyleBackColor = true;
             // 
+            // chkExcludeSampleFty
+            // 
+            this.chkExcludeSampleFty.AutoSize = true;
+            this.chkExcludeSampleFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkExcludeSampleFty.Location = new System.Drawing.Point(320, 187);
+            this.chkExcludeSampleFty.Name = "chkExcludeSampleFty";
+            this.chkExcludeSampleFty.Size = new System.Drawing.Size(178, 21);
+            this.chkExcludeSampleFty.TabIndex = 102;
+            this.chkExcludeSampleFty.Text = "Exclude Sample Factory";
+            this.chkExcludeSampleFty.UseVisualStyleBackColor = true;
+            // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(525, 255);
+            this.Controls.Add(this.chkExcludeSampleFty);
             this.Controls.Add(this.chk_Include_Artwork);
             this.Controls.Add(this.chk_Accumulate_output);
             this.Controls.Add(this.txtCDCode);
@@ -246,6 +259,7 @@
             this.Controls.SetChildIndex(this.txtCDCode, 0);
             this.Controls.SetChildIndex(this.chk_Accumulate_output, 0);
             this.Controls.SetChildIndex(this.chk_Include_Artwork, 0);
+            this.Controls.SetChildIndex(this.chkExcludeSampleFty, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -267,5 +281,6 @@
         private Class.txtcdcode txtCDCode;
         private Win.UI.CheckBox chk_Accumulate_output;
         private Win.UI.CheckBox chk_Include_Artwork;
+        private Win.UI.CheckBox chkExcludeSampleFty;
     }
 }

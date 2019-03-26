@@ -432,7 +432,7 @@ from SewingOutput_Detail sod
 inner join #updateChild upd on sod.UKey = upd.SewingOutput_DetailUKey
 
 --update SewingOutput.LockDate 讓更新資料傳回台北
-update SewingOutput set LockDate  = null where ID IN (SELECT ID FROM #SewingID)
+update SewingOutput set LockDate = null, ReDailyTransferDate = GETDATE() where ID IN (SELECT ID FROM #SewingID)
 
 DROP TABLE #tmpUpd;
 DROP TABLE #tmp2;
