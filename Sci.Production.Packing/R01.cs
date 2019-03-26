@@ -73,6 +73,7 @@ namespace Sci.Production.Packing
 
         // 驗證輸入條件
         private string _ScanName;
+        private string _Barcode;
         /// <summary>
         /// ValidateInput
         /// </summary>
@@ -125,6 +126,7 @@ namespace Sci.Production.Packing
             this._mDivision = this.txtMdivision1.Text;
             this._factory = this.comboFactory.Text;
             this._ScanName = this.txtuser1.TextBox1.Text;
+            this._Barcode = this.txtBarcode.Text;
 
             return base.ValidateInput();
         }
@@ -238,6 +240,11 @@ namespace Sci.Production.Packing
             else if (this.rdbtnSummary.Checked)
             {
                 sqlwhere.Append(" and (pld.ScanEditDate ='' or pld.ScanEditDate is null or pld.Lacking = 1)");
+            }
+
+            if (!MyUtility.Check.Empty(this._Barcode))
+            {
+                sqlwhere.Append(string.Format(" and pld.Barcode = '{0}'", this._Barcode));
             }
             #endregion
 

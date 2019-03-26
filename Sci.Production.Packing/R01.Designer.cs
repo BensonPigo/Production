@@ -56,6 +56,8 @@
             this.radioButton1 = new Sci.Win.UI.RadioButton();
             this.label3 = new Sci.Win.UI.Label();
             this.txtuser1 = new Sci.Production.Class.txtuser();
+            this.txtBarcode = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -305,7 +307,7 @@
             // 
             this.rdbtnSummary.AutoSize = true;
             this.rdbtnSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnSummary.Location = new System.Drawing.Point(200, 271);
+            this.rdbtnSummary.Location = new System.Drawing.Point(200, 299);
             this.rdbtnSummary.Name = "rdbtnSummary";
             this.rdbtnSummary.Size = new System.Drawing.Size(111, 21);
             this.rdbtnSummary.TabIndex = 137;
@@ -317,7 +319,7 @@
             this.rdbtnDetail.AutoSize = true;
             this.rdbtnDetail.Checked = true;
             this.rdbtnDetail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.rdbtnDetail.Location = new System.Drawing.Point(109, 271);
+            this.rdbtnDetail.Location = new System.Drawing.Point(109, 299);
             this.rdbtnDetail.Name = "rdbtnDetail";
             this.rdbtnDetail.Size = new System.Drawing.Size(85, 21);
             this.rdbtnDetail.TabIndex = 136;
@@ -327,7 +329,7 @@
             // 
             // labelReportType
             // 
-            this.labelReportType.Location = new System.Drawing.Point(9, 271);
+            this.labelReportType.Location = new System.Drawing.Point(9, 299);
             this.labelReportType.Name = "labelReportType";
             this.labelReportType.Size = new System.Drawing.Size(97, 23);
             this.labelReportType.TabIndex = 135;
@@ -337,7 +339,7 @@
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(317, 273);
+            this.radioButton1.Location = new System.Drawing.Point(317, 301);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(41, 21);
             this.radioButton1.TabIndex = 138;
@@ -361,9 +363,28 @@
             this.txtuser1.TabIndex = 141;
             this.txtuser1.TextBox1Binding = "";
             // 
+            // txtBarcode
+            // 
+            this.txtBarcode.BackColor = System.Drawing.Color.White;
+            this.txtBarcode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBarcode.Location = new System.Drawing.Point(109, 270);
+            this.txtBarcode.Name = "txtBarcode";
+            this.txtBarcode.Size = new System.Drawing.Size(130, 23);
+            this.txtBarcode.TabIndex = 143;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(9, 270);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(97, 23);
+            this.label4.TabIndex = 142;
+            this.label4.Text = "Barcode";
+            // 
             // R01
             // 
-            this.ClientSize = new System.Drawing.Size(506, 330);
+            this.ClientSize = new System.Drawing.Size(506, 383);
+            this.Controls.Add(this.txtBarcode);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.txtuser1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.radioButton1);
@@ -425,6 +446,8 @@
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.txtuser1, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.txtBarcode, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -460,5 +483,7 @@
         private Win.UI.RadioButton radioButton1;
         private Win.UI.Label label3;
         private Class.txtuser txtuser1;
+        private Win.UI.TextBox txtBarcode;
+        private Win.UI.Label label4;
     }
 }

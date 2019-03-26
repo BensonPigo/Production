@@ -42,6 +42,8 @@ namespace Sci.Production.Packing
         private string _scidate2;
         private string _offdate1;
         private string _offdate2;
+        private string _scanDate1;
+        private string _scanDate2;
         private string _brand;
         private string _mDivision;
         private string _factory;
@@ -116,6 +118,24 @@ namespace Sci.Production.Packing
                 this._offdate2 = null;
             }
 
+            if (!MyUtility.Check.Empty(this.dateScanDate.Value1))
+            {
+                this._scanDate1 = Convert.ToDateTime(this.dateScanDate.Value1).ToString("d");
+            }
+            else
+            {
+                this._scanDate1 = null;
+            }
+
+            if (!MyUtility.Check.Empty(this.dateScanDate.Value2))
+            {
+                this._scanDate2 = Convert.ToDateTime(this.dateScanDate.Value2).ToString("d");
+            }
+            else
+            {
+                this._scanDate2 = null;
+            }
+
             this._brand = this.txtbrand.Text;
             this._mDivision = this.txtMdivision1.Text;
             this._factory = this.comboFactory.Text;
@@ -184,6 +204,16 @@ namespace Sci.Production.Packing
             if (!MyUtility.Check.Empty(this._offdate2))
             {
                 where += $" and  o.SewOffLine <= '{this._offdate2}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._scanDate1))
+            {
+                where += $" and  pld.ScanEditDate  >= '{this._scanDate1}' ";
+            }
+
+            if (!MyUtility.Check.Empty(this._scanDate2))
+            {
+                where += $" and  pld.ScanEditDate  <= '{this._scanDate2}' ";
             }
 
             if (!MyUtility.Check.Empty(this._brand))

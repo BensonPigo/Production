@@ -54,6 +54,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.label5 = new Sci.Win.UI.Label();
+            this.label8 = new Sci.Win.UI.Label();
+            this.dateScanDate = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -180,14 +182,14 @@
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(119, 154);
+            this.txtbrand.Location = new System.Drawing.Point(119, 180);
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(100, 23);
             this.txtbrand.TabIndex = 126;
             // 
             // labelBrand
             // 
-            this.labelBrand.Location = new System.Drawing.Point(9, 154);
+            this.labelBrand.Location = new System.Drawing.Point(9, 180);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(107, 23);
             this.labelBrand.TabIndex = 125;
@@ -197,7 +199,7 @@
             // 
             this.txtMdivision1.BackColor = System.Drawing.Color.White;
             this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(119, 183);
+            this.txtMdivision1.Location = new System.Drawing.Point(119, 209);
             this.txtMdivision1.MaxLength = 8;
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.Size = new System.Drawing.Size(67, 23);
@@ -205,7 +207,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(9, 183);
+            this.labelM.Location = new System.Drawing.Point(9, 209);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(107, 23);
             this.labelM.TabIndex = 128;
@@ -217,7 +219,7 @@
             this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(119, 212);
+            this.comboFactory.Location = new System.Drawing.Point(119, 238);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(80, 24);
@@ -225,7 +227,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 213);
+            this.label2.Location = new System.Drawing.Point(9, 239);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(107, 23);
             this.label2.TabIndex = 129;
@@ -283,7 +285,7 @@
             "",
             "Complete",
             "InComplete"});
-            this.cmbPOcompletion.Location = new System.Drawing.Point(119, 242);
+            this.cmbPOcompletion.Location = new System.Drawing.Point(119, 268);
             this.cmbPOcompletion.Name = "cmbPOcompletion";
             this.cmbPOcompletion.OldText = "";
             this.cmbPOcompletion.Size = new System.Drawing.Size(130, 24);
@@ -295,7 +297,7 @@
             this.chkBulk.Checked = true;
             this.chkBulk.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBulk.Location = new System.Drawing.Point(119, 272);
+            this.chkBulk.Location = new System.Drawing.Point(119, 298);
             this.chkBulk.Name = "chkBulk";
             this.chkBulk.Size = new System.Drawing.Size(54, 21);
             this.chkBulk.TabIndex = 134;
@@ -308,7 +310,7 @@
             this.chkSample.Checked = true;
             this.chkSample.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkSample.Location = new System.Drawing.Point(179, 272);
+            this.chkSample.Location = new System.Drawing.Point(179, 298);
             this.chkSample.Name = "chkSample";
             this.chkSample.Size = new System.Drawing.Size(74, 21);
             this.chkSample.TabIndex = 135;
@@ -321,7 +323,7 @@
             this.chkGarment.Checked = true;
             this.chkGarment.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkGarment.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkGarment.Location = new System.Drawing.Point(259, 272);
+            this.chkGarment.Location = new System.Drawing.Point(259, 298);
             this.chkGarment.Name = "chkGarment";
             this.chkGarment.Size = new System.Drawing.Size(82, 21);
             this.chkGarment.TabIndex = 136;
@@ -330,7 +332,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 243);
+            this.label1.Location = new System.Drawing.Point(9, 269);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 23);
             this.label1.TabIndex = 137;
@@ -338,7 +340,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(9, 272);
+            this.label3.Location = new System.Drawing.Point(9, 298);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(107, 23);
             this.label3.TabIndex = 138;
@@ -360,9 +362,40 @@
             this.label5.TabIndex = 140;
             this.label5.Text = "Offline Date";
             // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(9, 151);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(107, 23);
+            this.label8.TabIndex = 142;
+            this.label8.Text = "Scan Date";
+            // 
+            // dateScanDate
+            // 
+            // 
+            // 
+            // 
+            this.dateScanDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateScanDate.DateBox1.Name = "";
+            this.dateScanDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateScanDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateScanDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateScanDate.DateBox2.Name = "";
+            this.dateScanDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateScanDate.DateBox2.TabIndex = 1;
+            this.dateScanDate.Location = new System.Drawing.Point(119, 151);
+            this.dateScanDate.Name = "dateScanDate";
+            this.dateScanDate.Size = new System.Drawing.Size(280, 23);
+            this.dateScanDate.TabIndex = 141;
+            // 
             // R02
             // 
-            this.ClientSize = new System.Drawing.Size(506, 345);
+            this.ClientSize = new System.Drawing.Size(506, 351);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.dateScanDate);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -420,6 +453,8 @@
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.dateScanDate, 0);
+            this.Controls.SetChildIndex(this.label8, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -453,5 +488,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label4;
         private Win.UI.Label label5;
+        private Win.UI.Label label8;
+        private Win.UI.DateRange dateScanDate;
     }
 }
