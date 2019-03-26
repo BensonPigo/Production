@@ -30,6 +30,7 @@ namespace Sci.Production.Packing
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision1.Text = Sci.Env.User.Keyword;
         }
 
         private string _sp1;
@@ -147,7 +148,7 @@ namespace Sci.Production.Packing
 select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
 	Junk=iif(o.Junk=0,'N','Y'),
 	Dest=(select Alias from Country ct where ct.id=pl.Dest),
-	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
+	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
 	pl.Status,o.Qty,
 	TtlCTNS=sum(pld.CTNQty),
 	TtlQty=sum(pld.ShipQty),
@@ -165,11 +166,10 @@ inner join  Orders o on o.id = pld.OrderID
 where 1=1
 {where}
 group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,o.Junk,pl.Dest,
-o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
-pl.Status,o.Qty,pld.Refno,iif(isnull(pl.LocalPOID,'')='','N','Y'),pl.EstCTNBooking,pl.EstCTNArrive,pl.Remark
+	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
+	pl.Status,o.Qty,pld.Refno,iif(isnull(pl.LocalPOID,'')='','N','Y'),pl.EstCTNBooking,pl.EstCTNArrive,pl.Remark
 order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
 ";
-
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this._printData);
             if (!result)
             {
