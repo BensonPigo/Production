@@ -55,6 +55,22 @@ namespace Sci.Production.Sewing
             {
                 this.toolbar.cmdSend.Enabled = true;
             }
+
+            if (this.CurrentMaintain != null)
+            {
+                string strSqlcmd = $@"select * from SewingOutput_DailyUnlock
+where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
+                if (MyUtility.Check.Seek(strSqlcmd) &&
+                    this.Perm.Recall &&
+                    string.Compare(this.CurrentMaintain["Status"].ToString(), "Send") == 0)
+                {
+                    this.toolbar.cmdRecall.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdRecall.Enabled = false;
+                }
+            }
         }
 
         /// <inheritdoc/>
