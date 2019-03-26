@@ -19,16 +19,24 @@ namespace Sci.Production.Warehouse
         string StartSPNo, EndSPNo, MDivision, Factory, StartRefno, EndRefno, Color, MT, ST;
         DateTime? BuyerDelivery1, BuyerDelivery2;
         DateTime? ETA1, ETA2;
+        DateTime? arriveWH1, arriveWH2;
         string sqlcolumn = @"select
 	[M] = o.MDivisionID
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
+    ,[ArriveWHDate] = stuff((
+	            	select concat(char(10),Format(whsearrival,'yyyy/MM/dd'))
+	            	from Export_Detail with (nolock) 
+                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
+	            	for xml path('')
+	            ),1,1,'')
     ,[WK] = stuff((
 	            	select concat(char(10),ID)
 	            	from Export_Detail with (nolock) 
-	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
 	            	for xml path('')
 	            ),1,1,'')
 	,[Brand] = o.BrandID
@@ -67,10 +75,17 @@ namespace Sci.Production.Warehouse
 	,[SP#] = psd.id
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
+    ,[ArriveWHDate] = stuff((
+	            	select concat(char(10),Format(whsearrival,'yyyy/MM/dd'))
+	            	from Export_Detail with (nolock) 
+                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
+	            	for xml path('')
+	            ),1,1,'')
     ,[WK] = stuff((
 	            	select concat(char(10),ID)
 	            	from Export_Detail with (nolock) 
-	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
 	            	for xml path('')
 	            ),1,1,'')
 	,[Brand] = o.BrandID
@@ -154,8 +169,22 @@ namespace Sci.Production.Warehouse
             boolCheckQty = checkQty.Checked;
             BuyerDelivery1 = dateBuyerDelivery.Value1;
             BuyerDelivery2 = dateBuyerDelivery.Value2;
-            ETA1 = dateRange1.Value1;
-            ETA2 = dateRange1.Value2;
+            ETA1 = dateETA.Value1;
+            ETA2 = dateETA.Value2;
+            arriveWH1 = dateArriveDate.Value1;
+            arriveWH2 = dateArriveDate.Value2;
+
+            if (MyUtility.Check.Empty(StartSPNo) &&
+                MyUtility.Check.Empty(EndSPNo) &&
+                !dateETA.HasValue &&
+                !dateArriveDate.HasValue &&
+                !dateBuyerDelivery.HasValue &&
+                MyUtility.Check.Empty(StartRefno) &&
+                MyUtility.Check.Empty(EndRefno))
+            {
+                MyUtility.Msg.WarningBox("<SP#>,<ETA>,<Arrive W/H Date>,<Buyer Delivery>,<Refno> at least one entry is required");
+                return false;
+            }
             return true;
         }
         
@@ -305,6 +334,29 @@ where 1=1
             if (!MyUtility.Check.Empty(ETA2))
             {
                 sqlcmd.Append($" and psd.FinalETA <='{((DateTime)ETA2).ToString("yyyy/MM/dd")}'");
+            }
+
+            if (!MyUtility.Check.Empty(arriveWH1) && !MyUtility.Check.Empty(arriveWH2))
+            {
+                sqlcmd.Append($@" and exists (select 1 from Export_Detail with (nolock) 
+                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	            	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 and  
+                            Export.whsearrival >='{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}' and
+                            Export.whsearrival <='{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}') ");
+            }
+            else if (!MyUtility.Check.Empty(arriveWH1))
+            {
+                sqlcmd.Append($@" and exists (select 1 from Export_Detail with (nolock) 
+                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	            	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 and  
+                            Export.whsearrival >='{((DateTime)arriveWH1).ToString("yyyy/MM/dd")}') ");
+            }
+            else if (!MyUtility.Check.Empty(arriveWH2))
+            {
+                sqlcmd.Append($@" and exists (select 1 from Export_Detail with (nolock) 
+                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	            	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 and  
+                            Export.whsearrival <='{((DateTime)arriveWH2).ToString("yyyy/MM/dd")}') ");
             }
 
             #endregion
