@@ -413,6 +413,7 @@ tmpTtlManPower as (
 			  and m2.Team = a.Team 
 			  and m2.SewingLineID = a.SewingLineID	
 			  and a.OutputDate = m2.OutputDate
+			  and m2.FactoryID = a.FactoryID	
 	) d
 	group by OutputDate
 )
