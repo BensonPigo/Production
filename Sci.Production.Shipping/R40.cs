@@ -631,7 +631,7 @@ join (
 	from #tmpWHNotCloseSewingOutput 
     where CustomSP <>''
 	group by POID,HSCode,NLCode,Refno,MaterialType,Description,CustomsUnit,StockUnit
-) tw on tw.POID = ti.ID and tw.NLCode = ti.NLCode and tw.Refno = ti.Refno
+) tw on tw.POID = ti.ID and tw.NLCode = ti.NLCode and tw.Refno = ti.Refno and ti.HSCode = tw.HSCode and tw.MaterialType = ti.MaterialType and ti.CustomsUnit = tw.CustomsUnit and ti.StockUnit = tw.StockUnit
 order by IIF(ti.ID is null,tw.POID,ti.ID)
 
 --4) Production成品倉(Prod. Qty Detail)
@@ -909,7 +909,7 @@ select
 ,[LiqQty] = isnull(tc.Qty,0) + isnull(td.Qty,0) --調整與勾選Liquidation data only相同
 ,[OnRoadMaterialQty] = isnull(orm.Qty,0)
 ,[WHQty] = isnull(tw.Qty,0)
-,[WIPQty] = isnull(ti.Qty,0) - isnull(sof.Qty,0)
+,[WIPQty] = isnull(ti.Qty,0)
 ,[ProdQty] = isnull(tp.Qty,0)
 ,[OnRoadProductQty] = isnull(orp.Qty,0)
 ,[ScrapQty] = isnull(ts.Qty,0)
