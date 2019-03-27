@@ -41,6 +41,7 @@ namespace Sci.Production.Shipping
         {
             base.OnFormLoaded();
             Ict.Win.DataGridViewGeneratorTextColumnSettings bLNo = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
+            Ict.Win.DataGridViewGeneratorTextColumnSettings bL2No = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
             Ict.Win.DataGridViewGeneratorTextColumnSettings wKNO = new Ict.Win.DataGridViewGeneratorTextColumnSettings();
 
             #region BLNo
@@ -124,6 +125,7 @@ from FtyExport WITH (NOLOCK)
                             {
                                 DataRow newRow = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
                                 newRow["Blno"] = dtExp.Rows[i]["Blno"];
+                                newRow["Bl2no"] = string.Empty;
                                 newRow["InvNo"] = dtExp.Rows[i]["Wkno"];
                                 newRow["ShipModeID"] = dtExp.Rows[i]["ShipModeID"];
                                 newRow["GW"] = dtExp.Rows[i]["GW"];
@@ -175,6 +177,7 @@ select * from Expt", e.FormattedValue.ToString());
                                 DataRow newRow = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
 
                                 newRow["Blno"] = dtImp.Rows[i]["Blno"];
+                                newRow["Bl2no"] = string.Empty;
                                 newRow["Wkno"] = dtImp.Rows[i]["Wkno"];
                                 newRow["ShipModeID"] = dtImp.Rows[i]["ShipModeID"];
                                 newRow["GW"] = dtImp.Rows[i]["GW"];
@@ -191,16 +194,72 @@ select * from Expt", e.FormattedValue.ToString());
                     {
                         if (dts.Rows[i].RowState != DataRowState.Deleted)
                         {
-                            // if (MyUtility.Check.Empty(dts.Rows[i]["Blno"].ToString())&& dr["type"].ToString().ToUpper()=="IMPORT")
-                            // {
-                            //    //刪除
-                            //    dts.Rows[i].Delete();
-                            // }
                             if (MyUtility.Check.Empty(dts.Rows[i]["Blno"].ToString()) && MyUtility.Check.Empty(dts.Rows[i]["WKNO"].ToString()) && MyUtility.Check.Empty(dts.Rows[i]["InvNO"].ToString()))
                             {
                                 // 刪除
                                 dts.Rows[i].Delete();
                             }
+                        }
+                    }
+
+                    e.Cancel = true; // 不進入RowIndex判斷
+                }
+            };
+#endregion
+            #region BL2No
+            bLNo.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode ||
+                    e.RowIndex == -1 ||
+                    MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                string cmd_type = string.Format(@"select * from ShippingAP where id='{0}'", this.apData["ID"]);
+                DataRow drGrid = this.gridBLNo.GetDataRow<DataRow>(e.RowIndex);
+                DataTable dts = (DataTable)this.listControlBindingSource1.DataSource;
+                if (drGrid["BL2NO"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper())
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Seek(cmd_type))
+                {
+                    // 判斷資料是否存在
+                    string strChk =
+$@"select 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
+	'' as ShippingAPID ,g.BLNo, g.BL2No
+	,  '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
+	'' as ShareBase, 0 as FtyWK 
+from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
+                    DataTable dtBl2No;
+                    DBProxy.Current.Select(null, strChk, out dtBl2No);
+                    if (MyUtility.Check.Empty(dtBl2No))
+                    {
+                        return;
+                    }
+
+                    if (dtBl2No.Rows.Count == 0)
+                    {
+                        drGrid.Delete();
+                        e.Cancel = true;
+                        MyUtility.Msg.InfoBox("<BL2No:>" + e.FormattedValue.ToString() + " Not Found!!");
+                        return;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < dtBl2No.Rows.Count; i++)
+                        {
+                            DataRow newRow = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
+                            newRow["Blno"] = dtBl2No.Rows[i]["Blno"];
+                            newRow["Bl2no"] = dtBl2No.Rows[i]["Bl2no"];
+                            newRow["InvNo"] = dtBl2No.Rows[i]["InvNo"];
+                            newRow["ShipModeID"] = dtBl2No.Rows[i]["ShipModeID"];
+                            newRow["GW"] = dtBl2No.Rows[i]["GW"];
+                            newRow["CBM"] = dtBl2No.Rows[i]["CBM"];
+                            newRow["Amount"] = dtBl2No.Rows[i]["Amount"];
+                            ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(newRow);
                         }
                     }
 
@@ -246,7 +305,7 @@ select * from Expt", e.FormattedValue.ToString());
 with GB as 
 (   
     select distinct 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
-	'' as ShippingAPID, iif(g.BLNo is null or g.BLNo ='' , g.BL2No,g.BLNo) as BLNo
+	'' as ShippingAPID ,g.BLNo, g.BL2No
 	,  '' as WKNo, '' as Type, '' as CurrencyID, 0 as Amount,
 	'' as ShareBase, 0 as FtyWK 
 	from GMTBooking g  WITH (NOLOCK) 
@@ -255,14 +314,14 @@ with GB as
     where 1=1  and g.id='{0}' 
 ), 
 PL as 
-(   select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,
+(   select distinct 0 as Selected,ID as InvNo,ShipModeID,GW,CBM, '' as ShippingAPID, '' as BLNo,'' as BL2No,
     '' as WKNo,'' as Type,'' as CurrencyID,0 as Amount, '' as ShareBase,0 as FtyWK 
     from PackingList WITH (NOLOCK) 
     where  (Type = 'F' or Type = 'L')  and id='{0}' 
 ) ,
 FTY AS
 (
-    select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno,
+    select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno, '' as Bl2No
     '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
     from FtyExport fe WITH (NOLOCK) 
     where fe.Type = 3  and fe.id='{0}'
@@ -307,6 +366,7 @@ SELECT * FROM FTY
                                 }
 
                                 drGrid["Blno"] = dtExp.Rows[i]["Blno"];
+                                drGrid["Bl2no"] = dtExp.Rows[i]["Bl2no"];
                                 drGrid["InvNo"] = dtExp.Rows[i]["InvNo"];
                                 drGrid["ShipModeID"] = dtExp.Rows[i]["ShipModeID"];
                                 drGrid["GW"] = dtExp.Rows[i]["GW"];
@@ -389,7 +449,8 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             this.gridBLNo.IsEditingReadOnly = false;
             this.gridBLNo.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridBLNo)
-                .Text("BLNo", header: "B/L No.", width: Widths.AnsiChars(13), settings: bLNo)
+                .Text("BLNo", header: "BL/MAWB No.", width: Widths.AnsiChars(13), settings: bLNo)
+                .Text("BL2No", header: "FCR/BL/HAWB", width: Widths.AnsiChars(13), settings: bL2No)
                 .Text(MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WKNo" : "InvNo", header: MyUtility.Convert.GetString(this.apData["Type"]) == "IMPORT" ? "WK#/Fty WK#" : "GB#/Fty WK#/Packing#", width: Widths.AnsiChars(18), settings: wKNO)
                 .Text("ShipModeID", header: "Shipping Mode", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("GW", header: "G.W.", decimal_places: 3, iseditingreadonly: true)
@@ -1168,6 +1229,7 @@ CLOSE cursor_PackingList", MyUtility.Convert.GetString(this.apData["ID"]));
         {
             DataRow newRow = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
             newRow["Blno"] = string.Empty;
+            newRow["Bl2no"] = string.Empty;
             newRow["Wkno"] = string.Empty;
             newRow["ShipModeID"] = string.Empty;
             newRow["GW"] = 0;
