@@ -48,6 +48,7 @@ namespace Sci.Production.Shipping
             this.gridExpenseData.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridExpenseData)
             .Text("Type", header: "Type", width: Widths.AnsiChars(33), iseditingreadonly: true)
+            .MaskedText("AccountID","0000-0000", header: "Account No", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("CurrencyID", header: "Currency", width: Widths.AnsiChars(3), iseditingreadonly: true)
             .Numeric("Amount", header: "Expense", decimal_places: 2, iseditingreadonly: true)
             .Text("ShippingAPID", header: "A/P No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
