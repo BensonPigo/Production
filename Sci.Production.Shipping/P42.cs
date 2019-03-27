@@ -126,7 +126,7 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                         if (MyUtility.Convert.GetString(dr["BrandID"]) != MyUtility.Convert.GetString(e.FormattedValue))
                         {
                             string sqlchk = $@"select 1 from Brand with(nolock) where ID = '{e.FormattedValue}' ";
-                            if (!MyUtility.Check.Seek(sqlchk))
+                            if (!MyUtility.Check.Seek(sqlchk) && MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L"))
                             {
                                 dr["BrandID"] = DBNull.Value;
                                 MyUtility.Msg.WarningBox("Brand not found!!");
@@ -197,7 +197,8 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
 
         private void BRT(DataRow dr, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
-            if (!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]))
+            if ((!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])) ||
+                (MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L") && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])))
             {
                 string type = MyUtility.Convert.GetString(dr["FabricType"]);
                 string nlCode = string.Empty;
