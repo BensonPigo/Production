@@ -235,11 +235,11 @@ namespace Sci.Production.Packing
             string having = string.Empty;
             if (this._POCompletion.EqualString("Complete"))
             {
-                having += $"having iif(isnull(o.Qty,0)=0,0,sum(pld.ScanQty)/o.Qty) = 1 ";
+                having += $"having iif(isnull(o.Qty,0)=0,CAST(0 AS FLOAT),sum(pld.ScanQty)/CAST(o.Qty AS FLOAT)) = 1 ";
             }
             else if (this._POCompletion.EqualString("InComplete"))
             {
-                having += $"having iif(isnull(o.Qty,0)=0,0,sum(pld.ScanQty)/o.Qty) < 1 ";
+                having += $"having iif(isnull(o.Qty,0)=0,CAST(0 AS FLOAT),sum(pld.ScanQty)/CAST(o.Qty AS FLOAT)) < 1 ";
             }
 
             List<string> category = new List<string>();
