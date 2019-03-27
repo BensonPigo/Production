@@ -30,6 +30,7 @@ namespace Sci.Production.Packing
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision1.Text = Sci.Env.User.Keyword;
         }
 
         private string _sp1;
@@ -278,7 +279,7 @@ select
 	o.BuyerDelivery,
 	ScanQty=sum(pld.ScanQty),
 	BalanceQty=o.Qty-sum(pld.ScanQty),
-	POCompletion=iif(isnull(o.Qty,0)=0,0,sum(pld.ScanQty)/o.Qty)
+	POCompletion=round(iif(isnull(o.Qty,0)=0,CAST(0 AS FLOAT),sum(pld.ScanQty)/CAST(o.Qty AS FLOAT)),2)
 into #tmp
 from Orders o
 inner join PackingList_Detail pld on o.id = pld.OrderID

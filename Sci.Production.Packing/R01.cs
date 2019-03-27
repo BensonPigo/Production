@@ -30,6 +30,7 @@ namespace Sci.Production.Packing
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision1.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
