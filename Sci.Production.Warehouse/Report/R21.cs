@@ -27,7 +27,7 @@ namespace Sci.Production.Warehouse
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
-	            	select concat(char(10),Format(whsearrival,'yyyy/MM/dd'))
+	            	select concat(char(10),isnull(Format(Export.whsearrival,'yyyy/MM/dd'),'　'))
 	            	from Export_Detail with (nolock) 
                     inner join Export with (nolock) on Export.ID = Export_Detail.ID
 	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
@@ -76,7 +76,7 @@ namespace Sci.Production.Warehouse
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[ETA] = psd.FinalETA
     ,[ArriveWHDate] = stuff((
-	            	select concat(char(10),Format(whsearrival,'yyyy/MM/dd'))
+	            	select concat(char(10),isnull(Format(Export.whsearrival,'yyyy/MM/dd'),'　'))
 	            	from Export_Detail with (nolock) 
                     inner join Export with (nolock) on Export.ID = Export_Detail.ID
 	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
