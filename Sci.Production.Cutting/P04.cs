@@ -419,8 +419,9 @@ where cd.id = '{0}'", CurrentDetailData["ID"]);
                     objSheet.Cells[1, 1] = keyWord;   // 條件字串寫入excel
                     objSheet.Cells[3, 2] = dateCuttingDate.Text;
                     objSheet.Cells[3, 5] = CurrentMaintain["POID"].ToString();
-                    objSheet.Cells[3, 9] = CurrentMaintain["CutCellid"].ToString();
-                    objSheet.Cells[3, 12] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
+                    objSheet.Cells[3, 10] = CurrentMaintain["SpreadingNoID"].ToString();
+                    objSheet.Cells[3, 12] = CurrentMaintain["CutCellid"].ToString();
+                    objSheet.Cells[3, 15] = Sci.Production.PublicPrg.Prgs.GetAddOrEditBy(loginID);
                     pathName = Sci.Production.Class.MicrosoftFile.GetName("Cutting_Daily_Plan");
                     objBook.SaveAs(pathName);
                     if (autoSave)

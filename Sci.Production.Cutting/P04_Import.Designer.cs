@@ -38,10 +38,12 @@
             this.txtCutCell = new Sci.Production.Class.txtCell();
             this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTop = new Sci.Win.UI.Panel();
+            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.label1 = new Sci.Win.UI.Label();
             this.panelBottom = new Sci.Win.UI.Panel();
             this.panelMiddle = new Sci.Win.UI.Panel();
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.txtfactory();
+            this.txtSpreadingNo = new Sci.Production.Class.txtSpreadingNo();
+            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
@@ -75,6 +77,7 @@
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(944, 436);
             this.gridImport.TabIndex = 3;
             this.gridImport.TabStop = false;
@@ -114,7 +117,7 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Location = new System.Drawing.Point(265, 11);
+            this.labelCutCell.Location = new System.Drawing.Point(431, 11);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(75, 23);
             this.labelCutCell.TabIndex = 4;
@@ -131,9 +134,9 @@
             // txtCutCell
             // 
             this.txtCutCell.BackColor = System.Drawing.Color.White;
-            this.txtCutCell.MDivisionID = "";
             this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutCell.Location = new System.Drawing.Point(343, 11);
+            this.txtCutCell.Location = new System.Drawing.Point(509, 11);
+            this.txtCutCell.MDivisionID = "";
             this.txtCutCell.Name = "txtCutCell";
             this.txtCutCell.Size = new System.Drawing.Size(30, 23);
             this.txtCutCell.TabIndex = 1;
@@ -147,6 +150,8 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.label2);
+            this.panelTop.Controls.Add(this.txtSpreadingNo);
             this.panelTop.Controls.Add(this.txtfactory);
             this.panelTop.Controls.Add(this.label1);
             this.panelTop.Controls.Add(this.labelEstCutDate);
@@ -159,6 +164,25 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(944, 43);
             this.panelTop.TabIndex = 6;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(636, 11);
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 7;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(558, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Factory";
             // 
             // panelBottom
             // 
@@ -179,24 +203,24 @@
             this.panelMiddle.Size = new System.Drawing.Size(944, 436);
             this.panelMiddle.TabIndex = 8;
             // 
-            // label1
+            // txtSpreadingNo
             // 
-            this.label1.Location = new System.Drawing.Point(393, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Factory";
+            this.txtSpreadingNo.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo.IncludeJunk = true;
+            this.txtSpreadingNo.Location = new System.Drawing.Point(369, 11);
+            this.txtSpreadingNo.MDivision = "";
+            this.txtSpreadingNo.Name = "txtSpreadingNo";
+            this.txtSpreadingNo.Size = new System.Drawing.Size(45, 23);
+            this.txtSpreadingNo.TabIndex = 8;
             // 
-            // txtfactory
+            // label2
             // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(471, 11);
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 7;
+            this.label2.Location = new System.Drawing.Point(267, 11);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(99, 23);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "Spreading No";
             // 
             // P04_Import
             // 
@@ -231,5 +255,7 @@
         private Win.UI.Panel panelMiddle;
         private Class.txtfactory txtfactory;
         private Win.UI.Label label1;
+        private Win.UI.Label label2;
+        private Class.txtSpreadingNo txtSpreadingNo;
     }
 }

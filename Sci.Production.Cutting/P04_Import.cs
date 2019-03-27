@@ -28,7 +28,7 @@ namespace Sci.Production.Cutting
         }
         protected override void OnFormLoaded()
         {
-            DBProxy.Current.Select(null, "Select 0 as Sel, '' as poid,'' as cuttingid,'' as brandid,'' as styleid,'' as cutcellid,'' as cutref from cutplan where 1=0", out gridTable);
+            DBProxy.Current.Select(null, "Select 0 as Sel, '' as poid,'' as cuttingid,'' as brandid,'' as styleid,'' as cutcellid,'' as cutref ,'' as SpreadingNoID from cutplan where 1=0", out gridTable);
             base.OnFormLoaded();
             this.gridImport.IsEditingReadOnly = false; //必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = gridTable;
@@ -38,9 +38,13 @@ namespace Sci.Production.Cutting
             .Text("Cuttingid", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Styleid", header: "Style#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(40), iseditingreadonly: true);
             this.gridImport.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+
+            //預設MDivision = 使用者登入的 MDivision
+            this.txtSpreadingNo.MDivision = Sci.Env.User.Keyword;
 
         }
         private void btnClose_Click(object sender, EventArgs e)
@@ -59,7 +63,21 @@ namespace Sci.Production.Cutting
             string factory = txtfactory.Text;
             string estcutdate = dateEstCutDate.Text;
             string cutcellid = txtCutCell.Text;
-            string sqlcmd = string.Format("Select a.*,'' as orderid_b,'' as article_b, '' as sizecode,'' as sewinglineid,1 as sel from Workorder a where (cutplanid='' or cutplanid is null) and cutcellid!='' and a.CutRef != ''  and mDivisionid ='{0}' and estcutdate = '{1}'", keyWord, estcutdate);
+            string spreadingNo = txtSpreadingNo.Text;
+            string sqlcmd = $@"Select 
+a.*
+,'' as orderid_b
+,'' as article_b
+, '' as sizecode
+,'' as sewinglineid
+,1 as sel 
+from Workorder a
+where (cutplanid='' or cutplanid is null) 
+and cutcellid!='' 
+and a.CutRef != ''  
+and mDivisionid ='{keyWord}' 
+and estcutdate = '{estcutdate}'";
+
             if (!MyUtility.Check.Empty(cutcellid))
             {
                 sqlcmd = sqlcmd + string.Format(" and cutcellid = '{0}'", cutcellid);
@@ -67,6 +85,10 @@ namespace Sci.Production.Cutting
             if (!MyUtility.Check.Empty(factory))
             {
                 sqlcmd = sqlcmd + string.Format(" and a.factoryid = '{0}'", factory);
+            }
+            if (!MyUtility.Check.Empty(spreadingNo))
+            {
+                sqlcmd = sqlcmd + string.Format(" and a.spreadingNoID = '{0}'", spreadingNo);
             }
             DataRow queryRow, ordersRow;
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out detailTable);
@@ -88,7 +110,7 @@ namespace Sci.Production.Cutting
                             line = MyUtility.GetValue.Lookup(string.Format("Select SewingLineid from Sewingschedule_Detail Where Orderid = '{0}' ", dr["orderid_b"]), null);
                         }
                         dr["Sewinglineid"] = line;
-                        DataRow[] griddray = gridTable.Select(string.Format("cuttingid = '{0}' and cutcellid ='{1}'", dr["id"], dr["cutcellid"]));
+                        DataRow[] griddray = gridTable.Select(string.Format("cuttingid = '{0}' and cutcellid ='{1}' and SpreadingNoID ='{2}'", dr["id"], dr["cutcellid"], dr["SpreadingNoID"]));
                         if (griddray.Length == 0)
                         {
                             DataRow newdr = gridTable.NewRow();
@@ -98,6 +120,7 @@ namespace Sci.Production.Cutting
                             newdr["Cuttingid"] = dr["ID"];
                             newdr["brandid"] = ordersRow["brandid"];
                             newdr["Styleid"] = ordersRow["styleid"];
+                            newdr["SpreadingNoID"] = dr["SpreadingNoID"];
                             newdr["Cutcellid"] = dr["cutcellid"];
                             newdr["cutref"] = dr["cutref"];
                             gridTable.Rows.Add(newdr);
@@ -143,8 +166,8 @@ namespace Sci.Production.Cutting
                         if (!string.IsNullOrWhiteSpace(id))
                         {
                             iu += string.Format(@"
-insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}');
-", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"]);
+insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName,AddDate,POID,SpreadingNoID) Values('{0}','{1}','{2}','{3}','{4}','{5}','{6}',GetDate(),'{7}','{8}');
+", id, dr["CuttingID"], keyWord, dr["cutcellid"], dateEstCutDate.Text, "New", loginID, dr["POId"], dr["SpreadingNoID"]);
                             importay = detailTable.Select(string.Format("id = '{0}' and cutcellid = '{1}'", dr["CuttingID"], dr["cutcellid"]));
                             importedIDs.Add(id);
                             if (importay.Length > 0)
