@@ -30,6 +30,7 @@ namespace Sci.Production.Packing
             DBProxy.Current.Select(null, "select '' union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Sci.Env.User.Factory;
+            this.txtMdivision1.Text = Sci.Env.User.Keyword;
         }
 
         // 驗證輸入條件
@@ -73,6 +74,7 @@ namespace Sci.Production.Packing
 
         // 驗證輸入條件
         private string _ScanName;
+        private string _Barcode;
         /// <summary>
         /// ValidateInput
         /// </summary>
@@ -125,6 +127,7 @@ namespace Sci.Production.Packing
             this._mDivision = this.txtMdivision1.Text;
             this._factory = this.comboFactory.Text;
             this._ScanName = this.txtuser1.TextBox1.Text;
+            this._Barcode = this.txtBarcode.Text;
 
             return base.ValidateInput();
         }
@@ -238,6 +241,11 @@ namespace Sci.Production.Packing
             else if (this.rdbtnSummary.Checked)
             {
                 sqlwhere.Append(" and (pld.ScanEditDate ='' or pld.ScanEditDate is null or pld.Lacking = 1)");
+            }
+
+            if (!MyUtility.Check.Empty(this._Barcode))
+            {
+                sqlwhere.Append(string.Format(" and pld.Barcode = '{0}'", this._Barcode));
             }
             #endregion
 
