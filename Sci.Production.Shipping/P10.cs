@@ -62,9 +62,10 @@ select p.ID
 , p.CTNQty
 , p.CBM
 , ClogCTNQty = (
-	select sum(CTNQty) 
+	select isnull(sum(CTNQty) ,0)
 	from PackingList_Detail pd WITH (NOLOCK) 
 	where pd.ID = p.ID and pd.ReceiveDate is not null
+    and pd.CFAReceiveDate is null
 )
 , p.InspDate
 , p.InspStatus
@@ -98,6 +99,7 @@ select g.ID
 , ClogCTNQty = (
 	select isnull(sum(pd.CTNQty),0) from PackingList p WITH (NOLOCK) ,PackingList_Detail pd WITH (NOLOCK) 
 	where p.INVNo = g.ID and p.ID = pd.ID and pd.ReceiveDate is not null
+    and pd.CFAReceiveDate is null
 )
 ,[TotalShipQty] =  isnull(g.TotalShipQty,0)
 from GMTBooking g WITH (NOLOCK) 
@@ -723,6 +725,24 @@ and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
             if (msgReceDate.Length > 0)
             {
                 MyUtility.Msg.WarningBox("The CTNs were not received by CLog yet!! Cannot confirm!!\r\n" + msgReceDate.ToString());
+                return;
+            }
+
+            #endregion
+
+            #region 檢查是否還有箱子在CFA
+            string strSqlcmd =
+                    $@"
+select 1
+from PackingList p1
+inner join PackingList_Detail p2 on p1.ID=p2.ID
+where ShipPlanID='{this.CurrentMaintain["id"]}'
+and p2.CFAReceiveDate is not null
+and p2.CFAReturnClogDate is null
+and p2.CTNQty > 0";
+            if (MyUtility.Check.Seek(strSqlcmd))
+            {
+                MyUtility.Msg.WarningBox("The CTNs are in CFA now, Cannot confirm!!");
                 return;
             }
 
