@@ -208,7 +208,8 @@ order by CONVERT(int,SUBSTRING(vd.NLCode,3,3))", masterID);
                 }
                 else if (type.EqualString("L"))
                 {
-                    nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where refno = '{dr["Refno"]}'");
+                    nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where ltrim(refno) = '{dr["Refno"]}'");
+                    dr["BrandID"] = string.Empty;
                 }
 
                 StringBuilder errNLCode = new StringBuilder();
@@ -313,7 +314,7 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
             #region
             foreach (DataRow dr in this.DetailDatas)
             {
-                if (MyUtility.Check.Empty(dr["BrandID"]))
+                if (MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L"))
                 {
                     MyUtility.Msg.WarningBox("Brand cannot be empty!");
                     return false;
@@ -366,7 +367,7 @@ select HSCode,UnitID from VNContract_Detail WITH (NOLOCK) where ID = '{this.Curr
                 }
                 else if (fabricType.EqualString("L"))
                 {
-                    string sqlchk = $@"select 1 from LocalItem with(nolock) where refno = '{dr["refno"]}' and nlcode = '{dr["nlcode"]}'";
+                    string sqlchk = $@"select 1 from LocalItem with(nolock) where ltrim(refno) = '{dr["refno"]}' and nlcode = '{dr["nlcode"]}'";
                     if (!MyUtility.Check.Seek(sqlchk))
                     {
                         MyUtility.Msg.WarningBox($"Ref No. :{dr["refno"]} , Customs Code : {dr["nlcode"]} not exists!");
@@ -557,7 +558,7 @@ order by vaqd.NLCode
                 }
                 else if (type.EqualString("L"))
                 {
-                    nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where refno = '{newRow["Refno"]}'");
+                    nlCode = MyUtility.GetValue.Lookup($"select NLCode from LocalItem with(nolock) where ltrim(refno) = '{newRow["Refno"]}'");
                 }
 
                 string chkVNContract_Detail = $@"
@@ -676,7 +677,7 @@ select
 into #tmp
 from AdjustLocal al with(nolock)
 inner join AdjustLocal_Detail ald with(nolock)on ald.id = al.id
-left join LocalItem li with(nolock)on li.RefNo = ald.Refno
+left join LocalItem li with(nolock)on ltrim(li.RefNo) = ald.Refno
 left join orders o with(nolock) on o.id = ald.POID
 where al.Type = 'R' and al.id = '{this.txtWKNo.Text}'
 group by ald.Refno,li.NLCode,o.BrandID,li.HSCode,li.CustomsUnit
@@ -691,7 +692,7 @@ outer apply(
 	outer apply (select [value] = RateValue from dbo.View_Unitrate where FROM_U = li.UnitID and TO_U = 'M') M2Rate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = li.CustomsUnit) UnitRate
 	outer apply (select [value] = Rate from Unit_Rate WITH (NOLOCK) where UnitFrom = li.UnitID and UnitTo = 'M') M2UnitRate
-	where li.Refno = t.Refno
+	where ltrim(li.Refno) = t.Refno
 )L
 
 drop table #tmp
@@ -724,7 +725,7 @@ select
 into #tmp
 from FtyExport fe WITH (NOLOCK)
 inner join FtyExport_Detail fed WITH (NOLOCK) on fe.id=fed.id	
-left join LocalItem li WITH (NOLOCK) on li.Refno = fed.RefNo
+left join LocalItem li WITH (NOLOCK) on ltrim(li.Refno) = fed.RefNo
 left join orders o with(nolock) on o.id = fed.POID
 left join brand b with(nolock) on b.id = o.BrandID
 outer apply(
