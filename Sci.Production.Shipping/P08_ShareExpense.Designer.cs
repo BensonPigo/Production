@@ -87,7 +87,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(824, 0);
+            this.panel2.Location = new System.Drawing.Point(854, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(5, 539);
             this.panel2.TabIndex = 1;
@@ -107,7 +107,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(819, 38);
+            this.panel3.Size = new System.Drawing.Size(849, 38);
             this.panel3.TabIndex = 2;
             // 
             // numTtlNumberofDeliverySheets
@@ -133,7 +133,6 @@
             // 
             // labelTtlNumberofDeliverySheets
             // 
-            this.labelTtlNumberofDeliverySheets.Lines = 0;
             this.labelTtlNumberofDeliverySheets.Location = new System.Drawing.Point(586, 6);
             this.labelTtlNumberofDeliverySheets.Name = "labelTtlNumberofDeliverySheets";
             this.labelTtlNumberofDeliverySheets.Size = new System.Drawing.Size(190, 23);
@@ -164,7 +163,6 @@
             // 
             // labelTtlCBM
             // 
-            this.labelTtlCBM.Lines = 0;
             this.labelTtlCBM.Location = new System.Drawing.Point(432, 6);
             this.labelTtlCBM.Name = "labelTtlCBM";
             this.labelTtlCBM.Size = new System.Drawing.Size(57, 23);
@@ -195,7 +193,6 @@
             // 
             // labelTtlGW
             // 
-            this.labelTtlGW.Lines = 0;
             this.labelTtlGW.Location = new System.Drawing.Point(277, 6);
             this.labelTtlGW.Name = "labelTtlGW";
             this.labelTtlGW.Size = new System.Drawing.Size(56, 23);
@@ -225,7 +222,6 @@
             // 
             // labelTtlAmt
             // 
-            this.labelTtlAmt.Lines = 0;
             this.labelTtlAmt.Location = new System.Drawing.Point(122, 6);
             this.labelTtlAmt.Name = "labelTtlAmt";
             this.labelTtlAmt.Size = new System.Drawing.Size(53, 23);
@@ -243,7 +239,6 @@
             // 
             // labelCurrency
             // 
-            this.labelCurrency.Lines = 0;
             this.labelCurrency.Location = new System.Drawing.Point(4, 6);
             this.labelCurrency.Name = "labelCurrency";
             this.labelCurrency.Size = new System.Drawing.Size(63, 23);
@@ -258,7 +253,7 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(5, 38);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(819, 501);
+            this.panel4.Size = new System.Drawing.Size(849, 501);
             this.panel4.TabIndex = 3;
             // 
             // panel7
@@ -267,7 +262,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(0, 0);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(693, 292);
+            this.panel7.Size = new System.Drawing.Size(723, 292);
             this.panel7.TabIndex = 2;
             // 
             // gridBLNo
@@ -291,7 +286,8 @@
             this.gridBLNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBLNo.RowTemplate.Height = 24;
             this.gridBLNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridBLNo.Size = new System.Drawing.Size(693, 292);
+            this.gridBLNo.ShowCellToolTips = false;
+            this.gridBLNo.Size = new System.Drawing.Size(723, 292);
             this.gridBLNo.TabIndex = 0;
             this.gridBLNo.TabStop = false;
             // 
@@ -302,7 +298,7 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel6.Location = new System.Drawing.Point(0, 292);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(693, 209);
+            this.panel6.Size = new System.Drawing.Size(723, 209);
             this.panel6.TabIndex = 1;
             // 
             // panel9
@@ -312,7 +308,7 @@
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(0, 35);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(693, 174);
+            this.panel9.Size = new System.Drawing.Size(723, 174);
             this.panel9.TabIndex = 1;
             // 
             // panel11
@@ -321,7 +317,7 @@
             this.panel11.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel11.Location = new System.Drawing.Point(0, 0);
             this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(693, 169);
+            this.panel11.Size = new System.Drawing.Size(723, 169);
             this.panel11.TabIndex = 2;
             // 
             // gridAccountID
@@ -345,7 +341,8 @@
             this.gridAccountID.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridAccountID.RowTemplate.Height = 24;
             this.gridAccountID.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridAccountID.Size = new System.Drawing.Size(693, 169);
+            this.gridAccountID.ShowCellToolTips = false;
+            this.gridAccountID.Size = new System.Drawing.Size(723, 169);
             this.gridAccountID.TabIndex = 0;
             this.gridAccountID.TabStop = false;
             // 
@@ -354,7 +351,7 @@
             this.panel10.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel10.Location = new System.Drawing.Point(0, 169);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(693, 5);
+            this.panel10.Size = new System.Drawing.Size(723, 5);
             this.panel10.TabIndex = 1;
             // 
             // panel8
@@ -363,12 +360,11 @@
             this.panel8.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel8.Location = new System.Drawing.Point(0, 0);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(693, 35);
+            this.panel8.Size = new System.Drawing.Size(723, 35);
             this.panel8.TabIndex = 0;
             // 
             // labelDetails
             // 
-            this.labelDetails.Lines = 0;
             this.labelDetails.Location = new System.Drawing.Point(4, 8);
             this.labelDetails.Name = "labelDetails";
             this.labelDetails.Size = new System.Drawing.Size(49, 23);
@@ -385,7 +381,7 @@
             this.panel5.Controls.Add(this.btnImport);
             this.panel5.Controls.Add(this.btnDelete);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel5.Location = new System.Drawing.Point(693, 0);
+            this.panel5.Location = new System.Drawing.Point(723, 0);
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(126, 501);
             this.panel5.TabIndex = 0;
@@ -467,7 +463,7 @@
             // 
             // P08_ShareExpense
             // 
-            this.ClientSize = new System.Drawing.Size(829, 539);
+            this.ClientSize = new System.Drawing.Size(859, 539);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);

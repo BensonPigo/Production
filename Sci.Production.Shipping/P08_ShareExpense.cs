@@ -207,7 +207,7 @@ select * from Expt", e.FormattedValue.ToString());
             };
 #endregion
             #region BL2No
-            bLNo.CellValidating += (s, e) =>
+            bL2No.CellValidating += (s, e) =>
             {
                 if (!this.EditMode ||
                     e.RowIndex == -1 ||
@@ -226,6 +226,25 @@ select * from Expt", e.FormattedValue.ToString());
 
                 if (MyUtility.Check.Seek(cmd_type))
                 {
+                    // 刪除異動資料
+                    if (drGrid["BL2NO"].ToString().ToUpper() != e.FormattedValue.ToString().ToUpper() && !MyUtility.Check.Empty(drGrid["BL2NO"].ToString()))
+                    {
+                        string blno = drGrid["BL2NO"].ToString().ToUpper();
+                        int t = dts.Rows.Count;
+                        for (int i = t - 1; i >= 0; i--)
+                        {
+                            if (dts.Rows[i].RowState != DataRowState.Deleted)
+                            {
+                                if (dts.Rows[i]["BL2NO"].ToString().ToUpper() == blno)
+                                { // 刪除
+                                    dts.Rows[i].Delete();
+                                }
+                            }
+                        }
+
+                        e.Cancel = true; // 不進入RowIndex判斷
+                    }
+
                     // 判斷資料是否存在
                     string strChk =
 $@"select 0 as Selected,g.ID as InvNo,g.ShipModeID,g.TotalGW as GW, g.TotalCBM as CBM,
@@ -260,6 +279,20 @@ from GMTBooking g where g.BL2No ='{e.FormattedValue.ToString()}'";
                             newRow["CBM"] = dtBl2No.Rows[i]["CBM"];
                             newRow["Amount"] = dtBl2No.Rows[i]["Amount"];
                             ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(newRow);
+                        }
+                    }
+
+                    // delete empty rows
+                    int t1 = dts.Rows.Count;
+                    for (int i = t1 - 1; i >= 0; i--)
+                    {
+                        if (dts.Rows[i].RowState != DataRowState.Deleted)
+                        {
+                            if (MyUtility.Check.Empty(dts.Rows[i]["Blno"].ToString()) && MyUtility.Check.Empty(dts.Rows[i]["WKNO"].ToString()) && MyUtility.Check.Empty(dts.Rows[i]["InvNO"].ToString()))
+                            {
+                                // 刪除
+                                dts.Rows[i].Delete();
+                            }
                         }
                     }
 
@@ -321,7 +354,7 @@ PL as
 ) ,
 FTY AS
 (
-    select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno, '' as Bl2No
+    select 0 as Selected,fe.ID as WKNo,fe.ShipModeID,WeightKg as GW, fe.Cbm, '' as ShippingAPID, Blno, '' as Bl2No,
     '' as InvNo,'' as Type,'' as CurrencyID,0 as Amount,'' as ShareBase,1 as FtyWK
     from FtyExport fe WITH (NOLOCK) 
     where fe.Type = 3  and fe.id='{0}'
@@ -504,7 +537,7 @@ select * from FtyExportData ", e.FormattedValue.ToString());
             string strSqlCmd = $@"
 merge ShareExpense t
 using (
-	select top 1
+	select distinct
 [ShippingAPID] = '{this.apData["ID"]}'
 ,[BLNo] = iif(BLNo is null or BLNo='', BL2No,BLNo)
 ,[WKNo] = ''
@@ -597,6 +630,7 @@ order by sh.AccountID", MyUtility.Convert.GetString(this.apData["ID"]));
                 @"
 select  ShippingAPID
         , se.Blno
+        , [Bl2no] = (select BL2No from GMTBooking where id=se.InvNo)
         , WKNo
         , InvNo
         , se.Type
