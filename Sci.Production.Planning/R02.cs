@@ -418,13 +418,20 @@ order by k.FactoryID,k.ID");
             }
 
             list.Sort();
-            if (type == "Min")
+            if (list.Count > 0)
             {
-                return list[0];
+                if (type == "Min")
+                {
+                    return list[0];
+                }
+                else
+                {
+                    return list[list.Count - 1];
+                }
             }
             else
             {
-                return list[list.Count - 1];
+                return string.Empty;
             }
         }
     }
