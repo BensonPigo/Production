@@ -160,7 +160,7 @@ where junk = 0 and (PortArrival is null or DocArrival is null)");
                 {
                     if (Convert.ToDateTime(dr["PortArrival"]) > Convert.ToDateTime(dr["WhseArrival"]))
                     {
-                        warningmsg.Append($@"WK#: {dr["ID"]} < Arrive Port Date > can't later than < Arrive W/H Date >");
+                        warningmsg.Append($@"WK#: {dr["ID"]} < Arrive Port Date > can't later than < Arrive W/H Date >." + Environment.NewLine);
                         continue;
                     }
                 }
@@ -170,7 +170,7 @@ where junk = 0 and (PortArrival is null or DocArrival is null)");
                     if (DateTime.Compare(Convert.ToDateTime(dr["PortArrival"]).AddDays(10), (DateTime)dr["Eta"]) < 0 ||
                         DateTime.Compare(Convert.ToDateTime(dr["PortArrival"]).AddDays(-10), (DateTime)dr["Eta"]) > 0)
                     {
-                        warningmsg.Append($@"WK#: {dr["ID"]} < Arrive Port Date > earlier or later more than <ETA> 10 days, Cannot be saved.");
+                        warningmsg.Append($@"WK#: {dr["ID"]} < Arrive Port Date > earlier or later more than <ETA> 10 days, Cannot be saved." + Environment.NewLine);
                         continue;
                     }
                 }
