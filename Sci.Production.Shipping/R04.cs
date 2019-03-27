@@ -116,6 +116,8 @@ namespace Sci.Production.Shipping
 		,ShipQty = (select isnull(sum(ShipQty), 0) 
 					from Pullout_Detail WITH (NOLOCK) 
 					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) 
+		,OrderTtlQty=o.Qty
+		,ShipTtlQty=isnull(plds.ShipQty,0)
 		,o.MDivisionID
 		,o.FactoryID
 		,Alias = isnull(c.Alias,'')		
@@ -125,6 +127,10 @@ namespace Sci.Production.Shipping
 		,o.PoPrice
 		,o.Customize1
 		,o.Customize2
+		,CustCDID.CustCDID
+		,plds.CTNQty
+		,plds.GW
+		,cbm.CTNQty
 		,oq.ShipmodeID
 		,SMP = IIF(o.ScanAndPack = 1,'Y','')
 		,VasShas = IIF(o.VasShas = 1,'Y','') 
@@ -180,12 +186,32 @@ outer apply(
 			inner join PackingList p on p.id = pd.id
 			inner join GMTBooking gb on gb.id = p.INVNo
 			where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
-            {0}
+            
 		)a
 		order by a.id
 		for xml path('')
 	),1,1,'')
 )gb
+outer apply(
+	select top 1 p.CustCDID
+	from packinglist_detail pd
+	inner join PackingList p on p.id = pd.id
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+)CustCDID
+outer apply(
+	select CTNQty=sum(pd.CTNQty),GW=sum(pd.GW),ShipQty=sum(pd.ShipQty)
+	from packinglist_detail pd
+	inner join PackingList p on p.id = pd.id
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+)plds
+outer apply(
+	select CTNQty=round(sum(l.CBM),4)
+	from packinglist_detail pd
+	inner join PackingList p on p.id = pd.id
+	inner join LocalItem l on l.refno = pd.refno
+	where pd.orderid = o.id and pd.OrderShipmodeSeq = oq.seq
+)cbm
+
 outer apply(
 	select PulloutDate = stuff((
 		select concat(',',a.PulloutDate)
