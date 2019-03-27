@@ -142,7 +142,10 @@ Update sod set
 from SewingOutput_DailyUnlock sod
 where sod.SewingOutputID in (select id from #tmp) and sod.UnLockDate is null
 
-update s set Status='New', LockDate = null from SewingOutput s where id in (select id from #tmp)
+update s set Status='New', LockDate = null 
+, s.editname='{Sci.Env.User.UserID}' 
+, s.editdate=getdate()
+from SewingOutput s where id in (select id from #tmp)
 ";
             DataTable dt2;
             using (TransactionScope scope = new TransactionScope())
