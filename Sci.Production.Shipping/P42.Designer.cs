@@ -37,6 +37,11 @@
             this.labelCustomdeclareNo = new Sci.Win.UI.Label();
             this.txtCustomdeclareNo = new Sci.Win.UI.TextBox();
             this.btnImportfromExcel = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtWKNo = new Sci.Win.UI.TextBox();
+            this.txtShippingReason1 = new Sci.Production.Class.txtShippingReason();
+            this.btnDownloadexcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -53,6 +58,11 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnDownloadexcel);
+            this.masterpanel.Controls.Add(this.txtShippingReason1);
+            this.masterpanel.Controls.Add(this.txtWKNo);
+            this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnImportfromExcel);
             this.masterpanel.Controls.Add(this.txtCustomdeclareNo);
             this.masterpanel.Controls.Add(this.labelCustomdeclareNo);
@@ -62,7 +72,7 @@
             this.masterpanel.Controls.Add(this.labelContractNo);
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(913, 103);
+            this.masterpanel.Size = new System.Drawing.Size(913, 138);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelDate, 0);
@@ -73,15 +83,20 @@
             this.masterpanel.Controls.SetChildIndex(this.labelCustomdeclareNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomdeclareNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportfromExcel, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtWKNo, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtShippingReason1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownloadexcel, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 103);
-            this.detailpanel.Size = new System.Drawing.Size(913, 246);
+            this.detailpanel.Location = new System.Drawing.Point(0, 138);
+            this.detailpanel.Size = new System.Drawing.Size(913, 211);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(663, 68);
+            this.gridicon.Location = new System.Drawing.Point(663, 103);
             this.gridicon.TabIndex = 7;
             // 
             // refresh
@@ -90,7 +105,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(913, 246);
+            this.detailgridcont.Size = new System.Drawing.Size(913, 211);
             // 
             // detail2
             // 
@@ -145,7 +160,6 @@
             // 
             // labelDate
             // 
-            this.labelDate.Lines = 0;
             this.labelDate.Location = new System.Drawing.Point(9, 13);
             this.labelDate.Name = "labelDate";
             this.labelDate.Size = new System.Drawing.Size(81, 23);
@@ -154,7 +168,6 @@
             // 
             // labelContractNo
             // 
-            this.labelContractNo.Lines = 0;
             this.labelContractNo.Location = new System.Drawing.Point(9, 43);
             this.labelContractNo.Name = "labelContractNo";
             this.labelContractNo.Size = new System.Drawing.Size(81, 23);
@@ -163,8 +176,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
-            this.labelRemark.Location = new System.Drawing.Point(9, 73);
+            this.labelRemark.Location = new System.Drawing.Point(9, 101);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(81, 23);
             this.labelRemark.TabIndex = 6;
@@ -193,14 +205,13 @@
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(94, 73);
+            this.txtRemark.Location = new System.Drawing.Point(94, 101);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(536, 23);
             this.txtRemark.TabIndex = 3;
             // 
             // labelCustomdeclareNo
             // 
-            this.labelCustomdeclareNo.Lines = 0;
             this.labelCustomdeclareNo.Location = new System.Drawing.Point(313, 13);
             this.labelCustomdeclareNo.Name = "labelCustomdeclareNo";
             this.labelCustomdeclareNo.Size = new System.Drawing.Size(124, 23);
@@ -228,6 +239,54 @@
             this.btnImportfromExcel.UseVisualStyleBackColor = true;
             this.btnImportfromExcel.Click += new System.EventHandler(this.BtnImportfromExcel_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(10, 72);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 23);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Reason";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(313, 43);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(124, 23);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Fty WK#/ WH ID";
+            // 
+            // txtWKNo
+            // 
+            this.txtWKNo.BackColor = System.Drawing.Color.White;
+            this.txtWKNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "WKNo", true));
+            this.txtWKNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWKNo.Location = new System.Drawing.Point(440, 42);
+            this.txtWKNo.Name = "txtWKNo";
+            this.txtWKNo.Size = new System.Drawing.Size(168, 23);
+            this.txtWKNo.TabIndex = 12;
+            this.txtWKNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtWKNo_Validating);
+            // 
+            // txtShippingReason1
+            // 
+            this.txtShippingReason1.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "ReasonID", true));
+            this.txtShippingReason1.DisplayBox1Binding = "";
+            this.txtShippingReason1.Location = new System.Drawing.Point(94, 70);
+            this.txtShippingReason1.Name = "txtShippingReason1";
+            this.txtShippingReason1.Size = new System.Drawing.Size(467, 27);
+            this.txtShippingReason1.TabIndex = 13;
+            this.txtShippingReason1.TextBox1Binding = "";
+            this.txtShippingReason1.Type = "AQ";
+            // 
+            // btnDownloadexcel
+            // 
+            this.btnDownloadexcel.Location = new System.Drawing.Point(625, 49);
+            this.btnDownloadexcel.Name = "btnDownloadexcel";
+            this.btnDownloadexcel.Size = new System.Drawing.Size(142, 30);
+            this.btnDownloadexcel.TabIndex = 14;
+            this.btnDownloadexcel.Text = "Download excel";
+            this.btnDownloadexcel.UseVisualStyleBackColor = true;
+            this.btnDownloadexcel.Click += new System.EventHandler(this.BtnDownloadexcel);
+            // 
             // P42
             // 
             this.ApvChkValue = "New";
@@ -235,11 +294,10 @@
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "dateDate";
             this.DefaultOrder = "ID";
-            this.GridAlias = "VNContractQtyAdjust_Detail";
-            this.GridUniqueKey = "NLCode";
+            this.GridAlias = "VNContractQtyAdjust_Detail_Detail";
+            this.GridUniqueKey = "Refno";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P42";
@@ -278,5 +336,10 @@
         private Win.UI.Label labelContractNo;
         private Win.UI.Label labelDate;
         private Win.UI.Button btnImportfromExcel;
+        private Win.UI.TextBox txtWKNo;
+        private Win.UI.Label label2;
+        private Win.UI.Label label1;
+        private Class.txtShippingReason txtShippingReason1;
+        private Win.UI.Button btnDownloadexcel;
     }
 }
