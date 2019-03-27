@@ -113,21 +113,21 @@ namespace Sci.Production.Shipping
 		,o.StyleID
 		,o.SeasonID
 		,oq.Qty
+		,ShipQty = (select isnull(sum(ShipQty), 0) 
+					from Pullout_Detail WITH (NOLOCK) 
+					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) 
 		,o.MDivisionID
 		,o.FactoryID
-		,Alias = isnull(c.Alias,'')
+		,Alias = isnull(c.Alias,'')		
+		,Payment = isnull((select Term 
+						   from PayTermAR WITH (NOLOCK) 
+						   where ID = o.PayTermARID), '')
 		,o.PoPrice
 		,o.Customize1
 		,o.Customize2
 		,oq.ShipmodeID
 		,SMP = IIF(o.ScanAndPack = 1,'Y','')
 		,VasShas = IIF(o.VasShas = 1,'Y','') 
-		,ShipQty = (select isnull(sum(ShipQty), 0) 
-					from Pullout_Detail WITH (NOLOCK) 
-					where OrderID = o.ID and OrderShipmodeSeq = oq.Seq) - [dbo].getInvAdjQty(o.ID,oq.Seq) 
-		,Payment = isnull((select Term 
-						   from PayTermAR WITH (NOLOCK) 
-						   where ID = o.PayTermARID), '')
 		,Handle = o.MRHandle+' - '+isnull((select Name + ' #' + ExtNo 
 										   from TPEPass1 WITH (NOLOCK) 
 										   where ID = o.MRHandle), '') 
@@ -303,47 +303,9 @@ and o.PulloutComplete=0 and o.Qty > 0", whereFCRDate));
                 return false;
             }
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
+            MyUtility.Excel.CopyToXls(this.printData, string.Empty, "Shipping_R04_EstimateOutstandingShipmentReport.xltx", 1, false, null, excel, wSheet: excel.Sheets[1]);
 
-            // 填內容值
-            int intRowsStart = 2;
-            object[,] objArray = new object[1, 31];
-            foreach (DataRow dr in this.printData.Rows)
-            {
-                objArray[0, 0] = dr["BuyerDelivery"];
-                objArray[0, 1] = dr["EstPulloutDate"];
-                objArray[0, 2] = dr["BrandID"];
-                objArray[0, 3] = dr["BuyerID"];
-                objArray[0, 4] = dr["ID"];
-                objArray[0, 5] = dr["Category"];
-                objArray[0, 6] = dr["seq"];
-                objArray[0, 7] = dr["pkid"];
-                objArray[0, 8] = dr["pkINVNo"];
-                objArray[0, 9] = dr["FCRDate"];
-                objArray[0, 10] = dr["PulloutDate"];
-                objArray[0, 11] = dr["CustPONo"];
-                objArray[0, 12] = dr["StyleID"];
-                objArray[0, 13] = dr["SeasonID"];
-                objArray[0, 14] = dr["Qty"];
-                objArray[0, 15] = dr["ShipQty"];
-                objArray[0, 16] = dr["MDivisionID"];
-                objArray[0, 17] = dr["FactoryID"];
-                objArray[0, 18] = dr["Alias"];
-                objArray[0, 19] = dr["Payment"];
-                objArray[0, 20] = dr["PoPrice"];
-                objArray[0, 21] = dr["Customize1"];
-                objArray[0, 22] = dr["Customize2"];
-                objArray[0, 23] = dr["ShipmodeID"];
-                objArray[0, 24] = dr["SMP"];
-                objArray[0, 25] = dr["VasShas"];
-                objArray[0, 26] = dr["Handle"];
-                objArray[0, 27] = dr["SMR"];
-                objArray[0, 28] = dr["LocalMR"];
-                objArray[0, 29] = dr["OSReason"];
-                objArray[0, 30] = dr["OutstandingRemark"];
-                worksheet.Range[string.Format("A{0}:AE{0}", intRowsStart)].Value2 = objArray;
-                intRowsStart++;
-            }
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];
 
             excel.Cells.EntireColumn.AutoFit();
             excel.Cells.EntireRow.AutoFit();
