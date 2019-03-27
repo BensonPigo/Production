@@ -232,16 +232,16 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                         }
                     }
                 };
-                base.OnDetailGridSetup();
-                this.Helper.Controls.Grid.Generator(this.detailgrid)
-                    .Text("BrandId", header: "Brand", width: Widths.AnsiChars(10), settings: this.brand)
-                    .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), settings: this.refno)
-                    .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
-                    .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                    .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
-                    .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
-                    .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                    .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
+            base.OnDetailGridSetup();
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("BrandId", header: "Brand", width: Widths.AnsiChars(10), settings: this.brand)
+                .Text("RefNo", header: "Ref No.", width: Widths.AnsiChars(10), settings: this.refno)
+                .Text("FabricType", header: "Type", width: Widths.AnsiChars(10), settings: this.fabricType)
+                .Text("HSCode", header: "HS Code", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("NLCode", header: "Customs Code", width: Widths.AnsiChars(7), settings: this.nlcode).Get(out this.col_nlcode)
+                .Numeric("Qty", header: "Customs Qty", decimal_places: 2, width: Widths.AnsiChars(15), settings: this.qty).Get(out this.col_qty)
+                .Text("UnitID", header: "Customs Unit", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
         }
 
         /// <inheritdoc/>
@@ -339,13 +339,12 @@ order by CONVERT(int,SUBSTRING(vdd.NLCode,3,3))
                 }
                 else
                 {
-                    if (!MyUtility.Check.Seek($"select 1 from LocalItem with(nolock) where Refno = '{dr["Refno"]}' and NLCode = '{dr["NLcode"]}'"))
+                    if (!MyUtility.Check.Seek($"select 1 from LocalItem with(nolock) where ltrim(Refno) = '{dr["Refno"]}' and NLCode = '{dr["NLcode"]}'"))
                     {
                         MyUtility.Msg.WarningBox($"Refno:{dr["Refno"]}, Customs Code:{dr["NLcode"]} not exists!");
                         return false;
                     }
                 }
-
             }
             #endregion
 
@@ -471,7 +470,8 @@ when not matched by source and t.id in(select id from #tmps) then
 
         private void BRT(DataRow dr)
         {
-            if (!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"]))
+            if ((!MyUtility.Check.Empty(dr["BrandID"]) && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])) ||
+                (MyUtility.Convert.GetString(dr["FabricType"]).EqualString("L") && !MyUtility.Check.Empty(dr["Refno"]) && !MyUtility.Check.Empty(dr["FabricType"])))
             {
                 string type = MyUtility.Convert.GetString(dr["FabricType"]);
                 if (type.EqualString("A") || type.EqualString("F"))
@@ -520,25 +520,11 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
                 }
                 else if (type.EqualString("L"))
                 {
-                    string sql = $@"
-select f.HSCode,f.NLCode,f.CustomsUnit,f.NLCode
-from FtyExport e WITH (NOLOCK) 
-inner join FtyExport_Detail ed WITH (NOLOCK) on e.ID = ed.ID
-inner join LocalItem li WITH (NOLOCK) on li.RefNo = ed.RefNo and li.LocalSuppid = ed.SuppID
-inner join orders o with(nolock) on o.id = ed.POID
-inner join brand b with(nolock) on b.id = o.BrandID
-outer apply(
-    select top 1 f1.* 
-    from Fabric f1 with(nolock) 
-    inner join brand b2 with(nolock) on f1.BrandID = b2.id 
-    where f1.Refno = ed.Refno and b2.BrandGroup = b.BrandGroup and f1.Type = ed.FabricType
-    order by f1.NLCodeEditDate desc
-)f
-where b.id = '{dr["BrandID"]}' and li.RefNo = '{dr["RefNo"]}' and iif(ed.FabricType = '','L',ed.FabricType)='{dr["FabricType"]}'
-";
+                    string sql = $@"select li.HSCode,li.NLCode,li.CustomsUnit,li.NLCode from LocalItem li where ltrim(li.RefNo) = '{dr["RefNo"]}' ";
                     DataRow row;
                     if (MyUtility.Check.Seek(sql, out row))
                     {
+                        dr["BrandID"] = string.Empty;
                         dr["NLCode"] = row["NLCode"];
                         dr["HSCode"] = row["HSCode"];
                         DataRow seekData;
@@ -682,25 +668,25 @@ where ID = '{this.CurrentMaintain["VNContractID"]}' and NLCode = '{dr["NLCode"]}
                     return;
                 }
 
-                 if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
+                if (this.NoNLCode.Rows.Count > 0 || this.NotInPO.Rows.Count > 0)
+                {
+                    Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
+                    DialogResult result = callNextForm.ShowDialog(this);
+                    if (result == System.Windows.Forms.DialogResult.OK)
                     {
-                        Sci.Production.Shipping.P40_AssignNLCode callNextForm = new Sci.Production.Shipping.P40_AssignNLCode(this.NoNLCode, this.NotInPO, this.UnitNotFound, this.CurrentMaintain);
-                        DialogResult result = callNextForm.ShowDialog(this);
-                        if (result == System.Windows.Forms.DialogResult.OK)
-                        {
-                            this.NotInPO = callNextForm.NotInPo;
-                            callNextForm.Dispose();
-                            this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
-                        }
-                        else
-                        {
-                            callNextForm.Dispose();
-                        }
+                        this.NotInPO = callNextForm.NotInPo;
+                        callNextForm.Dispose();
+                        this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
                     }
                     else
                     {
-                        this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
+                        callNextForm.Dispose();
                     }
+                }
+                else
+                {
+                    this.CalaulateData(string.Format("e.BLNo = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BLNo"])));
+                }
             }
         }
 
@@ -1027,7 +1013,7 @@ outer apply(
 )f
 where {0}", sqlWhere);
             }
-                #endregion
+            #endregion
             DataTable tmpData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out tmpData);
             if (!result)
