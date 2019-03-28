@@ -146,8 +146,10 @@ WHERE 	not exists(
                 {
                     case "O":
                         SqlCmd += $@" 
-		and orders.Category ='s' 
-        or (awt.IsArtwork=1 and v.Cost > 0 and orders.Category='B')";
+		and (
+                orders.Category ='s' 
+                or (awt.IsArtwork=1 and v.Cost > 0 and orders.Category='B')
+        )";
                         break;
                     case "I":
                         SqlCmd += $@" 
@@ -225,8 +227,11 @@ WHERE 	not exists(
                 {
                     case "O":
                         SqlCmd += $@" 
-        and orders.Category ='s' 
-        or (awt.IsArtwork = 0 and Order_TmsCost.Price > 0 and orders.Category = 'B')";
+        and (
+                orders.Category ='s' 
+                or (awt.IsArtwork = 0 and Order_TmsCost.Price > 0 
+                and orders.Category = 'B')
+        )";
                         break;
                     case "I":
                         SqlCmd += $@" 
