@@ -110,7 +110,14 @@ and estcutdate = '{estcutdate}'";
                             line = MyUtility.GetValue.Lookup(string.Format("Select SewingLineid from Sewingschedule_Detail Where Orderid = '{0}' ", dr["orderid_b"]), null);
                         }
                         dr["Sewinglineid"] = line;
-                        DataRow[] griddray = gridTable.Select(string.Format("cuttingid = '{0}' and cutcellid ='{1}' and SpreadingNoID ='{2}'", dr["id"], dr["cutcellid"], dr["SpreadingNoID"]));
+                        
+                        //SpreadingNoID可能是DBNULL或空字串，對User來說都一樣，因此放進OR
+                        DataRow[] griddray = gridTable.Select($@"
+                                                                cuttingid = '{dr["id"]}' 
+                                                                and cutcellid ='{dr["cutcellid"]}' 
+                                                                and SpreadingNoID {(MyUtility.Check.Empty(dr["SpreadingNoID"]) ? "IS NULL OR SpreadingNoID = '' " : "='"+ dr["SpreadingNoID"].ToString()+ "'" )}
+                                                                ");
+
                         if (griddray.Length == 0)
                         {
                             DataRow newdr = gridTable.NewRow();
