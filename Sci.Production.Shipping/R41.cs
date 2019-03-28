@@ -296,7 +296,7 @@ order by v.CDate", sqlCondition);
 select v.ID,v.CDate,vdd.BrandID,vdd.Refno,
 	FabricType= case when vdd.FabricType = 'F' then 'Fabric'
 					 when vdd.FabricType = 'A' then 'Accessory' 
-					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where l.RefNo = vdd.Refno)
+					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where ltrim(l.RefNo) = vdd.Refno)
 					 end ,
 	v.VNContractID,v.DeclareNo,
 	BLWK=IIF(v.BLNo='',v.WKNo,v.BLNo),vdd.NLCode,vd.HSCode,vdd.Qty,vd.UnitID,vd.Remark
@@ -317,7 +317,7 @@ order by v.ID", sqlCondition);
 select v.ID,v.CDate,vdd.RefNo,
 	FabricType= case when vdd.FabricType = 'F' then 'Fabric'
 					 when vdd.FabricType = 'A' then 'Accessory' 
-					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where l.RefNo = vdd.Refno)
+					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where ltrim(l.RefNo) = vdd.Refno)
 					 end ,
 	v.VNContractID,v.DeclareNo,v.InvNo,ed.StyleID,ed.SeasonID,ed.BrandID,ed.ExportQty,
 	isnull(vd.NLCode,'') as NLCode,isnull(vd.HSCode,'') as HSCode,isnull(vdd.Qty,0) as Usage,
@@ -344,7 +344,7 @@ order by v.ID", sqlCondition);
 select v.CDate,v.VNContractID,vdd.BrandID,Reason =concat(v.ReasonID,'-',sr.Description),vdd.Refno,
 	FabricType= case when vdd.FabricType = 'F' then 'Fabric'
 					 when vdd.FabricType = 'A' then 'Accessory' 
-					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where l.RefNo = vdd.Refno)
+					 when vdd.FabricType = 'L' then (select Category from LocalItem l with(nolock) where ltrim(l.RefNo) = vdd.Refno)
 					 end ,
 	v.DeclareNo,vdd.NLCode,isnull(cd.HSCode,'') as HSCode,vdd.Qty,isnull(cd.UnitID,'') as UnitID,v.Remark
 from VNContractQtyAdjust v WITH (NOLOCK) 
