@@ -473,7 +473,15 @@ Do you want to continue? ");
             {
                 if (dr["Sel"].ToString() == "True")
                 {
-                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                    DataRow[] detaildr;
+                    if (MyUtility.Check.Empty(dr["Ukey"]))
+                    {
+                        detaildr = detailTb.Select(string.Format("newkey = '{0}'", dr["newkey"]));
+                    }
+                    else
+                    {
+                        detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                    }                    
 
                     detaildr[0]["SpreadingNoID"] = dr["SpreadingNoID"];
                     detaildr[0]["Cutcellid"] = dr["Cutcellid"];
