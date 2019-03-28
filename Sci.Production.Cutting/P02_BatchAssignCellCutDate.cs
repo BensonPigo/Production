@@ -471,6 +471,8 @@ Do you want to continue? ");
             };
             foreach (DataRow dr in curTb.Rows)
             {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
                 if (dr["Sel"].ToString() == "True")
                 {
                     DataRow[] detaildr;
