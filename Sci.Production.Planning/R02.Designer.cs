@@ -99,7 +99,6 @@
             this.dateSCIDelivery.DateBox2.Name = "";
             this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSCIDelivery.DateBox2.TabIndex = 1;
-            this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(115, 12);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
@@ -121,7 +120,6 @@
             this.dateInLineDate.DateBox2.Name = "";
             this.dateInLineDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateInLineDate.DateBox2.TabIndex = 1;
-            this.dateInLineDate.IsRequired = false;
             this.dateInLineDate.Location = new System.Drawing.Point(115, 48);
             this.dateInLineDate.Name = "dateInLineDate";
             this.dateInLineDate.Size = new System.Drawing.Size(280, 23);
@@ -195,7 +193,6 @@
             this.dateCutInline.DateBox2.Name = "";
             this.dateCutInline.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateCutInline.DateBox2.TabIndex = 1;
-            this.dateCutInline.IsRequired = false;
             this.dateCutInline.Location = new System.Drawing.Point(115, 120);
             this.dateCutInline.Name = "dateCutInline";
             this.dateCutInline.Size = new System.Drawing.Size(280, 23);
@@ -231,7 +228,6 @@
             this.dateBuyerDelivery.DateBox2.Name = "";
             this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateBuyerDelivery.DateBox2.TabIndex = 1;
-            this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(115, 84);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
@@ -353,6 +349,7 @@
             this.comboCategory.IsSupportUnselect = true;
             this.comboCategory.Location = new System.Drawing.Point(115, 336);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(205, 24);
             this.comboCategory.TabIndex = 144;
             this.comboCategory.Type = "Pms_ReportForProduct";
