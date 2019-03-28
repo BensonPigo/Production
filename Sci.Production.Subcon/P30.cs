@@ -1004,6 +1004,19 @@ where refno = '{0}'
             };
             #endregion
 
+            Ict.Win.DataGridViewGeneratorDateColumnSettings ds = new DataGridViewGeneratorDateColumnSettings();
+            ds.CellValidating += (s, e) =>
+            {
+                DataRow currentRow = ((Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
+                if (!(MyUtility.Check.Empty(e.FormattedValue)))
+                {
+                    if (Convert.ToDateTime(e.FormattedValue) < DateTime.Now.Date)
+                    {
+                        MyUtility.Msg.WarningBox("Delivery date cannot earlier than today.");
+                        currentRow["Delivery"] = DateTime.Now.Date;
+                    }
+                }
+            };
             Ict.Win.DataGridViewGeneratorNumericColumnSettings ns2 = new DataGridViewGeneratorNumericColumnSettings();
             ns2.EditingMouseDoubleClick += (s, e) =>
             {
@@ -1037,7 +1050,7 @@ where refno = '{0}'
             .Numeric("price", header: "Price", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 4, iseditingreadonly: true) //11
             .Numeric("amount", header: "Amount", width: Widths.AnsiChars(9), iseditingreadonly: true, decimal_places: 2, integer_places: 14)  //12
             .Numeric("std_price", header: "Standard Price", width: Widths.AnsiChars(6), decimal_places: 3, integer_places: 4, iseditingreadonly: true) //13
-            .Date("delivery", header: "Delivery", width: Widths.AnsiChars(10)) //14
+            .Date("delivery", header: "Delivery", width: Widths.AnsiChars(10), settings: ds) //14
             .Text("Requestid", header: "Request ID", width: Widths.AnsiChars(13), iseditingreadonly: true) //15
             .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns2) //16
             .Numeric("apqty", header: "AP Qty", width: Widths.AnsiChars(6), decimal_places: 0, integer_places: 6, iseditingreadonly: true, settings: ns3) //17
@@ -1676,6 +1689,18 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             if (batchapprove != null)
             {
                 batchapprove.Dispose();
+            }
+        }
+
+        private void dateDeliveryDate_Validating(object sender, CancelEventArgs e)
+        {
+            if (!MyUtility.Check.Empty(this.dateDeliveryDate.Value))
+            {
+                if (this.dateDeliveryDate.Value < DateTime.Now.Date)
+                {
+                    MyUtility.Msg.WarningBox("Delivery date cannot earlier than today.");
+                    this.dateDeliveryDate.Value = DateTime.Now.Date;
+                }
             }
         }
     }
