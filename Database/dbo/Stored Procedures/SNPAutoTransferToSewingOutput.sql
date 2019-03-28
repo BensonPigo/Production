@@ -1,7 +1,7 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/26/2019 8:49:54 AM ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/28/2019 10:34:11 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -141,10 +141,41 @@ BEGIN
 			group by dDate,WorkLine,MONo,ColorName,SizeName
 
 			
-			SELECt *
-			INTO #tmp_Into_SewingOutput_Detail_Detail
-			FROM #tmp_Into_SewingOutput_Detail_Detail_with0
+
+			SELECt  dDate
+					,WorkLine
+					,OrderId
+					,ComboType
+					,Article
+					,SizeCode
+					,[QAQty]=CASE  WHEN (Order_Qty.Qty - AlreadyInPMS.Qty) >= t.QAQty THEN t.QAQty
+								   ELSE (Order_Qty.Qty - AlreadyInPMS.Qty) 
+								   END
+			INTO #tmp_Into_SewingOutput_Detail_Detail_1
+			FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t
+			OUTER APPLY(
+				SELECT [Qty]
+				FROM Order_Qty 
+				WHERE ID=t.OrderId AND Article=t.Article AND SizeCode=t.SizeCode
+			)Order_Qty
+			OUTER APPLY(
+				SELECT [Qty]=SUM(QAQty)
+				FROM SewingOutput_Detail_Detail
+				WHERE SewingOutput_DetailUKey
+				IN(
+					SELECT UKey
+					FROM SewingOutput_Detail
+					WHERE OrderID=t.OrderId
+				)
+				AND Article=t.Article
+				AND SizeCode=t.SizeCode
+			)AlreadyInPMS
 			WHERE QAQty > 0
+			
+			SELECt  *
+			INTO #tmp_Into_SewingOutput_Detail_Detail
+			FROM #tmp_Into_SewingOutput_Detail_Detail_1 
+			WHERE QAQty IS NOT NULL
 
 
 			--Prepare SewingOutput_Detail	
