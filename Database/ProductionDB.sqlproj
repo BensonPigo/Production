@@ -2333,6 +2333,8 @@
     <Build Include="dbo\Tables\ArtworkPO_IrregularPrice.sql" />
     <Build Include="dbo\Tables\VNContractQtyAdjust_Detail_Detail.sql" />
     <Build Include="dbo\Tables\VNImportDeclaration_Detail_Detail.sql" />
+    <Build Include="dbo\Functions\GetMaterialTypeDesc.sql" />
+    <Build Include="dbo\Stored Procedures\CreateVNConsumption_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
