@@ -86,6 +86,7 @@
             this.checkCancelledOrder = new Sci.Win.UI.CheckBox();
             this.lbClogCFMStatus = new Sci.Win.UI.Label();
             this.disClogCFMStatus = new Sci.Win.UI.DisplayBox();
+            this.btnBatchConf = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -159,7 +160,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateCartonEstBooking);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(1004, 313);
+            this.masterpanel.Size = new System.Drawing.Size(1089, 313);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -222,7 +223,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 313);
-            this.detailpanel.Size = new System.Drawing.Size(1004, 336);
+            this.detailpanel.Size = new System.Drawing.Size(1089, 336);
             // 
             // gridicon
             // 
@@ -235,7 +236,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1004, 336);
+            this.detailgridcont.Size = new System.Drawing.Size(1089, 336);
             // 
             // detail2
             // 
@@ -251,24 +252,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1004, 687);
+            this.detail.Size = new System.Drawing.Size(1089, 687);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1004, 649);
+            this.detailcont.Size = new System.Drawing.Size(1089, 649);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 649);
-            this.detailbtm.Size = new System.Drawing.Size(1004, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1089, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1004, 556);
+            this.browse.Size = new System.Drawing.Size(1089, 687);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1012, 716);
+            this.tabs.Size = new System.Drawing.Size(1097, 716);
             // 
             // createby
             // 
@@ -876,10 +877,22 @@
             this.disClogCFMStatus.Size = new System.Drawing.Size(27, 23);
             this.disClogCFMStatus.TabIndex = 70;
             // 
+            // btnBatchConf
+            // 
+            this.btnBatchConf.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchConf.Location = new System.Drawing.Point(963, 12);
+            this.btnBatchConf.Name = "btnBatchConf";
+            this.btnBatchConf.Size = new System.Drawing.Size(122, 30);
+            this.btnBatchConf.TabIndex = 4;
+            this.btnBatchConf.Text = "Batch Confirm";
+            this.btnBatchConf.UseVisualStyleBackColor = true;
+            this.btnBatchConf.Click += new System.EventHandler(this.BtnBatchConf_Click);
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1012, 749);
+            this.ClientSize = new System.Drawing.Size(1097, 749);
+            this.Controls.Add(this.btnBatchConf);
             this.DefaultControl = "txtbrand";
             this.DefaultControlForEdit = "txtbrand";
             this.DefaultDetailOrder = "Seq";
@@ -896,8 +909,8 @@
             this.UnApvChkValue = "Confirmed";
             this.UniqueExpress = "ID";
             this.WorkAlias = "PackingList";
-            this.WorkView = "View_PackingP03";
             this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnBatchConf, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
@@ -977,5 +990,6 @@
         private Win.UI.CheckBox checkCancelledOrder;
         private Win.UI.DisplayBox disClogCFMStatus;
         private Win.UI.Label lbClogCFMStatus;
+        private Win.UI.Button btnBatchConf;
     }
 }

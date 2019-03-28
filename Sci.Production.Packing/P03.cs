@@ -104,7 +104,7 @@ namespace Sci.Production.Packing
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
+            this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B' and QueryDate >= dateadd(year,-1,getdate())";
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.ReloadTimeoutSeconds = 900;
@@ -162,13 +162,18 @@ namespace Sci.Production.Packing
             this.comboxbs1 = new BindingSource(this.ComboBox1_RowSource, null);
             this.comboSortby.DataSource = this.comboxbs1;
 
-            #region 新增Bath Confirm 按鈕
-            Sci.Win.UI.Button btnBatchConf = new Win.UI.Button();
-            btnBatchConf.Text = "Batch Confirm";
-            btnBatchConf.Click += new EventHandler(this.btnBatchConf_Click);
-            this.browsetop.Controls.Add(btnBatchConf);
-            btnBatchConf.Size = new Size(122, 30);
-            btnBatchConf.Visible = true;
+            #region 新增During ComboBox
+            Sci.Win.UI.Label lbDuring = new Win.UI.Label();
+            lbDuring.Size = new Size(66, 23);
+            lbDuring.Text = "During";
+            this.browsetop.Controls.Add(lbDuring);
+            Sci.Win.UI.ComboBox cbDuring = new Win.UI.ComboBox();
+            cbDuring.Size = new Size(121, 24);
+            cbDuring.Items.AddRange(new object[] { "A Year", "All" });
+            cbDuring.SelectedIndex = 0;
+            cbDuring.SelectedIndexChanged += new System.EventHandler(this.CbDuring_SelectedIndexChanged); // 需在selectindex之後，不然會造成DefaultFilter執行兩次。
+            cbDuring.Name = "cbDuring";
+            this.browsetop.Controls.Add(cbDuring);
             #endregion
 
             DataTable queryDT;
@@ -199,7 +204,8 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             };
         }
 
-        private void btnBatchConf_Click(object sender, EventArgs e)
+        // BatchConfirm
+        private void BtnBatchConf_Click(object sender, EventArgs e)
         {
             var frm = new Sci.Production.Packing.P03_BatchConfirm();
             this.ShowWaitMessage("Data Loading....");
@@ -207,6 +213,22 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
             frm.ShowDialog(this);
             this.ReloadDatas();
             this.RenewData();
+        }
+
+        private void CbDuring_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox cbDuring = (ComboBox)sender;
+            switch (cbDuring.SelectedIndex)
+            {
+                case 0:
+                    this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B' and QueryDate >= dateadd(year,-1,getdate())";
+                    break;
+                case 1:
+                    this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
+                    break;
+            }
+
+            this.ReloadDatas();
         }
 
         /// <summary>
