@@ -26,6 +26,7 @@ namespace Sci.Production.Subcon
     {
         public static DataTable dtPadBoardInfo;
         private bool boolNeedReaload = false;
+        private bool IsEarlier = false;
         Form batchapprove;
 
 
@@ -713,6 +714,9 @@ and isnull(ThreadRequisition_Detail.POID, '') != '' ", dr["requestid"].ToString(
 
             #region Status Label
             label25.Text = CurrentMaintain["status"].ToString();
+            this.dateDeliveryDate.Value = null;
+            this.txtBuyer.Text = string.Empty;
+
             #endregion
 
             #region Batch Import, Special record button
@@ -1698,9 +1702,21 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             {
                 if (this.dateDeliveryDate.Value < DateTime.Now.Date)
                 {
-                    MyUtility.Msg.WarningBox("Delivery date cannot earlier than today.");
-                    this.dateDeliveryDate.Value = DateTime.Now.Date;
+                    IsEarlier = true;
                 }
+            }
+        }
+
+        private void dateDeliveryDate_Leave(object sender, EventArgs e)
+        {
+            if (IsEarlier)
+            {
+                MyUtility.Msg.WarningBox("Delivery date cannot earlier than today.");
+                
+                this.dateDeliveryDate.Value = DateTime.Now.Date;
+                
+                IsEarlier = false;
+                this.btnBatchUpdateDellivery_Click(this.btnBatchUpdateDellivery,new EventArgs());
             }
         }
     }
