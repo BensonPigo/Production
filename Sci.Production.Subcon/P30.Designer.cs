@@ -597,7 +597,6 @@
             this.dateDeliveryDate.Name = "dateDeliveryDate";
             this.dateDeliveryDate.Size = new System.Drawing.Size(130, 23);
             this.dateDeliveryDate.TabIndex = 6;
-            this.dateDeliveryDate.Leave += new System.EventHandler(this.dateDeliveryDate_Leave);
             this.dateDeliveryDate.Validating += new System.ComponentModel.CancelEventHandler(this.dateDeliveryDate_Validating);
             // 
             // label1

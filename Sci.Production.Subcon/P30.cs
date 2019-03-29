@@ -26,7 +26,6 @@ namespace Sci.Production.Subcon
     {
         public static DataTable dtPadBoardInfo;
         private bool boolNeedReaload = false;
-        private bool IsEarlier = false;
         Form batchapprove;
 
 
@@ -1702,21 +1701,10 @@ Where loc2.id = '{masterID}' order by loc2.orderid,loc2.refno,threadcolorid
             {
                 if (this.dateDeliveryDate.Value < DateTime.Now.Date)
                 {
-                    IsEarlier = true;
+                    MyUtility.Msg.WarningBox("Delivery date cannot earlier than today.");
+                    this.dateDeliveryDate.Value = DateTime.Now.Date;
+                    e.Cancel = true;
                 }
-            }
-        }
-
-        private void dateDeliveryDate_Leave(object sender, EventArgs e)
-        {
-            if (IsEarlier)
-            {
-                MyUtility.Msg.WarningBox("Delivery date cannot earlier than today.");
-                
-                this.dateDeliveryDate.Value = DateTime.Now.Date;
-                
-                IsEarlier = false;
-                this.btnBatchUpdateDellivery_Click(this.btnBatchUpdateDellivery,new EventArgs());
             }
         }
     }
