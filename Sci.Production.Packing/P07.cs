@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
@@ -176,6 +177,64 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Complete.");
+        }
+
+        private void btnToExcelCombo_Click(object sender, EventArgs e)
+        {
+            this.ShowWaitMessage("Data Loading....");
+            if (MyUtility.Check.Empty(this.gridData))
+            {
+                this.HideWaitMessage();
+                return;
+            }
+
+            if (this.gridData.Rows.Count == 0)
+            {
+                this.HideWaitMessage();
+                return;
+            }
+
+            this.gridDetail.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
+
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+
+            DataRow[] drSelect = dt.Select("selected = 1");
+            if (drSelect.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+            {
+                if (MyUtility.Convert.GetString(dr["selected"]) == "1")
+                {
+                    DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), this.radioFormA.Checked ? "1" : "2", out this.printData, out this.ctnDim, out this.qtyBDown);
+                    if (!result)
+                    {
+                        this.HideWaitMessage();
+                        MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
+                        return;
+                    }
+
+                    //PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, this.radioFormA.Checked ? "1" : "2", this.printData, this.ctnDim, this.qtyBDown);
+                    
+                }
+            }
+
+            //#region Save & Show Excel
+            //string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_PackingGuideReport");
+            //Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            //workbook.SaveAs(strExcelName);
+            //workbook.Close();
+            //excel.Quit();
+            //Marshal.ReleaseComObject(excel);
+            //Marshal.ReleaseComObject(worksheet);
+            //Marshal.ReleaseComObject(workbook);
+
+            //strExcelName.OpenFile();
+            //#endregion 
         }
     }
 }

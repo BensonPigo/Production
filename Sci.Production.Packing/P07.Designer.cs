@@ -29,16 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.radioGroup2 = new Sci.Win.UI.RadioGroup();
+            this.btnToExcelCombo = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioFormB = new Sci.Win.UI.RadioButton();
             this.radioFormA = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSP_e = new Sci.Win.UI.TextBox();
+            this.txtSP_s = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.txtbrand = new Sci.Production.Class.txtbrand();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
@@ -53,10 +58,6 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.label1 = new Sci.Win.UI.Label();
-            this.txtSP_e = new Sci.Win.UI.TextBox();
-            this.txtSP_s = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             this.radioGroup2.SuspendLayout();
             this.radioPanel1.SuspendLayout();
@@ -95,6 +96,7 @@
             // 
             // radioGroup2
             // 
+            this.radioGroup2.Controls.Add(this.btnToExcelCombo);
             this.radioGroup2.Controls.Add(this.btnToExcel);
             this.radioGroup2.Controls.Add(this.radioPanel1);
             this.radioGroup2.Location = new System.Drawing.Point(526, 4);
@@ -102,6 +104,16 @@
             this.radioGroup2.Size = new System.Drawing.Size(357, 191);
             this.radioGroup2.TabIndex = 1;
             this.radioGroup2.TabStop = false;
+            // 
+            // btnToExcelCombo
+            // 
+            this.btnToExcelCombo.Location = new System.Drawing.Point(207, 48);
+            this.btnToExcelCombo.Name = "btnToExcelCombo";
+            this.btnToExcelCombo.Size = new System.Drawing.Size(145, 30);
+            this.btnToExcelCombo.TabIndex = 2;
+            this.btnToExcelCombo.Text = "To Excel by combo";
+            this.btnToExcelCombo.UseVisualStyleBackColor = true;
+            this.btnToExcelCombo.Click += new System.EventHandler(this.btnToExcelCombo_Click);
             // 
             // btnToExcel
             // 
@@ -166,6 +178,45 @@
             this.radioGroup1.Size = new System.Drawing.Size(501, 191);
             this.radioGroup1.TabIndex = 0;
             this.radioGroup1.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Location = new System.Drawing.Point(319, 73);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(20, 23);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "～";
+            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.Color = System.Drawing.Color.Black;
+            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
+            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
+            // 
+            // txtSP_e
+            // 
+            this.txtSP_e.BackColor = System.Drawing.Color.White;
+            this.txtSP_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP_e.Location = new System.Drawing.Point(131, 102);
+            this.txtSP_e.Name = "txtSP_e";
+            this.txtSP_e.Size = new System.Drawing.Size(186, 23);
+            this.txtSP_e.TabIndex = 11;
+            // 
+            // txtSP_s
+            // 
+            this.txtSP_s.BackColor = System.Drawing.Color.White;
+            this.txtSP_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP_s.Location = new System.Drawing.Point(131, 73);
+            this.txtSP_s.Name = "txtSP_s";
+            this.txtSP_s.Size = new System.Drawing.Size(186, 23);
+            this.txtSP_s.TabIndex = 10;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(7, 73);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(120, 23);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "SP#";
             // 
             // btnQuery
             // 
@@ -309,14 +360,14 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(0, 0);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
@@ -325,45 +376,6 @@
             this.gridDetail.Size = new System.Drawing.Size(888, 337);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(319, 73);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(20, 23);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "～";
-            this.label1.TextStyle.BorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.Color = System.Drawing.Color.Black;
-            this.label1.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
-            this.label1.TextStyle.GradientColor = System.Drawing.Color.Black;
-            // 
-            // txtSP_e
-            // 
-            this.txtSP_e.BackColor = System.Drawing.Color.White;
-            this.txtSP_e.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP_e.Location = new System.Drawing.Point(131, 102);
-            this.txtSP_e.Name = "txtSP_e";
-            this.txtSP_e.Size = new System.Drawing.Size(186, 23);
-            this.txtSP_e.TabIndex = 11;
-            // 
-            // txtSP_s
-            // 
-            this.txtSP_s.BackColor = System.Drawing.Color.White;
-            this.txtSP_s.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP_s.Location = new System.Drawing.Point(131, 73);
-            this.txtSP_s.Name = "txtSP_s";
-            this.txtSP_s.Size = new System.Drawing.Size(186, 23);
-            this.txtSP_s.TabIndex = 10;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(7, 73);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 23);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "SP#";
             // 
             // P07
             // 
@@ -424,5 +436,6 @@
         private Win.UI.TextBox txtSP_e;
         private Win.UI.TextBox txtSP_s;
         private Win.UI.Label label2;
+        private Win.UI.Button btnToExcelCombo;
     }
 }
