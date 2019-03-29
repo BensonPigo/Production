@@ -146,7 +146,7 @@ namespace Sci.Production.Packing
             #endregion
             string sqlcmd = $@"
 select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
-	Junk=iif(o.Junk=0,'N','Y'),
+	Junk=iif(o.Junk=1,'Y','N'),
 	Dest=(select Alias from Country ct where ct.id=pl.Dest),
 	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
 	pl.Status,o.Qty,
@@ -154,7 +154,7 @@ select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPON
 	TtlQty=sum(pld.ShipQty),
 	TtlNw=sum(pld.NW),
 	TtlGW=sum(pld.GW),
-	TtlCBM=(select CBM from LocalItem where Refno = pld.Refno)*sum(pld.CTNQty),
+	TtlCBM=sum(cbm.CBM)*sum(pld.CTNQty),
 	PurchaseCTN= iif(isnull(pl.LocalPOID,'')='','N','Y'),
 	ClogCFMStatus=iif(count(pld.ID) = count(pld.ReceiveDate), 'Y','N'),
 	pl.EstCTNBooking,
@@ -163,11 +163,16 @@ select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPON
 from PackingList_Detail pld
 inner join PackingList pl on pl.ID = pld.ID
 inner join  Orders o on o.id = pld.OrderID
+outer apply(select CBM from LocalItem where Refno = pld.Refno) cbm
 where 1=1
 {where}
-group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,o.Junk,pl.Dest,
+group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
+	iif(o.Junk=1,'Y','N'),pl.Dest,
 	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
-	pl.Status,o.Qty,pld.Refno,iif(isnull(pl.LocalPOID,'')='','N','Y'),pl.EstCTNBooking,pl.EstCTNArrive,pl.Remark
+	pl.Status,o.Qty,iif(isnull(pl.LocalPOID,'')='','N','Y'),
+	pl.EstCTNBooking,
+	pl.EstCTNArrive,
+	pl.Remark
 order by pl.MDivisionID,pl.FactoryID,pl.ID,o.ID
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this._printData);
