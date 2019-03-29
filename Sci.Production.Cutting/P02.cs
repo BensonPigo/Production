@@ -687,7 +687,8 @@ where WorkOrderUkey={0}", masterID);
             };
             col_layer.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || e.RowIndex == -1) return;
+                if (!this.EditMode || e.RowIndex == -1 || e.FormattedValue == null)
+                    return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["layer"].ToString();
                 string newvalue = e.FormattedValue.ToString();

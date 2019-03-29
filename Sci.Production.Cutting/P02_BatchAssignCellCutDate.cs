@@ -36,7 +36,9 @@ namespace Sci.Production.Cutting
             MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
             if (cursor != null)
             {
-                Poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{cursor.Rows[0]["ID"]}'");
+                DataTable dtcopy = cursor.Copy();
+                dtcopy.AcceptChanges();
+                Poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{dtcopy.Rows[0]["ID"]}'");
             }
         }
 
