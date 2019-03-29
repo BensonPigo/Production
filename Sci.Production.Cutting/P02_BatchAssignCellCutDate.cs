@@ -29,13 +29,16 @@ namespace Sci.Production.Cutting
             detailTb = cursor;
             curTb = cursor.Copy();
             curTb.Columns.Add("Sel", typeof(bool));
+            this.txtSpreadingNo.MDivisionID = this.KeyWord;
             gridsetup();
             btnFilter_Click(null, null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 
             MyUtility.Tool.ProcessWithDatatable(curTb, "orderid", "select distinct orderid from #tmp", out sp);
             if (cursor != null)
             {
-                Poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{cursor.Rows[0]["ID"]}'");
+                DataTable dtcopy = cursor.Copy();
+                dtcopy.AcceptChanges();
+                Poid = MyUtility.GetValue.Lookup($@"Select poid from orders WITH (NOLOCK) where id ='{dtcopy.Rows[0]["ID"]}'");
             }
         }
 
@@ -471,9 +474,19 @@ Do you want to continue? ");
             };
             foreach (DataRow dr in curTb.Rows)
             {
+                if (dr.RowState == DataRowState.Deleted)
+                    continue;
                 if (dr["Sel"].ToString() == "True")
                 {
-                    DataRow[] detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                    DataRow[] detaildr;
+                    if (MyUtility.Check.Empty(dr["Ukey"]))
+                    {
+                        detaildr = detailTb.Select(string.Format("newkey = '{0}'", dr["newkey"]));
+                    }
+                    else
+                    {
+                        detaildr = detailTb.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
+                    }                    
 
                     detaildr[0]["SpreadingNoID"] = dr["SpreadingNoID"];
                     detaildr[0]["Cutcellid"] = dr["Cutcellid"];
