@@ -851,14 +851,15 @@ where 1 = 1
                     objSheets.Columns["T"].Clear();
                     objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//cutcellID
+                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = MD;
                     objSheets.Cells[4, 1] = cuttings[i];
                     objSheets.get_Range("A1").ColumnWidth = 14.25;
                     objSheets.get_Range("B1").ColumnWidth = 14;
                     objSheets.get_Range("C1").ColumnWidth = 7.88;
                     objSheets.get_Range("D1").ColumnWidth = 14.75;
-                    objSheets.get_Range("E1").ColumnWidth = 8.5;
+                    objSheets.get_Range("E1").ColumnWidth = 13;
                     objSheets.get_Range("F1").ColumnWidth = 15.25;
                     objSheets.get_Range("G1").ColumnWidth = 8.75;
                     objSheets.get_Range("H1").ColumnWidth = 7.38;
@@ -937,14 +938,15 @@ where 1 = 1
                     objSheets.Columns["V"].Clear();
                     objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//cutcellID
+                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = MD;
                     objSheets.Cells[4, 1] = cuttings[i];
                     objSheets.get_Range("A1").ColumnWidth = 15.75;
                     objSheets.get_Range("B1").ColumnWidth = 11.75;
                     objSheets.get_Range("C1").ColumnWidth = 8.25;
                     objSheets.get_Range("D1").ColumnWidth = 15.38;
-                    objSheets.get_Range("E1").ColumnWidth = 9.13;
+                    objSheets.get_Range("E1").ColumnWidth = 13;
                     objSheets.get_Range("F1").ColumnWidth = 15.25;
                     objSheets.get_Range("G1").ColumnWidth = 8.75;
                     objSheets.get_Range("H1").ColumnWidth = 7.38;
@@ -1018,7 +1020,8 @@ where 1 = 1
 
                     objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//cutcellID
+                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = MD;
                     //objSheets.Columns.AutoFit();
                     objSheets.Columns[7].ColumnWidth = 47;
