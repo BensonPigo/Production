@@ -100,7 +100,6 @@
             // 
             // labelSEQ
             // 
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(13, 13);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(75, 23);
@@ -109,7 +108,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(13, 43);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(75, 23);
@@ -118,7 +116,6 @@
             // 
             // labelColorCode
             // 
-            this.labelColorCode.Lines = 0;
             this.labelColorCode.Location = new System.Drawing.Point(13, 123);
             this.labelColorCode.Name = "labelColorCode";
             this.labelColorCode.Size = new System.Drawing.Size(107, 23);
@@ -127,7 +124,6 @@
             // 
             // labelEstRcedQty
             // 
-            this.labelEstRcedQty.Lines = 0;
             this.labelEstRcedQty.Location = new System.Drawing.Point(13, 153);
             this.labelEstRcedQty.Name = "labelEstRcedQty";
             this.labelEstRcedQty.Size = new System.Drawing.Size(107, 23);
@@ -136,7 +132,6 @@
             // 
             // labelInspectedQty
             // 
-            this.labelInspectedQty.Lines = 0;
             this.labelInspectedQty.Location = new System.Drawing.Point(13, 183);
             this.labelInspectedQty.Name = "labelInspectedQty";
             this.labelInspectedQty.Size = new System.Drawing.Size(107, 23);
@@ -145,7 +140,6 @@
             // 
             // label1stEstimateQty
             // 
-            this.label1stEstimateQty.Lines = 0;
             this.label1stEstimateQty.Location = new System.Drawing.Point(13, 213);
             this.label1stEstimateQty.Name = "label1stEstimateQty";
             this.label1stEstimateQty.Size = new System.Drawing.Size(107, 23);
@@ -154,7 +148,6 @@
             // 
             // labelDamageSampleSentDate
             // 
-            this.labelDamageSampleSentDate.Lines = 0;
             this.labelDamageSampleSentDate.Location = new System.Drawing.Point(13, 243);
             this.labelDamageSampleSentDate.Name = "labelDamageSampleSentDate";
             this.labelDamageSampleSentDate.Size = new System.Drawing.Size(171, 23);
@@ -163,7 +156,6 @@
             // 
             // labelReplacementETA
             // 
-            this.labelReplacementETA.Lines = 0;
             this.labelReplacementETA.Location = new System.Drawing.Point(13, 273);
             this.labelReplacementETA.Name = "labelReplacementETA";
             this.labelReplacementETA.Size = new System.Drawing.Size(171, 23);
@@ -172,7 +164,6 @@
             // 
             // labelDefectResponsibility
             // 
-            this.labelDefectResponsibility.Lines = 0;
             this.labelDefectResponsibility.Location = new System.Drawing.Point(13, 303);
             this.labelDefectResponsibility.Name = "labelDefectResponsibility";
             this.labelDefectResponsibility.Size = new System.Drawing.Size(221, 23);
@@ -181,7 +172,6 @@
             // 
             // labelFactorySuggested
             // 
-            this.labelFactorySuggested.Lines = 0;
             this.labelFactorySuggested.Location = new System.Drawing.Point(13, 333);
             this.labelFactorySuggested.Name = "labelFactorySuggested";
             this.labelFactorySuggested.Size = new System.Drawing.Size(331, 23);
@@ -330,12 +320,12 @@
             this.comboDefectResponsibility.IsSupportUnselect = true;
             this.comboDefectResponsibility.Location = new System.Drawing.Point(238, 303);
             this.comboDefectResponsibility.Name = "comboDefectResponsibility";
+            this.comboDefectResponsibility.OldText = "";
             this.comboDefectResponsibility.Size = new System.Drawing.Size(198, 24);
             this.comboDefectResponsibility.TabIndex = 16;
             // 
             // labelRefNo
             // 
-            this.labelRefNo.Lines = 0;
             this.labelRefNo.Location = new System.Drawing.Point(171, 13);
             this.labelRefNo.Name = "labelRefNo";
             this.labelRefNo.Size = new System.Drawing.Size(46, 23);
@@ -354,7 +344,6 @@
             // 
             // labelInvoice
             // 
-            this.labelInvoice.Lines = 0;
             this.labelInvoice.Location = new System.Drawing.Point(429, 13);
             this.labelInvoice.Name = "labelInvoice";
             this.labelInvoice.Size = new System.Drawing.Size(56, 23);
@@ -377,7 +366,6 @@
             // 
             // labelETA
             // 
-            this.labelETA.Lines = 0;
             this.labelETA.Location = new System.Drawing.Point(712, 13);
             this.labelETA.Name = "labelETA";
             this.labelETA.Size = new System.Drawing.Size(35, 23);
@@ -396,7 +384,6 @@
             // 
             // labelActualRcedQty
             // 
-            this.labelActualRcedQty.Lines = 0;
             this.labelActualRcedQty.Location = new System.Drawing.Point(262, 153);
             this.labelActualRcedQty.Name = "labelActualRcedQty";
             this.labelActualRcedQty.Size = new System.Drawing.Size(114, 23);
@@ -405,7 +392,6 @@
             // 
             // labelDefectQty
             // 
-            this.labelDefectQty.Lines = 0;
             this.labelDefectQty.Location = new System.Drawing.Point(262, 183);
             this.labelDefectQty.Name = "labelDefectQty";
             this.labelDefectQty.Size = new System.Drawing.Size(114, 23);
@@ -414,7 +400,6 @@
             // 
             // labelFinalNeededQty
             // 
-            this.labelFinalNeededQty.Lines = 0;
             this.labelFinalNeededQty.Location = new System.Drawing.Point(262, 213);
             this.labelFinalNeededQty.Name = "labelFinalNeededQty";
             this.labelFinalNeededQty.Size = new System.Drawing.Size(114, 23);
@@ -501,7 +486,6 @@
             // 
             // labelAWBOfDamageSample
             // 
-            this.labelAWBOfDamageSample.Lines = 0;
             this.labelAWBOfDamageSample.Location = new System.Drawing.Point(338, 243);
             this.labelAWBOfDamageSample.Name = "labelAWBOfDamageSample";
             this.labelAWBOfDamageSample.Size = new System.Drawing.Size(168, 23);
@@ -510,7 +494,6 @@
             // 
             // labelCostOccurred
             // 
-            this.labelCostOccurred.Lines = 0;
             this.labelCostOccurred.Location = new System.Drawing.Point(338, 273);
             this.labelCostOccurred.Name = "labelCostOccurred";
             this.labelCostOccurred.Size = new System.Drawing.Size(168, 23);
@@ -519,7 +502,6 @@
             // 
             // labelReason
             // 
-            this.labelReason.Lines = 0;
             this.labelReason.Location = new System.Drawing.Point(448, 303);
             this.labelReason.Name = "labelReason";
             this.labelReason.Size = new System.Drawing.Size(53, 23);
@@ -532,6 +514,7 @@
             this.txtAWBOfDamageSample.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AWBNo", true));
             this.txtAWBOfDamageSample.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtAWBOfDamageSample.Location = new System.Drawing.Point(510, 243);
+            this.txtAWBOfDamageSample.MaxLength = 30;
             this.txtAWBOfDamageSample.Name = "txtAWBOfDamageSample";
             this.txtAWBOfDamageSample.Size = new System.Drawing.Size(280, 23);
             this.txtAWBOfDamageSample.TabIndex = 13;
@@ -543,6 +526,7 @@
             this.txtReason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ResponsibilityReason", true));
             this.txtReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtReason.Location = new System.Drawing.Point(505, 303);
+            this.txtReason.MaxLength = 100;
             this.txtReason.Name = "txtReason";
             this.txtReason.Size = new System.Drawing.Size(356, 23);
             this.txtReason.TabIndex = 17;
@@ -554,6 +538,7 @@
             this.txtFactorySuggested.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Suggested", true));
             this.txtFactorySuggested.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactorySuggested.Location = new System.Drawing.Point(348, 333);
+            this.txtFactorySuggested.MaxLength = 100;
             this.txtFactorySuggested.Name = "txtFactorySuggested";
             this.txtFactorySuggested.Size = new System.Drawing.Size(513, 23);
             this.txtFactorySuggested.TabIndex = 18;
@@ -562,8 +547,14 @@
             // 
             this.numCostOccurred.BackColor = System.Drawing.Color.White;
             this.numCostOccurred.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OccurCost", true));
+            this.numCostOccurred.DecimalPlaces = 3;
             this.numCostOccurred.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numCostOccurred.Location = new System.Drawing.Point(510, 273);
+            this.numCostOccurred.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            196608});
             this.numCostOccurred.Name = "numCostOccurred";
             this.numCostOccurred.NullValue = new decimal(new int[] {
             0,
