@@ -834,6 +834,7 @@ where orders.id = '{0}' and orders.MDivisionID='{1}'
 and orders.Category  in ('B','S','T') and orders.Junk=0 and Finished=0
 and factory.IsProduceFty = 1 
 and (orders.Qty-pd.ShipQty-inv.DiffQty <> 0 or orders.Category='T')
+and orders.PulloutComplete = 0
  "
                     , e.FormattedValue, Sci.Env.User.Keyword), out dr, null))
                 {
