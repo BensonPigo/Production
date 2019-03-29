@@ -535,7 +535,7 @@ where WorkOrderUkey={0}", masterID);
                 .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5).Get(out col_layer)
+                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, maximum: 9999M).Get(out col_layer)
                 .Text("CutQty", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("orderid", header: "SP#", width: Widths.AnsiChars(13)).Get(out col_sp)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out col_seq1)
@@ -687,7 +687,8 @@ where WorkOrderUkey={0}", masterID);
             };
             col_layer.CellValidating += (s, e) =>
             {
-                if (!this.EditMode || e.RowIndex == -1) return;
+                if (!this.EditMode || e.RowIndex == -1 || e.FormattedValue == null)
+                    return;
                 DataRow dr = detailgrid.GetDataRow(e.RowIndex);
                 string oldvalue = dr["layer"].ToString();
                 string newvalue = e.FormattedValue.ToString();
