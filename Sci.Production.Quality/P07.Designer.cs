@@ -201,6 +201,7 @@
             // displayofInspection
             // 
             this.displayofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AIRLabInspPercent", true));
             this.displayofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayofInspection.Location = new System.Drawing.Point(673, 9);
@@ -250,16 +251,14 @@
             // 
             // labelofInspection
             // 
-            this.labelofInspection.Lines = 0;
             this.labelofInspection.Location = new System.Drawing.Point(560, 7);
             this.labelofInspection.Name = "labelofInspection";
-            this.labelofInspection.Size = new System.Drawing.Size(110, 23);
+            this.labelofInspection.Size = new System.Drawing.Size(141, 23);
             this.labelofInspection.TabIndex = 98;
-            this.labelofInspection.Text = "% of Inspection";
+            this.labelofInspection.Text = "Article % of Inspection";
             // 
             // labelEarliestEstCuttingDate
             // 
-            this.labelEarliestEstCuttingDate.Lines = 0;
             this.labelEarliestEstCuttingDate.Location = new System.Drawing.Point(227, 7);
             this.labelEarliestEstCuttingDate.Name = "labelEarliestEstCuttingDate";
             this.labelEarliestEstCuttingDate.Size = new System.Drawing.Size(165, 23);
@@ -286,16 +285,14 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(560, 61);
             this.labelRemark.Name = "labelRemark";
-            this.labelRemark.Size = new System.Drawing.Size(110, 23);
+            this.labelRemark.Size = new System.Drawing.Size(141, 23);
             this.labelRemark.TabIndex = 94;
             this.labelRemark.Text = "Remark";
             // 
             // labelCompletionDate
             // 
-            this.labelCompletionDate.Lines = 0;
             this.labelCompletionDate.Location = new System.Drawing.Point(227, 88);
             this.labelCompletionDate.Name = "labelCompletionDate";
             this.labelCompletionDate.Size = new System.Drawing.Size(165, 23);
@@ -358,6 +355,7 @@
             // 
             // dateEarliestSCIDel
             // 
+            this.dateEarliestSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MinSciDelivery", true));
             this.dateEarliestSCIDel.IsSupportEditMode = false;
             this.dateEarliestSCIDel.Location = new System.Drawing.Point(395, 34);
             this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";
@@ -376,10 +374,9 @@
             // 
             // labelMtlCmplt
             // 
-            this.labelMtlCmplt.Lines = 0;
             this.labelMtlCmplt.Location = new System.Drawing.Point(560, 34);
             this.labelMtlCmplt.Name = "labelMtlCmplt";
-            this.labelMtlCmplt.Size = new System.Drawing.Size(110, 23);
+            this.labelMtlCmplt.Size = new System.Drawing.Size(141, 23);
             this.labelMtlCmplt.TabIndex = 109;
             this.labelMtlCmplt.Text = "Mtl Cmplt(SP)";
             // 
@@ -388,14 +385,13 @@
             this.displayMtlCmplt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayMtlCmplt.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayMtlCmplt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayMtlCmplt.Location = new System.Drawing.Point(673, 36);
+            this.displayMtlCmplt.Location = new System.Drawing.Point(704, 34);
             this.displayMtlCmplt.Name = "displayMtlCmplt";
             this.displayMtlCmplt.Size = new System.Drawing.Size(140, 21);
             this.displayMtlCmplt.TabIndex = 110;
             // 
             // labelLocateforWK
             // 
-            this.labelLocateforWK.Lines = 0;
             this.labelLocateforWK.Location = new System.Drawing.Point(9, 132);
             this.labelLocateforWK.Name = "labelLocateforWK";
             this.labelLocateforWK.Size = new System.Drawing.Size(100, 23);
@@ -472,7 +468,7 @@
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AirLaboratoryRemark", true));
             this.editRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(673, 63);
+            this.editRemark.Location = new System.Drawing.Point(704, 61);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(157, 90);
