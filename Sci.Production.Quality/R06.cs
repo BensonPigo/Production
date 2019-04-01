@@ -493,9 +493,10 @@ outer apply (
 	and a.seq1 = tmp.seq1
 	and a.seq2 = tmp.seq2
 )b
-left join FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID
 LEFT JOIN Export_Detail ED ON ED.PoID = TMP.POID AND ED.Seq1 = TMP.SEQ1 AND ED.Seq2 = TMP.SEQ2
-left join Export d on ED.ID = D.ID AND c.Consignee = d.Consignee AND D.Confirm = 1
+left join Export d on ED.ID = D.ID AND D.Confirm = 1
+left join Factory fty with (nolock) on fty.ID = d.Consignee
+left join FIRSTDYELOT c on b.Refno = c.Refno and b.ColorID = c.ColorID and b.SuppID = c.SuppID  AND c.FactoryGroup = fty.TestDocFactoryGroup 
 left join orders o on ed.PoID = o.id and o.Category in ('B','M')
 left join Season e on o.SeasonID  = e.ID and o.BrandID = e.BrandID --and e.SeasonSCIID = c.SeasonSCIID
 left join Fabric f on f.SCIRefno = b.SCIRefno 
