@@ -111,7 +111,11 @@ namespace Sci.Production.Planning
 Select O.ID , O.CPU , O.Cpu * {1} / 60 as SMV , O.CPU * {1} as TMS , O.FactoryID , O.BrandAreaCode , O.Qty , O.StyleID , F.CountryID
 From Orders O WITH (NOLOCK)
 Left Join Factory F WITH (NOLOCK) on O.FactoryID = F.ID
-Where O.Category in ('B','S') {0}", where,
+Where 1 = 1 
+	  and o.LocalOrder = 0 
+	  and f.IsProduceFty = 1 
+      and O.Category in ('B','S') 
+      {0}", where,
                 this.StandardTms);
 
             this.BeginInvoke(() => { MyUtility.Msg.WaitWindows("Wait – Style,Order Data capture, data may be many, please wait (Step 1/5)"); });
@@ -137,7 +141,7 @@ select tmpData1.ID as OrderID , tmpData1.CPU as CPU, tmpData1.SMV as SMV, tmpDat
     tmpData1.BrandAreaCode as AGCCode, tmpData1.Qty as [Order Qty], tmpData1.StyleID as Style, tmpData1.CountryID as FactoryCountry, 
     isnull(SewingOutput_Detail.QAQty,0) as ProdQty,isnull(Round(3600 / tmpData1.TMS * Round(SewingOutput.ManPower * SewingOutput_Detail.WorkHour ,1), 0) ,0)  as StardQty 
 from #tmpData1 tmpData1
-Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID
+Left Join SewingOutput_Detail WITH (NOLOCK) on OrderID = tmpData1.ID AND SewingOutput_Detail.WorkHour > 0
 Left Join SewingOutput WITH (NOLOCK) on SewingOutput.ID = SewingOutput_Detail.ID";
 
             this.BeginInvoke(() => { Sci.MyUtility.Msg.WaitWindows("Wait – By Order, Factory Finishing details (Step 2/5)"); });
