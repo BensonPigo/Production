@@ -41,6 +41,7 @@
     [IsSampleRoom]         BIT            CONSTRAINT [DF_Factory_IsSampleRoom] DEFAULT ((0)) NULL,
     [IsSCI]				   BIT NULL DEFAULT ((0)), 
     [IsProduceFty]		   BIT NULL DEFAULT ((1)), 
+    [TestDocFactoryGroup] VARCHAR(8) CONSTRAINT [DF_Factory_TestDocFactoryGroup] DEFAULT ('') NULL, 
     CONSTRAINT [PK_Factory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
