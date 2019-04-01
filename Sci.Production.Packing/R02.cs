@@ -294,9 +294,21 @@ order by o.CustPONo
 select * from #tmp
 
 select 
-	o.CustPONo,o.id,pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,pld.Barcode,LackingQty=pld.ShipQty -pld.ScanQty
-from #tmp o
+	o.CustPONo,o.id,pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
+    ,[Barcode] = isnull(c7.Barcode,'')
+	,[Scanned Qty] = pld.ScanQty
+	,[Balance Qty] = pld.ShipQty -pld.ScanQty	
+	from #tmp o
 inner join PackingList_Detail pld on o.id = pld.OrderID
+outer apply(
+	select Barcode = stuff((
+		select iif(pld2.Barcode!='',  concat('/',pld2.Barcode),'')
+		from PackingList_Detail pld2 with (nolock)
+		where pld2.id = pld.ID and pld2.OrderID = pld.OrderID and pld2.CTNStartNo = pld.CTNStartNo
+		order by pld2.id,pld2.OrderID,pld2.CTNStartNo
+		for xml path('')
+	),1,1,'')
+)c7
 order by o.CustPONo
 
 drop table #tmp
@@ -333,10 +345,37 @@ drop table #tmp
 
             string excelName = "Packing_R02";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + $"\\{excelName}.xltx");
-            MyUtility.Excel.CopyToXls(this._printData[0], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
+            Excel.Worksheet worksheet = excelApp.Sheets[1];
+            worksheet.Cells[2, 2] = this._sp1 + "~" + this._sp2;
+            worksheet.Cells[2, 5] = this._po1 + "~" + this._po2;
+            worksheet.Cells[2, 8] = this._bdate1 + "~" + this._bdate2;
+            worksheet.Cells[2, 11] = this._scidate1 + "~" + this._scidate2;
+            worksheet.Cells[2, 14] = this._offdate1 + "~" + this._offdate2;
+            worksheet.Cells[2, 17] = this._scanDate1 + "~" + this._scanDate2;
+            worksheet.Cells[2, 20] = this._brand;
+            worksheet.Cells[2, 22] = this._mDivision;
+            worksheet.Cells[2, 24] = this._factory;
+            worksheet.Cells[2, 26] = this.cmbPOcompletion.Text;
+
+              string strcategory = (this.chkBulk.Checked ? "Bulk," : string.Empty) + (this.chkSample.Checked ? "Sample," : string.Empty) + (this.chkGarment.Checked ? "Garment," : string.Empty);
+            worksheet.Cells[2, 28] = strcategory.Substring(0, strcategory.Length - 1);
+
+            MyUtility.Excel.CopyToXls(this._printData[0], string.Empty, $"{excelName}.xltx", 3, false, null, excelApp, wSheet: excelApp.Sheets[1]); // 將datatable copy to excel
             excelApp.DisplayAlerts = false;
-            MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{excelName}.xltx", 1, false, null, excelApp, wSheet: excelApp.Sheets[2]); // 將datatable copy to excel
-            Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1]; // 取得工作表
+
+            worksheet = excelApp.Sheets[2];
+            worksheet.Cells[2, 2] = this._sp1 + "~" + this._sp2;
+            worksheet.Cells[2, 5] = this._po1 + "~" + this._po2;
+            worksheet.Cells[2, 8] = this._bdate1 + "~" + this._bdate2;
+            worksheet.Cells[3, 2] = this._scidate1 + "~" + this._scidate2;
+            worksheet.Cells[3, 5] = this._offdate1 + "~" + this._offdate2;
+            worksheet.Cells[3, 8] = this._scanDate1 + "~" + this._scanDate2;
+            worksheet.Cells[4, 2] = this._brand;
+            worksheet.Cells[4, 4] = this._mDivision;
+            worksheet.Cells[4, 6] = this._factory;
+            worksheet.Cells[4, 8] = this.cmbPOcompletion.Text;
+            worksheet.Cells[4, 10] = strcategory.Substring(0, strcategory.Length - 1);
+            MyUtility.Excel.CopyToXls(this._printData[1], string.Empty, $"{excelName}.xltx", 5, false, null, excelApp, wSheet: excelApp.Sheets[2]); 
             worksheet.Columns.AutoFit();
             #region 釋放上面開啟過excel物件
             string strExcelName = Class.MicrosoftFile.GetName(excelName);

@@ -265,6 +265,7 @@ select
 	,[P.O.#] = o.CustPONo
 	,[Buyer] = b.BuyerID
 	,[CTN#] = pld.CTNStartNo
+	,[CTN Barcode] = pl.ID + pld.CTNStartNo
 	,[Qty] = pld.ShipQty
 	,[Scan Date] = pld.ScanEditDate
     ,[Scan Name] = dbo.getPass1_ExtNo(pld.ScanName)
@@ -284,6 +285,7 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],Customize1
 	,[Color] = c3.Color
 	,[Size] = c4.Size
 	,[CTN#]
+    ,[CTN Barcode]
 	,[PC/CTN] = c5.QtyPerCTN
 	,[QTY] = SUM(t.Qty)
 	,[PC/CTN Scanned] = c6.ScanQty
@@ -358,7 +360,7 @@ outer apply(
 	and pld.Lacking=1
 )LackingQty
 group by [Packing#]	,[Factory]	,[Shipmode]	,[SP#]	,[Style]	,[Brand]	,[Season]	,Customize1	,[P.O.#]	,[Buyer]	,[Destination]
-	,[CTN#]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name] ,[Actual CTN Weight],Lacking,LackingQty.Qty
+	,[CTN#],[CTN Barcode]	,[Scan Date]	,c2.colorway	,c3.Color	,c4.Size	,c5.QtyPerCTN	,c6.ScanQty	,c7.Barcode,[Scan Name] ,[Actual CTN Weight],Lacking,LackingQty.Qty
 order by ROW_NUMBER() OVER(ORDER BY [Packing#],[SP#], RIGHT(REPLICATE('0', 3) + CAST([CTN#] as NVARCHAR), 3))
 DROP TABLE #TMP
 ", sqlwhere.ToString());
