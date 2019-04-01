@@ -29,7 +29,7 @@ namespace Sci.Production.Cutting
             detailTb = cursor;
             curTb = cursor.Copy();
             curTb.Columns.Add("Sel", typeof(bool));
-            this.txtSpreadingNo.MDivisionID = this.KeyWord;
+            this.txtSpreadingNo.MDivision = this.KeyWord;
             gridsetup();
             btnFilter_Click(null, null);  //1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 

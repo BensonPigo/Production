@@ -26,10 +26,10 @@ namespace Sci.Production.Cutting
         public P11(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,parts,'' as cutref,'' as poid, 0 as iden,ispair from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
+            string cmd_st = "Select 0 as sel,PatternCode,PatternDesc, '' as annotation,parts,'' as cutref,'' as poid, 0 as iden,ispair ,Location from Bundle_detail_allpart WITH (NOLOCK) where 1=0";
             DBProxy.Current.Select(null, cmd_st, out allpartTb);
 
-            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts, '' as cutref,'' as poid, 0 as iden,ispair from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
+            string pattern_cmd = "Select patternCode,PatternDesc,Parts,'' as art,0 AS parts, '' as cutref,'' as poid, 0 as iden,ispair ,Location from Bundle_Detail WITH (NOLOCK) Where 1=0"; //左下的Table
             DBProxy.Current.Select(null, pattern_cmd, out patternTb);
 
             string cmd_art = "Select PatternCode,subprocessid from Bundle_detail_art WITH (NOLOCK) where 1=0";
@@ -425,6 +425,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             Helper.Controls.Grid.Generator(this.gridCutpart)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(15))
+            .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Text("art", header: "Artwork", width: Widths.AnsiChars(15), iseditingreadonly: true, settings: subcell)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partQtyCell)
             .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
@@ -443,6 +444,7 @@ where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
             .CheckBox("Sel", header: "", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("PatternCode", header: "CutPart", width: Widths.AnsiChars(10), settings: patterncell2)
             .Text("PatternDesc", header: "CutPart Name", width: Widths.AnsiChars(13))
+            .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Numeric("Parts", header: "Parts", width: Widths.AnsiChars(3), integer_places: 3, settings: partQtyCell2)
             .CheckBox("IsPair", header: "IsPair", width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0);
@@ -903,6 +905,7 @@ order by ArticleGroup", patternukey);
                     DataRow ndr = allpartTb.NewRow();
                     ndr["PatternCode"] = dr["PatternCode"];
                     ndr["PatternDesc"] = dr["PatternDesc"];
+                    ndr["Location"] = dr["Location"];
                     ndr["parts"] = MyUtility.Convert.GetInt(dr["alone"]) + MyUtility.Convert.GetInt(dr["DV"]) * 2 + MyUtility.Convert.GetInt(dr["Pair"]) * 2;
                     ndr["Cutref"] = cutref;
                     ndr["POID"] = poid;
@@ -935,6 +938,7 @@ order by ArticleGroup", patternukey);
                                     DataRow ndr2 = patternTb.NewRow();
                                     ndr2["PatternCode"] = dr["PatternCode"];
                                     ndr2["PatternDesc"] = dr["PatternDesc"];
+                                    ndr2["Location"] = dr["Location"];
                                     ndr2["Parts"] = 1;
                                     ndr2["art"] = art;
                                     ndr2["POID"] = poid;
@@ -949,6 +953,7 @@ order by ArticleGroup", patternukey);
                                 DataRow ndr2 = patternTb.NewRow();
                                 ndr2["PatternCode"] = dr["PatternCode"];
                                 ndr2["PatternDesc"] = dr["PatternDesc"];
+                                ndr2["Location"] = dr["Location"];
                                 ndr2["art"] = art;
                                 ndr2["Parts"] = dr["alone"];
                                 ndr2["POID"] = poid;
@@ -964,6 +969,7 @@ order by ArticleGroup", patternukey);
                             ndr["PatternCode"] = dr["PatternCode"];
                             ndr["PatternDesc"] = dr["PatternDesc"];
                             ndr["Annotation"] = dr["Annotation"];
+                            ndr["Location"] = dr["Location"];
                             ndr["POID"] = poid;
                             ndr["Cutref"] = cutref;
                             ndr["iden"] = iden;
@@ -980,6 +986,7 @@ order by ArticleGroup", patternukey);
                         ndr["PatternCode"] = dr["PatternCode"];
                         ndr["PatternDesc"] = dr["PatternDesc"];
                         ndr["Annotation"] = dr["Annotation"];
+                        ndr["Location"] = dr["Location"];
                         ndr["POID"] = poid;
                         ndr["Cutref"] = cutref;
                         ndr["iden"] = iden;
@@ -1158,6 +1165,7 @@ order by ArticleGroup", patternukey);
             DataRow ndr = allpartTb.NewRow();
             ndr["PatternCode"] = selectartDr["PatternCode"];
             ndr["PatternDesc"] = selectartDr["PatternDesc"];
+            ndr["Location"] = selectartDr["Location"];
             ndr["iden"] = selectartDr["iden"];
             ndr["poid"] = selectartDr["poid"];
             ndr["Cutref"] = selectartDr["cutref"];
@@ -1234,6 +1242,7 @@ order by ArticleGroup", patternukey);
                     DataRow ndr2 = patternTb.NewRow();
                     ndr2["PatternCode"] = chdr["PatternCode"];
                     ndr2["PatternDesc"] = chdr["PatternDesc"];
+                    ndr2["Location"] = chdr["Location"];
                     ndr2["iden"] = chdr["iden"];
                     ndr2["Parts"] = chdr["Parts"];
                     //ndr2["art"] = art;
@@ -1377,6 +1386,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     ndr["poid"] = dr["poid"];
                     ndr["PatternCode"] = dr2["PatternCode"];
                     ndr["PatternDesc"] = dr2["PatternDesc"];
+                    ndr["Location"] = dr2["Location"];
                     ndr["art"] = dr2["art"];
                     ndr["Parts"] = dr2["Parts"];
                     ndr["isPair"] = dr2["isPair"];
@@ -1390,6 +1400,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                     ndr["poid"] = dr["poid"];
                     ndr["PatternCode"] = dr2["PatternCode"];
                     ndr["PatternDesc"] = dr2["PatternDesc"];
+                    ndr["Location"] = dr2["Location"];
                     ndr["annotation"] = dr2["annotation"];
                     ndr["Parts"] = dr2["Parts"];
                     ndr["isPair"] = dr2["isPair"];
@@ -1451,6 +1462,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                         ndr["poid"] = dr["poid"];
                         ndr["PatternCode"] = dr2["PatternCode"];
                         ndr["PatternDesc"] = dr2["PatternDesc"];
+                        ndr["Location"] = dr2["Location"];
                         ndr["art"] = dr2["art"];
                         ndr["Parts"] = dr2["Parts"];
                         ndr["isPair"] = dr2["isPair"];
@@ -1468,6 +1480,7 @@ Please check the cut refno#：{cutref} distribution data in workOrder(Cutting P0
                         ndr["poid"] = dr["poid"];
                         ndr["PatternCode"] = dr2["PatternCode"];
                         ndr["PatternDesc"] = dr2["PatternDesc"];
+                        ndr["Location"] = dr2["Location"];
                         ndr["annotation"] = dr2["annotation"];
                         ndr["Parts"] = dr2["Parts"];
                         ndr["isPair"] = dr2["isPair"];
@@ -1674,6 +1687,9 @@ values
 
                     foreach (DataRow rowPat in PatternAry)
                     {
+                        // 不為 Allparts 的依照 Pattern_GL 紀錄 Location，否則帶入空白
+                        string location = rowPat["PatternCode"].ToString() == "ALLPARTS" ? string.Empty : rowPat["Location"].ToString();
+
                         if (MyUtility.Check.Empty(rowPat["PatternCode"]))
                         {
                             MyUtility.Msg.WarningBox("CutPart cannot be empty.");
@@ -1685,11 +1701,11 @@ values
                         nBundleDetail_dr["Insert"] = string.Format(
                             @"Insert into Bundle_Detail
                             (ID,Bundleno,BundleGroup,PatternCode,
-                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,isPair) Values
+                            PatternDesc,SizeCode,Qty,Parts,Farmin,Farmout,isPair ,Location) Values
                             ('{0}','{1}',{2},'{3}',
-                            '{4}','{5}',{6},{7},0,0,'{8}')",
+                            '{4}','{5}',{6},{7},0,0,'{8}','{9}')",
                             id_list[idcount], bundleno_list[bundlenocount], startno, rowPat["PatternCode"],
-                            rowPat["PatternDesc"].ToString().Replace("'", "''"), artar["SizeCode"], rowqty["Qty"], rowPat["Parts"], rowPat["isPair"]);
+                            rowPat["PatternDesc"].ToString().Replace("'", "''"), artar["SizeCode"], rowqty["Qty"], rowPat["Parts"], rowPat["isPair"], location);
                         Insert_Bundle_Detail.Rows.Add(nBundleDetail_dr);
                         #endregion
                         if (!MyUtility.Check.Empty(rowPat["art"])) //非空白的Art 才存在
@@ -1725,8 +1741,8 @@ values
                                 }
 
                                 DataRow nBundleDetailAllPart_dr = Insert_Bundle_Detail_AllPart.NewRow();
-                                nBundleDetailAllPart_dr["Insert"] = string.Format(@"Insert Into Bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair) Values('{0}','{1}','{2}','{3}','{4}')",
-                                     id_list[idcount], rowall["PatternCode"], rowall["PatternDesc"], rowall["Parts"], rowall["isPair"]);
+                                nBundleDetailAllPart_dr["Insert"] = string.Format(@"Insert Into Bundle_Detail_allpart(ID,PatternCode,PatternDesc,Parts,isPair,Location) Values('{0}','{1}','{2}','{3}','{4}','{5}')",
+                                         id_list[idcount], rowall["PatternCode"], rowall["PatternDesc"], rowall["Parts"], rowall["isPair"], rowall["Location"]);
                                 Insert_Bundle_Detail_AllPart.Rows.Add(nBundleDetailAllPart_dr);
                             }
 

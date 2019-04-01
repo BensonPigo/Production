@@ -55,6 +55,22 @@ namespace Sci.Production.Sewing
             {
                 this.toolbar.cmdSend.Enabled = true;
             }
+
+            if (this.CurrentMaintain != null)
+            {
+                string strSqlcmd = $@"select * from SewingOutput_DailyUnlock
+where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
+                if (MyUtility.Check.Seek(strSqlcmd) &&
+                    this.Perm.Recall &&
+                    string.Compare(this.CurrentMaintain["Status"].ToString(), "Send") == 0)
+                {
+                    this.toolbar.cmdRecall.Enabled = true;
+                }
+                else
+                {
+                    this.toolbar.cmdRecall.Enabled = false;
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -827,6 +843,8 @@ values('{this.CurrentMaintain["ID"]}' ,'{callReason.ReturnReason}' ,'{callReason
             string sqlcmd = $@"
 update  s 
 set s.LockDate = CONVERT(date, GETDATE()) , s.Status='Send'
+, s.editname='{Sci.Env.User.UserID}' 
+, s.editdate=getdate()
 FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = s.ID
 INNER JOIN MockupOrder mo ON mo.ID = sd.OrderId
@@ -893,13 +911,16 @@ ORDER by Ukey DESC
 
 --Recall 一律是從Send改回New
 INSERT INTO SewingOutput_History (ID ,HisType ,OldValue ,NewValue ,ReasonID ,Remark ,AddName ,AddDate)
-VALUES ('{this.CurrentMaintain["ID"]}','Status' ,'Send' ,'New' ,@reasonID ,@remark,'{Sci.Env.User.UserID}' ,GETDATE())
+VALUES ('{this.CurrentMaintain["ID"]}','Status' ,'Send' ,'New' ,isnull(@reasonID,''),isnull(@remark,''),'{Sci.Env.User.UserID}' ,GETDATE())
 
 Update SewingOutput_DailyUnlock SET 
 UnLockDate = GETDATE() ,UnLockName= '{Sci.Env.User.UserID}'
 where ukey=@ukey
 
-UPDATE SewingOutput SET Status='New', LockDate = NULL WHERE ID = '{this.CurrentMaintain["ID"]}' 
+UPDATE SewingOutput SET Status='New', LockDate = NULL 
+, editname='{Sci.Env.User.UserID}' 
+, editdate=getdate()
+WHERE ID = '{this.CurrentMaintain["ID"]}' 
 ";
             #endregion
 
