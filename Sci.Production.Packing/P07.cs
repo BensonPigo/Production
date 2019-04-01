@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.Packing
 {
@@ -158,6 +159,10 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                 return;
             }
 
+            DataSet dsPrintdata = new DataSet();
+            DataSet dsctnDim = new DataSet();
+            DataSet dsqtyBDown = new DataSet();
+
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
                 if (MyUtility.Convert.GetString(dr["selected"]) == "1")
@@ -170,9 +175,81 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                         return;
                     }
 
-                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, this.radioFormA.Checked ? "1" : "2", this.printData, this.ctnDim, this.qtyBDown);
+                    DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["ID"].EqualString(dr["id"])).CopyToDataTable();
+
+                    this.printData.TableName = dr["ID"].ToString();
+                    dsPrintdata.Tables.Add(this.printData);
+
+                    this.ctnDim.TableName = dr["ID"].ToString();
+                    dsctnDim.Tables.Add(this.ctnDim);
+
+                    this.qtyBDown.TableName = dr["ID"].ToString();
+                    dsqtyBDown.Tables.Add(this.qtyBDown);
+
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.radioFormA.Checked ? "1" : "2", dsPrintdata, dsctnDim, dsqtyBDown);
                 }
             }
+
+            this.HideWaitMessage();
+            MyUtility.Msg.InfoBox("Complete.");
+        }
+
+        private void btnToExcelCombo_Click(object sender, EventArgs e)
+        {
+            this.ShowWaitMessage("Data Loading....");
+            if (MyUtility.Check.Empty(this.gridData))
+            {
+                this.HideWaitMessage();
+                return;
+            }
+
+            if (this.gridData.Rows.Count == 0)
+            {
+                this.HideWaitMessage();
+                return;
+            }
+
+            this.gridDetail.ValidateControl();
+            this.listControlBindingSource1.EndEdit();
+
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["selected"].EqualDecimal(1)).CopyToDataTable();
+
+            DataSet dsPrintdata = new DataSet();
+            DataSet dsctnDim = new DataSet();
+            DataSet dsqtyBDown = new DataSet();
+
+            DataRow[] drSelect = dt.Select("selected = 1");
+            if (drSelect.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            foreach (DataRow dr in drSelect)
+            {
+                if (MyUtility.Convert.GetString(dr["selected"]) == "1")
+                {
+                    DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), this.radioFormA.Checked ? "1" : "2", out this.printData, out this.ctnDim, out this.qtyBDown);
+                    if (!result)
+                    {
+                        this.HideWaitMessage();
+                        MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
+                        return;
+                    }
+
+                    this.printData.TableName = dr["ID"].ToString();
+                    dsPrintdata.Tables.Add(this.printData);
+
+                    this.ctnDim.TableName = dr["ID"].ToString();
+                    dsctnDim.Tables.Add(this.ctnDim);
+
+                    this.qtyBDown.TableName = dr["ID"].ToString();
+                    dsqtyBDown.Tables.Add(this.qtyBDown);
+                }
+            }
+
+            PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.radioFormA.Checked ? "1" : "2", dsPrintdata, dsctnDim, dsqtyBDown);
+
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Complete.");
