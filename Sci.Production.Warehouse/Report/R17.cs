@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
                 if (!((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Empty())
                     objSheets.Cells[i + 1, 12] = ((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Trim();
             }
-            objSheets.Columns[12].ColumnWidth = 50;
+          //  objSheets.Columns[12].ColumnWidth = 50;
             objSheets.Rows.AutoFit();
 
             #region Save & Show Excel
