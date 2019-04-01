@@ -71,10 +71,6 @@ namespace Sci.Production.Quality
                 if (dr["CutInLine"] == DBNull.Value) dateEarliestEstCuttingDate.Text = "";
                 else dateEarliestEstCuttingDate.Value = Convert.ToDateTime(dr["CutInLine"]);
 
-                //[Earliest SCI Del]
-                if (dr["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
-                else dateEarliestSCIDel.Value = Convert.ToDateTime(dr["MinSciDelivery"]);
-
                 //[Target Lead time]
                 DateTime? targT = null;
                 if (!MyUtility.Check.Empty(dr["CutInLine"]) && !MyUtility.Check.Empty(dr["MinSciDelivery"]))
@@ -97,16 +93,7 @@ namespace Sci.Production.Quality
                 if (articleAry.Length > 0)
                 {
                     inspnum = Math.Round(((decimal)articleAry.Length / dRowCount) * 100, 2).ToString();
-                    displayofInspection.Text = inspnum + "%";
                 }
-                else
-                {
-                    displayofInspection.Text = "";
-                }
-            }
-            else
-            {
-                displayofInspection.Text = "";
             }
 
             DateTime? CompDate,OvenDate,WashDate; 
@@ -489,6 +476,37 @@ namespace Sci.Production.Quality
             this.detailgrid.Update();
             this.detailgrid.Refresh();
 
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            DualResult upResult;
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    //更新PO.AIRLabInspPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIRLab','{CurrentMaintain["ID"]}'")))
+                    {
+                        _transactionscope.Dispose();
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+            RenewData();
+            base.ClickSaveAfter();
         }
     }
 }

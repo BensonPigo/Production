@@ -41,8 +41,12 @@
     [AIRInspPercent]                NUMERIC (5, 2) DEFAULT ((0.00)) NOT NULL,
     [FIRLabInspPercent]             NUMERIC (5, 2) CONSTRAINT [DF_PO_FIRLabInspPercent] DEFAULT ((0)) NOT NULL,
     [LabColorFastnessPercent]       NUMERIC (5, 2) CONSTRAINT [DF_PO_LabColorFastnessPercent] DEFAULT ((0)) NOT NULL,
+    [LabOvenPercent]                NUMERIC (5, 2) CONSTRAINT [DF_PO_LabOvenPercent] DEFAULT ((0)) NULL,
+    [AIRLabInspPercent]             NUMERIC (5, 2) CONSTRAINT [DF_PO_AIRLabInspPercent] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_PO] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
