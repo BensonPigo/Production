@@ -335,6 +335,7 @@
             // displayArticleofInspection
             // 
             this.displayArticleofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayArticleofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LabOvenPercent", true));
             this.displayArticleofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayArticleofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayArticleofInspection.Location = new System.Drawing.Point(703, 20);
@@ -353,6 +354,7 @@
             // 
             // dateEarliestSCIDel
             // 
+            this.dateEarliestSCIDel.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MinSciDelivery", true));
             this.dateEarliestSCIDel.IsSupportEditMode = false;
             this.dateEarliestSCIDel.Location = new System.Drawing.Point(412, 46);
             this.dateEarliestSCIDel.Name = "dateEarliestSCIDel";

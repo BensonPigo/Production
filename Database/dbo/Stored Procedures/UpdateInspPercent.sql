@@ -1,9 +1,9 @@
 ﻿
 
---將根據傳入參數，更新 PO.FIRInspPercent 或 PO.AIRInspPercent
+--�N�ھڶǤJ�ѼơA��s PO.FIRInspPercent �� PO.AIRInspPercent
 CREATE PROCEDURE [dbo].[UpdateInspPercent] 
 (
-	@Type varchar(10) = '' --FIR , AIR , FIRLab, LabColorFastness
+	@Type varchar(20) = '' --FIR , AIR , FIRLab, LabColorFastness
 	,@POID varchar(20) = ''
 	
 )
@@ -64,6 +64,33 @@ BEGIN
 			FROM [PO] p
 			where P.ID=@POID
 		END
+
+		IF @Type='LabOven'
+		BEGIN
+			UPDATE p
+			SET 
+			LabOvenPercent= (   select 
+				cnt= isnull(convert(varchar,round(convert(float,sum(case when status='Confirmed' then 1 else 0 end))
+				/convert(float,count(*)),4)*100),0)
+			from oven  
+			where POID=@POID )
+			FROM [PO] p
+			where P.ID=@POID
+		END
+
+			IF @Type='AIRLab'
+		BEGIN
+			UPDATE p
+			SET 
+			AIRLabInspPercent= (   select 
+				cnt= isnull(convert(varchar,round(convert(float,sum(case when Result<>'' OR( NonOven='True' and NonWash='True') then 1					else 0 end))/convert(float,count(*)),4)*100),0)
+			from AIR_Laboratory 
+			where POID=@POID )
+			FROM [PO] p
+			where P.ID=@POID
+		END
+
+
 	END TRY
 	BEGIN CATCH
 		EXEC usp_GetErrorInfo;

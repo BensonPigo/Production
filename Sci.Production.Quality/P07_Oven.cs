@@ -213,6 +213,16 @@ namespace Sci.Production.Quality
                 this.btnEdit.Enabled = true;
 
             }
+
+            //更新PO.AIRLabInspPercent
+            DualResult upResult;
+            if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'AIRLab','{maindr["POID"]}'")))
+            {
+                ShowErr(upResult);
+                return;
+            }
+
+            OnRequery();
         }
         #region 修改寫法,先保留! 20161105
         //protected override bool OnSaveBefore()

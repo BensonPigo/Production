@@ -61,27 +61,23 @@ namespace Sci.Production.Quality
                 if (drEarly["CutInLine"] == DBNull.Value) dateEarliestEstCuttingDate.Text = "";
                 else dateEarliestEstCuttingDate.Value = Convert.ToDateTime(drEarly["CutInLine"]);
             }
-            if (MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')",CurrentMaintain["id"].ToString()),out drSci))
-            {
-                if (!MyUtility.Check.Empty(drSci["MinSciDelivery"]))
-                {
-                    if (drSci["MinSciDelivery"] == DBNull.Value) dateEarliestSCIDel.Text = "";
-                    else dateEarliestSCIDel.Value = Convert.ToDateTime(drSci["MinSciDelivery"]);
-                }
-            }
 
-            DateTime? targT = null;
-            if (!MyUtility.Check.Empty(drEarly["CUTINLINE"]) && !MyUtility.Check.Empty(drSci["MinSciDelivery"]))
+            if (MyUtility.Check.Seek(string.Format("select * from dbo.GetSCI('{0}','')", CurrentMaintain["id"].ToString()), out drSci))
             {
-                targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
-            }
-            if (targT != null)
-            {
-                dateTargetLeadtime.Value = targT;
-            }
-            else
-            {
-                dateTargetLeadtime.Text = "";
+                DateTime? targT = null;
+                if (!MyUtility.Check.Empty(drEarly["CUTINLINE"]) && !MyUtility.Check.Empty(drSci["MinSciDelivery"]))
+                {
+                    targT = Sci.Production.PublicPrg.Prgs.GetTargetLeadTime(drEarly["CUTINLINE"], drSci["MinSciDelivery"]);
+                }
+
+                if (targT != null)
+                {
+                    dateTargetLeadtime.Value = targT;
+                }
+                else
+                {
+                    dateTargetLeadtime.Text = "";
+                }
             }
 
             #region 比照R03報表計算方式
@@ -94,22 +90,7 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
             decimal dRowCount = dtArticle.Rows.Count;            
             decimal intArticle = 0;
             DataTable articleDT = (DataTable)detailgridbs.DataSource;
-            if (articleDT.Rows.Count != 0)
-            {
-                intArticle = Math.Round((articleDT.Rows.Count / dRowCount) * 100, 2);
-                if (intArticle > 100)
-                {
-                    displayArticleofInspection.Text = "100%";
-                }
-                else
-                {
-                    displayArticleofInspection.Text = intArticle.ToString() + "%";
-                }
-            }
-            else
-            {
-                displayArticleofInspection.Text = "";
-            }
+            
             DateTime CompDate;
             if (intArticle >= 100)
             {
@@ -394,6 +375,37 @@ where o.poid = '{0}') a", this.CurrentMaintain["ID"].ToString()), out dtArticle)
         {
             contextMenuStrip();
             base.OnDetailGridRowChanged();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            DualResult upResult;
+            TransactionScope _transactionscope = new TransactionScope();
+            using (_transactionscope)
+            {
+                try
+                {
+                    //更新PO.LabOvenPercent
+                    if (!(upResult = DBProxy.Current.Execute(null, $"exec UpdateInspPercent 'LabOven','{CurrentMaintain["ID"]}'")))
+                    {
+                        _transactionscope.Dispose();
+                        return;
+                    }
+
+                    _transactionscope.Complete();
+                    _transactionscope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _transactionscope.Dispose();
+                    ShowErr("Commit transaction error.", ex);
+                    return;
+                }
+            }
+            _transactionscope.Dispose();
+            _transactionscope = null;
+            RenewData();
+            base.ClickSaveAfter();
         }
 
     }
