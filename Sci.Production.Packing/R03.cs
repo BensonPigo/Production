@@ -148,7 +148,7 @@ namespace Sci.Production.Packing
 select pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
 	Junk=iif(o.Junk=1,'Y','N'),
 	Dest=(select Alias from Country ct where ct.id=pl.Dest),
-	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
+	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewLine,o.SewOffLine,
 	pl.Status,o.Qty,
 	TtlCTNS=sum(pld.CTNQty),
 	TtlQty=sum(pld.ShipQty),
@@ -168,7 +168,7 @@ where 1=1
 {where}
 group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
 	iif(o.Junk=1,'Y','N'),pl.Dest,
-	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewInLine,o.SewOffLine,
+	o.StyleID,o.BrandID,pl.CustCDID,o.SewInLine,pl.ShipModeID,pl.INVNo,pl.PulloutDate,o.SewLine,o.SewOffLine,
 	pl.Status,o.Qty,iif(isnull(pl.LocalPOID,'')='','N','Y'),
 	pl.EstCTNBooking,
 	pl.EstCTNArrive,
