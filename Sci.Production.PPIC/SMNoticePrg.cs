@@ -786,8 +786,8 @@ Select color.Article, color.FabricCode, color.FabricPanelCode, color.ColorID
                 sqlX = @"
 Select fabricCode.FabricPanelCode, fabricCode.PatternPanel, bof.FabricCode, q.QTWith 
 	From Orders o
-	Left Join Order_BOF bof on bof.ID = o.ID
-	Left Join Order_FabricCode fabricCode on fabricCode.Order_BOFUkey = bof.Ukey
+	inner Join Order_BOF bof on bof.ID = o.ID
+	inner Join Order_FabricCode fabricCode on fabricCode.Order_BOFUkey = bof.Ukey
 Outer Apply (
     Select Top 1 Concat(fabricCode.FabricCode, fabricCode.PatternPanel) as QTWith
     From Order_FabricCode_QT qt
