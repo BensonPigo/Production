@@ -536,6 +536,7 @@ out this.FinalALLData);
             sxrc.DicDatas.Add("##detailAll", xrt2);
             sxrc.DicDatas.Add("##StyleDetail", xrt3);
             sxrc.DicDatas.Add("##OrderDetail", xrt4);
+            sxrc.DicDatas.Add("##SeasonCode", this.txtSeason.Text + "_historical data");
 
             sxrc.Save(Sci.Production.Class.MicrosoftFile.GetName("Centralized_R01.Matrix"));
             this.Final_Data1.Clear();
