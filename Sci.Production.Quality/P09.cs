@@ -332,7 +332,8 @@ left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.FactoryGroup = Export.Consignee and fd.SeasonSCIID = s.SeasonSCIID
+left join Factory fty with (nolock) on fty.ID = Export.Consignee
+left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.FactoryGroup = fty.TestDocFactoryGroup and fd.SeasonSCIID = s.SeasonSCIID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 outer apply(
 	select T1InspectedYards=sum(fp.ActualYds)
@@ -577,7 +578,8 @@ left join Po_Supp_Detail psd with(nolock) on psd.id = ed.poid and psd.seq1 = ed.
 left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
-left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.FactoryGroup = Export.Consignee 
+left join Factory fty with (nolock) on fty.ID = Export.Consignee
+left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.FactoryGroup = fty.TestDocFactoryGroup 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where   ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
@@ -596,7 +598,8 @@ select
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
 ,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot)
 from #tmp a
-full join FirstDyelot b on a.consignee = b.FactoryGroup
+left join Factory fty with (nolock) on fty.ID = a.Consignee
+full join FirstDyelot b on fty.TestDocFactoryGroup = b.FactoryGroup
 and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID 
 where 1=1 and 
 {sqlwhere}
