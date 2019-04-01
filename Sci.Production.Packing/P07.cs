@@ -159,6 +159,10 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                 return;
             }
 
+            DataSet dsPrintdata = new DataSet();
+            DataSet dsctnDim = new DataSet();
+            DataSet dsqtyBDown = new DataSet();
+
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
                 if (MyUtility.Convert.GetString(dr["selected"]) == "1")
@@ -171,7 +175,18 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                         return;
                     }
 
-                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, this.radioFormA.Checked ? "1" : "2", this.printData, this.ctnDim, this.qtyBDown);
+                    DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["ID"].EqualString(dr["id"])).CopyToDataTable();
+
+                    this.printData.TableName = dr["ID"].ToString();
+                    dsPrintdata.Tables.Add(this.printData);
+
+                    this.ctnDim.TableName = dr["ID"].ToString();
+                    dsctnDim.Tables.Add(this.ctnDim);
+
+                    this.qtyBDown.TableName = dr["ID"].ToString();
+                    dsqtyBDown.Tables.Add(this.qtyBDown);
+
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.radioFormA.Checked ? "1" : "2", dsPrintdata, dsctnDim, dsqtyBDown);
                 }
             }
 
@@ -197,7 +212,11 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
             this.gridDetail.ValidateControl();
             this.listControlBindingSource1.EndEdit();
 
-            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["selected"].EqualDecimal(1)).CopyToDataTable();
+
+            DataSet dsPrintdata = new DataSet();
+            DataSet dsctnDim = new DataSet();
+            DataSet dsqtyBDown = new DataSet();
 
             DataRow[] drSelect = dt.Select("selected = 1");
             if (drSelect.Length == 0)
@@ -206,7 +225,7 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                 return;
             }
 
-            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+            foreach (DataRow dr in drSelect)
             {
                 if (MyUtility.Convert.GetString(dr["selected"]) == "1")
                 {
@@ -218,23 +237,22 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                         return;
                     }
 
-                    //PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dr, this.radioFormA.Checked ? "1" : "2", this.printData, this.ctnDim, this.qtyBDown);
-                    
+                    this.printData.TableName = dr["ID"].ToString();
+                    dsPrintdata.Tables.Add(this.printData);
+
+                    this.ctnDim.TableName = dr["ID"].ToString();
+                    dsctnDim.Tables.Add(this.ctnDim);
+
+                    this.qtyBDown.TableName = dr["ID"].ToString();
+                    dsqtyBDown.Tables.Add(this.qtyBDown);
                 }
             }
 
-            //#region Save & Show Excel
-            //string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Packing_P03_PackingGuideReport");
-            //Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
-            //workbook.SaveAs(strExcelName);
-            //workbook.Close();
-            //excel.Quit();
-            //Marshal.ReleaseComObject(excel);
-            //Marshal.ReleaseComObject(worksheet);
-            //Marshal.ReleaseComObject(workbook);
+            PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.radioFormA.Checked ? "1" : "2", dsPrintdata, dsctnDim, dsqtyBDown);
 
-            //strExcelName.OpenFile();
-            //#endregion 
+
+            this.HideWaitMessage();
+            MyUtility.Msg.InfoBox("Complete.");
         }
     }
 }
