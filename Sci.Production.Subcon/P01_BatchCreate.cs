@@ -123,6 +123,7 @@ inner join Orders WITH (NOLOCK) on Order_TmsCost.id = Orders.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join view_order_artworks v on v.id = Order_TmsCost.id 
 									and v.artworktypeid = Order_TmsCost.artworktypeid
+inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 WHERE 	not exists(
 			select * 
 			from artworkpo a WITH (NOLOCK) 
@@ -137,11 +138,24 @@ WHERE 	not exists(
 		and factory.mdivisionid = '{1}'
 		and factory.IsProduceFty = 1
 		and Order_TmsCost.localsuppid !=''
-		and Orders.category  in ('B','S')
+        and Orders.PulloutComplete = 0
 		", poType, Sci.Env.User.Keyword);
 
                 SqlCmd += string.Format(" AND Order_TmsCost.InhouseOSP = '{0}'", poType);
-
+                switch (poType)
+                {
+                    case "O":
+                        SqlCmd += $@" 
+		and (
+                orders.Category ='s' 
+                or (awt.IsArtwork=1 and v.Cost > 0 and orders.Category='B')
+        )";
+                        break;
+                    case "I":
+                        SqlCmd += $@" 
+        and orders.Category in ('S','B') ";
+                        break;
+                }
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate <= '{0}' ", apvdate_e); }
@@ -191,6 +205,7 @@ FROM Order_TmsCost WITH (NOLOCK)
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 inner join order_qty v WITH (NOLOCK) on v.id = order_tmscost.id
+inner join ArtworkType awt WITH (NOLOCK) on Order_TmsCost.ArtworkTypeID=awt.ID
 WHERE 	not exists(
 			select * 
 			from artworkpo a WITH (NOLOCK) 
@@ -204,10 +219,25 @@ WHERE 	not exists(
 		and orders.Finished=0
 		and orders.IsForecast = 0
 		and orders.Junk = 0
-		and Order_TmsCost.localsuppid !=''
-		and Orders.category  in ('B','S')
+		and Order_TmsCost.localsuppid !=''		
+        and Orders.PulloutComplete = 0
 		", poType, Sci.Env.User.Keyword);
                 SqlCmd += string.Format(" and Order_TmsCost.InhouseOSP = '{0}'", poType);
+                switch (poType)
+                {
+                    case "O":
+                        SqlCmd += $@" 
+        and (
+                orders.Category ='s' 
+                or (awt.IsArtwork = 0 and Order_TmsCost.Price > 0 
+                and orders.Category = 'B')
+        )";
+                        break;
+                    case "I":
+                        SqlCmd += $@" 
+        and orders.Category in ('S','B') ";
+                        break;
+                }
                 if (!(string.IsNullOrWhiteSpace(artworktype))) { SqlCmd += string.Format(" and Order_TmsCost.ArtworkTypeID = '{0}'", artworktype); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_b))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate >= '{0}' ", apvdate_b); }
                 if (!(string.IsNullOrWhiteSpace(apvdate_e))) { SqlCmd += string.Format(" and Order_TmsCost.ApvDate <= '{0}' ", apvdate_e); }
