@@ -154,15 +154,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(921, 519);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(915, 473);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(915, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
@@ -204,7 +204,7 @@
             this.displayofInspection.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AIRLabInspPercent", true));
             this.displayofInspection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayofInspection.Location = new System.Drawing.Point(673, 9);
+            this.displayofInspection.Location = new System.Drawing.Point(704, 9);
             this.displayofInspection.Name = "displayofInspection";
             this.displayofInspection.Size = new System.Drawing.Size(140, 21);
             this.displayofInspection.TabIndex = 104;
@@ -267,7 +267,6 @@
             // 
             // labelEarliestSCIDel
             // 
-            this.labelEarliestSCIDel.Lines = 0;
             this.labelEarliestSCIDel.Location = new System.Drawing.Point(227, 34);
             this.labelEarliestSCIDel.Name = "labelEarliestSCIDel";
             this.labelEarliestSCIDel.Size = new System.Drawing.Size(165, 23);
@@ -276,7 +275,6 @@
             // 
             // labelTargetLeadtime
             // 
-            this.labelTargetLeadtime.Lines = 0;
             this.labelTargetLeadtime.Location = new System.Drawing.Point(227, 61);
             this.labelTargetLeadtime.Name = "labelTargetLeadtime";
             this.labelTargetLeadtime.Size = new System.Drawing.Size(165, 23);
@@ -301,7 +299,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(9, 90);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(60, 23);
@@ -310,7 +307,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(9, 34);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(60, 23);
@@ -319,7 +315,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(9, 61);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(60, 23);
@@ -328,7 +323,6 @@
             // 
             // labelSP
             // 
-            this.labelSP.Lines = 0;
             this.labelSP.Location = new System.Drawing.Point(9, 7);
             this.labelSP.Name = "labelSP";
             this.labelSP.Size = new System.Drawing.Size(60, 23);
@@ -420,7 +414,6 @@
             // 
             // labelSEQ
             // 
-            this.labelSEQ.Lines = 0;
             this.labelSEQ.Location = new System.Drawing.Point(253, 132);
             this.labelSEQ.Name = "labelSEQ";
             this.labelSEQ.Size = new System.Drawing.Size(40, 23);
@@ -446,6 +439,7 @@
             this.comboOvenWashBoth.IsSupportUnselect = true;
             this.comboOvenWashBoth.Location = new System.Drawing.Point(9, 163);
             this.comboOvenWashBoth.Name = "comboOvenWashBoth";
+            this.comboOvenWashBoth.OldText = "";
             this.comboOvenWashBoth.Size = new System.Drawing.Size(120, 24);
             this.comboOvenWashBoth.TabIndex = 116;
             // 
