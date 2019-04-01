@@ -16,12 +16,13 @@ namespace Sci.Production.Cutting
     public partial class R02 : Sci.Win.Tems.PrintForm
     {
         DataTable[] printData;
-        string MD, Factory, CutCell1, CutCell2;
+        string MD, Factory, CutCell1, CutCell2 ,SpreadingNo1 ,SpreadingNo2;
         string[] cuttings;
         DateTime? dateR_CuttingDate1, dateR_CuttingDate2;
         StringBuilder condition_CuttingDate = new StringBuilder();
-        DataTable Cutcelltb;
+        DataTable Maintb;
         string NameEN, strExcelName;
+        string selected_splitWorksheet = "CutCell";
 
         public R02(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -59,13 +60,29 @@ namespace Sci.Production.Cutting
         {
             if (MyUtility.Check.Empty(dateCuttingDate.Value1))
             {
-                MyUtility.Msg.WarningBox("CuttingDate can't empty!!");
+                MyUtility.Msg.WarningBox("Cutting Date can't empty!!");
                 return false;
             }
-            if (MyUtility.Check.Empty(txtCutCellStart.Text.Trim()))
+
+            switch (selected_splitWorksheet)
             {
-                MyUtility.Msg.WarningBox("CutCell can't empty!!");
-                return false;
+                case "CutCell":
+                    if (MyUtility.Check.Empty(txtCutCellStart.Text.Trim()) && MyUtility.Check.Empty(txtCutCellEnd.Text.Trim()))
+                    {
+                        MyUtility.Msg.WarningBox("Cut Cell can't empty!!");
+                        return false;
+                    }
+                    break;
+                case "SpreadingNo":
+                    if (MyUtility.Check.Empty(txtSpreadingNoStart.Text.Trim()) && MyUtility.Check.Empty(txtSpreadingNoEnd.Text.Trim()))
+                    {
+
+                        MyUtility.Msg.WarningBox("Spreading No. can't empty!!");
+                        return false;
+                    }
+                    break;
+                default:
+                    break;
             }
 
             Factory = comboFactory.Text;
@@ -74,23 +91,33 @@ namespace Sci.Production.Cutting
             dateR_CuttingDate2 = dateCuttingDate.Value2;
 
             //select distinct cutcellid from cutplan order by cutcellid 不只有數字,where條件要''單引號,且mask是00
-            int c1, c2;
-            bool bc1, bc2;
-            bc1 = int.TryParse(txtCutCellStart.Text.Trim(), out c1);
-            if (bc1) CutCell1 = c1.ToString("D2");
-            else CutCell1 = txtCutCellStart.Text.Trim();
-            //若CutCell2為空則=CutCell1
-            if (!MyUtility.Check.Empty(txtCutCellEnd.Text.Trim()))
-            {
-                bc2 = int.TryParse(txtCutCellEnd.Text.Trim(), out c2);
-                if (bc2) CutCell2 = c2.ToString("D2");
-                else CutCell2 = txtCutCellEnd.Text.Trim();
-            }
-            else
-            {
-                CutCell2 = CutCell1;
-            }
 
+            //避免1、2這樣的條件再>=、<=的篩選有誤，因此補0成01、02
+            //若包含文字符號則不處理
+
+            int Cell1, Cell2, Spreading1, Spreading2;
+            bool IsCell1Number, IsCell2Number, IsSpreading1Number, IsSpreading2Number;
+
+            //this.CutCell1
+            IsCell1Number = int.TryParse(txtCutCellStart.Text.Trim(), out Cell1);
+            if (IsCell1Number) this.CutCell1 = Cell1.ToString("D2");
+            else this.CutCell1 = txtCutCellStart.Text.Trim();
+
+            //this.CutCell2
+            IsCell2Number = int.TryParse(txtCutCellEnd.Text.Trim(), out Cell2);
+            if (IsCell2Number) this.CutCell2 = Cell2.ToString("D2");
+            else this.CutCell2 = txtCutCellEnd.Text.Trim();
+
+            //SpreadingNo1
+            IsSpreading1Number = int.TryParse(txtSpreadingNoStart.Text.Trim(), out Spreading1);
+            if (IsSpreading1Number) this.SpreadingNo1 = Spreading1.ToString("D2");
+            else this.SpreadingNo1 = txtSpreadingNoStart.Text.Trim();
+
+            //SpreadingNo2
+            IsSpreading2Number = int.TryParse(txtSpreadingNoEnd.Text.Trim(), out Spreading2);
+            if (IsSpreading2Number) this.SpreadingNo2 = Spreading2.ToString("D2");
+            else this.SpreadingNo2 = txtSpreadingNoEnd.Text.Trim();
+            
             return base.ValidateInput();
         }
 
@@ -100,48 +127,84 @@ namespace Sci.Production.Cutting
             NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
             //準備CutCell包含非數字
             string scell;
+            scell = $@"
+select  distinct  {(selected_splitWorksheet== "CutCell" ? "CutCellID" : "SpreadingNoID")}
+from Cutplan WITH (NOLOCK) 
+inner join Cutting on CutPlan.CuttingID = Cutting.ID
+where   Cutplan.MDivisionID ='{MD}'";
+
             if (radioByDetail.Checked || radioBySummary.Checked)
             {
-                scell = string.Format(@"
-select  distinct CutCellID 
-from Cutplan WITH (NOLOCK) 
-inner join Cutting on CutPlan.CuttingID = Cutting.ID
-where   Cutplan.EstCutdate >= '{0}' 
-        and Cutplan.EstCutdate <= '{1}'
-        and Cutplan.MDivisionID ='{2}' 
-        and Cutplan.CutCellID >= '{3}' 
-        and Cutplan.CutCellID <='{4}' 
-        {5}
-order by CutCellID"
-, Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
-, Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
-, MD
-, CutCell1
-, CutCell2
-, (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
-            }else{
-                scell = string.Format(@"
-select  distinct CutCellID 
-from Cutplan WITH (NOLOCK) 
-inner join Cutting on CutPlan.CuttingID = Cutting.ID
-where   Cutplan.EstCutdate = '{0}'
-        and Cutplan.MDivisionID ='{1}' 
-        and Cutplan.CutCellID >= '{2}' 
-        and Cutplan.CutCellID <='{3}' 
-        {4}
-order by CutCellID"
-, Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
-, MD
-, CutCell1
-, CutCell2
-, (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
+                //                scell = string.Format(@"
+                //select  distinct CutCellID 
+                //from Cutplan WITH (NOLOCK) 
+                //inner join Cutting on CutPlan.CuttingID = Cutting.ID
+                //where   Cutplan.EstCutdate >= '{0}' 
+                //        and Cutplan.EstCutdate <= '{1}'
+                //        and Cutplan.MDivisionID ='{2}' 
+                //        and Cutplan.CutCellID >= '{3}' 
+                //        and Cutplan.CutCellID <='{4}' 
+                //        {5}
+                //order by CutCellID"
+                //, Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+                //, Convert.ToDateTime(dateR_CuttingDate2).ToString("d")
+                //, MD
+                //, CutCell1
+                //, CutCell2
+                //, (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate >= '{Convert.ToDateTime(dateR_CuttingDate1).ToString("d")}'";
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate <= '{Convert.ToDateTime(dateR_CuttingDate2).ToString("d")}'";
+            }
+            else
+            {
+//                scell = string.Format(@"
+//select  distinct CutCellID 
+//from Cutplan WITH (NOLOCK) 
+//inner join Cutting on CutPlan.CuttingID = Cutting.ID
+//where   Cutplan.EstCutdate = '{0}'
+//        and Cutplan.MDivisionID ='{1}' 
+//        and Cutplan.CutCellID >= '{2}' 
+//        and Cutplan.CutCellID <='{3}' 
+//        {4}
+//order by CutCellID"
+//, Convert.ToDateTime(dateR_CuttingDate1).ToString("d")
+//, MD
+//, CutCell1
+//, CutCell2
+//, (Factory.Empty() ? "" : string.Format("and Cutting.FactoryID = '{0}'", Factory)));
+
+                scell += Environment.NewLine + $"        and Cutplan.EstCutdate = '{Convert.ToDateTime(dateR_CuttingDate1).ToString("d")}'";
             }
 
-            DBProxy.Current.Select(null, scell, out Cutcelltb);
-            
-            int CutCellcount = Cutcelltb.Rows.Count;//CutCel總數
+            if (!MyUtility.Check.Empty(Factory))
+            {
+                scell += Environment.NewLine + $"        and Cutting.FactoryID = '{Factory}'";
+            }
+            if (!MyUtility.Check.Empty(CutCell1))
+            {
+                scell += Environment.NewLine + $"        and  Cutplan.CutCellID >=  '{CutCell1}'";
+            }
+            if (!MyUtility.Check.Empty(CutCell2))
+            {
+                scell += Environment.NewLine + $"        and  Cutplan.CutCellID <=  '{CutCell2}'";
+            }
+            if (!MyUtility.Check.Empty(SpreadingNo1))
+            {
+                scell += Environment.NewLine + $"        and  Cutplan.SpreadingNoID >=  '{SpreadingNo1}'";
+            }
+            if (!MyUtility.Check.Empty(SpreadingNo2))
+            {
+                scell += Environment.NewLine + $"        and  Cutplan.SpreadingNoID <=  '{SpreadingNo2}'";
+            }
 
-            if (CutCellcount == 0)
+            scell += Environment.NewLine + "ORDER BY " + (selected_splitWorksheet == "CutCell" ? "CutCellID" : "SpreadingNoID");
+
+
+            DBProxy.Current.Select(null, scell, out Maintb);
+            
+            int SheetsCount = Maintb.Rows.Count;//CutCel總數
+
+            if (SheetsCount == 0)
                 return Result.F("Data not found!");
 
             StringBuilder sqlCmd = new StringBuilder();
@@ -149,7 +212,7 @@ order by CutCellID"
             #region radiobtnByM
             if (radioByDetail.Checked)
             {
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < SheetsCount; i++)
                 {
                     sqlCmd.Append(string.Format("IF OBJECT_ID('tempdb.dbo.#tmpall{0}','U')IS NOT NULL DROP TABLE #tmpall{0}", i));
                     sqlCmd.Append(@"
@@ -248,9 +311,13 @@ where 1 = 1
                     {
                         sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
                     }
-                    if (!MyUtility.Check.Empty(CutCell1))
+                    if (!MyUtility.Check.Empty(CutCell1) || !MyUtility.Check.Empty(CutCell2))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                    }
+                    if (!MyUtility.Check.Empty(SpreadingNo1) || !MyUtility.Check.Empty(SpreadingNo2))
+                    {
+                        sqlCmd.Append(string.Format(" and Cutplan.SpreadingNoID = '{0}' ", Maintb.Rows[i][0].ToString()));
                     }
 
                     sqlCmd.Append(@"order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]");
@@ -309,7 +376,7 @@ drop table #tmpall");
             #region radioBtnByCutCell
             if (radioByOneDayDetial.Checked)
             {
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < SheetsCount; i++)
                 {
                     sqlCmd.Append(string.Format("IF OBJECT_ID('tempdb.dbo.#tmpall{0}','U')IS NOT NULL DROP TABLE #tmpall{0}", i));
                     sqlCmd.Append(@"
@@ -444,9 +511,13 @@ where 1 = 1 --??? AND fe.ETA IS NOT NULL
                     {
                         sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
                     }
-                    if (!MyUtility.Check.Empty(CutCell1))
+                    if (!MyUtility.Check.Empty(CutCell1) || !MyUtility.Check.Empty(CutCell2))
                     {
-                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and Cutplan.CutCellID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                    }
+                    if (!MyUtility.Check.Empty(SpreadingNo1) || !MyUtility.Check.Empty(SpreadingNo2))
+                    {
+                        sqlCmd.Append(string.Format(" and Cutplan.SpreadingNoID = '{0}' ", Maintb.Rows[i][0].ToString()));
                     }
 
                     sqlCmd.Append(@"order by [Line#],[Request#],[Fab ETA],[SP#],[Comb.],[ms] desc,[Seq#]");
@@ -505,7 +576,7 @@ drop table #tmpall");
             #region radiobtn By Detail3
             if (radioBySummary.Checked)
             {
-                for (int i = 0; i < CutCellcount; i++)
+                for (int i = 0; i < SheetsCount; i++)
                 {
                     sqlCmd.Append(@"
 select distinct
@@ -625,9 +696,13 @@ where 1 = 1
                     {
                         sqlCmd.Append(string.Format(" and cut.FactoryID = '{0}' ", Factory));
                     }
-                    if (!MyUtility.Check.Empty(CutCell1))
+                    if (!MyUtility.Check.Empty(CutCell1) || !MyUtility.Check.Empty(CutCell2))
                     {
-                        sqlCmd.Append(string.Format(" and c.CutCellID = '{0}' ", Cutcelltb.Rows[i][0].ToString()));
+                        sqlCmd.Append(string.Format(" and c.CutCellID = '{0}' ", Maintb.Rows[i][0].ToString()));
+                    }
+                    if (!MyUtility.Check.Empty(SpreadingNo1) || !MyUtility.Check.Empty(SpreadingNo2))
+                    {
+                        sqlCmd.Append(string.Format(" and c.SpreadingNoID = '{0}' ", Maintb.Rows[i][0].ToString()));
                     }
                     sqlCmd.Append(" order by [Request#],[Line#],[SP#],[Seq#]");
                 }
@@ -640,8 +715,8 @@ where 1 = 1
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
                 return failResult;
             }
-            cuttings = new string[CutCellcount];
-            for (int i = 0; i < CutCellcount; i++)
+            cuttings = new string[SheetsCount];
+            for (int i = 0; i < SheetsCount; i++)
             {
                 cuttings[i] = printData[i].Rows.Count.ToString() + " cuttings";                
             }
@@ -705,12 +780,13 @@ where 1 = 1
 
         bool boolshowexcel = false;
         bool boolsend = false;
+
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             SetCount(printData[0].Rows.Count);            
             
-            int CutCellcount = Cutcelltb.Rows.Count;//CutCel總數
+            int CutCellcount = Maintb.Rows.Count;//CutCel總數
             bool countrow = false;
             for (int i = 0; i < CutCellcount; i++)
             {
@@ -773,16 +849,17 @@ where 1 = 1
                         }
                     }
                     objSheets.Columns["T"].Clear();
-                    objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
+                    objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
+                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = MD;
                     objSheets.Cells[4, 1] = cuttings[i];
                     objSheets.get_Range("A1").ColumnWidth = 14.25;
                     objSheets.get_Range("B1").ColumnWidth = 14;
                     objSheets.get_Range("C1").ColumnWidth = 7.88;
                     objSheets.get_Range("D1").ColumnWidth = 14.75;
-                    objSheets.get_Range("E1").ColumnWidth = 8.5;
+                    objSheets.get_Range("E1").ColumnWidth = 13;
                     objSheets.get_Range("F1").ColumnWidth = 15.25;
                     objSheets.get_Range("G1").ColumnWidth = 8.75;
                     objSheets.get_Range("H1").ColumnWidth = 7.38;
@@ -859,16 +936,17 @@ where 1 = 1
                         }
                     }
                     objSheets.Columns["V"].Clear();
-                    objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
+                    objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
+                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = MD;
                     objSheets.Cells[4, 1] = cuttings[i];
                     objSheets.get_Range("A1").ColumnWidth = 15.75;
                     objSheets.get_Range("B1").ColumnWidth = 11.75;
                     objSheets.get_Range("C1").ColumnWidth = 8.25;
                     objSheets.get_Range("D1").ColumnWidth = 15.38;
-                    objSheets.get_Range("E1").ColumnWidth = 9.13;
+                    objSheets.get_Range("E1").ColumnWidth = 13;
                     objSheets.get_Range("F1").ColumnWidth = 15.25;
                     objSheets.get_Range("G1").ColumnWidth = 8.75;
                     objSheets.get_Range("H1").ColumnWidth = 7.38;
@@ -940,9 +1018,10 @@ where 1 = 1
                     com.WriteTable(printData[i],6);
 
 
-                    objSheets.Name = "Cell" + (Cutcelltb.Rows[i][0].ToString());//工作表名稱
+                    objSheets.Name = (selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + (Maintb.Rows[i][0].ToString());//工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(dateR_CuttingDate1).ToString("d") + "~" + Convert.ToDateTime(dateR_CuttingDate2).ToString("d"); //查詢日期
-                    objSheets.Cells[3, 6] = (Cutcelltb.Rows[i][0].ToString());//cutcellID
+                    objSheets.Cells[3, 5] = (selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No");//CutCell或SpreadingNo
+                    objSheets.Cells[3, 6] = (Maintb.Rows[i][0].ToString());//CutCell或SpreadingNo
                     objSheets.Cells[3, 9] = MD;
                     //objSheets.Columns.AutoFit();
                     objSheets.Columns[7].ColumnWidth = 47;
@@ -1049,6 +1128,95 @@ where   junk = 0
         private void comboM_TextChanged(object sender, EventArgs e)
         {
             this.setComboFactory();
+        }
+
+
+        private void radioByCutCell_CheckedChanged(object sender, EventArgs e)
+        {
+            ByCutCell_SpreadingNo_change();
+        }
+
+        private void radioBySpreadingNo_CheckedChanged(object sender, EventArgs e)
+        {
+            ByCutCell_SpreadingNo_change();
+        }
+        
+        private void radioGroup1_Paint(object sender, PaintEventArgs e)
+        {
+            //把GroupBox的框線改成透明
+            GroupBox box = sender as GroupBox;
+            DrawGroupBox(box, e.Graphics, Color.Transparent, Color.Transparent);
+        }
+
+        private void DrawGroupBox(GroupBox box, Graphics g, Color textColor, Color borderColor)
+        {
+            if (box != null)
+            {
+                Brush textBrush = new SolidBrush(textColor);
+                Brush borderBrush = new SolidBrush(borderColor);
+                Pen borderPen = new Pen(borderBrush);
+                SizeF strSize = g.MeasureString(box.Text, box.Font);
+                Rectangle rect = new Rectangle(box.ClientRectangle.X,
+                                               box.ClientRectangle.Y + (int)(strSize.Height / 2),
+                                               box.ClientRectangle.Width - 1,
+                                               box.ClientRectangle.Height - (int)(strSize.Height / 2) - 1);
+
+                // Clear text and border
+                g.Clear(this.BackColor);
+
+                // Draw text
+                g.DrawString(box.Text, box.Font, textBrush, box.Padding.Left, 0);
+
+                // Drawing Border
+                //Left
+                g.DrawLine(borderPen, rect.Location, new Point(rect.X, rect.Y + rect.Height));
+                //Right
+                g.DrawLine(borderPen, new Point(rect.X + rect.Width, rect.Y), new Point(rect.X + rect.Width, rect.Y + rect.Height));
+                //Bottom
+                g.DrawLine(borderPen, new Point(rect.X, rect.Y + rect.Height), new Point(rect.X + rect.Width, rect.Y + rect.Height));
+                //Top1
+                g.DrawLine(borderPen, new Point(rect.X, rect.Y), new Point(rect.X + box.Padding.Left, rect.Y));
+                //Top2
+                g.DrawLine(borderPen, new Point(rect.X + box.Padding.Left + (int)(strSize.Width), rect.Y), new Point(rect.X + rect.Width, rect.Y));
+            }
+        }
+        
+        private void ByCutCell_SpreadingNo_change()
+        {
+            if (this.radioByCutCell.Checked)
+            {
+                this.txtCutCellStart.ReadOnly = false;
+                this.txtCutCellEnd.ReadOnly = false;
+                this.txtCutCellStart.IsSupportEditMode = true;
+                this.txtCutCellStart.IsSupportEditMode = true;
+
+
+                this.txtSpreadingNoStart.Text = string.Empty;
+                this.txtSpreadingNoEnd.Text = string.Empty;
+                this.txtSpreadingNoStart.ReadOnly = true;
+                this.txtSpreadingNoEnd.ReadOnly = true;
+                this.txtSpreadingNoStart.IsSupportEditMode = false;
+                this.txtSpreadingNoEnd.IsSupportEditMode = false;
+                
+                this.selected_splitWorksheet = "CutCell";
+            }
+            if (this.radioBySpreadingNo.Checked)
+            {
+                this.txtCutCellStart.ReadOnly = true;
+                this.txtCutCellEnd.ReadOnly = true;
+                this.txtCutCellStart.IsSupportEditMode = false;
+                this.txtCutCellStart.IsSupportEditMode = false;
+
+
+                this.txtCutCellStart.Text = string.Empty;
+                this.txtCutCellEnd.Text = string.Empty;
+
+                this.txtSpreadingNoStart.ReadOnly = false;
+                this.txtSpreadingNoEnd.ReadOnly = false;
+                this.txtSpreadingNoStart.IsSupportEditMode = true;
+                this.txtSpreadingNoEnd.IsSupportEditMode = true;
+                this.selected_splitWorksheet = "SpreadingNo";
+            }
         }
     }
 }
