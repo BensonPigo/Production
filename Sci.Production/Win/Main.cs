@@ -445,7 +445,7 @@ namespace Sci.Production
         private bool AlertForNotLatestVersion()
         {
             System.Windows.Forms.Application.DoEvents();
-            MessageBox.Show(new Form() { TopMost = true }, $@"warnning!!
+            MessageBox.Show(new Form() { TopMost = true }, $@"
 
 New version {strMaxVerDirName} is updated!!!
 
