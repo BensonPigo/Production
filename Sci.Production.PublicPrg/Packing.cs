@@ -949,6 +949,11 @@ select * from @tempQtyBDown", PackingListID, ReportType);
             foreach (DataRow dr in PLdt.Rows)
             {
                 #region Get Sci Delivery
+                bool notExistsID = PrintData.Tables[dr["ID"].ToString()] == null;
+                if (notExistsID)
+                {
+                    continue;
+                }
                 DataRow[] getMinDelivery = PrintData.Tables[dr["ID"].ToString()].Select("SciDelivery = min(SciDelivery)");
                 string strSciDelivery = "";
                 if (getMinDelivery.Length > 0)
