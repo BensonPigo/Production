@@ -296,6 +296,7 @@ select * from #tmp
 select 
 	o.CustPONo,o.id,pld.Article,pld.SizeCode,pld.ID,pld.CTNStartNo,[CTN Barcode] = pld.ID+pld.CTNStartNo
     ,[Barcode] = isnull(c7.Barcode,'')
+    ,[PC/CTN] = pld.QtyPerCTN
 	,[Scanned Qty] = pld.ScanQty
 	,[Balance Qty] = pld.ShipQty -pld.ScanQty	
 	from #tmp o
