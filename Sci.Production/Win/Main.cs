@@ -20,6 +20,7 @@ namespace Sci.Production
     {
         delegate Sci.Win.Tems.Base CREATETEMPLATE(ToolStripMenuItem menuitem);
         static Dictionary<Process, ToolStripMenuItem> proList = new Dictionary<Process, ToolStripMenuItem>();
+        private static string strMaxVerDirName = string.Empty;
 
         class TemplateInfo
         {
@@ -444,19 +445,19 @@ namespace Sci.Production
         private bool AlertForNotLatestVersion()
         {
             System.Windows.Forms.Application.DoEvents();
-            MessageBox.Show(new Form() { TopMost = true }, @"warnning!!
+            MessageBox.Show(new Form() { TopMost = true }, $@"warnning!!
 
-main menu is updated!!!
+New version {strMaxVerDirName} is updated!!!
 
-please re-open main menu.
+Please re-login system.
 
-thank you
+Thank you
 -----------------------------
 注意!!
 
-已經有新版本的主程式發布
+已經有新版本{strMaxVerDirName}發布
 
-請將手邊事情告一段落後，重新開啟主選單
+請將手邊事情告一段落後，重新登入系統
 
 謝謝您的配合", "Warnning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -487,6 +488,7 @@ thank you
                     .Max();
                 if (maxVerDirName != null && maxVerDirName != appDI.Name)
                 {
+                    strMaxVerDirName = maxVerDirName;
                     return false;
                 }
             }
