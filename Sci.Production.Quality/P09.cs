@@ -160,13 +160,15 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            if (MyUtility.Check.Empty(data["TPEFirstDyelot"]))
+            bool canEdit = this.CheckPage2_Row_CanEdit(data["TPEFirstDyelot"].ToString());
+
+            if (canEdit)
             {
-                this.col_FirstDyelot.IsEditingReadOnly = true;
+                this.col_FirstDyelot.IsEditingReadOnly = false;
             }
             else
             {
-                this.col_FirstDyelot.IsEditingReadOnly = false;
+                this.col_FirstDyelot.IsEditingReadOnly = true;
             }
         }
 
@@ -185,13 +187,25 @@ namespace Sci.Production.Quality
                      return;
                  }
 
-                 if (MyUtility.Check.Empty(dr["TPEFirstDyelot"]))
+                 bool canEdit = this.CheckPage2_Row_CanEdit(dr["TPEFirstDyelot"].ToString());
+                 if (!canEdit)
                  {
                      this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                  }
              };   
         }
         #region Tab_Page1
+
+        private bool CheckPage2_Row_CanEdit(string tPEFirstDyelot)
+        {
+            if (MyUtility.Check.Empty(tPEFirstDyelot) ||
+               tPEFirstDyelot.Equals("no need to provide 1st dye lot"))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         private string Filename(DataRow dr, string type)
         {

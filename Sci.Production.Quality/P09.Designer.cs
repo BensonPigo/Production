@@ -280,6 +280,7 @@
             // 
             // displayBoxapvSeasonNull
             // 
+            this.displayBoxapvSeasonNull.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.displayBoxapvSeasonNull.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxapvSeasonNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayBoxapvSeasonNull.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
@@ -290,6 +291,7 @@
             // 
             // labapprovedSeasoinNull
             // 
+            this.labapprovedSeasoinNull.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labapprovedSeasoinNull.BackColor = System.Drawing.Color.Transparent;
             this.labapprovedSeasoinNull.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F);
             this.labapprovedSeasoinNull.Location = new System.Drawing.Point(41, 462);
