@@ -319,7 +319,7 @@ and o.PulloutComplete = 0
                 }
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_artworkpoDetail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' and patterncode = '{2}'", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString(), tmp["patterncode"].ToString()));
+                    DataRow[] findrow = dt_artworkpoDetail.Select($@"orderid = '{tmp["orderid"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and Price='{tmp["Cost"]}'");
 
                     if (findrow.Length > 0)
                     {
