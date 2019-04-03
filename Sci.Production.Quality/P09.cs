@@ -160,7 +160,7 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            if (MyUtility.Check.Empty(data["SeasonSCIID"]))
+            if (MyUtility.Check.Empty(data["TPEFirstDyelot"]))
             {
                 this.col_FirstDyelot.IsEditingReadOnly = true;
             }
@@ -185,7 +185,7 @@ namespace Sci.Production.Quality
                      return;
                  }
 
-                 if (MyUtility.Check.Empty(dr["SeasonSCIID"]))
+                 if (MyUtility.Check.Empty(dr["TPEFirstDyelot"]))
                  {
                      this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                  }
@@ -589,7 +589,7 @@ and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
 
 select 
-[Consignee] = iif(a.Consignee is null,b.TestDocFactoryGroup,a.Consignee)
+fty.TestDocFactoryGroup
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
 ,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
 ,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
@@ -600,12 +600,12 @@ select
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
 ,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot)
 from #tmp a
-left join Factory fty with (nolock) on fty.ID = a.Consignee
+inner join Factory fty with (nolock) on fty.ID = a.Consignee
 full join FirstDyelot b on fty.TestDocFactoryGroup = b.TestDocFactoryGroup
 and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID 
 where 1=1 and 
 {sqlwhere}
-Order by Consignee, SuppID, Refno, ColorID, a.SeasonSCIID
+Order by  SuppID, Refno, ColorID, a.SeasonSCIID
 
 drop table #tmp
 ";
@@ -648,17 +648,17 @@ drop table #tmp
             DataTable changedt = dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).Distinct().CopyToDataTable();
             string sqlupdate = $@"
 merge FirstDyelot t
-using (select ConSignee,Suppid,Refno,ColorID,SeasonSCIID,max(convert(date,FirstDyelot)) as FirstDyelot 
+using (select TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID,max(convert(date,FirstDyelot)) as FirstDyelot 
 from #tmp
-group by  ConSignee,Suppid,Refno,ColorID,SeasonSCIID) s
-on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.TestDocFactoryGroup = s.Consignee  and t.SeasonSCIID = s.SeasonSCIID
+group by  TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID) s
+on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.TestDocFactoryGroup = s.TestDocFactoryGroup  and t.SeasonSCIID = s.SeasonSCIID
 when matched then update set 
 	FirstDyelot=s.FirstDyelot,
 	EditName = '{Sci.Env.User.UserID}',
 	EditDate = GETDATE()
 when not matched by target then 
 insert([Refno],[SuppID],[ColorID],TestDocFactoryGroup,SeasonSCIID,[FirstDyelot],[EditName],[EditDate])
-VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.Consignee,SeasonSCIID,s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
+VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.TestDocFactoryGroup,SeasonSCIID,s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
 ;
 ";
             DataTable odt;
