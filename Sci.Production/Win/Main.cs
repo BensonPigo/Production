@@ -246,6 +246,12 @@ namespace Sci.Production
             try
             {
                 formClass = Activator.CreateInstance(typeofControl, arrArg);
+                if (formClass is Sci.Win.IForm && !string.IsNullOrWhiteSpace(strArg))
+                {
+                    Sci.Win.IForm iform = (Sci.Win.IForm)formClass;
+                    iform.FormParameter = strArg;
+                }
+
             }
             catch (Exception e)
             {
