@@ -34,8 +34,8 @@
             this.txtWKNo2 = new Sci.Win.UI.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtWKNo1 = new Sci.Win.UI.TextBox();
-            this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
-            this.labelBuyerDelivery = new Sci.Win.UI.Label();
+            this.dateETA = new Sci.Win.UI.DateRange();
+            this.labETA = new Sci.Win.UI.Label();
             this.btnQuery = new Sci.Win.UI.Button();
             this.labWkNo = new Sci.Win.UI.Label();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -62,8 +62,8 @@
             this.panel3.Controls.Add(this.txtWKNo2);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.txtWKNo1);
-            this.panel3.Controls.Add(this.dateBuyerDelivery);
-            this.panel3.Controls.Add(this.labelBuyerDelivery);
+            this.panel3.Controls.Add(this.dateETA);
+            this.panel3.Controls.Add(this.labETA);
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.labWkNo);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
@@ -99,35 +99,35 @@
             this.txtWKNo1.Size = new System.Drawing.Size(120, 23);
             this.txtWKNo1.TabIndex = 46;
             // 
-            // dateBuyerDelivery
+            // dateETA
             // 
             // 
             // 
             // 
-            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dateBuyerDelivery.DateBox1.Name = "";
-            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(108, 23);
-            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            this.dateETA.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateETA.DateBox1.Name = "";
+            this.dateETA.DateBox1.Size = new System.Drawing.Size(108, 23);
+            this.dateETA.DateBox1.TabIndex = 0;
             // 
             // 
             // 
-            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(130, 0);
-            this.dateBuyerDelivery.DateBox2.Name = "";
-            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(108, 23);
-            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
-            this.dateBuyerDelivery.IsRequired = false;
-            this.dateBuyerDelivery.Location = new System.Drawing.Point(558, 12);
-            this.dateBuyerDelivery.Name = "dateBuyerDelivery";
-            this.dateBuyerDelivery.Size = new System.Drawing.Size(238, 23);
-            this.dateBuyerDelivery.TabIndex = 4;
+            this.dateETA.DateBox2.Location = new System.Drawing.Point(130, 0);
+            this.dateETA.DateBox2.Name = "";
+            this.dateETA.DateBox2.Size = new System.Drawing.Size(108, 23);
+            this.dateETA.DateBox2.TabIndex = 1;
+            this.dateETA.IsRequired = false;
+            this.dateETA.Location = new System.Drawing.Point(558, 12);
+            this.dateETA.Name = "dateETA";
+            this.dateETA.Size = new System.Drawing.Size(238, 23);
+            this.dateETA.TabIndex = 4;
             // 
-            // labelBuyerDelivery
+            // labETA
             // 
-            this.labelBuyerDelivery.Location = new System.Drawing.Point(460, 12);
-            this.labelBuyerDelivery.Name = "labelBuyerDelivery";
-            this.labelBuyerDelivery.Size = new System.Drawing.Size(94, 23);
-            this.labelBuyerDelivery.TabIndex = 3;
-            this.labelBuyerDelivery.Text = "Buyer Delivery";
+            this.labETA.Location = new System.Drawing.Point(503, 12);
+            this.labETA.Name = "labETA";
+            this.labETA.Size = new System.Drawing.Size(52, 23);
+            this.labETA.TabIndex = 3;
+            this.labETA.Text = "ETA";
             // 
             // btnQuery
             // 
@@ -292,8 +292,8 @@
         private Win.UI.Panel panel3;
         private Win.UI.Button btnQuery;
         private Win.UI.Label labWkNo;
-        private Win.UI.DateRange dateBuyerDelivery;
-        private Win.UI.Label labelBuyerDelivery;
+        private Win.UI.DateRange dateETA;
+        private Win.UI.Label labETA;
         private Win.UI.TextBox txtWKNo2;
         private System.Windows.Forms.Label label1;
         private Win.UI.TextBox txtWKNo1;
