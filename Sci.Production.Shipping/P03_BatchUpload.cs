@@ -109,14 +109,14 @@ where junk = 0 and (PortArrival is null or DocArrival is null)");
                 sqlCmd.Append($@" and id <= '{this.txtWKNo2.Text}'");
             }
 
-            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value1))
+            if (!MyUtility.Check.Empty(this.dateETA.Value1))
             {
-                sqlCmd.Append($@" and Eta >= '{((DateTime)this.dateBuyerDelivery.Value1).ToString("yyyy/MM/dd")}'");
+                sqlCmd.Append($@" and Eta >= '{((DateTime)this.dateETA.Value1).ToString("yyyy/MM/dd")}'");
             }
 
-            if (!MyUtility.Check.Empty(this.dateBuyerDelivery.Value2))
+            if (!MyUtility.Check.Empty(this.dateETA.Value2))
             {
-                sqlCmd.Append($@" and Eta <= '{((DateTime)this.dateBuyerDelivery.Value2).ToString("yyyy/MM/dd")}'");
+                sqlCmd.Append($@" and Eta <= '{((DateTime)this.dateETA.Value2).ToString("yyyy/MM/dd")}'");
             }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.dtQuery);
