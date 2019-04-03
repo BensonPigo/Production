@@ -162,18 +162,13 @@ namespace Sci.Production.Packing
             this.comboxbs1 = new BindingSource(this.ComboBox1_RowSource, null);
             this.comboSortby.DataSource = this.comboxbs1;
 
-            #region 新增During ComboBox
-            Sci.Win.UI.Label lbDuring = new Win.UI.Label();
-            lbDuring.Size = new Size(66, 23);
-            lbDuring.Text = "During";
-            this.browsetop.Controls.Add(lbDuring);
-            Sci.Win.UI.ComboBox cbDuring = new Win.UI.ComboBox();
-            cbDuring.Size = new Size(121, 24);
-            cbDuring.Items.AddRange(new object[] { "A Year", "All" });
-            cbDuring.SelectedIndex = 0;
-            cbDuring.SelectedIndexChanged += new System.EventHandler(this.CbDuring_SelectedIndexChanged); // 需在selectindex之後，不然會造成DefaultFilter執行兩次。
-            cbDuring.Name = "cbDuring";
-            this.browsetop.Controls.Add(cbDuring);
+            #region 新增During ComboBox DataSource
+            this.ComboBox1_RowSource.Clear();
+            this.comboxbs1.Clear();
+            this.ComboBox1_RowSource.Add("A Year");
+            this.ComboBox1_RowSource.Add("All");
+            this.comboxbs1 = new BindingSource(this.ComboBox1_RowSource, null);
+            this.cbDuring.DataSource = this.comboxbs1;
             #endregion
 
             DataTable queryDT;
@@ -218,17 +213,30 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
         private void CbDuring_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cbDuring = (ComboBox)sender;
+            bool bolInit = this.DefaultFilter.IndexOf("QueryDate >= dateadd(year,-1,getdate())") > 0;
+            bool bolReload = true;
             switch (cbDuring.SelectedIndex)
             {
                 case 0:
-                    this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B' and QueryDate >= dateadd(year,-1,getdate())";
+                    if (bolInit)
+                    {
+                        bolReload = false;
+                    }
+                    else
+                    {
+                        this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B' and QueryDate >= dateadd(year,-1,getdate())";
+                    }
+
                     break;
                 case 1:
                     this.DefaultFilter = "MDivisionID = '" + Sci.Env.User.Keyword + "' AND Type = 'B'";
                     break;
             }
 
-            this.ReloadDatas();
+            if (bolReload)
+            {
+                this.ReloadDatas();
+            }
         }
 
         /// <summary>
@@ -908,6 +916,7 @@ order by os.Seq",
             this.CurrentMaintain["Type"] = "B";
             this.CurrentMaintain["FactoryID"] = Sci.Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
+            this.CurrentMaintain["QueryDate"] = DateTime.Now.ToShortDateString();
         }
 
         /// <summary>
@@ -1557,10 +1566,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                 this.col_nnw.IsEditingReadOnly = true;
                 for (int i = 0; i < this.detailgrid.ColumnCount; i++)
                 {
-                    if (i != 17)
-                    {
-                        this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
-                    }
+                    this.detailgrid.Columns[i].DefaultCellStyle.ForeColor = Color.Black;
                 }
 
                 this.col_refno.EditingMouseDown -= new EventHandler<Ict.Win.UI.DataGridViewEditingControlMouseEventArgs>(CartonRefnoCommon.EditingMouseDown);
