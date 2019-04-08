@@ -810,7 +810,7 @@
             this.DefaultFilter = "potype=\'O\'";
             this.DefaultOrder = "issuedate,id";
             this.GridAlias = "ArtworkPO_detail";
-            this.GridUniqueKey = "id,artworkid,patterncode,OrderId";
+            this.GridUniqueKey = "id,artworkid,patterncode,OrderId,cost";
             this.IsSupportCheck = true;
             this.IsSupportClose = true;
             this.IsSupportConfirm = true;
