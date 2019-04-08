@@ -465,7 +465,7 @@ select t.CustPoNo,t.Brand,t.Styleid,t.StyleName,t.Article,t.Barcode,t.Size,[Pack
 [mapSeq] = ROW_NUMBER() OVER (PARTITION BY t.CustPoNo,t.Brand,t.Styleid,t.Article,t.Size ORDER BY PL.ID, PL.seq),pl.Seq
 from keyTable as t
 left join ORDERS O  WITH (NOLOCK) ON  O.custpono= t.CustPoNo and O.StyleID= t.Styleid
-inner join PackingList_Detail PL  WITH (NOLOCK) on    PL.Article= t.Article and PL.SizeCode=t.Size and O.ID = PL.OrderID
+left join PackingList_Detail PL  WITH (NOLOCK) on    PL.Article= t.Article and PL.SizeCode=t.Size and O.ID = PL.OrderID
 left join PackingList P WITH (NOLOCK) ON P.BrandID= t.Brand and p.id = pl.id
 ),
 excelData as
@@ -473,7 +473,9 @@ excelData as
 select *,[mapSeq] = ROW_NUMBER() OVER (PARTITION BY CustPoNo,Brand,Styleid,Article,Size ORDER BY CustCTN)
 from   #tmp
 )
-select  [selected] = isnull(ed.selected,1),pd.CustPoNo,pd.Brand,pd.Styleid,pd.StyleName,pd.Article,pd.Barcode,pd.Size,pd.PackID,pd.CTN,[CustCTN]= isnull(ed.CustCTN,''),[Status] = isnull(ed.Status,''),pd.Seq
+select  [selected] = isnull(ed.selected,1),pd.CustPoNo,pd.Brand,pd.Styleid,pd.StyleName,pd.Article,pd.Barcode,pd.Size,pd.PackID,pd.CTN,[CustCTN]= isnull(ed.CustCTN,''),
+        [Status] = iif(pd.PackID is null, 'Cust CTN can not mapping!! Please check <Size>,<Colorway>' ,isnull(ed.Status,'')),
+        pd.Seq
 from PackingList_Detailtmp pd
 left join excelData ed on pd.CustPoNo =  ed.CustPoNo and pd.Brand = ed.Brand and pd.Styleid = ed.Styleid and 
 pd.Article = ed.Article and pd.Size =ed.Size and pd.mapSeq = ed.mapSeq
