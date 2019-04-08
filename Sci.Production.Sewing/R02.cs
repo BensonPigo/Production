@@ -879,40 +879,51 @@ left join tmpCountStyle s on q.CPUFactor = s.CPUFactor"),
                         this.SewOutPutData,
                         "OrderId,ComboType,QAQty,LastShift,SubconInSisterFty",
                         string.Format(@"
-;with tmpArtwork as(
-	Select ID
+
+    Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
 		   																, '')),
            [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
 							        when ProductionUnit = 'TMS' then 3
 							        else 0 end
+    into #tmpArtwork
 	from ArtworkType WITH (NOLOCK)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
           and IsPrintToCMP=1
-),
-tmpAllSubprocess as(
-	select ot.ArtworkTypeID
+
+    
+    select ot.ArtworkTypeID
 		   , a.OrderId
 		   , a.ComboType
            , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
+    into  #tmpAllSubprocess
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category != 'G'
---	left join Style_Location sl WITH (NOLOCK) on sl.StyleUkey = o.StyleUkey 
---												 and sl.Location = a.ComboType
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
             --排除 subcon in non sister的數值
           and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInSisterFty <> 0 ))           
           and ot.Price > 0 		    
 	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
-)
+
+    --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
+    update s set s.Price = 0
+        from #tmpAllSubprocess s
+        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId
+        where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price < a.Price
+
+    update s set s.Price = 0
+        from #tmpAllSubprocess s
+        inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId
+        where s.ArtworkTypeID = 'AT (HAND)'  and s.Price < a.Price
+
 select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Round(Price,t1.DecimalNumber)), 0)
+	   , Price = isnull(sum(Round(t2.Price,t1.DecimalNumber)), 0)
 	   , rs
-from tmpArtwork t1
-left join tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
+from #tmpArtwork t1
+left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs
 order by t1.ID"),
                         out this.subprocessData);
