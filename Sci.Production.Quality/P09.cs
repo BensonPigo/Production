@@ -160,13 +160,15 @@ namespace Sci.Production.Quality
                 return;
             }
 
-            if (MyUtility.Check.Empty(data["SeasonSCIID"]))
+            bool canEdit = this.CheckPage2_Row_CanEdit(data["TPEFirstDyelot"].ToString());
+
+            if (canEdit)
             {
-                this.col_FirstDyelot.IsEditingReadOnly = true;
+                this.col_FirstDyelot.IsEditingReadOnly = false;
             }
             else
             {
-                this.col_FirstDyelot.IsEditingReadOnly = false;
+                this.col_FirstDyelot.IsEditingReadOnly = true;
             }
         }
 
@@ -185,13 +187,25 @@ namespace Sci.Production.Quality
                      return;
                  }
 
-                 if (MyUtility.Check.Empty(dr["SeasonSCIID"]))
+                 bool canEdit = this.CheckPage2_Row_CanEdit(dr["TPEFirstDyelot"].ToString());
+                 if (!canEdit)
                  {
                      this.grid2.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
                  }
              };   
         }
         #region Tab_Page1
+
+        private bool CheckPage2_Row_CanEdit(string tPEFirstDyelot)
+        {
+            if (MyUtility.Check.Empty(tPEFirstDyelot) ||
+               tPEFirstDyelot.Equals("no need to provide 1st dye lot"))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         private string Filename(DataRow dr, string type)
         {
@@ -335,7 +349,7 @@ left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
-left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.FactoryGroup = fty.TestDocFactoryGroup and fd.SeasonSCIID = s.SeasonSCIID
+left join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup and fd.SeasonSCIID = s.SeasonSCIID
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 outer apply(
 	select T1InspectedYards=sum(fp.ActualYds)
@@ -581,7 +595,7 @@ left join PO_Supp ps with(nolock) on ps.id = psd.id and ps.SEQ1 = psd. SEQ1
 left join Supp with(nolock) on Supp.ID = ps.SuppID
 left join Season s with(nolock) on s.ID=o.SeasonID and s.BrandID = o.BrandID
 left join Factory fty with (nolock) on fty.ID = Export.Consignee
-left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.FactoryGroup = fty.TestDocFactoryGroup 
+left outer join FirstDyelot fd with(nolock) on fd.Refno = psd.Refno and fd.ColorID = psd.ColorID and fd.SuppID = ps.SuppID and fd.TestDocFactoryGroup = fty.TestDocFactoryGroup 
 left join Fabric f with(nolock) on f.SCIRefno =psd.SCIRefno
 where   ps.seq1 not like '7%' 
 and psd.FabricType = 'F'
@@ -589,7 +603,7 @@ and (ed.qty + ed.Foc)>0
 and o.Category in('B','M')
 
 select 
-[Consignee] = iif(a.Consignee is null,b.FactoryGroup,a.Consignee)
+fty.TestDocFactoryGroup
 ,[suppid] = iif(a.SuppID is null, b.SuppID,a.Suppid)
 ,[AbbEN] = iif(a.AbbEN is null, (select abben from supp where id=b.suppid), a.abben)
 ,[Refno] = iif(a.Refno is null ,b.Refno,a.refno)
@@ -600,12 +614,12 @@ select
 ,[FirstDyelot] = iif(a.FirstDyelot is null, b.FirstDyelot, a.FirstDyelot)
 ,[TPEFirstDyelot] = iif(a.TPEFirstDyelot is null,format(b.TPEFirstDyelot,'yyyy/MM/dd'),a.TPEFirstDyelot)
 from #tmp a
-left join Factory fty with (nolock) on fty.ID = a.Consignee
-full join FirstDyelot b on fty.TestDocFactoryGroup = b.FactoryGroup
+inner join Factory fty with (nolock) on fty.ID = a.Consignee
+full join FirstDyelot b on fty.TestDocFactoryGroup = b.TestDocFactoryGroup
 and a.Refno=b.Refno and a.suppid=b.suppid and a.colorid=b.ColorID 
 where 1=1 and 
 {sqlwhere}
-Order by Consignee, SuppID, Refno, ColorID, a.SeasonSCIID
+Order by  SuppID, Refno, ColorID, a.SeasonSCIID
 
 drop table #tmp
 ";
@@ -648,17 +662,17 @@ drop table #tmp
             DataTable changedt = dt2.AsEnumerable().Where(r => r.RowState == DataRowState.Modified).Distinct().CopyToDataTable();
             string sqlupdate = $@"
 merge FirstDyelot t
-using (select ConSignee,Suppid,Refno,ColorID,SeasonSCIID,max(convert(date,FirstDyelot)) as FirstDyelot 
+using (select TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID,max(convert(date,FirstDyelot)) as FirstDyelot 
 from #tmp
-group by  ConSignee,Suppid,Refno,ColorID,SeasonSCIID) s
-on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.FactoryGroup = s.Consignee  and t.SeasonSCIID = s.SeasonSCIID
+group by  TestDocFactoryGroup,Suppid,Refno,ColorID,SeasonSCIID) s
+on t.Refno = s.Refno and t.SuppID = s.SuppID and t.ColorID = s.ColorID and t.TestDocFactoryGroup = s.TestDocFactoryGroup  and t.SeasonSCIID = s.SeasonSCIID
 when matched then update set 
 	FirstDyelot=s.FirstDyelot,
 	EditName = '{Sci.Env.User.UserID}',
 	EditDate = GETDATE()
 when not matched by target then 
-insert([Refno],[SuppID],[ColorID],FactoryGroup,SeasonSCIID,[FirstDyelot],[EditName],[EditDate])
-VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.Consignee,SeasonSCIID,s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
+insert([Refno],[SuppID],[ColorID],TestDocFactoryGroup,SeasonSCIID,[FirstDyelot],[EditName],[EditDate])
+VALUES(s.[Refno],s.[SuppID],s.[ColorID],s.TestDocFactoryGroup,SeasonSCIID,s.[FirstDyelot],'{Sci.Env.User.UserID}',GETDATE())
 ;
 ";
             DataTable odt;

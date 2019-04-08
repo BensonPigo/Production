@@ -67,7 +67,7 @@ namespace Sci.Production.Warehouse
                 if (!((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Empty())
                     objSheets.Cells[i + 1, 12] = ((string)((Excel.Range)objSheets.Cells[i + 1, 12]).Value).Trim();
             }
-            objSheets.Columns[12].ColumnWidth = 50;
+          //  objSheets.Columns[12].ColumnWidth = 50;
             objSheets.Rows.AutoFit();
 
             #region Save & Show Excel
@@ -130,7 +130,7 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
-        p.FinalETA,
+        Receive.ETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         Category = DropDownList.Name,
@@ -161,6 +161,13 @@ outer apply(
 	and SUBSTRING(ID,2,1)= orders.Category
     and name !='ALL'
 )DropDownList
+OUTER APPLY(
+	select r.ETA
+	from Receiving_Detail rd
+	inner join Receiving r on rd.id=r.id
+	WHERE rd.Roll = a.Roll and rd.Dyelot=a.Dyelot
+	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
+)Receive
 where   1=1");
                     if (!MyUtility.Check.Empty(spno)) 
                         sqlcmd.Append(string.Format(@"
@@ -188,13 +195,13 @@ where   1=1");
                     if (!MyUtility.Check.Empty(eta1))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.FinalETA >= '{0}'", eta1));
+        and Receive.ETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.FinalETA <= '{0}'", eta2));
+        and Receive.ETA <= '{0}'", eta2));
                     }
 
                     switch (selectindex)
@@ -223,7 +230,7 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
-        p.FinalETA,
+        Receive.ETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         Category = DropDownList.Name,
@@ -254,6 +261,13 @@ outer apply(
 	and SUBSTRING(ID,2,1)= orders.Category
     and name !='ALL'
 )DropDownList
+OUTER APPLY(
+	select r.ETA
+	from Receiving_Detail rd
+	inner join Receiving r on rd.id=r.id
+	WHERE rd.Roll = a.Roll and rd.Dyelot=a.Dyelot
+	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
+)Receive
 where   1=1 
         And {0} ", locationFilte));
                     if (!MyUtility.Check.Empty(spno)) 
@@ -282,13 +296,13 @@ where   1=1
                     if (!MyUtility.Check.Empty(eta1))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.FinalETA >= '{0}'", eta1));
+        and Receive.ETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.FinalETA <= '{0}'", eta2));
+        and Receive.ETA <= '{0}'", eta2));
                     }
 
                     switch (selectindex)
@@ -319,7 +333,7 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
-        p.FinalETA,
+        Receive.ETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         Category = DropDownList.Name,
@@ -350,6 +364,13 @@ outer apply(
 	and SUBSTRING(ID,2,1)= orders.Category
     and name !='ALL'
 )DropDownList
+OUTER APPLY(
+	select r.ETA
+	from Receiving_Detail rd
+	inner join Receiving r on rd.id=r.id
+	WHERE rd.Roll = a.Roll and rd.Dyelot=a.Dyelot
+	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
+)Receive
 where   1=1"));
 
                     if (!MyUtility.Check.Empty(dateSCIDelivery.Value1))
@@ -383,13 +404,13 @@ where   1=1"));
                     if (!MyUtility.Check.Empty(eta1))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.FinalETA >= '{0}'", eta1));
+        and Receive.ETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.FinalETA <= '{0}'", eta2));
+        and Receive.ETA <= '{0}'", eta2));
                     }
 
                     switch (selectindex)
@@ -417,7 +438,7 @@ select distinct
         seq1		= a.seq1,
         seq2		= a.seq2,
         Refno		= p.Refno,
-        p.FinalETA,
+        Receive.ETA,
         MaterialType = case when p.FabricType = 'F'then 'Fabric' 
 							when p.FabricType = 'A'then 'Accessory' else 'All'end,
         Category = DropDownList.Name,
@@ -448,6 +469,13 @@ outer apply(
 	and SUBSTRING(ID,2,1)= orders.Category
     and name !='ALL'
 )DropDownList
+OUTER APPLY(
+	select r.ETA
+	from Receiving_Detail rd
+	inner join Receiving r on rd.id=r.id
+	WHERE rd.Roll = a.Roll and rd.Dyelot=a.Dyelot
+	and a.POID=rd.PoId and a.Seq1=rd.Seq1 and a.Seq2=rd.Seq2
+)Receive
 where   1=1
         And {0} ", locationFilte));
 
@@ -480,13 +508,13 @@ where   1=1
                     if (!MyUtility.Check.Empty(eta1))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.FinalETA >= '{0}'", eta1));
+        and Receive.ETA >= '{0}'", eta1));
                     }
 
                     if (!MyUtility.Check.Empty(eta2))
                     {
                         sqlcmd.Append(string.Format(@" 
-        and p.FinalETA <= '{0}'", eta2));
+        and Receive.ETA <= '{0}'", eta2));
                     }
 
                     switch (selectindex)
