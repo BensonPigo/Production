@@ -32,59 +32,56 @@ namespace Sci.Production.Quality
 
         protected override void OnFormLoaded()
         {
- 	            base.OnFormLoaded();
-                #region Combox setting
-                DataTable dtTeam;
-                Ict.DualResult tResult;
-                if (tResult = DBProxy.Current.Select(null, "select distinct team  from Cfa WITH (NOLOCK) ", out dtTeam))
-                {
-                    this.comboTeam.DataSource = dtTeam;
-                    this.comboTeam.DisplayMember = "Team";
-                    this.comboTeam.ValueMember = "Team";
-                }
-                else { ShowErr(tResult); }
+            base.OnFormLoaded();
+            #region Combox setting
+            Dictionary<String, String> team_RowSource = new Dictionary<string, string>();
+            team_RowSource.Add("A", "A");
+            team_RowSource.Add("B", "B");
+            this.comboTeam.DataSource = new BindingSource(team_RowSource, null);
+            this.comboTeam.ValueMember = "Key";
+            this.comboTeam.DisplayMember = "Value";
 
-                Dictionary<String, String> Stage_RowSource = new Dictionary<string, string>();
-                Stage_RowSource.Add("I", "Comments/Roving");
-                Stage_RowSource.Add("C", "Change Over");
-                Stage_RowSource.Add("P", "Stagger");
-                Stage_RowSource.Add("R", "Re-Stagger");
-                Stage_RowSource.Add("F", "Final");                              
-                Stage_RowSource.Add("B", "Buyer");
-                comboInspectionStage.DataSource = new BindingSource(Stage_RowSource, null);
-                comboInspectionStage.ValueMember = "Key";
-                comboInspectionStage.DisplayMember = "Value";
+            Dictionary<String, String> Stage_RowSource = new Dictionary<string, string>();
+            Stage_RowSource.Add("I", "Comments/Roving");
+            Stage_RowSource.Add("C", "Change Over");
+            Stage_RowSource.Add("P", "Stagger");
+            Stage_RowSource.Add("R", "Re-Stagger");
+            Stage_RowSource.Add("F", "Final");
+            Stage_RowSource.Add("B", "Buyer");
+            comboInspectionStage.DataSource = new BindingSource(Stage_RowSource, null);
+            comboInspectionStage.ValueMember = "Key";
+            comboInspectionStage.DisplayMember = "Value";
 
-                Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
-                Result_RowSource.Add("P", "Pass");
-                Result_RowSource.Add("F", "Fail");
-                comboResult.DataSource = new BindingSource(Result_RowSource, null);
-                comboResult.ValueMember = "Key";
-                comboResult.DisplayMember = "Value";
-                #endregion
-                DataTable queryDT;
-                string querySql = @"
+            Dictionary<String, String> Result_RowSource = new Dictionary<string, string>();
+            Result_RowSource.Add("P", "Pass");
+            Result_RowSource.Add("F", "Fail");
+            comboResult.DataSource = new BindingSource(Result_RowSource, null);
+            comboResult.ValueMember = "Key";
+            comboResult.DisplayMember = "Value";
+            #endregion
+            DataTable queryDT;
+            string querySql = @"
 select '' FTYGroup
 
 union 
 select distinct FTYGroup 
 from Factory ";
-                DBProxy.Current.Select(null, querySql, out queryDT);
-                MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
-                queryfors.SelectedIndex = 0;
-                queryfors.SelectedIndexChanged += (s, e) =>
+            DBProxy.Current.Select(null, querySql, out queryDT);
+            MyUtility.Tool.SetupCombox(queryfors, 1, queryDT);
+            queryfors.SelectedIndex = 0;
+            queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (queryfors.SelectedIndex)
                 {
-                    switch (queryfors.SelectedIndex)
-                    {
-                        case 0:
-                            this.DefaultWhere = "";
-                            break;
-                        default:
-                            this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
-                            break;
-                    }
-                    this.ReloadDatas();
-                };
+                    case 0:
+                        this.DefaultWhere = "";
+                        break;
+                    default:
+                        this.DefaultWhere = string.Format("FactoryID = '{0}'", queryfors.SelectedValue);
+                        break;
+                }
+                this.ReloadDatas();
+            };
 
         }
       
@@ -569,6 +566,7 @@ where a.ID='{0}'",
             CurrentMaintain["Status"] = "New";            
             CurrentMaintain["cDate"] = DateTime.Now;            
             CurrentMaintain["MDivisionid"] = Sci.Env.User.Keyword;
+            CurrentMaintain["Team"] = "";
         }
 
         // edit前檢查
