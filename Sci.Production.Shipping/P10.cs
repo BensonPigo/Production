@@ -730,21 +730,38 @@ and p2.ReceiveDate is null ", this.CurrentMaintain["id"]), out dtRec);
             #endregion
 
             #region 檢查是否還有箱子在CFA
+            DataTable dtCfa;
+            StringBuilder warningmsg = new StringBuilder();
             string strSqlcmd =
-                    $@"
-select 1
+                   $@"
+select distinct p1.INVNo,p2.OrderID,p2.ID
 from PackingList p1
 inner join PackingList_Detail p2 on p1.ID=p2.ID
 where ShipPlanID='{this.CurrentMaintain["id"]}'
 and p2.CFAReceiveDate is not null
 and p2.CFAReturnClogDate is null
 and p2.CTNQty > 0";
+            if (result = DBProxy.Current.Select(null, strSqlcmd, out dtCfa))
+            {
+                if (dtCfa.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtCfa.Rows)
+                    {
+                        warningmsg.Append($@"GB#: {dr["INVNo"]}, SP: {dr["OrderID"]}
+, Packing#: {dr["ID"]}" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox("The CTNs are in CFA now, Cannot confirm!" + Environment.NewLine + warningmsg.ToString());
+                    return;
+                }
+            }
+
             if (MyUtility.Check.Seek(strSqlcmd))
             {
+
                 MyUtility.Msg.WarningBox("The CTNs are in CFA now, Cannot confirm!!");
                 return;
             }
-
             #endregion
 
             // Garment Booking還沒Confirm就不可以做Confirm
