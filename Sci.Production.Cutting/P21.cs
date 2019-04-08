@@ -182,28 +182,34 @@ namespace Sci.Production.Cutting
                         return;
                     }
 
-                    exists = MyUtility.Check.Seek($@"
-                                    select 1 from FtyInventory F
-                                    inner join PO_Supp_Detail PD ON f.poid = pd.id 
-                                                                    And f.seq1 = pd.seq1 
-                                                                    And f.seq2  = pd.seq2 
-                                    where F.POID = '{CuttingSpNO}' and F.SEQ1 = '{seq[0]}' and F.SEQ2 = '{seq[1]}'
-                                    and PD.FabricType = 'F'");
+                    selectedRow["Seq"] = newValue;
+                    selectedRow["Seq1"] = seq[0];
+                    selectedRow["Seq2"] = seq[1];
+                    #region 移除輸入判斷限制
+                    //exists = MyUtility.Check.Seek($@"
+                    //                select 1 from FtyInventory F
+                    //                inner join PO_Supp_Detail PD ON f.poid = pd.id 
+                    //                                                And f.seq1 = pd.seq1 
+                    //                                                And f.seq2  = pd.seq2 
+                    //                where F.POID = '{CuttingSpNO}' and F.SEQ1 = '{seq[0]}' and F.SEQ2 = '{seq[1]}'
+                    //                and PD.FabricType = 'F'");
 
-                    if (!exists)
-                    {
-                        MyUtility.Msg.WarningBox($"<SEQ: {newValue}> not found!");
-                        e.Cancel = true;
-                        return;
-                    }
-                    else
-                    {
-                        selectedRow["Seq"] = newValue;
-                        selectedRow["Seq1"] = seq[0];
-                        selectedRow["Seq2"] = seq[1];
-                    }
+                    //if (!exists)
+                    //{
+                    //    MyUtility.Msg.WarningBox($"<SEQ: {newValue}> not found!");
+                    //    e.Cancel = true;
+                    //    return;
+                    //}
+                    //else
+                    //{
+                    //    selectedRow["Seq"] = newValue;
+                    //    selectedRow["Seq1"] = seq[0];
+                    //    selectedRow["Seq2"] = seq[1];
+                    //}
+                    #endregion
+
                 }
-                
+
             };
 
             setRoll.CellValidating += (s, e) =>
@@ -238,20 +244,24 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                exists = MyUtility.Check.Seek($@"
-                                    select 1 from FtyInventory 
-                                    where POID = '{CuttingSpNO}' and SEQ1 = '{arrSeq[0]}' and SEQ2 = '{arrSeq[1]}'
-                                    and Roll='{newValue}' and Dyelot='{dyelot}'");
+                #region 移除輸入判斷限制
+                //exists = MyUtility.Check.Seek($@"
+                //                    select 1 from FtyInventory 
+                //                    where POID = '{CuttingSpNO}' and SEQ1 = '{arrSeq[0]}' and SEQ2 = '{arrSeq[1]}'
+                //                    and Roll='{newValue}' and Dyelot='{dyelot}'");
 
-                if (!exists)
-                {
-                    selectedRow["Roll"] = string.Empty;
-                    MyUtility.Msg.WarningBox($"< POID : {CuttingSpNO}, SEQ : {arrSeq[0] + " " + arrSeq[1]}, Roll : {newValue} , Dyelot : {dyelot}> not found! ");
-                    selectedRow.AcceptChanges();
-                    return;
-                }
-                else
-                    selectedRow["Roll"] = newValue;
+                //if (!exists)
+                //{
+                //    selectedRow["Roll"] = string.Empty;
+                //    MyUtility.Msg.WarningBox($"< POID : {CuttingSpNO}, SEQ : {arrSeq[0] + " " + arrSeq[1]}, Roll : {newValue} , Dyelot : {dyelot}> not found! ");
+                //    selectedRow.AcceptChanges();
+                //    return;
+                //}
+                //else
+                // selectedRow["Roll"] = newValue;
+                #endregion
+
+                selectedRow["Roll"] = newValue;
 
             };
             
@@ -288,22 +298,26 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                exists = MyUtility.Check.Seek($@"
-                                    select 1 from FtyInventory 
-                                    where POID = '{CuttingSpNO}' and SEQ1 = '{arrSeq[0]}' and SEQ2 = '{arrSeq[1]}'
-                                    and Roll='{Roll}' 
-                                    and Dyelot='{newValue}'");
+                #region 移除輸入判斷限制
+                //exists = MyUtility.Check.Seek($@"
+                //                    select 1 from FtyInventory 
+                //                    where POID = '{CuttingSpNO}' and SEQ1 = '{arrSeq[0]}' and SEQ2 = '{arrSeq[1]}'
+                //                    and Roll='{Roll}' 
+                //                    and Dyelot='{newValue}'");
 
-                if (!exists)
-                {
-                    //e.Cancel = true;
-                    selectedRow["Dyelot"] = string.Empty ;
-                    MyUtility.Msg.WarningBox($"< POID : {CuttingSpNO}, SEQ : {arrSeq[0] + " " + arrSeq[1]}, Roll : {Roll} , Dyelot : {newValue}> not found! ");
-                    selectedRow.AcceptChanges();
-                    return;
-                }
-                else
-                    selectedRow["Dyelot"] = newValue;
+                //if (!exists)
+                //{
+                //    //e.Cancel = true;
+                //    selectedRow["Dyelot"] = string.Empty ;
+                //    MyUtility.Msg.WarningBox($"< POID : {CuttingSpNO}, SEQ : {arrSeq[0] + " " + arrSeq[1]}, Roll : {Roll} , Dyelot : {newValue}> not found! ");
+                //    selectedRow.AcceptChanges();
+                //    return;
+                //}
+                //else
+                //selectedRow["Dyelot"] = newValue;
+                #endregion
+
+                selectedRow["Dyelot"] = newValue;
 
             };
             
