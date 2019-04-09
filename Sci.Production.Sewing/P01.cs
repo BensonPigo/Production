@@ -1161,14 +1161,21 @@ order by a.OrderId,os.Seq",
             }
             #endregion
 
-            #region 檢查QA Ttl Output是否為0
+            #region 檢查QA Ttl Output是否為0 和Reason ID 是否存在
 
-            // DataGridViewRow dr = this.detailgrid.Rows
             foreach (DataGridViewRow item in this.detailgrid.Rows)
             {
                 if (item.Cells["QAQty"].Value.ToString() == "0" && string.IsNullOrEmpty(item.Cells["SewingReasonID"].Value.ToString()))
                 {
                     MyUtility.Msg.WarningBox("Please input [Reason] if [Qa Ttl Output] is 0!");
+                    return false;
+                }
+
+                string strReasonID = item.Cells["SewingReasonID"].Value.ToString();
+                if (!MyUtility.Check.Empty(strReasonID) &&
+                    !MyUtility.Check.Seek($@"select 1 from SewingReason where id = '{strReasonID}' and Type='SO' AND Junk=0"))
+                {
+                    MyUtility.Msg.WarningBox($@"<Reason ID: {strReasonID}> not found");
                     return false;
                 }
             }
