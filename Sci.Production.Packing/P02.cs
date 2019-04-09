@@ -10,6 +10,7 @@ using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Runtime.InteropServices;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Packing
 {
@@ -2429,6 +2430,31 @@ ELSE
                 return;
             }
 
+            #region 檢查Packinglist_Detail與此次轉換數量加總是否超過Order_QtyShip數量
+            string sqlCheckShipQty = $@"
+declare @PKQty int
+declare @shipQty int
+
+select @PKQty = isnull(sum(QtyPerCTN),0)
+from PackingList_Detail with (nolock) where OrderID = '{this.CurrentMaintain["OrderID"].ToString()}' and
+                                            OrderShipmodeSeq = '{this.CurrentMaintain["OrderShipmodeSeq"].ToString()}' and
+                                            ID <> '{this.CurrentMaintain["ID"].ToString()}' 
+
+select @shipQty = Qty
+from Order_QtyShip with (nolock) where ID = '{this.CurrentMaintain["OrderID"].ToString()}' and Seq = '{this.CurrentMaintain["OrderShipmodeSeq"].ToString()}'
+
+select [PKQty] = @PKQty,[shipQty] = @shipQty
+
+";
+            DataRow drCheckShipQty;
+            MyUtility.Check.Seek(sqlCheckShipQty, out drCheckShipQty);
+            bool isOverShipQty = ((int)drCheckShipQty["PKQty"] + this.numTotalShipQty.Value) > (int)drCheckShipQty["shipQty"] ? true : false;
+            if (isOverShipQty)
+            {
+                MyUtility.Msg.WarningBox($"<SP#>{this.CurrentMaintain["OrderID"]},<Seq>{this.CurrentMaintain["OrderShipmodeSeq"].ToString()} already switch Packing Qty({drCheckShipQty["PKQty"].ToString()}) and this time switch Packing Qty({this.numTotalShipQty.Value}),can not more than this Seq Ship Qty({drCheckShipQty["shipQty"].ToString()})");
+                return;
+            }
+            #endregion
             string insertCmd = this.GetSwitchToPackingListSQL(((Button)sender).Name);
 
             DualResult result = DBProxy.Current.Execute(null, insertCmd);
