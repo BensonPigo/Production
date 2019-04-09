@@ -84,7 +84,9 @@ namespace Sci.Production.PPIC
             sqlCmd.Append(string.Format(@"
 select s.BrandID,s.ID,s.SeasonID,sp.MDivisionID,sp.FactoryID
 	,Doc = CONCAT(sp.DOC,'-',r.Name)
-	,sp.SendDate,sp.ReceiveDate,sp.SendToQA,sp.QAReceived,sp.ProvideDate,sp.OrderId,sp.SCIDelivery,sp.BuyerDelivery
+	,sp.SendDate,sp.ReceiveDate,sp.SendToQA,sp.QAReceived,
+    [UnnecessaryToSend] = iif(Len(isnull(sp.ReasonID,'')) = 0,'N','Y')
+    ,sp.ProvideDate,sp.OrderId,sp.SCIDelivery,sp.BuyerDelivery
 	,PullForward = IIF(sp.IsPF = 1,'Y','N')
 	,Handle		 = CONCAT(sp.SendName,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.SendName))
 	,MRHandle	 = CONCAT(sp.MRHandle,'-',(select Name from TPEPass1 WITH (NOLOCK) where ID = sp.MRHandle))
