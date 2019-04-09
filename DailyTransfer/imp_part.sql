@@ -335,7 +335,7 @@ s.DescriptionDetail
 	A.ShipFoc=B.ShipFoc,
 	A.ShipETA=B.ShipETA
 	FROM Machine.DBO.PartPO_Detail A
-	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno AND a.SEQ1=b.SEQ1 AND a.SEQ2=b.Seq2 and a.id = b.MmsReqID and b.Junk=0
+	INNER JOIN Trade_To_Pms.DBO.MmsPO_Detail B  on a.PartID=b.Refno AND a.SEQ2=b.Seq2 and a.id = b.MmsReqID and b.Junk=0
 	INNER JOIN  Machine.DBO.PartPO C ON A.ID=C.ID
 	WHERE C.FactoryID in (select id from @Sayfty)
 
