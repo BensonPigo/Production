@@ -516,6 +516,7 @@ order by os.Seq", dr["OrderID"].ToString(),
             this.CurrentMaintain["Type"] = "S";
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["MDivisionID"] = Sci.Env.User.Keyword;
+            this.CurrentMaintain["QueryDate"] = DateTime.Now.ToShortDateString();
 
             this.gridicon.Append.Enabled = true;
             this.gridicon.Insert.Enabled = true;
