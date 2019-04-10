@@ -259,9 +259,9 @@ SET ARITHABORT ON
 	fl.WashInspector,
 	LW.WashDate,
 	V.Result AS RESULT3,
-	[OvenInspector] = v.Inspector,
+	[OvenInspector] = v.Name,
 	CFD.Result AS RESULT4,
-	[CFInspector] = cfd.Inspector,
+	[CFInspector] = cfd.Name,
     ps1.LocalMR
 from dbo.FIR F WITH (NOLOCK) 
     inner join (select R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty
@@ -297,12 +297,15 @@ OUTER APPLY(
 		AND L.ID = F.ID AND L.SEQ1 = F.SEQ1 AND L.SEQ2 = F.SEQ2
 		)LW
 OUTER APPLY(
-        select od.Result,ov.Inspector from dbo.Oven ov WITH (NOLOCK) 
+        select od.Result, pass1.name from dbo.Oven ov WITH (NOLOCK) 
         inner join dbo.Oven_Detail od WITH (NOLOCK) on od.ID = ov.ID
+        left join pass1 WITH (NOLOCK) on pass1.id = ov.Inspector
         where ov.POID=F.POID and od.SEQ1=F.Seq1 and seq2=F.Seq2 and ov.Status='Confirmed'
         )V
 OUTER APPLY(
-         select distinct cd.Result,cf.Inspector from dbo.ColorFastness CF WITH (NOLOCK) inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+        select distinct cd.Result, pass1.name from dbo.ColorFastness CF WITH (NOLOCK) 
+        inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+        left join pass1 WITH (NOLOCK) on pass1.id = cf.Inspector
         where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
         )CFD
 Outer apply(
@@ -330,7 +333,7 @@ LC.CrockingDate,LH.Heat,LH.HeatDate,
 LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR,
 ftp.TotalPoint,F.Odor,F.OdorDate,f.PhysicalInspector,f.WeightInspector
 ,f.ShadeboneInspector,f.ContinuityInspector,f.OdorInspector
-,fl.CrockingInspector,fl.HeatInspector,fl.WashInspector,v.Inspector,cfd.Inspector
+,fl.CrockingInspector,fl.HeatInspector,fl.WashInspector,v.Name,cfd.Name
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
 ";
