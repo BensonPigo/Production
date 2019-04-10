@@ -112,6 +112,7 @@ namespace Sci.Production.Quality
             checkNonOdor.Value = maindr["nonOdor"].ToString();
             displayResult.Text = maindr["Odor"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
+            txtOdorInspector.Text = maindr["OdorInspector"].ToString();
             return base.OnRequery();
         }
 
@@ -313,7 +314,7 @@ namespace Sci.Production.Quality
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set OdorDate = GetDate(),OdorEncode=1,EditName='{0}',EditDate = GetDate(),Odor = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set OdorDate = GetDate(),OdorEncode=1,EditName='{0}',EditDate = GetDate(),Odor = '{1}',Result ='{2}',Status='{4}',OdorInspector='{0}'  where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
@@ -362,7 +363,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set OdorDate = null,OdorEncode=0,EditName='{0}',EditDate = GetDate(),Odor = '',Result ='{2}',Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set OdorDate = null,OdorEncode=0,EditName='{0}',EditDate = GetDate(),Odor = '',Result ='{2}',Status='{3}',OdorInspector='' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;

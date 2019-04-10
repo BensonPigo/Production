@@ -123,6 +123,7 @@ namespace Sci.Production.Quality
             checkNonInspection.Value = maindr["nonphysical"].ToString();
             displayResult.Text = maindr["physical"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
+            txtPhysicalInspector.Text = maindr["PhysicalInspector"].ToString();
         }
 
         DataTable datas2;
@@ -735,7 +736,8 @@ Where DetailUkey = {15};",
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set PhysicalDate = '{7}',PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='{6}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], sumPoint, sumTotalYds, returnstr[1],Convert.ToDateTime(gridTb.Compute("Max(InspDate)", "")).ToString("yyyy/MM/dd"));
+                @"Update Fir set PhysicalDate = '{7}',PhysicalEncode=1,EditName='{0}',EditDate = GetDate(),Physical = '{1}',Result ='{2}',TotalDefectPoint = {4},TotalInspYds = {5},Status='{6}' ,PhysicalInspector = '{0}'
+                  where id ={3}", loginID, result, returnstr[0], maindr["ID"], sumPoint, sumTotalYds, returnstr[1],Convert.ToDateTime(gridTb.Compute("Max(InspDate)", "")).ToString("yyyy/MM/dd"));
                 #endregion
                 
                 maindr["Result"] = returnstr[0];
@@ -759,7 +761,7 @@ Where DetailUkey = {15};",
                 #endregion
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set PhysicalDate = null,PhysicalEncode=0,EditName='{0}',EditDate = GetDate(),Physical = '',Result ='{2}',TotalDefectPoint = 0,TotalInspYds = 0,Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set PhysicalDate = null,PhysicalEncode=0,EditName='{0}',EditDate = GetDate(),Physical = '',Result ='{2}',TotalDefectPoint = 0,TotalInspYds = 0,Status='{3}' ,PhysicalInspector = ''  where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;

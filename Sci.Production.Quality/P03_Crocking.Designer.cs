@@ -60,6 +60,8 @@
             this.labelDescription = new Sci.Win.UI.Label();
             this.editDescription = new Sci.Win.UI.EditBox();
             this.btntoPDF = new Sci.Win.UI.Button();
+            this.txtCrockingInspector = new Sci.Win.UI.TextBox();
+            this.labinspector = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
@@ -70,7 +72,7 @@
             this.btmcont.Controls.Add(this.btntoPDF);
             this.btmcont.Controls.Add(this.btnToExcel);
             this.btmcont.Location = new System.Drawing.Point(0, 545);
-            this.btmcont.Size = new System.Drawing.Size(974, 40);
+            this.btmcont.Size = new System.Drawing.Size(979, 40);
             this.btmcont.Controls.SetChildIndex(this.append, 0);
             this.btmcont.Controls.SetChildIndex(this.revise, 0);
             this.btmcont.Controls.SetChildIndex(this.delete, 0);
@@ -81,16 +83,16 @@
             // 
             // gridcont
             // 
-            this.gridcont.Location = new System.Drawing.Point(12, 127);
-            this.gridcont.Size = new System.Drawing.Size(950, 408);
+            this.gridcont.Location = new System.Drawing.Point(12, 154);
+            this.gridcont.Size = new System.Drawing.Size(955, 381);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(884, 5);
+            this.undo.Location = new System.Drawing.Point(889, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(804, 5);
+            this.save.Location = new System.Drawing.Point(809, 5);
             // 
             // labelSP
             // 
@@ -166,33 +168,33 @@
             // 
             // labelArriveQty
             // 
-            this.labelArriveQty.Location = new System.Drawing.Point(472, 9);
+            this.labelArriveQty.Location = new System.Drawing.Point(469, 9);
             this.labelArriveQty.Name = "labelArriveQty";
-            this.labelArriveQty.Size = new System.Drawing.Size(75, 23);
+            this.labelArriveQty.Size = new System.Drawing.Size(119, 23);
             this.labelArriveQty.TabIndex = 107;
             this.labelArriveQty.Text = "Arrive Qty";
             // 
             // labelArriveWHDate
             // 
-            this.labelArriveWHDate.Location = new System.Drawing.Point(675, 9);
+            this.labelArriveWHDate.Location = new System.Drawing.Point(693, 9);
             this.labelArriveWHDate.Name = "labelArriveWHDate";
-            this.labelArriveWHDate.Size = new System.Drawing.Size(144, 23);
+            this.labelArriveWHDate.Size = new System.Drawing.Size(137, 23);
             this.labelArriveWHDate.TabIndex = 108;
             this.labelArriveWHDate.Text = "Arrive W/H Date";
             // 
             // labelLastInspectionDate
             // 
-            this.labelLastInspectionDate.Location = new System.Drawing.Point(675, 38);
+            this.labelLastInspectionDate.Location = new System.Drawing.Point(693, 38);
             this.labelLastInspectionDate.Name = "labelLastInspectionDate";
-            this.labelLastInspectionDate.Size = new System.Drawing.Size(144, 23);
+            this.labelLastInspectionDate.Size = new System.Drawing.Size(137, 23);
             this.labelLastInspectionDate.TabIndex = 109;
             this.labelLastInspectionDate.Text = "Last Inspection Date ";
             // 
             // labelResult
             // 
-            this.labelResult.Location = new System.Drawing.Point(472, 38);
+            this.labelResult.Location = new System.Drawing.Point(469, 38);
             this.labelResult.Name = "labelResult";
-            this.labelResult.Size = new System.Drawing.Size(75, 23);
+            this.labelResult.Size = new System.Drawing.Size(119, 23);
             this.labelResult.TabIndex = 110;
             this.labelResult.Text = "Result";
             // 
@@ -289,10 +291,10 @@
             this.txtArriveQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtArriveQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtArriveQty.IsSupportEditMode = false;
-            this.txtArriveQty.Location = new System.Drawing.Point(549, 9);
+            this.txtArriveQty.Location = new System.Drawing.Point(590, 9);
             this.txtArriveQty.Name = "txtArriveQty";
             this.txtArriveQty.ReadOnly = true;
-            this.txtArriveQty.Size = new System.Drawing.Size(111, 23);
+            this.txtArriveQty.Size = new System.Drawing.Size(90, 23);
             this.txtArriveQty.TabIndex = 120;
             // 
             // txtResult
@@ -300,10 +302,10 @@
             this.txtResult.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtResult.IsSupportEditMode = false;
-            this.txtResult.Location = new System.Drawing.Point(550, 38);
+            this.txtResult.Location = new System.Drawing.Point(591, 38);
             this.txtResult.Name = "txtResult";
             this.txtResult.ReadOnly = true;
-            this.txtResult.Size = new System.Drawing.Size(110, 23);
+            this.txtResult.Size = new System.Drawing.Size(89, 23);
             this.txtResult.TabIndex = 123;
             // 
             // btnEncode
@@ -333,7 +335,7 @@
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnToExcel.Location = new System.Drawing.Point(718, 5);
+            this.btnToExcel.Location = new System.Drawing.Point(723, 5);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(80, 30);
             this.btnToExcel.TabIndex = 95;
@@ -344,7 +346,7 @@
             // dateArriveWHDate
             // 
             this.dateArriveWHDate.IsSupportEditMode = false;
-            this.dateArriveWHDate.Location = new System.Drawing.Point(822, 9);
+            this.dateArriveWHDate.Location = new System.Drawing.Point(833, 9);
             this.dateArriveWHDate.Name = "dateArriveWHDate";
             this.dateArriveWHDate.ReadOnly = true;
             this.dateArriveWHDate.Size = new System.Drawing.Size(130, 23);
@@ -353,7 +355,7 @@
             // dateLastInspectionDate
             // 
             this.dateLastInspectionDate.IsSupportEditMode = false;
-            this.dateLastInspectionDate.Location = new System.Drawing.Point(822, 38);
+            this.dateLastInspectionDate.Location = new System.Drawing.Point(833, 38);
             this.dateLastInspectionDate.Name = "dateLastInspectionDate";
             this.dateLastInspectionDate.ReadOnly = true;
             this.dateLastInspectionDate.Size = new System.Drawing.Size(130, 23);
@@ -370,9 +372,9 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(472, 67);
+            this.labelDescription.Location = new System.Drawing.Point(469, 96);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(75, 25);
+            this.labelDescription.Size = new System.Drawing.Size(119, 25);
             this.labelDescription.TabIndex = 157;
             this.labelDescription.Text = "Description";
             // 
@@ -381,18 +383,18 @@
             this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editDescription.Location = new System.Drawing.Point(550, 67);
+            this.editDescription.Location = new System.Drawing.Point(591, 96);
             this.editDescription.Multiline = true;
             this.editDescription.Name = "editDescription";
             this.editDescription.ReadOnly = true;
-            this.editDescription.Size = new System.Drawing.Size(320, 54);
+            this.editDescription.Size = new System.Drawing.Size(279, 54);
             this.editDescription.TabIndex = 158;
             // 
             // btntoPDF
             // 
             this.btntoPDF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btntoPDF.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btntoPDF.Location = new System.Drawing.Point(632, 5);
+            this.btntoPDF.Location = new System.Drawing.Point(637, 5);
             this.btntoPDF.Name = "btntoPDF";
             this.btntoPDF.Size = new System.Drawing.Size(80, 30);
             this.btntoPDF.TabIndex = 96;
@@ -400,9 +402,30 @@
             this.btntoPDF.UseVisualStyleBackColor = true;
             this.btntoPDF.Click += new System.EventHandler(this.btntoPDF_Click);
             // 
+            // txtCrockingInspector
+            // 
+            this.txtCrockingInspector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtCrockingInspector.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtCrockingInspector.IsSupportEditMode = false;
+            this.txtCrockingInspector.Location = new System.Drawing.Point(591, 67);
+            this.txtCrockingInspector.Name = "txtCrockingInspector";
+            this.txtCrockingInspector.ReadOnly = true;
+            this.txtCrockingInspector.Size = new System.Drawing.Size(239, 23);
+            this.txtCrockingInspector.TabIndex = 226;
+            // 
+            // labinspector
+            // 
+            this.labinspector.Location = new System.Drawing.Point(469, 67);
+            this.labinspector.Name = "labinspector";
+            this.labinspector.Size = new System.Drawing.Size(119, 23);
+            this.labinspector.TabIndex = 225;
+            this.labinspector.Text = "Crocking Inspector";
+            // 
             // P03_Crocking
             // 
-            this.ClientSize = new System.Drawing.Size(974, 585);
+            this.ClientSize = new System.Drawing.Size(979, 585);
+            this.Controls.Add(this.txtCrockingInspector);
+            this.Controls.Add(this.labinspector);
             this.Controls.Add(this.editDescription);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.txtsupplierSupp);
@@ -470,6 +493,8 @@
             this.Controls.SetChildIndex(this.editDescription, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
+            this.Controls.SetChildIndex(this.labinspector, 0);
+            this.Controls.SetChildIndex(this.txtCrockingInspector, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
@@ -512,5 +537,7 @@
         private Win.UI.Label labelDescription;
         private Win.UI.EditBox editDescription;
         private Win.UI.Button btntoPDF;
+        private Win.UI.TextBox txtCrockingInspector;
+        private Win.UI.Label labinspector;
     }
 }

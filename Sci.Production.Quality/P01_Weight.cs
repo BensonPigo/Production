@@ -115,6 +115,7 @@ namespace Sci.Production.Quality
             checkNonWeightTest.Value = maindr["nonWeight"].ToString();
             displayResult.Text = maindr["Weight"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
+            txtWeightInspector.Text = maindr["WeightInspector"].ToString();
             return base.OnRequery();
         }
 
@@ -349,7 +350,7 @@ namespace Sci.Production.Quality
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}',ShadeboneInspector = '{0}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
@@ -398,7 +399,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}',ShadeboneInspector = ''  where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;

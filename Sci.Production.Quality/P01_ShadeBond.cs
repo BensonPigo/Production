@@ -117,7 +117,7 @@ namespace Sci.Production.Quality
             checkNonShadeBond.Value = maindr["nonshadebond"].ToString();
             displayResult.Text = maindr["shadebond"].ToString();
             txtuserApprover.TextBox1.Text = maindr["Approve"].ToString();
-
+            txtShadeboneInspector.Text = maindr["ShadeboneInspector"].ToString();
             return base.OnRequery();
         }
 
@@ -550,7 +550,7 @@ namespace Sci.Production.Quality
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set shadebondDate = GetDate(),shadebondEncode=1,EditName='{0}',EditDate = GetDate(),shadebond = '{1}',Result ='{2}',Status='{4}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set shadebondDate = GetDate(),shadebondEncode=1,EditName='{0}',EditDate = GetDate(),shadebond = '{1}',Result ='{2}',Status='{4}',WeightInspector = '{0}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
                  //*****Send Excel Email 尚未完成 需寄給Encoder的Teamleader 與 Supervisor*****
 
@@ -601,7 +601,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set shadebondDate = null,shadebondEncode=0,EditName='{0}',EditDate = GetDate(),shadebond = '',Result ='{2}',Status='{3}' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set shadebondDate = null,shadebondEncode=0,EditName='{0}',EditDate = GetDate(),shadebond = '',Result ='{2}',Status='{3}', WeightInspector = '' where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;
