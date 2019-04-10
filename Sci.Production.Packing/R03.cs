@@ -164,7 +164,7 @@ from PackingList_Detail pld
 inner join PackingList pl on pl.ID = pld.ID
 inner join  Orders o on o.id = pld.OrderID
 outer apply(select CBM from LocalItem where Refno = pld.Refno) cbm
-where 1=1
+where 1=1 and pld.DisposeFromClog= 0
 {where}
 group by pl.MDivisionID,pl.FactoryID,pl.ID,o.SciDelivery,o.BuyerDelivery,o.CustPONo,o.ID,
 	iif(o.Junk=1,'Y','N'),pl.Dest,

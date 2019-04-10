@@ -140,6 +140,7 @@ left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and o.PulloutComplete = 1
+and pd.DisposeFromClog= 0
 and p.PulloutID = ''
 ");
             sqlcmd.Append(sqlWHERE);
@@ -166,6 +167,7 @@ left join Pullout po WITH (NOLOCK) on p.PulloutID = po.ID
 where pd.CTNQty > 0
 and pd.ReceiveDate is not null
 and (p.PulloutID = '' or po.Status = 'New')
+and pd.DisposeFromClog= 0
 and o.PulloutComplete = 0
 ");
             sqlcmd.Append(sqlWHERE);

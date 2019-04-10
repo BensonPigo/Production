@@ -144,19 +144,20 @@ into #tmp_ClogLocationId
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join #tmp_Orders o on pd.OrderID = o.ID  and pd.OrderShipmodeSeq = o.Seq
 where ClogLocationId !='' 
-and ClogLocationId is not null   
+and ClogLocationId is not null and pd.DisposeFromClog= 0  
 
 select pd.OrderID,pd.OrderShipmodeSeq,sum(CTNQty) CTNQty, sum(ShipQty) GMTQty
 into #tmp_CTNQty
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join #tmp_Orders o on pd.OrderID = o.ID  and pd.OrderShipmodeSeq = o.Seq 
+where pd.DisposeFromClog= 0
 group by pd.OrderID,pd.OrderShipmodeSeq
 
 select pd.OrderID,pd.OrderShipmodeSeq,sum(CTNQty) ClogQty, sum(ShipQty) ClogGMTQty
 into #tmp_ClogQty
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join #tmp_Orders o on pd.OrderID = o.ID  and pd.OrderShipmodeSeq = o.Seq 
-where pd.ReceiveDate is not null
+where pd.ReceiveDate is not null and pd.DisposeFromClog= 0
 group by pd.OrderID,pd.OrderShipmodeSeq
  
 select  pd.OrderID,pd.OrderShipmodeSeq,sum (pd.CTNQty) PullQty
@@ -164,20 +165,21 @@ into #tmp_PullQty
 from PackingList p WITH (NOLOCK) 
 inner join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID 
 inner join #tmp_Orders o on pd.OrderID = o.ID  and pd.OrderShipmodeSeq = o.Seq  
-where p.PulloutID != ''
+where p.PulloutID != '' and pd.DisposeFromClog= 0
 group by pd.OrderID,pd.OrderShipmodeSeq
 
 select pd.OrderID,sum(ShipQty) TtlGMTQty
 into #tmp_TtlGMTQty
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID   
+where pd.DisposeFromClog= 0
 group by pd.OrderID
  
 select pd.OrderID,sum(ShipQty) TtlClogGMTQty
 into #tmp_TtlClogGMTQty
 from PackingList_Detail pd WITH (NOLOCK) 
 inner join (select distinct id from #tmp_Orders) o on pd.OrderID = o.ID   
-where ReceiveDate is not null
+where ReceiveDate is not null and pd.DisposeFromClog= 0
 group by pd.OrderID
 
 select pd.OrderID,sum(ShipQty) TtlPullGMTQty

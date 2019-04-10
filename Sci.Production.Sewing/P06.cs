@@ -106,7 +106,7 @@ select
 [selected] = 0,
 pd.ID,
 pd.CTNStartNo,
-[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail where ID = pd.ID and CTNStartNo = pd.CTNStartNo  FOR XML PATH('')),1,1,'') ,
+[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail with (nolock) where ID = pd.ID and CTNStartNo = pd.CTNStartNo and DisposeFromClog = 0  FOR XML PATH('')),1,1,'') ,
 pd.OrderID,
 o.CustPONo,
 o.StyleID,
@@ -119,7 +119,7 @@ pd.TransferDate,
 pd.DRYReceiveDate,
 pu.Status
 from  Orders o with (nolock)
-left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID
+left join PackingList_Detail pd with (nolock) on pd.OrderID = o.ID 
 left join PackingList p with (nolock) on p.id = pd.ID
 left join Pullout pu with (nolock) on p.PulloutID = pu.ID
 left join Country c with (nolock) on o.Dest = c.ID 
@@ -127,6 +127,7 @@ where	pd.CTNStartNo != '' and
 		p.MDivisionID =@M and
         pd.CTNQty = 1 and
 		p.Type in ('B','L') and
+        pd.DisposeFromClog = 0 and
 		pd.TransferDate  is null and
 		pd.DRYReceiveDate  is null and 
         pd.PackErrTransferDate  is null and 
@@ -206,7 +207,7 @@ select
 [selected] = 1,
 pd.ID,
 pd.CTNStartNo,
-[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail where {keyWhere} FOR XML PATH('')),1,1,'') ,
+[OrderIdlist] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail with (nolock) where {keyWhere} and DisposeFromClog = 0 FOR XML PATH('')),1,1,'') ,
 pd.OrderID,
 o.CustPONo,
 o.StyleID,
@@ -218,7 +219,7 @@ pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
 pu.Status
-from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1) pd
+from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1 DisposeFromClog = 0) pd
 inner join Orders o with (nolock) on pd.OrderID = o.ID
 left join PackingList p with (nolock) on p.id = pd.ID
 left join Pullout pu with (nolock) on p.PulloutID = pu.ID
@@ -363,7 +364,8 @@ where	pd.CTNStartNo != '' and
             foreach (var item in checkData)
             {
                 updSql = $@"
-update PackingList_Detail set DRYReceiveDate = GETDATE() where ID = '{item["ID"]}' and CTNStartNo = '{item["CTNStartNo"]}';
+update PackingList_Detail set DRYReceiveDate = GETDATE() where ID = '{item["ID"]}' 
+and CTNStartNo = '{item["CTNStartNo"]}' and DisposeFromClog= 0;
 insert into DRYReceive(ReceiveDate, MDivisionID, OrderID, PackingListID, CTNStartNo, AddName, AddDate)
             values(GETDATE(),'{Env.User.Keyword}','{item["OrderID"]}','{item["ID"]}','{item["CTNStartNo"]}','{Env.User.UserID}',GETDATE());
 ";

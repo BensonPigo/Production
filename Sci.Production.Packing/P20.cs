@@ -29,7 +29,8 @@ select
 [selected] = 0,
 pd.ID,
 pd.CTNStartNo,
-[OrderID] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail where ID = pd.ID and CTNStartNo = pd.CTNStartNo  FOR XML PATH('')),1,1,''),
+[OrderID] = Stuff((select distinct concat( '/',OrderID)   from PackingList_Detail 
+        where ID = pd.ID and CTNStartNo = pd.CTNStartNo and DisposeFromClog= 0  FOR XML PATH('')),1,1,''),
 o.CustPONo,
 o.StyleID,
 o.SeasonID,
@@ -229,7 +230,9 @@ left join Pullout pu with (nolock) on pu.ID = p.PulloutID
                     foreach (DataRow dr in drSelected)
                     {
                         saveSql = $@"
-update PackingList_Detail set PackErrTransferDate = null where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}'
+update PackingList_Detail 
+set PackErrTransferDate = null 
+where ID = '{dr["ID"]}' and CTNStartNo = '{dr["CTNStartNo"]}' and DisposeFromClog= 0;
 
 insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddName,AddDate)
                     values(GETDATE(),'{Env.User.Keyword}','{dr["MainSP"]}','{dr["ID"]}','{dr["CTNStartNo"]}','{Env.User.UserID}',GETDATE())
@@ -319,6 +322,7 @@ insert into PackErrCFM(CFMDate,MDivisionID,OrderID,PackingListID,CTNStartNo,AddN
 where	pd.CTNStartNo <> '' 
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
+        and pd.DisposeFromClog= 0
 		and pd.PackErrTransferDate is not null 
 		and (pu.Status = 'New' or pu.Status is null) 
         and pd.CTNQty = 1
@@ -367,6 +371,7 @@ where	pd.CTNStartNo <> ''
 		and p.MDivisionID = '{Env.User.Keyword}' 
 		and p.Type in ('B','L') 
         and pd.CTNQty = 1
+        and pd.DisposeFromClog= 0
         {keyWhere}
 ";
             bool result = MyUtility.Check.Seek(checkPackSql, listPar, out drPackResult);

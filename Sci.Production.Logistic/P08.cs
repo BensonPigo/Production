@@ -152,6 +152,7 @@ outer apply (
 where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
+and p2.DisposeFromClog= 0
 and p2.CFAReturnClogDate is not null
 and p2.ClogReceiveCFADate is null
 and (po.Status ='New' or po.Status is null)
@@ -268,6 +269,7 @@ where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.CFAReturnClogDate is not null
+and p2.DisposeFromClog= 0
 and p2.ClogReceiveCFADate is null
 and (po.Status ='New' or po.Status is null)
 and p2.id='{sl[2].Substring(0, 13)}'
@@ -333,6 +335,7 @@ where p2.CTNStartNo<>''
 and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 and p1.Type in ('B','L')
 and p2.CFAReturnClogDate is not null
+and p2.DisposeFromClog= 0
 and p2.ClogReceiveCFADate is null
 and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[2]}'
@@ -406,6 +409,7 @@ and p1.Mdivisionid='{Sci.Env.User.Keyword}'
 --and p2.ClogReceiveCFADate is null
 --and (po.Status ='New' or po.Status is null)
 and p2.CustCTN='{sl[2]}'
+and p2.DisposeFromClog= 0
 order by p2.ID,p2.CTNStartNo
 ";
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -496,7 +500,8 @@ select p.Status ,p2.CFAReturnClogDate,p2.ClogReceiveCFADate
 from PackingList_detail p2
 inner join PackingList p1 on p2.id=p1.id
 left join pullout p on p1.PulloutID = p.id
-where p2.id='{dr["id"].ToString().Trim()}' and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'", out drSelect))
+where p2.id='{dr["id"].ToString().Trim()}' 
+and p2.CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}' and p2.DisposeFromClog= 0", out drSelect))
                 {
                     warningmsg.Append($@"<CNT#: {dr["id"]}{dr["CTNStartNo"]}> does not exist!" + Environment.NewLine);
                     continue;
@@ -521,7 +526,8 @@ where p2.id='{dr["id"].ToString().Trim()}' and p2.CTNStartNo='{dr["CTNStartNo"].
 update PackingList_Detail 
 set ClogReceiveCFADate = CONVERT(varchar(100), GETDATE(), 111)
 , CFAReturnClogDate = null , ClogLocationID = '{dr["ClogLocationID"]}'
-where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()}'
+where id='{dr["id"].ToString().Trim()}' and CTNStartNo='{dr["CTNStartNo"].ToString().Trim()} 
+and DisposeFromClog= 0'
 ");
 
                         insertCmds.Add($@"
