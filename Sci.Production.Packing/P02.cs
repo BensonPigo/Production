@@ -1489,8 +1489,8 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
-			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate)
 	END
 ELSE
 	BEGIN --更新PackingList
@@ -1512,7 +1512,8 @@ ELSE
 			AddName = @addname,
 			AddDate = @adddate,
 			EditName = '',
-			EditDate = null
+			EditDate = null,
+            QueryDate = @adddate
 		WHERE ID = @id
 	END
 
@@ -1737,8 +1738,8 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
-			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate)
 	END
 ELSE
 	BEGIN --更新PackingList
@@ -1760,7 +1761,8 @@ ELSE
 			AddName = @addname,
 			AddDate = @adddate,
 			EditName = '',
-			EditDate = null
+			EditDate = null,
+            QueryDate = @adddate
 		WHERE ID = @id
 	END
 
@@ -2045,8 +2047,8 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
-			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate)
 	END
 ELSE
 	BEGIN --更新PackingList
@@ -2068,7 +2070,8 @@ ELSE
 			AddName = @addname,
 			AddDate = @adddate,
 			EditName = '',
-			EditDate = null
+			EditDate = null,
+            QueryDate = @adddate
 		WHERE ID = @id
 	END
 
@@ -2316,8 +2319,8 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate)
-			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate)
 	END
 ELSE
 	BEGIN --更新PackingList
@@ -2339,7 +2342,8 @@ ELSE
 			AddName = @addname,
 			AddDate = @adddate,
 			EditName = '',
-			EditDate = null
+			EditDate = null,
+            QueryDate = @adddate
 		WHERE ID = @id
 	END
 
