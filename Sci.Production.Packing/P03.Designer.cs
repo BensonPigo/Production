@@ -163,7 +163,7 @@
             this.masterpanel.Controls.Add(this.dateCartonEstArrived);
             this.masterpanel.Controls.Add(this.dateLocateforTransferClog);
             this.masterpanel.Controls.Add(this.datePullOutDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 313);
+            this.masterpanel.Size = new System.Drawing.Size(1089, 313);
             this.masterpanel.Controls.SetChildIndex(this.datePullOutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateLocateforTransferClog, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCartonEstArrived, 0);
@@ -226,7 +226,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 313);
-            this.detailpanel.Size = new System.Drawing.Size(892, 36);
+            this.detailpanel.Size = new System.Drawing.Size(1089, 336);
             // 
             // gridicon
             // 
@@ -239,7 +239,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 36);
+            this.detailgridcont.Size = new System.Drawing.Size(1089, 336);
             // 
             // detail2
             // 
@@ -255,16 +255,16 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(892, 387);
+            this.detail.Size = new System.Drawing.Size(1089, 687);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(892, 349);
+            this.detailcont.Size = new System.Drawing.Size(1089, 649);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 349);
-            this.detailbtm.Size = new System.Drawing.Size(892, 38);
+            this.detailbtm.Location = new System.Drawing.Point(0, 649);
+            this.detailbtm.Size = new System.Drawing.Size(1089, 38);
             // 
             // browse
             // 
@@ -912,7 +912,7 @@
             this.cbDuring.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.cbDuring.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cbDuring.FormattingEnabled = true;
-            this.cbDuring.IsSupportUnselect = true; 
+            this.cbDuring.IsSupportUnselect = true;
             this.cbDuring.Location = new System.Drawing.Point(932, 8);
             this.cbDuring.Name = "cbDuring";
             this.cbDuring.OldText = "A Year";
