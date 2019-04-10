@@ -756,12 +756,33 @@ and p2.CTNQty > 0";
                 }
             }
 
-            if (MyUtility.Check.Seek(strSqlcmd))
-            {
+            #endregion
 
-                MyUtility.Msg.WarningBox("The CTNs are in CFA now, Cannot confirm!!");
-                return;
+            #region 檢查是否還有箱子在CLog
+            DataTable dtCLog;
+            StringBuilder warningmsgCLog = new StringBuilder();
+            string strSqlcmdCLog =
+                   $@"
+select p2.ID+p2.CTNStartNo idCTN
+from GMTBooking g
+inner join PackingList p1 on p1.INVNo = g.id
+inner join PackingList_Detail p2 on p1.ID=p2.ID
+where g.ShipPlanID='{this.CurrentMaintain["id"]}'
+and (TransferCFADate is not null or ReceiveDate is null)";
+            if (result = DBProxy.Current.Select(null, strSqlcmdCLog, out dtCLog))
+            {
+                if (dtCLog.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtCLog.Rows)
+                    {
+                        warningmsgCLog.Append($@"<{dr["idCTN"]}> not in clog, cannot confirm !!" + Environment.NewLine);
+                    }
+
+                    MyUtility.Msg.WarningBox(warningmsgCLog.ToString());
+                    return;
+                }
             }
+
             #endregion
 
             // Garment Booking還沒Confirm就不可以做Confirm
