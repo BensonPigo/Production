@@ -61,7 +61,8 @@ namespace Sci.Production.Quality
 	b.styleid,b.BrandID,
 	c.ExportId,c.WhseArrival,
 	d.ColorID,	
-	e.WashDate,e.Wash,e.nonWash,e.SkewnessOptionID,e.WashInspector,
+	e.WashDate,e.Wash,e.nonWash,e.SkewnessOptionID
+    ,[WashInspector] = (select name from pass1 where id= e.WashInspector),
 	f.SuppID,
 	g.DescDetail										
 from FIR a WITH (NOLOCK) 

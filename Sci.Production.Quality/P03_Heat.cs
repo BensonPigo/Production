@@ -53,7 +53,8 @@ namespace Sci.Production.Quality
     b.styleid,b.BrandID,
     c.ExportId,c.WhseArrival,
     d.ColorID,
-    e.HeatDate,e.Heat,e.nonHeat,e.HeatInspector,
+    e.HeatDate,e.Heat,e.nonHeat,
+    [HeatInspector] = (select name from pass1 where id= e.HeatInspector),
     f.SuppID,
     g.DescDetail
 from FIR a WITH (NOLOCK) 

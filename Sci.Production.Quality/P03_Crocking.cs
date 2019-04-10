@@ -53,7 +53,8 @@ namespace Sci.Production.Quality
     b.styleid,b.BrandID,
     c.ExportId,c.WhseArrival,
     d.ColorID,
-    e.CrockingDate,e.Crocking,e.nonCrocking,e.CrockingInspector,
+    e.CrockingDate,e.Crocking,e.nonCrocking,
+    [CrockingInspector] = (select name from pass1 where id= e.CrockingInspector),
     f.SuppID,
     g.DescDetail
 from FIR a WITH (NOLOCK) 
