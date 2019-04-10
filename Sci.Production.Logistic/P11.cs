@@ -12,6 +12,7 @@ using System.Transactions;
 using System.Windows.Forms;
 using Sci.Win.Tems;
 using Ict.Win;
+using Sci.Data;
 
 namespace Sci.Production.Logistic
 {
@@ -156,6 +157,9 @@ where cdd.ID = '{masterID}'
         protected override void ClickConfirm()
         {
             base.ClickConfirm();
+
+            DualResult result;
+
             var listDistinctPKID = this.DetailDatas.Select(s => s["PackingListID"].ToString()).Distinct();
             bool isPackingAlreadyPullout = false;
             foreach (string packingID in listDistinctPKID)
@@ -167,6 +171,30 @@ where cdd.ID = '{masterID}'
                     return;
                 }
             }
+
+            #region 檢查detail資料是否已被confirm過
+            string sqlCheckConfirmed = $@"
+select cd.ID,cd.PackingListID,cd.CTNStartNO
+from ClogGarmentDispose c
+inner join ClogGarmentDispose_Detail cd with (nolock) on c.ID = cd.ID
+inner join ClogGarmentDispose_Detail cd1 on cd1.ID = '{this.CurrentMaintain["ID"]}' and cd.PackingListID = cd1.PackingListID and cd.CTNStartNO = cd1.CTNStartNO
+where c.Status = 'Confirmed' and c.ID <> '{this.CurrentMaintain["ID"]}'";
+
+            DataTable dtDisposeConfirmed;
+            result = DBProxy.Current.Select(null, sqlCheckConfirmed, out dtDisposeConfirmed);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            bool isDetailAlreadyConfirmed = dtDisposeConfirmed.Rows.Count > 0;
+            if (isDetailAlreadyConfirmed)
+            {
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dtDisposeConfirmed, "Detail data are already confirmed by other ID, please check the following data");
+                return;
+            }
+            #endregion
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
@@ -181,7 +209,7 @@ where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartN
 ";
                     DataTable dtResult;
                     DataTable dtDetail = this.DetailDatas.CopyToDataTable();
-                    DualResult result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, updateCMD, out dtResult);
+                    result = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, updateCMD, out dtResult);
                     if (!result)
                     {
                         this.ShowErr(result);
