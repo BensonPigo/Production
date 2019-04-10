@@ -42,6 +42,7 @@
     [FtyReqReturnDate]   DATE           NULL,
     [FtyReqReturnReason] VARCHAR (5)    DEFAULT ('') NOT NULL,
     [Lacking]            BIT            CONSTRAINT [DF_PackingList_Detail_Lacking] DEFAULT ((0)) NULL,
+    [DisposeFromClog] BIT CONSTRAINT [DF_PackingList_Detail_DisposeFromClog] DEFAULT ((0)) NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC),
     CONSTRAINT [UK_PackingList_Detail] UNIQUE NONCLUSTERED ([ID] ASC, [OrderID] ASC, [OrderShipmodeSeq] ASC, [CTNStartNo] ASC, [Article] ASC, [SizeCode] ASC)
 );
