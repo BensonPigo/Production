@@ -219,7 +219,7 @@ pd.Remark,
 pd.TransferDate,
 pd.DRYReceiveDate,
 pu.Status
-from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1 DisposeFromClog = 0) pd
+from  (select * from PackingList_Detail with (nolock) where {keyWhere} and CTNQty = 1 and DisposeFromClog = 0) pd
 inner join Orders o with (nolock) on pd.OrderID = o.ID
 left join PackingList p with (nolock) on p.id = pd.ID
 left join Pullout pu with (nolock) on p.PulloutID = pu.ID
@@ -299,7 +299,7 @@ where	pd.CTNStartNo != '' and
                         reader.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
                         while ((line = reader.ReadLine()) != null)
                         {
-                            packNo = line.Split('\t')[2].Trim();
+                            packNo = line.Split('\t')[1].Trim();
 
                             // 檢查PackingList_Detail.ID + PackingList_Detail.CustCTN
                             packDataResult = this.GetPackData(packNo, false);

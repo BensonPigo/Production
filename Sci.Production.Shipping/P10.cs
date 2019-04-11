@@ -768,7 +768,9 @@ from GMTBooking g
 inner join PackingList p1 on p1.INVNo = g.id
 inner join PackingList_Detail p2 on p1.ID=p2.ID
 where g.ShipPlanID='{this.CurrentMaintain["id"]}'
-and (TransferCFADate is not null or ReceiveDate is null)";
+and (TransferCFADate is not null or ReceiveDate is null)
+and p2.CTNQty > 0
+";
             if (result = DBProxy.Current.Select(null, strSqlcmdCLog, out dtCLog))
             {
                 if (dtCLog.Rows.Count > 0)
