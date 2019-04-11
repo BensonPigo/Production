@@ -205,7 +205,9 @@ namespace Sci.Production.Packing
             if (this.reportType == "1" || this.reportType == "2")
             {
 
-                DataTable dt = this.masterData.Table;
+                //DataTable dt = this.masterData.Table;
+
+                DataTable dt = this.masterData.Table.AsEnumerable().Where(row => row["ID"].EqualString(this.masterData["id"])).CopyToDataTable();
 
                 DataSet dsPrintdata = new DataSet();
                 DataSet dsctnDim = new DataSet();
