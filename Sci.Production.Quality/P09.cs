@@ -26,6 +26,7 @@ namespace Sci.Production.Quality
             Env.Cfg.FtpServerAccount = "insp_rpt";
             Env.Cfg.FtpServerPassword = "rpt_insp";
             displayBoxapvSeasonNull.BackColor = Color.FromArgb(190, 190, 190);
+            displayBox1.BackColor = Color.Yellow;
         }
 
         private DataTable dt1;
@@ -41,6 +42,17 @@ namespace Sci.Production.Quality
             #region tabPage1
             #region settings Event
 
+            DataGridViewGeneratorTextColumnSettings Refno = new DataGridViewGeneratorTextColumnSettings();
+            Refno.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1) return;
+                var dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
+                if (null == dr) return;
+                if (MyUtility.Convert.GetBool(dr["Clima"]))
+                {
+                    e.CellStyle.BackColor = Color.Yellow;
+                }
+            };
             DataGridViewGeneratorDateColumnSettings Inspection = new DataGridViewGeneratorDateColumnSettings();
             DataGridViewGeneratorDateColumnSettings Test = new DataGridViewGeneratorDateColumnSettings();
             Inspection.CellFormatting += (s, e) =>
@@ -98,7 +110,7 @@ namespace Sci.Production.Quality
             .Text("BrandID", header: "Brand", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("SuppID", header: "Supp", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Text("AbbEN", header: "Supp Name", width: Widths.AnsiChars(8), iseditingreadonly: true)
-            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true, settings: Refno)
             .Text("ColorID", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
             .Date("InspectionReport", header: "Inspection Report\r\nFty Received Date", width: Widths.AnsiChars(10)) // W (Pink)
@@ -339,7 +351,8 @@ select distinct
     ed.seq1,
     ed.seq2,
 	ed.Ukey,
-    o.BrandID
+    o.BrandID,
+    f.Clima
 from Export_Detail ed with(nolock)
 inner join Export with(nolock) on Export.id = ed.id and Export.Confirm = 1
 inner join orders o with(nolock) on o.id = ed.PoID

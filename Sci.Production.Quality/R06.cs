@@ -113,7 +113,7 @@ namespace Sci.Production.Quality
             string ttlqty_col = ReportType.Equals("supplier") ? "RefNo" : "SuppID";
             cmd = string.Format($@"
 
-select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID
+select distinct a.PoId,a.Seq1,a.Seq2,ps.SuppID,psd.Refno ,psd.ColorID,f.Clima
 into #tmp1
 from
 (
@@ -143,10 +143,11 @@ from
 left join Orders o on o.ID = a.PoId
 left join PO_Supp ps on ps.ID = a.PoId and ps.SEQ1 = a.Seq1
 left join PO_Supp_Detail psd on psd.ID = a.PoId and psd.SEQ1 = a.Seq1 and psd.SEQ2 = a.Seq2
+left join Fabric f on f.SCIRefno = psd.SCIRefno 
 where psd.FabricType = 'F'
 { sqlWhere }
 ------------Fabric Defect ----- 
-select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid 
+select rd.PoId,rd.Seq1,rd.Seq2,rd.ActualQty,rd.Dyelot,rd.Roll,t.SuppID,t.Refno,t.Colorid ,t.Clima
 into #tmpAllData
 from #tmp1 t
 inner join Receiving_Detail rd on t.PoId = rd.PoId and t.Seq1 = rd.Seq1 and t.Seq2 = rd.Seq2
@@ -270,13 +271,16 @@ select distinct s.SuppID
 	)
 	,Point.Defect
 	,Point.ID
-	,Point.Point	
+	,Point.Point
+    ,ref.Clima
 into #tmp
 from (select {groupby_col} from #GroupBySupp group by {groupby_col}) as gbs
 outer apply(	
-	SELECT distinct Refno
+	SELECT Refno,Clima=cast(max(cast(Clima as int))as bit)
 	FROM #tmpAllData 
 	WHERE #tmpAllData.{groupby_col} = gbs.{groupby_col}
+	group by RefNo
+
 ) as ref
 cross apply(	
 	SELECT distinct #tmpAllData.SuppID,Supp.AbbEN
@@ -587,9 +591,10 @@ select --distinct
     ,[SHORTWIDTH] = isnull(SHORTyards.SHORTWIDTH,0)
     ,[SHORT WIDTH (%)] = isnull(SHORTWIDTHLevel.SHORTWIDTH,0)
     ,SHORTWIDTHLevel = sl6.ID
+	,Tmp.Clima 
 into #TmpFinal
 from (
-	select distinct SuppID, refno, abben, BrandID, stockqty, isnull(TotalInspYds,0)TotalInspYds
+	select distinct SuppID, refno, abben, BrandID, stockqty, isnull(TotalInspYds,0)TotalInspYds,Clima 
 	, yrds	
 	from #tmp		
 )Tmp
@@ -714,10 +719,13 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
 
             DataTable toExcelDt = allDatas[0].Copy();
             toExcelDt.Columns.Remove("KeyCnt");
+            toExcelDt.Columns.Remove("Clima");
             MyUtility.Excel.CopyToXls(toExcelDt, "", xltx_name, 5, false, null, objApp);
+            //objApp.Visible = true;
             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
             objApp.DisplayAlerts = false; // 禁止Excel跳出合併提示視窗
             int line = 6;
+            int coltype = ReportType.Equals("supplier") ? 2 : 1;
             string key_column = allDatas[1].Columns[0].ColumnName;
 
             var combineCheckDt = allDatas[0].AsEnumerable();
@@ -746,8 +754,14 @@ drop table #tmp1,#tmp,#tmp2,#tmpAllData,#GroupBySupp,#tmpsuppdefect,#tmp2groupby
                         //objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]].Style = rang.Style;
                         rang2 = objSheets.Range[objSheets.Cells[ii][line], objSheets.Cells[ii][line + cnt - 1]];
                         rang2.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteFormats,
-                            Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
+                        Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, false, false);
                     }
+                }
+
+                bool Clima = (bool)allDatas[0].Rows[i]["Clima"];
+                if (Clima)
+                {
+                    objSheets.get_Range((Microsoft.Office.Interop.Excel.Range)objSheets.Cells[line, coltype], (Microsoft.Office.Interop.Excel.Range)objSheets.Cells[line, coltype]).Interior.Color = Color.Yellow;
                 }
 
                 line = line + cnt;
