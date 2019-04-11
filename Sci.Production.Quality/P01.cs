@@ -107,6 +107,11 @@ c.ExportID as Wkno
 ,a.Odor
 ,a.OdorEncode
 ,a.OdorDate
+,[PhysicalInspector] = (select name from pass1 where id = a.PhysicalInspector)
+,[WeightInspector] = (select name from pass1 where id = a.WeightInspector)
+,[ShadeboneInspector] = (select name from pass1 where id = a.ShadeboneInspector)
+,[ContinuityInspector] = (select name from pass1 where id = a.ContinuityInspector)
+,[OdorInspector] = (select name from pass1 where id = a.OdorInspector)
 From FIR a WITH (NOLOCK) Left join Receiving c WITH (NOLOCK) on c.id = a.receivingid
 inner join PO_Supp_Detail d WITH (NOLOCK) on d.id = a.poid and d.seq1 = a.seq1 and d.seq2 = a.seq2
 outer apply(select name from color WITH (NOLOCK) where color.id = d.colorid and color.BrandId = d.BrandId)cn
