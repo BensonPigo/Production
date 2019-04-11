@@ -954,6 +954,15 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 {
                     continue;
                 }
+
+                //防止 Sheet Name 重複
+                foreach (Microsoft.Office.Interop.Excel.Worksheet existsSheet in excel.Workbooks[1].Worksheets)
+                {
+                    if (string.Compare(existsSheet.Name, dr["id"].ToString()) == 0)
+                    {
+                        continue;
+                    }
+                }
                 DataRow[] getMinDelivery = PrintData.Tables[dr["ID"].ToString()].Select("SciDelivery = min(SciDelivery)");
                 string strSciDelivery = "";
                 if (getMinDelivery.Length > 0)
