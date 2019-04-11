@@ -343,6 +343,8 @@ where MDivisionID = '{0}'", Sci.Env.User.Keyword);
                 this.disClogCFMStatus.Text = cancelOrder["ClogCFMStatus"].ToString();
             }
             #endregion
+
+            Color_Change();
         }
 
         // 檢查OrderID+Seq不可以重複建立
@@ -896,6 +898,8 @@ order by os.Seq",
                 }
                 #endregion
             };
+
+            Color_Change();
         }
 
         /// <summary>
@@ -1033,17 +1037,22 @@ outer apply (
 ) CustCD
 where CustCD.value != @CustCD
       or CustCD.value is null";
-            DualResult reslut = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), null, strCheckCustCD, out dtCheckCustCD, paramters: listCheckCustCDSqlParameter);
-            if (reslut == false)
+
+            if (this.DetailDatas.Count > 0)
             {
-                MyUtility.Msg.WarningBox(this.result.ToString());
-                return false;
+                DualResult reslut = MyUtility.Tool.ProcessWithDatatable(this.DetailDatas.CopyToDataTable(), null, strCheckCustCD, out dtCheckCustCD, paramters: listCheckCustCDSqlParameter);
+                if (reslut == false)
+                {
+                    MyUtility.Msg.WarningBox(this.result.ToString());
+                    return false;
+                }
+                else if (dtCheckCustCD != null && dtCheckCustCD.Rows.Count > 0)
+                {
+                    MyUtility.Msg.WarningBox("CustCD are different, please check!");
+                    return false;
+                }
             }
-            else if (dtCheckCustCD != null && dtCheckCustCD.Rows.Count > 0)
-            {
-                MyUtility.Msg.WarningBox("CustCD are different, please check!");
-                return false;
-            }
+
             #endregion
 
             // 刪除表身SP No.或Qty為空白的資料，表身的CTN#, Ref No., Color Way與Size不可以為空值，計算CTNQty, ShipQty, NW, GW, NNW, CBM，重算表身Grid的Bal. Qty
@@ -2358,6 +2367,30 @@ inner join PackingList_Detail b on a.[Pack ID] = b.ID and a.CTN# = b.CTNStartNo
             {
                 strMsg = ex.Message;
                 return null;
+            }
+        }
+
+        private void Color_Change()
+        {
+            if (this.detailgrid.Rows.Count > 0 || !MyUtility.Check.Empty(this.detailgrid))
+            {
+                for (int index = 0; index < this.detailgrid.Rows.Count; index++)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(index);
+                    if (this.detailgrid.Rows.Count <= index || index < 0 )
+                    {
+                        return;
+                    }
+
+                    if (!MyUtility.Check.Empty(dr["DisposeFromClog"]))
+                    {
+                        this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(190, 190, 190);
+                    }
+                    else
+                    {
+                        this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
+                    }
+                }
             }
         }
     }

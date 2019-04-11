@@ -166,6 +166,7 @@ from (
             and b.TransferDate is not null
             and b.ReceiveDate is null
             and c.Dest = d.ID 
+            and b.DisposeFromClog= 0
             and a.MDivisionID = '{0}' 
             and (a.Type = 'B' or a.Type = 'L') 
             and c.MDivisionID = '{0}'
@@ -229,7 +230,8 @@ order by rn", Sci.Env.User.Keyword,
                 this.numSelectedCTNQty.Value = 0;
                 this.numTotalCTNQty.Value = 0;
                 // 先將Grid的結構給開出來
-                string selectCommand = @"Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
+                string selectCommand = @"
+Select distinct '' as ID, 0 as selected, b.TransferDate, b.Id as PackingListID, b.OrderID, 
 TRY_CONVERT(int,b.CTNStartNo) as 'CTNStartNo', 
 0 as rn,
 0 as rn1,
@@ -277,8 +279,9 @@ where 1=0";
                                 string sqlCmd = string.Format(
                                     @"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID
-from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0",
                                     dr["PackingListID"].ToString(),
                                     dr["CTNStartNo"].ToString());
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -336,8 +339,9 @@ where pd.ID = '{0}' and pd.CTNStartNo = '{1}' and pd.CTNQty > 0",
                                     dr["ClogLocationId"] = sl[1];
                                     sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID,pd.id,pd.CTNStartNo
-from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0";
 
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                     {
@@ -411,8 +415,9 @@ where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
                                 dr["ClogLocationId"] = sl[1];
                                 string sqlCmd = $@"
 select pd.OrderID,pd.OrderShipmodeSeq,TransferDate,ReceiveDate ,p.MDivisionID,pd.id,pd.CTNStartNo
-from PackingList_Detail pd WITH (NOLOCK) inner join PackingList p (NOLOCK) on pd.id = p.id
-where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0";
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join PackingList p (NOLOCK) on pd.id = p.id
+where pd.CustCTN = '{dr["CustCTN"]}' and pd.CTNQty > 0 and pd.DisposeFromClog= 0";
 
                                 if (MyUtility.Check.Seek(sqlCmd, out seekData))
                                 {
@@ -559,7 +564,8 @@ set ReceiveDate = GETDATE()
     , ReturnDate = null 
 where   ID = '{0}' 
         and OrderID = '{1}' 
-        and CTNStartNo = '{2}'; ",
+        and CTNStartNo = '{2}'
+        and DisposeFromClog= 0 ; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"]),

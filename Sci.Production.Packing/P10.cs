@@ -96,6 +96,7 @@ from (
     from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
     where b.OrderId = c.Id 
     and a.Id = b.Id 
+    and b.DisposeFromClog= 0
     and b.CTNStartNo != '' 
     and ((b.ReturnDate is null and b.TransferDate is null and b.DRYReceiveDate is null and b.PackErrTransferDate is null) or b.ReturnDate is not null) 
     and c.Dest = d.ID 
@@ -218,6 +219,7 @@ inner join Orders o on pd.OrderID = o.id
 where   pd.ID = '{0}' 
         and pd.CTNStartNo = '{1}' 
         and pd.CTNQty > 0 
+        and pd.DisposeFromClog= 0
 ",
                                         dr["PackingListID"].ToString(),
                                         dr["CTNStartNo"].ToString());
@@ -292,6 +294,7 @@ from    PackingList_Detail pd WITH (NOLOCK)
 inner join Orders o on pd.OrderID = o.id
 where   pd.CustCTN= '{dr["CustCTN"]}' 
         and pd.CTNQty > 0 
+        and pd.DisposeFromClog= 0
 ";
 
                                         if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -379,6 +382,7 @@ from    PackingList_Detail pd WITH (NOLOCK)
 inner join Orders o on pd.OrderID = o.id
 where   pd.CustCTN= '{dr["CustCTN"]}' 
         and pd.CTNQty > 0 
+        and pd.DisposeFromClog= 0
 ";
 
                                     if (MyUtility.Check.Seek(sqlCmd, out seekData))
@@ -542,7 +546,7 @@ values (GETDATE(),'{0}','{1}','{2}','{3}',GETDATE(),'{4}');",
                 updateCmds.Add(string.Format(
                     @"update PackingList_Detail 
 set TransferDate = GETDATE(), ReceiveDate = null, ClogLocationId = '', ReturnDate = null 
-where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}'; ",
+where ID = '{0}' and OrderID = '{1}' and CTNStartNo = '{2}' and DisposeFromClog= 0; ",
                     MyUtility.Convert.GetString(dr["PackingListID"]),
                     MyUtility.Convert.GetString(dr["OrderID"]),
                     MyUtility.Convert.GetString(dr["CTNStartNo"])));
