@@ -308,6 +308,7 @@ namespace Sci.Production.Quality
                 maindr["OdorEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["OdorInspector"] = loginID;
                 #endregion 
                 #region 判斷Result 是否要寫入
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
@@ -354,6 +355,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 maindr["OdorEncode"] = false;                
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["OdorInspector"] = string.Empty;
 
                 //判斷Result and Status 必須先確認Odor="",判斷才會正確
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);

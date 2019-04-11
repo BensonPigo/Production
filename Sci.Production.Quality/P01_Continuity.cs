@@ -329,6 +329,7 @@ namespace Sci.Production.Quality
                 maindr["ContinuityEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["ContinuityInspector"] = loginID;
                 #endregion 
                 #region 判斷Result 是否要寫入
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
@@ -377,6 +378,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 maindr["ContinuityEncode"] = false;                
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["ContinuityInspector"] = string.Empty;
 
                 //判斷Result and Status 必須先確認Continuity="",判斷才會正確
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);

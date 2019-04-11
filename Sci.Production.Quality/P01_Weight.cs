@@ -344,13 +344,14 @@ namespace Sci.Production.Quality
                 maindr["WeightEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["WeightInspector"] = loginID;
                 #endregion 
                 #region 判斷Result 是否要寫入
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}',ShadeboneInspector = '{0}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
+                @"Update Fir set WeightDate = GetDate(),WeightEncode=1,EditName='{0}',EditDate = GetDate(),Weight = '{1}',Result ='{2}',Status='{4}',WeightInspector = '{0}' where id ={3}", loginID, result, returnstr[0], maindr["ID"], returnstr[1]);
                 #endregion
                 #region Excel Email 需寄給Encoder的Teamleader 與 Supervisor*****
                 DataTable dt_Leader;
@@ -391,7 +392,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 maindr["WeightEncode"] = false;                
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
-
+                maindr["WeightInspector"] = string.Empty;
                 //判斷Result and Status 必須先確認Weight="", 判斷才會正確
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
                 maindr["Result"] = returnstr[0];
@@ -399,7 +400,7 @@ select ToAddress = stuff ((select concat (';', tmp.email)
                 #endregion 
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}',ShadeboneInspector = ''  where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
+                @"Update Fir set WeightDate = null,WeightEncode=0,EditName='{0}',EditDate = GetDate(),Weight = '',Result ='{2}',Status='{3}',WeightInspector = ''  where id ={1}", loginID, maindr["ID"], returnstr[0], returnstr[1]);
                 #endregion
             }
             DualResult upResult;

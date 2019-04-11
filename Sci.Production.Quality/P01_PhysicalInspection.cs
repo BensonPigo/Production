@@ -726,6 +726,7 @@ Where DetailUkey = {15};",
                 maindr["PhysicalEncode"] = true;
                 maindr["EditName"] = loginID;
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
+                maindr["PhysicalInspector"] = loginID;
                 int sumPoint = MyUtility.Convert.GetInt(gridTb.Compute("Sum(totalpoint)", ""));
                 decimal sumTotalYds = MyUtility.Convert.GetDecimal(gridTb.Compute("Sum(actualyds)", ""));
                 maindr["TotalDefectPoint"] = sumPoint;
@@ -753,6 +754,7 @@ Where DetailUkey = {15};",
                 maindr["EditDate"] = DateTime.Now.ToShortDateString();
                 maindr["TotalDefectPoint"] = 0;
                 maindr["TotalInspYds"] = 0;
+                maindr["PhysicalInspector"] = string.Empty;
 
                 //判斷Result and Status 必須先確認Physical="",判斷才會正確
                 string[] returnstr = Sci.Production.PublicPrg.Prgs.GetOverallResult_Status(maindr);
