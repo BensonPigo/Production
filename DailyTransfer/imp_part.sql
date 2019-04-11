@@ -399,7 +399,7 @@ update t
 		t.ShipFoc=s.ShipFoc,
 		t.ShipETA=s.ShipETA
 		from  Machine.dbo.PartPO_Detail as  t
-		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID AND t.Seq1=s.Seq1 and t.seq2=s.seq2 and s.Junk=0 AND s.ID=t.TPEPOID
+		inner join Trade_to_Pms.dbo.MmsPO_Detail s on t.id=s.MmsReqID and t.seq2=s.seq2 and s.Junk=0 AND s.ID=t.TPEPOID
 		inner join Machine.dbo.PartPO a on t.id=a.ID
 		left join Production.dbo.scifty b on a.FactoryID=b.ID
 		where 1=1
