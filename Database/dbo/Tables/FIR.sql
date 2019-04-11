@@ -43,8 +43,15 @@
     [Odor]                VARCHAR (5)     CONSTRAINT [DF_FIR_Odor] DEFAULT ('') NULL,
     [OdorEncode]          BIT             CONSTRAINT [DF_FIR_OdorEncode] DEFAULT ((0)) NULL,
     [OdorDate]            DATETIME        NULL,
+    [PhysicalInspector]   VARCHAR (10)    CONSTRAINT [DF_FIR_PhysicalInspector] DEFAULT ('') NOT NULL,
+    [WeightInspector]     VARCHAR (10)    CONSTRAINT [DF_FIR_WeightInspector] DEFAULT ('') NOT NULL,
+    [ShadeboneInspector]  VARCHAR (10)    CONSTRAINT [DF_FIR_ShadeboneInspector] DEFAULT ('') NOT NULL,
+    [ContinuityInspector] VARCHAR (10)    CONSTRAINT [DF_FIR_ContinuityInspector] DEFAULT ('') NOT NULL,
+    [OdorInspector]       VARCHAR (10)    CONSTRAINT [DF_FIR_OdorInspector] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FIR] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -241,23 +248,29 @@ GO
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不需檢驗氣味', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'nonOdor';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'����������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'nonOdor';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味Encode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OdorEncode';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���Encode', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OdorEncode';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味檢驗日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OdorDate';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���������', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'OdorDate';
+
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'氣味Result', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Odor';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���Result', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR', @level2type = N'COLUMN', @level2name = N'Odor';
+
+
 
 
 GO
-CREATE NONCLUSTERED INDEX [index_WH_P07]
-    ON [dbo].[FIR]([ReceivingID] ASC)
-    INCLUDE([POID], [SEQ1], [SEQ2]);
+
 
