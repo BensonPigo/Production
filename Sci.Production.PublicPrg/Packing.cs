@@ -956,11 +956,12 @@ select * from @tempQtyBDown", PackingListID, ReportType);
                 }
 
                 //防止 Sheet Name 重複
+                bool existsSheetName = false;
                 foreach (Microsoft.Office.Interop.Excel.Worksheet existsSheet in excel.Workbooks[1].Worksheets)
                 {
                     if (string.Compare(existsSheet.Name, dr["id"].ToString()) == 0)
                     {
-                        continue;
+                        existsSheetName = true;
                     }
                 }
                 DataRow[] getMinDelivery = PrintData.Tables[dr["ID"].ToString()].Select("SciDelivery = min(SciDelivery)");
@@ -1016,6 +1017,10 @@ select * from @tempQtyBDown", PackingListID, ReportType);
 
                 worksheet = excel.ActiveWorkbook.Worksheets[cntWorkSheet];
                 worksheet.Select();
+                if (existsSheetName)
+                {
+                    continue;
+                }
                 worksheet.Name = dr["id"].ToString();
                 string NameEN = MyUtility.GetValue.Lookup("NameEN", Sci.Env.User.Factory, "Factory ", "id");
                 cntWorkSheet++;
