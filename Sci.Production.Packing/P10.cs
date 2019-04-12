@@ -96,6 +96,7 @@ from (
     from PackingList a WITH (NOLOCK) , PackingList_Detail b WITH (NOLOCK) , Orders c WITH (NOLOCK) , Country d WITH (NOLOCK) 
     where b.OrderId = c.Id 
     and a.Id = b.Id 
+    and b.PackErrTransferDate is null
     and b.CTNStartNo != '' 
     and ((b.ReturnDate is null and b.TransferDate is null and b.DRYReceiveDate is null and b.PackErrTransferDate is null) or b.ReturnDate is not null) 
     and c.Dest = d.ID 
