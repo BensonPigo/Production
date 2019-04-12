@@ -79,7 +79,8 @@ namespace Sci.Production.Subcon
         {
             #region sqlcmd
             this.sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"Select distinct
+            sqlCmd.Append(@"
+Select distinct
             [Bundle#] = bt.BundleNo,
             [RFIDProcessLocationID] = bt.RFIDProcessLocationID,
             [Cut Ref#] = b.CutRef,
@@ -176,8 +177,6 @@ namespace Sci.Production.Subcon
 
             DBProxy.Current.DefaultTimeout = 1200;  //加長時間為30分鐘，避免timeout
             DualResult result = DBProxy.Current.Select(null, result_cnt_cmd, out printData);
-
-
             if (!result)
             {
                 DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
@@ -236,7 +235,6 @@ namespace Sci.Production.Subcon
 
                 while (reader.Read())
                 {
-                  
                     object[] items = new object[reader.FieldCount];
                     reader.GetValues(items);
                     tmpDatas.LoadDataRow(items, true);
@@ -248,9 +246,25 @@ namespace Sci.Production.Subcon
                         {
                             Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[sheet];   // 取得工作表
                             Marshal.ReleaseComObject(objSheets);    //釋放sheet
+
+                            string strExcelName1 = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R42_BundleTransactiondetail(RFID)");
+                            Microsoft.Office.Interop.Excel.Workbook workbook1 = objApp.ActiveWorkbook;
+                            workbook1.SaveAs(strExcelName1);
+                            workbook1.Close();
+                            objApp.Quit();
+                            Marshal.ReleaseComObject(objApp);
+                            Marshal.ReleaseComObject(workbook1);
+                            objApp = MyUtility.Excel.ConnectExcel(strExcelName1);
                         }
                         sheet = 1 + loadCounts / (int)excelMaxrow;
-                        loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow) + ((sheet - 1) * 10000);
+                        if (loadCounts - ((sheet - 1) * (int)excelMaxrow) <= 0)
+                        {
+                            loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow) + 10000;
+                        }
+                        else
+                        {
+                            loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow);
+                        }
                         this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
                         MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - 9999, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
                         
