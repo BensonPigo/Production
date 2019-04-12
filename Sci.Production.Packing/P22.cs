@@ -39,11 +39,14 @@ namespace Sci.Production.Packing
             .Text("CustPONo", header: "PO#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("StyleID", header: "Style#", width: Widths.Auto(), iseditingreadonly: false)
             .Text("BrandID", header: "Brand", width: Widths.Auto(), iseditingreadonly: false)
+             .Text("ErrorType", header: "ErrorType", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Alias", header: "Destination", width: Widths.Auto(), iseditingreadonly: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditingreadonly: false)
             .Text("ConfirmedBy", header: "Confirmed By", width: Widths.Auto(), iseditingreadonly: false)
             ;
+            this.grid1.AutoResizeColumns();
+
         }
 
         private void BtnQuery_Click(object sender, EventArgs e)
@@ -92,9 +95,13 @@ select
 	,o.BuyerDelivery
 	,o.SciDelivery
 	,[ConfirmedBy] = dbo.getPass1(pe.AddName)
+	,[ErrorType] = pt.PackingErrorID+'-'+pr.Description
 from PackErrCFM pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
+left join PackErrTransfer pt with(nolock) on pt.OrderID=pe.PackingListID
+and pe.OrderID=pt.OrderID and pt.CTNStartNo=pe.CTNStartNo and pe.MDivisionID=pt.MDivisionID
+left join PackingError pr with(nolock) on pr.ID=pt.PackingErrorID and pr.Type='TP'
 where 1=1
 {sqlwhere}
 order by pe.PackingListID,pe.CTNStartNo,pe.CFMDate
