@@ -174,6 +174,7 @@ namespace Sci.Production.Subcon
 
             string result_cnt_cmd = "select [resultcnt] = count(*) from  (" + sqlCmd.ToString() + ") resultCnt";
 
+            DBProxy.Current.DefaultTimeout = 1200;  //加長時間為30分鐘，避免timeout
             DualResult result = DBProxy.Current.Select(null, result_cnt_cmd, out printData);
 
 
@@ -188,8 +189,8 @@ namespace Sci.Production.Subcon
         // 產生Excel
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            int data_cnt = MyUtility.Convert.GetInt(printData.Rows[0]["resultcnt"]);
-            SetCount(data_cnt);
+            decimal data_cnt = MyUtility.Convert.GetInt(printData.Rows[0]["resultcnt"]);
+            SetCount((long)data_cnt);
             if (data_cnt <= 0)
             {
                 MyUtility.Msg.WarningBox("Data not found!");
@@ -199,7 +200,21 @@ namespace Sci.Production.Subcon
             }
             
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Subcon_R42_Bundle Transaction detail (RFID).xltx"); //預先開啟excel app
-
+            decimal excelMaxrow = 1010000;
+            int ttlSheet = (int)Math.Ceiling(data_cnt / excelMaxrow);
+            if (ttlSheet > 1)
+            {
+                for (int i = 0; i < ttlSheet; i++)
+                {
+                    if (i > 0)
+                    {
+                        Microsoft.Office.Interop.Excel.Worksheet worksheet1 = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[1]);
+                        Microsoft.Office.Interop.Excel.Worksheet worksheetn = ((Microsoft.Office.Interop.Excel.Worksheet)objApp.ActiveWorkbook.Worksheets[i + 1]);
+                        worksheet1.Copy(worksheetn);
+                    }
+                }
+            }
+            int sheet = 1;
             //因為一次載入太多筆資料到DataTable 會造成程式佔用大量記憶體，改為每1萬筆載入一次並貼在excel上
             #region 分段抓取資料填入excel
             this.ShowLoadingText($"Data Loading , please wait …");
@@ -210,6 +225,7 @@ namespace Sci.Production.Subcon
             cmd.CommandTimeout = 300;
             var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             int loadCounts = 0;
+            int loadCounts2 = 0;
             using (conn)
             using (reader)
             {
@@ -225,10 +241,19 @@ namespace Sci.Production.Subcon
                     reader.GetValues(items);
                     tmpDatas.LoadDataRow(items, true);
                     loadCounts++;
+                    loadCounts2++;
                     if (loadCounts % 10000 == 0)
                     {
+                        if (sheet != 1 + loadCounts / (int)excelMaxrow)
+                        {
+                            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[sheet];   // 取得工作表
+                            Marshal.ReleaseComObject(objSheets);    //釋放sheet
+                        }
+                        sheet = 1 + loadCounts / (int)excelMaxrow;
+                        loadCounts2 = loadCounts - ((sheet - 1) * (int)excelMaxrow) + ((sheet - 1) * 10000);
                         this.ShowLoadingText($"Data Loading – {loadCounts} , please wait …");
-                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts - 9999, false, null, objApp);// 將datatable copy to excel
+                        MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - 9999, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
+                        
                         this.DataTableClearAll(tmpDatas);
                         for (int i = 0; i < reader.FieldCount; i++)
                         {
@@ -237,12 +262,11 @@ namespace Sci.Production.Subcon
                     }
                 }
 
-                MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts - (loadCounts % 10000) + 1, false, null, objApp);// 將datatable copy to excel
+                MyUtility.Excel.CopyToXls(tmpDatas, "", "Subcon_R42_Bundle Transaction detail (RFID).xltx", loadCounts2 - (loadCounts2 % 10000) + 1, false, null, objApp, wSheet: objApp.Sheets[sheet]);// 將datatable copy to excel
                 this.DataTableClearAll(tmpDatas);
             }
             this.HideLoadingText();
             #endregion
-            Microsoft.Office.Interop.Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
 
             #region Save & Show Excel
             string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Subcon_R42_BundleTransactiondetail(RFID)");
@@ -250,7 +274,6 @@ namespace Sci.Production.Subcon
             workbook.SaveAs(strExcelName);
             workbook.Close();
             objApp.Quit();
-            Marshal.ReleaseComObject(objSheets);    //釋放sheet
             Marshal.ReleaseComObject(objApp);          //釋放objApp
             Marshal.ReleaseComObject(workbook);
             printData.Clear();
