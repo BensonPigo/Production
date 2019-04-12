@@ -296,6 +296,11 @@ where exists (select 1 from #tmp t where t.PackingListID = pd.ID and t.CTNStartN
 
         private void BtnImport_Click(object sender, EventArgs e)
         {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
             P11_Import p11_Import = new P11_Import(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource);
             p11_Import.ShowDialog();
         }

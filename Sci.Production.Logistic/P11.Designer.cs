@@ -109,6 +109,10 @@
             this.detailbtm.Location = new System.Drawing.Point(0, 371);
             this.detailbtm.Size = new System.Drawing.Size(963, 38);
             // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(963, 409);
+            // 
             // tabs
             // 
             this.tabs.Size = new System.Drawing.Size(971, 438);
@@ -170,6 +174,7 @@
             // 
             // btnImport
             // 
+            this.btnImport.Enabled = false;
             this.btnImport.Location = new System.Drawing.Point(875, 57);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(80, 30);
@@ -187,7 +192,6 @@
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(115, 23);
             this.lblStatus.TabIndex = 45;
-            this.lblStatus.Text = "Not Approve";
             this.lblStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
             // P11
