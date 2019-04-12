@@ -20,7 +20,7 @@
     [NoSizeUnit]       BIT             CONSTRAINT [DF_Fabric_NoSizeUnit] DEFAULT ((0)) NULL,
     [BomTypeSize]      BIT             CONSTRAINT [DF_Fabric_BomTypeSize] DEFAULT ((0)) NULL,
     [BomTypeColor]     BIT             CONSTRAINT [DF_Fabric_BomTypeColor] DEFAULT ((0)) NULL,
-    [ConstructionID]   VARCHAR (10)    CONSTRAINT [DF_Fabric_ConstructionID] DEFAULT ('') NULL,
+    [ConstructionID]   VARCHAR (20)    CONSTRAINT [DF_Fabric_ConstructionID] DEFAULT ('') NULL,
     [MatchFabric]      VARCHAR (1)     CONSTRAINT [DF_Fabric_MatchFabric] DEFAULT ('') NULL,
     [WeaveTypeID]      VARCHAR (20)    CONSTRAINT [DF_Fabric_WeaveTypeID] DEFAULT ('') NULL,
     [AddName]          VARCHAR (10)    CONSTRAINT [DF_Fabric_AddName] DEFAULT ('') NULL,
@@ -40,8 +40,11 @@
     [preshrink]        BIT             DEFAULT ((0)) NOT NULL,
     [RibItem]          BIT             CONSTRAINT [DF_Fabric_RibItem] DEFAULT ((0)) NOT NULL,
     [DWR]              BIT             CONSTRAINT [DF_Fabric_DWR] DEFAULT ((0)) NOT NULL,
+    [Clima]            BIT             CONSTRAINT [DF_Fabric_Clima] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Fabric] PRIMARY KEY CLUSTERED ([SCIRefno] ASC)
 );
+
+
 
 
 
