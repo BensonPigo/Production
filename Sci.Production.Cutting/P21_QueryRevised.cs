@@ -153,7 +153,7 @@ namespace Sci.Production.Cutting
                 .Text("CuttingSpNO", header: "Cutting SP#", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("CutRef", header: "CutRef#", iseditingreadonly: true, width: Widths.AnsiChars(7))
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(4), settings: setSeq1).Get(out cbb_Seq1)
-                .Text("SEQ2", header: "SE2", width: Widths.AnsiChars(3), settings: setSeq2).Get(out cbb_Seq2)
+                .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(3), settings: setSeq2).Get(out cbb_Seq2)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), settings: setRoll).Get(out cbb_Roll)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(7), settings: setDyelot).Get(out cbb_Dyelot)
                 .Numeric("Yardage", header: "Yardage", decimal_places: 2, integer_places: 11, width: Widths.AnsiChars(7))
