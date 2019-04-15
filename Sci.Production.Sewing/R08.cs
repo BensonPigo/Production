@@ -915,7 +915,7 @@ where f.Junk = 0",
             {
                 if (pams != null)
                 {
-                    int ttlWorkDay = this.dataMode.Where(w => w.SewTtlManhours != 0).Count();
+                    int ttlWorkDay = pams.Where(w => w.SewTtlManhours != 0).Count();
                     worksheet.Cells[insertRow, 1] = "Total work day:";
                     worksheet.Cells[insertRow, 3] = ttlWorkDay;
                 }
