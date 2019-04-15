@@ -296,6 +296,7 @@ where o.Id = '{0}'",
                 }
 
                 this.CurrentMaintain["ID"] = id;
+
             }
 
             string checkStatus = MyUtility.GetValue.Lookup(string.Format("select Status from AirPP where id = '{0}'", this.CurrentMaintain["ID"].ToString()));
@@ -838,6 +839,7 @@ where Id = '{orderID}'
 
             // OrderID異動，其他相關欄位要跟著異動
             this.ChangeOtherData(this.txtSpNo.Text);
+            this.ChangeQuotationAVG();
         }
 
         // Seq按右鍵
@@ -1385,6 +1387,38 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderID"]
             else
             {
                 this.displayResponsibilityJustifcation.Value = string.Empty;
+            }
+        }
+
+        private void ChangeQuotationAVG()
+        {
+            string strSqlCmd = $@"
+select [QuotationAVG] = ISNULL(iIf(sum(GW)=0 , 0, ROUND(sum(lastYear.Amt) / sum(GW) ,2)),0)
+from AirPP a
+left join orders o on a.OrderID = o.ID
+outer apply(
+	select sum(ActualAmount) as Amt
+	from AirPP
+	where id=a.ID
+	and DATEPART(YEAR,AddDate) = DATEPART(year, DATEADD(year,-1,getdate()))
+)lastYear
+where BrandID = '{this.displayBrand.Text}' 
+and Dest = '{this.txtCountryDestination.TextBox1.Text}' 
+and Forwarder = '{this.txtSubconForwarderN.TextBox1.Text}'";
+
+            DataRow dr;
+
+            if (MyUtility.Check.Seek(strSqlCmd, out dr))
+            {
+                this.CurrentMaintain["QuotationAVG"] = MyUtility.Check.Empty(dr["QuotationAVG"]) ? 0.00 : dr["QuotationAVG"];
+            }
+        }
+
+        private void txtSubconForwarderN_Validated(object sender, EventArgs e)
+        {
+            if (this.txtSubconForwarderN.TextBox1.Text != this.txtSubconForwarderN.TextBox1.OldValue)
+            {
+                this.ChangeQuotationAVG();
             }
         }
     }
