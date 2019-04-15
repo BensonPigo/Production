@@ -319,12 +319,12 @@ From
             string update = "";
             if (MyUtility.Check.Empty(detailTb))return;
             if (detailTb.Rows.Count == 0) return;
-            DataTable saveDataTable = detailTb.Select("Sel = 1").CopyToDataTable();
-            if (saveDataTable.Rows.Count == 0)
+            if (detailTb.Select("Sel = 1").Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select data first.");
                 return;
             }
+            DataTable saveDataTable = detailTb.Select("Sel = 1").CopyToDataTable();
             foreach (DataRow dr in saveDataTable.Rows)
             {
                 if (!MyUtility.Check.Empty(dr["newestcutdate"]) && 
