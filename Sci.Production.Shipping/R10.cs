@@ -465,10 +465,38 @@ outer apply(select sum(shipqty) as shipqty,sum(CTNQty)as CTNQty,sum(GW) as GW,su
 group by type,id,OnBoardDate,Shipper,BrandID,Category,CustCDID,
 Dest,ShipModeID,PulloutDate,Forwarder,BLNo,CurrencyID,orderID ,BuyerDelivery,packingid,PulloutID
 
-select a.*,b.AccountID,b.Amount 
-into #temp4
+-- 取得TOTAL CBM, 用來計算比例
+select a.id	,sum(a.CBM) TotalCBM
+into #tmpTotoalCBM
 from #temp3 a
-inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID");
+inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
+where a.shipmodeID in ('SEA','S-A/P','S-A/C')
+group by a.id
+
+-- 取得TOTAL GW, 用來計算比例
+select a.id	,sum(a.gw) TotalGW
+into #tmpTotoalGW
+from #temp3 a
+inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
+where a.shipmodeID in ('A/C', 'A/P', 'A/P-C', 'E/C', 'E/P', 'E/P-C')
+group by a.id
+
+-- group by GB#+SP# 依TotalCBM, Total GW比例來取得對應的Amount值
+select * 
+into #temp4
+from (
+	select a.*,b.AccountID
+	,[Amount] = iif(c.TotalCBM is null or c.TotalCBM=0,0, convert(float, round(b.Amount * A.CBM/C.TotalCBM,2) ))
+	from #temp3 a
+	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
+	LEFT JOIN #tmpTotoalCBM C ON A.ID=C.ID
+	union all
+	select a.*,b.AccountID
+	,[Amount] = iif(c.TotalGW is null or c.TotalGW=0,0, convert(float, round(b.Amount * A.CBM/C.TotalGW,2) ))
+	from #temp3 a
+	inner join ShareExpense b on a.ID=b.InvNo and a.CurrencyID=b.CurrencyID
+	LEFT JOIN #tmpTotoalGW C ON A.ID=C.ID
+) a");
                     }
 
                      queryAccount = string.Format(
@@ -501,7 +529,7 @@ from #temp4
 PIVOT (SUM(Amount)
 FOR AccountID IN ({0})) a
 order by id
-drop table #temp1,#temp2,#temp3,#temp4
+drop table #temp1,#temp2,#temp3,#temp4,#tmpTotoalCBM,#tmpTotoalGW
 ", allAccno.ToString().Substring(0, 1) == "," ? allAccno.ToString().Substring(1, allAccno.Length - 1) : allAccno.ToString()));
                 }
                 else
