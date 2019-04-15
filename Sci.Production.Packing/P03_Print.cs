@@ -204,11 +204,8 @@ namespace Sci.Production.Packing
             this.ShowWaitMessage("Data Loading....");
             if (this.reportType == "1" || this.reportType == "2")
             {
-
-                //DataTable dt = this.masterData.Table;
-
                 DataTable dt = this.masterData.Table.AsEnumerable().Where(row => row["ID"].EqualString(this.masterData["id"])).CopyToDataTable();
-
+                DataTable dtTop1 = dt.AsEnumerable().Take(1).CopyToDataTable();
                 DataSet dsPrintdata = new DataSet();
                 DataSet dsctnDim = new DataSet();
                 DataSet dsqtyBDown = new DataSet();
@@ -223,11 +220,11 @@ namespace Sci.Production.Packing
                 dsqtyBDown.Tables.Add(this.qtyBDown);
                 if (this.SP_Multiple)
                 {
-                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport_Multiple.xltx", dt, this.reportType, dsPrintdata, dsctnDim, dsqtyBDown);
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport_Multiple.xltx", dtTop1, this.reportType, dsPrintdata, dsctnDim, dsqtyBDown);
                 }
                 else
                 {
-                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.reportType, dsPrintdata, dsctnDim, dsqtyBDown);
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dtTop1, this.reportType, dsPrintdata, dsctnDim, dsqtyBDown);
                 }
             }
             else if (this.reportType == "3")
