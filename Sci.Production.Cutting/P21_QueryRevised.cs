@@ -22,12 +22,14 @@ namespace Sci.Production.Cutting
         {
             base.OnFormLoaded();
 
-            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Seq;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Seq1;
+            Ict.Win.UI.DataGridViewTextBoxColumn cbb_Seq2;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Roll;
             Ict.Win.UI.DataGridViewTextBoxColumn cbb_Dyelot;
             Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
 
-            DataGridViewGeneratorTextColumnSettings setSeq = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings setSeq1 = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings setSeq2 = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings setRoll = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings setDyelot = new DataGridViewGeneratorTextColumnSettings();
 
@@ -35,13 +37,12 @@ namespace Sci.Production.Cutting
             this.gridP21Query.DataSource = this.listControlBindingSource1;
 
             #region 事件
-            setSeq.CellValidating += (s, e) =>
+            setSeq1.CellValidating += (s, e) =>
             {
                 DataRow selectedRow = gridP21Query.GetDataRow(e.RowIndex);
-                string oldValue = selectedRow["Seq"].ToString();
+                string oldValue = selectedRow["Seq1"].ToString();
                 string newValue = e.FormattedValue.ToString();
                 string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
-                bool exists = false;
 
                 //沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1)
@@ -51,7 +52,7 @@ namespace Sci.Production.Cutting
                 //輸入空，才清空這些欄位，因此if else不能跟前面放一起
                 if (MyUtility.Check.Empty(newValue))
                 {
-                    selectedRow["Seq"] = string.Empty;
+                    selectedRow["Seq1"] = string.Empty;
                     selectedRow["Roll"] = string.Empty;
                     selectedRow["Dyelot"] = string.Empty;
                     selectedRow["Yardage"] = DBNull.Value;
@@ -62,36 +63,37 @@ namespace Sci.Production.Cutting
                     selectedRow["Roll"] = string.Empty;
                     selectedRow["Dyelot"] = string.Empty;
                     selectedRow["Yardage"] = DBNull.Value;
+                    selectedRow["Seq1"] = newValue;
+                }
+            };
 
-                    //判斷存在與否，不存在要另外提示訊息
-                    string[] seq = newValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (seq.Length < 2)
-                    {
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                        return;
-                    }
+            setSeq2.CellValidating += (s, e) =>
+            {
+                DataRow selectedRow = gridP21Query.GetDataRow(e.RowIndex);
+                string oldValue = selectedRow["Seq2"].ToString();
+                string newValue = e.FormattedValue.ToString();
+                string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
 
-                    exists = MyUtility.Check.Seek($@"
-                                    select 1 from FtyInventory F
-                                    inner join PO_Supp_Detail PD ON f.poid = pd.id 
-                                                                    And f.seq1 = pd.seq1 
-                                                                    And f.seq2  = pd.seq2 
-                                    where F.POID = '{CuttingSpNO}' and F.SEQ1 = '{seq[0]}' and F.SEQ2 = '{seq[1]}'
-                                    and PD.FabricType = 'F'");
-
-                    if (!exists)
-                    {
-                        e.Cancel = true;
-                        MyUtility.Msg.WarningBox($"<SEQ: {newValue}> not found!");
-                        return;
-                    }
-                    else
-                    {
-                        selectedRow["Seq"] = newValue;
-                        selectedRow["Seq1"] = seq[0];
-                        selectedRow["Seq2"] = seq[1];
-                    }
+                //沒有異動
+                if (oldValue.Equals(newValue) || e.RowIndex == -1)
+                {
+                    return;
+                }
+                //輸入空，才清空這些欄位，因此if else不能跟前面放一起
+                if (MyUtility.Check.Empty(newValue))
+                {
+                    selectedRow["Seq2"] = string.Empty;
+                    selectedRow["Roll"] = string.Empty;
+                    selectedRow["Dyelot"] = string.Empty;
+                    selectedRow["Yardage"] = DBNull.Value;
+                }
+                else
+                {
+                    //異動or不存在：清空Roll#欄位、Dyelot、Yardage資料
+                    selectedRow["Roll"] = string.Empty;
+                    selectedRow["Dyelot"] = string.Empty;
+                    selectedRow["Yardage"] = DBNull.Value;
+                    selectedRow["Seq2"] = newValue;
                 }
             };
 
@@ -102,8 +104,6 @@ namespace Sci.Production.Cutting
                 string newValue = e.FormattedValue.ToString();
                 string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
                 string dyelot = selectedRow["Dyelot"].ToString();
-                string seq = selectedRow["Seq"].ToString();
-                bool exists = false;
 
                 //沒有異動，修改Roll時，Dyelot不為空才驗證
                 if (oldValue.Equals(newValue) || e.RowIndex == -1 || MyUtility.Check.Empty(dyelot))
@@ -117,29 +117,7 @@ namespace Sci.Production.Cutting
                     return;
                 }
 
-                //判斷存在與否，不存在要另外提示訊息
-                string[] arrSeq = seq.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (arrSeq.Length < 2)
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                    return;
-                }
-
-                exists = MyUtility.Check.Seek($@"
-                                    select 1 from FtyInventory 
-                                    where POID = '{CuttingSpNO}' and SEQ1 = '{arrSeq[0]}' and SEQ2 = '{arrSeq[1]}'
-                                    and Roll='{newValue}' and Dyelot='{dyelot}'");
-
-                if (!exists)
-                {
-                    selectedRow["Roll"] = string.Empty;
-                    selectedRow.AcceptChanges();
-                    MyUtility.Msg.WarningBox($"< POID : {CuttingSpNO}, SEQ : {arrSeq[0] + " " + arrSeq[1]}, Roll : {newValue} , Dyelot : {dyelot}> not found! ");
-                    return;
-                }
-                else
-                    selectedRow["Roll"] = newValue;
+                selectedRow["Roll"] = newValue;
             };
 
             setDyelot.CellValidating += (s, e) =>
@@ -149,8 +127,6 @@ namespace Sci.Production.Cutting
                 string newValue = e.FormattedValue.ToString();
                 string CuttingSpNO = selectedRow["CuttingSpNO"].ToString();
                 string Roll = selectedRow["Roll"].ToString();
-                string seq = selectedRow["Seq"].ToString();
-                bool exists = false;
 
                 //沒有異動
                 if (oldValue.Equals(newValue) || e.RowIndex == -1 || MyUtility.Check.Empty(Roll))
@@ -163,30 +139,8 @@ namespace Sci.Production.Cutting
                     selectedRow["Dyelot"] = oldValue;
                     return;
                 }
-                //判斷存在與否，不存在要另外提示訊息
-                string[] arrSeq = seq.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (arrSeq.Length < 2)
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("Data not found!", "Seq");
-                    return;
-                }
 
-                exists = MyUtility.Check.Seek($@"
-                                    select 1 from FtyInventory 
-                                    where POID = '{CuttingSpNO}' and SEQ1 = '{arrSeq[0]}' and SEQ2 = '{arrSeq[1]}'
-                                    and Roll='{Roll}' 
-                                    and Dyelot='{newValue}'");
-
-                if (!exists)
-                {
-                    selectedRow["Dyelot"] = string.Empty;
-                    selectedRow.AcceptChanges();
-                    MyUtility.Msg.WarningBox($"< POID : {CuttingSpNO}, SEQ : {arrSeq[0] + " " + arrSeq[1]}, Roll : {Roll} , Dyelot : {newValue}> not found! ");
-                    return;
-                }
-                else
-                    selectedRow["Dyelot"] = newValue;
+                selectedRow["Dyelot"] = newValue;
             };
             #endregion
 
@@ -198,7 +152,8 @@ namespace Sci.Production.Cutting
                 .Text("EstCutCell", header: "Est.CutCell", iseditingreadonly: true, width: Widths.AnsiChars(10))
                 .Text("CuttingSpNO", header: "Cutting SP#", iseditingreadonly: true, width: Widths.AnsiChars(15))
                 .Text("CutRef", header: "CutRef#", iseditingreadonly: true, width: Widths.AnsiChars(7))
-                .Text("SEQ", header: "SEQ", width: Widths.AnsiChars(7), settings: setSeq).Get(out cbb_Seq)
+                .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(4), settings: setSeq1).Get(out cbb_Seq1)
+                .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(3), settings: setSeq2).Get(out cbb_Seq2)
                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), settings: setRoll).Get(out cbb_Roll)
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(7), settings: setDyelot).Get(out cbb_Dyelot)
                 .Numeric("Yardage", header: "Yardage", decimal_places: 2, integer_places: 11, width: Widths.AnsiChars(7))
@@ -211,11 +166,13 @@ namespace Sci.Production.Cutting
                 ;
 
             //MaxLength 設定
-            cbb_Seq.MaxLength = 6;
+            cbb_Seq1.MaxLength = 3;
+            cbb_Seq2.MaxLength = 2;
             cbb_Roll.MaxLength = 8;
             cbb_Dyelot.MaxLength = 8;
             //底色設定
-            this.gridP21Query.Columns["SEQ"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridP21Query.Columns["SEQ1"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridP21Query.Columns["SEQ2"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridP21Query.Columns["Roll"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridP21Query.Columns["Dyelot"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridP21Query.Columns["Yardage"].DefaultCellStyle.BackColor = Color.Pink;
@@ -265,12 +222,14 @@ namespace Sci.Production.Cutting
             currentTable = selectedRow.CopyToDataTable();
 
             errorArr = selectedRow.AsEnumerable().Where(o =>
-                                                           MyUtility.Check.Empty(o["Seq"]) || MyUtility.Check.Empty(o["Roll"]) ||
+                                                           MyUtility.Check.Empty(o["Seq1"]) ||
+                                                           MyUtility.Check.Empty(o["Seq2"]) ||
+                                                           MyUtility.Check.Empty(o["Roll"]) ||
                                                            MyUtility.Check.Empty(o["Dyelot"]) || MyUtility.Check.Empty(o["Yardage"])).ToArray();
         
             if (errorArr.Length > 0)
             {
-                MyUtility.Msg.WarningBox("<Seq>, <Roll#>, <Dyelot>, <Yardage> can not be empty or 0 ! ");
+                MyUtility.Msg.WarningBox("<Seq1>,<Seq2>, <Roll#>, <Dyelot>, <Yardage> can not be empty or 0 ! ");
                 return;
             }
             #endregion
@@ -407,7 +366,8 @@ namespace Sci.Production.Cutting
                                     [EstCutCell]= WorkOrder.CutCellid,
                                     [CuttingSpNO]= WorkOrder.ID,
                                     [CutRef]= cofr.CutRef,
-                                    [SEQ]= cofr.SEQ1 +' '+ cofr.SEQ2 ,
+                                    [SEQ1]= cofr.SEQ1 ,
+                                    [SEQ2]= cofr.SEQ2 ,
                                     [Roll]= cofr.Roll,
                                     [Dyelot]= cofr.Dyelot,
                                     [Yardage]= cofr.Yardage,
@@ -417,9 +377,7 @@ namespace Sci.Production.Cutting
                                     [AddDate]= cofr.AddDate,
                                     [EditName]=  editInfo.IdAndName,
                                     [EditDate]= cofr.EditDate,
-                                    [Ukey]=cofr.Ukey,
-                                    [Seq1]= cofr.Seq1,
-                                    [Seq2]= cofr.Seq2
+                                    [Ukey]=cofr.Ukey
                             FROM CuttingOutputFabricRecord cofr
                             INNER JOIN WorkOrder W on cofr.CutRef=W.CutRef and cofr.MDivisionId = w.MDivisionId
                             LEFT JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
