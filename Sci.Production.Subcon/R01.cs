@@ -71,6 +71,7 @@ namespace Sci.Production.Subcon
                                         ,a.LocalSuppID+'-'+(select abb from localsupp WITH (NOLOCK) where id = a.localsuppid) as localsupp
                                         ,a.ArtworkTypeID
                                         ,a.Delivery
+                                        ,a.InternalRemark
                                         ,b.OrderID
                                         ,c.SewInLine
                                         ,c.SciDelivery
