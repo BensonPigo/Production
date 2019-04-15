@@ -264,7 +264,7 @@ left join (select NULL FarmInDate,0 FarmInQty,FarmOut.IssueDate FarmOutDate,Farm
             if (this.checkIncludeFarmOutInDate.Checked)
             {
                 sqlCmd.Append(@"select k.FactoryID,k.ID,k.SewLine,k.StyleID,k.stitch,k.ArtworkTypeID,k.PatternCode+'-'+k.PatternDesc pattern
-,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery
+,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,BuyerDelivery
 ,iif(k.oven='1900-01-01','1',convert(varchar,k.oven)) as Oven
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash
@@ -279,7 +279,7 @@ order by k.FactoryID,k.ID,isnull(FarmOutDate,'99991231')");
             else
             {
                 sqlCmd.Append(@"select k.FactoryID,k.ID,k.SewLine,k.StyleID,k.stitch,k.ArtworkTypeID,k.PatternCode+'-'+k.PatternDesc pattern
-,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery
+,k.supplier,k.articles,k.poqty,k.stitch*k.poqty total_stitch,k.MTLETA,k.SciDelivery,k.BuyerDelivery
 ,iif(k.oven='1900-01-01','1',convert(varchar,k.oven)) as Oven
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash
 ,iif(k.Wash='1900-01-01','1',convert(varchar,k.Wash)) as Wash

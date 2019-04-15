@@ -54,6 +54,7 @@ namespace Sci.Production.Quality
     c.ExportId,c.WhseArrival,
     d.ColorID,
     e.HeatDate,e.Heat,e.nonHeat,
+    [HeatInspector] = (select name from pass1 where id= e.HeatInspector),
     f.SuppID,
     g.DescDetail
 from FIR a WITH (NOLOCK) 
@@ -83,11 +84,13 @@ where a.ID='{0}'"
                 txtResult.Text = fir_dr["Heat"].ToString();
                 checkNA.Value = fir_dr["nonHeat"].ToString();
                 editDescription.Text = fir_dr["DescDetail"].ToString();
+                txtHeatInspector.Text = fir_dr["HeatInspector"].ToString();
             }
             else
             {
                 txtSP.Text = ""; txtSEQ.Text = ""; txtArriveQty.Text = ""; txtWkno.Text = ""; dateArriveWHDate.Text = ""; txtStyle.Text = ""; txtBrand.Text = "";
                 txtsupplierSupp.Text = ""; txtSCIRefno.Text = ""; txtBrandRefno.Text = ""; txtColor.Text = ""; editDescription.Text = "";
+                txtHeatInspector.Text = "";
             }
 
 
@@ -842,7 +845,7 @@ Each Dyelot must be tested!", d));
                 #endregion
                 #region 判斷表身最晚時間
                 DataTable dt = (DataTable)gridbs.DataSource;
-                
+
                 if (dt.Rows.Count != 0)
                 {
                     DateTime lastDate = Convert.ToDateTime(dt.Rows[0]["inspDate"]);
@@ -856,11 +859,12 @@ Each Dyelot must be tested!", d));
                         }
                     }
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set HeatDate = '{0}',HeatEncode = 1,Heat='{1}' where id ='{2}'", lastDate.ToShortDateString(), result, maindr["ID"]);
+                    @"Update Fir_Laboratory set HeatDate = '{0}',HeatEncode = 1,Heat='{1}',HeatInspector = '{3}' where id ='{2}'", lastDate.ToShortDateString(), result, maindr["ID"], Sci.Env.User.UserID);
                 }
-                else {
+                else
+                {
                     updatesql = string.Format(
-                    @"Update Fir_Laboratory set HeatEncode = 1,Heat='{0}' where id ='{1}'", result, maindr["ID"]);
+                    @"Update Fir_Laboratory set HeatEncode = 1,Heat='{0}', HeatInspector = '{2}' where id ='{1}'", result, maindr["ID"], Sci.Env.User.UserID);
                 }
                 #endregion
 
@@ -870,7 +874,7 @@ Each Dyelot must be tested!", d));
             {                       
                 #region  寫入實體Table
                 updatesql = string.Format(
-                @"Update Fir_Laboratory set HeatDate = null,HeatEncode= 0,Heat = '' where id ='{0}'", maindr["ID"]);
+                @"Update Fir_Laboratory set HeatDate = null,HeatEncode= 0,Heat = '',HeatInspector = '' where id ='{0}'", maindr["ID"]);
 
                // updatesql = updatesql + string.Format(@"update FIR_Laboratory_Heat set editName='{0}',editDate=Getdate() where id='{1}'", loginID, maindr["ID"]);
                 #endregion

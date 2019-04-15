@@ -3502,6 +3502,16 @@
             記錄 ToolStripMenuItem.OwnerItem.Text
             </summary>
         </member>
+        <member name="P:Sci.Win.IForm.FormParameter">
+            <summary>
+            記錄 這個 Form 接收的 Parameter. 主要做為 F1 時. Help 的 Keyvalue 之一
+            </summary>
+        </member>
+        <member name="P:Sci.Win.IForm.ParentIForm">
+            <summary>
+            記錄是誰叫這個 Form
+            </summary>
+        </member>
         <member name="T:Sci.Win.ITemplateForm">
             <summary>
             TemplateForm common properties and behaviors.
@@ -3740,6 +3750,16 @@
             </summary>
         </member>
         <member name="P:Sci.Win.Forms.Base.SubsMenuText">
+            <summary>
+            from IForm
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Forms.Base.FormParameter">
+            <summary>
+            from IForm
+            </summary>
+        </member>
+        <member name="P:Sci.Win.Forms.Base.ParentIForm">
             <summary>
             from IForm
             </summary>
@@ -4530,7 +4550,7 @@
             <param name="tableschema">ITableSchema object.</param>
             <returns>Result of the method.</returns>
         </member>
-        <member name="M:Sci.Win.Subs.Base.SetSubsMenuText">
+        <member name="M:Sci.Win.Subs.Base.SetSubsMenuTextandParentIForm">
             <summary>
             設定 IForm.SubsMenuText
             </summary>

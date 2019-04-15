@@ -227,27 +227,41 @@ SET ARITHABORT ON
 	IIF(F.Nonphysical = 1,'Y',' ')[N/A Physical],
 	F.Result,
 	F.Physical,
+	[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector),
+	--F.PhysicalInspector,
 	F.PhysicalDate,
 	fta.ActualYds,
     ROUND( CAST (fta.ActualYds/SUM(t.StockQty) AS FLOAT) ,3),
 	ftp.TotalPoint,
 	F.Weight,
+	[WeightInspector] = (select name from Pass1 where id = f.WeightInspector),
 	F.WeightDate,
 	F.ShadeBond,
+	[ShadeboneInspector] = (select name from Pass1 where id = f.ShadeboneInspector),
 	F.ShadeBondDate,
 	F.Continuity,
+	[ContinuityInspector] = (select name from Pass1 where id = f.ContinuityInspector),
 	F.ContinuityDate,
 	F.Odor,
+	[OdorInspector] = (select name from Pass1 where id = f.OdorInspector),
 	F.OdorDate,
 	L.Result AS Result2,
 	IIF(L.nonCrocking=1,'Y',' ')[N/A Crocking],
-	LC.Crocking,	LC.CrockingDate,
+	LC.Crocking,
+	fl.CrockingInspector,
+	LC.CrockingDate,
 	IIF(L.nonHeat=1,'Y',' ')[N/A Heat Shrinkage],
-	LH.Heat,LH.HeatDate,
+	LH.Heat,
+	fl.HeatInspector,
+	LH.HeatDate,
 	IIF(L.nonWash=1,'Y',' ' )[N/A Wash Shrinkage],
-	LW.Wash,LW.WashDate,
+	LW.Wash,
+	fl.WashInspector,
+	LW.WashDate,
 	V.Result AS RESULT3,
+	[OvenInspector] = v.Name,
 	CFD.Result AS RESULT4,
+	[CFInspector] = cfd.Name,
     ps1.LocalMR
 from dbo.FIR F WITH (NOLOCK) 
     inner join (select R.WhseArrival,R.InvNo,R.ExportId,R.Id,rd.PoId,RD.seq1,RD.seq2,RD.StockQty
@@ -283,12 +297,15 @@ OUTER APPLY(
 		AND L.ID = F.ID AND L.SEQ1 = F.SEQ1 AND L.SEQ2 = F.SEQ2
 		)LW
 OUTER APPLY(
-        select od.Result from dbo.Oven ov WITH (NOLOCK) 
+        select od.Result, pass1.name from dbo.Oven ov WITH (NOLOCK) 
         inner join dbo.Oven_Detail od WITH (NOLOCK) on od.ID = ov.ID
+        left join pass1 WITH (NOLOCK) on pass1.id = ov.Inspector
         where ov.POID=F.POID and od.SEQ1=F.Seq1 and seq2=F.Seq2 and ov.Status='Confirmed'
         )V
 OUTER APPLY(
-         select distinct cd.Result from dbo.ColorFastness CF WITH (NOLOCK) inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+        select distinct cd.Result, pass1.name from dbo.ColorFastness CF WITH (NOLOCK) 
+        inner join dbo.ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = CF.ID
+        left join pass1 WITH (NOLOCK) on pass1.id = cf.Inspector
         where CF.Status = 'Confirmed' and CF.POID=F.POID and cd.SEQ1=F.Seq1 and cd.seq2=F.Seq2
         )CFD
 Outer apply(
@@ -299,6 +316,11 @@ Outer apply(
 ) ps1
 outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id=f.id)ftp
 outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id)fta
+outer apply(select  CrockingInspector = (select name from Pass1 where id = CrockingInspector)
+	,HeatInspector = (select name from Pass1 where id = HeatInspector)
+	,WashInspector = (select name from Pass1 where id = WashInspector)
+	from FIR_Laboratory where Id=f.ID
+)FL
 " + sqlWhere) + @" 
 GROUP BY 
 F.POID,F.SEQ1,F.SEQ2,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,
@@ -309,7 +331,9 @@ F.TotalInspYds,fta.ActualYds,F.Weight,F.WeightDate,F.ShadeBond,F.ShadeBondDate,F
 F.ContinuityDate,L.Result,LC.Crocking,
 LC.CrockingDate,LH.Heat,LH.HeatDate,
 LW.Wash,LW.WashDate,V.Result,CFD.Result,SP.SuppID,S.AbbEN,F.Nonphysical,L.nonCrocking,L.nonHeat,L.nonWash,ps1.LocalMR,
-ftp.TotalPoint,F.Odor,F.OdorDate
+ftp.TotalPoint,F.Odor,F.OdorDate,f.PhysicalInspector,f.WeightInspector
+,f.ShadeboneInspector,f.ContinuityInspector,f.OdorInspector
+,fl.CrockingInspector,fl.HeatInspector,fl.WashInspector,v.Name,cfd.Name
 ORDER BY POID,SEQ
 OPTION (OPTIMIZE FOR UNKNOWN)
 ";

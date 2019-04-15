@@ -117,7 +117,7 @@ outer apply (
 outer apply(select ott.price from Order_TmsCost ott where ott.artworktypeid = oa.ArtworkTypeID and ott.id = o.ID)bb
 where   1=1 
 and f.IsProduceFty=1
-and o.PulloutComplete = 0
+--and o.PulloutComplete = 0
 and o.category  in ('B','S')
 ");
 
@@ -174,7 +174,7 @@ outer apply (
 where   1=1 
 and f.IsProduceFty=1
 and o.category  in ('B','S')
-and o.PulloutComplete = 0
+--and o.PulloutComplete = 0
 ";
 
                     strSQLCmd += string.Format(" and o.MDivisionID='{0}' and ot.ArtworkTypeID = '{1}' and o.Junk=0 ", Sci.Env.User.Keyword, dr_artworkpo["artworktypeid"]);
@@ -319,7 +319,7 @@ and o.PulloutComplete = 0
                 }
                 foreach (DataRow tmp in dr2)
                 {
-                    DataRow[] findrow = dt_artworkpoDetail.Select(string.Format("orderid = '{0}' and ArtworkId = '{1}' and patterncode = '{2}'", tmp["orderid"].ToString(), tmp["ArtworkId"].ToString(), tmp["patterncode"].ToString()));
+                    DataRow[] findrow = dt_artworkpoDetail.Select($@"orderid = '{tmp["orderid"].ToString()}' and ArtworkId = '{tmp["ArtworkId"].ToString()}' and patterncode = '{tmp["patterncode"].ToString()}' and cost='{tmp["Cost"]}'");
 
                     if (findrow.Length > 0)
                     {

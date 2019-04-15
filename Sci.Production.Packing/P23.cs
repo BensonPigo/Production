@@ -240,7 +240,7 @@ OUTER APPLY(
 		select concat('/',OrderID)
 		from (
 			select distinct OrderID from PackingList_Detail p WITH (NOLOCK)
-			where p.orderid=pd.orderid
+			where p.orderid=pd.orderid and p.DisposeFromClog= 0
 		) o1
 		for xml path('')
 	),1,1,'')
@@ -253,6 +253,7 @@ OUTER APPLY(
 			select distinct sizecode 
 			from PackingList_Detail p WITH (NOLOCK)
 			where p.id=pd.id AND p.CTNStartNo = pd.CTNStartNo			
+            and p.DisposeFromClog= 0
 		) s
 		outer apply (
 			select seq from Order_SizeCode WITH (NOLOCK)
@@ -270,6 +271,7 @@ OUTER APPLY(
 			select distinct QtyPerCTN,sizecode 
 			from PackingList_Detail p WITH (NOLOCK)
 			where p.id=pd.id and p.CTNStartNo = pd.CTNStartNo			
+            and p.DisposeFromClog= 0
 		) q
 		outer apply (
 			select seq from Order_SizeCode WITH (NOLOCK)
@@ -284,6 +286,7 @@ WHERE pd.CTNStartNo<>''
      AND p.Mdivisionid='{Sci.Env.User.Keyword}'
      AND p.Type in ('B','L')
      AND pd.ReceiveDate is not null
+     AND pd.DisposeFromClog= 0
      AND pd.TransferCFADate is null
      AND (po.Status ='New' or po.Status IS NULL)
      AND pd.CTNQty=1
@@ -354,7 +357,7 @@ order by pd.ID,pd.Seq";
             --where a.CFANeedInsp <> b.CFANeedInsp 
 SELECT DISTINCT a.* 
 FROM #tmp a
-INNER JOIN PackingList_Detail b ON a.Ukey=b.Ukey
+INNER JOIN PackingList_Detail b ON a.Ukey=b.Ukey and b.DisposeFromClog= 0
 WHERE (b.FtyReqReturnDate IS NULL AND a.Selected = 1)   --若FtyReqReturnDate IS NULL，表示不應該勾選，但在FORM上的被勾選了   = 有異動
 OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS NOT NULL，表示應該勾選，但在FORM上的沒勾選了 = 有異動
 OR a.FtyReqReturnReason <> b.FtyReqReturnReason  --Reason異動
@@ -380,7 +383,7 @@ OR a.FtyReqReturnReason <> b.FtyReqReturnReason  --Reason異動
                     updateSqlCmd = updateSqlCmd + $@"
 UPDATE PackingList_Detail 
 SET FtyReqReturnDate = {ftyReqReturnDate},FtyReqReturnReason='{dr["FtyReqReturnReason"]}'
-WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' ;
+WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' and DisposeFromClog= 0;
 " + Environment.NewLine;
 
                     // 現在這個表身要拆開看，變成OrderID為表頭，該OrderID所在的表身為表身（後面以內表身稱之）
@@ -402,7 +405,7 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' ;
                     {
                         for (int i = 0; i <= arry_Orderid.Length - 1; i++)
                         {
-                            string spNo = MyUtility.GetValue.Lookup($"SELECT DISTINCT OrderID FROM PackingList_Detail WHERE OrderID = '{arry_Orderid[i]}' AND CTNQty=1 ");
+                            string spNo = MyUtility.GetValue.Lookup($"SELECT DISTINCT OrderID FROM PackingList_Detail WHERE OrderID = '{arry_Orderid[i]}' AND CTNQty=1 and DisposeFromClog= 0");
                             if (!MyUtility.Check.Empty(spNo))
                             {
                                 data_FtyReqReturnClog.Add("OrderID", spNo);
@@ -551,7 +554,7 @@ WHERE id='{dr["id"]}' AND CTNStartNo ='{dr["CTNStartNo"]}' ;
             MyUtility.Tool.ProcessWithDatatable(dt, string.Empty, @"
 SELECT DISTINCT a.* 
 FROM #tmp a
-INNER JOIN PackingList_Detail b ON a.Ukey=b.Ukey
+INNER JOIN PackingList_Detail b ON a.Ukey=b.Ukey and b.DisposeFromClog= 0
 WHERE (b.FtyReqReturnDate IS NULL AND a.Selected = 1)   --若FtyReqReturnDate IS NULL，表示不應該勾選，但在FORM上的被勾選了   = 有異動
 OR (b.FtyReqReturnDate IS NOT NULL AND a.Selected = 0)  --若FtyReqReturnDate IS NOT NULL，表示應該勾選，但在FORM上的沒勾選了 = 有異動
 ", out selectData);
