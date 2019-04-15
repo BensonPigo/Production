@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P19));
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -44,9 +45,13 @@
             this.gridPackErrTransfer = new Sci.Win.UI.Grid();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.picUpdate = new Sci.Win.UI.PictureBox();
+            this.labErrorType = new Sci.Win.UI.Label();
+            this.comboErrorType = new Sci.Win.UI.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridPackErrTransfer)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picUpdate)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -166,19 +171,20 @@
             this.gridPackErrTransfer.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridPackErrTransfer.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridPackErrTransfer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPackErrTransfer.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridPackErrTransfer.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridPackErrTransfer.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridPackErrTransfer.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridPackErrTransfer.Location = new System.Drawing.Point(12, 132);
             this.gridPackErrTransfer.Name = "gridPackErrTransfer";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridPackErrTransfer.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.gridPackErrTransfer.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridPackErrTransfer.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridPackErrTransfer.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridPackErrTransfer.RowTemplate.Height = 24;
@@ -214,28 +220,71 @@
             this.panel2.Size = new System.Drawing.Size(866, 42);
             this.panel2.TabIndex = 15;
             // 
+            // picUpdate
+            // 
+            this.picUpdate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picUpdate.Image = ((System.Drawing.Image)(resources.GetObject("picUpdate.Image")));
+            this.picUpdate.Location = new System.Drawing.Point(338, 98);
+            this.picUpdate.Name = "picUpdate";
+            this.picUpdate.Size = new System.Drawing.Size(27, 32);
+            this.picUpdate.TabIndex = 18;
+            this.picUpdate.TabStop = false;
+            this.picUpdate.WaitOnLoad = true;
+            this.picUpdate.Click += new System.EventHandler(this.picUpdate_Click);
+            // 
+            // labErrorType
+            // 
+            this.labErrorType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labErrorType.Location = new System.Drawing.Point(22, 101);
+            this.labErrorType.Name = "labErrorType";
+            this.labErrorType.Size = new System.Drawing.Size(86, 23);
+            this.labErrorType.TabIndex = 17;
+            this.labErrorType.Text = "Error Type";
+            // 
+            // comboErrorType
+            // 
+            this.comboErrorType.BackColor = System.Drawing.Color.White;
+            this.comboErrorType.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboErrorType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboErrorType.FormattingEnabled = true;
+            this.comboErrorType.IsSupportUnselect = true;
+            this.comboErrorType.Location = new System.Drawing.Point(111, 101);
+            this.comboErrorType.Name = "comboErrorType";
+            this.comboErrorType.OldText = "";
+            this.comboErrorType.Size = new System.Drawing.Size(221, 24);
+            this.comboErrorType.TabIndex = 19;
+            // 
             // P19
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(890, 474);
+            this.Controls.Add(this.comboErrorType);
+            this.Controls.Add(this.picUpdate);
+            this.Controls.Add(this.labErrorType);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.gridPackErrTransfer);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnSave);
             this.Name = "P19";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P19. Transfer To Packing Error";
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.gridPackErrTransfer, 0);
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
+            this.Controls.SetChildIndex(this.labErrorType, 0);
+            this.Controls.SetChildIndex(this.picUpdate, 0);
+            this.Controls.SetChildIndex(this.comboErrorType, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridPackErrTransfer)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picUpdate)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -257,5 +306,8 @@
         private Win.UI.Grid gridPackErrTransfer;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
+        private Win.UI.PictureBox picUpdate;
+        private Win.UI.Label labErrorType;
+        private Win.UI.ComboBox comboErrorType;
     }
 }
