@@ -88,6 +88,7 @@ g.ID
 ,g.CustCDID
 ,(g.Dest+' - '+isnull(c.Alias,'')) as Dest
 ,g.ShipModeID
+,g.CYCFS
 ,g.ShipTermID
 ,g.Handle,(g.Forwarder+' - '+isnull(ls.Abb,'')) as Forwarder
 ,g.Vessel
@@ -260,6 +261,7 @@ select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar))
 ), 1, 1, '') 
 , g.SONo
 , g.ShipModeID
+, g.CYCFS
 , g.Vessel
 , g.BLNo
 , g.BL2No
@@ -389,7 +391,7 @@ where pl.ID<>'' and 1=1 "));
             if (this.reportType == "1")
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 24];
+                object[,] objArray = new object[1, 25];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -400,30 +402,31 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 5] = dr["CustCDID"];
                     objArray[0, 6] = dr["Dest"];
                     objArray[0, 7] = dr["ShipModeID"];
-                    objArray[0, 8] = dr["ShipTermID"];
-                    objArray[0, 9] = dr["Handle"];
-                    objArray[0, 10] = dr["Forwarder"];
-                    objArray[0, 11] = dr["Vessel"];
-                    objArray[0, 12] = dr["ETD"];
-                    objArray[0, 13] = dr["ETA"];
-                    objArray[0, 14] = dr["SONo"];
-                    objArray[0, 15] = dr["SOCFMDate"];
-                    objArray[0, 16] = MyUtility.Check.Empty(dr["CTNTruck"]) ? dr["CTNTruck"] : MyUtility.Convert.GetString(dr["CTNTruck"]).Substring(0, MyUtility.Convert.GetString(dr["CTNTruck"]).Length - 1);
-                    objArray[0, 17] = dr["TotalShipQty"];
-                    objArray[0, 18] = dr["TotalCTNQty"];
-                    objArray[0, 19] = dr["TotalGW"];
-                    objArray[0, 20] = dr["TotalCBM"];
-                    objArray[0, 21] = dr["AddDate"];
-                    objArray[0, 22] = dr["ConfirmDate"];
-                    objArray[0, 23] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:X{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 8] = dr["CYCFS"];
+                    objArray[0, 9] = dr["ShipTermID"];
+                    objArray[0, 10] = dr["Handle"];
+                    objArray[0, 11] = dr["Forwarder"];
+                    objArray[0, 12] = dr["Vessel"];
+                    objArray[0, 13] = dr["ETD"];
+                    objArray[0, 14] = dr["ETA"];
+                    objArray[0, 15] = dr["SONo"];
+                    objArray[0, 16] = dr["SOCFMDate"];
+                    objArray[0, 17] = MyUtility.Check.Empty(dr["CTNTruck"]) ? dr["CTNTruck"] : MyUtility.Convert.GetString(dr["CTNTruck"]).Substring(0, MyUtility.Convert.GetString(dr["CTNTruck"]).Length - 1);
+                    objArray[0, 18] = dr["TotalShipQty"];
+                    objArray[0, 19] = dr["TotalCTNQty"];
+                    objArray[0, 20] = dr["TotalGW"];
+                    objArray[0, 21] = dr["TotalCBM"];
+                    objArray[0, 22] = dr["AddDate"];
+                    objArray[0, 23] = dr["ConfirmDate"];
+                    objArray[0, 24] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:Y{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
             else
             {
                 int intRowsStart = 3;
-                object[,] objArray = new object[1, 33];
+                object[,] objArray = new object[1, 34];
                 foreach (DataRow dr in this.printData.Rows)
                 {
                     objArray[0, 0] = dr["ID"];
@@ -444,22 +447,23 @@ where pl.ID<>'' and 1=1 "));
                     objArray[0, 15] = dr["PulloutReportConfirmDate"];
                     objArray[0, 16] = dr["PulloutID"];
                     objArray[0, 17] = dr["ShipModeID"];
-                    objArray[0, 18] = dr["ShipQty"];
-                    objArray[0, 19] = dr["CTNQty"];
-                    objArray[0, 20] = dr["GW"];
-                    objArray[0, 21] = dr["CBM"];
-                    objArray[0, 22] = dr["CustCDID"];
-                    objArray[0, 23] = dr["Dest"];
-                    objArray[0, 24] = dr["ConfirmDate"];
-                    objArray[0, 25] = dr["AddName"];
-                    objArray[0, 26] = dr["AddDate"];
-                    objArray[0, 27] = dr["ETD"];
-                    objArray[0, 28] = dr["ETA"];
-                    objArray[0, 29] = dr["BLNo"];
-                    objArray[0, 30] = dr["BL2No"];
-                    objArray[0, 31] = dr["Vessel"];
-                    objArray[0, 32] = dr["Remark"];
-                    worksheet.Range[string.Format("A{0}:AG{0}", intRowsStart)].Value2 = objArray;
+                    objArray[0, 18] = dr["CYCFS"];
+                    objArray[0, 19] = dr["ShipQty"];
+                    objArray[0, 20] = dr["CTNQty"];
+                    objArray[0, 21] = dr["GW"];
+                    objArray[0, 22] = dr["CBM"];
+                    objArray[0, 23] = dr["CustCDID"];
+                    objArray[0, 24] = dr["Dest"];
+                    objArray[0, 25] = dr["ConfirmDate"];
+                    objArray[0, 26] = dr["AddName"];
+                    objArray[0, 27] = dr["AddDate"];
+                    objArray[0, 28] = dr["ETD"];
+                    objArray[0, 29] = dr["ETA"];
+                    objArray[0, 30] = dr["BLNo"];
+                    objArray[0, 31] = dr["BL2No"];
+                    objArray[0, 32] = dr["Vessel"];
+                    objArray[0, 33] = dr["Remark"];
+                    worksheet.Range[string.Format("A{0}:AH{0}", intRowsStart)].Value2 = objArray;
                     intRowsStart++;
                 }
             }
