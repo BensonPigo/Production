@@ -99,7 +99,7 @@ select
 from PackErrCFM pe with(nolock)
 left join orders o with(nolock) on pe.OrderID = o.ID
 left join Country with(nolock) on Country.id = o.Dest
-left join PackErrTransfer pt with(nolock) on pt.OrderID=pe.PackingListID
+left join PackErrTransfer pt with(nolock) on pt.PackingListID=pe.PackingListID
 and pe.OrderID=pt.OrderID and pt.CTNStartNo=pe.CTNStartNo and pe.MDivisionID=pt.MDivisionID
 left join PackingError pr with(nolock) on pr.ID=pt.PackingErrorID and pr.Type='TP'
 where 1=1
