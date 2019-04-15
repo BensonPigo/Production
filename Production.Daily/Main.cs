@@ -1067,7 +1067,7 @@ where p.PulloutDate <= @PullOutLock
                 #region Save Excel
                 // 儲存路徑
                 string path = Sci.Env.Cfg.ReportTempDir;
-                string fileName = this.CurrentData["RgCode"].ToString().Trim() + " Pullout Report " + DateTime.Now.ToString("yyyyMMdd");
+                string fileName = "Pullout Report is pending Lock - " + this.CurrentData["RgCode"].ToString().Trim() + " - " + DateTime.Now.ToString("yyyyMMdd");
                 int lastIndex = 1;
                 
                 //判斷 流水號 = ReCode + " Pullout Report " + Date + 流水號 ( 4 碼 )
