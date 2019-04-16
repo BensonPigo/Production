@@ -243,19 +243,17 @@ BEGIN
 			,o.StyleUnit ,TMS.StdTMS
 
 			
-			--Prepare SewingOutput
-
-			--Begin INSERT¡ASewingOutput first
-	
-			--insert SewingOutput
-
+			--Prepare SewingOutput_Detail For Insrt
 			select 
 			[OutputDate]=dDate 
 			, [SewingLineID]=WorkLine 
 			, [QAQty]= Sum(QAQty) 
 			, [DefectQty]= sum(DefectQty) 
 			, [InlineQty]= sum(InlineQty) 
-			, [TMS]=IIF(Sum(QAQty)=0, 0 ,TMS) 
+			, [TMS]=IIF(SUM(QAQTY)=0
+							 , 0  
+							 , SUM(TMS * QAQTY) / SUM(QAQTY)
+						 )
 			, [Manpower] = 0
 			, [Manhour] = 0
 			, [Efficiency]=0
@@ -278,6 +276,7 @@ BEGIN
 			from #tmp_Into_SewingOutput_Detail
 			group by dDate,WorkLine ,TMS
 
+			--Get ID
 			SELECT [RowNumber]=row_number()OVER (ORDER BY OutputDate),*
 			INTO  #tmp_2
 			FROM  #tmp_1
@@ -287,6 +286,8 @@ BEGIN
 				,*
 			INTO #tmp_SewingOutput
 			FROM #tmp_2
+
+			
 
 			--Begin Insert
 
@@ -347,6 +348,36 @@ BEGIN
 			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine  = b.SewingLineID 
 				
 			
+			--------------For cauclator SewingOutput.TMS--------------
+			
+			SELECT DISTINCT
+				t2.ID 
+				,[SumQaqty] = SUM(t2.QAQTY)
+			INTO #tmp_SewingOutputTMS
+			FROM #tmp_SewingOutput t
+			INNER JOIN SewingOutput_Detail t2 ON t.ID=t2.ID
+			WHERE t.ID IN (
+				SELECT ID FROM #tmp_SewingOutput
+			)
+			group by t2.ID
+				
+			SELECT DISTINCT
+			t.id
+			,[TMS]=SUM( IIF (t3.SumQaqty=0,0, t2.TMS * t2.QAQty / t3.SumQaqty)  ) OVER (PARTITION BY  t.id ORDER BY  t.id) 
+			INTO #tmp_SewingOutputTMS_Final
+			FROm SewingOutput t
+			INNER JOIN SewingOutput_Detail t2 ON t.ID=t2.ID
+			INNER JOIN #tmp_SewingOutputTMS t3 ON t.ID=t3.ID
+
+				
+			UPDATE t
+			SET t.TMS= t2.TMS
+			FROM SewingOutput t
+			INNER JOIN #tmp_SewingOutputTMS_Final t2 ON t2.ID=t.ID
+
+			--------------For cauclator SewingOutput.TMS--------------
+
+
 			SELECT 
 			[ID]= b.ID
 			,[OrderId]
