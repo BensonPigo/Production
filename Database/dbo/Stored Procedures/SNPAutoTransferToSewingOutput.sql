@@ -1,12 +1,13 @@
 USE [Production]
 GO
 
-/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 3/28/2019 10:34:11 AM ******/
+/****** Object:  StoredProcedure [dbo].[SNPAutoTransferToSewingOutput]    Script Date: 2019/04/15 下午 04:35:47 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -135,6 +136,7 @@ BEGIN
 				,ColorName as Article
 				, SizeName as SizeCode
 				,[QAQty]=sum(OutputQty) 
+				,[InlineQty]=sum(InputQty) --4/13 InputQty寫入到Sewing P01中畫面的prod qty中
 			into #tmp_Into_SewingOutput_Detail_Detail_with0
 			from #tOutputTotal
 			where dDate = @DateStart
@@ -148,18 +150,19 @@ BEGIN
 					,ComboType
 					,Article
 					,SizeCode
-					,[QAQty]=CASE  WHEN (Order_Qty.Qty - AlreadyInPMS.Qty) >= t.QAQty THEN t.QAQty
+					,[QAQty]=CASE  WHEN (Order_Qty.Qty - AlreadyInPMS.Qty) >= ISNULL(t.QAQty,0) THEN ISNULL(t.QAQty,0)
 								   ELSE (Order_Qty.Qty - AlreadyInPMS.Qty) 
 								   END
+					,[InlineQty]
 			INTO #tmp_Into_SewingOutput_Detail_Detail_1
 			FROM #tmp_Into_SewingOutput_Detail_Detail_with0 t
 			OUTER APPLY(
-				SELECT [Qty]
+				SELECT [Qty]=ISNULL([Qty],0)
 				FROM Order_Qty 
 				WHERE ID=t.OrderId AND Article=t.Article AND SizeCode=t.SizeCode
 			)Order_Qty
 			OUTER APPLY(
-				SELECT [Qty]=SUM(QAQty)
+				SELECT [Qty]=ISNULL(SUM(QAQty),0)
 				FROM SewingOutput_Detail_Detail
 				WHERE SewingOutput_DetailUKey
 				IN(
@@ -170,15 +173,15 @@ BEGIN
 				AND Article=t.Article
 				AND SizeCode=t.SizeCode
 			)AlreadyInPMS
-			WHERE QAQty > 0
+			
 			
 			SELECt  *
 			INTO #tmp_Into_SewingOutput_Detail_Detail
 			FROM #tmp_Into_SewingOutput_Detail_Detail_1 
-			WHERE QAQty IS NOT NULL
+			WHERE QAQty IS NOT NULL --WHERE QAQty > 0  4/15  > 0要被包含進去
 
 
-			--Prepare SewingOutput_Detail	
+			--Prepare SewingOutput_Detail Fail
 			select
 			[OrderId]= CASE WHEN MONo LIKE '%-%'
 					THEN SUBSTRING(MONo, 1, CHARINDEX('-', MONo) - 1)
@@ -203,31 +206,54 @@ BEGIN
 			, t3.ComboType
 			, Article
 			,[QAQty]= Sum(QAQty) 
-			,[InlineQty]= sum( ISNULL(FailCount,0) ) + Sum(QAQty) 
+			,[InlineQty]= CASE WHEN sum( ISNULL(FailCount,0) ) = 0 AND Sum(QAQty)=0 THEN sum(InlineQty) --若tOutputTotal.FailQty與OutputQty都為0情況下，也需要把InputQty寫入到Sewing P01中畫面的prod qty中。
+							ELSE sum( ISNULL(FailCount,0) ) + Sum(QAQty)   --原本計算方法
+							END
 			,[DefectQty]= (sum( ISNULL(FailCount,0) ) + Sum(QAQty)) - Sum(QAQty) 
+			,[TMS] = TMS.CPU * TMS.CPUFactor * ( IIF(o.StyleUnit='PCS',100,Rate.Rate) /100  ) * TMS.StdTMS--CPU * CPUFactor * (Rate/100) * StdTMS
 			into #tmp_Into_SewingOutput_Detail
 			from #tmp_Into_SewingOutput_Detail_Detail t3
 			LEFT join #tempFail t on t.OrderId = t3.OrderId 
 			AND t.ComboType=t3.ComboType 
 			and t.WorkLine = t3.WorkLine 
-			and t.SizeCode = t3.SizeCode 
-			WHERE QAQty<>0
-			group by dDate,t3.WorkLine, t3.OrderId, t3.ComboType, Article 
+			and t.SizeCode = t3.SizeCode 			
+			LEFT JOIN Orders o ON o.ID=t3.OrderId
+			OUTER APPLY(
+				select  o.IsForecast
+						, o.SewLine
+						, o.CPU
+						, o.CPUFactor
+						, o.StyleUkey
+						, StdTMS = (select StdTMS 
+										from System WITH (NOLOCK))
+				from Orders o WITH (NOLOCK) 
+				inner join Factory f on o.FactoryID = f.ID
+				where   o.FtyGroup = 'SNP' 
+						and o.ID = t3.OrderId
+						and o.Category != 'G'
+						and f.IsProduceFty = 1
+			)TMS
+			OUTER APPLY(				
+				select Location
+				,[Rate] = isnull([dbo].[GetOrderLocation_Rate](o.ID,Location),[dbo].[GetStyleLocation_Rate](o.StyleUkey,Location)) 
+				from Style_Location WITH (NOLOCK) 
+				where StyleUkey = o.StyleUkey AND Location =t3.ComboType
+			)Rate
+			group by dDate,t3.WorkLine, t3.OrderId, t3.ComboType, Article ,TMS.CPU ,TMS.CPUFactor ,Rate.Rate
+			,o.StyleUnit ,TMS.StdTMS
 
 			
-			--Prepare SewingOutput
-
-			--Begin INSERT，SewingOutput first
-	
-			--insert SewingOutput
-
+			--Prepare SewingOutput_Detail For Insrt
 			select 
 			[OutputDate]=dDate 
 			, [SewingLineID]=WorkLine 
 			, [QAQty]= Sum(QAQty) 
 			, [DefectQty]= sum(DefectQty) 
 			, [InlineQty]= sum(InlineQty) 
-			, [TMS]=0
+			, [TMS]=IIF(SUM(QAQTY)=0
+							 , 0  
+							 , SUM(TMS * QAQTY) / SUM(QAQTY)
+						 )
 			, [Manpower] = 0
 			, [Manhour] = 0
 			, [Efficiency]=0
@@ -248,8 +274,9 @@ BEGIN
 			, [SubConOutContractNumber] = NULL
 			INTO #tmp_1
 			from #tmp_Into_SewingOutput_Detail
-			group by dDate,WorkLine
+			group by dDate,WorkLine ,TMS
 
+			--Get ID
 			SELECT [RowNumber]=row_number()OVER (ORDER BY OutputDate),*
 			INTO  #tmp_2
 			FROM  #tmp_1
@@ -259,6 +286,8 @@ BEGIN
 				,*
 			INTO #tmp_SewingOutput
 			FROM #tmp_2
+
+			
 
 			--Begin Insert
 
@@ -273,7 +302,7 @@ BEGIN
 			, [QAQty]
 			, [DefectQty]
 			, [InlineQty]
-			, [TMS]=0
+			, [TMS]
 			, [Manpower]=0
 			, [Manhour]=0
 			, [Efficiency]=0
@@ -305,7 +334,7 @@ BEGIN
 			,[ComboType]
 			,[Article]
 			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID =a.OrderId )
-			,[TMS]=0
+			,[TMS]=a.TMS
 			,[HourlyStandardOutput]=NULL
 			,[WorkHour]=0
 			,[QAQty]=a.QAQty
@@ -313,19 +342,49 @@ BEGIN
 			,[InlineQty]=a.InlineQty
 			,[OldDetailKey]=NULL
 			,[AutoCreate]=0
-			,[SewingReasonID]=''
+			,[SewingReasonID]= IIF(a.QAQty=0,'00001','') --若QAQTY，預設代第一個ReasionId
 			,[Remark]=NULL
 			FROM #tmp_Into_SewingOutput_Detail a
 			INNER JOIN #tmp_SewingOutput b ON a.dDate=b.OutputDate AND a.WorkLine  = b.SewingLineID 
 				
 			
+			--------------For cauclator SewingOutput.TMS--------------
+			
+			SELECT DISTINCT
+				t2.ID 
+				,[SumQaqty] = SUM(t2.QAQTY)
+			INTO #tmp_SewingOutputTMS
+			FROM #tmp_SewingOutput t
+			INNER JOIN SewingOutput_Detail t2 ON t.ID=t2.ID
+			WHERE t.ID IN (
+				SELECT ID FROM #tmp_SewingOutput
+			)
+			group by t2.ID
+				
+			SELECT DISTINCT
+			t.id
+			,[TMS]=SUM( IIF (t3.SumQaqty=0,0, t2.TMS * t2.QAQty / t3.SumQaqty)  ) OVER (PARTITION BY  t.id ORDER BY  t.id) 
+			INTO #tmp_SewingOutputTMS_Final
+			FROm SewingOutput t
+			INNER JOIN SewingOutput_Detail t2 ON t.ID=t2.ID
+			INNER JOIN #tmp_SewingOutputTMS t3 ON t.ID=t3.ID
+
+				
+			UPDATE t
+			SET t.TMS= t2.TMS
+			FROM SewingOutput t
+			INNER JOIN #tmp_SewingOutputTMS_Final t2 ON t2.ID=t.ID
+
+			--------------For cauclator SewingOutput.TMS--------------
+
+
 			SELECT 
 			[ID]= b.ID
 			,[OrderId]
 			,[ComboType]
 			,[Article]
 			,[Color]=(SELECT TOP 1 ColorID FROM View_OrderFAColor WHERE ID =a.OrderId )
-			,[TMS]=0
+			,[TMS]=a.TMS
 			,[HourlyStandardOutput]=NULL
 			,[WorkHour]=0
 			,[QAQty]=a.QAQty
@@ -445,6 +504,7 @@ BEGIN
 			,[EditDate]=NULL
 			,[MDivisionid]=(SELECT TOP 1 ID FROM MDivision)
 			FROM #tmp_Into_RFT
+			WHERE SewingLineID IS NOT NULL
 
 			--Prepapre RFT_Detail
 			SELECt * 
@@ -532,6 +592,7 @@ BEGIN
 		COMMIT TRANSACTION;  
 	
 END
+
 
 
 
