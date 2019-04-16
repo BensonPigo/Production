@@ -607,6 +607,7 @@ FROM   pullout_detail pd,
     pullout p 
 WHERE  pd.orderid = orders.id 
     AND pd.id = p.id 
+    AND (pd.status = 'C' or pd.ShipQty > 0)
     AND p.status = 'Confirmed'), 
 pulloutcomplete = Iif((
 	SELECT Count(p.id)
