@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -426,6 +427,72 @@ when matched then update set
                 }
 
             }
+        }
+
+        private void btnToExcel_Click(object sender, EventArgs e)
+        {
+            if (this.master == null || this.master.Rows.Count == 0)
+            {
+                return;
+            }
+
+            this.grid1.ValidateControl();
+            if (this.master.Select("Selected = 1").Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Must select datas!");
+                return;
+            }
+
+            DataTable selectdt = this.master.Select("Selected = 1").CopyToDataTable();
+
+            this.ShowWaitMessage("Starting Excel");
+            Microsoft.Office.Interop.Excel._Application excel = MyUtility.Excel.ConnectExcel(Sci.Env.Cfg.XltPathDir + "\\Shipping_B03.xltx"); // 預先開啟excel app
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[1];   // 取得工作表
+            worksheet.Cells[3, 1] = MyUtility.GetValue.Lookup("select RgCode from System", "Production");
+            Microsoft.Office.Interop.Excel.Range rngToCopy = worksheet.get_Range("A7:A10").EntireRow; // 複製格式後插入
+            Microsoft.Office.Interop.Excel.Range rngToInsert = worksheet.get_Range("A11", Type.Missing).EntireRow;
+            for (int i = 0; i < selectdt.Rows.Count - 1; i++)
+            {
+                rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
+            }
+
+            for (int i = 0; i < selectdt.Rows.Count; i++)
+            {
+                int irow = 7 + (i * 4);
+                worksheet.Cells[irow, 1] = selectdt.Rows[i]["ID"];
+                worksheet.Cells[irow, 2] = selectdt.Rows[i]["Description"];
+                worksheet.Cells[irow, 3] = selectdt.Rows[i]["IsApproved"];
+                worksheet.Cells[irow, 4] = selectdt.Rows[i]["UnitID"];
+                worksheet.Cells[irow, 5] = selectdt.Rows[i]["AccountIDN"];
+
+                worksheet.Cells[irow, 10] = selectdt.Rows[i]["sLocalSuppID"];
+                worksheet.Cells[irow, 11] = selectdt.Rows[i]["currencyid"];
+                worksheet.Cells[irow, 12] = MyUtility.Convert.GetDecimal(selectdt.Rows[i]["price"]).ToString("#,#.####");
+
+                DataView dv = this.detail.Select($"ID = '{selectdt.Rows[i]["ID"]}' and Ukey = {selectdt.Rows[i]["ukey"]} and LocalSuppID <> '' and price <> 0").CopyToDataTable().DefaultView;
+                dv.Sort = "Selected desc, Price";
+                DataTable ddt = dv.ToTable();
+                for (int j = 0; j < ddt.Rows.Count; j++)
+                {
+                    worksheet.Cells[irow + j, 7] = MyUtility.Convert.GetString(ddt.Rows[j]["LocalSuppID"]) + "-" + MyUtility.Convert.GetString(ddt.Rows[j]["SuppAbb"]);
+                    worksheet.Cells[irow + j, 8] = ddt.Rows[j]["CurrencyID"];
+                    worksheet.Cells[irow + j, 9] = MyUtility.Convert.GetDecimal(ddt.Rows[j]["Price"]).ToString("#,#.####");
+                }
+            }
+
+            worksheet.Columns.AutoFit();
+            #region Save Excel
+            string strExcelName = Sci.Production.Class.MicrosoftFile.GetName("Shipping_B03");
+            Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excel.Quit();
+            Marshal.ReleaseComObject(excel);
+            Marshal.ReleaseComObject(workbook);
+            strExcelName.OpenFile();
+            #endregion
+
+            this.HideWaitMessage();
         }
     }
 }
